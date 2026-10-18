@@ -2082,7 +2082,7 @@ body:has(#monthly-screen[style*="block"]) #accountant-bar{display:none!important
   </aside>
   <div class="main">
     <header class="topbar"><div class="topbar-left"><button type="button" class="mobile-menu-trigger" id="mobile-menu-trigger" aria-label="메뉴 열기" aria-controls="mobile-drawer" aria-expanded="false" onclick="toggleMobileDrawer()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><div class="crumb">ZEROCAR <span style="padding:0 7px;color:#c3cbd7">/</span> <b id="breadcrumb">대시보드</b></div></div><div class="topright"><span class="sample">● v1.83 · 테스트 시안</span><button class="topbutton" aria-label="알림" onclick="toast('알림 기능은 추후 구현 예정입니다.')" id="bell"></button><button class="top-avatar" id="top-avatar" onclick="logout()" title="로그아웃" aria-label="로그아웃">Z</button></div></header>
-    <main class="content"><div id="zc-cloud-banner" hidden role="status"><b>온라인 시범운영:</b> 차량·재고금융·선재고·월정산만 서버에 동기화됩니다. <b>고객정보·주민번호·사진·등록증은 이 기기 저장</b>이므로 실고객 데이터 입력을 금지합니다. 다중 직원 동시 작업은 아직 지원하지 않습니다.</div>
+    <main class="content"><div id="zc-cloud-banner" hidden role="status"><b>온라인 테스트 운영:</b> 차량·금융·월정산·고객정보의 클라우드 DB와 차량 사진·등록증의 비공개 Storage 연결을 시험하는 버전입니다. <b>운영 데이터 입력 전 로그인·접근권한·저장·조회·백업 검증이 필요하며, 주민번호 입력은 금지합니다.</b></div>
       <section class="pagehead"><div><p class="eyebrow" id="eyebrow">OVERVIEW</p><h1 id="screen-title">오늘의 업무 현황</h1><p class="subtitle" id="screen-sub">차량 재고와 매입·판매 현황을 한눈에 확인하세요.</p></div><button class="btn-primary" onclick="openAdd()" id="main-add" hidden aria-hidden="true" tabindex="-1"><span id="addicon"></span>차량 등록</button></section>
       <section id="accountant-bar" class="accountant-bar" hidden>
  <div class="acct-heading"><div class="acct-badge">경리 · 통합 관리</div><strong>딜러별 매입·재고·판매 통합 관리</strong><p>이 브라우저에 저장된 각 딜러의 차량을 함께 조회합니다. 다른 기기의 실시간 통합은 서버 연동 후 가능합니다.</p></div>
@@ -5634,7 +5634,7 @@ document.addEventListener('click',async event=>{
 </div>
 <div id="zc-cloud-gate" role="dialog" aria-modal="true" aria-labelledby="zc-cloud-title">
  <div class="zc-cloud-card">
-  <div class="zc-brand">ZEROCAR OFFICE <span>v1.86 · CLOUD TEST</span></div>
+  <div class="zc-brand">ZEROCAR OFFICE <span>v1.87 · CLOUD TEST</span></div>
   <h2 id="zc-cloud-title">온라인 업무 시스템 연결</h2>
   <p class="zc-cloud-desc">상사와 직원이 함께 사용할 수 있는 온라인 서버 로그인입니다. 실제 업무 투입 전에는 반드시 테스트 데이터를 이용해 모든 메뉴를 검증하세요.</p>
   <div id="zc-cloud-setup">
@@ -5739,8 +5739,8 @@ async function flush(){if(!S.ready||S.saving||S.conflict||!S.queue.size)return;S
 }
 async function ensureConnection(conf){const lib=await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/+esm');S.client=lib.createClient(conf.url,conf.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});
  const {error}=await S.client.auth.getSession();if(error)throw error;
- // RLS-protected table existence test does not require being authenticated
- const r=await S.client.from('zc_companies').select('id').limit(1);if(r.error)throw Error('설치 SQL 또는 Supabase URL을 확인하세요: '+r.error.message);
+ // Connection setup must not SELECT a company table before sign-in.
+ // RLS correctly disallows anonymous reads; authentication itself will validate the project and key.
 }
 async function readCompany(){
  let {data,error}=await S.client.from('zc_members').select('user_id,company_id,role,display_name,active').eq('user_id',S.user.id).maybeSingle();if(error)throw error;
@@ -6037,7 +6037,7 @@ login.addEventListener('submit',doSignIn);
 byId('zc-cloud-connect').addEventListener('click',async()=>{
  const conf=validConfig({url:byId('zc-cloud-url').value.trim(),key:byId('zc-cloud-key').value.trim()});
  if(!conf)return msg('프로젝트 URL·Publishable 키를 확인해 주세요.');
- try{await ensureConnection(conf);originalSet.call(localStorage,keyConfig,JSON.stringify(conf));setup.hidden=true;login.hidden=false;msg('서버 연결됨. 온라인 계정으로 로그인하세요.');}
+ try{await ensureConnection(conf);originalSet.call(localStorage,keyConfig,JSON.stringify(conf));setup.hidden=true;login.hidden=false;msg('연결 정보 저장됨. 온라인 계정으로 로그인하면 서버 인증을 확인합니다.');}
  catch(e){msg('서버 연결 오류: '+errMsg(e))}
 });
 byId('zc-cloud-config-change').addEventListener('click',()=>{setup.hidden=false;login.hidden=true;byId('zc86-onboard').hidden=true;msg('')});
