@@ -2037,6 +2037,9 @@ body:has(#monthly-screen[style*="block"]) #accountant-bar{display:none!important
 .zc85-postcode-layer{flex:1;min-height:0;overflow:hidden;background:#f9fbfc}
 .zc85-postcode-foot{margin:0;padding:10px 15px;border-top:1px solid #e4ecf3;font-size:10px;color:#708ba3;line-height:1.45}
 @media(max-width:650px){#zc85-postcode-overlay{padding:0}.zc85-postcode-dialog{height:100dvh;max-height:100dvh;width:100%;border-radius:0}.zc85-postcode-head{padding:14px 13px}}
+
+/* v1.91 independent postcode window fallback */
+.zc91-postcode-alt{background:#eaf4ff!important;color:#245d99!important;border:1px solid #c5daf0!important;border-radius:9px;padding:8px 12px;font-weight:800;font-size:12px;white-space:nowrap;margin-left:auto;margin-right:7px}
 </style>
 <style>
 /* v1.86 deployed operations companion controls */
@@ -2077,6 +2080,30 @@ body:has(#monthly-screen[style*="block"]) #accountant-bar{display:none!important
 @media(max-width:480px){.snote-public-nav{height:72px;width:calc(100% - 32px)}.snote-public-logo{font-size:20px}.snote-public-logo-icon{width:30px;height:30px;font-size:18px}.snote-public-login{padding:10px 8px}.snote-nav-actions .snote-button{padding:11px 13px}.snote-public-main{width:calc(100% - 32px)}.snote-hero{padding:60px 0 55px}.snote-hero h1{font-size:36px;line-height:1.34;letter-spacing:-1.7px}.snote-hero p{font-size:14px}.snote-features{grid-template-columns:1fr 1fr;gap:9px}.snote-features article{padding:17px 14px;min-height:174px}.snote-features h3{font-size:13px}.snote-features p{font-size:11px}.snote-trustline{font-size:11px;gap:9px}.snote-feature-section h2{font-size:19px}.snote-public-footer{padding:22px 16px}}
 @media print{#snote-public-home{display:none!important}}
 </style>
+
+<style>
+/* S-NOTE 1.90: standard sign-in and admin workspace */
+#zc86-register[hidden]{display:none!important}
+#zc-cloud-gate .zc-cloud-card{max-width:510px}
+#zc-cloud-login .zc-field{font-weight:650}
+#zc-cloud-login input{border-radius:11px;min-height:46px}
+.snote90-settings{display:grid;gap:14px}
+.snote90-panel{padding:23px;border:1px solid #dce7f1;background:#fff;border-radius:15px;box-shadow:0 3px 15px #12345608}
+.snote90-panel h3{margin:0 0 6px;font-size:17px;color:#1e4967}
+.snote90-panel p{font-size:12px;color:#74889b;margin:0 0 16px;line-height:1.6}
+.snote90-inline,.snote90-member,.snote90-lender{display:flex;gap:10px;align-items:end;flex-wrap:wrap}
+.snote90-inline label,.snote90-member label{display:grid;gap:6px;flex:1;min-width:170px;font-size:12px;font-weight:700}
+.snote90-settings input{height:37px;border:1px solid #d6e3ed;border-radius:8px;padding:8px 11px;min-width:0}
+.snote90-settings button{min-height:36px;border-radius:8px;cursor:pointer;padding:7px 12px}
+.snote90-member,.snote90-lender{border-top:1px solid #edf1f5;padding:12px 0}
+.snote90-member span{padding:8px 12px;border-radius:7px;background:#eef5fb;color:#37607d;font-size:12px}
+.snote90-lender strong{min-width:105px;flex:1}
+.snote90-lender input{max-width:160px;text-align:right}
+.snote90-danger{color:#bb4452;border:1px solid #f1cfd3;background:#fff7f8}
+.snote90-panel #zc86-invite-area{position:static!important;display:block;width:100%!important;max-height:none;box-shadow:none;border:none;padding:0}
+.snote90-panel #zc86-invite-area[hidden]{display:block!important}
+@media(max-width:640px){.snote90-panel{padding:15px}.snote90-member label{min-width:100%;}.snote90-lender input{width:120px}}
+</style>
 </head>
 <body>
 
@@ -2084,15 +2111,15 @@ body:has(#monthly-screen[style*="block"]) #accountant-bar{display:none!important
 <section id="snote-public-home" aria-label="S-NOTE 공개 홈페이지">
   <header class="snote-public-nav">
     <div class="snote-public-logo"><span class="snote-public-logo-icon">S</span><span>S-NOTE</span></div>
-    <div class="snote-nav-actions"><button type="button" class="snote-public-login" id="snote-home-login">로그인</button><button type="button" class="snote-button" id="snote-home-register">무료 회원가입</button></div>
+    <div class="snote-nav-actions"><button type="button" class="snote-public-login" id="snote-home-login">로그인</button><button type="button" class="snote-button" id="snote-home-register">로그인</button></div>
   </header>
   <main class="snote-public-main">
     <div class="snote-hero">
       <div class="snote-eyebrow">SMART DEALER WORKSPACE <span>·</span> 중고차 매매업무 통합 관리</div>
       <h1>중고차 업무의 모든 기록,<br><strong>하나의 <span>S-NOTE</span>에서</strong></h1>
       <p>차량 매입부터 재고·판매·고객관리, 금융 및 정산까지. 서로 다른 상사는 각자의 독립된 업무공간에서 관리합니다.</p>
-      <div class="snote-hero-actions"><button type="button" class="snote-button large" id="snote-hero-register">무료로 시작하기 <span aria-hidden="true">→</span></button><button type="button" class="snote-button-lite" id="snote-hero-login">이미 회원이신가요? 로그인</button></div>
-      <div class="snote-trustline"><span>✓ 이메일 인증 회원가입</span><span>✓ 상사별 데이터 분리</span><span>✓ PC · 모바일 접속</span></div>
+      <div class="snote-hero-actions"><button type="button" class="snote-button large" id="snote-hero-register">로그인하고 시작하기 <span aria-hidden="true">→</span></button><button type="button" class="snote-button-lite" id="snote-hero-login">이미 회원이신가요? 로그인</button></div>
+      <div class="snote-trustline"><span>✓ 인증된 직원 로그인</span><span>✓ 상사별 데이터 분리</span><span>✓ PC · 모바일 접속</span></div>
     </div>
     <section class="snote-feature-section" aria-label="업무 기능 소개">
       <h2>필요한 업무는 빠짐없이, 사용은 더 간편하게</h2>
@@ -2653,25 +2680,40 @@ const ZC_CARS_PREFIX='zerocar-office-v12-cars-';
 const ZC_COVER_PREFIX='zerocar-office-v12-covers-';
 let dealerAccounts=[];
 function isAccountant(){return currentUser?.role==='accountant'}
-function canManageCar(c){return !!currentUser&&!!c&&(isAccountant()?c.ownerId!==currentUser.username:c.ownerId===currentUser.username)}
+function isSnoteAdmin(){return currentUser?.role==='admin'}
+function isFinanceManager(){return isAccountant()||isSnoteAdmin()}
+function canManageCar(c){return !!currentUser&&!!c&&(isSnoteAdmin()?true:isAccountant()?c.ownerId!==currentUser.username:c.ownerId===currentUser.username)}
 function carsStoreKey(username=currentUser?.username||'unauthenticated'){return ZC_CARS_PREFIX+username}
 function normalizedCars(records,owner){return records.map(c=>({...c,ownerId:c.ownerId||owner,status:(c.status==='매입진행'||c.status==='수리중')?'판매중':c.status,repairItems:normalizeRepairItems(c),inventoryLoan:Number.isFinite(Number(c.inventoryLoan))&&Number(c.inventoryLoan)>=0?Number(c.inventoryLoan):0,inventoryLender:typeof c.inventoryLender==='string'&&c.inventoryLender.length<=45?c.inventoryLender:''}))}
 function dealerCars(username){try{const raw=localStorage.getItem(carsStoreKey(username));const parsed=raw===null?null:JSON.parse(raw);return normalizedCars(Array.isArray(parsed)?parsed:(username==='demo'?seedCars.map(x=>({...x})):[]),username)}catch(_){return username==='demo'?normalizedCars(seedCars.map(x=>({...x})),'demo'):[]}}
-function loadCarsForUser(){if(!currentUser){cars=[];return}if(!isAccountant()){cars=dealerCars(currentUser.username);zc182OverlayFinance();return}
- const owners=new Set(dealerAccounts.filter(a=>a.role!=='accountant').map(a=>a.username));
- // Support older account data or accounts whose local keys remain after a version change.
- for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i)||'';if(key.startsWith(ZC_CARS_PREFIX))owners.add(key.slice(ZC_CARS_PREFIX.length))}
- owners.add('demo');owners.delete(currentUser.username);
+function loadCarsForUser(){
+ if(!currentUser){cars=[];return}
+ if(!isFinanceManager()){cars=dealerCars(currentUser.username);zc182OverlayFinance();return}
+ // The hosted app must never mix sample/demo keys with live dealership data.
+ const cloudMembers=(typeof window.zc86Cloud!=='undefined' && window.zc86Cloud?.membersAliases?.())||null;
+ const owners=new Set(cloudMembers||dealerAccounts.filter(a=>a.role!=='accountant').map(a=>a.username));
+ if(!cloudMembers){for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i)||'';if(key.startsWith(ZC_CARS_PREFIX))owners.add(key.slice(ZC_CARS_PREFIX.length))}owners.add('demo');}
+ if(isSnoteAdmin())owners.add(currentUser.username);
+ if(isAccountant())owners.delete(currentUser.username);
  cars=[...owners].flatMap(owner=>dealerCars(owner));zc182OverlayFinance();
 }
-function persistCars(ownerId=null){if(!currentUser||isAccountant())return false;try{
- localStorage.setItem(carsStoreKey(),JSON.stringify(cars));
- return true;
- }catch(_){return false}}
-function dealerLabel(c){const account=dealerAccounts.find(a=>a.username===c.ownerId);return account?((account.name||account.username)+' · '+account.username):c.ownerId||'미확인'}
-function accountantFilter(){return isAccountant()?($('accountant-dealer-filter')?.value||'all'):'all'}
+function persistCars(ownerId=null){
+ if(!currentUser||isAccountant())return false;
+ try{
+  // An admin may edit another dealer's vehicle. Persist ONLY the selected owner's record,
+  // rather than replacing every dealer's snapshot (which would erase other dealers' work).
+  const owner=isSnoteAdmin()?(ownerId||currentUser.username):currentUser.username;
+  localStorage.setItem(carsStoreKey(owner),JSON.stringify(isSnoteAdmin()?cars.filter(c=>c.ownerId===owner):cars));
+  return true;
+ }catch(_){return false}
+}
+function dealerLabel(c){
+ const account=dealerAccounts.find(a=>a.username===c.ownerId);
+ return account?.name||((c.ownerId&&typeof window.zc86Cloud!=='undefined'&&window.zc86Cloud)?'담당 딜러':'담당자 미지정');
+}
+function accountantFilter(){return isFinanceManager()?($('accountant-dealer-filter')?.value||'all'):'all'}
 function handleAccountantDealerFilter(){renderCars();if(['finance','inventoryFinance'].includes(route))buildAlt();}
-function renderAccountantBar(){const bar=$('accountant-bar');if(!bar)return;bar.hidden=!isAccountant();if(!isAccountant())return;
+function renderAccountantBar(){const bar=$('accountant-bar');if(!bar)return;bar.hidden=!isFinanceManager();if(!isFinanceManager())return;
  const select=$('accountant-dealer-filter'),prior=select.value||'all';
  const owners=[...new Set(cars.map(c=>c.ownerId))].filter(Boolean);
  select.innerHTML='<option value="all">전체 딜러</option>'+owners.map(id=>`<option value="${esc(id)}">${esc(dealerLabel({ownerId:id}))}</option>`).join('');
@@ -2757,6 +2799,7 @@ function todayLocal(){let d=new Date();return [d.getFullYear(),String(d.getMonth
 function salePrice(c){return c.status==='판매완료'&&Number.isFinite(Number(c.soldPrice))&&c.soldPrice!==undefined&&c.soldPrice!==null&&c.soldPrice!==''?Number(c.soldPrice):Number(c.sell||0)}
 function formatKm(value){return num(Number(String(value??0).replaceAll(',',''))||0)}
 const pages={dashboard:{title:'대시보드',head:'오늘의 업무 현황',sub:'최근 등록 차량과 빠른 업무를 확인하세요.',eyebrow:'OVERVIEW',icon:'home'},cars:{title:'차량 관리',head:'차량 재고 관리',sub:'판매중 재고의 상태와 차량 서류를 관리합니다.',eyebrow:'INVENTORY',icon:'cars'},buy:{title:'매입 관리',head:'차량 매입 관리',sub:'판매 완료 전 차량만 확인할 수 있습니다.',eyebrow:'PURCHASE',icon:'purchase'},sell:{title:'판매 완료',head:'판매 완료 차량',sub:'판매가 완료된 차량을 별도로 관리합니다.',eyebrow:'SOLD VEHICLES',icon:'sold'},prestock:{title:'선재고 관리',head:'선재고 관리',sub:'선재고 지급·상환 내역과 잔액을 관리합니다.',eyebrow:'PRESTOCK LEDGER',icon:'wallet'},inventoryFinance:{title:'재고금융 관리',head:'재고금융 관리',sub:'보유 차량의 재고대출금과 금융사를 통합 조회합니다.',eyebrow:'INVENTORY FINANCE',icon:'loan'},monthly:{title:'월정산',head:'월정산 프로그램',sub:'월별 수입과 지출을 기록하고 내역을 분석·출력합니다.',eyebrow:'MONTHLY ACCOUNTING',icon:'calendar'},finance:{title:'수익 · 정산',head:'수익 및 정산',sub:'재고 및 판매 실적, 이번달 마진 리포트와 차량별 손익을 확인합니다.',eyebrow:'FINANCE',icon:'profit'},users:{title:'고객 관리',head:'고객 관리',sub:'매입·판매 고객 이력을 관리합니다.',eyebrow:'CUSTOMERS',icon:'customers'},settings:{title:'직원 · 설정',head:'직원 및 권한 설정',sub:'직원 계정, 차량 모델 데이터, 업무 접근 권한을 관리합니다.',eyebrow:'SETTINGS',icon:'settings'}};
+pages.acctFinance={title:'매입금액 현황',head:'매입금액 현황',sub:'상사 전체 차량의 매입·대출 현황을 조회합니다.',eyebrow:'ACCOUNTING',icon:'loan'};
 let route='dashboard';
 /* v1.81: visual indicator for the current dealer dashboard authorization. */
 let zcDashboardUnlocked=false;
@@ -3024,24 +3067,30 @@ document.addEventListener('touchstart',event=>{if(document.body.classList.contai
 document.addEventListener('touchend',event=>{if(mobileDrawerSwipeX===null)return;const delta=event.changedTouches[0].clientX-mobileDrawerSwipeX;if(delta< -70)closeMobileDrawer();mobileDrawerSwipeX=null},{passive:true});
 
 function zc81DashboardLockMark(id){
- if(id!=='finance'||!currentUser||isAccountant())return '';
+ if(id!=='finance'||!currentUser||isFinanceManager())return '';
  const unlocked=zcDashboardUnlocked;
  const status=unlocked?'잠금 해제':'잠김 · 비밀번호 확인 필요';
  return `<span class="zc81-dash-lock ${unlocked?'is-unlocked':'is-locked'}" role="img" aria-label="${status}" title="${status}">${ico(unlocked?'unlock':'lock')}</span>`;
 }
 function buildMenus(){
- const nav=$('desktop-nav');nav.innerHTML=Object.entries(pages).filter(([id])=>isAccountant()?['dashboard','buy','sell','prestock','inventoryFinance','finance','monthly','settings'].includes(id):!['cars','settings','inventoryFinance','prestock','monthly'].includes(id)).map(([id,p])=>`<button class="${route===id?'active':''}" onclick="navigate('${id}')">${ico(p.icon)}<span>${isAccountant()&&id==='dashboard'?'경리 통합 현황':isAccountant()&&id==='finance'?'매입금액 현황':isAccountant()&&id==='settings'?'설정':p.title}</span>${zc81DashboardLockMark(id)}</button>`).join('');
- const items=isAccountant()?[['dashboard','현황','home'],['buy','매입','buy'],['sell','판매','finance'],['prestock','선재고','finance'],['inventoryFinance','재고금융','finance'],['finance','매입금액','finance'],['settings','설정','settings']]:[['dashboard','홈','home'],['cars','차량','cars'],['add','등록','plus'],['finance','정산','finance']];
+ const adm=isSnoteAdmin(),acct=isAccountant();
+ const allowed=adm?['dashboard','cars','buy','sell','finance','users','prestock','inventoryFinance','acctFinance','monthly','settings']:
+ acct?['dashboard','buy','sell','prestock','inventoryFinance','finance','monthly']:
+ ['dashboard','buy','sell','finance','users'];
+ const nav=$('desktop-nav');
+ nav.innerHTML=Object.entries(pages).filter(([id])=>allowed.includes(id)).map(([id,p])=>
+ `<button class="${route===id?'active':''}" onclick="navigate('${id}')">${ico(p.icon)}<span>${acct&&id==='dashboard'?'경리 통합 현황':acct&&id==='finance'?'매입금액 현황':p.title}</span>${zc81DashboardLockMark(id)}</button>`).join('');
+ const items=acct?[['dashboard','현황','home'],['buy','매입','buy'],['sell','판매','sold'],['prestock','선재고','wallet'],['inventoryFinance','재고금융','loan'],['finance','매입금액','finance']]:
+ [['dashboard','홈','home'],['buy','매입','buy'],['sell','판매','sold'],['finance','정산','profit'],['add','등록','plus']];
  $('bottom-nav').innerHTML=items.map(([id,label,icon])=>`<button aria-label="${label}" class="${id==='add'?'plus-tab ':''}${id===route?'active':''}" onclick="${id==='add'?'openAdd()':`navigate('${id}')`}">${id==='add'?`<span class="mobile-plus">${ico(icon)}</span>`:ico(icon)}<span>${label}</span>${id==='finance'?zc81DashboardLockMark(id):''}</button>`).join('');
- const drawerNav=$('mobile-drawer-nav');
- if(drawerNav){
-  drawerNav.innerHTML=nav.innerHTML+(isAccountant()?'':`<button class="mobile-new-car" onclick="closeMobileDrawer();openAdd()">${ico('plus')}<span>차량 신규 등록</span></button>`);
+ const drawer=$('mobile-drawer-nav');if(drawer){
+  drawer.innerHTML=nav.innerHTML+(acct?'':`<button class="mobile-new-car" onclick="closeMobileDrawer();openAdd()">${ico('plus')}<span>차량 신규 등록</span></button>`);
   $('mobile-drawer-name').textContent=currentUser?.name||'사용자';
-  $('mobile-drawer-role').textContent=isAccountant()?'경리 · 통합 관리':'딜러 · 내 차량 관리';
-  $('mobile-drawer-avatar').textContent=(currentUser?.name||'Z').slice(0,1);
+  $('mobile-drawer-role').textContent=adm?'관리자 · 모든 업무 권한':acct?'경리 · 재고금융·월정산':'딜러 · 내 차량 관리';
+  $('mobile-drawer-avatar').textContent=(currentUser?.name||'S').slice(0,1);
  }
-
 }
+
 function padMonth(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`}
 function monthMarginStats(key){const sold=cars.filter(c=>c.status==='판매완료' && typeof c.soldAt==='string' && c.soldAt.slice(0,7)===key);return {key,count:sold.length,margin:sold.reduce((sum,c)=>sum+totals(c.buy,salePrice(c),normalizeCosts(c)).margin,0)}}
 function marginComparison(current,previous,kind){const diff=Math.round((current.margin-previous.margin)*10)/10;
@@ -3307,7 +3356,11 @@ async function confirmStatusChange(){
    toast('차량 삭제 정보를 저장하지 못했습니다. 다시 시도해주세요.');return;
   }
   try{
-   if(fileDB){
+   if(isSnoteAdmin()&&window.zc86Cloud?.ready){
+    await window.zc86Cloud.flush();
+    if(window.zc86Cloud.conflict)throw Error('서버 저장 충돌이 발생해 사진 삭제를 중단했습니다.');
+    await window.zc86Cloud.removeCarMedia(c.id);
+   }else if(fileDB){
     // 메모리 목록뿐 아니라 DB의 해당 차량 파일을 직접 검색해 모두 삭제합니다.
     const ids=await new Promise((resolve,reject)=>{
      const tx=fileDB.transaction('media','readonly');
@@ -3368,14 +3421,14 @@ function carTable(rows, inventoryDetails=false){
  const prestockIndex=inventoryDetails?prestockOutstandingIndex():null;
  if(!rows.length)return '<div class="empty">표시할 차량이 없습니다.</div>';
  const sold=route==='sell',extra=inventoryDetails&&!sold;
- return `<table class="${extra?'inventory-table':''}"><thead><tr><th>차량 정보</th><th>차량번호</th>${isAccountant()?'<th class="accountant-only-th">담당 딜러</th>':''}${extra?'<th>연식</th><th>주행거리</th><th>매입일자</th>':''}<th>매입가</th>${extra?'<th>선재고</th>':''}<th>${sold?'판매가':'판매예정가'}</th>${sold?'<th>판매 완료일</th>':''}<th>사진 / 서류</th><th>상태 변경</th></tr></thead><tbody>${rows.map(c=>`<tr class="vehicle-clickable" tabindex="0" role="button" aria-label="${esc(c.model)} 차량 상세 열기" onclick="openVehicle('${c.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openVehicle('${c.id}')}"><td><div class="car-cell"><div class="car-thumb">${thumbHtml(c)}</div><div><div class="car-name">${esc(c.model)}</div><div class="car-sub">${extra?(c.color?esc(c.color):'차량 상세 보기'):`${esc(c.year)}년 · ${esc(c.km)}km${c.color?' · '+esc(c.color):''}`}</div></div></div></td><td>${esc(c.plate)}</td>${isAccountant()?`<td class="acct-owner">${esc(dealerLabel(c))}</td>`:''}${extra?`<td class="inventory-year">${c.year?esc(c.year)+'년':'-'}</td><td class="inventory-km">${c.km!==undefined&&c.km!==null&&String(c.km).trim()!==''?esc(formatKm(c.km))+' km':'-'}</td><td class="inventory-purchase-date">${esc(c.purchaseAt||'-')}</td>`:''}<td class="price">${num(c.buy)}만</td>${extra?`<td>${prestockValueMarkup(c,prestockIndex)}</td>`:''}<td class="price">${num(sold?salePrice(c):c.sell)}만</td>${sold?`<td>${esc(c.soldAt||'미입력')}</td>`:''}<td>${mediaCountHtml(c)}</td><td>${statusSelect(c)}</td></tr>`).join('')}</tbody></table>`
+ return `<table class="${extra?'inventory-table':''}"><thead><tr><th>차량 정보</th><th>차량번호</th>${isFinanceManager()?'<th class="accountant-only-th">담당 딜러</th>':''}${extra?'<th>연식</th><th>주행거리</th><th>매입일자</th>':''}<th>매입가</th>${extra?'<th>선재고</th>':''}<th>${sold?'판매가':'판매예정가'}</th>${sold?'<th>판매 완료일</th>':''}<th>사진 / 서류</th><th>상태 변경</th></tr></thead><tbody>${rows.map(c=>`<tr class="vehicle-clickable" tabindex="0" role="button" aria-label="${esc(c.model)} 차량 상세 열기" onclick="openVehicle('${c.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openVehicle('${c.id}')}"><td><div class="car-cell"><div class="car-thumb">${thumbHtml(c)}</div><div><div class="car-name">${esc(c.model)}</div><div class="car-sub">${extra?(c.color?esc(c.color):'차량 상세 보기'):`${esc(c.year)}년 · ${esc(c.km)}km${c.color?' · '+esc(c.color):''}`}</div></div></div></td><td>${esc(c.plate)}</td>${isFinanceManager()?`<td class="acct-owner">${esc(dealerLabel(c))}</td>`:''}${extra?`<td class="inventory-year">${c.year?esc(c.year)+'년':'-'}</td><td class="inventory-km">${c.km!==undefined&&c.km!==null&&String(c.km).trim()!==''?esc(formatKm(c.km))+' km':'-'}</td><td class="inventory-purchase-date">${esc(c.purchaseAt||'-')}</td>`:''}<td class="price">${num(c.buy)}만</td>${extra?`<td>${prestockValueMarkup(c,prestockIndex)}</td>`:''}<td class="price">${num(sold?salePrice(c):c.sell)}만</td>${sold?`<td>${esc(c.soldAt||'미입력')}</td>`:''}<td>${mediaCountHtml(c)}</td><td>${statusSelect(c)}</td></tr>`).join('')}</tbody></table>`
 }
 function carMobile(rows, inventoryDetails=false){
  if(isAccountant())return accountantCarMobile(rows);
  const prestockIndex=inventoryDetails?prestockOutstandingIndex():null;
  if(!rows.length)return '<div class="empty">표시할 차량이 없습니다.</div>';
  const sold=route==='sell',extra=inventoryDetails&&!sold;
- return rows.map(c=>`<div class="vehicle-card" role="button" tabindex="0" onclick="openVehicle('${c.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openVehicle('${c.id}')}"><div class="car-thumb">${thumbHtml(c)}</div><div class="vehicle-info"><div class="vehicle-title">${esc(c.model)}</div>${isAccountant()?`<span class="acct-owner-mobile">담당 · ${esc(dealerLabel(c))}</span>`:''}<div class="vehicle-meta">${esc(c.plate)}${!extra?` · ${esc(c.year)}년 · ${esc(c.km)}km`:''}${c.color?' · '+esc(c.color):''}</div>${extra?`<div class="vehicle-inventory-meta"><span><b>연식</b>${c.year?esc(c.year)+'년':'-'}</span><span><b>주행거리</b>${c.km!==undefined&&c.km!==null&&String(c.km).trim()!==''?esc(formatKm(c.km))+' km':'-'}</span><span><b>매입일자</b>${esc(c.purchaseAt||'-')}</span></div>`:''}<div class="vehicle-price">${sold?'판매가':'판매예정가'} ${num(sold?salePrice(c):c.sell)}만원</div>${extra?`<span class="prestock-mobile-line">선재고 ${prestockValueMarkup(c,prestockIndex)}</span>`:''}${sold?`<div class="sale-date-chip">판매 완료일 ${esc(c.soldAt||'미입력')}</div>`:''}<span class="mobile-media">${mediaCountHtml(c)}</span></div><div class="vehicle-right">${statusSelect(c)}</div></div>`).join('')}
+ return rows.map(c=>`<div class="vehicle-card" role="button" tabindex="0" onclick="openVehicle('${c.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openVehicle('${c.id}')}"><div class="car-thumb">${thumbHtml(c)}</div><div class="vehicle-info"><div class="vehicle-title">${esc(c.model)}</div>${isFinanceManager()?`<span class="acct-owner-mobile">담당 · ${esc(dealerLabel(c))}</span>`:''}<div class="vehicle-meta">${esc(c.plate)}${!extra?` · ${esc(c.year)}년 · ${esc(c.km)}km`:''}${c.color?' · '+esc(c.color):''}</div>${extra?`<div class="vehicle-inventory-meta"><span><b>연식</b>${c.year?esc(c.year)+'년':'-'}</span><span><b>주행거리</b>${c.km!==undefined&&c.km!==null&&String(c.km).trim()!==''?esc(formatKm(c.km))+' km':'-'}</span><span><b>매입일자</b>${esc(c.purchaseAt||'-')}</span></div>`:''}<div class="vehicle-price">${sold?'판매가':'판매예정가'} ${num(sold?salePrice(c):c.sell)}만원</div>${extra?`<span class="prestock-mobile-line">선재고 ${prestockValueMarkup(c,prestockIndex)}</span>`:''}${sold?`<div class="sale-date-chip">판매 완료일 ${esc(c.soldAt||'미입력')}</div>`:''}<span class="mobile-media">${mediaCountHtml(c)}</span></div><div class="vehicle-right">${statusSelect(c)}</div></div>`).join('')}
 function renderCars(){let d=getFiltered('dash').slice(0,5),l=getFiltered('list');$('dash-table').innerHTML=carTable(d);$('dash-mobile').innerHTML=carMobile(d);const inventory=['cars','buy'].includes(route);$('list-table').innerHTML=carTable(l,inventory);$('list-mobile').innerHTML=carMobile(l,inventory)}
 function buildQuick(){
  const quick=isAccountant()?
@@ -3400,7 +3453,7 @@ function restoreFinanceCompanies(){
  }catch(e){console.warn('금융사 설정 불러오기 실패',e)}
 }
 function persistFinanceCompanies(next){
- if(!isAccountant())return false;
+ if(!isFinanceManager())return false;
  try{localStorage.setItem(ZC157_FINANCE_KEY,JSON.stringify(next));ACC44_LENDER_LIMITS=next.map(x=>[x[0],x[1]]);INVENTORY_LENDERS=next.map(x=>x[0]);return true}
  catch(e){toast('금융사 설정 저장에 실패했습니다.');return false}
 }
@@ -3454,7 +3507,7 @@ async function zc157AddDealer(event){
 function zc157FormatLimit(input){const v=input.value.replace(/[^0-9]/g,'').slice(0,9);input.value=v?Number(v).toLocaleString('ko-KR'):''}
 function zc157ParseLimit(input){const str=String(input||'').replaceAll(',','');return /^\d{1,9}$/.test(str)?Number(str):NaN}
 function zc157SaveLimit(button){
- if(!isAccountant())return;
+ if(!isFinanceManager())return;
  const row=button.closest('.zc157-finance-row'),input=row?.querySelector('input[data-finance]'),name=input?.dataset.finance,limit=zc157ParseLimit(input?.value);
  if(!name||!Number.isFinite(limit)||limit<0){toast('올바른 한도 금액(만원)을 입력하세요.');return}
  const prev=ACC44_LENDER_LIMITS.find(x=>x[0]===name);if(!prev)return;
@@ -3462,7 +3515,7 @@ function zc157SaveLimit(button){
  if(persistFinanceCompanies(ACC44_LENDER_LIMITS.map(x=>[x[0],x[0]===name?limit:x[1]]))){buildAccountantSettings();toast('금융사 한도를 수정했습니다.')}
 }
 function zc157AddLender(event){
- event.preventDefault();if(!isAccountant())return;
+ event.preventDefault();if(!isFinanceManager())return;
  const name=$('zc157-new-lender').value.trim(),limit=zc157ParseLimit($('zc157-new-limit').value);
  if(!name||name.length>45||!Number.isFinite(limit)){toast('금융사명과 한도금액을 확인해주세요.');return}
  if(INVENTORY_LENDERS.includes(name)){toast('이미 등록된 금융사입니다.');return}
@@ -3470,7 +3523,7 @@ function zc157AddLender(event){
  if(persistFinanceCompanies([...ACC44_LENDER_LIMITS,[name,limit]])){buildAccountantSettings();toast('금융사를 추가했습니다.')}
 }
 function zc157RemoveLender(button){
- if(!isAccountant())return;
+ if(!isFinanceManager())return;
  const name=button.closest('.zc157-finance-row')?.querySelector('input[data-finance]')?.dataset.finance;
  if(!name)return;
  if(cars.some(c=>c.inventoryLender===name)){toast('연결된 차량이 있어 삭제할 수 없습니다. 먼저 차량 상세에서 금융사를 변경하세요.');return}
@@ -3840,7 +3893,7 @@ function zc182WriteFinance(a){
 }
 function zc182MatchVehicle(plate,dealerId){return cars.filter(c=>zc182Plate(c.plate)===zc182Plate(plate)&&(!dealerId||c.ownerId===dealerId));}
 function zc182ActiveStandalone(){
- return zc182FinEntries().filter(r=>!cars.some(c=>zc182Plate(c.plate)===zc182Plate(r.plate)&&c.ownerId===r.dealerId)&&(!isAccountant()||accountantFilter()==='all'||r.dealerId===accountantFilter()));
+ return zc182FinEntries().filter(r=>!cars.some(c=>zc182Plate(c.plate)===zc182Plate(r.plate)&&c.ownerId===r.dealerId)&&(!isFinanceManager()||accountantFilter()==='all'||r.dealerId===accountantFilter()));
 }
 function zc182Usage(){
  const rows=financeCarRows().filter(c=>inventoryLoanOf(c)>0);
@@ -3853,11 +3906,12 @@ function zc182FormatLoan(el){
  el.value=(digits?Number(digits).toLocaleString('ko-KR'):'')+fraction;zc182CheckMatch();
 }
 function zc182OpenFinance(){
- if(!isAccountant()){toast('경리 전용 기능입니다.');return}
+ if(!isFinanceManager()){toast('재고금융 접근 권한이 없습니다.');return}
  const overlay=$('zc182-finance-overlay');$('zc182-finance-form').reset();$('zc182-plate').oninput=zc182CheckMatch;$('zc182-dealer').onchange=zc182CheckMatch;
  $('zc182-lender').innerHTML='<option value="">금융사 선택</option>'+INVENTORY_LENDERS.map(l=>`<option value="${esc(l)}">${esc(l)}</option>`).join('');
- const dealers=dealerAccounts.filter(a=>a.role!=='accountant');
- $('zc182-dealer').innerHTML='<option value="">담당 딜러 선택</option>'+dealers.map(a=>`<option value="${esc(a.username)}">${esc(a.name||a.username)} (${esc(a.username)})</option>`).join('');
+ const aliases=window.zc86Cloud?.membersAliases?.()||null;
+ const dealers=dealerAccounts.filter(a=>a.role!=='accountant'&&(!aliases||aliases.includes(a.username)));
+ $('zc182-dealer').innerHTML='<option value="">담당 딜러 선택</option>'+dealers.map(a=>`<option value="${esc(a.username)}">${esc(a.name||'직원')}</option>`).join('');
  overlay.hidden=false;document.body.classList.add('zc182-finance-open');zc182CheckMatch();$('zc182-model').focus();
 }
 document.addEventListener('keydown',function(event){if(event.key==='Escape'&&!$('zc182-finance-overlay')?.hidden){event.preventDefault();event.stopImmediatePropagation();zc182CloseFinance()}} ,true);
@@ -3873,7 +3927,7 @@ function zc182CheckMatch(){
  else message.textContent='일치하는 매입차량이 없습니다. 신규 차량을 생성하지 않고 독립 재고금융 장부에만 등록합니다.';
 }
 function zc182SubmitFinance(e){
- e.preventDefault();if(!isAccountant())return;
+ e.preventDefault();if(!isFinanceManager())return;
  const model=$('zc182-model').value.trim(),plate=$('zc182-plate').value.trim(),norm=zc182Plate(plate),lender=$('zc182-lender').value,dealerId=$('zc182-dealer').value;
  const raw=$('zc182-loan').value.replace(/,/g,'').trim(),loan=Number(raw);
  if(!model||model.length>100||!norm||norm.length<6||norm.length>22||!dealerId||!INVENTORY_LENDERS.includes(lender)||!/^(?:\d{1,9})(?:\.\d)?$/.test(raw)||!Number.isFinite(loan)||loan<0||loan>100000000){toast('차명, 차량번호, 대출금액(만원), 금융사, 담당딜러를 확인하세요.');return}
@@ -3929,7 +3983,7 @@ function buildInventoryFinance(){
  <div class="fin-lender-grid">${companyCards}</div>
  <div class="fin-filters"><label class="search"><span class="search-icon"></span><input id="inventory-finance-search" aria-label="재고금융 차량 검색" type="search" placeholder="차명 · 차량번호 · 담당딜러 검색" value="${esc(keyword)}" oninput="renderInventoryFinanceRows()"/></label><select class="filter" id="inventory-lender-filter" aria-label="재고금융사 필터" onchange="renderInventoryFinanceRows()"><option value="all">전체 금융사</option>${INVENTORY_LENDERS.map(l=>`<option value="${esc(l)}" ${lenderFilter===l?'selected':''}>${esc(l)}</option>`).join('')}<option value="cash" ${lenderFilter==='cash'?'selected':''}>현금차량</option><option value="none" ${lenderFilter==='none'?'selected':''}>미지정</option></select></div>
  <div class="tablewrap fin-table"><table><thead><tr><th>매입일자</th><th>차명</th><th>차량번호</th><th>차량연식</th><th>주행거리</th><th>매입가격</th><th>재고대출금액</th><th>재고금융사</th><th>담당 딜러</th><th>관리</th></tr></thead><tbody id="inventory-finance-tbody"></tbody></table></div><div id="inventory-finance-mobile" class="fin-mobile-list"></div>
- <p class="fin-note">※ 금융정보와 선재고 내역은 각각 별도 장부에 저장됩니다. 차량번호가 일치하는 경우 해당 차량의 대출금·금융사만 수정하며, 일치하지 않는 등록 건은 재고금융 장부에만 표시합니다. 판매완료 차량은 현재 사용액에서 제외됩니다. 금융사 한도는 경리 설정에서 변경할 수 있습니다.</p>`;
+ <p class="fin-note">※ 금융정보와 선재고 내역은 각각 별도 장부에 저장됩니다. 차량번호가 일치하는 경우 해당 차량의 대출금·금융사만 수정하며, 일치하지 않는 등록 건은 재고금융 장부에만 표시합니다. 판매완료 차량은 현재 사용액에서 제외됩니다. 금융사 한도는 관리자 설정에서 변경할 수 있습니다.</p>`;
  $('alt-title').style.display='none';$('alt-copy').style.display='none';$('alt-content').innerHTML=view;renderInventoryFinanceRows();
 }
 function renderInventoryFinanceRows(){
@@ -3951,7 +4005,7 @@ function buildAccountantPurchaseSummary(){
  $('alt-copy').textContent='매입 보유 차량의 매입가격, 재고대출금, 재고금융사를 조회합니다.';
  $('alt-content').innerHTML=`<div class="acct-finance-summary"><div><span>매입보유차량</span><strong>${holding.length}대</strong></div><div><span>매입가격 합계</span><strong>${num(purchased)}만원</strong></div><div><span>재고대출금 합계</span><strong>${num(loan)}만원</strong></div></div><div class="panel" style="margin-top:8px;box-shadow:none"><div class="panel-head"><div><h2>딜러별 차량 매입 내역</h2><p>매입가격과 재고금융 정보만 표시합니다.</p></div></div><div class="tablewrap">${accountantCarTable(holding)}</div><div class="mobile-list">${accountantCarMobile(holding)}</div></div>`;
 }
-function buildAlt(){if(route==='users'&&!isAccountant()){buildCustomerManagement();return;}if(isAccountant()&&route==='finance'){buildAccountantPurchaseSummary();return;}if(isAccountant()&&route==='settings'){buildAccountantSettings();return;}let title='',copy='',content='';if(route==='prestock'&&isAccountant()){buildPrestockManagement();return}if(route==='inventoryFinance'&&isAccountant()){buildInventoryFinance();return}if(route==='finance'){title='차량별 수익 · 정산';copy='매입원가, 부대비용, 예상 마진을 자동으로 계산합니다. 차량을 클릭하면 비용을 수정할 수 있습니다.';content=`<div class="panel" style="margin-top:21px;box-shadow:none"><div class="panel-head"><div><h2>차량별 예상 매출이익</h2><p>모든 비용 반영 · 수리비 내역 합산</p></div></div><div class="tablewrap"><table><thead><tr><th>차량</th>${isAccountant()?'<th>담당 딜러</th>':''}<th>매입가</th><th>부대비용</th><th>총 투입원가</th><th>판매예정가 / 판매가</th><th>예상 마진</th></tr></thead><tbody>${cars.filter(c=>accountantFilter()==='all'||c.ownerId===accountantFilter()).map(c=>{const t=totals(c.buy,salePrice(c),normalizeCosts(c));return `<tr class="vehicle-clickable" tabindex="0" role="button" onclick="openVehicle('${c.id}')" onkeydown="if(event.key==='Enter')openVehicle('${c.id}')"><td class="price">${esc(c.model)}</td>${isAccountant()?`<td>${esc(dealerLabel(c))}</td>`:''}<td>${num(c.buy)}만</td><td>${num(t.direct)}만</td><td>${num(t.landed)}만</td><td>${num(salePrice(c))}만${c.status==='판매완료'?' (판매)':''}</td><td class="price" style="color:${t.margin<0?'#c34859':'#16936f'}">${num(t.margin)}만</td></tr>`}).join('')}</tbody></table></div></div><p class="note">※ 예상 마진 = 재고는 판매예정가, 판매완료는 실제 판매가 - 매입가 - 등록된 모든 부대비용(수리비 상세 합계·소득세 포함). 실제 세무상 순이익과 다를 수 있습니다.</p>`}else if(route==='users'){title='고객관리 메뉴';copy='고객명, 연락처, 매입·판매 이력, 담당 직원 등은 권한에 따라 열람할 수 있도록 설계합니다.';content='<p class="note">고객 개인정보는 실제 개발 시 암호화, 접근 권한, 처리 목적에 맞춘 보관 정책을 적용합니다.</p>'}else{title='직원 및 차량 모델 데이터 관리';copy='직원 계정과 모델 분류의 관리 기능을 확장할 예정입니다. 등록된 차량 모델 분류를 확인할 수 있습니다.';content=`<div class="catalog-manage"><strong>차량 모델 목록 (로컬 DB)</strong><p id="catalog-counter"></p><p>기존 차량 모델 DB를 확인하고 내보낼 수 있습니다.</p><div class="buttons"><button class="btn-ghost" type="button" onclick="exportVehicleCatalog()">모델 목록 CSV 다운로드</button></div></div><p class="note">※ 이 데이터는 제조사 공식 가격표 확인 등급(연식별 표시), 이전 참고 등급, 세부등급 검증 대기 모델을 구분합니다. 엔카 공식 원본 DB나 국내 전체 출시 트림 확정 목록이 아닙니다. 검증된 자료는 CSV로 추가할 수 있습니다.</p><div class="world-panel"><div class="world-head"><div><strong>🌍 해외 공식 트림 검색 · 국내 등록과 분리</strong><p>미국·캐나다·영국·호주·일본의 공식 판매 트림만 표시합니다. 동일 차명이라도 국내 등급으로 자동 적용되지 않습니다.</p></div></div><div class="world-filters"><select id="world-market" aria-label="국가 선택" onchange="renderWorldTrims()"><option value="all">전체 국가</option><option value="US">미국 (US)</option><option value="CA">캐나다 (CA)</option><option value="GB">영국 (GB)</option><option value="AU">호주 (AU)</option><option value="JP">일본 (JP)</option></select><input id="world-search" type="search" placeholder="제조사, 차명, 등급 검색 (영어·일본어 가능)" oninput="renderWorldTrims()" /></div><div id="world-count" style="font-size:11px;color:#8191a5;margin-bottom:9px"></div><div class="world-results" id="world-results"></div><div class="world-credit">공식 트림명 출처: 각 국가 제조사 사이트 · 시장 구분 필수 · 전체 세계 차량의 전수조사 결과가 아닙니다.<br>일반 모델명 오픈데이터 참고: <a href="https://vehiclesdb.com" target="_blank" rel="noopener">Vehicle data by VehiclesDB</a> (CC BY 4.0, 데이터 자체는 별도 수입 필요)</div></div>`}if(route==='settings'){
+function buildAlt(){if(route==='users'&&!isAccountant()){buildCustomerManagement();return;}if(route==='settings'&&isSnoteAdmin()){snoteRenderAdminSettings();return;}if((isAccountant()&&route==='finance')||(isSnoteAdmin()&&route==='acctFinance')){buildAccountantPurchaseSummary();return;}let title='',copy='',content='';if(route==='prestock'&&isFinanceManager()){buildPrestockManagement();return}if(route==='inventoryFinance'&&isFinanceManager()){buildInventoryFinance();return}if(route==='finance'){title='차량별 수익 · 정산';copy='매입원가, 부대비용, 예상 마진을 자동으로 계산합니다. 차량을 클릭하면 비용을 수정할 수 있습니다.';content=`<div class="panel" style="margin-top:21px;box-shadow:none"><div class="panel-head"><div><h2>차량별 예상 매출이익</h2><p>모든 비용 반영 · 수리비 내역 합산</p></div></div><div class="tablewrap"><table><thead><tr><th>차량</th>${isAccountant()?'<th>담당 딜러</th>':''}<th>매입가</th><th>부대비용</th><th>총 투입원가</th><th>판매예정가 / 판매가</th><th>예상 마진</th></tr></thead><tbody>${cars.filter(c=>accountantFilter()==='all'||c.ownerId===accountantFilter()).map(c=>{const t=totals(c.buy,salePrice(c),normalizeCosts(c));return `<tr class="vehicle-clickable" tabindex="0" role="button" onclick="openVehicle('${c.id}')" onkeydown="if(event.key==='Enter')openVehicle('${c.id}')"><td class="price">${esc(c.model)}</td>${isAccountant()?`<td>${esc(dealerLabel(c))}</td>`:''}<td>${num(c.buy)}만</td><td>${num(t.direct)}만</td><td>${num(t.landed)}만</td><td>${num(salePrice(c))}만${c.status==='판매완료'?' (판매)':''}</td><td class="price" style="color:${t.margin<0?'#c34859':'#16936f'}">${num(t.margin)}만</td></tr>`}).join('')}</tbody></table></div></div><p class="note">※ 예상 마진 = 재고는 판매예정가, 판매완료는 실제 판매가 - 매입가 - 등록된 모든 부대비용(수리비 상세 합계·소득세 포함). 실제 세무상 순이익과 다를 수 있습니다.</p>`}else if(route==='users'){title='고객관리 메뉴';copy='고객명, 연락처, 매입·판매 이력, 담당 직원 등은 권한에 따라 열람할 수 있도록 설계합니다.';content='<p class="note">고객 개인정보는 실제 개발 시 암호화, 접근 권한, 처리 목적에 맞춘 보관 정책을 적용합니다.</p>'}else{title='직원 및 차량 모델 데이터 관리';copy='직원 계정과 모델 분류의 관리 기능을 확장할 예정입니다. 등록된 차량 모델 분류를 확인할 수 있습니다.';content=`<div class="catalog-manage"><strong>차량 모델 목록 (로컬 DB)</strong><p id="catalog-counter"></p><p>기존 차량 모델 DB를 확인하고 내보낼 수 있습니다.</p><div class="buttons"><button class="btn-ghost" type="button" onclick="exportVehicleCatalog()">모델 목록 CSV 다운로드</button></div></div><p class="note">※ 이 데이터는 제조사 공식 가격표 확인 등급(연식별 표시), 이전 참고 등급, 세부등급 검증 대기 모델을 구분합니다. 엔카 공식 원본 DB나 국내 전체 출시 트림 확정 목록이 아닙니다. 검증된 자료는 CSV로 추가할 수 있습니다.</p><div class="world-panel"><div class="world-head"><div><strong>🌍 해외 공식 트림 검색 · 국내 등록과 분리</strong><p>미국·캐나다·영국·호주·일본의 공식 판매 트림만 표시합니다. 동일 차명이라도 국내 등급으로 자동 적용되지 않습니다.</p></div></div><div class="world-filters"><select id="world-market" aria-label="국가 선택" onchange="renderWorldTrims()"><option value="all">전체 국가</option><option value="US">미국 (US)</option><option value="CA">캐나다 (CA)</option><option value="GB">영국 (GB)</option><option value="AU">호주 (AU)</option><option value="JP">일본 (JP)</option></select><input id="world-search" type="search" placeholder="제조사, 차명, 등급 검색 (영어·일본어 가능)" oninput="renderWorldTrims()" /></div><div id="world-count" style="font-size:11px;color:#8191a5;margin-bottom:9px"></div><div class="world-results" id="world-results"></div><div class="world-credit">공식 트림명 출처: 각 국가 제조사 사이트 · 시장 구분 필수 · 전체 세계 차량의 전수조사 결과가 아닙니다.<br>일반 모델명 오픈데이터 참고: <a href="https://vehiclesdb.com" target="_blank" rel="noopener">Vehicle data by VehiclesDB</a> (CC BY 4.0, 데이터 자체는 별도 수입 필요)</div></div>`}if(route==='settings'){
 content+=`<div class="catalog-source-panel"><strong>4단계 차량분류 · 기존 5단계 CSV 호환</strong><p>차량 등록은 제조사 → 모델명 → 세부모델 → 트림 4단계입니다. 이전 5단계 CSV의 세부등급은 트림과 합쳐 선택합니다. 한국(KR) 자료만 국내 등록 드롭다운에 적용하며 해외 트림은 별도 조회합니다. 업로드한 자료는 <b>출처 확인 대기</b>로 표시하며, 국내 제조사 공식 확인 등급을 임의로 덮어쓰지 않습니다.</p><div class="catalog-manage"><b>필수 열:</b> make,group,model,grade　<b>선택 열:</b> subgrade,model_year,source,source_url,market<br/><small>엔카·다나와·KB차차차·당근의 실제 수집 자료는 이용/재사용 허가를 확보한 뒤 CSV로 가져오세요.</small></div><div class="buttons"><button type="button" class="btn-ghost" onclick="exportVehicleCatalog()">전체 DB 내보내기</button></div></div>`;
 }
 $('alt-title').style.display='';$('alt-copy').style.display='';$('alt-title').textContent=title;$('alt-copy').textContent=copy;$('alt-content').innerHTML=content;if(route==='settings'&&!isAccountant()){refreshTaxonomyWidget();renderWorldTrims()}}
@@ -4244,7 +4298,7 @@ document.addEventListener('keydown',event=>{
  else if(!$('zc-auto-reg-overlay').hidden){event.preventDefault();closeAutoRegistration()}
 });
 
-function navigate(next){if(next==='finance'&&currentUser&&!isAccountant()&&!zcDashboardGateGranted){openDashboardGate();return;}if(document.body.classList.contains('mobile-drawer-visible'))closeMobileDrawer();if(!$('acc60-chart-overlay').hidden)closeAcc60ChartModal();document.body.classList.toggle('accountant-mode',isAccountant());if((['inventoryFinance','prestock','monthly','settings'].includes(next)&&!isAccountant())||(next==='users'&&isAccountant())){toast('경리 직원 전용 메뉴입니다.');return}zcDashboardUnlocked=!isAccountant()&&next==='finance'&&zcDashboardGateGranted;route=next;let p=pages[next];$('breadcrumb').textContent=isAccountant()&&next==='finance'?'매입금액 현황':p.title;$('eyebrow').textContent=p.eyebrow;$('screen-title').textContent=isAccountant()?({dashboard:'경리 통합 대시보드',buy:'전체 딜러 매입 관리',sell:'전체 딜러 판매 완료',finance:'매입금액 현황',inventoryFinance:'재고금융 관리',prestock:'선재고 관리',settings:'경리 설정',monthly:'월정산 프로그램'}[next]||p.head):p.head;$('screen-sub').textContent=isAccountant()?(next==='monthly'?'수입·지출 거래를 기록하고 월별 정산서 및 백업 파일을 관리합니다.':next==='prestock'?'선재고 지급·상환 거래 내역과 현재 잔액을 확인합니다.':next==='inventoryFinance'?'모든 딜러의 재고대출금과 금융사별 현황을 한곳에서 관리합니다.':next==='dashboard'?'매입·판매 실적과 금융사별 한도 및 사용금액을 한눈에 확인합니다.':'모든 딜러의 차량과 매입·판매 정보를 한곳에서 관리합니다.'):p.sub;$('monthly-screen').style.display=next==='monthly'?'block':'none';$('dashboard-screen').style.display=next==='dashboard'?'grid':'none';$('list-screen').style.display=['cars','buy','sell'].includes(next)?'block':'none';$('alt-screen').style.display=['finance','inventoryFinance','prestock','users','settings'].includes(next)?'block':'none';$('dealer-finance-overview').style.display=next==='finance'&&!isAccountant()?'block':'none';$('stats').style.display=next==='finance'&&!isAccountant()?'grid':'none';$('dashboard-analytics').style.display=next==='finance'&&!isAccountant()?'block':'none';document.querySelector('.app').classList.toggle('accountant-dashboard',isAccountant()&&next==='dashboard');if(isAccountant()&&next==='dashboard')renderAccountantDashboard();$('main-add').style.display='none';$('zc80-buy-scan').hidden=next!=='buy'||isAccountant();renderAccountantBar();if(['cars','buy','sell'].includes(next)){$('list-title').textContent=next==='sell'?'판매 완료 차량 목록':next==='buy'?'매입 관리 차량 목록':'재고 차량 목록';$('list-desc').textContent=next==='sell'?'판매가 완료된 차량만 표시합니다. 상태를 변경하면 다시 재고로 돌아갑니다.':next==='buy'?'판매 완료 전 차량만 표시합니다.':'판매중 차량만 표시합니다. 상태를 판매완료로 변경하면 판매 완료 페이지로 이동합니다.';$('list-filter').value=next==='sell'?'판매완료':'all';$('list-filter').style.display=next==='sell'?'none':'';$('list-query').value=''}if(['finance','inventoryFinance','prestock','users','settings'].includes(next))buildAlt();buildMenus();renderCars();const accBar=$('accountant-bar');if(accBar)accBar.hidden=!isAccountant()||['inventoryFinance','prestock'].includes(next);window.scrollTo({top:0,behavior:'instant'})}
+function navigate(next){const invitePane=$('zc86-invite-area'),inviteHome=$('zc86-admin-tools');if(invitePane&&inviteHome&&invitePane.parentElement!==inviteHome){inviteHome.appendChild(invitePane);invitePane.hidden=true;}if(next==='finance'&&currentUser&&!isAccountant()&&!isSnoteAdmin()&&!zcDashboardGateGranted){openDashboardGate();return;}if(document.body.classList.contains('mobile-drawer-visible'))closeMobileDrawer();if(!$('acc60-chart-overlay').hidden)closeAcc60ChartModal();document.body.classList.toggle('accountant-mode',isAccountant());if((['inventoryFinance','prestock','monthly','acctFinance'].includes(next)&&!isFinanceManager())||(next==='settings'&&!isSnoteAdmin())||(next==='users'&&isAccountant())){toast('해당 메뉴에 접근할 권한이 없습니다.');return}zcDashboardUnlocked=!isFinanceManager()&&next==='finance'&&zcDashboardGateGranted;route=next;let p=pages[next];$('breadcrumb').textContent=isAccountant()&&next==='finance'?'매입금액 현황':p.title;$('eyebrow').textContent=p.eyebrow;$('screen-title').textContent=isSnoteAdmin()&&next==='settings'?'관리자 · 직원 및 금융 설정':isAccountant()?({dashboard:'경리 통합 대시보드',buy:'전체 딜러 매입 관리',sell:'전체 딜러 판매 완료',finance:'매입금액 현황',inventoryFinance:'재고금융 관리',prestock:'선재고 관리',settings:'경리 설정',monthly:'월정산 프로그램'}[next]||p.head):p.head;$('screen-sub').textContent=isSnoteAdmin()&&next==='settings'?'직원 이름·상사명과 재고금융 설정을 관리합니다.':isAccountant()?(next==='monthly'?'수입·지출 거래를 기록하고 월별 정산서 및 백업 파일을 관리합니다.':next==='prestock'?'선재고 지급·상환 거래 내역과 현재 잔액을 확인합니다.':next==='inventoryFinance'?'모든 딜러의 재고대출금과 금융사별 현황을 한곳에서 관리합니다.':next==='dashboard'?'매입·판매 실적과 금융사별 한도 및 사용금액을 한눈에 확인합니다.':'모든 딜러의 차량과 매입·판매 정보를 한곳에서 관리합니다.'):p.sub;$('monthly-screen').style.display=next==='monthly'?'block':'none';$('dashboard-screen').style.display=next==='dashboard'?'grid':'none';$('list-screen').style.display=['cars','buy','sell'].includes(next)?'block':'none';$('alt-screen').style.display=['finance','inventoryFinance','prestock','users','settings','acctFinance'].includes(next)?'block':'none';$('dealer-finance-overview').style.display=next==='finance'&&!isAccountant()?'block':'none';$('stats').style.display=next==='finance'&&!isAccountant()?'grid':'none';$('dashboard-analytics').style.display=next==='finance'&&!isAccountant()?'block':'none';document.querySelector('.app').classList.toggle('accountant-dashboard',isAccountant()&&next==='dashboard');if(isAccountant()&&next==='dashboard')renderAccountantDashboard();$('main-add').style.display='none';$('zc80-buy-scan').hidden=next!=='buy'||isAccountant();renderAccountantBar();if(['cars','buy','sell'].includes(next)){$('list-title').textContent=next==='sell'?'판매 완료 차량 목록':next==='buy'?'매입 관리 차량 목록':'재고 차량 목록';$('list-desc').textContent=next==='sell'?'판매가 완료된 차량만 표시합니다. 상태를 변경하면 다시 재고로 돌아갑니다.':next==='buy'?'판매 완료 전 차량만 표시합니다.':'판매중 차량만 표시합니다. 상태를 판매완료로 변경하면 판매 완료 페이지로 이동합니다.';$('list-filter').value=next==='sell'?'판매완료':'all';$('list-filter').style.display=next==='sell'?'none':'';$('list-query').value=''}if(['finance','inventoryFinance','prestock','users','settings','acctFinance'].includes(next))buildAlt();buildMenus();renderCars();const accBar=$('accountant-bar');if(accBar)accBar.hidden=!isFinanceManager()||['inventoryFinance','prestock'].includes(next);window.scrollTo({top:0,behavior:'instant'})}
 function openAdd(){if(isAccountant()){toast('경리 화면에서는 각 딜러가 등록한 차량을 관리합니다.');return}$('overlay').classList.add('open');newYearTouched=false;fillVehicleSelect('make');setupColorSelect('new');$('new-year').value=String(new Date().getFullYear());$('new-purchase-date').value=todayLocal();$('new-km').value='';renderRepairRows('new',[]);$('new-make').focus();updateNewCarPreview();updateAddSummary()}
 function closeAdd(){$('overlay').classList.remove('open');zcAutoRegPendingFile=null}
 function saveCar(e){e.preventDefault();if(isAccountant()){toast('딜러 계정에서 차량을 등록해주세요.');return}let make=$('new-make').value,group=$('new-group').value,generation=$('new-generation').value,grade=$('new-grade').value,manual=$('new-model').required;if(grade==='__manual__'&&!manual)grade=$('new-grade-custom').value.trim();let subgrade='';let model=manual?$('new-model').value.trim():[make,generation,grade].filter(Boolean).join(' ').trim();let plate=$('new-plate').value.trim(),year=Number($('new-year').value),buy=Number($('new-buy').value),sell=Number($('new-sell').value);if(!currentUser||!model||!plate||(!manual&&[make,group,generation].some(x=>!x)))return toast('제조사, 모델명, 세부모델을 선택해주세요. 트림은 선택 사항입니다.');if(cars.some(c=>c.plate===plate)){toast('이미 등록된 차량번호입니다.');return}try{let costs=costInputs('new'),repairItems=getRepairItems('new');const km=parseMileage($('new-km').value),color=$('new-color').value,purchaseAt=$('new-purchase-date').value;if(!Number.isInteger(km)||km<0||km>9999999)throw Error('주행거리를 올바르게 입력해주세요.');if(purchaseAt&&!/^\d{4}-\d{2}-\d{2}$/.test(purchaseAt))throw Error('매입 날짜를 확인해주세요.');let id='vehicle-'+currentUser.username+'-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8);cars.unshift({id,ownerId:currentUser.username,model,make:manual?'':make,group:manual?'':group,generation:manual?'':generation,grade:manual?'':grade,subgrade,plate,year,vin:($('new-vin')?.value||'').trim().toUpperCase(),buy,sell,costs,repairItems,km:formatKm(km),color,purchaseAt,inventoryLoan:0,status:'판매중',emoji:'🚘'});let persisted=persistCars();if(persisted&&zcAutoRegPendingFile)zcAttachAutoRegistration(id,currentUser.username);e.target.reset();closeAdd();buildStats();navigate('buy');toast(persisted?'차량을 등록했습니다. 매입 관리 목록에서 확인할 수 있습니다.':'차량을 추가했지만 이 브라우저에서는 영구 저장이 제한됩니다.')}catch(e){toast(e.message)}}
@@ -4256,7 +4310,7 @@ let dbReady;
 function openFileDB(){return new Promise((resolve,reject)=>{try{const req=indexedDB.open('zerocar-office-v12-files',2);req.onupgradeneeded=()=>{const db=req.result;if(!db.objectStoreNames.contains('media')){const store=db.createObjectStore('media',{keyPath:'id'});store.createIndex('carId','carId',{unique:false})}if(!db.objectStoreNames.contains('modelPhotos'))db.createObjectStore('modelPhotos',{keyPath:'key'});};req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)}catch(e){reject(e)}})}
 function carFiles(id){return mediaByCar[id]||[]}
 function carPhotos(id){return carFiles(id).filter(x=>x.group==='photos').sort((a,b)=>a.createdAt-b.createdAt)}
-function saveCover(){if(isAccountant())return;try{if(isAccountant()){const c=cars.find(c=>c.id===activeCarId)||cars.find(c=>covers[c.id]);if(!c)return;const owner=c.ownerId,storage=JSON.parse(localStorage.getItem(ZC_COVER_PREFIX+owner)||'{}')||{};for(const row of cars.filter(x=>x.ownerId===owner)){if(covers[row.id])storage[row.id]=covers[row.id];else delete storage[row.id]}localStorage.setItem(ZC_COVER_PREFIX+owner,JSON.stringify(storage));}else localStorage.setItem(ZC_COVER_PREFIX+currentUser.username,JSON.stringify(covers))}catch(_){}}
+function saveCover(){if(isAccountant())return;try{if(isSnoteAdmin()){const c=cars.find(c=>c.id===activeCarId)||cars.find(c=>covers[c.id]);const owner=c?.ownerId||pendingStatusChange?.ownerId;if(!owner)return;const storage=JSON.parse(localStorage.getItem(ZC_COVER_PREFIX+owner)||'{}')||{};for(const row of cars.filter(x=>x.ownerId===owner)){if(covers[row.id])storage[row.id]=covers[row.id];else delete storage[row.id]}localStorage.setItem(ZC_COVER_PREFIX+owner,JSON.stringify(storage));}else localStorage.setItem(ZC_COVER_PREFIX+currentUser.username,JSON.stringify(covers))}catch(_){}}
 async function refreshMedia(){if(isAccountant()){mediaObjectUrls.forEach(u=>URL.revokeObjectURL(u));mediaObjectUrls=[];mediaByCar={};modelPhotoUrls.forEach(u=>URL.revokeObjectURL(u));modelPhotoUrls=[];modelPhotos=[];renderCars();return;}if(!fileDB)return;if(!currentUser){mediaByCar={};return}const records=await new Promise((resolve,reject)=>{const tx=fileDB.transaction('media','readonly');const r=tx.objectStore('media').getAll();r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)});mediaObjectUrls.forEach(url=>URL.revokeObjectURL(url));mediaObjectUrls=[];mediaByCar={};for(const record of records.filter(r=>currentUser&&(isAccountant()||r.ownerId===currentUser.username))){record.url=URL.createObjectURL(record.blob);mediaObjectUrls.push(record.url);(mediaByCar[record.carId]||(mediaByCar[record.carId]=[])).push(record)}await refreshModelPhotos();renderCars();if(activeCarId)renderVehicle()}
 function updateDB(records,removeIds=[]){return new Promise((resolve,reject)=>{if(!fileDB){reject(new Error('현재 브라우저에서 이미지 저장 기능을 사용할 수 없습니다.'));return}const tx=fileDB.transaction('media','readwrite'),store=tx.objectStore('media');for(const id of removeIds)store.delete(id);for(const record of records)store.put(record);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error||new Error('저장 중 오류'));tx.onabort=()=>reject(tx.error||new Error('저장이 취소되었습니다.'))})}
 
@@ -4839,7 +4893,7 @@ async function handleAccountantRegistration(event){
 }
 function persistAccountantFinancing(c,loan,lender){
  // 계정 전체 차량 배열을 덮어쓰지 않고, 원래 딜러 저장소의 허용된 두 필드만 갱신한다.
- if(!isAccountant()||!canManageCar(c)||!c.ownerId)return false;
+ if(!isFinanceManager()||!canManageCar(c)||!c.ownerId)return false;
  const key=carsStoreKey(c.ownerId),raw=localStorage.getItem(key);
  const records=raw===null?dealerCars(c.ownerId):JSON.parse(raw);
  if(!Array.isArray(records))throw Error('담당 딜러의 저장 데이터를 찾을 수 없습니다.');
@@ -4956,7 +5010,7 @@ async function registerAccount(event){event.preventDefault();if(!isAccountant())
 async function loginAccount(event){event.preventDefault();clearAuthError('login');const id=$('login-id').value.trim().toLowerCase(),pass=$('login-pw').value;const btn=$('login-submit');btn.disabled=true;btn.textContent='확인 중…';try{const account=await getAccount(id);const hash=account?await hashPassword(pass,account.salt):null;if(!account||hash!==account.passwordHash){showAuthError('login','아이디 또는 비밀번호가 일치하지 않습니다.');return}await zc80RememberLogin(pass,account);await enterWorkspace(account)}catch(e){showAuthError('login','로그인 중 문제가 발생했습니다. 브라우저 설정을 확인해 주세요.')}finally{btn.disabled=false;btn.textContent='로그인';$('login-pw').value=''}}
 async function loginAccountingDemo(){$('login-id').value='accounting';$('login-pw').value='account1234';await loginAccount({preventDefault(){}})}
 async function loginDemo(){try{const account=await getAccount('demo');if(account){await zc80RememberLogin('demo1234',account);await enterWorkspace(account);} else showAuthError('login','테스트 계정이 준비되지 않았습니다.')}catch(_){showAuthError('login','체험 계정에 로그인할 수 없습니다.')}}
-async function enterWorkspace(account){zcDashboardUnlocked=false;if(zc80SensitiveUser!==account.username)zc80SensitiveLock();currentUser={username:account.username,name:account.name,company:account.company,union:account.union,employeeNo:account.employeeNo,role:account.role||'dealer'};sessionStorage.setItem('zerocar-office-v12-session',account.username);dealerAccounts=await getAllAccounts();loadCarsForUser();loadCovers();$('auth-shell').classList.add('hidden');$('profile-name').textContent=account.name+(isAccountant()?' · 경리':' 딜러');$('profile-role').textContent=isAccountant()?'전체 딜러 통합 관리 · 체험판':account.company;$('profile-avatar').textContent=account.name.slice(0,1);$('top-avatar').textContent=account.name.slice(0,1);if(fileDB)await refreshMedia();else {mediaByCar={};modelPhotos=[];}buildStats();if(isAccountant())navigate('dashboard');else navigate('buy')}
+async function enterWorkspace(account){zcDashboardUnlocked=false;if(zc80SensitiveUser!==account.username)zc80SensitiveLock();currentUser={username:account.username,name:account.name,company:account.company,union:account.union,employeeNo:account.employeeNo,role:account.role||'dealer'};sessionStorage.setItem('zerocar-office-v12-session',account.username);dealerAccounts=await getAllAccounts();loadCarsForUser();loadCovers();$('auth-shell').classList.add('hidden');$('profile-name').textContent=account.name+(isAccountant()?' · 경리':isSnoteAdmin()?' · 관리자':' · 딜러');$('profile-role').textContent=isAccountant()?'재고금융 및 월정산 관리':isSnoteAdmin()?'상사 관리자 · 전체 업무':account.company;$('profile-avatar').textContent=account.name.slice(0,1);$('top-avatar').textContent=account.name.slice(0,1);if(fileDB)await refreshMedia();else {mediaByCar={};modelPhotos=[];}buildStats();if(isAccountant())navigate('dashboard');else navigate('buy')}
 function logout(){if(window.zc86Cloud?.ready){window.zc86Cloud.signOut();return;}if(!currentUser)return;if(!confirm('로그아웃하시겠습니까?'))return;zc80DismissUnlock(false);zc80SensitiveLock();closeDashboardGate();closeAutoRegistration();zcDashboardGateGranted=false;zcDashboardUnlocked=false;closeMobileDrawer();document.body.classList.remove('accountant-mode');sessionStorage.removeItem('zerocar-office-v12-session');currentUser=null;cars=[];covers={};mediaByCar={};modelPhotos=[];modelPhotoUrls.forEach(u=>URL.revokeObjectURL(u));modelPhotoUrls=[];mediaObjectUrls.forEach(u=>URL.revokeObjectURL(u));mediaObjectUrls=[];closeVehicle();closeAdd();$('auth-shell').classList.remove('hidden');$('login-id').value='';$('login-pw').value='';showAuthMode('login');$('login-id').focus()}
 async function seedSampleAccount(username,password,name,role,employeeNo){
  if(await getAccount(username))return;
@@ -5348,15 +5402,17 @@ document.addEventListener('keydown',e=>{
 </script>
 
 <script>
-/* v1.85 · Single-origin HTTPS Kakao Postcode integration.
- * No localhost, popup bridge, tokens or window.postMessage.
- * Search results are received by this same page via Kakao's oncomplete.
- * Do not change the Kakao Postcode library. */
-let zc79Pending=null; // kept for compatibility with closeSaleProgress()
+/* S-NOTE v1.91: Kakao Postcode, isolated one-file HTTPS bridge.
+ * Runs Kakao independently inside an srcdoc iframe (no .bat, localhost or extra HTML).
+ * A second-window fallback uses the same bridge; only address fields travel via postMessage.
+ */
+let zc79Pending=null; // compatibility for the original sales form
 let zc85ActiveTarget=null;
-let zc85PostcodeLoading=null;
 let zc85PostcodeInstance=null;
+let zc91AddressSession=null;
+let zc91Popup=null;
 const ZC85_KAKAO_SRC='https://t1.kakaocdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
+const ZC91_CHILD_SCRIPT="(function(){\n  'use strict';\n  var cfg=window.SNOTE_POSTCODE_CONTEXT||{};\n  var root=document.getElementById('postcode-search');\n  var status=document.getElementById('postcode-status');\n  function notify(kind,payload){\n    try{\n      var receiver=(window.opener&&!window.opener.closed)?window.opener:window.parent;\n      if(receiver && receiver!==window){receiver.postMessage({snotePostcodeV191:true,token:cfg.token,kind:kind,result:payload||{}},cfg.origin||'*');}\n    }catch(e){ if(status)status.textContent='선택 결과를 전달하지 못했습니다. 주소를 다시 검색하세요.'; }\n  }\n  function start(){\n    var Postcode=(window.kakao&&window.kakao.Postcode)||(window.daum&&window.daum.Postcode);\n    if(!Postcode){\n      if(status)status.textContent='주소검색 서비스를 불러오지 못했습니다. 인터넷 연결이나 브라우저 차단을 확인하세요.';\n      notify('error',{message:'카카오 주소검색 스크립트 로딩 실패'});\n      return;\n    }\n    if(status)status.style.display='none';\n    try{\n      var widget=new Postcode({\n        oncomplete:function(data){\n          // Send only the public postal address fields; never customer data.\n          notify('selected',{\n            roadAddress:String(data.roadAddress||''),\n            autoRoadAddress:String(data.autoRoadAddress||''),\n            address:String(data.address||''),\n            jibunAddress:String(data.jibunAddress||''),\n            autoJibunAddress:String(data.autoJibunAddress||''),\n            zonecode:String(data.zonecode||''),\n            userSelectedType:String(data.userSelectedType||'')\n          });\n        },\n        onclose:function(state){notify('closed',{state:String(state||'')});},\n        width:'100%',height:'100%'\n      });\n      widget.embed(root,{autoClose:false});\n      notify('ready',{});\n    }catch(e){\n      if(status)status.textContent='주소검색 초기화 오류. 다시 시도해 주세요.';\n      notify('error',{message:String(e&&e.message||'초기화 실패').slice(0,160)});\n    }\n  }\n  if(document.readyState==='complete')start();\n  else window.addEventListener('load',start,{once:true});\n})();";
 function zc79Message(text,kind='info'){
  const el=document.getElementById('zc79-address-status');
  if(el){el.textContent=text;el.dataset.kind=kind;}
@@ -5365,90 +5421,123 @@ function zc79Message(text,kind='info'){
 }
 function zc79ApplyAddress(data,targetId){
  const input=document.getElementById(targetId);
+ if(!input || !data || typeof data!=='object'){
+  zc79Message('주소 입력칸을 찾을 수 없습니다.','error');return false;
+ }
  const address=String(data.roadAddress||data.autoRoadAddress||data.address||data.jibunAddress||data.autoJibunAddress||'').trim();
- const modal=document.getElementById('zc72-sale-modal');
- if(!input||!modal||modal.hidden||!address){zc79Message('주소를 가져오지 못했습니다. 다시 선택해 주세요.','error');return false;}
+ if(!address){zc79Message('선택한 주소를 읽지 못했습니다. 다시 검색하거나 직접 입력해 주세요.','error');return false;}
  const zip=String(data.zonecode||'').replace(/\D/g,'').slice(0,5);
  input.value=(zip?'['+zip+'] ':'')+address;
  input.dataset.postcode=zip;
  input.dispatchEvent(new Event('input',{bubbles:true}));
  input.dispatchEvent(new Event('change',{bubbles:true}));
  if(targetId==='zc72-address'){
-   if(typeof zc74SyncSameAddress==='function')zc74SyncSameAddress();
-   if(typeof zc74RenderValidity==='function')zc74RenderValidity(targetId);
+  if(typeof zc74SyncSameAddress==='function')zc74SyncSameAddress();
+  if(typeof zc74RenderValidity==='function')zc74RenderValidity(targetId);
  }
- zc79Message('✓ 선택한 주소가 입력되었습니다. 상세주소를 기입하세요.','success');
- const detail=document.getElementById(targetId==='zc72-address'?'zc73-address-detail':'zc73-mailing-detail');
- if(detail)requestAnimationFrame(()=>detail.focus());
+ zc79Message('✓ '+address+' — 자동 입력 완료. 상세주소를 기입하세요.','success');
  return true;
+}
+function zc91BridgeHtml(token){
+ const origin=location.origin==='null'?'*':location.origin;
+ const cfg=JSON.stringify({token:token,origin:origin});
+ return '<!doctype html><html lang="ko"><head><meta charset="utf-8">'+
+  '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">'+
+  '<style>html,body{height:100%;margin:0;overflow:hidden;font-family:system-ui,sans-serif}'+
+  '#postcode-search{width:100%;height:100%;min-height:300px}'+
+  '#postcode-status{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:20px;background:#fff;color:#456273;font-size:14px;text-align:center}</style></head><body>'+
+  '<div id="postcode-search"></div><div id="postcode-status">카카오 주소검색을 불러오는 중…</div>'+
+  '<script>window.SNOTE_POSTCODE_CONTEXT='+cfg+';'+('</'+'script>')+
+  '<script src="'+ZC85_KAKAO_SRC+'"></'+'script>'+
+  '<script>'+ZC91_CHILD_SCRIPT+('</'+'script>')+'</body></html>';
 }
 function zc85ClosePostcode(){
  const overlay=document.getElementById('zc85-postcode-overlay');
  if(overlay)overlay.hidden=true;
- zc85ActiveTarget=null;
- // Kakao iframe is disposed, so repeated searches start with a clean widget.
  const layer=document.getElementById('zc85-postcode-layer');
  if(layer)layer.replaceChildren();
- zc85PostcodeInstance=null;
+ if(zc91Popup && !zc91Popup.closed){try{zc91Popup.close();}catch(_e){}}
+ zc91Popup=null;zc91AddressSession=null;zc85ActiveTarget=null;zc85PostcodeInstance=null;
 }
-function zc85LoadPostcode(){
- if(window.kakao?.Postcode || window.daum?.Postcode)return Promise.resolve();
- if(zc85PostcodeLoading)return zc85PostcodeLoading;
- zc85PostcodeLoading=new Promise((resolve,reject)=>{
-  const existing=document.querySelector('script[data-zc85-postcode]');
-  if(existing){existing.remove();}
-  const script=document.createElement('script');
-  script.src=ZC85_KAKAO_SRC;
-  script.async=true;
-  script.dataset.zc85Postcode='1';
-  let done=false;
-  const timer=setTimeout(()=>finish(new Error('카카오 주소검색 서버 연결 시간이 초과되었습니다. 인터넷 또는 광고 차단을 확인해 주세요.')),15000);
-  function finish(error){if(done)return;done=true;clearTimeout(timer);script.onload=null;script.onerror=null;
-    if(error){script.remove();reject(error);}else resolve();}
-  script.onload=()=>((window.kakao?.Postcode || window.daum?.Postcode)?finish():finish(new Error('주소검색 라이브러리가 준비되지 않았습니다.')));
-  script.onerror=()=>finish(new Error('카카오 주소검색 서비스를 불러오지 못했습니다. 네트워크 설정을 확인해 주세요.'));
-  document.head.appendChild(script);
- }).catch(err=>{zc85PostcodeLoading=null;throw err;});
- return zc85PostcodeLoading;
-}
-async function zc73OpenPostcode(targetId){
+function zc73OpenPostcode(targetId){
  if(!['zc72-address','zc72-mailing'].includes(targetId))return;
- if(document.getElementById('zc72-sale-modal')?.hidden)return;
+ const sale=document.getElementById('zc72-sale-modal');
+ if(!sale||sale.hidden)return;
  if(targetId==='zc72-mailing'&&document.getElementById('zc74-same-address')?.checked)return;
- zc85ActiveTarget=targetId;
+ zc85ClosePostcode(); // invalidate any previous lookup
  const overlay=document.getElementById('zc85-postcode-overlay');
  const layer=document.getElementById('zc85-postcode-layer');
  if(!overlay||!layer)return;
+ zc85ActiveTarget=targetId;
+ const token=window.crypto?.randomUUID?.()||String(Date.now())+'-'+String(Math.random());
+ zc91AddressSession={targetId:targetId,token:token,source:null,completed:false};
  overlay.hidden=false;
- zc79Message('도로명주소 검색을 불러오고 있습니다…');
- layer.replaceChildren();
- try{
-  await zc85LoadPostcode();
-  if(zc85ActiveTarget!==targetId || overlay.hidden)return;
-  const Postcode=window.kakao?.Postcode || window.daum?.Postcode;
-  if(!Postcode)throw new Error('주소검색 모듈을 초기화할 수 없습니다.');
-  zc85PostcodeInstance=new Postcode({
-   oncomplete:function(data){
-    // Capture the selection before destroying the search layer.
-    if(zc85ActiveTarget!==targetId)return;
-    const succeeded=zc79ApplyAddress(data,targetId);
-    if(succeeded)zc85ClosePostcode();
-   },
-   onclose:function(){if(zc85ActiveTarget===targetId)zc85ClosePostcode();},
-   width:'100%',height:'100%'
-  });
-  // Embedded iframe runs in the same visual modal; callback is in this page.
-  zc85PostcodeInstance.embed(layer,{autoClose:false});
-  zc79Message('주소를 검색하고 결과를 선택해 주세요.');
- }catch(error){
-  zc79Message('주소검색 오류: '+(error?.message||'알 수 없는 오류'),'error');
-  zc85ClosePostcode();
-  alert('주소검색을 열지 못했습니다. 인터넷 연결을 확인하거나 주소를 직접 입력하세요.\n'+(error?.message||''));
- }
+ zc79Message('독립된 카카오 주소검색 화면을 여는 중…');
+ const iframe=document.createElement('iframe');
+ iframe.title='카카오 도로명주소 검색';
+ iframe.setAttribute('aria-label','주소 검색');
+ iframe.setAttribute('referrerpolicy','strict-origin-when-cross-origin');
+ iframe.style.cssText='width:100%;height:100%;border:0;display:block;background:white';
+ zc91AddressSession.source=iframe;
+ layer.replaceChildren(iframe);
+ iframe.srcdoc=zc91BridgeHtml(token);
 }
-document.getElementById('zc85-postcode-close')?.addEventListener('click',zc85ClosePostcode);
-document.getElementById('zc85-postcode-overlay')?.addEventListener('click',e=>{
- if(e.target.id==='zc85-postcode-overlay')zc85ClosePostcode();
+function zc91OpenWindowPostcode(){
+ const session=zc91AddressSession;
+ if(!session)return;
+ const popup=window.open('about:blank','snote-address-search','width=560,height=750,resizable=yes,scrollbars=yes');
+ if(!popup){zc79Message('새 창이 차단됐습니다. 브라우저 팝업 허용 후 다시 누르세요.','error');return;}
+ zc91Popup=popup;session.source=popup;
+ try{
+  popup.document.open();popup.document.write(zc91BridgeHtml(session.token));popup.document.close();
+  const overlay=document.getElementById('zc85-postcode-overlay');if(overlay)overlay.hidden=true;
+  popup.focus();
+  zc79Message('새 창에서 주소를 선택하면 자동 입력됩니다.');
+ }catch(e){zc79Message('새 창 검색을 실행할 수 없습니다. 기본 검색을 다시 이용해 주세요.','error');}
+}
+window.addEventListener('message',function(event){
+ const session=zc91AddressSession;
+ if(!session || event.origin!==location.origin)return;
+ const msg=event.data;
+ if(!msg || msg.snotePostcodeV191!==true || msg.token!==session.token)return;
+ const sender=session.source;
+ const expected=sender?.tagName==='IFRAME'?sender.contentWindow:sender;
+ if(event.source!==expected)return;
+ if(msg.kind==='ready'){
+  zc79Message('주소 검색창에서 주소를 선택해 주세요.');return;
+ }
+ if(msg.kind==='error'){
+  zc79Message('카카오 주소검색 오류: '+String(msg.result?.message||'로드 실패').slice(0,120),'error');return;
+ }
+ if(msg.kind==='selected'){
+  if(session.completed)return;
+  session.completed=true;
+  let ok=false;
+  try{ok=zc79ApplyAddress(msg.result,session.targetId);}catch(error){
+   zc79Message('주소 자동입력 오류. 주소를 직접 입력하거나 다시 검색해 주세요.','error');
+   console.warn('S-NOTE postcode apply error',error);
+  }
+  if(ok){
+   const targetId=session.targetId;
+   // Wait until the child widget finishes its oncomplete handler before removing the iframe.
+   setTimeout(function(){
+    if(zc91AddressSession===session){zc85ClosePostcode();}
+    const detail=document.getElementById(targetId==='zc72-address'?'zc73-address-detail':'zc73-mailing-detail');
+    if(detail && document.getElementById('zc72-sale-modal')?.hidden===false)detail.focus();
+   },80);
+  }else{session.completed=false;}
+  return;
+ }
+ if(msg.kind==='closed' && !session.completed){
+  zc79Message('검색창이 닫혔습니다. 주소 자동입력이 되지 않았다면 새 창 검색을 이용해 주세요.','error');
+ }
+},false);
+// Overlay markup is located after this script: use delegated handlers.
+document.addEventListener('click',function(event){
+ if(event.target.closest('#zc91-postcode-popup')){event.preventDefault();zc91OpenWindowPostcode();return;}
+ if(event.target.closest('#zc85-postcode-close') || event.target.id==='zc85-postcode-overlay'){
+  event.preventDefault();zc85ClosePostcode();
+ }
 });
 document.addEventListener('keydown',e=>{
  if(e.key==='Escape'&&!document.getElementById('zc85-postcode-overlay')?.hidden){
@@ -5684,17 +5773,17 @@ document.addEventListener('click',async event=>{
 
 <div id="zc85-postcode-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="zc85-postcode-heading">
  <div class="zc85-postcode-dialog">
-  <header class="zc85-postcode-head"><div><strong id="zc85-postcode-heading">도로명주소 검색</strong><small id="zc85-postcode-hint" aria-live="polite">주소를 검색하고 선택해 주세요.</small></div><button id="zc85-postcode-close" type="button" aria-label="주소검색 닫기">✕</button></header>
+  <header class="zc85-postcode-head"><div><strong id="zc85-postcode-heading">도로명주소 검색</strong><small id="zc85-postcode-hint" aria-live="polite">주소를 검색하고 선택해 주세요.</small></div><button id="zc91-postcode-popup" type="button" class="zc91-postcode-alt" title="기본 검색이 동작하지 않을 때 새 창에서 검색">새 창 검색</button><button id="zc85-postcode-close" type="button" aria-label="주소검색 닫기">✕</button></header>
   <div id="zc85-postcode-layer" class="zc85-postcode-layer"></div>
-  <p class="zc85-postcode-foot">카카오 우편번호 검색 서비스 · 선택하면 입력칸에 자동 반영됩니다. 상세주소는 직접 입력해 주세요.</p>
+  <p class="zc85-postcode-foot">카카오 우편번호 검색 서비스 · 주소 선택 후 자동 입력됩니다. 안 되면 ‘새 창 검색’을 이용하세요.</p>
  </div>
 </div>
 <div id="zc-cloud-gate" role="dialog" aria-modal="true" aria-labelledby="zc-cloud-title">
  <div class="zc-cloud-card">
   <button type="button" id="snote-gate-home">← S-NOTE 홈으로</button>
-  <div class="zc-brand">S-NOTE <span>v1.89 · S-NOTE 공개형 준비</span></div>
+  <div class="zc-brand">S-NOTE <span>v1.91 · 주소검색 개선</span></div>
   <h2 id="zc-cloud-title">S-NOTE 계정 로그인</h2>
-  <p class="zc-cloud-desc">누구나 회원가입할 수 있습니다. 상사를 새로 개설하거나 기존 상사의 직원 초대로 참여할 수 있습니다.</p>
+  <p class="zc-cloud-desc">안전한 업무 관리 시스템입니다. 등록된 계정으로 로그인하세요.</p>
   <div id="zc-cloud-setup">
    <label class="zc-field">Supabase Project URL<input id="zc-cloud-url" placeholder="https://xxxxx.supabase.co" autocomplete="off"></label>
    <label class="zc-field">Publishable Key (sb_publishable_...)<input id="zc-cloud-key" placeholder="sb_publishable_..." autocomplete="off" spellcheck="false"></label>
@@ -5705,7 +5794,7 @@ document.addEventListener('click',async event=>{
    <label class="zc-field">온라인 계정 이메일<input type="email" id="zc-cloud-email" required autocomplete="username" placeholder="office@example.com"></label>
    <label class="zc-field">온라인 계정 비밀번호<input type="password" id="zc-cloud-password" required autocomplete="current-password" minlength="8"></label>
    <button type="submit" class="zc-btn" id="zc-cloud-submit">온라인 로그인 후 업무 시작</button>
-   <button type="button" class="zc-link" id="zc86-register">무료 회원가입 (이메일 인증 필요)</button>
+   <button type="button" class="zc-link" id="zc86-register" hidden>신규가입 (준비 중)</button>
    <button type="button" class="zc-link" id="zc-cloud-config-change">연결 설정 변경</button>
   </form>
 
@@ -5751,6 +5840,8 @@ const gate=byId('zc-cloud-gate'),setup=byId('zc-cloud-setup'),login=byId('zc-clo
 const keyConfig='zc86-supabase-public-config';
 // S-NOTE public deployment settings. These values are public: NEVER use sb_secret/service_role.
 // Set both fields once in the published index.html to enable registration on every device.
+// Deployment note: copy your existing SNOTE_PUBLIC_CONFIG (public URL and publishable key) from the deployed repository before replacing index.html.
+// Blank public config means first-time browsers will see the server connection setup. Never embed a secret/service_role key.
 const SNOTE_PUBLIC_CONFIG={
   url:'https://rmlycycleuscfqywbihj.supabase.co',
   key:'sb_publishable_sNBW_Qz-1H2vi1rG-ayUJg_aOWD2fHn'
@@ -5857,7 +5948,7 @@ async function prepareLegacyAccount(pass){
   const alias=ownerAlias(member.user_id),own=member.user_id===S.user.id;
   const seed=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(member.user_id));
   const salt=[...new Uint8Array(seed).slice(0,16)].map(v=>v.toString(16).padStart(2,'0')).join('');
-  let a={username:alias,name:member.display_name||'직원',company:S.company.name,employeeNo:own?'CLOUD-STAFF':'CLOUD',role:member.role==='accountant'?'accountant':'dealer',union:'',phone:'',salt,
+  let a={username:alias,name:member.display_name||'직원',company:S.company.name,employeeNo:own?'CLOUD-STAFF':'CLOUD',role:member.role==='admin'?'admin':member.role==='accountant'?'accountant':'dealer',union:'',phone:'',salt,
    passwordHash:own?await hashPassword(pass,salt):'disabled-for-cloud',createdAt:Date.now()};
   all.push(a);if(own)me=a;
  }
@@ -5947,11 +6038,13 @@ updateDB=async function(records,removeIds=[]){
   let save=await S.client.from('zc_media').upsert(meta,{onConflict:'company_id,owner_id,id'});
   if(save.error){await S.client.storage.from(BUCKET).remove([path]);throw new Error('사진 기록: '+save.error.message)}
  }
- if(removeIds.length){const rs=await S.client.from('zc_media').select('id,file_path').eq('company_id',company).eq('owner_id',owner).in('id',removeIds);
+ if(removeIds.length){const base=S.client.from('zc_media').select('id,file_path,owner_id').eq('company_id',company).in('id',removeIds);
+  const rs=await (isSnoteAdmin()?base:base.eq('owner_id',owner));
   if(rs.error)throw rs.error;
   const paths=(rs.data||[]).map(x=>x.file_path);
   if(paths.length){const rm=await S.client.storage.from(BUCKET).remove(paths);if(rm.error)throw rm.error;}
-  const del=await S.client.from('zc_media').delete().eq('company_id',company).eq('owner_id',owner).in('id',removeIds);if(del.error)throw del.error;
+  const baseDel=S.client.from('zc_media').delete().eq('company_id',company).in('id',removeIds);
+  const del=await(isSnoteAdmin()?baseDel:baseDel.eq('owner_id',owner));if(del.error)throw del.error;
  }
  await serverMediaRefresh();
  return undefined;
@@ -6088,7 +6181,8 @@ async function signOut(){if(!confirm('온라인 계정에서 로그아웃할까�
 }
 byId('zc86-signout').addEventListener('click',signOut);
 byId('zc86-reload').addEventListener('click',reload);
-byId('zc86-admin-open').addEventListener('click',()=>{byId('zc86-invite-area').hidden=!byId('zc86-invite-area').hidden});
+byId('zc86-admin-open').textContent='관리자 설정';
+byId('zc86-admin-open').addEventListener('click',()=>{if(isSnoteAdmin())navigate('settings')});
 async function refreshStaffList(){
  const host=byId('zc86-member-list');host.replaceChildren();
  const {data,error}=await S.client.from('zc_members').select('user_id,display_name,role,active').eq('company_id',S.company.id);
@@ -6110,6 +6204,78 @@ async function refreshStaffList(){
   div.append(sel,check,save);host.appendChild(div);
  }
 }
+
+// v1.90 Administrator-only settings page. DOM is created from trusted role data;
+// display-name/company changes MUST pass the server's company-scoped admin RPC.
+function snoteRenderAdminSettings(){
+ if(!isSnoteAdmin()||!S.ready)return;
+ const host=byId('alt-content');const invitePane=byId('zc86-invite-area');const inviteHome=byId('zc86-admin-tools');if(invitePane&&inviteHome&&invitePane.parentElement!==inviteHome)inviteHome.appendChild(invitePane);byId('alt-title').style.display='none';byId('alt-copy').style.display='none';
+ host.innerHTML=`<div class="snote90-settings"><section class="snote90-panel">
+ <h3>상사 정보</h3><p>관리자만 상사명을 변경할 수 있습니다. 모든 소속 직원에게 동일하게 적용됩니다.</p>
+ <div class="snote90-inline"><label>상사명<input id="snote90-company-name" maxlength="100"></label><button type="button" class="btn-primary" id="snote90-company-save">상사명 저장</button></div>
+ </section><section class="snote90-panel"><h3>직원 관리</h3><p>직원의 표시 이름과 역할을 관리합니다. 화면에는 내부 식별자를 표시하지 않습니다.</p>
+ <div id="snote90-members">직원 목록 불러오는 중...</div></section>
+ <section class="snote90-panel"><h3>직원 초대</h3><p>초대된 직원은 기존 상사에 연결됩니다. 초대코드는 별도로 전달해 주세요.</p><div id="snote90-invite-mount"></div></section>
+ <section class="snote90-panel"><h3>재고금융사 및 한도 관리</h3><p>입력 단위: 만원 · 금융사 설정은 클라우드 장부와 동기화됩니다.</p>
+ <div id="snote90-lenders"></div><div class="snote90-inline"><label>신규 금융사<input id="snote90-lender-name" maxlength="45" placeholder="금융사 이름"></label><label>한도 (만원)<input id="snote90-lender-limit" inputmode="numeric" placeholder="예: 100000"></label><button type="button" class="btn-primary" id="snote90-lender-add">금융사 추가</button></div></section></div>`;
+ byId('snote90-company-name').value=S.company.name;
+ byId('snote90-company-save').addEventListener('click',async()=>{
+  const name=byId('snote90-company-name').value.trim();if(name.length<2||name.length>100)return alert('상사명은 2~100자입니다.');
+  if(!confirm('소속 상사 이름을 변경할까요?'))return;
+  try{const {error}=await S.client.rpc('snote90_admin_update_name',{p_target:S.user.id,p_display_name:byId('zc86-account').textContent,p_company_name:name});if(error)throw error;
+   S.company.name=name;byId('zc86-company-name').textContent=name;
+   currentUser.company=name;for(const a of dealerAccounts)a.company=name;
+   byId('profile-role').textContent='상사 관리자 · 전체 업무';alert('상사명이 저장되었습니다.');
+  }catch(e){alert('상사명 변경 실패: '+errMsg(e))}
+ });
+ const oldMount=byId('zc86-invite-area');byId('snote90-invite-mount').appendChild(oldMount);oldMount.hidden=false;
+ byId('snote90-lender-add').addEventListener('click',()=>{
+  const name=byId('snote90-lender-name').value.trim();const limit=zc157ParseLimit(byId('snote90-lender-limit').value);
+  if(!name||name.length>45||!Number.isFinite(limit)||limit<0)return alert('금융사 이름과 한도 금액을 확인해주세요.');
+  if(INVENTORY_LENDERS.includes(name))return alert('이미 등록된 금융사입니다.');
+  if(INVENTORY_LENDERS.length>=30)return alert('금융사는 최대 30곳까지 가능합니다.');
+  if(persistFinanceCompanies([...ACC44_LENDER_LIMITS,[name,limit]])){snote90RenderLenders();byId('snote90-lender-name').value='';byId('snote90-lender-limit').value='';}
+ });
+ snote90RenderLenders();snote90RefreshMembers().catch(e=>byId('snote90-members').textContent='직원 조회 실패: '+errMsg(e));
+}
+function snote90RenderLenders(){
+ const host=byId('snote90-lenders');if(!host)return;host.replaceChildren();
+ for(const [name,limit] of ACC44_LENDER_LIMITS){
+  const row=document.createElement('div');row.className='snote90-lender';
+  const strong=document.createElement('strong');strong.textContent=name;
+  const input=document.createElement('input');input.type='text';input.inputMode='numeric';input.value=Number(limit).toLocaleString('ko-KR');input.setAttribute('aria-label',name+' 한도');
+  const save=document.createElement('button');save.textContent='수정';save.type='button';save.addEventListener('click',()=>{
+   const n=zc157ParseLimit(input.value);if(!Number.isFinite(n)||n<0)return alert('금액을 확인해주세요.');
+   if(persistFinanceCompanies(ACC44_LENDER_LIMITS.map(x=>[x[0],x[0]===name?n:x[1]])))snote90RenderLenders();
+  });
+  const del=document.createElement('button');del.type='button';del.textContent='삭제';del.className='snote90-danger';del.addEventListener('click',()=>{
+   if(cars.some(c=>c.inventoryLender===name)||INVENTORY_LENDERS.length<=1)return alert('사용 중이거나 마지막 금융사는 삭제할 수 없습니다.');
+   if(confirm(name+' 금융사를 삭제할까요?')&&persistFinanceCompanies(ACC44_LENDER_LIMITS.filter(x=>x[0]!==name)))snote90RenderLenders();
+  });row.append(strong,input,save,del);host.appendChild(row);
+ }
+}
+async function snote90RefreshMembers(){
+ const host=byId('snote90-members');if(!host||!isSnoteAdmin())return;
+ const r=await S.client.from('zc_members').select('user_id,display_name,role,active').eq('company_id',S.company.id).order('joined_at',{ascending:true});
+ if(r.error)throw r.error;host.replaceChildren();
+ for(const m of r.data||[]){
+  const row=document.createElement('div');row.className='snote90-member';
+  const label=document.createElement('label');label.textContent='직원 이름';
+  const input=document.createElement('input');input.value=m.display_name||'';input.maxLength=40;label.appendChild(input);
+  const role=document.createElement('span');role.textContent=m.role==='admin'?'관리자':m.role==='accountant'?'경리':'딜러';
+  const save=document.createElement('button');save.type='button';save.textContent='이름 저장';
+  save.addEventListener('click',async()=>{
+   const name=input.value.trim();if(name.length<1||name.length>40)return alert('직원 이름은 1~40자입니다.');
+   try{const {error}=await S.client.rpc('snote90_admin_update_name',{p_target:m.user_id,p_display_name:name,p_company_name:null});if(error)throw error;
+    const mm=S.members.find(x=>x.user_id===m.user_id);if(mm)mm.display_name=name;
+    const alias=ownerAlias(m.user_id),account=dealerAccounts.find(a=>a.username===alias);if(account)account.name=name;
+    if(m.user_id===S.user.id){currentUser.name=name;byId('zc86-account').textContent=name;byId('profile-name').textContent=name+' · 관리자'}
+    renderCars();renderAccountantBar();alert('직원 이름 저장 완료');
+   }catch(e){alert('이름 변경 실패: '+errMsg(e))}
+  });row.append(label,role,save);host.appendChild(row);
+ }
+}
+
 byId('zc86-members-refresh').addEventListener('click',()=>refreshStaffList().catch(e=>alert(errMsg(e))));
 byId('zc86-invite-create').addEventListener('click',async()=>{
  const email=byId('zc86-invite-email').value.trim(),role=byId('zc86-invite-role').value;
@@ -6124,7 +6290,7 @@ function snoteSetSignUpMode(signUp){
  snoteSignUpMode=!!signUp;
  byId('zc-cloud-title').textContent=signUp?'S-NOTE 무료 회원가입':'S-NOTE 계정 로그인';
  byId('zc-cloud-submit').textContent=signUp?'인증 메일 받고 회원가입':'온라인 로그인 후 업무 시작';
- byId('zc86-register').textContent=signUp?'이미 가입하셨나요? 로그인':'무료 회원가입 (이메일 인증 필요)';
+ byId('zc86-register').textContent=signUp?'이미 가입하셨나요? 로그인':'회원가입 준비 중';
  byId('zc-cloud-password').autocomplete=signUp?'new-password':'current-password';
 }
 function snoteShowAuth(mode){
@@ -6135,9 +6301,9 @@ function snoteShowAuth(mode){
  else {msg('');byId('zc-cloud-email').focus();}
 }
 for(const id of ['snote-home-login','snote-hero-login'])byId(id).addEventListener('click',()=>snoteShowAuth('login'));
-for(const id of ['snote-home-register','snote-hero-register'])byId(id).addEventListener('click',()=>snoteShowAuth('signup'));
+for(const id of ['snote-home-register','snote-hero-register']){const btn=byId(id);btn.textContent='로그인';btn.addEventListener('click',()=>snoteShowAuth('login'));}
 byId('snote-gate-home').addEventListener('click',()=>{if(!S.ready){gate.hidden=false;byId('snote-public-home').hidden=false;}});
-byId('zc86-register').addEventListener('click',()=>snoteSetSignUpMode(!snoteSignUpMode));
+byId('zc86-register').hidden=true;byId('zc86-register').addEventListener('click',()=>snoteSetSignUpMode(!snoteSignUpMode));
 login.addEventListener('submit',e=>{if(snoteSignUpMode){e.preventDefault();e.stopImmediatePropagation();registerAccount();}},true);
 login.addEventListener('submit',doSignIn);
 byId('zc-cloud-connect').addEventListener('click',async()=>{
@@ -6156,7 +6322,20 @@ if(location.protocol!=='https:'&&location.hostname!=='localhost'){
  msg('이 버전은 HTTPS로 배포한 주소에서만 사용할 수 있습니다. HTML 파일을 더블클릭해 실행하지 마세요.');
  byId('zc-cloud-connect').disabled=true;byId('zc-cloud-submit').disabled=true;
 }
-window.zc86Cloud={get ready(){return S.ready},get rrnEnabled(){return !!S.company?.rrn_enabled},get company(){return S.company?.name||''},flush,reload,signOut};
+async function snote90RemoveCarMedia(carId){
+ const isAdmin=S.members.some(m=>m.user_id===S.user?.id&&m.role==='admin'&&m.active);
+ if(!S.ready||!S.company||!isAdmin)throw Error('관리자만 차량의 전체 첨부파일을 삭제할 수 있습니다.');
+ const {data,error}=await S.client.from('zc_media').select('id,file_path').eq('company_id',S.company.id).eq('car_id',String(carId));
+ if(error)throw error;
+ if(!data?.length)return;
+ const removed=await S.client.storage.from(BUCKET).remove(data.map(row=>row.file_path));
+ if(removed.error)throw removed.error;
+ const result=await S.client.from('zc_media').delete().eq('company_id',S.company.id).eq('car_id',String(carId));
+ if(result.error)throw result.error;
+ await serverMediaRefresh();
+}
+window.snoteRenderAdminSettings=snoteRenderAdminSettings;
+window.zc86Cloud={get conflict(){return S.conflict},removeCarMedia:snote90RemoveCarMedia,membersAliases(){return S.members.map(m=>ownerAlias(m.user_id));},get isAdmin(){return S.members.some(m=>m.user_id===S.user?.id&&m.active&&m.role==='admin')},get ready(){return S.ready},get rrnEnabled(){return !!S.company?.rrn_enabled},get company(){return S.company?.name||''},flush,reload,signOut};
 })();
 
 </script></body>
