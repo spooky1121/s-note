@@ -5751,7 +5751,10 @@ const gate=byId('zc-cloud-gate'),setup=byId('zc-cloud-setup'),login=byId('zc-clo
 const keyConfig='zc86-supabase-public-config';
 // S-NOTE public deployment settings. These values are public: NEVER use sb_secret/service_role.
 // Set both fields once in the published index.html to enable registration on every device.
-const SNOTE_PUBLIC_CONFIG={url:'',key:''};
+const SNOTE_PUBLIC_CONFIG={
+  url:'https://rmlycycleuscfqywbihj.supabase.co',
+  key:'sb_publishable_sNBW_Qz-1H2vi1rG-ayUJg_aOWD2fHn'
+};
 const publicDefault=validConfig(SNOTE_PUBLIC_CONFIG);
 const LEGACY={finance:'zerocar-office-v182-inventory-finance-ledger',finance_limits:'zerocar-office-v157-finance-companies',prestock:'zerocar-office-v148-prestock-ledger',monthly:'zerocar-office-v165-monthly-ledger',categories:'zerocar-office-v170-monthly-category-settings'};
 const ownerAlias=uid=>'cld_'+uid.replace(/-/g,'').slice(0,18);
