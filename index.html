@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#ffffff" />
-<title>ZEROCAR OFFICE 1.85 · 온라인 배포 준비 및 주소검색 통합</title>
+<title>ZEROCAR OFFICE v1.86 · 클라우드 통합 테스트 운영</title>
 <style>
 :root{--ink:#172337;--muted:#7a869a;--line:#e8ecf2;--blue:#315efb;--navy:#131f33;--bg:#f7f9fc;--green:#189a6c;--radius:15px;--shadow:0 4px 24px rgba(19,31,51,.035)}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:'Manrope','Noto Sans KR',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}button,input,select{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #b5c5ff;outline-offset:2px}
@@ -2036,7 +2036,19 @@ body:has(#monthly-screen[style*="block"]) #accountant-bar{display:none!important
 .zc85-postcode-foot{margin:0;padding:10px 15px;border-top:1px solid #e4ecf3;font-size:10px;color:#708ba3;line-height:1.45}
 @media(max-width:650px){#zc85-postcode-overlay{padding:0}.zc85-postcode-dialog{height:100dvh;max-height:100dvh;width:100%;border-radius:0}.zc85-postcode-head{padding:14px 13px}}
 </style>
-</head>
+<style>
+/* v1.86 deployed operations companion controls */
+#zc86-topbar[hidden],#zc86-onboard[hidden],#zc86-admin-tools[hidden],#zc86-invite-area[hidden]{display:none!important}
+#zc86-topbar{position:fixed;z-index:6900;right:12px;bottom:128px;display:flex;flex-wrap:wrap;align-items:center;gap:7px;width:min(360px,calc(100vw - 24px));padding:11px;border:1px solid #dbe8f4;background:rgba(255,255,255,.98);border-radius:13px;box-shadow:0 6px 24px #0923392b;font:11px 'Malgun Gothic',sans-serif;color:#32536e}
+#zc86-topbar button{font-size:10px;font-weight:850;color:#2c648c;background:#ecf6ff;border:1px solid #cde4f8;border-radius:7px;padding:7px 9px;cursor:pointer}
+#zc86-topbar .zc86-pill{font-size:11px;display:flex;align-items:center;gap:5px;width:100%}.zc86-online-dot{color:#24a980}
+#zc86-admin-tools{position:relative}#zc86-invite-area{position:absolute;bottom:35px;right:0;width:330px;max-height:60vh;overflow:auto;border:1px solid #cde1f0;background:white;padding:14px;border-radius:12px;box-shadow:0 5px 22px #031d302e}
+#zc86-invite-area input,#zc86-invite-area select{display:block;width:100%;min-height:34px;margin:3px 0 7px;padding:6px;border:1px solid #cbd8e7;border-radius:7px}
+.zc86-privacy-caption{width:100%;margin:0;color:#a4763b;font-size:9.5px;line-height:1.4}
+#zc-cloud-status{bottom:85px}
+#zc86-onboard .zc-btn{margin:6px 0}
+@media(max-width:600px){#zc86-topbar{bottom:128px;right:7px;width:min(310px,calc(100vw - 14px));padding:8px}#zc86-topbar .zc86-privacy-caption{display:none}}
+</style></head>
 <body>
 
 <div class="auth-shell" id="auth-shell" aria-label="계정 로그인 및 회원가입">
@@ -4888,7 +4900,7 @@ async function loginAccount(event){event.preventDefault();clearAuthError('login'
 async function loginAccountingDemo(){$('login-id').value='accounting';$('login-pw').value='account1234';await loginAccount({preventDefault(){}})}
 async function loginDemo(){try{const account=await getAccount('demo');if(account){await zc80RememberLogin('demo1234',account);await enterWorkspace(account);} else showAuthError('login','테스트 계정이 준비되지 않았습니다.')}catch(_){showAuthError('login','체험 계정에 로그인할 수 없습니다.')}}
 async function enterWorkspace(account){zcDashboardUnlocked=false;if(zc80SensitiveUser!==account.username)zc80SensitiveLock();currentUser={username:account.username,name:account.name,company:account.company,union:account.union,employeeNo:account.employeeNo,role:account.role||'dealer'};sessionStorage.setItem('zerocar-office-v12-session',account.username);dealerAccounts=await getAllAccounts();loadCarsForUser();loadCovers();$('auth-shell').classList.add('hidden');$('profile-name').textContent=account.name+(isAccountant()?' · 경리':' 딜러');$('profile-role').textContent=isAccountant()?'전체 딜러 통합 관리 · 체험판':account.company;$('profile-avatar').textContent=account.name.slice(0,1);$('top-avatar').textContent=account.name.slice(0,1);if(fileDB)await refreshMedia();else {mediaByCar={};modelPhotos=[];}buildStats();if(isAccountant())navigate('dashboard');else navigate('buy')}
-function logout(){if(!currentUser)return;if(!confirm('로그아웃하시겠습니까?'))return;zc80DismissUnlock(false);zc80SensitiveLock();closeDashboardGate();closeAutoRegistration();zcDashboardGateGranted=false;zcDashboardUnlocked=false;closeMobileDrawer();document.body.classList.remove('accountant-mode');sessionStorage.removeItem('zerocar-office-v12-session');currentUser=null;cars=[];covers={};mediaByCar={};modelPhotos=[];modelPhotoUrls.forEach(u=>URL.revokeObjectURL(u));modelPhotoUrls=[];mediaObjectUrls.forEach(u=>URL.revokeObjectURL(u));mediaObjectUrls=[];closeVehicle();closeAdd();$('auth-shell').classList.remove('hidden');$('login-id').value='';$('login-pw').value='';showAuthMode('login');$('login-id').focus()}
+function logout(){if(window.zc86Cloud?.ready){window.zc86Cloud.signOut();return;}if(!currentUser)return;if(!confirm('로그아웃하시겠습니까?'))return;zc80DismissUnlock(false);zc80SensitiveLock();closeDashboardGate();closeAutoRegistration();zcDashboardGateGranted=false;zcDashboardUnlocked=false;closeMobileDrawer();document.body.classList.remove('accountant-mode');sessionStorage.removeItem('zerocar-office-v12-session');currentUser=null;cars=[];covers={};mediaByCar={};modelPhotos=[];modelPhotoUrls.forEach(u=>URL.revokeObjectURL(u));modelPhotoUrls=[];mediaObjectUrls.forEach(u=>URL.revokeObjectURL(u));mediaObjectUrls=[];closeVehicle();closeAdd();$('auth-shell').classList.remove('hidden');$('login-id').value='';$('login-pw').value='';showAuthMode('login');$('login-id').focus()}
 async function seedSampleAccount(username,password,name,role,employeeNo){
  if(await getAccount(username))return;
  const salt=bytesHex(crypto.getRandomValues(new Uint8Array(16)));
@@ -5622,9 +5634,9 @@ document.addEventListener('click',async event=>{
 </div>
 <div id="zc-cloud-gate" role="dialog" aria-modal="true" aria-labelledby="zc-cloud-title">
  <div class="zc-cloud-card">
-  <div class="zc-brand">ZEROCAR OFFICE <span>v1.85 · CLOUD PILOT</span></div>
-  <h2 id="zc-cloud-title">온라인 데이터 연결</h2>
-  <p class="zc-cloud-desc">온라인 서버 인증 후 기존 ZEROCAR OFFICE 화면을 엽니다. 첫 시범운영은 직원별 공유가 아닌 1계정 전용 데이터 동기화입니다.</p>
+  <div class="zc-brand">ZEROCAR OFFICE <span>v1.86 · CLOUD TEST</span></div>
+  <h2 id="zc-cloud-title">온라인 업무 시스템 연결</h2>
+  <p class="zc-cloud-desc">상사와 직원이 함께 사용할 수 있는 온라인 서버 로그인입니다. 실제 업무 투입 전에는 반드시 테스트 데이터를 이용해 모든 메뉴를 검증하세요.</p>
   <div id="zc-cloud-setup">
    <label class="zc-field">Supabase Project URL<input id="zc-cloud-url" placeholder="https://xxxxx.supabase.co" autocomplete="off"></label>
    <label class="zc-field">Publishable Key (sb_publishable_...)<input id="zc-cloud-key" placeholder="sb_publishable_..." autocomplete="off" spellcheck="false"></label>
@@ -5634,129 +5646,411 @@ document.addEventListener('click',async event=>{
   <form id="zc-cloud-login" hidden>
    <label class="zc-field">온라인 계정 이메일<input type="email" id="zc-cloud-email" required autocomplete="username" placeholder="office@example.com"></label>
    <label class="zc-field">온라인 계정 비밀번호<input type="password" id="zc-cloud-password" required autocomplete="current-password" minlength="8"></label>
-   <button type="submit" class="zc-btn" id="zc-cloud-submit">서버 로그인 후 오피스 열기</button>
+   <button type="submit" class="zc-btn" id="zc-cloud-submit">온라인 로그인 후 업무 시작</button>
+   <button type="button" class="zc-link" id="zc86-register">직원 계정 신규가입 (이메일 인증 필요)</button>
    <button type="button" class="zc-link" id="zc-cloud-config-change">연결 설정 변경</button>
   </form>
+
+<div id="zc86-onboard" hidden class="zc-sec">
+ <h3 style="font-size:17px;margin:0 0 12px">회사 최초 등록 · 직원 초대</h3>
+ <p style="font-size:11px;color:#627b96;line-height:1.6">처음 등록하는 관리자는 상사를 개설하고, 기존 상사 직원은 관리자에게 받은 초대 코드로 가입합니다.</p>
+ <label class="zc-field">성명 <input id="zc86-display-name" placeholder="예: 홍길동" autocomplete="name"></label>
+ <label class="zc-field">새 상사 이름 (최초 관리자만) <input id="zc86-new-company" placeholder="예: ZEROCAR"></label>
+ <button type="button" class="zc-btn" id="zc86-create-company">상사 신규 개설 · 관리자 등록</button>
+ <div class="zc-sec"><label class="zc-field">받은 직원 초대 코드<input id="zc86-invite-token" placeholder="관리자가 발급한 40자리 코드"></label>
+ <button type="button" class="zc-btn" id="zc86-join-company">초대받은 상사에 입장</button></div>
+</div>
   <div id="zc-cloud-message" class="zc-message" aria-live="polite"></div>
-  <div class="zc-warning"><b>시범운영 제한:</b> 차량·재고금융·선재고·월정산 장부를 계정별 DB에 동기화합니다. 사진, 자동차등록증, 고객관리와 주민번호는 아직 온라인 동기화 대상이 아닙니다. 실제 고객 민감정보는 입력하지 마세요. 여러 기기에서 동시에 수정하면 마지막 저장이 우선합니다.</div>
+  <div class="zc-warning"><b>온라인 테스트 운영:</b> 차량·금융·월정산·고객정보는 클라우드 DB, 사진·등록증·성능기록부는 비공개 Storage를 사용합니다. 여러 기기에서 동일 장부를 수정하면 충돌을 감지하여 저장을 중단합니다. 주소검색은 인터넷 연결이 필요합니다. <b>주민번호는 기본 저장 금지</b>이며 관련 법령상 구체적인 처리 근거를 검토한 뒤 관리자만 서버에서 활성화해야 합니다. 실제 고객정보를 입력하기 전 테스트와 보안 점검이 필요합니다.</div>
   <div id="zc-cloud-offline" hidden class="zc-sec"><button id="zc-cloud-open-local" class="zc-link" type="button">기존 로컬 데모만 열기 (이 PC에서만)</button></div>
  </div>
+</div>
+<div id="zc86-topbar" hidden aria-label="클라우드 운영 상태">
+ <div class="zc86-pill"><strong id="zc86-company-name">상사</strong><span>·</span><span id="zc86-account">직원</span><span class="zc86-online-dot">●</span></div>
+ <button type="button" id="zc86-reload" title="서버의 최신 데이터 다시 불러오기">서버 새로고침</button>
+ <button type="button" id="zc86-signout">로그아웃</button>
+ <div id="zc86-admin-tools" hidden><button type="button" id="zc86-admin-open">직원 초대</button>
+ <div id="zc86-invite-area" hidden><label>직원 이메일 <input id="zc86-invite-email" type="email" placeholder="employee@company.com"></label>
+ <label>권한<select id="zc86-invite-role"><option value="dealer">딜러</option><option value="accountant">경리</option></select></label>
+ <button type="button" id="zc86-invite-create">초대코드 발급</button><p id="zc86-invite-result" style="overflow-wrap:anywhere;max-width:300px"></p><button type="button" id="zc86-members-refresh">직원 목록 · 관리</button><div id="zc86-member-list"></div></div></div>
+ <p id="zc86-rrn-mode" class="zc86-privacy-caption"></p>
 </div>
 <button type="button" id="zc-cloud-status" hidden aria-label="클라우드 동기화 상태" title="클릭하여 서버 데이터 다시 불러오기">● 클라우드 연결됨</button>
 
 <script>
-/* v1.84 · Supabase-based authenticated cloud pilot; no production claims for customer PII or photos. */
+/* ZEROCAR OFFICE v1.86 — cloud authority layer.
+   All server credentials are PUBLIC publishable credentials only. No secret/service_role key.
+   The UI is the original app; the server is authoritative after authentication.
+*/
 (function(){
- 'use strict';
- const dsKeys={
-  cars:(name)=>'zerocar-office-v12-cars-'+name,
-  covers:(name)=>'zerocar-office-v12-covers-'+name,
-  finance:()=> 'zerocar-office-v182-inventory-finance-ledger',
-  finance_limits:()=> 'zerocar-office-v157-finance-companies',
-  prestock:()=> 'zerocar-office-v148-prestock-ledger',
-  monthly:()=> 'zerocar-office-v165-monthly-ledger',
-  categories:()=> 'zerocar-office-v170-monthly-category-settings'
- };
- const storageKey='zc84-supabase-connection';
- const gate=document.getElementById('zc-cloud-gate'),setup=document.getElementById('zc-cloud-setup'),login=document.getElementById('zc-cloud-login'),message=document.getElementById('zc-cloud-message'),status=document.getElementById('zc-cloud-status');
- const state={client:null,user:null,name:null,active:false,busy:false,pending:new Set(),timer:null,flushing:false,changed:false};
- const msg=t=>{message.textContent=t||''};
- const setStatus=(t,c='')=>{status.hidden=false;status.className=c;status.textContent=t;};
- const normKey=k=>Object.entries(dsKeys).find(([,fn])=>fn(state.name)===k)?.[0]||null;
- const originalSetItem=Storage.prototype.setItem;
- Storage.prototype.setItem=function(k,v){originalSetItem.call(this,k,v);if(this===localStorage&&state.active){const ds=normKey(k);if(ds)enqueue(ds);}};
- function enqueue(name){if(!state.active)return;state.pending.add(name);state.changed=true;setStatus('● 저장 대기 중','busy');clearTimeout(state.timer);state.timer=setTimeout(flush,850)}
- async function flush(){if(!state.active||state.flushing)return;state.flushing=true;clearTimeout(state.timer);
-  try{
-   while(state.pending.size){const names=[...state.pending];state.pending.clear();const uploads=names.map(name=>{
-    const text=localStorage.getItem(dsKeys[name](state.name));let body;
-    try{body=JSON.parse(text??'null')}catch{body=text}
-    return {user_id:state.user.id,dataset:name,payload:{body},updated_at:new Date().toISOString()};
-   });
-   const {error}=await state.client.from('zc_data_sets').upsert(uploads,{onConflict:'user_id,dataset'});
-   if(error){for(const n of names)state.pending.add(n);throw error;}
-  }
-   state.changed=false;setStatus('● 클라우드 저장 완료');
-  }catch(e){setStatus('● 클라우드 저장 실패 · 확인 필요','bad');console.warn('ZEROCAR cloud sync failed',e);}
-  finally{state.flushing=false}
+'use strict';
+const S={client:null,user:null,company:null,members:[],alias:null,ready:false,busy:false,loading:false,
+ revisions:new Map(),queue:new Set(),timer:null,saving:false,conflict:false,authPassword:null};
+const NIL='00000000-0000-0000-0000-000000000000';
+const BUCKET='zc-vehicle-private';
+const byId=id=>document.getElementById(id);
+const gate=byId('zc-cloud-gate'),setup=byId('zc-cloud-setup'),login=byId('zc-cloud-login'),info=byId('zc-cloud-message'),status=byId('zc-cloud-status');
+const keyConfig='zc86-supabase-public-config';
+const LEGACY={finance:'zerocar-office-v182-inventory-finance-ledger',finance_limits:'zerocar-office-v157-finance-companies',prestock:'zerocar-office-v148-prestock-ledger',monthly:'zerocar-office-v165-monthly-ledger',categories:'zerocar-office-v170-monthly-category-settings'};
+const ownerAlias=uid=>'cld_'+uid.replace(/-/g,'').slice(0,18);
+const getOwnUuid=owner=>S.members.find(m=>ownerAlias(m.user_id)===owner)?.user_id||null;
+const isShared=dataset=>!['cars','covers'].includes(dataset);
+const storageKey=(dataset,owner)=>dataset==='cars'?'zerocar-office-v12-cars-'+owner:dataset==='covers'?'zerocar-office-v12-covers-'+owner:LEGACY[dataset];
+const defaultBody=dataset=>dataset==='covers'?'{}':dataset==='categories'?'null':'[]';
+const kOf=(dataset,owner)=>dataset+':'+owner;
+const msg=v=>{info.textContent=String(v||'')};
+const showStatus=(t,cls='')=>{status.hidden=false;status.className=cls;status.textContent=t;};
+const errMsg=e=>String(e?.message||e||'서버 오류');
+function fail(e,context){console.error('ZEROCAR '+context,e);showStatus('● '+context+' 실패 · 확인 필요','bad');msg(context+': '+errMsg(e));}
+function validConfig(x){try{let u=new URL(x.url);return u.protocol==='https:'&&u.hostname.endsWith('.supabase.co')&&/^(sb_publishable_|eyJ)/.test(x.key)?{url:u.origin,key:x.key.trim()}:null;}catch{return null;}}
+function parsePayload(s){try{return JSON.parse(s)}catch{return null}}
+function scrub(o){ // defense-in-depth: no plain resident identifiers or encrypted legacy RRN in ordinary cloud records
+ if(typeof o==='string'&&/^\d{6}[- ]?\d{7}$/.test(o.trim()))return '';
+ if(o==null||typeof o!=='object')return o;
+ if(Array.isArray(o))return o.map(scrub);
+ const v={};for(const [k,value] of Object.entries(o)){
+  if(/rrn|jumin|resident(number|id)?|social.?security|ct-buyer-id|zc76-rrn|zc72-rrn|buyer.?id/i.test(k))continue;
+  v[k]=scrub(value);
+ }return v;
+}
+function cleanCustomer(rec){return scrub(rec)}
+function cloudKey(dataset,owner){return kOf(dataset,isShared(dataset)?NIL:owner)}
+function toEntry(k){
+ for(const [ds,key] of Object.entries(LEGACY))if(key===k)return {ds,owner:NIL};
+ for(const ds of ['cars','covers']){const prefix=ds==='cars'?'zerocar-office-v12-cars-':'zerocar-office-v12-covers-';if(k.startsWith(prefix)){
+  let owner=getOwnUuid(k.slice(prefix.length));if(owner)return {ds,owner};
+ }}return null;
+}
+const originalSet=Storage.prototype.setItem;
+Storage.prototype.setItem=function(k,v){originalSet.call(this,k,v);if(this===localStorage&&S.ready&&!S.loading){const entry=toEntry(k);if(entry)enqueue(entry.ds,entry.owner)}};
+function enqueue(ds,owner){if(S.conflict)return;S.queue.add(cloudKey(ds,owner));showStatus('● 서버 저장 대기 중','busy');clearTimeout(S.timer);S.timer=setTimeout(flush,600)}
+async function flush(){if(!S.ready||S.saving||S.conflict||!S.queue.size)return;S.saving=true;clearTimeout(S.timer);
+ try{while(S.queue.size){let [key]=S.queue;S.queue.delete(key);let i=key.indexOf(':'),dataset=key.slice(0,i),owner=key.slice(i+1);let raw=localStorage.getItem(storageKey(dataset,ownerAlias(owner)));
+  // shared datasets never use ownerAlias to resolve key
+  if(isShared(dataset))raw=localStorage.getItem(LEGACY[dataset]);
+  let payload=scrub(parsePayload(raw??defaultBody(dataset)));
+  let {data,error}=await S.client.rpc('zc_write_dataset',{p_company:S.company.id,p_dataset:dataset,p_owner:owner,p_expected:S.revisions.get(key)||0,p_payload:payload});
+  if(error){S.queue.add(key);throw error}
+  S.revisions.set(key,Number(data));
  }
- function normalizeConfig(raw){try{const c=typeof raw==='string'?JSON.parse(raw):raw;const u=new URL(c.url);if(u.protocol!=='https:'||!u.hostname.endsWith('.supabase.co')||!c.key.trim().startsWith('sb_publishable_'))return null;return {url:u.origin,key:c.key.trim()}}catch{return null}}
- async function connect(conf){if(!navigator.onLine)throw Error('인터넷 연결이 필요합니다.');
-  const module=await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
-  state.client=module.createClient(conf.url,conf.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});
-  // Verify project can be reached with project key before showing sign-in.
-  const {error}=await state.client.from('zc_data_sets').select('dataset').limit(1);if(error)throw new Error('DB 연결 확인 실패 (SQL 또는 공개 키 확인): '+error.message);
+ showStatus('● 모든 변경사항 서버 저장 완료');
+ }catch(e){S.conflict=/CONFLICT/i.test(errMsg(e));fail(e,S.conflict?'동시수정 충돌':'DB 저장');if(S.conflict)alert('다른 기기에서 먼저 변경한 장부가 있습니다. 저장을 중단했습니다. 화면 우측 하단의 상태 버튼을 눌러 서버 데이터를 다시 불러온 뒤 수정하세요.');}
+ finally{S.saving=false;}
+}
+async function ensureConnection(conf){const lib=await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/+esm');S.client=lib.createClient(conf.url,conf.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});
+ const {error}=await S.client.auth.getSession();if(error)throw error;
+ // RLS-protected table existence test does not require being authenticated
+ const r=await S.client.from('zc_companies').select('id').limit(1);if(r.error)throw Error('설치 SQL 또는 Supabase URL을 확인하세요: '+r.error.message);
+}
+async function readCompany(){
+ let {data,error}=await S.client.from('zc_members').select('user_id,company_id,role,display_name,active').eq('user_id',S.user.id).maybeSingle();if(error)throw error;
+ if(!data){byId('zc86-onboard').hidden=false;byId('zc-cloud-login').hidden=true;return false;}
+ if(!data.active)throw Error('관리자가 비활성화한 계정입니다.');
+ const c=await S.client.from('zc_companies').select('id,name,rrn_enabled').eq('id',data.company_id).single();if(c.error)throw c.error;S.company=c.data;
+ const mem=await S.client.from('zc_members').select('user_id,role,display_name,company_id,active').eq('company_id',S.company.id).eq('active',true);if(mem.error)throw mem.error;
+ S.members=mem.data||[];
+ S.alias=ownerAlias(S.user.id);return true;
+}
+async function restoreDatasets(){
+ S.loading=true;
+ try{
+ const {data,error}=await S.client.from('zc_datasets').select('dataset,owner_id,payload,revision').eq('company_id',S.company.id).limit(2000);if(error)throw error;
+ const map=new Map((data||[]).map(d=>[cloudKey(d.dataset,d.owner_id),d]));S.revisions.clear();
+ for(const m of S.members){for(const ds of ['cars','covers']){
+  let key=cloudKey(ds,m.user_id),row=map.get(key);
+  if(row)S.revisions.set(key,row.revision);
+  originalSet.call(localStorage,storageKey(ds,ownerAlias(m.user_id)),row?JSON.stringify(row.payload):defaultBody(ds));
+ }}
+ for(const ds of Object.keys(LEGACY)){
+  let key=cloudKey(ds,NIL),row=map.get(key);
+  if(row)S.revisions.set(key,row.revision);
+  originalSet.call(localStorage,LEGACY[ds],row?JSON.stringify(row.payload):defaultBody(ds));
  }
- async function ensureLegacyAccount(uid,pass,email){
-  for(let i=0;i<30&&!accountDB;i++)await new Promise(r=>setTimeout(r,100));
-  if(!accountDB){accountDB=await openAccountDB()}
-  const raw=new TextEncoder().encode(uid),digest=await crypto.subtle.digest('SHA-256',raw),salt=[...new Uint8Array(digest).slice(0,16)].map(v=>v.toString(16).padStart(2,'0')).join('');
-  const a={username:state.name,name:(email||'온라인 계정').split('@')[0],role:'dealer',company:'ZEROCAR · 클라우드 시범운영',union:'',employeeNo:'CLOUD-01',phone:'',salt,passwordHash:await hashPassword(pass,salt)};
-  await new Promise((resolve,reject)=>{const tx=accountDB.transaction('users','readwrite');tx.objectStore('users').put(a);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)});
-  return a;
+ const f=byId('monthly-ledger-frame');if(f&&f.srcdoc)f.srcdoc=f.srcdoc;
+ }finally{S.loading=false}
+}
+async function prepareLegacyAccount(pass){
+ for(let tries=0;!accountDB&&tries<30;tries++)await new Promise(r=>setTimeout(r,100));
+ if(!accountDB)accountDB=await openAccountDB();
+ let me=null;const all=[];
+ for(const member of S.members){
+  const alias=ownerAlias(member.user_id),own=member.user_id===S.user.id;
+  const seed=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(member.user_id));
+  const salt=[...new Uint8Array(seed).slice(0,16)].map(v=>v.toString(16).padStart(2,'0')).join('');
+  let a={username:alias,name:member.display_name||'직원',company:S.company.name,employeeNo:own?'CLOUD-STAFF':'CLOUD',role:member.role==='accountant'?'accountant':'dealer',union:'',phone:'',salt,
+   passwordHash:own?await hashPassword(pass,salt):'disabled-for-cloud',createdAt:Date.now()};
+  all.push(a);if(own)me=a;
  }
- async function hydrate(){
-  const {data,error}=await state.client.from('zc_data_sets').select('dataset,payload').eq('user_id',state.user.id);
-  if(error)throw error;
-  const map=new Map((data||[]).map(x=>[x.dataset,x.payload?.body]));
-  // This origin is a dedicated live pilot origin; never auto-import browser demo datasets.
-  for(const [name,keyFn] of Object.entries(dsKeys)){
-    const key=keyFn(state.name);
-    let content;
-    if(map.has(name))content=JSON.stringify(map.get(name));
-    else content=name==='covers'?'{}':name==='categories'?'null':'[]';
-    originalSetItem.call(localStorage,key,content);
-  }
-  // Reload the isolated monthly iframe so its cache of category settings matches remote.
-  const frame=document.getElementById('monthly-ledger-frame');
-  if(frame&&frame.srcdoc)frame.srcdoc=frame.srcdoc;
+ await new Promise((resolve,reject)=>{let tx=accountDB.transaction('users','readwrite'),store=tx.objectStore('users');for(const a of all)store.put(a);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)});
+ return me;
+}
+async function hydrateWorkspace(pass){
+ S.ready=false;
+ if(!await readCompany())return;
+ await restoreDatasets();
+ if(typeof restoreFinanceCompanies==='function')restoreFinanceCompanies();
+ const account=await prepareLegacyAccount(pass);
+ await zc80RememberLogin(pass,account);
+ await enterWorkspace(account);
+ S.ready=true;S.authPassword=null;gate.hidden=true;byId('zc86-topbar').hidden=false;byId('zc-cloud-banner')&&(byId('zc-cloud-banner').hidden=false);
+ document.body.classList.add('zc86-online');
+ byId('zc86-company-name').textContent=S.company.name;
+ byId('zc86-account').textContent=S.members.find(m=>m.user_id===S.user.id)?.display_name||'직원';
+ byId('zc86-admin-tools').hidden=!S.members.some(m=>m.user_id===S.user.id&&m.role==='admin');
+ if(!S.company.rrn_enabled){byId('zc72-rrn').required=false;byId('zc72-rrn').value='';byId('zc72-rrn').placeholder='주민번호 저장 비활성 (빈칸)';}
+ byId('zc86-rrn-mode').textContent=S.company.rrn_enabled?'법적 근거 확인 후 서버 30일 보관 활성':'주민번호 서버 보관 비활성 · 빈칸 입력';
+ showStatus('● 서버 연결 및 저장 준비 완료');
+ await refreshMedia();
+}
+async function doSignIn(e){e?.preventDefault?.();if(S.busy)return;S.busy=true;const button=byId('zc-cloud-submit');button.disabled=true;
+ const email=byId('zc-cloud-email').value.trim(),pass=byId('zc-cloud-password').value;
+ try{if(!S.client){const cfg=validConfig(parsePayload(localStorage.getItem(keyConfig))||{});if(!cfg)throw Error('서버 URL·공개 키를 먼저 입력해 주세요');await ensureConnection(cfg)}
+ const {data,error}=await S.client.auth.signInWithPassword({email,password:pass});if(error)throw error;if(!data?.user)throw Error('로그인 정보를 확인하지 못했습니다');
+ S.user=data.user;S.authPassword=pass;
+ await hydrateWorkspace(pass);
+ msg(S.company?'':'회사 정보가 없으면 상사 생성 또는 초대 코드를 입력하세요.');
+ }catch(e){fail(e,'로그인');}
+ finally{S.busy=false;button.disabled=false;byId('zc-cloud-password').value='';}
+}
+async function afterOnboard(kind){
+ const display=byId('zc86-display-name').value.trim(),company=byId('zc86-new-company').value.trim(),code=byId('zc86-invite-token').value.trim();
+ if(!display)throw Error('직원 성명을 입력하세요.');
+ const {error}=await S.client.rpc(kind==='new'?'zc_bootstrap_company':'zc_join_company',kind==='new'?{p_name:company,p_display_name:display}:{p_code:code,p_display_name:display});
+ if(error)throw error;
+ byId('zc86-onboard').hidden=true;
+ await hydrateWorkspace(S.authPassword);
+}
+async function registerAccount(){
+ const email=byId('zc-cloud-email').value.trim(),password=byId('zc-cloud-password').value;
+ if(!email||password.length<10){msg('이메일과 10자 이상 비밀번호를 입력하세요.');return}
+ try{const {data,error}=await S.client.auth.signUp({email,password});if(error)throw error;
+  msg(data?.session?'회원가입 완료. 로그인하고 상사를 등록하세요.':'회원가입 신청 완료. 이메일 인증 링크를 누른 뒤 로그인하세요.');
+ }catch(e){msg('회원가입 실패: '+errMsg(e))}
+}
+const prevUpdate=updateDB;
+const prevRefresh=refreshMedia;
+async function serverMediaRefresh(){
+ const r=await S.client.from('zc_media').select('*').eq('company_id',S.company.id).limit(3000);if(r.error)throw r.error;
+ for(const u of mediaObjectUrls)try{URL.revokeObjectURL(u)}catch{};
+ mediaObjectUrls=[];mediaByCar={};
+ // Downloads are authenticated private Storage calls; keep one entry per media record.
+ const all=(r.data||[]).filter(m=>m.group_name!=='modelPhoto');let cursor=0;
+ async function worker(){while(cursor<all.length){const m=all[cursor++];try{
+  const download=await S.client.storage.from(BUCKET).download(m.file_path);if(download.error)throw download.error;
+  let row={id:m.id,carId:m.car_id,ownerId:ownerAlias(m.owner_id),group:m.group_name,blob:download.data,filename:m.original_name,createdAt:new Date(m.created_at).getTime()};
+  row.url=URL.createObjectURL(row.blob);mediaObjectUrls.push(row.url);(mediaByCar[row.carId]||(mediaByCar[row.carId]=[])).push(row);
+ }catch(e){console.warn('파일 조회 실패',m.id,errMsg(e))}}}
+ await Promise.all(Array.from({length:Math.min(5,all.length)},()=>worker()));
+ if(typeof refreshModelPhotos==='function')await refreshModelPhotos();
+ renderCars();if(activeCarId)renderVehicle();
+}
+refreshMedia=async function(){if(!S.ready)return prevRefresh();try{await serverMediaRefresh()}catch(e){fail(e,'사진 조회')}};
+updateDB=async function(records,removeIds=[]){
+ if(!S.ready)return prevUpdate(records,removeIds);
+ const owner=S.user.id,company=S.company.id,uploaded=[];
+ // Require server upload success BEFORE declaring local success.
+ for(const r of records){
+  if(!r.blob||!['image/jpeg','image/png','image/webp'].includes(r.blob.type)||r.blob.size>10485760)throw Error('사진은 JPG/PNG/WEBP, 한 장 최대 10MB');
+  const fileid=String(r.id),carid=String(r.carId),ext=r.blob.type==='image/png'?'png':r.blob.type==='image/webp'?'webp':'jpg';
+  const path=[company,owner,encodeURIComponent(carid),encodeURIComponent(fileid)+'.'+ext].join('/');
+  let {error}=await S.client.storage.from(BUCKET).upload(path,r.blob,{contentType:r.blob.type,upsert:false});
+  if(error)throw Error('사진 업로드: '+error.message);
+  uploaded.push(path);
+  const meta={company_id:company,owner_id:owner,id:fileid,car_id:carid,file_path:path,original_name:String(r.filename||'이미지').slice(0,180),mime_type:r.blob.type,file_size:r.blob.size,group_name:r.group,meta:{}};
+  let save=await S.client.from('zc_media').upsert(meta,{onConflict:'company_id,owner_id,id'});
+  if(save.error){await S.client.storage.from(BUCKET).remove([path]);throw new Error('사진 기록: '+save.error.message)}
  }
- async function startSession(pass,user){
-  state.user=user;state.name='cld_'+user.id.replace(/-/g,'').slice(0,18);state.active=false;
-  await hydrate();
-  if(typeof restoreFinanceCompanies==='function')restoreFinanceCompanies();
-  const a=await ensureLegacyAccount(user.id,pass,user.email);
-  await zc80RememberLogin(pass,a);
-  await enterWorkspace(a);
-  state.active=true;gate.hidden=true;setStatus('● 클라우드 연결됨');document.getElementById('zc-cloud-banner').hidden=false;
-  document.body.classList.add('zc84-online');
+ if(removeIds.length){const rs=await S.client.from('zc_media').select('id,file_path').eq('company_id',company).eq('owner_id',owner).in('id',removeIds);
+  if(rs.error)throw rs.error;
+  const paths=(rs.data||[]).map(x=>x.file_path);
+  if(paths.length){const rm=await S.client.storage.from(BUCKET).remove(paths);if(rm.error)throw rm.error;}
+  const del=await S.client.from('zc_media').delete().eq('company_id',company).eq('owner_id',owner).in('id',removeIds);if(del.error)throw del.error;
  }
- async function signIn(e){e.preventDefault();if(state.busy)return;
-  const btn=document.getElementById('zc-cloud-submit'),pass=document.getElementById('zc-cloud-password').value,email=document.getElementById('zc-cloud-email').value.trim();
-  state.busy=true;btn.disabled=true;btn.textContent='서버 확인 및 데이터 불러오는 중…';msg('');
-  try{
-   if(!state.client){const cfg=normalizeConfig(localStorage.getItem(storageKey));if(!cfg)throw Error('서버 설정이 필요합니다.');await connect(cfg)}
-   const {data,error}=await state.client.auth.signInWithPassword({email,password:pass});if(error)throw error;
-   if(!data?.user)throw Error('로그인 사용자 정보를 확인할 수 없습니다.');
-   await startSession(pass,data.user);
-  }catch(ex){msg(ex.message||'로그인 또는 DB 연결에 실패했습니다. SQL 및 계정 설정을 확인하세요.');console.warn('Cloud login',ex)}
-  finally{state.busy=false;btn.disabled=false;btn.textContent='서버 로그인 후 오피스 열기';document.getElementById('zc-cloud-password').value=''}
+ await serverMediaRefresh();
+ return undefined;
+};
+
+
+// Model/trim reference photos also live in private cloud Storage, not local IndexedDB.
+const prevModelPhotos=refreshModelPhotos;
+const prevSaveModel=saveReferencePhoto;
+const prevImportModels=importModelPhotoBundle;
+const prevRemoveModel=removeReferencePhoto;
+async function modelPhotoRows(){let {data,error}=await S.client.from('zc_media').select('*').eq('company_id',S.company.id).eq('owner_id',S.user.id).eq('group_name','modelPhoto').limit(400);if(error)throw error;return data||[]}
+refreshModelPhotos=async function(){if(!S.ready)return prevModelPhotos();
+ for(const u of modelPhotoUrls)try{URL.revokeObjectURL(u)}catch{};
+ modelPhotoUrls=[];modelPhotos=[];
+ for(const m of await modelPhotoRows()){
+  try{let {data,error}=await S.client.storage.from(BUCKET).download(m.file_path);if(error)throw error;
+   let url=URL.createObjectURL(data);modelPhotoUrls.push(url);
+   modelPhotos.push({key:currentUser.username+'|'+m.meta.keySuffix,keySuffix:m.meta.keySuffix,ownerId:currentUser.username,filename:m.original_name,blob:data,url,createdAt:new Date(m.created_at).getTime()});
+  }catch(e){console.warn('모델 참고사진 다운로드',errMsg(e))}
  }
- document.getElementById('zc-cloud-connect').onclick=async()=>{
-  const conf=normalizeConfig({url:document.getElementById('zc-cloud-url').value.trim(),key:document.getElementById('zc-cloud-key').value.trim()});
-  if(!conf)return msg('Supabase 프로젝트 URL과 publishable 키 형식을 확인해주세요.');
-  msg('서버를 확인하는 중입니다…');
-  try{await connect(conf);originalSetItem.call(localStorage,storageKey,JSON.stringify(conf));setup.hidden=true;login.hidden=false;msg('서버 설정을 저장했습니다. Authentication에 등록한 이메일로 로그인하세요.')}
-  catch(ex){msg('서버 설정에 실패했습니다: '+(ex.message||'접속 오류'))}
- };
- document.getElementById('zc-cloud-config-change').onclick=()=>{setup.hidden=false;login.hidden=true;msg('')};
- login.addEventListener('submit',signIn);
- const cfg=normalizeConfig(localStorage.getItem(storageKey));
- if(cfg){setup.hidden=true;login.hidden=false;document.getElementById('zc-cloud-url').value=cfg.url;document.getElementById('zc-cloud-key').value=cfg.key;}
- if(location.protocol==='file:'){document.getElementById('zc-cloud-offline').hidden=false;document.getElementById('zc-cloud-open-local').onclick=()=>{gate.hidden=true;};}
- status.onclick=async()=>{
-  if(!state.active)return;
-  if(state.pending.size){await flush();return;}
-  if(!confirm('클라우드 데이터를 다시 불러올까요? 이 브라우저의 저장된 시범운영 데이터가 서버 내용으로 덮어써집니다.'))return;
-  try{state.active=false;setStatus('● 서버 데이터 불러오는 중','busy');await hydrate();loadCarsForUser();loadCovers();buildStats();navigate(route||'buy');state.active=true;setStatus('● 클라우드 데이터 새로고침 완료')}catch(ex){state.active=true;setStatus('● 서버 불러오기 실패','bad');alert(ex.message)}
- };
- const oldLogout=window.logout;
- if(typeof oldLogout==='function')window.logout=function(){const was=currentUser;oldLogout();if(was&&!currentUser){state.active=false;state.pending.clear();clearTimeout(state.timer);state.client?.auth.signOut();gate.hidden=false;status.hidden=true;login.hidden=false;setup.hidden=true;document.body.classList.remove('zc84-online');document.getElementById('zc-cloud-banner').hidden=true}};
- window.addEventListener('message',e=>{if(!state.active||e.origin!==location.origin)return;const frame=document.getElementById('monthly-ledger-frame');if(e.source!==frame?.contentWindow)return;if(e.data?.type==='ZC84_DATASET')enqueue(e.data.dataset==='monthly'?'monthly':'categories')});
- window.addEventListener('beforeunload',e=>{if(state.active&&(state.flushing||state.pending.size)){e.preventDefault();e.returnValue='';}});
- window.addEventListener('online',()=>{if(state.active&&state.pending.size)flush()});
- // Local media + customer store is intentionally excluded: requires private object storage,
- // lawful sensitive-data handling and verified migration before genuine operational use.
+};
+async function storeModelPhoto(file,suffix){
+ if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>10485760)throw Error('JPG/PNG/WEBP 최대 10MB 사진만 등록할 수 있습니다.');
+ const raw=new TextEncoder().encode(suffix),digest=await crypto.subtle.digest('SHA-256',raw);
+ const id='model-'+Array.from(new Uint8Array(digest).slice(0,16)).map(n=>n.toString(16).padStart(2,'0')).join('');
+ const previous=(await modelPhotoRows()).find(m=>m.id===id);
+ if(previous){let r=await S.client.storage.from(BUCKET).remove([previous.file_path]);if(r.error)throw r.error;
+  let d=await S.client.from('zc_media').delete().eq('company_id',S.company.id).eq('owner_id',S.user.id).eq('id',id);if(d.error)throw d.error;
+ }
+ const ext=file.type==='image/png'?'png':file.type==='image/webp'?'webp':'jpg';
+ const path=[S.company.id,S.user.id,'models',id+'.'+ext].join('/');
+ let r=await S.client.storage.from(BUCKET).upload(path,file,{contentType:file.type,upsert:false});if(r.error)throw r.error;
+ let d=await S.client.from('zc_media').insert({company_id:S.company.id,owner_id:S.user.id,id,car_id:'model-ref',file_path:path,original_name:file.name,mime_type:file.type,file_size:file.size,group_name:'modelPhoto',meta:{keySuffix:suffix}});
+ if(d.error){await S.client.storage.from(BUCKET).remove([path]);throw d.error;}
+}
+saveReferencePhoto=async function(e){if(!S.ready)return prevSaveModel(e);
+ const f=e.target.files?.[0];e.target.value='';const car=cars.find(c=>c.id===activeCarId&&canManageCar(c));if(!f||!car)return;
+ if(!confirm('이 이미지를 해당 차종의 기본 참고사진으로 저장할까요?'))return;
+ try{await storeModelPhoto(f,modelImageKey(car));await refreshModelPhotos();renderCars();renderVehicle();toast('참고사진을 클라우드에 저장했습니다.');}
+ catch(ex){fail(ex,'참고사진 저장');toast(errMsg(ex))}
+};
+importModelPhotoBundle=async function(e){if(!S.ready)return prevImportModels(e);
+ const files=[...(e.target.files||[])];e.target.value='';if(!files.length)return;
+ if(files.length>100)return toast('한 번에 100장 이하로 선택하세요.');
+ if(!confirm(files.length+'장의 모델 사진을 클라우드에 등록할까요?'))return;
+ let success=0,failed=0;
+ for(const f of files){let stem=f.name.replace(/\.(jpg|jpeg|png|webp)$/i,''),parts=stem.split('__').map(v=>v.trim());
+  if(![3,4].includes(parts.length)||parts.slice(0,3).some(v=>!v)){failed++;continue;}
+  try{await storeModelPhoto(f,parts.map(x=>x.toLocaleLowerCase('ko')).join('|'));success++;}catch(ex){failed++;console.error('참고사진 등록 실패',f.name,ex)}
+ }
+ await refreshModelPhotos();renderCars();toast('클라우드 참고사진: 성공 '+success+'장, 실패 '+failed+'장');
+};
+removeReferencePhoto=async function(){if(!S.ready)return prevRemoveModel();
+ const car=cars.find(x=>x.id===activeCarId),photo=car&&matchingModelPhoto(car);if(!photo)return;
+ if(!confirm('이 차종의 기본 참고사진을 클라우드에서 삭제할까요?'))return;
+ try{const rows=await modelPhotoRows(),m=rows.find(x=>x.meta?.keySuffix===photo.keySuffix);if(!m)return;
+  let r=await S.client.storage.from(BUCKET).remove([m.file_path]);if(r.error)throw r.error;
+  r=await S.client.from('zc_media').delete().eq('company_id',S.company.id).eq('owner_id',S.user.id).eq('id',m.id);if(r.error)throw r.error;
+  await refreshModelPhotos();renderCars();renderVehicle();toast('참고사진을 서버에서 삭제했습니다.');
+ }catch(e){fail(e,'참고사진 삭제')}
+};
+
+// Customer database is now authoritative; no browser IndexedDB customer fallback when connected.
+const originalReadCar=zc72ReadCar,originalReadOwner=zc72ReadOwner,originalWriteCustomer=zc72Write,originalDeleteCustomer=zc72Delete;
+zc72ReadCar=async function(owner,car){if(!S.ready)return originalReadCar(owner,car);
+ const uid=getOwnUuid(owner);if(!uid)return null;
+ const {data,error}=await S.client.from('zc_customers').select('payload,has_rrn').eq('company_id',S.company.id).eq('owner_id',uid).eq('car_id',String(car)).maybeSingle();
+ if(error)throw error;
+ if(!data)return null;
+ const obj={...data.payload};if(data.has_rrn)obj.rrnCipher={server:true};return obj;
+};
+zc72ReadOwner=async function(owner){if(!S.ready)return originalReadOwner(owner);
+ const uid=getOwnUuid(owner);if(!uid)return [];
+ const {data,error}=await S.client.from('zc_customers').select('payload,has_rrn').eq('company_id',S.company.id).eq('owner_id',uid).limit(2000);
+ if(error)throw error;return (data||[]).map(r=>({...r.payload,...(r.has_rrn?{rrnCipher:{server:true}}:{})}));
+};
+zc72Write=async function(record){if(!S.ready)return originalWriteCustomer(record);
+ if(!record?.carId)throw Error('차량 연결 정보가 없습니다');
+ const uid=getOwnUuid(record.ownerId);if(!uid)throw Error('고객 정보 담당 딜러 오류');
+ const safe=cleanCustomer(record);const rrn=record?.rrnCipher?.serverPending;
+ const {error}=await S.client.from('zc_customers').upsert({company_id:S.company.id,owner_id:uid,car_id:String(record.carId),payload:safe,updated_by:S.user.id,updated_at:new Date().toISOString()}, {onConflict:'company_id,owner_id,car_id'});
+ if(error)throw error;
+ if(rrn){const {error:e}=await S.client.rpc('zc_save_rrn',{p_company:S.company.id,p_owner:uid,p_car_id:String(record.carId),p_rrn:rrn});if(e)throw e;}
+ showStatus('● 고객정보 서버 저장 완료');
+};
+zc72Delete=async function(owner,car){if(!S.ready)return originalDeleteCustomer(owner,car);
+ const uid=getOwnUuid(owner);if(!uid)return;
+ let {error}=await S.client.from('zc_customers').delete().eq('company_id',S.company.id).eq('owner_id',uid).eq('car_id',String(car));if(error)throw error;
+};
+const prevEncryptRrn=zc80EncryptRrn;
+zc80EncryptRrn=async function(raw){if(!S.user)return prevEncryptRrn(raw);
+ const digits=String(raw||'').replace(/\D/g,'');
+ if(!S.company?.rrn_enabled){if(digits)throw Error('주민번호 저장이 비활성화되었습니다. 고객 주민번호를 빈칸으로 두고 진행해 주세요.');return null;}
+ if(!/^\d{13}$/.test(digits))return null;
+ return {serverPending:digits}; // only ephemeral memory; stripped from ordinary customer JSON.
+};
+zc80DecryptRrn=async function(record){if(!S.ready)return '';
+ if(!record?.rrnCipher?.server || !S.company.rrn_enabled)return '';
+ const owner=getOwnUuid(record.ownerId),car=record.carId;
+ const {data,error}=await S.client.rpc('zc_read_rrn',{p_company:S.company.id,p_owner:owner,p_car_id:String(car)});
+ if(error)throw error;return data?zc72RrnDisplay(String(data)):'';
+};
+zc80SaveRrnField=async function(owner,car,raw){
+ if(!S.ready||!S.company.rrn_enabled)return false;
+ const digits=String(raw||'').replace(/\D/g,'');if(!/^\d{13}$/.test(digits))return false;
+ const uid=getOwnUuid(owner);if(uid!==S.user.id)return false;
+ const {error}=await S.client.rpc('zc_save_rrn',{p_company:S.company.id,p_owner:uid,p_car_id:String(car),p_rrn:digits});if(error)throw error;
+ return true;
+};
+const oldValidate=zc74ValidField;
+zc74ValidField=function(id){if(id==='zc72-rrn'&&S.user&&!S.company?.rrn_enabled)return !byId(id).value.trim();return oldValidate(id);};
+
+// iframe monthly ledger signals parent to commit cloud transaction after same-origin local write.
+window.addEventListener('message',e=>{if(e.origin!==location.origin||!S.ready||e.data?.type!=='ZC84_DATASET')return;
+ const key=e.data.dataset==='monthly'?'monthly':e.data.dataset==='categories'?'categories':null;if(key)enqueue(key,NIL);
+});
+
+async function reload(){if(!S.ready)return;
+ if(!confirm('서버에 저장된 데이터로 다시 불러올까요? 현재 브라우저에서 서버에 반영되지 않은 변경사항은 사라집니다.'))return;
+ S.ready=false;S.queue.clear();S.conflict=false;
+ try{await restoreDatasets();loadCarsForUser();loadCovers();await refreshMedia();buildStats();navigate(route);S.ready=true;showStatus('● 서버 자료 다시 불러옴');}
+ catch(e){S.ready=true;fail(e,'새로고침')}
+}
+status.addEventListener('click',reload);
+window.addEventListener('beforeunload',e=>{if(!S.ready)return;if(S.queue.size||S.saving||S.conflict){e.preventDefault();e.returnValue='서버에 반영되지 않은 변경사항이 있습니다.';}});
+window.addEventListener('online',()=>{if(S.ready&&!S.conflict)flush()});
+window.addEventListener('offline',()=>{if(S.ready)showStatus('● 인터넷 연결 끊김 · 저장 불가','bad')});
+
+async function signOut(){if(!confirm('온라인 계정에서 로그아웃할까요?'))return;
+ await flush();if(S.queue.size||S.saving||S.conflict){alert('서버에 아직 저장하지 못한 변경사항이 있어 로그아웃을 중단했습니다. 연결 상태를 확인하세요.');return;}S.ready=false;S.authPassword=null;await S.client.auth.signOut();S.user=null;S.company=null;S.members=[];
+ if(currentUser){zc80SensitiveLock();currentUser=null;cars=[];covers={};}
+ gate.hidden=false;setup.hidden=true;login.hidden=false;byId('zc86-onboard').hidden=true;byId('zc86-topbar').hidden=true;status.hidden=true;msg('로그아웃되었습니다.');
+}
+byId('zc86-signout').addEventListener('click',signOut);
+byId('zc86-reload').addEventListener('click',reload);
+byId('zc86-admin-open').addEventListener('click',()=>{byId('zc86-invite-area').hidden=!byId('zc86-invite-area').hidden});
+async function refreshStaffList(){
+ const host=byId('zc86-member-list');host.replaceChildren();
+ const {data,error}=await S.client.from('zc_members').select('user_id,display_name,role,active').eq('company_id',S.company.id);
+ if(error)throw error;
+ for(const m of data||[]){
+  const div=document.createElement('div');div.style.cssText='border-top:1px solid #e0e9f0;padding:9px 0;display:grid;gap:5px';
+  const name=document.createElement('strong');name.textContent=m.display_name+' · '+(m.user_id===S.user.id?'(본인)':'직원');div.appendChild(name);
+  const sel=document.createElement('select');for(const [v,label] of [['dealer','딜러'],['accountant','경리']]){
+   const option=document.createElement('option');option.value=v;option.textContent=label;sel.appendChild(option)}
+  sel.value=m.role==='admin'?'dealer':m.role;
+  const check=document.createElement('label');const box=document.createElement('input');box.type='checkbox';box.checked=!!m.active;
+  check.append(box,document.createTextNode('사용 허용'));
+  const save=document.createElement('button');save.type='button';save.textContent='권한 저장';
+  if(m.user_id===S.user.id||m.role==='admin'){sel.disabled=true;box.disabled=true;save.disabled=true}
+  save.addEventListener('click',async()=>{try{
+   const {error}=await S.client.rpc('zc_manage_member',{p_target:m.user_id,p_role:sel.value,p_active:box.checked});if(error)throw error;
+   alert('직원 설정이 저장되었습니다. 해당 직원은 재로그인해야 변경사항이 반영됩니다.');await refreshStaffList();
+  }catch(e){alert('직원 변경 실패: '+errMsg(e))}});
+  div.append(sel,check,save);host.appendChild(div);
+ }
+}
+byId('zc86-members-refresh').addEventListener('click',()=>refreshStaffList().catch(e=>alert(errMsg(e))));
+byId('zc86-invite-create').addEventListener('click',async()=>{
+ const email=byId('zc86-invite-email').value.trim(),role=byId('zc86-invite-role').value;
+ try{const {data,error}=await S.client.rpc('zc_issue_invite',{p_email:email,p_role:role});if(error)throw error;
+  byId('zc86-invite-result').textContent='초대 대상 '+email+' / 초대코드 (48시간 유효): '+data;
+ }catch(e){byId('zc86-invite-result').textContent=errMsg(e)}
+});
+byId('zc86-create-company').addEventListener('click',async()=>{try{await afterOnboard('new')}catch(e){msg(errMsg(e))}});
+byId('zc86-join-company').addEventListener('click',async()=>{try{await afterOnboard('join')}catch(e){msg(errMsg(e))}});
+byId('zc86-register').addEventListener('click',registerAccount);
+login.addEventListener('submit',doSignIn);
+byId('zc-cloud-connect').addEventListener('click',async()=>{
+ const conf=validConfig({url:byId('zc-cloud-url').value.trim(),key:byId('zc-cloud-key').value.trim()});
+ if(!conf)return msg('프로젝트 URL·Publishable 키를 확인해 주세요.');
+ try{await ensureConnection(conf);originalSet.call(localStorage,keyConfig,JSON.stringify(conf));setup.hidden=true;login.hidden=false;msg('서버 연결됨. 온라인 계정으로 로그인하세요.');}
+ catch(e){msg('서버 연결 오류: '+errMsg(e))}
+});
+byId('zc-cloud-config-change').addEventListener('click',()=>{setup.hidden=false;login.hidden=true;byId('zc86-onboard').hidden=true;msg('')});
+const config=validConfig(parsePayload(localStorage.getItem(keyConfig))||{});
+if(config){setup.hidden=true;login.hidden=false;byId('zc-cloud-url').value=config.url;byId('zc-cloud-key').value=config.key;}
+const legacyOffline=byId('zc-cloud-offline');if(legacyOffline)legacyOffline.remove();
+// Never bypass online auth on file:// or at any unknown origin.
+if(location.protocol!=='https:'&&location.hostname!=='localhost'){
+ msg('이 버전은 HTTPS로 배포한 주소에서만 사용할 수 있습니다. HTML 파일을 더블클릭해 실행하지 마세요.');
+ byId('zc-cloud-connect').disabled=true;byId('zc-cloud-submit').disabled=true;
+}
+window.zc86Cloud={get ready(){return S.ready},get rrnEnabled(){return !!S.company?.rrn_enabled},get company(){return S.company?.name||''},flush,reload,signOut};
 })();
+
 </script></body>
 </html>
