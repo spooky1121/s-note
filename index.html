@@ -5634,7 +5634,7 @@ document.addEventListener('click',async event=>{
 </div>
 <div id="zc-cloud-gate" role="dialog" aria-modal="true" aria-labelledby="zc-cloud-title">
  <div class="zc-cloud-card">
-  <div class="zc-brand">ZEROCAR OFFICE <span>v1.87 · CLOUD TEST</span></div>
+  <div class="zc-brand">ZEROCAR OFFICE <span>v1.88 · CLOUD TEST</span></div>
   <h2 id="zc-cloud-title">온라인 업무 시스템 연결</h2>
   <p class="zc-cloud-desc">상사와 직원이 함께 사용할 수 있는 온라인 서버 로그인입니다. 실제 업무 투입 전에는 반드시 테스트 데이터를 이용해 모든 메뉴를 검증하세요.</p>
   <div id="zc-cloud-setup">
@@ -5737,10 +5737,25 @@ async function flush(){if(!S.ready||S.saving||S.conflict||!S.queue.size)return;S
  }catch(e){S.conflict=/CONFLICT/i.test(errMsg(e));fail(e,S.conflict?'동시수정 충돌':'DB 저장');if(S.conflict)alert('다른 기기에서 먼저 변경한 장부가 있습니다. 저장을 중단했습니다. 화면 우측 하단의 상태 버튼을 눌러 서버 데이터를 다시 불러온 뒤 수정하세요.');}
  finally{S.saving=false;}
 }
-async function ensureConnection(conf){const lib=await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/+esm');S.client=lib.createClient(conf.url,conf.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});
- const {error}=await S.client.auth.getSession();if(error)throw error;
- // Connection setup must not SELECT a company table before sign-in.
- // RLS correctly disallows anonymous reads; authentication itself will validate the project and key.
+async function ensureConnection(conf){
+ const lib=await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/+esm');
+ if(typeof lib?.createClient!=='function')throw Error('Supabase 인증 라이브러리를 불러오지 못했습니다.');
+ const client=lib.createClient(conf.url,conf.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});
+ const {error}=await client.auth.getSession();if(error)throw error;
+ // Keep client unset on a failed connection; do not leave a half-initialized client.
+ S.client=client;
+}
+// A saved URL/key only restores the form on page reload, not the JS Auth client.
+// Recreate the client on demand for BOTH registration and sign-in. Reuse concurrent requests.
+let authInitPromise=null;
+async function requireAuthClient(){
+ if(S.client)return S.client;
+ if(!authInitPromise){
+  const conf=validConfig(parsePayload(localStorage.getItem(keyConfig))||{});
+  if(!conf)throw Error('Supabase 연결 정보가 없습니다. 연결 설정 변경에서 URL과 공개 키를 저장하세요.');
+  authInitPromise=ensureConnection(conf).then(()=>S.client).finally(()=>{authInitPromise=null});
+ }
+ return authInitPromise;
 }
 async function readCompany(){
  let {data,error}=await S.client.from('zc_members').select('user_id,company_id,role,display_name,active').eq('user_id',S.user.id).maybeSingle();if(error)throw error;
@@ -5804,8 +5819,8 @@ async function hydrateWorkspace(pass){
 }
 async function doSignIn(e){e?.preventDefault?.();if(S.busy)return;S.busy=true;const button=byId('zc-cloud-submit');button.disabled=true;
  const email=byId('zc-cloud-email').value.trim(),pass=byId('zc-cloud-password').value;
- try{if(!S.client){const cfg=validConfig(parsePayload(localStorage.getItem(keyConfig))||{});if(!cfg)throw Error('서버 URL·공개 키를 먼저 입력해 주세요');await ensureConnection(cfg)}
- const {data,error}=await S.client.auth.signInWithPassword({email,password:pass});if(error)throw error;if(!data?.user)throw Error('로그인 정보를 확인하지 못했습니다');
+ try{const client=await requireAuthClient();
+ const {data,error}=await client.auth.signInWithPassword({email,password:pass});if(error)throw error;if(!data?.user)throw Error('로그인 정보를 확인하지 못했습니다');
  S.user=data.user;S.authPassword=pass;
  await hydrateWorkspace(pass);
  msg(S.company?'':'회사 정보가 없으면 상사 생성 또는 초대 코드를 입력하세요.');
@@ -5821,11 +5836,18 @@ async function afterOnboard(kind){
  await hydrateWorkspace(S.authPassword);
 }
 async function registerAccount(){
+ if(S.busy)return;
  const email=byId('zc-cloud-email').value.trim(),password=byId('zc-cloud-password').value;
  if(!email||password.length<10){msg('이메일과 10자 이상 비밀번호를 입력하세요.');return}
- try{const {data,error}=await S.client.auth.signUp({email,password});if(error)throw error;
-  msg(data?.session?'회원가입 완료. 로그인하고 상사를 등록하세요.':'회원가입 신청 완료. 이메일 인증 링크를 누른 뒤 로그인하세요.');
+ const btn=byId('zc86-register');S.busy=true;btn.disabled=true;
+ try{
+  msg('Supabase 인증 서버 연결 및 회원가입 요청 중입니다...');
+  const client=await requireAuthClient();
+  const {data,error}=await client.auth.signUp({email,password,options:{emailRedirectTo:location.origin+location.pathname}});
+  if(error)throw error;
+  msg(data?.session?'회원가입 완료. 같은 계정으로 로그인하세요.':'회원가입 요청이 접수되었습니다. 이메일 인증 안내가 도착하는지 확인한 뒤 로그인하세요.');
  }catch(e){msg('회원가입 실패: '+errMsg(e))}
+ finally{S.busy=false;btn.disabled=false;}
 }
 const prevUpdate=updateDB;
 const prevRefresh=refreshMedia;
@@ -6040,7 +6062,7 @@ byId('zc-cloud-connect').addEventListener('click',async()=>{
  try{await ensureConnection(conf);originalSet.call(localStorage,keyConfig,JSON.stringify(conf));setup.hidden=true;login.hidden=false;msg('연결 정보 저장됨. 온라인 계정으로 로그인하면 서버 인증을 확인합니다.');}
  catch(e){msg('서버 연결 오류: '+errMsg(e))}
 });
-byId('zc-cloud-config-change').addEventListener('click',()=>{setup.hidden=false;login.hidden=true;byId('zc86-onboard').hidden=true;msg('')});
+byId('zc-cloud-config-change').addEventListener('click',()=>{S.client=null;setup.hidden=false;login.hidden=true;byId('zc86-onboard').hidden=true;msg('')});
 const config=validConfig(parsePayload(localStorage.getItem(keyConfig))||{});
 if(config){setup.hidden=true;login.hidden=false;byId('zc-cloud-url').value=config.url;byId('zc-cloud-key').value=config.key;}
 const legacyOffline=byId('zc-cloud-offline');if(legacyOffline)legacyOffline.remove();
