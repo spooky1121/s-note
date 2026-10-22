@@ -25,5 +25,4 @@ S-NOTE는 중고차 매매상사를 위한 온라인 업무 관리 서비스입�
 현재 온라인 테스트 및 정식 서비스 구축을 진행하고 있습니다.
 
 © 2026 S-NOTE. All rights reserved.
-S-NOTE v1.95 배포 확인
-S-NOTE GitHub 자동 배포 테스트
+자동 배포 테스트
