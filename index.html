@@ -2145,6 +2145,26 @@ body:has(#monthly-screen[style*="block"]) #accountant-bar{display:none!important
 .quote-paper .snote95-footer-company,.contract-paper .snote95-footer-company{font-size:9.2px;letter-spacing:0;font-weight:850;line-height:1.35;color:#243e54}
 @media(max-width:620px){#zc-cloud-gate{padding:18px}#zc-cloud-gate .zc-cloud-card{padding:26px 22px}}
 </style>
+<style>
+/* S-NOTE v1.96 · SALES + OCR PATCH */
+.snote196-sale-heading{display:flex;align-items:center;gap:13px;flex-wrap:wrap}
+.snote196-sale-heading h2{margin:0}
+#snote196-reset-btn{border:1px solid #d7e3f2;border-radius:8px;background:#f6f9fd;color:#58708f;padding:7px 11px;font-family:inherit;font-weight:750;font-size:11px;line-height:1.2;letter-spacing:-.2px;white-space:nowrap;box-shadow:none}
+#snote196-reset-btn:hover{background:#ecf3fd;border-color:#adc6e8;color:#285c9e}
+#snote196-reset-btn:focus-visible{outline:2px solid #77a8ea;outline-offset:2px}
+.zc-finance-label[data-lender="KB캐피탈"],.zc-finance-label[data-lender="KB캐피탈"]:hover{background:#fff3be!important;color:#795a00!important;border:1px solid #f4d773!important;font-weight:800}
+.zc-finance-label[data-lender="JB우리금융"],.zc-finance-label[data-lender="JB우리금융"]:hover{background:#e1efff!important;color:#235db6!important;border:1px solid #b1d0f9!important;font-weight:800}
+.zc-finance-label[data-lender="메리츠"],.zc-finance-label[data-lender="메리츠"]:hover{background:#e0f5e9!important;color:#187a4a!important;border:1px solid #afdfc3!important;font-weight:800}
+.zc182-lender[data-lender="KB캐피탈"] .zc182-lender-h strong{color:#a17b02}
+.zc182-lender[data-lender="JB우리금융"] .zc182-lender-h strong{color:#2667b7}
+.zc182-lender[data-lender="메리츠"] .zc182-lender-h strong{color:#16804c}
+@media(max-width:600px){.snote196-sale-heading{gap:8px}#snote196-reset-btn{padding:6px 9px;font-size:10.5px}}
+</style>
+<style>
+/* S-NOTE v1.97 · ADMIN PRESTOCK FIX */
+@keyframes snote197RowReveal{from{box-shadow:0 0 0 3px #86bbfa99;background:#ebf5ff}to{box-shadow:0 0 0 0 transparent;background:transparent}}
+.snote197-added-row{animation:snote197RowReveal 1.7s ease-out}
+</style>
 </head>
 <body>
 
@@ -2183,7 +2203,7 @@ body:has(#monthly-screen[style*="block"]) #accountant-bar{display:none!important
       <div class="auth-story-body"><p class="auth-eyebrow">SMART DEALER WORKSPACE</p><h2>차량 관리의 시작,<br><span>더 간편하게.</span></h2><p>재고부터 차량 사진과 서류까지.<br>딜러별로 분리된 나만의 업무 공간.</p><div class="auth-points"><div class="auth-point"><i>✓</i>딜러별 차량 및 파일 관리</div><div class="auth-point"><i>✓</i>PC · 모바일 반응형 디자인</div><div class="auth-point"><i>✓</i>실차 사진 10장 · 성능서류 2장</div></div></div>
       <div class="auth-sidefoot">© S-NOTE · SMART DEALER WORKSPACE</div>
     </div>
-    <div class="auth-content" id="auth-content"><div class="auth-headsign"><span class="brandmark">S</span> S-NOTE <span style="color:#315efb;margin-left:-7px">OFFICE</span></div><div class="auth-topline"><strong>ACCOUNT ACCESS</strong><span>v1.95 · ONLINE</span></div><h1 id="auth-heading">다시 만나서 반가워요</h1><p class="auth-desc" id="auth-description">로그인하고 내 차량 재고를 확인하세요.</p>
+    <div class="auth-content" id="auth-content"><div class="auth-headsign"><span class="brandmark">S</span> S-NOTE <span style="color:#315efb;margin-left:-7px">OFFICE</span></div><div class="auth-topline"><strong>ACCOUNT ACCESS</strong><span>v1.97 · ONLINE</span></div><h1 id="auth-heading">다시 만나서 반가워요</h1><p class="auth-desc" id="auth-description">로그인하고 내 차량 재고를 확인하세요.</p>
       <div class="auth-tabs" hidden aria-hidden="true"><button id="login-tab" class="active" type="button" tabindex="-1" onclick="showAuthMode('login')">로그인</button><button id="signup-tab" type="button" onclick="showAuthMode('signup')" hidden aria-hidden="true" tabindex="-1">회원가입</button></div><div class="auth-success" id="login-success" role="status">✓ 회원가입이 완료되었습니다. 새 계정으로 로그인해 주세요.</div>
       <form id="login-form" class="auth-form" onsubmit="loginAccount(event)"><div><label class="auth-label" for="login-id">아이디</label><input class="auth-input" id="login-id" maxlength="30" autocomplete="username" placeholder="아이디를 입력하세요" required /></div><div><label class="auth-label" for="login-pw">비밀번호</label><input class="auth-input" id="login-pw" type="password" autocomplete="current-password" placeholder="비밀번호를 입력하세요" required /></div><div class="auth-error" id="login-error" role="alert"></div><button class="btn-primary auth-primary" id="login-submit" type="submit">로그인</button><button type="button" class="auth-demo" onclick="loginDemo()">딜러 체험 계정으로 시작하기&nbsp; →</button><button type="button" class="auth-demo" onclick="loginAccountingDemo()">경리 통합 화면 체험하기&nbsp; →</button><div class="accountant-login-help">경리 샘플: <b>accounting / account1234</b><br>딜러 샘플: <b>demo / demo1234</b>, <b>dealer2 / dealer1234</b></div><p class="auth-rule">체험판 전용 계정입니다. 실제 업무용 개인정보나 비밀번호를 입력하지 마세요.</p></form>
       <form id="signup-form" class="auth-form auth-signup-form" onsubmit="registerAccount(event)" style="display:none">
@@ -2206,7 +2226,7 @@ body:has(#monthly-screen[style*="block"]) #accountant-bar{display:none!important
     <div class="sidebar-end"><div class="support"><p class="st">간편하고 정확하게.</p><p class="sd">재고부터 매입 · 판매 · 정산까지<br>하나의 전산에서 관리하세요.</p></div><div class="profile"><div class="avatar" id="profile-avatar">Z</div><div class="profile-detail"><div class="pname" id="profile-name">딜러</div><div class="prole" id="profile-role">개인 차량 관리</div></div><button class="logout-icon" onclick="logout()" title="로그아웃" aria-label="로그아웃">↪</button></div></div>
   </aside>
   <div class="main">
-    <header class="topbar"><div class="topbar-left"><button type="button" class="mobile-menu-trigger" id="mobile-menu-trigger" aria-label="메뉴 열기" aria-controls="mobile-drawer" aria-expanded="false" onclick="toggleMobileDrawer()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><div class="crumb">S-NOTE <span style="padding:0 7px;color:#c3cbd7">/</span> <b id="breadcrumb">대시보드</b></div></div><div class="topright"><span class="sample">● S-NOTE v1.95 · 온라인 테스트</span><button class="topbutton" aria-label="알림" onclick="toast('알림 기능은 추후 구현 예정입니다.')" id="bell"></button><button class="top-avatar" id="top-avatar" onclick="logout()" title="로그아웃" aria-label="로그아웃">Z</button></div></header>
+    <header class="topbar"><div class="topbar-left"><button type="button" class="mobile-menu-trigger" id="mobile-menu-trigger" aria-label="메뉴 열기" aria-controls="mobile-drawer" aria-expanded="false" onclick="toggleMobileDrawer()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><div class="crumb">S-NOTE <span style="padding:0 7px;color:#c3cbd7">/</span> <b id="breadcrumb">대시보드</b></div></div><div class="topright"><span class="sample">● S-NOTE v1.97 · 온라인 테스트</span><button class="topbutton" aria-label="알림" onclick="toast('알림 기능은 추후 구현 예정입니다.')" id="bell"></button><button class="top-avatar" id="top-avatar" onclick="logout()" title="로그아웃" aria-label="로그아웃">Z</button></div></header>
     <main class="content"><div id="zc-cloud-banner" hidden role="status"><b>온라인 테스트 운영:</b> 차량·금융·월정산·고객정보의 클라우드 DB와 차량 사진·등록증의 비공개 Storage 연결을 시험하는 버전입니다. <b>운영 데이터 입력 전 로그인·접근권한·저장·조회·백업 검증이 필요하며, 주민번호 입력은 금지합니다.</b></div>
       <section class="pagehead"><div><p class="eyebrow" id="eyebrow">OVERVIEW</p><h1 id="screen-title">오늘의 업무 현황</h1><p class="subtitle" id="screen-sub">차량 재고와 매입·판매 현황을 한눈에 확인하세요.</p></div><button class="btn-primary" onclick="openAdd()" id="main-add" hidden aria-hidden="true" tabindex="-1"><span id="addicon"></span>차량 등록</button></section>
       <section id="accountant-bar" class="accountant-bar" hidden>
@@ -3453,23 +3473,23 @@ async function confirmStatusChange(){
 }
 function accountantCarTable(rows){
  if(!rows.length)return '<div class="empty">표시할 차량이 없습니다.</div>';
- return `<table class="inventory-table acct-buy-table"><thead><tr><th>차량 정보</th><th>차량번호</th><th>연식</th><th>주행거리</th><th>매입일자</th><th>매입가격</th><th>재고대출금</th><th>재고금융</th><th>재고금융사</th><th>상태</th></tr></thead><tbody>${rows.map(c=>`<tr class="vehicle-clickable" tabindex="0" role="button" onclick="openVehicle('${c.id}')" onkeydown="if(event.key==='Enter'){openVehicle('${c.id}')}" aria-label="${esc(c.model)} 차량 상세"><td><div class="acct-car-cell"><strong>${esc(c.model)}</strong><small>${esc(c.color||c.make||'')}</small></div></td><td>${esc(c.plate)}</td><td>${esc(c.year?c.year+'년':'-')}</td><td>${esc(c.km!==undefined&&c.km!==null?formatKm(c.km)+' km':'-')}</td><td>${esc(c.purchaseAt||'-')}</td><td class="acct-price acct-buy-price">${num(c.buy)}만원</td><td class="acct-price acct-loan-price">${num(inventoryLoanOf(c))}만원</td><td><span class="snote95-finance-indicator">${Number(inventoryLoanOf(c))>0?'재고':'현금'}</span></td><td>${lenderBadge(c)}</td><td>${statusSelect(c)}</td></tr>`).join('')}</tbody></table>`;
+ return `<table class="inventory-table acct-buy-table"><thead><tr><th>차량 정보</th><th>차량번호</th><th>연식</th><th>주행거리</th><th>매입일자</th><th>매입가격</th><th>재고대출금</th><th>재고금융</th><th>재고금융사</th><th>상태</th></tr></thead><tbody>${rows.map(c=>`<tr class="vehicle-clickable" tabindex="0" role="button" onclick="openVehicle('${c.id}')" onkeydown="if(event.key==='Enter'){openVehicle('${c.id}')}" aria-label="${esc(c.model)} 차량 상세"><td><div class="acct-car-cell"><strong>${esc(c.model)}</strong><small>${esc(c.color||c.make||'')}</small></div></td><td>${esc(c.plate)}</td><td>${esc(c.year?c.year+'년':'-')}</td><td>${esc(c.km!==undefined&&c.km!==null?formatKm(c.km)+' km':'-')}</td><td>${esc(c.purchaseAt||'-')}</td><td class="acct-price acct-buy-price">${num(c.buy)}만원</td><td class="acct-price acct-loan-price">${num(inventoryLoanOf(c))}만원</td><td><span class="snote95-finance-indicator">${Number(inventoryLoanOf(c))>0?('재고'+(c.inventoryLender?' · '+esc(c.inventoryLender):'')):'현금'}</span></td><td>${lenderBadge(c)}</td><td>${statusSelect(c)}</td></tr>`).join('')}</tbody></table>`;
 }
 function accountantCarMobile(rows){
  if(!rows.length)return '<div class="empty">표시할 차량이 없습니다.</div>';
- return rows.map(c=>`<div class="acct-mobile-card" role="button" tabindex="0" onclick="openVehicle('${c.id}')" onkeydown="if(event.key==='Enter')openVehicle('${c.id}')"><div class="acct-mobile-heading"><strong>${esc(c.model)}</strong>${statusSelect(c)}</div><p class="acct-mobile-sub">${esc(c.plate)}</p><div class="acct-mobile-fields"><div><label>연식</label><strong>${esc(c.year?c.year+'년':'-')}</strong></div><div><label>주행거리</label><strong>${esc(c.km!==undefined&&c.km!==null?formatKm(c.km)+' km':'-')}</strong></div><div><label>매입일자</label><strong>${esc(c.purchaseAt||'-')}</strong></div><div><label>매입가격</label><strong>${num(c.buy)}만원</strong></div><div><label>재고대출금</label><strong>${num(inventoryLoanOf(c))}만원</strong></div><div><label>재고금융</label><strong class="snote95-finance-indicator">${Number(inventoryLoanOf(c))>0?'재고':'현금'}</strong></div><div><label>재고금융사</label><strong>${lenderBadge(c)}</strong></div></div></div>`).join('');
+ return rows.map(c=>`<div class="acct-mobile-card" role="button" tabindex="0" onclick="openVehicle('${c.id}')" onkeydown="if(event.key==='Enter')openVehicle('${c.id}')"><div class="acct-mobile-heading"><strong>${esc(c.model)}</strong>${statusSelect(c)}</div><p class="acct-mobile-sub">${esc(c.plate)}</p><div class="acct-mobile-fields"><div><label>연식</label><strong>${esc(c.year?c.year+'년':'-')}</strong></div><div><label>주행거리</label><strong>${esc(c.km!==undefined&&c.km!==null?formatKm(c.km)+' km':'-')}</strong></div><div><label>매입일자</label><strong>${esc(c.purchaseAt||'-')}</strong></div><div><label>매입가격</label><strong>${num(c.buy)}만원</strong></div><div><label>재고대출금</label><strong>${num(inventoryLoanOf(c))}만원</strong></div><div><label>재고금융</label><strong class="snote95-finance-indicator">${Number(inventoryLoanOf(c))>0?('재고'+(c.inventoryLender?' · '+esc(c.inventoryLender):'')):'현금'}</strong></div><div><label>재고금융사</label><strong>${lenderBadge(c)}</strong></div></div></div>`).join('');
 }
 function carTable(rows, inventoryDetails=false){
  if(isAccountant())return accountantCarTable(rows);
  if(!rows.length)return '<div class="empty">표시할 차량이 없습니다.</div>';
  const sold=route==='sell',extra=inventoryDetails&&!sold;
- return `<table class="${extra?'inventory-table':''}"><thead><tr><th>차량 정보</th><th>차량번호</th>${extra?'<th>연식</th><th>주행거리</th><th>매입일자</th>':''}<th>매입가</th>${extra?'<th>재고금융</th>':''}<th>${sold?'판매가':'판매예정가'}</th>${sold?'<th>판매 완료일</th>':''}<th>사진 / 서류</th><th>상태 변경</th></tr></thead><tbody>${rows.map(c=>`<tr class="vehicle-clickable" tabindex="0" role="button" aria-label="${esc(c.model)} 차량 상세 열기" onclick="openVehicle('${c.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openVehicle('${c.id}')}"><td><div class="car-cell"><div class="car-thumb">${thumbHtml(c)}</div><div><div class="car-name">${esc(c.model)}</div><div class="car-sub">${extra?(c.color?esc(c.color):'차량 상세 보기'):`${esc(c.year)}년 · ${esc(c.km)}km${c.color?' · '+esc(c.color):''}`}</div></div></div></td><td>${esc(c.plate)}</td>${extra?`<td class="inventory-year">${c.year?esc(c.year)+'년':'-'}</td><td class="inventory-km">${c.km!==undefined&&c.km!==null&&String(c.km).trim()!==''?esc(formatKm(c.km))+' km':'-'}</td><td class="inventory-purchase-date">${esc(c.purchaseAt||'-')}</td>`:''}<td class="price">${num(c.buy)}만</td>${extra?`<td><span class="snote95-finance-indicator">${Number(inventoryLoanOf(c))>0?'재고':'현금'}</span></td>`:''}<td class="price">${num(sold?salePrice(c):c.sell)}만</td>${sold?`<td>${esc(c.soldAt||'미입력')}</td>`:''}<td>${mediaCountHtml(c)}</td><td>${statusSelect(c)}</td></tr>`).join('')}</tbody></table>`
+ return `<table class="${extra?'inventory-table':''}"><thead><tr><th>차량 정보</th><th>차량번호</th>${extra?'<th>연식</th><th>주행거리</th><th>매입일자</th>':''}<th>매입가</th>${extra?'<th>재고금융</th>':''}<th>${sold?'판매가':'판매예정가'}</th>${sold?'<th>판매 완료일</th>':''}<th>사진 / 서류</th><th>상태 변경</th></tr></thead><tbody>${rows.map(c=>`<tr class="vehicle-clickable" tabindex="0" role="button" aria-label="${esc(c.model)} 차량 상세 열기" onclick="openVehicle('${c.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openVehicle('${c.id}')}"><td><div class="car-cell"><div class="car-thumb">${thumbHtml(c)}</div><div><div class="car-name">${esc(c.model)}</div><div class="car-sub">${extra?(c.color?esc(c.color):'차량 상세 보기'):`${esc(c.year)}년 · ${esc(c.km)}km${c.color?' · '+esc(c.color):''}`}</div></div></div></td><td>${esc(c.plate)}</td>${extra?`<td class="inventory-year">${c.year?esc(c.year)+'년':'-'}</td><td class="inventory-km">${c.km!==undefined&&c.km!==null&&String(c.km).trim()!==''?esc(formatKm(c.km))+' km':'-'}</td><td class="inventory-purchase-date">${esc(c.purchaseAt||'-')}</td>`:''}<td class="price">${num(c.buy)}만</td>${extra?`<td><span class="snote95-finance-indicator">${Number(inventoryLoanOf(c))>0?('재고'+(c.inventoryLender?' · '+esc(c.inventoryLender):'')):'현금'}</span></td>`:''}<td class="price">${num(sold?salePrice(c):c.sell)}만</td>${sold?`<td>${esc(c.soldAt||'미입력')}</td>`:''}<td>${mediaCountHtml(c)}</td><td>${statusSelect(c)}</td></tr>`).join('')}</tbody></table>`
 }
 function carMobile(rows, inventoryDetails=false){
  if(isAccountant())return accountantCarMobile(rows);
  if(!rows.length)return '<div class="empty">표시할 차량이 없습니다.</div>';
  const sold=route==='sell',extra=inventoryDetails&&!sold;
- return rows.map(c=>`<div class="vehicle-card" role="button" tabindex="0" onclick="openVehicle('${c.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openVehicle('${c.id}')}"><div class="car-thumb">${thumbHtml(c)}</div><div class="vehicle-info"><div class="vehicle-title">${esc(c.model)}</div><div class="vehicle-meta">${esc(c.plate)}${!extra?` · ${esc(c.year)}년 · ${esc(c.km)}km`:''}${c.color?' · '+esc(c.color):''}</div>${extra?`<div class="vehicle-inventory-meta"><span><b>연식</b>${c.year?esc(c.year)+'년':'-'}</span><span><b>주행거리</b>${c.km!==undefined&&c.km!==null&&String(c.km).trim()!==''?esc(formatKm(c.km))+' km':'-'}</span><span><b>매입일자</b>${esc(c.purchaseAt||'-')}</span></div>`:''}<div class="vehicle-price">${sold?'판매가':'판매예정가'} ${num(sold?salePrice(c):c.sell)}만원</div>${extra?`<span class="prestock-mobile-line snote95-finance-indicator">재고금융 · ${Number(inventoryLoanOf(c))>0?'재고':'현금'}</span>`:''}${sold?`<div class="sale-date-chip">판매 완료일 ${esc(c.soldAt||'미입력')}</div>`:''}<span class="mobile-media">${mediaCountHtml(c)}</span></div><div class="vehicle-right">${statusSelect(c)}</div></div>`).join('')}
+ return rows.map(c=>`<div class="vehicle-card" role="button" tabindex="0" onclick="openVehicle('${c.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openVehicle('${c.id}')}"><div class="car-thumb">${thumbHtml(c)}</div><div class="vehicle-info"><div class="vehicle-title">${esc(c.model)}</div><div class="vehicle-meta">${esc(c.plate)}${!extra?` · ${esc(c.year)}년 · ${esc(c.km)}km`:''}${c.color?' · '+esc(c.color):''}</div>${extra?`<div class="vehicle-inventory-meta"><span><b>연식</b>${c.year?esc(c.year)+'년':'-'}</span><span><b>주행거리</b>${c.km!==undefined&&c.km!==null&&String(c.km).trim()!==''?esc(formatKm(c.km))+' km':'-'}</span><span><b>매입일자</b>${esc(c.purchaseAt||'-')}</span></div>`:''}<div class="vehicle-price">${sold?'판매가':'판매예정가'} ${num(sold?salePrice(c):c.sell)}만원</div>${extra?`<span class="prestock-mobile-line snote95-finance-indicator">재고금융 · ${Number(inventoryLoanOf(c))>0?('재고'+(c.inventoryLender?' · '+esc(c.inventoryLender):'')):'현금'}</span>`:''}${sold?`<div class="sale-date-chip">판매 완료일 ${esc(c.soldAt||'미입력')}</div>`:''}<span class="mobile-media">${mediaCountHtml(c)}</span></div><div class="vehicle-right">${statusSelect(c)}</div></div>`).join('')}
 function renderCars(){let d=getFiltered('dash').slice(0,5),l=getFiltered('list');$('dash-table').innerHTML=carTable(d);$('dash-mobile').innerHTML=carMobile(d);const inventory=['cars','buy'].includes(route);$('list-table').innerHTML=carTable(l,inventory);$('list-mobile').innerHTML=carMobile(l,inventory)}
 function buildQuick(){
  const quick=isAccountant()?
@@ -3574,7 +3594,7 @@ function zc157RemoveLender(button){
 }
 
 function lenderText(c){return inventoryLoanOf(c)<=0?'현금차량':INVENTORY_LENDERS.includes(c.inventoryLender)?c.inventoryLender:'미지정'}
-function lenderBadge(c){return `<span class="${inventoryLoanOf(c)<=0?'zc-cash-badge':'zc-finance-label'}">${esc(lenderText(c))}</span>`}
+function lenderBadge(c){const t=lenderText(c);return `<span class="${inventoryLoanOf(c)<=0?'zc-cash-badge':'zc-finance-label'}" data-lender="${esc(t)}">${esc(t)}</span>`}
 function saveInventoryLender(event,id){event?.stopPropagation();toast('경리 계정은 차량의 재고금융사를 변경할 수 없습니다.');}
 
 const PRESTOCK_LEDGER_SAMPLE=[
@@ -3707,7 +3727,7 @@ function refreshLinkedPrestockViews(){
 window.addEventListener('storage',event=>{
  if(event.key===PRESTOCK_V148_KEY||event.key===PRESTOCK_STORAGE_KEY){
   refreshLinkedPrestockViews();
-  if(isAccountant()&&route==='prestock')buildPrestockManagement();
+  if(isFinanceManager()&&route==='prestock')buildPrestockManagement();
  }
 });
 
@@ -3776,7 +3796,7 @@ function animatePrestockReveal(before){
  }
 }
 function togglePrestockMore(){
- if(!isAccountant()||!$('prestock-card'))return;
+ if(!isFinanceManager()||!$('prestock-card'))return;
  const expanding=!psExpanded;
  const rects=prestockCaptureRects();
  psExpanded=expanding;
@@ -3836,7 +3856,7 @@ function closePrestockMenu(){
  document.querySelectorAll('.ps-amount-trigger[aria-expanded="true"]').forEach(b=>b.setAttribute('aria-expanded','false'));
 }
 function openPrestockMenu(event,id){
- event.stopPropagation();if(!isAccountant())return;
+ event.stopPropagation();if(!isFinanceManager())return;
  const pop=$('ps-action-menu');if(!pop)return;
  if(psMenuId===id){closePrestockMenu();return}
  closePrestockMenu();psMenuId=id;
@@ -3847,7 +3867,7 @@ function openPrestockMenu(event,id){
  event.currentTarget.setAttribute('aria-expanded','true');
 }
 function choosePrestockAction(type){
- const id=psMenuId;closePrestockMenu();if(!id||!isAccountant())return;
+ const id=psMenuId;closePrestockMenu();if(!id||!isFinanceManager())return;
  const row=prestockAllRows().find(r=>r.id===id);if(!row)return;
  if(row.type==='adjustment'){toast('금액 조정 내역은 차량 상세에서 변경해주세요.');return;}
  if(type==='edit'){psEditingId=id;refreshPrestockDisplay();prestockVisibleEdit()?.focus();prestockVisibleEdit()?.select();return}
@@ -3858,14 +3878,14 @@ function choosePrestockAction(type){
 function cancelPrestockEdit(){psEditingId=null;refreshPrestockDisplay()}
 function prestockEditKey(event,id){if(event.key==='Enter'){event.preventDefault();confirmPrestockEdit(id)}else if(event.key==='Escape'){event.stopPropagation();cancelPrestockEdit()}}
 function confirmPrestockEdit(id){
- if(!isAccountant()||psEditingId!==id)return;
+ if(!isFinanceManager()||psEditingId!==id)return;
  const raw=(prestockVisibleEdit()?.value||'').replaceAll(',','').trim();
  const amount=prestockParseWon(raw);if(!Number.isFinite(amount)){toast('원 단위 정수로 금액을 입력해주세요.');prestockVisibleEdit()?.focus();return}
 if(!Number.isSafeInteger(amount)||amount<0){toast('금액을 확인해주세요.');return}
  openPrestockConfirmation('edit',id,amount);
 }
 function openPrestockConfirmation(type,id,amount){
- if(!isAccountant())return;
+ if(!isFinanceManager())return;
  const row=prestockAllRows().find(r=>r.id===id);if(!row)return;
  psPendingAction={type,id,amount};
  const titles={repay:'선재고 상환 하시겠습니까?',edit:'수정 하시겠습니까?',delete:'삭제 하시겠습니까?'};
@@ -3878,7 +3898,7 @@ function openPrestockConfirmation(type,id,amount){
 }
 function closePrestockConfirmation(){psPendingAction=null;$('ps-confirm-overlay')?.classList.remove('open');$('ps-confirm-overlay')?.setAttribute('aria-hidden','true')}
 function applyPrestockAction(){
- if(!psPendingAction||!isAccountant())return;
+ if(!psPendingAction||!isFinanceManager())return;
  const {type,id,amount}=psPendingAction;
  const rows=prestockAllRows(),index=rows.findIndex(r=>r.id===id);if(index<0){closePrestockConfirmation();toast('내역을 찾지 못했습니다.');return}
  if(type==='repay'){if(rows[index].repaid){closePrestockConfirmation();return}rows[index]={...rows[index],repaid:true,repaidAt:todayLocal()}}
@@ -3909,7 +3929,7 @@ function refreshPrestockDisplay(options={}){
  if(mobile)mobile.scrollTop=mobileTop;
 }
 function addPrestockEntry(event){
- event.preventDefault();if(!isAccountant())return;
+ event.preventDefault();if(!isFinanceManager()){toast('선재고 등록 권한이 없습니다.');return;}
  const date=$('ps-date')?.value||'',model=$('ps-model')?.value.trim()||'',plate=$('ps-plate')?.value.trim()||'',dealer=$('ps-dealer')?.value.trim()||'',raw=$('ps-amount')?.value.replaceAll(',','').trim()||'';
  if(!isValidPrestockDate(date)){toast('올바른 일자를 입력해주세요.');$('ps-date')?.focus();return}
  if(!model){toast('차명 또는 내용을 입력해주세요.');$('ps-model')?.focus();return}
@@ -3918,8 +3938,12 @@ function addPrestockEntry(event){
  const current=prestockAllRows();if(current.length>=2200){toast('저장 한도에 도달했습니다.');return}
  const entry={id:'ps-'+Date.now()+'-'+Math.random().toString(36).slice(2,10),date,model,plate,dealer,amount,repaid:false};
  if(!savePrestockRows([...current,entry]))return;
- refreshPrestockDisplay();refreshLinkedPrestockViews();$('ps-model').value='';$('ps-plate').value='';$('ps-dealer').value='';$('ps-amount').value='';$('ps-date').value=todayLocal();
- const scroll=$('ps-scroll');if(scroll)scroll.scrollTop=scroll.scrollHeight;if($('ps-mobile-list'))$('ps-mobile-list').scrollTop=$('ps-mobile-list').scrollHeight;
+ refreshPrestockDisplay();
+ // 과거 날짜로 입력한 내역도 목록에서 즉시 보이도록 펼쳐 해당 행으로 이동합니다.
+ if(!$('ps-tbody')?.querySelector('[data-prestock-row="'+entry.id+'"]')){psExpanded=true;refreshPrestockDisplay();}
+ refreshLinkedPrestockViews();$('ps-model').value='';$('ps-plate').value='';$('ps-dealer').value='';$('ps-amount').value='';$('ps-date').value=todayLocal();
+ const inserted=window.matchMedia('(max-width:760px)').matches?$('ps-mobile-list')?.querySelector('[data-prestock-row="'+entry.id+'"]'):$('ps-tbody')?.querySelector('[data-prestock-row="'+entry.id+'"]');
+ if(inserted){inserted.classList.add('snote197-added-row');inserted.scrollIntoView({behavior:'smooth',block:'nearest'});}
  toast('선재고 내역을 추가했습니다.');$('ps-model').focus();
 }
 // 외부 클릭 / 스크롤 시 열린 지급액 메뉴만 닫기
@@ -4026,7 +4050,7 @@ function buildInventoryFinance(){
  const lenderFilter=$('inventory-lender-filter')?.value||'all',keyword=$('inventory-finance-search')?.value||'';
  const companyCards=limits.map(([l,max])=>{
   const used=stat.used(l),remain=max-used,percent=max>0?used/max*100:used>0?100:0;
-  return `<article class="zc182-lender ${remain<0?'over':''}"><div class="zc182-lender-h"><strong>${esc(l)}</strong><small>${stat.count(l)}대 사용</small></div>
+  return `<article class="zc182-lender ${remain<0?'over':''}" data-lender="${esc(l)}"><div class="zc182-lender-h"><strong>${esc(l)}</strong><small>${stat.count(l)}대 사용</small></div>
   <div class="zc182-lender-numbers"><div><span>총한도</span><b>${num(max)}<small>만</small></b></div><div class="used"><span>사용금액</span><b>${num(used)}<small>만</small></b></div><div class="remain"><span>남은금액</span><b>${num(remain)}<small>만</small></b></div></div>
   <div class="zc182-meter" role="img" aria-label="${esc(l)} 한도 중 사용 ${percent.toFixed(1)}%"><span style="width:${Math.max(0,Math.min(100,percent))}%"></span></div>
   <div class="zc182-lender-foot"><span>사용률 <strong>${max>0?percent.toFixed(1):used>0?'한도 미설정':'0.0'}${max>0||used===0?'%':''}</strong></span><span>${remain<0?'한도 초과':'남은 한도'}</span></div></article>`;
@@ -4034,7 +4058,7 @@ function buildInventoryFinance(){
  const view=`<div class="fin-top"><div class="zc182-fin-head"><div><h3>재고금융 관리</h3><p>금융사별 총한도·사용금액·잔여한도를 한눈에 비교합니다. (단위: 만원)</p></div><button type="button" class="btn-primary" onclick="zc182OpenFinance()">＋ 신규 재고금융 등록</button></div>
  <div class="fin-total"><div class="fin-kpi"><span class="label">전체 한도</span><strong>${num(limitTotal)}<small>만원</small></strong></div><div class="fin-kpi"><span class="label">현재 사용</span><strong>${num(loanTotal)}<small>만원</small></strong></div><div class="fin-kpi"><span class="label">남은 금액</span><strong style="color:${remainTotal<0?'#c33c51':'#218e72'}">${num(remainTotal)}<small>만원</small></strong></div></div></div>
  <div class="fin-lender-grid">${companyCards}</div>
- <div class="fin-filters"><label class="search"><span class="search-icon"></span><input id="inventory-finance-search" aria-label="재고금융 차량 검색" type="search" placeholder="차명 · 차량번호 · 담당딜러 검색" value="${esc(keyword)}" oninput="renderInventoryFinanceRows()"/></label><select class="filter" id="inventory-lender-filter" aria-label="재고금융사 필터" onchange="renderInventoryFinanceRows()"><option value="all">전체 금융사</option>${INVENTORY_LENDERS.map(l=>`<option value="${esc(l)}" ${lenderFilter===l?'selected':''}>${esc(l)}</option>`).join('')}<option value="cash" ${lenderFilter==='cash'?'selected':''}>현금차량</option><option value="none" ${lenderFilter==='none'?'selected':''}>미지정</option></select></div>
+ <div class="fin-filters"><label class="search"><span class="search-icon"></span><input id="inventory-finance-search" aria-label="재고금융 차량 검색" type="search" placeholder="차명 · 차량번호 · 담당딜러 검색" value="${esc(keyword)}" oninput="renderInventoryFinanceRows()"/></label><select class="filter" id="inventory-lender-filter" aria-label="재고금융사 필터" onchange="renderInventoryFinanceRows()"><option value="all">전체 금융사</option>${INVENTORY_LENDERS.map(l=>`<option value="${esc(l)}" ${lenderFilter===l?'selected':''}>${esc(l)}</option>`).join('')}</select></div>
  <div class="tablewrap fin-table"><table><thead><tr><th>매입일자</th><th>차명</th><th>차량번호</th><th>차량연식</th><th>주행거리</th><th>매입가격</th><th>재고대출금액</th><th>재고금융사</th><th>담당 딜러</th><th>관리</th></tr></thead><tbody id="inventory-finance-tbody"></tbody></table></div><div id="inventory-finance-mobile" class="fin-mobile-list"></div>
  <p class="fin-note">※ 금융정보와 선재고 내역은 각각 별도 장부에 저장됩니다. 차량번호가 일치하는 경우 해당 차량의 대출금·금융사만 수정하며, 일치하지 않는 등록 건은 재고금융 장부에만 표시합니다. 판매완료 차량은 현재 사용액에서 제외됩니다. 금융사 한도는 관리자 설정에서 변경할 수 있습니다.</p>`;
  $('alt-title').style.display='none';$('alt-copy').style.display='none';$('alt-content').innerHTML=view;renderInventoryFinanceRows();
@@ -4042,13 +4066,13 @@ function buildInventoryFinance(){
 function renderInventoryFinanceRows(){
  const body=$('inventory-finance-tbody'),mobile=$('inventory-finance-mobile');if(!body||!mobile)return;
  const lender=$('inventory-lender-filter')?.value||'all',keyword=($('inventory-finance-search')?.value||'').trim().toLowerCase();
- const filtered=financeCarRows().filter(c=>(lender==='all'||(lender==='none'?(inventoryLoanOf(c)>0&&!INVENTORY_LENDERS.includes(c.inventoryLender)):lender==='cash'?inventoryLoanOf(c)<=0:(inventoryLoanOf(c)>0&&c.inventoryLender===lender)))&&(!keyword||[c.model,c.plate,dealerLabel(c)].join(' ').toLowerCase().includes(keyword)));
- const ledger=zc182ActiveStandalone().filter(r=>(lender==='all'||(lender==='none'?(r.loan>0&&!INVENTORY_LENDERS.includes(r.lender)):lender==='cash'?r.loan<=0:(r.loan>0&&r.lender===lender)))&&(!keyword||[r.model,r.plate,dealerLabel({ownerId:r.dealerId})].join(' ').toLowerCase().includes(keyword)));
+ const filtered=financeCarRows().filter(c=>inventoryLoanOf(c)>0&&INVENTORY_LENDERS.includes(c.inventoryLender)&&(lender==='all'||(lender==='none'?(inventoryLoanOf(c)>0&&!INVENTORY_LENDERS.includes(c.inventoryLender)):lender==='cash'?inventoryLoanOf(c)<=0:(inventoryLoanOf(c)>0&&c.inventoryLender===lender)))&&(!keyword||[c.model,c.plate,dealerLabel(c)].join(' ').toLowerCase().includes(keyword)));
+ const ledger=zc182ActiveStandalone().filter(r=>r.loan>0&&INVENTORY_LENDERS.includes(r.lender)&&(lender==='all'||(lender==='none'?(r.loan>0&&!INVENTORY_LENDERS.includes(r.lender)):lender==='cash'?r.loan<=0:(r.loan>0&&r.lender===lender)))&&(!keyword||[r.model,r.plate,dealerLabel({ownerId:r.dealerId})].join(' ').toLowerCase().includes(keyword)));
  if(!filtered.length&&!ledger.length){body.innerHTML='<tr><td colspan="10" class="fin-empty">조건에 맞는 재고금융 차량이 없습니다.</td></tr>';mobile.innerHTML='<div class="fin-empty">조건에 맞는 재고금융 차량이 없습니다.</div>';return}
  body.innerHTML=filtered.map(c=>`<tr><td>${esc(c.purchaseAt||'-')}</td><td class="fin-model">${esc(c.model)}</td><td>${esc(c.plate)}</td><td>${esc(c.year?c.year+'년':'-')}</td><td>${esc(c.km?formatKm(c.km)+' km':'-')}</td><td class="fin-buy">${num(c.buy)}만원</td><td class="fin-loan">${num(inventoryLoanOf(c))}만원</td><td>${lenderBadge(c)}</td><td class="fin-owner">${esc(dealerLabel(c))}</td><td><button type="button" class="btn-ghost fin-open" onclick="openVehicle('${c.id}')">상세</button></td></tr>`).join('')+
- ledger.map(r=>`<tr><td>-</td><td class="fin-model">${esc(r.model)} <span class="zc182-standalone">별도등록</span></td><td>${esc(r.plate)}</td><td>-</td><td>-</td><td>-</td><td class="fin-loan">${num(r.loan)}만원</td><td><span class="zc-finance-label">${esc(r.lender||'미지정')}</span></td><td>${esc(dealerLabel({ownerId:r.dealerId}))}</td><td><span class="zc182-standalone">매입 미매칭</span></td></tr>`).join('');
+ ledger.map(r=>`<tr><td>-</td><td class="fin-model">${esc(r.model)} <span class="zc182-standalone">별도등록</span></td><td>${esc(r.plate)}</td><td>-</td><td>-</td><td>-</td><td class="fin-loan">${num(r.loan)}만원</td><td><span class="zc-finance-label" data-lender="${esc(r.lender||'')}">${esc(r.lender||'미지정')}</span></td><td>${esc(dealerLabel({ownerId:r.dealerId}))}</td><td><span class="zc182-standalone">매입 미매칭</span></td></tr>`).join('');
  mobile.innerHTML=filtered.map(c=>`<article class="fin-mobile-card"><div class="fin-mobile-head"><strong>${esc(c.model)}</strong><span>${num(inventoryLoanOf(c))}만원</span></div><p>${esc(c.plate)} · ${esc(c.year?c.year+'년식':'연식 미입력')} · ${esc(c.km?formatKm(c.km)+' km':'주행거리 미입력')}</p><p>매입일자 ${esc(c.purchaseAt||'-')} · 담당 ${esc(dealerLabel(c))}</p><p>매입가격 <strong class="fin-buy-text">${num(c.buy)}만원</strong> · 재고대출금 <strong class="fin-loan-text">${num(inventoryLoanOf(c))}만원</strong></p><div class="fin-mobile-actions">${lenderBadge(c)}<button class="btn-ghost" type="button" onclick="openVehicle('${c.id}')">차량 상세</button></div></article>`).join('')+
- ledger.map(r=>`<article class="fin-mobile-card"><div class="fin-mobile-head"><strong>${esc(r.model)}</strong><span>${num(r.loan)}만원</span></div><p>${esc(r.plate)} · 담당 ${esc(dealerLabel({ownerId:r.dealerId}))}</p><div class="fin-mobile-actions"><span class="zc182-standalone">매입 미매칭 · 별도 장부</span><span>${esc(r.lender)}</span></div></article>`).join('');
+ ledger.map(r=>`<article class="fin-mobile-card"><div class="fin-mobile-head"><strong>${esc(r.model)}</strong><span>${num(r.loan)}만원</span></div><p>${esc(r.plate)} · 담당 ${esc(dealerLabel({ownerId:r.dealerId}))}</p><div class="fin-mobile-actions"><span class="zc182-standalone">매입 미매칭 · 별도 장부</span><span class="zc-finance-label" data-lender="${esc(r.lender||'')}">${esc(r.lender)}</span></div></article>`).join('');
 }
 function buildAccountantPurchaseSummary(){
  const rows=cars.filter(c=>accountantFilter()==='all'||c.ownerId===accountantFilter());
@@ -4301,7 +4325,14 @@ function snote92HighResRegions(anchors,lowW,lowH,highW,highH){
   const height=Math.min(highH-top,Math.round(h*2.1*ratioY));
   if(width>=100&&height>=20)out.push({left,top,width,height,kind:'full-row',confidence:70});
  }
- return out.filter(r=>r.width>70&&r.height>15).slice(0,6);
+ for(const anchor of anchors.slice(0,3)){
+    const b=anchor.bbox,h=Math.max(18,b.y1-b.y0);
+    const left=Math.round(Math.max(0,b.x1+h*.12)*ratioX),top=Math.round(Math.max(0,b.y0-h*.55)*ratioY);
+    const width=Math.min(highW-left,Math.round((lowW-b.x1-h*.12)*ratioX));
+    const height=Math.min(highH-top,Math.round(h*2.4*ratioY));
+    if(width>100&&height>20)out.unshift({left,top,width,height,kind:'right',confidence:anchor.confidence+12});
+  }
+  return out.filter(r=>r.width>70&&r.height>15).slice(0,10);
 }
 async function snote92ReadHighResVIN(worker,lib,file,overviewCanvas,rows,store,active){
  const anchors=snote92VinAnchors(rows,overviewCanvas.width,overviewCanvas.height);
@@ -4315,15 +4346,15 @@ async function snote92ReadHighResVIN(worker,lib,file,overviewCanvas,rows,store,a
  await worker.reinitialize('eng');
  const psm=lib.PSM||{};
  let found=0,agreement=new Map();
- for(let i=0;i<Math.min(regions.length,4);i++){
+ for(let i=0;i<Math.min(regions.length,6);i++){
   if(!active())return found;
   const roi=regions[i];
-  for(const variant of ['normal','binary','contrast']){
+  for(const variant of ['normal','binary','contrast','adaptive']){
    if(!active())return found;
    // When a VIN spans multiple OCR lines use SPARSE_TEXT for the full-row crop.
    const mode=roi.kind==='full-row'?(psm.SPARSE_TEXT||'11'):(psm.SINGLE_LINE||'7');
    await worker.setParameters({tessedit_pageseg_mode:mode,tessedit_char_whitelist:'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 -'});
-   const crop=vinCropCanvas(sharp,roi,variant);
+   const crop=variant==='adaptive'?snote196AdaptiveCrop(sharp,roi):vinCropCanvas(sharp,roi,variant);
    const output=await worker.recognize(crop);
    if(!active())return found;
    const candidates=vinCandidates(output?.data?.text||'',true);
@@ -4341,6 +4372,56 @@ async function snote92ReadHighResVIN(worker,lib,file,overviewCanvas,rows,store,a
  }
  return found;
 }
+
+/* S-NOTE v1.96: OCR full-page label search + local high-resolution enhancement.
+   Never auto-save uncertain VIN; review the registration photo manually. */
+async function snote196LocateVinRows(worker,lib,overview,originalRows,active){
+  const combined=[...originalRows];
+  const hasStrong=snote92VinAnchors(originalRows,overview.width,overview.height).some(x=>x.confidence>=90);
+  if(hasStrong)return combined;
+  for(const variant of ['contrast','binary']){
+    if(!active())break;
+    const adjusted=vinCropCanvas(overview,{left:0,top:0,width:overview.width,height:overview.height},variant);
+    await worker.setParameters({tessedit_pageseg_mode:lib.PSM?.SPARSE_TEXT||'11',tessedit_char_whitelist:''});
+    const response=await worker.recognize(adjusted,{}, {text:true,tsv:true,blocks:true});
+    if(!active())break;
+    const rx=overview.width/adjusted.width,ry=overview.height/adjusted.height;
+    const scale=b=>({x0:b.x0*rx,y0:b.y0*ry,x1:b.x1*rx,y1:b.y1*ry});
+    const rows=vinGetLines(response?.data||{}).map(r=>({...r,bbox:scale(r.bbox),words:(r.words||[]).map(w=>({...w,bbox:scale(w.bbox)}))}));
+    combined.push(...rows);
+    if(snote92VinAnchors(combined,overview.width,overview.height).some(a=>a.confidence>=90))break;
+  }
+  return combined;
+}
+function snote196AdaptiveCrop(source,roi){
+  const canvas=vinCropCanvas(source,roi,'normal');
+  const ctx=canvas.getContext('2d',{willReadFrequently:true});
+  const w=canvas.width,h=canvas.height;
+  if(w*h>2300000)return vinCropCanvas(source,roi,'contrast');
+  const image=ctx.getImageData(0,0,w,h),pixels=image.data;
+  const grey=new Uint8Array(w*h),integral=new Float64Array((w+1)*(h+1));
+  for(let y=0;y<h;y++){
+    let rowSum=0;
+    for(let x=0;x<w;x++){
+      const p=(y*w+x)*4,g=Math.round(.299*pixels[p]+.587*pixels[p+1]+.114*pixels[p+2]);
+      grey[y*w+x]=g;rowSum+=g;
+      integral[(y+1)*(w+1)+(x+1)]=integral[y*(w+1)+(x+1)]+rowSum;
+    }
+  }
+  const radius=Math.max(7,Math.min(22,Math.round(h/22))),stride=w+1;
+  for(let y=0;y<h;y++){
+    const y0=Math.max(0,y-radius),y1=Math.min(h,y+radius+1);
+    for(let x=0;x<w;x++){
+      const x0=Math.max(0,x-radius),x1=Math.min(w,x+radius+1);
+      const area=(x1-x0)*(y1-y0);
+      const mean=(integral[y1*stride+x1]-integral[y1*stride+x0]-integral[y0*stride+x1]+integral[y0*stride+x0])/area;
+      const ink=grey[y*w+x]<mean-10,idx=(y*w+x)*4;
+      pixels[idx]=pixels[idx+1]=pixels[idx+2]=ink?0:255;
+    }
+  }
+  ctx.putImageData(image,0,0);return canvas;
+}
+
 async function zc77RunAutoRegistrationOCR(file){const job=++zc77OcrSerial,username=currentUser?.username;
  const active=()=>job===zc77OcrSerial&&zcAutoRegFile===file&&$('zc-auto-reg-overlay')?.hidden===false&&username===currentUser?.username;
  zc77Busy=true;zc77Progress(2,'OCR 엔진 준비');$('zc-auto-reg-next').disabled=true;
@@ -4363,7 +4444,9 @@ async function zc77RunAutoRegistrationOCR(file){const job=++zc77OcrSerial,userna
    zc77ReadGroup(results,retry.data,.85);zc77ApplyCandidates(results);
   }
   zc77Progress(72,'차대번호 칸 고해상도 확대 재인식');
-  await snote92ReadHighResVIN(worker,tesseract,file,canvas,rows,results,active);
+  const vinRows=await snote196LocateVinRows(worker,tesseract,canvas,rows,active);
+   if(!active())return;
+   await snote92ReadHighResVIN(worker,tesseract,file,canvas,vinRows,results,active);
   if(!active())return;
   zc77Progress(94,'차량번호·차명·연식·차대번호 결과 확인');
   if(!active())return;
@@ -5203,7 +5286,7 @@ async function zc80EncryptAccountRrn(password,account,digits){
 }
 async function zc80EncryptRrn(raw){
  const digits=zc72Digits(raw);
- if(!/^\d{13}$/.test(digits))return null;
+ if(!/^(?:\d{10}|\d{13})$/.test(digits))return null;
  if(!await zc80RequireKey())throw new Error('주민번호 보관을 취소했습니다.');
  const iv=crypto.getRandomValues(new Uint8Array(12));
  const cipher=await crypto.subtle.encrypt({name:'AES-GCM',iv},zc80SensitiveKey,new TextEncoder().encode(digits));
@@ -5216,7 +5299,7 @@ async function zc80DecryptRrn(record){
  catch(e){throw new Error('주민번호 복호화에 실패했습니다. 계정 비밀번호 또는 저장된 자료를 확인해 주세요.');}
 }
 async function zc80SaveRrnField(ownerId,carId,raw){
- const digits=zc72Digits(raw);if(!/^\d{13}$/.test(digits))return false;
+ const digits=zc72Digits(raw);if(!/^(?:\d{10}|\d{13})$/.test(digits))return false;
  if(currentUser?.username!==ownerId)return false;
  const cipher=await zc80EncryptRrn(digits);
  const record=await zc72ReadCar(ownerId,carId);
@@ -5228,7 +5311,7 @@ let zc80ContractRrnSave=null;
 async function zc80StoreContractRrn(){
  if(!contractCarId||!currentUser||!$('contract-overlay').classList.contains('open'))return;
  const value=$('ct-buyer-id').value;
- if(!/^\d{13}$/.test(zc72Digits(value)))return;
+ if(!/^(?:\d{10}|\d{13})$/.test(zc72Digits(value)))return;
  try{await zc80SaveRrnField(currentUser.username,contractCarId,value)}
  catch(e){toast(e.message||'주민번호 암호화 저장에 실패했습니다.');}
 }
@@ -5239,7 +5322,7 @@ document.getElementById('ct-buyer-id').addEventListener('input',()=>{
 });
 let zc80ReceiptCarId=null;
 window.addEventListener('DOMContentLoaded',()=>document.getElementById('zc76-rrn')?.addEventListener('change',async function(){
- if(!zc80ReceiptCarId||!currentUser||!/^\d{13}$/.test(zc72Digits(this.value)))return;
+ if(!zc80ReceiptCarId||!currentUser||!/^(?:\d{10}|\d{13})$/.test(zc72Digits(this.value)))return;
  try{await zc80SaveRrnField(currentUser.username,zc80ReceiptCarId,this.value);toast('고객 주민번호를 암호화해 저장했습니다.');}
  catch(e){toast(e.message||'주민번호 저장 실패')}
 }));
@@ -5273,11 +5356,11 @@ window.addEventListener('message', function(e){
 <!-- v1.72 판매 진행 · 고객 정보 -->
 <div class="zc72-overlay" id="zc72-sale-modal" hidden role="presentation">
  <section class="zc72-dialog" role="dialog" aria-modal="true" aria-labelledby="zc72-title">
-  <header class="zc72-head"><div><small>SALES · CUSTOMER DETAILS</small><h2 id="zc72-title">판매 진행</h2><p id="zc72-car-title">미입력 항목은 빨간색으로 안내되며 다음 화면으로 이동할 수 있습니다.</p></div><button class="zc72-close" onclick="closeSaleProgress()" type="button" aria-label="판매 진행 닫기">×</button></header>
+  <header class="zc72-head"><div><small>SALES · CUSTOMER DETAILS</small><div class="snote196-sale-heading"><h2 id="zc72-title">판매 진행</h2><button type="button" id="snote196-reset-btn" onclick="snote196ResetSaleForm()" title="현재 입력칸을 모두 비웁니다">↺ 입력 초기화</button></div><p id="zc72-car-title">미입력 항목은 빨간색으로 안내되며 다음 화면으로 이동할 수 있습니다.</p></div><button class="zc72-close" onclick="closeSaleProgress()" type="button" aria-label="판매 진행 닫기">×</button></header>
   <form id="zc72-sale-form" class="zc72-form" novalidate onsubmit="saleProgressContract(event)">
     <div class="zc72-grid">
-     <label class="zc72-field"><span class="zc73-field-label">성함 <span class="zc73-required" aria-label="미입력 안내">(*)</span></span><input id="zc72-name" name="name" type="text" maxlength="50" autocomplete="off" placeholder="고객 성함"></label>
-     <label class="zc72-field"><span class="zc73-field-label">주민번호 <span class="zc73-required" aria-label="미입력 안내">(*)</span></span><input id="zc72-rrn" name="resident" type="text" inputmode="numeric" maxlength="14" autocomplete="off" spellcheck="false" placeholder="000000-0000000"></label>
+     <label class="zc72-field"><span class="zc73-field-label">성함(명칭) <span class="zc73-required" aria-label="미입력 안내">(*)</span></span><input id="zc72-name" name="name" type="text" maxlength="50" autocomplete="off" placeholder="고객 성함"></label>
+     <label class="zc72-field"><span class="zc73-field-label">주민번호(사업자)번호 <span class="zc73-required" aria-label="미입력 안내">(*)</span></span><input id="zc72-rrn" name="resident" type="text" inputmode="numeric" maxlength="14" autocomplete="off" spellcheck="false" placeholder="000000-0000000 또는 000-00-00000"></label>
      <div class="zc72-field full"><label class="zc73-field-label" for="zc72-address">등본상 주소 <span class="zc73-required" aria-label="미입력 안내">(*)</span></label><div class="zc73-address-line"><textarea id="zc72-address" name="address" maxlength="220" placeholder="주소 검색으로 선택하거나 직접 입력하세요"></textarea><button type="button" onclick="zc73OpenPostcode('zc72-address')">주소 검색</button></div><input id="zc73-address-detail" class="zc73-detail" type="text" maxlength="100" autocomplete="off" placeholder="상세주소 (동·호수 등 직접 입력)"><small class="zc73-address-note">검색된 도로명주소가 등본상 주소와 일치하는지 확인해 주세요.</small><small id="zc79-address-status" class="zc79-address-status" aria-live="polite">주소 검색 버튼을 눌러 선택하면 이 칸에 자동 입력됩니다.</small></div>
      <label class="zc72-field"><span class="zc73-field-label">전화번호 <span class="zc73-required" aria-label="미입력 안내">(*)</span></span><input id="zc72-phone" name="phone" type="tel" inputmode="tel" maxlength="20" autocomplete="off" placeholder="010-0000-0000"></label>
      <div class="zc72-field full"><div class="zc74-title-row"><label class="zc73-field-label" for="zc72-mailing">등기받을 주소 (선택)</label><label class="zc74-same-wrap" for="zc74-same-address"><input id="zc74-same-address" type="checkbox" autocomplete="off"> 위 주소와 동일</label></div><div class="zc73-address-line"><textarea id="zc72-mailing" name="mailing" maxlength="220" placeholder="주소 검색으로 선택하거나 직접 입력하세요"></textarea><button id="zc74-mailing-search" type="button" onclick="zc73OpenPostcode('zc72-mailing')">주소 검색</button></div><input id="zc73-mailing-detail" class="zc73-detail" type="text" maxlength="100" autocomplete="off" placeholder="상세주소 (동·호수 등 직접 입력)"><small class="zc73-address-note">검색 후 상세주소까지 확인해 주세요.</small></div>
@@ -5319,7 +5402,7 @@ function zc72Delete(ownerId,carId){return zc72OpenDb().then(db=>new Promise((res
  tx.oncomplete=()=>resolve();tx.onabort=()=>reject(tx.error);tx.onerror=()=>reject(tx.error);
 }));}
 function zc72Digits(v){return String(v||'').replace(/\D/g,'')}
-function zc72RrnDisplay(digits){if(digits.length<=6)return digits;return digits.slice(0,6)+'-'+digits.slice(6,13)}
+function zc72RrnDisplay(value){const d=zc72Digits(value).slice(0,13);if(d.length<=10){if(d.length<=3)return d;if(d.length<=5)return d.slice(0,3)+'-'+d.slice(3);return d.slice(0,3)+'-'+d.slice(3,5)+'-'+d.slice(5);}return d.slice(0,6)+'-'+d.slice(6,13)}
 const zc72RRN=document.getElementById('zc72-rrn');
 zc72RRN.addEventListener('input',function(){const d=zc72Digits(this.value).slice(0,13);this.value=zc72RrnDisplay(d)});
 function zc72PhoneFormat(input){let d=zc72Digits(input).slice(0,11);if(d.length<=3)return d;if(d.length<=7)return d.slice(0,3)+'-'+d.slice(3);return d.slice(0,3)+'-'+d.slice(3,-4)+'-'+d.slice(-4)}
@@ -5332,6 +5415,7 @@ function zc74ValidField(id){
  if(id==='zc72-name')return value.length>=2 && value.length<=50 && /[^\d\s]/u.test(value);
  if(id==='zc72-rrn'){
   const d=zc72Digits(value);
+  if(/^\d{10}$/.test(d))return true; // 사업자등록번호: 10자리 형식 확인
   if(!/^\d{13}$/.test(d)||!/[1-8]/.test(d[6]))return false;
   const century=({'1':1900,'2':1900,'3':2000,'4':2000,'5':1900,'6':1900,'7':2000,'8':2000})[d[6]];
   const y=century+Number(d.slice(0,2)),m=Number(d.slice(2,4)),day=Number(d.slice(4,6));
@@ -5353,8 +5437,8 @@ function zc74ValidateAll(focusOnInvalid=false){
  let first=null;
  ZC74_FIELDS.forEach(id=>{if(!zc74RenderValidity(id)&&!first)first=$(id)});
  if(focusOnInvalid&&first){first.focus();$('zc72-error').textContent=({
-  'zc72-name':'성함을 두 글자 이상 올바르게 입력해 주세요.',
-  'zc72-rrn':'주민번호 13자리와 생년월일을 확인해 주세요.',
+  'zc72-name':'성함(명칭)을 두 글자 이상 입력해 주세요.',
+  'zc72-rrn':'주민번호 13자리 또는 사업자번호 10자리를 확인해 주세요.',
   'zc72-address':'등본상 주소를 입력하고 주소 길이를 확인해 주세요.',
   'zc72-phone':'전화번호를 올바르게 입력해 주세요.'
  })[first.id];}
@@ -5397,6 +5481,18 @@ for(const id of ZC74_FIELDS){$(id).addEventListener('input',()=>zc74RenderValidi
 for(const id of ['zc74-refund-bank','zc74-refund-account','zc74-refund-holder'])$(id).addEventListener('input',()=>zc74RenderAccountValidity(false));
 $('zc74-refund-bank').addEventListener('change',()=>zc74RenderAccountValidity(false));
 $('zc74-refund-account').addEventListener('input',e=>{const input=e.target;const raw=input.value.replace(/[^\d-]/g,'');if(input.value!==raw)input.value=raw;});
+function snote196ResetSaleForm(){
+  if(zc72SaleLoading){toast('계약서 저장 중에는 입력값을 초기화할 수 없습니다.');return;}
+  const form=$('zc72-sale-form');if(!form)return;
+  form.dataset.snote196ManualReset='1';form.reset();
+  form.querySelectorAll('input,textarea,select').forEach(el=>{if(el.type==='checkbox'||el.type==='radio'){el.checked=false;}else if(el.tagName==='SELECT'){el.selectedIndex=0;}else{el.value='';}el.classList.remove('zc74-invalid');el.removeAttribute('aria-invalid');});
+  zc74ResetSaleForm();
+  form.querySelectorAll('.zc74-invalid').forEach(el=>el.classList.remove('zc74-invalid'));
+  form.querySelectorAll('[aria-invalid]').forEach(el=>el.removeAttribute('aria-invalid'));
+  $('zc72-error').textContent='';
+  const status=$('zc79-address-status');if(status)status.textContent='주소를 입력하거나 검색하세요.';
+  $('zc72-name').focus();toast('입력칸을 모두 초기화했습니다. 기존에 저장한 고객 기록은 그대로 유지됩니다.');
+}
 function zc74ResetSaleForm(){
  $('zc74-same-address').checked=false;zc74ToggleSameAddress();
  $('zc73-address-detail').value='';$('zc73-mailing-detail').value='';
@@ -5423,13 +5519,13 @@ async function openSaleProgress(){
  if(!currentUser||isAccountant()||!activeCarId){toast('딜러 차량 상세에서만 이용할 수 있습니다.');return;}
  const c=cars.find(x=>x.id===activeCarId&&canManageCar(x));if(!c)return;
  zc72SaleCarId=c.id;
- const form=$('zc72-sale-form');form.reset();zc74ResetSaleForm();$('zc72-car-title').textContent=c.model+' · '+(c.plate||'차량번호 미지정');
+ const form=$('zc72-sale-form');delete form.dataset.snote196ManualReset;form.reset();zc74ResetSaleForm();$('zc72-car-title').textContent=c.model+' · '+(c.plate||'차량번호 미지정');
  $('zc72-sale-modal').hidden=false;$('zc72-name').focus();
  const thisCar=c.id,thisUser=currentUser.username;
  try{
   const previous=await zc72ReadCar(thisUser,thisCar);
   if(zc72SaleCarId!==thisCar||currentUser?.username!==thisUser||$('zc72-sale-modal').hidden)return;
-  if(previous){zc74LoadCustomer(previous);if(previous.rrnCipher){try{$('zc72-rrn').value=await zc80DecryptRrn(previous);zc74RenderValidity('zc72-rrn')}catch(e){$('zc72-error').textContent=e.message;}}}
+  if(previous&&!$('zc72-sale-form').dataset.snote196ManualReset){zc74LoadCustomer(previous);if(previous.rrnCipher){try{$('zc72-rrn').value=await zc80DecryptRrn(previous);zc74RenderValidity('zc72-rrn')}catch(e){$('zc72-error').textContent=e.message;}}}
  }catch(e){$('zc72-error').textContent='기존 고객 정보를 불러오지 못했습니다. 저장소 설정을 확인해 주세요.'}
 }
 function closeSaleProgress(){
@@ -5454,7 +5550,7 @@ async function saleProgressContract(event,documentType='contract'){
  try{
   const prev=await zc72ReadCar(ownerId,carId);
   // 주민번호는 비밀번호 기반 AES-256-GCM으로 암호화한 뒤 고객별로 저장합니다.
-  const rrnCipher=/^\d{13}$/.test(rrn)&&zc74ValidField('zc72-rrn')?await zc80EncryptRrn(rrn):null;
+  const rrnCipher=/^(?:\d{10}|\d{13})$/.test(rrn)&&zc74ValidField('zc72-rrn')?await zc80EncryptRrn(rrn):null;
   const record={id:ownerId+':'+carId,ownerId,carId,name,phone,address,mailing,refund,refundBank:refundData.bank,refundAccount:refundData.account,refundHolder:refundData.holder,addressBase:$('zc72-address').value.trim(),addressDetail:$('zc73-address-detail').value.trim(),mailingBase:$('zc72-mailing').value.trim(),mailingDetail:$('zc73-mailing-detail').value.trim(),sameAddress:$('zc74-same-address').checked,carModel:car.model||'',plate:car.plate||'',contractData:prev?.contractData||null,contractSavedAt:prev?.contractSavedAt||null,rrnCipher,residentConfirmed:!!rrnCipher,createdAt:prev?.createdAt||Date.now(),updatedAt:Date.now()};
   await zc72Write(record);
   if(currentUser?.username!==ownerId||activeCarId!==carId)return;
@@ -5896,7 +5992,7 @@ document.addEventListener('click',async event=>{
 <div id="zc-cloud-gate" role="dialog" aria-modal="true" aria-labelledby="zc-cloud-title">
  <div class="zc-cloud-card">
   <button type="button" id="snote-gate-home">← S-NOTE 홈으로</button>
-  <div class="zc-brand">S-NOTE <span>v1.95</span></div>
+  <div class="zc-brand">S-NOTE <span>v1.97</span></div>
   <h2 id="zc-cloud-title">로그인</h2>
   <p class="zc-cloud-desc">S-NOTE 업무 계정으로 로그인하세요.</p>
   <div id="zc-cloud-setup">
