@@ -1734,29 +1734,67 @@ body:has(#monthly-screen[style*="block"]) #accountant-bar{display:none!important
 @media(max-width:830px){.fin-lender-grid{grid-template-columns:1fr}.zc182-lender-numbers b{font-size:16px}}
 @media(max-width:540px){.zc182-fields{grid-template-columns:1fr;padding:16px}.zc182-fields .zc182-full{grid-column:auto}.zc182-modal-head{padding:18px 16px 14px}.zc182-modal footer{padding:14px 16px 18px}.zc182-match{margin:0 16px}.zc182-fin-head h3{font-size:20px}}
 
-/* v1.85 - online pilot access gate */
-#zc-cloud-gate{position:fixed;z-index:9000;inset:0;display:flex;align-items:center;justify-content:center;overflow:auto;padding:28px;background:linear-gradient(125deg,#ebf3ff,#f7fbff 56%,#f7f9fc);font-family:'Noto Sans KR','Malgun Gothic',sans-serif}
+/* Sign-in: spacious form with a full-height photo panel. */
+#zc-cloud-gate{position:fixed;z-index:9000;inset:0;overflow:auto;overscroll-behavior:contain;padding:20px;background:#f5f3ef;font-family:'Noto Sans KR','Malgun Gothic',system-ui,sans-serif}
 #zc-cloud-gate[hidden]{display:none!important}
-#zc-cloud-gate .zc-cloud-card{width:min(525px,100%);background:#fff;border:1px solid #dfe9f4;border-radius:23px;padding:31px;box-shadow:0 18px 75px rgba(29,69,112,.13)}
-#zc-cloud-gate .zc-brand{font-size:20px;font-weight:900;letter-spacing:-.7px;color:#244768}
-#zc-cloud-gate .zc-brand span{font-size:10px;padding:5px 8px;border-radius:7px;background:#e4f4ff;color:#207ab7;margin-left:8px;vertical-align:middle}
-#zc-cloud-gate h2{margin:21px 0 6px;color:#233c57;font-size:23px;letter-spacing:-.7px}
-#zc-cloud-gate .zc-cloud-desc{margin:0 0 20px;color:#7b91a7;font-size:12px;line-height:1.8}
-#zc-cloud-gate .zc-field{display:block;margin-bottom:13px;font-size:11px;font-weight:850;color:#526d86}
-#zc-cloud-gate input{display:block;width:100%;height:44px;background:#fbfdff;border:1px solid #dce5ed;border-radius:9px;margin-top:6px;padding:0 12px;font-size:13px;color:#213e58}
-#zc-cloud-gate .zc-btn{height:44px;padding:0 14px;border:0;border-radius:10px;background:#316de0;color:#fff;font-size:12px;font-weight:850;width:100%}
+#zc-cloud-gate [hidden]{display:none!important}
+#zc-cloud-gate .snote-login-shell{display:grid;grid-template-columns:1fr 1fr;min-height:calc(100svh - 40px);width:100%;background:#fff;border-radius:26px;overflow:hidden}
+#zc-cloud-gate .snote-login-panel{display:flex;flex-direction:column;min-width:0;padding:27px clamp(28px,5.5vw,100px) 23px}
+#zc-cloud-gate .zc-cloud-card{width:min(390px,100%);max-width:none;margin:auto;background:transparent;border:0;border-radius:0;padding:48px 0;box-shadow:none}
+#zc-cloud-gate .zc-brand{display:flex;flex-direction:column;align-items:center;gap:13px;color:#172d30;font-size:19px;font-weight:800;letter-spacing:1px}
+#zc-cloud-gate .snote-login-mark{display:grid;place-items:center;width:44px;height:44px;border-radius:13px;background:#5436f5;color:#fff;font-size:28px;font-weight:800;letter-spacing:-2px;padding-right:2px}
+#zc-cloud-gate h2{margin:26px 0 12px;text-align:center;color:#173a3c;font-size:34px;font-weight:750;line-height:1.35;letter-spacing:-1.3px}
+#zc-cloud-gate .zc-cloud-desc{margin:0 0 40px;text-align:center;color:#657184;font-size:14px;line-height:1.7;word-break:keep-all}
+#zc-cloud-gate .zc-field{display:block;margin-bottom:21px;color:#657184;font-size:12px;font-weight:600}
+#zc-cloud-gate input{display:block;width:100%;min-width:0;height:51px;background:#fff;border:1px solid #dce0e8;border-radius:7px;margin-top:9px;padding:0 15px;font-size:14px;font-weight:400;color:#293241;transition:border-color .15s,box-shadow .15s}
+#zc-cloud-gate input::placeholder{color:#6c7483;font-weight:400;opacity:1}
+#zc-cloud-gate input:hover{border-color:#b8bdcc}
+#zc-cloud-gate input:focus{border-color:#765ff7;box-shadow:0 0 0 3px #5436f50d;outline:0}
+#zc-cloud-gate :is(button,input,summary):focus-visible{outline:3px solid #b6a9ff;outline-offset:3px}
+#zc-cloud-gate .snote-login-password{display:block;position:relative}
+#zc-cloud-gate .snote-login-password input{padding-right:50px}
+#zc-cloud-gate #snote-login-password-toggle{position:absolute;right:4px;top:4px;display:grid;place-items:center;width:43px;height:43px;border:0;border-radius:6px;background:transparent;color:#8590a2}
+#zc-cloud-gate #snote-login-password-toggle:hover{background:#f5f3ff;color:#5436f5}
+#zc-cloud-gate #snote-login-password-toggle svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+#zc-cloud-gate #snote-login-password-toggle[aria-pressed="false"] .snote-login-eye-slash{display:none}
+#zc-cloud-gate .snote-login-options{display:flex;align-items:center;justify-content:space-between;gap:9px;flex-wrap:wrap;margin:3px 0 30px}
+#zc-cloud-gate .snote95-remember{display:flex;align-items:center;gap:9px;margin:0;font-size:12px;font-weight:500;color:#525d6f;cursor:pointer}
+#zc-cloud-gate .snote95-remember input{appearance:auto;flex:none;width:16px;height:16px;min-height:16px;margin:0;padding:0;accent-color:#5436f5}
+#zc-cloud-gate .snote-login-shared-hint{color:#657184;font-size:10.5px}
+#zc-cloud-gate .zc-btn{display:block;width:100%;height:51px;padding:0 15px;border:0;border-radius:7px;background:#5436f5;color:#fff;font-size:14px;font-weight:650;transition:background .15s,box-shadow .15s}
+#zc-cloud-gate .zc-btn:hover:not(:disabled){background:#4324dc;box-shadow:0 4px 15px #5436f524}
 #zc-cloud-gate .zc-btn:disabled{opacity:.5;cursor:wait}
-#zc-cloud-gate .zc-link{background:none;border:0;color:#326f9b;font-size:11px;padding:12px 0;font-weight:800;text-decoration:underline}
+#zc-cloud-gate .zc-link{background:none;border:0;color:#6e5cb5;font-size:11px;padding:12px 0;font-weight:500;text-decoration:underline;text-underline-offset:3px}
+#zc-cloud-gate #zc-cloud-config-change{display:block;margin:8px auto 0;text-decoration:none;color:#657184}
+#zc-cloud-gate #snote-gate-home{display:inline-flex;align-items:center;align-self:flex-start;gap:7px;min-height:34px;padding:5px 0;border:0;background:transparent;color:#657184;font-size:11px;font-weight:500}
+#zc-cloud-gate #snote-gate-home:hover{color:#5436f5}
+#zc-cloud-gate #snote-gate-home svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+#zc-cloud-gate .snote-login-footer{margin:0;text-align:center;font-size:10px;color:#6c7483;letter-spacing:.15px}
+#zc-cloud-gate .snote-login-footer span{margin-left:10px;color:#6c7483}
+#zc-cloud-gate .snote-login-visual{position:relative;min-width:0;background:#4b2f22;isolation:isolate}
+#zc-cloud-gate .snote-login-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center}
+#zc-cloud-gate .snote-login-visual::after{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,#1c140e00 65%,#1c140e16)}
 #zc-cloud-gate .zc-sec{border-top:1px solid #ebf0f5;margin-top:18px;padding-top:17px}
-#zc-cloud-gate .zc-message{color:#c13c4a;font-size:11px;min-height:18px;margin:12px 0 0;line-height:1.6}
+#zc-cloud-gate .zc-message{color:#b23d4b;font-size:12px;margin:18px 0 0;padding:12px 14px;background:#fff5f5;border:1px solid #f7dfe2;border-radius:7px;line-height:1.7;overflow-wrap:anywhere}
+#zc-cloud-gate .zc-message:empty{height:1px;margin:0;padding:0;border:0;background:transparent}
 #zc-cloud-gate .zc-warning{background:#fffaf0;border:1px solid #f1e3c9;color:#8b652c;font-size:10.5px;line-height:1.7;border-radius:10px;padding:11px;margin-top:15px}
+#zc-cloud-gate .snote95-security{margin-top:26px;border:0;color:#657184;font-size:11px}
+#zc-cloud-gate .snote95-security>summary{width:fit-content;margin:auto;padding:7px;cursor:pointer;list-style:none;text-align:center;font-size:11px;color:#657184}
+#zc-cloud-gate .snote95-security>summary::-webkit-details-marker{display:none}
+#zc-cloud-gate .snote95-security>summary:hover{color:#5436f5}
+#zc-cloud-gate .snote95-security>summary::after{content:'+';display:inline-block;width:13px;margin-left:5px;color:#657184}
+#zc-cloud-gate .snote95-security[open]>summary::after{content:'−'}
+#zc-cloud-gate .zc-subinfo{color:#657184;font-size:10px;line-height:1.7;margin-top:12px}
+@media(min-width:1600px){#zc-cloud-gate .zc-cloud-card{width:min(430px,100%)}}
+@media(max-width:900px){#zc-cloud-gate{padding:12px}#zc-cloud-gate .snote-login-shell{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);min-height:calc(100svh - 24px);border-radius:20px}#zc-cloud-gate .snote-login-panel{padding:22px 30px}#zc-cloud-gate h2{font-size:30px}}
+@media(max-width:680px){#zc-cloud-gate{padding:0;background:#fff}#zc-cloud-gate .snote-login-shell{display:flex;flex-direction:column;min-height:100svh;border-radius:0}#zc-cloud-gate .snote-login-panel{min-height:100svh;padding:18px 25px 22px}#zc-cloud-gate .zc-cloud-card{width:min(390px,100%);padding:38px 0}#zc-cloud-gate .zc-brand{font-size:17px;gap:11px}#zc-cloud-gate h2{margin-top:23px;font-size:30px}#zc-cloud-gate .zc-cloud-desc{font-size:13px;margin-bottom:32px}#zc-cloud-gate input{font-size:16px}#zc-cloud-gate .snote-login-visual{min-height:60svh}#zc-cloud-gate .snote-login-photo{object-position:center 58%}}
+@media(prefers-reduced-motion:reduce){#zc-cloud-gate input,#zc-cloud-gate .zc-btn{transition:none}}
 #zc-cloud-status{position:fixed;right:14px;bottom:85px;z-index:7000;font-size:10.5px;font-weight:800;padding:9px 13px;background:#eef9f4;color:#178269;border:1px solid #c7ead9;border-radius:999px;box-shadow:0 8px 22px #182f491c;cursor:pointer}
 #zc-cloud-status[hidden]{display:none!important}
 #zc-cloud-status.bad{background:#fff3f0;color:#c34d3c;border-color:#f2d1c8}
 #zc-cloud-status.busy{background:#f1f7ff;color:#3265bd;border-color:#d5e5ff}
 #zc-cloud-notice{background:#fff9ed;border:1px solid #eeddbb;padding:11px 13px;border-radius:10px;font-size:10.5px;color:#8c692e;line-height:1.65;margin-top:12px}
-#zc-cloud-gate .zc-subinfo{color:#91a3b5;font-size:10px;margin-top:9px}
-@media(max-width:620px){#zc-cloud-gate{padding:13px}#zc-cloud-gate .zc-cloud-card{padding:22px 18px}#zc-cloud-gate h2{font-size:20px}#zc-cloud-status{bottom:80px;right:7px}}
+@media(max-width:620px){#zc-cloud-status{bottom:80px;right:7px}}
 
 #zc-cloud-banner{background:#fff9ea;border:1px solid #f0dfba;border-radius:11px;color:#8c662a;font-size:11px;line-height:1.8;padding:11px 13px;margin-bottom:14px}#zc-cloud-banner[hidden]{display:none!important}@media print{#zc-cloud-banner,#zc-cloud-status{display:none!important}}
 </style>
@@ -2075,7 +2113,6 @@ body:has(#monthly-screen[style*="block"]) #accountant-bar{display:none!important
 .snote-feature-ic{font-size:25px;margin-bottom:17px}.snote-features h3{margin:0 0 8px;font-size:15px;color:#1e405d}.snote-features p{margin:0;color:#7890a3;line-height:1.7;font-size:12px;word-break:keep-all}
 .snote-public-disclaimer{font-size:12px;color:#956b36;background:#fff9eb;border:1px solid #f0ddbb;padding:15px;border-radius:12px;line-height:1.8;margin-bottom:35px}
 .snote-public-footer{border-top:1px solid #e0ebf5;display:flex;gap:16px;flex-wrap:wrap;align-items:center;color:#8395a4;font-size:11px;padding:24px max(22px,calc((100% - 1120px)/2));background:#f6fafe}.snote-public-footer strong{font-size:14px;color:#284a65;margin-right:10px}
-#snote-gate-home{border:0;background:transparent;color:#3874a7;font-size:12px;font-weight:850;cursor:pointer;padding:3px 0 14px}
 @media(max-width:800px){.snote-features{grid-template-columns:repeat(2,minmax(0,1fr))}.snote-hero{padding:72px 0 73px}.snote-hero h1{letter-spacing:-2px}}
 @media(max-width:480px){.snote-public-nav{height:72px;width:calc(100% - 32px)}.snote-public-logo{font-size:20px}.snote-public-logo-icon{width:30px;height:30px;font-size:18px}.snote-public-login{padding:10px 8px}.snote-nav-actions .snote-button{padding:11px 13px}.snote-public-main{width:calc(100% - 32px)}.snote-hero{padding:60px 0 55px}.snote-hero h1{font-size:36px;line-height:1.34;letter-spacing:-1.7px}.snote-hero p{font-size:14px}.snote-features{grid-template-columns:1fr 1fr;gap:9px}.snote-features article{padding:17px 14px;min-height:174px}.snote-features h3{font-size:13px}.snote-features p{font-size:11px}.snote-trustline{font-size:11px;gap:9px}.snote-feature-section h2{font-size:19px}.snote-public-footer{padding:22px 16px}}
 @media print{#snote-public-home{display:none!important}}
@@ -2084,9 +2121,6 @@ body:has(#monthly-screen[style*="block"]) #accountant-bar{display:none!important
 <style>
 /* S-NOTE 1.90: standard sign-in and admin workspace */
 #zc86-register[hidden]{display:none!important}
-#zc-cloud-gate .zc-cloud-card{max-width:510px}
-#zc-cloud-login .zc-field{font-weight:650}
-#zc-cloud-login input{border-radius:11px;min-height:46px}
 .snote90-settings{display:grid;gap:14px}
 .snote90-panel{padding:23px;border:1px solid #dce7f1;background:#fff;border-radius:15px;box-shadow:0 3px 15px #12345608}
 .snote90-panel h3{margin:0 0 6px;font-size:17px;color:#1e4967}
@@ -2126,24 +2160,8 @@ body:has(#monthly-screen[style*="block"]) #accountant-bar{display:none!important
 @media(max-width:760px){#prestock-card .ps-stat>strong{font-size:22px}#prestock-card .ps-mobile-row .ps-money-editor input{width:130px;min-width:110px}}
 
 /* v1.95 · clean server sign-in, finance flag, compact company print footer */
-#zc-cloud-gate{background:#f5f8fc}
-#zc-cloud-gate .zc-cloud-card{width:min(410px,100%);padding:32px 31px 25px;border-radius:19px;box-shadow:0 14px 48px rgba(29,69,112,.09)}
-#zc-cloud-gate h2{margin:24px 0 5px;font-size:25px}
-#zc-cloud-gate .zc-cloud-desc{margin:0 0 22px;font-size:12.5px;line-height:1.5}
-#zc-cloud-login .zc-field{margin-bottom:15px;font-size:12px;color:#36506b}
-#zc-cloud-login input{margin-top:8px;min-height:48px;border:1px solid #dbe4ef;background:#fff;font-size:14px}
-#zc-cloud-login .zc-btn{margin-top:17px;min-height:48px;font-size:14px}
-#zc-cloud-login .snote95-remember{display:flex;align-items:center;gap:9px;color:#586e86;font-size:12px;font-weight:700;cursor:pointer;margin-top:2px}
-#zc-cloud-login .snote95-remember input{appearance:auto;width:17px;min-height:17px;height:17px;margin:0;accent-color:#568ddc;flex:none}
-#zc-cloud-gate .snote95-security{margin-top:11px;border:0;color:#8394a5;font-size:10px}
-#zc-cloud-gate .snote95-security>summary{cursor:pointer;list-style:none;text-align:center;padding:7px;font-size:10.5px;color:#8ba0b4}
-#zc-cloud-gate .snote95-security>summary::-webkit-details-marker{display:none}
-#zc-cloud-gate .snote95-security .zc-warning{font-size:10.5px;margin-top:8px}
-#zc-cloud-login #zc-cloud-config-change{display:block;margin:5px auto 0;text-decoration:none;color:#93a2b1;font-weight:600}
-#zc-cloud-gate #snote-gate-home{font-size:11px}
 .snote95-finance-indicator{font-weight:850;color:#477aac;white-space:nowrap}
 .quote-paper .snote95-footer-company,.contract-paper .snote95-footer-company{font-size:9.2px;letter-spacing:0;font-weight:850;line-height:1.35;color:#243e54}
-@media(max-width:620px){#zc-cloud-gate{padding:18px}#zc-cloud-gate .zc-cloud-card{padding:26px 22px}}
 </style>
 <style>
 /* S-NOTE v1.96 · SALES + OCR PATCH */
@@ -6478,12 +6496,14 @@ document.addEventListener('click',async event=>{
   <p class="zc85-postcode-foot">카카오 우편번호 검색 서비스 · 주소 선택 후 자동 입력됩니다. 안 되면 ‘새 창 검색’을 이용하세요.</p>
  </div>
 </div>
-<div id="zc-cloud-gate" role="dialog" aria-modal="true" aria-labelledby="zc-cloud-title">
+<div id="zc-cloud-gate" role="dialog" aria-modal="true" aria-labelledby="zc-cloud-title" aria-describedby="snote-login-description">
+ <div class="snote-login-shell">
+ <div class="snote-login-panel">
+  <button type="button" id="snote-gate-home"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m9 5-5 5 5 5M4 10h12"/></svg>S-NOTE 홈으로</button>
  <div class="zc-cloud-card">
-  <button type="button" id="snote-gate-home">← S-NOTE 홈으로</button>
-  <div class="zc-brand">S-NOTE <span>v2.02</span></div>
+  <div class="zc-brand"><span class="snote-login-mark" aria-hidden="true">S</span><strong>S-NOTE</strong></div>
   <h2 id="zc-cloud-title">로그인</h2>
-  <p class="zc-cloud-desc">S-NOTE 업무 계정으로 로그인하세요.</p>
+  <p class="zc-cloud-desc" id="snote-login-description">S-NOTE 계정으로 오늘의 업무를 시작하세요.</p>
   <div id="zc-cloud-setup">
    <label class="zc-field">Supabase Project URL<input id="zc-cloud-url" placeholder="https://xxxxx.supabase.co" autocomplete="off"></label>
    <label class="zc-field">Publishable Key (sb_publishable_...)<input id="zc-cloud-key" placeholder="sb_publishable_..." autocomplete="off" spellcheck="false"></label>
@@ -6491,9 +6511,10 @@ document.addEventListener('click',async event=>{
    <div class="zc-subinfo">설정은 브라우저에 저장됩니다. <b>service_role / secret 키는 절대로 입력하지 마세요.</b></div>
   </div>
   <form id="zc-cloud-login" hidden>
-   <label class="zc-field">이메일<input type="email" id="zc-cloud-email" required autocomplete="username" placeholder="이메일 주소"></label>
-   <label class="zc-field">비밀번호<input type="password" id="zc-cloud-password" required autocomplete="current-password" minlength="8" placeholder="비밀번호"></label>
-   <label class="snote95-remember"><input type="checkbox" id="snote95-remember" autocomplete="off"><span>자동 로그인 유지</span></label><button type="submit" class="zc-btn" id="zc-cloud-submit">로그인</button>
+   <label class="zc-field">이메일<input type="email" id="zc-cloud-email" required autocomplete="username" placeholder="이메일 주소를 입력해 주세요" autocapitalize="none" spellcheck="false"></label>
+   <div class="zc-field"><label for="zc-cloud-password">비밀번호</label><div class="snote-login-password"><input type="password" id="zc-cloud-password" required autocomplete="current-password" minlength="8" placeholder="비밀번호를 입력해 주세요"><button type="button" id="snote-login-password-toggle" aria-label="비밀번호 표시" aria-controls="zc-cloud-password" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/><path class="snote-login-eye-slash" d="m3 3 18 18"/></svg></button></div></div>
+   <div class="snote-login-options"><label class="snote95-remember"><input type="checkbox" id="snote95-remember" autocomplete="off"><span>자동 로그인 유지</span></label><span class="snote-login-shared-hint">공용 PC에서는 해제해 주세요</span></div>
+   <button type="submit" class="zc-btn" id="zc-cloud-submit">로그인</button>
    <button type="button" class="zc-link" id="zc86-register" hidden>신규가입 (준비 중)</button>
    <button type="button" class="zc-link" id="zc-cloud-config-change">연결 설정 변경</button>
   </form>
@@ -6507,9 +6528,13 @@ document.addEventListener('click',async event=>{
  <div class="zc-sec"><label class="zc-field">받은 직원 초대 코드<input id="zc86-invite-token" placeholder="관리자가 발급한 40자리 코드"></label>
  <button type="button" class="zc-btn" id="zc86-join-company">초대받은 상사에 입장</button></div>
 </div>
-  <div id="zc-cloud-message" class="zc-message" aria-live="polite"></div>
+  <div id="zc-cloud-message" class="zc-message" aria-live="polite" aria-atomic="true"></div>
   <details class="snote95-security"><summary>보안 및 이용 안내</summary><div class="zc-warning"><b>온라인 테스트 운영:</b> 차량·금융·월정산·고객정보는 클라우드 DB, 사진·등록증·성능기록부는 비공개 Storage를 사용합니다. 여러 기기에서 동일 장부를 수정하면 충돌을 감지하여 저장을 중단합니다. 주소검색은 인터넷 연결이 필요합니다. <b>주민번호는 기본 저장 금지</b>이며 관련 법령상 구체적인 처리 근거를 검토한 뒤 관리자만 서버에서 활성화해야 합니다. 실제 고객정보를 입력하기 전 테스트와 보안 점검이 필요합니다.</div></details>
   <div id="zc-cloud-offline" hidden class="zc-sec"><button id="zc-cloud-open-local" class="zc-link" type="button">기존 로컬 데모만 열기 (이 PC에서만)</button></div>
+ </div>
+  <p class="snote-login-footer">© 2026 S-NOTE. All rights reserved.<span>v2.02</span></p>
+ </div>
+ <aside class="snote-login-visual" aria-hidden="true"><img class="snote-login-photo" src="assets/login-garage.png" alt="" decoding="async"></aside>
  </div>
 </div>
 <div id="zc86-topbar" hidden aria-label="클라우드 운영 상태">
@@ -6688,7 +6713,7 @@ async function doSignIn(e){e?.preventDefault?.();if(S.busy)return;S.busy=true;co
  await hydrateWorkspace(pass);
  msg(S.company?'':'회사 정보가 없으면 상사 생성 또는 초대 코드를 입력하세요.');
  }catch(e){fail(e,'로그인');}
- finally{S.busy=false;button.disabled=false;byId('zc-cloud-password').value='';}
+ finally{S.busy=false;button.disabled=false;byId('zc-cloud-password').value='';snoteSetPasswordVisibility(false);}
 }
 async function afterOnboard(kind){
  const display=byId('zc86-display-name').value.trim(),company=byId('zc86-new-company').value.trim(),code=byId('zc86-invite-token').value.trim();
@@ -7058,9 +7083,17 @@ byId('zc86-invite-create').addEventListener('click',async()=>{
 byId('zc86-create-company').addEventListener('click',async()=>{try{await afterOnboard('new')}catch(e){msg(errMsg(e))}});
 byId('zc86-join-company').addEventListener('click',async()=>{try{await afterOnboard('join')}catch(e){msg(errMsg(e))}});
 let snoteSignUpMode=false;
+function snoteSetPasswordVisibility(visible){
+ byId('zc-cloud-password').type=visible?'text':'password';
+ const toggle=byId('snote-login-password-toggle');
+ toggle.setAttribute('aria-pressed',String(visible));
+ toggle.setAttribute('aria-label',visible?'비밀번호 숨기기':'비밀번호 표시');
+}
+byId('snote-login-password-toggle').addEventListener('click',()=>snoteSetPasswordVisibility(byId('zc-cloud-password').type==='password'));
 function snoteSetSignUpMode(signUp){
  snoteSignUpMode=!!signUp;
- byId('zc-cloud-title').textContent=signUp?'S-NOTE 무료 회원가입':'S-NOTE 계정 로그인';
+ snoteSetPasswordVisibility(false);
+ byId('zc-cloud-title').textContent=signUp?'S-NOTE 무료 회원가입':'로그인';
  byId('zc-cloud-submit').textContent=signUp?'인증 메일 받고 회원가입':'로그인';
  byId('zc86-register').textContent=signUp?'이미 가입하셨나요? 로그인':'회원가입 준비 중';
  byId('zc-cloud-password').autocomplete=signUp?'new-password':'current-password';
@@ -7074,7 +7107,7 @@ function snoteShowAuth(mode){
 }
 for(const id of ['snote-home-login','snote-hero-login'])byId(id).addEventListener('click',()=>snoteShowAuth('login'));
 for(const id of ['snote-home-register','snote-hero-register']){const btn=byId(id);btn.textContent='로그인';btn.addEventListener('click',()=>snoteShowAuth('login'));}
-byId('snote-gate-home').addEventListener('click',()=>{if(!S.ready){gate.hidden=false;byId('snote-public-home').hidden=false;}});
+byId('snote-gate-home').addEventListener('click',()=>{if(!S.ready){snoteSetPasswordVisibility(false);gate.hidden=false;byId('snote-public-home').hidden=false;}});
 byId('zc86-register').hidden=true;byId('zc86-register').addEventListener('click',()=>snoteSetSignUpMode(!snoteSignUpMode));
 login.addEventListener('submit',e=>{if(snoteSignUpMode){e.preventDefault();e.stopImmediatePropagation();registerAccount();}},true);
 login.addEventListener('submit',doSignIn);
