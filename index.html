@@ -2225,6 +2225,53 @@ body:has(#monthly-screen[style*="block"]) #accountant-bar{display:none!important
 @media(max-width:780px){.fin-kpi strong{font-size:clamp(12px,2.8vw,19px)}}
 @media print{body:has(#zc76-receipt-overlay:not([hidden])) #zc76-receipt-paper .snote202-receipt-brand{display:flex!important}}
 </style>
+
+<style>
+/* S-NOTE v2.03 — restrained finance and admin controls */
+.sidebar .snote203-sidebar-bell{display:grid;place-items:center;flex:none;width:32px;height:32px;border:1px solid #e6edf5;border-radius:10px;background:#f7fbff;color:#6685a1;box-shadow:none}
+.sidebar .snote203-sidebar-bell:hover{background:#e8f3fc}
+.sidebar .profile{gap:8px}.sidebar .profile-detail{min-width:0;flex:1}
+.snote90-settings{gap:16px}.snote90-panel{border-radius:16px;padding:24px;box-shadow:0 5px 22px rgba(16,43,79,.035)}
+.snote90-settings button:not(:disabled){transition:background-color .2s,border-color .2s,transform .2s,box-shadow .2s}
+.snote90-settings button{border:1px solid #e1e9f3;background:#f7fbff;color:#37648e;border-radius:9px;font-size:11px;font-weight:750;min-height:35px;box-shadow:none;padding:7px 13px;letter-spacing:-.15px}
+.snote90-settings button:hover:not(:disabled){background:#eaf4fd;border-color:#bfd8eb;transform:translateY(-1px)}
+.snote90-settings button.btn-primary,.snote90-settings .snote203-btn-primary{background:#3477b3;border:1px solid #3477b3;color:white}
+.snote90-settings button.btn-primary:hover:not(:disabled),.snote90-settings .snote203-btn-primary:hover:not(:disabled){background:#286698;border-color:#286698}
+.snote90-settings button.snote90-danger,.snote90-settings .snote203-muted{background:#fff;border-color:#f1dae0;color:#b45b64}
+.snote90-settings input{min-height:39px;border-radius:10px;background:#fbfdff}
+.snote90-member span[data-role="admin"]{color:#7557c5;background:#f1edff;border:1px solid #ddd5ff}
+.snote90-member span[data-role="accountant"]{color:#1979ad;background:#e9f6ff;border:1px solid #cae6f7}
+.snote90-member span[data-role="dealer"]{color:#167b59;background:#e9f9f1;border:1px solid #c7efdf}
+.snote203-lender{display:grid;grid-template-columns:minmax(110px,1fr) minmax(110px,1fr) minmax(115px,1fr) auto auto;align-items:end;gap:10px}
+.snote203-lender strong{font-size:12px;color:#214463;align-self:center}
+.snote203-lender label,.snote203-bank-fields label{display:grid;gap:5px;font-size:10.5px;color:#71859a;font-weight:700}
+.snote203-lender input{width:100%;max-width:none;height:39px}
+.snote203-bank-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.snote203-bank-actions{display:flex;justify-content:flex-end;margin-top:16px}
+.snote203-assets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:18px}
+.snote203-asset{border:1px solid #e8eef5;border-radius:12px;padding:14px;background:#fbfdff;min-width:0}
+.snote203-asset>strong{display:block;color:#284c6e;font-size:12px}.snote203-asset>small{display:block;color:#9aaabc;font-size:10px;margin-top:5px}
+.snote203-asset-preview{height:110px;display:grid;place-items:center;margin:11px 0;border:1px dashed #d7e2ed;border-radius:9px;background:#fff;color:#a0afbf;font-size:11px;overflow:hidden}
+.snote203-asset-preview img{max-width:100%;max-height:100%;object-fit:contain}
+.snote203-asset-actions{display:flex;flex-wrap:wrap;gap:7px}.snote203-asset-actions button{flex:1}
+@media(max-width:780px){.snote203-lender{grid-template-columns:1fr 1fr}.snote203-lender strong{grid-column:1/-1}.snote203-bank-fields,.snote203-assets{grid-template-columns:1fr}}
+#registration-ocr-zone{display:none!important}
+#vehicle-overlay .doc-tabs{display:flex!important;gap:7px;padding:5px;background:#eef3f8;border:1px solid #e0e9f1;border-radius:12px;margin:8px 0 15px}
+#vehicle-overlay .doc-tabs button{flex:1 1 0;min-width:0;border:1px solid transparent;border-radius:9px;background:transparent;color:#678198;font-size:12px;font-weight:700;padding:12px 9px;box-shadow:none}
+#vehicle-overlay .doc-tabs button.active{color:#1b63a5;background:#fff;border-color:#c1dbef;box-shadow:0 3px 11px rgba(29,83,130,.12)}
+#vehicle-overlay .doc-tabs button.active:focus-visible{outline:2px solid #70b1e5}
+#vehicle-overlay .doc-tabs button span{font-size:10px;color:inherit;opacity:.7}
+.fin-total .snote203-total-reserve{color:#171717}
+.zc182-lender .remain span,.zc182-lender .remain b,.zc182-lender .remain small{color:#171717!important}
+.zc182-lender .remain.snote203-reserve-warning span,.zc182-lender .remain.snote203-reserve-warning b,.zc182-lender .remain.snote203-reserve-warning small{color:#d37b26!important}
+.zc182-lender .remain.snote203-reserve-critical span,.zc182-lender .remain.snote203-reserve-critical b,.zc182-lender .remain.snote203-reserve-critical small{color:#d03c4b!important}
+.fin-table{max-height:490px;min-height:205px;overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable}
+.fin-table thead{position:sticky;top:0;z-index:1}
+.fin-mobile-list{max-height:510px;overflow:auto;overscroll-behavior:contain}
+#inventory-finance-tbody>tr,.fin-mobile-list>.fin-mobile-card{animation:snote203-fin-row .28s cubic-bezier(.2,.72,.2,1) both}
+@keyframes snote203-fin-row{from{opacity:.25;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){#inventory-finance-tbody>tr,.fin-mobile-list>.fin-mobile-card{animation:none}}
+</style>
 </head>
 <body>
 
@@ -2260,10 +2307,10 @@ body:has(#monthly-screen[style*="block"]) #accountant-bar{display:none!important
   <div class="auth-layout">
     <div class="auth-story">
       <div class="auth-lockup"><span class="brandmark">S</span> S-NOTE</div>
-      <div class="auth-story-body"><p class="auth-eyebrow">SMART DEALER WORKSPACE</p><h2>차량 관리의 시작,<br><span>더 간편하게.</span></h2><p>재고부터 차량 사진과 서류까지.<br>딜러별로 분리된 나만의 업무 공간.</p><div class="auth-points"><div class="auth-point"><i>✓</i>딜러별 차량 및 파일 관리</div><div class="auth-point"><i>✓</i>PC · 모바일 반응형 디자인</div><div class="auth-point"><i>✓</i>실차 사진 10장 · 성능서류 2장</div></div></div>
+      <div class="auth-story-body"><p class="auth-eyebrow">SMART DEALER WORKSPACE</p><h2>차량 관리의 시작,<br><span>더 간편하게.</span></h2><p>재고부터 차량 사진과 서류까지.<br>딜러별로 분리된 나만의 업무 공간.</p><div class="auth-points"><div class="auth-point"><i>✓</i>딜러별 차량 및 파일 관리</div><div class="auth-point"><i>✓</i>PC · 모바일 반응형 디자인</div><div class="auth-point"><i>✓</i>실차 사진 5장 · 성능서류 2장</div></div></div>
       <div class="auth-sidefoot">© S-NOTE · SMART DEALER WORKSPACE</div>
     </div>
-    <div class="auth-content" id="auth-content"><div class="auth-headsign"><span class="brandmark">S</span> S-NOTE <span style="color:#315efb;margin-left:-7px">OFFICE</span></div><div class="auth-topline"><strong>ACCOUNT ACCESS</strong><span>v2.02 · ONLINE</span></div><h1 id="auth-heading">다시 만나서 반가워요</h1><p class="auth-desc" id="auth-description">로그인하고 내 차량 재고를 확인하세요.</p>
+    <div class="auth-content" id="auth-content"><div class="auth-headsign"><span class="brandmark">S</span> S-NOTE <span style="color:#315efb;margin-left:-7px">OFFICE</span></div><div class="auth-topline"><strong>ACCOUNT ACCESS</strong><span>v2.03 · ONLINE</span></div><h1 id="auth-heading">다시 만나서 반가워요</h1><p class="auth-desc" id="auth-description">로그인하고 내 차량 재고를 확인하세요.</p>
       <div class="auth-tabs" hidden aria-hidden="true"><button id="login-tab" class="active" type="button" tabindex="-1" onclick="showAuthMode('login')">로그인</button><button id="signup-tab" type="button" onclick="showAuthMode('signup')" hidden aria-hidden="true" tabindex="-1">회원가입</button></div><div class="auth-success" id="login-success" role="status">✓ 회원가입이 완료되었습니다. 새 계정으로 로그인해 주세요.</div>
       <form id="login-form" class="auth-form" onsubmit="loginAccount(event)"><div><label class="auth-label" for="login-id">아이디</label><input class="auth-input" id="login-id" maxlength="30" autocomplete="username" placeholder="아이디를 입력하세요" required /></div><div><label class="auth-label" for="login-pw">비밀번호</label><input class="auth-input" id="login-pw" type="password" autocomplete="current-password" placeholder="비밀번호를 입력하세요" required /></div><div class="auth-error" id="login-error" role="alert"></div><button class="btn-primary auth-primary" id="login-submit" type="submit">로그인</button><button type="button" class="auth-demo" onclick="loginDemo()">딜러 체험 계정으로 시작하기&nbsp; →</button><button type="button" class="auth-demo" onclick="loginAccountingDemo()">경리 통합 화면 체험하기&nbsp; →</button><div class="accountant-login-help">경리 샘플: <b>accounting / account1234</b><br>딜러 샘플: <b>demo / demo1234</b>, <b>dealer2 / dealer1234</b></div><p class="auth-rule">체험판 전용 계정입니다. 실제 업무용 개인정보나 비밀번호를 입력하지 마세요.</p></form>
       <form id="signup-form" class="auth-form auth-signup-form" onsubmit="registerAccount(event)" style="display:none">
@@ -2281,16 +2328,16 @@ body:has(#monthly-screen[style*="block"]) #accountant-bar{display:none!important
 <div class="app">
   <aside class="sidebar">
     <div class="brand"><div class="brandmark">S</div><div><div class="brandname">S-NOTE</div><div class="branddesc">중고차 매매 관리 시스템</div></div></div>
-    <div class="navcaption">WORKSPACE</div>
+    
     <nav class="nav" id="desktop-nav"></nav>
-    <div class="sidebar-end"><div class="support"><p class="st">간편하고 정확하게.</p><p class="sd">재고부터 매입 · 판매 · 정산까지<br>하나의 전산에서 관리하세요.</p></div><div class="profile"><div class="avatar" id="profile-avatar">Z</div><div class="profile-detail"><div class="pname" id="profile-name">딜러</div><div class="prole" id="profile-role">개인 차량 관리</div></div><button class="logout-icon" onclick="logout()" title="로그아웃" aria-label="로그아웃">↪</button></div></div>
+    <div class="sidebar-end"><div class="support"><p class="st">간편하고 정확하게.</p><p class="sd">재고부터 매입 · 판매 · 정산까지<br>하나의 전산에서 관리하세요.</p></div><div class="profile"><div class="avatar" id="profile-avatar">Z</div><div class="profile-detail"><div class="pname" id="profile-name">딜러</div><div class="prole" id="profile-role">개인 차량 관리</div></div><button class="topbutton snote203-sidebar-bell" aria-label="알림" onclick="toast('알림 기능은 추후 구현 예정입니다.')" id="bell"></button><button class="logout-icon" onclick="logout()" title="로그아웃" aria-label="로그아웃">↪</button></div></div>
   </aside>
   <div class="main">
-    <header class="topbar"><div class="topbar-left"><button type="button" class="mobile-menu-trigger" id="mobile-menu-trigger" aria-label="메뉴 열기" aria-controls="mobile-drawer" aria-expanded="false" onclick="toggleMobileDrawer()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><div class="crumb">S-NOTE <span style="padding:0 7px;color:#c3cbd7">/</span> <b id="breadcrumb">대시보드</b></div></div><div class="topright"><span class="sample">● S-NOTE v2.02 · 온라인 테스트</span><button class="topbutton" aria-label="알림" onclick="toast('알림 기능은 추후 구현 예정입니다.')" id="bell"></button><button class="top-avatar" id="top-avatar" onclick="logout()" title="로그아웃" aria-label="로그아웃">Z</button></div></header>
+    <header class="topbar"><div class="topbar-left"><button type="button" class="mobile-menu-trigger" id="mobile-menu-trigger" aria-label="메뉴 열기" aria-controls="mobile-drawer" aria-expanded="false" onclick="toggleMobileDrawer()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><div class="crumb">S-NOTE <span style="padding:0 7px;color:#c3cbd7">/</span> <b id="breadcrumb">대시보드</b></div></div><div class="topright"><span class="sample">● S-NOTE v2.03 · 온라인 테스트</span></div></header>
     <main class="content"><div id="zc-cloud-banner" hidden role="status"><b>온라인 테스트 운영:</b> 차량·금융·월정산·고객정보의 클라우드 DB와 차량 사진·등록증의 비공개 Storage 연결을 시험하는 버전입니다. <b>운영 데이터 입력 전 로그인·접근권한·저장·조회·백업 검증이 필요하며, 주민번호 입력은 금지합니다.</b></div>
       <section class="pagehead"><div><p class="eyebrow" id="eyebrow">OVERVIEW</p><h1 id="screen-title">오늘의 업무 현황</h1><p class="subtitle" id="screen-sub">차량 재고와 매입·판매 현황을 한눈에 확인하세요.</p></div><button class="btn-primary" onclick="openAdd()" id="main-add" hidden aria-hidden="true" tabindex="-1"><span id="addicon"></span>차량 등록</button></section>
       <section id="accountant-bar" class="accountant-bar" hidden>
- <div class="acct-heading"><div class="acct-badge">경리 · 통합 관리</div><strong>딜러별 매입·재고·판매 통합 관리</strong><p>이 브라우저에 저장된 각 딜러의 차량을 함께 조회합니다. 다른 기기의 실시간 통합은 서버 연동 후 가능합니다.</p></div>
+ <div class="acct-heading"><div class="acct-badge">경리 · 통합 관리</div><strong>전체 차량 관리</strong><p>이 브라우저에 저장된 각 딜러의 차량을 함께 조회합니다. 다른 기기의 실시간 통합은 서버 연동 후 가능합니다.</p></div>
  <div class="acct-controls"><label for="accountant-dealer-filter">담당 딜러</label><select id="accountant-dealer-filter" aria-label="담당 딜러 필터" onchange="handleAccountantDealerFilter()"><option value="all">전체 딜러</option></select><button type="button" class="btn-ghost" onclick="refreshAccountantWorkspace()">새로고침</button></div>
  <div id="accountant-overview" class="acct-overview"></div>
  </section>
@@ -2561,7 +2608,7 @@ if(window.ResizeObserver)new ResizeObserver(update).observe(document.body);addEv
     <div class="vehicle-header"><div><p class="vehicle-eyebrow">VEHICLE FILES · 차량 상세 관리</p><h2 id="vehicle-title">차량 상세</h2><p class="vehicle-meta-line" id="vehicle-meta"></p></div><button class="close detail-close" type="button" onclick="closeVehicle()" aria-label="차량 상세 닫기" title="차량 상세 닫기">×</button></div>
     <div class="vehicle-body"><div class="vehicle-overview" id="vehicle-overview"></div><section class="acct-readonly-panel" id="acct-readonly-panel" aria-label="경리 차량정보 조회"></section>
       <section class="car-identity-section" aria-label="차량 기본정보 수정">
-        <div class="car-identity-head"><h3>차량 기본정보 수정</h3><span>제조사 · 모델 · 세부모델 · 트림 (선택)</span></div>
+        <div class="car-identity-head"><h3>차량 기본정보 수정</h3></div>
         <div class="vehicle-identity-grid">
           <label>제조사<select id="detail-make" onchange="fillDetailCatalog('group')"></select></label>
           <label>모델명<select id="detail-group" onchange="fillDetailCatalog('model')"></select></label>
@@ -2577,7 +2624,7 @@ if(window.ResizeObserver)new ResizeObserver(update).observe(document.body);addEv
       </section>
       <section class="sold-info-section" id="sold-info-section" style="display:none"><div class="car-identity-head"><h3>판매 완료 정보</h3><span>실제 판매 기준 · 수정 가능</span></div><div class="sold-fields"><label>판매 완료 날짜<input id="detail-sold-date" type="date" /></label><label>실제 판매가 (만원)<input id="detail-sold-price" class="detail-money-input" type="text" min="0" step="0.1" inputmode="decimal" oninput="updateDetailSummary()" autocomplete="off" spellcheck="false" placeholder="-" /></label></div><p class="identity-hint">판매완료 차량의 수익 계산은 판매예정가가 아닌 실제 판매가를 사용합니다.</p></section>
       <section class="car-cost-section" id="car-cost-section"><div class="car-cost-head"><div><h3>차량 매입 · 부대비용 관리</h3><p>차량별로 비용을 수정하고 저장할 수 있습니다. 단위: 만원</p></div><span class="count-pill">AUTO CALC · 자동 계산</span></div><div class="cost-edit core-cost-fields"><label>매입가 (만원)<input id="detail-buy" class="detail-money-input" type="text" min="0" step="0.1" oninput="updateDetailSummary()" inputmode="decimal" autocomplete="off" spellcheck="false" placeholder="-" /></label><label>판매예정가 (만원)<input id="detail-sell" class="detail-money-input" type="text" min="0" step="0.1" oninput="updateDetailSummary()" inputmode="decimal" autocomplete="off" spellcheck="false" placeholder="-" /></label><label>재고대출금 (만원)<input id="detail-inventory-loan" class="detail-money-input" type="text" min="0" max="100000000" step="0.1" inputmode="decimal" oninput="updateDetailSummary()" autocomplete="off" spellcheck="false" placeholder="-" /></label><label>재고 이자 (만원)<input id="detail-inventory-interest" class="detail-money-input" type="text" min="0" max="100000000" step="0.1" inputmode="decimal" oninput="updateDetailSummary()" autocomplete="off" spellcheck="false" placeholder="-" /></label></div><div class="detail-lender-row"><label for="detail-inventory-lender">재고금융사<select id="detail-inventory-lender"><option value="">미지정</option><option value="KB캐피탈">KB캐피탈</option><option value="JB우리금융">JB우리금융</option><option value="메리츠">메리츠</option><option value="현대캐피탈">현대캐피탈</option></select></label><p>재고대출금이 있는 차량의 금융사를 선택하세요. 경리 재고금융 관리 목록에도 반영됩니다.</p></div><p class="inventory-loan-note">재고대출금(원금)은 마진 비용에서 제외합니다. 재고 이자는 차량별 부대비용으로 합산해 예상 마진 및 현금 투자금에 반영합니다. 현금 투자금은 매입가와 실제 비용(소득세 제외)에서 대출금을 차감한 참고 금액입니다.</p><div class="cost-edit" id="detail-cost-fields"></div><div class="repair-group detail-repair"><div class="repair-top"><div><strong>수리비용 상세 내역</strong><span>수리 내역을 메모하고 항목별 금액을 입력하세요.</span></div><button class="section-button" type="button" onclick="addRepairRow('detail')">＋ 수리 항목 추가</button></div><div class="repair-rows" id="detail-repair-items"></div><div class="repair-total">수리비 합계 <strong id="detail-repair-total">0만원</strong></div></div><div class="cost-summary detail-summary" id="detail-cost-summary"></div><div class="inventory-loan-preview" id="inventory-loan-preview"></div><p class="cost-policy" style="margin-top:10px">* 예상 마진은 소득세 입력액까지 차감한 참고 금액입니다. 실제 신고 세액과 다를 수 있습니다.</p><div class="detail-save"><button type="button" class="btn-ghost quote-launch" onclick="openQuotePreview()">▤ 견적서</button><button type="button" class="btn-ghost contract-launch" onclick="openSaleProgress()">▣ 판매 진행</button><button type="button" class="btn-primary" onclick="saveVehicleCosts()">변경사항 저장</button></div></section>
-      <section class="media-section"><div class="media-section-head"><div><h3>실차 사진 <span class="count-pill" id="photo-count">0 / 10</span></h3><p class="media-helper">외관 · 실내 · 계기판 등 최대 10장 · 대표 사진 지정 가능</p></div><button class="section-button" id="photo-add" type="button" onclick="triggerMediaInput('photos')">＋ 사진 추가</button></div><div class="photo-grid" id="photo-grid"></div><div class="zc-reference-panel"><p id="zc-reference-hint">실차 사진이 없으면 모든 차량에 동일한 기본 이미지가 표시됩니다.</p><small>실제 차량 사진을 등록하면 목록과 차량 상세의 기본 이미지가 자동으로 교체됩니다. 기본 이미지는 사진 10장 제한에 포함되지 않습니다.</small></div></section>
+      <section class="media-section"><div class="media-section-head"><div><h3>실차 사진 <span class="count-pill" id="photo-count">0 / 5</span></h3><p class="media-helper">외관 · 실내 · 계기판 등 최대 5장 · 대표 사진 지정 가능</p></div><button class="section-button" id="photo-add" type="button" onclick="triggerMediaInput('photos')">＋ 사진 추가</button></div><div class="photo-grid" id="photo-grid"></div><p id="zc-reference-hint" hidden></p></section>
       <section class="media-section"><div class="media-section-head"><div><h3>차량 서류</h3><p class="media-helper">차량별 별도 보관 · 등록증 1장 / 성능·상태점검기록부 1개 탭에서 최대 2장</p></div></div><div class="doc-tabs" role="tablist" aria-label="차량 서류 종류"><button class="active" id="doc-tab-registration" type="button" role="tab" aria-selected="true" onclick="showDocTab('registration')">자동차등록증 <span>1장</span></button><button id="doc-tab-inspection" type="button" role="tab" aria-selected="false" onclick="showDocTab('inspection')">성능·상태점검기록부 <span>최대 2장</span></button></div><div class="doc-grid" id="doc-grid" role="tabpanel"></div>
        <div class="vin-ocr-zone" id="registration-ocr-zone" role="status" aria-live="polite" data-level="info">
          <div class="vin-ocr-head"><span class="vin-ocr-dot"></span><span>차대번호 자동 인식</span></div>
@@ -2847,7 +2894,7 @@ function dealerLabel(c){
 }
 function accountantFilter(){return isFinanceManager()?($('accountant-dealer-filter')?.value||'all'):'all'}
 function handleAccountantDealerFilter(){renderCars();if(['finance','inventoryFinance'].includes(route))buildAlt();}
-function renderAccountantBar(){const bar=$('accountant-bar');if(!bar)return;bar.hidden=!isFinanceManager();if(!isFinanceManager())return;
+function renderAccountantBar(){const bar=$('accountant-bar');if(!bar)return;bar.hidden=!isFinanceManager()||route==='settings';if(!isFinanceManager())return;
  const select=$('accountant-dealer-filter'),prior=select.value||'all';
  const owners=[...new Set(cars.map(c=>c.ownerId))].filter(Boolean);
  select.innerHTML='<option value="all">전체 딜러</option>'+owners.map(id=>`<option value="${esc(id)}">${esc(dealerLabel({ownerId:id}))}</option>`).join('');
@@ -3294,13 +3341,13 @@ function zc81DashboardLockMark(id){
 }
 function buildMenus(){
  const adm=isSnoteAdmin(),acct=isAccountant();
- const allowed=adm?['dashboard','cars','buy','sell','finance','users','prestock','inventoryFinance','acctFinance','monthly','settings']:
- acct?['dashboard','buy','sell','prestock','inventoryFinance','finance','monthly']:
+ const allowed=adm?['dashboard','cars','buy','sell','finance','users','prestock','inventoryFinance','monthly','settings']:
+ acct?['dashboard','buy','sell','prestock','inventoryFinance','monthly']:
  ['dashboard','buy','sell','finance','users'];
  const nav=$('desktop-nav');
  nav.innerHTML=Object.entries(pages).filter(([id])=>allowed.includes(id)).map(([id,p])=>
  `<button class="${route===id?'active':''}" onclick="navigate('${id}')">${ico(p.icon)}<span>${acct&&id==='dashboard'?'경리 통합 현황':acct&&id==='finance'?'매입금액 현황':p.title}</span>${zc81DashboardLockMark(id)}</button>`).join('');
- const items=acct?[['dashboard','현황','home'],['buy','매입','buy'],['sell','판매','sold'],['prestock','선재고','wallet'],['inventoryFinance','재고금융','loan'],['finance','매입금액','finance']]:
+ const items=acct?[['dashboard','현황','home'],['buy','매입','buy'],['sell','판매','sold'],['prestock','선재고','wallet'],['inventoryFinance','재고금융','loan']]:
  [['dashboard','홈','home'],['buy','매입','buy'],['sell','판매','sold'],['finance','정산','profit'],['add','등록','plus']];
  $('bottom-nav').innerHTML=items.map(([id,label,icon])=>`<button aria-label="${label}" class="${id==='add'?'plus-tab ':''}${id===route?'active':''}" onclick="${id==='add'?'openAdd()':`navigate('${id}')`}">${id==='add'?`<span class="mobile-plus">${ico(icon)}</span>`:ico(icon)}<span>${label}</span>${id==='finance'?zc81DashboardLockMark(id):''}</button>`).join('');
  const drawer=$('mobile-drawer-nav');if(drawer){
@@ -3677,18 +3724,56 @@ let INVENTORY_LENDERS=['KB캐피탈','JB우리금융','메리츠','현대캐피�
 function financeCarRows(){return cars.filter(c=>c.status!=='판매완료'&&(accountantFilter()==='all'||c.ownerId===accountantFilter()));}
 
 const ZC157_FINANCE_KEY='zerocar-office-v157-finance-companies';
+/* v2.03: shared supplemental settings live in the existing finance_limits cloud dataset,
+ * avoiding breaking schema migrations. The final record is metadata, not a lender. */
+const SNOTE203_META='_snote203_meta';
+function snote203Meta(){
+ try{const rows=JSON.parse(localStorage.getItem(ZC157_FINANCE_KEY)||'[]');
+ return Array.isArray(rows)?(rows.find(x=>x&&typeof x==='object'&&!Array.isArray(x)&&x[SNOTE203_META])?.[SNOTE203_META]||{}):{};}
+ catch(_){return {}}
+}
+function snote203PrestockConfig(){
+ const cfg=snote203Meta().prestock||{};
+ return {total:Number.isSafeInteger(cfg.total)&&cfg.total>=0?cfg.total:208248902,
+ bank:String(cfg.bank||'우리은행').slice(0,35),
+ account:String(cfg.account||'1005404896688').slice(0,45),
+ holder:String(cfg.holder||'소득세(선재고)').slice(0,45)};
+}
+function snote203WriteMeta(patch){
+ if(!isSnoteAdmin()||!window.zc86Cloud?.ready)return false;
+ const rows=JSON.parse(localStorage.getItem(ZC157_FINANCE_KEY)||'[]');
+ const lenders=Array.isArray(rows)?rows.filter(Array.isArray):ACC44_LENDER_LIMITS;
+ const meta={...snote203Meta(),...patch};
+ try{localStorage.setItem(ZC157_FINANCE_KEY,JSON.stringify([...lenders,{[SNOTE203_META]:meta}]));return true}
+ catch(e){console.warn(e);toast('상사 설정을 저장하지 못했습니다.');return false}
+}
+function snote203SavePrestockSettings(){
+ if(!isSnoteAdmin())return;
+ const raw=($('snote203-bank-total')?.value||'').replaceAll(',','').trim();
+ const bank=$('snote203-bank-name')?.value.trim()||'',account=$('snote203-bank-account')?.value.trim()||'',holder=$('snote203-bank-holder')?.value.trim()||'';
+ const total=Number(raw);
+ if(!/^\d{1,13}$/.test(raw)||!Number.isSafeInteger(total)||total<0||!bank||!account||!holder){toast('선재고 총액과 은행·계좌번호·계좌명을 확인하세요.');return}
+ if(snote203WriteMeta({prestock:{total,bank,account,holder}}))toast('선재고 계좌 설정을 저장했습니다.');
+}
+function snote203SaveLender(name,amount,rate){
+ if(!isSnoteAdmin())return false;
+ if(!Number.isFinite(amount)||amount<0||!Number.isFinite(rate)||rate<0||rate>100){toast('금융 한도 또는 연이율을 확인하세요.');return false}
+ const next=ACC44_LENDER_LIMITS.map(x=>x[0]===name?[x[0],amount,rate]:x);
+ return persistFinanceCompanies(next);
+}
+
 function restoreFinanceCompanies(){
  try{
   const saved=JSON.parse(localStorage.getItem(ZC157_FINANCE_KEY)||'null');
   if(!Array.isArray(saved)||!saved.length)return;
   const clean=[];const used=new Set();
-  for(const item of saved){if(!Array.isArray(item))continue;const name=String(item[0]||'').trim(),limit=Number(item[1]);if(name&&name.length<=45&&!used.has(name)&&Number.isFinite(limit)&&limit>=0&&limit<=100000000){clean.push([name,limit]);used.add(name)}}
+  for(const item of saved){if(!Array.isArray(item))continue;const name=String(item[0]||'').trim(),limit=Number(item[1]);if(name&&name.length<=45&&!used.has(name)&&Number.isFinite(limit)&&limit>=0&&limit<=100000000){clean.push([name,limit,Number.isFinite(Number(item[2]))&&Number(item[2])>=0&&Number(item[2])<=100?Number(item[2]):0]);used.add(name)}}
   if(clean.length){ACC44_LENDER_LIMITS=clean;INVENTORY_LENDERS=clean.map(x=>x[0]);}
  }catch(e){console.warn('금융사 설정 불러오기 실패',e)}
 }
 function persistFinanceCompanies(next){
  if(!isFinanceManager())return false;
- try{localStorage.setItem(ZC157_FINANCE_KEY,JSON.stringify(next));ACC44_LENDER_LIMITS=next.map(x=>[x[0],x[1]]);INVENTORY_LENDERS=next.map(x=>x[0]);return true}
+ try{const extra=snote203Meta();const prepared=next.map(x=>[x[0],x[1],Number.isFinite(Number(x[2]))?Number(x[2]):(ACC44_LENDER_LIMITS.find(y=>y[0]===x[0])?.[2]||0)]);localStorage.setItem(ZC157_FINANCE_KEY,JSON.stringify([...prepared,{[SNOTE203_META]:extra}]));ACC44_LENDER_LIMITS=prepared;INVENTORY_LENDERS=prepared.map(x=>x[0]);return true}
  catch(e){toast('금융사 설정 저장에 실패했습니다.');return false}
 }
 function syncLenderPicker(selected){
@@ -3754,7 +3839,7 @@ function zc157AddLender(event){
  if(!name||name.length>45||!Number.isFinite(limit)){toast('금융사명과 한도금액을 확인해주세요.');return}
  if(INVENTORY_LENDERS.includes(name)){toast('이미 등록된 금융사입니다.');return}
  if(INVENTORY_LENDERS.length>=30){toast('금융사는 최대 30곳까지 등록할 수 있습니다.');return}
- if(persistFinanceCompanies([...ACC44_LENDER_LIMITS,[name,limit]])){buildAccountantSettings();toast('금융사를 추가했습니다.')}
+ if(persistFinanceCompanies([...ACC44_LENDER_LIMITS,[name,limit,0]])){buildAccountantSettings();toast('금융사를 추가했습니다.')}
 }
 function zc157RemoveLender(button){
  if(!isFinanceManager())return;
@@ -3844,7 +3929,7 @@ function prestockSums(){
  // 금액 조정 후 원 지급 내역이 상환되어도 차량별 미상환금액이 음수가 되지 않도록 한다.
  const total=noPlateTotal+[...byPlate.values()].reduce((sum,v)=>sum+Math.max(0,v),0);
  const repaid=rows.filter(r=>r.repaid).length;
- return {rows,total,repaid,balance:PRESTOCK_BANK_TOTAL-total};
+ return {rows,total,repaid,balance:snote203PrestockConfig().total-total};
 }
 
 /* v1.56: 경리 선재고 원장과 차량번호 자동 매칭. 전액 상환/삭제 시 표시 금액 0. 차량 자체의 원가나 마진 데이터는 수정하지 않음. */
@@ -4005,9 +4090,9 @@ function prestockSection(){
  const now=todayLocal();
  const displayRows=prestockDisplayRows(rows);
  return `<section class="ps-card" id="prestock-card">
-  <div class="ps-head"><div class="ps-titleline"><span class="ps-title-icon">₩</span><div><div class="ps-eyebrow">ADVANCE INVENTORY LEDGER</div><h3>선재고 관리</h3><p>차량별 지급 내역과 선재고 가용 잔액을 관리합니다.</p></div></div><div class="ps-bank-label"><span>연결 계좌 · 샘플</span><strong>${PRESTOCK_BANK_LABEL}</strong><small>소득세(선재고)</small></div></div>
+  <div class="ps-head"><div class="ps-titleline"><span class="ps-title-icon">₩</span><div><div class="ps-eyebrow">ADVANCE INVENTORY LEDGER</div><h3>선재고 관리</h3><p>차량별 지급 내역과 선재고 가용 잔액을 관리합니다.</p></div></div><div class="ps-bank-label"><span>연결 계좌</span><strong>${esc(snote203PrestockConfig().bank)} ${esc(snote203PrestockConfig().account)}</strong><small>${esc(snote203PrestockConfig().holder)}</small></div></div>
   <div class="ps-stats" aria-label="선재고 잔액 요약">
-   <div class="ps-stat"><span>선재고 통장 총액</span><strong>${prestockFormatWon(PRESTOCK_BANK_TOTAL)}<small>원</small></strong><p>수동 설정 금액 · 은행 연동 없음</p></div>
+   <div class="ps-stat"><span>선재고 통장 총액</span><strong>${prestockFormatWon(snote203PrestockConfig().total)}<small>원</small></strong><p>수동 설정 금액 · 은행 연동 없음</p></div>
    <div class="ps-stat"><span>미상환 선재고 합계</span><strong id="ps-total">${prestockFormatWon(total)}<small>원</small></strong><p>상환완료 금액은 합산 제외</p></div>
    <div class="ps-stat ps-balance ${balance<0?'ps-negative':''}"><span>선재고 현재 잔액</span><strong id="ps-balance">${prestockFormatWon(balance)}<small>원</small></strong><p>통장 총액 − 미상환 합계</p></div>
   </div>
@@ -4224,14 +4309,14 @@ function buildInventoryFinance(){
  const limitTotal=limits.reduce((s,[,n])=>s+Number(n||0),0),remainTotal=limitTotal-loanTotal;
  const lenderFilter=$('inventory-lender-filter')?.value||'all',keyword=$('inventory-finance-search')?.value||'';
  const companyCards=limits.map(([l,max])=>{
-  const used=stat.used(l),remain=max-used,percent=max>0?used/max*100:used>0?100:0;
+  const used=stat.used(l),remain=max-used,percent=max>0?used/max*100:used>0?100:0,reserveRatio=max>0?remain/max:0,reserveTone=(max>0&&reserveRatio<=.15)?'snote203-reserve-critical':(max>0&&reserveRatio<=.40)?'snote203-reserve-warning':'snote203-reserve-normal';
   return `<article class="zc182-lender ${remain<0?'over':''}" data-lender="${esc(l)}"><div class="zc182-lender-h"><strong>${esc(l)}</strong><small>${stat.count(l)}대 사용</small></div>
-  <div class="zc182-lender-numbers"><div><span>총한도</span><b>${snote202Won(max)}<small>원</small></b></div><div class="used"><span>사용금액</span><b>${snote202Won(used)}<small>원</small></b></div><div class="remain"><span>남은금액</span><b>${snote202Won(remain)}<small>원</small></b></div></div>
+  <div class="zc182-lender-numbers"><div><span>총한도</span><b>${snote202Won(max)}<small>원</small></b></div><div class="used"><span>사용금액</span><b>${snote202Won(used)}<small>원</small></b></div><div class="remain ${reserveTone}"><span>잔여한도</span><b>${snote202Won(remain)}<small>원</small></b></div></div>
   <div class="zc182-meter" role="img" aria-label="${esc(l)} 한도 중 사용 ${percent.toFixed(1)}%"><span style="width:${Math.max(0,Math.min(100,percent))}%"></span></div>
-  <div class="zc182-lender-foot"><span>사용률 <strong>${max>0?percent.toFixed(1):used>0?'한도 미설정':'0.0'}${max>0||used===0?'%':''}</strong></span><span>${remain<0?'한도 초과':'남은 한도'}</span></div></article>`;
+  <div class="zc182-lender-foot"><span>사용률 <strong>${max>0?percent.toFixed(1):used>0?'한도 미설정':'0.0'}${max>0||used===0?'%':''}</strong></span></div></article>`;
  }).join('');
  const view=`<div class="fin-top"><div class="zc182-fin-head"><div><h3>재고금융 관리</h3><p>금융사별 총한도·사용금액·잔여한도를 한눈에 비교합니다. (단위: 원)</p></div><button type="button" class="btn-primary" onclick="zc182OpenFinance()">＋ 신규 재고금융 등록</button></div>
- <div class="fin-total"><div class="fin-kpi"><span class="label">전체 한도</span><strong>${snote202Won(limitTotal)}<small>원</small></strong></div><div class="fin-kpi"><span class="label">현재 사용</span><strong>${snote202Won(loanTotal)}<small>원</small></strong></div><div class="fin-kpi"><span class="label">남은 금액</span><strong style="color:${remainTotal<0?'#c33c51':'#218e72'}">${snote202Won(remainTotal)}<small>원</small></strong></div></div></div>
+ <div class="fin-total"><div class="fin-kpi"><span class="label">전체 한도</span><strong>${snote202Won(limitTotal)}<small>원</small></strong></div><div class="fin-kpi"><span class="label">현재 사용</span><strong>${snote202Won(loanTotal)}<small>원</small></strong></div><div class="fin-kpi"><span class="label">잔여한도</span><strong class="snote203-total-reserve" style="color:${limitTotal>0&&remainTotal/limitTotal<=.15?'#cf334c':limitTotal>0&&remainTotal/limitTotal<=.4?'#db7a21':'#171717'}">${snote202Won(remainTotal)}<small>원</small></strong></div></div></div>
  <div class="fin-lender-grid">${companyCards}</div>
  <div class="fin-filters"><label class="search"><span class="search-icon"></span><input id="inventory-finance-search" aria-label="재고금융 차량 검색" type="search" placeholder="차명 · 차량번호 · 담당딜러 검색" value="${esc(keyword)}" oninput="renderInventoryFinanceRows()"/></label><select class="filter" id="inventory-lender-filter" aria-label="재고금융사 필터" onchange="renderInventoryFinanceRows()"><option value="all">전체 금융사</option>${INVENTORY_LENDERS.map(l=>`<option value="${esc(l)}" ${lenderFilter===l?'selected':''}>${esc(l)}</option>`).join('')}</select></div>
  <div class="tablewrap fin-table"><table><thead><tr><th>매입일자</th><th>차명</th><th>차량번호</th><th>차량연식</th><th>주행거리</th><th>매입가격</th><th>재고대출금액</th><th>재고금융사</th><th>담당 딜러</th><th>관리</th></tr></thead><tbody id="inventory-finance-tbody"></tbody></table></div><div id="inventory-finance-mobile" class="fin-mobile-list"></div>
@@ -5383,7 +5468,7 @@ let activeDocTab='registration';
 function showDocTab(which){if(!['registration','inspection'].includes(which))return;activeDocTab=which;renderDocTab()}
 function renderDocTab(){if(!activeCarId)return;const all=carFiles(activeCarId);for(const kind of ['registration','inspection']){const el=$('doc-tab-'+kind);el.classList.toggle('active',activeDocTab===kind);el.setAttribute('aria-selected',activeDocTab===kind?'true':'false')}
  const entries=activeDocTab==='registration'?[['registration','자동차등록증','등록증 이미지 1장']]:[['inspection1','성능·상태점검기록부 · 1페이지','첫 번째 이미지'],['inspection2','성능·상태점검기록부 · 2페이지','두 번째 이미지']];
- $('doc-grid').innerHTML=entries.map(([group,title,desc])=>{const item=all.find(x=>x.group===group);return `<article class="doc-card"><div class="doc-title">${title}</div><div class="doc-subtitle">${desc} · 차량별 별도 보관</div><div class="doc-body">${item?`<img src="${esc(item.url)}" alt="${title} 보기" onclick="openZoom('${item.id}')" />`:`<div class="doc-placeholder">${ico('clipboard')}</div><span class="doc-empty">등록된 서류가 없습니다</span>`}</div>${item?`<div class="doc-filename" title="${esc(item.filename)}">${esc(item.filename)}</div>`:''}<div class="doc-footer"><button class="small-action primary" onclick="triggerMediaInput('${group}')">${item?'이미지 교체':'＋ 사진 등록'}</button>${item?`<button class="small-action" onclick="openZoom('${item.id}')">크게 보기</button>${group==='registration'?'<button class="small-action primary" type="button" onclick="redoRegistrationVinOCR()">차대번호 재인식</button>':''}<button class="small-action danger" onclick="removeMedia('${item.id}')">삭제</button>`:''}</div></article>`}).join('');
+ $('doc-grid').innerHTML=entries.map(([group,title,desc])=>{const item=all.find(x=>x.group===group);return `<article class="doc-card"><div class="doc-title">${title}</div><div class="doc-subtitle">${desc} · 차량별 별도 보관</div><div class="doc-body">${item?`<img src="${esc(item.url)}" alt="${title} 보기" onclick="openZoom('${item.id}')" />`:`<div class="doc-placeholder">${ico('clipboard')}</div><span class="doc-empty">등록된 서류가 없습니다</span>`}</div>${item?`<div class="doc-filename" title="${esc(item.filename)}">${esc(item.filename)}</div>`:''}<div class="doc-footer"><button class="small-action primary" onclick="triggerMediaInput('${group}')">${item?'이미지 교체':'＋ 사진 등록'}</button>${item?`<button class="small-action danger" onclick="removeMedia('${item.id}')">삭제</button>`:''}</div></article>`}).join('');
  updateVinOcrTab();
 }
 function openDateInputCalendar(input){
@@ -5563,16 +5648,16 @@ function saveAccountantVehicle(){
 }
 
 function renderVehicle(){if(isAccountant()){const c=cars.find(x=>x.id===activeCarId&&canManageCar(x));if(c)renderAccountantVehicle(c);return;}placeFinanceLenderAtTop(false);if(!currentUser||!activeCarId)return;const c=cars.find(x=>x.id===activeCarId&&canManageCar(x));if(!c)return;const photos=carPhotos(c.id),all=carFiles(c.id);const featured=coverPhoto(c);$('vehicle-title').textContent=c.model;$('vehicle-meta').textContent=`${isAccountant()?'담당 '+dealerLabel(c)+' · ':''}${c.plate}  ·  ${c.year}년식  ·  ${c.km}km${c.color?' · '+c.color:''}${c.purchaseAt?' · 매입일 '+c.purchaseAt:''}`;
-  $('vehicle-overview').innerHTML=[['상태',statusSelect(c)],['매입가',`${num(c.buy)}만원`],[c.status==='판매완료'?'판매가':'판매예정가',`${num(salePrice(c))}만원`],['보관 파일',`${photos.length+all.filter(x=>x.group!=='photos').length}개`],['재고금융 분류',lenderBadge(c)]].map(([label,val])=>`<div class="vehicle-metric"><label>${label}</label><strong>${val}</strong></div>`).join('')+prestockDetailMetric(c);
+  $('vehicle-overview').innerHTML=[['상태',statusSelect(c)],['매입가',`${num(c.buy)}만원`],[c.status==='판매완료'?'판매가':'판매예정가',`${num(salePrice(c))}만원`],['재고금융 분류',lenderBadge(c)]].map(([label,val])=>`<div class="vehicle-metric"><label>${label}</label><strong>${val}</strong></div>`).join('')+prestockDetailMetric(c);
   renderDetailIdentity(c);renderDetailCosts(c);
-  $('photo-count').textContent=`${photos.length} / 10`;$('photo-add').disabled=photos.length>=10;
+  $('photo-count').textContent=`${photos.length} / 5`;$('photo-add').disabled=photos.length>=5;
   const tiles=photos.map(p=>`<div class="photo-tile"><img src="${esc(p.url)}" alt="${esc(p.filename)}" onclick="openZoom('${p.id}')" loading="lazy" />${p.id===featured?.id?'<span class="cover-badge">대표 사진</span>':''}<div class="tile-controls"><button onclick="setCoverPhoto('${p.id}')" ${p.id===featured?.id?'disabled':''} title="대표 사진으로 지정">${p.id===featured?.id?'대표 ✓':'대표 지정'}</button><button class="delete" onclick="removeMedia('${p.id}')" title="사진 삭제">삭제</button></div></div>`).join('');
   const visual=photos.length?null:fallbackImage(c);
   const defaultTile=visual?`<div class="photo-tile zc-default-tile"><img src="${esc(visual.src)}" alt="${esc(visual.label)}"/><span class="zc-default-badge">${esc(visual.label)} · 실차 아님</span></div>`:'';
-  $('photo-grid').innerHTML=defaultTile+tiles+(photos.length<10?`<button type="button" class="photo-tile add-tile" onclick="triggerMediaInput('photos')">${ico('plus')}<span>사진 추가</span></button>`:'');
+  $('photo-grid').innerHTML=defaultTile+tiles+(photos.length<5?`<button type="button" class="photo-tile add-tile" onclick="triggerMediaInput('photos')">${ico('plus')}<span>사진 추가</span></button>`:'');
   $('zc-reference-hint').textContent=photos.length?'실제 차량 사진이 표시되고 있습니다.':'실차 사진을 추가하면 기본 이미지가 자동으로 교체됩니다.';
   renderDocTab()}
-async function handleMediaFiles(event,group){if(isAccountant()){toast('경리 계정은 차량 사진과 서류를 변경할 수 없습니다.');return;}const input=event.target;const raw=Array.from(input.files||[]);input.value='';if(!raw.length||!activeCarId)return;const carId=activeCarId;const chosen=group==='photos'?raw:raw.slice(0,1);if(raw.some(file=>!file.type.startsWith('image/'))){toast('이미지 파일만 등록할 수 있습니다.');return}if(chosen.some(f=>f.size>15*1024*1024)){toast('파일당 최대 15MB까지 등록할 수 있습니다.');return}let existing=carFiles(carId);if(group==='photos'){const remaining=10-carPhotos(carId).length;if(raw.length>remaining){toast(`실차 사진은 최대 10장입니다. 현재 ${remaining}장까지 추가할 수 있습니다.`);return}}
+async function handleMediaFiles(event,group){if(isAccountant()){toast('경리 계정은 차량 사진과 서류를 변경할 수 없습니다.');return;}const input=event.target;const raw=Array.from(input.files||[]);input.value='';if(!raw.length||!activeCarId)return;const carId=activeCarId;const chosen=group==='photos'?raw:raw.slice(0,1);if(raw.some(file=>!file.type.startsWith('image/'))){toast('이미지 파일만 등록할 수 있습니다.');return}if(chosen.some(f=>f.size>15*1024*1024)){toast('파일당 최대 15MB까지 등록할 수 있습니다.');return}let existing=carFiles(carId);if(group==='photos'){const remaining=5-carPhotos(carId).length;if(raw.length>remaining){toast(`실차 사진은 최대 5장입니다. 현재 ${remaining}장까지 추가할 수 있습니다.`);return}}
  const previous=group==='photos'?[]:existing.filter(m=>m.group===group).map(m=>m.id);const records=chosen.map((file,i)=>({id:'image-'+Date.now()+'-'+i+'-'+Math.random().toString(36).slice(2,9),carId,ownerId:cars.find(c=>c.id===carId)?.ownerId||currentUser.username,group,filename:file.name,createdAt:Date.now()+i,blob:file}));try{const draftVIN=group==='registration'?$('detail-vin').value:null;
  await updateDB(records,previous);await refreshMedia();
  if(group==='registration'&&activeCarId===carId&&canManageCar(cars.find(c=>c.id===carId))){
@@ -5619,7 +5704,7 @@ async function registerAccount(event){event.preventDefault();if(!isAccountant())
 async function loginAccount(event){event.preventDefault();clearAuthError('login');const id=$('login-id').value.trim().toLowerCase(),pass=$('login-pw').value;const btn=$('login-submit');btn.disabled=true;btn.textContent='확인 중…';try{const account=await getAccount(id);const hash=account?await hashPassword(pass,account.salt):null;if(!account||hash!==account.passwordHash){showAuthError('login','아이디 또는 비밀번호가 일치하지 않습니다.');return}await zc80RememberLogin(pass,account);await enterWorkspace(account)}catch(e){showAuthError('login','로그인 중 문제가 발생했습니다. 브라우저 설정을 확인해 주세요.')}finally{btn.disabled=false;btn.textContent='로그인';$('login-pw').value=''}}
 async function loginAccountingDemo(){$('login-id').value='accounting';$('login-pw').value='account1234';await loginAccount({preventDefault(){}})}
 async function loginDemo(){try{const account=await getAccount('demo');if(account){await zc80RememberLogin('demo1234',account);await enterWorkspace(account);} else showAuthError('login','테스트 계정이 준비되지 않았습니다.')}catch(_){showAuthError('login','체험 계정에 로그인할 수 없습니다.')}}
-async function enterWorkspace(account){zcDashboardUnlocked=false;if(zc80SensitiveUser!==account.username)zc80SensitiveLock();currentUser={username:account.username,name:account.name,company:account.company,union:account.union,employeeNo:account.employeeNo,role:account.role||'dealer'};sessionStorage.setItem('zerocar-office-v12-session',account.username);dealerAccounts=await getAllAccounts();loadCarsForUser();loadCovers();$('auth-shell').classList.add('hidden');$('profile-name').textContent=account.name+(isAccountant()?' · 경리':isSnoteAdmin()?' · 관리자':' · 딜러');$('profile-role').textContent=isAccountant()?'재고금융 및 월정산 관리':isSnoteAdmin()?'상사 관리자 · 전체 업무':account.company;$('profile-avatar').textContent=account.name.slice(0,1);$('top-avatar').textContent=account.name.slice(0,1);if(fileDB)await refreshMedia();else {mediaByCar={};modelPhotos=[];}buildStats();if(isAccountant())navigate('dashboard');else navigate('buy')}
+async function enterWorkspace(account){zcDashboardUnlocked=false;if(zc80SensitiveUser!==account.username)zc80SensitiveLock();currentUser={username:account.username,name:account.name,company:account.company,union:account.union,employeeNo:account.employeeNo,role:account.role||'dealer'};sessionStorage.setItem('zerocar-office-v12-session',account.username);dealerAccounts=await getAllAccounts();loadCarsForUser();loadCovers();$('auth-shell').classList.add('hidden');$('profile-name').textContent=account.name+(isAccountant()?' · 경리':isSnoteAdmin()?' · 관리자':' · 딜러');$('profile-role').textContent=isAccountant()?'재고금융 및 월정산 관리':isSnoteAdmin()?'상사 관리자 · 전체 업무':account.company;$('profile-avatar').textContent=account.name.slice(0,1);if(fileDB)await refreshMedia();else {mediaByCar={};modelPhotos=[];}buildStats();if(isAccountant())navigate('dashboard');else navigate('buy')}
 function logout(){if(window.zc86Cloud?.ready){window.zc86Cloud.signOut();return;}if(!currentUser)return;if(!confirm('로그아웃하시겠습니까?'))return;zc80DismissUnlock(false);zc80SensitiveLock();closeDashboardGate();closeAutoRegistration();zcDashboardGateGranted=false;zcDashboardUnlocked=false;closeMobileDrawer();document.body.classList.remove('accountant-mode');sessionStorage.removeItem('zerocar-office-v12-session');currentUser=null;cars=[];covers={};mediaByCar={};modelPhotos=[];modelPhotoUrls.forEach(u=>URL.revokeObjectURL(u));modelPhotoUrls=[];mediaObjectUrls.forEach(u=>URL.revokeObjectURL(u));mediaObjectUrls=[];closeVehicle();closeAdd();$('auth-shell').classList.remove('hidden');$('login-id').value='';$('login-pw').value='';showAuthMode('login');$('login-id').focus()}
 async function seedSampleAccount(username,password,name,role,employeeNo){
  if(await getAccount(username))return;
@@ -6835,11 +6920,15 @@ function snoteRenderAdminSettings(){
  host.innerHTML=`<div class="snote90-settings"><section class="snote90-panel">
  <h3>상사 정보</h3><p>관리자만 상사명을 변경할 수 있습니다. 모든 소속 직원에게 동일하게 적용됩니다.</p>
  <div class="snote90-inline"><label>상사명<input id="snote90-company-name" maxlength="100"></label><button type="button" class="btn-primary" id="snote90-company-save">상사명 저장</button></div>
+ <div class="snote203-assets"><div class="snote203-asset"><strong>상사 도장 이미지</strong><small>계약서에 사용할 PNG·JPG·WEBP</small><div id="snote203-stamp-preview" class="snote203-asset-preview">등록된 이미지 없음</div><input type="file" id="snote203-stamp-file" accept="image/png,image/jpeg,image/webp" hidden onchange="snote203UploadAsset('companyStamp',this)"><div class="snote203-asset-actions"><button type="button" onclick="document.getElementById('snote203-stamp-file').click()">이미지 등록 / 변경</button><button type="button" class="snote203-muted" onclick="snote203DeleteAsset('companyStamp')">삭제</button></div></div><div class="snote203-asset"><strong>상사 로고 이미지</strong><small>PNG·JPG·WEBP 이미지 파일</small><div id="snote203-logo-preview" class="snote203-asset-preview">등록된 이미지 없음</div><input type="file" id="snote203-logo-file" accept="image/png,image/jpeg,image/webp" hidden onchange="snote203UploadAsset('companyLogo',this)"><div class="snote203-asset-actions"><button type="button" onclick="document.getElementById('snote203-logo-file').click()">이미지 등록 / 변경</button><button type="button" class="snote203-muted" onclick="snote203DeleteAsset('companyLogo')">삭제</button></div></div></div>
  </section><section class="snote90-panel"><h3>직원 관리</h3><p>직원의 표시 이름과 역할을 관리합니다. 화면에는 내부 식별자를 표시하지 않습니다.</p>
  <div id="snote90-members">직원 목록 불러오는 중...</div></section>
  <section class="snote90-panel"><h3>직원 초대</h3><p>초대된 직원은 기존 상사에 연결됩니다. 초대코드는 별도로 전달해 주세요.</p><div id="snote90-invite-mount"></div></section>
- <section class="snote90-panel"><h3>재고금융사 및 한도 관리</h3><p>입력 단위: 만원 · 금융사 설정은 클라우드 장부와 동기화됩니다.</p>
- <div id="snote90-lenders"></div><div class="snote90-inline"><label>신규 금융사<input id="snote90-lender-name" maxlength="45" placeholder="금융사 이름"></label><label>한도 (만원)<input id="snote90-lender-limit" inputmode="numeric" placeholder="예: 100000"></label><button type="button" class="btn-primary" id="snote90-lender-add">금융사 추가</button></div></section></div>`;
+ <section class="snote90-panel"><h3>재고금융사 및 한도 관리</h3><p>금융사별 한도(만원)와 연이율(%)을 설정합니다. 금융사 설정은 클라우드에 동기화됩니다.</p>
+ <div id="snote90-lenders"></div><div class="snote90-inline"><label>신규 금융사<input id="snote90-lender-name" maxlength="45" placeholder="금융사 이름"></label><label>한도 (만원)<input id="snote90-lender-limit" inputmode="numeric" placeholder="예: 100000"></label><button type="button" class="btn-primary" id="snote90-lender-add">금융사 추가</button></div></section>
+ <section class="snote90-panel snote203-bank-card"><h3>선재고 설정</h3><p>선재고 통장 총액 및 연결 계좌 정보를 관리합니다. 실제 은행 계좌와 자동 연동되지 않습니다.</p>
+ <div class="snote203-bank-fields"><label>선재고 총액 (원)<input id="snote203-bank-total" type="text" inputmode="numeric" placeholder="0" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\\B(?=(\\d{3})+(?!\\d))/g,',')"></label><label>은행명<input id="snote203-bank-name" maxlength="35" placeholder="우리은행"></label><label>계좌번호<input id="snote203-bank-account" maxlength="45" placeholder="계좌번호"></label><label>계좌명 / 예금주<input id="snote203-bank-holder" maxlength="45" placeholder="예금주 또는 계좌명"></label></div><div class="snote203-bank-actions"><button class="btn-primary" type="button" onclick="snote203SavePrestockSettings()">선재고 설정 저장</button></div>
+ </section></div>`;
  byId('snote90-company-name').value=S.company.name;
  byId('snote90-company-save').addEventListener('click',async()=>{
   const name=byId('snote90-company-name').value.trim();if(name.length<2||name.length>100)return alert('상사명은 2~100자입니다.');
@@ -6856,25 +6945,86 @@ function snoteRenderAdminSettings(){
   if(!name||name.length>45||!Number.isFinite(limit)||limit<0)return alert('금융사 이름과 한도 금액을 확인해주세요.');
   if(INVENTORY_LENDERS.includes(name))return alert('이미 등록된 금융사입니다.');
   if(INVENTORY_LENDERS.length>=30)return alert('금융사는 최대 30곳까지 가능합니다.');
-  if(persistFinanceCompanies([...ACC44_LENDER_LIMITS,[name,limit]])){snote90RenderLenders();byId('snote90-lender-name').value='';byId('snote90-lender-limit').value='';}
+  if(persistFinanceCompanies([...ACC44_LENDER_LIMITS,[name,limit,0]])){snote90RenderLenders();byId('snote90-lender-name').value='';byId('snote90-lender-limit').value='';}
  });
- snote90RenderLenders();snote90RefreshMembers().catch(e=>byId('snote90-members').textContent='직원 조회 실패: '+errMsg(e));
+ snote90RenderLenders();snote203FillBank();snote203LoadAssets().catch(e=>console.warn('상사 이미지 미리보기',e));snote90RefreshMembers().catch(e=>byId('snote90-members').textContent='직원 조회 실패: '+errMsg(e));
 }
 function snote90RenderLenders(){
  const host=byId('snote90-lenders');if(!host)return;host.replaceChildren();
- for(const [name,limit] of ACC44_LENDER_LIMITS){
-  const row=document.createElement('div');row.className='snote90-lender';
+ for(const [name,limit,rate=0] of ACC44_LENDER_LIMITS){
+  const row=document.createElement('div');row.className='snote90-lender snote203-lender';
   const strong=document.createElement('strong');strong.textContent=name;
-  const input=document.createElement('input');input.type='text';input.inputMode='numeric';input.value=Number(limit).toLocaleString('ko-KR');input.setAttribute('aria-label',name+' 한도');
-  const save=document.createElement('button');save.textContent='수정';save.type='button';save.addEventListener('click',()=>{
-   const n=zc157ParseLimit(input.value);if(!Number.isFinite(n)||n<0)return alert('금액을 확인해주세요.');
-   if(persistFinanceCompanies(ACC44_LENDER_LIMITS.map(x=>[x[0],x[0]===name?n:x[1]])))snote90RenderLenders();
+  const limitLabel=document.createElement('label');limitLabel.textContent='재고한도 (만원)';
+  const input=document.createElement('input');input.type='text';input.inputMode='numeric';input.value=Number(limit).toLocaleString('ko-KR');input.setAttribute('aria-label',name+' 재고한도 (만원)');limitLabel.append(input);
+  const rateLabel=document.createElement('label');rateLabel.textContent='재고 연이율 (%)';
+  const interest=document.createElement('input');interest.type='number';interest.step='0.01';interest.min='0';interest.max='100';interest.value=String(rate);interest.setAttribute('aria-label',name+' 재고 연이율 (%)');rateLabel.append(interest);
+  const save=document.createElement('button');save.textContent='저장';save.type='button';save.className='snote203-btn-primary';save.addEventListener('click',()=>{
+   const n=zc157ParseLimit(input.value),r=Number(interest.value);
+   if(!Number.isFinite(n)||n<0||!interest.value.trim()||!Number.isFinite(r)||r<0||r>100)return alert('재고한도와 연이율(0~100%)을 확인해주세요.');
+   if(snote203SaveLender(name,n,Math.round(r*100)/100)){snote90RenderLenders();toast(name+' 재고한도·연이율을 저장했습니다.');}
   });
   const del=document.createElement('button');del.type='button';del.textContent='삭제';del.className='snote90-danger';del.addEventListener('click',()=>{
    if(cars.some(c=>c.inventoryLender===name)||INVENTORY_LENDERS.length<=1)return alert('사용 중이거나 마지막 금융사는 삭제할 수 없습니다.');
    if(confirm(name+' 금융사를 삭제할까요?')&&persistFinanceCompanies(ACC44_LENDER_LIMITS.filter(x=>x[0]!==name)))snote90RenderLenders();
-  });row.append(strong,input,save,del);host.appendChild(row);
+  });row.append(strong,limitLabel,rateLabel,save,del);host.appendChild(row);
  }
+}
+function snote203FillBank(){
+ const cfg=snote203PrestockConfig();
+ const total=$('snote203-bank-total');if(!total)return;
+ total.value=cfg.total.toLocaleString('ko-KR');$('snote203-bank-name').value=cfg.bank;
+ $('snote203-bank-account').value=cfg.account;$('snote203-bank-holder').value=cfg.holder;
+}
+let snote203AssetURLs=[];
+async function snote203AssetRecords(kind){
+ if(!S?.ready||!S.client||!S.company)return [];
+ const result=await S.client.from('zc_media').select('*').eq('company_id',S.company.id).eq('group_name',kind).limit(40);
+ if(result.error)throw result.error;
+ return (result.data||[]).sort((a,b)=>String(b.created_at||'').localeCompare(String(a.created_at||'')));
+}
+async function snote203LoadAssets(){
+ for(const url of snote203AssetURLs)URL.revokeObjectURL(url);snote203AssetURLs=[];
+ for(const [kind,target] of [['companyStamp','snote203-stamp-preview'],['companyLogo','snote203-logo-preview']]){
+  const box=byId(target);if(!box)return;
+  try{const entries=await snote203AssetRecords(kind);if(!box.isConnected)return;
+   if(!entries.length){box.textContent='등록된 이미지 없음';continue}
+   const file=await S.client.storage.from('zc-vehicle-private').download(entries[0].file_path);
+   if(file.error)throw file.error;
+   const url=URL.createObjectURL(file.data);snote203AssetURLs.push(url);
+   box.replaceChildren();const img=document.createElement('img');img.src=url;img.alt=kind==='companyStamp'?'등록한 상사 도장':'등록한 상사 로고';box.append(img);
+  }catch(err){if(box.isConnected)box.textContent='이미지를 불러오지 못했습니다.';console.warn(kind,err)}
+ }
+}
+async function snote203UploadAsset(kind,input){
+ const file=input.files?.[0];input.value='';if(!file||!isSnoteAdmin()||!S?.ready)return;
+ if(!['image/png','image/jpeg','image/webp'].includes(file.type)||file.size>3*1024*1024){toast('PNG/JPG/WEBP 형식, 3MB 이하 이미지를 선택해주세요.');return}
+ const button=input.closest('.snote203-asset')?.querySelector('button');if(button)button.disabled=true;
+ try{
+  const previous=await snote203AssetRecords(kind);
+  const id='snote203-'+kind.toLowerCase()+'-'+Date.now()+'-'+Math.random().toString(36).slice(2,8);
+  const ext=file.type==='image/png'?'png':file.type==='image/webp'?'webp':'jpg';
+  const path=[S.company.id,S.user.id,'branding',id+'.'+ext].join('/');
+  const upload=await S.client.storage.from('zc-vehicle-private').upload(path,file,{contentType:file.type,upsert:false});
+  if(upload.error)throw upload.error;
+  const record={company_id:S.company.id,owner_id:S.user.id,id,car_id:'company-brand',file_path:path,original_name:file.name,mime_type:file.type,file_size:file.size,group_name:kind,meta:{}};
+  const save=await S.client.from('zc_media').insert(record);
+  if(save.error){await S.client.storage.from('zc-vehicle-private').remove([path]);throw save.error}
+  for(const old of previous){
+   const rm=await S.client.from('zc_media').delete().eq('company_id',S.company.id).eq('owner_id',old.owner_id).eq('id',old.id);
+   if(!rm.error)await S.client.storage.from('zc-vehicle-private').remove([old.file_path]).catch(()=>{});
+  }
+  await snote203LoadAssets();toast((kind==='companyStamp'?'상사 도장':'상사 로고')+' 이미지를 저장했습니다.');
+ }catch(e){console.warn(e);toast('상사 이미지 저장 실패: 저장소 권한이나 파일 형식을 확인하세요.');}
+ finally{if(button)button.disabled=false}
+}
+async function snote203DeleteAsset(kind){
+ if(!isSnoteAdmin()||!S?.ready)return;
+ if(!confirm((kind==='companyStamp'?'상사 도장':'상사 로고')+' 이미지를 삭제할까요?'))return;
+ try{const previous=await snote203AssetRecords(kind);
+  for(const row of previous){const deleted=await S.client.from('zc_media').delete().eq('company_id',S.company.id).eq('owner_id',row.owner_id).eq('id',row.id);if(deleted.error)throw deleted.error;
+   await S.client.storage.from('zc-vehicle-private').remove([row.file_path]);}
+  await snote203LoadAssets();toast('상사 이미지를 삭제했습니다.');
+ }catch(e){console.warn(e);toast('이미지를 삭제하지 못했습니다. 권한을 확인하세요.');}
 }
 async function snote90RefreshMembers(){
  const host=byId('snote90-members');if(!host||!isSnoteAdmin())return;
@@ -6884,7 +7034,7 @@ async function snote90RefreshMembers(){
   const row=document.createElement('div');row.className='snote90-member';
   const label=document.createElement('label');label.textContent='직원 이름';
   const input=document.createElement('input');input.value=m.display_name||'';input.maxLength=40;label.appendChild(input);
-  const role=document.createElement('span');role.textContent=m.role==='admin'?'관리자':m.role==='accountant'?'경리':'딜러';
+  const role=document.createElement('span');role.dataset.role=m.role;role.textContent=m.role==='admin'?'관리자':m.role==='accountant'?'경리':'딜러';
   const save=document.createElement('button');save.type='button';save.textContent='이름 저장';
   save.addEventListener('click',async()=>{
    const name=input.value.trim();if(name.length<1||name.length>40)return alert('직원 이름은 1~40자입니다.');
