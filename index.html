@@ -2294,7 +2294,7 @@ body:has(#monthly-screen[style*="block"]) #accountant-bar{display:none!important
 <body>
 
 <!-- S-NOTE public landing: everyone can see this page before any registration -->
-<section id="snote-public-home" aria-label="S-NOTE 공개 홈페이지">
+<section id="snote-public-home" hidden aria-label="S-NOTE 공개 홈페이지">
   <header class="snote-public-nav">
     <div class="snote-public-logo"><span class="snote-public-logo-icon">S</span><span>S-NOTE</span></div>
     <div class="snote-nav-actions"><button type="button" class="snote-public-login" id="snote-home-login">로그인</button><button type="button" class="snote-button" id="snote-home-register">로그인</button></div>
@@ -6909,7 +6909,7 @@ window.addEventListener('offline',()=>{if(S.ready)showStatus('● 인터넷 연�
 async function signOut(){if(!confirm('온라인 계정에서 로그아웃할까요?'))return;
  await flush();if(S.queue.size||S.saving||S.conflict){alert('서버에 아직 저장하지 못한 변경사항이 있어 로그아웃을 중단했습니다. 연결 상태를 확인하세요.');return;}S.ready=false;S.authPassword=null;await S.client.auth.signOut();localStorage.removeItem(snote95RememberKey);byId('snote95-remember').checked=false;S.user=null;S.company=null;S.members=[];
  if(currentUser){zc80SensitiveLock();currentUser=null;cars=[];covers={};}
- gate.hidden=false;setup.hidden=true;login.hidden=false;byId('zc86-onboard').hidden=true;byId('zc86-topbar').hidden=true;status.hidden=true;byId('snote-public-home').hidden=false;msg('로그아웃되었습니다.');
+ gate.hidden=false;setup.hidden=true;login.hidden=false;byId('zc86-onboard').hidden=true;byId('zc86-topbar').hidden=true;status.hidden=true;byId('snote-public-home').hidden=true;msg('로그아웃되었습니다.');
 }
 byId('zc86-signout').addEventListener('click',signOut);
 byId('zc86-reload').addEventListener('click',reload);
@@ -7134,7 +7134,7 @@ async function snote95AutoRestore(){
  finally{S.busy=false;}
 }
 const config=publicDefault||validConfig(parsePayload(localStorage.getItem(keyConfig))||{});
-if(config){setup.hidden=true;login.hidden=false;byId('zc-cloud-url').value=config.url;byId('zc-cloud-key').value=config.key;}
+if(config){setup.hidden=true;login.hidden=false;byId('zc-cloud-url').value=config.url;byId('zc-cloud-key').value=config.key;byId('zc-cloud-email').focus();}
 byId('snote95-remember').checked=snote95Remember();
 if(publicDefault){byId('zc-cloud-config-change').hidden=true;}
 const legacyOffline=byId('zc-cloud-offline');if(legacyOffline)legacyOffline.remove();
