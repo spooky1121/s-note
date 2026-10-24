@@ -2400,6 +2400,544 @@ body:has(#monthly-screen[style*="block"]) #accountant-bar{display:none!important
 .sidebar .brand,.mobile-drawer-brand{flex-direction:column;align-items:flex-start;gap:6px}
 .sidebar .branddesc,.mobile-drawer-brand small{margin-top:0}
 </style>
+<style id="snote204-design">
+/* S-NOTE v2.04 · shared visual language, authentication screens */
+@media screen {
+  #zc-cloud-gate {
+    padding: 28px;
+    background: #f2f5f9;
+    color: #14263d;
+    font-family: 'Noto Sans KR', 'Malgun Gothic', system-ui, sans-serif;
+  }
+  #zc-cloud-gate .snote-login-shell {
+    grid-template-columns: minmax(0, .96fr) minmax(0, 1fr);
+    width: min(1440px, 100%);
+    min-height: min(900px, calc(100svh - 56px));
+    margin: 0 auto;
+    border: 1px solid #e2e8f0;
+    border-radius: 24px;
+    box-shadow: 0 16px 60px #14263d08;
+  }
+  #zc-cloud-gate .snote-login-panel,
+  #zc-cloud-gate:is([data-auth-mode="admin"], [data-auth-mode="staff"]) .snote-login-panel {
+    padding: 32px clamp(30px, 4.2vw, 72px) 25px;
+    background: #fff;
+  }
+  #zc-cloud-gate .snote204-auth-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  #zc-cloud-gate .snote204-auth-header .snote-wordmark { width: 130px; height: 36px; }
+  #zc-cloud-gate .snote204-auth-header > span:last-child { color: #64748b; font-size: 10px; letter-spacing: .2px; }
+  #zc-cloud-gate #snote-auth-back { margin-top: 24px; color: #53657e; }
+  #zc-cloud-gate #snote-auth-back:hover { color: #1d4ed8; }
+  #zc-cloud-gate .zc-cloud-card {
+    width: min(400px, 100%);
+    margin: auto;
+    padding: 48px 0 34px;
+  }
+  #zc-cloud-gate:is([data-auth-mode="admin"], [data-auth-mode="staff"]) .zc-cloud-card { width: min(520px, 100%); padding: 30px 0; }
+  #zc-cloud-gate .snote204-form-eyebrow { margin: 0 0 13px; color: #2563eb; font-size: 10px; font-weight: 750; letter-spacing: 1.6px; }
+  #zc-cloud-gate #zc-cloud-title { margin: 0 0 13px; text-align: left; color: #14263d; font-size: 34px; font-weight: 800; line-height: 1.35; letter-spacing: -1.4px; }
+  #zc-cloud-gate .zc-cloud-desc { margin: 0 0 34px; text-align: left; color: #64748b; font-size: 13px; line-height: 1.9; }
+  #zc-cloud-gate .zc-field { margin-bottom: 21px; color: #34465f; font-size: 12px; font-weight: 650; }
+  #zc-cloud-gate input { height: 52px; margin-top: 9px; padding: 0 15px; border: 1px solid #dbe3ed; border-radius: 10px; background: #fbfcfe; color: #14263d; font-size: 14px; }
+  #zc-cloud-gate input::placeholder { color: #78869a; }
+  #zc-cloud-gate input:hover { border-color: #a9b9cc; }
+  #zc-cloud-gate input:focus { border-color: #2563eb; background: #fff; box-shadow: 0 0 0 3px #2563eb0e; }
+  #zc-cloud-gate :is(button, input, summary):focus-visible { outline: 2px solid #2563eb; outline-offset: 3px; }
+  #zc-cloud-gate #snote-login-password-toggle { top: 4px; right: 4px; width: 44px; height: 44px; border-radius: 8px; color: #64748b; }
+  #zc-cloud-gate #snote-login-password-toggle:hover { background: #edf3ff; color: #1d4ed8; }
+  #zc-cloud-gate .snote-login-options { margin: 4px 0 27px; gap: 12px; }
+  #zc-cloud-gate .snote95-remember { color: #53657e; font-size: 12px; }
+  #zc-cloud-gate .snote95-remember input { width: 16px; height: 16px; margin: 0; accent-color: #2563eb; }
+  #zc-cloud-gate .snote-login-shared-hint { color: #64748b; font-size: 10px; }
+  #zc-cloud-gate .zc-btn { min-height: 52px; height: auto; padding: 15px 18px; border: 1px solid #2563eb; border-radius: 10px; background: #2563eb; color: #fff; font-size: 13px; font-weight: 700; line-height: 1.5; }
+  #zc-cloud-gate .zc-btn:hover:not(:disabled) { background: #1d4ed8; border-color: #1d4ed8; box-shadow: 0 5px 15px #2563eb1a; }
+  #zc-cloud-gate #zc-cloud-submit { display: flex; align-items: center; justify-content: space-between; text-align: left; }
+  #zc-cloud-gate #zc-cloud-submit::after { content: '→'; font-size: 20px; font-weight: 400; line-height: 1; }
+  #zc-cloud-gate .snote-auth-secondary { margin-top: 12px; background: #fff; border-color: #dbe3ed; color: #34465f; }
+  #zc-cloud-gate .snote-auth-secondary:hover:not(:disabled) { background: #f5f8fc; border-color: #bac9dd; color: #14263d; box-shadow: none; }
+  #zc-cloud-gate .snote-auth-invite { margin-top: 25px; padding-top: 23px; border-top: 1px solid #edf1f6; color: #64748b; font-size: 11px; }
+  #zc-cloud-gate .snote-auth-invite .zc-link { color: #1d4ed8; font-size: 11px; text-decoration: none; }
+  #zc-cloud-gate .zc-link { color: #1d4ed8; }
+  #zc-cloud-gate .zc-link:hover { text-decoration: underline; }
+  #zc-cloud-gate .snote95-security { margin-top: 25px; }
+  #zc-cloud-gate .snote95-security > summary { margin: 0; padding: 6px 0; text-align: left; color: #64748b; font-size: 10px; }
+  #zc-cloud-gate .snote95-security > summary:hover { color: #1d4ed8; }
+  #zc-cloud-gate .snote-auth-note { background: #f3f7fe; border-color: #dee8f7; border-radius: 10px; color: #53657e; font-size: 12px; }
+  #zc-cloud-gate .snote-auth-hint { color: #64748b; }
+  #zc-cloud-gate .snote-auth-complete-mark { background: #edf3ff; color: #2563eb; }
+  #zc-cloud-gate .snote-auth-complete h3 { color: #14263d; }
+  #zc-cloud-gate .snote-login-footer { margin-top: 16px; color: #64748b; font-size: 10px; text-align: left; line-height: 1.8; }
+  #zc-cloud-gate .snote-login-footer span { float: right; margin-left: 12px; color: #64748b; font-weight: 650; }
+  #zc-cloud-gate .snote-login-visual { order: -1; display: flex; flex-direction: column; min-height: 720px; padding: clamp(32px, 4vw, 60px); overflow: hidden; background: #14263d; }
+  #zc-cloud-gate .snote-login-photo { object-position: 54% center; filter: saturate(.55); }
+  #zc-cloud-gate .snote-login-visual::after { z-index: 0; background: linear-gradient(180deg, #0c203be8 0%, #102743b8 40%, #10274338 72%, #0c203bcf 100%); }
+  #zc-cloud-gate .snote204-hero-top { position: relative; z-index: 1; display: flex; align-items: center; gap: 12px; margin: 0; color: #d5e5ff; font-size: 10px; font-weight: 650; letter-spacing: 1.8px; }
+  #zc-cloud-gate .snote204-hero-top::before { content: ''; width: 26px; height: 1px; background: #8bb4ff; }
+  #zc-cloud-gate .snote-auth-hero { padding: 65px 0 0; opacity: 1; text-align: left; }
+  #zc-cloud-gate .snote-login-visual .snote-auth-hero-title { margin: 0 0 25px; text-align: left; color: #fff; font-size: clamp(32px, 3.1vw, 48px); font-weight: 450; line-height: 1.5; letter-spacing: -2px; }
+  #zc-cloud-gate .snote-auth-hero-title strong { color: #fff; font-weight: 750; }
+  #zc-cloud-gate .snote-auth-hero p { max-width: 360px; margin: 0; color: #d8e3f1; font-size: 13px; font-weight: 400; line-height: 1.95; }
+  #zc-cloud-gate .snote204-hero-bottom { position: relative; z-index: 1; margin-top: auto; padding-top: 100px; color: #e8f0fc; }
+  #zc-cloud-gate .snote204-hero-bottom > p { margin: 0 0 17px; font-size: 12px; line-height: 1.8; }
+  #zc-cloud-gate .snote204-hero-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  #zc-cloud-gate .snote204-hero-tags span { padding: 7px 11px; border: 1px solid #c6dcff4d; border-radius: 6px; background: #16335580; color: #eef5ff; font-size: 10px; line-height: 1.5; }
+  #zc-cloud-gate .snote-login-info { width: min(1256px, 100%); padding: 78px 12px 24px; }
+  #zc-cloud-gate .snote-login-info > header { margin-bottom: 32px; text-align: left; }
+  #zc-cloud-gate .snote204-section-label { margin: 0 0 13px; color: #2563eb; font-size: 10px; font-weight: 750; letter-spacing: 1.6px; }
+  #zc-cloud-gate .snote-login-info h2 { margin: 0 0 12px; color: #14263d; font-size: 28px; font-weight: 750; letter-spacing: -1.2px; text-align: left; }
+  #zc-cloud-gate .snote-login-info > header > p:not(.snote204-section-label) { color: #64748b; font-size: 13px; }
+  #zc-cloud-gate .snote-auth-features { gap: 16px; }
+  #zc-cloud-gate .snote-auth-feature { padding: 26px 24px 30px; background: #fff; border: 1px solid #e2e8f0; border-radius: 14px; }
+  #zc-cloud-gate .snote-auth-feature-icon { width: 40px; height: 40px; margin-bottom: 25px; border: 1px solid #dce8fb; border-radius: 10px; background: #f3f7ff; color: #2563eb; }
+  #zc-cloud-gate .snote-auth-feature-icon svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  #zc-cloud-gate .snote-auth-feature h3 { margin-bottom: 11px; color: #14263d; font-size: 14px; font-weight: 750; }
+  #zc-cloud-gate .snote-auth-feature p { color: #64748b; font-size: 12px; line-height: 1.9; }
+  #zc-cloud-gate .snote-auth-trust { justify-content: flex-start; gap: 16px 30px; margin: 25px 0; color: #53657e; font-size: 11px; }
+  #zc-cloud-gate .snote-auth-trust span { color: #2563eb; }
+  #zc-cloud-gate .snote-auth-disclaimer { padding: 14px 17px; border-color: #e2e8f0; border-radius: 10px; background: #edf1f6; color: #5d6a7d; font-size: 10px; text-align: left; }
+  @media (max-width: 1100px) {
+    #zc-cloud-gate { padding: 20px; }
+    #zc-cloud-gate .snote-login-shell { min-height: calc(100svh - 40px); grid-template-columns: minmax(0, .85fr) minmax(0, 1fr); }
+    #zc-cloud-gate .snote-login-visual { min-height: 700px; padding: 32px; }
+    #zc-cloud-gate .snote-auth-hero { padding-top: 55px; }
+    #zc-cloud-gate .snote-login-visual .snote-auth-hero-title { font-size: 34px; letter-spacing: -1.5px; }
+    #zc-cloud-gate .snote204-auth-header > span:last-child { display: none; }
+    #zc-cloud-gate .snote-auth-features { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 860px) {
+    #zc-cloud-gate .snote-login-shell { display: flex; flex-direction: column; width: min(600px, 100%); }
+    #zc-cloud-gate .snote-login-panel,
+    #zc-cloud-gate:is([data-auth-mode="admin"], [data-auth-mode="staff"]) .snote-login-panel { min-height: calc(100svh - 42px); padding: 27px 40px 24px; }
+    #zc-cloud-gate .snote-login-visual { display: none; }
+    #zc-cloud-gate .snote204-auth-header > span:last-child { display: inline; }
+    #zc-cloud-gate .zc-cloud-card { padding: 44px 0 30px; }
+    #zc-cloud-gate .snote-login-info { width: min(600px, 100%); padding: 48px 8px 20px; }
+  }
+  @media (max-width: 600px) {
+    #zc-cloud-gate { padding: 0; background: #fff; }
+    #zc-cloud-gate .snote-login-shell { width: 100%; min-height: 100svh; border: 0; border-radius: 0; box-shadow: none; }
+    #zc-cloud-gate .snote-login-panel,
+    #zc-cloud-gate:is([data-auth-mode="admin"], [data-auth-mode="staff"]) .snote-login-panel { min-height: 100svh; padding: max(24px, env(safe-area-inset-top)) 24px max(20px, env(safe-area-inset-bottom)); }
+    #zc-cloud-gate .snote204-auth-header { gap: 10px; }
+    #zc-cloud-gate .snote204-auth-header .snote-wordmark { width: 115px; height: 33px; }
+    #zc-cloud-gate .snote204-auth-header > span:last-child { font-size: 9px; }
+    #zc-cloud-gate .zc-cloud-card { width: 100%; margin: auto; padding: 42px 0 30px; }
+    #zc-cloud-gate #zc-cloud-title { font-size: 30px; }
+    #zc-cloud-gate .zc-cloud-desc { margin-bottom: 29px; font-size: 12px; }
+    #zc-cloud-gate input { font-size: 16px; }
+    #zc-cloud-gate .snote-auth-grid { grid-template-columns: 1fr; gap: 0; }
+    #zc-cloud-gate .snote-login-options { gap: 10px; }
+    #zc-cloud-gate .snote-login-footer { font-size: 9px; }
+    #zc-cloud-gate .snote-login-info { width: 100%; padding: 40px 24px 24px; border-top: 1px solid #e8edf4; background: #f5f7fb; }
+    #zc-cloud-gate .snote-login-info h2 { font-size: 23px; }
+    #zc-cloud-gate .snote-login-info > header > p:not(.snote204-section-label) { font-size: 12px; }
+    #zc-cloud-gate .snote-auth-features { grid-template-columns: 1fr; gap: 12px; }
+    #zc-cloud-gate .snote-auth-feature { padding: 23px; }
+    #zc-cloud-gate .snote-auth-feature-icon { float: left; margin: 0 17px 15px 0; }
+    #zc-cloud-gate .snote-auth-feature p { clear: both; }
+    #zc-cloud-gate .snote-auth-trust { align-items: flex-start; flex-direction: column; gap: 10px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #zc-cloud-gate input, #zc-cloud-gate .zc-btn { transition: none; }
+  }
+}
+
+/* S-NOTE v2.04: workspace finish. Screen-only so document printing is untouched. */
+@media screen {
+  .app {
+    --ink: #14263d;
+    --muted: #728098;
+    --blue: #2563eb;
+    --bg: #f5f7fb;
+    --line: #e5eaf2;
+    background: #f5f7fb;
+  }
+
+  .app .main {
+    background: #f5f7fb;
+  }
+
+  .app .sidebar {
+    background: #ffffff;
+    border-right-color: #e5eaf2;
+    box-shadow: 4px 0 24px rgba(20, 38, 61, .018);
+  }
+
+  .app .sidebar .brand {
+    padding-bottom: 30px;
+  }
+
+  .app .sidebar .branddesc {
+    color: #8a96a8;
+    letter-spacing: -.1px;
+  }
+
+  .app .sidebar .nav {
+    gap: 6px;
+  }
+
+  .app .sidebar .nav button,
+  .mobile-drawer .mobile-drawer-nav button {
+    border-radius: 11px;
+    color: #65748a;
+    font-weight: 650;
+    letter-spacing: -.2px;
+    transition: background-color .18s ease, color .18s ease;
+  }
+
+  .app .sidebar .nav button:hover,
+  .mobile-drawer .mobile-drawer-nav button:hover {
+    background: #f0f4fa;
+    color: #14263d;
+  }
+
+  .app .sidebar .nav button.active,
+  .mobile-drawer .mobile-drawer-nav button.active {
+    background: #14263d;
+    color: #ffffff;
+    box-shadow: 0 5px 12px rgba(20, 38, 61, .12);
+    font-weight: 750;
+  }
+
+  .app .sidebar .nav button.active .count {
+    background: rgba(255, 255, 255, .16);
+    color: #ffffff;
+  }
+
+  .app .sidebar .nav button:focus-visible,
+  .mobile-drawer .mobile-drawer-nav button:focus-visible {
+    outline: 3px solid #8fb4ff;
+    outline-offset: 2px;
+  }
+
+  .app .sidebar .support {
+    border: 1px solid #e8edf5;
+    border-radius: 14px;
+    padding: 17px 15px;
+    background: #f7f9fc;
+  }
+
+  .app .sidebar .support .st {
+    color: #334862;
+    font-size: 12px;
+    letter-spacing: -.2px;
+  }
+
+  .app .sidebar .support .sd {
+    color: #8290a3;
+    line-height: 1.8;
+  }
+
+  .app .topbar {
+    background: #ffffff;
+    border-bottom-color: #e5eaf2;
+    box-shadow: 0 2px 14px rgba(20, 38, 61, .018);
+  }
+
+  .app .topbar .eyebrow {
+    color: #7c8aa0;
+    font-size: 9px;
+    font-weight: 750;
+    letter-spacing: 1.45px;
+  }
+
+  .app .topbar .crumb h1 {
+    color: #14263d;
+    font-size: 21px;
+    font-weight: 780;
+    letter-spacing: -.75px;
+    line-height: 1.4;
+  }
+
+  .app .topbar .subtitle {
+    color: #7c899d;
+    font-size: 11.5px;
+    line-height: 1.65;
+  }
+
+  .app .topbar .sample {
+    border: 1px solid #e5ebf5;
+    background: #f7f9fd;
+    color: #74839a;
+    box-shadow: none;
+  }
+
+  .app .topbar .topbar-profile {
+    border: 1px solid #e7ecf3;
+    border-radius: 11px;
+    background: #ffffff;
+    color: #334862;
+  }
+
+  .app .topbar .topbar-profile:hover,
+  .app .topbar .topbar-profile[aria-expanded="true"] {
+    border-color: #d9e3f0;
+    background: #f5f8fc;
+  }
+
+  .app .snote-profile-menu {
+    border-color: #e2e8f1;
+    border-radius: 14px;
+    box-shadow: 0 14px 40px rgba(20, 38, 61, .12);
+  }
+
+  .app .content .panel {
+    border-color: #e5eaf2;
+    border-radius: 17px;
+    box-shadow: 0 4px 20px rgba(20, 38, 61, .035);
+  }
+
+  .app .panel-head h2 {
+    color: #22364f;
+    font-size: 15px;
+    font-weight: 780;
+    letter-spacing: -.4px;
+  }
+
+  .app .panel-head p {
+    color: #8a96a8;
+    font-size: 11px;
+    line-height: 1.6;
+  }
+
+  .app .stat {
+    border-color: #e5eaf2;
+    border-radius: 16px;
+    box-shadow: 0 4px 18px rgba(20, 38, 61, .028);
+  }
+
+  .app .stat .label {
+    color: #718096;
+    font-weight: 650;
+    letter-spacing: -.15px;
+  }
+
+  .app .stat .value {
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -.8px;
+  }
+
+  .app .searchrow .search,
+  .app .fin-filters .search {
+    border-color: #e0e7f1;
+    border-radius: 11px;
+    background: #f8fafd;
+    transition: border-color .18s ease, box-shadow .18s ease;
+  }
+
+  .app .searchrow .search:focus-within,
+  .app .fin-filters .search:focus-within {
+    border-color: #8aaff6;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, .08);
+  }
+
+  .app .searchrow .search input,
+  .app .fin-filters .search input {
+    color: #334862;
+    font-size: 12px;
+  }
+
+  .app .searchrow .search input::placeholder,
+  .app .fin-filters .search input::placeholder {
+    color: #96a2b4;
+  }
+
+  .app .searchrow > .filter,
+  .app .fin-filters > .filter {
+    border-color: #e0e7f1;
+    border-radius: 10px;
+    color: #65748a;
+    background-color: #ffffff;
+  }
+
+  .app .btn-primary {
+    background: #2563eb;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(37, 99, 235, .12);
+  }
+
+  .app .btn-primary:hover:not(:disabled) {
+    background: #1d4ed8;
+  }
+
+  .app .btn-ghost {
+    border-color: #e0e7f1;
+    border-radius: 10px;
+    color: #52657e;
+    background: #ffffff;
+  }
+
+  .app .btn-ghost:hover:not(:disabled) {
+    border-color: #c8d6e9;
+    color: #2563eb;
+    background: #f7faff;
+  }
+
+  .app #dash-table th,
+  .app #list-table th {
+    border-color: #edf1f6;
+    background: #f8fafd;
+    color: #7a889d;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: -.1px;
+  }
+
+  .app #dash-table td,
+  .app #list-table td {
+    border-bottom-color: #edf1f6;
+    font-size: 11.5px;
+    line-height: 1.55;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .app #dash-table .vehicle-clickable:hover,
+  .app #list-table .vehicle-clickable:hover {
+    background: #f8faff;
+  }
+
+  .app .vehicle-clickable:focus-visible,
+  .app .vehicle-card:focus-visible,
+  .app .acct-mobile-card:focus-visible {
+    outline: 2px solid #8fb4ff;
+    outline-offset: -2px;
+  }
+
+  .app .quick > button,
+  .app .quick > a {
+    border-color: #e7ecf3;
+    border-radius: 12px;
+    background: #ffffff;
+  }
+
+  .app .quick > button:hover,
+  .app .quick > a:hover {
+    border-color: #c8d9f5;
+    background: #f8faff;
+  }
+
+  .app .quick-label {
+    color: #334862;
+    letter-spacing: -.2px;
+  }
+
+  .app .quick-desc {
+    color: #8a96a8;
+  }
+
+  .app .empty {
+    color: #8593a7;
+    line-height: 1.7;
+  }
+
+  .mobile-drawer {
+    background: #ffffff;
+    box-shadow: 14px 0 48px rgba(20, 38, 61, .16);
+  }
+
+  .mobile-drawer .mobile-drawer-header,
+  .mobile-drawer .mobile-drawer-footer {
+    border-color: #e5eaf2;
+  }
+
+  .mobile-drawer .mobile-drawer-caption {
+    color: #91a0b4;
+    font-weight: 750;
+    letter-spacing: 1.5px;
+  }
+
+  .mobile-drawer .mobile-drawer-footer {
+    background: #f8fafd;
+  }
+
+  .mobile-drawer .mobile-drawer-avatar {
+    background: #eaf1ff;
+    color: #2563eb;
+  }
+}
+
+@media screen and (max-width: 760px) {
+  .app .topbar .crumb h1 {
+    font-size: 15px;
+    letter-spacing: -.4px;
+  }
+
+  .app .topbar .eyebrow {
+    font-size: 8px;
+    letter-spacing: 1.2px;
+  }
+
+  .app .topbar .subtitle {
+    font-size: 10.5px;
+    line-height: 1.6;
+  }
+
+  .app .topbar .topbar-profile {
+    min-height: 37px;
+  }
+
+  .app .panel-head h2 {
+    font-size: 14px;
+  }
+
+  .app .searchrow .search input {
+    font-size: 11px;
+  }
+
+  .app .content .panel,
+  .app .stat {
+    border-radius: 14px;
+  }
+
+  .app .searchrow > .filter {
+    font-size: 11px;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .app #list-screen > .panel > .panel-head {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .app #list-screen .zc-list-actions {
+    gap: 8px;
+  }
+
+  .app #list-screen #zc80-buy-scan {
+    flex: 1 1 180px;
+    min-width: 0;
+    justify-content: center;
+  }
+
+  .app #list-screen #snote92-buy-manual {
+    flex: 1 1 120px;
+    min-width: 0;
+    justify-content: center;
+  }
+
+  .app .vehicle-title {
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .app .vehicle-meta {
+    font-size: 10.5px;
+    line-height: 1.65;
+  }
+}
+
+@media screen and (prefers-reduced-motion: reduce) {
+  .app .sidebar .nav button,
+  .mobile-drawer .mobile-drawer-nav button,
+  .app .searchrow .search,
+  .app .fin-filters .search {
+    transition: none;
+  }
+}
+</style>
 </head>
 <body>
 
@@ -2411,7 +2949,7 @@ body:has(#monthly-screen[style*="block"]) #accountant-bar{display:none!important
       <div class="auth-story-body"><p class="auth-eyebrow">SMART DEALER WORKSPACE</p><h2>차량 관리의 시작,<br><span>더 간편하게.</span></h2><p>재고부터 차량 사진과 서류까지.<br>딜러별로 분리된 나만의 업무 공간.</p><div class="auth-points"><div class="auth-point"><i>✓</i>딜러별 차량 및 파일 관리</div><div class="auth-point"><i>✓</i>PC · 모바일 반응형 디자인</div><div class="auth-point"><i>✓</i>실차 사진 5장 · 성능서류 2장</div></div></div>
       <div class="auth-sidefoot">© S-NOTE · SMART DEALER WORKSPACE</div>
     </div>
-    <div class="auth-content" id="auth-content"><div class="auth-headsign"><span class="snote-wordmark"><img src="assets/snote-logo.png" alt="S-NOTE" width="2172" height="724" decoding="async"></span></div><div class="auth-topline"><strong>ACCOUNT ACCESS</strong><span>v2.03 · ONLINE</span></div><h1 id="auth-heading">다시 만나서 반가워요</h1><p class="auth-desc" id="auth-description">로그인하고 내 차량 재고를 확인하세요.</p>
+    <div class="auth-content" id="auth-content"><div class="auth-headsign"><span class="snote-wordmark"><img src="assets/snote-logo.png" alt="S-NOTE" width="2172" height="724" decoding="async"></span></div><div class="auth-topline"><strong>ACCOUNT ACCESS</strong><span>v2.04 · ONLINE</span></div><h1 id="auth-heading">다시 만나서 반가워요</h1><p class="auth-desc" id="auth-description">로그인하고 내 차량 재고를 확인하세요.</p>
       <div class="auth-tabs" hidden aria-hidden="true"><button id="login-tab" class="active" type="button" tabindex="-1" onclick="showAuthMode('login')">로그인</button><button id="signup-tab" type="button" onclick="showAuthMode('signup')" hidden aria-hidden="true" tabindex="-1">회원가입</button></div><div class="auth-success" id="login-success" role="status">✓ 회원가입이 완료되었습니다. 새 계정으로 로그인해 주세요.</div>
       <form id="login-form" class="auth-form" onsubmit="loginAccount(event)"><div><label class="auth-label" for="login-id">아이디</label><input class="auth-input" id="login-id" maxlength="30" autocomplete="username" placeholder="아이디를 입력하세요" required /></div><div><label class="auth-label" for="login-pw">비밀번호</label><input class="auth-input" id="login-pw" type="password" autocomplete="current-password" placeholder="비밀번호를 입력하세요" required /></div><div class="auth-error" id="login-error" role="alert"></div><button class="btn-primary auth-primary" id="login-submit" type="submit">로그인</button><button type="button" class="auth-demo" onclick="loginDemo()">딜러 체험 계정으로 시작하기&nbsp; →</button><button type="button" class="auth-demo" onclick="loginAccountingDemo()">경리 통합 화면 체험하기&nbsp; →</button><div class="accountant-login-help">경리 샘플: <b>accounting / account1234</b><br>딜러 샘플: <b>demo / demo1234</b>, <b>dealer2 / dealer1234</b></div><p class="auth-rule">체험판 전용 계정입니다. 실제 업무용 개인정보나 비밀번호를 입력하지 마세요.</p></form>
       <form id="signup-form" class="auth-form auth-signup-form" onsubmit="registerAccount(event)" style="display:none">
@@ -2434,7 +2972,7 @@ body:has(#monthly-screen[style*="block"]) #accountant-bar{display:none!important
     <div class="sidebar-end"><div class="support"><p class="st">간편하고 정확하게.</p><p class="sd">재고부터 매입 · 판매 · 정산까지<br>하나의 전산에서 관리하세요.</p></div></div>
   </aside>
   <div class="main">
-    <header class="topbar"><div class="topbar-left"><button type="button" class="mobile-menu-trigger" id="mobile-menu-trigger" aria-label="메뉴 열기" aria-controls="mobile-drawer" aria-expanded="false" onclick="toggleMobileDrawer()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><div class="crumb"><span id="breadcrumb" hidden>대시보드</span><p class="eyebrow" id="eyebrow">OVERVIEW</p><h1 id="screen-title">오늘의 업무 현황</h1></div></div><div class="topright"><span class="sample">● v2.03 · 온라인 테스트</span>
+    <header class="topbar"><div class="topbar-left"><button type="button" class="mobile-menu-trigger" id="mobile-menu-trigger" aria-label="메뉴 열기" aria-controls="mobile-drawer" aria-expanded="false" onclick="toggleMobileDrawer()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><div class="crumb"><span id="breadcrumb" hidden>대시보드</span><p class="eyebrow" id="eyebrow">OVERVIEW</p><h1 id="screen-title">오늘의 업무 현황</h1></div></div><div class="topright"><span class="sample">● v2.04 · 온라인 테스트</span>
       <div class="snote-profile-dropdown" id="snote-profile-dropdown">
         <button type="button" class="profile topbar-profile" id="snote-profile-trigger" aria-haspopup="menu" aria-controls="snote-profile-menu" aria-expanded="false" onclick="snoteToggleProfileMenu()"><span id="profile-avatar" hidden></span><span class="profile-detail"><span class="pname" id="profile-name">내 프로필</span><span id="profile-role" hidden></span></span><svg class="snote-profile-chevron" viewBox="0 0 20 20" aria-hidden="true"><path d="m5 8 5 5 5-5"/></svg></button>
         <div class="snote-profile-menu" id="snote-profile-menu" role="menu" aria-labelledby="snote-profile-trigger" hidden>
@@ -6671,8 +7209,10 @@ document.addEventListener('click',async event=>{
 <div id="zc-cloud-gate" data-auth-mode="login" role="dialog" aria-modal="true" aria-labelledby="zc-cloud-title" aria-describedby="snote-login-description">
  <div class="snote-login-shell">
   <div class="snote-login-panel">
+   <div class="snote204-auth-header"><span class="snote-wordmark"><img src="assets/snote-logo.png" alt="S-NOTE" width="2172" height="724" decoding="async"></span><span>중고차 상사 통합 업무관리</span></div>
    <button type="button" id="snote-auth-back" hidden><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m9 5-5 5 5 5M4 10h12"/></svg>로그인으로</button>
    <div class="zc-cloud-card">
+    <p class="snote204-form-eyebrow">YOUR DAILY WORKSPACE</p>
     <h2 id="zc-cloud-title">로그인</h2>
     <p class="zc-cloud-desc" id="snote-login-description">계정으로 로그인하고 오늘의 업무를 시작하세요.</p>
     <div id="zc-cloud-setup">
@@ -6740,26 +7280,29 @@ document.addEventListener('click',async event=>{
     <details class="snote95-security"><summary>보안 및 이용 안내</summary><div class="zc-warning"><b>온라인 테스트 운영:</b> 차량·금융·월정산·고객정보는 클라우드 DB, 사진·등록증·성능기록부는 비공개 Storage를 사용합니다. 여러 기기에서 동일 장부를 수정하면 충돌을 감지하여 저장을 중단합니다. 주소검색은 인터넷 연결이 필요합니다. <b>주민번호는 기본 저장 금지</b>이며 관련 법령상 구체적인 처리 근거를 검토한 뒤 관리자만 서버에서 활성화해야 합니다. 실제 고객정보를 입력하기 전 테스트와 보안 점검이 필요합니다.</div></details>
     <div id="zc-cloud-offline" hidden class="zc-sec"><button id="zc-cloud-open-local" class="zc-link" type="button">기존 로컬 데모만 열기 (이 PC에서만)</button></div>
    </div>
-   <p class="snote-login-footer">© 2026 S-NOTE. All rights reserved.<span>v2.02</span></p>
+   <p class="snote-login-footer">© 2026 S-NOTE. All rights reserved.<span>v2.04</span></p>
   </div>
   <aside class="snote-login-visual">
    <img class="snote-login-photo" src="assets/login-garage.png" alt="" decoding="async">
+   <p class="snote204-hero-top">WORK, WELL ORGANIZED.</p>
    <div class="snote-auth-hero">
-    <h2 class="snote-auth-hero-title">중고차 업무의 모든 기록,<br><strong>하나의 S-NOTE에서</strong></h2>
-    <p>차량 매입부터 재고·판매·고객관리, 금융 및 정산까지. 각자의 독립된 업무공간에서 관리합니다.</p>
+    <h2 class="snote-auth-hero-title">좋은 거래의 시작,<br><strong>정돈된 업무에서.</strong></h2>
+    <p>차량 한 대의 매입부터 판매와 정산까지.<br>매일의 업무가 자연스럽게 이어지는 공간, S-NOTE.</p>
    </div>
+   <div class="snote204-hero-bottom"><p>흩어져 있던 기록을 모아,<br>오늘의 업무에 더 집중하세요.</p><div class="snote204-hero-tags"><span>차량 · 재고</span><span>계약 · 고객</span><span>금융 · 정산</span></div></div>
   </aside>
  </div>
  <section class="snote-login-info" aria-labelledby="snote-login-info-title">
   <header>
-   <h2 id="snote-login-info-title">필요한 업무는 빠짐없이, 사용은 더 간편하게</h2>
+   <p class="snote204-section-label">ONE WORKSPACE, EVERY WORKDAY</p>
+   <h2 id="snote-login-info-title">매입에서 정산까지, 업무의 흐름이 한곳에.</h2>
    <p>중고차 매매업무에 필요한 기능을 하나의 업무공간에서 이용하세요.</p>
   </header>
   <div class="snote-auth-features" id="snote-auth-features">
-   <article class="snote-auth-feature"><div class="snote-auth-feature-icon" aria-hidden="true">🚙</div><h3>차량 · 재고 관리</h3><p>매입부터 판매완료까지 차량의 흐름과 비용을 한곳에서.</p></article>
-   <article class="snote-auth-feature"><div class="snote-auth-feature-icon" aria-hidden="true">🧾</div><h3>계약 · 고객 관리</h3><p>계약서, 견적서, 인수증과 고객별 진행 현황 관리.</p></article>
-   <article class="snote-auth-feature"><div class="snote-auth-feature-icon" aria-hidden="true">📈</div><h3>수익 · 월정산</h3><p>예상마진, 매출·지출, 월별 경영 흐름을 보기 쉽게.</p></article>
-   <article class="snote-auth-feature"><div class="snote-auth-feature-icon" aria-hidden="true">🏦</div><h3>재고금융 · 선재고</h3><p>금융사 한도와 재고 대출, 선재고 장부를 별도로 관리.</p></article>
+   <article class="snote-auth-feature"><div class="snote-auth-feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m5 9 2-5h10l2 5M3 10h18v8H3zM6 18v2m12-2v2M6 13h2m8 0h2"/></svg></div><h3>차량 · 재고 관리</h3><p>매입부터 판매완료까지 차량의 흐름과 비용을 한곳에서.</p></article>
+   <article class="snote-auth-feature"><div class="snote-auth-feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6zM14 3v5h5M9 12h7m-7 4h5"/></svg></div><h3>계약 · 고객 관리</h3><p>계약서, 견적서, 인수증과 고객별 진행 현황 관리.</p></article>
+   <article class="snote-auth-feature"><div class="snote-auth-feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 4v16h16M8 14l4-4 3 3 5-7m-5 0h5v5"/></svg></div><h3>수익 · 월정산</h3><p>예상마진, 매출·지출, 월별 경영 흐름을 보기 쉽게.</p></article>
+   <article class="snote-auth-feature"><div class="snote-auth-feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m3 8 9-5 9 5H3zm2 3v7m7-7v7m7-7v7M3 21h18M3 18h18"/></svg></div><h3>재고금융 · 선재고</h3><p>금융사 한도와 재고 대출, 선재고 장부를 별도로 관리.</p></article>
   </div>
   <ul class="snote-auth-trust" aria-label="이용 안내">
    <li><span aria-hidden="true">✓</span>인증된 직원 로그인</li>
