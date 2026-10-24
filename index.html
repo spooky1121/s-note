@@ -7059,7 +7059,7 @@ async function serverMediaRefresh(){
  for(const u of mediaObjectUrls)try{URL.revokeObjectURL(u)}catch{};
  mediaObjectUrls=[];mediaByCar={};
  // Downloads are authenticated private Storage calls; keep one entry per media record.
- const all=(r.data||[]).filter(m=>m.group_name!=='modelPhoto');let cursor=0;
+ const all=(r.data||[]).filter(m=>!['modelPhoto','companyStamp','companyLogo'].includes(m.group_name));let cursor=0;
  async function worker(){while(cursor<all.length){const m=all[cursor++];try{
   const download=await S.client.storage.from(BUCKET).download(m.file_path);if(download.error)throw download.error;
   let row={id:m.id,carId:m.car_id,ownerId:ownerAlias(m.owner_id),group:m.group_name,blob:download.data,filename:m.original_name,createdAt:new Date(m.created_at).getTime()};
@@ -7363,7 +7363,7 @@ function snoteRenderAdminSettings(){
  <div class="snote-company-actions"><button type="submit" class="btn-primary" id="snote90-company-save" disabled>상사정보 저장</button><button type="button" id="snote90-company-retry" hidden>연결 다시 확인</button></div>
  <p id="snote90-company-message" class="snote-company-message" role="status" aria-live="polite" aria-atomic="true">상사정보를 불러오는 중…</p>
  </form>
- <div class="snote203-assets"><div class="snote203-asset"><strong>상사 도장 이미지</strong><small>계약서에 사용할 PNG·JPG·WEBP</small><div id="snote203-stamp-preview" class="snote203-asset-preview">등록된 이미지 없음</div><input type="file" id="snote203-stamp-file" accept="image/png,image/jpeg,image/webp" hidden onchange="snote203UploadAsset('companyStamp',this)"><div class="snote203-asset-actions"><button type="button" onclick="document.getElementById('snote203-stamp-file').click()">이미지 등록 / 변경</button><button type="button" class="snote203-muted" onclick="snote203DeleteAsset('companyStamp')">삭제</button></div></div><div class="snote203-asset"><strong>상사 로고 이미지</strong><small>PNG·JPG·WEBP 이미지 파일</small><div id="snote203-logo-preview" class="snote203-asset-preview">등록된 이미지 없음</div><input type="file" id="snote203-logo-file" accept="image/png,image/jpeg,image/webp" hidden onchange="snote203UploadAsset('companyLogo',this)"><div class="snote203-asset-actions"><button type="button" onclick="document.getElementById('snote203-logo-file').click()">이미지 등록 / 변경</button><button type="button" class="snote203-muted" onclick="snote203DeleteAsset('companyLogo')">삭제</button></div></div></div>
+ <div class="snote203-assets"><div class="snote203-asset"><strong>상사 도장 이미지</strong><small>계약서에 사용할 PNG·JPG·WEBP</small><div id="snote203-stamp-preview" class="snote203-asset-preview">등록된 이미지 없음</div><input type="file" id="snote203-stamp-file" accept="image/png,image/jpeg,image/webp" hidden><div class="snote203-asset-actions"><button type="button" onclick="document.getElementById('snote203-stamp-file').click()">이미지 등록 / 변경</button><button type="button" class="snote203-muted" id="snote203-stamp-delete">삭제</button></div></div><div class="snote203-asset"><strong>상사 로고 이미지</strong><small>PNG·JPG·WEBP 이미지 파일</small><div id="snote203-logo-preview" class="snote203-asset-preview">등록된 이미지 없음</div><input type="file" id="snote203-logo-file" accept="image/png,image/jpeg,image/webp" hidden><div class="snote203-asset-actions"><button type="button" onclick="document.getElementById('snote203-logo-file').click()">이미지 등록 / 변경</button><button type="button" class="snote203-muted" id="snote203-logo-delete">삭제</button></div></div></div>
  </section><section class="snote90-panel"><h3>직원 관리</h3><p>직원의 표시 이름과 역할을 관리합니다. 화면에는 내부 식별자를 표시하지 않습니다.</p>
  <div id="snote90-members">직원 목록 불러오는 중...</div></section>
  <section class="snote90-panel"><h3>직원 초대</h3><p>딜러·경리 권한을 선택해 초대 링크를 만드세요. 생성된 링크를 직원에게 전달하면 초대받은 이메일로 가입할 수 있습니다.</p><div id="snote90-invite-mount"></div></section>
@@ -7375,6 +7375,10 @@ function snoteRenderAdminSettings(){
  snoteFillCompanyProfile(S.company,{display_name:S.members.find(m=>m.user_id===S.user.id)?.display_name,phone:''});
  byId('snote90-company-form').addEventListener('submit',snoteSaveCompanyProfile);
  byId('snote90-company-retry').addEventListener('click',snoteLoadCompanyProfile);
+ for(const [kind,prefix] of [['companyStamp','snote203-stamp'],['companyLogo','snote203-logo']]){
+  byId(prefix+'-file').addEventListener('change',event=>snote203UploadAsset(kind,event.currentTarget));
+  byId(prefix+'-delete').addEventListener('click',()=>snote203DeleteAsset(kind));
+ }
  byId('snote90-company-form').addEventListener('input',e=>{e.currentTarget.dataset.dirty='true';});
  byId('snote90-company-address').addEventListener('input',e=>{if(e.isTrusted)byId('snote90-company-postcode').value='';});
  snoteLoadCompanyProfile();
@@ -7414,21 +7418,22 @@ function snote203FillBank(){
  total.value=cfg.total.toLocaleString('ko-KR');$('snote203-bank-name').value=cfg.bank;
  $('snote203-bank-account').value=cfg.account;$('snote203-bank-holder').value=cfg.holder;
 }
-let snote203AssetURLs=[];
-let snoteDocumentLogoCache=null,snoteDocumentLogoPending=null;
+let snote203AssetURLs=[],snote203AssetLoad=0;
+const snote203AssetBusy=new Set();
+let snoteDocumentLogoCache=null,snoteDocumentLogoPending=null,snoteDocumentLogoVersion=0;
 window.snoteLoadDocumentLogo=async()=>{
  if(!S.ready||!S.client||!S.company)return null;
- const companyId=S.company.id,client=S.client;
+ const companyId=S.company.id,client=S.client,version=snoteDocumentLogoVersion;
  if(snoteDocumentLogoPending?.companyId===companyId)return snoteDocumentLogoPending.promise;
  const promise=(async()=>{
   const entries=await snote203AssetRecords('companyLogo');
-  if(!S.ready||S.company?.id!==companyId)return null;
+  if(!S.ready||S.company?.id!==companyId||version!==snoteDocumentLogoVersion)return null;
   const record=entries[0];
   if(!record)return null;
   if(snoteDocumentLogoCache?.companyId===companyId&&snoteDocumentLogoCache.path===record.file_path)return snoteDocumentLogoCache.url;
   const file=await client.storage.from('zc-vehicle-private').download(record.file_path);
   if(file.error)throw file.error;
-  if(!S.ready||S.company?.id!==companyId)return null;
+  if(!S.ready||S.company?.id!==companyId||version!==snoteDocumentLogoVersion)return null;
   const url=URL.createObjectURL(file.data);
   if(snoteDocumentLogoCache)URL.revokeObjectURL(snoteDocumentLogoCache.url);
   snoteDocumentLogoCache={companyId,path:record.file_path,url};
@@ -7439,53 +7444,110 @@ window.snoteLoadDocumentLogo=async()=>{
 };
 async function snote203AssetRecords(kind){
  if(!S?.ready||!S.client||!S.company)return [];
- const result=await S.client.from('zc_media').select('*').eq('company_id',S.company.id).eq('group_name',kind).limit(40);
+ const result=await S.client.from('zc_media').select('*').eq('company_id',S.company.id).eq('group_name',kind).order('created_at',{ascending:false}).limit(40);
  if(result.error)throw result.error;
  return (result.data||[]).sort((a,b)=>String(b.created_at||'').localeCompare(String(a.created_at||'')));
 }
 async function snote203LoadAssets(){
+ const request=++snote203AssetLoad,companyId=S.company?.id,client=S.client;
  for(const url of snote203AssetURLs)URL.revokeObjectURL(url);snote203AssetURLs=[];
  for(const [kind,target] of [['companyStamp','snote203-stamp-preview'],['companyLogo','snote203-logo-preview']]){
   const box=byId(target);if(!box)return;
-  try{const entries=await snote203AssetRecords(kind);if(!box.isConnected)return;
+  try{const entries=await snote203AssetRecords(kind);if(!box.isConnected||request!==snote203AssetLoad||S.company?.id!==companyId)return;
    if(!entries.length){box.textContent='등록된 이미지 없음';continue}
-   const file=await S.client.storage.from('zc-vehicle-private').download(entries[0].file_path);
+   const file=await client.storage.from('zc-vehicle-private').download(entries[0].file_path);
    if(file.error)throw file.error;
+   if(!box.isConnected||request!==snote203AssetLoad||S.company?.id!==companyId)return;
    const url=URL.createObjectURL(file.data);snote203AssetURLs.push(url);
    box.replaceChildren();const img=document.createElement('img');img.src=url;img.alt=kind==='companyStamp'?'등록한 상사 도장':'등록한 상사 로고';box.append(img);
-  }catch(err){if(box.isConnected)box.textContent='이미지를 불러오지 못했습니다.';console.warn(kind,err)}
+  }catch(err){if(box.isConnected&&request===snote203AssetLoad&&S.company?.id===companyId)box.textContent='이미지를 불러오지 못했습니다.';console.warn('상사 이미지 조회 실패',kind,err?.code||err?.status||'request failed')}
  }
 }
+function snote203InvalidateDocumentLogo(kind){
+ if(kind!=='companyLogo')return;
+ snoteDocumentLogoVersion++;snoteDocumentLogoPending=null;
+ if(snoteDocumentLogoCache)URL.revokeObjectURL(snoteDocumentLogoCache.url);
+ snoteDocumentLogoCache=null;
+ if(typeof snote95UpdateDocumentCompany==='function')snote95UpdateDocumentCompany();
+}
+function snote203AssetContext(kind){
+ if(!['companyStamp','companyLogo'].includes(kind)||!isSnoteAdmin()||!S.ready||!S.client||!S.company||!S.user)return null;
+ if(!S.members.some(member=>member.user_id===S.user.id&&member.active&&member.role==='admin'))return null;
+ return {client:S.client,companyId:S.company.id,userId:S.user.id};
+}
+function snote203LockAsset(kind){
+ const prefix=kind==='companyStamp'?'snote203-stamp':'snote203-logo';
+ const card=byId(prefix+'-file')?.closest('.snote203-asset');
+ const controls=[...(card?.querySelectorAll('button,input')||[])].map(element=>[element,element.disabled]);
+ for(const [element] of controls)element.disabled=true;
+ return ()=>{for(const [element,disabled] of controls)element.disabled=disabled;};
+}
+function snote203AssetFailure(stage,error){
+ const code=String(error?.code||error?.statusCode||error?.status||'');
+ if(code==='23514')return stage+' 실패: 이미지 등록용 DB 설정을 확인해 주세요.';
+ if(['42501','401','403'].includes(code))return stage+' 실패: 상사 관리자 권한과 저장소 접근 권한을 확인해 주세요.';
+ return stage+'에 실패했습니다. 연결 상태를 확인하고 다시 시도해 주세요.';
+}
 async function snote203UploadAsset(kind,input){
- const file=input.files?.[0];input.value='';if(!file||!isSnoteAdmin()||!S?.ready)return;
- if(!['image/png','image/jpeg','image/webp'].includes(file.type)||file.size>3*1024*1024){toast('PNG/JPG/WEBP 형식, 3MB 이하 이미지를 선택해주세요.');return}
- const button=input.closest('.snote203-asset')?.querySelector('button');if(button)button.disabled=true;
+ const file=input.files?.[0];input.value='';const context=snote203AssetContext(kind);if(!file||!context)return;
+ if(!['image/png','image/jpeg','image/webp'].includes(file.type)||!file.size||file.size>3*1024*1024){toast('PNG/JPG/WEBP 형식, 3MB 이하 이미지를 선택해주세요.');return}
+ const {client,companyId,userId}=context,key=companyId+':'+kind;
+ if(snote203AssetBusy.has(key))return;
+ snote203AssetBusy.add(key);const unlock=snote203LockAsset(kind);
+ const isCurrent=()=>S.ready&&S.company?.id===companyId&&S.user?.id===userId;
+ let stage='기존 이미지 조회',uploadedPath=null,metadataSaved=false;
  try{
   const previous=await snote203AssetRecords(kind);
+  if(!isCurrent())return;
   const id='snote203-'+kind.toLowerCase()+'-'+Date.now()+'-'+Math.random().toString(36).slice(2,8);
   const ext=file.type==='image/png'?'png':file.type==='image/webp'?'webp':'jpg';
-  const path=[S.company.id,S.user.id,'branding',id+'.'+ext].join('/');
-  const upload=await S.client.storage.from('zc-vehicle-private').upload(path,file,{contentType:file.type,upsert:false});
+  const path=[companyId,userId,'branding',id+'.'+ext].join('/');
+  stage='이미지 파일 업로드';
+  const upload=await client.storage.from('zc-vehicle-private').upload(path,file,{contentType:file.type,upsert:false});
   if(upload.error)throw upload.error;
-  const record={company_id:S.company.id,owner_id:S.user.id,id,car_id:'company-brand',file_path:path,original_name:file.name,mime_type:file.type,file_size:file.size,group_name:kind,meta:{}};
-  const save=await S.client.from('zc_media').insert(record);
-  if(save.error){await S.client.storage.from('zc-vehicle-private').remove([path]);throw save.error}
+  uploadedPath=path;if(!isCurrent())return;
+  const record={company_id:companyId,owner_id:userId,id,car_id:'company-brand',file_path:path,original_name:Array.from(file.name||'image.'+ext).slice(0,180).join(''),mime_type:file.type,file_size:file.size,group_name:kind,meta:{}};
+  stage='이미지 등록 정보 저장';
+  const save=await client.from('zc_media').insert(record);
+  if(save.error)throw save.error;metadataSaved=true;
+  if(!isCurrent())return;
+  let cleanupFailed=false;
   for(const old of previous){
-   const rm=await S.client.from('zc_media').delete().eq('company_id',S.company.id).eq('owner_id',old.owner_id).eq('id',old.id);
-   if(!rm.error)await S.client.storage.from('zc-vehicle-private').remove([old.file_path]).catch(()=>{});
+   try{
+    const rm=await client.from('zc_media').delete().eq('company_id',companyId).eq('owner_id',old.owner_id).eq('id',old.id);
+    if(rm.error){cleanupFailed=true;continue;}
+    const removed=await client.storage.from('zc-vehicle-private').remove([old.file_path]);if(removed.error)cleanupFailed=true;
+   }catch(_){cleanupFailed=true;}
   }
-  await snote203LoadAssets();toast((kind==='companyStamp'?'상사 도장':'상사 로고')+' 이미지를 저장했습니다.');
- }catch(e){console.warn(e);toast('상사 이미지 저장 실패: 저장소 권한이나 파일 형식을 확인하세요.');}
- finally{if(button)button.disabled=false}
+  if(!isCurrent())return;
+  snote203InvalidateDocumentLogo(kind);await snote203LoadAssets();
+  if(isCurrent())toast(cleanupFailed?'새 이미지는 저장됐지만 이전 파일 정리가 일부 완료되지 않았습니다.':(kind==='companyStamp'?'상사 도장':'상사 로고')+' 이미지를 저장했습니다.');
+ }catch(error){if(isCurrent())toast(snote203AssetFailure(stage,error));}
+ finally{
+  if(uploadedPath&&!metadataSaved)try{await client.storage.from('zc-vehicle-private').remove([uploadedPath]);}catch(_){}
+  unlock();snote203AssetBusy.delete(key);
+ }
 }
 async function snote203DeleteAsset(kind){
- if(!isSnoteAdmin()||!S?.ready)return;
+ const context=snote203AssetContext(kind);if(!context)return;
+ const {client,companyId,userId}=context,key=companyId+':'+kind;if(snote203AssetBusy.has(key))return;
  if(!confirm((kind==='companyStamp'?'상사 도장':'상사 로고')+' 이미지를 삭제할까요?'))return;
+ snote203AssetBusy.add(key);const unlock=snote203LockAsset(kind);
+ const isCurrent=()=>S.ready&&S.company?.id===companyId&&S.user?.id===userId;
+ let stage='기존 이미지 조회';
  try{const previous=await snote203AssetRecords(kind);
-  for(const row of previous){const deleted=await S.client.from('zc_media').delete().eq('company_id',S.company.id).eq('owner_id',row.owner_id).eq('id',row.id);if(deleted.error)throw deleted.error;
-   await S.client.storage.from('zc-vehicle-private').remove([row.file_path]);}
-  await snote203LoadAssets();toast('상사 이미지를 삭제했습니다.');
- }catch(e){console.warn(e);toast('이미지를 삭제하지 못했습니다. 권한을 확인하세요.');}
+  if(!isCurrent())return;
+  let cleanupFailed=false;
+  for(const row of previous){
+   stage='이미지 등록 정보 삭제';
+   const deleted=await client.from('zc_media').delete().eq('company_id',companyId).eq('owner_id',row.owner_id).eq('id',row.id);if(deleted.error)throw deleted.error;
+   try{const removed=await client.storage.from('zc-vehicle-private').remove([row.file_path]);if(removed.error)cleanupFailed=true;}catch(_){cleanupFailed=true;}
+  }
+  if(!isCurrent())return;
+  snote203InvalidateDocumentLogo(kind);await snote203LoadAssets();
+  if(isCurrent())toast(cleanupFailed?'이미지 등록은 해제됐지만 파일 정리가 일부 완료되지 않았습니다.':'상사 이미지를 삭제했습니다.');
+ }catch(error){if(isCurrent())toast(snote203AssetFailure(stage,error));}
+ finally{unlock();snote203AssetBusy.delete(key);}
 }
 async function snote90RefreshMembers(){
  const host=byId('snote90-members');if(!host||!isSnoteAdmin())return;
