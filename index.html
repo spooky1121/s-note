@@ -2321,10 +2321,12 @@ body:has(#monthly-screen[style*="block"]) #accountant-bar{display:none!important
 .sidebar .profile{gap:8px}.sidebar .profile-detail{min-width:0;flex:1}
 /* Account controls stay together at the top right on every workspace screen. */
 .topbar .topright{flex:none;gap:11px;margin-left:auto}
-.topbar{position:relative;z-index:20;height:auto;min-height:79px;padding-block:14px;gap:16px}
+.topbar{position:relative;z-index:20;display:grid;grid-template-columns:minmax(0,1fr) auto;height:auto;min-height:90px;padding-block:14px;column-gap:16px;row-gap:5px}
 .topbar .topbar-left{flex:1;min-width:0}
 .topbar .crumb{display:block;min-width:0;white-space:normal;overflow:visible}
 .topbar .crumb h1{margin:0;font-size:18px;line-height:1.4;font-weight:800;color:#33445c;word-break:keep-all;overflow-wrap:anywhere}
+.topbar .eyebrow{margin:0 0 3px;font-size:9px;line-height:1.3;font-weight:700;letter-spacing:1.1px;color:#8393a8}
+.topbar .subtitle{grid-column:1/-1;margin:0;font-size:11px;line-height:1.6;font-weight:400;letter-spacing:0;color:#8b98aa;word-break:keep-all;overflow-wrap:anywhere}
 .snote-profile-dropdown{position:relative}
 .topbar .topbar-profile{display:flex;align-items:center;gap:8px;max-width:260px;min-height:40px;padding:8px 10px;margin:0;border:0;border-radius:9px;background:transparent;color:#34445c;font:inherit;cursor:pointer;text-align:left}
 .topbar .topbar-profile:hover,.topbar .topbar-profile[aria-expanded="true"]{background:#f4f7fb}
@@ -2346,7 +2348,7 @@ body:has(#monthly-screen[style*="block"]) #accountant-bar{display:none!important
 .snote-profile-dialog h2{margin:0 0 20px;font-size:18px}.snote-profile-dialog dl{margin:0;display:grid;grid-template-columns:65px minmax(0,1fr);gap:16px 12px;font-size:13px}.snote-profile-dialog dt{color:#8491a2}.snote-profile-dialog dd{margin:0;overflow-wrap:anywhere}.snote-profile-dialog p{margin:22px 0;color:#8491a2;font-size:12px;line-height:1.7}.snote-profile-dialog form{text-align:right}.snote-profile-dialog button{min-height:38px;padding:8px 18px;border:1px solid #dbe5f0;border-radius:8px;background:#f6f9fd;color:#446381;font:inherit;font-size:12px;cursor:pointer}
 .mobile-drawer-footer{display:none!important}
 @media(max-width:1080px){.topbar .sample{display:none}}
-@media(max-width:760px){.topbar{position:sticky;min-height:60px;padding-block:8px;gap:8px}.topbar .crumb h1{font-size:14px}.topbar .topright{gap:7px}.topbar .topbar-profile{max-width:160px}.topbar-profile .pname{max-width:120px;font-size:12px}}
+@media(max-width:760px){.topbar{position:sticky;min-height:82px;padding-block:10px;column-gap:8px;row-gap:5px}.topbar .crumb h1{font-size:14px}.topbar .eyebrow{font-size:8px;letter-spacing:.8px}.topbar .topright{gap:7px}.topbar .topbar-profile{max-width:160px}.topbar-profile .pname{max-width:120px;font-size:12px}}
 @media(max-width:440px){.topbar .topbar-profile{max-width:118px;padding-inline:6px}.topbar-profile .pname{max-width:84px;font-size:11px}}
 .snote90-settings{gap:16px}.snote90-panel{border-radius:16px;padding:24px;box-shadow:0 5px 22px rgba(16,43,79,.035)}
 .snote90-settings button:not(:disabled){transition:background-color .2s,border-color .2s,transform .2s,box-shadow .2s}
@@ -2432,7 +2434,7 @@ body:has(#monthly-screen[style*="block"]) #accountant-bar{display:none!important
     <div class="sidebar-end"><div class="support"><p class="st">간편하고 정확하게.</p><p class="sd">재고부터 매입 · 판매 · 정산까지<br>하나의 전산에서 관리하세요.</p></div></div>
   </aside>
   <div class="main">
-    <header class="topbar"><div class="topbar-left"><button type="button" class="mobile-menu-trigger" id="mobile-menu-trigger" aria-label="메뉴 열기" aria-controls="mobile-drawer" aria-expanded="false" onclick="toggleMobileDrawer()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><div class="crumb"><span id="breadcrumb" hidden>대시보드</span><h1 id="screen-title">오늘의 업무 현황</h1></div></div><div class="topright"><span class="sample">● v2.03 · 온라인 테스트</span>
+    <header class="topbar"><div class="topbar-left"><button type="button" class="mobile-menu-trigger" id="mobile-menu-trigger" aria-label="메뉴 열기" aria-controls="mobile-drawer" aria-expanded="false" onclick="toggleMobileDrawer()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><div class="crumb"><span id="breadcrumb" hidden>대시보드</span><p class="eyebrow" id="eyebrow">OVERVIEW</p><h1 id="screen-title">오늘의 업무 현황</h1></div></div><div class="topright"><span class="sample">● v2.03 · 온라인 테스트</span>
       <div class="snote-profile-dropdown" id="snote-profile-dropdown">
         <button type="button" class="profile topbar-profile" id="snote-profile-trigger" aria-haspopup="menu" aria-controls="snote-profile-menu" aria-expanded="false" onclick="snoteToggleProfileMenu()"><span id="profile-avatar" hidden></span><span class="profile-detail"><span class="pname" id="profile-name">내 프로필</span><span id="profile-role" hidden></span></span><svg class="snote-profile-chevron" viewBox="0 0 20 20" aria-hidden="true"><path d="m5 8 5 5 5-5"/></svg></button>
         <div class="snote-profile-menu" id="snote-profile-menu" role="menu" aria-labelledby="snote-profile-trigger" hidden>
@@ -2441,10 +2443,10 @@ body:has(#monthly-screen[style*="block"]) #accountant-bar{display:none!important
           <button type="button" role="menuitem" tabindex="-1" class="snote-profile-logout" onclick="snoteCloseProfileMenu(true);logout()">로그아웃</button>
         </div>
       </div>
-    </div></header>
+    </div><p class="subtitle" id="screen-sub">차량 재고와 매입·판매 현황을 한눈에 확인하세요.</p></header>
     <dialog class="snote-profile-dialog" id="snote-profile-dialog" aria-labelledby="snote-profile-dialog-title"><h2 id="snote-profile-dialog-title">프로필 설정</h2><dl><dt>이름</dt><dd id="snote-profile-dialog-name"></dd><dt>권한</dt><dd id="snote-profile-dialog-role"></dd><dt>상사명</dt><dd id="snote-profile-dialog-company"></dd></dl><p>프로필 정보 변경은 상사 관리자에게 요청해 주세요.</p><form method="dialog"><button type="submit" autofocus>닫기</button></form></dialog>
     <main class="content"><div id="zc-cloud-banner" hidden role="status"><b>온라인 테스트 운영:</b> 차량·금융·월정산·고객정보의 클라우드 DB와 차량 사진·등록증의 비공개 Storage 연결을 시험하는 버전입니다. <b>운영 데이터 입력 전 로그인·접근권한·저장·조회·백업 검증이 필요하며, 주민번호 입력은 금지합니다.</b></div>
-      <section class="pagehead"><div><p class="eyebrow" id="eyebrow">OVERVIEW</p><p class="subtitle" id="screen-sub">차량 재고와 매입·판매 현황을 한눈에 확인하세요.</p></div><button class="btn-primary" onclick="openAdd()" id="main-add" hidden aria-hidden="true" tabindex="-1"><span id="addicon"></span>차량 등록</button></section>
+      <button class="btn-primary" onclick="openAdd()" id="main-add" hidden aria-hidden="true" tabindex="-1"><span id="addicon"></span>차량 등록</button>
       <section id="accountant-bar" class="accountant-bar" hidden>
  <div class="acct-heading"><div class="acct-badge">경리 · 통합 관리</div><strong>전체 차량 관리</strong><p>이 브라우저에 저장된 각 딜러의 차량을 함께 조회합니다. 다른 기기의 실시간 통합은 서버 연동 후 가능합니다.</p></div>
  <div class="acct-controls"><label for="accountant-dealer-filter">담당 딜러</label><select id="accountant-dealer-filter" aria-label="담당 딜러 필터" onchange="handleAccountantDealerFilter()"><option value="all">전체 딜러</option></select><button type="button" class="btn-ghost" onclick="refreshAccountantWorkspace()">새로고침</button></div>
