@@ -2188,7 +2188,8 @@ body:has(#monthly-screen[style*="block"]) #accountant-bar{display:none!important
 .snote-company-wide{grid-column:1/-1}.snote-company-address-row{display:flex;gap:9px;min-width:0}
 .snote-company-address-field{display:grid;gap:7px;min-width:0}
 .snote-company-address-row input{flex:1}.snote-company-address-row button{flex:none;white-space:nowrap}
-.snote-company-actions{display:flex;justify-content:flex-end;margin-top:18px}
+.snote-company-actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px;margin-top:18px}
+.snote-company-actions [hidden]{display:none!important}
 .snote-company-message{min-height:18px;margin:12px 0 0!important;color:#657184;font-size:12px;line-height:1.7}
 .snote-company-message[data-kind="error"]{color:#ad3445}.snote-company-message[data-kind="success"]{color:#147658}
 .snote-company-message[data-kind="setup"]{color:#8a611d}
@@ -7255,6 +7256,8 @@ async function refreshStaffList(){
 // display-name/company changes MUST pass the server's company-scoped admin RPC.
 function snoteCompanyProfileStatus(text,kind='info'){
  const output=byId('snote90-company-message');if(output){output.textContent=text;output.dataset.kind=kind;}
+ const retry=byId('snote90-company-retry'),form=byId('snote90-company-form');
+ if(retry)retry.hidden=!(['setup','error'].includes(kind)&&form?.dataset.serverReady!=='true');
 }
 function snoteCompanyProfileNeedsSetup(error){
  return ['42703','PGRST202','PGRST204'].includes(error?.code);
@@ -7278,8 +7281,11 @@ function snoteFillCompanyProfile(company,admin){
 }
 async function snoteLoadCompanyProfile(){
  const form=byId('snote90-company-form'),companyId=S.company?.id,userId=S.user?.id;
- if(!form||!S.ready||!companyId||!userId)return;
+ if(!form||!S.ready||!companyId||!userId||form.dataset.loading==='true'||form.dataset.saving==='true')return;
+ form.dataset.loading='true';byId('snote90-company-save').disabled=true;
+ const retry=byId('snote90-company-retry');if(retry)retry.disabled=true;
  form.dataset.serverReady='false';
+ snoteCompanyProfileStatus('상사정보 저장 연결을 확인하는 중…');
  try{
   const [company,admin]=await Promise.all([
    S.client.from('zc_companies').select('id,name,business_number,representative_name,business_postcode,business_address,business_address_detail').eq('id',companyId).single(),
@@ -7293,8 +7299,10 @@ async function snoteLoadCompanyProfile(){
   form.dataset.serverReady='true';byId('snote90-company-save').disabled=false;
   snoteCompanyProfileStatus(form.dataset.dirty==='true'?'서버 연결을 확인했습니다. 입력한 내용을 저장할 수 있습니다.':'상사정보를 불러왔습니다.');
  }catch(error){
-  if(byId('snote90-company-form')!==form||S.company?.id!==companyId)return;
-  snoteCompanyProfileStatus(snoteCompanyProfileNeedsSetup(error)?'상사정보 저장 기능의 서버 설정이 필요합니다. 입력 내용은 아직 저장되지 않습니다.':'상사정보를 불러오지 못했습니다. 연결과 사용 권한을 확인한 뒤 다시 열어 주세요.',snoteCompanyProfileNeedsSetup(error)?'setup':'error');
+  if(byId('snote90-company-form')!==form||S.company?.id!==companyId||S.user?.id!==userId)return;
+  snoteCompanyProfileStatus(snoteCompanyProfileNeedsSetup(error)?'상사정보 저장에 필요한 DB 항목이 아직 적용되지 않았습니다. 서버 설정 후 연결을 다시 확인해 주세요. 입력 내용은 아직 저장되지 않았습니다.':'상사정보를 불러오지 못했습니다. 연결과 사용 권한을 확인한 뒤 연결을 다시 확인해 주세요.',snoteCompanyProfileNeedsSetup(error)?'setup':'error');
+ }finally{
+  form.dataset.loading='false';if(retry)retry.disabled=false;
  }
 }
 async function snoteSaveCompanyProfile(event){
@@ -7329,7 +7337,7 @@ async function snoteSaveCompanyProfile(event){
  }catch(error){
   if(byId('snote90-company-form')!==form||S.company?.id!==companyId)return;
   if(snoteCompanyProfileNeedsSetup(error))form.dataset.serverReady='false';
-  snoteCompanyProfileStatus(snoteCompanyProfileNeedsSetup(error)?'상사정보 저장 기능의 서버 설정이 필요합니다. 입력 내용은 저장되지 않았습니다.':'상사정보를 저장하지 못했습니다. 입력 내용은 유지됩니다. 다시 시도해 주세요.',snoteCompanyProfileNeedsSetup(error)?'setup':'error');
+  snoteCompanyProfileStatus(snoteCompanyProfileNeedsSetup(error)?'상사정보 저장에 필요한 DB 항목이 아직 적용되지 않았습니다. 서버 설정 후 연결을 다시 확인해 주세요. 입력 내용은 저장되지 않았습니다.':'상사정보를 저장하지 못했습니다. 입력 내용은 유지됩니다. 다시 시도해 주세요.',snoteCompanyProfileNeedsSetup(error)?'setup':'error');
  }finally{
   for(const [element,disabled] of controls)element.disabled=disabled;
   form.dataset.saving='false';button.textContent='상사정보 저장';button.disabled=form.dataset.serverReady!=='true';
@@ -7352,7 +7360,7 @@ function snoteRenderAdminSettings(){
  <label>관리자 휴대전화<input id="snote90-company-admin-phone" required type="tel" maxlength="13" pattern="(?:01[016789][0-9]{7,8}|01[016789]-[0-9]{3,4}-[0-9]{4})" autocomplete="tel" placeholder="010-1234-5678"></label>
  <label class="snote-company-wide">관리자 이메일<input id="snote90-company-admin-email" type="email" readonly></label>
  </div>
- <div class="snote-company-actions"><button type="submit" class="btn-primary" id="snote90-company-save" disabled>상사정보 저장</button></div>
+ <div class="snote-company-actions"><button type="submit" class="btn-primary" id="snote90-company-save" disabled>상사정보 저장</button><button type="button" id="snote90-company-retry" hidden>연결 다시 확인</button></div>
  <p id="snote90-company-message" class="snote-company-message" role="status" aria-live="polite" aria-atomic="true">상사정보를 불러오는 중…</p>
  </form>
  <div class="snote203-assets"><div class="snote203-asset"><strong>상사 도장 이미지</strong><small>계약서에 사용할 PNG·JPG·WEBP</small><div id="snote203-stamp-preview" class="snote203-asset-preview">등록된 이미지 없음</div><input type="file" id="snote203-stamp-file" accept="image/png,image/jpeg,image/webp" hidden onchange="snote203UploadAsset('companyStamp',this)"><div class="snote203-asset-actions"><button type="button" onclick="document.getElementById('snote203-stamp-file').click()">이미지 등록 / 변경</button><button type="button" class="snote203-muted" onclick="snote203DeleteAsset('companyStamp')">삭제</button></div></div><div class="snote203-asset"><strong>상사 로고 이미지</strong><small>PNG·JPG·WEBP 이미지 파일</small><div id="snote203-logo-preview" class="snote203-asset-preview">등록된 이미지 없음</div><input type="file" id="snote203-logo-file" accept="image/png,image/jpeg,image/webp" hidden onchange="snote203UploadAsset('companyLogo',this)"><div class="snote203-asset-actions"><button type="button" onclick="document.getElementById('snote203-logo-file').click()">이미지 등록 / 변경</button><button type="button" class="snote203-muted" onclick="snote203DeleteAsset('companyLogo')">삭제</button></div></div></div>
@@ -7366,6 +7374,7 @@ function snoteRenderAdminSettings(){
  </section></div>`;
  snoteFillCompanyProfile(S.company,{display_name:S.members.find(m=>m.user_id===S.user.id)?.display_name,phone:''});
  byId('snote90-company-form').addEventListener('submit',snoteSaveCompanyProfile);
+ byId('snote90-company-retry').addEventListener('click',snoteLoadCompanyProfile);
  byId('snote90-company-form').addEventListener('input',e=>{e.currentTarget.dataset.dirty='true';});
  byId('snote90-company-address').addEventListener('input',e=>{if(e.isTrusted)byId('snote90-company-postcode').value='';});
  snoteLoadCompanyProfile();
