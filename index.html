@@ -2320,17 +2320,30 @@ body:has(#monthly-screen[style*="block"]) #accountant-bar{display:none!important
 .sidebar .profile{gap:8px}.sidebar .profile-detail{min-width:0;flex:1}
 /* Account controls stay together at the top right on every workspace screen. */
 .topbar .topright{flex:none;gap:11px;margin-left:auto}
-.topbar .topbar-profile{display:flex;align-items:center;gap:9px;max-width:230px;padding:0;margin:0;border:0}
-.topbar-profile .avatar{flex:none;width:34px;height:34px;border-radius:11px}
+.topbar{position:relative;z-index:20}
+.snote-profile-dropdown{position:relative}
+.topbar .topbar-profile{display:flex;align-items:center;gap:8px;max-width:260px;min-height:40px;padding:8px 10px;margin:0;border:0;border-radius:9px;background:transparent;color:#34445c;font:inherit;cursor:pointer;text-align:left}
+.topbar .topbar-profile:hover,.topbar .topbar-profile[aria-expanded="true"]{background:#f4f7fb}
+.topbar-profile:focus-visible,.snote-profile-menu button:focus-visible{outline:2px solid #3477b3;outline-offset:2px}
 .topbar-profile .profile-detail{min-width:0}
-.topbar-profile .pname,.topbar-profile .prole{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:155px}
-.topbar .snote-header-action{display:grid;place-items:center;flex:none;width:38px;height:38px;margin:0;padding:9px;border:1px solid #e4eaf2;border-radius:10px;background:#fff;color:#62768f}
-.topbar .snote-header-action:hover{background:#eef3ff;border-color:#c9d7f7;color:#315efb}
-.topbar .snote-header-action svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.topbar-profile .pname{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:220px;font-size:12px}
+.snote-profile-chevron{width:14px;height:14px;flex:none;fill:none;stroke:#94a0af;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:transform .18s}
+.topbar-profile[aria-expanded="true"] .snote-profile-chevron{transform:rotate(180deg)}
+.snote-profile-menu{position:absolute;top:calc(100% + 8px);right:0;z-index:30;width:184px;max-width:calc(100vw - 24px);padding:6px;background:#fff;border:1px solid #e5eaf1;border-radius:12px;box-shadow:0 12px 32px rgba(30,52,80,.13);transform-origin:top right}
+.snote-profile-menu[hidden]{display:none!important}
+.snote-profile-menu:not([hidden]){animation:snote-profile-slide .16s ease-out}
+.snote-profile-menu button{display:block;width:100%;min-height:40px;padding:10px 12px;border:0;border-radius:7px;background:transparent;color:#44556d;font:inherit;font-size:12px;font-weight:600;text-align:left;cursor:pointer}
+.snote-profile-menu button:hover,.snote-profile-menu button:focus-visible{background:#f3f7fb;color:#286698}
+.snote-profile-menu .snote-profile-logout{margin-top:5px;border-top:1px solid #edf0f5;border-radius:0 0 7px 7px;color:#a15d63}
+@keyframes snote-profile-slide{from{opacity:0;transform:translateY(-7px)}to{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){.snote-profile-menu:not([hidden]){animation:none}.snote-profile-chevron{transition:none}}
+.snote-profile-dialog{width:min(380px,calc(100vw - 32px));padding:24px;border:1px solid #e1e9f3;border-radius:16px;color:#34445c;box-shadow:0 20px 65px #172d4b33}
+.snote-profile-dialog::backdrop{background:rgba(27,43,64,.32)}
+.snote-profile-dialog h2{margin:0 0 20px;font-size:18px}.snote-profile-dialog dl{margin:0;display:grid;grid-template-columns:65px minmax(0,1fr);gap:16px 12px;font-size:13px}.snote-profile-dialog dt{color:#8491a2}.snote-profile-dialog dd{margin:0;overflow-wrap:anywhere}.snote-profile-dialog p{margin:22px 0;color:#8491a2;font-size:12px;line-height:1.7}.snote-profile-dialog form{text-align:right}.snote-profile-dialog button{min-height:38px;padding:8px 18px;border:1px solid #dbe5f0;border-radius:8px;background:#f6f9fd;color:#446381;font:inherit;font-size:12px;cursor:pointer}
 .mobile-drawer-footer{display:none!important}
 @media(max-width:1080px){.topbar .sample{display:none}}
-@media(max-width:760px){.topbar .topright{gap:7px}.topbar .topbar-profile{gap:7px;max-width:142px}.topbar-profile .avatar{width:30px;height:30px;border-radius:10px;font-size:12px}.topbar-profile .pname{max-width:95px;font-size:11px}.topbar-profile .prole{display:none}.topbar .snote-header-action{width:38px;height:38px;padding:9px}}
-@media(max-width:440px){.topbar .crumb{display:none}.topbar-profile .pname{max-width:76px}.topbar .topbar-left{flex:0 0 auto}}
+@media(max-width:760px){.topbar{position:sticky}.topbar .topright{gap:7px}.topbar .topbar-profile{max-width:200px}.topbar-profile .pname{max-width:160px;font-size:12px}}
+@media(max-width:440px){.topbar .crumb{display:none}.topbar .topbar-left{flex:0 0 auto}}
 .snote90-settings{gap:16px}.snote90-panel{border-radius:16px;padding:24px;box-shadow:0 5px 22px rgba(16,43,79,.035)}
 .snote90-settings button:not(:disabled){transition:background-color .2s,border-color .2s,transform .2s,box-shadow .2s}
 .snote90-settings button{border:1px solid #e1e9f3;background:#f7fbff;color:#37648e;border-radius:9px;font-size:11px;font-weight:750;min-height:35px;box-shadow:none;padding:7px 13px;letter-spacing:-.15px}
@@ -2413,7 +2426,17 @@ body:has(#monthly-screen[style*="block"]) #accountant-bar{display:none!important
     <div class="sidebar-end"><div class="support"><p class="st">간편하고 정확하게.</p><p class="sd">재고부터 매입 · 판매 · 정산까지<br>하나의 전산에서 관리하세요.</p></div></div>
   </aside>
   <div class="main">
-    <header class="topbar"><div class="topbar-left"><button type="button" class="mobile-menu-trigger" id="mobile-menu-trigger" aria-label="메뉴 열기" aria-controls="mobile-drawer" aria-expanded="false" onclick="toggleMobileDrawer()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><div class="crumb"><b id="breadcrumb">대시보드</b></div></div><div class="topright"><span class="sample">● v2.03 · 온라인 테스트</span><div class="profile topbar-profile" aria-label="내 프로필"><div class="avatar" id="profile-avatar">Z</div><div class="profile-detail"><div class="pname" id="profile-name">딜러</div><div class="prole" id="profile-role">개인 차량 관리</div></div></div><button type="button" class="topbutton snote-header-action" aria-label="알림" title="알림" onclick="toast('알림 기능은 추후 구현 예정입니다.')" id="bell"></button><button type="button" class="logout-icon snote-header-action" onclick="logout()" title="로그아웃" aria-label="로그아웃"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5H5v14h4M13 8l4 4-4 4M9 12h11"/></svg></button></div></header>
+    <header class="topbar"><div class="topbar-left"><button type="button" class="mobile-menu-trigger" id="mobile-menu-trigger" aria-label="메뉴 열기" aria-controls="mobile-drawer" aria-expanded="false" onclick="toggleMobileDrawer()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><div class="crumb"><b id="breadcrumb">대시보드</b></div></div><div class="topright"><span class="sample">● v2.03 · 온라인 테스트</span>
+      <div class="snote-profile-dropdown" id="snote-profile-dropdown">
+        <button type="button" class="profile topbar-profile" id="snote-profile-trigger" aria-haspopup="menu" aria-controls="snote-profile-menu" aria-expanded="false" onclick="snoteToggleProfileMenu()"><span id="profile-avatar" hidden></span><span class="profile-detail"><span class="pname" id="profile-name">내 프로필</span><span id="profile-role" hidden></span></span><svg class="snote-profile-chevron" viewBox="0 0 20 20" aria-hidden="true"><path d="m5 8 5 5 5-5"/></svg></button>
+        <div class="snote-profile-menu" id="snote-profile-menu" role="menu" aria-labelledby="snote-profile-trigger" hidden>
+          <button type="button" role="menuitem" tabindex="-1" onclick="snoteOpenProfileSettings()">프로필 설정</button>
+          <button type="button" role="menuitem" tabindex="-1" onclick="snoteCloseProfileMenu(true);toast('알림 기능은 추후 구현 예정입니다.')">알림</button>
+          <button type="button" role="menuitem" tabindex="-1" class="snote-profile-logout" onclick="snoteCloseProfileMenu(true);logout()">로그아웃</button>
+        </div>
+      </div>
+    </div></header>
+    <dialog class="snote-profile-dialog" id="snote-profile-dialog" aria-labelledby="snote-profile-dialog-title"><h2 id="snote-profile-dialog-title">프로필 설정</h2><dl><dt>이름</dt><dd id="snote-profile-dialog-name"></dd><dt>권한</dt><dd id="snote-profile-dialog-role"></dd><dt>상사명</dt><dd id="snote-profile-dialog-company"></dd></dl><p>프로필 정보 변경은 상사 관리자에게 요청해 주세요.</p><form method="dialog"><button type="submit" autofocus>닫기</button></form></dialog>
     <main class="content"><div id="zc-cloud-banner" hidden role="status"><b>온라인 테스트 운영:</b> 차량·금융·월정산·고객정보의 클라우드 DB와 차량 사진·등록증의 비공개 Storage 연결을 시험하는 버전입니다. <b>운영 데이터 입력 전 로그인·접근권한·저장·조회·백업 검증이 필요하며, 주민번호 입력은 금지합니다.</b></div>
       <section class="pagehead"><div><p class="eyebrow" id="eyebrow">OVERVIEW</p><h1 id="screen-title">오늘의 업무 현황</h1><p class="subtitle" id="screen-sub">차량 재고와 매입·판매 현황을 한눈에 확인하세요.</p></div><button class="btn-primary" onclick="openAdd()" id="main-add" hidden aria-hidden="true" tabindex="-1"><span id="addicon"></span>차량 등록</button></section>
       <section id="accountant-bar" class="accountant-bar" hidden>
@@ -3065,6 +3088,51 @@ let route='dashboard';
 /* v1.81: visual indicator for the current dealer dashboard authorization. */
 let zcDashboardUnlocked=false;
 const $=id=>document.getElementById(id);
+function snoteCloseProfileMenu(restoreFocus=false){
+ const trigger=$('snote-profile-trigger'),menu=$('snote-profile-menu');
+ if(!trigger||!menu)return;
+ const wasOpen=!menu.hidden;menu.hidden=true;trigger.setAttribute('aria-expanded','false');
+ if(wasOpen&&restoreFocus)trigger.focus();
+}
+function snoteToggleProfileMenu(){
+ const trigger=$('snote-profile-trigger'),menu=$('snote-profile-menu');
+ if(!menu.hidden){snoteCloseProfileMenu();return;}
+ menu.hidden=false;trigger.setAttribute('aria-expanded','true');
+ menu.querySelector('[role="menuitem"]').focus();
+}
+function snoteOpenProfileSettings(){
+ snoteCloseProfileMenu(true);if(!currentUser)return;
+ if(isSnoteAdmin()){
+  navigate('settings');const input=$('snote90-company-admin-name');
+  if(input){input.scrollIntoView({block:'center',behavior:'instant'});input.focus({preventScroll:true});}
+  return;
+ }
+ $('snote-profile-dialog-name').textContent=currentUser.name||'직원';
+ $('snote-profile-dialog-role').textContent=isAccountant()?'경리':'딜러';
+ $('snote-profile-dialog-company').textContent=currentUser.company||'';
+ $('snote-profile-dialog').showModal();
+}
+document.addEventListener('click',event=>{if(!event.target.closest('#snote-profile-dropdown'))snoteCloseProfileMenu();});
+document.addEventListener('focusin',event=>{if(!event.target.closest('#snote-profile-dropdown'))snoteCloseProfileMenu();});
+document.addEventListener('keydown',event=>{
+ const trigger=$('snote-profile-trigger'),menu=$('snote-profile-menu');
+ if(event.key==='Escape'&&!menu.hidden){event.preventDefault();snoteCloseProfileMenu(true);return;}
+ if(!event.target.closest('#snote-profile-dropdown'))return;
+ if(event.target===trigger){
+  if(event.key==='ArrowDown'||event.key==='ArrowUp'){
+   event.preventDefault();if(menu.hidden)snoteToggleProfileMenu();
+   const items=menu.querySelectorAll('[role="menuitem"]');items[event.key==='ArrowUp'?items.length-1:0].focus();
+  }
+  return;
+ }
+ if(menu.hidden)return;
+ const items=[...menu.querySelectorAll('[role="menuitem"]')],index=items.indexOf(document.activeElement);
+ if(['ArrowDown','ArrowUp','Home','End'].includes(event.key)){
+  event.preventDefault();const next=event.key==='Home'?0:event.key==='End'?items.length-1:(index+(event.key==='ArrowDown'?1:-1)+items.length)%items.length;items[next].focus();
+ }else if(event.key==='Tab'){
+  event.preventDefault();snoteCloseProfileMenu(true);
+ }
+});
 function num(n){return Number(n).toLocaleString('ko-KR')}
 
 /* Vehicle taxonomy: public Encar listings informed the UI hierarchy; starter entries are manually curated examples.
@@ -5780,7 +5848,7 @@ window.addEventListener('beforeprint',()=>{if($('contract-overlay')?.classList.c
 dbReady=openFileDB().then(async db=>{fileDB=db;await refreshMedia()}).catch(e=>{console.warn('IndexedDB unavailable',e);fileDB=null;toast('현재 브라우저에서는 사진 저장을 지원하지 않을 수 있습니다.')});
 
 let toastTimer;function toast(msg){clearTimeout(toastTimer);$('toast').textContent=msg;$('toast').style.display='block';toastTimer=setTimeout(()=>$('toast').style.display='none',3000)}
-$('addicon').innerHTML=ico('plus');$('bell').innerHTML=ico('bell');document.querySelectorAll('.search-icon').forEach(el=>el.innerHTML=ico('search'));document.querySelectorAll('.arrow-right').forEach(el=>el.innerHTML=ico('arrow'));buildQuick();buildStats();navigate('dashboard');initTaxonomy();
+$('addicon').innerHTML=ico('plus');document.querySelectorAll('.search-icon').forEach(el=>el.innerHTML=ico('search'));document.querySelectorAll('.arrow-right').forEach(el=>el.innerHTML=ico('arrow'));buildQuick();buildStats();navigate('dashboard');initTaxonomy();
 
 /* v1.2 Demo identity. This is intentionally a local design prototype, not production authentication.
    Passwords are not stored as plaintext; RRN inputs are never read, collected or persisted. */
