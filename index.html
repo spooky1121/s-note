@@ -2938,6 +2938,106 @@ body:has(#monthly-screen[style*="block"]) #accountant-bar{display:none!important
   }
 }
 </style>
+<style id="snote-finance-typography">
+/* Finance uses the prestock page's title, summary, detail and form text sizes. */
+@media screen {
+  .app #alt-content:has(.zc182-fin-head) {
+    --finance-title-size: 20px;
+    --finance-summary-size: clamp(17px, 1.65vw, 23px);
+  }
+  .app #alt-content .zc182-fin-head h3 {
+    font-size: var(--finance-title-size);
+  }
+  .app #alt-content .zc182-fin-head p,
+  .app #alt-content:has(.zc182-fin-head) .fin-kpi .label,
+  .app #alt-content .zc182-lender-numbers span {
+    font-size: 11px;
+  }
+  .app #alt-content:has(.zc182-fin-head) .fin-kpi strong {
+    font-size: var(--finance-summary-size);
+  }
+  .app #alt-content:has(.zc182-fin-head) .fin-kpi strong small,
+  .app #alt-content .zc182-lender-numbers b small {
+    font-size: 11px;
+  }
+  .app #alt-content .zc182-lender-h strong {
+    font-size: 15px;
+  }
+  .app #alt-content .zc182-lender-h small,
+  .app #alt-content .zc182-lender-foot {
+    font-size: 10px;
+  }
+  /* Secondary figures follow the prestock account-detail size. */
+  .app #alt-content .zc182-lender-numbers b {
+    font-size: 13px;
+  }
+  .app #alt-content:has(.zc182-fin-head) .fin-filters input,
+  .app #alt-content #inventory-lender-filter,
+  .app #alt-content:has(.zc182-fin-head) .fin-table .fin-buy,
+  .app #alt-content:has(.zc182-fin-head) .fin-table .fin-loan,
+  .app #alt-content:has(.zc182-fin-head) .fin-table .fin-open,
+  .app #alt-content:has(.zc182-fin-head) .fin-empty {
+    font-size: 11px;
+  }
+  .app #alt-content:has(.zc182-fin-head) .fin-table th {
+    font-size: 10px;
+  }
+  .app #alt-content:has(.zc182-fin-head) .fin-table td {
+    font-size: 10.8px;
+  }
+  .app #alt-content:has(.zc182-fin-head) .fin-mobile-head strong {
+    font-size: 12px;
+  }
+  .app #alt-content:has(.zc182-fin-head) .fin-mobile-head > span {
+    font-size: 11px;
+  }
+  .app #alt-content:has(.zc182-fin-head) .fin-mobile-card p {
+    font-size: 10px;
+  }
+  .app #alt-content:has(.zc182-fin-head) .fin-mobile-card p strong {
+    font-size: 10.5px;
+  }
+  .app #alt-content:has(.zc182-fin-head) .fin-note {
+    font-size: 9.5px;
+  }
+  #zc182-finance-overlay .zc182-fields label,
+  #zc182-finance-overlay .zc182-match {
+    font-size: 10px;
+  }
+  #zc182-finance-overlay .zc182-fields input,
+  #zc182-finance-overlay .zc182-fields select {
+    font-size: 11px;
+  }
+}
+@media screen and (max-width: 760px) {
+  .app #alt-content:has(.zc182-fin-head) {
+    --finance-summary-size: 22px;
+  }
+}
+@media screen and (max-width: 700px) {
+  .app #alt-content:has(.zc182-fin-head) {
+    --finance-title-size: 17px;
+  }
+  /* Keep full won amounts readable at the same size as prestock on phones. */
+  .app #alt-content:has(.zc182-fin-head) .fin-total {
+    grid-template-columns: 1fr;
+  }
+  .app #alt-content:has(.zc182-fin-head) .fin-kpi + .fin-kpi::before {
+    top: 0;
+    right: 14px;
+    bottom: auto;
+    left: 14px;
+    width: auto;
+    height: 1px;
+  }
+  #zc182-finance-overlay .zc182-modal-head h2 {
+    font-size: 17px;
+  }
+  #zc182-finance-overlay .zc182-match {
+    font-size: 9px;
+  }
+}
+</style>
 </head>
 <body>
 
