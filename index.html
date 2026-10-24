@@ -2390,6 +2390,11 @@ body:has(#monthly-screen[style*="block"]) #accountant-bar{display:none!important
 /* One shared wordmark replaces the former icon and repeated product name. */
 .snote-wordmark{display:block;position:relative;overflow:hidden;width:160px;height:42px;flex:none}
 .snote-wordmark img{position:absolute;top:50%;left:50%;width:200%;max-width:none;height:auto;transform:translate(-50%,-50%)}
+.snote-brand-home{display:block;flex:none;max-width:100%;padding:0;border:0;border-radius:9px;background:transparent;color:inherit;line-height:0;cursor:pointer;transition:box-shadow .25s ease,transform .25s ease}
+.snote-brand-home:focus-visible{outline:2px solid #009fff;outline-offset:5px;box-shadow:0 0 16px #00a7ff26}
+@media(hover:hover){.snote-brand-home:hover{transform:translateY(-1px);animation:snote-brand-neon 1.8s ease-in-out infinite}}
+@keyframes snote-brand-neon{0%,100%{box-shadow:0 0 0 1px #00a7ff26,0 0 12px #00a7ff1a}50%{box-shadow:0 0 0 1px #00a7ff52,0 0 20px #00a7ff38}}
+@media(prefers-reduced-motion:reduce){.snote-brand-home{transition:none}.snote-brand-home:hover{animation:none;transform:none;box-shadow:0 0 12px #00a7ff26}}
 .sidebar .brand,.mobile-drawer-brand{flex-direction:column;align-items:flex-start;gap:6px}
 .sidebar .branddesc,.mobile-drawer-brand small{margin-top:0}
 </style>
@@ -2421,7 +2426,7 @@ body:has(#monthly-screen[style*="block"]) #accountant-bar{display:none!important
 </div>
 <div class="app">
   <aside class="sidebar">
-    <div class="brand"><span class="snote-wordmark"><img src="assets/snote-logo.png" alt="S-NOTE" width="2172" height="724" decoding="async"></span><div class="branddesc">중고차 매매 관리 시스템</div></div>
+    <div class="brand"><button type="button" class="snote-brand-home" aria-label="메인 대시보드로 이동" onclick="navigate('dashboard')"><span class="snote-wordmark"><img src="assets/snote-logo.png" alt="S-NOTE" width="2172" height="724" decoding="async"></span></button><div class="branddesc">중고차 매매 관리 시스템</div></div>
     
     <nav class="nav" id="desktop-nav"></nav>
     <div class="sidebar-end"><div class="support"><p class="st">간편하고 정확하게.</p><p class="sd">재고부터 매입 · 판매 · 정산까지<br>하나의 전산에서 관리하세요.</p></div></div>
@@ -2683,7 +2688,7 @@ if(window.ResizeObserver)new ResizeObserver(update).observe(document.body);addEv
 <!-- v1.63 · 모바일 전용 슬라이드인 내비게이션 -->
 <div class="mobile-drawer-backdrop" id="mobile-drawer-backdrop" aria-hidden="true" onclick="closeMobileDrawer()"></div>
 <aside class="mobile-drawer" id="mobile-drawer" role="dialog" aria-modal="true" aria-label="S-NOTE 메뉴" aria-hidden="true" inert>
- <div class="mobile-drawer-header"><div class="mobile-drawer-brand"><span class="snote-wordmark"><img src="assets/snote-logo.png" alt="S-NOTE" width="2172" height="724" decoding="async"></span><small>중고차 매매 관리 시스템</small></div><button type="button" class="mobile-drawer-close" aria-label="메뉴 닫기" onclick="closeMobileDrawer()">×</button></div>
+ <div class="mobile-drawer-header"><div class="mobile-drawer-brand"><button type="button" class="snote-brand-home" aria-label="메인 대시보드로 이동" onclick="navigate('dashboard')"><span class="snote-wordmark"><img src="assets/snote-logo.png" alt="S-NOTE" width="2172" height="724" decoding="async"></span></button><small>중고차 매매 관리 시스템</small></div><button type="button" class="mobile-drawer-close" aria-label="메뉴 닫기" onclick="closeMobileDrawer()">×</button></div>
  <div class="mobile-drawer-body"><div class="mobile-drawer-caption">WORKSPACE</div><nav class="nav mobile-drawer-nav" id="mobile-drawer-nav" aria-label="전체 업무 메뉴"></nav></div>
  <div class="mobile-drawer-footer"><div class="mobile-drawer-user"><span class="mobile-drawer-avatar" id="mobile-drawer-avatar">Z</span><span><strong id="mobile-drawer-name">사용자</strong><small id="mobile-drawer-role">계정</small></span></div><button type="button" class="mobile-drawer-logout" onclick="logout()">로그아웃 →</button></div>
 </aside>
