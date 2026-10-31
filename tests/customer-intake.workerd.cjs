@@ -153,9 +153,73 @@ async function scenario(kind) {
   }
 }
 
+async function rrnScenario() {
+  const bindings = { ...ENV, CUSTOMER_INTAKE_RRN_KEY: '91'.repeat(32) };
+  const token = 'ab'.repeat(32);
+  const residentNumber = '0001013000000'; // Synthetic fixture; never use real customer data.
+  let stored, submissions = 0, reads = 0;
+  const options = {
+    modules: true,
+    script: fs.readFileSync(SOURCE, 'utf8') +
+      '\nexport default { fetch(request, env) { return onRequest({ request, env }); } };',
+    compatibilityDate: '2026-10-24', bindings, cf: false,
+    outboundService: async request => {
+      const target = new URL(request.url);
+      assert.equal(target.origin, ENV.SUPABASE_URL, 'No external networking permitted');
+      const args = await request.json();
+      if (target.pathname === '/rest/v1/rpc/snote_intake_submit_v2') {
+        submissions++;
+        assert.equal(request.headers.get('apikey'), ENV.SUPABASE_SERVICE_ROLE_KEY);
+        assert.equal(JSON.stringify(args).includes(residentNumber), false, 'DB receives ciphertext only');
+        assert.match(args.p_rrn_cipher, /^v1\.[0-9a-f]{24}\.[0-9a-f]{58}$/);
+        if (stored) assert.notEqual(stored.rrnCipher, args.p_rrn_cipher, 'Every encryption has a fresh IV');
+        stored = { ok: true, id: ID, tokenHash: args.p_token_hash, rrnCipher: args.p_rrn_cipher };
+        return MiniflareResponse.json({ ok: true, submittedAt: '2026-11-01T00:00:00Z' });
+      }
+      assert.equal(target.pathname, '/rest/v1/rpc/snote_intake_rrn_access');
+      reads++;
+      assert.equal(request.headers.get('Authorization'), 'Bearer ' + JWT);
+      assert.deepEqual(args, { p_id: ID });
+      return MiniflareResponse.json(stored);
+    }
+  };
+  const runtimeOptions = typeof convertV4MiniflareOptions === 'function'
+    ? { ...convertV4MiniflareOptions(options), telemetry: { enabled: false } } : options;
+  const runtime = new Miniflare(runtimeOptions);
+  const post = async body => {
+    const response = await runtime.dispatchFetch('https://intake.example/api/customer-intake', {
+      method: 'POST', headers: { Origin: 'https://intake.example', 'Content-Type': 'application/json', Authorization: 'Bearer ' + JWT },
+      body: JSON.stringify(body)
+    });
+    assert.equal(response.headers.get('Cache-Control'), 'no-store, private, max-age=0');
+    return { status: response.status, body: await response.json() };
+  };
+  try {
+    const body = { action: 'submit', token, session: 'cd'.repeat(32), vehicleConfirmed: true, consent: true,
+      rrn: residentNumber, rrnNoticeAccepted: true,
+      customer: { name: '테스트', addressBase: '테스트 주소', sameAddress: true } };
+    for (let i = 0; i < 2; i++) {
+      const result = await post(body);
+      assert.equal(result.status, 200);
+      assert.equal(JSON.stringify(result.body).includes(residentNumber), false);
+    }
+    const retrieved = await post({ action: 'read-rrn', id: ID });
+    assert.equal(retrieved.status, 200);
+    assert.deepEqual(retrieved.body, { ok: true, rrn: residentNumber });
+    stored.rrnCipher = stored.rrnCipher.slice(0, -1) + (stored.rrnCipher.endsWith('0') ? '1' : '0');
+    const tampered = await post({ action: 'read-rrn', id: ID });
+    assert.equal(tampered.status, 403);
+    assert.equal(tampered.body.code, 'RRN_NOT_AVAILABLE');
+    assert.equal(JSON.stringify(tampered.body).includes(residentNumber), false);
+    assert.equal(submissions, 2); assert.equal(reads, 2);
+    console.log('PASS actual workerd: AES-GCM RRN round trip, fresh IV, ciphertext-only DB, tamper refusal');
+  } finally { await runtime.dispose(); }
+}
+
 (async () => {
   for (const kind of ['accepted', 'supabase-redirect', 'solapi-redirect']) await scenario(kind);
-  console.log('PASS 3/3 actual-source workerd scenarios; real upstream networking disabled');
+  await rrnScenario();
+  console.log('PASS 4/4 actual-source workerd scenarios; real upstream networking disabled');
 })().catch(error => {
   console.error(error.name + ': ' + String(error.message).slice(0, 1600));
   process.exitCode = 1;

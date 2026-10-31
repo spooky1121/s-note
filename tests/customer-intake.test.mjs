@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createHash, createHmac } from 'node:crypto';
+import { createHash, createHmac, createCipheriv, createDecipheriv, randomBytes } from 'node:crypto';
 import { onRequest } from '../functions/api/customer-intake.js';
 
 // All HTTP is intercepted. These tests must never contact Supabase or SOLAPI.
@@ -13,6 +13,8 @@ const ENV = {
 const ID = '12345678-1234-4234-8234-123456789abc';
 const JWT = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIn0.c2lnbmF0dXJl';
 const TOKEN = 'a'.repeat(64), SESSION = 'b'.repeat(64);
+const RRN_KEY = 'c'.repeat(64), TEST_RRN = '9001011234567';
+const RRN_ENV = { ...ENV, CUSTOMER_INTAKE_RRN_KEY: RRN_KEY };
 const CAR = { model: '테스트 차량', plate: '123가4567', year: 2024, km: 12000, color: '흰색', sell: 2300 };
 const hash = value => createHash('sha256').update(value).digest('hex');
 const response = (value, status = 200) => new Response(JSON.stringify(value), { status, headers: { 'Content-Type': 'application/json' } });
@@ -45,7 +47,8 @@ test('GET exposes fixed configuration diagnostics only; missing setup prevents e
   const get = await call(undefined, { method: 'GET', env: {} });
   assert.deepEqual(get.body, {
     service: 'snote-customer-intake', configured: false, originMatches: null,
-    configurationIssues: ['SUPABASE_URL', 'SUPABASE_PUBLISHABLE_KEY', 'SUPABASE_SERVICE_ROLE_KEY', 'CUSTOMER_INTAKE_PUBLIC_ORIGIN', 'SOLAPI_API_KEY', 'SOLAPI_API_SECRET', 'SOLAPI_SENDER', 'CUSTOMER_INTAKE_OTP_SECRET'].map(name => ({ name, reason: '값이 설정되지 않았습니다.' }))
+    configurationIssues: ['SUPABASE_URL', 'SUPABASE_PUBLISHABLE_KEY', 'SUPABASE_SERVICE_ROLE_KEY', 'CUSTOMER_INTAKE_PUBLIC_ORIGIN', 'SOLAPI_API_KEY', 'SOLAPI_API_SECRET', 'SOLAPI_SENDER', 'CUSTOMER_INTAKE_OTP_SECRET'].map(name => ({ name, reason: '값이 설정되지 않았습니다.' })),
+    rrnConfigured: false, rrnConfigurationIssues: [{ name: 'CUSTOMER_INTAKE_RRN_KEY', reason: '주민번호 암호화 키가 설정되지 않았습니다.' }]
   });
   for (const key of Object.keys(ENV)) {
     const env = { ...ENV }; delete env[key];
@@ -82,7 +85,7 @@ test('configuration diagnostics never expose values and invalid settings remain 
     assert.equal(post.result.status, 503); assert.equal(post.body.code, 'SERVICE_UNAVAILABLE');
   }
   const valid = await call(undefined, { method: 'GET' });
-  assert.deepEqual(valid.body, { service: 'snote-customer-intake', configured: true, configurationIssues: [], originMatches: true });
+  assert.deepEqual(valid.body, { service: 'snote-customer-intake', configured: true, configurationIssues: [], originMatches: true, rrnConfigured: false, rrnConfigurationIssues: [{ name: 'CUSTOMER_INTAKE_RRN_KEY', reason: '주민번호 암호화 키가 설정되지 않았습니다.' }] });
   assert.equal(calls.length, 0);
 });
 
@@ -314,4 +317,132 @@ test('submit is durable-only, derives phone server-side, forwards separate refun
   assert.equal(calls[0].body.p_customer.mailingBase, body.customer.addressBase);
   assert.equal(Object.hasOwn(calls[0].body.p_customer, 'phone'), false);
   assert.equal(calls.length, 2);
+});
+
+function rrnEnvelope(digits = TEST_RRN, tokenHash = hash(TOKEN), key = RRN_KEY) {
+  const iv = randomBytes(12);
+  const cipher = createCipheriv('aes-256-gcm', Buffer.from(key, 'hex'), iv);
+  cipher.setAAD(Buffer.from(`snote-intake-rrn:v1:${tokenHash}`));
+  const encrypted = Buffer.concat([cipher.update(digits, 'utf8'), cipher.final(), cipher.getAuthTag()]);
+  return `v1.${iv.toString('hex')}.${encrypted.toString('hex')}`;
+}
+
+test('optional RRN key diagnostics are value-free and cannot block legacy/basic submissions', async t => {
+  const calls = mock(t, () => response({ ok: true, submittedAt: '2026-11-01T00:00:00Z' }));
+  for (const key of [undefined, '', 'private-invalid-key', 'f'.repeat(63), 'g'.repeat(64), 'f'.repeat(65)]) {
+    const env = { ...ENV, CUSTOMER_INTAKE_RRN_KEY: key };
+    const metadata = await call(undefined, { method: 'GET', env });
+    assert.equal(metadata.body.configured, true); assert.equal(metadata.body.rrnConfigured, false);
+    assert.equal(metadata.body.rrnConfigurationIssues.length, 1);
+    assert.equal(metadata.body.rrnConfigurationIssues[0].name, 'CUSTOMER_INTAKE_RRN_KEY');
+    if (key) assert.equal(JSON.stringify(metadata.body).includes(key), false);
+    const basic = await call(submit(), { env }); assert.equal(basic.result.status, 200);
+    assert.ok(calls.at(-1).url.endsWith('/snote_intake_submit'));
+    const before = calls.length;
+    const sensitive = await call(submit({ rrn: TEST_RRN, rrnNoticeAccepted: true }), { env });
+    assert.equal(sensitive.result.status, 503); assert.equal(sensitive.body.code, 'RRN_SETUP_REQUIRED');
+    assert.equal(calls.length, before);
+  }
+  const ready = await call(undefined, { method: 'GET', env: RRN_ENV });
+  assert.equal(ready.body.rrnConfigured, true); assert.deepEqual(ready.body.rrnConfigurationIssues, []);
+  assert.equal(JSON.stringify(ready.body).includes(RRN_KEY), false);
+});
+
+test('RRN validation requires real birth date, ASCII digits and explicit notice without adding RRN to customer JSON', async t => {
+  const calls = mock(t, () => { throw new Error('unexpected network'); });
+  const inputs = [
+    { rrn: TEST_RRN }, { rrn: TEST_RRN, rrnNoticeAccepted: false },
+    { rrn: TEST_RRN, rrnNoticeAccepted: 'true' }, { rrn: 9001011234567, rrnNoticeAccepted: true },
+    { rrn: '9002301234567', rrnNoticeAccepted: true }, { rrn: '9001019234567', rrnNoticeAccepted: true },
+    { rrn: '9912313234567', rrnNoticeAccepted: true }, { rrn: '９００１０１１２３４５６７', rrnNoticeAccepted: true },
+    { rrn: '900101 1234567', rrnNoticeAccepted: true },
+    { customer: { ...submit().customer, rrn: TEST_RRN } }
+  ];
+  for (const input of inputs) {
+    const result = await call(submit(input), { env: RRN_ENV });
+    assert.equal(result.result.status, 400); assert.equal(result.body.code, 'VALIDATION_ERROR');
+    assert.equal(JSON.stringify(result.body).includes(TEST_RRN), false);
+  }
+  assert.equal(calls.length, 0);
+});
+
+test('RRN submission encrypts independently with random IV and row-bound AAD; plaintext never enters DB payload or response', async t => {
+  const calls = mock(t, () => response({ ok: true, submittedAt: '2026-11-01T00:00:00Z' }));
+  for (let n = 0; n < 2; n++) {
+    const result = await call(submit({ rrn: '900101-1234567', rrnNoticeAccepted: true }), { env: RRN_ENV });
+    assert.equal(result.result.status, 200); assert.equal(JSON.stringify(result.body).includes(TEST_RRN), false);
+    const sent = calls.at(-1);
+    assert.ok(sent.url.endsWith('/snote_intake_submit_v2'));
+    assert.equal(sent.body.p_rrn_notice_version, '2026-11-01-r1');
+    assert.equal(sent.body.p_consent_version, '2026-11-01');
+    assert.match(sent.body.p_rrn_cipher, /^v1\.[a-f0-9]{24}\.[a-f0-9]{58}$/);
+    assert.equal(JSON.stringify(sent.body).includes(TEST_RRN), false);
+    assert.equal(Object.hasOwn(sent.body.p_customer, 'rrn'), false);
+    const [, ivHex, cipherHex] = sent.body.p_rrn_cipher.split('.');
+    const encrypted = Buffer.from(cipherHex, 'hex');
+    const decipher = createDecipheriv('aes-256-gcm', Buffer.from(RRN_KEY, 'hex'), Buffer.from(ivHex, 'hex'));
+    decipher.setAAD(Buffer.from(`snote-intake-rrn:v1:${hash(TOKEN)}`));
+    decipher.setAuthTag(encrypted.subarray(-16));
+    assert.equal(Buffer.concat([decipher.update(encrypted.subarray(0, -16)), decipher.final()]).toString('utf8'), TEST_RRN);
+  }
+  assert.notEqual(calls[0].body.p_rrn_cipher, calls[1].body.p_rrn_cipher);
+});
+
+test('RRN company policy denials and missing v2 SQL never turn into a fake successful or unencrypted submission', async t => {
+  for (const setupMissing of [false, true]) {
+    const calls = mock(t, () => setupMissing ? response({ code: 'PGRST202', message: TEST_RRN }, 404) : response({ ok: false, code: 'RRN_NOT_AVAILABLE', message: TEST_RRN }));
+    const result = await call(submit({ rrn: TEST_RRN, rrnNoticeAccepted: true }), { env: RRN_ENV });
+    assert.equal(result.body.code, setupMissing ? 'DB_SETUP_REQUIRED' : 'RRN_NOT_AVAILABLE');
+    assert.equal(result.result.status, setupMissing ? 503 : 403);
+    assert.equal(JSON.stringify(result.body).includes(TEST_RRN), false);
+    assert.equal(calls.length, 1); assert.ok(calls[0].url.endsWith('/snote_intake_submit_v2'));
+  }
+});
+
+test('info enables RRN only with both valid encryption key and authoritative DB policy, with legacy SQL fallback', async t => {
+  const info = { ok: true, status: 'pending', car: CAR, companyName: '상사', phoneMasked: '010-****-5678', rrnEnabled: true };
+  let v2Missing = false;
+  const calls = mock(t, call => call.url.endsWith('/snote_intake_view_v2') && v2Missing ? response({ code: 'PGRST202', message: 'not installed' }, 404) : response(info));
+  const legacy = await call({ action: 'info', token: TOKEN });
+  assert.equal(legacy.body.rrnEnabled, false); assert.ok(calls.at(-1).url.endsWith('/snote_intake_view'));
+  const enabled = await call({ action: 'info', token: TOKEN }, { env: RRN_ENV });
+  assert.equal(enabled.body.rrnEnabled, true); assert.ok(calls.at(-1).url.endsWith('/snote_intake_view_v2'));
+  v2Missing = true;
+  const fallback = await call({ action: 'info', token: TOKEN }, { env: RRN_ENV });
+  assert.equal(fallback.body.rrnEnabled, false);
+  assert.ok(calls.at(-2).url.endsWith('/snote_intake_view_v2')); assert.ok(calls.at(-1).url.endsWith('/snote_intake_view'));
+});
+
+test('read-rrn requires dealer JWT and valid key, checks returned row, and rejects tampering or cross-row ciphertext', async t => {
+  let data = { ok: true, id: ID, tokenHash: hash(TOKEN), rrnCipher: rrnEnvelope() };
+  const calls = mock(t, () => response(data));
+  assert.equal((await call({ action: 'read-rrn', id: ID }, { env: RRN_ENV })).result.status, 401);
+  assert.equal((await call({ action: 'read-rrn', id: ID }, { authorization: `Bearer ${JWT}` })).body.code, 'RRN_SETUP_REQUIRED');
+  assert.equal(calls.length, 0);
+  const read = () => call({ action: 'read-rrn', id: ID }, { env: RRN_ENV, authorization: `Bearer ${JWT}` });
+  const success = await read(); assert.deepEqual(success.body, { ok: true, rrn: TEST_RRN });
+  assert.match(success.result.headers.get('Cache-Control'), /no-store/);
+  assert.ok(calls.at(-1).url.endsWith('/snote_intake_rrn_access'));
+  assert.deepEqual(calls.at(-1).body, { p_id: ID }); assert.equal(calls.at(-1).options.headers.Authorization, `Bearer ${JWT}`);
+  for (const changed of [
+    { ...data, id: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa' },
+    { ...data, tokenHash: hash('different-row') },
+    { ...data, rrnCipher: data.rrnCipher.slice(0, -1) + (data.rrnCipher.endsWith('0') ? '1' : '0') },
+    { ...data, rrnCipher: rrnEnvelope(TEST_RRN, hash(TOKEN), 'd'.repeat(64)) },
+    { ok: false, code: 'RRN_NOT_AVAILABLE', message: TEST_RRN }
+  ]) {
+    data = changed;
+    const failure = await read(); assert.equal(failure.result.status, 403); assert.equal(failure.body.code, 'RRN_NOT_AVAILABLE');
+    assert.equal(JSON.stringify(failure.body).includes(TEST_RRN), false); assert.equal(Object.hasOwn(failure.body, 'rrn'), false);
+  }
+});
+
+test('dealer list exposes only key-gated hasRrn and never ciphertext or plaintext from RPC fields', async t => {
+  const cipher = rrnEnvelope();
+  mock(t, () => response([{ id: ID, submittedAt: '2026-11-01', hasRrn: true, rrnCipher: cipher, rrn: TEST_RRN, submission: { name: '테스트', rrn: TEST_RRN, rrnCipher: cipher } }]));
+  for (const env of [ENV, RRN_ENV]) {
+    const result = await call({ action: 'list', carId: 'car-1' }, { env, authorization: `Bearer ${JWT}` });
+    assert.equal(result.body.requests[0].hasRrn, env === RRN_ENV);
+    assert.equal(JSON.stringify(result.body).includes(TEST_RRN), false); assert.equal(JSON.stringify(result.body).includes(cipher), false);
+  }
 });

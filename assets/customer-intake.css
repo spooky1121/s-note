@@ -148,3 +148,41 @@ input[aria-invalid="true"] { border-color: #cf6b73; background: #fffafb; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; animation: none !important; }
 }
+
+/* Address lookup runs in a separate sandbox document, outside this form. */
+.address-input-row { display: flex; align-items: stretch; gap: 8px; min-width: 0; }
+.address-input-row > input { flex: 1; width: 0; min-width: 0; }
+.address-search-button { flex: none; padding: 0 12px; min-height: 46px; border: 1px solid #cad9ed; border-radius: 10px; color: #315f9b; background: #f2f7ff; font-size: 12px; font-weight: 650; white-space: nowrap; }
+.address-search-button:hover:not(:disabled) { background: #e9f1ff; }
+.address-search-button:disabled { color: #8492a7; background: #f4f6f9; border-color: #e1e7ef; }
+.rrn-fields { display: grid; grid-template-columns: minmax(0, 1fr) 14px minmax(0, 1fr); align-items: end; gap: 8px; }
+.rrn-fields .field { margin-bottom: 0; }
+.rrn-fields input { font-variant-numeric: tabular-nums; letter-spacing: 1px; }
+.rrn-fields input::placeholder { font-size: 12px; letter-spacing: 0; }
+.rrn-separator { display: flex; align-items: center; justify-content: center; min-height: 46px; color: #7a8ca5; font-size: 13px; }
+.rrn-notice { font-size: 11px; padding: 12px; margin-top: 13px; border: 1px solid #e0e7f1; border-radius: 10px; background: #fafbfd; }
+.address-dialog { width: min(560px, calc(100% - 24px)); max-width: none; height: min(740px, calc(100dvh - 32px)); max-height: none; padding: 0; border: 1px solid #dce5f1; border-radius: 17px; color: #14263d; background: #fff; box-shadow: 0 24px 80px #14263d30; overflow: hidden; }
+.address-dialog[open] { display: flex; flex-direction: column; }
+.address-dialog::backdrop { background: #10243c80; }
+.address-dialog-header { display: flex; flex: none; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 19px 21px 15px; border-bottom: 1px solid #e4ebf4; }
+.address-dialog-header h2 { margin: 0; font-size: 18px; line-height: 1.5; letter-spacing: -.5px; }
+.address-dialog-header p { margin: 5px 0 0; color: #5f6f86; font-size: 11px; line-height: 1.6; }
+.address-close { display: grid; place-items: center; flex: none; min-width: 44px; min-height: 44px; border: 0; border-radius: 10px; background: #f3f6fb; color: #536b8b; font-size: 26px; line-height: 1; }
+.address-dialog-status { flex: none; min-height: 18px; margin: 0; padding: 11px 18px; font-size: 11px; color: #5f6f86; line-height: 1.7; }
+.address-dialog-status[data-tone="error"] { color: #a44b56; background: #fff8f8; }
+.address-frame-host { flex: 1; min-height: 0; background: #f8fafd; }
+.address-frame-host iframe { display: block; width: 100%; height: 100%; border: 0; background: #fff; }
+.address-dialog-footer { flex: none; padding: 11px 18px; border-top: 1px solid #e4ebf4; }
+.address-dialog-footer p { margin: 0; color: #5f6f86; font-size: 10px; line-height: 1.65; }
+.address-dialog-footer .text-button { margin: 6px auto 0; }
+@media (max-width: 380px) {
+  .address-search-button { padding-inline: 9px; font-size: 11px; }
+  .rrn-fields { grid-template-columns: minmax(0, 1fr) 10px minmax(0, 1fr); gap: 5px; }
+  .rrn-fields input { padding-inline: 8px; font-size: 16px; letter-spacing: 0; }
+  .rrn-fields input::placeholder { font-size: 11px; }
+}
+@media (max-width: 600px) {
+  .address-dialog { width: 100%; height: 100dvh; border: 0; border-radius: 0; }
+  .address-dialog-header { padding: max(14px, env(safe-area-inset-top)) 15px 12px; }
+  .address-dialog-footer { padding-bottom: max(12px, env(safe-area-inset-bottom)); }
+}

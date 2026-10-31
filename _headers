@@ -3,5 +3,12 @@
   Referrer-Policy: no-referrer
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
-  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; frame-src 'self'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+
+/address-search*
+  Cache-Control: no-store
+  Referrer-Policy: no-referrer
+  X-Content-Type-Options: nosniff
+  Content-Security-Policy: default-src 'none'; script-src 'self' https://t1.kakaocdn.net https://t1.daumcdn.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://t1.kakaocdn.net https://t1.daumcdn.net https://postcode.map.daum.net https://postcode.map.kakao.com; connect-src https://postcode.map.daum.net https://postcode.map.kakao.com https://t1.kakaocdn.net https://t1.daumcdn.net; frame-src https://postcode.map.daum.net https://postcode.map.kakao.com; base-uri 'none'; form-action https://postcode.map.daum.net https://postcode.map.kakao.com; frame-ancestors 'self'
   Permissions-Policy: camera=(), microphone=(), geolocation=()

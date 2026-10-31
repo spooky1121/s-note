@@ -26,6 +26,9 @@
   let activeController = null;
   let ticker = null;
   let disposed = false;
+  let rrnEnabled = false;
+  let rrnClearedOnPause = false;
+  let addressSession = null;
 
   class ApiError extends Error {
     constructor(message, code, status, retryAfter, uncertain) {
@@ -47,6 +50,7 @@
   }
 
   function showStage(next, focus) {
+    if (next !== 'details') closeAddressSearch(false);
     stage = next;
     $('load-state').hidden = true;
     for (const name of stageNames) $('stage-' + name).hidden = name !== next;
@@ -93,6 +97,12 @@
     $('submit-customer').disabled = locked || retry > 0;
     $('submit-customer').textContent = busy === 'submit' ? '접수 결과 확인 중…' : retry ? retry + '초 후 다시 제출' : uncertainSubmission ? '접수 결과 다시 확인' : '고객정보 접수하기 →';
     $('retry-info').disabled = locked;
+    $('rrn-front').disabled = !rrnEnabled || fields.disabled;
+    $('rrn-back').disabled = !rrnEnabled || fields.disabled;
+    $('rrn-notice').disabled = !rrnEnabled || fields.disabled;
+    document.querySelectorAll('[data-address-search]').forEach(button => {
+      button.disabled = locked || fields.disabled || stage !== 'details' || !session || (button.dataset.addressSearch === 'mailing' && $('same-address').checked);
+    });
     $('send-timing').textContent = cooldown ? '인증번호 재요청은 잠시 후 가능합니다.' : '';
     if (challengeId && challengeExpiresAt) {
       const seconds = remaining(challengeExpiresAt);
@@ -133,6 +143,9 @@
   }
 
   function clearPrivateState() {
+    closeAddressSearch(false);
+    clearRrn();
+    rrnClearedOnPause = false;
     token = '';
     session = '';
     challengeId = '';
@@ -218,6 +231,20 @@
       message('문자 접수 결과를 확인하지 못했습니다. 1분 뒤 인증번호를 다시 요청해 주세요.', 'error', true);
       return;
     }
+    if (action === 'submit' && ['RRN_NOT_AVAILABLE', 'RRN_SETUP_REQUIRED'].includes(error.code)) {
+      if (uncertainSubmission) {
+        message('접수 결과를 아직 확인하지 못했습니다. 주민번호 설정을 담당자에게 확인한 뒤 같은 요청의 결과를 다시 확인해 주세요.', 'error', true);
+        return;
+      }
+      pendingSubmission = null;
+      uncertainSubmission = false;
+      rrnEnabled = false;
+      clearRrn();
+      $('rrn-section').hidden = true;
+      $('rrn-disabled-note').hidden = false;
+      message('주민번호 접수 설정이 변경되어 번호를 비웠습니다. 다른 정보는 유지되며 주민번호 없이 접수할 수 있습니다. 필요한 경우 담당자에게 문의해 주세요.', 'info', true);
+      return;
+    }
     if (action === 'submit' && error.uncertain) {
       uncertainSubmission = true;
       message('접수 결과를 아직 확인하지 못했습니다. 입력 내용은 이 화면에 보관 중입니다. 아래 버튼으로 접수 여부를 다시 확인해 주세요.', 'error', true);
@@ -261,6 +288,11 @@
       }
       if (['expired', 'revoked'].includes(state)) throw new ApiError('', state.toUpperCase());
       if (!result.car || typeof result.car !== 'object' || Array.isArray(result.car)) throw new ApiError('', 'SERVER_ERROR', 502);
+      rrnEnabled = result.rrnEnabled === true;
+      $('rrn-section').hidden = !rrnEnabled;
+      $('rrn-disabled-note').hidden = rrnEnabled;
+      if (!rrnEnabled) clearRrn();
+      syncRrnNotice();
       const company = displayValue(result.companyName, '담당 상사');
       document.querySelectorAll('[data-company-name]').forEach(element => { element.textContent = company; });
       const car = result.car;
@@ -294,6 +326,116 @@
     $('mailing-base').disabled = same || fields.disabled;
     $('mailing-detail').disabled = same || fields.disabled;
   }
+
+  function clearRrn() {
+    $('rrn-front').value = '';
+    $('rrn-back').value = '';
+    $('rrn-notice').checked = false;
+    syncRrnNotice();
+  }
+
+  function syncRrnNotice() {
+    const present = rrnEnabled && !!($('rrn-front').value || $('rrn-back').value);
+    $('rrn-notice-row').hidden = !present;
+    $('rrn-front').required = present;
+    $('rrn-back').required = present;
+    $('rrn-notice').required = present;
+    if (!present) $('rrn-notice').checked = false;
+  }
+
+  function collectRrn() {
+    if (!rrnEnabled) { clearRrn(); return ''; }
+    const front = $('rrn-front').value.trim(), back = $('rrn-back').value.trim();
+    if (!front && !back) return '';
+    if (!/^\d{6}$/.test(front)) return invalid('rrn-front', '주민번호 앞 6자리를 확인해 주세요.');
+    if (!/^\d{7}$/.test(back)) return invalid('rrn-back', '주민번호 뒤 7자리를 확인해 주세요.');
+    if (!$('rrn-notice').checked) return invalid('rrn-notice', '주민번호 입력 안내 확인 여부를 체크해 주세요.');
+    return front + back;
+  }
+
+  const addressTargets = Object.freeze({
+    residence: {base: 'address-base', detail: 'address-detail'},
+    mailing: {base: 'mailing-base', detail: 'mailing-detail'}
+  });
+
+  function closeAddressSearch(restoreFocus) {
+    const previous = addressSession;
+    addressSession = null;
+    if (previous) {
+      window.clearTimeout(previous.timer);
+      previous.frame.remove();
+    }
+    const dialog = $('address-dialog');
+    if (dialog.open) dialog.close();
+    if (restoreFocus && previous?.trigger?.isConnected && !previous.trigger.disabled) previous.trigger.focus();
+  }
+
+  function addressStatus(text, failed) {
+    $('address-dialog-status').textContent = text;
+    $('address-dialog-status').dataset.tone = failed ? 'error' : 'info';
+    $('address-dialog-retry').hidden = !failed;
+  }
+
+  function openAddressSearch(targetName, trigger) {
+    const target = addressTargets[targetName];
+    if (!target || stage !== 'details' || busy || uncertainSubmission || !session || fields.disabled || $(target.base).disabled) return;
+    closeAddressSearch(false);
+    let nonce;
+    try { nonce = Array.from(crypto.getRandomValues(new Uint8Array(16)), value => value.toString(16).padStart(2, '0')).join(''); }
+    catch (_) { message('주소 검색을 열지 못했습니다. 주소를 직접 입력해 주세요.', 'error', false); return; }
+    const frame = document.createElement('iframe');
+    frame.id = 'address-search-frame';
+    frame.title = targetName === 'mailing' ? '등기받을 주소 검색' : '등본상 주소 검색';
+    frame.setAttribute('sandbox', 'allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox');
+    frame.referrerPolicy = 'no-referrer';
+    const url = new URL('/address-search.html', location.origin);
+    url.searchParams.set('parentOrigin', location.origin);
+    url.hash = nonce;
+    frame.src = url.toString();
+    const current = {frame, nonce, target, targetName, trigger, timer: null};
+    addressSession = current;
+    addressStatus('주소 검색을 불러오고 있습니다.', false);
+    $('address-frame-host').replaceChildren(frame);
+    current.timer = window.setTimeout(() => {
+      if (addressSession !== current) return;
+      addressStatus('주소 검색을 불러오지 못했습니다. 다시 불러오거나 창을 닫고 직접 입력해 주세요.', true);
+    }, 15000);
+    $('address-dialog').showModal();
+    $('address-dialog-heading').focus();
+  }
+
+  document.querySelectorAll('[data-address-search]').forEach(button => {
+    button.addEventListener('click', () => openAddressSearch(button.dataset.addressSearch, button));
+  });
+  $('address-dialog-close').addEventListener('click', () => closeAddressSearch(true));
+  $('address-dialog').addEventListener('cancel', event => { event.preventDefault(); closeAddressSearch(true); });
+  $('address-dialog-retry').addEventListener('click', () => {
+    const previous = addressSession;
+    if (previous) openAddressSearch(previous.targetName, previous.trigger);
+  });
+  window.addEventListener('message', event => {
+    const current = addressSession, data = event.data;
+    if (!current || event.source !== current.frame.contentWindow || event.origin !== 'null' || !data || typeof data !== 'object' || Array.isArray(data) || data.type !== 'SNOTE_CUSTOMER_ADDRESS' || data.nonce !== current.nonce) return;
+    if (stage !== 'details' || busy || uncertainSubmission || !session || fields.disabled || $(current.target.base).disabled) { closeAddressSearch(false); return; }
+    if (data.kind === 'ready') {
+      window.clearTimeout(current.timer);
+      addressStatus('주소를 검색해 목록에서 선택해 주세요.', false);
+    } else if (data.kind === 'error') {
+      window.clearTimeout(current.timer);
+      addressStatus('주소 검색을 불러오지 못했습니다. 창을 닫고 직접 입력하거나 다시 불러와 주세요.', true);
+    } else if (data.kind === 'closed') closeAddressSearch(true);
+    else if (data.kind === 'selected') {
+      if (typeof data.address !== 'string' || !data.address.trim() || data.address.length > 200 || /[\u0000-\u001f\u007f]/.test(data.address) || (data.postcode && (typeof data.postcode !== 'string' || !/^\d{5}$/.test(data.postcode)))) return;
+      const target = current.target, address = data.address.trim();
+      if ($(target.base).value.trim() !== address) $(target.detail).value = '';
+      $(target.base).value = address;
+      clearValidation();
+      syncMailing();
+      closeAddressSearch(false);
+      message('주소를 입력했습니다. 상세주소를 확인해 주세요.', 'info', false);
+      $(target.detail).focus();
+    }
+  });
 
   function hasRefund() {
     return ['refund-bank', 'refund-account', 'refund-holder'].some(id => $(id).value.trim());
@@ -418,12 +560,18 @@
   $('same-address').addEventListener('change', () => {
     clearValidation();
     syncMailing();
+    updateControls();
   });
   form.addEventListener('input', () => {
     clearValidation();
     if (!busy && !uncertainSubmission) message('');
     syncMailing();
     syncRefundConsent();
+    syncRrnNotice();
+  });
+  for (const id of ['rrn-front', 'rrn-back']) $(id).addEventListener('input', event => {
+    if (!event.isComposing) event.currentTarget.value = event.currentTarget.value.replace(/\D/g, '');
+    syncRrnNotice();
   });
   form.addEventListener('submit', async event => {
     event.preventDefault();
@@ -438,9 +586,12 @@
       return;
     }
     if (!uncertainSubmission) {
+      const rrn = collectRrn();
+      if (rrn === null) return;
       const customer = collectCustomer();
       if (!customer) return;
       pendingSubmission = {token, session, vehicleConfirmed: true, consent: true, refundConsent: hasRefund() && $('refund-consent').checked, customer};
+      if (rrn) { pendingSubmission.rrn = rrn; pendingSubmission.rrnNoticeAccepted = true; }
     }
     if (!pendingSubmission) return;
     message('');
@@ -462,6 +613,9 @@
   }
   window.addEventListener('pagehide', () => {
     if (busy === 'submit' && pendingSubmission) uncertainSubmission = true;
+    rrnClearedOnPause = !!($('rrn-front').value || $('rrn-back').value);
+    clearRrn();
+    closeAddressSearch(false);
     disposed = true;
     if (ticker !== null) window.clearInterval(ticker);
     ticker = null;
@@ -474,8 +628,11 @@
     updateControls();
     if (uncertainSubmission && pendingSubmission) {
       showStage('details', false);
-      message('접수 요청 중 화면이 중단되었습니다. 입력 내용은 유지했습니다. 아래 버튼으로 접수 결과를 다시 확인해 주세요.', 'info', false);
+      message(pendingSubmission.rrn ? '화면이 중단되어 주민번호 입력칸을 비웠습니다. 이미 보낸 접수와 같은 내용으로 결과를 다시 확인해 주세요.' : '접수 요청 중 화면이 중단되었습니다. 입력 내용은 유지했습니다. 아래 버튼으로 접수 결과를 다시 확인해 주세요.', 'info', false);
+    } else if (rrnClearedOnPause && stage === 'details') {
+      message('주민번호 입력칸을 비웠습니다. 필요한 경우 다시 입력해 주세요. 다른 입력 내용은 유지됩니다.', 'info', false);
     }
+    rrnClearedOnPause = false;
   });
 
   try {

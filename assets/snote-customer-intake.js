@@ -4,7 +4,7 @@
   const API = '/api/customer-intake';
   const FIELDS = ['zc72-name', 'zc72-phone', 'zc72-address', 'zc73-address-detail',
     'zc72-mailing', 'zc73-mailing-detail', 'zc74-same-address',
-    'zc74-refund-bank', 'zc74-refund-account', 'zc74-refund-holder'];
+    'zc74-refund-bank', 'zc74-refund-account', 'zc74-refund-holder', 'zc72-rrn'];
   let state = null;
   let sequence = 0;
   const byId = id => document.getElementById(id);
@@ -72,6 +72,10 @@
   function failure(error, action) {
     if (error?.status === 401 || ['UNAUTHORIZED', 'AUTH_REQUIRED', 'INVALID_JWT'].includes(error?.code))
       return '로그인이 만료되었습니다. 다시 로그인한 뒤 이용해 주세요.';
+    if (error?.code === 'RRN_SETUP_REQUIRED')
+      return '주민번호 보관 설정을 확인해 주세요. 기존 판매 입력은 변경하지 않았습니다. 관리자 설정 후 다시 불러와 주세요.';
+    if (error?.code === 'RRN_NOT_AVAILABLE')
+      return '주민번호를 불러올 수 없습니다. 기존 판매 입력은 변경하지 않았습니다. 요청 상태와 이용 권한을 확인한 뒤 다시 시도해 주세요.';
     if (error?.code === 'DB_SETUP_REQUIRED')
       return '고객 입력용 DB 설정을 확인해 주세요. Supabase에서 고객 접수·인증 SQL 전체를 적용한 뒤 새로고침해 주세요.';
     if (error?.code === 'SERVER_SETUP_REQUIRED')
@@ -91,6 +95,8 @@
     if (error?.code === 'VALIDATION_ERROR') return '전화번호와 차량 상태를 확인해 주세요.';
     if (['REVOKED', 'EXPIRED', 'ALREADY_SUBMITTED'].includes(error?.code))
       return '요청 상태가 변경되었습니다. 새로고침으로 확인해 주세요.';
+    if (action === 'read-rrn')
+      return '고객 입력정보를 불러오지 못했습니다. 기존 판매 입력은 변경하지 않았습니다. 연결 상태를 확인한 뒤 다시 시도해 주세요.';
     if (action === 'create') {
       const status = Number.isInteger(error?.status) && error.status >= 100 && error.status <= 599 ? 'HTTP ' + error.status : error?.name === 'AbortError' ? '요청 시간 초과' : '';
       return '문자 요청 결과를 확인하지 못했습니다. 다시 보내기 전에 새로고침으로 요청 상태를 확인해 주세요.' + (status ? ' [확인 코드: ' + status + ']' : '');
@@ -314,31 +320,74 @@
     }
   }
 
-  function loadSubmission(s, item) {
+  async function loadSubmission(s, item) {
     if (!isCurrent(s) || s.busy || s.reading || !item.submission || typeof zc74LoadCustomer !== 'function') return;
     if (typeof zc72SaleLoading !== 'undefined' && zc72SaleLoading) {
       message(s, '계약서 저장이 끝난 뒤 입력정보를 불러와 주세요.', 'error');
       return;
     }
-    if (formValues() !== s.baseline && !window.confirm('판매 정보에 수정한 내용이 있습니다. 고객이 제출한 입력정보로 바꾸시겠습니까? 주민번호는 유지됩니다.')) return;
+    const readRrn = item.hasRrn === true && s.cloud.rrnEnabled === true;
+    const before = formValues();
+    const existingRrn = Boolean(byId('zc72-rrn')?.value);
+    if (readRrn && existingRrn) {
+      if (!window.confirm('판매 정보와 현재 입력된 주민번호를 고객이 제출한 정보로 바꾸시겠습니까?')) return;
+    } else if (before !== s.baseline && !window.confirm(readRrn
+      ? '판매 정보에 수정한 내용이 있습니다. 고객이 제출한 정보로 바꾸고 주민번호를 불러오시겠습니까?'
+      : '판매 정보에 수정한 내용이 있습니다. 고객이 제출한 입력정보로 바꾸시겠습니까? 주민번호는 유지됩니다.')) return;
     if (!isCurrent(s)) return;
-    const source = item.submission;
-    const values = {};
-    for (const field of ['name', 'addressBase', 'addressDetail', 'mailingBase', 'mailingDetail', 'refundBank', 'refundAccount', 'refundHolder']) values[field] = text(source[field]);
-    values.sameAddress = source.sameAddress === true;
-    values.phone = phoneFormat(text(source.phone) || text(item.phone));
-    const bank = byId('zc74-refund-bank');
-    if (bank && values.refundBank && values.refundBank.length <= 35 &&
-        !Array.from(bank.options).some(option => option.value === values.refundBank)) {
-      const option = node('option', '', values.refundBank);
-      option.value = values.refundBank;
-      bank.append(option);
+    s.busy = true;
+    clearTimeout(s.timer);
+    controls(s);
+    let rrn = '';
+    try {
+      if (readRrn) {
+        message(s, '고객 입력정보를 불러오는 중입니다.');
+        const result = await request(s, 'read-rrn', { id: item.id });
+        if (!isCurrent(s)) return;
+        if (s.cloud.rrnEnabled !== true) {
+          message(s, '주민번호 이용 설정이 변경되었습니다. 기존 판매 입력은 변경하지 않았습니다. 판매 창을 다시 열어 주세요.', 'error');
+          return;
+        }
+        if (typeof result.rrn !== 'string' || !/^\d{13}$/.test(result.rrn)) throw { code: 'RRN_NOT_AVAILABLE' };
+        rrn = result.rrn;
+        if (typeof zc72SaleLoading !== 'undefined' && zc72SaleLoading) {
+          message(s, '계약서 저장이 시작되어 불러오기를 중단했습니다. 저장이 끝난 뒤 다시 불러와 주세요.', 'error');
+          return;
+        }
+        if (formValues() !== before && !window.confirm('불러오는 동안 판매 정보가 수정되었습니다. 최신 수정 내용과 주민번호를 고객이 제출한 정보로 바꾸시겠습니까?')) return;
+      }
+      if (!isCurrent(s)) return;
+      const source = item.submission;
+      const values = {};
+      for (const field of ['name', 'addressBase', 'addressDetail', 'mailingBase', 'mailingDetail', 'refundBank', 'refundAccount', 'refundHolder']) values[field] = text(source[field]);
+      values.sameAddress = source.sameAddress === true;
+      values.phone = phoneFormat(text(source.phone) || text(item.phone));
+      const bank = byId('zc74-refund-bank');
+      if (bank && values.refundBank && values.refundBank.length <= 35 &&
+          !Array.from(bank.options).some(option => option.value === values.refundBank)) {
+        const option = node('option', '', values.refundBank);
+        option.value = values.refundBank;
+        bank.append(option);
+      }
+      // The general customer mapper never receives a resident number.
+      zc74LoadCustomer(values);
+      for (const id of FIELDS.filter(id => id !== 'zc72-rrn')) byId(id)?.dispatchEvent(new Event('input', { bubbles: true }));
+      if (readRrn && byId('zc72-rrn')) {
+        const field = byId('zc72-rrn');
+        field.value = typeof zc72RrnDisplay === 'function' ? zc72RrnDisplay(rrn) : rrn.slice(0, 6) + '-' + rrn.slice(6);
+        field.dispatchEvent(new Event('input', { bubbles: true }));
+        field.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+      // Existing sale actions save customer records; this action only fills the current form.
+      s.baseline = formValues();
+      const note = item.hasRrn === true && !readRrn ? ' 주민번호 불러오기가 꺼져 있어 기존 주민번호는 유지했습니다.' : '';
+      message(s, '판매 입력칸에 불러왔습니다. 내용을 확인한 뒤 기존 계약서·인수증 절차로 저장해 주세요.' + note, 'success');
+    } catch (error) {
+      if (isCurrent(s)) message(s, failure(error, 'read-rrn'), 'error');
+    } finally {
+      rrn = '';
+      if (isCurrent(s)) { s.busy = false; controls(s); schedule(s); }
     }
-    zc74LoadCustomer(values);
-    // Existing input listeners mark the sale draft; no customer record or contract is saved here.
-    for (const id of FIELDS) byId(id)?.dispatchEvent(new Event('input', { bubbles: true }));
-    s.baseline = formValues();
-    message(s, '판매 입력칸에 불러왔습니다. 내용을 확인한 뒤 기존 계약서·인수증 절차로 저장해 주세요.', 'success');
   }
 
   function unavailable(panel, content) {

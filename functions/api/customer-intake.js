@@ -1,13 +1,14 @@
 /** Customer phone-possession confirmation. This is not a legal-name identity check. */
 const MAX_BODY = 16 * 1024;
 const CONSENT_VERSION = '2026-11-01';
+const RRN_NOTICE_VERSION = '2026-11-01-r1';
 const TOKEN = /^[a-f0-9]{64}$/;
 const UUID = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i;
 const CUSTOMER_FIELDS = ['name', 'addressBase', 'addressDetail', 'mailingBase', 'mailingDetail', 'sameAddress', 'refundBank', 'refundAccount', 'refundHolder'];
 const ACTION_FIELDS = {
-  create: ['carId', 'phone'], list: ['carId'], revoke: ['id'], info: ['token'],
+  create: ['carId', 'phone'], list: ['carId'], revoke: ['id'], 'read-rrn': ['id'], info: ['token'],
   'send-code': ['token'], verify: ['token', 'challengeId', 'code'],
-  submit: ['token', 'session', 'vehicleConfirmed', 'consent', 'refundConsent', 'customer']
+  submit: ['token', 'session', 'vehicleConfirmed', 'consent', 'refundConsent', 'customer', 'rrn', 'rrnNoticeAccepted']
 };
 const MESSAGES = {
   INVALID_LINK: [404, '입력 링크를 확인해 주세요.'],
@@ -28,11 +29,13 @@ const MESSAGES = {
   SERVICE_UNAVAILABLE: [503, '고객정보 입력 서비스 설정을 확인해 주세요.'],
   DB_SETUP_REQUIRED: [503, '고객접수 SQL이 모두 적용되었는지 확인해 주세요.'],
   SERVER_SETUP_REQUIRED: [503, 'Supabase 서버 키 설정과 권한을 확인해 주세요.'],
+  RRN_SETUP_REQUIRED: [503, '주민번호 암호화 설정을 확인해 주세요.'],
+  RRN_NOT_AVAILABLE: [403, '주민번호 정보를 이용할 수 없습니다. 담당자와 보관기간·권한 설정을 확인해 주세요.'],
   UPSTREAM_ERROR: [502, '서버에 연결하지 못했습니다. 잠시 후 다시 시도하세요.'],
   SMS_SEND_FAILED: [502, '문자가 접수되지 않았습니다. 잠시 후 새 인증번호를 요청하세요.'],
   SMS_SEND_UNKNOWN: [503, '문자 접수 여부를 확인하지 못했습니다. 자동 재전송하지 않습니다. 잠시 후 다시 요청하세요.']
 };
-const RPC_CODES = new Set(['INVALID_LINK', 'EXPIRED', 'REVOKED', 'ALREADY_SUBMITTED', 'RATE_LIMITED', 'INVALID_CODE', 'LOCKED', 'SESSION_EXPIRED', 'VALIDATION_ERROR', 'FORBIDDEN']);
+const RPC_CODES = new Set(['INVALID_LINK', 'EXPIRED', 'REVOKED', 'ALREADY_SUBMITTED', 'RATE_LIMITED', 'INVALID_CODE', 'LOCKED', 'SESSION_EXPIRED', 'VALIDATION_ERROR', 'FORBIDDEN', 'RRN_NOT_AVAILABLE']);
 const DB_SETUP_CODES = new Set(['PGRST202', 'PGRST204', '42P01', '42703', '42883']);
 
 class IntakeError extends Error {
@@ -96,6 +99,12 @@ function inspectConfiguration(env = {}) {
   };
 }
 function configuration(env) { return inspectConfiguration(env).config; }
+function inspectRrnConfiguration(env = {}) {
+  const value = typeof env?.CUSTOMER_INTAKE_RRN_KEY === 'string' ? env.CUSTOMER_INTAKE_RRN_KEY.trim() : '';
+  if (!value) return { key: null, issues: [{ name: 'CUSTOMER_INTAKE_RRN_KEY', reason: '주민번호 암호화 키가 설정되지 않았습니다.' }] };
+  if (!/^[a-f0-9]{64}$/i.test(value)) return { key: null, issues: [{ name: 'CUSTOMER_INTAKE_RRN_KEY', reason: '32바이트 암호화 키를 64자리 16진수로 입력해 주세요.' }] };
+  return { key: unhex(value), issues: [] };
+}
 function sameOrigin(request, config) {
   const origin = request.headers.get('Origin');
   if (origin !== null && (origin !== new URL(request.url).origin || (config && origin !== config.publicOrigin))) fail('FORBIDDEN');
@@ -159,6 +168,43 @@ async function boundedJson(request) {
   } finally { clearTimeout(timer); }
 }
 function hex(bytes) { return Array.from(bytes, b => b.toString(16).padStart(2, '0')).join(''); }
+function unhex(value) { return Uint8Array.from(value.match(/../g), pair => Number.parseInt(pair, 16)); }
+function normalizedRrn(value) {
+  if (value === undefined) return '';
+  if (typeof value !== 'string') fail('VALIDATION_ERROR');
+  const trimmed = value.trim();
+  if (!trimmed) return '';
+  if (!/^\d{6}-?\d{7}$/.test(trimmed)) fail('VALIDATION_ERROR');
+  const digits = trimmed.replace('-', '');
+  const type = Number(digits[6]);
+  if (type < 1 || type > 8) fail('VALIDATION_ERROR');
+  const year = Number(digits.slice(0, 2)) + ([1, 2, 5, 6].includes(type) ? 1900 : 2000);
+  const month = Number(digits.slice(2, 4)); const day = Number(digits.slice(4, 6));
+  const birth = new Date(Date.UTC(year, month - 1, day));
+  const now = new Date(Date.now() + 9 * 60 * 60 * 1000);
+  const today = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+  if (birth.getUTCFullYear() !== year || birth.getUTCMonth() !== month - 1 || birth.getUTCDate() !== day || birth.getTime() > today) fail('VALIDATION_ERROR');
+  return digits;
+}
+async function rrnKey(rawKey, usage) {
+  return crypto.subtle.importKey('raw', rawKey, { name: 'AES-GCM' }, false, [usage]);
+}
+function rrnAad(tokenHash) { return new TextEncoder().encode(`snote-intake-rrn:v1:${tokenHash}`); }
+async function encryptRrn(rawKey, digits, tokenHash) {
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const ciphertext = await crypto.subtle.encrypt({ name: 'AES-GCM', iv, additionalData: rrnAad(tokenHash), tagLength: 128 }, await rrnKey(rawKey, 'encrypt'), new TextEncoder().encode(digits));
+  return `v1.${hex(iv)}.${hex(new Uint8Array(ciphertext))}`;
+}
+async function decryptRrn(rawKey, envelope, tokenHash) {
+  if (typeof envelope !== 'string' || !/^v1\.[a-f0-9]{24}\.[a-f0-9]{58}$/.test(envelope) || !TOKEN.test(tokenHash || '')) fail('RRN_NOT_AVAILABLE');
+  try {
+    const [, iv, ciphertext] = envelope.split('.');
+    const plaintext = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: unhex(iv), additionalData: rrnAad(tokenHash), tagLength: 128 }, await rrnKey(rawKey, 'decrypt'), unhex(ciphertext));
+    const digits = new TextDecoder('utf-8', { fatal: true }).decode(plaintext);
+    if (!/^\d{13}$/.test(digits) || normalizedRrn(digits) !== digits) fail('RRN_NOT_AVAILABLE');
+    return digits;
+  } catch { fail('RRN_NOT_AVAILABLE'); }
+}
 function randomToken() { return hex(crypto.getRandomValues(new Uint8Array(32))); }
 async function sha(value) { return hex(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value)))); }
 async function hmac(secret, value) {
@@ -214,10 +260,10 @@ function car(value) {
   if (!object(value)) fail('UPSTREAM_ERROR');
   return Object.fromEntries(['model', 'plate', 'year', 'km', 'color', 'sell'].map(key => [key, ['string', 'number'].includes(typeof value[key]) ? value[key] : '']));
 }
-function safeInfo(data) {
+function safeInfo(data, rrnAvailable = false) {
   if (data.ok !== true) fail('UPSTREAM_ERROR');
   if (data.status === 'submitted') return { ok: true, status: 'submitted', expiresAt: data.expiresAt };
-  return { ok: true, car: car(data.car), companyName: data.companyName, phoneMasked: data.phoneMasked, expiresAt: data.expiresAt, status: data.status };
+  return { ok: true, car: car(data.car), companyName: data.companyName, phoneMasked: data.phoneMasked, expiresAt: data.expiresAt, status: data.status, rrnEnabled: rrnAvailable && data.rrnEnabled === true };
 }
 async function delivery(config, id, kind, challengeId, status) {
   const result = await rpc(config, 'snote_intake_delivery', { p_id: id, p_kind: kind, p_challenge_id: challengeId, p_status: status });
@@ -236,11 +282,11 @@ async function sendMessage(config, to, body, invitation) {
     return 'unknown';
   } catch { return 'unknown'; }
 }
-async function perform(request, config, body) {
+async function perform(request, config, body, rrnEncryptionKey) {
   if (!object(body) || typeof body.action !== 'string' || !Object.hasOwn(ACTION_FIELDS, body.action)) fail('INVALID_REQUEST');
   const action = body.action;
   whitelist(body, ['action', ...ACTION_FIELDS[action]]);
-  const jwt = ['create', 'list', 'revoke'].includes(action) ? auth(request) : undefined;
+  const jwt = ['create', 'list', 'revoke', 'read-rrn'].includes(action) ? auth(request) : undefined;
   if (action === 'create') {
     const carId = text(body.carId, 200); const recipient = phone(body.phone); const rawToken = randomToken();
     const data = await rpc(config, 'snote_intake_create', { p_car_id: carId, p_phone: recipient, p_token_hash: await sha(rawToken) }, jwt);
@@ -258,13 +304,27 @@ async function perform(request, config, body) {
     return { ok: true, requests: rows.map(row => {
       if (!object(row)) fail('UPSTREAM_ERROR');
       const result = Object.fromEntries(fields.map(key => [key, row[key] ?? null]));
+      result.hasRrn = !!rrnEncryptionKey && row.hasRrn === true;
       if (row.submittedAt && object(row.submission)) result.submission = Object.fromEntries([...CUSTOMER_FIELDS, 'refundConsent', 'phone', 'carModel', 'plate'].filter(key => Object.hasOwn(row.submission, key)).map(key => [key, row.submission[key]]));
       return result;
     }) };
   }
   if (action === 'revoke') { const data = await rpc(config, 'snote_intake_revoke', { p_id: uuid(body.id) }, jwt); if (data.ok !== true) fail('UPSTREAM_ERROR'); return { ok: true }; }
+  if (action === 'read-rrn') {
+    const id = uuid(body.id);
+    if (!rrnEncryptionKey) fail('RRN_SETUP_REQUIRED');
+    const data = await rpc(config, 'snote_intake_rrn_access', { p_id: id }, jwt);
+    if (data.ok !== true || data.id !== id) fail('RRN_NOT_AVAILABLE');
+    return { ok: true, rrn: await decryptRrn(rrnEncryptionKey, data.rrnCipher, data.tokenHash) };
+  }
   const tokenHash = await sha(token(body.token));
-  if (action === 'info') return safeInfo(await rpc(config, 'snote_intake_view', { p_token_hash: tokenHash }));
+  if (action === 'info') {
+    if (rrnEncryptionKey) {
+      try { return safeInfo(await rpc(config, 'snote_intake_view_v2', { p_token_hash: tokenHash }), true); }
+      catch (error) { if (!(error instanceof IntakeError) || error.code !== 'DB_SETUP_REQUIRED') throw error; }
+    }
+    return safeInfo(await rpc(config, 'snote_intake_view', { p_token_hash: tokenHash }));
+  }
   if (action === 'send-code') {
     const challengeId = crypto.randomUUID(); const code = randomCode();
     const data = await rpc(config, 'snote_intake_challenge', { p_token_hash: tokenHash, p_challenge_id: challengeId, p_otp_hash: await hmac(config.otpSecret, `${challengeId}:${code}`) });
@@ -295,7 +355,16 @@ async function perform(request, config, body) {
     if (details.refundBank && body.refundConsent !== true) fail('VALIDATION_ERROR');
     if (!details.refundBank && body.refundConsent === true) fail('VALIDATION_ERROR');
     details.refundConsent = body.refundConsent === true;
-    const data = await rpc(config, 'snote_intake_submit', { p_token_hash: tokenHash, p_session_hash: await sha(body.session), p_customer: details, p_consent_version: CONSENT_VERSION });
+    const rrn = normalizedRrn(body.rrn);
+    if (body.rrnNoticeAccepted !== undefined && typeof body.rrnNoticeAccepted !== 'boolean') fail('VALIDATION_ERROR');
+    if (rrn && body.rrnNoticeAccepted !== true) fail('VALIDATION_ERROR');
+    if (rrn && !rrnEncryptionKey) fail('RRN_SETUP_REQUIRED');
+    const args = { p_token_hash: tokenHash, p_session_hash: await sha(body.session), p_customer: details, p_consent_version: CONSENT_VERSION };
+    if (rrn) {
+      args.p_rrn_cipher = await encryptRrn(rrnEncryptionKey, rrn, tokenHash);
+      args.p_rrn_notice_version = RRN_NOTICE_VERSION;
+    }
+    const data = await rpc(config, rrn ? 'snote_intake_submit_v2' : 'snote_intake_submit', args);
     if (data.ok !== true || typeof data.submittedAt !== 'string') fail('UPSTREAM_ERROR');
     return { ok: true, submittedAt: data.submittedAt, ...(data.alreadySubmitted === true ? { alreadySubmitted: true } : {}) };
   }
@@ -305,17 +374,18 @@ async function perform(request, config, body) {
 export function onRequestGet({ request, env }) {
   try {
     const { config, issues } = inspectConfiguration(env);
+    const rrn = inspectRrnConfiguration(env);
     sameOrigin(request, config);
     const originMatches = config ? new URL(request.url).origin === config.publicOrigin : null;
     if (originMatches === false) issues.push({ name: 'CUSTOMER_INTAKE_PUBLIC_ORIGIN', reason: '실제 접속 주소와 운영 주소 설정이 일치하지 않습니다.' });
-    return json({ service: 'snote-customer-intake', configured: !!config, configurationIssues: issues, originMatches });
+    return json({ service: 'snote-customer-intake', configured: !!config, configurationIssues: issues, originMatches, rrnConfigured: !!rrn.key, rrnConfigurationIssues: rrn.issues });
   } catch (error) { return errorResponse(error); }
 }
 export async function onRequestPost({ request, env }) {
   try {
     sameOrigin(request);
     const config = configuration(env); if (!config) fail('SERVICE_UNAVAILABLE'); sameOrigin(request, config);
-    return json(await perform(request, config, await boundedJson(request)));
+    return json(await perform(request, config, await boundedJson(request), inspectRrnConfiguration(env).key));
   } catch (error) { return errorResponse(error); }
 }
 export function onRequest(context) {
