@@ -15,6 +15,9 @@ DB 적용 전에는 카드에 서버 설정 안내가 표시되고 저장 버튼
 
 이 변경을 위해 DB 비밀번호나 서비스 키를 프런트엔드 파일에 넣지 마세요.
 
+고객 휴대폰 입력·문자 인증 기능의 별도 DB 적용과 자료 정리 예약은
+[고객 입력 운영 절차](../docs/customer-intake-setup.md)에 순서대로 정리되어 있습니다.
+
 ## 상사 도장·로고 이미지
 
 `migrations/202610240002_company_branding.sql`은 기존 `zc_media` 테이블에서 `companyStamp`·`companyLogo` 종류를 허용합니다. 이미지 파일은 기존 비공개 `zc-vehicle-private` 버킷에, 파일 경로·종류·크기 등 등록 정보는 `zc_media`에 저장합니다.
