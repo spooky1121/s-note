@@ -40,16 +40,97 @@ function submit(overrides = {}) {
     customer: { name: '테스트', addressBase: '서울시 테스트로 1', addressDetail: '101호', sameAddress: true, refundBank: '', refundAccount: '', refundHolder: '' }, ...overrides };
 }
 
-test('GET exposes service/configured only; missing setup prevents every mutation without network', async t => {
+test('GET exposes fixed configuration diagnostics only; missing setup prevents every mutation without network', async t => {
   const calls = mock(t, () => { throw new Error('unexpected network'); });
   const get = await call(undefined, { method: 'GET', env: {} });
-  assert.deepEqual(get.body, { service: 'snote-customer-intake', configured: false });
+  assert.deepEqual(get.body, {
+    service: 'snote-customer-intake', configured: false, originMatches: null,
+    configurationIssues: ['SUPABASE_URL', 'SUPABASE_PUBLISHABLE_KEY', 'SUPABASE_SERVICE_ROLE_KEY', 'CUSTOMER_INTAKE_PUBLIC_ORIGIN', 'SOLAPI_API_KEY', 'SOLAPI_API_SECRET', 'SOLAPI_SENDER', 'CUSTOMER_INTAKE_OTP_SECRET'].map(name => ({ name, reason: '값이 설정되지 않았습니다.' }))
+  });
   for (const key of Object.keys(ENV)) {
     const env = { ...ENV }; delete env[key];
     const result = await call({ action: 'create', carId: 'car-1', phone: '01012345678' }, { env, authorization: `Bearer ${JWT}` });
     assert.equal(result.result.status, 503, key); assert.equal(result.body.code, 'SERVICE_UNAVAILABLE');
   }
   assert.equal(calls.length, 0);
+});
+
+test('configuration diagnostics never expose values and invalid settings remain fail-closed', async t => {
+  const calls = mock(t, () => { throw new Error('unexpected network'); });
+  const cases = [
+    ['SUPABASE_URL', 'http://private-project.supabase.co'],
+    ['SUPABASE_URL', 'https://private-project.supabase.co/rest/v1'],
+    ['SUPABASE_URL', 'https://private-user:private-password@private-project.supabase.co'],
+    ['CUSTOMER_INTAKE_PUBLIC_ORIGIN', 'http://private-host.example'],
+    ['CUSTOMER_INTAKE_PUBLIC_ORIGIN', 'https://private-host.example/customer.html'],
+    ['SOLAPI_SENDER', '+8201012345678'], ['SOLAPI_SENDER', 'private-invalid-sender'],
+    ['CUSTOMER_INTAKE_OTP_SECRET', 'private-short-value'],
+    ...['SUPABASE_PUBLISHABLE_KEY', 'SUPABASE_SERVICE_ROLE_KEY', 'SOLAPI_API_KEY', 'SOLAPI_API_SECRET', 'CUSTOMER_INTAKE_OTP_SECRET'].map(name => [name, 'private-first-line\nprivate-second-line-very-long-value'])
+  ];
+  for (const [name, value] of cases) {
+    const env = { ...ENV, [name]: value };
+    const get = await call(undefined, { method: 'GET', env });
+    assert.equal(get.body.configured, false, name); assert.equal(get.body.originMatches, null);
+    assert.ok(get.body.configurationIssues.some(issue => issue.name === name));
+    for (const issue of get.body.configurationIssues) {
+      assert.ok(Object.hasOwn(ENV, issue.name)); assert.deepEqual(Object.keys(issue).sort(), ['name', 'reason']);
+    }
+    const serialized = JSON.stringify(get.body);
+    for (const privateValue of Object.values(env)) assert.equal(serialized.includes(privateValue), false);
+    assert.equal(serialized.includes('private-'), false);
+    const post = await call({ action: 'create', carId: 'car-1', phone: '01012345678' }, { env, authorization: `Bearer ${JWT}` });
+    assert.equal(post.result.status, 503); assert.equal(post.body.code, 'SERVICE_UNAVAILABLE');
+  }
+  const valid = await call(undefined, { method: 'GET' });
+  assert.deepEqual(valid.body, { service: 'snote-customer-intake', configured: true, configurationIssues: [], originMatches: true });
+  assert.equal(calls.length, 0);
+});
+
+test('address-bar diagnostics identify canonical origin mismatch without relaxing cross-origin protection', async t => {
+  mock(t, () => { throw new Error('unexpected network'); });
+  const env = { ...ENV, CUSTOMER_INTAKE_PUBLIC_ORIGIN: 'https://canonical-private.example' };
+  const get = await call(undefined, { method: 'GET', env, origin: null });
+  assert.equal(get.body.configured, true); assert.equal(get.body.originMatches, false);
+  assert.deepEqual(get.body.configurationIssues, [{ name: 'CUSTOMER_INTAKE_PUBLIC_ORIGIN', reason: '실제 접속 주소와 운영 주소 설정이 일치하지 않습니다.' }]);
+  assert.equal(JSON.stringify(get.body).includes(env.CUSTOMER_INTAKE_PUBLIC_ORIGIN), false);
+  assert.equal((await call(undefined, { method: 'GET', env })).result.status, 403);
+});
+
+test('RPC setup errors are classified without leaking upstream bodies or sending SMS', async t => {
+  for (const code of ['PGRST202', 'PGRST204', '42P01', '42703', '42883']) {
+    const calls = mock(t, () => response({ code, message: 'private SQL phone 01012345678', details: ENV.SUPABASE_SERVICE_ROLE_KEY }, 400));
+    const result = await call({ action: 'create', carId: 'car-1', phone: '01012345678' }, { authorization: `Bearer ${JWT}` });
+    assert.equal(result.result.status, 503); assert.equal(result.body.code, 'DB_SETUP_REQUIRED');
+    assert.equal(JSON.stringify(result.body).includes('01012345678'), false);
+    assert.equal(JSON.stringify(result.body).includes(ENV.SUPABASE_SERVICE_ROLE_KEY), false);
+    assert.equal(calls.length, 1);
+  }
+  for (const status of [401, 403]) {
+    const calls = mock(t, () => response({ message: ENV.SUPABASE_SERVICE_ROLE_KEY }, status));
+    const publicResult = await call({ action: 'info', token: TOKEN });
+    assert.equal(publicResult.result.status, 503); assert.equal(publicResult.body.code, 'SERVER_SETUP_REQUIRED');
+    const dealerResult = await call({ action: 'list', carId: 'car-1' }, { authorization: `Bearer ${JWT}` });
+    assert.equal(dealerResult.result.status, status); assert.equal(dealerResult.body.code, status === 401 ? 'UNAUTHORIZED' : 'FORBIDDEN');
+    assert.equal(JSON.stringify(publicResult.body).includes(ENV.SUPABASE_SERVICE_ROLE_KEY), false);
+    assert.equal(calls.length, 2);
+  }
+});
+
+test('server fetch uses workerd-compatible manual redirects and refuses every 3xx without following credentials', async t => {
+  for (const redirectAt of ['supabase', 'solapi']) {
+    const calls = mock(t, call => {
+      assert.equal(call.options.redirect, 'manual');
+      if (call.url.includes('private-redirect.example')) throw new Error('must never follow redirect');
+      if (call.url.endsWith('/snote_intake_create') && redirectAt === 'solapi') return response({ ok: true, id: ID, car: CAR });
+      if (call.url.endsWith('/snote_intake_delivery')) return response({ ok: true });
+      return new Response(null, { status: 302, headers: { Location: 'https://private-redirect.example/steal' } });
+    });
+    const result = await call({ action: 'create', carId: 'car-1', phone: '01012345678' }, { authorization: `Bearer ${JWT}` });
+    if (redirectAt === 'supabase') { assert.equal(result.result.status, 502); assert.equal(result.body.code, 'UPSTREAM_ERROR'); assert.equal(calls.length, 1); }
+    else { assert.equal(result.body.request.deliveryStatus, 'unknown'); assert.equal(calls.length, 3); assert.equal(calls.at(-1).body.p_status, 'unknown'); }
+    assert.equal(calls.some(call => call.url.includes('private-redirect.example')), false);
+    assert.equal(calls.filter(call => call.url.startsWith('https://api.solapi.com/')).length, redirectAt === 'supabase' ? 0 : 1);
+  }
 });
 
 test('invalid origins, methods, content types, JWTs and body shapes are rejected with private headers', async t => {

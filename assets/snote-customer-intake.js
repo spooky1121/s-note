@@ -72,8 +72,16 @@
   function failure(error, action) {
     if (error?.status === 401 || ['UNAUTHORIZED', 'AUTH_REQUIRED', 'INVALID_JWT'].includes(error?.code))
       return '로그인이 만료되었습니다. 다시 로그인한 뒤 이용해 주세요.';
-    if (error?.status === 503 || ['NOT_CONFIGURED', 'SERVICE_UNAVAILABLE', 'SETUP_REQUIRED'].includes(error?.code))
-      return '고객 입력 서비스 준비가 필요합니다. 관리자에게 문의해 주세요.';
+    if (error?.code === 'DB_SETUP_REQUIRED')
+      return '고객 입력용 DB 설정을 확인해 주세요. Supabase에서 고객 접수·인증 SQL 전체를 적용한 뒤 새로고침해 주세요.';
+    if (error?.code === 'SERVER_SETUP_REQUIRED')
+      return '서버의 Supabase 연결 설정을 확인해 주세요. Cloudflare 운영 환경의 서버 키를 확인하고 재배포한 뒤 새로고침해 주세요.';
+    if (['NOT_CONFIGURED', 'SERVICE_UNAVAILABLE', 'SETUP_REQUIRED'].includes(error?.code))
+      return '문자 발송 설정 확인이 필요합니다. 전화번호는 미리 입력할 수 있습니다. Cloudflare 운영 환경 설정을 저장·재배포한 뒤 새로고침해 주세요.';
+    if (error?.code === 'SMS_SEND_UNKNOWN')
+      return '문자 접수 여부를 확인하지 못했습니다. 다시 보내기 전에 요청 상태와 고객 수신 여부를 확인해 주세요.';
+    if (error?.status === 503)
+      return '고객 입력 서비스에 일시적으로 연결할 수 없습니다. 입력한 번호는 유지됩니다. 잠시 후 새로고침해 주세요.';
     if (error?.code === 'FORBIDDEN') return '본인 담당 차량만 이용할 수 있습니다. 담당 딜러와 차량 상태를 확인해 주세요.';
     if (error?.code === 'RATE_LIMITED') {
       const seconds = Number(error.retryAfter);
@@ -83,7 +91,10 @@
     if (error?.code === 'VALIDATION_ERROR') return '전화번호와 차량 상태를 확인해 주세요.';
     if (['REVOKED', 'EXPIRED', 'ALREADY_SUBMITTED'].includes(error?.code))
       return '요청 상태가 변경되었습니다. 새로고침으로 확인해 주세요.';
-    if (action === 'create') return '문자 요청 결과를 확인하지 못했습니다. 다시 보내기 전에 새로고침으로 요청 상태를 확인해 주세요.';
+    if (action === 'create') {
+      const status = Number.isInteger(error?.status) && error.status >= 100 && error.status <= 599 ? 'HTTP ' + error.status : error?.name === 'AbortError' ? '요청 시간 초과' : '';
+      return '문자 요청 결과를 확인하지 못했습니다. 다시 보내기 전에 새로고침으로 요청 상태를 확인해 주세요.' + (status ? ' [확인 코드: ' + status + ']' : '');
+    }
     if (action === 'revoke') return '취소 결과를 확인하지 못했습니다. 새로고침으로 요청 상태를 확인해 주세요.';
     return '요청 내역을 불러오지 못했습니다. 연결 상태를 확인하고 새로고침해 주세요.';
   }
@@ -119,7 +130,7 @@
   function controls(s) {
     if (!isCurrent(s)) return;
     s.create.disabled = s.busy || s.reading || s.blocked || !s.canCreate;
-    s.phone.disabled = s.busy || s.blocked || !s.canCreate;
+    s.phone.disabled = s.busy || !s.canCreate;
     s.refresh.disabled = s.busy || s.reading;
     s.copy.disabled = s.busy || !s.link;
     s.create.textContent = s.busy ? '처리 중…' : '입력 링크 문자 보내기';
@@ -150,7 +161,7 @@
     if (!isCurrent(s)) return;
     s.list.replaceChildren();
     if (!s.requests.length) {
-      s.list.append(node('p', 'snote-intake-empty', '이 차량의 고객 입력 요청이 없습니다.'));
+      s.list.append(node('p', 'snote-intake-empty', s.loaded ? '이 차량의 고객 입력 요청이 없습니다.' : '요청 내역을 아직 확인하지 못했습니다.'));
       return;
     }
     for (const item of s.requests.slice(0, 5)) {
@@ -194,12 +205,14 @@
       if (!isCurrent(s)) return;
       if (!Array.isArray(result.requests)) throw {};
       s.requests = result.requests.filter(item => item && typeof item.id === 'string');
+      const wasBlocked = s.blocked;
       s.blocked = false;
+      s.loaded = true;
       if (s.link && !s.requests.some(item => item.id === s.link.id && !item.revokedAt &&
           item.status !== 'revoked' && item.status !== 'expired' &&
           !(item.expiresAt && new Date(item.expiresAt).getTime() <= Date.now()))) s.link = null;
       renderRequests(s);
-      if (manual) message(s, '요청 내역을 확인했습니다.');
+      if (manual || wasBlocked) message(s, '요청 내역을 확인했습니다.');
     } catch (error) {
       if (!isCurrent(s)) return;
       if ([401, 403, 503].includes(error?.status)) s.blocked = true;
@@ -253,7 +266,10 @@
       else if (item.deliveryStatus === 'failed') message(s, '입력 링크는 생성됐지만 문자 접수에 실패했습니다.' + (s.link ? ' 링크 복사로 전달할 수 있습니다.' : copyNotice), 'error');
       else message(s, '입력 링크는 생성됐지만 문자 접수 여부는 확인되지 않았습니다. 중복 발송 전에 고객 수신 여부를 확인해 주세요.' + copyNotice, 'error');
     } catch (error) {
-      if (isCurrent(s)) message(s, sent ? failure(error, 'create') : '차량 정보를 저장하지 못했습니다. 저장 상태를 확인한 뒤 다시 시도해 주세요.', 'error');
+      if (isCurrent(s)) {
+        if (['DB_SETUP_REQUIRED', 'SERVER_SETUP_REQUIRED', 'SERVICE_UNAVAILABLE', 'NOT_CONFIGURED', 'SETUP_REQUIRED'].includes(error?.code)) s.blocked = true;
+        message(s, sent ? failure(error, 'create') : '차량 정보를 저장하지 못했습니다. 저장 상태를 확인한 뒤 다시 시도해 주세요.', 'error');
+      }
     } finally {
       if (isCurrent(s)) { s.busy = false; controls(s); schedule(s); }
     }
@@ -350,7 +366,7 @@
     const s = {
       id: sequence, username: context.user.username, role: context.user.role, carId: context.carId,
       cloud: context.cloud, canCreate: context.car.status !== '판매완료', controllers: new Set(),
-      requests: [], link: null, busy: false, reading: false, blocked: false, timer: null,
+      requests: [], link: null, busy: false, reading: false, blocked: false, loaded: false, timer: null,
       baseline: formValues()
     };
     state = s;

@@ -62,6 +62,7 @@ Supabase 서버 키는 **Settings → API Keys**에서 해당 프로젝트의 `s
 1. 위 DB SQL 두 개와 Cloudflare 설정을 완료합니다.
 2. GitHub의 기능 커밋을 포함한 최신 버전으로 Pages를 배포합니다. `index.html`뿐 아니라 `customer.html`, 새 `assets`·`functions` 파일과 `_headers`도 함께 배포되어야 합니다. GitHub 체크만으로 확정하기 어려우면 Cloudflare 프로젝트의 배포 화면에서 사용 중인 커밋을 확인합니다.
 3. 운영 주소의 `/api/customer-intake`에 접속해 `service`가 `snote-customer-intake`, `configured`가 `true`인지 확인합니다. 이 표시는 필요한 서버 설정 유무이며 실제 문자 수신이나 DB 함수 적용까지 보증하지 않습니다.
+   `configurationIssues`에는 문제가 있는 설정 이름과 사유만 표시되며 키 값은 표시되지 않습니다. `originMatches`가 `false`이면 현재 접속 주소와 `CUSTOMER_INTAKE_PUBLIC_ORIGIN`을 일치시킵니다. 설정을 확인한 주소와 판매 화면의 주소도 같아야 합니다.
 4. 로그인한 담당자 본인의 저장된 차량에서 판매 진행을 엽니다. 관리자도 다른 담당자 차량에 대신 요청하지 않고 해당 담당자 계정으로 진행합니다.
 5. **운영자가 직접 관리하는 테스트 휴대폰**으로 입력 요청을 한 번 보냅니다. 이 단계부터 실제 문자 비용이 발생합니다.
 6. 휴대폰에서 링크를 열고 인증번호를 받아 정보를 제출합니다. 이 과정에서 휴대폰 사용 확인과 개인정보 처리 동의를 직접 확인합니다.
@@ -86,8 +87,10 @@ Supabase 서버 키는 **Settings → API Keys**에서 해당 프로젝트의 `s
 
 | 증상 | 확인할 항목 |
 |---|---|
-| 문자 설정이 필요하다는 안내 | Cloudflare Production/Preview의 설정과 재배포 여부 |
+| 문자 설정이 필요하다는 안내 | Cloudflare Production/Preview의 설정과 재배포 여부. 전화번호는 미리 입력할 수 있고, 설정 확인 후 새로고침하면 발송이 활성화됩니다. OTP Secret은 앞뒤 공백을 제외하고 32자 이상이어야 합니다. |
 | DB 준비 안내 또는 저장 함수 오류 | 첫 번째 SQL 전체 실행, 기존 프로젝트 테이블, 동일 프로젝트 URL/키 |
+| 서버의 Supabase 연결 설정 안내 | Cloudflare의 `SUPABASE_SERVICE_ROLE_KEY`에 동일 프로젝트의 서버 전용 legacy service_role JWT 키를 사용했는지 확인 후 재배포 |
+| 설정은 정상인데 문자 요청 결과를 확인하지 못했다는 안내 | v2.11 이후의 `functions/api/customer-intake.js`까지 포함해 재배포했는지 확인. 구버전의 Cloudflare 호출 옵션 호환성 문제를 수정했습니다. 요청을 반복하지 말고 SOLAPI 발송 내역을 먼저 확인합니다. |
 | 문자 접수 실패 | SOLAPI 발신번호 승인, 잔액, API 키 권한, 발송 내역 |
 | 오래된 링크·취소된 링크 | 담당자가 최신 요청을 만들고 있는지, 원래 링크의 유효시간 |
 | 인증번호 오류·횟수 초과 | 최신 문자 사용 여부, 5분·5회 제한, 60초 후 새 번호 요청 |
@@ -107,3 +110,5 @@ node tests/customer-records.test.mjs
 ```
 
 추가로 분리된 PostgreSQL 엔진에서 DB 권한·인증 횟수·유효기간·중복 제출·자료 정리를 검증했고, 브라우저에서는 실제 API와 분리된 DB를 연결해 고객 제출부터 담당자 불러오기·계약서 반영까지 확인했습니다. 운영 개통 시험은 위 5절을 따릅니다.
+
+실제 Cloudflare 실행 엔진의 호환성은 [workerd 회귀 테스트](../tests/customer-intake.workerd.cjs)로 별도 확인합니다. 파일 상단의 안내대로 Miniflare와 undici를 저장소 외부에 설치한 뒤 실행합니다. 모든 외부 요청을 모의 응답으로 처리하며 실제 문자나 운영 DB를 호출하지 않습니다. 정적 Pages 배포 방식을 유지하기 위해 이 테스트를 위한 루트 `package.json`은 추가하지 않습니다.

@@ -26,11 +26,14 @@ const MESSAGES = {
   PAYLOAD_TOO_LARGE: [413, '요청 크기가 허용 범위를 초과했습니다.'],
   METHOD_NOT_ALLOWED: [405, '지원하지 않는 요청 방식입니다.'],
   SERVICE_UNAVAILABLE: [503, '고객정보 입력 서비스 설정을 확인해 주세요.'],
+  DB_SETUP_REQUIRED: [503, '고객접수 SQL이 모두 적용되었는지 확인해 주세요.'],
+  SERVER_SETUP_REQUIRED: [503, 'Supabase 서버 키 설정과 권한을 확인해 주세요.'],
   UPSTREAM_ERROR: [502, '서버에 연결하지 못했습니다. 잠시 후 다시 시도하세요.'],
   SMS_SEND_FAILED: [502, '문자가 접수되지 않았습니다. 잠시 후 새 인증번호를 요청하세요.'],
   SMS_SEND_UNKNOWN: [503, '문자 접수 여부를 확인하지 못했습니다. 자동 재전송하지 않습니다. 잠시 후 다시 요청하세요.']
 };
 const RPC_CODES = new Set(['INVALID_LINK', 'EXPIRED', 'REVOKED', 'ALREADY_SUBMITTED', 'RATE_LIMITED', 'INVALID_CODE', 'LOCKED', 'SESSION_EXPIRED', 'VALIDATION_ERROR', 'FORBIDDEN']);
+const DB_SETUP_CODES = new Set(['PGRST202', 'PGRST204', '42P01', '42703', '42883']);
 
 class IntakeError extends Error {
   constructor(code, retryAfter) { super(code); this.code = code; this.retryAfter = retryAfter; }
@@ -55,24 +58,44 @@ function errorResponse(error) {
   const retryAfter = Number.isInteger(error?.retryAfter) && error.retryAfter >= 0 && error.retryAfter <= 86400 ? error.retryAfter : undefined;
   return json({ error: message, code, ...(retryAfter === undefined ? {} : { retryAfter }) }, status, retryAfter);
 }
-function configuration(env = {}) {
-  const value = key => typeof env[key] === 'string' ? env[key].trim() : '';
+const CONFIG_NAMES = [
+  'SUPABASE_URL', 'SUPABASE_PUBLISHABLE_KEY', 'SUPABASE_SERVICE_ROLE_KEY',
+  'CUSTOMER_INTAKE_PUBLIC_ORIGIN', 'SOLAPI_API_KEY', 'SOLAPI_API_SECRET',
+  'SOLAPI_SENDER', 'CUSTOMER_INTAKE_OTP_SECRET'
+];
+function inspectConfiguration(env = {}) {
+  const values = Object.fromEntries(CONFIG_NAMES.map(name => [name, typeof env?.[name] === 'string' ? env[name].trim() : '']));
+  const issues = [];
+  // Diagnostics contain fixed names and fixed explanations only. Never include
+  // configured values, their lengths, prefixes, or hashes in a public response.
+  const issue = (name, reason) => { if (!issues.some(item => item.name === name)) issues.push({ name, reason }); };
+  for (const name of CONFIG_NAMES) if (!values[name]) issue(name, '값이 설정되지 않았습니다.');
+  let supabase, publicOrigin;
   try {
-    const supabase = new URL(value('SUPABASE_URL'));
-    const publicOrigin = new URL(value('CUSTOMER_INTAKE_PUBLIC_ORIGIN'));
-    const sender = value('SOLAPI_SENDER').replace(/[ -]/g, '');
-    if (supabase.protocol !== 'https:' || !/^[a-z0-9-]+\.supabase\.co$/.test(supabase.hostname) || supabase.port || supabase.username || supabase.password || supabase.search || supabase.hash || supabase.pathname !== '/') return null;
-    if (publicOrigin.protocol !== 'https:' || publicOrigin.username || publicOrigin.password || publicOrigin.search || publicOrigin.hash || publicOrigin.pathname !== '/' || !publicOrigin.hostname.includes('.')) return null;
-    const publishable = value('SUPABASE_PUBLISHABLE_KEY');
-    const serviceRole = value('SUPABASE_SERVICE_ROLE_KEY');
-    const apiKey = value('SOLAPI_API_KEY');
-    const apiSecret = value('SOLAPI_API_SECRET');
-    const otpSecret = value('CUSTOMER_INTAKE_OTP_SECRET');
-    if (!publishable || !serviceRole || !apiKey || !apiSecret || otpSecret.length < 32 || !/^\d{8,11}$/.test(sender)) return null;
-    if ([publishable, serviceRole, apiKey, apiSecret, otpSecret].some(x => /[\r\n]/.test(x))) return null;
-    return { supabase: supabase.origin, publicOrigin: publicOrigin.origin, publishable, serviceRole, apiKey, apiSecret, otpSecret, sender };
-  } catch { return null; }
+    supabase = new URL(values.SUPABASE_URL);
+    if (supabase.protocol !== 'https:' || !/^[a-z0-9-]+\.supabase\.co$/.test(supabase.hostname) || supabase.port || supabase.username || supabase.password || supabase.search || supabase.hash || supabase.pathname !== '/') throw new Error('invalid');
+  } catch { issue('SUPABASE_URL', 'HTTPS Supabase 프로젝트 주소를 경로 없이 입력해 주세요.'); }
+  try {
+    publicOrigin = new URL(values.CUSTOMER_INTAKE_PUBLIC_ORIGIN);
+    if (publicOrigin.protocol !== 'https:' || publicOrigin.username || publicOrigin.password || publicOrigin.search || publicOrigin.hash || publicOrigin.pathname !== '/' || !publicOrigin.hostname.includes('.')) throw new Error('invalid');
+  } catch { issue('CUSTOMER_INTAKE_PUBLIC_ORIGIN', '실제 운영 HTTPS 주소를 경로·쿼리·해시 없이 입력해 주세요.'); }
+  const sender = values.SOLAPI_SENDER.replace(/[ -]/g, '');
+  if (!/^\d{8,11}$/.test(sender)) issue('SOLAPI_SENDER', '승인된 국내 발신번호를 숫자 8~11자리로 입력해 주세요.');
+  for (const name of ['SUPABASE_PUBLISHABLE_KEY', 'SUPABASE_SERVICE_ROLE_KEY', 'SOLAPI_API_KEY', 'SOLAPI_API_SECRET', 'CUSTOMER_INTAKE_OTP_SECRET']) {
+    if (/[\r\n]/.test(values[name])) issue(name, '줄바꿈 없이 한 줄로 입력해 주세요.');
+  }
+  if (values.CUSTOMER_INTAKE_OTP_SECRET.length < 32) issue('CUSTOMER_INTAKE_OTP_SECRET', '32자 이상의 충분히 긴 무작위 문자열을 설정해 주세요.');
+  return {
+    config: issues.length ? null : {
+      supabase: supabase.origin, publicOrigin: publicOrigin.origin,
+      publishable: values.SUPABASE_PUBLISHABLE_KEY, serviceRole: values.SUPABASE_SERVICE_ROLE_KEY,
+      apiKey: values.SOLAPI_API_KEY, apiSecret: values.SOLAPI_API_SECRET,
+      otpSecret: values.CUSTOMER_INTAKE_OTP_SECRET, sender
+    },
+    issues
+  };
 }
+function configuration(env) { return inspectConfiguration(env).config; }
 function sameOrigin(request, config) {
   const origin = request.headers.get('Origin');
   if (origin !== null && (origin !== new URL(request.url).origin || (config && origin !== config.publicOrigin))) fail('FORBIDDEN');
@@ -150,7 +173,13 @@ function randomCode() {
 async function fetchJson(url, options, timeout, maxBytes = 256 * 1024) {
   const controller = new AbortController(); const timer = setTimeout(() => controller.abort(), timeout);
   try {
-    const response = await fetch(url, { ...options, signal: controller.signal, redirect: 'error' });
+    // workerd supports manual/follow only. Reject redirects before parsing so
+    // Supabase/SOLAPI credentials are never forwarded to a redirect target.
+    const response = await fetch(url, { ...options, signal: controller.signal, redirect: 'manual' });
+    if (response.status >= 300 && response.status < 400) {
+      void response.body?.cancel().catch(() => {});
+      throw new Error('Upstream redirect refused');
+    }
     const reader = response.body?.getReader(); let size = 0; const chunks = [];
     if (!reader) throw new Error('empty');
     while (true) { const { done, value } = await reader.read(); if (done) break; size += value.byteLength; if (size > maxBytes) { void reader.cancel().catch(() => {}); throw new Error('size'); } chunks.push(value); }
@@ -166,7 +195,12 @@ async function rpc(config, name, args, jwt) {
       method: 'POST', headers: { 'Content-Type': 'application/json', apikey: jwt ? config.publishable : config.serviceRole, Authorization: `Bearer ${jwt || config.serviceRole}` }, body: JSON.stringify(args)
     }, 15000));
   } catch { fail('UPSTREAM_ERROR'); }
-  if (!response.ok) { if (jwt && response.status === 401) fail('UNAUTHORIZED'); if (jwt && response.status === 403) fail('FORBIDDEN'); fail('UPSTREAM_ERROR'); }
+  if (!response.ok) {
+    if (object(data) && DB_SETUP_CODES.has(data.code)) fail('DB_SETUP_REQUIRED');
+    if (response.status === 401) fail(jwt ? 'UNAUTHORIZED' : 'SERVER_SETUP_REQUIRED');
+    if (response.status === 403) fail(jwt ? 'FORBIDDEN' : 'SERVER_SETUP_REQUIRED');
+    fail('UPSTREAM_ERROR');
+  }
   if (object(data) && data.ok === false) fail(RPC_CODES.has(data.code) ? data.code : 'UPSTREAM_ERROR', data.retryAfter);
   if (!object(data) && !Array.isArray(data)) fail('UPSTREAM_ERROR');
   return data;
@@ -269,7 +303,13 @@ async function perform(request, config, body) {
 }
 
 export function onRequestGet({ request, env }) {
-  try { const config = configuration(env); sameOrigin(request, config); return json({ service: 'snote-customer-intake', configured: !!config }); } catch (error) { return errorResponse(error); }
+  try {
+    const { config, issues } = inspectConfiguration(env);
+    sameOrigin(request, config);
+    const originMatches = config ? new URL(request.url).origin === config.publicOrigin : null;
+    if (originMatches === false) issues.push({ name: 'CUSTOMER_INTAKE_PUBLIC_ORIGIN', reason: '실제 접속 주소와 운영 주소 설정이 일치하지 않습니다.' });
+    return json({ service: 'snote-customer-intake', configured: !!config, configurationIssues: issues, originMatches });
+  } catch (error) { return errorResponse(error); }
 }
 export async function onRequestPost({ request, env }) {
   try {
