@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>소득정산 · S-NOTE</title>
+  <link rel="stylesheet" href="assets/income-settlement.css?v=2.21">
+  <script type="module" src="assets/income-settlement.js?v=2.21"></script>
+</head>
+<body>
+  <main id="income-app">
+    <header class="income-toolbar">
+      <div class="income-heading"><h1>소득정산</h1><p id="income-vehicle">차량 정보를 불러오는 중입니다.</p></div>
+      <div class="income-actions">
+        <span id="income-save-status" role="status" aria-live="polite">연결 대기</span>
+        <button id="income-refresh" type="button" disabled>서버 새로고침</button>
+        <button id="income-print" type="button" disabled>인쇄 / PDF</button>
+        <button id="income-save" class="primary" type="button" disabled>서버 저장</button>
+        <button id="income-close" class="close-button" type="button" aria-label="소득정산 닫기">×</button>
+      </div>
+    </header>
+    <p id="income-message" class="income-message" role="status" aria-live="polite">서버에서 차량과 저장된 정산표를 확인하고 있습니다.</p>
+    <section id="income-recovery" class="income-notice" hidden aria-label="임시 작성본 복구">
+      <p id="income-recovery-text"></p><div class="notice-actions"><button id="income-recover" type="button">임시 작성본 복구</button><button id="income-discard-draft" type="button">임시 작성본 삭제</button></div>
+    </section>
+    <section id="income-conflict" class="income-notice" hidden aria-label="서버 자료 변경">
+      <p id="income-conflict-text"></p><div class="notice-actions"><button id="income-use-server" type="button">서버 정산표 불러오기</button><button id="income-keep-local" type="button">현재 작성본으로 다시 저장</button><button id="income-apply-source" type="button" hidden>변경된 차량 정보 반영</button></div>
+    </section>
+    <div class="income-workspace">
+      <section class="income-paper-section" aria-label="엑셀 정산 양식">
+        <div class="sheet-controls"><label for="income-purchase-kind">매입금액 구분 <select id="income-purchase-kind" disabled><option value="recycled">재활용매입 (D11)</option><option value="invoice">세금계산서 매입 (D10)</option><option value="manual">직접 입력</option></select></label><label class="formula-switch"><input id="income-show-formulas" type="checkbox"> 수식 보기</label><span>단위: 원 · 노란 칸 직접 입력</span></div>
+        <div class="income-sheet-scroll" tabindex="0" aria-label="정산표. 좁은 화면에서는 좌우로 이동할 수 있습니다."><div id="income-sheet" aria-busy="true"></div></div>
+        <p class="sheet-help">차량의 실제 매입·매출액은 원 단위로 변환해 입력합니다. 직접 수정한 칸은 차량 정보 새로고침 시에도 유지합니다.</p>
+      </section>
+      <aside class="income-reference" aria-label="차량 비용 참고">
+        <h2>차량 비용 참고</h2><p>증빙을 확인한 비용만 정산표에 넣어 주세요. 아래 금액만으로 세금계산서 수취 여부를 판단하지 않습니다.</p>
+        <div id="income-suggestions"></div><div id="income-unmapped"></div>
+        <details class="income-formula-notes"><summary>원본 수식 안내</summary><p>첨부 엑셀의 51개 수식을 그대로 사용합니다. 재활용매입 항목의 표기(10/110)와 실제 수식(/1.09)이 다릅니다. 타차량 적자분 D40은 차감할 금액을 음수로 입력합니다. H35는 병합된 빈 셀을 참조하는 원본 수식을 유지합니다.</p><p>중개수수료와 딜러소득세 등 원본의 별도 입력 칸은 금액을 확인해 직접 입력합니다.</p></details>
+        <ul id="income-warnings" class="income-warnings"></ul>
+      </aside>
+    </div>
+    <footer class="income-footer">주민등록번호는 서버에 별도로 암호화하여 저장하며, 이 브라우저의 임시 작성본에는 보관하지 않습니다.</footer>
+  </main>
+  <section id="income-print-snapshot" aria-hidden="true"></section>
+</body>
+</html>
