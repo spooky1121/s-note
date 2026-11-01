@@ -1,0 +1,51 @@
+/* A small, local calculator shared by all workspace screens. */
+#snote-calculator-trigger {
+  display:grid;place-items:center;flex:none;width:40px;height:40px;padding:0;
+  border:1px solid #e5eaf1;border-radius:11px;background:#fff;color:#718095;
+  cursor:pointer;transition:background 160ms,border-color 160ms,color 160ms;
+}
+#snote-calculator-trigger svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}
+#snote-calculator-trigger:hover,#snote-calculator-trigger[aria-expanded="true"]{background:#f2f5fa;border-color:#d4dde9;color:#304a69}
+#snote-calculator-trigger:disabled{opacity:.45;cursor:default}
+#snote-calculator-trigger:focus-visible,#snote-calculator-panel button:focus-visible{outline:2px solid #799dce;outline-offset:3px}
+#snote-calculator-panel {
+  position:fixed;z-index:80;width:304px;max-width:calc(100vw - 24px);overflow:auto;
+  padding:17px;border:1px solid rgba(214,221,232,.85);border-radius:23px;
+  background:rgba(250,251,253,.97);color:#243146;
+  box-shadow:0 22px 60px rgba(24,39,61,.16),0 3px 10px rgba(24,39,61,.04);
+  backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
+  font-family:var(--snote-font-family,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif);
+  line-height:1.4;opacity:0;transform:translateY(-9px) scale(.985);transform-origin:top right;
+  transition:opacity 180ms ease,transform 180ms cubic-bezier(.2,.7,.2,1);
+  overscroll-behavior:contain;scrollbar-width:thin;outline:none;
+}
+#snote-calculator-panel[hidden]{display:none!important}
+#snote-calculator-panel.is-open{opacity:1;transform:translateY(0) scale(1)}
+.snote-calculator-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 2px}
+.snote-calculator-heading h2{margin:0;font-size:12px;font-weight:650;letter-spacing:-.15px;color:#718095}
+#snote-calculator-close{display:grid;place-items:center;width:26px;height:26px;padding:0;border:0;border-radius:50%;background:#edf0f5;color:#8994a5;cursor:pointer}
+#snote-calculator-close svg{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round}
+#snote-calculator-close:hover{background:#e2e7ef;color:#4c6078}
+.snote-calculator-screen{padding:17px 4px 14px;text-align:right;min-width:0;font-variant-numeric:tabular-nums}
+#snote-calculator-expression{min-height:17px;margin:0 0 6px;font-size:11px;color:#909aab;overflow-wrap:anywhere}
+#snote-calculator-display{display:block;min-height:48px;font-size:38px;font-weight:450;letter-spacing:-1.4px;line-height:1.25;color:#202b3e;overflow-wrap:anywhere;user-select:text}
+#snote-calculator-display[data-size="medium"]{font-size:29px;letter-spacing:-.8px}
+#snote-calculator-display[data-size="small"]{font-size:23px;letter-spacing:-.4px}
+#snote-calculator-display[data-error="true"]{font-size:25px;color:#a2635c;letter-spacing:-.5px}
+#snote-calculator-preview{min-height:17px;margin:4px 0 0;font-size:11px;color:#9b8a74;overflow-wrap:anywhere}
+.snote-calculator-keys{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+#snote-calculator-panel [data-calculator-key]{display:grid;place-items:center;min-width:0;min-height:47px;padding:7px 4px;border:1px solid #e9ecf1;border-radius:14px;background:#fff;color:#344055;font-family:inherit;font-size:21px;font-weight:450;line-height:1.2;box-shadow:0 1px 2px #18273d03;cursor:pointer;touch-action:manipulation;transition:background 140ms,transform 140ms,box-shadow 140ms;-webkit-tap-highlight-color:transparent}
+#snote-calculator-panel [data-calculator-key]:hover{background:#f0f3f7}
+#snote-calculator-panel [data-calculator-key]:active,#snote-calculator-panel [data-calculator-key].is-pressed{transform:scale(.94);background:#e9eef5;box-shadow:none}
+#snote-calculator-panel .snote-calculator-utility{background:#e9edf3;border-color:transparent;color:#617087;font-size:17px}
+#snote-calculator-panel .snote-calculator-operator{background:#f6e9da;border-color:transparent;color:#a8783d;font-size:25px}
+#snote-calculator-panel .snote-calculator-operator:hover{background:#efddc8}
+#snote-calculator-panel .snote-calculator-operator[aria-pressed="true"]{background:#e9d6be;color:#805925}
+#snote-calculator-panel .snote-calculator-equals{background:#d49a56;border-color:#d49a56;color:#fff}
+#snote-calculator-panel .snote-calculator-equals:hover,#snote-calculator-panel .snote-calculator-equals.is-pressed{background:#bc8242;border-color:#bc8242}
+.snote-calculator-backspace svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+#snote-calculator-help{min-height:15px;margin:12px 2px 0;color:#99a2b1;font-size:9px;text-align:center;line-height:1.6}
+#snote-calculator-help[data-error="true"]{color:#a2635c}
+@media(max-width:440px){#snote-calculator-trigger{width:36px;height:38px;border-radius:10px}.topbar .topright{gap:6px}#snote-calculator-panel{padding:15px;border-radius:21px}}
+@media(prefers-reduced-motion:reduce){#snote-calculator-panel,#snote-calculator-trigger,#snote-calculator-panel [data-calculator-key]{transition:none!important}}
+@media print{#snote-calculator-trigger,#snote-calculator-panel{display:none!important}}
