@@ -1,0 +1,7 @@
+.contract-paper .ct-seal-slot .ct-customer-signature-image{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:block;width:88px;height:33px;max-width:none;object-fit:contain;z-index:3;pointer-events:none}
+.contract-paper .ct-seal-slot .ct-customer-signature-image[hidden]{display:none}
+.contract-paper .ct-stamp-line .ct-seal-slot.has-customer-signature{flex-basis:88px;width:88px}
+.contract-paper .ct-seal-slot.has-customer-signature .stamp-mark{visibility:hidden}
+.ct-customer-signature-note{max-width:794px;margin:8px auto 0;line-height:1.5}
+.ct-customer-signature-note[hidden]{display:none}
+@media print{.ct-customer-signature-note{display:none!important}.contract-print-copy .ct-customer-signature-image{print-color-adjust:exact;-webkit-print-color-adjust:exact}}
