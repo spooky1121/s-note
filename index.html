@@ -3166,7 +3166,7 @@ button, input, select, textarea { font-family: inherit; }
       <div class="auth-story-body"><p class="auth-eyebrow">SMART DEALER WORKSPACE</p><h2>차량 관리의 시작,<br><span>더 간편하게.</span></h2><p>재고부터 차량 사진과 서류까지.<br>딜러별로 분리된 나만의 업무 공간.</p><div class="auth-points"><div class="auth-point"><i>✓</i>딜러별 차량 및 파일 관리</div><div class="auth-point"><i>✓</i>PC · 모바일 반응형 디자인</div><div class="auth-point"><i>✓</i>실차 사진 5장 · 성능서류 2장</div></div></div>
       <div class="auth-sidefoot">© S-NOTE · SMART DEALER WORKSPACE</div>
     </div>
-    <div class="auth-content" id="auth-content"><div class="auth-headsign"><span class="snote-wordmark"><img src="assets/snote-logo.png" alt="S-NOTE" width="2172" height="724" decoding="async"></span></div><div class="auth-topline"><strong>ACCOUNT ACCESS</strong><span>v2.15 · ONLINE</span></div><h1 id="auth-heading">다시 만나서 반가워요</h1><p class="auth-desc" id="auth-description">로그인하고 내 차량 재고를 확인하세요.</p>
+    <div class="auth-content" id="auth-content"><div class="auth-headsign"><span class="snote-wordmark"><img src="assets/snote-logo.png" alt="S-NOTE" width="2172" height="724" decoding="async"></span></div><div class="auth-topline"><strong>ACCOUNT ACCESS</strong><span>v2.16 · ONLINE</span></div><h1 id="auth-heading">다시 만나서 반가워요</h1><p class="auth-desc" id="auth-description">로그인하고 내 차량 재고를 확인하세요.</p>
       <div class="auth-tabs" hidden aria-hidden="true"><button id="login-tab" class="active" type="button" tabindex="-1" onclick="showAuthMode('login')">로그인</button><button id="signup-tab" type="button" onclick="showAuthMode('signup')" hidden aria-hidden="true" tabindex="-1">회원가입</button></div><div class="auth-success" id="login-success" role="status">✓ 회원가입이 완료되었습니다. 새 계정으로 로그인해 주세요.</div>
       <form id="login-form" class="auth-form" onsubmit="loginAccount(event)"><div><label class="auth-label" for="login-id">아이디</label><input class="auth-input" id="login-id" maxlength="30" autocomplete="username" placeholder="아이디를 입력하세요" required /></div><div><label class="auth-label" for="login-pw">비밀번호</label><input class="auth-input" id="login-pw" type="password" autocomplete="current-password" placeholder="비밀번호를 입력하세요" required /></div><div class="auth-error" id="login-error" role="alert"></div><button class="btn-primary auth-primary" id="login-submit" type="submit">로그인</button><button type="button" class="auth-demo" onclick="loginDemo()">딜러 체험 계정으로 시작하기&nbsp; →</button><button type="button" class="auth-demo" onclick="loginAccountingDemo()">경리 통합 화면 체험하기&nbsp; →</button><div class="accountant-login-help">경리 샘플: <b>accounting / account1234</b><br>딜러 샘플: <b>demo / demo1234</b>, <b>dealer2 / dealer1234</b></div><p class="auth-rule">체험판 전용 계정입니다. 실제 업무용 개인정보나 비밀번호를 입력하지 마세요.</p></form>
       <form id="signup-form" class="auth-form auth-signup-form" onsubmit="registerAccount(event)" style="display:none">
@@ -3189,7 +3189,7 @@ button, input, select, textarea { font-family: inherit; }
     <div class="sidebar-end"><div class="support"><p class="st">간편하고 정확하게.</p><p class="sd">재고부터 매입 · 판매 · 정산까지<br>하나의 전산에서 관리하세요.</p></div></div>
   </aside>
   <div class="main">
-    <header class="topbar"><div class="topbar-left"><button type="button" class="mobile-menu-trigger" id="mobile-menu-trigger" aria-label="메뉴 열기" aria-controls="mobile-drawer" aria-expanded="false" onclick="toggleMobileDrawer()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><div class="crumb"><span id="breadcrumb" hidden>대시보드</span><p class="eyebrow" id="eyebrow">OVERVIEW</p><h1 id="screen-title">오늘의 업무 현황</h1></div></div><div class="topright"><span class="sample">● v2.15 · 온라인 테스트</span>
+    <header class="topbar"><div class="topbar-left"><button type="button" class="mobile-menu-trigger" id="mobile-menu-trigger" aria-label="메뉴 열기" aria-controls="mobile-drawer" aria-expanded="false" onclick="toggleMobileDrawer()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><div class="crumb"><span id="breadcrumb" hidden>대시보드</span><p class="eyebrow" id="eyebrow">OVERVIEW</p><h1 id="screen-title">오늘의 업무 현황</h1></div></div><div class="topright"><span class="sample">● v2.16 · 온라인 테스트</span>
       <div class="snote-profile-dropdown" id="snote-profile-dropdown">
         <button type="button" class="profile topbar-profile" id="snote-profile-trigger" aria-haspopup="menu" aria-controls="snote-profile-menu" aria-expanded="false" onclick="snoteToggleProfileMenu()"><span id="profile-avatar" hidden></span><span class="profile-detail"><span class="pname" id="profile-name">내 프로필</span><span id="profile-role" hidden></span></span><svg class="snote-profile-chevron" viewBox="0 0 20 20" aria-hidden="true"><path d="m5 8 5 5 5-5"/></svg></button>
         <div class="snote-profile-menu" id="snote-profile-menu" role="menu" aria-labelledby="snote-profile-trigger" hidden>
@@ -3212,327 +3212,7 @@ button, input, select, textarea { font-family: inherit; }
         <section class="panel"><div class="panel-head"><div><h2>최근 등록 차량</h2><p>가장 최근에 관리한 차량 목록입니다.</p></div><button class="more" onclick="navigate(isAccountant()?'buy':'cars')">전체 보기 <span class="arrow-right"></span></button></div><div class="searchrow"><label class="search"><span class="search-icon"></span><input aria-label="차량 검색" type="search" id="dash-query" placeholder="차량명 또는 차량번호 검색" oninput="renderCars()" /></label><select aria-label="차량 상태" class="filter" id="dash-filter" onchange="renderCars()"><option value="all">전체 상태</option><option value="판매중">판매중</option><option value="판매완료">판매완료</option></select></div><div class="tablewrap" id="dash-table"></div><div class="mobile-list" id="dash-mobile"></div></section>
         <section class="panel"><div class="panel-head"><div><h2>빠른 업무</h2><p>자주 사용하는 기능을 모았습니다.</p></div></div><div class="actions"><div class="quick" id="quick-actions"></div></div></section>
       </div>
-      <section id="monthly-screen" style="display:none;width:100%;min-width:0" aria-label="월정산 프로그램"><iframe id="monthly-ledger-frame" title="S-NOTE 월정산 프로그램" scrolling="no" style="width:100%;height:1280px;border:0;display:block;background:transparent" srcdoc="&lt;!doctype html&gt;&lt;html lang=&quot;ko&quot;&gt;&lt;head&gt;&lt;meta charset=&quot;utf-8&quot;&gt;&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width,initial-scale=1&quot;&gt;&lt;title&gt;S-NOTE v2.15 | 월정산&lt;/title&gt;&lt;style&gt;
-:root{font-family:&#x27;Manrope&#x27;,&#x27;Noto Sans KR&#x27;,-apple-system,BlinkMacSystemFont,&#x27;Segoe UI&#x27;,sans-serif;-webkit-font-smoothing:antialiased;color:#172337;background:#f6f8fc}*{box-sizing:border-box}body{margin:0}button,input,select,textarea{font:inherit}button{cursor:pointer}.layout{display:flex;min-height:100vh}aside{width:220px;background:white;border-right:1px solid #e3eaf3;padding:30px 18px}.logo{font-weight:900;font-size:19px;color:#2865bd}.logo b{display:inline-grid;place-items:center;background:#3779d3;color:white;border-radius:12px;width:38px;height:38px;margin-right:8px}.sub{font-size:11px;color:#8291a3;margin:9px 0 35px}nav{background:#eaf4ff;color:#2474bb;padding:14px;border-radius:10px;font-weight:bold}.main{flex:1;min-width:0}.top{background:#fff;border-bottom:1px solid #e6ebf1;padding:22px 38px;font-size:12px;color:#7e8d9d}.content{max-width:1440px;margin:auto;padding:34px 38px}h1{font-size:28px;margin:0 0 9px}p.muted{font-size:13px;color:#8491a4}.head{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:23px}.actions{display:flex;gap:8px;flex-wrap:wrap}button{border:1px solid #dce5f0;background:white;border-radius:9px;padding:10px 14px;color:#4b6280;font-size:12px;font-weight:750}.primary{background:#3b90d5;color:white;border:1px solid #3b90d5}button:hover{filter:brightness(.97)}input,select,textarea{border:1px solid #dce5ef;background:#fff;padding:11px 12px;border-radius:9px;color:#26384c;min-width:0}input:focus,select:focus,textarea:focus{outline:2px solid #b9d9fa}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.card,.panel{background:#fff;border:1px solid #e6edf4;border-radius:14px;padding:20px}.card small{color:#788ba3;font-size:12px;font-weight:bold}.card strong{display:block;font-size:25px;margin:14px 0 4px;overflow-wrap:anywhere}.card .hint{color:#a0aebe;font-size:11px}.pos{color:#168a6b}.neg{color:#d65d63}.panel{margin-top:18px}.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:16px 0}.toolbar input[type=search]{flex:2;min-width:180px}.toolbar select{flex:1;min-width:110px}.toolbar input[type=month]{width:170px}.panel h2{font-size:16px;margin:0}.tablewrap{overflow:auto}table{border-collapse:collapse;width:100%;white-space:nowrap;font-size:12px}th{background:#f8fafc;color:#8393a6;text-align:left;font-size:11px;padding:14px 12px}td{border-bottom:1px solid #edf1f5;padding:14px 12px;color:#4c6179}td.right,th.right{text-align:right}.pill{font-size:11px;font-weight:bold;padding:6px 9px;border-radius:7px}.pill.in{background:#e8f8f1;color:#1c916d}.pill.out{background:#fff0f0;color:#c96369}.rowacts{display:flex;gap:5px}.rowacts button{padding:6px 9px}.empty{text-align:center;padding:40px;color:#9ba6b5}.bottom{display:grid;grid-template-columns:1fr 1fr;gap:18px}.category{margin-top:17px}.catline{display:flex;justify-content:space-between;gap:10px;margin:13px 0 6px;font-size:12px}.track{height:7px;border-radius:9px;background:#edf3f8;overflow:hidden}.bar{height:100%;background:#5ba5df}dialog{border:0;border-radius:17px;box-shadow:0 25px 90px #182c4860;width:min(600px,calc(100% - 25px));padding:27px}dialog::backdrop{background:#1b2c4688}.dialoghead{display:flex;justify-content:space-between;align-items:center}dialog h2{margin:0;font-size:20px}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:24px 0}.formgrid label{display:flex;flex-direction:column;gap:7px;font-size:12px;font-weight:bold;color:#61758b}.full{grid-column:1/-1}.tabs{display:flex;gap:8px;margin-top:18px}.tabs button.selected{background:#edf7ff;border-color:#73b6e4;color:#247cc4}.foot{display:flex;justify-content:flex-end;gap:8px}.notice{font-size:11px;color:#8898a8;line-height:1.8;margin-top:20px}.sr{position:absolute;left:-9999px}#print-sheet{display:none}.warn{color:#c76742}@media(max-width:900px){aside{display:none}.content{padding:24px 16px}.top{padding:18px}.stats{grid-template-columns:repeat(2,1fr)}.bottom{grid-template-columns:1fr}}@media(max-width:520px){.stats{gap:8px}.card{padding:14px}.card strong{font-size:19px}.formgrid{grid-template-columns:1fr}.head h1{font-size:24px}}@media print{@page{size:A4;margin:15mm}aside,.top,.head,.stats,.toolbar,.panel,.bottom,.notice{display:none!important}.layout,.main,.content{display:block;padding:0;margin:0}#print-sheet{display:block!important}#print-sheet h1{text-align:center;font-size:23px;margin:0 0 22px}#print-sheet .meta{display:flex;justify-content:space-between;font-size:12px;margin:15px 0}#print-sheet table{white-space:normal;font-size:10px}#print-sheet th,#print-sheet td{padding:9px 5px;border:1px solid #cfd5dd;color:#222}#print-sheet .tot{font-size:12px;text-align:right;margin-top:18px;line-height:2.2}#print-sheet .sign{text-align:right;margin-top:50px}}
- 
-/* v1.68 - Quick transaction entry */
-.quick-editor{background:#fff;border:1px solid #c6e4f7;border-radius:16px;padding:21px 23px;margin:0 0 18px;box-shadow:0 10px 32px #316e9910}
-.quick-editor[hidden],.advanced-fields[hidden]{display:none!important}
-.quick-editor .dialoghead{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
-.quick-editor .dialoghead h2{font-size:17px;margin:0 0 5px}
-.quick-editor .dialoghead p{margin:0;font-size:11px}
-.quick-editor .tabs{margin-top:15px}
-.quick-editor .tabs button{flex:1;max-width:140px}
-.quick-editor .formgrid{display:grid;grid-template-columns:125px minmax(140px,1fr) minmax(180px,1.6fr) minmax(150px,1fr);gap:10px;margin:14px 0 11px}
-.quick-editor .formgrid label{font-size:11px;gap:6px}
-.quick-editor .formgrid input,.quick-editor .formgrid select{height:42px;font-size:12px}
-.quick-editor #amount{font-size:19px;font-weight:900;color:#245f8a;text-align:right;font-variant-numeric:tabular-nums}
-.quick-editor .advanced-fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;grid-column:1/-1}
-.quick-editor .advanced-toggle{background:none;border:0;padding:7px 0;color:#488ab7;font-weight:800;font-size:11px}
-.quick-editor .foot{margin-top:3px;align-items:center}
-.quick-editor .foot .primary{min-width:150px}
-#editor #close{border:0;background:#eff5fa;padding:7px 11px}
-.head .actions{justify-content:flex-end}
-@media(max-width:1100px){.quick-editor .formgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:560px){.quick-editor{padding:15px 13px}.quick-editor .formgrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.quick-editor .formgrid label:nth-child(3){grid-column:1/-1}.quick-editor .advanced-fields{grid-template-columns:1fr}.quick-editor .foot .primary{flex:1}.quick-editor #amount{font-size:17px}}
-body{background:transparent!important}.layout{display:block!important;min-height:0!important}
-.layout&gt;aside,.main&gt;.top{display:none!important}.main{width:100%!important}
-.content{padding:8px 0 30px!important;max-width:none!important}
-.head h1{font-size:21px}@media(max-width:760px){.content{padding:4px 0 25px!important}}
-
-/* v1.69 - category status bars redesigned */
-.category{margin-top:15px}
-.status-wrap{display:flex;flex-direction:column;gap:12px}
-.status-top{display:flex;justify-content:space-between;align-items:end;gap:12px}
-.status-title{font-size:12px;font-weight:800;color:#68839c}
-.status-total{font-size:20px;font-weight:900;color:#24445f;letter-spacing:-0.02em}
-.stack-track{width:100%;height:16px;border-radius:999px;background:#edf3f8;overflow:hidden;display:flex;box-shadow:inset 0 0 0 1px #e1e9f1}
-.stack-seg{height:100%;display:block;min-width:0}
-.stack-seg:first-child{border-top-left-radius:999px;border-bottom-left-radius:999px}
-.stack-seg:last-child{border-top-right-radius:999px;border-bottom-right-radius:999px}
-.catlist{display:flex;flex-direction:column;gap:10px}
-.catitem{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;gap:9px;align-items:center;font-size:12px}
-.catdot{width:10px;height:10px;border-radius:50%}
-.catname{min-width:0;font-weight:700;color:#24445f;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.catamount{font-weight:800;color:#2f5c7f;font-variant-numeric:tabular-nums}
-.catpct{font-weight:800;color:#7b92a8;min-width:52px;text-align:right;font-variant-numeric:tabular-nums}
-@media(max-width:560px){.status-top{flex-direction:column;align-items:flex-start}.status-total{font-size:18px}.catitem{grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:&#x27;dot name pct&#x27; &#x27;dot amount amount&#x27;}.catdot{grid-area:dot}.catname{grid-area:name}.catamount{grid-area:amount;padding-left:2px}.catpct{grid-area:pct;min-width:auto}}
-
-
-/* v1.70 - editable monthly category lists */
-.quick-editor .category-field{display:flex;flex-direction:column;gap:6px;min-width:0}
-.quick-editor .category-field&gt;label{font-size:11px;font-weight:800;color:#61758b}
-.quick-editor .category-picker-row{display:flex;gap:6px;min-width:0}
-.quick-editor .category-picker-row select{flex:1;min-width:0;width:100%;height:42px;border:1px solid #dfe7f0;border-radius:9px;background:#fff;color:#243d57;font-size:12px;padding:0 8px}
-.quick-editor .cat-manage-toggle{height:42px;flex:0 0 auto;border-radius:9px;padding:0 11px;border:1px solid #c9e3f4;color:#2479a5;background:#eef9ff;font-size:11px;font-weight:900}
-.quick-editor .cat-manage-toggle:hover,.quick-editor .cat-manage-toggle.is-open{background:#dceffd;border-color:#8ec6e8}
-.quick-editor .category-manager{grid-column:1/-1;border:1px solid #d7e9f6;border-radius:12px;background:#f7fcff;padding:14px 15px;margin:0 0 2px}
-.quick-editor .category-manager[hidden]{display:none!important}
-.category-manager-top{display:flex;gap:9px;flex-wrap:wrap;align-items:baseline;margin-bottom:12px}
-.category-manager-top strong{font-size:12px;color:#2b5777}
-.category-manager-top span{font-size:10px;color:#829bb0}
-.category-chip-list{display:flex;gap:7px;flex-wrap:wrap}
-.cat-chip{display:inline-flex;align-items:center;gap:7px;min-height:30px;border:1px solid #daebf5;background:#fff;color:#315572;border-radius:8px;font-size:11px;font-weight:800;padding:4px 5px 4px 10px}
-.cat-chip button{width:22px;height:22px;display:grid;place-items:center;padding:0;border:0;border-radius:6px;background:#f5f8fb;color:#8796a9;font-size:18px;line-height:1;font-weight:500}
-.cat-chip button:hover{background:#fff0f1;color:#d0475a}
-.category-add-row{display:flex;gap:7px;margin-top:13px}
-.quick-editor .category-add-row input{height:38px;flex:1;min-width:0;border-radius:8px;border:1px solid #cedfea;background:#fff;padding:0 10px;font-size:12px}
-.quick-editor .category-add-row .cat-add-btn{height:38px;flex:none;background:#388fc4;color:white;border:0;border-radius:8px;padding:0 14px;font-size:11px;font-weight:850}
-.quick-editor .category-add-row .cat-add-btn:hover{background:#287bae}
-.category-manager-note{font-size:10px;line-height:1.5;color:#899daf;margin:10px 0 0}
-@media(max-width:560px){.quick-editor .category-manager{padding:12px 10px}.category-add-row{gap:6px}.quick-editor .category-add-row .cat-add-btn{padding:0 9px}.quick-editor .cat-manage-toggle{padding:0 8px}}
-
-
-/* v1.83 · all income items blue / all expense items red */
-.pos,#inTotal,.pill.in{color:#2164cb!important}
-.neg,#outTotal,.pill.out{color:#cd3348!important}
-.pill.in{background:#eaf2ff!important}.pill.out{background:#fff0f1!important}
-#incomeCats .status-title,#incomeCats .status-total,#incomeCats .catamount,#incomeCats .catpct,#incomeCats .catname{color:#2369c6}
-#expenseCats .status-title,#expenseCats .status-total,#expenseCats .catamount,#expenseCats .catpct,#expenseCats .catname{color:#c83d4c}
-#typeIn.selected{background:#eaf2ff!important;border-color:#74a4f0!important;color:#2064c3!important}
-#typeOut.selected{background:#fff1f2!important;border-color:#e9919c!important;color:#bd3044!important}
-#editor:has(#typeIn.selected) #amount{color:#226bd1!important}
-#editor:has(#typeOut.selected) #amount{color:#ce384e!important}
-#incomeCats .stack-track{background:#eaf2ff}#expenseCats .stack-track{background:#fff1f2}
-
-/* v2.05 · always-visible transaction entry and explicit server save status */
-.save-feedback{display:flex;align-items:center;gap:8px 14px;flex-wrap:wrap;margin-top:12px}
-#save-status{flex:1;min-width:180px;margin:0;color:#61758b;font-size:12px;line-height:1.8;overflow-wrap:anywhere}
-#save-status:empty{display:none}
-#save-status[data-state=&quot;busy&quot;]{color:#245f8a}
-#save-status[data-state=&quot;saved&quot;]{color:#147658}
-#save-status[data-state=&quot;error&quot;]{color:#b83248}
-#retry-save{color:#245f8a;border-color:#b8d4ed;font-size:11px}
-#retry-save[hidden]{display:none}
-@media print{#editor{display:none!important}}
-&lt;/style&gt;&lt;style id=&quot;snote-monthly-typography&quot;&gt;
-/* Shared type roles. Paper documents retain their fixed A4 sizes. */
-:root {
-  --snote-font-family: &#x27;Manrope&#x27;, &#x27;Noto Sans KR&#x27;, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, sans-serif;
-  --snote-text-page: 20px;
-  --snote-text-section: 15px;
-  --snote-text-subheading: 13px;
-  --snote-text-body: 12px;
-  --snote-text-label: 11px;
-  --snote-text-meta: 10px;
-  --snote-text-control: 12px;
-  --snote-text-button: 12px;
-  --snote-text-auth: 32px;
-  --snote-text-kpi: clamp(17px, 1.65vw, 23px);
-  --snote-text-amount: 13px;
-  --snote-text-unit: 11px;
-  --snote-line-body: 1.65;
-  --snote-line-heading: 1.4;
-}
-
-:root { font-family: var(--snote-font-family); }
-@media screen {
- body.snote-monthly { font-size: var(--snote-text-body); line-height: var(--snote-line-body); }
- body.snote-monthly .head h1 { font-size: var(--snote-text-page); line-height: var(--snote-line-heading); }
- body.snote-monthly .panel h2, body.snote-monthly .quick-editor .dialoghead h2 { font-size: var(--snote-text-section); line-height: var(--snote-line-heading); }
- body.snote-monthly .card strong { font-size: var(--snote-text-kpi); line-height: 1.3; }
- body.snote-monthly .card small, body.snote-monthly .quick-editor .formgrid label, body.snote-monthly .category-field &gt; label { font-size: var(--snote-text-label); }
- body.snote-monthly .quick-editor .formgrid input, body.snote-monthly .quick-editor .formgrid select, body.snote-monthly #amount,
- body.snote-monthly .toolbar input, body.snote-monthly .toolbar select, body.snote-monthly .category-add-row input { font-size: var(--snote-text-control); }
- body.snote-monthly button { font-size: var(--snote-text-button); }
- body.snote-monthly .cat-chip button { font-size: 18px; }
- body.snote-monthly .quick-editor .dialoghead p, body.snote-monthly .card .hint, body.snote-monthly .notice,
- body.snote-monthly .status-title, body.snote-monthly .catpct, body.snote-monthly .category-manager-note { font-size: var(--snote-text-meta); }
- body.snote-monthly .status-total { font-size: var(--snote-text-amount); }
- body.snote-monthly th { font-size: var(--snote-text-label); }
- body.snote-monthly td, body.snote-monthly #save-status { font-size: var(--snote-text-body); line-height: var(--snote-line-body); }
-}
-@media screen and (max-width: 760px) {
- :root { --snote-text-page: 18px; --snote-text-section: 14px; --snote-text-control: 16px; --snote-text-kpi: 22px; }
-}
-&lt;/style&gt;&lt;/head&gt;&lt;body class=&quot;snote-monthly&quot;&gt;&lt;div class=&quot;layout&quot;&gt;&lt;aside&gt;&lt;div class=&quot;logo&quot;&gt;&lt;b&gt;Z&lt;/b&gt;S-NOTE&lt;br&gt;　 OFFICE&lt;/div&gt;&lt;div class=&quot;sub&quot;&gt;SMART DEALER WORKSPACE · v1.66&lt;/div&gt;&lt;div style=&quot;color:#a5b1c1;font-size:11px;margin-bottom:14px&quot;&gt;경리&lt;/div&gt;&lt;nav&gt;▣　월정산 관리&lt;/nav&gt;&lt;/aside&gt;&lt;div class=&quot;main&quot;&gt;&lt;div class=&quot;top&quot;&gt;S-NOTE　 /　경리　 /　 &lt;b&gt;월정산 관리&lt;/b&gt;&lt;/div&gt;&lt;div class=&quot;content&quot;&gt;&lt;div class=&quot;head&quot;&gt;&lt;div&gt;&lt;h1&gt;월정산 관리&lt;/h1&gt;&lt;/div&gt;&lt;div class=&quot;actions&quot;&gt;&lt;button id=&quot;print&quot;&gt;A4 인쇄&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;&lt;section id=&quot;editor&quot; class=&quot;quick-editor&quot;&gt;&lt;div class=&quot;dialoghead&quot;&gt;&lt;div&gt;&lt;h2 id=&quot;editTitle&quot;&gt;거래 등록&lt;/h2&gt;&lt;p class=&quot;muted&quot;&gt;구분 → 날짜 → 분류 → 내용 → 금액만 입력하면 등록됩니다.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;tabs&quot;&gt;&lt;button id=&quot;typeIn&quot; type=&quot;button&quot;&gt;＋ 수입&lt;/button&gt;&lt;button id=&quot;typeOut&quot; type=&quot;button&quot;&gt;－ 지출&lt;/button&gt;&lt;/div&gt;&lt;form id=&quot;form&quot;&gt;&lt;div class=&quot;formgrid&quot;&gt;&lt;label&gt;거래일&lt;input type=&quot;date&quot; id=&quot;date&quot; required&gt;&lt;/label&gt;&lt;div class=&quot;category-field&quot;&gt;
-  &lt;label for=&quot;category&quot;&gt;분류&lt;/label&gt;
-  &lt;div class=&quot;category-picker-row&quot;&gt;
-    &lt;select id=&quot;category&quot; required aria-label=&quot;거래 분류&quot;&gt;&lt;/select&gt;
-    &lt;button type=&quot;button&quot; id=&quot;cat-manage-toggle&quot; class=&quot;cat-manage-toggle&quot; aria-expanded=&quot;false&quot; aria-controls=&quot;category-manager&quot; title=&quot;분류 항목을 추가하거나 삭제합니다&quot;&gt;관리&lt;/button&gt;
-  &lt;/div&gt;
-&lt;/div&gt;&lt;label&gt;거래 내용&lt;input id=&quot;item&quot; required maxlength=&quot;150&quot; placeholder=&quot;예: 사무실 월세&quot;&gt;&lt;/label&gt;&lt;label class=&quot;money-field&quot;&gt;금액 (원)&lt;input id=&quot;amount&quot; type=&quot;text&quot; inputmode=&quot;numeric&quot; autocomplete=&quot;off&quot; required maxlength=&quot;16&quot; placeholder=&quot;0&quot; aria-label=&quot;금액 원&quot;&gt;&lt;/label&gt;&lt;div id=&quot;category-manager&quot; class=&quot;category-manager&quot; hidden&gt;
-  &lt;div class=&quot;category-manager-top&quot;&gt;&lt;strong id=&quot;category-manager-title&quot;&gt;지출 분류 관리&lt;/strong&gt;&lt;span&gt;사용할 분류를 추가하거나 삭제하세요.&lt;/span&gt;&lt;/div&gt;
-  &lt;div id=&quot;category-chip-list&quot; class=&quot;category-chip-list&quot; aria-live=&quot;polite&quot;&gt;&lt;/div&gt;
-  &lt;div class=&quot;category-add-row&quot;&gt;
-    &lt;input id=&quot;category-new-name&quot; type=&quot;text&quot; maxlength=&quot;32&quot; placeholder=&quot;새 분류 이름 입력&quot; aria-label=&quot;새 분류 이름&quot; autocomplete=&quot;off&quot;&gt;
-    &lt;button type=&quot;button&quot; id=&quot;category-add&quot; class=&quot;cat-add-btn&quot;&gt;+ 분류 추가&lt;/button&gt;
-  &lt;/div&gt;
-  &lt;p class=&quot;category-manager-note&quot;&gt;분류를 삭제해도 이미 등록한 거래내역과 금액은 삭제되지 않습니다.&lt;/p&gt;
-&lt;/div&gt;&lt;div class=&quot;advanced-fields&quot; id=&quot;advanced-fields&quot; hidden&gt;&lt;label&gt;지급수단&lt;select id=&quot;account&quot;&gt;&lt;option&gt;현금&lt;/option&gt;&lt;option&gt;계좌이체&lt;/option&gt;&lt;option&gt;법인카드&lt;/option&gt;&lt;option&gt;개인카드&lt;/option&gt;&lt;option&gt;기타&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;&lt;label&gt;거래처&lt;input id=&quot;counterparty&quot; maxlength=&quot;100&quot;&gt;&lt;/label&gt;&lt;label&gt;메모&lt;input id=&quot;memo&quot; maxlength=&quot;400&quot;&gt;&lt;/label&gt;&lt;/div&gt;&lt;/div&gt;&lt;button type=&quot;button&quot; class=&quot;advanced-toggle&quot; id=&quot;advanced-toggle&quot; aria-expanded=&quot;false&quot;&gt;＋ 거래처·지급수단·메모 (선택)&lt;/button&gt;&lt;div class=&quot;foot&quot;&gt;&lt;button type=&quot;button&quot; id=&quot;cancel&quot;&gt;입력 초기화&lt;/button&gt;&lt;button class=&quot;primary&quot; type=&quot;submit&quot;&gt;거래 저장&lt;/button&gt;&lt;/div&gt;&lt;div class=&quot;save-feedback&quot;&gt;&lt;p id=&quot;save-status&quot; role=&quot;status&quot; aria-live=&quot;polite&quot; aria-atomic=&quot;true&quot;&gt;&lt;/p&gt;&lt;button type=&quot;button&quot; id=&quot;retry-save&quot; hidden&gt;서버 저장 다시 시도&lt;/button&gt;&lt;/div&gt;&lt;/form&gt;&lt;/section&gt;&lt;div class=&quot;stats&quot;&gt;&lt;div class=&quot;card&quot;&gt;&lt;small&gt;이달 총수입&lt;/small&gt;&lt;strong class=&quot;pos&quot; id=&quot;inTotal&quot;&gt;0원&lt;/strong&gt;&lt;div class=&quot;hint&quot;&gt;등록된 수입 합계&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;card&quot;&gt;&lt;small&gt;이달 총지출&lt;/small&gt;&lt;strong class=&quot;neg&quot; id=&quot;outTotal&quot;&gt;0원&lt;/strong&gt;&lt;div class=&quot;hint&quot;&gt;등록된 지출 합계&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;card&quot;&gt;&lt;small&gt;이달 수지 차액&lt;/small&gt;&lt;strong id=&quot;netTotal&quot;&gt;0원&lt;/strong&gt;&lt;div class=&quot;hint&quot;&gt;수입 − 지출&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;card&quot;&gt;&lt;small&gt;이달 거래 건수&lt;/small&gt;&lt;strong id=&quot;countTotal&quot;&gt;0건&lt;/strong&gt;&lt;div class=&quot;hint&quot;&gt;기록된 모든 거래&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;panel&quot;&gt;&lt;h2&gt;수입·지출 거래 장부&lt;/h2&gt;&lt;div class=&quot;toolbar&quot;&gt;&lt;input id=&quot;month&quot; type=&quot;month&quot; aria-label=&quot;정산 월&quot;&gt;&lt;input type=&quot;search&quot; id=&quot;search&quot; placeholder=&quot;내용·거래처·메모 검색&quot; aria-label=&quot;거래 검색&quot;&gt;&lt;select id=&quot;kind&quot; aria-label=&quot;유형 필터&quot;&gt;&lt;option value=&quot;all&quot;&gt;전체 구분&lt;/option&gt;&lt;option value=&quot;in&quot;&gt;수입&lt;/option&gt;&lt;option value=&quot;out&quot;&gt;지출&lt;/option&gt;&lt;/select&gt;&lt;select id=&quot;categoryFilter&quot; aria-label=&quot;분류 필터&quot;&gt;&lt;option value=&quot;all&quot;&gt;전체 분류&lt;/option&gt;&lt;/select&gt;&lt;button id=&quot;reset&quot;&gt;초기화&lt;/button&gt;&lt;/div&gt;&lt;div class=&quot;tablewrap&quot;&gt;&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;거래일&lt;/th&gt;&lt;th&gt;구분&lt;/th&gt;&lt;th&gt;분류&lt;/th&gt;&lt;th&gt;거래 내용&lt;/th&gt;&lt;th&gt;거래처&lt;/th&gt;&lt;th&gt;지급수단&lt;/th&gt;&lt;th class=&quot;right&quot;&gt;금액&lt;/th&gt;&lt;th&gt;관리&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody id=&quot;rows&quot;&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;&lt;div id=&quot;empty&quot; class=&quot;empty&quot; hidden&gt;해당하는 거래내역이 없습니다. 위 입력 카드에서 거래를 추가해 주세요.&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;bottom&quot;&gt;&lt;div class=&quot;panel&quot;&gt;&lt;h2&gt;수입 항목별 현황&lt;/h2&gt;&lt;div id=&quot;incomeCats&quot; class=&quot;category&quot;&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;panel&quot;&gt;&lt;h2&gt;지출 항목별 현황&lt;/h2&gt;&lt;div id=&quot;expenseCats&quot; class=&quot;category&quot;&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;notice&quot;&gt;※ 이 장부는 차량 재고·매입 원장과 별개의 수기 현금흐름 기록입니다. 온라인 로그인 상태에서는 소속 상사의 서버 자료와 동기화됩니다. 거래 저장 상태를 확인해 주세요. 회계·세무 신고용 장부와는 구분해 사용하세요.&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;section id=&quot;print-sheet&quot;&gt;&lt;/section&gt;&lt;script&gt;
-&#x27;use strict&#x27;;
-const KEY=&#x27;zerocar-office-v165-monthly-ledger&#x27;;
-const CAT_KEY=&#x27;zerocar-office-v170-monthly-category-settings&#x27;;
-const DEFAULT_CATS={
- in:[&#x27;차량 판매대금&#x27;,&#x27;차량 관련 수수료&#x27;,&#x27;기타 매출&#x27;,&#x27;이자수입&#x27;,&#x27;환급금&#x27;,&#x27;지원금&#x27;,&#x27;기타 수입&#x27;],
- out:[&#x27;사무실 입차료&#x27;,&#x27;급여인건비&#x27;,&#x27;운영비&#x27;,&#x27;공과금&#x27;,&#x27;세금공과금&#x27;,&#x27;수수료&#x27;,&#x27;기타지출&#x27;]
-};
-function normalizeCategories(values){
- if(!Array.isArray(values))return [];
- const result=[];
- for(const value of values){
-  if(typeof value!==&#x27;string&#x27;)continue;
-  const cleaned=value.trim().replace(/\s+/g,&#x27; &#x27;).slice(0,32);
-  if(cleaned&amp;&amp;!result.includes(cleaned))result.push(cleaned);
-  if(result.length&gt;=50)break;
- }
- return result;
-}
-function loadCategories(){
- try{
-  const raw=localStorage.getItem(CAT_KEY);
-  if(!raw)return {in:[...DEFAULT_CATS.in],out:[...DEFAULT_CATS.out]};
-  const saved=JSON.parse(raw);
-  return {in:normalizeCategories(saved?.in).length?normalizeCategories(saved.in):[...DEFAULT_CATS.in],out:normalizeCategories(saved?.out).length?normalizeCategories(saved.out):[...DEFAULT_CATS.out]};
- }catch{return {in:[...DEFAULT_CATS.in],out:[...DEFAULT_CATS.out]}}
-}
-let CATS=loadCategories();
-function saveCategories(next){
- try{localStorage.setItem(CAT_KEY,JSON.stringify(next));CATS=next;return true}
- catch(e){alert(&#x27;분류 저장에 실패했습니다. 브라우저 저장공간을 확인해 주세요.&#x27;);return false}
-}
-const $=s=&gt;document.getElementById(s);let kind=&#x27;out&#x27;,editId=null;const won=n=&gt;Number(n||0).toLocaleString(&#x27;ko-KR&#x27;)+&#x27;원&#x27;;const dateOk=s=&gt;{if(!/^\d{4}-\d{2}-\d{2}$/.test(s||&#x27;&#x27;))return false;let d=new Date(s+&#x27;T12:00:00&#x27;);return !isNaN(+d)&amp;&amp;[d.getFullYear(),String(d.getMonth()+1).padStart(2,&#x27;0&#x27;),String(d.getDate()).padStart(2,&#x27;0&#x27;)].join(&#x27;-&#x27;)===s};const esc=s=&gt;String(s??&#x27;&#x27;).replace(/[&amp;&lt;&gt;&quot;&#x27;]/g,c=&gt;({&#x27;&amp;&#x27;:&#x27;&amp;amp;&#x27;,&#x27;&lt;&#x27;:&#x27;&amp;lt;&#x27;,&#x27;&gt;&#x27;:&#x27;&amp;gt;&#x27;,&#x27;&quot;&#x27;:&#x27;&amp;quot;&#x27;,&quot;&#x27;&quot;:&#x27;&amp;#39;&#x27;}[c]));const today=()=&gt;{let d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,&#x27;0&#x27;),String(d.getDate()).padStart(2,&#x27;0&#x27;)].join(&#x27;-&#x27;)};
-function clean(r){if(!r||typeof r!==&#x27;object&#x27;||typeof r.id!==&#x27;string&#x27;||!dateOk(r.date)||![&#x27;in&#x27;,&#x27;out&#x27;].includes(r.kind)||!Number.isSafeInteger(r.amount)||r.amount&lt;=0||r.amount&gt;999999999999)return null;return {id:r.id,date:r.date,kind:r.kind,category:String(r.category||&#x27;기타&#x27;).slice(0,100),item:String(r.item||&#x27;&#x27;).slice(0,150),amount:r.amount,account:String(r.account||&#x27;&#x27;).slice(0,100),counterparty:String(r.counterparty||&#x27;&#x27;).slice(0,100),memo:String(r.memo||&#x27;&#x27;).slice(0,400),createdAt:Number(r.createdAt)||0}}
-function read(){try{let a=JSON.parse(localStorage.getItem(KEY)||&#x27;[]&#x27;);return Array.isArray(a)?a.map(clean).filter(Boolean):[]}catch{return []}}function write(a){try{localStorage.setItem(KEY,JSON.stringify(a));return true}catch(e){alert(&#x27;저장에 실패했습니다. 저장공간 또는 브라우저 설정을 확인하세요.&#x27;);return false}}
-function monthRows(){return read().filter(r=&gt;r.date.startsWith($(&#x27;month&#x27;).value)).sort((a,b)=&gt;b.date.localeCompare(a.date)||b.createdAt-a.createdAt)}function categorySelect(){let active=$(&#x27;categoryFilter&#x27;).value;let cats=[...new Set(monthRows().map(r=&gt;r.category))];$(&#x27;categoryFilter&#x27;).innerHTML=&#x27;&lt;option value=&quot;all&quot;&gt;전체 분류&lt;/option&gt;&#x27;+cats.map(c=&gt;`&lt;option value=&quot;${esc(c)}&quot;&gt;${esc(c)}&lt;/option&gt;`).join(&#x27;&#x27;);$(&#x27;categoryFilter&#x27;).value=cats.includes(active)?active:&#x27;all&#x27;}
-function totals(rs){return {inc:rs.filter(r=&gt;r.kind===&#x27;in&#x27;).reduce((a,r)=&gt;a+r.amount,0),out:rs.filter(r=&gt;r.kind===&#x27;out&#x27;).reduce((a,r)=&gt;a+r.amount,0)}}function renderCats(rows,k,id){const group={};rows.filter(r=&gt;r.kind===k).forEach(r=&gt;group[r.category]=(group[r.category]||0)+r.amount);const entries=Object.entries(group).sort((a,b)=&gt;b[1]-a[1]);const total=entries.reduce((s,[,a])=&gt;s+a,0);if(!entries.length||!total){$(id).innerHTML=&#x27;&lt;p class=&quot;muted&quot;&gt;아직 기록이 없습니다.&lt;/p&gt;&#x27;;return}const palette=k===&#x27;in&#x27;?[&#x27;#2667d8&#x27;,&#x27;#4784e6&#x27;,&#x27;#66a0ef&#x27;,&#x27;#8ab8f4&#x27;,&#x27;#2457b4&#x27;,&#x27;#6993cf&#x27;,&#x27;#9cc6f6&#x27;,&#x27;#3c74c8&#x27;]:[&#x27;#da4355&#x27;,&#x27;#ec6470&#x27;,&#x27;#f18b92&#x27;,&#x27;#f7b0b3&#x27;,&#x27;#b93447&#x27;,&#x27;#d96d80&#x27;,&#x27;#ee9ba3&#x27;,&#x27;#c55065&#x27;,&#x27;#f1c0c2&#x27;,&#x27;#ac354b&#x27;];const label=k===&#x27;in&#x27;?&#x27;총 수입&#x27;:&#x27;총 지출&#x27;;const segs=entries.map(([c,a],i)=&gt;{const pct=total?Math.round(a/total*1000)/10:0;const color=palette[i%palette.length];return `&lt;span class=&quot;stack-seg&quot; style=&quot;width:${pct}%;background:${color}&quot; title=&quot;${esc(c)} ${pct}%&quot;&gt;&lt;/span&gt;`}).join(&#x27;&#x27;);const list=entries.map(([c,a],i)=&gt;{const pct=total?Math.round(a/total*1000)/10:0;const color=palette[i%palette.length];return `&lt;div class=&quot;catitem&quot;&gt;&lt;span class=&quot;catdot&quot; style=&quot;background:${color}&quot;&gt;&lt;/span&gt;&lt;span class=&quot;catname&quot;&gt;${esc(c)}&lt;/span&gt;&lt;span class=&quot;catamount&quot;&gt;${won(a)}&lt;/span&gt;&lt;span class=&quot;catpct&quot;&gt;${pct.toFixed(1)}%&lt;/span&gt;&lt;/div&gt;`}).join(&#x27;&#x27;);$(id).innerHTML=`&lt;div class=&quot;status-wrap&quot;&gt;&lt;div class=&quot;status-top&quot;&gt;&lt;span class=&quot;status-title&quot;&gt;${label}&lt;/span&gt;&lt;strong class=&quot;status-total&quot;&gt;${won(total)}&lt;/strong&gt;&lt;/div&gt;&lt;div class=&quot;stack-track&quot; aria-label=&quot;${label} 비율 막대&quot;&gt;${segs}&lt;/div&gt;&lt;div class=&quot;catlist&quot;&gt;${list}&lt;/div&gt;&lt;/div&gt;`}
-function render(){const all=monthRows(),t=totals(all);$(&#x27;inTotal&#x27;).textContent=won(t.inc);$(&#x27;outTotal&#x27;).textContent=won(t.out);$(&#x27;netTotal&#x27;).textContent=won(t.inc-t.out);$(&#x27;netTotal&#x27;).className=t.inc-t.out&gt;=0?&#x27;pos&#x27;:&#x27;neg&#x27;;$(&#x27;countTotal&#x27;).textContent=all.length+&#x27;건&#x27;;categorySelect();let q=$(&#x27;search&#x27;).value.trim().toLowerCase();let rows=all.filter(r=&gt;($(&#x27;kind&#x27;).value===&#x27;all&#x27;||r.kind===$(&#x27;kind&#x27;).value)&amp;&amp;($(&#x27;categoryFilter&#x27;).value===&#x27;all&#x27;||r.category===$(&#x27;categoryFilter&#x27;).value)&amp;&amp;(!q||[r.item,r.category,r.memo,r.counterparty,r.account].join(&#x27; &#x27;).toLowerCase().includes(q)));$(&#x27;rows&#x27;).innerHTML=rows.map(r=&gt;`&lt;tr&gt;&lt;td&gt;${esc(r.date)}&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;pill ${r.kind}&quot;&gt;${r.kind===&#x27;in&#x27;?&#x27;수입&#x27;:&#x27;지출&#x27;}&lt;/span&gt;&lt;/td&gt;&lt;td&gt;${esc(r.category)}&lt;/td&gt;&lt;td&gt;&lt;b&gt;${esc(r.item)}&lt;/b&gt;${r.memo?&#x27;&lt;br&gt;&lt;small&gt;&#x27;+esc(r.memo)+&#x27;&lt;/small&gt;&#x27;:&#x27;&#x27;}&lt;/td&gt;&lt;td&gt;${esc(r.counterparty)}&lt;/td&gt;&lt;td&gt;${esc(r.account)}&lt;/td&gt;&lt;td class=&quot;right ${r.kind===&#x27;in&#x27;?&#x27;pos&#x27;:&#x27;neg&#x27;}&quot;&gt;&lt;b&gt;${r.kind===&#x27;in&#x27;?&#x27;+&#x27;:&#x27;−&#x27;}${won(r.amount)}&lt;/b&gt;&lt;/td&gt;&lt;td&gt;&lt;div class=&quot;rowacts&quot;&gt;&lt;button data-edit=&quot;${esc(r.id)}&quot;&gt;수정&lt;/button&gt;&lt;button data-delete=&quot;${esc(r.id)}&quot;&gt;삭제&lt;/button&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;`).join(&#x27;&#x27;);$(&#x27;empty&#x27;).hidden=rows.length&gt;0;renderCats(all,&#x27;in&#x27;,&#x27;incomeCats&#x27;);renderCats(all,&#x27;out&#x27;,&#x27;expenseCats&#x27;)}
-function setupKind(k,category){
- kind=k;
- $(&#x27;typeIn&#x27;).classList.toggle(&#x27;selected&#x27;,k===&#x27;in&#x27;);$(&#x27;typeOut&#x27;).classList.toggle(&#x27;selected&#x27;,k===&#x27;out&#x27;);
- const available=CATS[k];
- $(&#x27;category&#x27;).innerHTML=available.map(c=&gt;`&lt;option value=&quot;${esc(c)}&quot;&gt;${esc(c)}&lt;/option&gt;`).join(&#x27;&#x27;);
- if(category&amp;&amp;!available.includes(category))$(&#x27;category&#x27;).insertAdjacentHTML(&#x27;beforeend&#x27;,`&lt;option value=&quot;${esc(category)}&quot;&gt;${esc(category)} (이전 분류)&lt;/option&gt;`);
- if(category)$(&#x27;category&#x27;).value=category;
- renderCategoryManager();
-}
-function renderCategoryManager(){
- const manager=$(&#x27;category-manager&#x27;);
- if(manager.hidden)return;
- $(&#x27;category-manager-title&#x27;).textContent=kind===&#x27;in&#x27;?&#x27;수입 분류 관리&#x27;:&#x27;지출 분류 관리&#x27;;
- $(&#x27;category-chip-list&#x27;).innerHTML=CATS[kind].map(c=&gt;`&lt;span class=&quot;cat-chip&quot;&gt;&lt;span&gt;${esc(c)}&lt;/span&gt;&lt;button type=&quot;button&quot; data-cat-delete=&quot;${esc(c)}&quot; aria-label=&quot;${esc(c)} 삭제&quot; title=&quot;이 분류를 목록에서 삭제&quot;&gt;×&lt;/button&gt;&lt;/span&gt;`).join(&#x27;&#x27;);
-}
-function toggleCategoryManager(force){
- const el=$(&#x27;category-manager&#x27;),show=typeof force===&#x27;boolean&#x27;?force:el.hidden;
- el.hidden=!show;
- $(&#x27;cat-manage-toggle&#x27;).setAttribute(&#x27;aria-expanded&#x27;,String(show));
- $(&#x27;cat-manage-toggle&#x27;).classList.toggle(&#x27;is-open&#x27;,show);
- if(show){renderCategoryManager();$(&#x27;category-new-name&#x27;).focus()}
-}
-function addCategory(){
- const input=$(&#x27;category-new-name&#x27;);
- const name=input.value.trim().replace(/\s+/g,&#x27; &#x27;);
- if(!name){input.focus();return}
- if(name.length&gt;32){alert(&#x27;분류명은 32자 이내로 입력해 주세요.&#x27;);return}
- if(CATS[kind].includes(name)){alert(&#x27;이미 등록된 분류입니다.&#x27;);input.focus();return}
- if(CATS[kind].length&gt;=50){alert(&#x27;분류는 최대 50개까지 등록할 수 있습니다.&#x27;);return}
- const next={...CATS,[kind]:[...CATS[kind],name]};
- if(!saveCategories(next))return;
- setupKind(kind,name);input.value=&#x27;&#x27;;input.focus();
-}
-function removeCategory(name){
- if(!CATS[kind].includes(name))return;
- if(CATS[kind].length&lt;=1){alert(&#x27;분류는 최소 1개가 필요합니다.&#x27;);return}
- const usage=read().filter(r=&gt;r.kind===kind&amp;&amp;r.category===name).length;
- const warning=usage?`이 분류를 사용하는 기존 거래 ${usage}건은 그대로 유지됩니다.\n`:&#x27;&#x27;;
- if(!confirm(`&#x27;${name}&#x27; 분류를 선택 목록에서 삭제할까요?\n${warning}거래 기록이나 정산 금액은 삭제되지 않습니다.`))return;
- const keep=$(&#x27;category&#x27;).value;
- const next={...CATS,[kind]:CATS[kind].filter(c=&gt;c!==name)};
- if(!saveCategories(next))return;
- const editing=read().find(r=&gt;r.id===editId);
- const selected=keep===name?(editing?.category===name?name:next[kind][0]):keep;
- setupKind(kind,selected);
-}
-$(&#x27;cat-manage-toggle&#x27;).onclick=()=&gt;toggleCategoryManager();
-$(&#x27;category-add&#x27;).onclick=addCategory;
-$(&#x27;category-new-name&#x27;).addEventListener(&#x27;keydown&#x27;,e=&gt;{if(e.key===&#x27;Enter&#x27;){e.preventDefault();addCategory()}});
-$(&#x27;category-chip-list&#x27;).addEventListener(&#x27;click&#x27;,e=&gt;{
- const button=e.target.closest(&#x27;button[data-cat-delete]&#x27;);
- if(button)removeCategory(button.dataset.catDelete);
-});
-
-function openEditor(id,focus=true){toggleCategoryManager(false);const r=read().find(x=&gt;x.id===id);editId=r?.id||null;$(&#x27;editTitle&#x27;).textContent=r?&#x27;거래 수정&#x27;:&#x27;거래 등록&#x27;;$(&#x27;cancel&#x27;).textContent=r?&#x27;수정 취소&#x27;:&#x27;입력 초기화&#x27;;$(&#x27;form&#x27;).reset();setupKind(r?.kind||&#x27;out&#x27;,r?.category);$(&#x27;date&#x27;).value=r?.date||today();$(&#x27;item&#x27;).value=r?.item||&#x27;&#x27;;$(&#x27;amount&#x27;).value=r?.amount?Number(r.amount).toLocaleString(&#x27;ko-KR&#x27;):&#x27;&#x27;;$(&#x27;account&#x27;).value=r?.account||&#x27;계좌이체&#x27;;$(&#x27;counterparty&#x27;).value=r?.counterparty||&#x27;&#x27;;$(&#x27;memo&#x27;).value=r?.memo||&#x27;&#x27;;$(&#x27;editor&#x27;).hidden=false;if(focus){$(&#x27;editor&#x27;).scrollIntoView({block:&#x27;nearest&#x27;,behavior:&#x27;smooth&#x27;});$(&#x27;item&#x27;).focus()}}
-
-const moneyInput=$(&#x27;amount&#x27;);
-moneyInput.addEventListener(&#x27;input&#x27;,function(){
-  const raw=this.value.replace(/\D/g,&#x27;&#x27;).slice(0,12);
-  const before=this.value.slice(0,this.selectionStart??this.value.length).replace(/\D/g,&#x27;&#x27;).length;
-  this.value=raw?Number(raw).toLocaleString(&#x27;ko-KR&#x27;):&#x27;&#x27;;
-  let i=0, p=0;
-  while(p&lt;this.value.length&amp;&amp;i&lt;before){if(/\d/.test(this.value[p]))i++;p++;}
-  this.setSelectionRange(p,p);
-});
-$(&#x27;advanced-toggle&#x27;).onclick=()=&gt;{
-  const show=$(&#x27;advanced-fields&#x27;).hidden;
-  $(&#x27;advanced-fields&#x27;).hidden=!show;
-  $(&#x27;advanced-toggle&#x27;).setAttribute(&#x27;aria-expanded&#x27;,String(show));
-  $(&#x27;advanced-toggle&#x27;).textContent=show?&#x27;− 추가정보 접기&#x27;:&#x27;＋ 거래처·지급수단·메모 (선택)&#x27;;
-};
-$(&#x27;category&#x27;).addEventListener(&#x27;change&#x27;,()=&gt;{
-  if(!$(&#x27;item&#x27;).value.trim())$(&#x27;item&#x27;).placeholder=&#x27;예: &#x27;+$(&#x27;category&#x27;).value;
-});
-$(&#x27;cancel&#x27;).onclick=()=&gt;openEditor();$(&#x27;typeIn&#x27;).onclick=()=&gt;setupKind(&#x27;in&#x27;);$(&#x27;typeOut&#x27;).onclick=()=&gt;setupKind(&#x27;out&#x27;);$(&#x27;form&#x27;).onsubmit=e=&gt;{e.preventDefault();let amount=Number($(&#x27;amount&#x27;).value.replace(/,/g,&#x27;&#x27;));if(!dateOk($(&#x27;date&#x27;).value)||!Number.isSafeInteger(amount)||amount&lt;1||amount&gt;999999999999){alert(&#x27;거래일과 금액을 확인해 주세요.&#x27;);return}let a=read(),old=a.find(x=&gt;x.id===editId);let r={id:old?.id||(crypto.randomUUID?.()||(&#x27;ms-&#x27;+Date.now()+&#x27;-&#x27;+Math.random().toString(36).slice(2))),createdAt:old?.createdAt||Date.now(),date:$(&#x27;date&#x27;).value,kind,category:$(&#x27;category&#x27;).value,item:$(&#x27;item&#x27;).value.trim(),amount,account:$(&#x27;account&#x27;).value,counterparty:$(&#x27;counterparty&#x27;).value.trim(),memo:$(&#x27;memo&#x27;).value.trim()};if(!r.category){alert(&#x27;분류를 선택해 주세요.&#x27;);return}if(!r.item){alert(&#x27;거래 내용을 입력해 주세요.&#x27;);return}a=old?a.map(x=&gt;x.id===old.id?r:x):[...a,r];if(write(a)){$(&#x27;month&#x27;).value=r.date.slice(0,7);render();editId=null;$(&#x27;item&#x27;).value=&#x27;&#x27;;$(&#x27;amount&#x27;).value=&#x27;&#x27;;$(&#x27;counterparty&#x27;).value=&#x27;&#x27;;$(&#x27;memo&#x27;).value=&#x27;&#x27;;$(&#x27;item&#x27;).focus();$(&#x27;editTitle&#x27;).textContent=&#x27;거래 등록&#x27;;$(&#x27;cancel&#x27;).textContent=&#x27;입력 초기화&#x27;;}};
-$(&#x27;rows&#x27;).onclick=e=&gt;{let b=e.target.closest(&#x27;button&#x27;);if(!b)return;if(b.dataset.edit)openEditor(b.dataset.edit);if(b.dataset.delete&amp;&amp;confirm(&#x27;이 거래를 삭제하시겠습니까? 삭제한 거래는 복구할 수 없습니다.&#x27;)){if(write(read().filter(r=&gt;r.id!==b.dataset.delete)))render()}};
-$(&#x27;month&#x27;).onchange=()=&gt;{categorySelect();render()};$(&#x27;search&#x27;).oninput=render;$(&#x27;kind&#x27;).onchange=render;$(&#x27;categoryFilter&#x27;).onchange=render;$(&#x27;reset&#x27;).onclick=()=&gt;{$(&#x27;search&#x27;).value=&#x27;&#x27;;$(&#x27;kind&#x27;).value=&#x27;all&#x27;;$(&#x27;categoryFilter&#x27;).value=&#x27;all&#x27;;render()};
-$(&#x27;print&#x27;).onclick=()=&gt;{let a=monthRows(),t=totals(a),q=x=&gt;esc(x);$(&#x27;print-sheet&#x27;).innerHTML=`&lt;h1&gt;월 정 산 서&lt;/h1&gt;&lt;div class=&quot;meta&quot;&gt;&lt;span&gt;정산 기간 : ${q($(&#x27;month&#x27;).value)} &lt;/span&gt;&lt;span&gt;작성일 : ${today()}&lt;/span&gt;&lt;/div&gt;&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;거래일&lt;/th&gt;&lt;th&gt;구분&lt;/th&gt;&lt;th&gt;분류&lt;/th&gt;&lt;th&gt;거래 내용&lt;/th&gt;&lt;th&gt;거래처&lt;/th&gt;&lt;th&gt;수단&lt;/th&gt;&lt;th&gt;금액(원)&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;${a.map(r=&gt;`&lt;tr&gt;&lt;td&gt;${q(r.date)}&lt;/td&gt;&lt;td&gt;${r.kind===&#x27;in&#x27;?&#x27;수입&#x27;:&#x27;지출&#x27;}&lt;/td&gt;&lt;td&gt;${q(r.category)}&lt;/td&gt;&lt;td&gt;${q(r.item)}&lt;/td&gt;&lt;td&gt;${q(r.counterparty)}&lt;/td&gt;&lt;td&gt;${q(r.account)}&lt;/td&gt;&lt;td style=&quot;text-align:right&quot;&gt;${r.kind===&#x27;in&#x27;?&#x27;+&#x27;:&#x27;−&#x27;}${Number(r.amount).toLocaleString(&#x27;ko-KR&#x27;)}&lt;/td&gt;&lt;/tr&gt;`).join(&#x27;&#x27;)}&lt;/tbody&gt;&lt;/table&gt;&lt;div class=&quot;tot&quot;&gt;총수입 : ${won(t.inc)}　 /　 총지출 : ${won(t.out)}&lt;br&gt;&lt;b&gt;수지 차액 : ${won(t.inc-t.out)}&lt;/b&gt;&lt;/div&gt;&lt;div class=&quot;sign&quot;&gt;작성자 : __________________ (인)　확인자 : __________________ (인)&lt;/div&gt;`;window.print()};
-$(&#x27;month&#x27;).value=today().slice(0,7);render();openEditor(undefined,false);
-&lt;/script&gt;&lt;script&gt;
-(function(){
-const tokens=[&#x27;--snote-font-family&#x27;,&#x27;--snote-text-page&#x27;,&#x27;--snote-text-section&#x27;,&#x27;--snote-text-subheading&#x27;,&#x27;--snote-text-body&#x27;,&#x27;--snote-text-label&#x27;,&#x27;--snote-text-meta&#x27;,&#x27;--snote-text-control&#x27;,&#x27;--snote-text-button&#x27;,&#x27;--snote-text-auth&#x27;,&#x27;--snote-text-kpi&#x27;,&#x27;--snote-text-amount&#x27;,&#x27;--snote-text-unit&#x27;,&#x27;--snote-line-body&#x27;,&#x27;--snote-line-heading&#x27;];
-function update(){try{parent.postMessage({type:&#x27;ZEROCAR_MONTHLY_HEIGHT&#x27;,height:Math.ceil(document.documentElement.scrollHeight)},parent.location.origin)}catch(e){}}
-window.addEventListener(&#x27;message&#x27;,event=&gt;{
- if(event.source!==parent||event.origin!==parent.location.origin||event.data?.type!==&#x27;SNOTE_TYPOGRAPHY&#x27;||!event.data.values)return;
- for(const name of tokens){const value=event.data.values[name];if(typeof value===&#x27;string&#x27;&amp;&amp;value)document.documentElement.style.setProperty(name,value);}
- update();
-});
-if(window.ResizeObserver)new ResizeObserver(update).observe(document.body);
-addEventListener(&#x27;load&#x27;,update);update();
-if(parent!==window)parent.postMessage({type:&#x27;SNOTE_TYPOGRAPHY_READY&#x27;},parent.location.origin);
-})();
-&lt;/script&gt;&lt;script&gt;
-(function(){
- const datasets={
-  &#x27;zerocar-office-v165-monthly-ledger&#x27;:&#x27;monthly&#x27;,
-  &#x27;zerocar-office-v170-monthly-category-settings&#x27;:&#x27;categories&#x27;
- };
- let latestRequest=null,lastDataset=null,timeout=null;
- function feedback(state,message){
-  const status=document.getElementById(&#x27;save-status&#x27;);
-  status.dataset.state=state;status.textContent=message;
-  document.getElementById(&#x27;retry-save&#x27;).hidden=state!==&#x27;error&#x27;;
- }
- function requestSave(dataset){
-  lastDataset=dataset;
-  const requestId=crypto.randomUUID?.()||(&#x27;monthly-&#x27;+Date.now()+&#x27;-&#x27;+Math.random().toString(36).slice(2));
-  latestRequest=requestId;clearTimeout(timeout);
-  if(parent===window){feedback(&#x27;local&#x27;,&#x27;이 브라우저에 저장했습니다. 서버에는 연결되어 있지 않습니다.&#x27;);return;}
-  feedback(&#x27;busy&#x27;,&#x27;서버에 저장 중입니다.&#x27;);
-  try{
-   // srcdoc location.origin is &quot;null&quot; even though it inherits its parent&#x27;s origin.
-   parent.postMessage({type:&#x27;ZC84_DATASET&#x27;,dataset,requestId},parent.location.origin);
-   timeout=setTimeout(()=&gt;{
-    if(latestRequest===requestId)feedback(&#x27;error&#x27;,&#x27;브라우저에는 저장했지만 서버의 응답을 확인하지 못했습니다. 서버 저장을 다시 시도해 주세요.&#x27;);
-   },20000);
-  }catch(error){
-   feedback(&#x27;error&#x27;,&#x27;브라우저에는 저장했지만 서버에 저장 요청을 전달하지 못했습니다. 다시 시도해 주세요.&#x27;);
-  }
- }
- window.addEventListener(&#x27;message&#x27;,event=&gt;{
-  if(event.source!==parent||event.origin!==parent.location.origin||event.data?.type!==&#x27;SNOTE_MONTHLY_SAVE_RESULT&#x27;||event.data.requestId!==latestRequest)return;
-  clearTimeout(timeout);
-  if(event.data.state===&#x27;saved&#x27;)feedback(&#x27;saved&#x27;,&#x27;서버에 저장했습니다.&#x27;);
-  else if(event.data.state===&#x27;local&#x27;)feedback(&#x27;local&#x27;,&#x27;이 브라우저에 저장했습니다. 서버에는 연결되어 있지 않습니다.&#x27;);
-  else feedback(&#x27;error&#x27;,&#x27;브라우저에는 저장했지만 서버에 반영하지 못했습니다. &#x27;+String(event.data.message||&#x27;연결을 확인하고 다시 시도해 주세요.&#x27;).slice(0,200));
- });
- const before=Storage.prototype.setItem;
- Storage.prototype.setItem=function(key,value){
-  before.call(this,key,value);
-  if(this===localStorage&amp;&amp;datasets[key])requestSave(datasets[key]);
- };
- document.getElementById(&#x27;retry-save&#x27;).onclick=()=&gt;{if(lastDataset)requestSave(lastDataset);};
-})();
-&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;
-"></iframe></section>
+      <section id="monthly-screen" style="display:none;width:100%;min-width:0" aria-label="월정산 결산표"><iframe id="monthly-ledger-frame" title="S-NOTE 월정산 결산표" src="monthly.html?v=2.16" scrolling="no" style="width:100%;height:1280px;border:0;display:block;background:transparent"></iframe></section>
 <div class="list-screen" id="list-screen"><section class="panel"><div class="panel-head"><div><h2 id="list-title">전체 차량 목록</h2><p id="list-desc">차량별 상태와 금액을 확인할 수 있습니다.</p></div><div class="zc-list-actions"><button id="zc80-buy-scan" type="button" class="zc80-buy-scan" onclick="openAutoRegistration()" hidden><span class="zc80-buy-scan-icon" aria-hidden="true">▤</span><span>등록증으로 자동 등록</span></button><button id="snote92-buy-manual" type="button" onclick="openAdd()" hidden><span aria-hidden="true">＋</span><span>신규 등록</span></button><input id="zc-import-model-photos" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden onchange="importModelPhotoBundle(event)" /></div></div><div class="searchrow"><label class="search"><span class="search-icon"></span><input aria-label="차량 검색" type="search" id="list-query" placeholder="차량명 또는 차량번호 검색" oninput="renderCars()" /></label><select aria-label="차량 상태" class="filter" id="list-filter" onchange="renderCars()"><option value="all">전체 상태</option><option value="판매중">판매중</option><option value="판매완료">판매완료</option></select></div><div class="tablewrap" id="list-table"></div><div class="mobile-list" id="list-mobile"></div></section></div>
        <div class="alt-screen" id="alt-screen">
          <section id="dealer-finance-overview" aria-label="수익 정산 현황" style="display:none">
@@ -3946,7 +3626,7 @@ function formatMileageInput(input){
 function todayLocal(){let d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')}
 function salePrice(c){return c.status==='판매완료'&&Number.isFinite(Number(c.soldPrice))&&c.soldPrice!==undefined&&c.soldPrice!==null&&c.soldPrice!==''?Number(c.soldPrice):Number(c.sell||0)}
 function formatKm(value){return num(Number(String(value??0).replaceAll(',',''))||0)}
-const pages={dashboard:{title:'대시보드',head:'오늘의 업무 현황',sub:'최근 등록 차량과 빠른 업무를 확인하세요.',eyebrow:'OVERVIEW',icon:'home'},cars:{title:'차량 관리',head:'차량 재고 관리',sub:'판매중 재고의 상태와 차량 서류를 관리합니다.',eyebrow:'INVENTORY',icon:'cars'},buy:{title:'매입 관리',head:'차량 매입 관리',sub:'판매 완료 전 차량만 확인할 수 있습니다.',eyebrow:'PURCHASE',icon:'purchase'},sell:{title:'판매 완료',head:'판매 완료 차량',sub:'판매가 완료된 차량을 별도로 관리합니다.',eyebrow:'SOLD VEHICLES',icon:'sold'},prestock:{title:'선재고 관리',head:'선재고 관리',sub:'선재고 지급·상환 내역과 잔액을 관리합니다.',eyebrow:'PRESTOCK LEDGER',icon:'wallet'},inventoryFinance:{title:'재고금융 관리',head:'재고금융 관리',sub:'보유 차량의 재고대출금과 금융사를 통합 조회합니다.',eyebrow:'INVENTORY FINANCE',icon:'loan'},monthly:{title:'월정산',head:'월정산 프로그램',sub:'월별 수입과 지출을 기록하고 내역을 분석·출력합니다.',eyebrow:'MONTHLY ACCOUNTING',icon:'calendar'},finance:{title:'수익 · 정산',head:'수익 및 정산',sub:'재고 및 판매 실적, 이번달 마진 리포트와 차량별 손익을 확인합니다.',eyebrow:'FINANCE',icon:'profit'},users:{title:'고객 관리',head:'고객 관리',sub:'매입·판매 고객 이력을 관리합니다.',eyebrow:'CUSTOMERS',icon:'customers'},settings:{title:'직원 · 설정',head:'직원 및 권한 설정',sub:'직원 계정, 차량 모델 데이터, 업무 접근 권한을 관리합니다.',eyebrow:'SETTINGS',icon:'settings'}};
+const pages={dashboard:{title:'대시보드',head:'오늘의 업무 현황',sub:'최근 등록 차량과 빠른 업무를 확인하세요.',eyebrow:'OVERVIEW',icon:'home'},cars:{title:'차량 관리',head:'차량 재고 관리',sub:'판매중 재고의 상태와 차량 서류를 관리합니다.',eyebrow:'INVENTORY',icon:'cars'},buy:{title:'매입 관리',head:'차량 매입 관리',sub:'판매 완료 전 차량만 확인할 수 있습니다.',eyebrow:'PURCHASE',icon:'purchase'},sell:{title:'판매 완료',head:'판매 완료 차량',sub:'판매가 완료된 차량을 별도로 관리합니다.',eyebrow:'SOLD VEHICLES',icon:'sold'},prestock:{title:'선재고 관리',head:'선재고 관리',sub:'선재고 지급·상환 내역과 잔액을 관리합니다.',eyebrow:'PRESTOCK LEDGER',icon:'wallet'},inventoryFinance:{title:'재고금융 관리',head:'재고금융 관리',sub:'보유 차량의 재고대출금과 금융사를 통합 조회합니다.',eyebrow:'INVENTORY FINANCE',icon:'loan'},monthly:{title:'월정산',head:'월별 결산표',sub:'딜러별 수수료와 운영비, 통장 잔액·재고금융·미수금을 월별로 정리합니다.',eyebrow:'MONTHLY ACCOUNTING',icon:'calendar'},finance:{title:'수익 · 정산',head:'수익 및 정산',sub:'재고 및 판매 실적, 이번달 마진 리포트와 차량별 손익을 확인합니다.',eyebrow:'FINANCE',icon:'profit'},users:{title:'고객 관리',head:'고객 관리',sub:'매입·판매 고객 이력을 관리합니다.',eyebrow:'CUSTOMERS',icon:'customers'},settings:{title:'직원 · 설정',head:'직원 및 권한 설정',sub:'직원 계정, 차량 모델 데이터, 업무 접근 권한을 관리합니다.',eyebrow:'SETTINGS',icon:'settings'}};
 pages.acctFinance={title:'매입금액 현황',head:'매입금액 현황',sub:'상사 전체 차량의 매입·대출 현황을 조회합니다.',eyebrow:'ACCOUNTING',icon:'loan'};
 let route='dashboard';
 
@@ -6095,7 +5775,7 @@ document.addEventListener('keydown',event=>{
  else if(!$('zc-auto-reg-overlay').hidden){event.preventDefault();closeAutoRegistration()}
 });
 
-function navigate(next,options={}){if(!snotePageAllowed(next)){if(currentUser)toast('해당 메뉴에 접근할 권한이 없습니다.');return false;}if(next!==route&&!snotePrepareRouteChange())return false;const invitePane=$('zc86-invite-area'),inviteHome=$('zc86-admin-tools');if(invitePane&&inviteHome&&invitePane.parentElement!==inviteHome){inviteHome.appendChild(invitePane);invitePane.hidden=true;}if(next==='finance'&&currentUser&&!isAccountant()&&!isSnoteAdmin()&&!zcDashboardGateGranted){openDashboardGate();return;}if(document.body.classList.contains('mobile-drawer-visible'))closeMobileDrawer();if(!$('acc60-chart-overlay').hidden)closeAcc60ChartModal();document.body.classList.toggle('accountant-mode',isAccountant());if((['inventoryFinance','prestock','monthly','acctFinance'].includes(next)&&!isFinanceManager())||(next==='settings'&&!isSnoteAdmin())||(next==='users'&&isAccountant())){toast('해당 메뉴에 접근할 권한이 없습니다.');return}zcDashboardUnlocked=!isFinanceManager()&&next==='finance'&&zcDashboardGateGranted;route=next;let p=pages[next];$('breadcrumb').textContent=isAccountant()&&next==='finance'?'매입금액 현황':p.title;$('eyebrow').textContent=p.eyebrow;$('screen-title').textContent=isSnoteAdmin()&&next==='settings'?'관리자 · 직원 및 금융 설정':isAccountant()?({dashboard:'경리 통합 대시보드',buy:'전체 딜러 매입 관리',sell:'전체 딜러 판매 완료',finance:'매입금액 현황',inventoryFinance:'재고금융 관리',prestock:'선재고 관리',settings:'경리 설정',monthly:'월정산 프로그램'}[next]||p.head):p.head;$('screen-sub').textContent=isSnoteAdmin()&&next==='settings'?'직원 이름·상사명과 재고금융 설정을 관리합니다.':isAccountant()?(next==='monthly'?'수입·지출 거래를 기록하고 월별 정산서 및 백업 파일을 관리합니다.':next==='prestock'?'선재고 지급·상환 거래 내역과 현재 잔액을 확인합니다.':next==='inventoryFinance'?'모든 딜러의 재고대출금과 금융사별 현황을 한곳에서 관리합니다.':next==='dashboard'?'매입·판매 실적과 금융사별 한도 및 사용금액을 한눈에 확인합니다.':'모든 딜러의 차량과 매입·판매 정보를 한곳에서 관리합니다.'):p.sub;$('monthly-screen').style.display=next==='monthly'?'block':'none';$('dashboard-screen').style.display=next==='dashboard'?'grid':'none';$('list-screen').style.display=['cars','buy','sell'].includes(next)?'block':'none';$('alt-screen').style.display=['finance','inventoryFinance','prestock','users','settings','acctFinance'].includes(next)?'block':'none';$('dealer-finance-overview').style.display=next==='finance'&&!isAccountant()?'block':'none';$('stats').style.display=next==='finance'&&!isAccountant()?'grid':'none';$('dashboard-analytics').style.display=next==='finance'&&!isAccountant()?'block':'none';document.querySelector('.app').classList.toggle('accountant-dashboard',isAccountant()&&next==='dashboard');if(isAccountant()&&next==='dashboard')renderAccountantDashboard();$('main-add').style.display='none';$('zc80-buy-scan').hidden=next!=='buy'||isAccountant();$('snote92-buy-manual').hidden=next!=='buy'||isAccountant();renderAccountantBar();if(['cars','buy','sell'].includes(next)){$('list-title').textContent=next==='sell'?'판매 완료 차량 목록':next==='buy'?'매입 관리 차량 목록':'재고 차량 목록';$('list-desc').textContent=next==='sell'?'판매가 완료된 차량만 표시합니다. 상태를 변경하면 다시 재고로 돌아갑니다.':next==='buy'?'판매 완료 전 차량만 표시합니다.':'판매중 차량만 표시합니다. 상태를 판매완료로 변경하면 판매 완료 페이지로 이동합니다.';$('list-filter').value=next==='sell'?'판매완료':'all';$('list-filter').style.display=['sell','buy'].includes(next)?'none':'';$('list-query').value=''}if(['finance','inventoryFinance','prestock','users','settings','acctFinance'].includes(next))buildAlt();buildMenus();renderCars();const accBar=$('accountant-bar');if(accBar)accBar.hidden=!isFinanceManager()||['inventoryFinance','prestock'].includes(next);if(options.history!=='none')snoteWriteWorkspaceHistory(next,options.history||'push');window.scrollTo({top:0,behavior:'instant'});return true}
+function navigate(next,options={}){if(!snotePageAllowed(next)){if(currentUser)toast('해당 메뉴에 접근할 권한이 없습니다.');return false;}if(next!==route&&!snotePrepareRouteChange())return false;const invitePane=$('zc86-invite-area'),inviteHome=$('zc86-admin-tools');if(invitePane&&inviteHome&&invitePane.parentElement!==inviteHome){inviteHome.appendChild(invitePane);invitePane.hidden=true;}if(next==='finance'&&currentUser&&!isAccountant()&&!isSnoteAdmin()&&!zcDashboardGateGranted){openDashboardGate();return;}if(document.body.classList.contains('mobile-drawer-visible'))closeMobileDrawer();if(!$('acc60-chart-overlay').hidden)closeAcc60ChartModal();document.body.classList.toggle('accountant-mode',isAccountant());if((['inventoryFinance','prestock','monthly','acctFinance'].includes(next)&&!isFinanceManager())||(next==='settings'&&!isSnoteAdmin())||(next==='users'&&isAccountant())){toast('해당 메뉴에 접근할 권한이 없습니다.');return}zcDashboardUnlocked=!isFinanceManager()&&next==='finance'&&zcDashboardGateGranted;route=next;let p=pages[next];$('breadcrumb').textContent=isAccountant()&&next==='finance'?'매입금액 현황':p.title;$('eyebrow').textContent=p.eyebrow;$('screen-title').textContent=isSnoteAdmin()&&next==='settings'?'관리자 · 직원 및 금융 설정':isAccountant()?({dashboard:'경리 통합 대시보드',buy:'전체 딜러 매입 관리',sell:'전체 딜러 판매 완료',finance:'매입금액 현황',inventoryFinance:'재고금융 관리',prestock:'선재고 관리',settings:'경리 설정',monthly:'월별 결산표'}[next]||p.head):p.head;$('screen-sub').textContent=isSnoteAdmin()&&next==='settings'?'직원 이름·상사명과 재고금융 설정을 관리합니다.':isAccountant()?(next==='monthly'?'딜러별 수수료·운영비·이월·잔액을 실시간으로 정리하고 결산표를 출력합니다.':next==='prestock'?'선재고 지급·상환 거래 내역과 현재 잔액을 확인합니다.':next==='inventoryFinance'?'모든 딜러의 재고대출금과 금융사별 현황을 한곳에서 관리합니다.':next==='dashboard'?'매입·판매 실적과 금융사별 한도 및 사용금액을 한눈에 확인합니다.':'모든 딜러의 차량과 매입·판매 정보를 한곳에서 관리합니다.'):p.sub;$('monthly-screen').style.display=next==='monthly'?'block':'none';$('dashboard-screen').style.display=next==='dashboard'?'grid':'none';$('list-screen').style.display=['cars','buy','sell'].includes(next)?'block':'none';$('alt-screen').style.display=['finance','inventoryFinance','prestock','users','settings','acctFinance'].includes(next)?'block':'none';$('dealer-finance-overview').style.display=next==='finance'&&!isAccountant()?'block':'none';$('stats').style.display=next==='finance'&&!isAccountant()?'grid':'none';$('dashboard-analytics').style.display=next==='finance'&&!isAccountant()?'block':'none';document.querySelector('.app').classList.toggle('accountant-dashboard',isAccountant()&&next==='dashboard');if(isAccountant()&&next==='dashboard')renderAccountantDashboard();$('main-add').style.display='none';$('zc80-buy-scan').hidden=next!=='buy'||isAccountant();$('snote92-buy-manual').hidden=next!=='buy'||isAccountant();renderAccountantBar();if(['cars','buy','sell'].includes(next)){$('list-title').textContent=next==='sell'?'판매 완료 차량 목록':next==='buy'?'매입 관리 차량 목록':'재고 차량 목록';$('list-desc').textContent=next==='sell'?'판매가 완료된 차량만 표시합니다. 상태를 변경하면 다시 재고로 돌아갑니다.':next==='buy'?'판매 완료 전 차량만 표시합니다.':'판매중 차량만 표시합니다. 상태를 판매완료로 변경하면 판매 완료 페이지로 이동합니다.';$('list-filter').value=next==='sell'?'판매완료':'all';$('list-filter').style.display=['sell','buy'].includes(next)?'none':'';$('list-query').value=''}if(['finance','inventoryFinance','prestock','users','settings','acctFinance'].includes(next))buildAlt();buildMenus();renderCars();const accBar=$('accountant-bar');if(accBar)accBar.hidden=!isFinanceManager()||['inventoryFinance','prestock'].includes(next);if(options.history!=='none')snoteWriteWorkspaceHistory(next,options.history||'push');window.snoteMonthlyWorkbookRefresh?.();window.scrollTo({top:0,behavior:'instant'});return true}
 function openAdd(){delete $('overlay').dataset.snoteHistoryDirty;const previousHint=$('snote201-model-match-hint');previousHint?.remove();if(isAccountant()){toast('경리 화면에서는 각 딜러가 등록한 차량을 관리합니다.');return}$('overlay').classList.add('open');newYearTouched=false;delete $('new-model').dataset.snote98OcrFallback;SNOTE98_FIELDS.forEach(f=>{$('snote98-'+f+'-input').value='';});fillVehicleSelect('make');setupColorSelect('new');const hint=document.createElement('div');hint.id='snote201-model-match-hint';$('new-visual-preview')?.before(hint);$('new-year').value=String(new Date().getFullYear());$('new-purchase-date').value=todayLocal();$('new-km').value='';renderRepairRows('new',[]);$('new-make').focus();updateNewCarPreview();updateAddSummary()}
 function closeAdd(){$('overlay').classList.remove('open');zcAutoRegPendingFile=null}
 async function saveCar(e){
@@ -6941,8 +6621,8 @@ async function registerAccount(event){event.preventDefault();if(!isAccountant())
 async function loginAccount(event){event.preventDefault();clearAuthError('login');const id=$('login-id').value.trim().toLowerCase(),pass=$('login-pw').value;const btn=$('login-submit');btn.disabled=true;btn.textContent='확인 중…';try{const account=await getAccount(id);const hash=account?await hashPassword(pass,account.salt):null;if(!account||hash!==account.passwordHash){showAuthError('login','아이디 또는 비밀번호가 일치하지 않습니다.');return}await zc80RememberLogin(pass,account);await enterWorkspace(account)}catch(e){showAuthError('login','로그인 중 문제가 발생했습니다. 브라우저 설정을 확인해 주세요.')}finally{btn.disabled=false;btn.textContent='로그인';$('login-pw').value=''}}
 async function loginAccountingDemo(){$('login-id').value='accounting';$('login-pw').value='account1234';await loginAccount({preventDefault(){}})}
 async function loginDemo(){try{const account=await getAccount('demo');if(account){await zc80RememberLogin('demo1234',account);await enterWorkspace(account);} else showAuthError('login','테스트 계정이 준비되지 않았습니다.')}catch(_){showAuthError('login','체험 계정에 로그인할 수 없습니다.')}}
-async function enterWorkspace(account,options={}){zcDashboardUnlocked=false;if(zc80SensitiveUser!==account.username)zc80SensitiveLock();currentUser={username:account.username,name:account.name,company:account.company,union:account.union,employeeNo:account.employeeNo,role:account.role||'dealer'};sessionStorage.setItem('zerocar-office-v12-session',account.username);dealerAccounts=await getAllAccounts();loadCarsForUser();loadCovers();$('auth-shell').classList.add('hidden');$('profile-name').textContent=account.name+(isAccountant()?' · 경리':isSnoteAdmin()?' · 관리자':' · 딜러');$('profile-role').textContent=isAccountant()?'재고금융 및 월정산 관리':isSnoteAdmin()?'상사 관리자 · 전체 업무':account.company;$('profile-avatar').textContent=account.name.slice(0,1);if(fileDB)await refreshMedia();else {mediaByCar={};modelPhotos=[];}buildStats();if(options.restoreHistory===false){navigate(snoteDefaultPage(),{history:'none'});}else snoteEnterWorkspaceRoute()}
-function logout(){if(window.zc86Cloud?.ready){window.zc86Cloud.signOut();return;}if(!currentUser)return;if(!confirm('로그아웃하시겠습니까?'))return;zc80DismissUnlock(false);zc80SensitiveLock();closeDashboardGate();closeAutoRegistration();zcDashboardGateGranted=false;zcDashboardUnlocked=false;closeMobileDrawer();document.body.classList.remove('accountant-mode');sessionStorage.removeItem('zerocar-office-v12-session');currentUser=null;cars=[];covers={};mediaByCar={};modelPhotos=[];modelPhotoUrls.forEach(u=>URL.revokeObjectURL(u));modelPhotoUrls=[];mediaObjectUrls.forEach(u=>URL.revokeObjectURL(u));mediaObjectUrls=[];closeVehicle();closeAdd();$('auth-shell').classList.remove('hidden');$('login-id').value='';$('login-pw').value='';showAuthMode('login');$('login-id').focus();snoteResetWorkspaceNavigation();snoteWriteAuthHistory('login','replace')}
+async function enterWorkspace(account,options={}){zcDashboardUnlocked=false;if(zc80SensitiveUser!==account.username)zc80SensitiveLock();currentUser={username:account.username,name:account.name,company:account.company,union:account.union,employeeNo:account.employeeNo,role:account.role||'dealer'};sessionStorage.setItem('zerocar-office-v12-session',account.username);dealerAccounts=await getAllAccounts();loadCarsForUser();loadCovers();$('auth-shell').classList.add('hidden');$('profile-name').textContent=account.name+(isAccountant()?' · 경리':isSnoteAdmin()?' · 관리자':' · 딜러');$('profile-role').textContent=isAccountant()?'재고금융 및 월정산 관리':isSnoteAdmin()?'상사 관리자 · 전체 업무':account.company;$('profile-avatar').textContent=account.name.slice(0,1);if(fileDB)await refreshMedia();else {mediaByCar={};modelPhotos=[];}buildStats();if(options.restoreHistory===false){navigate(snoteDefaultPage(),{history:'none'});}else snoteEnterWorkspaceRoute();window.snoteMonthlyWorkbookRefresh?.();}
+function logout(){if(window.zc86Cloud?.ready){window.zc86Cloud.signOut();return;}if(!currentUser)return;if(!confirm('로그아웃하시겠습니까?'))return;window.snoteMonthlyWorkbookReset?.();zc80DismissUnlock(false);zc80SensitiveLock();closeDashboardGate();closeAutoRegistration();zcDashboardGateGranted=false;zcDashboardUnlocked=false;closeMobileDrawer();document.body.classList.remove('accountant-mode');sessionStorage.removeItem('zerocar-office-v12-session');currentUser=null;cars=[];covers={};mediaByCar={};modelPhotos=[];modelPhotoUrls.forEach(u=>URL.revokeObjectURL(u));modelPhotoUrls=[];mediaObjectUrls.forEach(u=>URL.revokeObjectURL(u));mediaObjectUrls=[];closeVehicle();closeAdd();$('auth-shell').classList.remove('hidden');$('login-id').value='';$('login-pw').value='';showAuthMode('login');$('login-id').focus();snoteResetWorkspaceNavigation();snoteWriteAuthHistory('login','replace')}
 async function seedSampleAccount(username,password,name,role,employeeNo){
  if(await getAccount(username))return;
  const salt=bytesHex(crypto.getRandomValues(new Uint8Array(16)));
@@ -7094,6 +6774,7 @@ function renderWorldTrims(){const table=document.getElementById('world-results')
   }else if(event.data?.type==='SNOTE_TYPOGRAPHY_READY')sendTypography();
  });
  window.addEventListener('resize',sendTypography);
+ frame()?.addEventListener('load',sendTypography);
  sendTypography();
 })();
 </script>
@@ -7882,7 +7563,7 @@ document.addEventListener('click',async event=>{
     <details class="snote95-security"><summary>보안 및 이용 안내</summary><div class="zc-warning"><b>온라인 테스트 운영:</b> 차량·금융·월정산·고객정보는 클라우드 DB, 사진·등록증·성능기록부는 비공개 Storage를 사용합니다. 여러 기기에서 동일 장부를 수정하면 충돌을 감지하여 저장을 중단합니다. 주소검색은 인터넷 연결이 필요합니다. <b>주민번호는 기본 저장 금지</b>이며 관련 법령상 구체적인 처리 근거를 검토한 뒤 관리자만 서버에서 활성화해야 합니다. 실제 고객정보를 입력하기 전 테스트와 보안 점검이 필요합니다.</div></details>
     <div id="zc-cloud-offline" hidden class="zc-sec"><button id="zc-cloud-open-local" class="zc-link" type="button">기존 로컬 데모만 열기 (이 PC에서만)</button></div>
    </div>
-   <p class="snote-login-footer">© 2026 S-NOTE. All rights reserved.<span>v2.15</span></p>
+   <p class="snote-login-footer">© 2026 S-NOTE. All rights reserved.<span>v2.16</span></p>
   </div>
   <aside class="snote-login-visual">
    <img class="snote-login-photo" src="assets/login-garage.png" alt="" decoding="async">
@@ -8005,7 +7686,9 @@ async function flush(){
  try{while(S.queue.size){let [key]=S.queue;S.queue.delete(key);let i=key.indexOf(':'),dataset=key.slice(0,i),owner=key.slice(i+1);let raw=localStorage.getItem(storageKey(dataset,ownerAlias(owner)));
   // shared datasets never use ownerAlias to resolve key
   if(isShared(dataset))raw=localStorage.getItem(LEGACY[dataset]);
-  let payload=scrub(parsePayload(raw??defaultBody(dataset)));
+  const parsed=parsePayload(raw??defaultBody(dataset));
+  if(dataset==='monthly'&&!Array.isArray(parsed)){S.queue.add(key);throw Error('월정산 자료 형식이 올바르지 않아 저장하지 않았습니다. 기존 자료를 확인해 주세요.');}
+  let payload=dataset==='monthly'?parsed:scrub(parsed);
   let {data,error}=await S.client.rpc('zc_write_dataset',{p_company:S.company.id,p_dataset:dataset,p_owner:owner,p_expected:S.revisions.get(key)||0,p_payload:payload});
   if(error){S.queue.add(key);throw error}
   S.revisions.set(key,Number(data));
@@ -8056,6 +7739,7 @@ async function readCompany(){
  S.alias=ownerAlias(S.user.id);return true;
 }
 async function restoreDatasets(){
+ snote216ResetMonthly();
  S.loading=true;
  try{
  const {data,error}=await S.client.from('zc_datasets').select('dataset,owner_id,payload,revision').eq('company_id',S.company.id).limit(2000);if(error)throw error;
@@ -8070,8 +7754,7 @@ async function restoreDatasets(){
   if(row)S.revisions.set(key,row.revision);
   originalSet.call(localStorage,LEGACY[ds],row?JSON.stringify(row.payload):defaultBody(ds));
  }
- const f=byId('monthly-ledger-frame');if(f&&f.srcdoc)f.srcdoc=f.srcdoc;
- }finally{S.loading=false}
+ }finally{S.loading=false;if(S.ready)snote216InitMonthly();}
 }
 async function prepareLegacyAccount(pass){
  for(let tries=0;!accountDB&&tries<30;tries++)await new Promise(r=>setTimeout(r,100));
@@ -8102,6 +7785,7 @@ function snoteShowOnboarding(){
  gate.scrollTop=0;
 }
 async function hydrateWorkspace(pass){
+ snote216ResetMonthly();
  S.ready=false;
  if(!await readCompany()){
   let completed;
@@ -8123,6 +7807,7 @@ async function hydrateWorkspace(pass){
  byId('zc72-rrn').placeholder='000000-0000000 또는 000-00-00000';
  byId('zc86-rrn-mode').textContent='고객 식별번호 서버 암호화 저장 · 목록과 문서에 전체 표시';
  showStatus('● 서버 연결 및 저장 준비 완료');
+ snote216InitMonthly();
  await refreshMedia();
 }
 async function doSignIn(e){e?.preventDefault?.();if(S.busy)return;S.busy=true;const button=byId('zc-cloud-submit');button.disabled=true;
@@ -8476,26 +8161,162 @@ window.snote214ReadCustomerIdentities=async function(records){
  return {values,failed};
 };
 
-// Only the monthly iframe can request a shared-ledger save. Acknowledge the actual RPC result.
-window.addEventListener('message',async e=>{
- if(e.origin!==location.origin||e.source!==byId('monthly-ledger-frame')?.contentWindow||e.data?.type!=='ZC84_DATASET')return;
- const key=e.data.dataset==='monthly'?'monthly':e.data.dataset==='categories'?'categories':null;if(!key)return;
- const reply=(state,message='')=>{
-  if(typeof e.data.requestId!=='string'||e.data.requestId.length>100)return;
-  e.source.postMessage({type:'SNOTE_MONTHLY_SAVE_RESULT',requestId:e.data.requestId,state,message},e.origin);
+// The workbook receives scoped server data only after a verified parent INIT.
+let snote216MonthlyContext=null,snote216MonthlyFrameReady=false,snote216MonthlyModules=null,snote216MonthlyRetryAt=0;
+const snote216MonthlyKey=cloudKey('monthly',NIL);
+function snote216MonthlyError(code,message){return Object.assign(new Error(message),{code});}
+function snote216MonthlyPost(message){byId('monthly-ledger-frame')?.contentWindow?.postMessage(message,location.origin);}
+function snote216MonthlyPermission(){
+ if(S.ready&&!S.loading&&S.user&&S.company&&S.client&&currentUser){
+  const member=S.members.find(value=>value.user_id===S.user.id&&value.company_id===S.company.id&&value.active===true&&['admin','accountant'].includes(value.role));
+  if(!member||!isFinanceManager())return null;
+  return {mode:'cloud',companyId:S.company.id,userId:S.user.id,companyName:S.company.name||'',username:currentUser.username,client:S.client};
+ }
+ if(!S.user&&!S.ready&&!S.busy&&currentUser&&!String(currentUser.username).startsWith('cld_')&&isFinanceManager()&&snoteWorkspaceVisible()){
+  const company=String(currentUser.company||'체험 상사'),user=String(currentUser.username);
+  return {mode:'demo',companyId:'demo:'+company,userId:user,companyName:company,username:user,client:null};
+ }
+ return null;
+}
+function snote216MonthlyCurrent(ctx){
+ if(snote216MonthlyContext!==ctx)return false;
+ const permission=snote216MonthlyPermission();
+ return !!permission&&permission.mode===ctx.mode&&permission.companyId===ctx.companyId&&permission.userId===ctx.userId&&permission.username===ctx.username&&permission.client===ctx.client;
+}
+function snote216MonthlyCheck(ctx){if(!snote216MonthlyCurrent(ctx))throw snote216MonthlyError('CONTEXT_CHANGED','로그인 또는 상사 정보가 변경되었습니다.');}
+function snote216ResetMonthly(message='',code='CONTEXT_CHANGED',notify=true){
+ snote216MonthlyContext=null;snote216MonthlyRetryAt=0;
+ if(notify)snote216MonthlyPost({type:'SNOTE_MONTHLY_WORKBOOK_RESET',message,code});
+}
+async function snote216MonthlySettle(ctx){
+ snote216MonthlyCheck(ctx);
+ if(ctx.mode!=='cloud')return;
+ if(S.conflict)throw snote216MonthlyError('NETWORK','다른 서버 자료의 수정 충돌을 먼저 해결한 뒤 다시 저장해 주세요.');
+ if(S.queue.has(snote216MonthlyKey)||S.saving||cloudFlushTask){
+  const result=await flush();snote216MonthlyCheck(ctx);
+  if(result?.ok!==true||S.conflict)throw snote216MonthlyError('NETWORK','서버에 반영되지 않은 자료가 있습니다. 기존 저장 상태를 확인한 뒤 다시 시도해 주세요.');
+ }
+}
+function snote216MonthlyDemoRead(ctx){
+ snote216MonthlyCheck(ctx);
+ let saved;try{saved=JSON.parse(localStorage.getItem(ctx.demoKey)||'null');}catch(_){throw snote216MonthlyError('INVALID_DATA','체험용 월정산 자료를 읽지 못했습니다.');}
+ if(saved===null)return {payload:[],revision:0};
+ if(!Array.isArray(saved.payload)||!Number.isSafeInteger(saved.revision)||saved.revision<0)throw snote216MonthlyError('INVALID_DATA','체험용 월정산 자료 형식을 확인해 주세요.');
+ return saved;
+}
+function snote216MonthlyAdapter(ctx){
+ return {
+  currentKey:()=>snote216MonthlyCurrent(ctx)?ctx.key:null,
+  async read(){
+   await snote216MonthlySettle(ctx);snote216MonthlyCheck(ctx);
+   if(ctx.mode==='demo')return snote216MonthlyDemoRead(ctx);
+   const result=await ctx.client.from('zc_datasets').select('payload,revision').eq('company_id',ctx.companyId).eq('dataset','monthly').eq('owner_id',NIL).maybeSingle();
+   snote216MonthlyCheck(ctx);
+   if(result.error)throw snote216MonthlyError('NETWORK','월정산 서버 자료를 불러오지 못했습니다. 연결 상태를 확인해 주세요.');
+   if(!result.data)return {payload:[],revision:0};
+   const revision=Number(result.data.revision);
+   if(!Array.isArray(result.data.payload)||!Number.isSafeInteger(revision)||revision<0)throw snote216MonthlyError('INVALID_DATA','서버 월정산 자료 형식을 확인해 주세요. 기존 자료는 변경하지 않았습니다.');
+   return {payload:result.data.payload,revision};
+  },
+  async write(payload,expectedRevision){
+   await snote216MonthlySettle(ctx);snote216MonthlyCheck(ctx);
+   if(!Array.isArray(payload))throw snote216MonthlyError('INVALID_DATA','월정산 저장 자료 형식을 확인해 주세요.');
+   if(ctx.mode==='demo'){
+    const latest=snote216MonthlyDemoRead(ctx);
+    if(latest.revision!==expectedRevision)throw snote216MonthlyError('RPC_CONFLICT','CONFLICT');
+    const revision=latest.revision+1;
+    try{localStorage.setItem(ctx.demoKey,JSON.stringify({payload,revision}));}catch(_){throw snote216MonthlyError('NETWORK','이 브라우저에 체험 자료를 저장하지 못했습니다.');}
+    snote216MonthlyCheck(ctx);return revision;
+   }
+   const result=await ctx.client.rpc('zc_write_dataset',{p_company:ctx.companyId,p_dataset:'monthly',p_owner:NIL,p_expected:expectedRevision,p_payload:payload});
+   snote216MonthlyCheck(ctx);
+   if(result.error)throw snote216MonthlyError(/CONFLICT/i.test(errMsg(result.error))?'RPC_CONFLICT':'NETWORK',/CONFLICT/i.test(errMsg(result.error))?'CONFLICT':'월정산 서버 저장 결과를 확인하지 못했습니다. 입력한 자료를 유지한 채 다시 시도해 주세요.');
+   const revision=Number(result.data);if(!Number.isSafeInteger(revision)||revision<0)throw snote216MonthlyError('NETWORK','월정산 서버 저장 응답을 확인하지 못했습니다.');
+   return revision;
+  },
+  onCommitted(payload,revision){
+   snote216MonthlyCheck(ctx);if(ctx.mode!=='cloud')return;
+   S.revisions.set(snote216MonthlyKey,revision);
+   const loading=S.loading;S.loading=true;
+   try{originalSet.call(localStorage,LEGACY.monthly,JSON.stringify(payload));}
+   catch(_){showStatus('● 월정산 서버 저장 완료 · 브라우저 캐시 확인 필요','bad');}
+   finally{S.loading=loading;}
+  }
  };
- if(!S.ready){reply('local');return;}
- if(S.loading){reply('error','서버 자료를 불러오는 중입니다. 잠시 후 다시 시도해 주세요.');return;}
- enqueue(key,NIL);
- const result=await flush();
- reply(result.ok?'saved':'error',result.error);
+}
+async function snote216MonthlyModule(){
+ if(!snote216MonthlyModules)snote216MonthlyModules=import('./assets/monthly-workbook-cloud.js?v=2.16').catch(error=>{snote216MonthlyModules=null;throw error;});
+ return snote216MonthlyModules;
+}
+async function snote216InitMonthly(){
+ if(!snote216MonthlyFrameReady)return false;
+ const permission=snote216MonthlyPermission();
+ if(!permission){if(snote216MonthlyContext)snote216ResetMonthly();return false;}
+ if(Date.now()<snote216MonthlyRetryAt)return false;
+ if(snote216MonthlyContext&&snote216MonthlyCurrent(snote216MonthlyContext)){
+  if(snote216MonthlyContext.initialized)return true;
+  if(snote216MonthlyContext.start)return snote216MonthlyContext.start;
+ }
+ if(snote216MonthlyContext)snote216ResetMonthly();
+ const nonce=crypto.randomUUID?.()||Array.from(crypto.getRandomValues(new Uint8Array(16)),number=>number.toString(16).padStart(2,'0')).join('');
+ const ctx={...permission,key:permission.companyId+':'+permission.userId+':'+nonce,initialized:false,store:null};
+ ctx.demoKey='snote-monthly-workbook-demo:v1:'+encodeURIComponent(ctx.companyId)+':'+encodeURIComponent(ctx.userId);
+ snote216MonthlyContext=ctx;
+ ctx.start=(async()=>{
+  const module=await snote216MonthlyModule();snote216MonthlyCheck(ctx);
+  ctx.store=module.createMonthlyStore(snote216MonthlyAdapter(ctx));
+  const loaded=await ctx.store.load();snote216MonthlyCheck(ctx);ctx.initialized=true;
+  snote216MonthlyPost({type:'SNOTE_MONTHLY_WORKBOOK_INIT',context:{key:ctx.key,companyId:ctx.companyId,userId:ctx.userId,companyName:ctx.companyName,canEdit:true,mode:ctx.mode},payload:loaded.payload,versions:loaded.versions});
+  return true;
+ })().catch(error=>{
+  if(snote216MonthlyContext===ctx){snote216ResetMonthly('월정산 자료를 불러오지 못했습니다. 서버 연결을 확인하고 다시 시도해 주세요.',error.code||'NETWORK');snote216MonthlyRetryAt=Date.now()+2000;showStatus('● 월정산 자료 불러오기 실패 · 다시 연결해 주세요.','bad');}
+  return false;
+ });
+ return ctx.start;
+}
+function snote216MonthlyResult(ctx,data,fields){
+ if(!snote216MonthlyCurrent(ctx)){if(snote216MonthlyContext===ctx)snote216ResetMonthly();return;}
+ snote216MonthlyPost({type:'SNOTE_MONTHLY_WORKBOOK_RESULT',contextKey:ctx.key,requestId:data.requestId,month:data.month,clientSeq:data.clientSeq,...fields});
+}
+window.addEventListener('message',async event=>{
+ if(event.origin!==location.origin||event.source!==byId('monthly-ledger-frame')?.contentWindow||!event.data||typeof event.data!=='object'||Array.isArray(event.data))return;
+ const data=event.data;
+ if(data.type==='SNOTE_MONTHLY_WORKBOOK_READY'){snote216MonthlyFrameReady=true;await snote216InitMonthly();return;}
+ if(!['SNOTE_MONTHLY_WORKBOOK_SAVE','SNOTE_MONTHLY_WORKBOOK_LOAD'].includes(data.type))return;
+ const ctx=snote216MonthlyContext;
+ if(!ctx||data.contextKey!==ctx.key)return;
+ if(!snote216MonthlyCurrent(ctx)){snote216ResetMonthly();return;}
+ if(!ctx.initialized||!ctx.store)return;
+ if(typeof data.requestId!=='string'||!data.requestId||data.requestId.length>100)return;
+ if(data.type==='SNOTE_MONTHLY_WORKBOOK_LOAD'){
+  try{const loaded=await ctx.store.load();snote216MonthlyCheck(ctx);snote216MonthlyPost({type:'SNOTE_MONTHLY_WORKBOOK_SYNC',contextKey:ctx.key,requestId:data.requestId,state:'saved',payload:loaded.payload,versions:loaded.versions});}
+  catch(error){if(snote216MonthlyCurrent(ctx))snote216MonthlyPost({type:'SNOTE_MONTHLY_WORKBOOK_SYNC',contextKey:ctx.key,requestId:data.requestId,state:'error',code:error.code||'NETWORK',message:error.message||'서버 자료를 다시 불러오지 못했습니다.'});else if(snote216MonthlyContext===ctx)snote216ResetMonthly();}
+  return;
+ }
+ if(!Number.isSafeInteger(data.clientSeq)||data.clientSeq<0||typeof data.month!=='string'||!/^\d{4}-(0[1-9]|1[0-2])$/.test(data.month)||(data.baseVersion!==null&&(typeof data.baseVersion!=='string'||! /^[a-f0-9]{64}$/.test(data.baseVersion)))){
+  snote216MonthlyResult(ctx,data,{state:'error',code:'INVALID_DATA',message:'월정산 저장 요청 형식을 확인해 주세요.'});return;
+ }
+ try{
+  const saved=await ctx.store.save({month:data.month,book:data.book,baseVersion:data.baseVersion,requestId:data.requestId});snote216MonthlyCheck(ctx);
+  snote216MonthlyResult(ctx,data,{state:'saved',book:saved.book,baseVersion:saved.baseVersion,message:ctx.mode==='demo'?'이 브라우저에만 저장했습니다. 서버 자료가 아닙니다.':undefined});
+ }catch(error){
+  snote216MonthlyResult(ctx,data,{state:error.code==='CONFLICT'?'conflict':'error',code:error.code||'NETWORK',message:error.message||'월정산 서버 저장을 확인하지 못했습니다.',...(error.code==='CONFLICT'?{remoteBook:error.remoteBook,baseVersion:error.baseVersion}:{})});
+ }
 });
+const snote216MonthlyFrame=byId('monthly-ledger-frame');
+if(snote216MonthlyFrame){
+ snote216MonthlyFrame.addEventListener('load',()=>{snote216MonthlyFrameReady=true;snote216ResetMonthly('',undefined,false);snote216InitMonthly();});
+ try{if(snote216MonthlyFrame.contentDocument?.readyState==='complete'&&new URL(snote216MonthlyFrame.contentWindow.location.href).pathname.endsWith('/monthly.html'))snote216MonthlyFrameReady=true;}catch(_){}
+}
+window.snoteMonthlyWorkbookRefresh=()=>{snote216MonthlyRetryAt=0;return snote216InitMonthly();};
+window.snoteMonthlyWorkbookReset=snote216ResetMonthly;
+snote216InitMonthly();
 
 async function reload(){if(!S.ready)return;
  if(!confirm('서버에 저장된 데이터로 다시 불러올까요? 현재 브라우저에서 서버에 반영되지 않은 변경사항은 사라집니다.'))return;
- S.ready=false;S.queue.clear();S.conflict=false;
- try{await restoreDatasets();loadCarsForUser();loadCovers();await refreshMedia();buildStats();navigate(route);S.ready=true;showStatus('● 서버 자료 다시 불러옴');}
- catch(e){S.ready=true;fail(e,'새로고침')}
+ snote216ResetMonthly();S.ready=false;S.queue.clear();S.conflict=false;
+ try{await restoreDatasets();loadCarsForUser();loadCovers();await refreshMedia();buildStats();navigate(route);S.ready=true;showStatus('● 서버 자료 다시 불러옴');snote216InitMonthly();}
+ catch(e){S.ready=true;fail(e,'새로고침');snote216InitMonthly();}
 }
 status.addEventListener('click',reload);
 window.addEventListener('beforeunload',e=>{if(!S.ready)return;if(S.queue.size||S.saving||S.conflict){e.preventDefault();e.returnValue='서버에 반영되지 않은 변경사항이 있습니다.';}});
@@ -8503,7 +8324,7 @@ window.addEventListener('online',()=>{if(S.ready&&!S.conflict)flush()});
 window.addEventListener('offline',()=>{if(S.ready)showStatus('● 인터넷 연결 끊김 · 저장 불가','bad')});
 
 async function signOut(){if(!confirm('온라인 계정에서 로그아웃할까요?'))return;
- await flush();if(S.queue.size||S.saving||S.conflict){alert('서버에 아직 저장하지 못한 변경사항이 있어 로그아웃을 중단했습니다. 연결 상태를 확인하세요.');return;}S.ready=false;S.authPassword=null;await S.client.auth.signOut();localStorage.removeItem(snote95RememberKey);byId('snote95-remember').checked=false;S.user=null;S.company=null;S.members=[];
+ await flush();if(S.queue.size||S.saving||S.conflict){alert('서버에 아직 저장하지 못한 변경사항이 있어 로그아웃을 중단했습니다. 연결 상태를 확인하세요.');return;}snote216ResetMonthly();S.ready=false;S.authPassword=null;await S.client.auth.signOut();localStorage.removeItem(snote95RememberKey);byId('snote95-remember').checked=false;S.user=null;S.company=null;S.members=[];
  if(currentUser){zc80SensitiveLock();currentUser=null;cars=[];covers={};}
  sessionStorage.removeItem('zerocar-office-v12-session');snoteResetWorkspaceNavigation();
  byId('zc86-topbar').hidden=true;status.hidden=true;snoteShowAuth('login',true,true);msg('로그아웃되었습니다.');
