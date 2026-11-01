@@ -6,133 +6,71 @@
   <meta name="referrer" content="no-referrer">
   <meta name="robots" content="noindex, nofollow, noarchive">
   <meta name="theme-color" content="#f5f7fb">
-  <title>S-NOTE | 고객정보 모바일 접수</title>
-  <link rel="stylesheet" href="assets/customer-intake.css?v=2.13">
-  <script src="assets/customer-intake.js?v=2.13" defer></script>
+  <title>S-NOTE | 고객정보 입력</title>
+  <link rel="stylesheet" href="assets/customer-intake.css?v=2.15">
+  <script src="assets/customer-intake.js?v=2.15" defer></script>
 </head>
-<body class="customer-page">
-  <header class="site-header">
-    <span class="wordmark"><img src="assets/snote-logo.png" alt="S-NOTE" width="2172" height="724"></span>
-    <span class="header-label">고객정보 모바일 접수</span>
-  </header>
+<body>
+  <header class="site-header"><span class="wordmark"><img src="assets/snote-logo.png" alt="S-NOTE" width="2172" height="724"></span><span>고객정보 입력</span></header>
   <main class="page-shell" id="main-content">
     <article class="intake-card">
-      <header class="card-header">
-        <p class="eyebrow">CUSTOMER INFORMATION</p>
-        <h1>좋은 거래를 위한<br>간편한 정보 접수</h1>
-        <p class="card-description"><span data-company-name>담당 상사</span>에서 보내드린 차량을 확인하고<br class="desktop-break"> 계약에 필요한 정보를 입력해 주세요.</p>
-      </header>
-      <nav id="progress" aria-label="접수 단계" hidden>
-        <ol class="step-list">
-          <li data-step="car"><span class="step-number" aria-hidden="true">1</span><span class="step-label">차량 확인</span></li>
-          <li data-step="verify"><span class="step-number" aria-hidden="true">2</span><span class="step-label">휴대전화 확인</span></li>
-          <li data-step="details"><span class="step-number" aria-hidden="true">3</span><span class="step-label">정보 입력</span></li>
-          <li data-step="success"><span class="step-number" aria-hidden="true">4</span><span class="step-label">접수 완료</span></li>
-        </ol>
-      </nav>
+      <header class="card-header"><h1>거래에 필요한 정보를 입력해 주세요</h1><p><span data-company-name>담당 상사</span>에 전달할 정보를 차례로 확인합니다.</p></header>
+      <div id="progress" class="wizard-progress" hidden><div><span id="progress-label">성함</span><span id="progress-count">1 / 6</span></div><progress id="progress-bar" max="6" value="1" aria-label="고객정보 입력 진행"></progress></div>
       <div id="status-message" class="status-box" role="status" aria-live="polite" aria-atomic="true" tabindex="-1" hidden></div>
-      <section id="load-state" class="load-state" aria-live="polite"><span class="loading-dot" aria-hidden="true"></span><p>안내받으신 차량을 확인하고 있습니다.</p></section>
-      <noscript><p class="status-box" data-tone="error">고객정보를 접수하려면 브라우저에서 JavaScript를 허용한 뒤 문자로 받은 링크를 다시 열어 주세요.</p></noscript>
-
+      <section id="load-state" class="load-state" aria-live="polite"><p>안내받으신 차량을 확인하고 있습니다.</p></section>
+      <noscript><p class="status-box" data-tone="error">문자로 받은 입력 링크를 JavaScript가 허용된 브라우저에서 열어 주세요.</p></noscript>
       <section id="stage-car" class="stage" aria-labelledby="vehicle-heading" hidden>
-        <div class="section-heading"><p class="eyebrow">STEP 01</p><h2 id="vehicle-heading" tabindex="-1">안내받은 차량이 맞나요?</h2><p>차량번호와 모델을 먼저 확인해 주세요.</p></div>
-        <div class="vehicle-card">
-          <p class="vehicle-caption">구매 상담 차량</p>
-          <h3 id="car-model" class="vehicle-title"></h3>
-          <dl class="vehicle-grid">
-            <div><dt>차량번호</dt><dd id="car-plate"></dd></div>
-            <div><dt>연식</dt><dd id="car-year"></dd></div>
-            <div><dt>주행거리</dt><dd id="car-km"></dd></div>
-            <div><dt>색상</dt><dd id="car-color"></dd></div>
-          </dl>
-          <div class="vehicle-price"><span>안내 금액</span><strong id="car-price"></strong></div>
-        </div>
+        <div class="section-heading"><h2 id="vehicle-heading" tabindex="-1">안내받은 차량이 맞나요?</h2><p>차량을 확인한 뒤 정보 입력을 시작합니다.</p></div>
+        <div class="vehicle-card"><p class="vehicle-caption">구매 상담 차량</p><h3 id="car-model"></h3><dl class="vehicle-grid"><div><dt>차량번호</dt><dd id="car-plate"></dd></div><div><dt>연식</dt><dd id="car-year"></dd></div><div><dt>주행거리</dt><dd id="car-km"></dd></div><div><dt>색상</dt><dd id="car-color"></dd></div></dl><div class="vehicle-price"><span>안내 금액</span><strong id="car-price"></strong></div></div>
         <label class="check-row vehicle-check"><input id="vehicle-confirmed" type="checkbox"><span>위 차량이 안내받은 차량임을 확인했습니다.</span></label>
-        <p class="field-help">차량이 다르면 입력을 진행하지 말고 담당자에게 문의해 주세요.</p>
-        <div class="actions"><button id="vehicle-next" class="button primary" type="button" disabled>휴대전화 확인하기 <span aria-hidden="true">→</span></button></div>
-        <p id="link-expiry" class="privacy-note"></p>
+        <p class="field-help">차량이 다르면 담당자에게 문의해 주세요.</p><button id="vehicle-next" class="button primary" type="button" disabled>정보 입력 시작</button><p id="link-expiry" class="privacy-note"></p>
       </section>
-
-      <section id="stage-verify" class="stage" aria-labelledby="verify-heading" hidden>
-        <div class="section-heading"><p class="eyebrow">STEP 02</p><h2 id="verify-heading" tabindex="-1">휴대전화로 확인해 주세요</h2><p>이 링크를 받으신 번호로 인증번호를 보내드립니다.</p></div>
-        <div class="phone-summary"><span>인증번호를 받을 휴대전화</span><strong id="masked-phone"></strong></div>
-        <p class="field-help">문자로 휴대전화 소유 여부를 확인하며, 실명 본인확인 서비스는 아닙니다.</p>
-        <button id="request-code" class="button primary" type="button">인증번호 받기</button>
-        <p id="send-timing" class="countdown"></p>
-        <form id="verify-form" class="verification-form" novalidate hidden>
-          <label class="field" for="verification-code"><span>인증번호 6자리</span><input id="verification-code" name="code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required aria-describedby="code-timing" disabled></label>
-          <p id="code-timing" class="countdown"></p>
-          <button id="verify-button" class="button primary" type="submit" disabled>인증번호 확인</button>
-        </form>
-        <button id="back-to-car" class="text-button" type="button">차량정보 다시 보기</button>
-      </section>
-
-      <section id="stage-details" class="stage" aria-labelledby="details-heading" hidden>
-        <div class="section-heading"><p class="eyebrow">STEP 03</p><h2 id="details-heading" tabindex="-1">계약에 필요한 정보를 입력해 주세요</h2><p>입력한 정보는 담당자가 계약서와 인수증 작성에 사용합니다.</p></div>
-        <div class="verified-note"><span aria-hidden="true">✓</span><span>휴대전화 확인 완료 <strong id="verified-phone"></strong></span></div>
-        <div id="address-search-status" class="address-search-status" hidden>
-          <p id="address-search-message" role="status" aria-live="polite" aria-atomic="true"></p>
-          <div class="address-search-actions"><button id="address-search-focus" type="button">검색창 다시 보기</button><button id="address-search-cancel" type="button">주소 검색 취소</button></div>
-        </div>
+      <section id="stage-details" class="stage" aria-label="고객정보 단계별 입력" hidden>
         <form id="customer-form" novalidate>
-          <fieldset id="customer-fields" class="form-fields">
-            <legend class="sr-only">고객정보 입력</legend>
-            <label class="field" for="customer-name"><span>성함 <em>필수</em></span><input id="customer-name" name="name" type="text" autocomplete="name" minlength="2" maxlength="50" required placeholder="고객 성함"></label>
-            <section id="rrn-section" class="sensitive-section" aria-labelledby="rrn-heading" hidden>
-              <div class="form-section"><h3 id="rrn-heading">주민등록번호 <small>선택</small></h3><p>차량 계약·이전등록 업무에 필요한 경우에만 입력해 주세요.</p></div>
-              <div class="rrn-fields">
-                <label class="field" for="rrn-front"><span>앞 6자리</span><input id="rrn-front" type="text" inputmode="numeric" autocomplete="off" maxlength="6" pattern="[0-9]{6}" placeholder="생년월일 6자리" aria-describedby="rrn-help" disabled></label>
-                <span class="rrn-separator" aria-hidden="true">－</span>
-                <label class="field" for="rrn-back"><span>뒤 7자리</span><input id="rrn-back" type="password" inputmode="numeric" autocomplete="off" maxlength="7" pattern="[0-9]{7}" placeholder="뒤 7자리" aria-describedby="rrn-help" disabled></label>
-              </div>
-              <p id="rrn-help" class="field-help">입력한 주민번호는 서버에 암호화해 저장하며, 담당자가 판매 진행 화면에서 불러올 수 있습니다.</p>
+          <fieldset id="customer-fields" class="form-fields"><legend class="sr-only">고객정보 입력</legend>
+            <section data-wizard-step="name" aria-labelledby="details-heading" hidden>
+              <div class="section-heading"><h2 id="details-heading" tabindex="-1">성함을 입력해 주세요</h2><p>계약서에 기재할 고객 성함입니다.</p></div>
+              <label class="field" for="customer-name"><span>성함 <em>필수</em></span><input id="customer-name" name="name" type="text" autocomplete="name" minlength="2" maxlength="50" required placeholder="고객 성함"></label>
             </section>
-            <p id="rrn-disabled-note" class="field-help" hidden>현재 상사는 주민번호 접수를 사용하지 않습니다.</p>
-            <div class="form-section"><h3>주소</h3><p>계약서에 기재할 등본상 주소를 입력해 주세요.</p></div>
-            <div class="field"><label for="address-base">기본주소 <em>필수</em></label><div class="address-input-row"><input id="address-base" name="addressBase" type="text" autocomplete="section-residence address-line1" maxlength="200" required placeholder="도로명 또는 지번 주소"><button class="address-search-button" type="button" data-address-search="residence" aria-label="등본상 주소 검색 (새 창)">주소 검색</button></div></div>
-            <label class="field" for="address-detail"><span>상세주소</span><input id="address-detail" name="addressDetail" type="text" autocomplete="section-residence address-line2" maxlength="100" placeholder="동·호수 등 상세주소"></label>
-            <div class="form-section"><h3>등기받을 주소 <small>선택</small></h3></div>
-            <label class="check-row same-address"><input id="same-address" name="sameAddress" type="checkbox" checked><span>위 주소와 동일합니다.</span></label>
-            <div class="field"><label for="mailing-base">등기 기본주소</label><div class="address-input-row"><input id="mailing-base" name="mailingBase" type="text" autocomplete="section-mailing address-line1" maxlength="200" placeholder="등기받을 주소"><button class="address-search-button" type="button" data-address-search="mailing" aria-label="등기받을 주소 검색 (새 창)">주소 검색</button></div></div>
-            <label class="field" for="mailing-detail"><span>등기 상세주소</span><input id="mailing-detail" name="mailingDetail" type="text" autocomplete="section-mailing address-line2" maxlength="100" placeholder="동·호수 등 상세주소"></label>
-            <div class="form-section"><h3>이전비 환급계좌 <small>선택</small></h3><p>환급이 필요한 경우에만 은행명·계좌번호·예금주를 모두 입력해 주세요.</p></div>
-            <div class="field-grid">
-              <label class="field" for="refund-bank"><span>은행명</span><input id="refund-bank" name="refundBank" type="text" autocomplete="off" maxlength="35" placeholder="예: 신한은행"></label>
-              <label class="field" for="refund-holder"><span>예금주</span><input id="refund-holder" name="refundHolder" type="text" autocomplete="off" maxlength="50" placeholder="예금주 성함"></label>
-            </div>
-            <label class="field" for="refund-account"><span>계좌번호</span><input id="refund-account" name="refundAccount" type="text" inputmode="numeric" autocomplete="off" maxlength="32" placeholder="숫자 또는 하이픈(-)"></label>
-            <div id="refund-consent-section" class="consent-card optional-consent" hidden>
-              <label class="check-row"><input id="refund-consent" type="checkbox"><span>환급계좌 수집·이용에 동의합니다. <em>계좌 입력 시 필수</em></span></label>
-              <p class="consent-copy">입력한 은행명·계좌번호·예금주는 <span data-company-name>담당 상사</span>의 이전비 환급 업무에 사용합니다. 이 입력 링크를 통한 제출 내역은 30일간 보관합니다. 매매계약에 반영된 정보의 보관·삭제 문의는 해당 상사에 요청해 주세요. 동의하지 않으시면 환급계좌를 비워 두고 접수할 수 있습니다.</p>
-            </div>
-            <div class="consent-card required-consent">
-              <label class="check-row"><input id="required-consent" type="checkbox" required><span>개인정보 수집·이용에 동의합니다. <em>필수</em></span></label>
-              <p class="consent-copy"><span data-company-name>담당 상사</span>에서 계약서·인수증 작성과 거래 안내를 위해 성함, 인증한 휴대전화번호, 주소 및 입력한 등기주소를 수집·이용합니다. <span id="rrn-consent-copy" hidden>선택해 입력한 주민번호는 차량 계약·이전등록 업무에 사용하며 서버에 별도로 암호화해 저장합니다. </span>이 입력 링크를 통한 제출 내역은 30일간 보관합니다. 매매계약에 반영된 정보의 보관·삭제 문의는 해당 상사에 요청해 주세요. 동의하지 않으시면 이 화면에서 접수할 수 없습니다.</p>
-            </div>
+            <section id="rrn-section" data-wizard-step="rrn" aria-labelledby="rrn-heading" hidden>
+              <div class="section-heading"><h2 id="rrn-heading" tabindex="-1">주민등록번호를 입력해 주세요</h2><p>차량 계약·이전등록 업무에 사용합니다.</p></div>
+              <div class="rrn-fields"><label class="field" for="rrn-front"><span>앞 6자리 <em>필수</em></span><input id="rrn-front" type="text" inputmode="numeric" autocomplete="off" maxlength="6" placeholder="생년월일 6자리" aria-describedby="rrn-help" required></label><span class="rrn-separator" aria-hidden="true">－</span><label class="field" for="rrn-back"><span>뒤 7자리 <em>필수</em></span><input id="rrn-back" type="password" inputmode="numeric" autocomplete="off" maxlength="7" placeholder="뒤 7자리" aria-describedby="rrn-help" required></label></div>
+              <p id="rrn-help" class="field-help">주민번호는 암호화해 저장합니다. 접수 전 입력은 이 화면에만 임시로 보관합니다.</p>
+            </section>
+            <section data-wizard-step="address" aria-labelledby="address-heading" hidden>
+              <div class="section-heading"><h2 id="address-heading" tabindex="-1">등본상 주소를 입력해 주세요</h2><p>주소를 검색한 뒤 동·호수 등 상세주소를 확인해 주세요.</p></div>
+              <div id="address-search-status" class="address-search-status" hidden><p id="address-search-message" role="status" aria-live="polite" aria-atomic="true"></p><div class="address-search-actions"><button id="address-search-focus" type="button">검색창 다시 보기</button><button id="address-search-cancel" type="button">주소 검색 취소</button></div></div>
+              <div class="field"><label for="address-base">기본주소 <em>필수</em></label><div class="address-input-row"><input id="address-base" name="addressBase" type="text" autocomplete="section-residence address-line1" maxlength="200" required placeholder="도로명 또는 지번 주소"><button class="address-search-button" type="button" data-address-search="residence" aria-label="등본상 주소 검색 (새 창)">주소 검색</button></div></div>
+              <label class="field" for="address-detail"><span>상세주소</span><input id="address-detail" name="addressDetail" type="text" autocomplete="section-residence address-line2" maxlength="100" placeholder="동·호수 등 상세주소"></label>
+              <div class="form-section"><h3>등기받을 주소 <small>선택</small></h3></div><label class="check-row same-address"><input id="same-address" name="sameAddress" type="checkbox" checked><span>위 주소와 동일합니다.</span></label>
+              <div id="mailing-fields" hidden><div class="field"><label for="mailing-base">등기 기본주소</label><div class="address-input-row"><input id="mailing-base" name="mailingBase" type="text" autocomplete="section-mailing address-line1" maxlength="200" placeholder="등기받을 주소"><button class="address-search-button" type="button" data-address-search="mailing" aria-label="등기받을 주소 검색 (새 창)">주소 검색</button></div></div><label class="field" for="mailing-detail"><span>등기 상세주소</span><input id="mailing-detail" name="mailingDetail" type="text" autocomplete="section-mailing address-line2" maxlength="100" placeholder="동·호수 등 상세주소"></label><p class="field-help">별도 등기주소가 없으면 비워 두셔도 됩니다.</p></div>
+            </section>
+            <section id="stage-verify" data-wizard-step="phone" aria-labelledby="verify-heading" hidden>
+              <div class="section-heading"><h2 id="verify-heading" tabindex="-1">휴대전화번호를 확인해 주세요</h2><p>입력 링크를 받으신 번호로 문자를 보내드립니다.</p></div>
+              <label class="field" for="customer-phone"><span>휴대전화번호 <em>필수</em></span><input id="customer-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="25" required placeholder="010-0000-0000" aria-describedby="phone-help"></label><p id="phone-help" class="field-help">받으신 번호: <strong id="masked-phone"></strong><br>문자로 휴대전화 소유 여부를 확인하며, 실명 본인확인 서비스는 아닙니다.</p>
+              <button id="request-code" class="button secondary" type="button">인증번호 받기</button><p id="send-timing" class="countdown"></p>
+              <div id="verify-form" class="verification-form" hidden><label class="field" for="verification-code"><span>인증번호 6자리</span><input id="verification-code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" disabled aria-describedby="code-timing"></label><p id="code-timing" class="countdown"></p><button id="verify-button" class="button primary" type="button" disabled>인증번호 확인</button></div>
+              <div id="verified-note" class="verified-note" hidden>휴대전화 확인 완료 <strong id="verified-phone"></strong></div>
+            </section>
+            <section data-wizard-step="refund" aria-labelledby="refund-heading" hidden>
+              <div class="section-heading"><h2 id="refund-heading" tabindex="-1">환급계좌를 입력해 주세요</h2><p>이전비 환급이 필요한 경우에만 입력해 주세요. 없으면 다음으로 넘어갈 수 있습니다.</p></div>
+              <label class="field" for="refund-bank"><span>은행명 <small>선택</small></span><input id="refund-bank" name="refundBank" type="text" autocomplete="off" maxlength="35" placeholder="예: 신한은행"></label><label class="field" for="refund-account"><span>계좌번호 <small>선택</small></span><input id="refund-account" name="refundAccount" type="text" inputmode="numeric" autocomplete="off" maxlength="32" placeholder="숫자 또는 하이픈(-)"></label><label class="field" for="refund-holder"><span>예금주 <small>선택</small></span><input id="refund-holder" name="refundHolder" type="text" autocomplete="off" maxlength="50" placeholder="예금주 성함"></label>
+            </section>
+            <section data-wizard-step="consent" aria-labelledby="consent-heading" hidden>
+              <div class="section-heading"><h2 id="consent-heading" tabindex="-1">내용을 확인하고 서명해 주세요</h2><p>동의와 서명을 마친 뒤 한 번에 접수합니다.</p></div>
+              <dl id="input-summary" class="input-summary"></dl>
+              <div class="consent-card"><label class="check-row"><input id="required-consent" type="checkbox" required><span>개인정보 수집·이용에 동의합니다. <em>필수</em></span></label><p class="consent-brief">입력정보와 서명을 계약·이전등록 업무에 사용합니다.</p><details class="consent-details"><summary>수집·이용 안내 보기</summary><p class="consent-copy"><span data-company-name>담당 상사</span>에서 차량 계약·이전등록, 계약서·인수증 작성과 거래 안내를 위해 성함, 주민번호, 인증한 휴대전화번호, 주소 및 입력한 등기주소, 서명을 수집·이용합니다. 주민번호는 별도로 암호화해 저장합니다. 이 입력 링크를 통한 제출 내역은 30일간 보관합니다. 고객관리와 매매계약에 반영된 정보의 보관·삭제 문의는 해당 상사에 요청해 주세요. 동의하지 않으시면 이 화면에서 접수할 수 없습니다.</p></details></div>
+              <div id="refund-consent-section" class="consent-card" hidden><label class="check-row"><input id="refund-consent" type="checkbox"><span>환급계좌 수집·이용에 동의합니다. <em>계좌 입력 시 필수</em></span></label><p class="consent-brief">입력한 계좌정보를 이전비 환급 업무에 사용합니다.</p><details class="consent-details"><summary>수집·이용 안내 보기</summary><p class="consent-copy">입력한 은행명·계좌번호·예금주는 <span data-company-name>담당 상사</span>의 이전비 환급 업무에 사용합니다. 이 입력 링크를 통한 제출 내역은 30일간 보관합니다. 고객관리와 매매계약에 반영된 정보의 보관·삭제 문의는 해당 상사에 요청해 주세요. 동의하지 않으시면 이전 단계에서 환급계좌를 비워 두실 수 있습니다.</p></details></div>
+              <div class="signature-field"><div class="signature-label"><label for="signature-canvas">손서명 <em>필수</em></label><button id="signature-clear" type="button">다시 서명</button></div><canvas id="signature-canvas" width="600" height="240" tabindex="0" role="img" aria-label="손서명 입력 영역. 손가락이나 마우스로 직접 서명해 주세요." aria-describedby="signature-help signature-status">손서명을 지원하는 브라우저에서 입력해 주세요.</canvas><p id="signature-help" class="field-help">위 영역에 손가락이나 마우스로 직접 서명해 주세요.</p><p id="signature-status" class="signature-status" role="status" aria-live="polite">아직 서명하지 않았습니다.</p></div>
+            </section>
           </fieldset>
-          <div class="actions"><button id="submit-customer" class="button primary" type="submit">고객정보 접수하기 <span aria-hidden="true">→</span></button></div>
-          <p class="privacy-note">신분증은 제출하지 않습니다. 주민번호 입력칸은 화면이 중단되면 비워집니다.<br>화면을 닫거나 새로고침하면 입력 중인 내용이 사라집니다.</p>
+          <div class="wizard-actions"><button id="wizard-prev" class="button secondary" type="button">이전</button><button id="wizard-next" class="button primary" type="button">다음</button><button id="submit-customer" class="button primary" type="submit" hidden>동의하고 접수하기</button></div>
+          <p class="privacy-note">입력 내용은 마지막에 접수하기 전까지 저장되지 않습니다.<br>화면을 닫거나 새로고침하면 입력 중인 내용이 사라집니다.</p>
         </form>
-        <button id="review-vehicle" class="text-button" type="button">차량정보 다시 보기</button>
       </section>
-
-      <section id="stage-success" class="stage completion" aria-labelledby="success-heading" hidden>
-        <span class="completion-mark" aria-hidden="true">✓</span>
-        <p class="eyebrow">INFORMATION RECEIVED</p>
-        <h2 id="success-heading" tabindex="-1">고객정보가 접수되었습니다</h2>
-        <p id="success-description">담당자가 판매 진행 화면에서 확인할 수 있습니다.<br>수정이 필요하면 담당자에게 문의해 주세요.</p>
-        <p id="submitted-time" class="privacy-note"></p>
-        <div class="completion-summary"><span>다음 단계</span><strong>담당자의 안내를 기다려 주세요.</strong></div>
-      </section>
-
-      <section id="stage-terminal" class="stage terminal" aria-labelledby="terminal-heading" hidden>
-        <span class="terminal-mark" aria-hidden="true">!</span>
-        <h2 id="terminal-heading" tabindex="-1">링크를 확인해 주세요</h2>
-        <p id="terminal-description"></p>
-        <div class="terminal-actions"><button id="retry-info" class="button secondary" type="button" hidden>다시 확인하기</button></div>
-      </section>
-    </article>
-    <footer class="page-footer"><span>S-NOTE</span> · 중고차 거래의 모든 기록</footer>
+      <section id="stage-success" class="stage completion" aria-labelledby="success-heading" hidden><span class="completion-mark" aria-hidden="true">✓</span><h2 id="success-heading" tabindex="-1">고객정보가 접수되었습니다</h2><p id="success-description">담당자가 입력 내용을 확인할 수 있습니다.</p><p id="submitted-time" class="privacy-note"></p><div class="completion-summary">수정이 필요하면 담당자에게 문의해 주세요.</div></section>
+      <section id="stage-terminal" class="stage terminal" aria-labelledby="terminal-heading" hidden><h2 id="terminal-heading" tabindex="-1">링크를 확인해 주세요</h2><p id="terminal-description"></p><button id="retry-info" class="button secondary" type="button" hidden>다시 확인하기</button></section>
+    </article><footer class="page-footer">S-NOTE · 중고차 거래의 모든 기록</footer>
   </main>
 </body>
 </html>

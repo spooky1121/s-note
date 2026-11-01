@@ -4,16 +4,18 @@
 // but workerd rejects it before any outbound request. All upstream HTTP is mocked.
 // Install test tools OUTSIDE this static Pages repository (do not add a root manifest):
 //   npm install --prefix /tmp/snote-runtime-tests --no-save --no-audit --no-fund \
-//     miniflare@5.20261019.2-beta undici@7.29.1
+//     miniflare@5.20261019.2-beta undici@7.29.1 esbuild
 //   NODE_PATH=/tmp/snote-runtime-tests/node_modules node tests/customer-intake.workerd.cjs
 // Requires Node.js 22+. Never provide real Supabase or SOLAPI credentials here.
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
+const { build } = require('esbuild');
 const { Miniflare, Response: MiniflareResponse, convertV4MiniflareOptions } = require('miniflare');
 const { MockAgent, fetch: mockFetch } = require('undici');
 
 const SOURCE = path.resolve(__dirname, '..', 'functions', 'api', 'customer-intake.js');
+let bundledSource;
 const ENV = {
   SUPABASE_URL: 'https://intake-runtime-test.supabase.co',
   SUPABASE_PUBLISHABLE_KEY: 'test-publishable-key',
@@ -77,8 +79,7 @@ async function scenario(kind) {
 
   const options = {
     modules: true,
-    script: fs.readFileSync(SOURCE, 'utf8') +
-      '\nexport default { fetch(request, env) { return onRequest({ request, env }); } };',
+    script: bundledSource,
     compatibilityDate: '2026-10-24',
     bindings: ENV,
     cf: false,
@@ -160,8 +161,7 @@ async function rrnScenario(dedicated) {
   let stored, submissions = 0, reads = 0;
   const options = {
     modules: true,
-    script: fs.readFileSync(SOURCE, 'utf8') +
-      '\nexport default { fetch(request, env) { return onRequest({ request, env }); } };',
+    script: bundledSource,
     compatibilityDate: '2026-10-24', bindings, cf: false,
     outboundService: async request => {
       const target = new URL(request.url);
@@ -175,6 +175,10 @@ async function rrnScenario(dedicated) {
         if (stored) assert.notEqual(stored.rrnCipher, args.p_rrn_cipher, 'Every encryption has a fresh IV');
         stored = { ok: true, id: ID, tokenHash: args.p_token_hash, rrnCipher: args.p_rrn_cipher };
         return MiniflareResponse.json({ ok: true, submittedAt: '2026-11-01T00:00:00Z' });
+      }
+      if (target.pathname === '/rest/v1/rpc/snote_intake_details_v3') {
+        assert.equal(request.headers.get('Authorization'), 'Bearer ' + JWT);
+        return MiniflareResponse.json({ ok: true, id: ID, source: 'legacy' });
       }
       assert.equal(target.pathname, '/rest/v1/rpc/snote_intake_rrn_access');
       reads++;
@@ -216,11 +220,62 @@ async function rrnScenario(dedicated) {
   } finally { await runtime.dispose(); }
 }
 
+async function wizardScenario() {
+  const context = { ok: true, companyId: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', ownerId: '11111111-1111-4111-8111-111111111111', carId: 'test-car-1', phone: '01012345678' };
+  const signature = { version: 1, strokes: [[[0.1, 0.2], [0.6, 0.8]]] };
+  let stored = '', writes = 0;
+  const options = { modules: true, script: bundledSource, compatibilityDate: '2026-10-24', bindings: ENV, cf: false,
+    outboundService: async request => {
+      const target = new URL(request.url); assert.equal(target.origin, ENV.SUPABASE_URL);
+      const args = await request.json();
+      if (target.pathname.endsWith('/snote_intake_submit_context_v3')) {
+        assert.equal(request.headers.get('apikey'), ENV.SUPABASE_SERVICE_ROLE_KEY);
+        return MiniflareResponse.json(context);
+      }
+      if (target.pathname.endsWith('/snote_intake_submit_v3')) {
+        writes++; assert.equal(args.p_customer.phone, context.phone);
+        assert.deepEqual(args.p_signature, signature);
+        assert.match(args.p_identity_cipher, /^smi1\.[a-f0-9]{24}\.[a-f0-9]{58}$/);
+        assert.equal(JSON.stringify(args).includes('0001013000000'), false);
+        stored = args.p_identity_cipher;
+        return MiniflareResponse.json({ ok: true, submittedAt: '2026-11-01T12:00:00Z', canonicalApplied: true });
+      }
+      assert.equal(target.pathname, '/rest/v1/rpc/snote_intake_details_v3');
+      assert.equal(request.headers.get('Authorization'), 'Bearer ' + JWT);
+      return MiniflareResponse.json({ ...context, id: ID, identityCipher: stored });
+    }
+  };
+  const settings = typeof convertV4MiniflareOptions === 'function'
+    ? { ...convertV4MiniflareOptions(options), telemetry: { enabled: false } } : options;
+  const runtime = new Miniflare(settings);
+  const post = async body => {
+    const response = await runtime.dispatchFetch('https://intake.example/api/customer-intake', {
+      method: 'POST', headers: { Origin: 'https://intake.example', 'Content-Type': 'application/json', Authorization: 'Bearer ' + JWT }, body: JSON.stringify(body)
+    });
+    return { status: response.status, body: await response.json() };
+  };
+  try {
+    const result = await post({ action: 'submit', flowVersion: 'wizard-v1', token: 'ab'.repeat(32), session: 'cd'.repeat(32),
+      vehicleConfirmed: true, consent: true, rrn: '0001013000000', rrnNoticeAccepted: true, signature,
+      customer: { name: '테스트', addressBase: '서울시 테스트로', sameAddress: true, phone: context.phone } });
+    assert.equal(result.status, 200, JSON.stringify(result.body)); assert.equal(result.body.canonicalApplied, true);
+    const read = await post({ action: 'read-rrn', id: ID });
+    assert.equal(read.status, 200); assert.equal(read.body.rrn, '0001013000000'); assert.equal(writes, 1);
+    console.log('PASS actual workerd: wizard signature + verified phone + smi1 encryption + v3 atomic submit + dealer full RRN read');
+  } finally { await runtime.dispose(); }
+}
+
 (async () => {
+  const bundle = await build({ stdin: {
+    contents: fs.readFileSync(SOURCE, 'utf8') + '\nexport default { fetch(request, env) { return onRequest({ request, env }); } };',
+    resolveDir: path.dirname(SOURCE), sourcefile: 'customer-intake-runtime.js'
+  }, bundle: true, write: false, format: 'esm', platform: 'browser', target: 'es2022', logLevel: 'silent' });
+  bundledSource = bundle.outputFiles[0].text;
   for (const kind of ['accepted', 'supabase-redirect', 'solapi-redirect']) await scenario(kind);
   await rrnScenario(true);
   await rrnScenario(false);
-  console.log('PASS 5/5 actual-source workerd scenarios; real upstream networking disabled');
+  await wizardScenario();
+  console.log('PASS 6/6 actual-source workerd scenarios; real upstream networking disabled');
 })().catch(error => {
   console.error(error.name + ': ' + String(error.message).slice(0, 1600));
   process.exitCode = 1;

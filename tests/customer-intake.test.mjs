@@ -48,7 +48,7 @@ test('GET exposes fixed configuration diagnostics only; missing setup prevents e
   assert.deepEqual(get.body, {
     service: 'snote-customer-intake', configured: false, originMatches: null,
     configurationIssues: ['SUPABASE_URL', 'SUPABASE_PUBLISHABLE_KEY', 'SUPABASE_SERVICE_ROLE_KEY', 'CUSTOMER_INTAKE_PUBLIC_ORIGIN', 'SOLAPI_API_KEY', 'SOLAPI_API_SECRET', 'SOLAPI_SENDER', 'CUSTOMER_INTAKE_OTP_SECRET'].map(name => ({ name, reason: '값이 설정되지 않았습니다.' })),
-    rrnConfigured: false, rrnConfigurationIssues: [{ name: 'CUSTOMER_INTAKE_OTP_SECRET', reason: '기본 서버 키 설정을 확인해야 주민번호 암호화를 사용할 수 있습니다.' }], rrnKeyMode: null
+    rrnConfigured: false, rrnConfigurationIssues: [{ name: 'CUSTOMER_INTAKE_OTP_SECRET', reason: '기본 서버 키 설정을 확인해야 주민번호 암호화를 사용할 수 있습니다.' }], rrnKeyMode: null, flowVersion: 'wizard-v1'
   });
   for (const key of Object.keys(ENV)) {
     const env = { ...ENV }; delete env[key];
@@ -85,7 +85,7 @@ test('configuration diagnostics never expose values and invalid settings remain 
     assert.equal(post.result.status, 503); assert.equal(post.body.code, 'SERVICE_UNAVAILABLE');
   }
   const valid = await call(undefined, { method: 'GET' });
-  assert.deepEqual(valid.body, { service: 'snote-customer-intake', configured: true, configurationIssues: [], originMatches: true, rrnConfigured: true, rrnConfigurationIssues: [{ name: 'CUSTOMER_INTAKE_RRN_KEY', reason: '별도 암호화 키 없이 기본 서버 키에서 분리한 암호화 키로 보관합니다.' }], rrnKeyMode: 'derived' });
+  assert.deepEqual(valid.body, { service: 'snote-customer-intake', configured: true, configurationIssues: [], originMatches: true, rrnConfigured: true, rrnConfigurationIssues: [{ name: 'CUSTOMER_INTAKE_RRN_KEY', reason: '별도 암호화 키 없이 기본 서버 키에서 분리한 암호화 키로 보관합니다.' }], rrnKeyMode: 'derived', flowVersion: 'wizard-v1' });
   assert.equal(calls.length, 0);
 });
 
@@ -419,7 +419,7 @@ test('info enables RRN only with both valid encryption key and authoritative DB 
 
 test('read-rrn requires dealer JWT and valid key, checks returned row, and rejects tampering or cross-row ciphertext', async t => {
   let data = { ok: true, id: ID, tokenHash: hash(TOKEN), rrnCipher: rrnEnvelope() };
-  const calls = mock(t, () => response(data));
+  const calls = mock(t, call => call.url.endsWith('/snote_intake_details_v3') ? response({ ok: true, id: ID, source: 'legacy' }) : response(data));
   assert.equal((await call({ action: 'read-rrn', id: ID }, { env: RRN_ENV })).result.status, 401);
   assert.equal((await call({ action: 'read-rrn', id: ID }, { env: { ...ENV, CUSTOMER_INTAKE_OTP_SECRET: '' }, authorization: `Bearer ${JWT}` })).body.code, 'SERVICE_UNAVAILABLE');
   assert.equal(calls.length, 0);
@@ -460,6 +460,7 @@ test('HKDF key is deterministic and domain-separated; derived records remain rea
   const calls = mock(t, call => {
     if (call.url.endsWith('/snote_intake_submit_v2')) { storedCipher = call.body.p_rrn_cipher; return response({ ok: true, submittedAt: '2026-11-01T00:00:00Z' }); }
     if (call.url.endsWith('/snote_intake_rrn_access')) return response({ ok: true, id: ID, tokenHash: hash(TOKEN), rrnCipher: storedCipher });
+    if (call.url.endsWith('/snote_intake_details_v3')) return response({ code: 'PGRST202' }, 404);
     throw new Error('unexpected request');
   });
   const encrypted = [];
@@ -483,7 +484,7 @@ test('HKDF key is deterministic and domain-separated; derived records remain rea
 });
 
 test('existing dedicated-key records survive OTP key changes but missing basic OTP setup stays fail-closed', async t => {
-  const calls = mock(t, () => response({ ok: true, id: ID, tokenHash: hash(TOKEN), rrnCipher: rrnEnvelope() }));
+  const calls = mock(t, call => call.url.endsWith('/snote_intake_details_v3') ? response({ ok: true, id: ID, source: 'legacy' }) : response({ ok: true, id: ID, tokenHash: hash(TOKEN), rrnCipher: rrnEnvelope() }));
   const env = { ...RRN_ENV, CUSTOMER_INTAKE_OTP_SECRET: 'changed-test-only-otp-secret-at-least-32-characters' };
   const success = await call({ action: 'read-rrn', id: ID }, { env, authorization: `Bearer ${JWT}` });
   assert.deepEqual(success.body, { ok: true, rrn: TEST_RRN });
@@ -493,4 +494,159 @@ test('existing dedicated-key records survive OTP key changes but missing basic O
     assert.equal(failed.result.status, 503); assert.equal(failed.body.code, 'SERVICE_UNAVAILABLE');
   }
   assert.equal(calls.length, before);
+});
+
+const FLOW = 'wizard-v1';
+const OWNER = '11111111-1111-4111-8111-111111111111';
+const COMPANY = '22222222-2222-4222-8222-222222222222';
+const CONTEXT = { ok: true, companyId: COMPANY, ownerId: OWNER, carId: 'car-1', phone: '01012345678' };
+const SIGNATURE = { version: 1, strokes: [[[0.123456, 0.234567], [0.8, 0.7]]] };
+const NORMAL_SIGNATURE = { version: 1, strokes: [[[0.1235, 0.2346], [0.8, 0.7]]] };
+function wizardSubmit(overrides = {}) {
+  return submit({ flowVersion: FLOW, rrn: TEST_RRN, rrnNoticeAccepted: true, signature: SIGNATURE, customer: { ...submit().customer, phone: CONTEXT.phone }, ...overrides });
+}
+
+test('wizard info requires v3 SQL and never falls back to a legacy signatureless flow', async t => {
+  let installed = false;
+  const calls = mock(t, () => installed ? response({ ok: true, car: CAR, status: 'pending', companyName: '상사', phoneMasked: '010-****-5678', expiresAt: '2026-11-02', rrnEnabled: true, rrn_enabled: false, flowVersion: FLOW }) : response({ code: 'PGRST202', message: 'private SQL' }, 404));
+  const missing = await call({ action: 'info', token: TOKEN, flowVersion: FLOW });
+  assert.equal(missing.body.code, 'DB_SETUP_REQUIRED'); assert.equal(calls.length, 1);
+  assert.ok(calls[0].url.endsWith('/snote_intake_view_v3'));
+  installed = true;
+  const info = await call({ action: 'info', token: TOKEN, flowVersion: FLOW });
+  assert.equal(info.body.flowVersion, FLOW); assert.equal(info.body.rrnEnabled, true);
+  assert.equal(Object.hasOwn(info.body, 'phone'), false); assert.equal(JSON.stringify(info.body).includes(CONTEXT.phone), false);
+  const before = calls.length;
+  assert.equal((await call({ action: 'info', token: TOKEN, flowVersion: 'unknown-version' })).result.status, 400);
+  assert.equal((await call({ action: 'create', carId: 'car-1', phone: CONTEXT.phone, flowVersion: FLOW }, { authorization: `Bearer ${JWT}` })).result.status, 400);
+  assert.equal(calls.length, before);
+});
+
+test('wizard phone challenge validates the supplied phone in DB before sending only to the bound recipient', async t => {
+  let allowed = false;
+  const calls = mock(t, call => {
+    if (call.url.endsWith('/snote_intake_challenge_v3')) return allowed ? response({ ok: true, id: ID, phone: CONTEXT.phone, challengeId: call.body.p_challenge_id, expiresAt: '2026-11-01T00:05:00Z' }) : response({ ok: false, code: 'VALIDATION_ERROR', message: CONTEXT.phone });
+    if (call.url.startsWith('https://api.solapi.com/')) return response({ statusCode: '2000', messageId: 'M4V_test_message' });
+    if (call.url.endsWith('/snote_intake_delivery')) return response({ ok: true });
+    throw new Error('unexpected request');
+  });
+  const rejected = await call({ action: 'send-code', token: TOKEN, flowVersion: FLOW, phone: '01099998888' });
+  assert.equal(rejected.result.status, 400); assert.equal(calls.length, 1);
+  assert.equal(JSON.stringify(rejected.body).includes(CONTEXT.phone), false);
+  allowed = true;
+  const accepted = await call({ action: 'send-code', token: TOKEN, flowVersion: FLOW, phone: '+82 10-1234-5678' });
+  assert.equal(accepted.result.status, 200); assert.equal(calls[1].body.p_phone, CONTEXT.phone);
+  assert.equal(calls[2].body.message.to, CONTEXT.phone);
+  assert.equal(Object.hasOwn(accepted.body, 'phone'), false); assert.equal(Object.hasOwn(accepted.body, 'code'), false);
+});
+
+test('wizard verification returns the full server phone only after OTP and verified session context succeed', async t => {
+  let mode = 'wrong';
+  const calls = mock(t, call => {
+    if (call.url.endsWith('/snote_intake_verify')) return mode === 'wrong' ? response({ ok: false, code: 'INVALID_CODE' }) : response({ ok: true, sessionExpiresAt: '2026-11-01T00:30:00Z' });
+    if (call.url.endsWith('/snote_intake_submit_context_v3')) return mode === 'missing' ? response({ code: 'PGRST202' }, 404) : response(CONTEXT);
+    throw new Error('unexpected request');
+  });
+  const body = { action: 'verify', token: TOKEN, flowVersion: FLOW, challengeId: ID, code: '123456' };
+  assert.equal((await call(body)).body.code, 'INVALID_CODE'); assert.equal(calls.length, 1);
+  mode = 'missing';
+  const missing = await call(body); assert.equal(missing.body.code, 'DB_SETUP_REQUIRED'); assert.equal(Object.hasOwn(missing.body, 'session'), false); assert.equal(Object.hasOwn(missing.body, 'phone'), false);
+  mode = 'valid';
+  const valid = await call(body);
+  assert.equal(valid.body.phone, CONTEXT.phone); assert.equal(valid.body.flowVersion, FLOW);
+  assert.equal(calls.at(-1).body.p_session_hash, hash(valid.body.session));
+  for (const privateField of ['companyId', 'ownerId', 'carId']) assert.equal(Object.hasOwn(valid.body, privateField), false);
+});
+
+test('wizard final submission uses verified context, normalized signature and one atomic v3 save with smi1 ciphertext', async t => {
+  const calls = mock(t, call => call.url.endsWith('/snote_intake_submit_context_v3') ? response(CONTEXT) : response({ ok: true, submittedAt: '2026-11-01T00:00:00Z', canonicalApplied: true }));
+  const submitted = await call(wizardSubmit());
+  assert.deepEqual(submitted.body, { ok: true, submittedAt: '2026-11-01T00:00:00Z', canonicalApplied: true });
+  assert.equal(calls.length, 2); assert.ok(calls[1].url.endsWith('/snote_intake_submit_v3'));
+  const args = calls[1].body;
+  assert.deepEqual(Object.keys(args).sort(), ['p_token_hash', 'p_session_hash', 'p_customer', 'p_consent_version', 'p_identity_cipher', 'p_signature'].sort());
+  assert.deepEqual(args.p_signature, NORMAL_SIGNATURE); assert.equal(args.p_customer.phone, CONTEXT.phone);
+  assert.equal(args.p_consent_version, '2026-11-01'); assert.equal(args.p_token_hash, hash(TOKEN)); assert.equal(args.p_session_hash, hash(SESSION));
+  assert.match(args.p_identity_cipher, /^smi1\.[a-f0-9]{24}\.[a-f0-9]{58}$/);
+  assert.equal(JSON.stringify(args).includes(TEST_RRN), false); assert.equal(Object.hasOwn(args.p_customer, 'identityCipher'), false);
+  const key = Buffer.from(hkdfSync('sha256', Buffer.from(ENV.CUSTOMER_INTAKE_OTP_SECRET), Buffer.from('snote-customer-intake:rrn:v1:hkdf-salt'), Buffer.from('snote-customer-intake:rrn:v1:aes-256-gcm'), 32));
+  const [, iv, encrypted] = args.p_identity_cipher.split('.'); const bytes = Buffer.from(encrypted, 'hex');
+  const decipher = createDecipheriv('aes-256-gcm', key, Buffer.from(iv, 'hex'));
+  decipher.setAAD(Buffer.from('snote-manual-identity:v1:' + JSON.stringify([COMPANY, OWNER, 'car-1']))); decipher.setAuthTag(bytes.subarray(-16));
+  assert.equal(Buffer.concat([decipher.update(bytes.subarray(0, -16)), decipher.final()]).toString(), TEST_RRN);
+});
+
+test('wizard signatures reject unknown formats, excessive points and insufficient ink before any DB call', async t => {
+  const calls = mock(t, () => { throw new Error('unexpected network'); });
+  const invalid = [undefined, '<svg>private</svg>', { version: 1, strokes: [], image: 'data:private' }, { version: 1, strokes: [] },
+    { version: 1, strokes: [[]] }, { version: '1', strokes: [[[0, 0], [1, 1]]] },
+    { version: 1, strokes: [[[0, 0], [0.1, '0.2']]] }, { version: 1, strokes: [[[0, 0], [0.1, 0.2, 0.3]]] },
+    { version: 1, strokes: [[[0, 0], [1.1, 0.2]]] }, { version: 1, strokes: [[[0, 0], [NaN, 0.2]]] },
+    { version: 1, strokes: [[[0.3, 0.1], [0.305, 0.1]]] }, { version: 1, strokes: [[[0.1, 0.1], [0.1, 0.1]]] },
+    { version: 1, strokes: [Array.from({ length: 257 }, (_, i) => [i / 300, 0.2])] },
+    { version: 1, strokes: Array.from({ length: 25 }, () => [[0, 0], [1, 1]]) },
+    { version: 1, strokes: Array.from({ length: 6 }, () => Array.from({ length: 201 }, (_, i) => [i / 250, 0.2])) }
+  ];
+  for (const input of invalid) {
+    const result = await call(wizardSubmit({ signature: input }));
+    assert.equal(result.result.status, 400); assert.equal(result.body.code, 'VALIDATION_ERROR');
+  }
+  for (const change of [{ rrn: '' }, { rrnNoticeAccepted: false }, { customer: { ...submit().customer } }]) assert.equal((await call(wizardSubmit(change))).result.status, 400);
+  assert.equal(calls.length, 0);
+});
+
+test('wizard rejects phone/context mismatch and setup failures without any legacy or signatureless save', async t => {
+  let mode = 'mismatch';
+  const calls = mock(t, call => {
+    if (call.url.endsWith('/snote_intake_submit_context_v3')) return mode === 'context-missing' ? response({ code: 'PGRST202' }, 404) : response({ ...CONTEXT, phone: mode === 'mismatch' ? '01099998888' : CONTEXT.phone });
+    if (call.url.endsWith('/snote_intake_submit_v3')) return response({ code: 'PGRST202', message: 'private SQL' }, 404);
+    throw new Error('legacy save must never run');
+  });
+  assert.equal((await call(wizardSubmit())).body.code, 'VALIDATION_ERROR'); assert.equal(calls.length, 1);
+  mode = 'context-missing'; assert.equal((await call(wizardSubmit())).body.code, 'DB_SETUP_REQUIRED');
+  mode = 'submit-missing'; assert.equal((await call(wizardSubmit())).body.code, 'DB_SETUP_REQUIRED');
+  assert.ok(calls.every(call => call.url.endsWith('/snote_intake_submit_context_v3') || call.url.endsWith('/snote_intake_submit_v3')));
+});
+
+test('wizard accepts bounded signature JSON above legacy size and preserves exact-payload retry semantics', async t => {
+  let first = true;
+  const calls = mock(t, call => {
+    if (call.url.endsWith('/snote_intake_submit_context_v3')) return response(CONTEXT);
+    if (first) { first = false; throw new Error('commit response lost'); }
+    return response({ ok: true, submittedAt: '2026-11-01T00:00:00Z', canonicalApplied: false, alreadySubmitted: true });
+  });
+  const raw = JSON.stringify(wizardSubmit()) + ' '.repeat(20 * 1024);
+  const failed = await call(null, { raw }); assert.equal(failed.body.code, 'UPSTREAM_ERROR');
+  const retry = await call(null, { raw }); assert.deepEqual(retry.body, { ok: true, submittedAt: '2026-11-01T00:00:00Z', alreadySubmitted: true, canonicalApplied: false });
+  assert.deepEqual(calls[1].body.p_signature, calls[3].body.p_signature); assert.equal(calls[1].body.p_session_hash, calls[3].body.p_session_hash);
+  const before = calls.length;
+  const stream = new ReadableStream({ start(controller) { controller.enqueue(new TextEncoder().encode(JSON.stringify(wizardSubmit()) + ' '.repeat(65 * 1024))); controller.close(); } });
+  assert.equal((await call(null, { requestBody: stream })).result.status, 413); assert.equal(calls.length, before);
+});
+
+test('dealer list returns signature metadata but strips every ciphertext and private binding', async t => {
+  mock(t, () => response([{ id: ID, submittedAt: '2026-11-01', hasRrn: true, hasSignature: true, canonicalApplied: true, submission: { name: '테스트', phone: CONTEXT.phone, signature: SIGNATURE, signedAt: '2026-11-01T00:00:00Z', flowVersion: FLOW, identityCipher: 'private-cipher', rrn: TEST_RRN, tokenHash: TOKEN, ownerId: OWNER } }]));
+  const result = await call({ action: 'list', carId: 'car-1' }, { authorization: `Bearer ${JWT}` });
+  const item = result.body.requests[0];
+  assert.equal(item.hasRrn, true); assert.equal(item.hasSignature, true); assert.equal(item.canonicalApplied, true);
+  assert.deepEqual(item.submission.signature, NORMAL_SIGNATURE); assert.equal(item.submission.flowVersion, FLOW);
+  assert.equal(item.submission.signedAt, '2026-11-01T00:00:00Z');
+  for (const privateValue of ['private-cipher', TEST_RRN, TOKEN, OWNER]) assert.equal(JSON.stringify(result.body).includes(privateValue), false);
+});
+
+test('new intake identity decrypts from authoritative details and never falls back after a new-cipher error', async t => {
+  const key = Buffer.from(hkdfSync('sha256', Buffer.from(ENV.CUSTOMER_INTAKE_OTP_SECRET), Buffer.from('snote-customer-intake:rrn:v1:hkdf-salt'), Buffer.from('snote-customer-intake:rrn:v1:aes-256-gcm'), 32));
+  const iv = randomBytes(12); const cipher = createCipheriv('aes-256-gcm', key, iv);
+  cipher.setAAD(Buffer.from('snote-manual-identity:v1:' + JSON.stringify([COMPANY, OWNER, 'car-1'])));
+  const encrypted = Buffer.concat([cipher.update(TEST_RRN), cipher.final(), cipher.getAuthTag()]);
+  let details = { ok: true, id: ID, companyId: COMPANY, ownerId: OWNER, carId: 'car-1', identityCipher: `smi1.${iv.toString('hex')}.${encrypted.toString('hex')}` };
+  const original = details;
+  const calls = mock(t, call => { assert.ok(call.url.endsWith('/snote_intake_details_v3')); return response(details); });
+  const read = () => call({ action: 'read-rrn', id: ID }, { authorization: `Bearer ${JWT}` });
+  assert.deepEqual((await read()).body, { ok: true, rrn: TEST_RRN });
+  for (const tampered of [{ ...original, ownerId: COMPANY }, { ...original, carId: 'other-car' }, { ...original, identityCipher: 'corrupt', source: 'legacy' }, { ...original, identityCipher: null, source: 'legacy' }]) {
+    details = tampered;
+    const result = await read(); assert.equal(result.body.code, 'RRN_NOT_AVAILABLE'); assert.equal(Object.hasOwn(result.body, 'rrn'), false);
+  }
+  assert.equal(calls.length, 5);
 });

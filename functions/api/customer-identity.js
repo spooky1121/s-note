@@ -1,9 +1,10 @@
 import { getResidentEncryptionKeys } from './customer-intake.js';
+import { encryptIdentityCipher, decryptIdentityCipher } from '../_shared/customer-identity-codec.js';
+export { encryptIdentityCipher, decryptIdentityCipher } from '../_shared/customer-identity-codec.js';
 
 const MAX_BODY = 32 * 1024;
 const UUID = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i;
 const DIGITS = /^(?:\d{10}|\d{13})$/;
-const ENVELOPE = /^smi1\.[a-f0-9]{24}\.(?:[a-f0-9]{52}|[a-f0-9]{58})$/;
 const ERRORS = {
   UNAUTHORIZED: [401, '로그인이 필요합니다. 다시 로그인해 주세요.'],
   FORBIDDEN: [403, '본인 소속과 담당 고객·차량의 정보만 이용할 수 있습니다.'],
@@ -116,26 +117,12 @@ async function confirmCar(config, jwt, context, id) {
   if (!Array.isArray(datasets)) fail('UPSTREAM_ERROR');
   if (!datasets.some(row => Array.isArray(row?.payload) && row.payload.some(car => object(car) && String(car.id) === id))) fail('FORBIDDEN');
 }
-function hex(bytes) { return Array.from(bytes, value => value.toString(16).padStart(2, '0')).join(''); }
-function unhex(value) { return Uint8Array.from(value.match(/../g), pair => Number.parseInt(pair, 16)); }
-function aad(context, id) { return new TextEncoder().encode('snote-manual-identity:v1:' + JSON.stringify([context.company, context.owner, id])); }
-async function cryptoKey(raw, usage) { return crypto.subtle.importKey('raw', raw, { name: 'AES-GCM' }, false, [usage]); }
 async function encrypt(keys, context, id, value) {
-  const iv = crypto.getRandomValues(new Uint8Array(12));
-  const ciphertext = await crypto.subtle.encrypt({ name: 'AES-GCM', iv, additionalData: aad(context, id), tagLength: 128 }, await cryptoKey(keys.key, 'encrypt'), new TextEncoder().encode(value));
-  return `smi1.${hex(iv)}.${hex(new Uint8Array(ciphertext))}`;
+  return encryptIdentityCipher(keys, context, id, value);
 }
 async function decrypt(keys, context, id, envelope) {
-  if (typeof envelope !== 'string' || !ENVELOPE.test(envelope)) fail('IDENTITY_DECRYPT_FAILED');
-  const [, iv, ciphertext] = envelope.split('.');
-  for (const key of keys.keys) {
-    try {
-      const bytes = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: unhex(iv), additionalData: aad(context, id), tagLength: 128 }, await cryptoKey(key, 'decrypt'), unhex(ciphertext));
-      const value = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
-      if (DIGITS.test(value)) return value;
-    } catch { /* Never send ciphertext, keys, or a partial value to the caller. */ }
-  }
-  fail('IDENTITY_DECRYPT_FAILED');
+  try { return await decryptIdentityCipher(keys, context, id, envelope); }
+  catch { fail('IDENTITY_DECRYPT_FAILED'); }
 }
 function inFilter(ids) { return `in.(${ids.map(id => '"' + id.replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"').join(',')})`; }
 async function read(config, jwt, context, ids, keys) {

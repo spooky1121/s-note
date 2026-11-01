@@ -1,5 +1,8 @@
 /** Customer phone-possession confirmation. This is not a legal-name identity check. */
-const MAX_BODY = 16 * 1024;
+import { encryptIdentityCipher, decryptIdentityCipher } from '../_shared/customer-identity-codec.js';
+const MAX_BODY = 64 * 1024;
+const LEGACY_MAX_BODY = 16 * 1024;
+const FLOW_VERSION = 'wizard-v1';
 const CONSENT_VERSION = '2026-11-01';
 const RRN_NOTICE_VERSION = '2026-11-01-r1';
 const RRN_HKDF_SALT = 'snote-customer-intake:rrn:v1:hkdf-salt';
@@ -143,8 +146,8 @@ function phone(value) {
 }
 function token(value) { if (typeof value !== 'string' || !TOKEN.test(value)) fail('INVALID_LINK'); return value; }
 function uuid(value) { if (typeof value !== 'string' || !UUID.test(value)) fail('VALIDATION_ERROR'); return value; }
-function customer(value) {
-  whitelist(value, CUSTOMER_FIELDS);
+function customer(value, wizard = false) {
+  whitelist(value, wizard ? [...CUSTOMER_FIELDS, 'phone'] : CUSTOMER_FIELDS);
   if (typeof value.sameAddress !== 'boolean') fail('VALIDATION_ERROR');
   const result = {
     name: text(value.name, 50), addressBase: text(value.addressBase, 200), addressDetail: text(value.addressDetail, 100, false),
@@ -157,7 +160,30 @@ function customer(value) {
   if ([...`${result.addressBase}${result.addressDetail ? ' ' + result.addressDetail : ''}`].length > 220 || [...`${result.mailingBase}${result.mailingDetail ? ' ' + result.mailingDetail : ''}`].length > 220) fail('VALIDATION_ERROR');
   const refund = [result.refundBank, result.refundAccount, result.refundHolder];
   if (refund.some(Boolean) && (!refund.every(Boolean) || !/^[\d-]{6,32}$/.test(result.refundAccount) || result.refundAccount.replace(/-/g, '').length < 6)) fail('VALIDATION_ERROR');
+  if (wizard) result.phone = phone(value.phone);
   return result;
+}
+function signature(value) {
+  whitelist(value, ['version', 'strokes']);
+  if (value.version !== 1 || !Array.isArray(value.strokes) || !value.strokes.length || value.strokes.length > 24) fail('VALIDATION_ERROR');
+  const points = []; let distinct = false;
+  const strokes = value.strokes.map(stroke => {
+    if (!Array.isArray(stroke) || !stroke.length || stroke.length > 256) fail('VALIDATION_ERROR');
+    return stroke.map(point => {
+      if (!Array.isArray(point) || point.length !== 2 || point.some(coordinate => typeof coordinate !== 'number' || !Number.isFinite(coordinate) || coordinate < 0 || coordinate > 1)) fail('VALIDATION_ERROR');
+      if (points.length >= 1200) fail('VALIDATION_ERROR');
+      const units = point.map(coordinate => Math.round(coordinate * 10000));
+      if (!distinct) distinct = points.some(previous => (previous[0] - units[0]) ** 2 + (previous[1] - units[1]) ** 2 > 50 ** 2);
+      points.push(units);
+      return units.map(coordinate => coordinate / 10000);
+    });
+  });
+  if (!distinct) fail('VALIDATION_ERROR');
+  return { version: 1, strokes };
+}
+function verifiedContext(data) {
+  if (data.ok !== true || !UUID.test(data.companyId || '') || !UUID.test(data.ownerId || '') || !['string', 'number'].includes(typeof data.carId) || (typeof data.carId === 'number' && !Number.isFinite(data.carId)) || !String(data.carId) || String(data.carId).length > 200 || typeof data.phone !== 'string' || !/^(?:010\d{8}|01[16789]\d{7,8})$/.test(data.phone)) fail('UPSTREAM_ERROR');
+  return { company: data.companyId, owner: data.ownerId, carId: String(data.carId), phone: data.phone };
 }
 async function boundedJson(request) {
   if ((request.headers.get('Content-Type') || '').split(';')[0].trim().toLowerCase() !== 'application/json') fail('UNSUPPORTED_MEDIA_TYPE');
@@ -177,7 +203,7 @@ async function boundedJson(request) {
       }
       const all = new Uint8Array(size); let offset = 0;
       for (const chunk of chunks) { all.set(chunk, offset); offset += chunk.byteLength; }
-      try { return JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(all)); } catch { fail('INVALID_REQUEST'); }
+      try { return { body: JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(all)), size }; } catch { fail('INVALID_REQUEST'); }
     };
     return await Promise.race([read(), new Promise((_, reject) => { timer = setTimeout(() => { void reader.cancel().catch(() => {}); reject(new IntakeError('INVALID_REQUEST')); }, 5000); })]);
   } finally { clearTimeout(timer); }
@@ -303,7 +329,10 @@ async function perform(request, config, body, rrnEncryption) {
   const rrnEncryptionKey = rrnEncryption.key;
   if (!object(body) || typeof body.action !== 'string' || !Object.hasOwn(ACTION_FIELDS, body.action)) fail('INVALID_REQUEST');
   const action = body.action;
-  whitelist(body, ['action', ...ACTION_FIELDS[action]]);
+  const wizard = body.flowVersion !== undefined;
+  if (wizard && (body.flowVersion !== FLOW_VERSION || !['info', 'send-code', 'verify', 'submit'].includes(action))) fail('INVALID_REQUEST');
+  const extra = wizard ? ['flowVersion', ...(action === 'send-code' ? ['phone'] : action === 'submit' ? ['signature'] : [])] : [];
+  whitelist(body, ['action', ...ACTION_FIELDS[action], ...extra]);
   const jwt = ['create', 'list', 'revoke', 'read-rrn'].includes(action) ? auth(request) : undefined;
   if (action === 'create') {
     const carId = text(body.carId, 200); const recipient = phone(body.phone); const rawToken = randomToken();
@@ -323,7 +352,16 @@ async function perform(request, config, body, rrnEncryption) {
       if (!object(row)) fail('UPSTREAM_ERROR');
       const result = Object.fromEntries(fields.map(key => [key, row[key] ?? null]));
       result.hasRrn = !!rrnEncryptionKey && row.hasRrn === true;
-      if (row.submittedAt && object(row.submission)) result.submission = Object.fromEntries([...CUSTOMER_FIELDS, 'refundConsent', 'phone', 'carModel', 'plate'].filter(key => Object.hasOwn(row.submission, key)).map(key => [key, row.submission[key]]));
+      result.hasSignature = row.hasSignature === true;
+      result.canonicalApplied = row.canonicalApplied === true;
+      if (row.submittedAt && object(row.submission)) {
+        result.submission = Object.fromEntries([...CUSTOMER_FIELDS, 'refundConsent', 'phone', 'carModel', 'plate'].filter(key => Object.hasOwn(row.submission, key)).map(key => [key, row.submission[key]]));
+        if (row.submission.signature !== undefined) {
+          try { result.submission.signature = signature(row.submission.signature); } catch { fail('UPSTREAM_ERROR'); }
+        }
+        if (typeof row.submission.signedAt === 'string') result.submission.signedAt = row.submission.signedAt;
+        if (row.submission.flowVersion === FLOW_VERSION) result.submission.flowVersion = FLOW_VERSION;
+      }
       return result;
     }) };
   }
@@ -331,12 +369,30 @@ async function perform(request, config, body, rrnEncryption) {
   if (action === 'read-rrn') {
     const id = uuid(body.id);
     if (!rrnEncryptionKey) fail('RRN_SETUP_REQUIRED');
+    let details;
+    try { details = await rpc(config, 'snote_intake_details_v3', { p_id: id }, jwt); }
+    catch (error) { if (!(error instanceof IntakeError) || error.code !== 'DB_SETUP_REQUIRED') throw error; }
+    if (details) {
+      if (details.ok !== true || details.id !== id) fail('RRN_NOT_AVAILABLE');
+      if (Object.hasOwn(details, 'identityCipher')) {
+        if (!UUID.test(details.companyId || '') || !UUID.test(details.ownerId || '') || !['string', 'number'].includes(typeof details.carId) || !String(details.carId)) fail('RRN_NOT_AVAILABLE');
+        try { return { ok: true, rrn: await decryptIdentityCipher(rrnEncryption, { company: details.companyId, owner: details.ownerId }, String(details.carId), details.identityCipher) }; }
+        catch { fail('RRN_NOT_AVAILABLE'); }
+      }
+      if (details.source !== 'legacy') fail('RRN_NOT_AVAILABLE');
+    }
     const data = await rpc(config, 'snote_intake_rrn_access', { p_id: id }, jwt);
     if (data.ok !== true || data.id !== id) fail('RRN_NOT_AVAILABLE');
     return { ok: true, rrn: await decryptRrn(rrnEncryption.keys, data.rrnCipher, data.tokenHash) };
   }
   const tokenHash = await sha(token(body.token));
   if (action === 'info') {
+    if (wizard) {
+      if (!rrnEncryptionKey) fail('RRN_SETUP_REQUIRED');
+      const data = await rpc(config, 'snote_intake_view_v3', { p_token_hash: tokenHash });
+      if (data.status !== 'submitted' && (data.flowVersion !== FLOW_VERSION || data.rrnEnabled !== true)) fail('DB_SETUP_REQUIRED');
+      return { ...safeInfo(data, true), flowVersion: FLOW_VERSION };
+    }
     if (rrnEncryptionKey) {
       try { return safeInfo(await rpc(config, 'snote_intake_view_v2', { p_token_hash: tokenHash }), true); }
       catch (error) { if (!(error instanceof IntakeError) || error.code !== 'DB_SETUP_REQUIRED') throw error; }
@@ -345,8 +401,11 @@ async function perform(request, config, body, rrnEncryption) {
   }
   if (action === 'send-code') {
     const challengeId = crypto.randomUUID(); const code = randomCode();
-    const data = await rpc(config, 'snote_intake_challenge', { p_token_hash: tokenHash, p_challenge_id: challengeId, p_otp_hash: await hmac(config.otpSecret, `${challengeId}:${code}`) });
+    const args = { p_token_hash: tokenHash, p_challenge_id: challengeId, p_otp_hash: await hmac(config.otpSecret, `${challengeId}:${code}`) };
+    if (wizard) args.p_phone = phone(body.phone);
+    const data = await rpc(config, wizard ? 'snote_intake_challenge_v3' : 'snote_intake_challenge', args);
     if (data.ok !== true || data.challengeId !== challengeId || !UUID.test(data.id || '') || !/^(?:010\d{8}|01[16789]\d{7,8})$/.test(data.phone || '')) fail('UPSTREAM_ERROR');
+    if (wizard && data.phone !== args.p_phone) fail('UPSTREAM_ERROR');
     let status = await sendMessage(config, data.phone, `[S-NOTE] 인증번호: ${code} (5분 내 입력)`, false);
     try { await delivery(config, data.id, 'otp', challengeId, status); } catch {
       status = 'unknown';
@@ -363,13 +422,17 @@ async function perform(request, config, body, rrnEncryption) {
     const session = randomToken();
     const data = await rpc(config, 'snote_intake_verify', { p_token_hash: tokenHash, p_challenge_id: challengeId, p_otp_hash: await hmac(config.otpSecret, `${challengeId}:${body.code}`), p_session_hash: await sha(session) });
     if (data.ok !== true || typeof data.sessionExpiresAt !== 'string') fail('UPSTREAM_ERROR');
+    if (wizard) {
+      const context = verifiedContext(await rpc(config, 'snote_intake_submit_context_v3', { p_token_hash: tokenHash, p_session_hash: await sha(session) }));
+      return { ok: true, session, sessionExpiresAt: data.sessionExpiresAt, phone: context.phone, flowVersion: FLOW_VERSION };
+    }
     return { ok: true, session, sessionExpiresAt: data.sessionExpiresAt };
   }
   if (action === 'submit') {
     if (body.vehicleConfirmed !== true || body.consent !== true) fail('VALIDATION_ERROR');
     if (body.refundConsent !== undefined && typeof body.refundConsent !== 'boolean') fail('VALIDATION_ERROR');
     if (typeof body.session !== 'string' || !TOKEN.test(body.session)) fail('SESSION_EXPIRED');
-    const details = customer(body.customer);
+    const details = customer(body.customer, wizard);
     if (details.refundBank && body.refundConsent !== true) fail('VALIDATION_ERROR');
     if (!details.refundBank && body.refundConsent === true) fail('VALIDATION_ERROR');
     details.refundConsent = body.refundConsent === true;
@@ -377,7 +440,17 @@ async function perform(request, config, body, rrnEncryption) {
     if (body.rrnNoticeAccepted !== undefined && typeof body.rrnNoticeAccepted !== 'boolean') fail('VALIDATION_ERROR');
     if (rrn && body.rrnNoticeAccepted !== true) fail('VALIDATION_ERROR');
     if (rrn && !rrnEncryptionKey) fail('RRN_SETUP_REQUIRED');
+    if (wizard && !rrn) fail('VALIDATION_ERROR');
     const args = { p_token_hash: tokenHash, p_session_hash: await sha(body.session), p_customer: details, p_consent_version: CONSENT_VERSION };
+    if (wizard) {
+      args.p_signature = signature(body.signature);
+      const context = verifiedContext(await rpc(config, 'snote_intake_submit_context_v3', { p_token_hash: tokenHash, p_session_hash: args.p_session_hash }));
+      if (details.phone !== context.phone) fail('VALIDATION_ERROR');
+      args.p_identity_cipher = await encryptIdentityCipher(rrnEncryption, context, context.carId, rrn);
+      const data = await rpc(config, 'snote_intake_submit_v3', args);
+      if (data.ok !== true || typeof data.submittedAt !== 'string' || typeof data.canonicalApplied !== 'boolean') fail('UPSTREAM_ERROR');
+      return { ok: true, submittedAt: data.submittedAt, ...(data.alreadySubmitted === true ? { alreadySubmitted: true } : {}), canonicalApplied: data.canonicalApplied };
+    }
     if (rrn) {
       args.p_rrn_cipher = await encryptRrn(rrnEncryptionKey, rrn, tokenHash);
       args.p_rrn_notice_version = RRN_NOTICE_VERSION;
@@ -396,14 +469,16 @@ export async function onRequestGet({ request, env }) {
     sameOrigin(request, config);
     const originMatches = config ? new URL(request.url).origin === config.publicOrigin : null;
     if (originMatches === false) issues.push({ name: 'CUSTOMER_INTAKE_PUBLIC_ORIGIN', reason: '실제 접속 주소와 운영 주소 설정이 일치하지 않습니다.' });
-    return json({ service: 'snote-customer-intake', configured: !!config, configurationIssues: issues, originMatches, rrnConfigured: !!rrn.key, rrnConfigurationIssues: rrn.issues, rrnKeyMode: rrn.mode });
+    return json({ service: 'snote-customer-intake', configured: !!config, configurationIssues: issues, originMatches, rrnConfigured: !!rrn.key, rrnConfigurationIssues: rrn.issues, rrnKeyMode: rrn.mode, flowVersion: FLOW_VERSION });
   } catch (error) { return errorResponse(error); }
 }
 export async function onRequestPost({ request, env }) {
   try {
     sameOrigin(request);
     const config = configuration(env); if (!config) fail('SERVICE_UNAVAILABLE'); sameOrigin(request, config);
-    return json(await perform(request, config, await boundedJson(request), await inspectRrnConfiguration(env)));
+    const parsed = await boundedJson(request);
+    if (parsed.body?.flowVersion !== FLOW_VERSION && (parsed.size > LEGACY_MAX_BODY || Number(request.headers.get('Content-Length') || 0) > LEGACY_MAX_BODY)) fail('PAYLOAD_TOO_LARGE');
+    return json(await perform(request, config, parsed.body, await inspectRrnConfiguration(env)));
   } catch (error) { return errorResponse(error); }
 }
 export function onRequest(context) {

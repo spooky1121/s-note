@@ -101,6 +101,10 @@
 #snote-intake-panel .snote-intake-row-actions .snote-intake-button { min-height: 36px; padding: 7px 10px; }
 #snote-intake-panel .snote-intake-empty { margin: 0; color: #637b91; }
 #snote-intake-panel .snote-intake-footnote { margin: 12px 0 0; color: #637b91; font-size: var(--snote-text-meta, 10px); }
+#snote-intake-panel .snote-intake-signature { margin-top: 14px; padding: 13px; border: 1px solid #dbe6ee; border-radius: 10px; background: #fff; }
+#snote-intake-panel .snote-intake-signature[hidden] { display: none; }
+#snote-intake-panel .snote-intake-signature > strong { font-size: var(--snote-text-subheading, 13px); }
+#snote-intake-panel .snote-intake-signature-canvas { display: block; width: min(100%, 360px); height: auto; margin-top: 9px; border: 1px solid #edf1f5; border-radius: 6px; }
 @media (max-width: 600px) {
   #snote-intake-panel.snote-intake { margin: 14px 14px 0; padding: 14px; }
   #snote-intake-panel .snote-intake-compose > .snote-intake-button { flex: 1 1 auto; }

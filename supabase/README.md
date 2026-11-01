@@ -1,5 +1,7 @@
 # 상사정보 저장 기능 적용
 
+휴대폰의 단계별 입력·주민번호·서명·자동 반영에는 [0004 SQL](migrations/202611010004_customer_intake_wizard.sql)을 적용합니다. [사용·적용 안내](../docs/customer-intake-wizard.md)를 확인하세요.
+
 판매 진행의 수동 주민번호 저장·전체 표시는 [사용 안내](../docs/manual-customer-identity.md)를 확인하세요. v2.14 수동 저장 기능에는 추가 SQL이 필요하지 않습니다.
 
 이 저장소의 Cloudflare Pages 배포는 Supabase의 DB 구조를 자동 변경하지 않습니다.

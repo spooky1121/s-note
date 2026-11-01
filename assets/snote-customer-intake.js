@@ -49,6 +49,74 @@
     }));
   }
 
+  function submissionKey(item) {
+    const time = new Date(item?.submittedAt || '').getTime();
+    return text(item?.id) + '|' + (Number.isFinite(time) ? String(time) : text(item?.submittedAt));
+  }
+
+  function signatureValue(value) {
+    if (!value || typeof value !== 'object' || Array.isArray(value) || value.version !== 1 ||
+        Object.keys(value).some(key => !['version', 'strokes'].includes(key)) ||
+        !Array.isArray(value.strokes) || !value.strokes.length || value.strokes.length > 24) return null;
+    const points = [], strokes = [];
+    for (const stroke of value.strokes) {
+      if (!Array.isArray(stroke) || !stroke.length || stroke.length > 256) return null;
+      const normalized = [];
+      for (const point of stroke) {
+        if (!Array.isArray(point) || point.length !== 2 || point.some(number => typeof number !== 'number' || !Number.isFinite(number) || number < 0 || number > 1) || points.length >= 1200) return null;
+        const safe = point.map(number => Math.round(number * 10000) / 10000);
+        normalized.push(safe); points.push(safe);
+      }
+      strokes.push(normalized);
+    }
+    let drawn = false;
+    for (let i = 0; i < points.length && !drawn; i++) for (let j = i + 1; j < points.length; j++) {
+      if (Math.hypot(points[i][0] - points[j][0], points[i][1] - points[j][1]) > 0.005) { drawn = true; break; }
+    }
+    return drawn ? { version: 1, strokes } : null;
+  }
+
+  function drawSignature(canvas, value) {
+    const signature = signatureValue(value);
+    if (!signature || !canvas?.getContext) return false;
+    const context = canvas.getContext('2d');
+    if (!context) return false;
+    const width = canvas.width, height = canvas.height;
+    context.clearRect(0, 0, width, height);
+    context.fillStyle = '#fff'; context.fillRect(0, 0, width, height);
+    context.strokeStyle = '#233b54'; context.lineWidth = Math.max(2, width / 230);
+    context.lineCap = 'round'; context.lineJoin = 'round';
+    for (const stroke of signature.strokes) {
+      context.beginPath();
+      stroke.forEach(([x, y], index) => index ? context.lineTo(x * width, y * height) : context.moveTo(x * width, y * height));
+      context.stroke();
+    }
+    return true;
+  }
+
+  function renderSignature(s, value, signedAt) {
+    if (!isCurrent(s)) return;
+    s.signature.replaceChildren();
+    const signature = signatureValue(value);
+    s.signature.hidden = !signature;
+    if (!signature) return;
+    const canvas = node('canvas', 'snote-intake-signature-canvas');
+    canvas.width = 640; canvas.height = 240;
+    canvas.setAttribute('role', 'img'); canvas.setAttribute('aria-label', '고객 원제출 서명');
+    drawSignature(canvas, signature);
+    const date = timestamp(signedAt);
+    s.signature.append(node('strong', '', '고객 원제출 서명'), canvas,
+      node('p', 'snote-intake-meta', date ? '서명 접수 ' + date : '고객이 휴대폰에서 제출한 서명'),
+      node('p', 'snote-intake-meta', '원래 제출한 정보의 서명입니다. 이후 수정한 내용의 새 서명이 아닙니다.'));
+  }
+
+  function arrival(s, item) {
+    if (!isCurrent(s)) return;
+    s.manualOnly.add(submissionKey(item));
+    renderSignature(s, item.submission?.signature, item.submission?.signedAt);
+    message(s, '새 입력이 도착했습니다. 현재 작성 내용은 유지했습니다. 입력정보 불러오기로 확인해 주세요.');
+  }
+
   function close() {
     ++sequence;
     if (state) {
@@ -206,6 +274,7 @@
     s.reading = true;
     controls(s);
     if (manual) message(s, '요청 내역을 확인하는 중입니다.');
+    let candidate = null;
     try {
       const result = await request(s, 'list', { carId: s.carId });
       if (!isCurrent(s)) return;
@@ -219,12 +288,19 @@
           !(item.expiresAt && new Date(item.expiresAt).getTime() <= Date.now()))) s.link = null;
       renderRequests(s);
       if (manual || wasBlocked) message(s, '요청 내역을 확인했습니다.');
+      candidate = s.requests.filter(item => item.submission && (item.submittedAt || item.status === 'submitted') && !item.revokedAt && item.status !== 'revoked')
+        .sort((a, b) => (new Date(b.submittedAt).getTime() || 0) - (new Date(a.submittedAt).getTime() || 0))[0] || null;
     } catch (error) {
       if (!isCurrent(s)) return;
       if ([401, 403, 503].includes(error?.status)) s.blocked = true;
       message(s, failure(error, 'list'), 'error');
     } finally {
       if (isCurrent(s)) { s.reading = false; controls(s); schedule(s); }
+    }
+    if (candidate && isCurrent(s) && !s.applied.has(submissionKey(candidate)) && !s.appliedIds.has(candidate.id)) {
+      if (s.manualOnly.has(submissionKey(candidate)) || formValues() !== s.baseline || s.unsavedImport ||
+          (typeof zc72SaleLoading !== 'undefined' && zc72SaleLoading)) arrival(s, candidate);
+      else await loadSubmission(s, candidate, { automatic: true });
     }
   }
 
@@ -320,18 +396,20 @@
     }
   }
 
-  async function loadSubmission(s, item) {
+  async function loadSubmission(s, item, options = {}) {
+    const automatic = options.automatic === true;
     if (!isCurrent(s) || s.busy || s.reading || !item.submission || typeof zc74LoadCustomer !== 'function') return;
     if (typeof zc72SaleLoading !== 'undefined' && zc72SaleLoading) {
-      message(s, '계약서 저장이 끝난 뒤 입력정보를 불러와 주세요.', 'error');
+      if (automatic) arrival(s, item); else message(s, '고객정보 저장이 끝난 뒤 입력정보를 불러와 주세요.', 'error');
       return;
     }
-    const readRrn = item.hasRrn === true && s.cloud.rrnEnabled === true;
+    const readRrn = item.hasRrn === true;
     const before = formValues();
+    if (automatic && (before !== s.baseline || s.unsavedImport)) { arrival(s, item); return; }
     const existingRrn = Boolean(byId('zc72-rrn')?.value);
-    if (readRrn && existingRrn) {
+    if (!automatic && readRrn && existingRrn) {
       if (!window.confirm('판매 정보와 현재 입력된 주민번호를 고객이 제출한 정보로 바꾸시겠습니까?')) return;
-    } else if (before !== s.baseline && !window.confirm(readRrn
+    } else if (!automatic && before !== s.baseline && !window.confirm(readRrn
       ? '판매 정보에 수정한 내용이 있습니다. 고객이 제출한 정보로 바꾸고 주민번호를 불러오시겠습니까?'
       : '판매 정보에 수정한 내용이 있습니다. 고객이 제출한 입력정보로 바꾸시겠습니까? 주민번호는 유지됩니다.')) return;
     if (!isCurrent(s)) return;
@@ -344,17 +422,16 @@
         message(s, '고객 입력정보를 불러오는 중입니다.');
         const result = await request(s, 'read-rrn', { id: item.id });
         if (!isCurrent(s)) return;
-        if (s.cloud.rrnEnabled !== true) {
-          message(s, '주민번호 이용 설정이 변경되었습니다. 기존 판매 입력은 변경하지 않았습니다. 판매 창을 다시 열어 주세요.', 'error');
-          return;
-        }
         if (typeof result.rrn !== 'string' || !/^\d{13}$/.test(result.rrn)) throw { code: 'RRN_NOT_AVAILABLE' };
         rrn = result.rrn;
         if (typeof zc72SaleLoading !== 'undefined' && zc72SaleLoading) {
-          message(s, '계약서 저장이 시작되어 불러오기를 중단했습니다. 저장이 끝난 뒤 다시 불러와 주세요.', 'error');
+          if (automatic) arrival(s, item); else message(s, '고객정보 저장이 시작되어 불러오기를 중단했습니다. 저장이 끝난 뒤 다시 불러와 주세요.', 'error');
           return;
         }
-        if (formValues() !== before && !window.confirm('불러오는 동안 판매 정보가 수정되었습니다. 최신 수정 내용과 주민번호를 고객이 제출한 정보로 바꾸시겠습니까?')) return;
+        if (formValues() !== before) {
+          if (automatic) { arrival(s, item); return; }
+          if (!window.confirm('불러오는 동안 판매 정보가 수정되었습니다. 최신 수정 내용과 주민번호를 고객이 제출한 정보로 바꾸시겠습니까?')) return;
+        }
       }
       if (!isCurrent(s)) return;
       const source = item.submission;
@@ -380,10 +457,13 @@
       }
       // Existing sale actions save customer records; this action only fills the current form.
       s.baseline = formValues();
-      const note = item.hasRrn === true && !readRrn ? ' 주민번호 불러오기가 꺼져 있어 기존 주민번호는 유지했습니다.' : '';
-      message(s, '판매 입력칸에 불러왔습니다. 내용을 확인한 뒤 기존 계약서·인수증 절차로 저장해 주세요.' + note, 'success');
+      s.applied.add(submissionKey(item)); s.appliedIds.add(item.id);
+      s.unsavedImport = item.canonicalApplied !== true;
+      renderSignature(s, item.submission?.signature, item.submission?.signedAt);
+      if (automatic && item.canonicalApplied === true) delete byId('zc72-sale-modal').dataset.snoteHistoryDirty;
+      message(s, automatic ? '고객이 제출한 정보를 판매 입력칸에 자동으로 채웠습니다.' : '판매 입력칸에 불러왔습니다. 내용을 확인한 뒤 고객정보 저장 또는 기존 문서 절차로 저장해 주세요.', 'success');
     } catch (error) {
-      if (isCurrent(s)) message(s, failure(error, 'read-rrn'), 'error');
+      if (isCurrent(s)) { if (automatic) s.manualOnly.add(submissionKey(item)); message(s, failure(error, 'read-rrn'), 'error'); }
     } finally {
       rrn = '';
       if (isCurrent(s)) { s.busy = false; controls(s); schedule(s); }
@@ -394,7 +474,7 @@
     panel.append(node('h3', 'snote-intake-heading', '고객 직접 입력'), node('p', 'snote-intake-note', content));
   }
 
-  function open() {
+  function open(customer = null) {
     close();
     const panel = byId('snote-intake-panel');
     if (!panel) return;
@@ -416,8 +496,10 @@
       id: sequence, username: context.user.username, role: context.user.role, carId: context.carId,
       cloud: context.cloud, canCreate: context.car.status !== '판매완료', controllers: new Set(),
       requests: [], link: null, busy: false, reading: false, blocked: false, loaded: false, timer: null,
-      baseline: formValues()
+      baseline: formValues(), applied: new Set(), appliedIds: new Set(), manualOnly: new Set(),
+      unsavedImport: byId('zc72-sale-modal')?.dataset.snoteHistoryDirty === '1' || byId('zc72-sale-form')?.dataset.snote196ManualReset === '1'
     };
+    if (typeof customer?.intakeSource?.requestId === 'string') s.appliedIds.add(customer.intakeSource.requestId);
     state = s;
     const head = node('div', 'snote-intake-head');
     head.append(node('h3', 'snote-intake-heading', '고객 직접 입력'));
@@ -445,10 +527,13 @@
     s.message.setAttribute('aria-live', 'polite');
     s.list = node('ul', 'snote-intake-list');
     s.list.setAttribute('aria-label', '고객 입력 요청 내역');
-    panel.append(head, note, line, s.message, s.list,
+    s.signature = node('section', 'snote-intake-signature'); s.signature.hidden = true;
+    s.signature.setAttribute('aria-label', '고객 원제출 서명');
+    panel.append(head, note, line, s.message, s.list, s.signature,
       node('p', 'snote-intake-footnote', '새 링크를 보내면 이전 입력 대기 링크는 취소됩니다. 링크는 24시간 동안 유효하며, 복사는 이 창에서 생성한 최근 링크만 가능합니다.'));
     if (!s.canCreate) message(s, '판매완료 차량은 새 링크를 보낼 수 없습니다. 기존 요청 내역만 확인할 수 있습니다.');
     renderRequests(s);
+    renderSignature(s, customer?.customerSignature, customer?.customerSignatureSignedAt);
     const observer = new MutationObserver(() => { if (!isCurrent(s)) close(); });
     s.observer = observer;
     for (const element of [byId('zc72-sale-modal'), byId('zc-cloud-gate'), byId('auth-shell')]) {
@@ -464,7 +549,19 @@
     if (!isCurrent(s)) { close(); return; }
     if (!document.hidden) refresh(s, false);
   });
+  document.addEventListener('reset', event => {
+    if (event.target?.id === 'zc72-sale-form' && state && isCurrent(state)) state.unsavedImport = true;
+  });
   window.addEventListener('pagehide', close);
   window.snoteIntakeOpen = open;
   window.snoteIntakeClose = close;
+  window.snoteIntakeCustomerSaved = function () {
+    const s = state;
+    if (s && isCurrent(s)) { s.baseline = formValues(); s.unsavedImport = false; }
+  };
+  window.snoteRenderCustomerSignature = drawSignature;
+  window.snoteCustomerSignatureImage = function (value) {
+    const canvas = document.createElement('canvas'); canvas.width = 640; canvas.height = 240;
+    return drawSignature(canvas, value) ? canvas.toDataURL('image/png') : '';
+  };
 })();
