@@ -111,6 +111,8 @@ if(trigger){
     if(!opened||event.ctrlKey||event.metaKey||event.altKey||event.isComposing)return;
     if(event.key==='Escape'){event.preventDefault();event.stopPropagation();close(true);return;}
     if(!panel.contains(document.activeElement)&&document.activeElement!==trigger)return;
+    // Enter still activates the named open/close buttons when they have focus.
+    if(event.key==='Enter'&&(document.activeElement===trigger||document.activeElement===panel.querySelector('#snote-calculator-close')))return;
     const key=/^[0-9.+\-*/=%]$/.test(event.key)?event.key==='%'?'PERCENT':event.key:event.key==='Enter'?'=':event.key==='Backspace'?'BACKSPACE':event.key==='Delete'?'AC':null;
     if(key){event.preventDefault();event.stopPropagation();press(key);}
   },true);
