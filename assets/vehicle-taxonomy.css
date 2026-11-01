@@ -1,0 +1,12 @@
+.snote220-taxonomy-notice{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:0 0 16px;padding:12px 14px;border:1px solid #dce7f3;border-radius:10px;background:#f4f8fe;color:#607d9f;font-family:var(--snote-font-family,inherit);font-size:11px;line-height:1.8;overflow-wrap:anywhere}
+.snote220-taxonomy-notice[hidden]{display:none!important}
+.snote220-taxonomy-notice[data-state="saved"]{background:#f1f8f5;border-color:#d9eae2;color:#5b826f}
+.snote220-taxonomy-notice[data-state="SETUP_REQUIRED"],.snote220-taxonomy-notice[data-state="NETWORK"],.snote220-taxonomy-notice[data-state="CAR_NOT_SAVED"]{background:#fff9f1;border-color:#eee0cc;color:#997b54}
+.snote220-taxonomy-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;flex:none}
+.snote220-taxonomy-actions button,.snote220-taxonomy-actions a{display:inline-flex;align-items:center;justify-content:center;min-height:34px;padding:6px 10px;border:1px solid #d5e2f1;border-radius:7px;background:white;color:#53769d;font:inherit;font-size:10px;text-decoration:none;cursor:pointer}
+.snote220-taxonomy-actions button:disabled{opacity:.55;cursor:wait}
+.snote220-taxonomy-actions [hidden]{display:none!important}
+#snote220-taxonomy-inline{display:block;font-size:10px;margin-bottom:15px}
+#snote220-taxonomy-inline .snote220-taxonomy-actions{margin-top:7px}
+@media(max-width:760px){.snote220-taxonomy-notice{display:block;font-size:11px}.snote220-taxonomy-actions{margin-top:8px}.snote220-taxonomy-actions button,.snote220-taxonomy-actions a{min-height:40px;font-size:11px}}
+@media print{.snote220-taxonomy-notice{display:none!important}}

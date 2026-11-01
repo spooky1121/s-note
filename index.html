@@ -3156,6 +3156,7 @@ button, input, select, textarea { font-family: inherit; }
 </style>
 <link rel="stylesheet" href="assets/snote-customer-intake.css?v=2.15">
 <link rel="stylesheet" href="assets/quick-calculator.css?v=2.17">
+<link rel="stylesheet" href="assets/vehicle-taxonomy.css?v=2.20">
 </head>
 <body class="snote-typography">
 
@@ -3167,7 +3168,7 @@ button, input, select, textarea { font-family: inherit; }
       <div class="auth-story-body"><p class="auth-eyebrow">SMART DEALER WORKSPACE</p><h2>차량 관리의 시작,<br><span>더 간편하게.</span></h2><p>재고부터 차량 사진과 서류까지.<br>딜러별로 분리된 나만의 업무 공간.</p><div class="auth-points"><div class="auth-point"><i>✓</i>딜러별 차량 및 파일 관리</div><div class="auth-point"><i>✓</i>PC · 모바일 반응형 디자인</div><div class="auth-point"><i>✓</i>실차 사진 5장 · 성능서류 2장</div></div></div>
       <div class="auth-sidefoot">© S-NOTE · SMART DEALER WORKSPACE</div>
     </div>
-    <div class="auth-content" id="auth-content"><div class="auth-headsign"><span class="snote-wordmark"><img src="assets/snote-logo.png" alt="S-NOTE" width="2172" height="724" decoding="async"></span></div><div class="auth-topline"><strong>ACCOUNT ACCESS</strong><span>v2.19 · ONLINE</span></div><h1 id="auth-heading">다시 만나서 반가워요</h1><p class="auth-desc" id="auth-description">로그인하고 내 차량 재고를 확인하세요.</p>
+    <div class="auth-content" id="auth-content"><div class="auth-headsign"><span class="snote-wordmark"><img src="assets/snote-logo.png" alt="S-NOTE" width="2172" height="724" decoding="async"></span></div><div class="auth-topline"><strong>ACCOUNT ACCESS</strong><span>v2.20 · ONLINE</span></div><h1 id="auth-heading">다시 만나서 반가워요</h1><p class="auth-desc" id="auth-description">로그인하고 내 차량 재고를 확인하세요.</p>
       <div class="auth-tabs" hidden aria-hidden="true"><button id="login-tab" class="active" type="button" tabindex="-1" onclick="showAuthMode('login')">로그인</button><button id="signup-tab" type="button" onclick="showAuthMode('signup')" hidden aria-hidden="true" tabindex="-1">회원가입</button></div><div class="auth-success" id="login-success" role="status">✓ 회원가입이 완료되었습니다. 새 계정으로 로그인해 주세요.</div>
       <form id="login-form" class="auth-form" onsubmit="loginAccount(event)"><div><label class="auth-label" for="login-id">아이디</label><input class="auth-input" id="login-id" maxlength="30" autocomplete="username" placeholder="아이디를 입력하세요" required /></div><div><label class="auth-label" for="login-pw">비밀번호</label><input class="auth-input" id="login-pw" type="password" autocomplete="current-password" placeholder="비밀번호를 입력하세요" required /></div><div class="auth-error" id="login-error" role="alert"></div><button class="btn-primary auth-primary" id="login-submit" type="submit">로그인</button><button type="button" class="auth-demo" onclick="loginDemo()">딜러 체험 계정으로 시작하기&nbsp; →</button><button type="button" class="auth-demo" onclick="loginAccountingDemo()">경리 통합 화면 체험하기&nbsp; →</button><div class="accountant-login-help">경리 샘플: <b>accounting / account1234</b><br>딜러 샘플: <b>demo / demo1234</b>, <b>dealer2 / dealer1234</b></div><p class="auth-rule">체험판 전용 계정입니다. 실제 업무용 개인정보나 비밀번호를 입력하지 마세요.</p></form>
       <form id="signup-form" class="auth-form auth-signup-form" onsubmit="registerAccount(event)" style="display:none">
@@ -3190,7 +3191,7 @@ button, input, select, textarea { font-family: inherit; }
     <div class="sidebar-end"><div class="support"><p class="st">간편하고 정확하게.</p><p class="sd">재고부터 매입 · 판매 · 정산까지<br>하나의 전산에서 관리하세요.</p></div></div>
   </aside>
   <div class="main">
-    <header class="topbar"><div class="topbar-left"><button type="button" class="mobile-menu-trigger" id="mobile-menu-trigger" aria-label="메뉴 열기" aria-controls="mobile-drawer" aria-expanded="false" onclick="toggleMobileDrawer()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><div class="crumb"><span id="breadcrumb" hidden>대시보드</span><p class="eyebrow" id="eyebrow">OVERVIEW</p><h1 id="screen-title">오늘의 업무 현황</h1></div></div><div class="topright"><span class="sample">● v2.19 · 온라인 테스트</span>
+    <header class="topbar"><div class="topbar-left"><button type="button" class="mobile-menu-trigger" id="mobile-menu-trigger" aria-label="메뉴 열기" aria-controls="mobile-drawer" aria-expanded="false" onclick="toggleMobileDrawer()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><div class="crumb"><span id="breadcrumb" hidden>대시보드</span><p class="eyebrow" id="eyebrow">OVERVIEW</p><h1 id="screen-title">오늘의 업무 현황</h1></div></div><div class="topright"><span class="sample">● v2.20 · 온라인 테스트</span>
       <button type="button" id="snote-calculator-trigger" aria-label="계산기 열기" title="계산기" aria-haspopup="dialog" aria-controls="snote-calculator-panel" aria-expanded="false" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="2.75" width="14" height="18.5" rx="3"/><rect x="8" y="6" width="8" height="3" rx=".6"/><path d="M8.5 12.5h.01m3.49 0h.01m3.49 0h.01m-7.01 3h.01m3.49 0h.01m3.49 0h.01m-7.01 3h3.5m3.5-3v3"/></svg></button>
       <div class="snote-profile-dropdown" id="snote-profile-dropdown">
         <button type="button" class="profile topbar-profile" id="snote-profile-trigger" aria-haspopup="menu" aria-controls="snote-profile-menu" aria-expanded="false" onclick="snoteToggleProfileMenu()"><span id="profile-avatar" hidden></span><span class="profile-detail"><span class="pname" id="profile-name">내 프로필</span><span id="profile-role" hidden></span></span><svg class="snote-profile-chevron" viewBox="0 0 20 20" aria-hidden="true"><path d="m5 8 5 5 5-5"/></svg></button>
@@ -3841,7 +3842,7 @@ function showGradeProvenance(prefix){
  let info=$(prefix+'-grade-provenance');if(!info){info=document.createElement('div');info.id=prefix+'-grade-provenance';info.className='catalog-grade-meta';el.closest('.formitem')?.append(info)}
  if(!make||!group||!model){info.textContent='제조사·모델을 먼저 선택해 주세요.';return}
  if(grade==='__manual__'){info.textContent='직접 입력한 등급은 공식 목록 검증 전까지 별도 확인이 필요합니다.';return}
- const record=vehicleTaxonomy.find(r=>r.make===make&&r.group===group&&r.model===model&&catalogTrim(r)===grade);
+ const record=domesticTaxonomy().find(r=>r.make===make&&r.group===group&&r.model===model&&catalogTrim(r)===grade);
  if(!record){info.textContent='등급을 선택하면 근거 자료를 확인할 수 있습니다.';return}
  const official=['official','official_price_page'].includes(record.verification);
  info.replaceChildren();const flag=document.createElement('strong');flag.textContent=official?'제조사 확인':'참고 / 확인 필요';if(!official)flag.className='needs-review';info.append(flag);
@@ -3858,14 +3859,35 @@ function snote98CarTaxonomy(){
  }
  return [...out.values()];
 }
+let snote220PublicCatalog=null,snote220TaxonomyUI=null,snote220RegistrationSession=0;
+function snote220CatalogPart(value){return String(value||'').normalize('NFKC').trim().replace(/\s+/g,' ').replace(/[A-Z]/g,c=>c.toLowerCase());}
+function snote220PublicRows(){
+ if(!snote220PublicCatalog){const map=new Map();for(const row of BUNDLED_CATALOG_V118){const key=taxonomyKey(row),old=map.get(key);if(!old||(['official','official_price_page'].includes(row.verification)&&!['official','official_price_page'].includes(old.verification)))map.set(key,row);}snote220PublicCatalog=[...map.values()];}
+ return snote220PublicCatalog;
+}
+function snote220MergeCatalog(rows){
+ const result=new Map(),labels=Array.from({length:5},()=>new Map()),fields=['make','group','model','grade','subgrade'];
+ for(const original of rows){if(original.market&&original.market!=='KR'&&original.market!=='UNSPECIFIED')continue;
+  const row={...original},parts=fields.map(field=>snote220CatalogPart(row[field]));
+  for(let i=0;i<fields.length;i++){if(!parts[i])continue;const key=JSON.stringify(parts.slice(0,i+1));if(!labels[i].has(key))labels[i].set(key,row[fields[i]]);row[fields[i]]=labels[i].get(key);}
+  const key=JSON.stringify(parts);if(!result.has(key)){row.key=taxonomyKey(row);result.set(key,row);}
+ }return [...result.values()];
+}
 function domesticTaxonomy(){
- const combined=new Map(vehicleTaxonomy.filter(r=>!r.market||r.market==='KR'||r.market==='UNSPECIFIED').map(r=>[taxonomyKey(r),r]));
+ const online=window.snoteVehicleTaxonomyBridge?.hasSession()||!currentUser;
+ if(online){const context=window.snoteVehicleTaxonomyBridge?.context();const scopedImports=context?vehicleTaxonomy.filter(row=>row.company_id===context.company_id):[];
+  return snote220MergeCatalog([...snote220PublicRows(),...(window.snoteVehicleTaxonomyRows?.()||[]),...scopedImports,...(context?snote98CarTaxonomy():[])]);
+ }
+ const combined=new Map(vehicleTaxonomy.filter(r=>!r.company_id&&(!r.market||r.market==='KR'||r.market==='UNSPECIFIED')).map(r=>[taxonomyKey(r),r]));
  for(const row of snote98CarTaxonomy())if(!combined.has(row.key))combined.set(row.key,row);
  return [...combined.values()];
 }
+function snote220EnsureTaxonomyUI(){if(!snote220TaxonomyUI)snote220TaxonomyUI=import('./assets/vehicle-taxonomy-ui.js?v=2.20').catch(error=>{snote220TaxonomyUI=null;throw error;});return snote220TaxonomyUI;}
+async function snote220RefreshTaxonomy(){await snote220EnsureTaxonomyUI();if(window.snoteVehicleTaxonomyBridge?.context())return window.snoteLoadVehicleTaxonomy();window.snoteVehicleTaxonomyOnOpen?.();}
 async function snote98SaveTaxonomy(row){
- if(!row||!row.make||!row.group||!row.model)return;
- const item={make:row.make,group:row.group,model:row.model,grade:row.grade||'',subgrade:'',model_year:String(row.year||''),verification:'user_import',source:'vehicle_registration_manual',source_url:'',review_note:'차량 직접입력 · 공식 목록 확인 필요',market:'KR'};
+ if(window.snoteVehicleTaxonomyBridge?.hasSession()){const context=window.snoteVehicleTaxonomyBridge.context();await snote220EnsureTaxonomyUI();if(!context||window.snoteVehicleTaxonomyBridge.context()?.key!==context.key)throw Object.assign(Error('로그인 또는 상사가 변경되었습니다.'),{code:'CONTEXT_CHANGED'});return window.snoteSaveVehicleTaxonomyForCar(row);}
+ if(!row||!row.make||!row.group||!row.generation)throw Error('저장할 차량 분류를 확인해 주세요.');
+ const item={make:row.make,group:row.group,model:row.generation,grade:row.grade||'',subgrade:row.subgrade||'',model_year:String(row.year||''),verification:'user_import',source:'vehicle_registration_manual',source_url:'',review_note:'차량 직접입력 · 공식 목록 확인 필요',market:'KR'};
  item.key=taxonomyKey(item);
  if(!vehicleTaxonomy.some(x=>taxonomyKey(x)===item.key))vehicleTaxonomy.push(item);
  if(taxonomyDB){
@@ -3875,6 +3897,7 @@ async function snote98SaveTaxonomy(row){
   }
  }
  refreshTaxonomyWidget();
+ return {state:'local',vehicleSaved:false};
 }
 /* S-NOTE v1.98: vehicle registration taxonomy inline manual editors */
 const SNOTE98_FIELDS=['make','group','generation','grade'];
@@ -3941,14 +3964,18 @@ function fillVehicleSelect(level){
 function syncVehicleCatalog(){
  snote98SyncInline();showGradeProvenance('new');updateNewCarPreview();
 }
-function refreshTaxonomyWidget(){const el=$('catalog-counter');if(!el)return;const models=new Set(vehicleTaxonomy.map(x=>x.make+'|'+x.group));const generations=new Set(vehicleTaxonomy.map(x=>x.make+'|'+x.group+'|'+x.model));const verified=vehicleTaxonomy.filter(x=>x.grade).length;const official=vehicleTaxonomy.filter(x=>x.grade&&['official','official_price_page'].includes(x.verification)).length; const reference=vehicleTaxonomy.filter(x=>x.grade&&!['official','official_price_page'].includes(x.verification)).length;el.textContent='제조사 '+num(uniqueSorted(vehicleTaxonomy.map(x=>x.make)).length)+'곳 · 모델 '+num(models.size)+'종 · 세대/세부모델 '+num(generations.size)+'종 · 공식 확인 등급 '+num(official)+'건 · 참고/직접 추가 '+num(reference)+'건 · 등급 미확인 '+num(vehicleTaxonomy.filter(x=>!x.grade).length)+'건 · 세부등급 '+num(vehicleTaxonomy.filter(x=>x.subgrade).length)+'건';}
+function refreshTaxonomyWidget(){const el=$('catalog-counter');if(!el)return;const catalog=domesticTaxonomy();const models=new Set(catalog.map(x=>x.make+'|'+x.group));const generations=new Set(catalog.map(x=>x.make+'|'+x.group+'|'+x.model));const verified=catalog.filter(x=>x.grade).length;const official=catalog.filter(x=>x.grade&&['official','official_price_page'].includes(x.verification)).length; const reference=catalog.filter(x=>x.grade&&!['official','official_price_page'].includes(x.verification)).length;el.textContent='제조사 '+num(uniqueSorted(catalog.map(x=>x.make)).length)+'곳 · 모델 '+num(models.size)+'종 · 세대/세부모델 '+num(generations.size)+'종 · 공식 확인 등급 '+num(official)+'건 · 참고/직접 추가 '+num(reference)+'건 · 등급 미확인 '+num(catalog.filter(x=>!x.grade).length)+'건 · 세부등급 '+num(catalog.filter(x=>x.subgrade).length)+'건';}
 function escapeCsv(value){let s=String(value??'');return '"'+s.replaceAll('"','""')+'"'}
-function exportVehicleCatalog(){const cols=['make','group','model','grade','subgrade','model_year','verification','source','source_url','review_note','market'];const lines=[cols.join(','),...vehicleTaxonomy.map(x=>cols.map(k=>escapeCsv(x[k])).join(','))];let blob=new Blob(['\uFEFF'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'});let url=URL.createObjectURL(blob);let a=document.createElement('a');a.href=url;a.download='s-note_vehicle_catalog.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
+function exportVehicleCatalog(){const cols=['make','group','model','grade','subgrade','model_year','verification','source','source_url','review_note','market'];const lines=[cols.join(','),...domesticTaxonomy().map(x=>cols.map(k=>escapeCsv(x[k])).join(','))];let blob=new Blob(['\uFEFF'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'});let url=URL.createObjectURL(blob);let a=document.createElement('a');a.href=url;a.download='s-note_vehicle_catalog.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
 function parseCsv(content){let rows=[],row=[],field='',quoted=false;content=content.replace(/^\uFEFF/,'');for(let i=0;i<content.length;i++){const c=content[i];if(c==='"'){if(quoted&&content[i+1]==='"'){field+='"';i++}else quoted=!quoted}else if(c===','&&!quoted){row.push(field);field=''}else if((c==='\n'||c==='\r')&&!quoted){if(c==='\r'&&content[i+1]==='\n')i++;row.push(field);if(row.some(x=>x.trim()))rows.push(row);row=[];field=''}else field+=c}if(quoted)throw Error('닫히지 않은 따옴표가 있습니다.');row.push(field);if(row.some(x=>x.trim()))rows.push(row);return rows}
 function downloadCatalogTemplate(){const cols=['make','group','model','grade','subgrade','model_year','verification','source','source_url','review_note','market'];const example=['기아','K5','K5 3세대','1.6 터보 노블레스','','2025','source_unverified','authorized_csv','','실차와 대조 필요','KR'];const csv=cols.join(',')+'\r\n'+example.map(escapeCsv).join(',');const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download='s-note_taxonomy_5level_template.csv';a.click();setTimeout(()=>URL.revokeObjectURL(u),2000)}
 async function importVehicleCatalog(event){const file=event.target.files?.[0];event.target.value='';if(!file)return;try{
+ const catalogContext=window.snoteVehicleTaxonomyBridge?.context(),online=!!window.snoteVehicleTaxonomyBridge?.hasSession();
+ const contextStillCurrent=()=>!online||!!catalogContext&&window.snoteVehicleTaxonomyBridge.context()?.key===catalogContext.key;
+ if(!contextStillCurrent())throw Error('서버 연결을 확인한 뒤 가져오기를 다시 시도해 주세요.');
  if(file.size>15*1024*1024)throw Error('CSV는 최대 15MB까지 업로드할 수 있습니다.');
  const rows=parseCsv(await file.text());if(!rows.length)throw Error('파일이 비어 있습니다.');
+ if(!contextStillCurrent())throw Error('로그인 또는 상사가 변경되었습니다.');
  const headers=rows.shift().map(s=>s.trim().toLowerCase().replace(/^\uFEFF/,''));
  if(!['make','group','model','grade'].every(k=>headers.includes(k)))throw Error('필수 열: make,group,model,grade');
  const cell=(fields,k)=>headers.includes(k)?String(fields[headers.indexOf(k)]||'').trim():'';
@@ -3961,9 +3988,11 @@ async function importVehicleCatalog(event){const file=event.target.files?.[0];ev
  parsed.push(incoming);
  }
  if(!parsed.length)throw Error('유효한 데이터가 없습니다.');if(parsed.length>60000)throw Error('최대 60,000건까지 가져올 수 있습니다.');
- const accepted=[];let protectedCount=0;const existing=new Map(vehicleTaxonomy.map(x=>[taxonomyKey(x),x]));for(const r of parsed){const old=existing.get(r.key);if(old&&['official','official_price_page','user_import'].includes(old.verification)){protectedCount++;continue}accepted.push(r);existing.set(r.key,r)}
+ const accepted=[];let protectedCount=0;const existing=new Map(domesticTaxonomy().map(x=>[taxonomyKey(x),x]));for(const r of parsed){const identity=taxonomyKey(r),old=existing.get(identity);if(old&&['official','official_price_page','user_import'].includes(old.verification)){protectedCount++;continue}if(online){r.company_id=catalogContext.company_id;r.key='company:'+catalogContext.company_id+':'+identity;}accepted.push(r);existing.set(identity,r)}
+ if(!contextStillCurrent())throw Error('로그인 또는 상사가 변경되었습니다.');
  if(taxonomyDB){await new Promise((resolve,reject)=>{const tx=taxonomyDB.transaction('entries','readwrite'),store=tx.objectStore('entries');for(const row of accepted)store.put(row);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)});vehicleTaxonomy=await readTaxonomy()}
- else vehicleTaxonomy=[...existing.values()];
+ else vehicleTaxonomy=vehicleTaxonomy.concat(accepted);
+ if(!contextStillCurrent())throw Error('로그인 또는 상사가 변경되었습니다.');
  refreshTaxonomyWidget();fillVehicleSelect('make');toast(`CSV ${accepted.length}건 반영 · 공식 확인 ${protectedCount}건 보호 · 형식 오류 ${skipped}건`)
  }catch(e){toast('CSV 가져오기 오류: '+e.message)}}
 
@@ -5801,8 +5830,8 @@ document.addEventListener('keydown',event=>{
 });
 
 function navigate(next,options={}){window.snoteCloseCalculator?.();if(!snotePageAllowed(next)){if(currentUser)toast('해당 메뉴에 접근할 권한이 없습니다.');return false;}if(next!==route&&!snotePrepareRouteChange())return false;const invitePane=$('zc86-invite-area'),inviteHome=$('zc86-admin-tools');if(invitePane&&inviteHome&&invitePane.parentElement!==inviteHome){inviteHome.appendChild(invitePane);invitePane.hidden=true;}if(next==='finance'&&currentUser&&!isAccountant()&&!isSnoteAdmin()&&!zcDashboardGateGranted){openDashboardGate();return;}if(document.body.classList.contains('mobile-drawer-visible'))closeMobileDrawer();if(!$('acc60-chart-overlay').hidden)closeAcc60ChartModal();document.body.classList.toggle('accountant-mode',isAccountant());if((['inventoryFinance','prestock','monthly','acctFinance'].includes(next)&&!isFinanceManager())||(next==='settings'&&!isSnoteAdmin())||(next==='users'&&isAccountant())){toast('해당 메뉴에 접근할 권한이 없습니다.');return}zcDashboardUnlocked=!isFinanceManager()&&next==='finance'&&zcDashboardGateGranted;route=next;let p=pages[next];$('breadcrumb').textContent=isAccountant()&&next==='finance'?'매입금액 현황':p.title;$('eyebrow').textContent=p.eyebrow;$('screen-title').textContent=isSnoteAdmin()&&next==='settings'?'관리자 · 직원 및 금융 설정':isAccountant()?({dashboard:'경리 통합 대시보드',buy:'전체 딜러 매입 관리',sell:'전체 딜러 판매 완료',finance:'매입금액 현황',inventoryFinance:'재고금융 관리',prestock:'선재고 관리',settings:'경리 설정',monthly:'월별 결산표'}[next]||p.head):p.head;$('screen-sub').textContent=isSnoteAdmin()&&next==='settings'?'직원 이름·상사명과 재고금융 설정을 관리합니다.':isAccountant()?(next==='monthly'?'딜러별 수수료·운영비·이월·잔액을 실시간으로 정리하고 결산표를 출력합니다.':next==='prestock'?'선재고 지급·상환 거래 내역과 현재 잔액을 확인합니다.':next==='inventoryFinance'?'모든 딜러의 재고대출금과 금융사별 현황을 한곳에서 관리합니다.':next==='dashboard'?'매입·판매 실적과 금융사별 한도 및 사용금액을 한눈에 확인합니다.':'모든 딜러의 차량과 매입·판매 정보를 한곳에서 관리합니다.'):p.sub;$('monthly-screen').style.display=next==='monthly'?'block':'none';$('dashboard-screen').style.display=next==='dashboard'?'grid':'none';$('list-screen').style.display=['cars','buy','sell'].includes(next)?'block':'none';$('alt-screen').style.display=['finance','inventoryFinance','prestock','users','settings','acctFinance'].includes(next)?'block':'none';$('dealer-finance-overview').style.display=next==='finance'&&!isAccountant()?'block':'none';$('stats').style.display=next==='finance'&&!isAccountant()?'grid':'none';$('dashboard-analytics').style.display=next==='finance'&&!isAccountant()?'block':'none';document.querySelector('.app').classList.toggle('accountant-dashboard',isAccountant()&&next==='dashboard');if(isAccountant()&&next==='dashboard')renderAccountantDashboard();$('main-add').style.display='none';$('zc80-buy-scan').hidden=next!=='buy'||isAccountant();$('snote92-buy-manual').hidden=next!=='buy'||isAccountant();renderAccountantBar();if(['cars','buy','sell'].includes(next)){$('list-title').textContent=next==='sell'?'판매 완료 차량 목록':next==='buy'?'매입 관리 차량 목록':'재고 차량 목록';$('list-desc').textContent=next==='sell'?'판매가 완료된 차량만 표시합니다. 상태를 변경하면 다시 재고로 돌아갑니다.':next==='buy'?'판매 완료 전 차량만 표시합니다.':'판매중 차량만 표시합니다. 상태를 판매완료로 변경하면 판매 완료 페이지로 이동합니다.';$('list-filter').value=next==='sell'?'판매완료':'all';$('list-filter').style.display=['sell','buy'].includes(next)?'none':'';$('list-query').value=''}if(['finance','inventoryFinance','prestock','users','settings','acctFinance'].includes(next))buildAlt();buildMenus();renderCars();const accBar=$('accountant-bar');if(accBar)accBar.hidden=!isFinanceManager()||['inventoryFinance','prestock'].includes(next);if(options.history!=='none')snoteWriteWorkspaceHistory(next,options.history||'push');window.snoteMonthlyWorkbookRefresh?.();window.scrollTo({top:0,behavior:'instant'});return true}
-function openAdd(){delete $('overlay').dataset.snoteHistoryDirty;const previousHint=$('snote201-model-match-hint');previousHint?.remove();if(isAccountant()){toast('경리 화면에서는 각 딜러가 등록한 차량을 관리합니다.');return}$('overlay').classList.add('open');newYearTouched=false;delete $('new-model').dataset.snote98OcrFallback;SNOTE98_FIELDS.forEach(f=>{$('snote98-'+f+'-input').value='';});fillVehicleSelect('make');setupColorSelect('new');const hint=document.createElement('div');hint.id='snote201-model-match-hint';$('new-visual-preview')?.before(hint);$('new-year').value=String(new Date().getFullYear());$('new-purchase-date').value=todayLocal();$('new-km').value='';renderRepairRows('new',[]);$('new-make').focus();updateNewCarPreview();updateAddSummary()}
-function closeAdd(){$('overlay').classList.remove('open');zcAutoRegPendingFile=null}
+function openAdd(){snote220RegistrationSession++;const saveButton=$('overlay').querySelector('[type="submit"]');if(saveButton)saveButton.disabled=false;void snote220RefreshTaxonomy().catch(()=>{});delete $('overlay').dataset.snoteHistoryDirty;const previousHint=$('snote201-model-match-hint');previousHint?.remove();if(isAccountant()){toast('경리 화면에서는 각 딜러가 등록한 차량을 관리합니다.');return}$('overlay').classList.add('open');newYearTouched=false;delete $('new-model').dataset.snote98OcrFallback;SNOTE98_FIELDS.forEach(f=>{$('snote98-'+f+'-input').value='';});fillVehicleSelect('make');setupColorSelect('new');const hint=document.createElement('div');hint.id='snote201-model-match-hint';$('new-visual-preview')?.before(hint);$('new-year').value=String(new Date().getFullYear());$('new-purchase-date').value=todayLocal();$('new-km').value='';renderRepairRows('new',[]);$('new-make').focus();updateNewCarPreview();updateAddSummary()}
+function closeAdd(){snote220RegistrationSession++;$('overlay').classList.remove('open');zcAutoRegPendingFile=null}
 async function saveCar(e){
  e.preventDefault();if(isAccountant()){toast('딜러 계정에서 차량을 등록해주세요.');return}
  const ocr=snote98UsingOcrTitle();
@@ -5813,6 +5842,7 @@ async function saveCar(e){
  if(!currentUser||!model||!plate||(!ocr&&(!make||!group||!generation))){toast('제조사, 차명, 등급(세부모델)을 입력해주세요. 트림은 선택 사항입니다.');return}
  if(cars.some(c=>c.plate===plate)){toast('이미 등록된 차량번호입니다.');return}
  const button=e.target.querySelector('[type="submit"]');if(button?.disabled)return;
+ const registrationSession=snote220RegistrationSession,actor=currentUser,cloud=!!window.snoteVehicleTaxonomyBridge?.hasSession(),cloudContext=window.snoteVehicleTaxonomyBridge?.context();
  if(button)button.disabled=true;
  try{
   const costs=costInputs('new'),repairItems=getRepairItems('new'),km=parseMileage($('new-km').value),color=$('new-color').value,purchaseAt=$('new-purchase-date').value;
@@ -5820,16 +5850,32 @@ async function saveCar(e){
   if(purchaseAt&&!/^\d{4}-\d{2}-\d{2}$/.test(purchaseAt))throw Error('매입 날짜를 확인해주세요.');
   const id='vehicle-'+currentUser.username+'-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8);
   const row={id,ownerId:currentUser.username,model,make:ocr?'':make,group:ocr?'':group,generation:ocr?'':generation,grade:ocr?'':grade,subgrade:'',plate,year,vin:($('new-vin')?.value||'').trim().toUpperCase(),buy,sell,costs,repairItems,km:formatKm(km),color,purchaseAt,inventoryLoan:0,status:'판매중',emoji:'🚘'};
+  if(cloud){
+   if(!cloudContext)throw Error('서버 연결을 확인한 뒤 차량을 등록해 주세요.');
+   if(!ocr&&manuallyEntered){await snote220EnsureTaxonomyUI();window.snotePrepareVehicleTaxonomyCar(row);}
+   if(currentUser!==actor||window.snoteVehicleTaxonomyBridge.context()?.key!==cloudContext.key)throw Object.assign(Error('로그인 또는 상사가 변경되었습니다.'),{code:'CONTEXT_CHANGED'});
+  }
   cars.unshift(row);
   const persisted=persistCars();
   if(!persisted){cars.shift();throw Error('차량 정보를 저장하지 못했습니다. 다시 시도해주세요.');}
-  // Only commit catalog values after the vehicle record has been persisted.
-  let catalogSaved=true;
-  if(!ocr&&manuallyEntered){try{await snote98SaveTaxonomy({...row});}catch(error){catalogSaved=false;console.warn('차종 목록 추가 실패:',error);}}
-  if(zcAutoRegPendingFile)zcAttachAutoRegistration(id,currentUser.username);
-  e.target.reset();closeAdd();buildStats();navigate('buy');
-  toast(catalogSaved?'차량을 등록했습니다. 새 차종은 다음 등록에서 선택할 수 있습니다.':'차량은 등록했지만 차종 목록 저장에 실패했습니다.');
- }catch(error){toast(error?.message||'차량 등록 실패')}finally{if(button)button.disabled=false;}
+  // Catalogue writes follow a confirmed car write; partial failures have their own retry.
+  let catalogSaved=true,vehicleSaved=!cloud;
+  if(!ocr&&manuallyEntered){
+   try{const saved=await snote98SaveTaxonomy({...row});catalogSaved=saved?.state==='saved'||saved?.state==='local';vehicleSaved=cloud?saved?.vehicleSaved===true:true;}
+   catch(error){catalogSaved=false;if(error.code==='CONTEXT_CHANGED')throw error;console.warn('차종 목록 추가 실패:',error?.code||'request failed');}
+  }else if(cloud){
+   try{await window.snoteVehicleTaxonomyBridge.confirmVehicle(cloudContext,id);vehicleSaved=true;}
+   catch(error){if(error.code==='CONTEXT_CHANGED')throw error;vehicleSaved=false;}
+  }
+  if(currentUser!==actor||(cloud&&window.snoteVehicleTaxonomyBridge.context()?.key!==cloudContext?.key))throw Object.assign(Error('로그인 또는 상사가 변경되었습니다.'),{code:'CONTEXT_CHANGED'});
+  if(registrationSession===snote220RegistrationSession){
+   if(zcAutoRegPendingFile)zcAttachAutoRegistration(id,actor.username);
+   e.target.reset();closeAdd();buildStats();navigate('buy');
+  }
+  if(cloud&&!vehicleSaved)toast('차량의 서버 저장을 확인하지 못했습니다. 연결 상태와 저장 안내를 확인해 주세요.');
+  else if(!catalogSaved)toast('차량은 저장되었습니다. 차종 목록은 안내의 다시 확인 버튼으로 재시도해 주세요.');
+  else toast(cloud?'차량을 서버에 등록했습니다. 직접 입력한 차종은 상사 공용 목록에서 다시 선택할 수 있습니다.':'차량을 이 브라우저에 등록했습니다. 직접 입력한 차종은 다음 등록에서 선택할 수 있습니다.');
+ }catch(error){toast(error?.message||'차량 등록 실패')}finally{if(button&&(registrationSession===snote220RegistrationSession||!$('overlay').classList.contains('open')))button.disabled=false;}
 }
 
 // 미디어 구조: { id, carId, group, filename, createdAt, blob }; document buckets are isolated.
@@ -6646,8 +6692,8 @@ async function registerAccount(event){event.preventDefault();if(!isAccountant())
 async function loginAccount(event){event.preventDefault();clearAuthError('login');const id=$('login-id').value.trim().toLowerCase(),pass=$('login-pw').value;const btn=$('login-submit');btn.disabled=true;btn.textContent='확인 중…';try{const account=await getAccount(id);const hash=account?await hashPassword(pass,account.salt):null;if(!account||hash!==account.passwordHash){showAuthError('login','아이디 또는 비밀번호가 일치하지 않습니다.');return}await zc80RememberLogin(pass,account);await enterWorkspace(account)}catch(e){showAuthError('login','로그인 중 문제가 발생했습니다. 브라우저 설정을 확인해 주세요.')}finally{btn.disabled=false;btn.textContent='로그인';$('login-pw').value=''}}
 async function loginAccountingDemo(){$('login-id').value='accounting';$('login-pw').value='account1234';await loginAccount({preventDefault(){}})}
 async function loginDemo(){try{const account=await getAccount('demo');if(account){await zc80RememberLogin('demo1234',account);await enterWorkspace(account);} else showAuthError('login','테스트 계정이 준비되지 않았습니다.')}catch(_){showAuthError('login','체험 계정에 로그인할 수 없습니다.')}}
-async function enterWorkspace(account,options={}){window.snoteResetCalculator?.();zcDashboardUnlocked=false;if(zc80SensitiveUser!==account.username)zc80SensitiveLock();currentUser={username:account.username,name:account.name,company:account.company,union:account.union,employeeNo:account.employeeNo,role:account.role||'dealer'};sessionStorage.setItem('zerocar-office-v12-session',account.username);dealerAccounts=await getAllAccounts();loadCarsForUser();loadCovers();$('auth-shell').classList.add('hidden');$('profile-name').textContent=account.name+(isAccountant()?' · 경리':isSnoteAdmin()?' · 관리자':' · 딜러');$('profile-role').textContent=isAccountant()?'재고금융 및 월정산 관리':isSnoteAdmin()?'상사 관리자 · 전체 업무':account.company;$('profile-avatar').textContent=account.name.slice(0,1);if(fileDB)await refreshMedia();else {mediaByCar={};modelPhotos=[];}buildStats();if(options.restoreHistory===false){navigate(snoteDefaultPage(),{history:'none'});}else snoteEnterWorkspaceRoute();window.snoteMonthlyWorkbookRefresh?.();}
-function logout(){if(window.zc86Cloud?.ready){window.zc86Cloud.signOut();return;}if(!currentUser)return;if(!confirm('로그아웃하시겠습니까?'))return;window.snoteResetCalculator?.();window.snoteMonthlyWorkbookReset?.();zc80DismissUnlock(false);zc80SensitiveLock();closeDashboardGate();closeAutoRegistration();zcDashboardGateGranted=false;zcDashboardUnlocked=false;closeMobileDrawer();document.body.classList.remove('accountant-mode');sessionStorage.removeItem('zerocar-office-v12-session');currentUser=null;cars=[];covers={};mediaByCar={};modelPhotos=[];modelPhotoUrls.forEach(u=>URL.revokeObjectURL(u));modelPhotoUrls=[];mediaObjectUrls.forEach(u=>URL.revokeObjectURL(u));mediaObjectUrls=[];closeVehicle();closeAdd();$('auth-shell').classList.remove('hidden');$('login-id').value='';$('login-pw').value='';showAuthMode('login');$('login-id').focus();snoteResetWorkspaceNavigation();snoteWriteAuthHistory('login','replace')}
+async function enterWorkspace(account,options={}){window.snoteResetVehicleTaxonomy?.();window.snoteResetCalculator?.();zcDashboardUnlocked=false;if(zc80SensitiveUser!==account.username)zc80SensitiveLock();currentUser={username:account.username,name:account.name,company:account.company,union:account.union,employeeNo:account.employeeNo,role:account.role||'dealer'};sessionStorage.setItem('zerocar-office-v12-session',account.username);dealerAccounts=await getAllAccounts();loadCarsForUser();loadCovers();$('auth-shell').classList.add('hidden');$('profile-name').textContent=account.name+(isAccountant()?' · 경리':isSnoteAdmin()?' · 관리자':' · 딜러');$('profile-role').textContent=isAccountant()?'재고금융 및 월정산 관리':isSnoteAdmin()?'상사 관리자 · 전체 업무':account.company;$('profile-avatar').textContent=account.name.slice(0,1);if(fileDB)await refreshMedia();else {mediaByCar={};modelPhotos=[];}buildStats();if(options.restoreHistory===false){navigate(snoteDefaultPage(),{history:'none'});}else snoteEnterWorkspaceRoute();window.snoteMonthlyWorkbookRefresh?.();}
+function logout(){if(window.zc86Cloud?.ready){window.zc86Cloud.signOut();return;}if(!currentUser)return;if(!confirm('로그아웃하시겠습니까?'))return;window.snoteResetCalculator?.();window.snoteResetVehicleTaxonomy?.();window.snoteMonthlyWorkbookReset?.();zc80DismissUnlock(false);zc80SensitiveLock();closeDashboardGate();closeAutoRegistration();zcDashboardGateGranted=false;zcDashboardUnlocked=false;closeMobileDrawer();document.body.classList.remove('accountant-mode');sessionStorage.removeItem('zerocar-office-v12-session');currentUser=null;cars=[];covers={};mediaByCar={};modelPhotos=[];modelPhotoUrls.forEach(u=>URL.revokeObjectURL(u));modelPhotoUrls=[];mediaObjectUrls.forEach(u=>URL.revokeObjectURL(u));mediaObjectUrls=[];closeVehicle();closeAdd();$('auth-shell').classList.remove('hidden');$('login-id').value='';$('login-pw').value='';showAuthMode('login');$('login-id').focus();snoteResetWorkspaceNavigation();snoteWriteAuthHistory('login','replace')}
 async function seedSampleAccount(username,password,name,role,employeeNo){
  if(await getAccount(username))return;
  const salt=bytesHex(crypto.getRandomValues(new Uint8Array(16)));
@@ -7588,7 +7634,7 @@ document.addEventListener('click',async event=>{
     <details class="snote95-security"><summary>보안 및 이용 안내</summary><div class="zc-warning"><b>온라인 테스트 운영:</b> 차량·금융·월정산·고객정보는 클라우드 DB, 사진·등록증·성능기록부는 비공개 Storage를 사용합니다. 여러 기기에서 동일 장부를 수정하면 충돌을 감지하여 저장을 중단합니다. 주소검색은 인터넷 연결이 필요합니다. <b>주민번호는 기본 저장 금지</b>이며 관련 법령상 구체적인 처리 근거를 검토한 뒤 관리자만 서버에서 활성화해야 합니다. 실제 고객정보를 입력하기 전 테스트와 보안 점검이 필요합니다.</div></details>
     <div id="zc-cloud-offline" hidden class="zc-sec"><button id="zc-cloud-open-local" class="zc-link" type="button">기존 로컬 데모만 열기 (이 PC에서만)</button></div>
    </div>
-   <p class="snote-login-footer">© 2026 S-NOTE. All rights reserved.<span>v2.19</span></p>
+   <p class="snote-login-footer">© 2026 S-NOTE. All rights reserved.<span>v2.20</span></p>
   </div>
   <aside class="snote-login-visual">
    <img class="snote-login-photo" src="assets/login-garage.png" alt="" decoding="async">
@@ -7764,7 +7810,7 @@ async function readCompany(){
  S.alias=ownerAlias(S.user.id);return true;
 }
 async function restoreDatasets(){
- snote216ResetMonthly();
+ snote220InvalidateCatalog();snote216ResetMonthly();
  S.loading=true;
  try{
  const {data,error}=await S.client.from('zc_datasets').select('dataset,owner_id,payload,revision').eq('company_id',S.company.id).limit(2000);if(error)throw error;
@@ -7810,7 +7856,7 @@ function snoteShowOnboarding(){
  gate.scrollTop=0;
 }
 async function hydrateWorkspace(pass){
- snote216ResetMonthly();
+ snote220InvalidateCatalog();snote216ResetMonthly();
  S.ready=false;
  if(!await readCompany()){
   let completed;
@@ -7832,7 +7878,7 @@ async function hydrateWorkspace(pass){
  byId('zc72-rrn').placeholder='000000-0000000 또는 000-00-00000';
  byId('zc86-rrn-mode').textContent='고객 식별번호 서버 암호화 저장 · 목록과 문서에 전체 표시';
  showStatus('● 서버 연결 및 저장 준비 완료');
- snote216InitMonthly();
+ void snote220RefreshTaxonomy().catch(()=>{});snote216InitMonthly();
  await refreshMedia();
 }
 async function doSignIn(e){e?.preventDefault?.();if(S.busy)return;S.busy=true;const button=byId('zc-cloud-submit');button.disabled=true;
@@ -8186,6 +8232,51 @@ window.snote214ReadCustomerIdentities=async function(records){
  return {values,failed};
 };
 
+// Company vehicle names use dedicated authenticated RPCs, separate from car snapshots.
+let snote220CatalogEpoch=0,snote220CatalogModel=null;
+function snote220CatalogError(code,message){return Object.assign(new Error(message),{code});}
+function snote220CatalogContext(){
+ if(!S.ready||S.loading||!S.client||!S.user||!S.company||!currentUser||currentUser.username!==ownerAlias(S.user.id))return null;
+ const member=S.members.find(row=>row.user_id===S.user.id&&row.company_id===S.company.id&&row.active===true&&['admin','dealer','accountant'].includes(row.role));
+ return member?{key:S.company.id+':'+S.user.id+':'+snote220CatalogEpoch,company_id:S.company.id,user_id:S.user.id,canWrite:member.role!=='accountant'}:null;
+}
+function snote220CheckCatalog(context){if(!context||snote220CatalogContext()?.key!==context.key)throw snote220CatalogError('CONTEXT_CHANGED','로그인 또는 상사가 변경되었습니다.');}
+function snote220InvalidateCatalog(){snote220CatalogEpoch++;window.snoteResetVehicleTaxonomy?.();if(byId('overlay')?.classList.contains('open'))closeAdd();}
+function snote220MapCatalogError(error){
+ const code=error?.code;
+ if(['PGRST202','PGRST205','42P01','42883'].includes(code))return snote220CatalogError('SETUP_REQUIRED','상사 공용 차종 DB 설정이 필요합니다.');
+ if(code==='42501')return snote220CatalogError('FORBIDDEN','차종 목록을 이용할 권한이 없습니다.');
+ if(code==='22023')return snote220CatalogError('INVALID_DATA','차종 입력값을 확인해 주세요.');
+ return snote220CatalogError('NETWORK','차종 목록의 서버 응답을 확인하지 못했습니다.');
+}
+async function snote220CatalogRpc(context,name,args={}){
+ snote220CheckCatalog(context);const client=S.client;
+ const result=await client.rpc(name,args);snote220CheckCatalog(context);
+ if(result.error)throw snote220MapCatalogError(result.error);
+ return result.data;
+}
+async function snote220ConfirmVehicle(context,carId,entry=null){
+ snote220CheckCatalog(context);
+ if(typeof carId!=='string'||!carId||carId.length>200)throw snote220CatalogError('INVALID_DATA','차량 식별자를 확인해 주세요.');
+ const flushed=await flush();snote220CheckCatalog(context);
+ if(flushed?.ok!==true)throw snote220CatalogError('CAR_NOT_SAVED','차량의 서버 저장을 먼저 확인해 주세요.');
+ const result=await S.client.from('zc_datasets').select('payload').eq('company_id',context.company_id).eq('owner_id',context.user_id).eq('dataset','cars').maybeSingle();
+ snote220CheckCatalog(context);
+ if(result.error||!Array.isArray(result.data?.payload))throw snote220CatalogError('CAR_NOT_SAVED','차량의 서버 저장을 확인하지 못했습니다.');
+ const matches=result.data.payload.filter(row=>row?.id===carId);
+ if(matches.length!==1)throw snote220CatalogError('CAR_NOT_SAVED','서버에 저장된 차량을 확인해 주세요.');
+ if(entry){
+  if(!snote220CatalogModel)snote220CatalogModel=import('./assets/vehicle-taxonomy-store.js?v=2.20').catch(error=>{snote220CatalogModel=null;throw error;});
+  const model=await snote220CatalogModel;snote220CheckCatalog(context);
+  if(model.taxonomyIdentity(model.taxonomyEntryFromCar(matches[0]))!==model.taxonomyIdentity(entry))throw snote220CatalogError('CAR_NOT_SAVED','서버 차량의 분류와 저장할 목록이 다릅니다.');
+ }
+ return true;
+}
+window.snoteVehicleTaxonomyBridge={context:snote220CatalogContext,hasSession:()=>!!S.user||S.ready||S.busy,
+ read:context=>snote220CatalogRpc(context,'snote_vehicle_taxonomy_list'),
+ upsert:(context,entry)=>{snote220CheckCatalog(context);if(!context.canWrite)throw snote220CatalogError('FORBIDDEN','차종을 추가할 권한이 없습니다.');return snote220CatalogRpc(context,'snote_vehicle_taxonomy_upsert',{p_entry:entry,p_expected_company_id:context.company_id});},
+ confirmVehicle:snote220ConfirmVehicle};
+
 // The workbook receives scoped server data only after a verified parent INIT.
 let snote216MonthlyContext=null,snote216MonthlyFrameReady=false,snote216MonthlyModules=null,snote216MonthlyRetryAt=0;
 const snote216MonthlyKey=cloudKey('monthly',NIL);
@@ -8340,7 +8431,7 @@ snote216InitMonthly();
 async function reload(){if(!S.ready)return;
  if(!confirm('서버에 저장된 데이터로 다시 불러올까요? 현재 브라우저에서 서버에 반영되지 않은 변경사항은 사라집니다.'))return;
  snote216ResetMonthly();S.ready=false;S.queue.clear();S.conflict=false;
- try{await restoreDatasets();loadCarsForUser();loadCovers();await refreshMedia();buildStats();navigate(route);S.ready=true;showStatus('● 서버 자료 다시 불러옴');snote216InitMonthly();}
+ try{await restoreDatasets();loadCarsForUser();loadCovers();await refreshMedia();buildStats();navigate(route);S.ready=true;showStatus('● 서버 자료 다시 불러옴');void snote220RefreshTaxonomy().catch(()=>{});snote216InitMonthly();}
  catch(e){S.ready=true;fail(e,'새로고침');snote216InitMonthly();}
 }
 status.addEventListener('click',reload);
@@ -8349,7 +8440,7 @@ window.addEventListener('online',()=>{if(S.ready&&!S.conflict)flush()});
 window.addEventListener('offline',()=>{if(S.ready)showStatus('● 인터넷 연결 끊김 · 저장 불가','bad')});
 
 async function signOut(){if(!confirm('온라인 계정에서 로그아웃할까요?'))return;
- await flush();if(S.queue.size||S.saving||S.conflict){alert('서버에 아직 저장하지 못한 변경사항이 있어 로그아웃을 중단했습니다. 연결 상태를 확인하세요.');return;}snote216ResetMonthly();window.snoteResetCalculator?.();S.ready=false;S.authPassword=null;await S.client.auth.signOut();localStorage.removeItem(snote95RememberKey);byId('snote95-remember').checked=false;S.user=null;S.company=null;S.members=[];
+ await flush();if(S.queue.size||S.saving||S.conflict){alert('서버에 아직 저장하지 못한 변경사항이 있어 로그아웃을 중단했습니다. 연결 상태를 확인하세요.');return;}snote216ResetMonthly();snote220InvalidateCatalog();window.snoteResetCalculator?.();S.ready=false;S.authPassword=null;await S.client.auth.signOut();localStorage.removeItem(snote95RememberKey);byId('snote95-remember').checked=false;S.user=null;S.company=null;S.members=[];
  if(currentUser){zc80SensitiveLock();currentUser=null;cars=[];covers={};}
  sessionStorage.removeItem('zerocar-office-v12-session');snoteResetWorkspaceNavigation();
  byId('zc86-topbar').hidden=true;status.hidden=true;snoteShowAuth('login',true,true);msg('로그아웃되었습니다.');
@@ -8857,5 +8948,6 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 </script>
 <script src="assets/snote-customer-intake.js?v=2.15" defer></script>
 <script type="module" src="assets/quick-calculator.js?v=2.17"></script>
+<script type="module" src="assets/vehicle-taxonomy-ui.js?v=2.20"></script>
 </body>
 </html>

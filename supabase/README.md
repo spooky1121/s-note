@@ -6,6 +6,8 @@
 
 이 저장소의 Cloudflare Pages 배포는 Supabase의 DB 구조를 자동 변경하지 않습니다.
 
+직접 입력 차종을 상사 공용 목록으로 쌓으려면 [차종 DB 적용 안내](../docs/vehicle-taxonomy-setup.md)에 따라 `migrations/202611010005_vehicle_taxonomy.sql` 전체를 한 번 실행합니다. 새 키 설정은 필요하지 않습니다.
+
 1. 연결된 Supabase 프로젝트의 [**SQL Editor**](https://supabase.com/dashboard/project/rmlycycleuscfqywbihj/sql/new)를 엽니다.
 2. `migrations/202610240001_company_profile.sql` 전체를 붙여 넣고 실행합니다.
 3. S-NOTE의 관리자 계정으로 **직원·설정 → 상사 정보**를 열고 **연결 다시 확인**을 누릅니다. 이미 입력한 내용은 유지됩니다. 이전 버전이라 이 버튼이 없다면 페이지를 새로고침합니다.
