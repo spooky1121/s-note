@@ -1,5 +1,7 @@
 # 상사정보 저장 기능 적용
 
+판매 진행의 수동 주민번호 저장·전체 표시는 [사용 안내](../docs/manual-customer-identity.md)를 확인하세요. v2.14 수동 저장 기능에는 추가 SQL이 필요하지 않습니다.
+
 이 저장소의 Cloudflare Pages 배포는 Supabase의 DB 구조를 자동 변경하지 않습니다.
 
 1. 연결된 Supabase 프로젝트의 [**SQL Editor**](https://supabase.com/dashboard/project/rmlycycleuscfqywbihj/sql/new)를 엽니다.

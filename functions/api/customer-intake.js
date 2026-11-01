@@ -119,6 +119,7 @@ async function inspectRrnConfiguration(env = {}) {
     : [{ name: 'CUSTOMER_INTAKE_OTP_SECRET', reason: '기본 서버 키 설정을 확인해야 주민번호 암호화를 사용할 수 있습니다.' }];
   return { key, keys: [dedicated, derived].filter(Boolean), mode: dedicated ? 'dedicated' : derived ? 'derived' : null, issues };
 }
+export { inspectRrnConfiguration as getResidentEncryptionKeys };
 function sameOrigin(request, config) {
   const origin = request.headers.get('Origin');
   if (origin !== null && (origin !== new URL(request.url).origin || (config && origin !== config.publicOrigin))) fail('FORBIDDEN');
