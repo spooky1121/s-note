@@ -1,16 +1,15 @@
 :root { font-family: 'Manrope', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #14263d; background: #fff; }
 * { box-sizing: border-box; }
 html, body { height: 100%; margin: 0; overflow: hidden; }
-body { display: flex; flex-direction: column; }
+body { display: flex; flex-direction: column; min-width: 280px; }
 [hidden] { display: none !important; }
+.search-header { display: flex; flex: none; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px; border-bottom: 1px solid #e4ebf4; }
+.search-header h1 { margin: 0; font-size: 17px; line-height: 1.5; }
+.search-header p { margin: 3px 0 0; color: #5f6f86; font-size: 11px; line-height: 1.6; }
+.search-header button { flex: none; width: 44px; height: 44px; border: 0; border-radius: 9px; background: #f2f6fb; color: #536b8b; font-family: inherit; font-size: 26px; line-height: 1; cursor: pointer; }
+.search-header button:focus-visible { outline: 3px solid #9dbdff; outline-offset: 2px; }
 .search-status { flex: none; margin: 0; padding: 20px; color: #5f6f86; font-size: 12px; line-height: 1.8; text-align: center; }
 .search-status[data-tone="error"] { color: #a44b56; background: #fff7f7; }
 #postcode-root { flex: 1; min-height: 0; width: 100%; overflow: auto; }
-
-
-
 .search-footer { flex: none; padding: 10px 12px; border-top: 1px solid #e4ebf4; background: #fff; }
-.search-footer button { width: 100%; min-height: 44px; border: 1px solid #cad9ed; border-radius: 9px; color: #315f9b; background: #f2f7ff; font-family: inherit; font-size: 12px; font-weight: 650; line-height: 1.5; cursor: pointer; }
-.search-footer button:focus-visible { outline: 3px solid #9dbdff; outline-offset: 2px; }
-.search-footer button:disabled { color: #7d8ba0; background: #f4f6f9; cursor: not-allowed; }
-.search-footer p { margin: 7px 0 0; color: #5f6f86; font-size: 10px; line-height: 1.6; }
+.search-footer p { margin: 0; color: #5f6f86; font-size: 11px; line-height: 1.6; }

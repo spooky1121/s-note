@@ -99,7 +99,6 @@
     $('retry-info').disabled = locked;
     $('rrn-front').disabled = !rrnEnabled || fields.disabled;
     $('rrn-back').disabled = !rrnEnabled || fields.disabled;
-    $('rrn-notice').disabled = !rrnEnabled || fields.disabled;
     document.querySelectorAll('[data-address-search]').forEach(button => {
       button.disabled = locked || fields.disabled || stage !== 'details' || !session || (button.dataset.addressSearch === 'mailing' && $('same-address').checked);
     });
@@ -242,6 +241,7 @@
       clearRrn();
       $('rrn-section').hidden = true;
       $('rrn-disabled-note').hidden = false;
+      $('rrn-consent-copy').hidden = true;
       message('주민번호 접수 설정이 변경되어 번호를 비웠습니다. 다른 정보는 유지되며 주민번호 없이 접수할 수 있습니다. 필요한 경우 담당자에게 문의해 주세요.', 'info', true);
       return;
     }
@@ -291,6 +291,7 @@
       rrnEnabled = result.rrnEnabled === true;
       $('rrn-section').hidden = !rrnEnabled;
       $('rrn-disabled-note').hidden = rrnEnabled;
+      $('rrn-consent-copy').hidden = !rrnEnabled;
       if (!rrnEnabled) clearRrn();
       syncRrnNotice();
       const company = displayValue(result.companyName, '담당 상사');
@@ -330,17 +331,13 @@
   function clearRrn() {
     $('rrn-front').value = '';
     $('rrn-back').value = '';
-    $('rrn-notice').checked = false;
     syncRrnNotice();
   }
 
   function syncRrnNotice() {
     const present = rrnEnabled && !!($('rrn-front').value || $('rrn-back').value);
-    $('rrn-notice-row').hidden = !present;
     $('rrn-front').required = present;
     $('rrn-back').required = present;
-    $('rrn-notice').required = present;
-    if (!present) $('rrn-notice').checked = false;
   }
 
   function collectRrn() {
@@ -349,7 +346,6 @@
     if (!front && !back) return '';
     if (!/^\d{6}$/.test(front)) return invalid('rrn-front', '주민번호 앞 6자리를 확인해 주세요.');
     if (!/^\d{7}$/.test(back)) return invalid('rrn-back', '주민번호 뒤 7자리를 확인해 주세요.');
-    if (!$('rrn-notice').checked) return invalid('rrn-notice', '주민번호 입력 안내 확인 여부를 체크해 주세요.');
     return front + back;
   }
 
@@ -363,17 +359,16 @@
     addressSession = null;
     if (previous) {
       window.clearTimeout(previous.timer);
-      previous.frame.remove();
+      window.clearInterval(previous.watch);
+      try { previous.popup.close(); } catch (_) { /* The search window may already be closed. */ }
     }
-    const dialog = $('address-dialog');
-    if (dialog.open) dialog.close();
+    $('address-search-status').hidden = true;
     if (restoreFocus && previous?.trigger?.isConnected && !previous.trigger.disabled) previous.trigger.focus();
   }
 
   function addressStatus(text, failed) {
-    $('address-dialog-status').textContent = text;
-    $('address-dialog-status').dataset.tone = failed ? 'error' : 'info';
-    $('address-dialog-retry').hidden = !failed;
+    $('address-search-message').textContent = text;
+    $('address-search-status').dataset.tone = failed ? 'error' : 'info';
   }
 
   function openAddressSearch(targetName, trigger) {
@@ -383,46 +378,48 @@
     let nonce;
     try { nonce = Array.from(crypto.getRandomValues(new Uint8Array(16)), value => value.toString(16).padStart(2, '0')).join(''); }
     catch (_) { message('주소 검색을 열지 못했습니다. 주소를 직접 입력해 주세요.', 'error', false); return; }
-    const frame = document.createElement('iframe');
-    frame.id = 'address-search-frame';
-    frame.title = targetName === 'mailing' ? '등기받을 주소 검색' : '등본상 주소 검색';
-    frame.setAttribute('sandbox', 'allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox');
-    frame.referrerPolicy = 'no-referrer';
     const url = new URL('/address-search.html', location.origin);
     url.searchParams.set('parentOrigin', location.origin);
     url.hash = nonce;
-    frame.src = url.toString();
-    const current = {frame, nonce, target, targetName, trigger, timer: null};
+    let popup;
+    try { popup = window.open(url.toString(), 'snote_customer_address_' + nonce, 'width=560,height=750,resizable=yes,scrollbars=yes'); }
+    catch (_) { /* Popup blocking is reported below without losing the form. */ }
+    if (!popup) {
+      message('주소 검색창이 차단되었습니다. 브라우저에서 팝업을 허용한 뒤 다시 눌러 주세요. 주소를 직접 입력할 수도 있습니다.', 'error', false);
+      return;
+    }
+    const current = {popup, nonce, target, targetName, trigger, timer: null, watch: null};
     addressSession = current;
-    addressStatus('주소 검색을 불러오고 있습니다.', false);
-    $('address-frame-host').replaceChildren(frame);
+    $('address-search-status').hidden = false;
+    addressStatus('새 창에서 주소 검색을 불러오고 있습니다.', false);
     current.timer = window.setTimeout(() => {
       if (addressSession !== current) return;
-      addressStatus('주소 검색을 불러오지 못했습니다. 다시 불러오거나 창을 닫고 직접 입력해 주세요.', true);
+      addressStatus('검색창이 열리지 않으면 검색을 취소한 뒤 다시 눌러 주세요. 주소를 직접 입력할 수도 있습니다.', true);
     }, 15000);
-    $('address-dialog').showModal();
-    $('address-dialog-heading').focus();
+    current.watch = window.setInterval(() => {
+      if (addressSession !== current) return;
+      try { if (popup.closed) closeAddressSearch(true); } catch (_) { closeAddressSearch(true); }
+    }, 500);
+    try { popup.focus(); } catch (_) { /* Some mobile browsers choose the new tab automatically. */ }
   }
 
   document.querySelectorAll('[data-address-search]').forEach(button => {
     button.addEventListener('click', () => openAddressSearch(button.dataset.addressSearch, button));
   });
-  $('address-dialog-close').addEventListener('click', () => closeAddressSearch(true));
-  $('address-dialog').addEventListener('cancel', event => { event.preventDefault(); closeAddressSearch(true); });
-  $('address-dialog-retry').addEventListener('click', () => {
-    const previous = addressSession;
-    if (previous) openAddressSearch(previous.targetName, previous.trigger);
+  $('address-search-cancel').addEventListener('click', () => closeAddressSearch(true));
+  $('address-search-focus').addEventListener('click', () => {
+    try { addressSession?.popup.focus(); } catch (_) { closeAddressSearch(true); }
   });
   window.addEventListener('message', event => {
     const current = addressSession, data = event.data;
-    if (!current || event.source !== current.frame.contentWindow || event.origin !== 'null' || !data || typeof data !== 'object' || Array.isArray(data) || data.type !== 'SNOTE_CUSTOMER_ADDRESS' || data.nonce !== current.nonce) return;
+    if (!current || event.source !== current.popup || event.origin !== location.origin || !data || typeof data !== 'object' || Array.isArray(data) || data.type !== 'SNOTE_CUSTOMER_ADDRESS' || data.nonce !== current.nonce) return;
     if (stage !== 'details' || busy || uncertainSubmission || !session || fields.disabled || $(current.target.base).disabled) { closeAddressSearch(false); return; }
     if (data.kind === 'ready') {
       window.clearTimeout(current.timer);
-      addressStatus('주소를 검색해 목록에서 선택해 주세요.', false);
+      addressStatus('검색창에서 주소를 선택해 주세요. 선택한 주소가 이 화면에 자동으로 입력됩니다.', false);
     } else if (data.kind === 'error') {
       window.clearTimeout(current.timer);
-      addressStatus('주소 검색을 불러오지 못했습니다. 창을 닫고 직접 입력하거나 다시 불러와 주세요.', true);
+      addressStatus('주소 검색을 불러오지 못했습니다. 검색을 취소한 뒤 다시 시도하거나 주소를 직접 입력해 주세요.', true);
     } else if (data.kind === 'closed') closeAddressSearch(true);
     else if (data.kind === 'selected') {
       if (typeof data.address !== 'string' || !data.address.trim() || data.address.length > 200 || /[\u0000-\u001f\u007f]/.test(data.address) || (data.postcode && (typeof data.postcode !== 'string' || !/^\d{5}$/.test(data.postcode)))) return;
@@ -591,7 +588,7 @@
       const customer = collectCustomer();
       if (!customer) return;
       pendingSubmission = {token, session, vehicleConfirmed: true, consent: true, refundConsent: hasRefund() && $('refund-consent').checked, customer};
-      if (rrn) { pendingSubmission.rrn = rrn; pendingSubmission.rrnNoticeAccepted = true; }
+      if (rrn) { pendingSubmission.rrn = rrn; pendingSubmission.rrnNoticeAccepted = $('required-consent').checked; }
     }
     if (!pendingSubmission) return;
     message('');

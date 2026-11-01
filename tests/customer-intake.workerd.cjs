@@ -153,8 +153,8 @@ async function scenario(kind) {
   }
 }
 
-async function rrnScenario() {
-  const bindings = { ...ENV, CUSTOMER_INTAKE_RRN_KEY: '91'.repeat(32) };
+async function rrnScenario(dedicated) {
+  const bindings = dedicated ? { ...ENV, CUSTOMER_INTAKE_RRN_KEY: '91'.repeat(32) } : { ...ENV };
   const token = 'ab'.repeat(32);
   const residentNumber = '0001013000000'; // Synthetic fixture; never use real customer data.
   let stored, submissions = 0, reads = 0;
@@ -212,14 +212,15 @@ async function rrnScenario() {
     assert.equal(tampered.body.code, 'RRN_NOT_AVAILABLE');
     assert.equal(JSON.stringify(tampered.body).includes(residentNumber), false);
     assert.equal(submissions, 2); assert.equal(reads, 2);
-    console.log('PASS actual workerd: AES-GCM RRN round trip, fresh IV, ciphertext-only DB, tamper refusal');
+    console.log('PASS actual workerd: ' + (dedicated ? 'dedicated' : 'derived') + ' AES-GCM RRN round trip, fresh IV, ciphertext-only DB, tamper refusal');
   } finally { await runtime.dispose(); }
 }
 
 (async () => {
   for (const kind of ['accepted', 'supabase-redirect', 'solapi-redirect']) await scenario(kind);
-  await rrnScenario();
-  console.log('PASS 4/4 actual-source workerd scenarios; real upstream networking disabled');
+  await rrnScenario(true);
+  await rrnScenario(false);
+  console.log('PASS 5/5 actual-source workerd scenarios; real upstream networking disabled');
 })().catch(error => {
   console.error(error.name + ': ' + String(error.message).slice(0, 1600));
   process.exitCode = 1;

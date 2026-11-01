@@ -7,8 +7,8 @@
   <meta name="robots" content="noindex, nofollow, noarchive">
   <meta name="theme-color" content="#f5f7fb">
   <title>S-NOTE | 고객정보 모바일 접수</title>
-  <link rel="stylesheet" href="assets/customer-intake.css?v=2.12">
-  <script src="assets/customer-intake.js?v=2.12" defer></script>
+  <link rel="stylesheet" href="assets/customer-intake.css?v=2.13">
+  <script src="assets/customer-intake.js?v=2.13" defer></script>
 </head>
 <body class="customer-page">
   <header class="site-header">
@@ -70,6 +70,10 @@
       <section id="stage-details" class="stage" aria-labelledby="details-heading" hidden>
         <div class="section-heading"><p class="eyebrow">STEP 03</p><h2 id="details-heading" tabindex="-1">계약에 필요한 정보를 입력해 주세요</h2><p>입력한 정보는 담당자가 계약서와 인수증 작성에 사용합니다.</p></div>
         <div class="verified-note"><span aria-hidden="true">✓</span><span>휴대전화 확인 완료 <strong id="verified-phone"></strong></span></div>
+        <div id="address-search-status" class="address-search-status" hidden>
+          <p id="address-search-message" role="status" aria-live="polite" aria-atomic="true"></p>
+          <div class="address-search-actions"><button id="address-search-focus" type="button">검색창 다시 보기</button><button id="address-search-cancel" type="button">주소 검색 취소</button></div>
+        </div>
         <form id="customer-form" novalidate>
           <fieldset id="customer-fields" class="form-fields">
             <legend class="sr-only">고객정보 입력</legend>
@@ -81,16 +85,15 @@
                 <span class="rrn-separator" aria-hidden="true">－</span>
                 <label class="field" for="rrn-back"><span>뒤 7자리</span><input id="rrn-back" type="password" inputmode="numeric" autocomplete="off" maxlength="7" pattern="[0-9]{7}" placeholder="뒤 7자리" aria-describedby="rrn-help" disabled></label>
               </div>
-              <p id="rrn-help" class="field-help">주민번호는 별도로 암호화해 접수 후 최대 30일간 보관하며, 담당자가 업무 화면에서 별도로 불러와 확인합니다.</p>
-              <label id="rrn-notice-row" class="check-row rrn-notice" hidden><input id="rrn-notice" type="checkbox" disabled><span>차량 계약·이전등록 업무를 위한 주민번호 입력 안내를 확인했습니다.</span></label>
+              <p id="rrn-help" class="field-help">입력한 주민번호는 서버에 암호화해 저장하며, 담당자가 판매 진행 화면에서 불러올 수 있습니다.</p>
             </section>
             <p id="rrn-disabled-note" class="field-help" hidden>현재 상사는 주민번호 접수를 사용하지 않습니다.</p>
             <div class="form-section"><h3>주소</h3><p>계약서에 기재할 등본상 주소를 입력해 주세요.</p></div>
-            <div class="field"><label for="address-base">기본주소 <em>필수</em></label><div class="address-input-row"><input id="address-base" name="addressBase" type="text" autocomplete="section-residence address-line1" maxlength="200" required placeholder="도로명 또는 지번 주소"><button class="address-search-button" type="button" data-address-search="residence" aria-haspopup="dialog" aria-controls="address-dialog">주소 검색</button></div></div>
+            <div class="field"><label for="address-base">기본주소 <em>필수</em></label><div class="address-input-row"><input id="address-base" name="addressBase" type="text" autocomplete="section-residence address-line1" maxlength="200" required placeholder="도로명 또는 지번 주소"><button class="address-search-button" type="button" data-address-search="residence" aria-label="등본상 주소 검색 (새 창)">주소 검색</button></div></div>
             <label class="field" for="address-detail"><span>상세주소</span><input id="address-detail" name="addressDetail" type="text" autocomplete="section-residence address-line2" maxlength="100" placeholder="동·호수 등 상세주소"></label>
             <div class="form-section"><h3>등기받을 주소 <small>선택</small></h3></div>
             <label class="check-row same-address"><input id="same-address" name="sameAddress" type="checkbox" checked><span>위 주소와 동일합니다.</span></label>
-            <div class="field"><label for="mailing-base">등기 기본주소</label><div class="address-input-row"><input id="mailing-base" name="mailingBase" type="text" autocomplete="section-mailing address-line1" maxlength="200" placeholder="등기받을 주소"><button class="address-search-button" type="button" data-address-search="mailing" aria-haspopup="dialog" aria-controls="address-dialog">주소 검색</button></div></div>
+            <div class="field"><label for="mailing-base">등기 기본주소</label><div class="address-input-row"><input id="mailing-base" name="mailingBase" type="text" autocomplete="section-mailing address-line1" maxlength="200" placeholder="등기받을 주소"><button class="address-search-button" type="button" data-address-search="mailing" aria-label="등기받을 주소 검색 (새 창)">주소 검색</button></div></div>
             <label class="field" for="mailing-detail"><span>등기 상세주소</span><input id="mailing-detail" name="mailingDetail" type="text" autocomplete="section-mailing address-line2" maxlength="100" placeholder="동·호수 등 상세주소"></label>
             <div class="form-section"><h3>이전비 환급계좌 <small>선택</small></h3><p>환급이 필요한 경우에만 은행명·계좌번호·예금주를 모두 입력해 주세요.</p></div>
             <div class="field-grid">
@@ -104,7 +107,7 @@
             </div>
             <div class="consent-card required-consent">
               <label class="check-row"><input id="required-consent" type="checkbox" required><span>개인정보 수집·이용에 동의합니다. <em>필수</em></span></label>
-              <p class="consent-copy"><span data-company-name>담당 상사</span>에서 계약서·인수증 작성과 거래 안내를 위해 성함, 인증한 휴대전화번호, 주소 및 입력한 등기주소를 수집·이용합니다. 이 입력 링크를 통한 제출 내역은 30일간 보관합니다. 매매계약에 반영된 정보의 보관·삭제 문의는 해당 상사에 요청해 주세요. 동의하지 않으시면 이 화면에서 접수할 수 없습니다.</p>
+              <p class="consent-copy"><span data-company-name>담당 상사</span>에서 계약서·인수증 작성과 거래 안내를 위해 성함, 인증한 휴대전화번호, 주소 및 입력한 등기주소를 수집·이용합니다. <span id="rrn-consent-copy" hidden>선택해 입력한 주민번호는 차량 계약·이전등록 업무에 사용하며 서버에 별도로 암호화해 저장합니다. </span>이 입력 링크를 통한 제출 내역은 30일간 보관합니다. 매매계약에 반영된 정보의 보관·삭제 문의는 해당 상사에 요청해 주세요. 동의하지 않으시면 이 화면에서 접수할 수 없습니다.</p>
             </div>
           </fieldset>
           <div class="actions"><button id="submit-customer" class="button primary" type="submit">고객정보 접수하기 <span aria-hidden="true">→</span></button></div>
@@ -131,11 +134,5 @@
     </article>
     <footer class="page-footer"><span>S-NOTE</span> · 중고차 거래의 모든 기록</footer>
   </main>
-  <dialog id="address-dialog" class="address-dialog" aria-labelledby="address-dialog-heading" aria-describedby="address-dialog-help">
-    <header class="address-dialog-header"><div><h2 id="address-dialog-heading" tabindex="-1">주소 검색</h2><p id="address-dialog-help">도로명·지번·건물명으로 검색해 주세요.</p></div><button id="address-dialog-close" class="address-close" type="button" aria-label="주소 검색 닫기">×</button></header>
-    <p id="address-dialog-status" class="address-dialog-status" role="status" aria-live="polite">주소 검색을 준비하고 있습니다.</p>
-    <div id="address-frame-host" class="address-frame-host"></div>
-    <div class="address-dialog-footer"><p>검색이 열리지 않으면 닫고 주소를 직접 입력할 수 있습니다.</p><button id="address-dialog-retry" class="text-button" type="button" hidden>다시 불러오기</button></div>
-  </dialog>
 </body>
 </html>

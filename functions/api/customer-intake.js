@@ -2,6 +2,8 @@
 const MAX_BODY = 16 * 1024;
 const CONSENT_VERSION = '2026-11-01';
 const RRN_NOTICE_VERSION = '2026-11-01-r1';
+const RRN_HKDF_SALT = 'snote-customer-intake:rrn:v1:hkdf-salt';
+const RRN_HKDF_INFO = 'snote-customer-intake:rrn:v1:aes-256-gcm';
 const TOKEN = /^[a-f0-9]{64}$/;
 const UUID = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i;
 const CUSTOMER_FIELDS = ['name', 'addressBase', 'addressDetail', 'mailingBase', 'mailingDetail', 'sameAddress', 'refundBank', 'refundAccount', 'refundHolder'];
@@ -99,11 +101,23 @@ function inspectConfiguration(env = {}) {
   };
 }
 function configuration(env) { return inspectConfiguration(env).config; }
-function inspectRrnConfiguration(env = {}) {
+async function inspectRrnConfiguration(env = {}) {
   const value = typeof env?.CUSTOMER_INTAKE_RRN_KEY === 'string' ? env.CUSTOMER_INTAKE_RRN_KEY.trim() : '';
-  if (!value) return { key: null, issues: [{ name: 'CUSTOMER_INTAKE_RRN_KEY', reason: '주민번호 암호화 키가 설정되지 않았습니다.' }] };
-  if (!/^[a-f0-9]{64}$/i.test(value)) return { key: null, issues: [{ name: 'CUSTOMER_INTAKE_RRN_KEY', reason: '32바이트 암호화 키를 64자리 16진수로 입력해 주세요.' }] };
-  return { key: unhex(value), issues: [] };
+  const dedicated = /^[a-f0-9]{64}$/i.test(value) ? unhex(value) : null;
+  const secret = typeof env?.CUSTOMER_INTAKE_OTP_SECRET === 'string' ? env.CUSTOMER_INTAKE_OTP_SECRET.trim() : '';
+  let derived = null;
+  if (secret.length >= 32 && !/[\r\n]/.test(secret)) {
+    try {
+      // Domain separation keeps the AES key distinct from OTP HMAC key material.
+      const material = await crypto.subtle.importKey('raw', new TextEncoder().encode(secret), 'HKDF', false, ['deriveBits']);
+      derived = new Uint8Array(await crypto.subtle.deriveBits({ name: 'HKDF', hash: 'SHA-256', salt: new TextEncoder().encode(RRN_HKDF_SALT), info: new TextEncoder().encode(RRN_HKDF_INFO) }, material, 256));
+    } catch { /* No insecure encryption fallback. Basic intake remains separate. */ }
+  }
+  const key = dedicated || derived;
+  const issues = dedicated ? [] : key
+    ? [{ name: 'CUSTOMER_INTAKE_RRN_KEY', reason: value ? '별도 암호화 키 형식이 올바르지 않아 기본 서버 키에서 분리한 암호화 키로 보관합니다.' : '별도 암호화 키 없이 기본 서버 키에서 분리한 암호화 키로 보관합니다.' }]
+    : [{ name: 'CUSTOMER_INTAKE_OTP_SECRET', reason: '기본 서버 키 설정을 확인해야 주민번호 암호화를 사용할 수 있습니다.' }];
+  return { key, keys: [dedicated, derived].filter(Boolean), mode: dedicated ? 'dedicated' : derived ? 'derived' : null, issues };
 }
 function sameOrigin(request, config) {
   const origin = request.headers.get('Origin');
@@ -195,15 +209,17 @@ async function encryptRrn(rawKey, digits, tokenHash) {
   const ciphertext = await crypto.subtle.encrypt({ name: 'AES-GCM', iv, additionalData: rrnAad(tokenHash), tagLength: 128 }, await rrnKey(rawKey, 'encrypt'), new TextEncoder().encode(digits));
   return `v1.${hex(iv)}.${hex(new Uint8Array(ciphertext))}`;
 }
-async function decryptRrn(rawKey, envelope, tokenHash) {
+async function decryptRrn(rawKeys, envelope, tokenHash) {
   if (typeof envelope !== 'string' || !/^v1\.[a-f0-9]{24}\.[a-f0-9]{58}$/.test(envelope) || !TOKEN.test(tokenHash || '')) fail('RRN_NOT_AVAILABLE');
-  try {
-    const [, iv, ciphertext] = envelope.split('.');
-    const plaintext = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: unhex(iv), additionalData: rrnAad(tokenHash), tagLength: 128 }, await rrnKey(rawKey, 'decrypt'), unhex(ciphertext));
-    const digits = new TextDecoder('utf-8', { fatal: true }).decode(plaintext);
-    if (!/^\d{13}$/.test(digits) || normalizedRrn(digits) !== digits) fail('RRN_NOT_AVAILABLE');
-    return digits;
-  } catch { fail('RRN_NOT_AVAILABLE'); }
+  for (const rawKey of rawKeys) {
+    try {
+      const [, iv, ciphertext] = envelope.split('.');
+      const plaintext = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: unhex(iv), additionalData: rrnAad(tokenHash), tagLength: 128 }, await rrnKey(rawKey, 'decrypt'), unhex(ciphertext));
+      const digits = new TextDecoder('utf-8', { fatal: true }).decode(plaintext);
+      if (/^\d{13}$/.test(digits) && normalizedRrn(digits) === digits) return digits;
+    } catch { /* Try at most the configured dedicated and derived keys. */ }
+  }
+  fail('RRN_NOT_AVAILABLE');
 }
 function randomToken() { return hex(crypto.getRandomValues(new Uint8Array(32))); }
 async function sha(value) { return hex(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value)))); }
@@ -282,7 +298,8 @@ async function sendMessage(config, to, body, invitation) {
     return 'unknown';
   } catch { return 'unknown'; }
 }
-async function perform(request, config, body, rrnEncryptionKey) {
+async function perform(request, config, body, rrnEncryption) {
+  const rrnEncryptionKey = rrnEncryption.key;
   if (!object(body) || typeof body.action !== 'string' || !Object.hasOwn(ACTION_FIELDS, body.action)) fail('INVALID_REQUEST');
   const action = body.action;
   whitelist(body, ['action', ...ACTION_FIELDS[action]]);
@@ -315,7 +332,7 @@ async function perform(request, config, body, rrnEncryptionKey) {
     if (!rrnEncryptionKey) fail('RRN_SETUP_REQUIRED');
     const data = await rpc(config, 'snote_intake_rrn_access', { p_id: id }, jwt);
     if (data.ok !== true || data.id !== id) fail('RRN_NOT_AVAILABLE');
-    return { ok: true, rrn: await decryptRrn(rrnEncryptionKey, data.rrnCipher, data.tokenHash) };
+    return { ok: true, rrn: await decryptRrn(rrnEncryption.keys, data.rrnCipher, data.tokenHash) };
   }
   const tokenHash = await sha(token(body.token));
   if (action === 'info') {
@@ -371,21 +388,21 @@ async function perform(request, config, body, rrnEncryptionKey) {
   fail('INVALID_REQUEST');
 }
 
-export function onRequestGet({ request, env }) {
+export async function onRequestGet({ request, env }) {
   try {
     const { config, issues } = inspectConfiguration(env);
-    const rrn = inspectRrnConfiguration(env);
+    const rrn = await inspectRrnConfiguration(env);
     sameOrigin(request, config);
     const originMatches = config ? new URL(request.url).origin === config.publicOrigin : null;
     if (originMatches === false) issues.push({ name: 'CUSTOMER_INTAKE_PUBLIC_ORIGIN', reason: '실제 접속 주소와 운영 주소 설정이 일치하지 않습니다.' });
-    return json({ service: 'snote-customer-intake', configured: !!config, configurationIssues: issues, originMatches, rrnConfigured: !!rrn.key, rrnConfigurationIssues: rrn.issues });
+    return json({ service: 'snote-customer-intake', configured: !!config, configurationIssues: issues, originMatches, rrnConfigured: !!rrn.key, rrnConfigurationIssues: rrn.issues, rrnKeyMode: rrn.mode });
   } catch (error) { return errorResponse(error); }
 }
 export async function onRequestPost({ request, env }) {
   try {
     sameOrigin(request);
     const config = configuration(env); if (!config) fail('SERVICE_UNAVAILABLE'); sameOrigin(request, config);
-    return json(await perform(request, config, await boundedJson(request), inspectRrnConfiguration(env).key));
+    return json(await perform(request, config, await boundedJson(request), await inspectRrnConfiguration(env)));
   } catch (error) { return errorResponse(error); }
 }
 export function onRequest(context) {
