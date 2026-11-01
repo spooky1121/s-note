@@ -267,16 +267,44 @@ function rowLabel(row, type) {
 
 const OTHER_FIELDS =
   /(?:최초\s*등록\s*일|차\s*대\s*번\s*호|차\s*종|용\s*도|형\s*식|제\s*작\s*연\s*월|차\s*체|원\s*동\s*기|연\s*식|사\s*용\s*본\s*거\s*지|승\s*차\s*정\s*원|소\s*유\s*자|자동차\s*등록\s*번호|등록\s*번호|차량\s*번호|VIN)/i;
+const CIRCLED_FIELD_NUMBER = '[①-⑳⑴-⒇⓪⓫-⓴⓵-⓾❶-❿]';
+const FIELD_NUMBER = `(?:${CIRCLED_FIELD_NUMBER}|[（(]\\s*[0-9０-９]{1,2}\\s*[)）]|[［\\[]\\s*[0-9０-９]{1,2}\\s*[\\]］])`;
+const EXPLICIT_FIELD_NUMBER = new RegExp(`^${FIELD_NUMBER}$`);
+const NUMBERED_NEXT_FIELD = new RegExp(`\\s*${FIELD_NUMBER}\\s*(?=${OTHER_FIELDS.source})`, 'i');
+const TRAILING_CIRCLED_FIELD = new RegExp(`\\s*${CIRCLED_FIELD_NUMBER}\\s*$`);
+const OTHER_FIELD_LABEL = new RegExp(`^(?:${OTHER_FIELDS.source})$`, 'i');
 
-function adjacentText(rows, row, label) {
-  const right = row.words
+function modelColumnText(words, height) {
+  let end = words.length;
+  for (let i = 0; i < words.length; i++) {
+    const key = labelKey(words[i].text);
+    // A number attached to a complete field label is label metadata, not a model.
+    const numberedLabel = /^\d{1,2}/.test(key) && OTHER_FIELD_LABEL.test(key.replace(/^\d{1,2}/, ''));
+    let field = numberedLabel;
+    for (let n = 1; !field && n <= 4 && i + n <= words.length; n++) {
+      field = OTHER_FIELD_LABEL.test(labelKey(words.slice(i, i + n).map(word => word.text).join('')));
+    }
+    if (!field) continue;
+    end = i;
+    const marker = words[i - 1], previous = words[i - 2];
+    // OCR may read ⑤ as ASCII 5. Remove that separate token only when its box
+    // belongs beside the next label, across a clear gap from the model text.
+    if (marker && EXPLICIT_FIELD_NUMBER.test(marker.text.trim())) end--;
+    else if (marker && previous && /^\d{1,2}$/.test(clean(marker.text)) &&
+        marker.x0 - previous.x1 >= Math.max(16, height * 2) &&
+        words[i].x0 - marker.x1 >= -8 && words[i].x0 - marker.x1 <= Math.max(12, height)) end--;
+    break;
+  }
+  return words.slice(0, end).map(word => word.text).join(' ').trim();
+}
+
+function adjacentText(rows, row, label, model = false) {
+  const rightWords = row.words
     .slice(label.index + label.count)
-    .filter(w => w.x0 >= label.x1 - 8)
-    .map(w => w.text)
-    .join(' ')
-    .trim();
+    .filter(w => w.x0 >= label.x1 - 8);
+  const right = model ? modelColumnText(rightWords, row.h) : rightWords.map(w => w.text).join(' ').trim();
 
-  if (right) return right;
+  if (right || (model && rightWords.length)) return right;
 
   const next = rows
     .filter(
@@ -299,11 +327,16 @@ function adjacentText(rows, row, label) {
         )
     )[0];
 
-  return next?.text || '';
+  return next ? (model ? modelColumnText(next.words, next.h) : next.text) : '';
 }
 
 function cleanedModel(text) {
-  let s = clean(text)
+  // Preserve circled/parenthesized field markers until their boundary is removed:
+  // NFKC would turn ⑤ into a genuine-looking trailing ASCII 5.
+  const source = String(text || '').trim()
+    .replace(NUMBERED_NEXT_FIELD, ' ')
+    .replace(TRAILING_CIRCLED_FIELD, '');
+  let s = clean(source)
     .replace(
       /^\s*(?:차\s*명|자동차\s*명칭?)\s*[:：]?/,
       ''
@@ -371,8 +404,9 @@ function rawFollowingLine(lines, pattern) {
   return '';
 }
 
-function parseDocument(annotation) {
+export function parseDocument(annotation) {
   const raw = clean(annotation?.text || '');
+  const modelLines = String(annotation?.text || '').trim().split(/\r?\n/).map(s => s.trim()).filter(Boolean);
 
   const textLines = raw
     .split(/\r?\n/)
@@ -437,7 +471,8 @@ function parseDocument(annotation) {
       const value = adjacentText(
         rows,
         row,
-        found
+        found,
+        type === 'model'
       );
 
       if (type === 'model') {
@@ -473,7 +508,7 @@ function parseDocument(annotation) {
   if (!model) {
     model = cleanedModel(
       rawFollowingLine(
-        textLines,
+        modelLines,
         /(?:^|\s)(?:차\s*명|자동차\s*명칭?)\s*[:：]?/
       )
     );
