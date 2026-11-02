@@ -1,0 +1,17 @@
+{
+  "name": "snote-encar-tests",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Offline regression tests for the S-NOTE Encar lookup integration",
+  "scripts": {
+    "test": "node --test --test-isolation=none server.test.mjs frontend.test.cjs",
+    "test:browser": "node browser-smoke.cjs"
+  },
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "devDependencies": {
+    "jsdom": "30.1.3",
+    "playwright": "1.57.0"
+  }
+}
