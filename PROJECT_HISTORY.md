@@ -10,6 +10,18 @@
 - 배포 전 독립 테스트 66개를 다시 실행해 모두 통과했다. 실제 Chromium 검증과 배포 후 HTML·스크립트·API 응답을 확인한다.
 - 기존 OCR·Supabase 비밀값은 공개하거나 덮어쓰지 않는다. 실제 검색 검증 여부와 배포 결과는 확인된 사실만 후속 기록에 남긴다.
 
+### 배포 완료 결과 — 2026-11-03 00:17 KST 확인
+
+- 릴리스 커밋: `d540f3e31a9ea32c3079083d8f9c9c7f10a23635` — `Release Encar advertisement lookup in S-NOTE v2.27`.
+- `git push origin HEAD:main` 성공: 기존 `488d8d2`에서 강제 갱신 없이 정상 반영했다. 원격 main의 정확 SHA도 별도로 확인했다.
+- **s-note Pages 성공:** [Cloudflare GitHub 체크 125359432770](https://github.com/spooky1121/s-note/runs/125359432770), `succeeded` / `Deployed successfully` / `Deploy successful!`, Latest commit `d540f3e`. 배포 URL: https://25c23a0d.s-note.pages.dev .
+- **zerocar-office Pages 성공:** [체크 125359241058](https://github.com/spooky1121/s-note/runs/125359241058), 같은 릴리스 SHA 배포 성공. 배포 URL: https://7a57da1d.zerocar-office.pages.dev .
+- 별도 `Workers Builds: zerocar-office` 체크 125360240513은 실패했다. 공개 체크에 실패 원문은 없었으며 이번 웹 Pages 배포 성공과 구분한다. Workers 설정은 변경하지 않았다.
+- 배포 전 재검증: 독립 테스트 **66/66**, 실제 Chromium 검증 **8개 묶음** 통과. 서버·화면 JS 구문 검사와 `git diff --check`도 통과했다.
+- **검증 제한:** 운영 도메인과 Pages 주소로 보내는 읽기 요청은 현재 실행 환경의 HTTPS 프록시 CONNECT 단계에서 `403 Forbidden`으로 차단됐다. 네트워크 접근 허용 후 재시도도 동일했고 직접 접속은 DNS 해석에 실패했다. 서비스 자체의 403으로 해석하지 않는다. 따라서 공개 HTML·JS·API의 실제 HTTP 응답 및 로그인 후 운영 화면은 직접 확인하지 못했다.
+- **실제 검색 API 및 배포 환경 설정 연동은 미검증 상태다.** 서버 키의 값을 읽거나 변경하지 않았으며 실제 차량번호 검색·유료 크레딧 사용·데이터 변경을 하지 않았다. 사용자가 Production의 `TAVILY_API_KEY` 등록 여부를 확인하면 기존 Supabase 설정과 함께 실연동을 점검한다.
+- 이 배포 결과 기록 커밋은 문서만 변경하며 `[skip ci]`로 원격 기록한다. 배포된 애플리케이션 코드의 기준 SHA는 위 `d540f3e`다.
+
 아래 절은 최초 로컬 인계 당시의 기록이다. 당시의 “배포하지 않음”은 그 단계의 결과이며, 현재 배포 요청을 취소하거나 새 승인을 요구하는 지침이 아니다.
 
 ## 엔카 광고 연결 패치 — 로컬 적용·검증 완료, 원격 공개 대기

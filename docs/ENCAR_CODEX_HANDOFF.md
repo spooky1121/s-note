@@ -6,6 +6,16 @@
 
 이전 절의 원격 반영·배포 대기는 이번 사용자 요청으로 해제되었다. 키 공개, 유료 API 가입, 데이터 삭제는 승인 범위에 포함하지 않는다. 운영 반영 후에는 공개 HTML의 단일 스크립트 연결, 실제 JS 제공, `/api/encar` 함수 응답을 확인한다. 실차 조회의 성공 여부는 서버 키·로그인 세션·실제 광고 검증 결과를 확인했을 때만 완료로 기록한다.
 
+### 배포 완료와 현재 검증 범위
+
+- 릴리스 `d540f3e31a9ea32c3079083d8f9c9c7f10a23635`를 기존 main에 정상 push했다. 강제 push나 다른 작업 초기화는 하지 않았다.
+- 2026-11-03 00:17 KST에 정확한 릴리스 SHA의 **s-note Pages 성공**을 [체크 125359432770](https://github.com/spooky1121/s-note/runs/125359432770)에서 확인했다. 배포 URL은 https://25c23a0d.s-note.pages.dev 이다.
+- 같은 SHA의 **zerocar-office Pages 성공**도 [체크 125359241058](https://github.com/spooky1121/s-note/runs/125359241058)에서 확인했다. 배포 URL은 https://7a57da1d.zerocar-office.pages.dev 이다.
+- 별도 Workers Build의 실패는 Pages 결과와 구분한다. 실패 원문과 Workers 설정은 접근하지 못했고 변경하지 않았다.
+- 배포 전 **66개 테스트와 Chromium 8개 검증 묶음이 재통과**했다. 실제 운영 HTML·JS·API 읽기는 실행 환경 프록시의 CONNECT 403으로 차단되어 직접 검증하지 못했다. 이는 서비스 자체의 오류 응답을 확인한 것이 아니다.
+- **실제 검색 API 및 배포 환경 설정 연동은 미검증 상태다.** 운영 비밀값을 읽거나 변경하지 않았으며 실제 차량 조회도 하지 않았다. Production의 `TAVILY_API_KEY` 등록 여부와 기존 OCR Supabase 설정을 확인한 뒤 로그인 상태에서 실차 검증이 남아 있다.
+- 기록 커밋은 문서만 변경하고 `[skip ci]`로 main에 남긴다. 현재 애플리케이션 배포 기준은 `d540f3e`이며, 이후에는 최신 커밋의 checks 목록을 다시 읽어 완료 run을 확인한다. 예전 Building run만 추적하면 완료 결과를 놓칠 수 있다.
+
 ## 최초 로컬 적용 상태
 
 - 작업 브랜치: `feat/encar-ad-link-handoff`.
