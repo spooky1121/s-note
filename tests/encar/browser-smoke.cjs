@@ -13,8 +13,11 @@ const PLATE='12가3456',SECOND_PLATE='34나5678';
 const ARTIFACTS=process.env.ENCAR_TEST_ARTIFACT_DIR||path.join(os.tmpdir(),'snote-encar-browser');
 const executablePath=process.env.CHROMIUM_PATH||(fs.existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined);
 const BUTTON='.snote-encar-button',NOTE='.snote-encar-note',LINKS='.snote-encar-results a';
+const MANUAL='.snote-encar-manual',ADDRESS='#snote-encar-manual-url',COPY='.snote-encar-copy',COPY_FALLBACK='.snote-encar-copy-fallback';
+const REQUEST_ID='12345678-1234-4234-8234-123456789abc';
 const listing=(id='43000001',trustedId='43000002',model='가상 검증 차량')=>({id,model,sellerUrl:'https://fem.encar.com/cars/detail/'+id,trustedId,trustedUrl:trustedId?'https://fem.encar.com/cars/detail/'+trustedId:null});
 const found=(plate=PLATE,listings=[listing()])=>({status:listings.length>1?'multiple':'found',plate,listings,verifiedAt:'2026-11-02T00:00:00.000Z'});
+const unverified=(plate=PLATE,code='SEARCH_NO_RESULTS')=>({plate,status:'unverified',listings:[],verifiedAt:null,diagnostics:{code,requestId:REQUEST_ID,searchCount:3,resultCount:0,candidateCount:0,checkedCount:0,rejected:{plateMismatch:0,notAdvertising:0,notFound:0},plate,id:'43000001',url:listing().sellerUrl,token:'PRIVATE_TOKEN'}});
 let browser;
 fs.mkdirSync(ARTIFACTS,{recursive:true});
 
@@ -67,6 +70,7 @@ async function fixture(width=1440){
  f.reply=(body,status=200)=>f.responses.push({body,status});return f;
 }
 async function lookup(f,body){f.reply(body);const popupPromise=f.context.waitForEvent('page');await f.page.locator(BUTTON).click();const popup=await popupPromise;await f.page.locator(BUTTON+':not([disabled])').waitFor();return popup;}
+async function verifyAddress(f,body,address){f.reply(body);const popupPromise=f.context.waitForEvent('page');await f.page.locator(ADDRESS).fill(address);await f.page.locator(MANUAL+' button').click();const popup=await popupPromise;await f.page.locator(BUTTON+':not([disabled])').waitFor();return popup;}
 async function closed(popup){if(!popup.isClosed())await popup.waitForEvent('close');assert.equal(popup.isClosed(),true);}
 async function assertLinks(f,expected){
  const actual=await f.page.locator(LINKS).evaluateAll(elements=>elements.map(a=>({text:a.textContent,url:a.href,target:a.target,rel:a.rel})));
@@ -76,7 +80,7 @@ async function position(f){
  const geometry=await f.page.evaluate(()=>{const rect=selector=>{const b=document.querySelector(selector).getBoundingClientRect();return {x:b.x,y:b.y,right:b.right,bottom:b.bottom,width:b.width,height:b.height};};return {button:rect('.snote-encar-button'),meta:rect('#vehicle-meta'),header:rect('.vehicle-header'),close:rect('.detail-close'),overflow:document.documentElement.scrollWidth>innerWidth,modalOverflow:document.querySelector('.vehicle-modal').scrollWidth>document.querySelector('.vehicle-modal').clientWidth};});
  assert(geometry.button.y>=geometry.meta.bottom,'Button must sit below the actual vehicle metadata');assert(geometry.button.x>=geometry.header.x&&geometry.button.right<=geometry.header.right,'Button must remain inside the actual detail header');assert(geometry.button.right<=geometry.close.x||geometry.button.bottom<=geometry.close.y||geometry.button.y>=geometry.close.bottom,'Encar button must not overlap the detail close button');assert.equal(geometry.overflow,false);assert.equal(geometry.modalOverflow,false);
 }
-async function heldJson(f,body){
+async function heldJson(f,body,address){
  await f.page.evaluate(()=>{
   if(!window.__encarNativeFetch)window.__encarNativeFetch=window.fetch.bind(window);
   window.__encarJsonWaiting=false;window.__encarReleaseJson=null;
@@ -85,7 +89,7 @@ async function heldJson(f,body){
    return new Proxy(response,{get(target,key){if(key==='json')return async()=>{const body=await target.json();window.__encarJsonWaiting=true;await new Promise(resolve=>window.__encarReleaseJson=resolve);return body;};const value=Reflect.get(target,key,target);return typeof value==='function'?value.bind(target):value;}});
   };
  });
- f.reply(body);const popupPromise=f.context.waitForEvent('page');await f.page.locator(BUTTON).click();const popup=await popupPromise;await f.page.waitForFunction(()=>window.__encarJsonWaiting);assert.equal(await popup.evaluate(()=>opener===null),true,'Waiting popup must disconnect its opener before any API result');return popup;
+ f.reply(body);const popupPromise=f.context.waitForEvent('page');if(address){await f.page.locator(ADDRESS).fill(address);await f.page.locator(MANUAL+' button').click();}else await f.page.locator(BUTTON).click();const popup=await popupPromise;await f.page.waitForFunction(()=>window.__encarJsonWaiting);assert.equal(await popup.evaluate(()=>opener===null),true,'Waiting popup must disconnect its opener before any API result');return popup;
 }
 async function releaseJson(f){await f.page.evaluate(()=>{window.__encarReleaseJson();window.fetch=window.__encarNativeFetch;});await f.page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));}
 async function finish(f){assert.deepEqual(f.external,[],'No external requests are allowed');assert.deepEqual(f.unexpected,[],'No unrelated API requests are allowed');assert.deepEqual(f.errors,[],'Actual index must have no uncaught browser errors');assert.equal(f.responses.length,0);await f.context.close();}
@@ -110,6 +114,16 @@ async function finish(f){assert.deepEqual(f.external,[],'No external requests ar
    popup=await lookup(f,found(SECOND_PLATE));await closed(popup);assert.equal(await p.locator(LINKS).count(),0);assert.equal(await p.locator(NOTE).getAttribute('data-error'),'true');
    console.log('PASS simulated popup blocking keeps clickable verified fallback links; foreign URLs and a different response plate never navigate');
 
+   popup=await lookup(f,unverified());await closed(popup);assert.match(await p.locator(NOTE).textContent(),/검색에서 광고 후보/);assert.equal(await p.locator(MANUAL).evaluate(el=>el.open),false);
+   await p.evaluate(()=>Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async text=>{window.__encarCopied=text;}}}));
+   await p.locator(COPY).click();const copied=await p.evaluate(()=>window.__encarCopied);assert.equal(JSON.parse(copied).code,'SEARCH_NO_RESULTS');assert.equal(JSON.parse(copied).requestId,REQUEST_ID);assert(copied.length<600);assert.doesNotMatch(copied,/PRIVATE|12가3456|43000001|https:|token|url/i);
+   await p.locator(MANUAL+' summary').click();await p.locator(ADDRESS).fill('https://fem.encar.com.evil.example/cars/detail/43000001');const badCount=f.requests.length,badPages=f.context.pages().length;await p.locator(MANUAL+' button').click();assert.match(await p.locator('.snote-encar-manual-error').textContent(),/HTTPS 주소/);assert.equal(f.requests.length,badCount);assert.equal(f.context.pages().length,badPages);
+   const beforeManual=f.navigations.length;popup=await verifyAddress(f,unverified(PLATE,'PLATE_MISMATCH'),'https://m.encar.com/ca/carsearch/car_detailview.do?carid=43000002');await closed(popup);assert.equal(f.navigations.length,beforeManual);assert.deepEqual(f.requests.at(-1),{plate:PLATE,candidateIds:['43000002']});assert.match(await p.locator(NOTE).textContent(),/차량번호가 현재 차량과 일치하지/);
+   await p.locator(MANUAL+' summary').click();popup=await heldJson(f,found(),'https://fem.encar.com/cars/detail/43000002?shared=yes');assert.equal(popup.url(),'about:blank');assert.equal(f.navigations.length,beforeManual);assert.deepEqual(f.requests.at(-1),{plate:PLATE,candidateIds:['43000002']});await releaseJson(f);await popup.waitForURL(listing().sellerUrl);await popup.close();
+   assert.equal(await p.locator(MANUAL).isHidden(),true);assert.equal(await p.locator(COPY).isHidden(),true);assert.equal(await p.evaluate(()=>document.getElementById('vehicle-overlay').dataset.snoteHistoryDirty||''),'','Lookup-only address input must not mark the vehicle as an unsaved edit');
+   await p.locator('#detail-km').fill('12345');assert.equal(await p.evaluate(()=>document.getElementById('vehicle-overlay').dataset.snoteHistoryDirty),'1','Actual vehicle edits must still be tracked');await p.evaluate(()=>delete document.getElementById('vehicle-overlay').dataset.snoteHistoryDirty);
+   console.log('PASS actual unverified diagnostics, privacy-safe clipboard, bad-host rejection, manual ID-only server validation with no direct navigation, and lookup/vehicle draft separation');
+
    popup=await heldJson(f,found());const beforeSwitch=f.navigations.length;await p.evaluate(()=>openVehicle('encar-car-2'));await closed(popup);await releaseJson(f);assert.equal(await p.locator(LINKS).count(),0);assert.equal(await p.locator(NOTE).textContent(),'');assert.equal(f.navigations.length,beforeSwitch);await p.locator(BUTTON+':not([disabled])').waitFor();
    console.log('PASS real car switch cancels its waiting tab and a late parsed response cannot insert links or open the previous car advertisement');
 
@@ -120,8 +134,10 @@ async function finish(f){assert.deepEqual(f.external,[],'No external requests ar
    console.log('PASS actual cloud logout cancels the popup and ignores late lookup content without navigating or leaking links');await finish(f);
   }
   for(const width of [390,320]){
-   const f=await fixture(width),p=f.page;await position(f);const popup=await lookup(f,found());await popup.waitForURL(listing().sellerUrl);await popup.close();await position(f);await p.screenshot({path:path.join(ARTIFACTS,'encar-detail-'+width+'.png')});
-   await p.locator('.detail-close').click();assert.equal(await p.locator('#vehicle-overlay').getAttribute('aria-hidden'),'true');assert.equal(await p.locator(LINKS).count(),0);await finish(f);console.log('PASS '+width+'px real detail header/button/verified links fit without overflow and the existing close button clears the result');
+   const f=await fixture(width),p=f.page;await position(f);let popup=await lookup(f,found());await popup.waitForURL(listing().sellerUrl);await popup.close();await position(f);
+   popup=await lookup(f,unverified());await closed(popup);await p.locator(MANUAL+' summary').click();const longAddress='https://fem.encar.com/cars/detail/43000002?shared='+'x'.repeat(1800);await p.locator(ADDRESS).fill(longAddress);await p.evaluate(()=>Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async()=>{throw Error('SIMULATED_CLIPBOARD_UNAVAILABLE');}}}));await p.locator(COPY).click();await p.locator(COPY_FALLBACK).waitFor({state:'visible'});assert.equal(await p.locator(COPY_FALLBACK).evaluate(el=>el.readOnly),true);assert.doesNotMatch(await p.locator(COPY_FALLBACK).inputValue(),/PRIVATE|12가3456|43000001|https:|token|url/i);await position(f);await p.screenshot({path:path.join(ARTIFACTS,'encar-detail-'+width+'.png')});
+   popup=await verifyAddress(f,found(),longAddress);await popup.waitForURL(listing().sellerUrl);await popup.close();assert.deepEqual(f.requests.at(-1),{plate:PLATE,candidateIds:['43000002']});await position(f);
+   await p.locator('.detail-close').click();assert.equal(await p.locator('#vehicle-overlay').getAttribute('aria-hidden'),'true');assert.equal(await p.locator(LINKS).count(),0);assert.equal(await p.locator(ADDRESS).inputValue(),'');assert.equal(await p.locator(COPY_FALLBACK).inputValue(),'');await finish(f);console.log('PASS '+width+'px actual manual verifier/long URL/selected diagnostic fallback fit without overflow, verify through the server, and clear on close');
   }
  }finally{await browser.close();}
 })().catch(error=>{console.error(error.stack);process.exitCode=1;});

@@ -59,25 +59,37 @@ function request(payload = { plate: PLATE }, headers = {}, method = 'POST') {
 async function run(config = {}, req = request(), extraEnv = {}) {
   const calls = [];
   const pending = [];
+  const logs = [];
   const oldFetch = globalThis.fetch;
+  const oldInfo = console.info;
+  let searchIndex = 0;
+  console.info = (...values) => logs.push(values.join(' '));
   globalThis.fetch = async (urlValue, options = {}) => {
     const url = new URL(urlValue);
     const call = { url: url.href, options };
     calls.push(call);
+    await config.onCall?.(call, calls);
     if (url.origin === env.SUPABASE_URL && url.pathname === '/auth/v1/user') {
       assert.equal(options.headers.apikey, env.SUPABASE_PUBLISHABLE_KEY);
       assert.equal(options.headers.Authorization, 'Bearer ' + TOKEN);
-      return json(config.user ?? { id: USER_ID }, config.authStatus ?? 200);
+      return config.authResponse ?? json(config.user ?? { id: USER_ID }, config.authStatus ?? 200);
     }
     if (url.origin === env.SUPABASE_URL && url.pathname === '/rest/v1/zc_members') {
       assert.equal(url.searchParams.get('select'), 'user_id');
       assert.equal(url.searchParams.get('user_id'), 'eq.' + USER_ID);
       assert.equal(url.searchParams.get('active'), 'eq.true');
       assert.equal(url.searchParams.get('limit'), '1');
-      return json(config.members ?? [{ user_id: USER_ID }], config.membershipStatus ?? 200);
+      return config.membershipResponse ?? json(config.members ?? [{ user_id: USER_ID }], config.membershipStatus ?? 200);
     }
     if (url.href === 'https://api.tavily.com/search') {
       if (config.searchThrows) throw config.searchThrows;
+      if (config.searches) {
+        const next = config.searches[searchIndex++];
+        assert(next, 'No more than the specified basic searches are allowed');
+        if (next instanceof Error) throw next;
+        if (next instanceof Response) return next;
+        return json({ results: next.results ?? [] }, next.status ?? 200);
+      }
       return json(config.searchPayload ?? { results: config.results ?? [] }, config.searchStatus ?? 200);
     }
     if (url.origin === 'https://fem.encar.com' && /^\/cars\/detail\/[0-9]+$/.test(url.pathname)) {
@@ -100,9 +112,10 @@ async function run(config = {}, req = request(), extraEnv = {}) {
       waitUntil(promise) { pending.push(promise); }
     });
     await Promise.all(pending);
-    return { reply, body: await reply.json(), calls };
+    return { reply, body: await reply.json(), calls, logs };
   } finally {
     globalThis.fetch = oldFetch;
+    console.info = oldInfo;
   }
 }
 
@@ -369,7 +382,7 @@ test('cached candidate is reverified and cannot revive an inactive advertisement
     ENCAR_CACHE: { async get() { return JSON.stringify([ORIGINAL]); }, async put() {} }
   });
   assert.equal(result.body.status, 'unverified');
-  assert.equal(searchCalls(result).length, 1);
+  assert.equal(searchCalls(result).length, 2);
   assert.equal(detailCalls(result).length, 1);
 });
 
@@ -397,4 +410,233 @@ test('GET is rejected without any external request', async () => {
   assert.equal(result.reply.status, 405);
   assert.equal(result.reply.headers.get('allow'), 'POST');
   assert.equal(result.calls.length, 0);
+});
+
+test('all direct result URLs precede snippet links when six candidates fill the limit', async () => {
+  const noise = Array.from({ length: 6 }, (_, index) => String(44000001 + index));
+  const pages = Object.fromEntries(noise.map(id => [id, html(base({ vehicleNo: '12나3456', vehicleId: Number(id), queryCarId: Number(id) }))]));
+  pages[ORIGINAL] = html();
+  const result = await run({ results: [
+    { url: 'https://example.com/article', content: noise.map(id => BASE + id).join(' ') },
+    { url: BASE + ORIGINAL, content: PLATE }
+  ], pages });
+  assert.equal(result.body.status, 'found');
+  assert.equal(result.body.listings[0].id, ORIGINAL);
+  assert.equal(detailCalls(result).length, 6);
+  assert.equal(searchCalls(result).length, 1);
+});
+
+test('explicit carsbat lot labels in titles and known URLs in metadata yield verified candidates', async t => {
+  for (const result of [
+    { url: 'https://carsbat.com/vehicle/synthetic', title: 'Lot number: ' + ORIGINAL, content: PLATE },
+    { url: 'https://carsbat.com/vehicle/synthetic', title: 'Номер лота: ' + ORIGINAL, content: PLATE },
+    { url: 'https://example.com/article', title: BASE + ORIGINAL, content: PLATE },
+    { url: 'https://example.com/article', raw_content: BASE + ORIGINAL, content: PLATE }
+  ]) await t.test(JSON.stringify(Object.keys(result)), async () => {
+    const found = await run({ results: [result], pages: { [ORIGINAL]: html() } });
+    assert.equal(found.body.status, 'found'); assert.equal(detailCalls(found).length, 1);
+  });
+});
+
+test('mobile Encar carid URL is only a candidate and is fetched on the fixed detail host', async () => {
+  const result = await run({ results: [{ url: 'https://m.encar.com/mobile/moCarDetail.do?carid=' + ORIGINAL }], pages: { [ORIGINAL]: html() } });
+  assert.equal(result.body.status, 'found');
+  assert.deepEqual(detailCalls(result).map(call => call.url), [BASE + ORIGINAL]);
+  assert.ok(result.calls.every(call => !call.url.startsWith('https://m.encar.com/')));
+});
+
+test('plain numbers and lot labels from unknown hosts remain untrusted in every metadata field', async () => {
+  const result = await run({ results: [{ url: 'https://example.com/article', title: 'Lot number: ' + ORIGINAL,
+    content: PLATE + ' ' + ORIGINAL, raw_content: 'Номер лота: ' + ORIGINAL }] });
+  assert.equal(result.body.status, 'unverified');
+  assert.equal(result.body.diagnostics.code, 'SEARCH_NO_CANDIDATES');
+  assert.equal(detailCalls(result).length, 0);
+});
+
+test('empty exact search gets one unquoted plate-only basic search and stops when verified', async () => {
+  const result = await run({ searches: [{ results: [] }, { results: [{ url: BASE + ORIGINAL }] }], pages: { [ORIGINAL]: html() } });
+  assert.equal(result.body.status, 'found');
+  const calls = searchCalls(result); assert.equal(calls.length, 2);
+  const first = JSON.parse(calls[0].options.body), second = JSON.parse(calls[1].options.body);
+  assert.equal(first.query, '"' + PLATE + '"'); assert.equal(first.exact_match, true);
+  assert.equal(second.query, PLATE); assert.equal(Object.hasOwn(second, 'exact_match'), false);
+  assert.equal(second.search_depth, 'basic'); assert.equal(second.max_results, 8);
+  assert.deepEqual(Object.keys(result.body).sort(), ['listings', 'plate', 'status', 'verifiedAt']);
+});
+
+test('a normal no-match first search can resolve on fallback, with repeated details memoized', async () => {
+  const result = await run({ searches: [
+    { results: [{ url: BASE + ORIGINAL }] },
+    { results: [{ url: BASE + ORIGINAL }, { url: BASE + SECOND }] }
+  ], pages: { [ORIGINAL]: html(base({ vehicleNo: '12나3456' })), [SECOND]: html(base({ vehicleId: Number(SECOND), queryCarId: Number(SECOND) })) } });
+  assert.equal(result.body.status, 'found'); assert.equal(result.body.listings[0].id, SECOND);
+  assert.equal(searchCalls(result).length, 2);
+  assert.equal(detailCalls(result).filter(call => call.url === BASE + ORIGINAL).length, 1);
+  assert.equal(detailCalls(result).length, 2);
+});
+
+test('two empty searches report safe SEARCH_NO_RESULTS diagnostics', async () => {
+  const result = await run({ searches: [{ results: [] }, { results: [] }] });
+  assert.equal(result.body.status, 'unverified'); assert.equal(result.body.diagnostics.code, 'SEARCH_NO_RESULTS');
+  assert.equal(result.body.diagnostics.searchCount, 2); assert.equal(result.body.diagnostics.resultCount, 0);
+  assert.equal(result.body.diagnostics.candidateCount, 0); assert.equal(result.body.diagnostics.checkedCount, 0);
+  assert.match(result.body.diagnostics.requestId, /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
+  assert.equal(result.reply.headers.get('x-request-id'), result.body.diagnostics.requestId);
+});
+
+test('indexed results with no recognized candidate have a separate diagnostic', async () => {
+  const result = await run({ results: [{ url: 'https://example.com/no-recognized-url', content: PLATE }] });
+  assert.equal(result.body.diagnostics.code, 'SEARCH_NO_CANDIDATES');
+  assert.equal(result.body.diagnostics.resultCount, 2); assert.equal(result.body.diagnostics.checkedCount, 0);
+});
+
+test('plate mismatch, inactive advertisement, and 404 have distinct bounded rejection counts', async t => {
+  for (const [page, code, counter] of [
+    [html(base({ vehicleNo: '12나3456' })), 'PLATE_MISMATCH', 'plateMismatch'],
+    [html(base({ advertisement: { status: 'SOLD' } })), 'AD_INACTIVE', 'notAdvertising'],
+    [new Response('not found', { status: 404 }), 'DETAIL_NOT_FOUND', 'notFound']
+  ]) await t.test(code, async () => {
+    const result = await run({ results: [{ url: BASE + ORIGINAL }], pages: { [ORIGINAL]: page } });
+    assert.equal(result.body.status, 'unverified'); assert.equal(result.body.diagnostics.code, code);
+    assert.equal(result.body.diagnostics.candidateCount, 1); assert.equal(result.body.diagnostics.checkedCount, 1);
+    assert.equal(result.body.diagnostics.rejected[counter], 1);
+  });
+});
+
+test('mixed rejection reasons remain NO_VERIFIED_LISTING instead of asserting one cause', async () => {
+  const result = await run({ results: [{ url: BASE + ORIGINAL }, { url: BASE + SECOND }],
+    pages: { [ORIGINAL]: html(base({ vehicleNo: '12나3456' })) } });
+  assert.equal(result.body.diagnostics.code, 'NO_VERIFIED_LISTING');
+  assert.deepEqual(result.body.diagnostics.rejected, { plateMismatch: 1, notAdvertising: 0, notFound: 1 });
+});
+
+test('provider authentication, rate, quota and unavailable errors never trigger fallback', async t => {
+  for (const [status, code] of [[401, 'SEARCH_AUTH_FAILED'], [403, 'SEARCH_AUTH_FAILED'],
+    [429, 'SEARCH_RATE_LIMITED'], [432, 'SEARCH_QUOTA_EXCEEDED'], [433, 'SEARCH_QUOTA_EXCEEDED'], [503, 'SEARCH_UNAVAILABLE']]) {
+    await t.test(String(status), async () => {
+      const result = await run({ searches: [{ status }] });
+      assert.equal(result.body.status, 'error'); assert.equal(result.reply.status, 502);
+      assert.equal(result.body.diagnostics.code, code); assert.equal(searchCalls(result).length, 1);
+    });
+  }
+});
+
+test('detail block, malformed state, redirects, and timeout never trigger another search', async t => {
+  for (const [page, code] of [
+    [new Response('blocked', { status: 403 }), 'DETAIL_BLOCKED'],
+    ['<script>window.__PRELOADED_STATE__={broken}</script>', 'DETAIL_PARSE_FAILED'],
+    [new Response('', { status: 302, headers: { Location: 'https://untrusted.example/' } }), 'DETAIL_UNAVAILABLE'],
+    [new DOMException('fixture timeout', 'AbortError'), 'UPSTREAM_TIMEOUT']
+  ]) await t.test(code, async () => {
+    const result = await run({ results: [{ url: BASE + ORIGINAL }], pages: { [ORIGINAL]: page } });
+    assert.equal(result.body.status, 'error'); assert.equal(result.body.diagnostics.code, code);
+    assert.equal(searchCalls(result).length, 1);
+  });
+});
+
+test('a failed cached detail does not spend a search request', async () => {
+  const result = await run({ pages: { [ORIGINAL]: new Response('blocked', { status: 403 }) } }, request({ plate: PLATE, candidateIds: [ORIGINAL] }));
+  assert.equal(result.body.diagnostics.code, 'DETAIL_BLOCKED'); assert.equal(searchCalls(result).length, 0);
+});
+
+test('two searches never exceed twelve primary candidates and fetch each ID once', async () => {
+  const first = Array.from({ length: 8 }, (_, index) => String(44000001 + index));
+  const second = Array.from({ length: 8 }, (_, index) => String(45000001 + index));
+  const result = await run({ searches: [{ results: first.map(id => ({ url: BASE + id })) }, { results: second.map(id => ({ url: BASE + id })) }] });
+  assert.equal(result.body.status, 'unverified'); assert.equal(searchCalls(result).length, 2);
+  assert.equal(result.body.diagnostics.candidateCount, 12); assert.equal(detailCalls(result).length, 12);
+  assert.equal(new Set(detailCalls(result).map(call => call.url)).size, 12);
+});
+
+test('hints share the twelve-candidate budget and do not spend a fallback search after it is exhausted', async () => {
+  const hints = Array.from({ length: 6 }, (_, index) => String(46000001 + index));
+  const found = Array.from({ length: 6 }, (_, index) => String(47000001 + index));
+  const result = await run({ searches: [{ results: found.map(id => ({ url: BASE + id })) }] }, request({ plate: PLATE, candidateIds: hints }));
+  assert.equal(result.body.status, 'unverified'); assert.equal(result.body.diagnostics.candidateCount, 12);
+  assert.equal(detailCalls(result).length, 12); assert.equal(searchCalls(result).length, 1);
+});
+
+test('configuration diagnostics reveal only fixed reason names', async () => {
+  const search = await run({}, request(), { TAVILY_API_KEY: '' });
+  assert.equal(search.body.diagnostics.code, 'SEARCH_NOT_CONFIGURED'); assert.equal(search.calls.length, 0);
+  const supabase = await run({}, request(), { SUPABASE_URL: 'invalid-url' });
+  assert.equal(supabase.body.diagnostics.code, 'SUPABASE_NOT_CONFIGURED'); assert.equal(supabase.calls.length, 0);
+});
+
+test('diagnostics and structured logs exclude all plate, listing IDs, URLs, credentials and raw upstream content', async () => {
+  const result = await run({ searchPayload: { detail: 'PRIVATE_UPSTREAM ' + TOKEN + ' ' + env.TAVILY_API_KEY } });
+  assert.equal(result.body.status, 'error'); assert.equal(result.body.diagnostics.code, 'SEARCH_UNAVAILABLE');
+  assert.equal(result.logs.length, 1);
+  const log = JSON.parse(result.logs[0]);
+  assert.deepEqual(Object.keys(log).sort(), ['candidateCount', 'checkedCount', 'code', 'durationMs', 'rejected', 'requestId', 'resultCount', 'searchCount']);
+  assert.deepEqual(Object.keys(result.body.diagnostics).sort(), ['candidateCount', 'checkedCount', 'code', 'rejected', 'requestId', 'resultCount', 'searchCount']);
+  for (const value of [PLATE, ORIGINAL, BASE, TOKEN, env.TAVILY_API_KEY, env.SUPABASE_PUBLISHABLE_KEY, 'PRIVATE_UPSTREAM']) {
+    assert.equal(JSON.stringify(result.body.diagnostics).includes(value), false);
+    assert.equal(result.logs.join('').includes(value), false);
+  }
+});
+
+test('35-second overall deadline covers successful prior stages and a hanging detail fetch', async t => {
+  t.mock.timers.enable({ apis: ['setTimeout', 'Date'], now: 100000 });
+  let entered; const ready = new Promise(resolve => { entered = resolve; });
+  const pending = run({ results: [{ url: BASE + ORIGINAL }], onCall(call) {
+    if (call.url.startsWith(BASE)) { entered(); return new Promise(() => {}); }
+    t.mock.timers.tick(9000);
+  } });
+  await ready;
+  t.mock.timers.tick(8001);
+  const result = await pending;
+  assert.equal(result.body.diagnostics.code, 'DEADLINE_EXCEEDED'); assert.equal(result.body.status, 'error');
+  assert.equal(searchCalls(result).length, 1); assert.equal(result.body.diagnostics.checkedCount, 1);
+});
+
+test('per-fetch timeout includes an auth response body that never finishes', async t => {
+  t.mock.timers.enable({ apis: ['setTimeout', 'Date'], now: 100000 });
+  let entered; const ready = new Promise(resolve => { entered = resolve; });
+  const body = new ReadableStream({ pull() { entered(); } });
+  const pending = run({ authResponse: new Response(body) });
+  await ready; await new Promise(setImmediate); assert.equal(body.locked, true);
+  t.mock.timers.tick(10001);
+  const result = await pending;
+  assert.equal(result.body.diagnostics.code, 'UPSTREAM_TIMEOUT'); assert.equal(result.calls.length, 1);
+});
+
+test('overall deadline also bounds the incoming JSON body instead of misreporting invalid JSON', async t => {
+  t.mock.timers.enable({ apis: ['setTimeout', 'Date'], now: 100000 });
+  const body = new ReadableStream({ pull() {} });
+  const req = new Request('https://snote.example/api/encar', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + TOKEN }, body, duplex: 'half' });
+  const pending = run({}, req);
+  await new Promise(setImmediate); assert.equal(req.body.locked, true);
+  t.mock.timers.tick(35001);
+  const result = await pending;
+  assert.equal(result.body.diagnostics.code, 'DEADLINE_EXCEEDED'); assert.equal(searchCalls(result).length, 0);
+});
+
+test('remaining overall budget also interrupts a detail response body, not only its fetch', async t => {
+  t.mock.timers.enable({ apis: ['setTimeout', 'Date'], now: 100000 });
+  const body = new ReadableStream({ pull() {} });
+  const pending = run({ results: [{ url: BASE + ORIGINAL }], pages: { [ORIGINAL]: () => new Response(body) },
+    onCall(call) { if (!call.url.startsWith(BASE)) t.mock.timers.tick(9000); } });
+  await new Promise(setImmediate); assert.equal(body.locked, true);
+  t.mock.timers.tick(8001);
+  const result = await pending;
+  assert.equal(result.body.diagnostics.code, 'DEADLINE_EXCEEDED'); assert.equal(searchCalls(result).length, 1);
+});
+
+test('search response body timeout is an error and does not trigger fallback', async t => {
+  t.mock.timers.enable({ apis: ['setTimeout', 'Date'], now: 100000 });
+  const body = new ReadableStream({ pull() {} });
+  const pending = run({ searches: [new Response(body)] });
+  await new Promise(setImmediate); assert.equal(body.locked, true);
+  t.mock.timers.tick(10001);
+  const result = await pending;
+  assert.equal(result.body.diagnostics.code, 'UPSTREAM_TIMEOUT'); assert.equal(searchCalls(result).length, 1);
+});
+
+test('incoming cancellation stops the operation before a search can be billed', async () => {
+  const controller = new AbortController();
+  const req = new Request('https://snote.example/api/encar', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + TOKEN }, body: JSON.stringify({ plate: PLATE }), signal: controller.signal });
+  const result = await run({ onCall() { controller.abort(); } }, req);
+  assert.equal(result.body.status, 'error'); assert.equal(result.body.diagnostics.code, 'UPSTREAM_TIMEOUT');
+  assert.equal(searchCalls(result).length, 0);
 });

@@ -1,4 +1,4 @@
-/* S-NOTE: verified Encar links, plate input only. No seller-account lookup. */
+/* S-NOTE: server-verified Encar links. No seller-account lookup. */
 (() => {
   'use strict';
   if (window.SnoteEncarLink) return;
@@ -7,11 +7,38 @@
   const CACHE_PREFIX = 'snote.encar.candidate.v1:';
   const CACHE_AGE = 7 * 24 * 60 * 60 * 1000;
   const REQUEST_TIMEOUT = 45000;
+  const UNVERIFIED_MESSAGES = Object.freeze({
+    SEARCH_NO_RESULTS: '검색에서 광고 후보를 찾지 못했습니다. 광고 주소를 알고 있다면 아래에서 확인해 주세요.',
+    SEARCH_NO_CANDIDATES: '검색 결과에서 확인할 광고 주소를 찾지 못했습니다. 광고 주소로 다시 확인할 수 있습니다.',
+    PLATE_MISMATCH: '확인한 광고의 차량번호가 현재 차량과 일치하지 않습니다. 광고 주소를 다시 확인해 주세요.',
+    AD_INACTIVE: '확인한 광고에서 현재 게시 중인 매물을 확인하지 못했습니다. 광고 주소를 다시 확인해 주세요.',
+    DETAIL_NOT_FOUND: '광고 주소의 상세 페이지를 찾지 못했습니다. 주소를 다시 확인해 주세요.',
+    NO_VERIFIED_LISTING: '확인한 후보에서 현재 차량번호와 일치하는 광고를 검증하지 못했습니다.'
+  });
+  const ERROR_MESSAGES = Object.freeze({
+    SEARCH_NOT_CONFIGURED: '광고 검색 서비스 설정을 확인해 주세요. 관리자에게 문의해 주세요.',
+    SUPABASE_NOT_CONFIGURED: '온라인 계정 연결 설정을 확인해 주세요. 관리자에게 문의해 주세요.',
+    SEARCH_AUTH_FAILED: '광고 검색 서비스 인증에 실패했습니다. 관리자에게 문의해 주세요.',
+    SEARCH_RATE_LIMITED: '광고 검색 요청이 많습니다. 잠시 후 다시 확인해 주세요.',
+    SEARCH_QUOTA_EXCEEDED: '광고 검색 서비스의 이용 한도를 확인해 주세요. 관리자에게 문의해 주세요.',
+    SEARCH_UNAVAILABLE: '광고 검색 서비스에 연결하지 못했습니다. 잠시 후 다시 확인해 주세요.',
+    DETAIL_BLOCKED: '엔카에서 광고 확인 요청을 제한했습니다. 잠시 후 다시 확인해 주세요.',
+    DETAIL_PARSE_FAILED: '광고 페이지의 정보를 읽지 못했습니다. 잠시 후 다시 확인해 주세요.',
+    DETAIL_UNAVAILABLE: '광고 상세 페이지에 연결하지 못했습니다. 잠시 후 다시 확인해 주세요.',
+    UPSTREAM_TIMEOUT: '광고 검색 또는 상세 확인 응답이 지연됐습니다. 잠시 후 다시 확인해 주세요.',
+    DEADLINE_EXCEEDED: '광고 확인 시간이 초과됐습니다. 잠시 후 다시 확인해 주세요.'
+  });
+  const SAFE_CODES = new Set([...Object.keys(UNVERIFIED_MESSAGES), ...Object.keys(ERROR_MESSAGES),
+    'METHOD_NOT_ALLOWED', 'AUTH_REQUIRED', 'AUTH_FAILED', 'STAFF_REQUIRED', 'AUTH_UNAVAILABLE',
+    'INVALID_REQUEST', 'UNSUPPORTED_MEDIA_TYPE', 'REQUEST_TOO_LARGE',
+    'HTTP_ERROR', 'UNVERIFIED', 'CLIENT_TIMEOUT', 'NETWORK_ERROR', 'INVALID_RESPONSE']);
   let active = null;
   let contextKey = '';
   let contextActor = null;
   let contextReady = false;
-  let bar, button, note, results;
+  let bar, button, note, results, manual, manualInput, manualButton, manualError;
+  let copyButton, copyStatus, copyFallback;
+  let diagnosticSnapshot = null, feedbackVersion = 0;
 
   function normalizePlate(value) {
     return String(value || '').normalize('NFKC').replace(/[\s-]+/g, '');
@@ -60,6 +87,74 @@
     return value === expected ? expected : null;
   }
 
+  function candidateFromUrl(value) {
+    if (typeof value !== 'string' || value.length > 2048 || /[\u0000-\u001f\u007f]/.test(value)) return null;
+    try {
+      const url = new URL(value.trim());
+      if (url.protocol !== 'https:' || url.username || url.password || url.port) return null;
+      if (url.hostname === 'fem.encar.com') {
+        const match = /^\/cars\/detail\/([1-9][0-9]{0,11})\/?$/.exec(url.pathname);
+        return match?.[1] || null;
+      }
+      if (!['www.encar.com', 'encar.com', 'm.encar.com'].includes(url.hostname)) return null;
+      if (url.hostname !== 'm.encar.com' && url.pathname !== '/dc/dc_cardetailview.do') return null;
+      const ids = [...url.searchParams].filter(([key]) => key.toLowerCase() === 'carid').map(([, id]) => id);
+      return ids.length === 1 && validId(ids[0]) ? ids[0] : null;
+    } catch (_) { return null; }
+  }
+
+  function resetFeedback() {
+    ++feedbackVersion;
+    diagnosticSnapshot = null;
+    results.replaceChildren();
+    setNote('');
+    manual.hidden = true; manual.open = false; manualInput.value = ''; manualError.textContent = '';
+    copyButton.hidden = true; copyButton.disabled = false; copyStatus.textContent = '';
+    copyFallback.hidden = true; copyFallback.value = '';
+  }
+
+  function setDiagnostics(raw, httpStatus, fallbackCode) {
+    const data = raw && typeof raw === 'object' && !Array.isArray(raw) ? raw : {};
+    const code = typeof data.code === 'string' && SAFE_CODES.has(data.code) ? data.code : fallbackCode;
+    const safe = { service: 'snote-encar', code, httpStatus: Number.isInteger(httpStatus) && httpStatus >= 100 && httpStatus <= 599 ? httpStatus : null };
+    if (typeof data.requestId === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(data.requestId)) safe.requestId = data.requestId;
+    for (const key of ['searchCount', 'resultCount', 'candidateCount', 'checkedCount']) {
+      if (Number.isInteger(data[key]) && data[key] >= 0 && data[key] <= 1000) safe[key] = data[key];
+    }
+    const rejected = {};
+    if (data.rejected && typeof data.rejected === 'object' && !Array.isArray(data.rejected)) {
+      for (const key of ['plateMismatch', 'notAdvertising', 'notFound']) {
+        if (Number.isInteger(data.rejected[key]) && data.rejected[key] >= 0 && data.rejected[key] <= 1000) rejected[key] = data.rejected[key];
+      }
+    }
+    if (Object.keys(rejected).length) safe.rejected = rejected;
+    diagnosticSnapshot = safe;
+    copyButton.hidden = false;
+    return code;
+  }
+
+  async function copyDiagnostics() {
+    syncContext();
+    if (!diagnosticSnapshot) return;
+    const version = feedbackVersion, context = currentContext(), content = JSON.stringify(diagnosticSnapshot, null, 2);
+    const current = () => version === feedbackVersion && currentContext()?.actor === context?.actor && currentContext()?.key === context?.key && currentContext()?.ready;
+    copyButton.disabled = true;
+    try {
+      if (!navigator.clipboard?.writeText) throw new Error('CLIPBOARD_UNAVAILABLE');
+      await navigator.clipboard.writeText(content);
+      if (current()) copyStatus.textContent = '진단 정보를 복사했습니다.';
+    } catch (_) {
+      if (current()) {
+        copyFallback.value = content; copyFallback.hidden = false; copyFallback.focus(); copyFallback.select();
+        copyStatus.textContent = '선택된 진단 정보를 복사해 주세요.';
+      }
+    } finally { if (current()) copyButton.disabled = false; }
+  }
+
+  function lookupError(message, code = 'INVALID_RESPONSE') {
+    const error = new Error(message); error.userMessage = message; error.diagnosticCode = code; return error;
+  }
+
   function closeWaitingTab(job) {
     if (!job?.waitingTab) return;
     try { if (!job.waitingTab.closed) job.waitingTab.close(); } catch (_) {}
@@ -67,10 +162,12 @@
   }
 
   function cancel() {
-    if (!active) return;
-    active.controller.abort();
-    closeWaitingTab(active);
+    if (active) {
+      active.controller.abort();
+      closeWaitingTab(active);
+    }
     active = null;
+    resetFeedback();
   }
 
   function setNote(message, isError = false) {
@@ -104,8 +201,6 @@
       contextKey = nextKey;
       contextActor = context?.actor || null;
       contextReady = !!context?.ready;
-      results.replaceChildren();
-      setNote('');
       button.disabled = !context?.plate || !context?.ready;
       button.textContent = '엔카 광고 보기';
     }
@@ -116,8 +211,6 @@
     contextKey = '';
     contextActor = null;
     contextReady = false;
-    results.replaceChildren();
-    setNote('');
     button.disabled = true;
     button.textContent = '엔카 광고 보기';
   }
@@ -125,7 +218,8 @@
   function prepareTab() {
     // Open during the user's click; do not use the noopener feature here,
     // because that would discard the handle required for later navigation.
-    const tab = window.open('about:blank', '_blank');
+    let tab;
+    try { tab = window.open('about:blank', '_blank'); } catch (_) { return null; }
     if (!tab) return null;
     try {
       tab.opener = null;
@@ -162,7 +256,7 @@
     }
   }
 
-  async function lookup() {
+  async function lookup(manualIds = null) {
     syncContext();
     const context = currentContext();
     if (!context || !/^(?:[가-힣]{2})?\d{2,3}[가-힣]\d{4}$/.test(context.plate)) {
@@ -178,50 +272,53 @@
     active = job;
     button.disabled = true;
     button.textContent = '광고 확인 중…';
-    results.replaceChildren();
     setNote('차량번호와 광고 상태를 확인하고 있습니다.');
     const timeout = setTimeout(() => { job.timedOut = true; job.controller.abort(); }, REQUEST_TIMEOUT);
     try {
       const token = await abortable(window.zc86Cloud.getAccessToken(), job.controller.signal);
       if (!stillCurrent(job)) { closeWaitingTab(job); return; }
-      if (!token) throw new Error('로그인 세션이 만료되었습니다. 다시 로그인해 주세요.');
+      if (!token) throw lookupError('로그인 세션이 만료되었습니다. 다시 로그인해 주세요.', 'AUTH_REQUIRED');
       const response = await abortable(fetch(ENDPOINT, {
         method: 'POST',
         headers: {'Content-Type': 'application/json', Accept: 'application/json', Authorization: 'Bearer ' + token},
-        body: JSON.stringify({plate: context.plate, candidateIds: readCandidates(context.plate)}),
+        body: JSON.stringify({plate: context.plate, candidateIds: manualIds === null ? readCandidates(context.plate) : manualIds}),
         signal: job.controller.signal,
         cache: 'no-store',
         credentials: 'same-origin'
       }), job.controller.signal);
       if (!stillCurrent(job)) { closeWaitingTab(job); return; }
+      job.httpStatus = response.status;
       if (!(response.headers.get('content-type') || '').includes('application/json')) {
-        throw new Error('엔카 조회 기능이 아직 연결되지 않았습니다. 관리자에게 문의해 주세요.');
+        throw lookupError('엔카 조회 기능이 아직 연결되지 않았습니다. 관리자에게 문의해 주세요.');
       }
       const data = await abortable(response.json(), job.controller.signal);
       if (!stillCurrent(job)) { closeWaitingTab(job); return; }
-      if (!response.ok || data.status === 'error') {
+      if (!response.ok || data?.status === 'error') {
         const messages = {
           401: '로그인 세션이 만료되었습니다. 다시 로그인해 주세요.',
           403: '이 기능을 사용할 수 있는 직원 권한을 확인해 주세요.',
           503: '엔카 조회 기능의 서버 설정이 필요합니다. 관리자에게 문의해 주세요.'
         };
-        throw new Error(messages[response.status] || '지금은 광고를 확인할 수 없습니다. 잠시 후 다시 시도해 주세요.');
+        const code = setDiagnostics(data?.diagnostics, response.status, 'HTTP_ERROR');
+        throw lookupError(ERROR_MESSAGES[code] || messages[response.status] || '지금은 광고를 확인할 수 없습니다. 잠시 후 다시 시도해 주세요.');
       }
-      if (data.plate !== context.plate || !Array.isArray(data.listings) || !['found','multiple','unverified'].includes(data.status)) {
-        throw new Error('광고 확인 응답이 올바르지 않습니다. 다시 시도해 주세요.');
+      if (!data || typeof data !== 'object' || Array.isArray(data) || data.plate !== context.plate || !Array.isArray(data.listings) || !['found','multiple','unverified'].includes(data.status)) {
+        throw lookupError('광고 확인 응답이 올바르지 않습니다. 다시 시도해 주세요.');
       }
       const listings = data.listings;
       if (data.status === 'unverified') {
-        if (listings.length) throw new Error('광고 확인 응답이 올바르지 않습니다. 다시 시도해 주세요.');
+        if (listings.length) throw lookupError('광고 확인 응답이 올바르지 않습니다. 다시 시도해 주세요.');
         closeWaitingTab(job);
-        try { localStorage.removeItem(CACHE_PREFIX + context.plate); } catch (_) {}
-        setNote('일치하는 현재 광고를 확인하지 못했습니다. 나중에 다시 확인해 주세요.');
+        if (manualIds === null) { try { localStorage.removeItem(CACHE_PREFIX + context.plate); } catch (_) {} }
+        const code = setDiagnostics(data.diagnostics, response.status, 'UNVERIFIED');
+        setNote(UNVERIFIED_MESSAGES[code] || '일치하는 현재 광고를 확인하지 못했습니다. 나중에 다시 확인해 주세요.');
+        manual.hidden = false;
         return;
       }
       if (!listings.length || listings.some(item => !item || !detailUrl(item.sellerUrl, item.id)) ||
           (data.status === 'found' && listings.length !== 1) || (data.status === 'multiple' && listings.length < 2) ||
           !data.verifiedAt || !Number.isFinite(Date.parse(data.verifiedAt))) {
-        throw new Error('광고 검증 결과를 확인할 수 없습니다. 다시 시도해 주세요.');
+        throw lookupError('광고 검증 결과를 확인할 수 없습니다. 다시 시도해 주세요.');
       }
       saveCandidates(context.plate, listings);
       showListings(listings);
@@ -241,7 +338,8 @@
     } catch (error) {
       closeWaitingTab(job);
       if (!stillCurrent(job)) return;
-      setNote(job.timedOut ? '확인이 지연되고 있습니다. 잠시 후 다시 시도해 주세요.' : String(error?.message || '광고 확인에 실패했습니다.').slice(0,220), true);
+      if (!diagnosticSnapshot) setDiagnostics(null, job.httpStatus, job.timedOut ? 'CLIENT_TIMEOUT' : error?.diagnosticCode || 'NETWORK_ERROR');
+      setNote(job.timedOut ? '확인이 지연되고 있습니다. 잠시 후 다시 시도해 주세요.' : error?.userMessage || '광고 확인에 실패했습니다. 연결 상태를 확인하고 다시 시도해 주세요.', true);
     } finally {
       clearTimeout(timeout);
       if (active === job) {
@@ -253,12 +351,26 @@
     }
   }
 
+  function verifyManual(event) {
+    event.preventDefault();
+    syncContext();
+    if (manual.hidden || active) return;
+    const id = candidateFromUrl(manualInput.value);
+    if (!id) {
+      manualError.textContent = '엔카 광고의 HTTPS 주소를 확인해 주세요.';
+      manualInput.focus();
+      return;
+    }
+    manualError.textContent = '';
+    lookup([id]);
+  }
+
   function mount() {
     const overlay = document.getElementById('vehicle-overlay');
     const meta = document.getElementById('vehicle-meta');
     if (!overlay || !meta) return;
     const style = document.createElement('style');
-    style.textContent = '.snote-encar-tools{margin-top:12px;display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:12px;line-height:1.6}.snote-encar-button{border:1px solid #bae1f5;background:#eef9ff;color:#187bac;padding:7px 12px;border-radius:9px;font:inherit;font-weight:700;cursor:pointer}.snote-encar-button:disabled{opacity:.6;cursor:wait}.snote-encar-note{color:#63758a}.snote-encar-note[data-error=true]{color:#b54747}.snote-encar-results{flex-basis:100%;display:grid;gap:6px}.snote-encar-result{display:flex;flex-wrap:wrap;gap:10px;align-items:center}.snote-encar-result span{color:#64748b}.snote-encar-result a{color:#187bac;font-weight:700;text-decoration:underline;text-underline-offset:3px}.snote-encar-button:focus-visible,.snote-encar-result a:focus-visible{outline:2px solid #38bdf8;outline-offset:3px}';
+    style.textContent = '.snote-encar-tools{margin-top:12px;display:flex;flex-wrap:wrap;align-items:center;gap:8px;min-width:0;font-size:12px;line-height:1.6}.snote-encar-button,.snote-encar-manual button{border:1px solid #bae1f5;background:#eef9ff;color:#187bac;padding:7px 12px;border-radius:9px;font:inherit;font-weight:700;cursor:pointer}.snote-encar-button:disabled{opacity:.6;cursor:wait}.snote-encar-note,.snote-encar-copy-status{color:#63758a}.snote-encar-note[data-error=true],.snote-encar-manual-error{color:#b54747}.snote-encar-results{flex-basis:100%;display:grid;gap:6px}.snote-encar-result{display:flex;flex-wrap:wrap;gap:10px;align-items:center}.snote-encar-result span{color:#64748b}.snote-encar-result a{color:#187bac;font-weight:700;text-decoration:underline;text-underline-offset:3px}.snote-encar-manual{flex-basis:100%;min-width:0;max-width:100%}.snote-encar-manual summary{cursor:pointer;color:#187bac;font-weight:700}.snote-encar-manual form{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;min-width:0}.snote-encar-manual label,.snote-encar-manual-error{flex-basis:100%}.snote-encar-manual input{flex:1 1 180px;min-width:0;max-width:100%;border:1px solid #d6e2ee;border-radius:8px;padding:8px;font:inherit;background:white;color:#334155}.snote-encar-copy{padding:2px 0;border:0;background:transparent;color:#63758a;font:inherit;text-decoration:underline;text-underline-offset:3px;cursor:pointer}.snote-encar-copy-fallback{flex-basis:100%;min-width:0;max-width:100%;box-sizing:border-box;height:120px;padding:8px;border:1px solid #d6e2ee;border-radius:8px;font:11px/1.5 monospace;overflow-wrap:anywhere;white-space:pre-wrap}.snote-encar-tools [hidden]{display:none!important}.snote-encar-tools :is(button,a,input,summary,textarea):focus-visible{outline:2px solid #38bdf8;outline-offset:3px}';
     document.head.append(style);
     bar = document.createElement('div');
     bar.className = 'snote-encar-tools';
@@ -267,14 +379,25 @@
     button.className = 'snote-encar-button';
     button.textContent = '엔카 광고 보기';
     button.disabled = true;
-    button.addEventListener('click', lookup);
+    button.addEventListener('click', () => lookup());
     note = document.createElement('span');
     note.className = 'snote-encar-note';
     note.setAttribute('role','status');
     note.setAttribute('aria-live','polite');
     results = document.createElement('div');
     results.className = 'snote-encar-results';
-    bar.append(button, note, results);
+    manual = document.createElement('details'); manual.className = 'snote-encar-manual'; manual.hidden = true;
+    const summary = document.createElement('summary'); summary.textContent = '광고 주소로 확인';
+    const form = document.createElement('form'); form.noValidate = true; form.addEventListener('submit', verifyManual);
+    const label = document.createElement('label'); label.htmlFor = 'snote-encar-manual-url'; label.textContent = '엔카 광고 주소';
+    manualInput = document.createElement('input'); manualInput.id = 'snote-encar-manual-url'; manualInput.type = 'url'; manualInput.inputMode = 'url'; manualInput.maxLength = 2048; manualInput.autocomplete = 'off'; manualInput.spellcheck = false; manualInput.placeholder = 'https://fem.encar.com/cars/detail/…';
+    manualButton = document.createElement('button'); manualButton.type = 'submit'; manualButton.textContent = '주소 확인';
+    manualError = document.createElement('span'); manualError.className = 'snote-encar-manual-error'; manualError.setAttribute('role', 'status');
+    form.append(label, manualInput, manualButton, manualError); manual.append(summary, form);
+    copyButton = document.createElement('button'); copyButton.type = 'button'; copyButton.className = 'snote-encar-copy'; copyButton.textContent = '진단 정보 복사'; copyButton.hidden = true; copyButton.addEventListener('click', copyDiagnostics);
+    copyStatus = document.createElement('span'); copyStatus.className = 'snote-encar-copy-status'; copyStatus.setAttribute('role', 'status');
+    copyFallback = document.createElement('textarea'); copyFallback.className = 'snote-encar-copy-fallback'; copyFallback.readOnly = true; copyFallback.hidden = true; copyFallback.setAttribute('aria-label', '복사할 진단 정보');
+    bar.append(button, note, results, manual, copyButton, copyStatus, copyFallback);
     meta.insertAdjacentElement('afterend', bar);
     new MutationObserver(syncContext).observe(overlay, {attributes:true,attributeFilter:['class']});
     new MutationObserver(syncContext).observe(meta, {childList:true,subtree:true,characterData:true});
