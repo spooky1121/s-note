@@ -1,12 +1,17 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
+import './html-rewriter-setup.mjs';
 
-const source = await readFile(new URL('../../functions/api/encar.js', import.meta.url), 'utf8');
+const source = (await readFile(new URL('../../functions/api/encar.js', import.meta.url), 'utf8')).replace(
+  "'../_shared/encar-catalog.mjs'", JSON.stringify(new URL('../../functions/_shared/encar-catalog.mjs', import.meta.url).href));
 const { onRequest } = await import('data:text/javascript;base64,' + Buffer.from(source).toString('base64'));
 const USER_ID = '10000000-0000-4000-8000-000000000001';
 const TOKEN = 'test_access_token_with_more_than_thirty_characters';
 const BASE = 'https://fem.encar.com/cars/detail/';
+const CATALOG = 'https://encar.spb.ru';
+const CATALOG_FORM = '<form action="/catalog" method="get"><label for="car-number">Номер автомобиля</label><input id="car-number" name="car_number"><button>Поиск</button></form>';
+const CATALOG_EMPTY = '<div class="no-results">Ничего не найдено</div>';
 const PLATE = '12가3456';
 const ORIGINAL = '43000001';
 const TRUSTED = '43000002';
@@ -68,7 +73,7 @@ async function run(config = {}, req = request(), extraEnv = {}) {
     const url = new URL(urlValue);
     const call = { url: url.href, options };
     calls.push(call);
-    await config.onCall?.(call, calls);
+    if (url.origin !== CATALOG || config.observeCatalog) await config.onCall?.(call, calls);
     if (url.origin === env.SUPABASE_URL && url.pathname === '/auth/v1/user') {
       assert.equal(options.headers.apikey, env.SUPABASE_PUBLISHABLE_KEY);
       assert.equal(options.headers.Authorization, 'Bearer ' + TOKEN);
@@ -91,6 +96,16 @@ async function run(config = {}, req = request(), extraEnv = {}) {
         return json({ results: next.results ?? [] }, next.status ?? 200);
       }
       return json(config.searchPayload ?? { results: config.results ?? [] }, config.searchStatus ?? 200);
+    }
+    if (url.origin === CATALOG) {
+      assert.equal(options.method, 'GET'); assert.equal(options.redirect, 'manual');
+      assert.deepEqual(options.headers, { Accept: 'text/html' });
+      if (config.catalogThrows) throw config.catalogThrows;
+      const page = config.catalogPages?.[url.href] ?? config.catalogPages?.[url.pathname] ?? (url.pathname === '/' ? CATALOG_FORM : CATALOG_EMPTY);
+      if (typeof page === 'function') return page(call);
+      if (page instanceof Error) throw page;
+      if (page instanceof Response) return page.clone();
+      return new Response(page, { headers: { 'Content-Type': 'text/html' } });
     }
     if (url.origin === 'https://fem.encar.com' && /^\/cars\/detail\/[0-9]+$/.test(url.pathname)) {
       assert.equal(options.method, 'GET');
@@ -127,6 +142,11 @@ function detailCalls(result) {
   return result.calls.filter(call => call.url.startsWith(BASE));
 }
 
+function catalogCalls(result) { return result.calls.filter(call => call.url.startsWith(CATALOG + '/')); }
+function catalogCard(plate = PLATE, id = ORIGINAL) {
+  return '<article class="car-card"><span class="car-number">' + plate + '</span><a href="/auto/' + id + '/">Synthetic vehicle</a></article>';
+}
+
 test('unauthenticated request performs no external requests', async () => {
   const result = await run({}, request({ plate: PLATE }, { Authorization: '' }));
   assert.equal(result.reply.status, 401);
@@ -153,11 +173,10 @@ test('a membership for a different user does not authorize the caller', async ()
   assert.equal(searchCalls(result).length, 0);
 });
 
-test('missing provider key is a configuration error even with candidate hints', async () => {
-  const result = await run({}, request({ plate: PLATE, candidateIds: [ORIGINAL] }), { TAVILY_API_KEY: '' });
-  assert.equal(result.reply.status, 503);
-  assert.equal(result.body.status, 'error');
-  assert.equal(result.calls.length, 0);
+test('a missing optional search key does not block a freshly verified candidate hint', async () => {
+  const result = await run({ pages: { [ORIGINAL]: html() } }, request({ plate: PLATE, candidateIds: [ORIGINAL] }), { TAVILY_API_KEY: '' });
+  assert.equal(result.reply.status, 200); assert.equal(result.body.status, 'found');
+  assert.equal(catalogCalls(result).length, 0); assert.equal(searchCalls(result).length, 0);
 });
 
 test('POST uses the exact search payload and returns only verified allowlisted fields', async () => {
@@ -219,7 +238,7 @@ test('known URL patterns and explicit carsbat lot labels produce candidates with
       const result = await run({ results: [example], pages: { [ORIGINAL]: html() } });
       assert.equal(result.body.status, 'found');
       assert.equal(detailCalls(result).length, 1);
-      assert.ok(result.calls.every(call => /^(?:https:\/\/fixture\.supabase\.co\/|https:\/\/api\.tavily\.com\/search$|https:\/\/fem\.encar\.com\/cars\/detail\/)/.test(call.url)));
+      assert.ok(result.calls.every(call => /^(?:https:\/\/fixture\.supabase\.co\/|https:\/\/api\.tavily\.com\/search$|https:\/\/fem\.encar\.com\/cars\/detail\/|https:\/\/encar\.spb\.ru\/)/.test(call.url)));
     });
   }
 });
@@ -574,7 +593,7 @@ test('hints share the twelve-candidate budget and do not spend a fallback search
 
 test('configuration diagnostics reveal only fixed reason names', async () => {
   const search = await run({}, request(), { TAVILY_API_KEY: '' });
-  assert.equal(search.body.diagnostics.code, 'SEARCH_NOT_CONFIGURED'); assert.equal(search.calls.length, 0);
+  assert.equal(search.body.diagnostics.code, 'CATALOG_NO_MATCH'); assert.equal(searchCalls(search).length, 0);
   const supabase = await run({}, request(), { SUPABASE_URL: 'invalid-url' });
   assert.equal(supabase.body.diagnostics.code, 'SUPABASE_NOT_CONFIGURED'); assert.equal(supabase.calls.length, 0);
 });
@@ -584,8 +603,9 @@ test('diagnostics and structured logs exclude all plate, listing IDs, URLs, cred
   assert.equal(result.body.status, 'error'); assert.equal(result.body.diagnostics.code, 'SEARCH_UNAVAILABLE');
   assert.equal(result.logs.length, 1);
   const log = JSON.parse(result.logs[0]);
-  assert.deepEqual(Object.keys(log).sort(), ['candidateCount', 'checkedCount', 'code', 'durationMs', 'plateMatchedCount', 'rawResultCount', 'recognizedSourceCount', 'rejected', 'requestId', 'resultCount', 'resultPlateMatchCount', 'searchCount']);
-  assert.deepEqual(Object.keys(result.body.diagnostics).sort(), ['candidateCount', 'checkedCount', 'code', 'plateMatchedCount', 'rawResultCount', 'recognizedSourceCount', 'rejected', 'requestId', 'resultCount', 'resultPlateMatchCount', 'searchCount']);
+  const catalogKeys = ['catalogRequestCount', 'catalogPageCount', 'catalogRecordCount', 'catalogExactMatchCount', 'catalogFormCount', 'catalogPlateFieldCount', 'catalogLinkCount'];
+  assert.deepEqual(Object.keys(log).sort(), [...catalogKeys, 'candidateCount', 'checkedCount', 'code', 'durationMs', 'plateMatchedCount', 'rawResultCount', 'recognizedSourceCount', 'rejected', 'requestId', 'resultCount', 'resultPlateMatchCount', 'searchCount'].sort());
+  assert.deepEqual(Object.keys(result.body.diagnostics).sort(), [...catalogKeys, 'candidateCount', 'checkedCount', 'code', 'plateMatchedCount', 'rawResultCount', 'recognizedSourceCount', 'rejected', 'requestId', 'resultCount', 'resultPlateMatchCount', 'searchCount'].sort());
   for (const value of [PLATE, ORIGINAL, BASE, TOKEN, env.TAVILY_API_KEY, env.SUPABASE_PUBLISHABLE_KEY, 'PRIVATE_UPSTREAM']) {
     assert.equal(JSON.stringify(result.body.diagnostics).includes(value), false);
     assert.equal(result.logs.join('').includes(value), false);
@@ -809,4 +829,191 @@ test('fallback raw body waiting is still bounded by the shared 35-second deadlin
   t.mock.timers.tick(8001);
   const result = await pending;
   assert.equal(result.body.diagnostics.code, 'DEADLINE_EXCEEDED'); assert.equal(searchCalls(result).length, 2);
+});
+
+test('public catalogue succeeds without Tavily and sends only the suffix to a discovered GET form', async () => {
+  const result = await run({ catalogPages: { '/catalog': catalogCard() }, pages: { [ORIGINAL]: html() } }, request(), { TAVILY_API_KEY: '' });
+  assert.equal(result.body.status, 'found'); assert.equal(result.body.listings[0].id, ORIGINAL);
+  assert.equal(searchCalls(result).length, 0); assert.equal(catalogCalls(result).length, 2);
+  assert.equal(new URL(catalogCalls(result)[1].url).searchParams.get('car_number'), '3456');
+  for (const call of catalogCalls(result)) {
+    assert.equal(call.url.includes(PLATE), false); assert.equal(call.url.includes(encodeURIComponent(PLATE)), false);
+    assert.deepEqual(call.options.headers, { Accept: 'text/html' }); assert.equal(call.options.redirect, 'manual');
+  }
+  assert.deepEqual(Object.keys(result.body).sort(), ['listings', 'plate', 'status', 'verifiedAt']);
+});
+
+test('suffix keeps leading zeroes and is never converted to a number', async () => {
+  const plate = '12가0012';
+  const result = await run({ catalogPages: { '/catalog': catalogCard(plate) }, pages: { [ORIGINAL]: html(base({ vehicleNo: plate })) } }, request({ plate }), { TAVILY_API_KEY: '' });
+  assert.equal(result.body.status, 'found'); assert.equal(new URL(catalogCalls(result)[1].url).searchParams.get('car_number'), '0012');
+});
+
+test('another full plate with the same suffix cannot supply its advertisement ID', async () => {
+  const result = await run({ catalogPages: { '/catalog': catalogCard('34나3456', SECOND) + catalogCard() }, pages: { [ORIGINAL]: html() } }, request(), { TAVILY_API_KEY: '' });
+  assert.equal(result.body.status, 'found'); assert.deepEqual(detailCalls(result).map(call => call.url), [BASE + ORIGINAL]);
+});
+
+test('catalogue-only discovery preserves the official detail rejection reason after an exact card match', async () => {
+  for (const [page, expected] of [
+    [html(base({ advertisement: { status: 'SOLD' } })), 'AD_INACTIVE'],
+    [html(base({ vehicleNo: '34나3456' })), 'PLATE_MISMATCH'],
+    [new Response('Not found', { status: 404 }), 'DETAIL_NOT_FOUND']
+  ]) {
+    const result = await run({ catalogPages: { '/catalog': catalogCard() }, pages: { [ORIGINAL]: page } }, request(), { TAVILY_API_KEY: '' });
+    assert.equal(result.body.status, 'unverified');
+    assert.equal(result.body.diagnostics.code, expected);
+    assert.equal(result.body.diagnostics.catalogExactMatchCount, 1);
+    assert.equal(detailCalls(result).length, 1);
+    assert.equal(searchCalls(result).length, 0);
+  }
+});
+
+test('multiple exact-plate catalogue cards remain multiple after independent detail verification', async () => {
+  const result = await run({ catalogPages: { '/catalog': catalogCard() + catalogCard(PLATE, SECOND) }, pages: {
+    [ORIGINAL]: html(), [SECOND]: html(base({ vehicleId: Number(SECOND), queryCarId: Number(SECOND) }))
+  } }, request(), { TAVILY_API_KEY: '' });
+  assert.equal(result.body.status, 'multiple'); assert.equal(result.body.listings.length, 2); assert.equal(searchCalls(result).length, 0);
+});
+
+test('a page-wide plate cannot join an unrelated card ID', async () => {
+  const page = '<h1>' + PLATE + '</h1>' + catalogCard('34나3456', SECOND);
+  const result = await run({ catalogPages: { '/catalog': page } }, request(), { TAVILY_API_KEY: '' });
+  assert.equal(result.body.status, 'unverified'); assert.equal(result.body.diagnostics.code, 'CATALOG_NO_MATCH');
+  assert.equal(detailCalls(result).length, 0); assert.equal(result.body.diagnostics.catalogExactMatchCount, 0);
+});
+
+test('configured public query skips discovery and preserves filter values on actual pagination links', async () => {
+  const pages = {};
+  pages[CATALOG + '/catalog?car_number=3456&fuel=gas&fuel=diesel'] = catalogCard('34나3456', SECOND) + '<a rel="next" href="?page=2&car_number=9999">Next</a>';
+  pages[CATALOG + '/catalog?page=2&car_number=3456&fuel=gas&fuel=diesel'] = catalogCard();
+  const result = await run({ catalogPages: pages, pages: { [ORIGINAL]: html() } }, request(), { TAVILY_API_KEY: '', ENCAR_CATALOG_SEARCH_URL: CATALOG + '/catalog?car_number={suffix}&fuel=gas&fuel=diesel' });
+  assert.equal(result.body.status, 'found'); assert.equal(catalogCalls(result).length, 2);
+  assert.equal(catalogCalls(result).some(call => call.url === CATALOG + '/'), false);
+  const next = new URL(catalogCalls(result)[1].url);
+  assert.equal(next.searchParams.get('page'), '2'); assert.equal(next.searchParams.get('car_number'), '3456');
+  assert.deepEqual(next.searchParams.getAll('fuel'), ['gas', 'diesel']);
+});
+
+test('configured suffix query keeps multiple values under the same field name', async () => {
+  const result = await run({ catalogPages: { '/catalog': catalogCard() }, pages: { [ORIGINAL]: html() } }, request(), {
+    TAVILY_API_KEY: '', ENCAR_CATALOG_SEARCH_URL: CATALOG + '/catalog?car_number={suffix}&car_number=extra'
+  });
+  assert.equal(result.body.status, 'found');
+  assert.deepEqual(new URL(catalogCalls(result)[0].url).searchParams.getAll('car_number'), ['3456', 'extra']);
+});
+
+test('catalogue pagination cycles fail without repeatedly fetching a URL', async () => {
+  const result = await run({ catalogPages: { '/catalog': catalogCard('34나3456', SECOND) + '<a rel="next" href="?car_number=3456">Next</a>' } }, request(), { TAVILY_API_KEY: '' });
+  assert.equal(result.body.status, 'error'); assert.equal(result.body.diagnostics.code, 'CATALOG_INCOMPLETE');
+  assert.equal(catalogCalls(result).length, 2); assert.equal(detailCalls(result).length, 0);
+});
+
+test('three catalogue pages with a further page are incomplete even if an early page had a match', async () => {
+  const pages = {};
+  for (let page = 1; page <= 3; page++) pages[CATALOG + '/catalog?' + (page === 1 ? 'car_number=3456&page=1' : 'page=' + page + '&car_number=3456')] = catalogCard(page === 1 ? PLATE : '34나3456', page === 1 ? ORIGINAL : SECOND) + '<a rel="next" href="?page=' + (page + 1) + '">Next</a>';
+  const result = await run({ catalogPages: pages }, request(), { TAVILY_API_KEY: '', ENCAR_CATALOG_SEARCH_URL: CATALOG + '/catalog?car_number={suffix}&page=1' });
+  assert.equal(result.body.status, 'error'); assert.equal(result.body.diagnostics.code, 'CATALOG_INCOMPLETE');
+  assert.equal(result.body.diagnostics.catalogPageCount, 3); assert.equal(catalogCalls(result).length, 3); assert.equal(detailCalls(result).length, 0);
+});
+
+test('too many exact catalogue IDs cannot be silently reduced to a unique result', async () => {
+  const cards = Array.from({ length: 13 }, (_, index) => catalogCard(PLATE, String(48000001 + index))).join('');
+  const result = await run({ catalogPages: { '/catalog': cards } }, request(), { TAVILY_API_KEY: '' });
+  assert.equal(result.body.status, 'error'); assert.equal(result.body.diagnostics.code, 'CATALOG_INCOMPLETE'); assert.equal(detailCalls(result).length, 0);
+});
+
+test('catalogue discovery failure can be rescued only by independently verified fallback listings', async () => {
+  const result = await run({ catalogPages: { '/': new Response('blocked', { status: 403 }) }, results: [{ url: BASE + ORIGINAL }], pages: { [ORIGINAL]: html() } });
+  assert.equal(result.body.status, 'found'); assert.equal(searchCalls(result).length, 1); assert.equal(catalogCalls(result).length, 1);
+});
+
+test('unverified or failed fallback never hides the original catalogue failure', async t => {
+  for (const extra of [{ results: [] }, { searchStatus: 401 }]) await t.test(Object.keys(extra)[0], async () => {
+    const result = await run({ catalogPages: { '/': new Response('blocked', { status: 403 }) }, ...extra });
+    assert.equal(result.body.status, 'error'); assert.equal(result.body.diagnostics.code, 'CATALOG_BLOCKED');
+  });
+});
+
+test('catalogue-discovered detail errors cannot be bypassed with a different provider', async () => {
+  const result = await run({ catalogPages: { '/catalog': catalogCard() }, pages: { [ORIGINAL]: new Response('blocked', { status: 403 }) }, results: [{ url: BASE + SECOND }] });
+  assert.equal(result.body.diagnostics.code, 'DETAIL_BLOCKED'); assert.equal(searchCalls(result).length, 0);
+});
+
+test('blocked, absent, unknown and unsupported public pages are errors, not no-match', async t => {
+  for (const [pages, code] of [
+    [{ '/': new Response('blocked', { status: 403 }) }, 'CATALOG_BLOCKED'],
+    [{ '/': new Response('missing', { status: 404 }) }, 'CATALOG_UNAVAILABLE'],
+    [{ '/': '<main>Unrecognized home layout</main>' }, 'CATALOG_FORM_UNSUPPORTED'],
+    [{ '/catalog': '<main>Unrecognized search layout</main>' }, 'CATALOG_PARSE_FAILED']
+  ]) await t.test(code, async () => {
+    const result = await run({ catalogPages: pages }, request(), { TAVILY_API_KEY: '' });
+    assert.equal(result.body.status, 'error'); assert.equal(result.body.diagnostics.code, code);
+  });
+});
+
+test('catalogue redirects and external next links are never followed', async t => {
+  for (const pages of [
+    { '/': new Response('', { status: 302, headers: { Location: 'https://evil.example/catalog' } }) },
+    { '/catalog': catalogCard('34나3456', SECOND) + '<a rel="next" href="https://evil.example/catalog?page=2">Next</a>' }
+  ]) await t.test('unsafe public navigation', async () => {
+    const result = await run({ catalogPages: pages }, request(), { TAVILY_API_KEY: '' });
+    assert.equal(result.body.status, 'error'); assert.equal(result.calls.some(call => call.url.startsWith('https://evil.example/')), false);
+  });
+});
+
+test('invalid configured URLs are rejected before public catalogue requests', async t => {
+  for (const template of ['https://evil.example/?q={suffix}', CATALOG + ':8443/?q={suffix}', CATALOG + '/{suffix}', CATALOG + '/catalog?q={suffix}&q2={suffix}']) {
+    await t.test(template.includes('evil') ? 'other host' : 'invalid template', async () => {
+      const result = await run({}, request(), { TAVILY_API_KEY: '', ENCAR_CATALOG_SEARCH_URL: template });
+      assert.equal(result.body.diagnostics.code, 'CATALOG_CONFIG_INVALID'); assert.equal(catalogCalls(result).length, 0);
+    });
+  }
+});
+
+test('public HTML body limits and missing parser fail closed with fixed codes', async t => {
+  const limited = await run({ catalogPages: { '/': new Response('', { headers: { 'Content-Length': String(3 * 1024 * 1024 + 1) } }) } }, request(), { TAVILY_API_KEY: '' });
+  assert.equal(limited.body.diagnostics.code, 'CATALOG_LIMIT_EXCEEDED');
+  const original = globalThis.HTMLRewriter;
+  try {
+    delete globalThis.HTMLRewriter;
+    const result = await run({}, request(), { TAVILY_API_KEY: '' });
+    assert.equal(result.body.diagnostics.code, 'CATALOG_PARSER_UNAVAILABLE');
+  } finally { globalThis.HTMLRewriter = original; }
+});
+
+test('catalogue diagnostics and logs contain only counts, not forms, query URLs, credentials or vehicle data', async () => {
+  const result = await run({}, request(), { TAVILY_API_KEY: '' });
+  assert.equal(result.body.diagnostics.code, 'CATALOG_NO_MATCH');
+  for (const field of ['catalogRequestCount', 'catalogPageCount', 'catalogRecordCount', 'catalogExactMatchCount', 'catalogFormCount', 'catalogPlateFieldCount', 'catalogLinkCount']) assert(Number.isSafeInteger(result.body.diagnostics[field]));
+  assert.equal(result.body.diagnostics.catalogRequestCount, 2); assert.equal(result.body.diagnostics.catalogPageCount, 1);
+  for (const secret of [PLATE, ORIGINAL, CATALOG, 'car_number', TOKEN, env.SUPABASE_PUBLISHABLE_KEY]) {
+    assert.equal(JSON.stringify(result.body.diagnostics).includes(secret), false); assert.equal(result.logs.join('').includes(secret), false);
+  }
+});
+
+test('a hanging public catalogue body is bounded by the existing per-request timeout', async t => {
+  t.mock.timers.enable({ apis: ['setTimeout', 'Date'], now: 100000 });
+  let entered; const ready = new Promise(resolve => { entered = resolve; });
+  const body = new ReadableStream({ pull() { entered(); } }, { highWaterMark: 0 });
+  const pending = run({ catalogPages: { '/': () => new Response(body) } }, request(), { TAVILY_API_KEY: '' });
+  await ready; t.mock.timers.tick(10001);
+  const result = await pending;
+  assert.equal(result.body.diagnostics.code, 'UPSTREAM_TIMEOUT'); assert.equal(catalogCalls(result).length, 1);
+});
+
+test('public pagination shares the original 35-second deadline rather than resetting it per page', async t => {
+  t.mock.timers.enable({ apis: ['setTimeout', 'Date'], now: 100000 });
+  let entered; const ready = new Promise(resolve => { entered = resolve; });
+  const body = new ReadableStream({ pull() { entered(); } }, { highWaterMark: 0 });
+  const pending = run({ observeCatalog: true, onCall(call) {
+    if (!call.url.startsWith(CATALOG) || new URL(call.url).searchParams.get('page') === '1') t.mock.timers.tick(9000);
+  }, catalogPages: { '/catalog': call => new URL(call.url).searchParams.get('page') === '1'
+    ? new Response(catalogCard('34나3456', SECOND) + '<a rel="next" href="?page=2">Next</a>') : new Response(body) } }, request(), {
+    TAVILY_API_KEY: '', ENCAR_CATALOG_SEARCH_URL: CATALOG + '/catalog?car_number={suffix}&page=1'
+  });
+  await ready; t.mock.timers.tick(8001);
+  const result = await pending;
+  assert.equal(result.body.diagnostics.code, 'DEADLINE_EXCEEDED'); assert.equal(catalogCalls(result).length, 2);
+  assert.equal(searchCalls(result).length, 0);
 });

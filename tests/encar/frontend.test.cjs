@@ -439,7 +439,7 @@ test('19 old unverified responses retain the exact note, with an optional closed
 
 test('20 unverified diagnostic reasons have distinct honest notes without raw server text', async t => {
   const messages = [];
-  for (const code of ['SEARCH_NO_RESULTS', 'SEARCH_NO_CANDIDATES', 'PLATE_MISMATCH', 'AD_INACTIVE', 'DETAIL_NOT_FOUND', 'NO_VERIFIED_LISTING']) {
+  for (const code of ['SEARCH_NO_RESULTS', 'SEARCH_NO_CANDIDATES', 'PLATE_MISMATCH', 'AD_INACTIVE', 'DETAIL_NOT_FOUND', 'CATALOG_NO_MATCH', 'NO_VERIFIED_LISTING']) {
     await t.test(code, async sub => {
       const f = fixture(sub); await showUnverified(f, { code, requestId: REQUEST_ID, message: 'UNTRUSTED_PRIVATE_MESSAGE' });
       messages.push(f.note.textContent); assert.doesNotMatch(f.note.textContent, /UNTRUSTED|판매\s*완료|매물.*없/);
@@ -447,19 +447,20 @@ test('20 unverified diagnostic reasons have distinct honest notes without raw se
       assert.equal(f.tabs[0].closed, true); assert.deepEqual(f.tabs[0].navigations, []);
     });
   }
-  assert.equal(new Set(messages).size, 6);
+  assert.equal(new Set(messages).size, 7);
 });
 
 test('21 service diagnostic error codes distinguish setup, search, detail and timeout while unknown/old replies keep HTTP fallbacks', async t => {
   const messages = [];
-  for (const code of ['SEARCH_NOT_CONFIGURED', 'SUPABASE_NOT_CONFIGURED', 'SEARCH_AUTH_FAILED', 'SEARCH_RATE_LIMITED', 'SEARCH_QUOTA_EXCEEDED', 'SEARCH_UNAVAILABLE', 'DETAIL_BLOCKED', 'DETAIL_PARSE_FAILED', 'DETAIL_UNAVAILABLE', 'AD_STATUS_UNKNOWN', 'UPSTREAM_TIMEOUT', 'DEADLINE_EXCEEDED']) {
+  for (const code of ['SEARCH_NOT_CONFIGURED', 'SUPABASE_NOT_CONFIGURED', 'SEARCH_AUTH_FAILED', 'SEARCH_RATE_LIMITED', 'SEARCH_QUOTA_EXCEEDED', 'SEARCH_UNAVAILABLE', 'DETAIL_BLOCKED', 'DETAIL_PARSE_FAILED', 'DETAIL_UNAVAILABLE', 'AD_STATUS_UNKNOWN', 'CATALOG_BLOCKED', 'CATALOG_UNAVAILABLE', 'CATALOG_FORM_UNSUPPORTED', 'CATALOG_PARSE_FAILED', 'CATALOG_INCOMPLETE', 'CATALOG_CONFIG_INVALID', 'CATALOG_PARSER_UNAVAILABLE', 'CATALOG_LIMIT_EXCEEDED', 'UPSTREAM_TIMEOUT', 'DEADLINE_EXCEEDED']) {
     await t.test(code, async sub => {
       const f = fixture(sub); f.click(); await settle(); f.reply(0, { status: 'error', diagnostics: { code, requestId: REQUEST_ID, message: 'UNTRUSTED_PRIVATE_MESSAGE' } }, { status: 502 }); await settle();
       messages.push(f.note.textContent); assert.doesNotMatch(f.note.textContent, /UNTRUSTED/); assert.equal(f.note.dataset.error, 'true');
       assert.equal(f.manual.hidden, true); assert.equal(f.copyButton.hidden, false); assert.equal(f.tabs[0].closed, true);
+      assert.equal(f.links.length, 0); assert.deepEqual(f.tabs[0].navigations, []);
     });
   }
-  assert.equal(new Set(messages).size, 12);
+  assert.equal(new Set(messages).size, 20);
   const f = fixture(t); f.click(); await settle(); f.reply(0, { status: 'error', diagnostics: { code: 'UNKNOWN_PRIVATE_CODE' } }, { status: 503 }); await settle();
   assert.equal(f.note.textContent, '엔카 조회 기능의 서버 설정이 필요합니다. 관리자에게 문의해 주세요.');
 });
@@ -548,8 +549,8 @@ test('29 an unknown advertisement state is an error, never a sold/inactive claim
   assert.doesNotMatch(f.copyFallback.value, /PRIVATE|12가3456|43000001|https:|advertisementStatus/);
 });
 
-test('30 optional matched-plate and search-stage counts copy only whole numbers in the existing bounds', async t => {
-  const keys = ['plateMatchedCount', 'resultPlateMatchCount', 'rawResultCount', 'recognizedSourceCount'];
+test('30 optional matched-plate, search-stage and public-catalog counts copy only whole numbers in the existing bounds', async t => {
+  const keys = ['plateMatchedCount', 'resultPlateMatchCount', 'rawResultCount', 'recognizedSourceCount', 'catalogRequestCount', 'catalogPageCount', 'catalogRecordCount', 'catalogExactMatchCount', 'catalogFormCount', 'catalogPlateFieldCount', 'catalogLinkCount'];
   for (const count of [0, 1000, -1, 1.25, 1001, '1', null, Number.NaN, Number.POSITIVE_INFINITY]) {
     const f = fixture(t); await showUnverified(f, { code: 'NO_VERIFIED_LISTING', ...Object.fromEntries(keys.map(key => [key, count])) }); f.copyButton.click(); await settle();
     const copied = JSON.parse(f.copyFallback.value);
@@ -559,4 +560,15 @@ test('30 optional matched-plate and search-stage counts copy only whole numbers 
     }
     assert.deepEqual(Object.keys(copied).filter(key => !keys.includes(key)), ['service', 'code', 'httpStatus']);
   }
+});
+
+test('31 incomplete public-catalog verification never opens partial listings and copies only safe catalog counters', async t => {
+  const f = fixture(t); f.click(); await settle();
+  const counters = { catalogRequestCount: 2, catalogPageCount: 1, catalogRecordCount: 4, catalogExactMatchCount: 1, catalogFormCount: 1, catalogPlateFieldCount: 1, catalogLinkCount: 1 };
+  f.reply(0, { ...found(), status: 'error', diagnostics: { code: 'CATALOG_INCOMPLETE', requestId: REQUEST_ID, ...counters, source: 'PRIVATE_SOURCE', host: 'PRIVATE_HOST', title: 'PRIVATE_TITLE', text: 'PRIVATE_TEXT', raw_content: 'PRIVATE_RAW', body: 'PRIVATE_BODY', plate: PLATE, id: '43000001', url: listing().sellerUrl, token: 'PRIVATE_TOKEN' } }, { status: 502 }); await settle();
+  assert.equal(f.note.textContent, '공개 차량 목록의 일부 조회를 마치지 못했습니다. 잠시 후 다시 확인해 주세요.');
+  assert.doesNotMatch(f.note.textContent, /PRIVATE|판매\s*완료|매물.*없/); assert.equal(f.tabs[0].closed, true); assert.deepEqual(f.tabs[0].navigations, []); assert.equal(f.links.length, 0);
+  f.copyButton.click(); await settle();
+  assert.deepEqual(JSON.parse(f.copyFallback.value), { service: 'snote-encar', code: 'CATALOG_INCOMPLETE', httpStatus: 502, requestId: REQUEST_ID, ...counters });
+  assert.doesNotMatch(f.copyFallback.value, /PRIVATE|12가3456|43000001|https:|token|raw_content/); assert(f.copyFallback.value.length < 600);
 });

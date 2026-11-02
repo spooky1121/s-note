@@ -69,7 +69,7 @@ async function fixture(width=1440){
  await page.evaluate(()=>{window.__encarFixtureState.ready=true;document.getElementById('zc86-topbar').hidden=false;});await page.locator(BUTTON+':not([disabled])').waitFor();
  f.reply=(body,status=200)=>f.responses.push({body,status});return f;
 }
-async function lookup(f,body){f.reply(body);const popupPromise=f.context.waitForEvent('page');await f.page.locator(BUTTON).click();const popup=await popupPromise;await f.page.locator(BUTTON+':not([disabled])').waitFor();return popup;}
+async function lookup(f,body,status=200){f.reply(body,status);const popupPromise=f.context.waitForEvent('page');await f.page.locator(BUTTON).click();const popup=await popupPromise;await f.page.locator(BUTTON+':not([disabled])').waitFor();return popup;}
 async function verifyAddress(f,body,address){f.reply(body);const popupPromise=f.context.waitForEvent('page');await f.page.locator(ADDRESS).fill(address);await f.page.locator(MANUAL+' button').click();const popup=await popupPromise;await f.page.locator(BUTTON+':not([disabled])').waitFor();return popup;}
 async function closed(popup){if(!popup.isClosed())await popup.waitForEvent('close');assert.equal(popup.isClosed(),true);}
 async function assertLinks(f,expected){
@@ -123,6 +123,12 @@ async function finish(f){assert.deepEqual(f.external,[],'No external requests ar
    assert.equal(await p.locator(MANUAL).isHidden(),true);assert.equal(await p.locator(COPY).isHidden(),true);assert.equal(await p.evaluate(()=>document.getElementById('vehicle-overlay').dataset.snoteHistoryDirty||''),'','Lookup-only address input must not mark the vehicle as an unsaved edit');
    await p.locator('#detail-km').fill('12345');assert.equal(await p.evaluate(()=>document.getElementById('vehicle-overlay').dataset.snoteHistoryDirty),'1','Actual vehicle edits must still be tracked');await p.evaluate(()=>delete document.getElementById('vehicle-overlay').dataset.snoteHistoryDirty);
    console.log('PASS actual unverified diagnostics, privacy-safe clipboard, bad-host rejection, manual ID-only server validation with no direct navigation, and lookup/vehicle draft separation');
+
+   const catalogCounts={catalogRequestCount:2,catalogPageCount:1,catalogRecordCount:4,catalogExactMatchCount:1,catalogFormCount:1,catalogPlateFieldCount:1,catalogLinkCount:1},beforeCatalog=f.navigations.length;
+   popup=await lookup(f,{...found(),status:'error',diagnostics:{code:'CATALOG_INCOMPLETE',requestId:REQUEST_ID,...catalogCounts,plate:PLATE,url:listing().sellerUrl,body:'PRIVATE_CATALOG_BODY',token:'PRIVATE_TOKEN'}},502);await closed(popup);assert.equal(f.navigations.length,beforeCatalog);assert.equal(await p.locator(LINKS).count(),0);assert.match(await p.locator(NOTE).textContent(),/공개 차량 목록의 일부 조회/);
+   await p.locator(COPY).click();const catalogCopy=await p.evaluate(()=>window.__encarCopied);assert.deepEqual(JSON.parse(catalogCopy),{service:'snote-encar',code:'CATALOG_INCOMPLETE',httpStatus:502,requestId:REQUEST_ID,...catalogCounts});assert.doesNotMatch(catalogCopy,/PRIVATE|12가3456|43000001|https:|token|body/i);
+   popup=await lookup(f,unverified(PLATE,'CATALOG_NO_MATCH'));await closed(popup);assert.match(await p.locator(NOTE).textContent(),/공개 차량 목록에서 전체 차량번호/);assert.equal(await p.locator(MANUAL).isHidden(),false);assert.equal(await p.locator(MANUAL).evaluate(el=>el.open),false);assert.equal(f.navigations.length,beforeCatalog);assert.equal(await p.locator(LINKS).count(),0);
+   console.log('PASS actual public-catalog incomplete/no-match replies use specific honest notes, do not open partial listings, and copy only safe numeric diagnostics');
 
    popup=await heldJson(f,found());const beforeSwitch=f.navigations.length;await p.evaluate(()=>openVehicle('encar-car-2'));await closed(popup);await releaseJson(f);assert.equal(await p.locator(LINKS).count(),0);assert.equal(await p.locator(NOTE).textContent(),'');assert.equal(f.navigations.length,beforeSwitch);await p.locator(BUTTON+':not([disabled])').waitFor();
    console.log('PASS real car switch cancels its waiting tab and a late parsed response cannot insert links or open the previous car advertisement');

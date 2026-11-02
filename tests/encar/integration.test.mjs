@@ -4,9 +4,12 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { JSDOM } from 'jsdom';
+import './html-rewriter-setup.mjs';
 
 const frontend = await readFile(new URL('../../assets/snote-encar-link.js', import.meta.url), 'utf8');
-const backend = await readFile(new URL('../../functions/api/encar.js', import.meta.url), 'utf8');
+const backend = (await readFile(new URL('../../functions/api/encar.js', import.meta.url), 'utf8'))
+  .replace(/(['"])\.\.\/_shared\/encar-catalog\.mjs\1/g,
+    JSON.stringify(new URL('../../functions/_shared/encar-catalog.mjs', import.meta.url).href));
 const { onRequest } = await import('data:text/javascript;base64,' + Buffer.from(backend).toString('base64'));
 const PLATE = '12가3456', ORIGINAL = '43000001', TRUSTED = '43000002';
 const BASE = 'https://fem.encar.com/cars/detail/';
@@ -24,11 +27,11 @@ function detail(id, plate = PLATE) {
   } } }) + ';</script>';
 }
 
-function fixture(t, { batches = [], plate = PLATE } = {}) {
+function fixture(t, { batches = [], plate = PLATE, providerKey = 'synthetic_search_secret', catalogHTML = null } = {}) {
   const dom = new JSDOM('<!doctype html><div id="zc-cloud-gate" hidden></div>' +
     '<div id="zc86-topbar"></div><section id="vehicle-overlay" class="open"><p id="vehicle-meta">차량</p></section>',
   { url: 'https://integration.example/', runScripts: 'outside-only' });
-  const w = dom.window, requests = [], searches = [], tabs = [], logs = [];
+  const w = dom.window, requests = [], searches = [], tabs = [], logs = [], catalogRequests = [];
   const previousFetch = globalThis.fetch, previousInfo = console.info;
   console.info = value => logs.push(value);
   let heldDetail = null;
@@ -37,6 +40,16 @@ function fixture(t, { batches = [], plate = PLATE } = {}) {
     const json = body => new Response(JSON.stringify(body), { headers: { 'Content-Type': 'application/json' } });
     if (url.href === 'https://fixture.supabase.co/auth/v1/user') return json({ id: USER });
     if (url.origin === 'https://fixture.supabase.co' && url.pathname === '/rest/v1/zc_members') return json([{ user_id: USER }]);
+    if (url.origin === 'https://encar.spb.ru') {
+      catalogRequests.push(url);
+      if (url.pathname === '/') return new Response('<form action="/fixture-catalog" method="get"><label for="fixture-number">Номер автомобиля</label><input id="fixture-number" name="car_number"></form>', { headers: { 'Content-Type': 'text/html' } });
+      if (url.pathname === '/fixture-catalog') {
+        assert.equal(url.searchParams.get('car_number'), PLATE.slice(-4));
+        assert.equal(url.searchParams.has('plate'), false);
+        return new Response(catalogHTML ?? '<main><p class="empty">Ничего не найдено</p></main>', { headers: { 'Content-Type': 'text/html' } });
+      }
+      assert.fail('The synthetic catalog URL must come from its actual fixture form');
+    }
     if (url.href === 'https://api.tavily.com/search') {
       searches.push(JSON.parse(options.body));
       return json({ results: batches.shift() || [] });
@@ -62,18 +75,25 @@ function fixture(t, { batches = [], plate = PLATE } = {}) {
     try {
       return await onRequest({ request: new Request('https://integration.example/api/encar', {
         method: init.method, headers: init.headers, body: init.body, signal: controller.signal
-      }), env: { TAVILY_API_KEY: 'synthetic_search_secret', SUPABASE_URL: 'https://fixture.supabase.co',
+      }), env: { TAVILY_API_KEY: providerKey, SUPABASE_URL: 'https://fixture.supabase.co',
         SUPABASE_PUBLISHABLE_KEY: 'synthetic_publishable_key' } });
     } finally { init.signal.removeEventListener('abort', abort); }
   };
   w.eval(frontend); if (!w.SnoteEncarLink) w.document.dispatchEvent(new w.Event('DOMContentLoaded'));
-  t.after(() => { globalThis.fetch = previousFetch; console.info = previousInfo; dom.window.close(); });
+  t.after(async () => {
+    w.dispatchEvent(new w.Event('pagehide')); await tick(); await tick();
+    globalThis.fetch = previousFetch; console.info = previousInfo; dom.window.close();
+  });
   const button = w.document.querySelector('.snote-encar-button');
   async function done() {
-    for (let attempt = 0; attempt < 100; attempt++) { await tick(); if (!button.disabled) return; }
+    const until = Date.now() + 5000;
+    while (Date.now() < until) {
+      await new Promise(resolve => setTimeout(resolve, 5));
+      if (!button.disabled) return;
+    }
     assert.fail('Integration fixture did not finish');
   }
-  return { w, button, tabs, searches, requests, logs, done,
+  return { w, button, tabs, searches, requests, logs, catalogRequests, done,
     holdDetails(promise) { heldDetail = promise; },
     get note() { return w.document.querySelector('.snote-encar-note').textContent; },
     get manual() { return w.document.querySelector('.snote-encar-manual'); },
@@ -88,6 +108,18 @@ test('integration: automatic fallback uses the plate and opens separately verifi
   assert.deepEqual(f.searches.map(search => search.query), ['"' + PLATE + '"', PLATE]);
   assert.deepEqual(f.tabs[0].navigations, [BASE + ORIGINAL]);
   assert.equal(f.tabs[0].opener, null);
+  assert.deepEqual([...f.w.document.querySelectorAll('.snote-encar-results a')].map(a => a.href), [BASE + ORIGINAL, BASE + TRUSTED]);
+  assert.equal(f.manual.hidden, true);
+});
+
+test('integration: public catalog uses the suffix, matches the entire card, and opens verified links without a search-provider key', async t => {
+  const catalogHTML = '<main><article class="car-card"><a href="/auto/43000003/">다른 가상 차량</a><span>34나3456</span></article>' +
+    '<article class="car-card"><a href="/auto/' + ORIGINAL + '/">대상 가상 차량</a><span>' + PLATE + '</span></article></main>';
+  const f = fixture(t, { providerKey: '', catalogHTML });
+  f.button.click(); await f.done();
+  assert.equal(f.catalogRequests.length, 2);
+  assert.equal(f.searches.length, 0);
+  assert.deepEqual(f.tabs[0].navigations, [BASE + ORIGINAL]);
   assert.deepEqual([...f.w.document.querySelectorAll('.snote-encar-results a')].map(a => a.href), [BASE + ORIGINAL, BASE + TRUSTED]);
   assert.equal(f.manual.hidden, true);
 });

@@ -1,6 +1,8 @@
+import { CATALOG_ORIGIN, catalogURL, configuredCatalogSearch, discoverCatalogSearch, parseCatalogPage } from '../_shared/encar-catalog.mjs';
+
 /**
  * S-NOTE / Cloudflare Pages Function: POST /api/encar
- * Required secrets: TAVILY_API_KEY, SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY.
+ * Required: SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY. TAVILY_API_KEY is optional.
  * Optional ENCAR_CACHE KV contains candidate IDs only; every hit is reverified.
  * No seller/account/contact fields are used or returned.
  */
@@ -20,6 +22,8 @@ const AUTO_EXPORT_HOSTS = ['encar.spb.ru', 'trust-encar.ru', 'encar.msk.ru', 'en
 const SEARCH_SOURCE_DOMAINS = ['encar.com', ...AUTO_EXPORT_HOSTS, 'carsbat.com', 'deffcars.ru'];
 const RECOGNIZED_SOURCE_HOSTS = new Set([...SEARCH_SOURCE_DOMAINS, 'fem.encar.com', 'm.encar.com']);
 const RESULT_TEXT_FIELDS = ['title', 'content', 'raw_content'];
+const CATALOG_ERRORS = new Set(['CATALOG_BLOCKED', 'CATALOG_UNAVAILABLE', 'CATALOG_FORM_UNSUPPORTED',
+  'CATALOG_PARSE_FAILED', 'CATALOG_INCOMPLETE', 'CATALOG_CONFIG_INVALID', 'CATALOG_PARSER_UNAVAILABLE', 'CATALOG_LIMIT_EXCEEDED']);
 const REGIONS = '(?:서울|부산|대구|인천|광주|대전|울산|세종|경기|강원|충북|충남|전북|전남|경북|경남|제주)';
 const PLATE = new RegExp('^(?:' + REGIONS + ')?[0-9]{2,3}[가-힣][0-9]{4}$');
 const BLOCKED = /has_been_cr_blocked|서비스\s*이용\s*제한됨|비정상적인\s*트래픽|<title>\s*(?:Access Denied|Request blocked)/i;
@@ -33,6 +37,8 @@ function operation(request) {
   const op = { requestId: crypto.randomUUID(), startedAt, deadline: startedAt + DEADLINE_MS,
     controller, searchCount: 0, resultCount: 0, checkedCount: 0, plateMatchedCount: 0,
     resultPlateMatchCount: 0, rawResultCount: 0, recognizedSourceCount: 0, candidates: new Set(),
+    catalogRequestCount: 0, catalogPageCount: 0, catalogRecordCount: 0, catalogExactMatchCount: 0,
+    catalogFormCount: 0, catalogPlateFieldCount: 0, catalogLinkCount: 0,
     rejected: { plateMismatch: 0, notAdvertising: 0, notFound: 0 } };
   op.timer = setTimeout(() => controller.abort(new EncarError('DEADLINE_EXCEEDED')), DEADLINE_MS);
   op.abort = () => controller.abort(new EncarError('UPSTREAM_TIMEOUT'));
@@ -52,6 +58,9 @@ function counters(op) {
     candidateCount: op.candidates.size, checkedCount: op.checkedCount,
     plateMatchedCount: op.plateMatchedCount, resultPlateMatchCount: op.resultPlateMatchCount,
     rawResultCount: op.rawResultCount, recognizedSourceCount: op.recognizedSourceCount,
+    catalogRequestCount: op.catalogRequestCount, catalogPageCount: op.catalogPageCount,
+    catalogRecordCount: op.catalogRecordCount, catalogExactMatchCount: op.catalogExactMatchCount,
+    catalogFormCount: op.catalogFormCount, catalogPlateFieldCount: op.catalogPlateFieldCount, catalogLinkCount: op.catalogLinkCount,
     rejected: { ...op.rejected } };
 }
 
@@ -152,6 +161,7 @@ async function fetchLimited(op, url, options = {}, maxBytes = MAX_SEARCH_BYTES, 
     return { ok: fetched.ok, status: fetched.status, text };
   } catch (error) {
     if (error instanceof EncarError) throw error;
+    if (error?.message === 'body-limit' && unavailable === 'CATALOG_UNAVAILABLE') throw new EncarError('CATALOG_LIMIT_EXCEEDED');
     if (error?.name === 'AbortError' || error?.name === 'TimeoutError') throw new EncarError('UPSTREAM_TIMEOUT');
     throw new EncarError(unavailable);
   } finally {
@@ -458,6 +468,76 @@ async function verifyCandidates(ids, getDetail) {
   return { listings, errored: !!errorCode, errorCode };
 }
 
+function catalogError(error, fallback = 'CATALOG_PARSE_FAILED') {
+  if (error instanceof EncarError) return error;
+  return new EncarError(CATALOG_ERRORS.has(error?.code) ? error.code : fallback);
+}
+
+async function catalogHTML(op, url) {
+  const safeURL = catalogURL(url);
+  remaining(op);
+  ++op.catalogRequestCount;
+  const result = await fetchLimited(op, safeURL.href, { method: 'GET', headers: { Accept: 'text/html' } }, MAX_HTML_BYTES, 'CATALOG_UNAVAILABLE');
+  if (BLOCKED.test(result.text) || [403, 429].includes(result.status) || /<title>\s*(?:Just a moment|Attention Required)/i.test(result.text)) throw new EncarError('CATALOG_BLOCKED');
+  if (!result.ok) throw new EncarError('CATALOG_UNAVAILABLE');
+  return result.text;
+}
+
+async function catalogCandidates(op, env, plate) {
+  const suffix = plate.slice(-4);
+  let searchURL;
+  try {
+    const template = env.ENCAR_CATALOG_SEARCH_URL;
+    searchURL = template === undefined || (typeof template === 'string' && !template.trim()) ? null : configuredCatalogSearch(template, suffix);
+    if (!searchURL) {
+      const home = catalogURL(CATALOG_ORIGIN + '/');
+      const html = await catalogHTML(op, home);
+      const form = await waitFor(discoverCatalogSearch(html, home.href, suffix), op.controller.signal);
+      op.catalogFormCount += form.formCount;
+      op.catalogPlateFieldCount += form.plateFieldCount;
+      searchURL = catalogURL(form.url);
+    }
+    const original = catalogURL(searchURL), visited = new Set(), ids = new Set();
+    const filterKeys = [...new Set(original.searchParams.keys())].filter(key => original.searchParams.getAll(key).some(value => value.includes(suffix)));
+    if (!filterKeys.length) throw new EncarError('CATALOG_FORM_UNSUPPORTED');
+    let current = original;
+    for (let pageNumber = 0; pageNumber < 3; pageNumber++) {
+      if (visited.has(current.href)) throw new EncarError('CATALOG_INCOMPLETE');
+      visited.add(current.href);
+      const html = await catalogHTML(op, current);
+      const parsed = await waitFor(parseCatalogPage(html, current.href, plate), op.controller.signal);
+      ++op.catalogPageCount;
+      op.catalogRecordCount += parsed.recordCount;
+      op.catalogExactMatchCount += parsed.exactMatchCount;
+      op.catalogLinkCount += parsed.linkCount;
+      for (const value of parsed.ids) {
+        const id = idOf(value);
+        if (!id) throw new EncarError('CATALOG_PARSE_FAILED');
+        ids.add(id);
+      }
+      const newCount = [...ids].filter(id => !op.candidates.has(id)).length;
+      if (parsed.truncated || newCount + op.candidates.size > MAX_TOTAL_CANDIDATES) throw new EncarError('CATALOG_INCOMPLETE');
+      if (!parsed.nextUrl) return [...ids];
+      if (pageNumber === 2) throw new EncarError('CATALOG_INCOMPLETE');
+      const next = catalogURL(parsed.nextUrl, current.href);
+      // Preserve actual form filters, including repeated values, while retaining
+      // the actual next link's pagination parameters. Never invent a next URL.
+      for (const key of new Set(original.searchParams.keys())) {
+        if (filterKeys.includes(key)) {
+          next.searchParams.delete(key);
+          for (const value of original.searchParams.getAll(key)) next.searchParams.append(key, value);
+        } else if (!next.searchParams.has(key)) {
+          for (const value of original.searchParams.getAll(key)) next.searchParams.append(key, value);
+        }
+      }
+      current = next;
+    }
+    throw new EncarError('CATALOG_INCOMPLETE');
+  } catch (error) {
+    throw catalogError(error);
+  }
+}
+
 async function cachedCandidates(op, env, plate) {
   if (typeof env.ENCAR_CACHE?.get !== 'function') return [];
   try {
@@ -485,6 +565,11 @@ export async function onRequest(context) {
   const op = operation(request);
   let plate = '';
   const finish = (httpStatus, listings = [], status = 'error', code = 'INVALID_REQUEST') => response(op, httpStatus, plate, listings, status, code);
+  const unverifiedCode = fallback => {
+    const rejected = Object.entries(op.rejected).filter(([, count]) => count > 0);
+    if (rejected.length === 1) return { plateMismatch: 'PLATE_MISMATCH', notAdvertising: 'AD_INACTIVE', notFound: 'DETAIL_NOT_FOUND' }[rejected[0][0]];
+    return op.candidates.size ? 'NO_VERIFIED_LISTING' : fallback;
+  };
   const select = values => values.filter(id => {
     if (op.candidates.has(id)) return true;
     if (op.candidates.size >= MAX_TOTAL_CANDIDATES) return false;
@@ -495,7 +580,6 @@ export async function onRequest(context) {
     const apiKey = String(env.TAVILY_API_KEY || '').trim();
     const supaUrl = String(env.SUPABASE_URL || '').trim().replace(/\/$/, '');
     const supaKey = String(env.SUPABASE_PUBLISHABLE_KEY || '').trim();
-    if (!apiKey) return finish(503, [], 'error', 'SEARCH_NOT_CONFIGURED');
     if (!/^https:\/\/[\w-]+\.supabase\.co$/.test(supaUrl) || !supaKey) return finish(503, [], 'error', 'SUPABASE_NOT_CONFIGURED');
     const authorization = await authorize(op, request, supaUrl, supaKey);
     if (authorization) return finish(authorization.status, [], 'error', authorization.code);
@@ -522,22 +606,42 @@ export async function onRequest(context) {
       remaining(op);
       return finish(200, hinted.listings, hinted.listings.length > 1 ? 'multiple' : 'found');
     }
-    for (let attempt = 0; attempt < 2; attempt++) {
-      if (attempt && op.candidates.size >= MAX_TOTAL_CANDIDATES) break;
-      const candidates = select(await searchCandidates(op, plate, apiKey, attempt === 1));
+    let catalogFailure = null;
+    try {
+      const candidates = select(await catalogCandidates(op, env, plate));
       const verified = await verifyCandidates(candidates, getDetail);
+      // A failed detail is not a failed discovery provider: never bypass its
+      // partial-error policy with an independent search result.
       if (verified.errored) return finish(502, verified.listings, 'error', verified.errorCode);
       if (verified.listings.length) {
         remaining(op);
         saveCandidates(context, plate, verified.listings.map(item => item.id));
         return finish(200, verified.listings, verified.listings.length > 1 ? 'multiple' : 'found');
       }
+    } catch (error) {
+      catalogFailure = catalogError(error);
+    }
+    if (!apiKey) return catalogFailure ? finish(502, [], 'error', catalogFailure.code) : finish(200, [], 'unverified', unverifiedCode('CATALOG_NO_MATCH'));
+    try {
+      for (let attempt = 0; attempt < 2; attempt++) {
+        if (attempt && op.candidates.size >= MAX_TOTAL_CANDIDATES) break;
+        const candidates = select(await searchCandidates(op, plate, apiKey, attempt === 1));
+        const verified = await verifyCandidates(candidates, getDetail);
+        if (verified.errored) return finish(502, verified.listings, 'error', verified.errorCode);
+        if (verified.listings.length) {
+          remaining(op);
+          saveCandidates(context, plate, verified.listings.map(item => item.id));
+          return finish(200, verified.listings, verified.listings.length > 1 ? 'multiple' : 'found');
+        }
+      }
+    } catch (error) {
+      if (catalogFailure) return finish(502, [], 'error', catalogFailure.code);
+      throw error;
     }
     remaining(op);
+    if (catalogFailure) return finish(502, [], 'error', catalogFailure.code);
     saveCandidates(context, plate, [...op.candidates]);
-    let code = !op.candidates.size ? op.resultCount ? 'SEARCH_NO_CANDIDATES' : 'SEARCH_NO_RESULTS' : 'NO_VERIFIED_LISTING';
-    const rejected = Object.entries(op.rejected).filter(([, count]) => count > 0);
-    if (rejected.length === 1) code = { plateMismatch: 'PLATE_MISMATCH', notAdvertising: 'AD_INACTIVE', notFound: 'DETAIL_NOT_FOUND' }[rejected[0][0]];
+    const code = unverifiedCode(op.resultCount ? 'SEARCH_NO_CANDIDATES' : 'SEARCH_NO_RESULTS');
     return finish(200, [], 'unverified', code);
   } catch (error) {
     return finish(502, [], 'error', error instanceof EncarError ? error.code : 'SEARCH_UNAVAILABLE');
