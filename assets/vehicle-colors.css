@@ -1,8 +1,8 @@
 .snote222-vehicle-color{display:inline-flex;position:relative;width:22px;height:22px;min-width:22px;max-width:22px;flex:0 0 22px;vertical-align:middle;overflow:hidden;border:1px solid #b8c2cf;border-radius:6px;background:#fff;box-sizing:border-box;line-height:1}
 .snote222-vehicle-color__fill{position:absolute;inset:0;display:block}
 .snote222-vehicle-color--two-tone .snote222-vehicle-color__fill+ .snote222-vehicle-color__fill{clip-path:polygon(100% 0,100% 100%,0 100%)}
-.snote222-vehicle-color--unknown,.snote222-vehicle-color--missing{align-items:center;justify-content:center;border-style:dashed;border-color:#b9c3d0;background:#f4f6f9;color:#8491a2;box-shadow:none}
-.snote222-vehicle-color__dash{font:400 13px/1 sans-serif;pointer-events:none}
+.snote222-vehicle-color--unknown,.snote222-vehicle-color--missing{align-items:center;justify-content:center;border-style:solid;border-color:#f5c2c7;border-radius:50%;background:#fff1f2;color:#dc2626;box-shadow:none}
+.snote222-vehicle-color__question{font:700 15px/1 sans-serif;pointer-events:none}
 .snote222-color-column{width:48px;min-width:48px;text-align:center!important;vertical-align:middle}
 .snote222-color-column .snote222-vehicle-color{vertical-align:middle}
 .snote222-model-line{display:inline-flex;align-items:center;gap:8px;min-width:0;max-width:100%;flex-wrap:wrap;vertical-align:middle;overflow-wrap:anywhere}

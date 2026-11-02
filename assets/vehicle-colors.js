@@ -89,7 +89,7 @@
     const color = resolve(value);
     const title = color.state === 'missing' ? color.label : color.state === 'unknown' ? `외장색 확인 필요: ${color.label}` : `외장색: ${color.label}`;
     const fills = color.colors.map(key => `<span class="snote222-vehicle-color__fill snote222-color--${key}" data-color-key="${key}" aria-hidden="true"></span>`).join('');
-    return `<span class="snote222-vehicle-color snote222-vehicle-color--${color.state}" data-color-state="${color.state}" role="img" title="${escape(title)}" aria-label="${escape(title)}">${fills || '<span class="snote222-vehicle-color__dash" aria-hidden="true">—</span>'}</span>`;
+    return `<span class="snote222-vehicle-color snote222-vehicle-color--${color.state}" data-color-state="${color.state}" role="img" title="${escape(title)}" aria-label="${escape(title)}">${fills || '<span class="snote222-vehicle-color__question" aria-hidden="true">?</span>'}</span>`;
   }
 
   const api = Object.freeze({resolve, render, paletteKeys:Object.freeze(palette.map(([key]) => key))});
