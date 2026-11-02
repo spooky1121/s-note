@@ -412,6 +412,19 @@ test('GET is rejected without any external request', async () => {
   assert.equal(result.calls.length, 0);
 });
 
+test('branded hints and relevance counts require the complete plate token including a region', async () => {
+  const regionalPlate = '서울' + PLATE;
+  const regional = { url: 'https://fixture.invalid/car', content: regionalPlate + ' Encar ID: ' + ORIGINAL };
+  const mismatch = await run({ results: [regional], pages: { [ORIGINAL]: html() } });
+  assert.equal(mismatch.body.diagnostics.code, 'SEARCH_NO_CANDIDATES');
+  assert.equal(mismatch.body.diagnostics.resultPlateMatchCount, 0);
+  assert.equal(detailCalls(mismatch).length, 0);
+  const prose = await run({ results: [{ url: 'https://fixture.invalid/car', content: '차량번호' + PLATE + '입니다. Encar ID: ' + ORIGINAL }], pages: { [ORIGINAL]: html() } });
+  assert.equal(prose.body.status, 'found');
+  const exact = await run({ results: [regional], pages: { [ORIGINAL]: html(base({ vehicleNo: regionalPlate })) } }, request({ plate: regionalPlate }));
+  assert.equal(exact.body.status, 'found');
+});
+
 test('all direct result URLs precede snippet links when six candidates fill the limit', async () => {
   const noise = Array.from({ length: 6 }, (_, index) => String(44000001 + index));
   const pages = Object.fromEntries(noise.map(id => [id, html(base({ vehicleNo: '12나3456', vehicleId: Number(id), queryCarId: Number(id) }))]));
@@ -461,6 +474,9 @@ test('empty exact search gets one unquoted plate-only basic search and stops whe
   assert.equal(first.query, '"' + PLATE + '"'); assert.equal(first.exact_match, true);
   assert.equal(second.query, PLATE); assert.equal(Object.hasOwn(second, 'exact_match'), false);
   assert.equal(second.search_depth, 'basic'); assert.equal(second.max_results, 8);
+  assert.equal(first.include_raw_content, false); assert.equal(Object.hasOwn(first, 'include_domains'), false);
+  assert.equal(second.include_raw_content, true);
+  assert.deepEqual(second.include_domains, ['encar.com', 'encar.spb.ru', 'trust-encar.ru', 'encar.msk.ru', 'encar.cbg.ru', 'carsbat.com', 'deffcars.ru']);
   assert.deepEqual(Object.keys(result.body).sort(), ['listings', 'plate', 'status', 'verifiedAt']);
 });
 
@@ -568,8 +584,8 @@ test('diagnostics and structured logs exclude all plate, listing IDs, URLs, cred
   assert.equal(result.body.status, 'error'); assert.equal(result.body.diagnostics.code, 'SEARCH_UNAVAILABLE');
   assert.equal(result.logs.length, 1);
   const log = JSON.parse(result.logs[0]);
-  assert.deepEqual(Object.keys(log).sort(), ['candidateCount', 'checkedCount', 'code', 'durationMs', 'rejected', 'requestId', 'resultCount', 'searchCount']);
-  assert.deepEqual(Object.keys(result.body.diagnostics).sort(), ['candidateCount', 'checkedCount', 'code', 'rejected', 'requestId', 'resultCount', 'searchCount']);
+  assert.deepEqual(Object.keys(log).sort(), ['candidateCount', 'checkedCount', 'code', 'durationMs', 'plateMatchedCount', 'rawResultCount', 'recognizedSourceCount', 'rejected', 'requestId', 'resultCount', 'resultPlateMatchCount', 'searchCount']);
+  assert.deepEqual(Object.keys(result.body.diagnostics).sort(), ['candidateCount', 'checkedCount', 'code', 'plateMatchedCount', 'rawResultCount', 'recognizedSourceCount', 'rejected', 'requestId', 'resultCount', 'resultPlateMatchCount', 'searchCount']);
   for (const value of [PLATE, ORIGINAL, BASE, TOKEN, env.TAVILY_API_KEY, env.SUPABASE_PUBLISHABLE_KEY, 'PRIVATE_UPSTREAM']) {
     assert.equal(JSON.stringify(result.body.diagnostics).includes(value), false);
     assert.equal(result.logs.join('').includes(value), false);
@@ -639,4 +655,158 @@ test('incoming cancellation stops the operation before a search can be billed', 
   const result = await run({ onCall() { controller.abort(); } }, req);
   assert.equal(result.body.status, 'error'); assert.equal(result.body.diagnostics.code, 'UPSTREAM_TIMEOUT');
   assert.equal(searchCalls(result).length, 0);
+});
+
+test('a sold advertisement for a different plate is a mismatch, not an inactive matching vehicle', async () => {
+  const result = await run({ results: [{ url: BASE + ORIGINAL }], pages: { [ORIGINAL]: html(base({ vehicleNo: '12나3456', advertisement: { status: 'SOLD' } })) } });
+  assert.equal(result.body.diagnostics.code, 'PLATE_MISMATCH');
+  assert.equal(result.body.diagnostics.plateMatchedCount, 0);
+  assert.deepEqual(result.body.diagnostics.rejected, { plateMismatch: 1, notAdvertising: 0, notFound: 0 });
+});
+
+test('unknown or malformed advertising states are never guessed active or reported sold', async t => {
+  for (const status of ['NORMAL', 'ADVERTISING', 'UNSUPPORTED_FIXTURE_STATUS', '', null, {}, TOKEN, env.TAVILY_API_KEY, 'PRIVATE_PERSON 주민번호', BASE + ORIGINAL]) {
+    await t.test(typeof status + ':' + String(status).length, async () => {
+      const result = await run({ results: [{ url: BASE + ORIGINAL }], pages: { [ORIGINAL]: html(base({ advertisement: { status } })) } });
+      assert.equal(result.reply.status, 502); assert.equal(result.body.diagnostics.code, 'AD_STATUS_UNKNOWN');
+      assert.equal(result.body.listings.length, 0); assert.equal(result.body.diagnostics.plateMatchedCount, 1);
+      assert.equal(result.body.diagnostics.rejected.notAdvertising, 0); assert.equal(searchCalls(result).length, 1);
+      assert.equal(Object.hasOwn(result.body.diagnostics, 'advertisementStates'), false);
+      for (const privateValue of [TOKEN, env.TAVILY_API_KEY, PLATE, ORIGINAL, 'PRIVATE_PERSON']) {
+        assert.equal(JSON.stringify(result.body.diagnostics).includes(privateValue), false);
+        assert.equal(result.logs.join('').includes(privateValue), false);
+      }
+    });
+  }
+});
+
+test('valid identity and an exact plate are required before counting a plate match', async () => {
+  const result = await run({ results: [{ url: BASE + ORIGINAL }], pages: { [ORIGINAL]: html(base({ vehicleId: null, advertisement: { status: 'SOLD' } })) } });
+  assert.equal(result.body.diagnostics.code, 'DETAIL_PARSE_FAILED');
+  assert.equal(result.body.diagnostics.plateMatchedCount, 0); assert.equal(result.body.diagnostics.rejected.notAdvertising, 0);
+});
+
+test('an inactive trusted alias can locate an independently active original but is never linked', async () => {
+  const result = await run({ results: [{ url: BASE + TRUSTED }], pages: {
+    [TRUSTED]: html(base({ queryCarId: Number(TRUSTED), advertisement: { status: 'SOLD' }, manage: { dummy: true, dummyVehicleId: Number(TRUSTED) } })),
+    [ORIGINAL]: html(base({ manage: { dummy: false, dummyVehicleId: Number(TRUSTED) } }))
+  } });
+  assert.equal(result.body.status, 'found'); assert.equal(result.body.listings.length, 1);
+  assert.equal(result.body.listings[0].sellerUrl, BASE + ORIGINAL);
+  assert.equal(result.body.listings[0].trustedId, null); assert.equal(result.body.listings[0].trustedUrl, null);
+  assert.equal(detailCalls(result).length, 2); assert.equal(searchCalls(result).length, 1);
+  assert.deepEqual(Object.keys(result.body).sort(), ['listings', 'plate', 'status', 'verifiedAt']);
+});
+
+test('inactive alias does not open an inactive canonical original or revisit either page', async () => {
+  const result = await run({ results: [{ url: BASE + TRUSTED }], pages: {
+    [TRUSTED]: html(base({ queryCarId: Number(TRUSTED), advertisement: { status: 'SOLD' }, manage: { dummy: true, dummyVehicleId: Number(TRUSTED) } })),
+    [ORIGINAL]: html(base({ advertisement: { status: 'SOLD' }, manage: { dummy: false, dummyVehicleId: Number(TRUSTED) } }))
+  } });
+  assert.equal(result.body.status, 'unverified'); assert.equal(result.body.diagnostics.code, 'AD_INACTIVE');
+  assert.equal(result.body.diagnostics.plateMatchedCount, 2); assert.equal(result.body.diagnostics.rejected.notAdvertising, 2);
+  assert.equal(detailCalls(result).length, 2); assert.equal(searchCalls(result).length, 2);
+});
+
+test('inactive trusted page from another plate never supplies a canonical lookup hint', async () => {
+  const result = await run({ results: [{ url: BASE + TRUSTED }], pages: {
+    [TRUSTED]: html(base({ vehicleNo: '12나3456', queryCarId: Number(TRUSTED), advertisement: { status: 'SOLD' }, manage: { dummy: true, dummyVehicleId: Number(TRUSTED) } })),
+    [ORIGINAL]: html()
+  } });
+  assert.equal(result.body.diagnostics.code, 'PLATE_MISMATCH'); assert.equal(detailCalls(result).length, 1);
+  assert.equal(result.body.diagnostics.plateMatchedCount, 0);
+});
+
+test('unknown canonical and trusted states preserve conservative partial-error handling', async t => {
+  for (const unknown of ['original', 'trusted']) await t.test(unknown, async () => {
+    const result = await run({ results: [{ url: BASE + (unknown === 'original' ? TRUSTED : ORIGINAL) }], pages: {
+      [TRUSTED]: html(base({ queryCarId: Number(TRUSTED), advertisement: { status: unknown === 'trusted' ? 'UNSUPPORTED_FIXTURE_STATUS' : 'SOLD' }, manage: { dummy: true, dummyVehicleId: Number(TRUSTED) } })),
+      [ORIGINAL]: html(base({ advertisement: { status: unknown === 'original' ? 'UNSUPPORTED_FIXTURE_STATUS' : 'ADVERTISE' }, manage: { dummy: false, dummyVehicleId: Number(TRUSTED) } }))
+    } });
+    assert.equal(result.reply.status, 502); assert.equal(result.body.diagnostics.code, 'AD_STATUS_UNKNOWN');
+    assert.equal(result.body.status, 'error'); assert.equal(searchCalls(result).length, 1);
+    assert.ok(result.body.listings.every(item => item.trustedUrl === null));
+  });
+});
+
+test('canonical cycles between inactive aliases are bounded to one lookup hop and memoized', async () => {
+  const result = await run({ results: [{ url: BASE + TRUSTED }], pages: {
+    [TRUSTED]: html(base({ queryCarId: Number(TRUSTED), advertisement: { status: 'SOLD' }, manage: { dummy: true, dummyVehicleId: Number(TRUSTED) } })),
+    [ORIGINAL]: html(base({ vehicleId: Number(TRUSTED), queryCarId: Number(ORIGINAL), advertisement: { status: 'SOLD' }, manage: { dummy: true, dummyVehicleId: Number(ORIGINAL) } }))
+  } });
+  assert.equal(result.body.status, 'unverified'); assert.equal(detailCalls(result).length, 2);
+  assert.equal(new Set(detailCalls(result).map(call => call.url)).size, 2);
+  assert.equal(result.body.diagnostics.candidateCount, 1); assert.equal(result.body.diagnostics.checkedCount, 2);
+});
+
+test('fallback raw content actually recovers a known URL or carsbat lot and verifies its detail', async t => {
+  for (const item of [
+    { url: 'https://example.com/article', content: PLATE, raw_content: BASE + ORIGINAL },
+    { url: 'https://carsbat.com/vehicle/synthetic', content: PLATE, raw_content: 'Lot number: ' + ORIGINAL }
+  ]) await t.test(item.url.includes('carsbat') ? 'lot' : 'URL', async () => {
+    const result = await run({ searches: [{ results: [{ url: item.url, content: PLATE }] }, { results: [item] }], pages: { [ORIGINAL]: html() } });
+    assert.equal(result.body.status, 'found'); assert.equal(result.body.listings[0].id, ORIGINAL);
+    assert.equal(searchCalls(result).length, 2); assert.equal(detailCalls(result).length, 1);
+    assert.equal(JSON.parse(searchCalls(result)[1].options.body).include_raw_content, true);
+  });
+});
+
+test('only a branded listing ID in a result mentioning the exact plate can be used on an unknown host', async t => {
+  for (const label of ['Encar ID: ', '엔카 매물번호: ']) await t.test(label, async () => {
+    const result = await run({ searches: [{ results: [] }, { results: [{ url: 'https://example.com/article', title: '12 가-3456', raw_content: label + ORIGINAL }] }], pages: { [ORIGINAL]: html() } });
+    assert.equal(result.body.status, 'found'); assert.equal(detailCalls(result).length, 1);
+  });
+});
+
+test('irrelevant plates and generic lot/numeric labels on unknown hosts never become branded candidates', async t => {
+  for (const item of [
+    { content: '12나3456', raw_content: 'Encar ID: ' + ORIGINAL },
+    { content: '112가34567', raw_content: '엔카 매물번호: ' + ORIGINAL },
+    { content: PLATE, raw_content: 'Lot number: ' + ORIGINAL },
+    { content: PLATE, raw_content: ORIGINAL }
+  ]) await t.test(item.raw_content.slice(0, 15), async () => {
+    const result = await run({ searches: [{ results: [] }, { results: [{ url: 'https://unknown.example/article', ...item }] }] });
+    assert.equal(result.body.diagnostics.code, 'SEARCH_NO_CANDIDATES'); assert.equal(detailCalls(result).length, 0);
+  });
+});
+
+test('result relevance, raw availability and known source counters are safe integers with no metadata', async () => {
+  const result = await run({ searches: [{ results: [
+    { url: 'https://carsbat.com/vehicle/synthetic', title: '１２ 가-３４５６', raw_content: 'PRIVATE_PERSON no lot labels' },
+    { url: 'https://unknown.example/article', content: '12나3456', raw_content: ' ' }
+  ] }, { results: [{ url: 'https://fem.encar.com/cars', content: 'unrelated content', raw_content: 'PRIVATE_PERSON ' + TOKEN }] }] });
+  const diagnostics = result.body.diagnostics;
+  assert.equal(diagnostics.resultCount, 3); assert.equal(diagnostics.resultPlateMatchCount, 1);
+  assert.equal(diagnostics.rawResultCount, 2); assert.equal(diagnostics.recognizedSourceCount, 2);
+  assert.equal(diagnostics.plateMatchedCount, 0);
+  for (const key of ['resultPlateMatchCount', 'rawResultCount', 'recognizedSourceCount']) assert(Number.isSafeInteger(diagnostics[key]));
+  for (const value of ['PRIVATE_PERSON', TOKEN, 'carsbat.com', 'unknown.example', PLATE]) {
+    assert.equal(JSON.stringify(diagnostics).includes(value), false); assert.equal(result.logs.join('').includes(value), false);
+  }
+});
+
+test('first search retains 512KiB body bound while fallback raw responses may exceed it below 2MiB', async () => {
+  const oversizedFirst = await run({ searches: [json({ results: [], padding: 'x'.repeat(512 * 1024) })] });
+  assert.equal(oversizedFirst.body.diagnostics.code, 'SEARCH_UNAVAILABLE'); assert.equal(searchCalls(oversizedFirst).length, 1);
+  const result = await run({ searches: [{ results: [] }, { results: [{ url: 'https://carsbat.com/vehicle/synthetic', raw_content: 'Lot number: ' + ORIGINAL + ' ' + 'x'.repeat(600 * 1024) }] }], pages: { [ORIGINAL]: html() } });
+  assert.equal(result.body.status, 'found'); assert.equal(searchCalls(result).length, 2);
+});
+
+test('fallback raw response larger than 2MiB is cancelled and stays an error', async () => {
+  let cancelled = false;
+  const body = new ReadableStream({ start(controller) { controller.enqueue(new Uint8Array(2 * 1024 * 1024 + 1)); }, cancel() { cancelled = true; } });
+  const result = await run({ searches: [{ results: [] }, new Response(body)] });
+  assert.equal(result.body.status, 'error'); assert.equal(result.body.diagnostics.code, 'SEARCH_UNAVAILABLE');
+  assert.equal(searchCalls(result).length, 2); assert.equal(cancelled, true);
+});
+
+test('fallback raw body waiting is still bounded by the shared 35-second deadline', async t => {
+  t.mock.timers.enable({ apis: ['setTimeout', 'Date'], now: 100000 });
+  const body = new ReadableStream({ pull() {} });
+  let callCount = 0;
+  const pending = run({ searches: [{ results: [] }, new Response(body)], onCall() { if (++callCount <= 3) t.mock.timers.tick(9000); } });
+  await new Promise(setImmediate); assert.equal(body.locked, true);
+  t.mock.timers.tick(8001);
+  const result = await pending;
+  assert.equal(result.body.diagnostics.code, 'DEADLINE_EXCEEDED'); assert.equal(searchCalls(result).length, 2);
 });

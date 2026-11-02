@@ -92,6 +92,17 @@ test('integration: automatic fallback uses the plate and opens separately verifi
   assert.equal(f.manual.hidden, true);
 });
 
+test('integration: fallback raw content supplies a missing indexed candidate before any link can open', async t => {
+  const f = fixture(t, { batches: [[{ url: 'https://fixture.invalid/vehicle', title: '가상 검색 결과' }],
+    [{ url: 'https://carsbat.com/fixture', title: '가상 검색 결과', raw_content: PLATE + ' Lot number: ' + ORIGINAL }]] });
+  f.button.click(); await f.done();
+  assert.equal(f.searches.length, 2);
+  assert.equal(f.searches[0].include_raw_content, false);
+  assert.equal(f.searches[1].include_raw_content, true);
+  assert.deepEqual(f.tabs[0].navigations, [BASE + ORIGINAL]);
+  assert.equal(f.manual.hidden, true);
+});
+
 test('integration: no indexed candidate reports its stage; a supplied URL still waits for real server verification', async t => {
   const f = fixture(t); f.button.click(); await f.done();
   assert.equal(f.tabs[0].closed, true); assert.equal(f.manual.hidden, false);

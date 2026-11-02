@@ -25,6 +25,7 @@
     DETAIL_BLOCKED: '엔카에서 광고 확인 요청을 제한했습니다. 잠시 후 다시 확인해 주세요.',
     DETAIL_PARSE_FAILED: '광고 페이지의 정보를 읽지 못했습니다. 잠시 후 다시 확인해 주세요.',
     DETAIL_UNAVAILABLE: '광고 상세 페이지에 연결하지 못했습니다. 잠시 후 다시 확인해 주세요.',
+    AD_STATUS_UNKNOWN: '광고 상태를 확인하지 못했습니다. 진단 정보를 복사해 관리자에게 전달해 주세요.',
     UPSTREAM_TIMEOUT: '광고 검색 또는 상세 확인 응답이 지연됐습니다. 잠시 후 다시 확인해 주세요.',
     DEADLINE_EXCEEDED: '광고 확인 시간이 초과됐습니다. 잠시 후 다시 확인해 주세요.'
   });
@@ -118,7 +119,7 @@
     const code = typeof data.code === 'string' && SAFE_CODES.has(data.code) ? data.code : fallbackCode;
     const safe = { service: 'snote-encar', code, httpStatus: Number.isInteger(httpStatus) && httpStatus >= 100 && httpStatus <= 599 ? httpStatus : null };
     if (typeof data.requestId === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(data.requestId)) safe.requestId = data.requestId;
-    for (const key of ['searchCount', 'resultCount', 'candidateCount', 'checkedCount']) {
+    for (const key of ['searchCount', 'resultCount', 'candidateCount', 'checkedCount', 'plateMatchedCount', 'resultPlateMatchCount', 'rawResultCount', 'recognizedSourceCount']) {
       if (Number.isInteger(data[key]) && data[key] >= 0 && data[key] <= 1000) safe[key] = data[key];
     }
     const rejected = {};

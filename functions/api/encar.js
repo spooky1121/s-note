@@ -9,10 +9,17 @@ const MAX_CANDIDATES = 6;
 const MAX_REQUEST_BYTES = 4096;
 const MAX_HTML_BYTES = 3 * 1024 * 1024;
 const MAX_SEARCH_BYTES = 512 * 1024;
+const MAX_RAW_SEARCH_BYTES = 2 * 1024 * 1024;
 const TIMEOUT_MS = 10000;
 const DEADLINE_MS = 35000;
 const MAX_TOTAL_CANDIDATES = 12;
 const ENCAR_DETAIL = 'https://fem.encar.com/cars/detail/';
+const AUTO_EXPORT_HOSTS = ['encar.spb.ru', 'trust-encar.ru', 'encar.msk.ru', 'encar.cbg.ru'];
+// Keep fallback search domains aligned with the URL/lot parsers below.
+// Tavily's encar.com domain filter includes its official subdomains.
+const SEARCH_SOURCE_DOMAINS = ['encar.com', ...AUTO_EXPORT_HOSTS, 'carsbat.com', 'deffcars.ru'];
+const RECOGNIZED_SOURCE_HOSTS = new Set([...SEARCH_SOURCE_DOMAINS, 'fem.encar.com', 'm.encar.com']);
+const RESULT_TEXT_FIELDS = ['title', 'content', 'raw_content'];
 const REGIONS = '(?:서울|부산|대구|인천|광주|대전|울산|세종|경기|강원|충북|충남|전북|전남|경북|경남|제주)';
 const PLATE = new RegExp('^(?:' + REGIONS + ')?[0-9]{2,3}[가-힣][0-9]{4}$');
 const BLOCKED = /has_been_cr_blocked|서비스\s*이용\s*제한됨|비정상적인\s*트래픽|<title>\s*(?:Access Denied|Request blocked)/i;
@@ -24,7 +31,8 @@ class EncarError extends Error {
 function operation(request) {
   const controller = new AbortController(), startedAt = Date.now();
   const op = { requestId: crypto.randomUUID(), startedAt, deadline: startedAt + DEADLINE_MS,
-    controller, searchCount: 0, resultCount: 0, checkedCount: 0, candidates: new Set(),
+    controller, searchCount: 0, resultCount: 0, checkedCount: 0, plateMatchedCount: 0,
+    resultPlateMatchCount: 0, rawResultCount: 0, recognizedSourceCount: 0, candidates: new Set(),
     rejected: { plateMismatch: 0, notAdvertising: 0, notFound: 0 } };
   op.timer = setTimeout(() => controller.abort(new EncarError('DEADLINE_EXCEEDED')), DEADLINE_MS);
   op.abort = () => controller.abort(new EncarError('UPSTREAM_TIMEOUT'));
@@ -41,7 +49,10 @@ function remaining(op) {
 
 function counters(op) {
   return { searchCount: op.searchCount, resultCount: op.resultCount,
-    candidateCount: op.candidates.size, checkedCount: op.checkedCount, rejected: { ...op.rejected } };
+    candidateCount: op.candidates.size, checkedCount: op.checkedCount,
+    plateMatchedCount: op.plateMatchedCount, resultPlateMatchCount: op.resultPlateMatchCount,
+    rawResultCount: op.rawResultCount, recognizedSourceCount: op.recognizedSourceCount,
+    rejected: { ...op.rejected } };
 }
 
 function response(op, httpStatus, plate = '', listings = [], status = 'error', code = 'INVALID_REQUEST') {
@@ -193,7 +204,7 @@ function idFromURL(value) {
       if (key.toLowerCase() === 'carid') return idOf(value);
     }
   }
-  if (['trust-encar.ru', 'encar.spb.ru', 'encar.msk.ru', 'encar.cbg.ru'].includes(host)) {
+  if (AUTO_EXPORT_HOSTS.includes(host)) {
     return idOf(/^\/auto\/([0-9]+)(?:\/|$)/.exec(url.pathname)?.[1]);
   }
   if (host === 'deffcars.ru') {
@@ -202,7 +213,18 @@ function idFromURL(value) {
   return '';
 }
 
-function candidatesFromResults(results) {
+function resultMentionsPlate(result, plate) {
+  return RESULT_TEXT_FIELDS.some(key => {
+    if (typeof result?.[key] !== 'string') return false;
+    const compact = result[key].normalize('NFKC').replace(/[\s-]/g, '');
+    if (!compact.includes(plate)) return false;
+    const tokens = new RegExp('(?<![0-9])' + REGIONS + '?[0-9]{2,3}[가-힣][0-9]{4}(?![0-9])', 'g');
+    for (const match of compact.matchAll(tokens)) if (match[0] === plate) return true;
+    return false;
+  });
+}
+
+function candidatesFromResults(results, plate) {
   const ids = new Set();
   const add = value => {
     const id = idOf(value);
@@ -212,7 +234,7 @@ function candidatesFromResults(results) {
   // Indexed result URLs precede incidental links in any one snippet.
   for (const result of limited) add(idFromURL(result?.url));
   for (const result of limited) {
-    const content = ['title', 'content', 'raw_content'].map(key => typeof result?.[key] === 'string' ? result[key] : '').join('\n');
+    const content = RESULT_TEXT_FIELDS.map(key => typeof result?.[key] === 'string' ? result[key] : '').join('\n');
     for (const match of content.matchAll(/https?:\/\/[^\s<>"'\\]+/gi)) {
       add(idFromURL(match[0].replace(/[),.;\]}]+$/, '')));
     }
@@ -221,6 +243,11 @@ function candidatesFromResults(results) {
       for (const match of content.matchAll(/(?:\bLot\s+(?:number|no\.?)|Номер\s+лота)\s*[:#–-]?\s*([0-9]+)(?![0-9])/giu)) {
         add(match[1]);
       }
+    }
+    // A branded listing label is a hint only when the same indexed result
+    // explicitly mentions the requested plate. Bare numbers never qualify.
+    if (resultMentionsPlate(result, plate)) {
+      for (const match of content.normalize('NFKC').matchAll(/(?:\bEncar\s*ID|엔카\s*매물\s*번호)\s*[:：#]\s*([0-9]+)(?![0-9])/giu)) add(match[1]);
     }
     if (ids.size >= MAX_CANDIDATES) break;
   }
@@ -244,9 +271,10 @@ async function searchCandidates(op, plate, apiKey, fallback = false) {
       max_results: 8,
       auto_parameters: false,
       include_answer: false,
-      include_raw_content: false
+      include_raw_content: fallback,
+      ...(fallback ? { include_domains: SEARCH_SOURCE_DOMAINS } : {})
     })
-  });
+  }, fallback ? MAX_RAW_SEARCH_BYTES : MAX_SEARCH_BYTES);
   if (!result.ok) {
     if ([401, 403].includes(result.status)) throw new EncarError('SEARCH_AUTH_FAILED');
     if ([432, 433].includes(result.status)) throw new EncarError('SEARCH_QUOTA_EXCEEDED');
@@ -256,8 +284,15 @@ async function searchCandidates(op, plate, apiKey, fallback = false) {
   let payload;
   try { payload = JSON.parse(result.text); } catch (_) { throw new EncarError('SEARCH_UNAVAILABLE'); }
   if (!Array.isArray(payload?.results)) throw new EncarError('SEARCH_UNAVAILABLE');
-  op.resultCount += Math.min(payload.results.length, 8);
-  return candidatesFromResults(payload.results);
+  const results = payload.results.slice(0, 8);
+  op.resultCount += results.length;
+  for (const item of results) {
+    if (resultMentionsPlate(item, plate)) ++op.resultPlateMatchCount;
+    if (typeof item?.raw_content === 'string' && item.raw_content.trim()) ++op.rawResultCount;
+    const host = parsedURL(item?.url)?.hostname.toLowerCase().replace(/^www\./, '');
+    if (RECOGNIZED_SOURCE_HOSTS.has(host)) ++op.recognizedSourceCount;
+  }
+  return candidatesFromResults(results, plate);
 }
 
 // Extract a JSON object while respecting quotes and backslash escapes.
@@ -348,21 +383,26 @@ async function detail(op, id, plate) {
     if (fetched.status === 404 || fetched.status === 410) { ++op.rejected.notFound; return { kind: 'unverified' }; }
     if (!fetched.ok) return { kind: 'error', code: 'DETAIL_UNAVAILABLE' };
     const base = extractState(fetched.text).cars.base;
-    if (typeof base.advertisement?.status !== 'string') return { kind: 'error', code: 'DETAIL_PARSE_FAILED' };
-    if (base.advertisement.status !== 'ADVERTISE') { ++op.rejected.notAdvertising; return { kind: 'unverified' }; }
     const actualPlate = normalizePlate(base.vehicleNo);
     const originalId = idOf(base.vehicleId);
     if (!actualPlate || !originalId) return { kind: 'error', code: 'DETAIL_PARSE_FAILED' };
     if (actualPlate !== plate) { ++op.rejected.plateMismatch; return { kind: 'unverified' }; }
-    return {
-      kind: 'match',
+    ++op.plateMatchedCount;
+    const identity = {
       id: originalId,
       sourceId: id,
       dummyId: idOf(base.manage?.dummyVehicleId),
       dummy: base.manage?.dummy === true,
-      queryId: idOf(base.queryCarId),
-      ...listingData(base)
+      queryId: idOf(base.queryCarId)
     };
+    if (base.advertisement?.status === 'SOLD') {
+      ++op.rejected.notAdvertising;
+      // An inactive trusted alias is not a verified link. Its same-plate
+      // canonical ID may still locate a separately active original page.
+      return { kind: 'inactive', ...identity };
+    }
+    if (base.advertisement?.status !== 'ADVERTISE') return { kind: 'error', code: 'AD_STATUS_UNKNOWN' };
+    return { kind: 'match', ...identity, ...listingData(base) };
   } catch (error) {
     return { kind: 'error', code: error instanceof EncarError ? error.code : 'DETAIL_PARSE_FAILED' };
   }
@@ -385,7 +425,8 @@ async function verifyCandidates(ids, getDetail) {
   const discovered = await mapConcurrent(ids, getDetail);
   const errors = discovered.filter(item => item.kind === 'error').map(item => item.code);
   const roots = new Map();
-  await mapConcurrent(discovered.filter(item => item.kind === 'match'), async candidate => {
+  await mapConcurrent(discovered.filter(item => item.kind === 'match' ||
+    (item.kind === 'inactive' && item.dummy && item.sourceId !== item.id)), async candidate => {
     const original = candidate.sourceId === candidate.id ? candidate : await getDetail(candidate.id);
     if (original.kind === 'error') errors.push(original.code);
     if (original.kind === 'match' && original.id === candidate.id && !original.dummy) roots.set(original.id, original);
@@ -412,7 +453,7 @@ async function verifyCandidates(ids, getDetail) {
     };
   });
   listings.sort((a, b) => a.id.localeCompare(b.id));
-  const priority = ['DEADLINE_EXCEEDED', 'UPSTREAM_TIMEOUT', 'DETAIL_BLOCKED', 'DETAIL_PARSE_FAILED', 'DETAIL_UNAVAILABLE'];
+  const priority = ['DEADLINE_EXCEEDED', 'UPSTREAM_TIMEOUT', 'DETAIL_BLOCKED', 'DETAIL_PARSE_FAILED', 'AD_STATUS_UNKNOWN', 'DETAIL_UNAVAILABLE'];
   const errorCode = priority.find(code => errors.includes(code)) || (errors.length ? 'DETAIL_UNAVAILABLE' : null);
   return { listings, errored: !!errorCode, errorCode };
 }

@@ -452,14 +452,14 @@ test('20 unverified diagnostic reasons have distinct honest notes without raw se
 
 test('21 service diagnostic error codes distinguish setup, search, detail and timeout while unknown/old replies keep HTTP fallbacks', async t => {
   const messages = [];
-  for (const code of ['SEARCH_NOT_CONFIGURED', 'SUPABASE_NOT_CONFIGURED', 'SEARCH_AUTH_FAILED', 'SEARCH_RATE_LIMITED', 'SEARCH_QUOTA_EXCEEDED', 'SEARCH_UNAVAILABLE', 'DETAIL_BLOCKED', 'DETAIL_PARSE_FAILED', 'DETAIL_UNAVAILABLE', 'UPSTREAM_TIMEOUT', 'DEADLINE_EXCEEDED']) {
+  for (const code of ['SEARCH_NOT_CONFIGURED', 'SUPABASE_NOT_CONFIGURED', 'SEARCH_AUTH_FAILED', 'SEARCH_RATE_LIMITED', 'SEARCH_QUOTA_EXCEEDED', 'SEARCH_UNAVAILABLE', 'DETAIL_BLOCKED', 'DETAIL_PARSE_FAILED', 'DETAIL_UNAVAILABLE', 'AD_STATUS_UNKNOWN', 'UPSTREAM_TIMEOUT', 'DEADLINE_EXCEEDED']) {
     await t.test(code, async sub => {
       const f = fixture(sub); f.click(); await settle(); f.reply(0, { status: 'error', diagnostics: { code, requestId: REQUEST_ID, message: 'UNTRUSTED_PRIVATE_MESSAGE' } }, { status: 502 }); await settle();
       messages.push(f.note.textContent); assert.doesNotMatch(f.note.textContent, /UNTRUSTED/); assert.equal(f.note.dataset.error, 'true');
       assert.equal(f.manual.hidden, true); assert.equal(f.copyButton.hidden, false); assert.equal(f.tabs[0].closed, true);
     });
   }
-  assert.equal(new Set(messages).size, 11);
+  assert.equal(new Set(messages).size, 12);
   const f = fixture(t); f.click(); await settle(); f.reply(0, { status: 'error', diagnostics: { code: 'UNKNOWN_PRIVATE_CODE' } }, { status: 503 }); await settle();
   assert.equal(f.note.textContent, '엔카 조회 기능의 서버 설정이 필요합니다. 관리자에게 문의해 주세요.');
 });
@@ -507,11 +507,12 @@ test('25 manual verification and previous diagnostics are cleared on a car chang
 test('26 diagnostic copy whitelists bounded numeric counters, UUID and known code, omitting all vehicle/auth/URL/raw fields', async t => {
   const f = fixture(t), writes = [];
   Object.defineProperty(f.w.navigator, 'clipboard', { value: { writeText: async text => writes.push(text) } });
-  await showUnverified(f, { code: 'SEARCH_NO_RESULTS', requestId: REQUEST_ID, searchCount: 3, resultCount: Number.MAX_SAFE_INTEGER, candidateCount: '12', checkedCount: 1001,
+  await showUnverified(f, { code: 'SEARCH_NO_RESULTS', requestId: REQUEST_ID, searchCount: 3, resultCount: Number.MAX_SAFE_INTEGER, candidateCount: '12', checkedCount: 1001, plateMatchedCount: 2, resultPlateMatchCount: 3, rawResultCount: 5, recognizedSourceCount: 1,
     plate: PLATE, id: '43000001', url: listing().sellerUrl, apiKey: 'PRIVATE_API_KEY', token: 'PRIVATE_TOKEN', message: 'PRIVATE_MESSAGE',
+    source: 'PRIVATE_SOURCE', host: 'PRIVATE_HOST', title: 'PRIVATE_TITLE', text: 'PRIVATE_TEXT', raw_content: 'PRIVATE_RAW', body: 'PRIVATE_BODY',
     rejected: { plateMismatch: 2, notAdvertising: -1, notFound: 4, private: 'PRIVATE_VALUE' } });
   f.copyButton.click(); await settle(); assert.equal(writes.length, 1);
-  assert.deepEqual(JSON.parse(writes[0]), { service: 'snote-encar', code: 'SEARCH_NO_RESULTS', httpStatus: 200, requestId: REQUEST_ID, searchCount: 3, rejected: { plateMismatch: 2, notFound: 4 } });
+  assert.deepEqual(JSON.parse(writes[0]), { service: 'snote-encar', code: 'SEARCH_NO_RESULTS', httpStatus: 200, requestId: REQUEST_ID, searchCount: 3, plateMatchedCount: 2, resultPlateMatchCount: 3, rawResultCount: 5, recognizedSourceCount: 1, rejected: { plateMismatch: 2, notFound: 4 } });
   assert.doesNotMatch(writes[0], /PRIVATE|12가3456|43000001|https:|Bearer|apiKey|token/); assert(writes[0].length < 600);
   assert.equal(f.copyFallback.hidden, true); assert.match(f.copyStatus.textContent, /복사했습니다/);
   const invalid = fixture(t); await showUnverified(invalid, { code: 'PRIVATE_TOKEN', requestId: REQUEST_ID+PLATE, searchCount: -1 }); invalid.copyButton.click(); await settle();
@@ -534,4 +535,28 @@ test('28 unavailable popups and native token errors never expose raw exceptions'
   assert.equal(JSON.parse(failed.copyFallback.value).code, 'NETWORK_ERROR');
   const expired = fixture(t, { token: () => Promise.resolve(null) }); expired.click(); await settle(); expired.copyButton.click(); await settle();
   assert.equal(expired.requests.length, 0); assert.equal(JSON.parse(expired.copyFallback.value).code, 'AUTH_REQUIRED');
+});
+
+test('29 an unknown advertisement state is an error, never a sold/inactive claim or direct navigation', async t => {
+  const f = fixture(t); f.click(); await settle();
+  f.reply(0, { ...found(), status: 'error', diagnostics: { code: 'AD_STATUS_UNKNOWN', requestId: REQUEST_ID, plateMatchedCount: 1, advertisementStatus: 'PRIVATE_RAW_STATUS', plate: PLATE, id: '43000001', url: listing().sellerUrl } }, { status: 502 }); await settle();
+  assert.equal(f.note.textContent, '광고 상태를 확인하지 못했습니다. 진단 정보를 복사해 관리자에게 전달해 주세요.');
+  assert.doesNotMatch(f.note.textContent, /종료|판매\s*완료|판매\s*중단|매물.*없/);
+  assert.equal(f.note.dataset.error, 'true'); assert.equal(f.tabs[0].closed, true); assert.deepEqual(f.tabs[0].navigations, []); assert.equal(f.links.length, 0);
+  f.copyButton.click(); await settle();
+  assert.deepEqual(JSON.parse(f.copyFallback.value), { service: 'snote-encar', code: 'AD_STATUS_UNKNOWN', httpStatus: 502, requestId: REQUEST_ID, plateMatchedCount: 1 });
+  assert.doesNotMatch(f.copyFallback.value, /PRIVATE|12가3456|43000001|https:|advertisementStatus/);
+});
+
+test('30 optional matched-plate and search-stage counts copy only whole numbers in the existing bounds', async t => {
+  const keys = ['plateMatchedCount', 'resultPlateMatchCount', 'rawResultCount', 'recognizedSourceCount'];
+  for (const count of [0, 1000, -1, 1.25, 1001, '1', null, Number.NaN, Number.POSITIVE_INFINITY]) {
+    const f = fixture(t); await showUnverified(f, { code: 'NO_VERIFIED_LISTING', ...Object.fromEntries(keys.map(key => [key, count])) }); f.copyButton.click(); await settle();
+    const copied = JSON.parse(f.copyFallback.value);
+    for (const key of keys) {
+      if (count === 0 || count === 1000) assert.equal(copied[key], count);
+      else assert.equal(Object.hasOwn(copied, key), false);
+    }
+    assert.deepEqual(Object.keys(copied).filter(key => !keys.includes(key)), ['service', 'code', 'httpStatus']);
+  }
 });
