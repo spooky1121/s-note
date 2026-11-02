@@ -456,7 +456,7 @@ test('21 service diagnostic error codes distinguish setup, search, detail and ti
     await t.test(code, async sub => {
       const f = fixture(sub); f.click(); await settle(); f.reply(0, { status: 'error', diagnostics: { code, requestId: REQUEST_ID, message: 'UNTRUSTED_PRIVATE_MESSAGE' } }, { status: 502 }); await settle();
       messages.push(f.note.textContent); assert.doesNotMatch(f.note.textContent, /UNTRUSTED/); assert.equal(f.note.dataset.error, 'true');
-      assert.equal(f.manual.hidden, true); assert.equal(f.copyButton.hidden, false); assert.equal(f.tabs[0].closed, true);
+      assert.equal(f.manual.hidden, !code.startsWith('CATALOG_')); assert.equal(f.manual.open, false); assert.equal(f.copyButton.hidden, false); assert.equal(f.tabs[0].closed, true);
       assert.equal(f.links.length, 0); assert.deepEqual(f.tabs[0].navigations, []);
     });
   }
@@ -474,6 +474,18 @@ test('22 a manual URL supplies only its explicit ID and cannot navigate until th
   f.reply(1, found()); await settle();
   assert.deepEqual(f.tabs[1].navigations, [listing().sellerUrl]); assert.notEqual(f.tabs[1].navigations[0], 'https://fem.encar.com/cars/detail/43000002');
   assert.equal(f.manual.hidden, true); assert.equal(f.copyButton.hidden, true);
+});
+
+test('catalogue discovery failure leaves the independent manual verifier available without bypassing validation', async t => {
+  const f = fixture(t); f.click(); await settle();
+  f.reply(0, { status: 'error', diagnostics: { code: 'CATALOG_FORM_UNSUPPORTED' } }, { status: 502 }); await settle();
+  assert.equal(f.manual.hidden, false); assert.equal(f.manual.open, false);
+  assert.equal(f.tabs[0].closed, true); assert.equal(f.links.length, 0);
+  f.submitAddress('https://fem.encar.com/cars/detail/43000001'); await settle();
+  assert.deepEqual(JSON.parse(f.requests[1].init.body), { plate: PLATE, candidateIds: ['43000001'] });
+  assert.deepEqual(f.tabs[1].navigations, []);
+  f.reply(1, found()); await settle();
+  assert.deepEqual(f.tabs[1].navigations, [listing().sellerUrl]);
 });
 
 test('23 supported HTTPS desktop/mobile addresses are ID hints only', async t => {

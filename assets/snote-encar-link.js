@@ -42,6 +42,7 @@
     'METHOD_NOT_ALLOWED', 'AUTH_REQUIRED', 'AUTH_FAILED', 'STAFF_REQUIRED', 'AUTH_UNAVAILABLE',
     'INVALID_REQUEST', 'UNSUPPORTED_MEDIA_TYPE', 'REQUEST_TOO_LARGE',
     'HTTP_ERROR', 'UNVERIFIED', 'CLIENT_TIMEOUT', 'NETWORK_ERROR', 'INVALID_RESPONSE']);
+  const CATALOG_FAILURES = new Set(Object.keys(ERROR_MESSAGES).filter(code => code.startsWith('CATALOG_')));
   let active = null;
   let contextKey = '';
   let contextActor = null;
@@ -310,6 +311,7 @@
           503: '엔카 조회 기능의 서버 설정이 필요합니다. 관리자에게 문의해 주세요.'
         };
         const code = setDiagnostics(data?.diagnostics, response.status, 'HTTP_ERROR');
+        if (response.status >= 500 && CATALOG_FAILURES.has(code)) manual.hidden = false;
         throw lookupError(ERROR_MESSAGES[code] || messages[response.status] || '지금은 광고를 확인할 수 없습니다. 잠시 후 다시 시도해 주세요.');
       }
       if (!data || typeof data !== 'object' || Array.isArray(data) || data.plate !== context.plate || !Array.isArray(data.listings) || !['found','multiple','unverified'].includes(data.status)) {

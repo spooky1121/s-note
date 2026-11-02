@@ -124,6 +124,17 @@ test('integration: public catalog uses the suffix, matches the entire card, and 
   assert.equal(f.manual.hidden, true);
 });
 
+test('integration: failed catalog parsing does not hide the independently verified address flow', async t => {
+  const f = fixture(t, { providerKey: '', catalogHTML: '<main>Unrecognized synthetic layout</main>' });
+  f.button.click(); await f.done();
+  assert.equal(f.tabs[0].closed, true); assert.equal(f.manual.hidden, false);
+  assert.match(f.note, /공개 차량 목록의 정보를 읽지/);
+  f.submit(BASE + ORIGINAL); await f.done();
+  assert.deepEqual(f.tabs[1].navigations, [BASE + ORIGINAL]);
+  assert.equal(f.catalogRequests.length, 2, 'A supplied ID is verified before catalog lookup');
+  assert.equal(f.searches.length, 0);
+});
+
 test('integration: fallback raw content supplies a missing indexed candidate before any link can open', async t => {
   const f = fixture(t, { batches: [[{ url: 'https://fixture.invalid/vehicle', title: '가상 검색 결과' }],
     [{ url: 'https://carsbat.com/fixture', title: '가상 검색 결과', raw_content: PLATE + ' Lot number: ' + ORIGINAL }]] });
