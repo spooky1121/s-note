@@ -9,6 +9,12 @@
 - 서버 함수와 목록 파서 코드는 v2.30 릴리스 `67152a0`과 동일하다. 해당 최종 Functions 빌드와 기존 OCR **6/6** 검증 결과를 유지한다.
 - 최종 화면 버전과 스크립트 캐시 키는 `v2.30.1`이다. 실제 공개 목록과 실차 자동 조회는 여전히 운영 확인이 남아 있다.
 
+### 최종 배포 확인
+
+- 최종 앱 릴리스 `f26ab072fbe5060d8719401ef5146e9fbc22a468`를 main에 반영했다. 2026-11-03 03:13 KST에 [Cloudflare Pages: s-note 최신 완료 체크](https://github.com/spooky1121/s-note/runs/125459032300)의 `succeeded / Deployed successfully`, Latest commit `f26ab07`를 확인했다.
+- 운영 주소: https://s-note.pages.dev . 최종 릴리스 배포 URL: https://bed34fe6.s-note.pages.dev . 실제 공개 목록 폼·카드 인식과 실차 조회 성공은 이 배포 결과와 별도로 미검증이다.
+- 작업 브랜치는 `feat/encar-public-catalog`이며 이후 문서 전용 기록은 앱 코드를 변경하지 않는다. 실제 앱 기준은 `f26ab07`이다.
+
 ## 2026-11-03 — v2.30 공개 목록에서 끝 4자리로 후보 조회
 
 ### 요청과 구현 범위
