@@ -1,8 +1,26 @@
-/* Keep the vehicle detail close action at its own top-right corner. */
+/* Keep the close circle centered on the popup corner, outside its scroll clip. */
 @media screen {
+  #vehicle-overlay {
+    align-items: center;
+    padding: 28px;
+  }
+
+  #vehicle-overlay .vehicle-detail-frame {
+    position: relative;
+    width: 960px;
+    max-width: 100%;
+    min-width: 0;
+    overflow: visible;
+  }
+
+  #vehicle-overlay .vehicle-modal {
+    width: 100%;
+    max-height: min(92vh, 1000px, calc(100dvh - 56px));
+  }
+
   #vehicle-overlay .vehicle-header {
     min-height: 76px;
-    padding-right: 76px;
+    padding-right: 36px;
   }
 
   #vehicle-overlay .vehicle-header > div:first-child {
@@ -11,10 +29,11 @@
     overflow-wrap: anywhere;
   }
 
-  #vehicle-overlay .vehicle-header .detail-close {
+  #vehicle-overlay .vehicle-detail-frame > .detail-close {
     position: absolute;
-    top: 14px;
-    right: 14px;
+    top: -22px;
+    right: -22px;
+    z-index: 40;
     display: grid;
     place-items: center;
     width: 44px;
@@ -33,25 +52,25 @@
     touch-action: manipulation;
   }
 
-  #vehicle-overlay .vehicle-header .detail-close:hover {
+  #vehicle-overlay .vehicle-detail-frame > .detail-close:hover {
     background: #bd2130;
     color: #fff;
   }
 
-  #vehicle-overlay .vehicle-header .detail-close:focus-visible {
+  #vehicle-overlay .vehicle-detail-frame > .detail-close:focus-visible {
     outline: 3px solid #b45309;
     outline-offset: 3px;
   }
 }
 
 @media screen and (max-width: 760px) {
-  #vehicle-overlay .vehicle-header {
-    min-height: 70px;
-    padding-right: 72px;
+  #vehicle-overlay .vehicle-modal {
+    height: calc(100dvh - 56px);
+    max-height: calc(100dvh - 56px);
   }
 
-  #vehicle-overlay .vehicle-header .detail-close {
-    top: 12px;
-    right: 12px;
+  #vehicle-overlay .vehicle-header {
+    min-height: 70px;
+    padding-right: 32px;
   }
 }

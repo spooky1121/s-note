@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.31">
+<html lang="ko" data-snote-release="2.31.1">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -3159,7 +3159,7 @@ button, input, select, textarea { font-family: inherit; }
 <link rel="stylesheet" href="assets/vehicle-taxonomy.css?v=2.20">
 <link rel="stylesheet" href="assets/income-settlement-parent.css?v=2.25">
 <link rel="stylesheet" href="assets/vehicle-colors.css?v=2.23">
-<link rel="stylesheet" href="assets/vehicle-detail.css?v=2.31">
+<link rel="stylesheet" href="assets/vehicle-detail.css?v=2.31.1">
 <link rel="stylesheet" href="assets/sales-month-filter.css?v=2.26">
 <script src="assets/vehicle-colors.js?v=2.23"></script>
 <link rel="stylesheet" href="assets/customer-contract-signature.css?v=2.22">
@@ -3264,8 +3264,10 @@ button, input, select, textarea { font-family: inherit; }
 
 <!-- 차량별 사진과 서류 관리: 모든 이미지가 차량 고유 ID에 연결됩니다. -->
 <div class="overlay vehicle-overlay" id="vehicle-overlay" aria-hidden="true">
-  <section class="vehicle-modal" role="dialog" aria-modal="true" aria-labelledby="vehicle-title">
-    <div class="vehicle-header"><div><p class="vehicle-eyebrow">VEHICLE FILES · 차량 상세 관리</p><h2 id="vehicle-title">차량 상세</h2><p class="vehicle-meta-line" id="vehicle-meta"></p></div><button class="close detail-close" type="button" onclick="closeVehicle()" aria-label="차량 상세 닫기" title="차량 상세 닫기">×</button></div>
+  <div class="vehicle-detail-frame" role="dialog" aria-modal="true" aria-labelledby="vehicle-title">
+    <button class="close detail-close" type="button" onclick="closeVehicle()" aria-label="차량 상세 닫기" title="차량 상세 닫기">×</button>
+  <section class="vehicle-modal">
+    <div class="vehicle-header"><div><p class="vehicle-eyebrow">VEHICLE FILES · 차량 상세 관리</p><h2 id="vehicle-title">차량 상세</h2><p class="vehicle-meta-line" id="vehicle-meta"></p></div></div>
     <div class="vehicle-body"><div class="vehicle-overview" id="vehicle-overview"></div><section class="acct-readonly-panel" id="acct-readonly-panel" aria-label="경리 차량정보 조회"></section>
       <section class="car-identity-section" aria-label="차량 기본정보 수정">
         <div class="car-identity-head"><h3>차량 기본정보 수정</h3></div>
@@ -3299,6 +3301,7 @@ button, input, select, textarea { font-family: inherit; }
     </div>
     <div class="file-info"><span class="file-alert">테스트 버전:</span> 이 파일에서 추가한 사진과 서류는 현재 기기의 브라우저 저장소(IndexedDB)에만 보관됩니다. 직원 간 공유·클라우드 백업·접근 권한은 서버 연결 단계에서 구현합니다. 개인정보가 담긴 실서류는 정식 보안 체계를 구축한 뒤 사용하세요.</div>
   </section>
+  </div>
   <div id="vehicle-save-success" role="status" aria-live="polite" aria-hidden="true">
     <div class="vehicle-save-success-card">
       <div class="vehicle-save-check" aria-hidden="true"><svg viewBox="0 0 48 48"><path class="check-path" d="M12 25l9 9L37 16"/></svg></div>
@@ -9177,7 +9180,7 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 <script type="module" src="assets/quick-calculator.js?v=2.17"></script>
 <script type="module" src="assets/vehicle-taxonomy-ui.js?v=2.20"></script>
 <script type="module" src="assets/income-settlement-parent.js?v=2.25"></script>
-<script src="assets/release-info.js?v=2.31" defer></script>
-<script src="assets/snote-encar-link.js?v=2.31" defer></script>
+<script src="assets/release-info.js?v=2.31.1" defer></script>
+<script src="assets/snote-encar-link.js?v=2.31.1" defer></script>
 </body>
 </html>
