@@ -19,6 +19,12 @@
 - 실제 IndexedDB 모의 이미지로 PC/모바일 2패널/세로 배치, 현금 투자금920만원 실시간 표시, 이미지 버튼·키보드 확대, 대표/삭제/교체 CTA·5장 제한·서류 탭/문자열 escaping, 사진 갱신 중 미저장 입력 보존을 확인했다. 인증·HTTP·DB는 합성이며 운영 자료를 읽거나 쓰지 않았다.
 - 최종 자동 검사 **300/300**과 구문/diff 검사 통과 이후 기능 소스는 동결했다. 브라우저 로그 `/tmp/snote-vehicle-v232-browser.log`, 시각 확인 이미지 `/tmp/snote-encar-browser/vehicle-detail-compact-1440.png`, `vehicle-detail-compact-390.png`는 실행 환경 임시 산출물이다.
 
+### v2.32 배포 결과
+
+- 앱 `08e1f4378f16ff5839663cbf7933a70765424d5c`를 main에 반영했다. git credential helper가 없어 첫 push는 인증 연결 오류로 실패했지만 기존 환경 인증을 일회성 `gh auth git-credential` helper로 연결해 정상 push했다. 실제 토큰은 출력·파일 저장하지 않았다.
+- 2026-11-03 18:08:40 KST에 [s-note Pages 최신 완료 체크 125824579231](https://github.com/spooky1121/s-note/runs/125824579231)의 `succeeded / Deployed successfully`, Latest commit `08e1f43`와 원격 main SHA 일치를 확인했다. 새 개별 배포는 https://eb4c7ff7.s-note.pages.dev 이다.
+- 운영 주소는 https://s-note.pages.dev/?release=2.32 이다. 새 운영 화면과 실제 저장/취소는 아직 사용자 확인 전이며 개별 배포 성공과 구분한다. SQL·추가 키 설정은 필요 없다. 이후 문서 전용 커밋은 앱을 바꾸지 않으며 앱 기준은 `08e1f43`다.
+
 ## 2026-11-03 — v2.31.1 닫기 원의 중심을 팝업 모서리에 배치
 
 - 사용자가 v2.31 운영의 조회·서버 저장·새로고침 후 링크 복원·빨간 X가 모두 정상이라고 확인했다. 이어 빨간 원의 중심을 팝업 오른쪽 위 꼭짓점에 맞추도록 요청했다.
