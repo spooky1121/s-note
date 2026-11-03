@@ -9,6 +9,12 @@
 - 실제 Chromium 1440/390/320px에서 주소/하단 1:1 PC 배치·모바일 overflow 없음·원제출 canvas 이동·저장·재열기·계약서/인수증 버튼과 Esc 복귀를 확인하고 화면을 직접 검토했다. 실제 고객정보 API+AES+합성 DB 8묶음(21 writes/26 identity requests), 서명·실제 2페이지 PDF 7묶음 회귀 통과. 고객정보 브라우저 테스트에 자동 복귀와 문서 식별번호 수정 반영 검증을 추가했다.
 - 변경 JS·inline JS·diff 검사 통과. 운영 DB·문자 발송·서버 Functions·SQL·키 설정은 변경하지 않았다. 검증 로그와 화면은 `/workspace/work/v235-*`, `/workspace/work/sales-v235-*`에 보관한다. 배포 결과는 후속 기록으로 구분한다.
 
+### v2.35 배포
+
+- 앱 `30b30f1a41110bf833403fc8bb4a7f62724b36ee`를 main에 정상 push했다. 2026-11-03 20:50:54 KST 완료된 [s-note Pages 체크 125899598089](https://github.com/spooky1121/s-note/runs/125899598089)의 `success / Deployed successfully`, Latest commit `30b30f1` 일치를 확인했다.
+- 개별 배포 https://39c80521.s-note.pages.dev , 운영 주소 https://s-note.pages.dev/?release=2.35 . 로컬 Chromium/합성 DB 검증과 Pages 배포 성공을 확인했으며 운영 로그인·실제 고객 데이터·문자 발송은 사용하지 않았다. 이전 환경의 운영 URL 직접 조회 403 제한은 유지된다.
+- 같은 저장소의 별도 `Workers Builds: zerocar-office`는 실패했고 `Cloudflare Pages: zerocar-office`와 요청 대상 `Cloudflare Pages: s-note`는 성공했다. s-note 배포와 별도 Workers 작업의 결과를 구분한다. 문서 전용 후속 커밋은 앱을 변경하지 않는다.
+
 ## 2026-11-03 — v2.34 판매진행 팝업 정리
 
 - 재시작 환경의 `/workspace/s-note`에는 미커밋 파일이 없고 기준은 v2.31.1이었다. 원격 최신 main `d1a2959`를 가져온 후 요청 UI를 재적용했다. 동기화 전 작업 사본은 work 폴더와 git stash에 보존했다.
