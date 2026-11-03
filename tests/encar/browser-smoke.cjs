@@ -24,14 +24,14 @@ fs.mkdirSync(ARTIFACTS,{recursive:true});
 
 async function releaseLabels(page,{loggedIn=false,width=1440}={}){
  const release=await page.evaluate(()=>({version:document.documentElement.getAttribute('data-snote-release'),apiVersion:window.SnoteRelease?.version,frozen:Object.isFrozen(window.SnoteRelease),labels:[...document.querySelectorAll('[data-snote-version]')].map(element=>({text:element.textContent,prefix:element.getAttribute('data-snote-version-prefix')||'',suffix:element.getAttribute('data-snote-version-suffix')||''})),scripts:[...document.scripts].filter(script=>script.src&&new URL(script.src).pathname==='/assets/release-info.js').map(script=>script.src)}));
- assert.match(release.version,/^(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)(?:\.(?:0|[1-9][0-9]*))?$/);assert.equal(release.apiVersion,release.version);assert.equal(release.frozen,true);assert.equal(release.labels.length,3);assert.equal(release.scripts.length,1);assert.equal(new URL(release.scripts[0]).searchParams.get('v'),release.version);
+ assert.match(release.version,/^(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)(?:\.(?:0|[1-9][0-9]*))?$/);assert.equal(release.apiVersion,release.version);assert.equal(release.frozen,true);assert.equal(release.labels.length,4);assert.equal(release.scripts.length,1);assert.equal(new URL(release.scripts[0]).searchParams.get('v'),release.version);
  for(const label of release.labels)assert.equal(label.text,label.prefix+'v'+release.version+label.suffix);
  assert.equal(await page.locator('.auth-topline [data-snote-version]').textContent(),'v'+release.version+' · ONLINE');
- assert.equal(await page.locator('.topright .sample[data-snote-version]').textContent(),'● v'+release.version+' · 온라인 테스트');
+ assert.equal(await page.locator('.topright [data-snote-version]').count(),0);assert.equal(await page.locator('.sidebar .snote-sidebar-version').textContent(),'v'+release.version);assert.equal(await page.locator('#mobile-drawer .snote-sidebar-version').textContent(),'v'+release.version);
  assert.equal(await page.locator('.snote-login-footer [data-snote-version]').textContent(),'v'+release.version,'The runtime-created cloud login footer must use the same canonical version');
  if(loggedIn){
   assert.equal(await page.locator('#auth-shell').evaluate(element=>element.classList.contains('hidden')),true);
-  assert.equal(await page.locator('.topright .sample[data-snote-version]').isVisible(),width>1080,'The logged-in header badge must actually display on desktop and preserve the existing mobile layout');
+  assert.equal(await page.locator('.sidebar .snote-sidebar-version').isVisible(),width>760,'The version belongs at the sidebar bottom');assert.equal(await page.locator('#snote-weather').isVisible(),true);
   await page.locator('#snote-calculator-trigger:not([disabled])').waitFor();
   const calculator=await page.locator('#snote-calculator-trigger').boundingBox(),profile=await page.locator('#snote-profile-trigger').boundingBox();assert(calculator&&profile);assert(calculator.x+calculator.width<=profile.x+1,'The version label must not disturb the calculator/profile placement');
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
@@ -53,7 +53,7 @@ async function releaseLifecycle(page,version){
  console.log('PASS actual HTML canonical release synchronizes all three original badges, late added markers/subtrees, and duplicate-script refresh without changing app state');
 }
 
-async function fixture(width=1440,savedCars=null,{primaryColor=null}={}){
+async function fixture(width=1440,savedCars=null,{primaryColor=null,weather=null}={}){
  const context=await browser.newContext({viewport:{width,height:950}}),page=await context.newPage();
  const f={context,page,requests:[],navigations:[],external:[],unexpected:[],errors:[],responses:[],dialogs:[],dialogAnswers:[],unexpectedDialogs:[]};
  const answerDialog=async dialog=>{
@@ -74,6 +74,7 @@ async function fixture(width=1440,savedCars=null,{primaryColor=null}={}){
    f.navigations.push(url.href);return route.fulfill({contentType:'text/html;charset=utf-8',body:'<!doctype html><title>가상 엔카 광고</title><p>로컬 검증용 광고 응답</p>'});
   }
   if(url.origin!==ORIGIN){f.external.push(url.href);return route.abort();}
+  if(url.pathname==='/api/weather')return route.fulfill({status:weather?.ok===false?503:200,contentType:'application/json',body:JSON.stringify(weather||{ok:true,temperature:18.4,code:0,region:'합성 지역',source:'MET Norway'})});
   if(url.pathname==='/api/encar'){
    const body=JSON.parse(request.postData());assert.equal(request.method(),'POST');assert.equal(request.headers().authorization,'Bearer '+TOKEN);assert.deepEqual(Object.keys(body).sort(),['candidateIds','plate']);assert(Array.isArray(body.candidateIds));
    f.requests.push(body);const response=f.responses.shift();assert(response,'Every lookup must have an explicit synthetic response');

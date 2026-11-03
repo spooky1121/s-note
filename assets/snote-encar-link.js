@@ -127,8 +127,7 @@
     const displayed=[...results.querySelectorAll('a')].map(anchor=>anchor.href);
     if(JSON.stringify(expected)===JSON.stringify(displayed))return;
     showListings(record.listings, true);
-    const date = new Date(record.verifiedAt).toLocaleString('ko-KR', {timeZone: 'Asia/Seoul'});
-    saveStatus.textContent = '최근 확인 광고 · 마지막 확인 ' + date;
+    saveStatus.textContent = '';
     setNote('');
   }
 

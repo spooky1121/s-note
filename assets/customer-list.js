@@ -20,8 +20,9 @@
    body.innerHTML=visible.map(record=>{const id=String(record.carId),identity=values.has(id)?maskIdentity(values.get(id)):failed.has(id)?'조회 실패':record.rrnCipher&&pending?'확인 중…':'미등록';return renderRow(record,identity,carFor(record));}).join('');
    empty.hidden=filtered.length>0;empty.textContent=rows.length?'검색 결과가 없습니다.':'저장된 고객이 없습니다.';
   }
+  window.SnoteListSort?.values('customers',(record,label)=>{const car=carFor(record);if(label==='차량')return car?.model||record.carModel||'';if(label==='고객')return record.name||'';if(label.includes('주민'))return (values.get(String(record.carId))||'').slice(0,6);if(label==='상태')return car?.status==='판매완료'?'판매완료':'판매중';if(label==='주소')return record.address||record.addressBase||'';return record.updatedAt||0;});
   input.addEventListener('input',render);
-  dispose=()=>{disposed=true;rows=[];values.clear();failed.clear();lastQuery=null;input.value='';input.removeEventListener('input',render);};
+  dispose=()=>{window.SnoteListSort?.unbind('customers');disposed=true;rows=[];values.clear();failed.clear();lastQuery=null;input.value='';input.removeEventListener('input',render);};
   render();
   try{const result=await readIdentities(records);if(disposed||!isCurrent())return;values=result.values;failed=result.failed;}catch(_){if(disposed||!isCurrent())return;failed=new Set(rows.filter(record=>record.rrnCipher).map(record=>String(record.carId)));}
   pending=false;render();

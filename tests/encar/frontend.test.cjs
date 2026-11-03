@@ -683,7 +683,7 @@ test('34 persisted car links restore immediately with no lookup, popup or write'
   const f = fixture(t, { bridge: true, savedRecord: storedRecord() });
   assert.equal(f.links.length, 2); assert.deepEqual(f.links.map(a => a.href), [listing().sellerUrl, listing().trustedUrl]);
   assert.equal(f.requests.length, 0); assert.equal(f.openCalls.length, 0); assert.equal(f.saveCalls.length, 0);
-  assert.match(f.saveStatus.textContent, /최근 확인 광고/); assert.doesNotMatch(f.saveStatus.textContent, /서버에 저장했습니다/);
+  assert.equal(f.saveStatus.textContent,''); assert.doesNotMatch(f.saveStatus.textContent, /서버에 저장했습니다/);
   assert.equal(f.note.textContent, ''); assert.equal(f.saveRetry.hidden, true);
 });
 
@@ -694,7 +694,7 @@ test('35 acknowledged car links survive closing and reopening without another lo
   f.closeDetail(); await settle(); assert.equal(f.links.length, 0);
   f.reopenDetail(); await settle();
   assert.equal(f.links.length, 2); assert.equal(f.requests.length, 1); assert.equal(f.openCalls.length, 1); assert.equal(f.saveCalls.length, 1);
-  assert.match(f.saveStatus.textContent, /최근 확인 광고/);
+  assert.equal(f.saveStatus.textContent,'');
 });
 
 test('36 a fresh device restores server car data without a local ID cache, then verifies its selected trusted link', async t => {
@@ -754,7 +754,7 @@ test('40 pending local car metadata can reopen as a recent verified hint without
   f.click(); await settle(); f.reply(0, found()); await settle();
   assert.ok(f.w.cars[0].encarLinks); assert.equal(f.saveRetry.hidden, false);
   f.closeDetail(); await settle(); f.reopenDetail(); await settle();
-  assert.equal(f.links.length, 2); assert.match(f.saveStatus.textContent, /최근 확인 광고/);
+  assert.equal(f.links.length, 2); assert.equal(f.saveStatus.textContent,'');
   assert.doesNotMatch(f.saveStatus.textContent, /서버에 저장했습니다|저장된 광고/);
   assert.equal(f.requests.length, 1); assert.equal(f.saveCalls.length, 1);
 });

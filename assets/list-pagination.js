@@ -3,6 +3,7 @@
  'use strict';
  const states=new Map(),size=20;
  window.snote236Paginate=function(rows,key,signature,hostId,render){
+  window.SnoteListSort?.bind(key,render);rows=window.SnoteListSort?.apply(rows,key)||rows;signature+=':sort'+(window.SnoteListSort?.revision(key)||0);
   let state=states.get(key);
   if(!state||state.signature!==signature){state={signature,page:1};states.set(key,state);}
   const pages=Math.max(1,Math.ceil(rows.length/size));state.page=Math.min(state.page,pages);
@@ -20,5 +21,5 @@
   }
   return rows.slice((state.page-1)*size,state.page*size);
  };
- window.snote236ResetPagination=()=>states.clear();
+ window.snote236ResetPagination=()=>{states.clear();window.SnoteListSort?.reset();};
 })();

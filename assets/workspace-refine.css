@@ -1,0 +1,87 @@
+@media screen{
+ #snote-app #list-screen .snote-list-encar{width:22px;height:26px;min-width:22px;border-radius:5px}
+ #snote-app #list-screen .snote-list-encar img{width:18px;height:18px}
+ #snote-app #list-screen .snote-encar-column{width:38px;padding:8px 5px;text-align:center}
+ #snote-app :is(#list-screen,#alt-content) .car-thumb{width:48px;height:40px;border-radius:8px;flex:none;overflow:hidden}
+ #snote-app .car-thumb img{width:100%;height:100%;object-fit:cover}
+ #snote-app #list-mobile .car-thumb{width:64px;height:52px;border-radius:8px}
+ #snote-app .topbar .topbar-profile{display:flex;justify-content:center;align-items:center;gap:8px;min-height:36px;padding:7px 10px;line-height:1.35}
+ #snote-app .topbar-profile .profile-detail{display:flex;align-items:center;justify-content:center;text-align:center}
+ #snote-app .topbar-profile .pname{margin:0;padding:0;line-height:20px;font-weight:500}
+ .snote-profile-chevron{display:block;margin:0;align-self:center;flex:none}
+ .snote-sidebar-version{display:block;margin:12px 0 0;padding:8px 10px 0;text-align:center;color:#a0a5b5;font-size:10px;font-weight:400;line-height:1.4}
+ .mobile-drawer>.snote-sidebar-version{margin:0;padding:8px 12px 14px}
+ .snote-weather{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-width:46px;font-size:12px;font-weight:500;color:#7e879a;white-space:nowrap;line-height:24px}
+ .snote-weather [data-weather-icon]{font-size:18px;line-height:1;color:#8c99b4}
+ .snote-weather[data-state=unavailable]{color:#aeb3c0}
+ #zc-cloud-banner:empty{display:none!important}
+ #snote-app .sidebar .snote-spaced-logo,.mobile-drawer .snote-spaced-logo{width:126px;height:34px}
+ .snote-spaced-logo>.snote-logo-s,.snote-spaced-logo>.snote-logo-note{position:absolute;top:0;height:34px;overflow:hidden;display:block}
+ .snote-spaced-logo>.snote-logo-s{left:0;width:32px}.snote-spaced-logo>.snote-logo-note{left:38px;width:88px}
+ .snote-spaced-logo>.snote-logo-s img,.snote-spaced-logo>.snote-logo-note img{position:absolute;width:240px;max-width:none;height:auto;top:50%;transform:translate(-50%,-50%)}
+ .snote-spaced-logo>.snote-logo-s img{left:60px}.snote-spaced-logo>.snote-logo-note img{left:28px}
+ #snote-app .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0}
+ #snote-app .stats>.stat{display:grid;grid-template-rows:28px 40px minmax(28px,auto);align-content:start;padding:14px 20px!important;min-width:0;min-height:130px;margin:0;border:0;border-right:1px solid #ececf1;border-bottom:1px solid #ececf1}
+ #snote-app .stats>.stat:nth-child(3n){border-right:0}#snote-app .stats>.stat:nth-last-child(-n+3){border-bottom:0}
+ #snote-app .stat .stat-top{margin:0;align-items:center;min-width:0;gap:12px}
+ #snote-app .stat .value{align-self:center;font-variant-numeric:tabular-nums;line-height:1.3}
+ #snote-app .stat .stat-note{margin:0;line-height:1.5;align-self:start}
+ #snote-app #list-screen .status-select{width:66px;min-width:66px;max-width:66px;min-height:24px;height:26px;font-size:10px;padding:3px 3px;border-radius:5px}
+ #snote-app :is(#list-screen,#alt-content) .snote-finance-column{text-align:center}
+ #snote-app .snote90-settings{max-width:1060px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start}
+ #snote-app .snote90-panel{padding:18px;border:1px solid #ececf1;border-radius:10px;box-shadow:none;background:white;min-width:0}
+ #snote-app .snote90-panel:first-child,#snote-app .snote90-panel:has(#snote90-lenders),#snote-app .snote90-panel:has(#snote203-bank-total){grid-column:1/-1}
+ #snote-app .snote90-panel h3{font-size:13px;font-weight:550;margin:0 0 7px}
+ #snote-app .snote90-panel p{font-size:10px;line-height:1.65;color:#929aae}
+ #snote-app .snote-company-fields{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;max-width:850px}
+ #snote-app .snote-company-fields>.snote-company-wide{grid-column:span 2}
+ #snote-app .snote-company-address-field{grid-column:1/-1!important}
+ #snote-app .snote-company-fields label,#snote-app .snote90-inline label,#snote-app .snote90-member label,#snote-app .snote90-lender label{font-size:10px;font-weight:450;gap:5px}
+ #snote-app .snote90-settings :is(input:not([type=file]),select){height:32px;min-height:32px;padding:6px 8px;font-size:12px;border:1px solid #e6e8ef;border-radius:6px;background:#fff;box-shadow:none;min-width:0}
+ #snote-app .snote90-settings textarea{max-width:450px;min-height:58px;font-size:12px}
+ #snote-app .snote90-settings button{min-height:30px;padding:6px 9px;font-size:11px;font-weight:500;border-radius:6px;box-shadow:none}
+ #snote-app .snote90-member,#snote-app .snote90-lender{gap:10px;padding:10px 0;align-items:center}
+ #snote-app .snote90-member label{flex:0 1 180px;max-width:180px}
+ #snote-app .snote90-member input{width:100%}
+ #snote-app .snote90-lender strong{width:120px;flex:none;font-size:11px}
+ #snote-app .snote90-lender label{flex:0 1 170px;max-width:170px}
+ #snote-app .snote90-lender input{width:100%}
+ #snote-app .snote90-inline input{max-width:200px;width:100%}
+ #snote-app .snote90-inline label{flex:0 1 200px;min-width:120px}
+ #snote-app #zc86-invite-area{padding:0;border:0;background:transparent;box-shadow:none}
+ #snote-app #zc86-invite-area :is(input,select){max-width:260px}
+ #snote-app .snote203-assets{gap:12px;max-width:620px}
+ #snote-app .snote203-asset-preview{height:70px;min-height:70px}
+ #snote-app #prestock-card .ps-table{font-size:11px;background:white;border-collapse:collapse}
+ #snote-app #prestock-card .ps-table th{padding:10px 12px;background:#f9f9fb;border:0;color:#83899e;font-size:10px;font-weight:400;position:sticky;top:0;z-index:1}
+ #snote-app #prestock-card .ps-table td{padding:13px 12px;background:#fff;border:0;border-bottom:1px solid #eeeef3;color:#465062;font-size:11px;font-weight:450}
+ #snote-app #prestock-card .ps-table tbody tr:hover td{background:#fafafd}
+ #snote-app #prestock-card .ps-table tfoot td{background:#fafafd;font-weight:500}
+ #snote-app #prestock-card .ps-scroll{border:0;border-radius:0;box-shadow:none}
+ #snote-app #prestock-card .ps-mobile-row{border:1px solid #ececf1;border-radius:10px;box-shadow:none;background:#fff;padding:13px}
+ #snote-app .snote-sort-header{display:inline-flex;align-items:center;justify-content:inherit;gap:7px;width:auto;min-height:24px;max-width:100%;padding:0;border:0;background:transparent;color:inherit;font:inherit;text-align:inherit;white-space:nowrap;cursor:pointer;box-shadow:none}
+ #snote-app .snote-sort-header:hover{color:#4455ed}
+ #snote-app .snote-sort-header:focus-visible{outline:2px solid #8899ef;outline-offset:4px}
+ .snote-sort-arrow{color:#a2a8bb;font-size:11px;min-width:7px}
+ [aria-sort=ascending] .snote-sort-arrow,[aria-sort=descending] .snote-sort-arrow{color:#4455ed}
+ .snote-mobile-sort{display:none}
+}
+@media screen and (max-width:760px){
+ #snote-app .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #snote-app .stats>.stat{padding:12px!important;border-right:1px solid #ececf1!important;border-bottom:1px solid #ececf1!important;grid-template-rows:28px 38px minmax(28px,auto)}
+ #snote-app .stats>.stat:nth-child(2n){border-right:0!important}#snote-app .stats>.stat:nth-last-child(-n+2){border-bottom:0!important}
+ .snote-weather{font-size:11px;min-width:40px;gap:3px}
+ #snote-app .snote90-settings{grid-template-columns:minmax(0,1fr)}
+ #snote-app .snote-company-fields{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+ #snote-app .snote90-panel{padding:14px}
+ #snote-app .snote90-settings :is(input:not([type=file]),select){font-size:16px;height:36px}
+ #snote-app .snote90-panel:first-child,#snote-app .snote90-panel:has(#snote90-lenders),#snote-app .snote90-panel:has(#snote203-bank-total){grid-column:1}
+ #snote-app .snote-company-fields>.snote-company-wide{grid-column:1/-1}
+ .snote-mobile-sort{display:flex;align-items:center;justify-content:flex-end;gap:6px;margin:0 0 10px;color:#8d96a8;font-size:11px}
+ .snote-mobile-sort label{display:flex;gap:7px;align-items:center;min-width:0}
+ .snote-mobile-sort select{max-width:160px;height:32px;border:1px solid #e7e9f1;border-radius:6px;background:#fff;color:#59647b;padding:3px 7px;font-size:16px;min-width:0}
+ .snote-mobile-sort button{width:32px;height:32px;border:1px solid #e7e9f1;border-radius:6px;background:#fff;color:#4455ed;padding:3px;font-size:16px}
+}
+@media print{.snote-mobile-sort,.snote-weather,.snote-sidebar-version,.snote-sort-arrow{display:none!important}}
+@media screen{a.snote-weather{text-decoration:none}a.snote-weather:hover{color:#4455ed}}
+@media screen{#snote-app .snote-company-actions{max-width:850px;justify-content:flex-end;gap:8px}#snote-app #snote90-company-admin-email{max-width:300px}}
