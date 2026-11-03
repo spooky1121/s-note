@@ -1,0 +1,33 @@
+/* Vehicle details alone use a full-height right drawer. Other dialogs keep their frames. */
+@media screen{
+ #vehicle-overlay{padding:0!important;align-items:stretch!important;justify-content:flex-end!important;overflow:hidden}
+ #vehicle-overlay .vehicle-detail-frame{width:min(1120px,calc(100vw - 48px));max-width:100%;height:100dvh;max-height:100dvh;flex:none;margin:0;overflow:visible}
+ #vehicle-overlay .vehicle-modal{width:100%!important;height:100dvh!important;max-height:100dvh!important;margin:0!important;border:0!important;border-left:1px solid #e7e8ef!important;border-radius:0!important;overflow:auto!important;overscroll-behavior:contain;box-shadow:-12px 0 45px #19243a18!important;animation:none!important}
+ #vehicle-overlay.open .vehicle-detail-frame{animation:snote-vehicle-slide .3s cubic-bezier(.22,.75,.2,1)}
+ #vehicle-overlay .vehicle-header{padding:21px 58px 18px 26px!important;background:#fff!important;min-height:84px;position:sticky;top:0;z-index:20}
+ #vehicle-overlay button.snote-popup-close{inset:18px 16px auto auto!important}
+ #vehicle-overlay .vehicle-body{padding:24px 26px 36px}
+}
+@media screen and (min-width:1100px){
+ #vehicle-overlay .vehicle-body{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.15fr);grid-template-areas:'overview overview' 'identity costs' 'sold costs' 'media media';gap:20px;align-items:start}
+ #vehicle-overlay #vehicle-overview{grid-area:overview;margin:0}
+ #vehicle-overlay .car-identity-section{grid-area:identity;margin:0}
+ #vehicle-overlay #sold-info-section{grid-area:sold;margin:0}
+ #vehicle-overlay #car-cost-section{grid-area:costs;margin:0;grid-template-columns:repeat(2,minmax(0,1fr))}
+ #vehicle-overlay .car-identity-section .vehicle-identity-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #vehicle-overlay .vehicle-identity-grid>label:has(:is(#detail-purchase-date,#detail-vin)){grid-column:1/-1}
+ #vehicle-overlay .vehicle-media-grid{grid-area:media;margin:0;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px}
+ #vehicle-overlay .vehicle-media-grid>.media-section{margin:0}
+ #vehicle-overlay .vehicle-media-grid .photo-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+ body.accountant-mode #vehicle-overlay .vehicle-body{display:block}
+ body.accountant-mode #vehicle-overlay #vehicle-overview{margin-bottom:20px}
+}
+@media screen and (max-width:760px){
+ #vehicle-overlay .vehicle-detail-frame{width:100vw}
+ #vehicle-overlay .vehicle-header{padding:calc(18px + env(safe-area-inset-top,0px)) 16px 16px!important}
+ #vehicle-overlay .vehicle-name-links{padding-right:30px}
+ #vehicle-overlay .vehicle-body{padding:16px 16px calc(30px + env(safe-area-inset-bottom,0px))}
+ #vehicle-overlay button.snote-popup-close{inset:calc(12px + env(safe-area-inset-top,0px)) 10px auto auto!important}
+}
+@keyframes snote-vehicle-slide{from{transform:translateX(100%)}to{transform:translateX(0)}}
+@media(prefers-reduced-motion:reduce){#vehicle-overlay.open .vehicle-detail-frame{animation:none!important}}
