@@ -21,6 +21,37 @@ const unverified=(plate=PLATE,code='SEARCH_NO_RESULTS')=>({plate,status:'unverif
 let browser;
 fs.mkdirSync(ARTIFACTS,{recursive:true});
 
+async function releaseLabels(page,{loggedIn=false,width=1440}={}){
+ const release=await page.evaluate(()=>({version:document.documentElement.getAttribute('data-snote-release'),apiVersion:window.SnoteRelease?.version,frozen:Object.isFrozen(window.SnoteRelease),labels:[...document.querySelectorAll('[data-snote-version]')].map(element=>({text:element.textContent,prefix:element.getAttribute('data-snote-version-prefix')||'',suffix:element.getAttribute('data-snote-version-suffix')||''})),scripts:[...document.scripts].filter(script=>script.src&&new URL(script.src).pathname==='/assets/release-info.js').map(script=>script.src)}));
+ assert.match(release.version,/^(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)(?:\.(?:0|[1-9][0-9]*))?$/);assert.equal(release.apiVersion,release.version);assert.equal(release.frozen,true);assert.equal(release.labels.length,3);assert.equal(release.scripts.length,1);assert.equal(new URL(release.scripts[0]).searchParams.get('v'),release.version);
+ for(const label of release.labels)assert.equal(label.text,label.prefix+'v'+release.version+label.suffix);
+ assert.equal(await page.locator('.auth-topline [data-snote-version]').textContent(),'v'+release.version+' · ONLINE');
+ assert.equal(await page.locator('.topright .sample[data-snote-version]').textContent(),'● v'+release.version+' · 온라인 테스트');
+ assert.equal(await page.locator('.snote-login-footer [data-snote-version]').textContent(),'v'+release.version,'The runtime-created cloud login footer must use the same canonical version');
+ if(loggedIn){
+  assert.equal(await page.locator('#auth-shell').evaluate(element=>element.classList.contains('hidden')),true);
+  assert.equal(await page.locator('.topright .sample[data-snote-version]').isVisible(),width>1080,'The logged-in header badge must actually display on desktop and preserve the existing mobile layout');
+  await page.locator('#snote-calculator-trigger:not([disabled])').waitFor();
+  const calculator=await page.locator('#snote-calculator-trigger').boundingBox(),profile=await page.locator('#snote-profile-trigger').boundingBox();assert(calculator&&profile);assert(calculator.x+calculator.width<=profile.x+1,'The version label must not disturb the calculator/profile placement');
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+ }
+ return release.version;
+}
+
+async function releaseLifecycle(page,version){
+ await page.evaluate(()=>{
+  window.__releaseOriginal=window.SnoteRelease;
+  const direct=document.createElement('span');direct.id='release-fixture-direct';direct.hidden=true;direct.setAttribute('data-snote-version','');direct.setAttribute('data-snote-version-prefix','[');direct.setAttribute('data-snote-version-suffix',']');direct.textContent='버전 확인 중';document.body.append(direct);
+  const subtree=document.createElement('div');subtree.id='release-fixture-subtree';subtree.hidden=true;const nested=document.createElement('span');nested.setAttribute('data-snote-version','');nested.setAttribute('data-snote-version-suffix',' · 추가 표시');nested.textContent='버전 확인 중';subtree.append(nested);document.body.append(subtree);
+ });
+ await page.waitForFunction(version=>document.getElementById('release-fixture-direct').textContent==='[v'+version+']'&&document.querySelector('#release-fixture-subtree [data-snote-version]').textContent==='v'+version+' · 추가 표시',version);
+ await page.evaluate(async()=>{const original=[...document.scripts].find(script=>script.src&&new URL(script.src).pathname==='/assets/release-info.js');const duplicate=document.createElement('script');duplicate.src=original.src;await new Promise((resolve,reject)=>{duplicate.onload=resolve;duplicate.onerror=reject;document.body.append(duplicate);});duplicate.remove();});
+ assert.equal(await page.evaluate(()=>window.SnoteRelease===window.__releaseOriginal),true,'Duplicate script loading must keep the same release synchronizer');
+ await page.evaluate(()=>{document.getElementById('release-fixture-direct').remove();document.getElementById('release-fixture-subtree').remove();document.querySelector('.auth-topline [data-snote-version]').textContent='버전 확인 중';window.SnoteRelease.refresh();});
+ await releaseLabels(page,{loggedIn:true});
+ console.log('PASS actual HTML canonical release synchronizes all three original badges, late added markers/subtrees, and duplicate-script refresh without changing app state');
+}
+
 async function fixture(width=1440){
  const context=await browser.newContext({viewport:{width,height:950}}),page=await context.newPage();
  const f={context,page,requests:[],navigations:[],external:[],unexpected:[],errors:[],responses:[]};
@@ -50,7 +81,7 @@ async function fixture(width=1440){
   }
   f.unexpected.push(url.pathname);return route.abort();
  });
- await page.goto(ORIGIN,{waitUntil:'networkidle'});await page.waitForFunction(()=>!!window.__encarFixtureAuth&&!!window.SnoteEncarLink);await page.evaluate(()=>window.__encarFixtureAuth);
+ await page.goto(ORIGIN,{waitUntil:'networkidle'});await page.waitForFunction(()=>!!window.__encarFixtureAuth&&!!window.SnoteEncarLink&&!!window.SnoteRelease);await page.evaluate(()=>window.__encarFixtureAuth);f.release=await releaseLabels(page,{width});
  await page.evaluate(async({actor,company,alias,token,plate,secondPlate})=>{
   await enterWorkspace({username:alias,name:'가상 검증 딜러',role:'dealer',company:'가상 검증 상사',employeeNo:'TEST',union:''});
   cars=[{id:'encar-car-1',ownerId:alias,model:'가상 검증 차량 1',plate,year:2026,km:'10,000',buy:1000,sell:1200,status:'판매중'},{id:'encar-car-2',ownerId:alias,model:'가상 검증 차량 2',plate:secondPlate,year:2026,km:'20,000',buy:1500,sell:1700,status:'판매중'}];
@@ -63,8 +94,11 @@ async function fixture(width=1440){
     return Promise.reject(Error('Unexpected browser fixture table '+table)).then(resolve,reject);
    }};return chain;
   },rpc:async()=>({data:[],error:null})};
-  document.getElementById('zc-cloud-gate').hidden=true;openVehicle('encar-car-1');
+  document.getElementById('zc-cloud-gate').hidden=true;
  },{actor:ACTOR,company:COMPANY,alias:ALIAS,token:TOKEN,plate:PLATE,secondPlate:SECOND_PLATE});
+ await releaseLabels(page,{loggedIn:true,width});
+ if(width===1440)await page.screenshot({path:path.join(ARTIFACTS,'release-header-1440.png')});
+ await page.evaluate(()=>openVehicle('encar-car-1'));
  await page.locator(BUTTON).waitFor({state:'visible'});assert.equal(await page.locator(BUTTON).isDisabled(),true,'Local/demo login must not enable an online lookup');
  await page.evaluate(()=>{window.__encarFixtureState.ready=true;document.getElementById('zc86-topbar').hidden=false;});await page.locator(BUTTON+':not([disabled])').waitFor();
  f.reply=(body,status=200)=>f.responses.push({body,status});return f;
@@ -98,7 +132,7 @@ async function finish(f){assert.deepEqual(f.external,[],'No external requests ar
  browser=await chromium.launch({headless:true,...(executablePath?{executablePath}:{})});
  try{
   {
-   const f=await fixture(),p=f.page;await position(f);assert.equal(await p.locator('.snote-encar-tools').count(),1);await p.screenshot({path:path.join(ARTIFACTS,'encar-detail-1440.png')});
+   const f=await fixture(),p=f.page;await releaseLifecycle(p,f.release);await position(f);assert.equal(await p.locator('.snote-encar-tools').count(),1);await p.screenshot({path:path.join(ARTIFACTS,'encar-detail-1440.png')});
    let popup=await lookup(f,found());await popup.waitForURL(listing().sellerUrl);assert.equal(await popup.evaluate(()=>opener===null),true);assert.deepEqual(f.requests[0],{plate:PLATE,candidateIds:[]});await assertLinks(f,[listing().sellerUrl,listing().trustedUrl]);await popup.close();
    assert.deepEqual(await p.evaluate(plate=>Object.keys(JSON.parse(localStorage.getItem('snote.encar.candidate.v1:'+plate))).sort(),PLATE),['at','ids','plate']);
    console.log('PASS real index desktop/header placement, local login disabled, online ready enabled, verified single seller popup and trusted fallback links');
