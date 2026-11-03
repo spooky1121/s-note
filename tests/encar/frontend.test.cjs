@@ -44,6 +44,21 @@ function storedRecord(listings = [listing()], plate = PLATE) {
 
 const plain = value => JSON.parse(JSON.stringify(value));
 
+function assertLookupIcon(button, busy = false) {
+  assert.equal(button.tagName, 'BUTTON');
+  assert.equal(button.type, 'button', 'The lookup must not submit an enclosing vehicle form');
+  assert.match(button.getAttribute('aria-label') || '', /엔카.*광고/, 'The icon action needs its own accessible name');
+  assert.match(button.title, /광고/, 'The icon retains a readable pointer tooltip');
+  if (busy) assert.equal(button.getAttribute('aria-busy'), 'true');
+  else assert.ok([null, 'false'].includes(button.getAttribute('aria-busy')), 'A settled icon must no longer announce busy work');
+  const icons = button.querySelectorAll('svg');
+  assert.equal(icons.length, 1, 'Lookup state changes must preserve exactly one icon');
+  assert.equal(icons[0].namespaceURI, 'http://www.w3.org/2000/svg');
+  assert.equal(icons[0].getAttribute('aria-hidden'), 'true', 'The button names the action; the SVG is decorative');
+  assert.equal(icons[0].getAttribute('focusable'), 'false', 'Keyboard focus belongs to the button');
+  assert.equal([...button.childNodes].filter(node => node.nodeType === 3).map(node => node.textContent).join('').trim(), '', 'The icon action must not acquire a visible text label during asynchronous work');
+}
+
 function fixture(t, options = {}) {
   const console = new VirtualConsole();
   const errors = [];
@@ -52,7 +67,7 @@ function fixture(t, options = {}) {
     <div id="zc-cloud-gate" hidden></div><div id="zc86-topbar"></div>
     <button id="zc-cloud-status" hidden>클라우드 연결됨</button>
     <section id="vehicle-overlay" class="overlay open">
-      <header><p id="vehicle-meta">원래 차량 정보</p><button id="original-close">닫기</button></header>
+      <header><p id="vehicle-meta">원래 차량 정보</p>${options.headerActions ? '<div id="vehicle-header-actions" role="group" aria-label="차량 작업"><button id="original-action" type="button">견적서</button></div>' : ''}<button id="original-close">닫기</button></header>
       <div id="original-detail">원래 상세 본문</div>
     </section></body></html>`, {
     url: 'https://snote.test/',
@@ -178,12 +193,14 @@ test('01 additive mount preserves existing UI/functions and duplicate loads are 
   f.w.eval(SOURCE);
   assert.equal(f.w.document.querySelectorAll('.snote-encar-tools').length, 1);
   assert.equal(f.button.disabled, false);
+  assertLookupIcon(f.button);
 });
 
 test('02 popup is synchronous, and navigation occurs only after server verification', async t => {
   const token = deferred();
   const f = fixture(t, { token: () => token.promise });
   f.click();
+  assertLookupIcon(f.button, true);
   assert.deepEqual(f.events, ['open', 'token']);
   assert.equal(f.tabs[0].opener, null);
   assert.equal(f.tabs[0].document.title, '엔카 광고 확인 중');
@@ -360,19 +377,23 @@ test('12 a token promise that never settles times out, closes the popup, and res
 test('13 pagehide resets pending work and bfcache pageshow restores a usable button', async t => {
   const f = fixture(t, { ignoreAbort: true });
   f.click(); await settle();
+  assertLookupIcon(f.button, true);
   f.w.dispatchEvent(new f.w.PageTransitionEvent('pagehide', { persisted: true }));
   await settle();
   assert.equal(f.requests[0].aborted, true);
   assert.equal(f.tabs[0].closed, true);
   assert.equal(f.button.disabled, true);
-  assert.equal(f.button.textContent, '엔카 광고 보기');
+  assert.equal(f.button.getAttribute('aria-label'), '엔카광고보기');
+  assertLookupIcon(f.button);
   f.w.dispatchEvent(new f.w.PageTransitionEvent('pageshow', { persisted: true }));
   await settle();
   assert.equal(f.button.disabled, false);
+  assertLookupIcon(f.button);
   f.reply(0, found()); await settle();
   assert.deepEqual(f.tabs[0].navigations, []);
   f.click(); await settle(); f.reply(1, found()); await settle();
   assert.deepEqual(f.tabs[1].navigations, [listing().sellerUrl]);
+  assertLookupIcon(f.button);
 });
 
 test('14 context is checked again after a delayed JSON body is decoded', async t => {
@@ -767,4 +788,25 @@ test('43 an original advertisement ID cannot also become its own trusted link or
   assert.equal(fresh.saveCalls[0].record.listings[0].trustedId, null);
   assert.equal(fresh.saveCalls[0].record.listings[0].trustedUrl, null);
   assert.equal(fresh.saveStatus.textContent, '광고 링크를 서버에 저장했습니다.');
+});
+
+test('44 the accessible icon survives failed lookup and retry while disabled offline actions remain named', async t => {
+  const offline = fixture(t, { ready: false });
+  assert.equal(offline.button.disabled, true);
+  assertLookupIcon(offline.button);
+  offline.click(); await settle();
+  assert.equal(offline.openCalls.length, 0); assert.equal(offline.requests.length, 0);
+
+  const f = fixture(t, { headerActions: true }); assertLookupIcon(f.button);
+  assert.equal(f.button.parentElement.id, 'vehicle-header-actions');
+  assert.equal(f.w.document.getElementById('original-action').textContent, '견적서');
+  f.click(); await settle(); assertLookupIcon(f.button, true);
+  f.reply(0, { status: 'error', diagnostics: { code: 'DETAIL_BLOCKED' } }, { status: 502 }); await settle();
+  assert.equal(f.tabs[0].closed, true); assert.equal(f.button.disabled, false);
+  assertLookupIcon(f.button);
+  assert.equal(f.note.dataset.error, 'true'); assert.deepEqual(f.tabs[0].navigations, []);
+  f.click(); await settle(); assertLookupIcon(f.button, true);
+  f.reply(1, found()); await settle();
+  assert.deepEqual(f.tabs[1].navigations, [listing().sellerUrl]);
+  assertLookupIcon(f.button);
 });

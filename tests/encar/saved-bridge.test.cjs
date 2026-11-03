@@ -144,3 +144,36 @@ test('actual reload drains an old RPC before restoring canonical payload and rev
  f.context.cars[0].buy=456;f.context.persistActual();assert.equal((await f.context.flushActual()).ok,true);
  assert.equal(f.calls.at(-1).p_expected,8);assert.deepEqual(f.serverRecord().encarLinks,data);assert.equal(f.serverRecord().buy,456);
 });
+
+test('vehicle save cancellation checks every pending dataset before accepting a later cars ACK',()=>{
+ const discard=between('function snoteVehicleDiscardPending(){','function snoteVehicleHasChanges(');
+ for(const queued of [null,'prestock:shared','finance:shared']){
+  const f=fixture(),scope=f.bridge.context('car-a');let undos=0,acknowledged=0;
+  f.S.revisions.set(key(USER),8);if(queued)f.S.queue.add(queued);
+  f.context.snoteVehicleSameView=()=>true;
+  f.context.snoteVehicleAcknowledgePending=()=>{acknowledged++;};
+  f.context.toast=()=>assert.fail('The fixture rollback must succeed');
+  f.context.undoFixture=()=>{undos++;return true;};
+  f.context.pendingFixture={context:{id:'car-a',cloud:true,scopeKey:scope.key},revision:7};
+  vm.runInContext('let snoteVehicleUnconfirmedWrite={...pendingFixture,undo:undoFixture};\n'+discard,f.context);
+  assert.equal(f.context.snoteVehicleDiscardPending(),true);
+  assert.equal(undos,queued?1:0,'A partially saved transaction must remain cancellable');
+  assert.equal(acknowledged,queued?0:1,'Only a fully acknowledged transaction is a previous completed save');
+ }
+});
+
+test('vehicle acknowledgement status is scoped to the current authenticated vehicle and contains no payload',()=>{
+ const f=fixture(),state=f.context.snoteVehicleWriteState('car-a');
+ assert.deepEqual(Object.keys(state).sort(),['key','pending','revision','saving']);
+ assert.equal(state.revision,7);assert.equal(state.pending,false);
+ assert.equal(f.context.snoteVehicleWriteState('car-sibling'),null);
+ f.S.ready=false;assert.equal(f.context.snoteVehicleWriteState('car-a'),null);
+});
+
+test('navigation checks real vehicle changes even when OCR has not emitted an input event',()=>{
+ const questions=[],context={window:{},document:{querySelectorAll:()=>[]},SNOTE_DRAFT_HOSTS:'fixture',snoteVehicleHasChanges:()=>true,confirm:message=>{questions.push(message);return false;}};
+ vm.createContext(context);
+ vm.runInContext(between('function snotePrepareRouteChange(){',"addEventListener('popstate',snoteRestoreNavigation);"),context);
+ assert.equal(context.snotePrepareRouteChange(),false);
+ assert.equal(questions.length,1);assert.match(questions[0],/저장하지 않고 화면을 이동/);
+});

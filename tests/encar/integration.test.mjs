@@ -29,7 +29,7 @@ function detail(id, plate = PLATE) {
 
 function fixture(t, { batches = [], plate = PLATE, providerKey = 'synthetic_search_secret', catalogHTML = null } = {}) {
   const dom = new JSDOM('<!doctype html><div id="zc-cloud-gate" hidden></div>' +
-    '<div id="zc86-topbar"></div><section id="vehicle-overlay" class="open"><p id="vehicle-meta">차량</p></section>',
+    '<div id="zc86-topbar"></div><section id="vehicle-overlay" class="open"><header class="vehicle-header"><div class="vehicle-heading"><div class="vehicle-heading-row"><h2 id="vehicle-title">차량</h2><div id="vehicle-header-actions" role="group" aria-label="차량 작업"></div></div><p id="vehicle-meta">차량</p></div></header></section>',
   { url: 'https://integration.example/', runScripts: 'outside-only' });
   const w = dom.window, requests = [], searches = [], tabs = [], logs = [], catalogRequests = [];
   const previousFetch = globalThis.fetch, previousInfo = console.info;
@@ -116,12 +116,23 @@ test('integration: public catalog uses the suffix, matches the entire card, and 
   const catalogHTML = '<main><article class="car-card"><a href="/auto/43000003/">다른 가상 차량</a><span>34나3456</span></article>' +
     '<article class="car-card"><a href="/auto/' + ORIGINAL + '/">대상 가상 차량</a><span>' + PLATE + '</span></article></main>';
   const f = fixture(t, { providerKey: '', catalogHTML });
-  f.button.click(); await f.done();
+  assert.equal(f.button.getAttribute('aria-label'), '엔카광고보기');
+  assert.equal(f.button.parentElement.id, 'vehicle-header-actions');
+  assert.ok([null, 'false'].includes(f.button.getAttribute('aria-busy')));
+  assert.equal(f.button.querySelector('svg')?.getAttribute('aria-hidden'), 'true');
+  f.button.click();
+  assert.equal(f.button.disabled, true); assert.equal(f.button.getAttribute('aria-busy'), 'true');
+  assert.equal(f.button.querySelectorAll('svg').length, 1);
+  assert.equal(f.tabs[0].navigations.length, 0, 'An icon click still waits for the real API verification');
+  await f.done();
   assert.equal(f.catalogRequests.length, 2);
   assert.equal(f.searches.length, 0);
   assert.deepEqual(f.tabs[0].navigations, [BASE + ORIGINAL]);
   assert.deepEqual([...f.w.document.querySelectorAll('.snote-encar-results a')].map(a => a.href), [BASE + ORIGINAL, BASE + TRUSTED]);
   assert.equal(f.manual.hidden, true);
+  assert.equal(f.button.disabled, false); assert.ok([null, 'false'].includes(f.button.getAttribute('aria-busy')));
+  assert.equal(f.button.getAttribute('aria-label'), '엔카광고보기');
+  assert.equal(f.button.querySelectorAll('svg').length, 1);
 });
 
 test('integration: failed catalog parsing does not hide the independently verified address flow', async t => {

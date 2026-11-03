@@ -232,6 +232,20 @@
     const error = new Error(message); error.userMessage = message; error.diagnosticCode = code; return error;
   }
 
+  function renderLookupButton(busy = false) {
+    button.setAttribute('aria-label', '엔카광고보기');
+    button.setAttribute('title', '엔카광고보기');
+    button.setAttribute('data-tooltip', '엔카광고보기');
+    button.setAttribute('aria-busy', String(busy));
+    button.classList.toggle('is-loading', busy);
+    if (button.querySelector('svg')) return;
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    for (const [name, value] of Object.entries({viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', 'stroke-width': '2.1', 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'aria-hidden': 'true', focusable: 'false'})) svg.setAttribute(name, value);
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', 'M18 5H7v14h11M7 12h9');
+    svg.append(path); button.replaceChildren(svg);
+  }
+
   function closeWaitingTab(job) {
     if (!job?.waitingTab) return;
     try { if (!job.waitingTab.closed) job.waitingTab.close(); } catch (_) {}
@@ -281,7 +295,7 @@
       contextCar = context?.car || null;
       contextStorageKey = context?.storage?.key || '';
       button.disabled = !context?.plate || !context?.ready;
-      button.textContent = '엔카 광고 보기';
+      renderLookupButton();
       restoreSaved(context);
     }
   }
@@ -294,7 +308,7 @@
     contextCar = null;
     contextStorageKey = '';
     button.disabled = true;
-    button.textContent = '엔카 광고 보기';
+    renderLookupButton();
   }
 
   function prepareTab() {
@@ -359,7 +373,7 @@
     const job = {...context, controller: new AbortController(), waitingTab: prepareTab(), timedOut: false};
     active = job;
     button.disabled = true;
-    button.textContent = '광고 확인 중…';
+    renderLookupButton(true);
     setNote('차량번호와 광고 상태를 확인하고 있습니다.');
     const timeout = setTimeout(() => { job.timedOut = true; job.controller.abort(); }, REQUEST_TIMEOUT);
     try {
@@ -450,7 +464,7 @@
       if (active === job) {
         active = null;
         button.disabled = !currentContext()?.ready;
-        button.textContent = '엔카 광고 보기';
+        renderLookupButton();
         syncContext();
       }
     }
@@ -476,13 +490,14 @@
     if (!overlay || !meta) return;
     const style = document.createElement('style');
     style.textContent = '.snote-encar-tools{margin-top:12px;display:flex;flex-wrap:wrap;align-items:center;gap:8px;min-width:0;font-size:12px;line-height:1.6}.snote-encar-button,.snote-encar-manual button{border:1px solid #bae1f5;background:#eef9ff;color:#187bac;padding:7px 12px;border-radius:9px;font:inherit;font-weight:700;cursor:pointer}.snote-encar-button:disabled{opacity:.6;cursor:wait}.snote-encar-note,.snote-encar-copy-status{color:#63758a}.snote-encar-note[data-error=true],.snote-encar-manual-error{color:#b54747}.snote-encar-results{flex-basis:100%;display:grid;gap:6px}.snote-encar-result{display:flex;flex-wrap:wrap;gap:10px;align-items:center}.snote-encar-result span{color:#64748b}.snote-encar-result a{color:#187bac;font-weight:700;text-decoration:underline;text-underline-offset:3px}.snote-encar-manual{flex-basis:100%;min-width:0;max-width:100%}.snote-encar-manual summary{cursor:pointer;color:#187bac;font-weight:700}.snote-encar-manual form{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;min-width:0}.snote-encar-manual label,.snote-encar-manual-error{flex-basis:100%}.snote-encar-manual input{flex:1 1 180px;min-width:0;max-width:100%;border:1px solid #d6e2ee;border-radius:8px;padding:8px;font:inherit;background:white;color:#334155}.snote-encar-save-status{flex-basis:100%;color:#64748b;font-size:11px}.snote-encar-save-status:empty{display:none}.snote-encar-save-retry{border:1px solid #d6e2ee;border-radius:8px;background:#fff;color:#187bac;padding:5px 10px;font:inherit;cursor:pointer}.snote-encar-save-retry:disabled{opacity:.6;cursor:wait}.snote-encar-copy{padding:2px 0;border:0;background:transparent;color:#63758a;font:inherit;text-decoration:underline;text-underline-offset:3px;cursor:pointer}.snote-encar-copy-fallback{flex-basis:100%;min-width:0;max-width:100%;box-sizing:border-box;height:120px;padding:8px;border:1px solid #d6e2ee;border-radius:8px;font:11px/1.5 monospace;overflow-wrap:anywhere;white-space:pre-wrap}.snote-encar-tools [hidden]{display:none!important}.snote-encar-tools :is(button,a,input,summary,textarea):focus-visible{outline:2px solid #38bdf8;outline-offset:3px}';
+    style.textContent += '.snote-encar-button{display:inline-grid;place-items:center;width:44px;height:44px;padding:0;border-radius:12px;color:#d52c3b}.snote-encar-button svg{display:block;width:22px;height:22px}.snote-encar-button.is-loading{cursor:wait;opacity:.6}';
     document.head.append(style);
     bar = document.createElement('div');
     bar.className = 'snote-encar-tools';
     button = document.createElement('button');
     button.type = 'button';
-    button.className = 'snote-encar-button';
-    button.textContent = '엔카 광고 보기';
+    button.className = 'snote-encar-button vehicle-header-action';
+    renderLookupButton();
     button.disabled = true;
     button.addEventListener('click', () => lookup());
     note = document.createElement('span');
@@ -511,8 +526,11 @@
     copyButton = document.createElement('button'); copyButton.type = 'button'; copyButton.className = 'snote-encar-copy'; copyButton.textContent = '진단 정보 복사'; copyButton.hidden = true; copyButton.addEventListener('click', copyDiagnostics);
     copyStatus = document.createElement('span'); copyStatus.className = 'snote-encar-copy-status'; copyStatus.setAttribute('role', 'status');
     copyFallback = document.createElement('textarea'); copyFallback.className = 'snote-encar-copy-fallback'; copyFallback.readOnly = true; copyFallback.hidden = true; copyFallback.setAttribute('aria-label', '복사할 진단 정보');
-    bar.append(button, note, results, saveStatus, saveRetry, manual, copyButton, copyStatus, copyFallback);
+    bar.append(note, results, saveStatus, saveRetry, manual, copyButton, copyStatus, copyFallback);
     meta.insertAdjacentElement('afterend', bar);
+    const headerActions = document.getElementById('vehicle-header-actions');
+    if (headerActions) headerActions.prepend(button);
+    else bar.prepend(button);
     new MutationObserver(syncContext).observe(overlay, {attributes:true,attributeFilter:['class']});
     new MutationObserver(syncContext).observe(meta, {childList:true,subtree:true,characterData:true});
     for (const id of ['zc-cloud-gate', 'zc86-topbar']) {
