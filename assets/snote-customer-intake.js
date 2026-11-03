@@ -98,8 +98,8 @@
     if (!isCurrent(s)) return;
     s.signature.replaceChildren();
     const signature = signatureValue(value);
-    s.signature.hidden = !signature;
-    if (!signature) return;
+    s.signature.hidden = false;
+    if (!signature) { s.signature.append(node('strong', '', '고객 원제출 서명'), node('p', 'snote-sale-signature-empty', '접수된 서명이 없습니다.')); return; }
     const canvas = node('canvas', 'snote-intake-signature-canvas');
     canvas.width = 640; canvas.height = 240;
     canvas.setAttribute('role', 'img'); canvas.setAttribute('aria-label', '고객 원제출 서명');
@@ -129,6 +129,8 @@
     }
     state = null;
     byId('snote-intake-panel')?.replaceChildren();
+    const signature = byId('snote-sale-signature');
+    if (signature) signature.replaceChildren(node('strong', '', '고객 원제출 서명'), node('p', 'snote-sale-signature-empty', '접수된 서명이 없습니다.'));
   }
 
   function message(s, content, kind = '') {
@@ -523,9 +525,10 @@
     s.message.setAttribute('aria-live', 'polite');
     s.list = node('ul', 'snote-intake-list');
     s.list.setAttribute('aria-label', '고객 입력 요청 내역');
-    s.signature = node('section', 'snote-intake-signature'); s.signature.hidden = true;
+    s.signature = byId('snote-sale-signature');
+    if (!s.signature) return;
     s.signature.setAttribute('aria-label', '고객 원제출 서명');
-    panel.append(head, line, s.message, s.list, s.signature);
+    panel.append(head, line, s.message, s.list);
     if (!s.canCreate) message(s, '판매완료 차량은 새 링크를 보낼 수 없습니다. 기존 요청 내역만 확인할 수 있습니다.');
     renderRequests(s);
     renderSignature(s, customer?.customerSignature, customer?.customerSignatureSignedAt);

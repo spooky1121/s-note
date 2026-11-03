@@ -130,7 +130,8 @@ async function main(){
   await page.waitForFunction(()=>document.getElementById('ct-buyer-id').value==='000101-3000000');
   let row=await saved();assert(row);assert.match(row.payload.identityCipher,/^smi1\.[a-f0-9]{24}\.[a-f0-9]{58}$/);assert.equal(rawInPayload(row.payload),false);assert.equal((await apiCall({action:'read',carId:'test-car-1'})).value,RAW13);
   console.log('PASS rrn_enabled=false manual13 → encrypted JSON insert → API read → full contract');
-  await page.evaluate(async()=>{await closeContractPreview();await zc75WriteQueue;await openSaleProgress();});
+  await page.evaluate(async()=>{await closeContractPreview();await zc75WriteQueue;});
+  assert.equal(await page.locator('#zc72-sale-modal').evaluate(el=>el.hidden),false,'Closing the sale contract must restore its sales dialog');
   assert.equal(await page.locator('#zc72-rrn').inputValue(),FORMATTED13);
   await page.evaluate(()=>closeSaleProgress());await boot(page);
   assert.equal(await page.locator('#zc72-rrn').inputValue(),FORMATTED13);
@@ -165,13 +166,18 @@ async function main(){
   assert.equal(await page.evaluate(()=>closeContractPreview()),true);
   assert.equal((await apiCall({action:'read',carId:'test-car-2'})).value,RAW10);
   await page.evaluate(()=>zc75WriteQueue);
-  await page.evaluate(async()=>{const r=await zc72ReadCar(currentUser.username,'test-car-2');await zc76OpenReceipt(r,cars.find(c=>c.id==='test-car-2'));});
+  assert.equal(await page.locator('#zc72-sale-modal').evaluate(el=>el.hidden),false);
+  assert.equal(await page.locator('#zc72-rrn').inputValue(),'987-65-43210','Returning sales inputs must reflect the identity saved in the document');
+  await page.locator('#zc72-sale-modal .snote-sale-action[aria-label="인수증 출력"]').click();
+  await page.locator('#zc76-receipt-overlay').waitFor({state:'visible'});
   assert.equal(await page.locator('#zc76-rrn').inputValue(),'987-65-43210');
   await page.evaluate(()=>{document.getElementById('zc76-rrn').value='000101-3000000';});failNextWrite=true;
   assert.equal(await page.evaluate(()=>zc76CloseReceipt()),false);
   assert.equal(await page.locator('#zc76-rrn').inputValue(),FORMATTED13);
   assert.equal(await page.locator('#zc76-receipt-overlay').evaluate(el=>el.hidden),false);
   assert.equal(await page.evaluate(()=>zc76CloseReceipt()),true);
+  assert.equal(await page.locator('#zc72-sale-modal').evaluate(el=>el.hidden),false,'Closing the sale receipt must restore its sales dialog');
+  assert.equal(await page.locator('#zc72-rrn').inputValue(),FORMATTED13);
   assert.equal((await apiCall({action:'read',carId:'test-car-2'})).value,RAW13);
   console.log('PASS business10 roundtrip; sales/contract/receipt write failure preserves input and stays open; retry persists');
 

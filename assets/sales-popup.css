@@ -49,3 +49,18 @@
  #zc72-sale-modal .zc74-title-row{flex-wrap:wrap;gap:7px}
 }
 @media(max-width:380px){#zc72-sale-modal .zc72-grid{grid-template-columns:minmax(0,1fr)}#zc72-sale-modal .zc72-field.full{grid-column:auto}}
+/* v2.35: paired addresses, refund account and original submitted signature. */
+#zc72-sale-modal .snote-sale-addresses,#zc72-sale-modal .snote-sale-bottom{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;grid-column:1/-1;min-width:0;align-items:start}
+#zc72-sale-modal .snote-sale-addresses>.zc72-field.full{grid-column:auto}
+#zc72-sale-modal .snote-sale-addresses .zc73-address-line{display:flex;flex-wrap:wrap}
+#zc72-sale-modal .snote-sale-addresses textarea{flex:1 1 180px;width:0;height:36px;min-height:36px}
+#zc72-sale-modal .snote-sale-addresses .zc73-address-line button{flex:0 0 auto}
+#zc72-sale-modal .snote-sale-bottom{align-items:stretch}
+#zc72-sale-modal .snote-sale-bottom>.zc74-account-fields{grid-column:auto;grid-template-columns:minmax(0,1fr);margin:0;padding:12px}
+#zc72-sale-modal .snote-sale-bottom .zc74-account-heading{grid-column:auto}
+#zc72-sale-modal .snote-sale-signature{min-width:0;border:1px solid #dbe6ee;border-radius:10px;padding:12px;background:#fff;color:#52677f;font-size:11px}
+#zc72-sale-modal .snote-sale-signature>strong{font-size:12px}
+#zc72-sale-modal .snote-intake-signature-canvas{display:block;width:100%;height:auto;max-height:150px;object-fit:contain;margin-top:10px;border:1px solid #edf1f5;border-radius:6px}
+#zc72-sale-modal .snote-sale-signature p{font-size:11px;line-height:1.5;overflow-wrap:anywhere}
+#zc72-sale-modal .snote-sale-signature-empty{display:grid;place-items:center;min-height:110px;color:#8b9baa;background:#fafcfe;border-radius:6px}
+@media(max-width:650px){#zc72-sale-modal .snote-sale-addresses,#zc72-sale-modal .snote-sale-bottom{grid-template-columns:minmax(0,1fr)}#zc72-sale-modal .snote-sale-addresses textarea{width:100%;flex-basis:180px}}

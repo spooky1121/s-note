@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.34">
+<html lang="ko" data-snote-release="2.35">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -3165,7 +3165,7 @@ button, input, select, textarea { font-family: inherit; }
 <script src="assets/vehicle-colors.js?v=2.23"></script>
 <link rel="stylesheet" href="assets/customer-contract-signature.css?v=2.22">
 <script src="assets/customer-contract-signature.js?v=2.22"></script>
-<link rel="stylesheet" href="assets/sales-popup.css?v=2.34">
+<link rel="stylesheet" href="assets/sales-popup.css?v=2.35">
 </head>
 <body class="snote-typography">
 
@@ -3799,6 +3799,7 @@ function snotePrepareRouteChange(){
  if(window.snoteIncomePrepareRouteChange&&!window.snoteIncomePrepareRouteChange())return false;
  const drafts=[...document.querySelectorAll(SNOTE_DRAFT_HOSTS)].filter(el=>el.dataset.snoteHistoryDirty==='1'&&el.getClientRects().length);
  if((drafts.length||snoteVehicleHasChanges())&&!confirm('작성 중인 내용이 있습니다. 저장하지 않고 화면을 이동할까요?'))return false;
+ snote235SaleReturn=null;
  for(const el of document.querySelectorAll(SNOTE_DRAFT_HOSTS))delete el.dataset.snoteHistoryDirty;
  closeDashboardGate();
  if($('contract-overlay').classList.contains('open'))closeContractPreview({discard:true});else ++snote214ContractView;
@@ -6117,11 +6118,19 @@ async function printQuote(){if(!$('quote-overlay').classList.contains('open'))re
 
 /* v1.9 · Contract preview (client-only draft) */
 let contractCarId=null,contractMode='sale',contractOwner={};
+let snote235SaleReturn=null;
+async function snote235ReturnToSale(kind,actor,car,view,options){
+ const target=snote235SaleReturn;snote235SaleReturn=null;
+ if(options.discard||!target||target.kind!==kind||target.actor!==actor||currentUser!==actor||target.car!==car||activeCarId!==car||target.view!==view||target.route!==route||!cars.some(c=>c.id===car&&canManageCar(c)))return false;
+ $('vehicle-overlay').classList.add('open');$('vehicle-overlay').setAttribute('aria-hidden','false');
+ await openSaleProgress();return true;
+}
 function snote222ContractSignatureContext(){
  const car=cars.find(item=>item.id===contractCarId);
  return {actor:currentUser,ownerId:car?.ownerId||'',carId:contractCarId,view:snote214ContractView,mode:contractMode,open:$('contract-overlay').classList.contains('open'),customerName:$('ct-buyer-name').value};
 }
 function snote222ResetContractSession(){
+ snote235SaleReturn=null;
  window.zc72EraseContractPersonal?.();
  if(typeof zc75ResetContractTracking==='function')zc75ResetContractTracking();
 }
@@ -6258,7 +6267,7 @@ function setContractMode(mode){if(!['sale','purchase'].includes(mode))return;if(
  const c=cars.find(x=>x.id===contractCarId);if(c){const edited=mode==='sale'?(c.status==='판매완료'&&$('detail-sold-price')?.value!==''?Number($('detail-sold-price').value):Number($('detail-sell').value)):Number($('detail-buy').value);const fallback=mode==='sale'?(c.status==='판매완료'?salePrice(c):c.sell):c.buy;const price=Number.isFinite(edited)&&edited>=0?edited:fallback;$('ct-total-price').value=Math.round(price*10000).toLocaleString('ko-KR')} ctUpdateMoney();
  buildContractPrintPages();
 }
-function openContractPreview(){delete $('contract-overlay').dataset.snoteHistoryDirty;
+function openContractPreview(){snote235SaleReturn=null;delete $('contract-overlay').dataset.snoteHistoryDirty;
  window.snote222ContractSignature?.clear();
  zc75ResetContractTracking();
  ++snote214ContractView;
@@ -6294,6 +6303,7 @@ async function closeContractPreview(options={}){
  if(window.zc72EraseContractPersonal)window.zc72EraseContractPersonal();
  $('contract-overlay').classList.remove('open');$('contract-overlay').setAttribute('aria-hidden','true');contractCarId=null;
  snote214ContractIdentityBaseline='';
+ if(await snote235ReturnToSale('contract',actor,car,view,options))return true;
  if(returningToCustomers){closeVehicle();if(route==='users')buildCustomerManagement();}
  else if(activeCarId){$('vehicle-overlay').classList.add('open');$('vehicle-overlay').setAttribute('aria-hidden','false')}
  return true;
@@ -7120,10 +7130,15 @@ function renderWorldTrims(){const table=document.getElementById('world-results')
      <label class="zc72-field"><span class="zc73-field-label">성함(명칭) <span class="zc73-required" aria-label="미입력 안내">(*)</span></span><input id="zc72-name" name="name" type="text" maxlength="50" autocomplete="off" placeholder="고객 성함"></label>
      <label class="zc72-field"><span class="zc73-field-label">주민번호(사업자)번호 <span class="zc73-required" aria-label="미입력 안내">(*)</span></span><input id="zc72-rrn" name="resident" type="text" inputmode="numeric" maxlength="14" autocomplete="off" spellcheck="false" placeholder="000000-0000000 또는 000-00-00000"></label>
      <label class="zc72-field"><span class="zc73-field-label">전화번호 <span class="zc73-required" aria-label="미입력 안내">(*)</span></span><input id="zc72-phone" name="phone" type="tel" inputmode="tel" maxlength="20" autocomplete="off" placeholder="010-0000-0000"></label>
+     <div class="snote-sale-addresses">
      <div class="zc72-field full"><label class="zc73-field-label" for="zc72-address">등본상 주소 <span class="zc73-required" aria-label="미입력 안내">(*)</span></label><div class="zc73-address-line"><textarea id="zc72-address" name="address" maxlength="220" placeholder="주소 검색으로 선택하거나 직접 입력하세요"></textarea><button type="button" onclick="zc73OpenPostcode('zc72-address')">주소 검색</button></div><input id="zc73-address-detail" class="zc73-detail" type="text" maxlength="100" autocomplete="off" placeholder="상세주소 (동·호수 등 직접 입력)"><small class="zc73-address-note">검색된 도로명주소가 등본상 주소와 일치하는지 확인해 주세요.</small><small id="zc79-address-status" class="zc79-address-status" aria-live="polite">주소 검색 버튼을 눌러 선택하면 이 칸에 자동 입력됩니다.</small></div>
 
      <div class="zc72-field full"><div class="zc74-title-row"><label class="zc73-field-label" for="zc72-mailing">등기받을 주소 (선택)</label><label class="zc74-same-wrap" for="zc74-same-address"><input id="zc74-same-address" type="checkbox" autocomplete="off"> 위 주소와 동일</label></div><div class="zc73-address-line"><textarea id="zc72-mailing" name="mailing" maxlength="220" placeholder="주소 검색으로 선택하거나 직접 입력하세요"></textarea><button id="zc74-mailing-search" type="button" onclick="zc73OpenPostcode('zc72-mailing')">주소 검색</button></div><input id="zc73-mailing-detail" class="zc73-detail" type="text" maxlength="100" autocomplete="off" placeholder="상세주소 (동·호수 등 직접 입력)"><small class="zc73-address-note">검색 후 상세주소까지 확인해 주세요.</small></div>
+     </div>
+     <div class="snote-sale-bottom">
      <div class="zc74-account-fields"><div class="zc74-account-heading">이전비 환급계좌 (선택)</div><label class="zc72-field">은행명<select id="zc74-refund-bank" name="refundBank"><option value="">은행 선택</option><option value="KB국민은행">KB국민은행</option><option value="신한은행">신한은행</option><option value="하나은행">하나은행</option><option value="우리은행">우리은행</option><option value="NH농협은행">NH농협은행</option><option value="지역 농·축협">지역 농·축협</option><option value="IBK기업은행">IBK기업은행</option><option value="SC제일은행">SC제일은행</option><option value="KDB산업은행">KDB산업은행</option><option value="한국씨티은행">한국씨티은행</option><option value="Sh수협은행">Sh수협은행</option><option value="수협회원조합">수협회원조합</option><option value="우체국">우체국</option><option value="카카오뱅크">카카오뱅크</option><option value="케이뱅크">케이뱅크</option><option value="토스뱅크">토스뱅크</option><option value="iM뱅크(구 대구은행)">iM뱅크(구 대구은행)</option><option value="부산은행">부산은행</option><option value="경남은행">경남은행</option><option value="광주은행">광주은행</option><option value="전북은행">전북은행</option><option value="제주은행">제주은행</option><option value="새마을금고">새마을금고</option><option value="신협">신협</option><option value="저축은행">저축은행</option><option value="산림조합">산림조합</option><option value="기타 금융기관">기타 금융기관</option></select></label><label class="zc72-field zc74-account-wide">계좌번호<input id="zc74-refund-account" name="refundAccount" inputmode="numeric" autocomplete="off" maxlength="32" placeholder="숫자 또는 하이픈(-)"></label><label class="zc72-field">예금주<input id="zc74-refund-holder" name="refundHolder" maxlength="50" autocomplete="off" placeholder="예금주 성함"></label></div>
+     <section id="snote-sale-signature" class="snote-sale-signature" aria-label="고객 원제출 서명"><strong>고객 원제출 서명</strong><p class="snote-sale-signature-empty">접수된 서명이 없습니다.</p></section>
+     </div>
     </div>
     <div class="zc72-error" id="zc72-error" role="alert" aria-live="polite"></div>
 
@@ -7277,6 +7292,7 @@ function zc74LoadCustomer(p){
 }
 
 async function openSaleProgress(){
+ snote235SaleReturn=null;
  if(!currentUser||isAccountant()||!activeCarId){toast('딜러 차량 상세에서만 이용할 수 있습니다.');return;}
  const c=cars.find(x=>x.id===activeCarId&&canManageCar(x));if(!c)return;
  const view=++snote214SaleView,actor=currentUser;
@@ -7293,6 +7309,7 @@ async function openSaleProgress(){
  if(view===snote214SaleView&&currentUser===actor&&zc72SaleCarId===thisCar&&!$('zc72-sale-modal').hidden)window.snoteIntakeOpen?.(loadedCustomer);
 }
 function closeSaleProgress(){
+ snote235SaleReturn=null;
  ++snote214SaleView;
  window.snoteIntakeClose?.();
  if(typeof zc85ClosePostcode==='function')zc85ClosePostcode();
@@ -7331,12 +7348,15 @@ async function saleProgressContract(event,documentType='contract'){
   if(documentType==='receipt'){
    const draft={...record,rrn:zc72RrnDisplay(rrn)}; // 출력용 메모리 값; 암호문만 DB 저장
    closeSaleProgress();
+   const receiptRoute=route,receiptView=snote214ReceiptView+1;
    await zc76OpenReceipt(draft,car);
+   if(currentUser===actor&&activeCarId===carId&&route===receiptRoute&&snote214ReceiptView===receiptView&&!$('zc76-receipt-overlay').hidden&&zc80ReceiptCarId===carId)snote235SaleReturn={kind:'receipt',actor,car:carId,view:receiptView,route:receiptRoute};
    toast('인수증에 고객·차량정보를 자동 입력했습니다. 확인 후 상단 인쇄 버튼을 누르세요.');
    return;
   }
   closeSaleProgress();
   openContractPreview();
+  snote235SaleReturn={kind:'contract',actor,car:carId,view:snote214ContractView,route};
   // 기존 계약서의 을(매수인) 영역에 사용자 입력을 반영.
   $('ct-buyer-name').value=name;
   $('ct-buyer-id').value=zc72RrnDisplay(rrn);
@@ -7728,6 +7748,7 @@ function zc76FitReceipt(){
  else el.style.removeProperty('--zc76-scale');
 }
 async function zc76OpenReceipt(person,car){
+ snote235SaleReturn=null;
  if(!currentUser||isAccountant()||!car||car.ownerId!==currentUser.username)return;
  const actor=currentUser,view=++snote214ReceiptView,routeAtStart=route,activeAtStart=activeCarId;
  const account=await getAccount(currentUser.username).catch(()=>null);
@@ -7778,6 +7799,7 @@ async function zc76CloseReceipt(options={}){
  snote214ReceiptIdentityBaseline='';
  zc76Value('zc76-rrn','');zc76Value('zc76-sign-name','');zc76SelectReset();
  snote215ReceiptSignature(null);
+ await snote235ReturnToSale('receipt',actor,carId,view,options);
  return true;
 }
 function zc76PrintReceipt(){
@@ -7791,7 +7813,7 @@ function zc76PrintReceipt(){
 }
 window.addEventListener('resize',zc76FitReceipt);
 document.addEventListener('keydown',event=>{
- if(event.key==='Escape'&&zc76ReceiptOpen){event.preventDefault();zc76CloseReceipt()}
+ if(event.key==='Escape'&&zc76ReceiptOpen){event.preventDefault();event.stopImmediatePropagation();zc76CloseReceipt()}
 },true);
 document.getElementById('zc76-price').addEventListener('input',function(){
  const digits=this.value.replace(/\D/g,'').slice(0,9);this.value=digits?Number(digits).toLocaleString('ko-KR'):'';
@@ -9344,11 +9366,11 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 })();
 
 </script>
-<script src="assets/snote-customer-intake.js?v=2.34" defer></script>
+<script src="assets/snote-customer-intake.js?v=2.35" defer></script>
 <script type="module" src="assets/quick-calculator.js?v=2.17"></script>
 <script type="module" src="assets/vehicle-taxonomy-ui.js?v=2.20"></script>
 <script type="module" src="assets/income-settlement-parent.js?v=2.25"></script>
-<script src="assets/release-info.js?v=2.34" defer></script>
+<script src="assets/release-info.js?v=2.35" defer></script>
 <script src="assets/snote-encar-link.js?v=2.33.1" defer></script>
 </body>
 </html>
