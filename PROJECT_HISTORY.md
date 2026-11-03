@@ -11,6 +11,12 @@
 - 기존 실제 HTML/Chromium 차량·엔카·저장·모바일 회귀 **27/27** 통과. 신규 **1440/390/320px 3묶음**에서 딜러/경리 한 줄 요약54px 이하·동일 행·body overflow 없음, 모든 placeholder 색상, 휴지통/+ /순환 SVG·색상·이름, 실제 수리 행 추가/삭제, 실제 파일 선택으로 사진 추가/점검기록부 교체, 삭제 취소/확정, 원래 현금 투자금920만원 실시간 계산을 확인했다. 합성 PNG/IndexedDB/HTTP/인증이며 운영 자료를 사용하지 않았다.
 - 최종 PC·모바일 요약/미디어 화면을 직접 확인했다. 로그 `/workspace/work/v238-*`, 화면 `/tmp/snote-detail-v238/`에 보관한다. 서버 Functions·DB·SQL·키 설정 변경은 없다. 배포 결과는 후속 기록으로 구분한다.
 
+### v2.38 배포
+
+- 앱 `0d27c44a1ba22bf21c897a87c91b3eea9932aa6a`를 main에 정상 push했다. 2026-11-03 22:05:17 KST 완료된 [s-note Pages 체크 125934886119](https://github.com/spooky1121/s-note/runs/125934886119)의 `success / Deployed successfully`, Latest commit `0d27c44` 일치를 확인했다.
+- 개별 배포 https://8a9b98e1.s-note.pages.dev , 운영 주소 https://s-note.pages.dev/?release=2.38 . 검증은 실제 HTML/Chromium과 합성 HTTP·계정·PNG/IndexedDB 기준이며 운영 차량·고객·문자 발송은 사용하지 않았다. 기존 운영 URL 직접 조회403 제한은 반복하지 않았다.
+- 별도 Workers `zerocar-office` 빌드는 실패했고 Pages `zerocar-office`와 요청 대상 Pages `s-note`는 성공했다. 요청 대상 배포와 별도 Workers 결과를 구분한다. 후속 문서 전용 커밋은 앱을 변경하지 않는다.
+
 ## 2026-11-03 — v2.37 고객 검색·목록 정리·차량 삭제·엔카 로딩/복원
 
 - 기존 변경 없는 `542b963`에서 작업했다. 판매 완료 차량 상세의 엔카 조회 아이콘을 숨기며 이미 저장된 광고 링크는 유지한다. 판매 상태가 같은 객체에서 바뀌거나 광고 정보가 갱신되는 경우에도 표시를 동기화한다.
