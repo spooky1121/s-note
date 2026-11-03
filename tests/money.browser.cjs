@@ -4,13 +4,16 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('n
 const ROOT=path.resolve(__dirname,'..');
 (async()=>{const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium'});setBrowser(browser);try{
  for(const width of[1440,390,320]){
-  const f=await fixture(width),p=f.page;assert.equal(await p.locator('#detail-buy').inputValue(),'10000000');assert.equal(await p.locator('#detail-sell').inputValue(),'12000000');
+  const f=await fixture(width),p=f.page;assert.equal(await p.locator('#detail-buy').inputValue(),'10,000,000');assert.equal(await p.locator('#detail-sell').inputValue(),'12,000,000');
   await p.locator('#detail-buy').fill('10000001');await p.locator('#detail-sell').fill('12000004');await p.locator('#detail-bodywork').fill('1');await p.locator('#detail-purchaseFee').fill('2');await p.locator('#detail-repair-items .repair-memo').fill('합성 수리');await p.locator('#detail-repair-items .repair-amount').fill('3');
   assert.deepEqual(await p.locator('.detail-summary strong').allTextContents(),['6원','10,000,007원','1,999,997원']);
-  await p.locator('#detail-buy').press('End');await p.locator('#detail-buy').press('.');assert.equal(await p.locator('#detail-buy').inputValue(),'10000001');
-  assert.equal(await p.evaluate(()=>saveVehicleCosts({closeAfterSave:false})),true);
+  const buy=p.locator('#detail-buy');await buy.focus();await buy.evaluate(e=>e.setSelectionRange(3,3));await buy.press('Backspace');assert.equal(await buy.inputValue(),'1,000,001');await buy.fill('10,000,001');
+  await buy.evaluate(e=>e.setSelectionRange(3,3));await buy.press('2');assert.equal(await buy.inputValue(),'102,000,001');assert.equal(await buy.evaluate(e=>e.selectionStart),3);await buy.fill('10,000,001');
+  await buy.evaluate(e=>e.setSelectionRange(2,2));await buy.press('Delete');assert.equal(await buy.inputValue(),'1,000,001');await buy.fill('10,000,001');
+  await p.locator('#detail-buy').press('End');await p.locator('#detail-buy').press('.');assert.equal(await p.locator('#detail-buy').inputValue(),'10,000,001');
+  await buy.blur();assert.equal(await p.evaluate(()=>saveVehicleCosts({closeAfterSave:false})),true);
   const wire=await p.evaluate(()=>structuredClone(window.__encarFixtureCars));assert.equal(wire[0].buy,1000.0001);assert.equal(wire[0].costs.bodywork,.0001);assert.equal(wire[0].repairItems[0].amount,.0003);assert.equal(wire[1].buy,1500);
-  await p.evaluate(()=>{loadCarsForUser();renderVehicle()});assert.equal(await p.locator('#detail-buy').inputValue(),'10000001');assert.deepEqual(await p.locator('.detail-summary strong').allTextContents(),['6원','10,000,007원','1,999,997원']);
+  await p.evaluate(async()=>{await closeVehicle({discard:true});loadCarsForUser();openVehicle('encar-car-1')});assert.equal(await p.locator('#detail-buy').inputValue(),'10,000,001');assert.deepEqual(await p.locator('.detail-summary strong').allTextContents(),['6원','10,000,007원','1,999,997원']);
   await p.evaluate(()=>{const old=currentUser;window.__moneyActor=old;window.__encarFixtureState.ready=false;currentUser={...old,role:'admin'};persistFinanceCompanies([['검증금융',1500000001,6]]);restoreFinanceCompanies();window.__moneyLimit=ACC44_LENDER_LIMITS[0][1];zc182WriteFinance([{id:'fin-money',model:'합성 재고금융 차량',plate:'99가9999',dealerId:old.username,loan:1234001,lender:'검증금융',moneyUnit:'KRW'}]);window.__moneyLedger=zc182FinEntries()[0].loan;localStorage.setItem(PRESTOCK_V148_KEY,JSON.stringify([{id:'ps-money',date:'2026-11-03',plate:cars[0].plate,model:'단위 검증',amount:500000,repaid:false}]));window.__moneyPrestock=prestockForCar(cars[0]);currentUser=old;window.__encarFixtureState.ready=true;});
   assert.deepEqual(await p.evaluate(()=>[window.__moneyLimit,window.__moneyLedger,window.__moneyPrestock]),[1500000001,1234001,500000]);
   await p.evaluate(()=>openQuotePreview());assert.equal(await p.evaluate(()=>quoteVehiclePrice),12000004);await p.evaluate(()=>closeQuotePreview());
