@@ -17,6 +17,12 @@
 - 최종 스크린샷을 직접 확인했다. 로그 `/tmp/snote-vehicle-v233-browser.log`, `vehicle-form-v233-*`/`vehicle-palette-v233-*` 스크린샷은 실행 환경 임시 산출물이다. HTTP/인증/DB는 합성이며 실제 운영 자료에 접근하지 않았다.
 - 최종 Node300/300·화면/통합101/101·구문/diff 검사 이후 기능 소스는 동결했다. 원격 반영/Pages 결과는 아래 후속 기록으로 구분한다.
 
+### v2.33 배포
+
+- 앱 `44cac01d3f34be2405105fe3409ce98639492d9c`를 main에 정상 push했다. 2026-11-03 19:29:05 KST에 [s-note Pages 최신 완료 체크 125861272590](https://github.com/spooky1121/s-note/runs/125861272590)의 `succeeded / Deployed successfully`, Latest commit `44cac01`와 원격 main SHA 일치를 확인했다. 이전 Building run `125860950048`에 고정하지 않고 새 완료 run을 확인했다.
+- 새 개별 배포는 https://0dc3124e.s-note.pages.dev , 운영 주소는 https://s-note.pages.dev/?release=2.33 이다. 실제 운영 화면은 직접 HTTP로 읽지 못했고 사용자 확인도 아직 없으므로 개별 배포 성공과 구분한다.
+- SQL·추가 API 설정은 없다. 이후 문서 전용 커밋은 앱을 변경하지 않으며 앱 기준은 `44cac01`이다.
+
 ## 2026-11-03 — v2.32 차량 상세 단순화와 저장 확인
 
 - 차명 옆에 엔카·견적서·판매진행·저장 44px 선형 SVG 아이콘을 모았다. 각각 `엔카광고보기`·`견적서`·`판매진행`·`변경사항저장` 툴팁과 접근성 이름을 제공한다. 저장의 이름은 `저장`이며 기존 중간 액션 행은 제거했다. 엔카 버튼의 busy/취소/다시 조회에도 아이콘을 유지한다.
