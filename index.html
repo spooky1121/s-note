@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.42">
+<html lang="ko" data-snote-release="2.43">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -1116,6 +1116,9 @@ body.accountant-mode #vehicle-overlay .car-identity-section{margin-bottom:14px}
 .ps-add{background:#328ecc;color:#fff;border:0;height:39px;border-radius:9px;padding:0 9px;white-space:nowrap;font-size:12px;font-weight:900;cursor:pointer;box-shadow:0 3px 10px #3a9cd426}
 .ps-add:hover{background:#267cbb}
 .ps-add:focus-visible{outline:3px solid #b7e1ff;outline-offset:2px}
+#prestock-card .ps-add{display:inline-grid;place-items:center;justify-self:end;width:40px;min-width:40px;height:39px;padding:8px;border:1px solid #dce5ff;border-radius:9px;background:#f5f8ff;color:#315cf5;box-shadow:none}
+#prestock-card .ps-add:hover{background:#eaf0ff;border-color:#c5d5ff}
+#prestock-card .ps-add svg{display:block;width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .ps-disclaimer{margin:10px 0 0!important;color:#9aa8b5!important;font-size:9.5px!important;line-height:1.7!important}
 @media(max-width:1150px){.ps-fields{grid-template-columns:repeat(3,minmax(0,1fr))}.ps-add{width:100%}.ps-stat>strong{font-size:20px}}
 @media(max-width:700px){.ps-card{padding:16px 13px;border-radius:14px}.ps-head{align-items:flex-start;flex-direction:column;gap:11px}.ps-bank-label{width:100%;min-width:0;text-align:left}.ps-stats{grid-template-columns:1fr;gap:8px}.ps-stat{padding:12px 14px}.ps-stat>strong{font-size:21px;margin:6px 0 3px}.ps-scroll{max-height:370px}.ps-fields{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.ps-fields label:nth-child(2){grid-column:span 2}.ps-fields label:nth-child(5){grid-column:span 2}.ps-add{grid-column:1/-1}.ps-form-title span{font-size:9px}.ps-card .ps-head h3{font-size:17px}}
@@ -5027,12 +5030,12 @@ function prestockTableRow(r){
  const badge=r.repaid?'<span class="ps-repaid-tag">✓ 상환완료</span>':'';
  const adjusted=r.type==='adjustment';
  const amountCell=adjusted?`<span class="ps-amount-trigger" title="차량 상세에서 관리하는 금액 조정 내역" style="cursor:default">${value} <small>조정</small></span>`:editing?`<div class="ps-money-editor"><input id="ps-edit-amount" aria-label="수정 지급액 (원)" value="${amount?prestockFormatWon(amount):''}" type="text" maxlength="20" inputmode="numeric" oninput="formatPrestockWon(this)" onkeydown="prestockEditKey(event,'${esc(r.id)}')"/><button type="button" class="ps-edit-save" onclick="confirmPrestockEdit('${esc(r.id)}')">수정</button><button type="button" class="ps-edit-cancel" onclick="cancelPrestockEdit()" aria-label="금액 수정 취소">×</button></div>`:`<button type="button" class="ps-amount-trigger" aria-label="${esc(r.model)} 지급액 메뉴 열기" aria-haspopup="menu" aria-expanded="${psMenuId===r.id?'true':'false'}" onclick="openPrestockMenu(event,'${esc(r.id)}')"><span class="${amount?'':'ps-amount-blank'}">${value}</span><span class="ps-chevron">▾</span></button>`;
- return `<tr class="${r.type==='tax'?'ps-tax':''} ${r.sample?'ps-example':'ps-user-entry'} ${r.repaid?'ps-repaid':''}" data-prestock-row="${esc(r.id)}"><td>${esc(date)}</td><td class="ps-primary">${esc(r.model||'-')}${badge}</td><td class="snote222-color-column">${snote222VehicleColor(snote222LedgerColor(r))}</td><td>${esc(r.plate||'-')}</td><td>${esc(r.dealer||'-')}</td><td class="ps-money ps-money-action">${amountCell}</td></tr>`;
+ return `<tr class="${r.type==='tax'?'ps-tax':''} ${r.sample?'ps-example':'ps-user-entry'} ${r.repaid?'ps-repaid':''}" data-prestock-row="${esc(r.id)}"><td>${esc(date)}</td><td class="ps-primary">${esc(r.model||'-')}${badge}</td><td>${esc(r.plate||'-')}</td><td>${esc(r.dealer||'-')}</td><td class="ps-money ps-money-action">${amountCell}</td></tr>`;
 }
 function prestockMobileRow(r){
  const editing=psEditingId===r.id, amount=Number(r.amount)||0, value=amount?prestockFormatWon(amount):'-', adjusted=r.type==='adjustment';
  const editor=adjusted?`<span class="ps-amount-trigger" title="상세에서 수정할 수 있는 금액 조정 내역">${value}원 · 조정</span>`:editing?`<div class="ps-money-editor"><input id="ps-edit-amount-mobile" aria-label="수정 지급액 (원)" value="${amount?prestockFormatWon(amount):''}" type="text" inputmode="numeric" maxlength="20" oninput="formatPrestockWon(this)" onkeydown="prestockEditKey(event,'${esc(r.id)}')"/><button type="button" class="ps-edit-save" onclick="confirmPrestockEdit('${esc(r.id)}')">수정</button><button type="button" class="ps-edit-cancel" onclick="cancelPrestockEdit()">×</button></div>`:`<button type="button" class="ps-amount-trigger" aria-label="${esc(r.model)} 지급액 메뉴 열기" aria-haspopup="menu" onclick="openPrestockMenu(event,'${esc(r.id)}')"><span>${value==='-'?'-':value+'원'}</span><span class="ps-chevron">▾</span></button>`;
- return `<article class="ps-mobile-row ${r.repaid?'ps-repaid':''}" data-prestock-row="${esc(r.id)}"><div class="ps-mobile-title"><div><span class="snote222-model-line"><strong>${esc(r.model||'-')}</strong>${snote222VehicleColor(snote222LedgerColor(r))}</span>${r.repaid?'<span class="ps-repaid-tag">✓ 상환완료</span>':''}</div><span class="ps-mobile-date">${esc(String(r.date||'').replaceAll('-','.'))}</span></div><div class="ps-mobile-meta"><span>차량번호 <b>${esc(r.plate||'-')}</b></span><span>담당자 <b>${esc(r.dealer||'-')}</b></span></div><div class="ps-mobile-amount"><span>지급액</span>${editor}</div></article>`;
+ return `<article class="ps-mobile-row ${r.repaid?'ps-repaid':''}" data-prestock-row="${esc(r.id)}"><div class="ps-mobile-title"><div><span class="snote222-model-line"><strong>${esc(r.model||'-')}</strong></span>${r.repaid?'<span class="ps-repaid-tag">✓ 상환완료</span>':''}</div><span class="ps-mobile-date">${esc(String(r.date||'').replaceAll('-','.'))}</span></div><div class="ps-mobile-meta"><span>차량번호 <b>${esc(r.plate||'-')}</b></span><span>담당자 <b>${esc(r.dealer||'-')}</b></span></div><div class="ps-mobile-amount"><span>지급액</span>${editor}</div></article>`;
 }
 function prestockVisibleEdit(){return window.matchMedia('(max-width:760px)').matches?($('ps-edit-amount-mobile')||$('ps-edit-amount')):($('ps-edit-amount')||$('ps-edit-amount-mobile'));}
 function prestockSection(){
@@ -5047,10 +5050,10 @@ function prestockSection(){
    <div class="ps-stat ps-balance ${balance<0?'ps-negative':''}"><span>선재고 현재 잔액</span><strong id="ps-balance">${prestockFormatWon(balance)}<small>원</small></strong><p>통장 총액 − 미상환 합계</p></div>
   </div>
   <div class="ps-ledger-head"><div><h4>선재고 거래 내역</h4><p>지급액을 클릭하면 상환·금액수정·취소가 가능합니다.</p></div><span class="ps-row-count" id="ps-row-count">미상환 ${rows.filter(r=>!r.repaid).length}건</span></div>
-  <div class="ps-scroll" id="ps-scroll"><table class="ps-table"><thead><tr><th>일자</th><th>차명 / 내용</th><th class="snote222-color-column">색상</th><th>차량번호</th><th>담당자</th><th class="ps-money">지급액 (원) ▾</th></tr></thead><tbody id="ps-tbody">${displayRows.map(prestockTableRow).join('')}</tbody><tfoot><tr><td colspan="5">미상환 지급 합계</td><td id="ps-table-total" class="ps-money">${prestockFormatWon(total)}</td></tr></tfoot></table></div><div class="ps-mobile-list" id="ps-mobile-list">${displayRows.map(prestockMobileRow).join('')}</div><div class="ps-list-controls" id="ps-list-controls">${prestockMoreMarkup(rows.length)}</div>
+  <div class="ps-scroll" id="ps-scroll"><table class="ps-table"><thead><tr><th>일자</th><th>차명 / 내용</th><th>차량번호</th><th>담당자</th><th class="ps-money">지급액 (원) ▾</th></tr></thead><tbody id="ps-tbody">${displayRows.map(prestockTableRow).join('')}</tbody><tfoot><tr><td colspan="4">미상환 지급 합계</td><td id="ps-table-total" class="ps-money">${prestockFormatWon(total)}</td></tr></tfoot></table></div><div class="ps-mobile-list" id="ps-mobile-list">${displayRows.map(prestockMobileRow).join('')}</div><div class="ps-list-controls" id="ps-list-controls">${prestockMoreMarkup(rows.length)}</div>
   <div id="ps-action-menu" class="ps-action-pop" role="menu" aria-label="선재고 지급액 작업"><button type="button" role="menuitem" onclick="choosePrestockAction('repay')">선재고상환</button><button type="button" role="menuitem" onclick="choosePrestockAction('edit')">금액수정</button><button type="button" class="ps-danger" role="menuitem" onclick="choosePrestockAction('delete')">취소</button></div>
-  <form class="ps-entry-form" id="ps-entry-form" autocomplete="off" onsubmit="addPrestockEntry(event)"><div class="ps-form-title"><strong>＋ 선재고 내역 추가</strong><span>입력 후 추가 버튼을 누르면 목록과 잔액에 바로 반영됩니다.</span></div><div class="ps-fields">
-   <label>일자 <input id="ps-date" type="date" value="${now}" onclick="openDateInputCalendar(this)" required aria-label="선재고 일자" /></label><label>차명 / 내용 <input id="ps-model" type="text" maxlength="65" placeholder="예: 코나 / 세금 납부" required aria-label="차명 또는 내용" /></label><label>차량번호 <input id="ps-plate" type="text" maxlength="22" placeholder="선택 입력" aria-label="선재고 차량번호" /></label><label>담당자 <input id="ps-dealer" type="text" maxlength="35" placeholder="선택 입력" aria-label="선재고 담당자" /></label><label>지급액 (원) <input id="ps-amount" type="text" inputmode="numeric" placeholder="예: 15,000,000" maxlength="20" oninput="formatPrestockWon(this)" aria-label="선재고 지급액 (원)" /></label><button class="ps-add" type="submit">＋ 추가</button>
+  <form class="ps-entry-form" id="ps-entry-form" autocomplete="off" onsubmit="addPrestockEntry(event)"><div class="ps-form-title"><strong>선재고 내역 추가</strong><span>입력 후 추가 버튼을 누르면 목록과 잔액에 바로 반영됩니다.</span></div><div class="ps-fields">
+   <label>일자 <input id="ps-date" type="date" value="${now}" onclick="openDateInputCalendar(this)" required aria-label="선재고 일자" /></label><label>차명 / 내용 <input id="ps-model" type="text" maxlength="65" placeholder="예: 코나 / 세금 납부" required aria-label="차명 또는 내용" /></label><label>차량번호 <input id="ps-plate" type="text" maxlength="22" placeholder="선택 입력" aria-label="선재고 차량번호" /></label><label>담당자 <input id="ps-dealer" type="text" maxlength="35" placeholder="선택 입력" aria-label="선재고 담당자" /></label><label>지급액 (원) <input id="ps-amount" type="text" inputmode="numeric" placeholder="예: 15,000,000" maxlength="20" oninput="formatPrestockWon(this)" aria-label="선재고 지급액 (원)" /></label><button class="ps-add" type="submit" aria-label="선재고 내역 추가" title="선재고 내역 추가">${snote238VehicleIcon('add')}</button>
   </div></form>
   <p class="ps-disclaimer">※ 모든 선재고 금액은 원(₩) 단위 정수로 표시·입력합니다. 기존 저장금액은 변환하지 않고 원 단위 그대로 보존합니다. 상환완료 건은 미상환 합계에서 제외되며, 실제 은행 계좌와 자동 연동되지는 않습니다.</p>
  </section>`;
@@ -9335,7 +9338,7 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 <script type="module" src="assets/quick-calculator.js?v=2.36"></script>
 <script type="module" src="assets/vehicle-taxonomy-ui.js?v=2.20"></script>
 <script type="module" src="assets/income-settlement-parent.js?v=2.41"></script>
-<script src="assets/release-info.js?v=2.42" defer></script>
+<script src="assets/release-info.js?v=2.43" defer></script>
 <script src="assets/snote-encar-link.js?v=2.40" defer></script>
 </body>
 </html>
