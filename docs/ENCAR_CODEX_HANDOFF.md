@@ -10,6 +10,8 @@ v2.31 조회/서버 저장/새로고침 후 복원/빨간 X는 사용자 운영 
 
 검증: 실제 HTML/Chromium **16개 묶음 통과**, 기존15개에 320×640 작은 화면을 추가했다. PC/390px/320px의 원 중심=popup.right/top(오차0.5px 미만), 전체 원 viewport 안/9점 hit, 6개 광고/900px 스크롤, Enter/좌표 클릭, dialog 범위·다른 팝업·기존 저장/복원 회귀를 확인했다. 문법/diff/버전 단일 기준/마지막 body 연결도 통과했다. 엔카/서버 JS가 같으므로 이전 Node296개는 재실행하지 않았다. 브라우저 HTTP/DB는 합성이다.
 
+배포: `3f660ffd1f26b589f4dbb8273509dd1ab29be50d`를 main에 반영했고 2026-11-03 17:27:36 KST에 [s-note Pages 완료 체크 125807263330](https://github.com/spooky1121/s-note/runs/125807263330)의 `succeeded / Deployed successfully`, Latest commit `3f660ff`와 원격 SHA 일치를 확인했다. 개별 배포는 https://ab5a065a.s-note.pages.dev 이다. 운영 https://s-note.pages.dev 의 새 CSS 화면을 직접 HTTP로 읽은 확인은 아니다. 후속 문서 커밋과 무관하게 앱 기준은 `3f660ff`다.
+
 ## 2026-11-03 v2.31 — 확인된 링크를 차량 서버 자료에 저장
 
 조회 성공 후 판매자/별도 검증된 믿고 링크를 차량의 `encarLinks`에 저장한다. 형식은 `{version:1, plate, verifiedAt, listings:[{id, model, sellerUrl, trustedId, trustedUrl}]}`이며 최대 12개 원본만 허용한다. 공식 HTTPS 고정 URL과 ID를 대조하고, 같은 원본 ID를 믿고로 중복 표시하지 않는다. 검증 실패/부분 실패는 새 링크로 저장하지 않는다.

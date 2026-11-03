@@ -13,6 +13,12 @@
 - 6개 광고로 헤더가 늘어난 경우와 900px 스크롤 후에도 같은 위치다. 닫기 Enter/실제 좌표 클릭, 같은 dialog 안의 버튼/제목, 다른 팝업 스타일, 엔카 저장·새 기기 복원 회귀도 통과했다.
 - 변경 JS/테스트 문법·diff·버전 단일 기준/실제 마지막 body 연결 검사 통과. 엔카/서버 JS는 v2.31과 동일하므로 이전 Node 296개 결과를 유지하고 이번에는 화면 회귀만 다시 실행했다. 외부 HTTP/인증/DB는 합성이다.
 
+### v2.31.1 배포
+
+- 앱 SHA `3f660ffd1f26b589f4dbb8273509dd1ab29be50d`를 main에 정상 반영했다. 2026-11-03 17:27:36 KST에 [s-note Pages 최신 완료 체크 125807263330](https://github.com/spooky1121/s-note/runs/125807263330)의 `succeeded / Deployed successfully`, Latest commit `3f660ff`와 원격 main SHA 일치를 확인했다.
+- 개별 배포: https://ab5a065a.s-note.pages.dev . 운영 주소: https://s-note.pages.dev . 운영 별칭의 새 X 위치는 직접 HTTP로 확인하지 못했으며, v2.31의 저장/복원 사용자 확인과 이번 CSS의 로컬 실제 브라우저 확인을 구분한다.
+- 이후 문서 전용 기록은 앱 코드를 바꾸지 않는다. 배포 앱 기준은 `3f660ff`다.
+
 ## 2026-11-03 — v2.31 엔카 광고 서버 저장·복원과 차량 상세 닫기 개선
 
 - 공식 엔카 검증에 성공한 판매자/믿고 광고 ID·고정 상세 URL·확인 시각을 차량의 `encarLinks`에 저장한다. 기존 소유자별 `cars` 데이터와 `persistCars` → `zc_write_dataset`의 권한·revision 충돌 검사를 재사용하므로 추가 SQL·테이블·API 키는 필요 없다. 경리 계정은 기존 읽기 권한을 유지하며 자동 저장은 담당 딜러/관리자만 수행한다.
