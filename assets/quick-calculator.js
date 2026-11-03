@@ -66,12 +66,13 @@ if(trigger){
     const rect=trigger.getBoundingClientRect(),viewport=window.visualViewport;
     const leftEdge=viewport?.offsetLeft||0,topEdge=viewport?.offsetTop||0;
     const width=viewport?.width||innerWidth,height=viewport?.height||innerHeight;
-    const cardWidth=Math.min(304,width-24);
-    const left=Math.max(leftEdge+12,Math.min(rect.right-cardWidth,leftEdge+width-cardWidth-12));
-    let top=rect.bottom+10;
-    if(topEdge+height-top<180)top=topEdge+12;
+    const cardWidth=Math.min(304,width-56);
+    const left=Math.max(leftEdge+28,Math.min(rect.right-cardWidth,leftEdge+width-cardWidth-28));
+    let top=rect.bottom+28;
+    if(topEdge+height-top<180)top=topEdge+28;
     panel.style.width=cardWidth+'px';panel.style.left=left+'px';panel.style.top=top+'px';
-    panel.style.maxHeight=Math.max(0,topEdge+height-top-12)+'px';
+    const available=Math.max(0,topEdge+height-top-28);
+    panel.style.maxHeight=available+'px';panel.style.setProperty('--snote-calculator-body-height',Math.max(0,available-34)+'px');
   }
   function close(restoreFocus=false,immediate=false){
     if(!opened&&panel.hidden)return;

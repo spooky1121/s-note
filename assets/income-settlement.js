@@ -1,3 +1,4 @@
+if(window.parent!==window)document.documentElement.dataset.embedded='true';
 import {TEMPLATE,createDocument,normalizeDocument,calculate,parseMoney,draftDocument,invoiceCostSuggestions} from './income-settlement-model.js';
 import {buildForm} from './income-settlement-view.js?v=2.25';
 import {buildPrintSnapshot} from './income-settlement-print.js?v=2.25';

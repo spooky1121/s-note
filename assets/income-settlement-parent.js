@@ -3,7 +3,7 @@ import {createSource,createDocument,sourceFingerprint} from './income-settlement
 const bridge=()=>window.snoteIncomeSettlementBridge;
 const dialog=document.createElement('dialog');dialog.id='snote221-income-dialog';dialog.setAttribute('aria-label','차량 소득정산');
 const frame=document.createElement('iframe');frame.id='snote221-income-frame';frame.title='차량별 매입매출 및 소득정산';
-const loadingClose=document.createElement('button');loadingClose.id='snote221-income-loading-close';loadingClose.type='button';loadingClose.textContent='×';loadingClose.setAttribute('aria-label','소득정산 닫기');loadingClose.addEventListener('click',()=>close());
+const loadingClose=document.createElement('button');loadingClose.id='snote221-income-loading-close';loadingClose.type='button';loadingClose.textContent='×';loadingClose.setAttribute('aria-label','소득정산 닫기');loadingClose.addEventListener('click',()=>{if(active?.initial&&active.ready)post(active,{type:'SNOTE_INCOME_REQUEST_CLOSE'});else close();});
 dialog.append(loadingClose,frame);document.body.append(dialog);
 let active=null;
 function failure(code,message){return Object.assign(new Error(message),{code});}
@@ -53,7 +53,7 @@ async function demoRequest(context,body){
  if(body.action==='save')throw failure('ONLINE_REQUIRED','서버 저장은 온라인 계정으로 로그인한 뒤 사용할 수 있습니다. 현재 작성본은 인쇄할 수 있습니다.');
  return {ok:true,stored:false,source,sourceVersion,document:createDocument(source),baseVersion:null,revision:0};
 }
-function init(context){if(context.ready&&context.initial&&current(context)){loadingClose.hidden=true;post(context,{type:'SNOTE_INCOME_INIT',context:context.public,...publicData(context.initial)});}}
+function init(context){if(context.ready&&context.initial&&current(context)){loadingClose.hidden=false;post(context,{type:'SNOTE_INCOME_INIT',context:context.public,...publicData(context.initial)});}}
 async function open(carId){
  if(active?.base.carId===carId&&dialog.open)return;
  if(active?.dirty&&!confirm('현재 작성 중인 정산서 대신 다른 차량을 열까요?'))return;
@@ -63,7 +63,7 @@ async function open(carId){
  const context={base,public:{...base,key:base.key+':'+nonce},dirty:false,ready:false,initial:null,tail:Promise.resolve()};
  active=context;
  loadingClose.hidden=false;
- try{frame.contentWindow.location.replace('income-settlement.html?v=2.25');}catch(_){frame.src='income-settlement.html?v=2.25';}
+ try{frame.contentWindow.location.replace('income-settlement.html?v=2.36');}catch(_){frame.src='income-settlement.html?v=2.36';}
  dialog.showModal();
  try{context.initial=await enqueue(context,()=>request(context,{action:'load'}));init(context);}
  catch(error){if(current(context)){close();window.toast?.(error.message||'정산서를 불러오지 못했습니다.');}}

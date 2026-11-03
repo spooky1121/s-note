@@ -1,0 +1,31 @@
+.snote-pagination{display:flex;justify-content:center;align-items:center;gap:6px;flex-wrap:wrap;margin:20px 0 4px}
+.snote-pagination[hidden]{display:none}
+.snote-pagination button{min-width:36px;height:36px;border:1px solid #dce5ed;border-radius:8px;background:white;color:#52677f;cursor:pointer;font:600 12px sans-serif}
+.snote-pagination button[aria-current=page]{background:#245f86;color:white;border-color:#245f86}
+.snote-pagination button:disabled{opacity:.4;cursor:default}
+.snote-page-count{flex-basis:100%;text-align:center;font-size:12px;color:#74879a;margin-bottom:4px}
+.snote-pagination button:focus-visible{outline:3px solid #147db4;outline-offset:2px}
+@media screen{
+ .snote-popup-overlay{padding:28px!important;box-sizing:border-box!important;align-items:center!important;justify-content:center!important}
+ .snote-popup-frame{position:relative;flex:none;width:min(var(--snote-popup-width,960px),100%);max-width:100%;min-width:0;overflow:visible}
+ .snote-popup-frame>.snote-popup-card{box-sizing:border-box;width:100%!important;max-width:100%!important;max-height:calc(100dvh - 56px)!important;height:auto;overflow:auto!important;margin:0!important}
+ button.snote-popup-close{position:absolute!important;inset:-22px -22px auto auto!important;z-index:100!important;display:grid!important;place-items:center!important;width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;padding:0!important;margin:0!important;border:2px solid white!important;border-radius:50%!important;background:#df3546!important;color:white!important;box-shadow:0 3px 12px #7a142c40!important;font:30px/1 sans-serif!important;cursor:pointer!important;transform:none!important}
+ button.snote-popup-close:hover{background:#bf2435!important}
+ button.snote-popup-close:focus-visible{outline:3px solid #147db4!important;outline-offset:3px!important}
+ button.snote-popup-close[hidden]{display:none!important}
+ button.snote-popup-close svg{display:none!important}
+ dialog.snote-popup-native{overflow:visible!important;max-width:calc(100vw - 56px)!important;max-height:calc(100dvh - 56px)!important;box-sizing:border-box}
+ .snote-popup-native-body{max-height:calc(100dvh - 120px);overflow:auto;min-width:0}
+ #snote221-income-dialog.snote-popup-native{width:min(1200px,calc(100vw - 56px));height:calc(100dvh - 56px);border-radius:18px}
+ #snote221-income-dialog>.snote-popup-native-body{height:100%;max-height:100%;overflow:hidden;border-radius:inherit}
+ #snote-calculator-panel{overflow:visible!important;max-width:calc(100vw - 56px)!important}
+ #zoom-overlay.snote-popup-overlay .snote-popup-frame{width:min(1100px,100%)}
+ .snote-zoom-body{position:relative;max-height:calc(100dvh - 56px);overflow:auto}
+ #snote201-image-zoom .snote201-zoom-toolbar, #zoom-overlay .zoom-toolbar{position:sticky;inset:auto;top:0;display:flex;justify-content:flex-end}
+ #zoom-overlay #zoom-image{max-height:calc(100dvh - 110px);max-width:100%}
+}
+@media print{.snote-popup-close,.snote-pagination{display:none!important}.snote-popup-frame{display:contents}}
+
+@media screen{.mobile-drawer-header button.snote-popup-close{inset:14px 14px auto auto!important}#snote201-image-zoom img{max-width:100%;max-height:calc(100dvh - 110px)}.snote-popup-native-body>iframe{min-height:100%}}
+
+@media screen{.snote-calculator-content{max-height:var(--snote-calculator-body-height,calc(100dvh - 150px));overflow:auto}}
