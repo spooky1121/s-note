@@ -1,0 +1,57 @@
+/* Keep the vehicle detail close action at its own top-right corner. */
+@media screen {
+  #vehicle-overlay .vehicle-header {
+    min-height: 76px;
+    padding-right: 76px;
+  }
+
+  #vehicle-overlay .vehicle-header > div:first-child {
+    flex: 1;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  #vehicle-overlay .vehicle-header .detail-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: #dc3545;
+    color: #fff;
+    font-size: 28px;
+    font-weight: 400;
+    line-height: 1;
+    box-shadow: 0 3px 10px #9f172b29;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  #vehicle-overlay .vehicle-header .detail-close:hover {
+    background: #bd2130;
+    color: #fff;
+  }
+
+  #vehicle-overlay .vehicle-header .detail-close:focus-visible {
+    outline: 3px solid #b45309;
+    outline-offset: 3px;
+  }
+}
+
+@media screen and (max-width: 760px) {
+  #vehicle-overlay .vehicle-header {
+    min-height: 70px;
+    padding-right: 72px;
+  }
+
+  #vehicle-overlay .vehicle-header .detail-close {
+    top: 12px;
+    right: 12px;
+  }
+}

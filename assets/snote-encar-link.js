@@ -47,8 +47,11 @@
   let contextKey = '';
   let contextActor = null;
   let contextReady = false;
+  let contextCar = null;
+  let contextStorageKey = '';
   let bar, button, note, results, manual, manualInput, manualButton, manualError;
-  let copyButton, copyStatus, copyFallback;
+  let copyButton, copyStatus, copyFallback, saveStatus, saveRetry;
+  let retryRecord = null, saveVersion = 0;
   let diagnosticSnapshot = null, feedbackVersion = 0;
 
   function normalizePlate(value) {
@@ -67,12 +70,15 @@
     const car = cars.find(item => item.id === activeCarId);
     if (!car) return null;
     const plate = normalizePlate(car.plate);
-    return { plate, key: String(car.id) + ':' + plate, actor: currentUser, ready: !!window.zc86Cloud?.ready };
+    let storage = null;
+    try { storage = window.snoteEncarLinksBridge?.context(String(car.id)) || null; } catch (_) {}
+    return { car, storage, plate, key: String(car.id) + ':' + plate + ':' + String(car.ownerId || ''), actor: currentUser, ready: !!window.zc86Cloud?.ready };
   }
 
   function stillCurrent(job) {
     const now = currentContext();
-    return active === job && now?.ready && now.key === job.key && now.actor === job.actor;
+    return active === job && now?.ready && now.key === job.key && now.actor === job.actor && now.car === job.car &&
+      (now.storage?.key || '') === (job.storage?.key || '');
   }
 
   function readCandidates(plate) {
@@ -98,6 +104,63 @@
     return value === expected ? expected : null;
   }
 
+  function savedRecord(value, plate) {
+    if (!value || value.version !== 1 || value.plate !== plate || !Array.isArray(value.listings) ||
+        !value.listings.length || value.listings.length > 12 || typeof value.verifiedAt !== 'string' ||
+        !Number.isFinite(Date.parse(value.verifiedAt)) || Date.parse(value.verifiedAt) > Date.now() + 60000) return null;
+    const listings = [];
+    for (const item of value.listings) {
+      if (!item || !detailUrl(item.sellerUrl, item.id)) return null;
+      const trusted = String(item.trustedId) !== String(item.id) ? detailUrl(item.trustedUrl, item.trustedId) : null;
+      listings.push({id: String(item.id), model: String(item.model || '').slice(0, 200),
+        sellerUrl: detailUrl(item.sellerUrl, item.id), trustedId: trusted ? String(item.trustedId) : null, trustedUrl: trusted});
+    }
+    if (new Set(listings.map(item => item.id)).size !== listings.length) return null;
+    return {version: 1, plate, verifiedAt: value.verifiedAt, listings};
+  }
+
+  function restoreSaved(context) {
+    if (!context?.ready || !context.storage) return;
+    const record = savedRecord(context.car.encarLinks, context.plate);
+    if (!record) return;
+    showListings(record.listings, true);
+    const date = new Date(record.verifiedAt).toLocaleString('ko-KR', {timeZone: 'Asia/Seoul'});
+    saveStatus.textContent = '최근 확인 광고 · 마지막 확인 ' + date;
+    setNote('링크를 누르면 현재 광고인지 다시 확인해 엽니다.');
+  }
+
+  async function persistListings(context, record) {
+    const bridge = window.snoteEncarLinksBridge;
+    if (!bridge?.save || !context.storage) return false;
+    if (!context.storage.canWrite) {
+      saveStatus.textContent = '광고는 확인했습니다. 서버 저장은 담당 딜러 또는 관리자가 할 수 있습니다.';
+      return false;
+    }
+    const version = ++saveVersion;
+    retryRecord = record;
+    saveRetry.hidden = true;
+    saveStatus.textContent = '광고 링크를 서버에 저장 중…';
+    const current = () => {
+      const now = currentContext();
+      return version === saveVersion && now?.key === context.key && now.actor === context.actor && now.ready &&
+        now.car === context.car && (now.storage?.key || '') === (context.storage?.key || '');
+    };
+    try {
+      const saved = await bridge.save(context.storage, record);
+      if (!current()) return false;
+      if (saved?.ok !== true) throw new Error('SAVE_NOT_CONFIRMED');
+      retryRecord = null;
+      saveStatus.textContent = '광고 링크를 서버에 저장했습니다.';
+      return true;
+    } catch (_) {
+      if (current()) {
+        saveStatus.textContent = '광고는 확인했지만 서버 저장을 확인하지 못했습니다.';
+        saveRetry.hidden = false;
+      }
+      return false;
+    }
+  }
+
   function candidateFromUrl(value) {
     if (typeof value !== 'string' || value.length > 2048 || /[\u0000-\u001f\u007f]/.test(value)) return null;
     try {
@@ -116,6 +179,9 @@
 
   function resetFeedback() {
     ++feedbackVersion;
+    ++saveVersion;
+    retryRecord = null;
+    saveStatus.textContent = ''; saveRetry.hidden = true; saveRetry.disabled = false;
     diagnosticSnapshot = null;
     results.replaceChildren();
     setNote('');
@@ -207,13 +273,16 @@
   function syncContext() {
     const context = currentContext();
     const nextKey = context?.key || '';
-    if (nextKey !== contextKey || (context?.actor || null) !== contextActor || !!context?.ready !== contextReady) {
+    if (nextKey !== contextKey || (context?.actor || null) !== contextActor || !!context?.ready !== contextReady || (context?.car || null) !== contextCar || (context?.storage?.key || '') !== contextStorageKey) {
       cancel();
       contextKey = nextKey;
       contextActor = context?.actor || null;
       contextReady = !!context?.ready;
+      contextCar = context?.car || null;
+      contextStorageKey = context?.storage?.key || '';
       button.disabled = !context?.plate || !context?.ready;
       button.textContent = '엔카 광고 보기';
+      restoreSaved(context);
     }
   }
 
@@ -222,6 +291,8 @@
     contextKey = '';
     contextActor = null;
     contextReady = false;
+    contextCar = null;
+    contextStorageKey = '';
     button.disabled = true;
     button.textContent = '엔카 광고 보기';
   }
@@ -243,11 +314,11 @@
     return tab;
   }
 
-  function showListings(listings) {
+  function showListings(listings, recheck = false) {
     results.replaceChildren();
     for (const item of listings) {
       const seller = detailUrl(item.sellerUrl, item.id);
-      const trusted = detailUrl(item.trustedUrl, item.trustedId);
+      const trusted = String(item.trustedId) !== String(item.id) ? detailUrl(item.trustedUrl, item.trustedId) : null;
       if (!seller) continue;
       const row = document.createElement('div');
       row.className = 'snote-encar-result';
@@ -261,13 +332,19 @@
         anchor.href = url;
         anchor.target = '_blank';
         anchor.rel = 'noopener noreferrer';
+        if (recheck) anchor.addEventListener('click', event => {
+          event.preventDefault();
+          if (active) return;
+          const id = text === '엔카 믿고' ? String(item.trustedId) : String(item.id);
+          lookup([...new Set([String(item.id), id])], {sellerId: String(item.id), id, trusted: text === '엔카 믿고'});
+        });
         row.append(anchor);
       }
       results.append(row);
     }
   }
 
-  async function lookup(manualIds = null) {
+  async function lookup(manualIds = null, selectedLink = null) {
     syncContext();
     const context = currentContext();
     if (!context || !/^(?:[가-힣]{2})?\d{2,3}[가-힣]\d{4}$/.test(context.plate)) {
@@ -292,7 +369,8 @@
       const response = await abortable(fetch(ENDPOINT, {
         method: 'POST',
         headers: {'Content-Type': 'application/json', Accept: 'application/json', Authorization: 'Bearer ' + token},
-        body: JSON.stringify({plate: context.plate, candidateIds: manualIds === null ? readCandidates(context.plate) : manualIds}),
+        body: JSON.stringify({plate: context.plate, candidateIds: manualIds === null ?
+          [...new Set([...(savedRecord(context.car.encarLinks, context.plate)?.listings.map(item => item.id) || []), ...readCandidates(context.plate)])].slice(0, 12) : manualIds}),
         signal: job.controller.signal,
         cache: 'no-store',
         credentials: 'same-origin'
@@ -334,6 +412,21 @@
       }
       saveCandidates(context.plate, listings);
       showListings(listings);
+      const record = savedRecord({version: 1, plate: context.plate, verifiedAt: data.verifiedAt, listings}, context.plate);
+      if (record) void persistListings(context, record);
+      if (selectedLink) {
+        const selected = listings.find(item => String(item.id) === selectedLink.sellerId);
+        const selectedUrl = selected && (selectedLink.trusted ?
+          (String(selected.trustedId) === selectedLink.id && detailUrl(selected.trustedUrl, selectedLink.id)) : detailUrl(selected.sellerUrl, selectedLink.id));
+        if (!selectedUrl) {
+          closeWaitingTab(job);
+          setNote('저장된 광고의 상태가 변경되었습니다. 확인된 링크를 선택해 주세요.');
+        } else if (job.waitingTab && !job.waitingTab.closed) {
+          job.waitingTab.location.replace(selectedUrl); job.waitingTab = null;
+          setNote('저장된 광고를 다시 확인해 열었습니다.');
+        } else setNote('광고를 확인했습니다. 아래 링크를 눌러 열어 주세요.');
+        return;
+      }
       if (data.status === 'multiple' || listings.length !== 1) {
         closeWaitingTab(job);
         setNote('같은 차량번호의 광고가 여러 개입니다. 열 광고를 선택해 주세요.');
@@ -382,7 +475,7 @@
     const meta = document.getElementById('vehicle-meta');
     if (!overlay || !meta) return;
     const style = document.createElement('style');
-    style.textContent = '.snote-encar-tools{margin-top:12px;display:flex;flex-wrap:wrap;align-items:center;gap:8px;min-width:0;font-size:12px;line-height:1.6}.snote-encar-button,.snote-encar-manual button{border:1px solid #bae1f5;background:#eef9ff;color:#187bac;padding:7px 12px;border-radius:9px;font:inherit;font-weight:700;cursor:pointer}.snote-encar-button:disabled{opacity:.6;cursor:wait}.snote-encar-note,.snote-encar-copy-status{color:#63758a}.snote-encar-note[data-error=true],.snote-encar-manual-error{color:#b54747}.snote-encar-results{flex-basis:100%;display:grid;gap:6px}.snote-encar-result{display:flex;flex-wrap:wrap;gap:10px;align-items:center}.snote-encar-result span{color:#64748b}.snote-encar-result a{color:#187bac;font-weight:700;text-decoration:underline;text-underline-offset:3px}.snote-encar-manual{flex-basis:100%;min-width:0;max-width:100%}.snote-encar-manual summary{cursor:pointer;color:#187bac;font-weight:700}.snote-encar-manual form{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;min-width:0}.snote-encar-manual label,.snote-encar-manual-error{flex-basis:100%}.snote-encar-manual input{flex:1 1 180px;min-width:0;max-width:100%;border:1px solid #d6e2ee;border-radius:8px;padding:8px;font:inherit;background:white;color:#334155}.snote-encar-copy{padding:2px 0;border:0;background:transparent;color:#63758a;font:inherit;text-decoration:underline;text-underline-offset:3px;cursor:pointer}.snote-encar-copy-fallback{flex-basis:100%;min-width:0;max-width:100%;box-sizing:border-box;height:120px;padding:8px;border:1px solid #d6e2ee;border-radius:8px;font:11px/1.5 monospace;overflow-wrap:anywhere;white-space:pre-wrap}.snote-encar-tools [hidden]{display:none!important}.snote-encar-tools :is(button,a,input,summary,textarea):focus-visible{outline:2px solid #38bdf8;outline-offset:3px}';
+    style.textContent = '.snote-encar-tools{margin-top:12px;display:flex;flex-wrap:wrap;align-items:center;gap:8px;min-width:0;font-size:12px;line-height:1.6}.snote-encar-button,.snote-encar-manual button{border:1px solid #bae1f5;background:#eef9ff;color:#187bac;padding:7px 12px;border-radius:9px;font:inherit;font-weight:700;cursor:pointer}.snote-encar-button:disabled{opacity:.6;cursor:wait}.snote-encar-note,.snote-encar-copy-status{color:#63758a}.snote-encar-note[data-error=true],.snote-encar-manual-error{color:#b54747}.snote-encar-results{flex-basis:100%;display:grid;gap:6px}.snote-encar-result{display:flex;flex-wrap:wrap;gap:10px;align-items:center}.snote-encar-result span{color:#64748b}.snote-encar-result a{color:#187bac;font-weight:700;text-decoration:underline;text-underline-offset:3px}.snote-encar-manual{flex-basis:100%;min-width:0;max-width:100%}.snote-encar-manual summary{cursor:pointer;color:#187bac;font-weight:700}.snote-encar-manual form{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;min-width:0}.snote-encar-manual label,.snote-encar-manual-error{flex-basis:100%}.snote-encar-manual input{flex:1 1 180px;min-width:0;max-width:100%;border:1px solid #d6e2ee;border-radius:8px;padding:8px;font:inherit;background:white;color:#334155}.snote-encar-save-status{flex-basis:100%;color:#64748b;font-size:11px}.snote-encar-save-status:empty{display:none}.snote-encar-save-retry{border:1px solid #d6e2ee;border-radius:8px;background:#fff;color:#187bac;padding:5px 10px;font:inherit;cursor:pointer}.snote-encar-save-retry:disabled{opacity:.6;cursor:wait}.snote-encar-copy{padding:2px 0;border:0;background:transparent;color:#63758a;font:inherit;text-decoration:underline;text-underline-offset:3px;cursor:pointer}.snote-encar-copy-fallback{flex-basis:100%;min-width:0;max-width:100%;box-sizing:border-box;height:120px;padding:8px;border:1px solid #d6e2ee;border-radius:8px;font:11px/1.5 monospace;overflow-wrap:anywhere;white-space:pre-wrap}.snote-encar-tools [hidden]{display:none!important}.snote-encar-tools :is(button,a,input,summary,textarea):focus-visible{outline:2px solid #38bdf8;outline-offset:3px}';
     document.head.append(style);
     bar = document.createElement('div');
     bar.className = 'snote-encar-tools';
@@ -398,6 +491,15 @@
     note.setAttribute('aria-live','polite');
     results = document.createElement('div');
     results.className = 'snote-encar-results';
+    saveStatus = document.createElement('span'); saveStatus.className = 'snote-encar-save-status'; saveStatus.setAttribute('role', 'status');
+    saveRetry = document.createElement('button'); saveRetry.type = 'button'; saveRetry.className = 'snote-encar-save-retry'; saveRetry.textContent = '링크 저장 다시 시도'; saveRetry.hidden = true;
+    saveRetry.addEventListener('click', async () => {
+      const context = currentContext(), record = retryRecord;
+      if (!context || !record || active) return;
+      saveRetry.disabled = true;
+      await persistListings(context, record);
+      if (currentContext()?.key === context.key && currentContext()?.actor === context.actor) saveRetry.disabled = false;
+    });
     manual = document.createElement('details'); manual.className = 'snote-encar-manual'; manual.hidden = true;
     const summary = document.createElement('summary'); summary.textContent = '광고 주소로 확인';
     const form = document.createElement('form'); form.noValidate = true; form.addEventListener('submit', verifyManual);
@@ -409,7 +511,7 @@
     copyButton = document.createElement('button'); copyButton.type = 'button'; copyButton.className = 'snote-encar-copy'; copyButton.textContent = '진단 정보 복사'; copyButton.hidden = true; copyButton.addEventListener('click', copyDiagnostics);
     copyStatus = document.createElement('span'); copyStatus.className = 'snote-encar-copy-status'; copyStatus.setAttribute('role', 'status');
     copyFallback = document.createElement('textarea'); copyFallback.className = 'snote-encar-copy-fallback'; copyFallback.readOnly = true; copyFallback.hidden = true; copyFallback.setAttribute('aria-label', '복사할 진단 정보');
-    bar.append(button, note, results, manual, copyButton, copyStatus, copyFallback);
+    bar.append(button, note, results, saveStatus, saveRetry, manual, copyButton, copyStatus, copyFallback);
     meta.insertAdjacentElement('afterend', bar);
     new MutationObserver(syncContext).observe(overlay, {attributes:true,attributeFilter:['class']});
     new MutationObserver(syncContext).observe(meta, {childList:true,subtree:true,characterData:true});

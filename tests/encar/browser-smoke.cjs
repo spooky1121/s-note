@@ -52,7 +52,7 @@ async function releaseLifecycle(page,version){
  console.log('PASS actual HTML canonical release synchronizes all three original badges, late added markers/subtrees, and duplicate-script refresh without changing app state');
 }
 
-async function fixture(width=1440){
+async function fixture(width=1440,savedCars=null){
  const context=await browser.newContext({viewport:{width,height:950}}),page=await context.newPage();
  const f={context,page,requests:[],navigations:[],external:[],unexpected:[],errors:[],responses:[]};
  context.on('page',opened=>{opened.on('pageerror',error=>f.errors.push(error.message));opened.on('dialog',dialog=>dialog.accept());});
@@ -82,20 +82,27 @@ async function fixture(width=1440){
   f.unexpected.push(url.pathname);return route.abort();
  });
  await page.goto(ORIGIN,{waitUntil:'networkidle'});await page.waitForFunction(()=>!!window.__encarFixtureAuth&&!!window.SnoteEncarLink&&!!window.SnoteRelease);await page.evaluate(()=>window.__encarFixtureAuth);f.release=await releaseLabels(page,{width});
- await page.evaluate(async({actor,company,alias,token,plate,secondPlate})=>{
+ await page.evaluate(async({actor,company,alias,token,plate,secondPlate,savedCars})=>{
   await enterWorkspace({username:alias,name:'가상 검증 딜러',role:'dealer',company:'가상 검증 상사',employeeNo:'TEST',union:''});
   cars=[{id:'encar-car-1',ownerId:alias,model:'가상 검증 차량 1',plate,year:2026,km:'10,000',buy:1000,sell:1200,status:'판매중'},{id:'encar-car-2',ownerId:alias,model:'가상 검증 차량 2',plate:secondPlate,year:2026,km:'20,000',buy:1500,sell:1700,status:'판매중'}];
+  if(savedCars)cars=structuredClone(savedCars);
   localStorage.setItem(carsStoreKey(alias),JSON.stringify(cars));window.__encarFixtureCars=structuredClone(cars);
+  window.__encarFixtureWrites=[];window.__encarFixtureRevision=0;
   const S=window.__encarFixtureState;S.user={id:actor,email:'synthetic@example.invalid'};S.company={id:company,name:'가상 검증 상사'};S.members=[{user_id:actor,company_id:company,role:'dealer',display_name:'가상 검증 딜러',active:true}];
   S.client={auth:{getSession:async()=>({data:{session:{access_token:token,user:{id:actor}}},error:null}),signOut:async()=>({error:null})},from(table){
    const chain={select(){return chain},eq(){return chain},in(){return chain},order(){return chain},limit(){return chain},maybeSingle(){return chain},single(){return chain},then(resolve,reject){
-    if(table==='zc_datasets')return Promise.resolve({data:[{dataset:'cars',owner_id:actor,payload:window.__encarFixtureCars,revision:1},{dataset:'covers',owner_id:actor,payload:{},revision:1}],error:null}).then(resolve,reject);
+    if(table==='zc_datasets')return Promise.resolve({data:[{dataset:'cars',owner_id:actor,payload:structuredClone(window.__encarFixtureCars),revision:window.__encarFixtureRevision},{dataset:'covers',owner_id:actor,payload:{},revision:1}],error:null}).then(resolve,reject);
     if(table==='zc_media')return Promise.resolve({data:[],error:null}).then(resolve,reject);
     return Promise.reject(Error('Unexpected browser fixture table '+table)).then(resolve,reject);
    }};return chain;
-  },rpc:async()=>({data:[],error:null})};
+  },rpc:async(name,args)=>{
+   if(name!=='zc_write_dataset'||args.p_dataset!=='cars'||args.p_company!==company||args.p_owner!==actor)throw Error('Unexpected browser fixture RPC');
+   if(args.p_expected!==window.__encarFixtureRevision)return{data:null,error:{code:'CONFLICT',message:'CONFLICT'}};
+   window.__encarFixtureCars=structuredClone(args.p_payload);window.__encarFixtureWrites.push(structuredClone(args));
+   return{data:++window.__encarFixtureRevision,error:null};
+  }};
   document.getElementById('zc-cloud-gate').hidden=true;
- },{actor:ACTOR,company:COMPANY,alias:ALIAS,token:TOKEN,plate:PLATE,secondPlate:SECOND_PLATE});
+ },{actor:ACTOR,company:COMPANY,alias:ALIAS,token:TOKEN,plate:PLATE,secondPlate:SECOND_PLATE,savedCars});
  await releaseLabels(page,{loggedIn:true,width});
  if(width===1440)await page.screenshot({path:path.join(ARTIFACTS,'release-header-1440.png')});
  await page.evaluate(()=>openVehicle('encar-car-1'));
@@ -111,8 +118,22 @@ async function assertLinks(f,expected){
  assert.deepEqual(actual.map(a=>a.url),expected);for(const a of actual){assert.equal(a.target,'_blank');assert.equal(a.rel,'noopener noreferrer');}
 }
 async function position(f){
- const geometry=await f.page.evaluate(()=>{const rect=selector=>{const b=document.querySelector(selector).getBoundingClientRect();return {x:b.x,y:b.y,right:b.right,bottom:b.bottom,width:b.width,height:b.height};};return {button:rect('.snote-encar-button'),meta:rect('#vehicle-meta'),header:rect('.vehicle-header'),close:rect('.detail-close'),overflow:document.documentElement.scrollWidth>innerWidth,modalOverflow:document.querySelector('.vehicle-modal').scrollWidth>document.querySelector('.vehicle-modal').clientWidth};});
+ const geometry=await f.page.evaluate(()=>{const rect=selector=>{const b=document.querySelector(selector).getBoundingClientRect();return {x:b.x,y:b.y,right:b.right,bottom:b.bottom,width:b.width,height:b.height};};const close=document.querySelector('#vehicle-overlay .detail-close'),bounds=close.getBoundingClientRect(),style=getComputedStyle(close),modal=document.querySelector('#vehicle-overlay .vehicle-modal');return {button:rect('.snote-encar-button'),meta:rect('#vehicle-meta'),header:rect('.vehicle-header'),close:rect('#vehicle-overlay .detail-close'),closePosition:style.position,closeRadius:style.borderRadius,closeBackground:style.backgroundColor,closeColor:style.color,closeHit:document.elementFromPoint(bounds.x+bounds.width/2,bounds.y+bounds.height/2)?.closest('.detail-close')===close,scrollTop:modal.scrollTop,viewportWidth:innerWidth,viewportHeight:innerHeight,overflow:document.documentElement.scrollWidth>innerWidth,modalOverflow:modal.scrollWidth>modal.clientWidth};});
  assert(geometry.button.y>=geometry.meta.bottom,'Button must sit below the actual vehicle metadata');assert(geometry.button.x>=geometry.header.x&&geometry.button.right<=geometry.header.right,'Button must remain inside the actual detail header');assert(geometry.button.right<=geometry.close.x||geometry.button.bottom<=geometry.close.y||geometry.button.y>=geometry.close.bottom,'Encar button must not overlap the detail close button');assert.equal(geometry.overflow,false);assert.equal(geometry.modalOverflow,false);
+ const inset=geometry.viewportWidth>760?14:12;assert.equal(geometry.closePosition,'absolute');assert.equal(geometry.close.width,44);assert.equal(geometry.close.height,44);assert.equal(geometry.closeRadius,'50%');assert.equal(geometry.closeColor,'rgb(255, 255, 255)');assert.match(geometry.closeBackground,/rgb\((220, 53, 69|189, 33, 48)\)/);assert(Math.abs(geometry.close.y-geometry.header.y-inset)<1,'The close action must remain at the header top edge');assert(Math.abs(geometry.header.right-geometry.close.right-inset)<1,'The close action must remain at the header right edge');assert(geometry.close.y>=0&&geometry.close.bottom<=geometry.viewportHeight);assert.equal(geometry.closeHit,true,'The close button must stay visible and win pointer hit testing');
+ return geometry;
+}
+
+async function vehicleCloseRegression(width){
+ const f=await fixture(width),p=f.page,before=await position(f);
+ const isolated=await p.evaluate(()=>{const element=document.querySelector('#overlay .close'),read=()=>{const style=getComputedStyle(element);return{position:style.position,background:style.backgroundColor,color:style.color,radius:style.borderRadius};},enabled=read(),sheet=document.querySelector('link[href*="assets/vehicle-detail.css"]');sheet.disabled=true;const disabled=read();sheet.disabled=false;return{enabled,disabled};});assert.deepEqual(isolated.enabled,isolated.disabled,'The vehicle-specific close styling must not affect other popup controls');
+ const choices=Array.from({length:6},(_,index)=>listing(String(43000001+index),null,'검증용 다중 광고 '+(index+1)+' · '+'상세 설명이 있는 차량 모델 '.repeat(2)));
+ const popup=await lookup(f,found(PLATE,choices));await closed(popup);const expanded=await position(f);assert(expanded.header.height>before.header.height+100,'Six real result rows must substantially expand the header');assert(Math.abs(expanded.close.y-before.close.y)<1,'Adding result rows must not push the close button downward');
+ await p.screenshot({path:path.join(ARTIFACTS,'vehicle-close-'+width+'-expanded.png')});
+ await p.evaluate(()=>{const modal=document.querySelector('#vehicle-overlay .vehicle-modal');modal.scrollTop=Math.min(900,modal.scrollHeight-modal.clientHeight);});await p.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+ const scrolled=await position(f);assert(scrolled.scrollTop>0);assert(Math.abs(scrolled.close.y-expanded.close.y)<1,'The close button must remain at the same corner after scrolling the detail');await p.screenshot({path:path.join(ARTIFACTS,'vehicle-close-'+width+'-scrolled.png')});
+ if(width===1440){await p.locator('#vehicle-overlay .detail-close').focus();await p.keyboard.press('Enter');}else await p.mouse.click(scrolled.close.x+scrolled.close.width/2,scrolled.close.y+scrolled.close.height/2);
+ assert.equal(await p.locator('#vehicle-overlay').getAttribute('aria-hidden'),'true');assert.equal(await p.evaluate(()=>activeCarId),null);await finish(f);console.log('PASS '+width+'px vehicle close: 44px red circle at the top-right corner, six-result expansion, 900px scrolling, pointer hit test, keyboard/click close and other-popup isolation');
 }
 async function heldJson(f,body,address){
  await f.page.evaluate(()=>{
@@ -180,5 +201,21 @@ async function finish(f){assert.deepEqual(f.external,[],'No external requests ar
    popup=await verifyAddress(f,found(),longAddress);await popup.waitForURL(listing().sellerUrl);await popup.close();assert.deepEqual(f.requests.at(-1),{plate:PLATE,candidateIds:['43000002']});await position(f);
    await p.locator('.detail-close').click();assert.equal(await p.locator('#vehicle-overlay').getAttribute('aria-hidden'),'true');assert.equal(await p.locator(LINKS).count(),0);assert.equal(await p.locator(ADDRESS).inputValue(),'');assert.equal(await p.locator(COPY_FALLBACK).inputValue(),'');await finish(f);console.log('PASS '+width+'px actual manual verifier/long URL/selected diagnostic fallback fit without overflow, verify through the server, and clear on close');
   }
+  {
+   const f=await fixture(),p=f.page;let popup=await lookup(f,found());await popup.waitForURL(listing().sellerUrl);await popup.close();
+   await p.waitForFunction(()=>document.querySelector('.snote-encar-save-status').textContent.includes('서버에 저장했습니다'));
+   const saved=await p.evaluate(()=>({cars:structuredClone(window.__encarFixtureCars),writes:structuredClone(window.__encarFixtureWrites)}));
+   assert.equal(saved.writes.length,1);assert.equal(saved.writes[0].p_expected,0);assert.equal(saved.cars[0].encarLinks.listings[0].sellerUrl,listing().sellerUrl);assert.equal(saved.cars[0].encarLinks.listings[0].trustedUrl,listing().trustedUrl);assert.equal(saved.cars[1].encarLinks,undefined);
+   const requestCount=f.requests.length;await p.locator('#vehicle-overlay .detail-close').click();await p.evaluate(()=>openVehicle('encar-car-1'));await p.locator(LINKS).first().waitFor();
+   await assertLinks(f,[listing().sellerUrl,listing().trustedUrl]);assert.equal(f.requests.length,requestCount,'Reopening must show stored links without a lookup');
+   f.reply(found());const popupPromise=f.context.waitForEvent('page');await p.getByRole('link',{name:'엔카 믿고',exact:true}).click();popup=await popupPromise;await popup.waitForURL(listing().trustedUrl);assert.deepEqual(f.requests.at(-1).candidateIds,['43000001','43000002']);await popup.close();
+   await p.waitForFunction(()=>document.querySelector('.snote-encar-save-status').textContent.includes('서버에 저장했습니다'));await finish(f);
+   const second=await fixture(390,saved.cars),mobile=second.page;await mobile.locator(LINKS).first().waitFor();await assertLinks(second,[listing().sellerUrl,listing().trustedUrl]);assert.equal(second.requests.length,0,'A new browser must restore links from its server dataset, not local candidate storage');
+   assert.equal(await mobile.evaluate(plate=>localStorage.getItem('snote.encar.candidate.v1:'+plate),PLATE),null);await position(second);await mobile.screenshot({path:path.join(ARTIFACTS,'encar-saved-links-390.png')});
+   popup=await lookup(second,found());await popup.waitForURL(listing().sellerUrl);await popup.close();assert.deepEqual(second.requests[0].candidateIds,['43000001'],'The main lookup must also reuse server-stored IDs');
+   await mobile.waitForFunction(()=>document.querySelector('.snote-encar-save-status').textContent.includes('서버에 저장했습니다'));await finish(second);
+   console.log('PASS actual cloud bridge writes scoped verified seller/trusted URLs, reopens without search, revalidates the selected trusted link, and restores in a clean second browser');
+  }
+  for(const width of [1440,390,320])await vehicleCloseRegression(width);
  }finally{await browser.close();}
 })().catch(error=>{console.error(error.stack);process.exitCode=1;});

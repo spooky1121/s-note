@@ -38,6 +38,12 @@ function found(plate = PLATE, listings = [listing()]) {
   return { status: 'found', plate, listings, verifiedAt: new Date().toISOString() };
 }
 
+function storedRecord(listings = [listing()], plate = PLATE) {
+  return { version: 1, plate, verifiedAt: new Date().toISOString(), listings };
+}
+
+const plain = value => JSON.parse(JSON.stringify(value));
+
 function fixture(t, options = {}) {
   const console = new VirtualConsole();
   const errors = [];
@@ -54,9 +60,10 @@ function fixture(t, options = {}) {
     virtualConsole: console
   });
   const w = dom.window;
-  const state = { ready: true };
-  const events = [], openCalls = [], tabs = [], requests = [];
-  w.cars = [{ id: 'car-1', plate: PLATE }, { id: 'car-2', plate: SECOND_PLATE }];
+  const state = { ready: options.ready ?? true, canWrite: options.canWrite ?? true, storageScope: 'fixture-company' };
+  const events = [], openCalls = [], tabs = [], requests = [], saveCalls = [];
+  w.cars = plain(options.cars || [{ id: 'car-1', plate: PLATE }, { id: 'car-2', plate: SECOND_PLATE }]);
+  if (options.savedRecord !== undefined) w.cars[0].encarLinks = plain(options.savedRecord);
   w.activeCarId = 'car-1';
   w.currentUser = { username: 'test-user' };
   const originalOpenVehicle = () => {};
@@ -70,6 +77,27 @@ function fixture(t, options = {}) {
       return options.token ? options.token() : Promise.resolve('mock-session-token');
     }
   };
+  if (options.bridge) {
+    w.snoteEncarLinksBridge = {
+      context(carId) {
+        const car = w.cars.find(item => String(item.id) === carId);
+        if (!state.ready || !w.currentUser || !car) return null;
+        const plate = String(car.plate || '').normalize('NFKC').replace(/[\s-]/g, '');
+        return { key: [state.storageScope, w.currentUser.username, carId, plate, car.ownerId || 'fixture-owner'].join(':'),
+          carId, plate, canWrite: state.canWrite, companyId: state.storageScope, userId: w.currentUser.username };
+      },
+      save(base, record) {
+        const target = w.cars.find(item => String(item.id) === base.carId);
+        const call = { base: plain(base), record: plain(record) };
+        const index = saveCalls.push(call) - 1;
+        if (options.applyBeforeSave && target) target.encarLinks = plain(call.record);
+        return Promise.resolve(options.save ? options.save(call.base, call.record, index) : { ok: true }).then(result => {
+          if (result?.ok === true && options.applySaved !== false && target) target.encarLinks = plain(call.record);
+          return result;
+        });
+      }
+    };
+  }
   if (options.requestTimeoutMs !== undefined) {
     const realSetTimeout = w.setTimeout.bind(w);
     w.setTimeout = (handler, delay, ...args) => realSetTimeout(
@@ -113,7 +141,7 @@ function fixture(t, options = {}) {
   t.after(() => { w.close(); assert.equal(errors.length, 0, 'No unhandled DOM errors'); });
 
   return {
-    w, state, events, openCalls, tabs, requests, button,
+    w, state, events, openCalls, tabs, requests, saveCalls, button,
     originalOpenVehicle, originalCloseVehicle,
     get note() { return w.document.querySelector('.snote-encar-note'); },
     get links() { return [...w.document.querySelectorAll('.snote-encar-results a')]; },
@@ -122,6 +150,10 @@ function fixture(t, options = {}) {
     get copyButton() { return w.document.querySelector('.snote-encar-copy'); },
     get copyFallback() { return w.document.querySelector('.snote-encar-copy-fallback'); },
     get copyStatus() { return w.document.querySelector('.snote-encar-copy-status'); },
+    get saveStatus() { return w.document.querySelector('.snote-encar-save-status'); },
+    get saveRetry() { return w.document.querySelector('.snote-encar-save-retry'); },
+    closeDetail() { w.document.getElementById('vehicle-overlay').classList.remove('open'); },
+    reopenDetail() { w.document.getElementById('vehicle-overlay').classList.add('open'); },
     click() { button.click(); },
     submitAddress(value) { this.manual.open = true; this.manualInput.value = value; this.manual.querySelector('button').click(); },
     reply(index, body, opts = {}) {
@@ -583,4 +615,156 @@ test('31 incomplete public-catalog verification never opens partial listings and
   f.copyButton.click(); await settle();
   assert.deepEqual(JSON.parse(f.copyFallback.value), { service: 'snote-encar', code: 'CATALOG_INCOMPLETE', httpStatus: 502, requestId: REQUEST_ID, ...counters });
   assert.doesNotMatch(f.copyFallback.value, /PRIVATE|12가3456|43000001|https:|token|raw_content/); assert(f.copyFallback.value.length < 600);
+});
+
+test('32 successful verification saves only the bounded canonical record and reports success after the server ACK', async t => {
+  const saved = deferred(), f = fixture(t, { bridge: true, save: () => saved.promise });
+  const result = found(PLATE, [{ ...listing(), mileage: 12345, private: 'PRIVATE_RESPONSE', token: 'PRIVATE_TOKEN' }]);
+  f.click(); await settle(); f.reply(0, result); await settle();
+  assert.equal(f.saveCalls.length, 1);
+  assert.match(f.saveStatus.textContent, /저장 중/); assert.doesNotMatch(f.saveStatus.textContent, /저장했습니다/);
+  assert.equal(f.saveRetry.hidden, true); assert.deepEqual(f.tabs[0].navigations, [listing().sellerUrl]);
+  const call = f.saveCalls[0];
+  assert.equal(call.base.carId, 'car-1'); assert.equal(call.base.plate, PLATE); assert.equal(call.base.canWrite, true);
+  assert.deepEqual(Object.keys(call.record).sort(), ['listings', 'plate', 'verifiedAt', 'version']);
+  assert.deepEqual(call.record, { version: 1, plate: PLATE, verifiedAt: result.verifiedAt, listings: [listing()] });
+  assert.doesNotMatch(JSON.stringify(call.record), /PRIVATE|token|mileage/);
+  saved.resolve({ ok: true }); await settle();
+  assert.equal(f.saveStatus.textContent, '광고 링크를 서버에 저장했습니다.');
+  assert.equal(f.saveRetry.hidden, true); assert.deepEqual(plain(f.w.cars[0].encarLinks), call.record);
+});
+
+test('33 failed or unconfirmed storage retains verified links and retries only the save', async t => {
+  for (const failure of ['reject', 'unconfirmed']) await t.test(failure, async sub => {
+    const f = fixture(sub, { bridge: true, save: (_base, _record, index) => index ? { ok: true } : failure === 'reject' ? Promise.reject(Error('PRIVATE_DB_ERROR')) : { ok: false } });
+    f.click(); await settle(); f.reply(0, found()); await settle();
+    assert.equal(f.saveCalls.length, 1); assert.equal(f.saveRetry.hidden, false);
+    assert.match(f.saveStatus.textContent, /저장을 확인하지 못/); assert.doesNotMatch(f.saveStatus.textContent, /PRIVATE|저장했습니다/);
+    assert.equal(f.links.length, 2); assert.deepEqual(f.tabs[0].navigations, [listing().sellerUrl]);
+    f.saveRetry.click(); await settle();
+    assert.equal(f.saveCalls.length, 2); assert.equal(f.requests.length, 1, 'A save retry must not spend another lookup');
+    assert.deepEqual(f.saveCalls[1].record, f.saveCalls[0].record);
+    assert.equal(f.saveStatus.textContent, '광고 링크를 서버에 저장했습니다.'); assert.equal(f.saveRetry.hidden, true);
+  });
+});
+
+test('34 persisted car links restore immediately with no lookup, popup or write', t => {
+  const f = fixture(t, { bridge: true, savedRecord: storedRecord() });
+  assert.equal(f.links.length, 2); assert.deepEqual(f.links.map(a => a.href), [listing().sellerUrl, listing().trustedUrl]);
+  assert.equal(f.requests.length, 0); assert.equal(f.openCalls.length, 0); assert.equal(f.saveCalls.length, 0);
+  assert.match(f.saveStatus.textContent, /최근 확인 광고/); assert.doesNotMatch(f.saveStatus.textContent, /서버에 저장했습니다/);
+  assert.match(f.note.textContent, /다시 확인/); assert.equal(f.saveRetry.hidden, true);
+});
+
+test('35 acknowledged car links survive closing and reopening without another lookup or write', async t => {
+  const f = fixture(t, { bridge: true });
+  f.click(); await settle(); f.reply(0, found()); await settle();
+  assert.equal(f.saveCalls.length, 1); assert.ok(f.w.cars[0].encarLinks);
+  f.closeDetail(); await settle(); assert.equal(f.links.length, 0);
+  f.reopenDetail(); await settle();
+  assert.equal(f.links.length, 2); assert.equal(f.requests.length, 1); assert.equal(f.openCalls.length, 1); assert.equal(f.saveCalls.length, 1);
+  assert.match(f.saveStatus.textContent, /최근 확인 광고/);
+});
+
+test('36 a fresh device restores server car data without a local ID cache, then verifies its selected trusted link', async t => {
+  const first = fixture(t, { bridge: true }); first.click(); await settle(); first.reply(0, found()); await settle();
+  const next = fixture(t, { bridge: true, cars: plain(first.w.cars) });
+  assert.equal(next.w.localStorage.getItem(PREFIX + PLATE), null); assert.equal(next.links.length, 2);
+  assert.equal(next.requests.length, 0); assert.equal(next.saveCalls.length, 0);
+  next.links.find(a => a.textContent === '엔카 믿고').click(); await settle();
+  assert.deepEqual(JSON.parse(next.requests[0].init.body), { plate: PLATE, candidateIds: ['43000001', '43000002'] });
+  assert.deepEqual(next.tabs[0].navigations, [], 'Restored data is only a hint until the server verifies it again');
+  next.reply(0, found()); await settle();
+  assert.deepEqual(next.tabs[0].navigations, [listing().trustedUrl]); assert.equal(next.saveCalls.length, 1);
+});
+
+test('37 an explicitly selected saved seller is reverified and remains the selection when several originals verify', async t => {
+  const second = listing('43000003', null), f = fixture(t, { bridge: true, savedRecord: storedRecord([listing(), second]) });
+  f.links.find(a => a.href === second.sellerUrl).click(); await settle();
+  assert.deepEqual(JSON.parse(f.requests[0].init.body).candidateIds, ['43000003']); assert.deepEqual(f.tabs[0].navigations, []);
+  f.reply(0, { ...found(PLATE, [listing(), second]), status: 'multiple' }); await settle();
+  assert.deepEqual(f.tabs[0].navigations, [second.sellerUrl]);
+  assert.equal(f.saveCalls.length, 1); assert.equal(f.saveCalls[0].record.listings.length, 2);
+});
+
+test('38 a missing, changed or inconsistent selected trusted advertisement never opens the old URL', async t => {
+  for (const change of ['missing', 'changed', 'inconsistent']) await t.test(change, async sub => {
+    const f = fixture(sub, { bridge: true, savedRecord: storedRecord() });
+    f.links.find(a => a.textContent === '엔카 믿고').click(); await settle();
+    const current = change === 'missing' ? listing('43000001', null) : listing('43000001', '43000004');
+    if (change === 'inconsistent') current.trustedUrl = listing().trustedUrl;
+    f.reply(0, found(PLATE, [current])); await settle();
+    assert.equal(f.tabs[0].closed, true); assert.deepEqual(f.tabs[0].navigations, []);
+    assert.match(f.note.textContent, /상태가 변경/);
+    assert.equal(f.saveCalls.length, 1);
+    if (change !== 'changed') assert.equal(f.saveCalls[0].record.listings[0].trustedUrl, null);
+  });
+});
+
+test('39 late storage replies cannot restore feedback after vehicle, plate, actor, storage scope or data changes', async t => {
+  for (const change of ['vehicle', 'plate', 'logout', 'scope', 'replacement']) await t.test(change, async sub => {
+    const saved = deferred(), f = fixture(sub, { bridge: true, save: () => saved.promise });
+    f.click(); await settle(); f.reply(0, found()); await settle(); assert.match(f.saveStatus.textContent, /저장 중/);
+    if (change === 'vehicle') f.w.activeCarId = 'car-2';
+    if (change === 'plate') f.w.cars[0].plate = SECOND_PLATE;
+    if (change === 'logout') { f.state.ready = false; f.w.currentUser = null; f.w.document.getElementById('zc-cloud-gate').hidden = false; }
+    if (change === 'scope') f.state.storageScope = 'other-fixture-company';
+    if (change === 'replacement') f.w.cars = plain(f.w.cars);
+    f.w.document.getElementById('vehicle-meta').textContent = '새 화면'; await settle();
+    assert.equal(f.saveStatus.textContent, ''); assert.equal(f.saveRetry.hidden, true);
+    saved.resolve({ ok: true }); await settle();
+    assert.equal(f.saveStatus.textContent, ''); assert.equal(f.saveRetry.hidden, true); assert.equal(f.links.length, 0);
+    assert.equal(f.saveCalls.length, 1);
+  });
+});
+
+test('40 pending local car metadata can reopen as a recent verified hint without claiming a server ACK', async t => {
+  const f = fixture(t, { bridge: true, applyBeforeSave: true, save: () => Promise.reject(Error('PRIVATE_DB_ERROR')) });
+  f.click(); await settle(); f.reply(0, found()); await settle();
+  assert.ok(f.w.cars[0].encarLinks); assert.equal(f.saveRetry.hidden, false);
+  f.closeDetail(); await settle(); f.reopenDetail(); await settle();
+  assert.equal(f.links.length, 2); assert.match(f.saveStatus.textContent, /최근 확인 광고/);
+  assert.doesNotMatch(f.saveStatus.textContent, /서버에 저장했습니다|저장된 광고/);
+  assert.equal(f.requests.length, 1); assert.equal(f.saveCalls.length, 1);
+});
+
+test('41 unsafe, mismatched, duplicate and oversized stored records cannot become links or trigger writes', async t => {
+  const invalid = [
+    { ...storedRecord(), version: 2 }, { ...storedRecord(), plate: SECOND_PLATE },
+    { ...storedRecord(), verifiedAt: 'not-a-date' }, { ...storedRecord(), verifiedAt: new Date(Date.now() + 120000).toISOString() },
+    storedRecord([]), storedRecord(Array.from({ length: 13 }, (_, i) => listing(String(43000001 + i), null))),
+    storedRecord([listing(), listing()]), storedRecord([{ ...listing(), sellerUrl: 'https://evil.test/cars/detail/43000001' }]),
+    storedRecord([{ ...listing(), sellerUrl: 'javascript:alert(1)' }]), storedRecord([{ ...listing(), id: '43000003' }])
+  ];
+  for (const record of invalid) {
+    const f = fixture(t, { bridge: true, savedRecord: record });
+    assert.equal(f.links.length, 0); assert.equal(f.requests.length, 0); assert.equal(f.openCalls.length, 0); assert.equal(f.saveCalls.length, 0);
+  }
+  for (const trustedUrl of ['https://evil.test/cars/detail/43000002', 'javascript:alert(1)', 'https://fem.encar.com/cars/detail/43000004']) {
+    const f = fixture(t, { bridge: true, savedRecord: storedRecord([{ ...listing(), trustedUrl }]) });
+    assert.deepEqual(f.links.map(a => a.href), [listing().sellerUrl]); assert.equal(f.requests.length, 0); assert.equal(f.saveCalls.length, 0);
+  }
+});
+
+test('42 read-only staff may restore and reverify links but never call the storage bridge', async t => {
+  const record = storedRecord(); record.verifiedAt = new Date(Date.now() - 3600000).toISOString();
+  const f = fixture(t, { bridge: true, canWrite: false, savedRecord: record }), before = JSON.stringify(f.w.cars[0]);
+  assert.equal(f.links.length, 2); f.links.find(a => a.textContent === '엔카 믿고').click(); await settle();
+  assert.deepEqual(f.tabs[0].navigations, []); f.reply(0, found()); await settle();
+  assert.deepEqual(f.tabs[0].navigations, [listing().trustedUrl]); assert.equal(f.saveCalls.length, 0);
+  assert.equal(JSON.stringify(f.w.cars[0]), before); assert.equal(f.saveRetry.hidden, true);
+  assert.match(f.saveStatus.textContent, /담당 딜러|관리자/); assert.doesNotMatch(f.saveStatus.textContent, /서버에 저장했습니다/);
+});
+
+test('43 an original advertisement ID cannot also become its own trusted link or invalid server record', async t => {
+  const sameId = listing('43000001', '43000001');
+  const restored = fixture(t, { bridge: true, savedRecord: storedRecord([sameId]) });
+  assert.deepEqual(restored.links.map(a => a.href), [sameId.sellerUrl]);
+  assert.equal(restored.links.some(a => a.textContent === '엔카 믿고'), false);
+  const fresh = fixture(t, { bridge: true }); fresh.click(); await settle(); fresh.reply(0, found(PLATE, [sameId])); await settle();
+  assert.deepEqual(fresh.links.map(a => a.href), [sameId.sellerUrl]);
+  assert.equal(fresh.saveCalls.length, 1);
+  assert.equal(fresh.saveCalls[0].record.listings[0].trustedId, null);
+  assert.equal(fresh.saveCalls[0].record.listings[0].trustedUrl, null);
+  assert.equal(fresh.saveStatus.textContent, '광고 링크를 서버에 저장했습니다.');
 });

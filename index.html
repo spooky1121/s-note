@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.30.2">
+<html lang="ko" data-snote-release="2.31">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -3159,6 +3159,7 @@ button, input, select, textarea { font-family: inherit; }
 <link rel="stylesheet" href="assets/vehicle-taxonomy.css?v=2.20">
 <link rel="stylesheet" href="assets/income-settlement-parent.css?v=2.25">
 <link rel="stylesheet" href="assets/vehicle-colors.css?v=2.23">
+<link rel="stylesheet" href="assets/vehicle-detail.css?v=2.31">
 <link rel="stylesheet" href="assets/sales-month-filter.css?v=2.26">
 <script src="assets/vehicle-colors.js?v=2.23"></script>
 <link rel="stylesheet" href="assets/customer-contract-signature.css?v=2.22">
@@ -8371,11 +8372,91 @@ window.snoteVehicleTaxonomyBridge={context:snote220CatalogContext,hasSession:()=
  upsert:(context,entry)=>{snote220CheckCatalog(context);if(!context.canWrite)throw snote220CatalogError('FORBIDDEN','차종을 추가할 권한이 없습니다.');return snote220CatalogRpc(context,'snote_vehicle_taxonomy_upsert',{p_entry:entry,p_expected_company_id:context.company_id});},
  confirmVehicle:snote220ConfirmVehicle};
 
+// S-NOTE Encar vehicle link persistence bridge.
+let snoteEncarLinksEpoch=0,snoteEncarLinksSequence=0,snoteEncarLinksTail=Promise.resolve();
+function snoteEncarLinksReset(){snoteEncarLinksEpoch++;snoteEncarLinksSequence++;}
+function snoteEncarLinksError(code,message){return Object.assign(new Error(message),{code});}
+const snoteEncarLinksOverlay=byId('vehicle-overlay');
+function snoteEncarLinksPlate(value){
+ if(typeof value!=='string')return '';
+ const plate=value.normalize('NFKC').replace(/[\s-]/g,'');
+ return /^(?:(?:서울|부산|대구|인천|광주|대전|울산|세종|경기|강원|충북|충남|전북|전남|경북|경남|제주))?[0-9]{2,3}[가-힣][0-9]{4}$/.test(plate)?plate:'';
+}
+function snoteEncarLinksContext(carId){
+ if(!S.ready||S.loading||S.busy||!S.client||!S.user||!S.company||!currentUser||!snoteEncarLinksOverlay?.classList.contains('open'))return null;
+ if(typeof S.user.id!=='string'||typeof S.company.id!=='string'||currentUser.username!==ownerAlias(S.user.id))return null;
+ carId=String(carId??'');
+ if(!carId||carId.length>200||String(activeCarId)!==carId)return null;
+ const matches=cars.filter(car=>String(car?.id)===carId);if(matches.length!==1)return null;
+ const car=matches[0],plate=snoteEncarLinksPlate(car.plate);if(!plate)return null;
+ const actor=S.members.find(member=>member.user_id===S.user.id&&member.company_id===S.company.id&&member.active===true&&['dealer','admin','accountant'].includes(member.role));
+ const owner=S.members.find(member=>member.company_id===S.company.id&&member.active===true&&typeof member.user_id==='string'&&ownerAlias(member.user_id)===car.ownerId);
+ if(!actor||!owner||currentUser.role!==actor.role||(actor.role==='dealer'&&owner.user_id!==S.user.id))return null;
+ return {key:JSON.stringify([S.company.id,S.user.id,owner.user_id,carId,plate,snoteEncarLinksEpoch,snote224VehicleOpen]),carId,plate,
+  canWrite:actor.role==='admin'||actor.role==='dealer',actor:currentUser,client:S.client,user:S.user,company:S.company,
+  ownerId:owner.user_id,ownerAlias:car.ownerId,car,epoch:snoteEncarLinksEpoch};
+}
+function snoteEncarLinksCheck(base,sequence){
+ const now=base&&snoteEncarLinksContext(base.carId);
+ if(!now||now.key!==base.key||now.actor!==base.actor||now.client!==base.client||now.user!==base.user||now.company!==base.company||now.car!==base.car||
+  (sequence!==undefined&&sequence!==snoteEncarLinksSequence))throw snoteEncarLinksError('CONTEXT_CHANGED','로그인 또는 엔카 저장 대상 차량이 변경되었습니다.');
+ if(!now.canWrite)throw snoteEncarLinksError('FORBIDDEN','담당 딜러 또는 관리자만 엔카 광고를 저장할 수 있습니다.');
+ return now;
+}
+function snoteEncarLinksRecord(base,value){
+ const plain=item=>!!item&&typeof item==='object'&&!Array.isArray(item);
+ const id=item=>typeof item==='string'&&/^[1-9][0-9]{0,11}$/.test(item);
+ const invalid=()=>{throw snoteEncarLinksError('INVALID_DATA','저장할 엔카 광고 정보를 확인해 주세요.');};
+ if(!plain(value)||Object.keys(value).some(key=>!['version','plate','verifiedAt','listings'].includes(key))||value.version!==1||
+  snoteEncarLinksPlate(value.plate)!==base.plate||typeof value.verifiedAt!=='string'||!Array.isArray(value.listings)||!value.listings.length||value.listings.length>12)invalid();
+ const date=new Date(value.verifiedAt);
+ if(!Number.isFinite(date.getTime())||date.toISOString()!==value.verifiedAt||date.getTime()>Date.now()+60000)invalid();
+ const ids=new Set(),listings=[];
+ for(const item of value.listings){
+  if(!plain(item)||Object.keys(item).some(key=>!['id','model','sellerUrl','trustedId','trustedUrl'].includes(key))||!id(item.id)||ids.has(item.id)||
+   typeof item.model!=='string'||item.model.length>300||/[\u0000-\u001f\u007f-\u009f]/.test(item.model)||item.sellerUrl!=='https://fem.encar.com/cars/detail/'+item.id)invalid();
+  const trustedId=item.trustedId??null,trustedUrl=item.trustedUrl??null;
+  if(trustedId===null?trustedUrl!==null:!id(trustedId)||trustedId===item.id||trustedUrl!=='https://fem.encar.com/cars/detail/'+trustedId)invalid();
+  ids.add(item.id);listings.push({id:item.id,model:item.model,sellerUrl:item.sellerUrl,trustedId,trustedUrl});
+ }
+ return scrub({version:1,plate:base.plate,verifiedAt:date.toISOString(),listings});
+}
+window.snoteEncarLinksBridge={
+ context:snoteEncarLinksContext,
+ async save(base,record){
+  snoteEncarLinksCheck(base);
+  const safe=snoteEncarLinksRecord(base,record),sequence=++snoteEncarLinksSequence;
+  const task=snoteEncarLinksTail.catch(()=>{}).then(async()=>{
+   snoteEncarLinksCheck(base,sequence);
+   const prepared=await flush();snoteEncarLinksCheck(base,sequence);
+   if(prepared?.ok!==true||S.conflict)throw snoteEncarLinksError('NETWORK','기존 차량 자료의 서버 저장을 먼저 확인해 주세요.');
+   const key=cloudKey('cars',base.ownerId),storage=storageKey('cars',base.ownerAlias),before=Number(S.revisions.get(key)||0);
+   if(!Number.isSafeInteger(before)||before<0)throw snoteEncarLinksError('NETWORK','차량의 서버 저장 상태를 확인하지 못했습니다.');
+   const car=base.car,previous=car.encarLinks,hadPrevious=Object.hasOwn(car,'encarLinks');
+   car.encarLinks=safe;
+   if(!persistCars(base.ownerAlias)){
+    if(hadPrevious)car.encarLinks=previous;else delete car.encarLinks;
+    throw snoteEncarLinksError('NETWORK','엔카 광고를 저장하지 못했습니다. 다시 시도해 주세요.');
+   }
+   const saved=await flush();snoteEncarLinksCheck(base,sequence);
+   const revision=Number(S.revisions.get(key));
+   let payload;try{payload=JSON.parse(localStorage.getItem(storage)||'null');}catch(_){}
+   const matches=Array.isArray(payload)?payload.filter(item=>String(item?.id)===base.carId&&item.ownerId===base.ownerAlias):[];
+   if(saved?.ok!==true||S.conflict||S.queue.has(key)||!Number.isSafeInteger(revision)||revision<=before||matches.length!==1||JSON.stringify(matches[0].encarLinks)!==JSON.stringify(safe))
+    throw snoteEncarLinksError('NETWORK','엔카 광고의 서버 저장을 확인하지 못했습니다. 저장을 다시 시도해 주세요.');
+   return {ok:true};
+  });
+  snoteEncarLinksTail=task.catch(()=>{});
+  return task;
+ }
+};
+// End S-NOTE Encar vehicle link persistence bridge.
+
 // A settlement can update only its financial document; the API returns the
 // canonical owner snapshot so later vehicle edits retain that server write.
 let snote221IncomeEpoch=0;
 function snote221IncomeError(code,message){return Object.assign(new Error(message),{code});}
-function snote221ResetIncome(){snote222ResetContractSession();snote221IncomeEpoch++;window.snoteResetIncomeSettlement?.();}
+function snote221ResetIncome(){snoteEncarLinksReset();snote222ResetContractSession();snote221IncomeEpoch++;window.snoteResetIncomeSettlement?.();}
 function snote221IncomeContext(carId){
  carId=String(carId);const matches=cars.filter(car=>String(car.id)===carId);if(matches.length!==1||!currentUser)return null;
  const car=matches[0];
@@ -8576,8 +8657,8 @@ snote216InitMonthly();
 
 async function reload(){if(!S.ready)return;
  if(!confirm('서버에 저장된 데이터로 다시 불러올까요? 현재 브라우저에서 서버에 반영되지 않은 변경사항은 사라집니다.'))return;
- snote216ResetMonthly();S.ready=false;S.queue.clear();S.conflict=false;
- try{await restoreDatasets();loadCarsForUser();loadCovers();await refreshMedia();buildStats();navigate(route);S.ready=true;showStatus('● 서버 자료 다시 불러옴');void snote220RefreshTaxonomy().catch(()=>{});snote216InitMonthly();}
+ snote216ResetMonthly();snoteEncarLinksReset();S.ready=false;clearTimeout(S.timer);S.queue.clear();
+ try{if(cloudFlushTask)await cloudFlushTask;S.queue.clear();S.conflict=false;await restoreDatasets();loadCarsForUser();loadCovers();await refreshMedia();buildStats();navigate(route);S.ready=true;showStatus('● 서버 자료 다시 불러옴');void snote220RefreshTaxonomy().catch(()=>{});snote216InitMonthly();}
  catch(e){S.ready=true;fail(e,'새로고침');snote216InitMonthly();}
 }
 status.addEventListener('click',reload);
@@ -9096,7 +9177,7 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 <script type="module" src="assets/quick-calculator.js?v=2.17"></script>
 <script type="module" src="assets/vehicle-taxonomy-ui.js?v=2.20"></script>
 <script type="module" src="assets/income-settlement-parent.js?v=2.25"></script>
-<script src="assets/release-info.js?v=2.30.2" defer></script>
-<script src="assets/snote-encar-link.js?v=2.30.2" defer></script>
+<script src="assets/release-info.js?v=2.31" defer></script>
+<script src="assets/snote-encar-link.js?v=2.31" defer></script>
 </body>
 </html>
