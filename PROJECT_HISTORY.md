@@ -11,6 +11,12 @@
 - 기존 실제 브라우저 회귀 **27/27**(차량 상세/저장/엔카), 고객정보 실제 API+AES+로컬 합성 DB **8/8**(20 writes·24 identity requests), 계약서 서명·실제 2페이지 PDF **7/7** 통과. 실제 운영 DB/문자/외부 API를 사용하지 않았다.
 - 검증 로그·합성 화면은 `/workspace/work/`에 보관한다. 서버 Functions·SQL·키 설정 변경은 없다. 배포 결과는 후속 기록으로 구분한다.
 
+### v2.34 배포
+
+- 앱 `cb6aec9afa1c556116b0ca4ba914773ff3e729c4`를 main에 정상 push했다. 2026-11-03 20:36:11 KST 완료된 [s-note Pages 체크 125892961407](https://github.com/spooky1121/s-note/runs/125892961407)의 `success / Deployed successfully`, Latest commit `cb6aec9` 일치를 확인했다. 이전 Building 체크 대신 새 완료 체크를 확인했다.
+- 개별 배포 https://5e45f669.s-note.pages.dev , 운영 주소 https://s-note.pages.dev/?release=2.34 . 이 환경의 운영 주소 직접 HTTP 조회는 403이어서 운영 HTML은 확인하지 못했다. 실제 Chromium 검증은 로컬 전체 HTML과 합성 HTTP/DB 기준이며 실제 고객자료나 문자 발송을 사용하지 않았다.
+- 후속 문서 전용 커밋은 앱을 바꾸지 않으며 배포 앱 기준은 `cb6aec9`다. SQL·서버 키 추가 설정은 없다.
+
 ## 2026-11-03 — v2.33.1 저장·판매진행 아이콘과 색상 바
 
 - 차량 상세 저장 버튼은 디스켓 선형 SVG로 바꿨다. 판매진행 버튼은 첨부 그림의 영수증/상승 화살표만 남긴 간결한 선형 SVG로 그렸다. 첨부 파일 자체를 편집·재사용한 이미지가 아니라 참고 모티프를 반영한 UI 아이콘이며 기존 버튼 이름/풍선말/호출·권한은 그대로다.
