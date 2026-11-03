@@ -14,6 +14,8 @@
 - Cloudflare Pages Functions 로컬 번들(Wrangler4.152.0) 컴파일과 JS 구문/diff 공백 검사를 통과했다.
 - 기존 브라우저 테스트의 빨간44px 외곽 닫기 기대를 최신30px 회색 inset 디자인으로 수정했다. 고객 테스트는 제거된 새로고침 대신 실제 visibility 자동조회, 하단 이동 서명과 아이콘 이름을 사용한다. 월결산 fixture는 새 공통 스타일/글꼴까지 로드하며 의도적으로 보류한 모의 저장 ACK를 명시적으로 해제해 타이밍 의존을 제거한다.
 
+- GitHub main 앱 커밋 `3bca1d3c9cd5d412e5e0b1df35d0a349e38ab882`. Cloudflare **Pages: s-note** 체크 `126046148849` completed/success, 2026-11-04 01:19:37 KST(2026-11-03T16:19:37Z)에 배포 완료했다. 서비스 https://s-note.pages.dev/?release=2.44 / 배포 https://265dc8ab.s-note.pages.dev . 별도 Pages zerocar-office도 성공했다. 실행 환경의 운영 URL 접근 제한으로 실제 운영 로그인/실제 MMS 발송을 검증했다고 주장하지 않는다.
+
 ## 2026-11-04 — v2.43 선재고 목록 색상 제거 및 파란 추가 아이콘
 
 - 기존 미커밋 변경 없는 `5439ef1`에서 시작했다. 선재고 관리 PC 목록의 색상 헤더/셀과 모바일 카드의 색상 배지만 제거했다. 다른 차량/재고금융 목록의 색상과 원본 선재고/차량 데이터는 유지한다. 미상환 합계 footer colspan을5→4로 맞춰5열 목록과 정렬했다.
