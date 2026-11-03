@@ -12,6 +12,12 @@
 - 기존 실제 브라우저 회귀: 차량/엔카27, 고객정보 API+AES+합성 DB8, 계약서 서명·실제 PDF7, 소득정산 API/CAS·PDF11, 계산기2, 월정산 UI3, 역할별 차량 색상6+외부요청/오류 검사 통과. 실제 고객 DB·문자·운영 API 자료는 사용하지 않았다. 작업 검증 로그·화면은 `/workspace/work/v236-*`와 `/workspace/work/v236/`에 보관한다.
 - 서버 Functions·SQL·키 설정은 변경하지 않았다. 배포 결과는 후속 기록으로 구분한다.
 
+### v2.36 배포
+
+- 앱 `97234e4c82a3909f17ce35308e4105c761faa068`를 main에 정상 push했다. 2026-11-03 21:11:10 KST 완료된 [s-note Pages 체크 125908997801](https://github.com/spooky1121/s-note/runs/125908997801)의 `success / Deployed successfully`, Latest commit `97234e4` 일치를 확인했다. 이전 Building 체크 대신 새 완료 체크를 확인했다.
+- 개별 배포 https://d6c70ab2.s-note.pages.dev , 운영 주소 https://s-note.pages.dev/?release=2.36 . 실제 운영 로그인·데이터·문자 발송은 사용하지 않았다. 로컬 Chromium/합성 DB 검증과 배포 성공을 구분한다. 운영 URL 직접 조회는 이전과 같은 환경 접근 제한으로 이번에는 반복하지 않았다.
+- 같은 저장소의 별도 Workers `zerocar-office` 빌드는 실패했고 Pages `zerocar-office`와 요청 대상 Pages `s-note`는 성공했다. 요청 대상 s-note 배포와 별도 Workers 결과를 구분한다. 후속 문서 전용 커밋은 앱을 변경하지 않는다.
+
 ## 2026-11-03 — v2.35 판매 주소·서명 반반 배치와 문서 닫기 복귀
 
 - 기존 미커밋 변경 없는 `bbdd407`에서 작업했다. 등본상 주소·등기받을 주소를 절반씩 좌우 배치하고 입력 높이를 줄였다. 하단은 이전비 환급계좌와 고객 원제출 서명을 1:1로 배치한다. 650px 이하에서는 가독성을 위해 세로로 쌓는다.
