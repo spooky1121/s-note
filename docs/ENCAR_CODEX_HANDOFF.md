@@ -14,7 +14,7 @@
 
 앱 SHA `9ec8189222daa0feb1c803a8fdf90cffb2c23d00`를 main에 반영했다. 2026-11-03 16:26 KST에 [s-note Pages 최신 완료 체크 125783969901](https://github.com/spooky1121/s-note/runs/125783969901)의 `succeeded / Deployed successfully`, Latest commit `9ec8189`와 **새 개별 배포 https://a54377be.s-note.pages.dev** 를 확인했다. `bed34fe6`는 수정 전 릴리스 주소다.
 
-운영 https://s-note.pages.dev 의 실제 화면은 여전히 직접 읽지 못했다. 사용자에게 운영/새 개별 배포 주소를 각각 새 탭으로 열어 v2.30.2가 보이는지 요청했으며 아직 회신 전이다. 성공 체크를 production 별칭 화면의 실측으로 바꾸어 기록하지 않는다. 후속 문서 전용 커밋과 무관하게 앱 기준은 `9ec8189`다.
+사용자가 운영 https://s-note.pages.dev/?release=2.30.2 와 새 개별 배포 https://a54377be.s-note.pages.dev/?release=2.30.2 를 각각 열어 **“둘다 v2.30.2 로 나옴”**이라고 회신했다. 따라서 운영 화면의 새 버전 표시는 사용자 확인 완료다. 이 환경에서 직접 HTTP를 읽거나 production 별칭 설정을 조회한 결과는 아니다. 엔카 실차 자동 검색은 별도 확인이 남아 있다. 후속 문서 전용 커밋과 무관하게 앱 기준은 `9ec8189`다.
 
 ## 2026-11-03 v2.30.1 — 목록 오류의 독립 주소 재검증
 
