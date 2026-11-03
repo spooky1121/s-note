@@ -48,7 +48,7 @@
   let contextActor = null;
   let contextReady = false;
   let contextCar = null;
-  let contextStorageKey = '';
+  let contextStorageKey = '', contextSavedKey = '';
   let bar, button, note, results, manual, manualInput, manualButton, manualError;
   let copyButton, copyStatus, copyFallback, saveStatus, saveRetry;
   let retryRecord = null, saveVersion = 0;
@@ -123,6 +123,9 @@
     if (!context?.ready || !context.storage) return;
     const record = savedRecord(context.car.encarLinks, context.plate);
     if (!record) return;
+    const expected=record.listings.flatMap(item=>[item.sellerUrl,item.trustedUrl].filter(Boolean));
+    const displayed=[...results.querySelectorAll('a')].map(anchor=>anchor.href);
+    if(JSON.stringify(expected)===JSON.stringify(displayed))return;
     showListings(record.listings, true);
     const date = new Date(record.verifiedAt).toLocaleString('ko-KR', {timeZone: 'Asia/Seoul'});
     saveStatus.textContent = '최근 확인 광고 · 마지막 확인 ' + date;
@@ -287,6 +290,8 @@
 
   function syncContext() {
     const context = currentContext();
+    if(button)button.hidden=context?.car.status==='판매완료';
+    const savedKey=JSON.stringify(savedRecord(context?.car.encarLinks,context?.plate));
     const nextKey = context?.key || '';
     if (nextKey !== contextKey || (context?.actor || null) !== contextActor || !!context?.ready !== contextReady || (context?.car || null) !== contextCar || (context?.storage?.key || '') !== contextStorageKey) {
       cancel();
@@ -295,10 +300,12 @@
       contextReady = !!context?.ready;
       contextCar = context?.car || null;
       contextStorageKey = context?.storage?.key || '';
+      contextSavedKey = savedKey;
       button.disabled = !context?.plate || !context?.ready;
       renderLookupButton();
       restoreSaved(context);
     }
+    if(!active&&savedKey!==contextSavedKey){contextSavedKey=savedKey;if(savedKey!=='null')restoreSaved(context);else results.replaceChildren();}
   }
 
   function resetContext() {
@@ -307,7 +314,7 @@
     contextActor = null;
     contextReady = false;
     contextCar = null;
-    contextStorageKey = '';
+    contextStorageKey = '';contextSavedKey='';
     button.disabled = true;
     renderLookupButton();
   }
@@ -321,10 +328,16 @@
     try {
       tab.opener = null;
       tab.document.title = '엔카 광고 확인 중';
-      const message = tab.document.createElement('p');
-      message.textContent = '차량번호와 일치하는 광고를 확인하고 있습니다. 잠시만 기다려 주세요.';
-      message.style.cssText = 'font:16px/1.8 system-ui,sans-serif;max-width:560px;margin:72px auto;padding:24px;color:#334155';
-      tab.document.body.replaceChildren(message);
+      const viewport=tab.document.createElement('meta');viewport.name='viewport';viewport.content='width=device-width, initial-scale=1';tab.document.head.append(viewport);
+      const style=tab.document.createElement('style');style.textContent=`
+       *{box-sizing:border-box}body{margin:0;min-height:100dvh;display:grid;place-items:center;padding:28px;background:#f6f8fb;color:#253449;font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Noto Sans KR',sans-serif}
+       main{text-align:center;width:min(100%,620px)}.scene{position:relative;margin:0 auto 28px;width:230px;height:130px;overflow:hidden}.road{position:absolute;left:0;right:0;bottom:20px;height:1px;background:#dae2eb}.car{position:absolute;left:42px;top:35px;width:135px;height:64px;color:#567a9e;animation:drive 2.6s ease-in-out infinite}.scan{position:absolute;width:55px;height:55px;border:3px solid #ed6372;border-radius:50%;left:140px;top:15px;animation:scan 2.6s ease-in-out infinite}.scan:after{content:'';position:absolute;width:24px;height:3px;background:#ed6372;right:-18px;bottom:-8px;transform:rotate(45deg);border-radius:4px}
+       h1{font-size:clamp(20px,4.5vw,28px);font-weight:700;letter-spacing:-1px;line-height:1.5;margin:0 0 12px;word-break:keep-all}p{font-size:14px;color:#8c98a8;line-height:1.7;margin:0}.dots{display:flex;justify-content:center;gap:7px;margin-top:25px}.dots i{width:6px;height:6px;border-radius:50%;background:#9eb2c8;animation:pulse 1.3s ease-in-out infinite}.dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}
+       @keyframes drive{0%,100%{transform:translateX(-9px)}50%{transform:translateX(9px)}}@keyframes scan{0%,100%{transform:translateX(-40px)}50%{transform:translateX(4px)}}@keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}@media(prefers-reduced-motion:reduce){*{animation:none!important}}
+      `;tab.document.head.append(style);
+      const content=tab.document.createElement('main');content.setAttribute('role','status');content.setAttribute('aria-live','polite');
+      content.innerHTML='<div class="scene" aria-hidden="true"><div class="road"></div><svg class="car" viewBox="0 0 140 65" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 43v-17l19-4 14-15h42l17 20 17 5v14H15zM37 22h58M53 8l-9 14M86 8l9 14M112 33h8"/><circle cx="38" cy="45" r="10" fill="#f6f8fb"/><circle cx="103" cy="45" r="10" fill="#f6f8fb"/></svg><div class="scan"></div></div><h1>해당 차량의 엔카 광고를 찾고 있어요!</h1><p>차량번호와 광고 정보를 확인하고 있어요.<br>확인이 끝나면 광고 페이지로 이동합니다.</p><div class="dots" aria-hidden="true"><i></i><i></i><i></i></div>';
+      tab.document.body.replaceChildren(content);
     } catch (_) { /* The result links remain available in S-NOTE. */ }
     return tab;
   }
@@ -371,6 +384,7 @@
       return;
     }
     cancel();
+    restoreSaved(context);
     const job = {...context, controller: new AbortController(), waitingTab: prepareTab(), timedOut: false};
     active = job;
     button.disabled = true;

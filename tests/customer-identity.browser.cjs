@@ -136,7 +136,7 @@ async function main(){
   await page.evaluate(()=>closeSaleProgress());await boot(page);
   assert.equal(await page.locator('#zc72-rrn').inputValue(),FORMATTED13);
   await page.evaluate(()=>{closeSaleProgress();closeVehicle();navigate('users');});
-  await page.waitForFunction(()=>document.querySelector('[data-customer-identity="test-car-1"]')?.textContent==='000101-3000000');
+  await page.waitForFunction(()=>document.querySelector('[data-customer-identity="test-car-1"]')?.textContent==='000101-*******');
   await page.locator('[data-customer-receipt="test-car-1"]').click();
   await page.locator('#zc76-receipt-overlay').waitFor({state:'visible'});
   assert.equal(await page.locator('#zc76-rrn').inputValue(),FORMATTED13);
@@ -214,7 +214,7 @@ async function main(){
   assert.equal(await page.locator('#zc72-rrn').inputValue(),FORMATTED13);assert.equal(await page.evaluate(()=>zc72SaleCarId),'test-car-2');
   console.log('PASS late decrypt from previous customer cannot replace current sales form');
   await page.evaluate(()=>{closeSaleProgress();closeVehicle();navigate('users');});
-  await page.waitForFunction(()=>document.querySelector('[data-customer-identity="test-car-1"]')?.textContent==='987-65-43210');
+  await page.waitForFunction(()=>document.querySelector('[data-customer-identity="test-car-1"]')?.textContent==='987-**-*****');
   const contractHold=deferred(),contractEntered=deferred();holdIdentity={match:body=>body.action==='read'&&body.carId==='test-car-1',entered:contractEntered.resolve,wait:contractHold.promise};
   await page.evaluate(()=>{window.__contractOpen=zc75OpenSavedContract('test-car-1');});await contractEntered.promise;
   await page.evaluate(()=>{document.getElementById('ct-buyer-id').value='000101-3000000';});

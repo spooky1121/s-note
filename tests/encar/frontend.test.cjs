@@ -821,3 +821,13 @@ test('44 the accessible logo survives failed lookup and retry while disabled off
   assert.deepEqual(f.tabs[1].navigations, [listing().sellerUrl]);
   assert.equal(assertLookupIcon(f.button), logo);
 });
+
+test('45 sold vehicles hide only the lookup icon and keep authorized saved links', async t => {
+ const f=fixture(t,{bridge:true,savedRecord:storedRecord()});f.w.cars[0].status='판매완료';f.w.SnoteEncarLink.refresh();assert.equal(f.button.hidden,true);assert.equal(f.links.length,2);f.w.cars[0].status='판매중';f.w.SnoteEncarLink.refresh();assert.equal(f.button.hidden,false);assert.equal(f.requests.length,0);
+});
+test('46 isolated waiting tab contains the requested styled message and reduced-motion animation', async t => {
+ const f=fixture(t);f.click();await settle();const doc=f.tabs[0].document;assert.equal(doc.querySelector('h1').textContent,'해당 차량의 엔카 광고를 찾고 있어요!');assert.equal(doc.querySelectorAll('.car,.scan').length,2);assert.match(doc.querySelector('style').textContent,/prefers-reduced-motion/);assert.equal(f.tabs[0].opener,null);f.reply(0,found());await settle();assert.deepEqual(f.tabs[0].navigations,[listing().sellerUrl]);
+});
+test('47 failed recheck retains only previously saved verified URLs and its failure message', async t => {
+ const f=fixture(t,{bridge:true,savedRecord:storedRecord()});f.click();await settle();f.reply(0,{status:'error',diagnostics:{code:'DETAIL_BLOCKED'}},{status:502});await settle();assert.deepEqual(f.links.map(a=>a.href),[listing().sellerUrl,listing().trustedUrl]);assert.equal(f.note.dataset.error,'true');assert.match(f.note.textContent,/제한/);assert.equal(f.tabs[0].closed,true);
+});
