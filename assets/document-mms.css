@@ -1,0 +1,26 @@
+#vehicle-overlay .snote-detail-icon.is-share{color:#315cf5;border-color:#dce5ff;background:#f5f8ff}
+#snote-document-mms{width:min(640px,calc(100vw - 56px));max-width:calc(100vw - 56px);padding:0;border:1px solid #e6ebf1;border-radius:18px;background:#fff;color:#28384b;box-shadow:0 22px 85px #14223740}
+#snote-document-mms::backdrop{background:#17223366;backdrop-filter:blur(4px)}
+#snote-document-mms .mms-body{padding:24px;min-width:0}
+#snote-document-mms h2{font-size:19px;margin:0 0 7px;font-weight:700;letter-spacing:-.5px}
+#snote-document-mms .mms-caption{font-size:12px;color:#8792a0;line-height:1.7;margin:0 0 18px}
+#snote-document-mms .mms-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0}
+#snote-document-mms label{font-size:12px;color:#68788d;min-width:0;display:block}
+#snote-document-mms input[type=tel],#snote-document-mms input[readonly]{display:block;width:100%;height:42px;padding:10px 11px;border:1px solid #dce4ed;border-radius:9px;box-sizing:border-box;background:#fff;font:inherit;font-size:15px;color:#28384b;margin-top:6px}
+#snote-document-mms input[readonly]{background:#f7f9fc;color:#8491a2}
+#snote-document-mms .mms-kind{display:flex;gap:8px;margin:14px 0;border:0;padding:0;flex-wrap:wrap}
+#snote-document-mms .mms-kind label{display:flex;gap:6px;align-items:center;border:1px solid #e1e7ef;border-radius:9px;padding:10px;background:#f8faff;color:#42658b}
+#snote-document-mms .mms-preview{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+#snote-document-mms .mms-file{padding:10px;border:1px solid #e2e8ef;border-radius:11px;background:#fbfcfe}
+#snote-document-mms .mms-file label{display:flex;align-items:flex-start;gap:6px;color:#415770;line-height:1.5}
+#snote-document-mms .mms-file img{display:block;width:100%;height:180px;object-fit:contain;background:#edf1f6;border-radius:7px;margin:10px 0;cursor:zoom-in}
+#snote-document-mms .mms-file small{font-size:11px;color:#8a96a5;line-height:1.6}
+#snote-document-mms .mms-message{font-size:12px;line-height:1.8;overflow-wrap:anywhere;color:#527193;margin:14px 0}
+#snote-document-mms .mms-message[data-error=true]{color:#c24654}
+#snote-document-mms .mms-send{display:block;margin:16px 0 0 auto;min-height:42px;border:0;border-radius:10px;background:#315cf5;color:#fff;padding:10px 18px;font:inherit;font-size:13px;font-weight:650;cursor:pointer}
+#snote-document-mms .mms-send:disabled{opacity:.4;cursor:default}
+#snote-document-mms .mms-history{font-size:11px;color:#8a96a5;line-height:1.8;margin-top:18px;border-top:1px solid #edf0f4;padding-top:12px}
+#snote-document-mms .mms-history p{margin:4px 0;overflow-wrap:anywhere}
+#snote-document-mms button:focus-visible,#snote-document-mms input:focus-visible{outline:3px solid #b6cffd;outline-offset:2px}
+@media(max-width:650px){#snote-document-mms .mms-body{padding:20px 14px}#snote-document-mms .mms-fields{grid-template-columns:1fr}#snote-document-mms input[type=tel]{font-size:16px}#snote-document-mms .mms-preview{grid-template-columns:1fr}#snote-document-mms .mms-file img{height:200px}}
+@media print{#snote-document-mms,#vehicle-document-share{display:none!important}}

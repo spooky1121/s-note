@@ -1,0 +1,51 @@
+/* Compact actions, title-aligned vehicle search and shared popup presentation. */
+#list-screen .list-heading{flex:1;min-width:0}
+#list-screen .list-title-line{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+#list-screen .list-title-line h2{flex:none;margin:0}
+#buy-search-host{display:block;flex:0 1 300px;min-width:180px;max-width:330px}
+#buy-search-host[hidden]{display:none!important}
+#buy-search-host .search{width:100%;min-width:0;margin:0;box-sizing:border-box}
+#buy-search-host input{width:100%;min-width:0;font-size:12px}
+#snote-app #list-screen .zc-list-actions :is(#zc80-buy-scan,#snote92-buy-manual){display:inline-grid;place-items:center;flex:none;width:36px;min-width:36px;height:36px;padding:7px;border:1px solid #dce5ff;border-radius:9px;background:#f5f8ff;color:#315cf5;box-shadow:none}
+#snote-app #list-screen .zc-list-actions button[hidden]{display:none!important}
+#snote-app #list-screen .zc-list-actions button:hover{background:#eaf0ff}
+#snote-app button svg{width:18px;height:18px}
+#vehicle-overlay .vehicle-header-action{width:40px;height:40px;flex-basis:40px;min-width:40px;min-height:40px}
+#vehicle-overlay .vehicle-header-action svg{width:20px;height:20px}
+#vehicle-overlay .snote-encar-button.vehicle-header-action{width:40px;height:40px;padding:0}
+#vehicle-overlay .snote-encar-logo{width:40px;height:40px}
+#vehicle-overlay .snote-detail-icon{width:32px;height:32px;min-width:32px;padding:6px}
+#vehicle-overlay .snote-detail-icon svg{width:18px;height:18px}
+#vehicle-overlay .detail-repair .repair-top .snote-detail-icon,#vehicle-overlay .repair-row .repair-remove{width:32px;min-width:32px;height:32px;padding:6px}
+#vehicle-overlay .tile-controls .snote-detail-icon{width:28px;min-width:28px;height:28px;padding:4px}
+#vehicle-overlay .tile-controls .snote-detail-icon svg{width:17px;height:17px}
+#vehicle-overlay .photo-grid .add-tile.snote-detail-icon{width:100%;height:auto;padding:12px}
+#vehicle-overlay .photo-grid .add-tile svg{width:26px;height:26px}
+#snote-app .snote-list-action{width:32px;height:32px;min-width:32px;padding:6px}
+#snote-app .snote-list-action svg{width:18px;height:18px}
+#prestock-card .ps-add{width:36px;min-width:36px;height:36px;padding:7px}
+#prestock-card .ps-add svg{width:19px;height:19px}
+#prestock-card #ps-bank-account{border:0;border-bottom:1px dashed #d0dbe9;border-radius:0;background:none;color:inherit;font:inherit;letter-spacing:inherit;cursor:pointer;padding:0 0 3px;text-align:left}
+#prestock-card #ps-bank-account:hover{color:#315cf5}
+#snote-prestock-account{width:min(420px,calc(100vw - 56px));padding:0;border:1px solid #e3e9f1;border-radius:17px;background:#fff;color:#2b3d54;box-shadow:0 24px 75px #14223730}
+#snote-prestock-account .bank-body{padding:25px}
+#snote-prestock-account h2{margin:0 0 20px;font-size:19px}
+#snote-prestock-account dl{display:grid;gap:17px;margin:0}
+#snote-prestock-account dt{color:#8a97a8;font-size:11px;margin-bottom:6px}
+#snote-prestock-account dd{margin:0;color:#304967;font-size:15px;overflow-wrap:anywhere}
+@media(max-width:650px){#list-screen .panel-head{position:relative;display:block}#list-screen .zc-list-actions{position:absolute;top:18px;right:18px;gap:7px}#list-screen .list-title-line{gap:10px}#list-screen .list-title-line h2{width:100%;padding-right:85px;box-sizing:border-box}#buy-search-host{flex-basis:100%;min-width:0;max-width:none;width:100%}#vehicle-overlay .detail-repair .repair-row{grid-template-columns:minmax(0,1fr) 90px 32px;gap:8px}}
+@media screen{
+ .snote-popup-overlay,.overlay,#vehicle-overlay,#zc72-sale-modal,#zc76-receipt-overlay,#zc182-finance-overlay,#zc-auto-reg-overlay,#zc80-unlock,#zoom-overlay,#snote201-image-zoom{background-color:rgba(20,34,54,.32)!important;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+ dialog::backdrop{background:rgba(20,34,54,.32);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);animation:snote-popup-fade .18s ease-out}
+ .snote-popup-frame>.snote-popup-card,#zc72-sale-modal:not([hidden]) .zc72-dialog,dialog[open]>.snote-popup-native-body{animation:snote-popup-enter .2s cubic-bezier(.2,.7,.3,1)}
+ #vehicle-overlay.open .vehicle-modal{animation:snote-popup-fade .18s ease-out}
+ button.snote-popup-close{font-size:26px!important}
+ .ps-action-pop.open,.snote-profile-menu:not([hidden]),.color-picker.expanded .color-menu{isolation:isolate;animation:snote-popup-fade .16s ease-out}
+ .ps-action-pop.open::before,.snote-profile-menu:not([hidden])::before,.color-picker.expanded .color-menu::before{content:'';position:fixed;inset:0;background:rgba(20,34,54,.12);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);z-index:-2;pointer-events:none}
+ .ps-action-pop.open::after,.snote-profile-menu:not([hidden])::after,.color-picker.expanded .color-menu::after{content:'';position:absolute;inset:0;border-radius:inherit;background:white;z-index:-1;pointer-events:none}
+}
+@keyframes snote-popup-enter{from{opacity:0;transform:translateY(7px) scale(.99)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes snote-popup-fade{from{opacity:0}to{opacity:1}}
+@media(prefers-reduced-motion:reduce){#vehicle-overlay.open .vehicle-modal{animation:none!important}.snote-popup-frame>.snote-popup-card,#zc72-sale-modal .zc72-dialog,dialog[open]>.snote-popup-native-body,dialog::backdrop,.ps-action-pop.open,.snote-profile-menu:not([hidden]),.color-picker.expanded .color-menu{animation:none!important}}
+
+@media print{#snote-prestock-account{display:none!important}}

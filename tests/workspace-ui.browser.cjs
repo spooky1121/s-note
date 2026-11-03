@@ -7,10 +7,10 @@ const ART=process.env.WORKSPACE_UI_ARTIFACTS||path.join(require('node:os').tmpdi
 async function geometry(p,root,selector='.snote-popup-close'){
  const button=p.locator(root+' '+selector).first();await button.waitFor({state:'visible'});
  await p.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
- await p.waitForFunction(selector=>Math.abs(document.querySelector(selector).getBoundingClientRect().width-44)<.001,root+' '+selector);
- const g=await button.evaluate(b=>{const r=b.getBoundingClientRect(),f=b.parentElement.getBoundingClientRect(),s=getComputedStyle(b),cx=r.x+22,cy=r.y+22;return {x:r.x,y:r.y,right:r.right,bottom:r.bottom,width:r.width,height:r.height,color:s.color,bg:s.backgroundColor,radius:s.borderRadius,cornerX:f.right,cornerY:f.top,points:[[0,0],[20,0],[-20,0],[0,20],[0,-20]].map(([dx,dy])=>document.elementFromPoint(cx+dx,cy+dy)?.outerHTML.slice(0,180)),hit:[[0,0],[20,0],[-20,0],[0,20],[0,-20]].every(([dx,dy])=>document.elementFromPoint(cx+dx,cy+dy)?.closest('button')===b),vw:innerWidth,vh:innerHeight}});
- assert(Math.abs(g.width-44)<.01,root);assert(Math.abs(g.height-44)<.01,root);assert.equal(g.radius,'50%',root);assert.equal(g.bg,'rgb(223, 53, 70)',root);assert.equal(g.color,'rgb(255, 255, 255)',root);assert(g.x>=0&&g.y>=0&&g.right<=g.vw&&g.bottom<=g.vh,JSON.stringify({root,g}));assert(g.hit,JSON.stringify({root,g}));
- if(!root.includes('calculator')){assert(Math.abs(g.x+22-g.cornerX)<2,root+' corner X');assert(Math.abs(g.y+22-g.cornerY)<2,root+' corner Y');}
+ await p.waitForFunction(selector=>Math.abs(document.querySelector(selector).getBoundingClientRect().width-30)<.001,root+' '+selector);
+ const g=await button.evaluate(b=>{const r=b.getBoundingClientRect(),f=b.parentElement.getBoundingClientRect(),s=getComputedStyle(b),cx=r.x+15,cy=r.y+15;return {x:r.x,y:r.y,right:r.right,bottom:r.bottom,width:r.width,height:r.height,color:s.color,bg:s.backgroundColor,radius:s.borderRadius,cornerX:f.right,cornerY:f.top,points:[[0,0],[12,0],[-12,0],[0,12],[0,-12]].map(([dx,dy])=>document.elementFromPoint(cx+dx,cy+dy)?.outerHTML.slice(0,180)),hit:[[0,0],[12,0],[-12,0],[0,12],[0,-12]].every(([dx,dy])=>document.elementFromPoint(cx+dx,cy+dy)?.closest('button')===b),vw:innerWidth,vh:innerHeight}});
+ assert(Math.abs(g.width-30)<.01,root);assert(Math.abs(g.height-30)<.01,root);assert.equal(g.radius,'6px',root);assert.equal(g.bg,'rgba(0, 0, 0, 0)',root);assert.equal(g.color,'rgb(129, 134, 155)',root);assert(g.x>=0&&g.y>=0&&g.right<=g.vw&&g.bottom<=g.vh,JSON.stringify({root,g}));assert(g.hit,JSON.stringify({root,g}));
+ if(!root.includes('calculator')){assert(Math.abs(g.right-(g.cornerX-10))<2,root+' corner X');assert(Math.abs(g.y-(g.cornerY+10))<2,root+' corner Y');}
  return button;
 }
 (async()=>{const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium'});setBrowser(browser);try{
