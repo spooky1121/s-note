@@ -205,7 +205,6 @@
     if (!isCurrent(s)) return;
     s.create.disabled = s.busy || s.reading || s.blocked || !s.canCreate;
     s.phone.disabled = s.busy || !s.canCreate;
-    s.refresh.disabled = s.busy || s.reading;
     s.copy.disabled = s.busy || !s.link;
     s.create.textContent = s.busy ? '처리 중…' : '입력 링크 문자 보내기';
     for (const item of s.list.querySelectorAll('button')) item.disabled = s.busy || s.reading;
@@ -503,9 +502,6 @@
     state = s;
     const head = node('div', 'snote-intake-head');
     head.append(node('h3', 'snote-intake-heading', '고객 직접 입력'));
-    s.refresh = button('새로고침', 'snote-intake-button is-quiet', () => refresh(s, true));
-    head.append(s.refresh);
-    const note = node('p', 'snote-intake-note', '고객이 문자 인증 후 정보를 입력합니다. 휴대전화 소지 확인이며, 실명·본인확인 서비스가 아닙니다.');
     const line = node('div', 'snote-intake-compose');
     const label = node('label', 'snote-intake-phone-label', '문자 받을 휴대전화');
     label.htmlFor = 'snote-intake-phone';
@@ -529,8 +525,7 @@
     s.list.setAttribute('aria-label', '고객 입력 요청 내역');
     s.signature = node('section', 'snote-intake-signature'); s.signature.hidden = true;
     s.signature.setAttribute('aria-label', '고객 원제출 서명');
-    panel.append(head, note, line, s.message, s.list, s.signature,
-      node('p', 'snote-intake-footnote', '새 링크를 보내면 이전 입력 대기 링크는 취소됩니다. 링크는 24시간 동안 유효하며, 복사는 이 창에서 생성한 최근 링크만 가능합니다.'));
+    panel.append(head, line, s.message, s.list, s.signature);
     if (!s.canCreate) message(s, '판매완료 차량은 새 링크를 보낼 수 없습니다. 기존 요청 내역만 확인할 수 있습니다.');
     renderRequests(s);
     renderSignature(s, customer?.customerSignature, customer?.customerSignatureSignedAt);

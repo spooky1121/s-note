@@ -1,0 +1,51 @@
+/* v2.34: sales dialog only. Keep its scroll region inside the corner close frame. */
+#zc72-sale-modal{padding:28px;align-items:center}
+#zc72-sale-modal .snote-sale-frame{position:relative;width:min(820px,100%);min-width:0}
+#zc72-sale-modal .zc72-dialog{width:100%;height:auto;max-height:calc(100dvh - 56px);border-radius:16px;overflow:auto}
+#zc72-sale-modal .zc72-close{position:absolute;z-index:5;top:-22px;right:-22px;width:44px;height:44px;min-width:44px;border:2px solid #fff;border-radius:50%;background:#df3546;color:#fff;box-shadow:0 3px 12px #7a142c40;font:30px/1 sans-serif;display:grid;place-items:center;padding:0;cursor:pointer}
+#zc72-sale-modal .zc72-close:hover{background:#bf2435}
+#zc72-sale-modal button:focus-visible{outline:3px solid #147db4;outline-offset:3px}
+#zc72-sale-modal .zc72-head{padding:16px 20px;gap:12px;align-items:center;background:#fafcfe}
+#zc72-sale-modal .snote-sale-heading{min-width:0;flex:1}
+#zc72-sale-modal .zc72-head h2{font-size:19px;margin:0}
+#zc72-sale-modal .zc72-head p{margin-top:6px;overflow-wrap:anywhere}
+#zc72-sale-modal .snote-sale-actions{display:flex;gap:6px;align-items:center;flex-shrink:0}
+#zc72-sale-modal .snote-sale-action{position:relative;display:grid;place-items:center;flex:0 0 40px;width:40px;height:40px;border:1px solid #dce5ec;border-radius:10px;background:#fff;color:#234d68;padding:8px;cursor:pointer}
+#zc72-sale-modal .snote-sale-action svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+#zc72-sale-modal .snote-sale-action:hover{background:#edf6fc;border-color:#86b6d0}
+#zc72-sale-modal .snote-sale-action:disabled{opacity:.45;cursor:wait}
+#zc72-sale-modal .snote-sale-action::after{content:attr(data-tooltip);position:absolute;top:calc(100% + 8px);left:50%;transform:translateX(-50%);white-space:nowrap;padding:7px 9px;border-radius:7px;background:#19374c;color:#fff;font:600 12px/1.4 sans-serif;box-shadow:0 3px 10px #132d3d26;opacity:0;visibility:hidden;pointer-events:none;z-index:10}
+#zc72-sale-modal .snote-sale-action:last-child::after{left:auto;right:0;transform:none}
+#zc72-sale-modal .snote-sale-action:hover::after,#zc72-sale-modal .snote-sale-action:focus-visible::after{opacity:1;visibility:visible}
+#zc72-sale-modal .zc72-form{padding:16px 20px 20px}
+#zc72-sale-modal .zc72-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+#zc72-sale-modal .zc72-field{gap:5px;font-size:11px}
+#zc72-sale-modal .zc72-field input:not([type=checkbox]),#zc72-sale-modal .zc72-field select,#zc72-sale-modal .zc72-field textarea{height:34px;min-height:34px;padding:6px 9px;border-radius:8px;font-size:12px;line-height:20px}
+#zc72-sale-modal .zc72-field textarea{resize:vertical}
+#zc72-sale-modal .zc73-address-line{align-items:start;gap:7px}
+#zc72-sale-modal .zc73-address-line button{height:34px;min-height:34px;padding:5px 10px;font-size:11px}
+#zc72-sale-modal .zc74-account-fields{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:12px}
+#zc72-sale-modal .zc74-account-wide{grid-column:auto}
+#zc72-sale-modal .snote-intake-panel{margin:14px 20px 0;padding:12px;border-radius:10px}
+#zc72-sale-modal .snote-intake-head{margin-bottom:8px}
+#zc72-sale-modal .snote-intake-heading{font-size:13px}
+#zc72-sale-modal .snote-intake-compose{gap:7px;align-items:end}
+#zc72-sale-modal .snote-intake-phone{height:34px;min-height:34px;font-size:12px;padding:6px 9px}
+#zc72-sale-modal .snote-intake-button{min-height:34px;padding:6px 9px;font-size:11px}
+#zc72-sale-modal .snote-intake-message:empty{display:none}
+#zc72-sale-modal .zc72-error:empty{display:none}
+@media(max-width:650px){
+ #zc72-sale-modal .zc72-head{padding:14px;flex-wrap:wrap;gap:10px}
+ #zc72-sale-modal .snote-sale-heading{flex-basis:100%}
+ #zc72-sale-modal .snote-sale-actions{margin-left:auto}
+ #zc72-sale-modal .zc72-form{padding:14px}
+ #zc72-sale-modal .zc72-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+ #zc72-sale-modal .zc72-field input:not([type=checkbox]),#zc72-sale-modal .zc72-field select,#zc72-sale-modal .zc72-field textarea,#zc72-sale-modal .snote-intake-phone{height:36px;min-height:36px;font-size:16px;line-height:22px}
+ #zc72-sale-modal .zc74-account-fields{grid-template-columns:minmax(0,1fr);padding:10px}
+ #zc72-sale-modal .snote-intake-panel{margin:12px 14px 0;padding:10px}
+ #zc72-sale-modal .snote-intake-compose{display:flex;flex-wrap:wrap}
+ #zc72-sale-modal .snote-intake-phone-label{flex:1 1 100%;min-width:0}
+ #zc72-sale-modal .snote-intake-button{font-size:11px;min-width:0;white-space:normal}
+ #zc72-sale-modal .zc74-title-row{flex-wrap:wrap;gap:7px}
+}
+@media(max-width:380px){#zc72-sale-modal .zc72-grid{grid-template-columns:minmax(0,1fr)}#zc72-sale-modal .zc72-field.full{grid-column:auto}}

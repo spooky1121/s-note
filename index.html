@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.33.1">
+<html lang="ko" data-snote-release="2.34">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -3165,6 +3165,7 @@ button, input, select, textarea { font-family: inherit; }
 <script src="assets/vehicle-colors.js?v=2.23"></script>
 <link rel="stylesheet" href="assets/customer-contract-signature.css?v=2.22">
 <script src="assets/customer-contract-signature.js?v=2.22"></script>
+<link rel="stylesheet" href="assets/sales-popup.css?v=2.34">
 </head>
 <body class="snote-typography">
 
@@ -7111,23 +7112,23 @@ function renderWorldTrims(){const table=document.getElementById('world-results')
 </div>
 <!-- v1.72 판매 진행 · 고객 정보 -->
 <div class="zc72-overlay" id="zc72-sale-modal" hidden role="presentation">
- <section class="zc72-dialog" role="dialog" aria-modal="true" aria-labelledby="zc72-title">
-  <header class="zc72-head"><div><small>SALES · CUSTOMER DETAILS</small><div class="snote196-sale-heading"><h2 id="zc72-title">판매 진행</h2><button type="button" id="snote196-reset-btn" onclick="snote196ResetSaleForm()" title="현재 입력칸을 모두 비웁니다">↺ 입력 초기화</button></div><p id="zc72-car-title">미입력 항목은 빨간색으로 안내되며 다음 화면으로 이동할 수 있습니다.</p></div><button class="zc72-close" onclick="closeSaleProgress()" type="button" aria-label="판매 진행 닫기">×</button></header>
+ <div class="snote-sale-frame" role="dialog" aria-modal="true" aria-labelledby="zc72-title"><button class="zc72-close" onclick="closeSaleProgress()" type="button" aria-label="판매 진행 닫기">×</button><section class="zc72-dialog">
+  <header class="zc72-head"><div class="snote-sale-heading"><div class="snote196-sale-heading"><h2 id="zc72-title">판매 진행</h2><button type="button" id="snote196-reset-btn" onclick="snote196ResetSaleForm()" title="현재 입력칸을 모두 비웁니다">↺ 입력 초기화</button></div><p id="zc72-car-title"></p></div><div class="snote-sale-actions" role="group" aria-label="고객정보 저장 및 출력"><button type="button" class="snote-sale-action" id="snote214-save-customer" onclick="saleProgressContract(event,'save')" aria-label="고객정보 저장" data-tooltip="고객정보 저장"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h12l4 4v14H3V3z"/><path d="M7 3v6h10V3M7 21v-8h10v8"/></svg></button><button type="submit" form="zc72-sale-form" class="snote-sale-action" id="zc72-print-button" aria-label="계약서 출력" data-tooltip="계약서 출력"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9V3h12v6M6 17H3V9h18v8h-3M6 14h12v7H6z"/><path d="M17 11h1"/></svg></button><button type="button" class="snote-sale-action" onclick="saleProgressContract(event,'receipt')" aria-label="인수증 출력" data-tooltip="인수증 출력"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2zM9 7h6M9 11h6M9 15h3"/></svg></button></div></header>
   <section id="snote-intake-panel" class="snote-intake-panel" aria-label="휴대폰으로 고객정보 받기"></section>
   <form id="zc72-sale-form" class="zc72-form" novalidate onsubmit="saleProgressContract(event)">
     <div class="zc72-grid">
      <label class="zc72-field"><span class="zc73-field-label">성함(명칭) <span class="zc73-required" aria-label="미입력 안내">(*)</span></span><input id="zc72-name" name="name" type="text" maxlength="50" autocomplete="off" placeholder="고객 성함"></label>
      <label class="zc72-field"><span class="zc73-field-label">주민번호(사업자)번호 <span class="zc73-required" aria-label="미입력 안내">(*)</span></span><input id="zc72-rrn" name="resident" type="text" inputmode="numeric" maxlength="14" autocomplete="off" spellcheck="false" placeholder="000000-0000000 또는 000-00-00000"></label>
-     <div class="zc72-field full"><label class="zc73-field-label" for="zc72-address">등본상 주소 <span class="zc73-required" aria-label="미입력 안내">(*)</span></label><div class="zc73-address-line"><textarea id="zc72-address" name="address" maxlength="220" placeholder="주소 검색으로 선택하거나 직접 입력하세요"></textarea><button type="button" onclick="zc73OpenPostcode('zc72-address')">주소 검색</button></div><input id="zc73-address-detail" class="zc73-detail" type="text" maxlength="100" autocomplete="off" placeholder="상세주소 (동·호수 등 직접 입력)"><small class="zc73-address-note">검색된 도로명주소가 등본상 주소와 일치하는지 확인해 주세요.</small><small id="zc79-address-status" class="zc79-address-status" aria-live="polite">주소 검색 버튼을 눌러 선택하면 이 칸에 자동 입력됩니다.</small></div>
      <label class="zc72-field"><span class="zc73-field-label">전화번호 <span class="zc73-required" aria-label="미입력 안내">(*)</span></span><input id="zc72-phone" name="phone" type="tel" inputmode="tel" maxlength="20" autocomplete="off" placeholder="010-0000-0000"></label>
+     <div class="zc72-field full"><label class="zc73-field-label" for="zc72-address">등본상 주소 <span class="zc73-required" aria-label="미입력 안내">(*)</span></label><div class="zc73-address-line"><textarea id="zc72-address" name="address" maxlength="220" placeholder="주소 검색으로 선택하거나 직접 입력하세요"></textarea><button type="button" onclick="zc73OpenPostcode('zc72-address')">주소 검색</button></div><input id="zc73-address-detail" class="zc73-detail" type="text" maxlength="100" autocomplete="off" placeholder="상세주소 (동·호수 등 직접 입력)"><small class="zc73-address-note">검색된 도로명주소가 등본상 주소와 일치하는지 확인해 주세요.</small><small id="zc79-address-status" class="zc79-address-status" aria-live="polite">주소 검색 버튼을 눌러 선택하면 이 칸에 자동 입력됩니다.</small></div>
+
      <div class="zc72-field full"><div class="zc74-title-row"><label class="zc73-field-label" for="zc72-mailing">등기받을 주소 (선택)</label><label class="zc74-same-wrap" for="zc74-same-address"><input id="zc74-same-address" type="checkbox" autocomplete="off"> 위 주소와 동일</label></div><div class="zc73-address-line"><textarea id="zc72-mailing" name="mailing" maxlength="220" placeholder="주소 검색으로 선택하거나 직접 입력하세요"></textarea><button id="zc74-mailing-search" type="button" onclick="zc73OpenPostcode('zc72-mailing')">주소 검색</button></div><input id="zc73-mailing-detail" class="zc73-detail" type="text" maxlength="100" autocomplete="off" placeholder="상세주소 (동·호수 등 직접 입력)"><small class="zc73-address-note">검색 후 상세주소까지 확인해 주세요.</small></div>
      <div class="zc74-account-fields"><div class="zc74-account-heading">이전비 환급계좌 (선택)</div><label class="zc72-field">은행명<select id="zc74-refund-bank" name="refundBank"><option value="">은행 선택</option><option value="KB국민은행">KB국민은행</option><option value="신한은행">신한은행</option><option value="하나은행">하나은행</option><option value="우리은행">우리은행</option><option value="NH농협은행">NH농협은행</option><option value="지역 농·축협">지역 농·축협</option><option value="IBK기업은행">IBK기업은행</option><option value="SC제일은행">SC제일은행</option><option value="KDB산업은행">KDB산업은행</option><option value="한국씨티은행">한국씨티은행</option><option value="Sh수협은행">Sh수협은행</option><option value="수협회원조합">수협회원조합</option><option value="우체국">우체국</option><option value="카카오뱅크">카카오뱅크</option><option value="케이뱅크">케이뱅크</option><option value="토스뱅크">토스뱅크</option><option value="iM뱅크(구 대구은행)">iM뱅크(구 대구은행)</option><option value="부산은행">부산은행</option><option value="경남은행">경남은행</option><option value="광주은행">광주은행</option><option value="전북은행">전북은행</option><option value="제주은행">제주은행</option><option value="새마을금고">새마을금고</option><option value="신협">신협</option><option value="저축은행">저축은행</option><option value="산림조합">산림조합</option><option value="기타 금융기관">기타 금융기관</option></select></label><label class="zc72-field zc74-account-wide">계좌번호<input id="zc74-refund-account" name="refundAccount" inputmode="numeric" autocomplete="off" maxlength="32" placeholder="숫자 또는 하이픈(-)"></label><label class="zc72-field">예금주<input id="zc74-refund-holder" name="refundHolder" maxlength="50" autocomplete="off" placeholder="예금주 성함"></label></div>
     </div>
-    <p class="zc72-tip">직접 입력하거나 휴대폰 제출정보를 불러온 뒤 고객정보 저장을 누르면 고객관리에 반영됩니다. <b>주민번호·사업자번호는 서버에 암호화해 저장하며, 고객목록과 계약서·인수증에 전체 번호를 표시합니다.</b></p>
     <div class="zc72-error" id="zc72-error" role="alert" aria-live="polite"></div>
-    <div class="zc72-foot"><button type="button" class="zc72-receipt" id="snote214-save-customer" onclick="saleProgressContract(event,'save')">고객정보 저장</button><button type="submit" class="zc72-print" id="zc72-print-button">▤ 계약서 출력</button><button type="button" class="zc72-receipt" onclick="saleProgressContract(event,'receipt')">▣ 인수증 출력</button></div>
+
   </form>
- </section>
+ </section></div>
 </div>
 <script>
 /* v1.72: 고객 인적사항은 딜러별 IndexedDB에 보관합니다. 주민번호 전체는 절대로 기록하지 않습니다. */
@@ -7313,7 +7314,7 @@ async function saleProgressContract(event,documentType='contract'){
  if(mailing.length>220){error.textContent='등기 주소 길이가 길어 계약서 인쇄 시 잘릴 수 있습니다.';}
  if(!zc74RenderAccountValidity(true)){error.textContent='환급계좌 입력 내용을 확인해 주세요. 빈칸이어도 다음 화면으로 이동할 수 있습니다.';}
  const signature=snote214SaleSignature(),details={addressBase:$('zc72-address').value.trim(),addressDetail:$('zc73-address-detail').value.trim(),mailingBase:$('zc72-mailing').value.trim(),mailingDetail:$('zc73-mailing-detail').value.trim(),sameAddress:$('zc74-same-address').checked};
- zc72SaleLoading=true;$('zc72-print-button').disabled=true;$('snote214-save-customer').disabled=true;$('zc72-print-button').textContent='저장 중…';
+ zc72SaleLoading=true;$('zc72-print-button').disabled=true;$('snote214-save-customer').disabled=true;$('zc72-print-button').setAttribute('aria-busy','true');
  try{
   const prev=await zc72ReadCar(ownerId,carId);
   if(currentUser!==actor||view!==snote214SaleView||zc72SaleCarId!==carId)return;
@@ -7355,7 +7356,7 @@ async function saleProgressContract(event,documentType='contract'){
   // 기존 인쇄 미리보기에서 마지막으로 확인한 뒤 인쇄 버튼을 누릅니다.
   toast('고객정보 저장 완료 · 계약서에 매수인 정보가 입력되었습니다. 상단 인쇄 버튼을 눌러주세요.');
  }catch(e){if(currentUser===actor&&view===snote214SaleView)error.textContent=e?.message||'고객정보 저장에 실패했습니다. 연결 상태를 확인해 주세요.';}
- finally{zc72SaleLoading=false;$('zc72-print-button').disabled=false;$('snote214-save-customer').disabled=false;$('zc72-print-button').textContent='▤ 계약서 출력';}
+ finally{zc72SaleLoading=false;$('zc72-print-button').disabled=false;$('snote214-save-customer').disabled=false;$('zc72-print-button').removeAttribute('aria-busy');}
 }
 // 호출은 기존 계약서 닫기 함수에서만 수행되며, 주민번호 포함 인쇄 복제본을 즉시 파기합니다.
 window.zc72EraseContractPersonal=function(){
@@ -9343,11 +9344,11 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 })();
 
 </script>
-<script src="assets/snote-customer-intake.js?v=2.15" defer></script>
+<script src="assets/snote-customer-intake.js?v=2.34" defer></script>
 <script type="module" src="assets/quick-calculator.js?v=2.17"></script>
 <script type="module" src="assets/vehicle-taxonomy-ui.js?v=2.20"></script>
 <script type="module" src="assets/income-settlement-parent.js?v=2.25"></script>
-<script src="assets/release-info.js?v=2.33.1" defer></script>
+<script src="assets/release-info.js?v=2.34" defer></script>
 <script src="assets/snote-encar-link.js?v=2.33.1" defer></script>
 </body>
 </html>
