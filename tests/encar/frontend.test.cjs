@@ -605,7 +605,7 @@ test('27 a rejected/late clipboard operation cannot restore diagnostic text afte
 
 test('28 unavailable popups and native token errors never expose raw exceptions', async t => {
   const blocked = fixture(t); blocked.w.open = () => { throw Error('PRIVATE_POPUP_ERROR'); }; blocked.click(); await settle(); blocked.reply(0, found()); await settle();
-  assert.equal(blocked.links.length, 2); assert.match(blocked.note.textContent, /아래 링크/); assert.doesNotMatch(blocked.note.textContent, /PRIVATE/);
+  assert.equal(blocked.links.length, 2); assert.match(blocked.note.textContent, /링크/); assert.doesNotMatch(blocked.note.textContent, /PRIVATE/);
   const failed = fixture(t, { token: () => Promise.reject(Error('PRIVATE_TOKEN_ERROR')) }); failed.click(); await settle();
   assert.equal(failed.requests.length, 0); assert.equal(failed.tabs[0].closed, true); assert.doesNotMatch(failed.note.textContent, /PRIVATE/); failed.copyButton.click(); await settle();
   assert.equal(JSON.parse(failed.copyFallback.value).code, 'NETWORK_ERROR');
@@ -684,7 +684,7 @@ test('34 persisted car links restore immediately with no lookup, popup or write'
   assert.equal(f.links.length, 2); assert.deepEqual(f.links.map(a => a.href), [listing().sellerUrl, listing().trustedUrl]);
   assert.equal(f.requests.length, 0); assert.equal(f.openCalls.length, 0); assert.equal(f.saveCalls.length, 0);
   assert.match(f.saveStatus.textContent, /최근 확인 광고/); assert.doesNotMatch(f.saveStatus.textContent, /서버에 저장했습니다/);
-  assert.match(f.note.textContent, /다시 확인/); assert.equal(f.saveRetry.hidden, true);
+  assert.equal(f.note.textContent, ''); assert.equal(f.saveRetry.hidden, true);
 });
 
 test('35 acknowledged car links survive closing and reopening without another lookup or write', async t => {

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.39">
+<html lang="ko" data-snote-release="2.40">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -3171,9 +3171,10 @@ button, input, select, textarea { font-family: inherit; }
 <script src="assets/list-pagination.js?v=2.36"></script>
 <script src="assets/popup-controls.js?v=2.36" defer></script>
 <link rel="stylesheet" href="assets/list-style.css?v=2.37">
-<script src="assets/customer-list.js?v=2.37.1" defer></script>
+<script src="assets/customer-list.js?v=2.40" defer></script>
 <link rel="stylesheet" href="assets/vehicle-detail-compact.css?v=2.38">
 <link rel="stylesheet" href="assets/vehicle-finance.css?v=2.39">
+<link rel="stylesheet" href="assets/vehicle-detail-layout.css?v=2.40">
 </head>
 <body class="snote-typography">
 
@@ -3264,7 +3265,7 @@ button, input, select, textarea { font-family: inherit; }
   <section class="vehicle-modal">
     <div class="vehicle-header"><div class="vehicle-heading">
       <p class="vehicle-eyebrow" hidden></p>
-      <div class="vehicle-heading-row"><h2 id="vehicle-title">차량 상세</h2><div class="vehicle-header-actions" id="vehicle-header-actions" role="group" aria-label="차량 작업">
+      <div class="vehicle-heading-row"><div class="vehicle-name-links"><h2 id="vehicle-title">차량 상세</h2></div><div class="vehicle-header-actions" id="vehicle-header-actions" role="group" aria-label="차량 작업">
         <button type="button" class="vehicle-header-action quote-launch" onclick="openQuotePreview()" aria-label="견적서" data-tooltip="견적서"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8zM14 3v5h5M9 12h6M9 16h6"/></svg></button>
         <button type="button" class="vehicle-header-action contract-launch" onclick="openSaleProgress()" aria-label="판매진행" data-tooltip="판매진행"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M13 3H5a1 1 0 0 0-1 1v17l2-1.5L8 21l2-1.5L12 21l2-1.5V4a1 1 0 0 0-1-1ZM7 7h4M7 11h4M7 15h2"/><path d="M18 15V5m-3 3 3-3 3 3"/></svg></button>
         <button type="button" class="vehicle-header-action vehicle-header-save" id="vehicle-header-save" onclick="saveVehicleCosts()" aria-label="저장" data-tooltip="변경사항저장"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 3h12l4 4v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2ZM7 3v6h9V3M7 21v-7h10v7M13 5v2"/></svg></button>
@@ -6688,7 +6689,7 @@ function renderAccountantVehicle(c){
  $('vehicle-title').textContent=c.model;
  $('vehicle-meta').textContent=`담당 ${dealerLabel(c)} · ${c.plate} · ${c.year||'-'}년식 · ${formatKm(c.km||0)} km`;
  const loan=inventoryLoanOf(c);
- $('vehicle-overview').innerHTML=[['차량번호',esc(c.plate),''],['매입가격',`${num(c.buy)}만원`,'acct-buy-value'],['재고대출금',`${num(loan)}만원`,'acct-loan-value'],['매입일자',esc(c.purchaseAt||'-'),'']].map(([label,val,cls])=>`<div class="vehicle-metric ${cls}"><label>${label}</label><strong>${val}</strong></div>`).join('')+accountantPrestockEditMetric(c);
+ $('vehicle-overview').innerHTML=[['차량번호',esc(c.plate),''],['매입가격',`${num(c.buy)}만원`,'acct-buy-value'],['재고대출금',`${num(loan)}만원`,'acct-loan-value'],['매입일자',esc(c.purchaseAt||'-'),'']].map(([label,val,cls])=>`<div class="vehicle-metric ${cls}"><label>${label}</label><strong>${val}</strong></div>`).join('');
  const rows=[
   ['담당 딜러',dealerLabel(c),''],['차명',c.model||'-',''],['차량번호',c.plate||'-',''],
   ['제조사',c.make||'-',''],['연식',c.year?c.year+'년':'-',''],['주행거리',formatKm(c.km||0)+' km',''],
@@ -6701,7 +6702,7 @@ function renderAccountantVehicle(c){
  <div class="acct-edit-panel"><div class="acct-edit-head"><strong>재고금융 수정</strong><small>재고대출금액 · 재고금융사</small></div>
   <div class="acct-edit-fields"><label class="acct-edit-loan">재고대출금액 (만원)<input id="acct-edit-loan" type="text" inputmode="decimal" autocomplete="off" value="${loan?num(loan):''}" placeholder="-" aria-label="재고대출금액 (만원)"/></label>
   <label class="acct-edit-lender">재고금융사<select id="acct-edit-lender" aria-label="재고금융사">${lenders}</select></label></div>
-  <div class="acct-edit-actions"><span class="acct-edit-saved">위쪽 선재고 금액도 함께 저장 · 기타 차량정보 조회 전용</span><button type="button" class="btn-primary" onclick="saveAccountantVehicle()">재고금융 변경사항 저장</button></div></div>
+  <div class="acct-edit-actions"><span class="acct-edit-saved">기타 차량정보 조회 전용</span><button type="button" class="btn-primary" onclick="saveAccountantVehicle()">재고금융 변경사항 저장</button></div></div>
  <div class="acct-readonly-grid">${rows.map(([label,value,cls])=>`<div class="acct-readonly-item ${cls}"><label>${label}</label><strong>${esc(String(value))}</strong></div>`).join('')}</div>
  <section class="acct-registration-section" aria-label="담당 딜러 차량의 자동차등록증">
   <div class="acct-registration-head"><div><h4>자동차등록증</h4><p>해당 차량의 등록증을 등록하거나 교체합니다. 담당 딜러의 차량 서류와 연동됩니다.</p></div><span>차량별 1장</span></div>
@@ -6816,7 +6817,7 @@ function saveAccountantVehicle({closeAfterSave=true}={}){
   const lender=$('acct-edit-lender')?.value||'';
   if(lender&&!INVENTORY_LENDERS.includes(lender))throw Error('등록된 재고금융사를 선택해주세요.');
   const psRaw=($('acct-edit-prestock')?.value||'').replaceAll(',','').trim();
-  const desired=psRaw===''?0:prestockParseWon(psRaw);
+  const desired=$('acct-edit-prestock')?(psRaw===''?0:prestockParseWon(psRaw)):prestockForCar(c);
   if(!Number.isSafeInteger(desired)||desired<0)throw Error('선재고는 원 단위 정수로 입력해주세요.');
   const plate=normalizePrestockPlate(c.plate);
   const current=prestockForCar(c);
@@ -6849,7 +6850,7 @@ function saveAccountantVehicle({closeAfterSave=true}={}){
 }
 
 function renderVehicle(){const deleteCar=cars.find(item=>item.id===activeCarId);if($('vehicle-header-delete'))$('vehicle-header-delete').hidden=!deleteCar||isAccountant()||!canManageCar(deleteCar);const draft=snoteVehicleDraftForRender();if(isAccountant()){const c=cars.find(x=>x.id===activeCarId&&canManageCar(x));if(c){renderAccountantVehicle(c);snoteVehicleRestoreDraft(draft);}return;}placeFinanceLenderAtTop(false);if(!currentUser||!activeCarId)return;const c=cars.find(x=>x.id===activeCarId&&canManageCar(x));if(!c)return;const photos=carPhotos(c.id),all=carFiles(c.id);const featured=coverPhoto(c);$('vehicle-title').textContent=c.model;$('vehicle-meta').textContent=`${isAccountant()?'담당 '+dealerLabel(c)+' · ':''}${c.plate}  ·  ${c.year}년식  ·  ${c.km}km${c.color?' · '+c.color:''}${c.purchaseAt?' · 매입일 '+c.purchaseAt:''}`;
-  $('vehicle-overview').innerHTML=[['상태',statusSelect(c)],['매입가',`${num(c.buy)}만원`],[c.status==='판매완료'?'판매가':'판매예정가',`${num(salePrice(c))}만원`],['재고금융 분류',lenderBadge(c)],['현금 투자금',`<span id="vehicle-cash-investment" class="${inventoryInvestmentOf(c)-inventoryLoanOf(c)<0?'equity-negative':''}">${num(inventoryInvestmentOf(c)-inventoryLoanOf(c))}만원</span>`]].map(([label,val])=>`<div class="vehicle-metric${label==='현금 투자금'?' vehicle-cash':''}"><label>${label}</label><strong>${val}</strong></div>`).join('')+prestockDetailMetric(c);
+  $('vehicle-overview').innerHTML=[['상태',statusSelect(c)],['매입가',`${num(c.buy)}만원`],[c.status==='판매완료'?'판매가':'판매예정가',`${num(salePrice(c))}만원`],['재고금융 분류',lenderBadge(c)],['현금 투자금',`<span id="vehicle-cash-investment" class="${inventoryInvestmentOf(c)-inventoryLoanOf(c)<0?'equity-negative':''}">${num(inventoryInvestmentOf(c)-inventoryLoanOf(c))}만원</span>`]].map(([label,val])=>`<div class="vehicle-metric${label==='현금 투자금'?' vehicle-cash':''}"><label>${label}</label><strong>${val}</strong></div>`).join('');
   renderDetailIdentity(c);renderDetailCosts(c);
   renderVehiclePhotos(c);
   renderDocTab();snoteVehicleRestoreDraft(draft)}
@@ -7349,7 +7350,7 @@ async function buildCustomerManagement(){
    renderRow:(r,identity,car)=>{
     const status=car?.status==='판매완료'?'판매완료':'판매중';
     const action=(kind,attr,label)=>`<button class="snote-list-action ${kind==='delete'?'is-danger':''}" type="button" ${attr}="${esc(r.carId)}" aria-label="${label}" data-tooltip="${label}">${snote237CustomerIcon(kind)}</button>`;
-    return `<tr><td data-label="고객"><b>${esc(r.name||'')}</b><small>${esc(r.phone||'')}</small></td><td data-label="식별번호" data-customer-identity="${esc(r.carId)}">${esc(identity)}</td><td data-label="차량"><button type="button" class="snote202-car-open" data-customer-car="${esc(r.carId)}" aria-label="${esc(car?.model||r.carModel||r.plate||'차량')} 차량 상세 보기">${esc(car?.model||r.carModel||'')}</button><small>${esc(car?.plate||r.plate||'')}</small></td><td data-label="상태"><span class="zc75-status ${status==='판매완료'?'done':'selling'}">${status}</span></td><td data-label="주소">${esc(r.address||'미입력')}</td><td data-label="관리"><div class="zc75-actions">${action('sale','data-customer-open','판매 진행')}${action('contract','data-customer-contract','계약서 확인')}${action('receipt','data-customer-receipt','인수증 확인')}${action('delete','data-customer-delete','고객 삭제')}</div></td></tr>`;
+    return `<tr><td data-label="차량"><button type="button" class="snote202-car-open" data-customer-car="${esc(r.carId)}" aria-label="${esc(car?.model||r.carModel||r.plate||'차량')} 차량 상세 보기">${esc(car?.model||r.carModel||'')}</button><small>${esc(car?.plate||r.plate||'')}</small></td><td data-label="고객"><b>${esc(r.name||'')}</b><small>${esc(r.phone||'')}</small></td><td data-label="식별번호" data-customer-identity="${esc(r.carId)}">${esc(identity)}</td><td data-label="상태"><span class="zc75-status ${status==='판매완료'?'done':'selling'}">${status}</span></td><td data-label="주소">${esc(r.address||'미입력')}</td><td data-label="관리"><div class="zc75-actions">${action('sale','data-customer-open','판매 진행')}${action('contract','data-customer-contract','계약서 확인')}${action('receipt','data-customer-receipt','인수증 확인')}${action('delete','data-customer-delete','고객 삭제')}</div></td></tr>`;
    }});
  }catch(e){if(current())host.innerHTML='<div class="empty">고객정보를 불러오지 못했습니다. 연결 상태를 확인해 주세요.</div>';}
 }
@@ -9315,7 +9316,7 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 <script type="module" src="assets/quick-calculator.js?v=2.36"></script>
 <script type="module" src="assets/vehicle-taxonomy-ui.js?v=2.20"></script>
 <script type="module" src="assets/income-settlement-parent.js?v=2.39"></script>
-<script src="assets/release-info.js?v=2.39" defer></script>
-<script src="assets/snote-encar-link.js?v=2.37" defer></script>
+<script src="assets/release-info.js?v=2.40" defer></script>
+<script src="assets/snote-encar-link.js?v=2.40" defer></script>
 </body>
 </html>

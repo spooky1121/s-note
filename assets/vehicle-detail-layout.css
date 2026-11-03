@@ -1,0 +1,10 @@
+/* Detail summary uses the available width; long values remain scrollable on small screens. */
+#vehicle-overlay #vehicle-overview>.vehicle-metric{flex:1 0 auto;justify-content:space-between;gap:10px}
+#vehicle-overlay .vehicle-name-links{display:flex;flex:1 1 230px;align-items:center;flex-wrap:wrap;gap:8px 14px;min-width:0}
+#vehicle-overlay .vehicle-name-links #vehicle-title{flex:0 1 auto;max-width:100%;min-width:0}
+#vehicle-overlay .vehicle-name-links .snote-encar-results{display:flex;flex:0 1 auto;flex-wrap:wrap;gap:5px 12px;min-width:0;max-width:100%;font-size:11px;line-height:1.6}
+#vehicle-overlay .vehicle-name-links .snote-encar-result{gap:8px;min-width:0;max-width:100%;overflow-wrap:anywhere}
+#vehicle-overlay .vehicle-name-links .snote-encar-result a{white-space:nowrap;color:#187bac;font-weight:600;text-decoration:underline;text-underline-offset:3px}
+#vehicle-overlay .vehicle-name-links .snote-encar-results:empty{display:none}
+#vehicle-overlay .vehicle-name-links a:focus-visible{outline:2px solid #38bdf8;outline-offset:3px}
+@media(max-width:650px){#vehicle-overlay #vehicle-overview>.vehicle-metric{padding:8px 11px}#snote-app .zc72-customers td[data-label="차량"]{grid-column:1/-1}}

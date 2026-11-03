@@ -16,6 +16,7 @@ const SIGNATURE={version:1,strokes:[[[.1,.2],[.4,.7],[.8,.3]]]};
   });
   await p.waitForFunction(()=>document.querySelector('[data-customer-identity="refine-0"]')?.textContent==='900101-*******');
   assert.equal(await p.locator('#snote-customer-rows tr').count(),20);assert.equal(await p.locator('.snote-list-action svg').count(),80);
+  assert.equal(await p.locator('.zc72-customers th').first().textContent(),'차량');assert.equal(await p.locator('#snote-customer-rows tr').first().locator('td').first().getAttribute('data-label'),'차량');
   const input=p.locator('#snote-customer-search');
   for(const query of ['홍길동','900101','9001011234567','1234567','01012345678','12가3456','테헤란로','쏘나타','현대','홍길동 현대','테스트은행']){
    await input.fill(query);const count=await p.locator('#snote-customer-rows tr').count();assert.equal(count,query==='테스트은행'?20:1,query);assert.equal(await p.locator('[data-customer-identity="refine-0"]').textContent(),'900101-*******');

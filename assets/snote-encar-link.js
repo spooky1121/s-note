@@ -129,7 +129,7 @@
     showListings(record.listings, true);
     const date = new Date(record.verifiedAt).toLocaleString('ko-KR', {timeZone: 'Asia/Seoul'});
     saveStatus.textContent = '최근 확인 광고 · 마지막 확인 ' + date;
-    setNote('링크를 누르면 현재 광고인지 다시 확인해 엽니다.');
+    setNote('');
   }
 
   async function persistListings(context, record) {
@@ -351,8 +351,7 @@
       const row = document.createElement('div');
       row.className = 'snote-encar-result';
       const label = document.createElement('span');
-      label.textContent = listings.length > 1 ? (String(item.model || '확인된 광고') + ' · ' + item.id) : '확인된 광고';
-      row.append(label);
+      if (listings.length > 1) { label.textContent = String(item.model || '') + ' · ' + item.id; row.append(label); }
       for (const [text, url] of [['판매자 광고', seller], ['엔카 믿고', trusted]]) {
         if (!url) continue;
         const anchor = document.createElement('a');
@@ -453,7 +452,7 @@
         } else if (job.waitingTab && !job.waitingTab.closed) {
           job.waitingTab.location.replace(selectedUrl); job.waitingTab = null;
           setNote('저장된 광고를 다시 확인해 열었습니다.');
-        } else setNote('광고를 확인했습니다. 아래 링크를 눌러 열어 주세요.');
+        } else setNote('광고를 확인했습니다. 링크를 눌러 열어 주세요.');
         return;
       }
       if (data.status === 'multiple' || listings.length !== 1) {
@@ -467,7 +466,7 @@
         job.waitingTab = null;
         setNote('차량번호가 일치하는 광고를 열었습니다.');
       } else {
-        setNote('광고를 확인했습니다. 아래 링크를 눌러 열어 주세요.');
+        setNote('광고를 확인했습니다. 링크를 눌러 열어 주세요.');
       }
     } catch (error) {
       closeWaitingTab(job);
@@ -541,8 +540,11 @@
     copyButton = document.createElement('button'); copyButton.type = 'button'; copyButton.className = 'snote-encar-copy'; copyButton.textContent = '진단 정보 복사'; copyButton.hidden = true; copyButton.addEventListener('click', copyDiagnostics);
     copyStatus = document.createElement('span'); copyStatus.className = 'snote-encar-copy-status'; copyStatus.setAttribute('role', 'status');
     copyFallback = document.createElement('textarea'); copyFallback.className = 'snote-encar-copy-fallback'; copyFallback.readOnly = true; copyFallback.hidden = true; copyFallback.setAttribute('aria-label', '복사할 진단 정보');
-    bar.append(note, results, saveStatus, saveRetry, manual, copyButton, copyStatus, copyFallback);
+    bar.append(note, saveStatus, saveRetry, manual, copyButton, copyStatus, copyFallback);
     meta.insertAdjacentElement('afterend', bar);
+    const title = document.getElementById('vehicle-title');
+    if (title) title.insertAdjacentElement('afterend', results);
+    else bar.append(results);
     const headerActions = document.getElementById('vehicle-header-actions');
     if (headerActions) headerActions.prepend(button);
     else bar.prepend(button);
