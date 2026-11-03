@@ -329,3 +329,231 @@
 @media screen and (max-width: 700px) {
   #vehicle-overlay .vehicle-media-grid { grid-template-columns: minmax(0, 1fr); }
 }
+
+/* Compact, aligned detail forms; keep every existing field and its DOM order. */
+@media screen {
+  #vehicle-overlay :is(.car-identity-section, .sold-info-section, .car-cost-section) {
+    margin-bottom: 14px;
+    padding: 16px;
+    border-color: #e8eaee;
+    border-radius: 12px;
+    box-shadow: none;
+  }
+
+  #vehicle-overlay :is(.car-identity-head, .car-cost-head) {
+    margin-bottom: 12px;
+  }
+
+  #vehicle-overlay :is(.car-identity-head h3, .car-cost-head h3) {
+    font-size: 13px;
+    font-weight: 650;
+    line-height: 1.5;
+  }
+
+  #vehicle-overlay .car-identity-section .vehicle-identity-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    align-items: start;
+    gap: 12px 10px;
+  }
+
+  #vehicle-overlay .car-cost-section {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    align-items: start;
+    gap: 12px 10px;
+  }
+
+  #vehicle-overlay .car-cost-section > .car-cost-head {
+    display: flex;
+    grid-column: 1 / -1;
+    align-items: center;
+    margin: 0;
+  }
+
+  #vehicle-overlay .car-cost-section > :is(.cost-edit, .detail-lender-row) {
+    display: contents;
+  }
+
+  #vehicle-overlay .car-identity-section .vehicle-identity-grid > label,
+  #vehicle-overlay .sold-info-section .sold-fields > label,
+  #vehicle-overlay .car-cost-section :is(.cost-edit, .detail-lender-row) > label {
+    flex-direction: column;
+    align-items: stretch;
+    min-width: 0;
+    margin: 0;
+    gap: 5px;
+    color: #697381;
+    font-size: 11px;
+    font-weight: 550;
+    line-height: 1.4;
+  }
+
+  #vehicle-overlay .car-identity-section .vehicle-identity-grid > label > :is(input, select:not([hidden])),
+  #vehicle-overlay .sold-info-section .sold-fields input,
+  #vehicle-overlay .car-cost-section :is(input, .detail-lender-row select) {
+    width: 100%;
+    min-width: 0;
+    height: 34px;
+    min-height: 34px;
+    padding: 6px 9px;
+    border: 1px solid #e0e4e9;
+    border-radius: 8px;
+    background: #fbfcfd;
+    color: #303a47;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 20px;
+    box-shadow: none;
+  }
+
+  #vehicle-overlay .car-identity-section .vehicle-identity-grid > label > :is(input, select):focus,
+  #vehicle-overlay .sold-info-section .sold-fields input:focus,
+  #vehicle-overlay .car-cost-section :is(input, .detail-lender-row select):focus {
+    border-color: #4e7ab4;
+    outline: 2px solid #4e7ab4;
+    outline-offset: 1px;
+    background: #fff;
+  }
+
+  #vehicle-overlay .car-cost-section > :is(.detail-repair, .detail-summary) {
+    grid-column: 1 / -1;
+    min-width: 0;
+    margin: 0;
+  }
+
+  #vehicle-overlay .car-cost-section > .detail-repair {
+    padding: 12px;
+    border-color: #e9ecf0;
+    border-radius: 10px;
+    background: #fafbfc;
+  }
+
+  #vehicle-overlay .detail-repair .repair-top {
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 10px;
+    gap: 8px;
+  }
+
+  #vehicle-overlay .detail-repair .repair-top strong {
+    margin: 0;
+    font-size: 12px;
+  }
+
+  #vehicle-overlay .detail-repair .repair-top span { display: none; }
+  #vehicle-overlay .detail-repair .repair-top .section-button {
+    min-height: 32px;
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+
+  #vehicle-overlay .detail-repair .repair-row {
+    grid-template-columns: minmax(0, 1fr) 120px 44px;
+    gap: 8px;
+  }
+
+  #vehicle-overlay .detail-repair .repair-remove {
+    width: 44px;
+    height: 34px;
+    padding: 0;
+    font-size: 11px;
+  }
+
+  #vehicle-overlay .detail-repair .repair-total {
+    margin-top: 10px;
+    padding-top: 10px;
+    font-size: 11px;
+  }
+
+  #vehicle-overlay .detail-summary { gap: 8px; }
+  #vehicle-overlay .detail-summary .sum-cell {
+    padding: 10px 12px;
+    border-radius: 9px;
+  }
+  #vehicle-overlay .detail-summary .sum-cell small { margin-bottom: 5px; }
+  #vehicle-overlay .detail-summary .sum-cell strong { font-size: 15px; }
+
+  #vehicle-overlay .snote-encar-button.vehicle-header-action,
+  #vehicle-overlay .snote-encar-button.vehicle-header-action:hover {
+    border: 0;
+    background: transparent;
+    overflow: visible;
+  }
+
+  #vehicle-overlay .snote-encar-logo {
+    display: block;
+    width: 44px;
+    height: 44px;
+    object-fit: contain;
+  }
+}
+
+@media screen and (max-width: 760px) {
+  #vehicle-overlay :is(.car-identity-section, .sold-info-section, .car-cost-section) {
+    padding: 14px 12px;
+  }
+
+  #vehicle-overlay .car-identity-section .vehicle-identity-grid,
+  #vehicle-overlay .car-cost-section {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px 10px;
+  }
+
+  #vehicle-overlay .vehicle-identity-grid > label:has(#detail-purchase-date),
+  #vehicle-overlay .vehicle-identity-grid > label:has(#detail-vin) {
+    grid-column: 1 / -1;
+  }
+
+  #vehicle-overlay .car-identity-section .vehicle-identity-grid > label > :is(input, select:not([hidden])),
+  #vehicle-overlay .sold-info-section .sold-fields input,
+  #vehicle-overlay .car-cost-section :is(input, .detail-lender-row select) {
+    height: 36px;
+    min-height: 36px;
+    padding: 6px 9px;
+    font-size: 16px;
+    line-height: 22px;
+  }
+
+  #vehicle-overlay .detail-repair .repair-row {
+    grid-template-columns: minmax(0, 1fr) 44px;
+  }
+
+  #vehicle-overlay .detail-repair .repair-memo { grid-column: 1 / -1; }
+  #vehicle-overlay .detail-repair .repair-remove { height: 36px; }
+  #vehicle-overlay .detail-repair .repair-top .section-button { min-height: 36px; }
+  #vehicle-overlay .detail-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  #vehicle-overlay .detail-summary .sum-cell:last-child { grid-column: 1 / -1; }
+  #vehicle-overlay .detail-summary .sum-cell strong {
+    font-size: 14px;
+    white-space: nowrap;
+    word-break: normal;
+    overflow-wrap: normal;
+  }
+  #vehicle-overlay .detail-summary .sum-cell { padding: 9px 8px; }
+}
+
+@media screen and (max-width: 480px) {
+  #vehicle-overlay .detail-summary { grid-template-columns: minmax(0, 1fr); }
+
+  #vehicle-overlay .detail-summary .sum-cell {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-width: 0;
+    gap: 8px;
+    padding: 9px 10px;
+  }
+
+  #vehicle-overlay .detail-summary .sum-cell small {
+    flex: 1 1 auto;
+    min-width: 0;
+    margin: 0;
+    font-size: 10px;
+    line-height: 1.4;
+  }
+
+  #vehicle-overlay .detail-summary .sum-cell strong {
+    display: block;
+    flex: none;
+  }
+}

@@ -13,6 +13,7 @@ const backend = (await readFile(new URL('../../functions/api/encar.js', import.m
 const { onRequest } = await import('data:text/javascript;base64,' + Buffer.from(backend).toString('base64'));
 const PLATE = '12가3456', ORIGINAL = '43000001', TRUSTED = '43000002';
 const BASE = 'https://fem.encar.com/cars/detail/';
+const LOOKUP_LOGO_SRC = 'assets/encar-logo.png?v=2.33';
 const TOKEN = 'synthetic_integration_token_longer_than_thirty_characters';
 const USER = '10000000-0000-4000-8000-000000000001';
 const tick = () => new Promise(resolve => setImmediate(resolve));
@@ -117,12 +118,21 @@ test('integration: public catalog uses the suffix, matches the entire card, and 
     '<article class="car-card"><a href="/auto/' + ORIGINAL + '/">대상 가상 차량</a><span>' + PLATE + '</span></article></main>';
   const f = fixture(t, { providerKey: '', catalogHTML });
   assert.equal(f.button.getAttribute('aria-label'), '엔카광고보기');
+  assert.equal(f.button.getAttribute('data-tooltip'), '엔카광고보기');
+  assert.equal(f.button.hasAttribute('title'), false, 'Only the custom tooltip names the action on hover');
   assert.equal(f.button.parentElement.id, 'vehicle-header-actions');
   assert.ok([null, 'false'].includes(f.button.getAttribute('aria-busy')));
-  assert.equal(f.button.querySelector('svg')?.getAttribute('aria-hidden'), 'true');
+  const logo = f.button.querySelector('img');
+  assert.ok(logo, 'The header action contains the supplied PNG logo');
+  assert.equal(logo.getAttribute('src'), LOOKUP_LOGO_SRC);
+  assert.equal(logo.getAttribute('alt'), '');
+  assert.equal(logo.getAttribute('aria-hidden'), 'true');
+  assert.equal(f.button.querySelectorAll('img').length, 1);
+  assert.equal(f.button.querySelectorAll('svg').length, 0);
   f.button.click();
   assert.equal(f.button.disabled, true); assert.equal(f.button.getAttribute('aria-busy'), 'true');
-  assert.equal(f.button.querySelectorAll('svg').length, 1);
+  assert.equal(f.button.querySelector('img'), logo, 'Pending verification keeps the same logo image');
+  assert.equal(logo.getAttribute('src'), LOOKUP_LOGO_SRC);
   assert.equal(f.tabs[0].navigations.length, 0, 'An icon click still waits for the real API verification');
   await f.done();
   assert.equal(f.catalogRequests.length, 2);
@@ -132,7 +142,13 @@ test('integration: public catalog uses the suffix, matches the entire card, and 
   assert.equal(f.manual.hidden, true);
   assert.equal(f.button.disabled, false); assert.ok([null, 'false'].includes(f.button.getAttribute('aria-busy')));
   assert.equal(f.button.getAttribute('aria-label'), '엔카광고보기');
-  assert.equal(f.button.querySelectorAll('svg').length, 1);
+  assert.equal(f.button.getAttribute('data-tooltip'), '엔카광고보기');
+  assert.equal(f.button.hasAttribute('title'), false);
+  assert.equal(f.button.querySelector('img'), logo, 'A verified result keeps the same logo image');
+  assert.equal(logo.getAttribute('src'), LOOKUP_LOGO_SRC);
+  assert.equal(logo.getAttribute('alt'), '');
+  assert.equal(logo.getAttribute('aria-hidden'), 'true');
+  assert.equal(f.button.querySelectorAll('img').length, 1);
 });
 
 test('integration: failed catalog parsing does not hide the independently verified address flow', async t => {

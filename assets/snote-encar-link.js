@@ -234,16 +234,17 @@
 
   function renderLookupButton(busy = false) {
     button.setAttribute('aria-label', '엔카광고보기');
-    button.setAttribute('title', '엔카광고보기');
+    button.removeAttribute('title');
     button.setAttribute('data-tooltip', '엔카광고보기');
     button.setAttribute('aria-busy', String(busy));
     button.classList.toggle('is-loading', busy);
-    if (button.querySelector('svg')) return;
-    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    for (const [name, value] of Object.entries({viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', 'stroke-width': '2.1', 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'aria-hidden': 'true', focusable: 'false'})) svg.setAttribute(name, value);
-    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    path.setAttribute('d', 'M18 5H7v14h11M7 12h9');
-    svg.append(path); button.replaceChildren(svg);
+    if (button.querySelector('img.snote-encar-logo')) return;
+    const logo = document.createElement('img');
+    logo.className = 'snote-encar-logo';
+    logo.src = 'assets/encar-logo.png?v=2.33';
+    logo.alt = ''; logo.setAttribute('aria-hidden', 'true');
+    logo.width = 44; logo.height = 44; logo.decoding = 'async';
+    button.replaceChildren(logo);
   }
 
   function closeWaitingTab(job) {

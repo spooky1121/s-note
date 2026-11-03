@@ -13,6 +13,7 @@ const PLATE='12가3456',SECOND_PLATE='34나5678';
 const ARTIFACTS=process.env.ENCAR_TEST_ARTIFACT_DIR||path.join(os.tmpdir(),'snote-encar-browser');
 const executablePath=process.env.CHROMIUM_PATH||(fs.existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined);
 const BUTTON='.snote-encar-button',NOTE='.snote-encar-note',LINKS='.snote-encar-results a';
+const ENCAR_LOGO_PATH='/assets/encar-logo.png';
 const MANUAL='.snote-encar-manual',ADDRESS='#snote-encar-manual-url',COPY='.snote-encar-copy',COPY_FALLBACK='.snote-encar-copy-fallback';
 const REQUEST_ID='12345678-1234-4234-8234-123456789abc';
 const listing=(id='43000001',trustedId='43000002',model='가상 검증 차량')=>({id,model,sellerUrl:'https://fem.encar.com/cars/detail/'+id,trustedId,trustedUrl:trustedId?'https://fem.encar.com/cars/detail/'+trustedId:null});
@@ -52,7 +53,7 @@ async function releaseLifecycle(page,version){
  console.log('PASS actual HTML canonical release synchronizes all three original badges, late added markers/subtrees, and duplicate-script refresh without changing app state');
 }
 
-async function fixture(width=1440,savedCars=null){
+async function fixture(width=1440,savedCars=null,{primaryColor=null}={}){
  const context=await browser.newContext({viewport:{width,height:950}}),page=await context.newPage();
  const f={context,page,requests:[],navigations:[],external:[],unexpected:[],errors:[],responses:[],dialogs:[],dialogAnswers:[],unexpectedDialogs:[]};
  const answerDialog=async dialog=>{
@@ -92,10 +93,11 @@ async function fixture(width=1440,savedCars=null){
   f.unexpected.push(url.pathname);return route.abort();
  });
  await page.goto(ORIGIN,{waitUntil:'networkidle'});await page.waitForFunction(()=>!!window.__encarFixtureAuth&&!!window.SnoteEncarLink&&!!window.SnoteRelease);await page.evaluate(()=>window.__encarFixtureAuth);f.release=await releaseLabels(page,{width});
- await page.evaluate(async({actor,company,alias,token,plate,secondPlate,savedCars})=>{
+ await page.evaluate(async({actor,company,alias,token,plate,secondPlate,savedCars,primaryColor})=>{
   await enterWorkspace({username:alias,name:'가상 검증 딜러',role:'dealer',company:'가상 검증 상사',employeeNo:'TEST',union:''});
   cars=[{id:'encar-car-1',ownerId:alias,model:'가상 검증 차량 1',plate,year:2026,km:'10,000',buy:1000,sell:1200,status:'판매중'},{id:'encar-car-2',ownerId:alias,model:'가상 검증 차량 2',plate:secondPlate,year:2026,km:'20,000',buy:1500,sell:1700,status:'판매중'}];
   if(savedCars)cars=structuredClone(savedCars);
+  if(typeof primaryColor==='string')cars[0].color=primaryColor;
   localStorage.setItem(carsStoreKey(alias),JSON.stringify(cars));window.__encarFixtureCars=structuredClone(cars);
   window.__encarFixtureWrites=[];window.__encarFixtureRevision=0;window.__encarFixtureWriteMode='ok';window.__encarFixtureWriteWaiting=false;window.__encarFixtureReleaseWrite=null;window.__encarFixtureWriteFailures=0;
   const S=window.__encarFixtureState;S.user={id:actor,email:'synthetic@example.invalid'};S.company={id:company,name:'가상 검증 상사'};S.members=[{user_id:actor,company_id:company,role:'dealer',display_name:'가상 검증 딜러',active:true}];
@@ -117,15 +119,20 @@ async function fixture(width=1440,savedCars=null){
    return{data:++window.__encarFixtureRevision,error:null};
   }};
   document.getElementById('zc-cloud-gate').hidden=true;
- },{actor:ACTOR,company:COMPANY,alias:ALIAS,token:TOKEN,plate:PLATE,secondPlate:SECOND_PLATE,savedCars});
+ },{actor:ACTOR,company:COMPANY,alias:ALIAS,token:TOKEN,plate:PLATE,secondPlate:SECOND_PLATE,savedCars,primaryColor});
  await releaseLabels(page,{loggedIn:true,width});
  if(width===1440)await page.screenshot({path:path.join(ARTIFACTS,'release-header-1440.png')});
  await page.evaluate(()=>openVehicle('encar-car-1'));
  await page.locator(BUTTON).waitFor({state:'visible'});assert.equal(await page.locator(BUTTON).isDisabled(),true,'Local/demo login must not enable an online lookup');
+ await assertEncarLogo(page);
  await page.evaluate(()=>{window.__encarFixtureState.ready=true;document.getElementById('zc86-topbar').hidden=false;});await page.locator(BUTTON+':not([disabled])').waitFor();
  f.reply=(body,status=200)=>f.responses.push({body,status});return f;
 }
-async function lookup(f,body,status=200){f.reply(body,status);const popupPromise=f.context.waitForEvent('page');await f.page.locator(BUTTON).click();const popup=await popupPromise;await f.page.locator(BUTTON+':not([disabled])').waitFor();return popup;}
+async function assertEncarLogo(page){
+ const logo=page.locator(BUTTON+' img.snote-encar-logo');assert.equal(await logo.count(),1);assert.equal(await page.locator(BUTTON+' svg').count(),0);assert.equal(await logo.getAttribute('alt'),'');assert.equal(await logo.getAttribute('aria-hidden'),'true');assert.equal(await page.locator(BUTTON).getAttribute('title'),null,'The native tooltip must not duplicate the custom tooltip');
+ const source=new URL(await logo.getAttribute('src'),ORIGIN);assert.equal(source.pathname,ENCAR_LOGO_PATH);await logo.evaluate(image=>image.decode());assert.equal(await logo.evaluate(image=>image.complete&&image.naturalWidth>0&&image.naturalHeight>0),true,'The real PNG asset must load successfully');
+}
+async function lookup(f,body,status=200){f.reply(body,status);const popupPromise=f.context.waitForEvent('page');await f.page.locator(BUTTON).click();const popup=await popupPromise;await f.page.locator(BUTTON+':not([disabled])').waitFor();await assertEncarLogo(f.page);return popup;}
 async function verifyAddress(f,body,address){f.reply(body);const popupPromise=f.context.waitForEvent('page');await f.page.locator(ADDRESS).fill(address);await f.page.locator(MANUAL+' button').click();const popup=await popupPromise;await f.page.locator(BUTTON+':not([disabled])').waitFor();return popup;}
 async function closed(popup){if(!popup.isClosed())await popup.waitForEvent('close');assert.equal(popup.isClosed(),true);}
 async function assertLinks(f,expected){
@@ -159,7 +166,7 @@ async function heldJson(f,body,address){
    return new Proxy(response,{get(target,key){if(key==='json')return async()=>{const body=await target.json();window.__encarJsonWaiting=true;await new Promise(resolve=>window.__encarReleaseJson=resolve);return body;};const value=Reflect.get(target,key,target);return typeof value==='function'?value.bind(target):value;}});
   };
  });
- f.reply(body);const popupPromise=f.context.waitForEvent('page');if(address){await f.page.locator(ADDRESS).fill(address);await f.page.locator(MANUAL+' button').click();}else await f.page.locator(BUTTON).click();const popup=await popupPromise;await f.page.waitForFunction(()=>window.__encarJsonWaiting);assert.equal(await popup.evaluate(()=>opener===null),true,'Waiting popup must disconnect its opener before any API result');return popup;
+ f.reply(body);const popupPromise=f.context.waitForEvent('page');if(address){await f.page.locator(ADDRESS).fill(address);await f.page.locator(MANUAL+' button').click();}else await f.page.locator(BUTTON).click();const popup=await popupPromise;await f.page.waitForFunction(()=>window.__encarJsonWaiting);await assertEncarLogo(f.page);assert.equal(await popup.evaluate(()=>opener===null),true,'Waiting popup must disconnect its opener before any API result');return popup;
 }
 async function releaseJson(f){await f.page.evaluate(()=>{window.__encarReleaseJson();window.fetch=window.__encarNativeFetch;});await f.page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));}
 async function finish(f){assert.deepEqual(f.external,[],'No external requests are allowed');assert.deepEqual(f.unexpected,[],'No unrelated API requests are allowed');assert.deepEqual(f.errors,[],'Actual index must have no uncaught browser errors');assert.deepEqual(f.unexpectedDialogs,[],'Every confirm/alert must have an explicit expected answer');assert.equal(f.dialogAnswers.length,0,'Every queued dialog answer must be used');assert.equal(f.responses.length,0);await f.context.close();}
@@ -219,9 +226,9 @@ async function vehicleSaveOnCloseRegression(){
 async function vehicleHeaderAndMediaRegression(width){
  const f=await fixture(width),p=f.page;await position(f);
  for(const label of ['엔카광고보기','견적서','판매진행','저장']){
-  const action=p.getByRole('button',{name:label,exact:true});assert.equal(await action.count(),1);assert.equal(await action.locator('svg').count(),1);assert.equal(await action.locator('svg').getAttribute('aria-hidden'),'true');assert.equal(await action.getAttribute('title')!==null,true,'Every icon action must retain a pointer tooltip');
+  const action=p.getByRole('button',{name:label,exact:true});assert.equal(await action.count(),1);if(label==='엔카광고보기')await assertEncarLogo(p);else{assert.equal(await action.locator('svg').count(),1);assert.equal(await action.locator('svg').getAttribute('aria-hidden'),'true');}assert.equal(await action.getAttribute('title'),null,'Custom icon tooltips must not also trigger a native browser tooltip');assert(await action.getAttribute('data-tooltip'));
   assert.equal(await action.evaluate(element=>!!element.closest('#vehicle-header-actions')),true);
-  await action.hover();assert.equal(await action.evaluate(element=>getComputedStyle(element,'::after').visibility),'visible','The custom tooltip must actually appear on pointer hover');assert.equal(await action.evaluate(element=>getComputedStyle(element,'::after').content),JSON.stringify(await action.getAttribute('title')));
+  await action.hover();assert.equal(await action.evaluate(element=>getComputedStyle(element,'::after').visibility),'visible','The custom tooltip must actually appear on pointer hover');assert.equal(await action.evaluate(element=>getComputedStyle(element,'::after').content),JSON.stringify(await action.getAttribute('data-tooltip')));
  }
  await p.locator('#detail-buy').fill('1100');await p.locator('#detail-inventory-loan').fill('200');await p.locator('#detail-advertising').fill('20');await p.locator('#detail-incomeTax').fill('30');await p.locator('#detail-extra').fill('미디어 작업 중 보존할 편집');
  assert.equal(await p.locator('#vehicle-cash-investment').textContent(),'920만원','The top cash-investment card must update immediately and exclude income tax');
@@ -246,7 +253,47 @@ async function vehicleHeaderAndMediaRegression(width){
  f.answerConfirm(true,/^실차 사진를 삭제할까요\?$/);await p.getByRole('button',{name:'실차 사진 1 삭제',exact:true}).click();await p.waitForFunction(()=>document.querySelectorAll('.photo-thumb').length===4);assert.equal(await p.locator('#photo-add').isDisabled(),false);assert.equal(await p.locator('#photo-grid .add-tile').count(),1);
  assert.equal(await p.locator('#detail-extra').inputValue(),'미디어 작업 중 보존할 편집');assert.equal(await p.locator('#detail-buy').inputValue(),'1100');assert.equal(await p.locator('#vehicle-cash-investment').textContent(),'920만원','Media rerenders must preserve unsaved amounts and the live cash card');
  assert.equal(await p.evaluate(()=>window.__mediaInjected||false),false,'Untrusted media IDs and filenames must remain inert in rendered handlers and labels');assert.equal(await p.locator('#vehicle-overlay img[onerror]').count(),0);assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);await position(f);await p.screenshot({path:path.join(ARTIFACTS,'vehicle-detail-compact-'+width+'.png')});
- await finish(f);console.log('PASS '+width+'px title SVG actions open the correct forms; compact media panels preserve max-five, keyboard zoom, cover/delete, document tabs and inert filenames');
+ await finish(f);console.log('PASS '+width+'px title icon actions open the correct forms; compact media panels preserve max-five, keyboard zoom, cover/delete, document tabs and inert filenames');
+}
+
+async function assertCompactVehicleForm(page,width){
+ const layout=await page.evaluate(()=>{
+  const visible=element=>element.getClientRects().length>0,rect=element=>{const r=element.getBoundingClientRect();return{x:r.x,y:r.y,right:r.right,bottom:r.bottom,width:r.width,height:r.height};};
+  const identity=document.querySelector('.vehicle-identity-grid'),costs=document.getElementById('car-cost-section');
+  const fields=[...document.querySelectorAll('.vehicle-identity-grid>label>input,.vehicle-identity-grid>label>select:not([hidden]),#car-cost-section input,#car-cost-section .detail-lender-row select')].filter(visible).map(element=>({id:element.id,...rect(element),font:parseFloat(getComputedStyle(element).fontSize)}));
+  const labels=[...document.querySelectorAll('.vehicle-identity-grid>label,#car-cost-section .cost-edit>label,#car-cost-section .detail-lender-row>label')].filter(visible).map(element=>({font:parseFloat(getComputedStyle(element).fontSize),overflow:element.scrollWidth>element.clientWidth+1}));
+  const fullRows=['detail-model','detail-extra','detail-purchase-date','detail-vin'].map(id=>({id,...rect(document.getElementById(id).closest('label'))}));
+  const summary=[...document.querySelectorAll('.detail-summary .sum-cell strong')].map(element=>{const range=document.createRange();range.selectNodeContents(element);return{text:element.textContent,overflow:element.scrollWidth>element.clientWidth+1,lines:range.getClientRects().length};});
+  return{identity:rect(identity),identityColumns:getComputedStyle(identity).gridTemplateColumns.split(/\s+/).length,costColumns:getComputedStyle(costs).gridTemplateColumns.split(/\s+/).length,summaryColumns:getComputedStyle(document.querySelector('.detail-summary')).gridTemplateColumns.split(/\s+/).length,fields,labels,fullRows,summary,overflow:document.documentElement.scrollWidth>innerWidth||document.querySelector('.vehicle-modal').scrollWidth>document.querySelector('.vehicle-modal').clientWidth};
+ });
+ assert.equal(layout.identityColumns,width>760?4:2);assert.equal(layout.costColumns,width>760?4:2);assert.equal(layout.summaryColumns,width<=480?1:width<=760?2:3);assert.equal(layout.overflow,false);assert(layout.labels.every(label=>label.font>=11&&!label.overflow),'Compact labels must remain readable without horizontal clipping');
+ for(const field of layout.fields){assert.equal(field.height,width>760?34:36,'Compact input height: '+field.id);assert(field.font>=(width>760?13:16),'Input text must remain readable: '+field.id);assert(field.width>40,'Every visible form control must retain usable width: '+field.id);}
+ for(const row of layout.fullRows.filter(row=>width<=760||['detail-model','detail-extra'].includes(row.id)))assert(Math.abs(row.width-layout.identity.width)<1,'Long '+row.id+' fields must span the form row');
+ assert(layout.summary.every(value=>!value.overflow&&value.lines===1),'Summary amounts must remain on one readable line inside their cards: '+JSON.stringify(layout.summary));
+}
+
+async function vehiclePaletteRegression(width){
+ const legacy='크림 화이트',basic=['','흰색','검정색','회색','은색','빨간색','파란색','남색','초록색','갈색','베이지색','노란색','주황색'];
+ const f=await fixture(width,null,{primaryColor:legacy}),p=f.page,trigger=p.locator('#detail-color-trigger'),menu=p.locator('#detail-color-menu');
+ await assertCompactVehicleForm(p,width);await p.screenshot({path:path.join(ARTIFACTS,'vehicle-form-v233-'+width+'-top.png')});await p.locator('#car-cost-section').scrollIntoViewIfNeeded();await p.screenshot({path:path.join(ARTIFACTS,'vehicle-form-v233-'+width+'-costs.png')});
+ if(width===320){
+  const buy=await p.locator('#detail-buy').inputValue(),advertising=await p.locator('#detail-advertising').inputValue();await p.locator('#detail-buy').fill('100000000');await p.locator('#detail-advertising').fill('100000000');await assertCompactVehicleForm(p,width);assert.deepEqual(await p.locator('.detail-summary .sum-cell strong').allTextContents(),['100,000,000만원','200,000,000만원','-199,998,800만원'],'Supported large amounts must remain exact and unabridged');await p.locator('.detail-summary').scrollIntoViewIfNeeded();await p.screenshot({path:path.join(ARTIFACTS,'vehicle-form-v233-320-large-amounts.png')});await p.locator('#detail-buy').fill(buy);await p.locator('#detail-advertising').fill(advertising);await assertCompactVehicleForm(p,width);
+ }
+ if(width===390){await p.setViewportSize({width:600,height:950});await assertCompactVehicleForm(p,600);await p.setViewportSize({width,height:950});await assertCompactVehicleForm(p,width);}
+ const registration=await p.evaluate(()=>{openAdd();const result={options:[...document.getElementById('new-color').options].map(option=>option.value),source:COLOR_OPTIONS.map(option=>option[0])};closeAdd();return result;});assert.deepEqual(registration.options,registration.source);assert(registration.options.length>basic.length*2,'The registration form must keep its original expanded color list');
+ await p.evaluate(()=>{window.__detailColorEvents=[];for(const type of ['input','change'])document.addEventListener(type,event=>{if(event.target.id==='detail-color')window.__detailColorEvents.push(type);});});assert.equal(await p.locator('#detail-color').inputValue(),legacy);assert.equal(await p.evaluate(()=>snoteVehicleHasChanges()),false);
+ await trigger.click();await menu.waitFor({state:'visible'});assert.deepEqual(await menu.locator('[role=option]').evaluateAll(elements=>elements.map(element=>element.dataset.value)),[...basic,legacy]);assert.equal(await menu.locator('.detail-color-current').count(),1);assert.equal(await menu.locator('.detail-color-current').getAttribute('data-value'),legacy);assert.equal(await menu.locator('[aria-selected=true]').getAttribute('data-value'),legacy);
+ const palette=await menu.evaluate(element=>{const r=element.getBoundingClientRect(),modalElement=element.closest('.vehicle-modal'),modal=modalElement.getBoundingClientRect(),style=getComputedStyle(element);return{left:r.left,right:r.right,top:r.top,bottom:r.bottom,modalLeft:modal.left+modalElement.clientLeft,modalRight:modal.left+modalElement.clientLeft+modalElement.clientWidth,modalTop:modal.top+modalElement.clientTop,modalBottom:modal.top+modalElement.clientTop+modalElement.clientHeight,columns:style.gridTemplateColumns.split(/\s+/).length,viewportWidth:innerWidth,viewportHeight:innerHeight,visibleOptionHits:[...element.querySelectorAll('[role=option]')].map(option=>({option,r:option.getBoundingClientRect()})).filter(({r:b})=>b.top>=r.top+2&&b.bottom<=r.bottom-2).every(({option,r:b})=>document.elementFromPoint(b.x+b.width/2,b.y+b.height/2)?.closest('[role=option]')===option)};});
+ assert.equal(palette.columns,4);assert(palette.left>=palette.modalLeft&&palette.right<=palette.modalRight&&palette.top>=palette.modalTop&&palette.bottom<=palette.modalBottom,'The palette must fit inside the actual scroll clip, not just the viewport');assert(palette.left>=0&&palette.right<=palette.viewportWidth&&palette.top>=0&&palette.bottom<=palette.viewportHeight);assert.equal(palette.visibleOptionHits,true,'Every visible color option must be clickable through the real popup layers');
+ assert.equal(await menu.locator('[data-value="흰색"] .color-bar').evaluate(element=>parseFloat(getComputedStyle(element).borderTopWidth)>=1),true,'White must retain a visible border');await p.screenshot({path:path.join(ARTIFACTS,'vehicle-palette-v233-'+width+'.png')});await menu.locator('.detail-color-current').click();assert.deepEqual(await p.evaluate(()=>window.__detailColorEvents),[]);assert.equal(await p.evaluate(()=>snoteVehicleHasChanges()),false,'Choosing the current legacy value must not create an edit');
+ await trigger.focus();await p.keyboard.press('ArrowDown');await menu.waitFor({state:'visible'});await p.keyboard.press('Home');assert.equal(await p.evaluate(()=>document.activeElement.dataset.value),'');await p.keyboard.press('End');assert.equal(await p.evaluate(()=>document.activeElement.dataset.value),legacy);await p.keyboard.press('ArrowLeft');assert.equal(await p.evaluate(()=>document.activeElement.dataset.value),'주황색');await p.keyboard.press('ArrowRight');assert.equal(await p.evaluate(()=>document.activeElement.dataset.value),legacy);await p.keyboard.press('Escape');assert.equal(await trigger.getAttribute('aria-expanded'),'false');assert.equal(await p.evaluate(()=>document.activeElement.id),'detail-color-trigger');assert.equal(await p.locator('#vehicle-overlay').getAttribute('aria-hidden'),'false','Escape must close the palette without closing the vehicle');
+ await trigger.click();await p.locator('#vehicle-title').click();assert.equal(await trigger.getAttribute('aria-expanded'),'false','A click outside the palette must close it');
+ await trigger.click();await p.keyboard.press('Home');await p.keyboard.press('ArrowDown');await p.keyboard.press('Enter');assert.equal(await p.locator('#detail-color').inputValue(),'흰색');assert.deepEqual(await p.evaluate(()=>window.__detailColorEvents),['input','change']);assert.equal(await p.evaluate(()=>snoteVehicleHasChanges()),true);f.answerConfirm(false);await p.locator('.detail-close').click();await p.locator('#vehicle-overlay.open').waitFor({state:'hidden'});assert.equal(await p.evaluate(()=>window.__encarFixtureCars[0].color),legacy);
+ await p.evaluate(()=>openVehicle('encar-car-1'));assert.equal(await p.locator('#detail-color').inputValue(),legacy);
+ if(width===1440){
+  await p.locator('#detail-extra').fill('색상값을 바꾸지 않는 저장');await p.locator('#vehicle-header-save').click();await p.locator('#vehicle-overlay.open').waitFor({state:'hidden'});assert.equal(await p.evaluate(()=>window.__encarFixtureCars[0].color),legacy,'Saving unrelated fields must retain the exact legacy color value');await p.evaluate(()=>openVehicle('encar-car-1'));await trigger.click();await p.keyboard.press('Home');await p.keyboard.press('ArrowDown');await p.keyboard.press('ArrowDown');await p.keyboard.press('Space');assert.equal(await p.locator('#detail-color').inputValue(),'검정색');f.answerConfirm(true);await p.locator('.detail-close').click();await p.locator('#vehicle-overlay.open').waitFor({state:'hidden'});assert.equal(await p.evaluate(()=>window.__encarFixtureCars[0].color),'검정색','An intentional basic-color selection must reach the server');
+ }
+ await finish(f);console.log('PASS '+width+'px compact aligned form, readable amounts, single-tooltip PNG logo and clipped-safe 12-color palette preserve legacy values, keyboard use and explicit save/discard');
 }
 
 (async()=>{
@@ -320,5 +367,6 @@ async function vehicleHeaderAndMediaRegression(width){
   await vehicleCloseRegression(320,640);
   await vehicleSaveOnCloseRegression();
   for(const width of [1440,390])await vehicleHeaderAndMediaRegression(width);
+  for(const width of [1440,390,320])await vehiclePaletteRegression(width);
  }finally{await browser.close();}
 })().catch(error=>{console.error(error.stack);process.exitCode=1;});

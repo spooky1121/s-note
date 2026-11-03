@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.32">
+<html lang="ko" data-snote-release="2.33">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -3159,7 +3159,8 @@ button, input, select, textarea { font-family: inherit; }
 <link rel="stylesheet" href="assets/vehicle-taxonomy.css?v=2.20">
 <link rel="stylesheet" href="assets/income-settlement-parent.css?v=2.25">
 <link rel="stylesheet" href="assets/vehicle-colors.css?v=2.23">
-<link rel="stylesheet" href="assets/vehicle-detail.css?v=2.32">
+<link rel="stylesheet" href="assets/vehicle-detail.css?v=2.33">
+<link rel="stylesheet" href="assets/vehicle-detail-colors.css?v=2.33">
 <link rel="stylesheet" href="assets/sales-month-filter.css?v=2.26">
 <script src="assets/vehicle-colors.js?v=2.23"></script>
 <link rel="stylesheet" href="assets/customer-contract-signature.css?v=2.22">
@@ -3270,9 +3271,9 @@ button, input, select, textarea { font-family: inherit; }
     <div class="vehicle-header"><div class="vehicle-heading">
       <p class="vehicle-eyebrow" hidden></p>
       <div class="vehicle-heading-row"><h2 id="vehicle-title">차량 상세</h2><div class="vehicle-header-actions" id="vehicle-header-actions" role="group" aria-label="차량 작업">
-        <button type="button" class="vehicle-header-action quote-launch" onclick="openQuotePreview()" aria-label="견적서" title="견적서" data-tooltip="견적서"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8zM14 3v5h5M9 12h6M9 16h6"/></svg></button>
-        <button type="button" class="vehicle-header-action contract-launch" onclick="openSaleProgress()" aria-label="판매진행" title="판매진행" data-tooltip="판매진행"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="8" cy="7" r="3"/><path d="M3 20v-2a5 5 0 0 1 10 0v2M15 11h6m-3-3 3 3-3 3"/></svg></button>
-        <button type="button" class="vehicle-header-action vehicle-header-save" id="vehicle-header-save" onclick="saveVehicleCosts()" aria-label="저장" title="변경사항저장" data-tooltip="변경사항저장"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3v12m-4-4 4 4 4-4M5 16v4h14v-4"/></svg></button>
+        <button type="button" class="vehicle-header-action quote-launch" onclick="openQuotePreview()" aria-label="견적서" data-tooltip="견적서"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8zM14 3v5h5M9 12h6M9 16h6"/></svg></button>
+        <button type="button" class="vehicle-header-action contract-launch" onclick="openSaleProgress()" aria-label="판매진행" data-tooltip="판매진행"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="8" cy="7" r="3"/><path d="M3 20v-2a5 5 0 0 1 10 0v2M15 11h6m-3-3 3 3-3 3"/></svg></button>
+        <button type="button" class="vehicle-header-action vehicle-header-save" id="vehicle-header-save" onclick="saveVehicleCosts()" aria-label="저장" data-tooltip="변경사항저장"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3v12m-4-4 4 4 4-4M5 16v4h14v-4"/></svg></button>
       </div></div><p class="vehicle-meta-line" id="vehicle-meta"></p>
     </div></div>
     <div class="vehicle-body"><div class="vehicle-overview" id="vehicle-overview"></div><section class="acct-readonly-panel" id="acct-readonly-panel" aria-label="경리 차량정보 조회"></section>
@@ -3285,7 +3286,7 @@ button, input, select, textarea { font-family: inherit; }
           <label>트림 (선택)<select id="detail-grade" onchange="syncDetailCatalog()"></select></label>
           <label class="whole identity-manual" id="detail-grade-custom-wrapper" style="display:none">트림 직접 입력 (선택)<input id="detail-grade-custom" type="text" maxlength="80" placeholder="원할 때만 입력 (비워도 저장 가능)" /></label>
           <label class="whole identity-manual" id="detail-model-wrapper">차량명 직접 입력<input id="detail-model" type="text" maxlength="100" placeholder="제조사부터 트림까지 입력" /></label>
-          <label>차량 색상<div class="color-picker" id="detail-color-picker"><button id="detail-color-trigger" class="color-trigger" type="button" aria-haspopup="listbox" aria-expanded="false" onclick="toggleColorPicker('detail')"><span class="color-bar" id="detail-color-swatch"></span><span id="detail-color-caption" class="color-caption">색상 선택</span><span class="color-caret">⌄</span></button><div id="detail-color-menu" class="color-menu" role="listbox" aria-label="차량 색상 목록"></div><select id="detail-color" aria-hidden="true" tabindex="-1" hidden></select></div></label>
+          <label>차량 색상<div class="color-picker" id="detail-color-picker"><button id="detail-color-trigger" class="color-trigger detail-color-trigger" type="button" aria-label="현재 색상: 미지정. 색상 선택" aria-haspopup="listbox" aria-controls="detail-color-menu" aria-expanded="false" onclick="toggleColorPicker('detail')"><span class="color-bar" id="detail-color-swatch" aria-hidden="true"></span><span id="detail-color-caption" class="color-caption">미지정</span></button><div id="detail-color-menu" class="color-menu detail-color-palette" role="listbox" aria-label="차량 색상 목록"></div><select id="detail-color" aria-hidden="true" tabindex="-1" hidden></select></div></label>
 
            <label>주행거리 (km)<input id="detail-km" type="text" inputmode="numeric" maxlength="9" pattern="[0-9,]*" placeholder="예: 43,200" oninput="formatMileageInput(this)" /></label>
            <label>매입 날짜<input id="detail-purchase-date" type="date" onclick="openDateInputCalendar(this)" /></label><label>차대번호 (VIN)<input id="detail-vin" type="text" maxlength="25" placeholder="차대번호 입력" autocapitalize="characters" spellcheck="false" /></label><label class="whole">기타 / 견적서 비고<input id="detail-extra" type="text" maxlength="90" placeholder="차량 특징, 기타 안내 사항 (견적서에 자동 반영)" /></label>
@@ -3615,8 +3616,22 @@ const COLOR_OPTIONS=[
  ['기타','기타 색상','#cbd2de','기타 유채색']
 ];
 function colorItem(value){return COLOR_OPTIONS.find(x=>x[0]===value)||[value,value+' · 기존 저장된 색상','#cbd2de','기타'];}
+const DETAIL_COLOR_OPTIONS=[
+ ['','미지정','#eef1f5'],['흰색','흰색','#fff'],['검정색','검정','#141619'],['회색','회색','#9196a0'],
+ ['은색','은색','linear-gradient(120deg,#919aa6,#e6eaee,#9ba5b0)'],['빨간색','빨강','#db4145'],['파란색','파랑','#347dcc'],
+ ['남색','남색','#1a3154'],['초록색','초록','#35865b'],['갈색','갈색','#795440'],['베이지색','베이지','#d3bf9c'],
+ ['노란색','노랑','#f3c927'],['주황색','주황','#e88438']
+];
+function detailColorOptions(selected=$('detail-color')?.value||''){
+ return DETAIL_COLOR_OPTIONS.some(item=>item[0]===selected)?DETAIL_COLOR_OPTIONS:
+  [...DETAIL_COLOR_OPTIONS,[selected,selected,colorItem(selected)[2],true]];
+}
 function buildColorMenu(prefix){
  const menu=$(prefix+'-color-menu');if(!menu)return;
+ if(prefix==='detail'){
+  menu.innerHTML=detailColorOptions().map(([value,label,color,current])=>`<button type="button" role="option" class="color-choice detail-color-choice${current?' detail-color-current':''}" data-value="${esc(value)}" aria-label="${esc(label)}${current?' · 현재 저장된 색상':''}" aria-selected="false" tabindex="-1" onclick="chooseColor('detail',this.dataset.value)"><span class="color-bar" style="background:${color}" aria-hidden="true">${value?'':'–'}</span><span class="detail-color-label">${esc(label)}</span>${current?'<small>현재 색상</small>':''}</button>`).join('');
+  return;
+ }
  let previous='';menu.innerHTML=COLOR_OPTIONS.map(([val,label,color,group])=>{
   const heading=group!==previous?`<div class="color-menu-heading">${esc(group)}</div>`:'';previous=group;
   return heading+`<button type="button" role="option" class="color-choice" data-value="${esc(val)}" aria-selected="false" onclick="chooseColor('${prefix}',this.dataset.value)"><span class="color-bar" style="background:${color}"></span><span>${esc(label)}</span><span class="color-check">✓</span></button>`;
@@ -3624,19 +3639,49 @@ function buildColorMenu(prefix){
 }
 function setupColorSelect(prefix,selected=''){
  const el=$(prefix+'-color');if(!el)return;
- el.innerHTML=COLOR_OPTIONS.map(([val,label])=>`<option value="${esc(val)}">${esc(label)}</option>`).join('');
- if(selected&&!COLOR_OPTIONS.some(v=>v[0]===selected))el.insertAdjacentHTML('beforeend',`<option value="${esc(selected)}">${esc(selected)} (기존 입력)</option>`);
+ const options=prefix==='detail'?detailColorOptions(selected):COLOR_OPTIONS;
+ el.innerHTML=options.map(([val,label])=>`<option value="${esc(val)}">${esc(label)}</option>`).join('');
+ if(selected&&!options.some(v=>v[0]===selected))el.insertAdjacentHTML('beforeend',`<option value="${esc(selected)}">${esc(selected)} (기존 입력)</option>`);
  el.value=selected||'';buildColorMenu(prefix);updateColorSwatch(prefix);
 }
 function updateColorSwatch(prefix){
  const select=$(prefix+'-color'),bar=$(prefix+'-color-swatch'),caption=$(prefix+'-color-caption');if(!select||!bar)return;
- const item=colorItem(select.value);bar.style.background=item[2];caption.textContent=item[1];
- const menu=$(prefix+'-color-menu');if(menu)menu.querySelectorAll('.color-choice').forEach(btn=>btn.setAttribute('aria-selected',btn.dataset.value===select.value?'true':'false'));
+ const item=prefix==='detail'?detailColorOptions().find(value=>value[0]===select.value):colorItem(select.value);bar.style.background=item[2];caption.textContent=item[1];
+ if(prefix==='detail'){bar.textContent=select.value?'':'–';const trigger=$('detail-color-trigger');trigger.setAttribute('aria-label','현재 색상: '+item[1]+'. 색상 선택');trigger.title=item[1];}
+ const menu=$(prefix+'-color-menu');if(menu)menu.querySelectorAll('.color-choice').forEach(btn=>{const selected=btn.dataset.value===select.value;btn.setAttribute('aria-selected',selected?'true':'false');if(prefix==='detail')btn.tabIndex=selected?0:-1;});
 }
 function closeColorPickers(){for(const prefix of ['new','detail']){const picker=$(prefix+'-color-picker'),trigger=$(prefix+'-color-trigger');if(picker)picker.classList.remove('expanded');if(trigger)trigger.setAttribute('aria-expanded','false')}}
-function toggleColorPicker(prefix){const picker=$(prefix+'-color-picker'),wasOpen=picker?.classList.contains('expanded');closeColorPickers();if(picker&&!wasOpen){picker.classList.add('expanded');$(prefix+'-color-trigger').setAttribute('aria-expanded','true');}}
-function chooseColor(prefix,value){const select=$(prefix+'-color');if(!select)return;select.value=value;updateColorSwatch(prefix);closeColorPickers();$(prefix+'-color-trigger').focus();}
+function positionDetailColorPalette(){
+ const menu=$('detail-color-menu'),trigger=$('detail-color-trigger');if(!menu||!trigger)return;
+ menu.style.left='0';menu.style.top='calc(100% + 8px)';menu.style.bottom='auto';menu.style.maxHeight='';
+ const modal=trigger.closest('.vehicle-modal'),clip=modal?.getBoundingClientRect(),width=window.innerWidth,height=window.innerHeight;
+ const left=Math.max(16,clip?clip.left+modal.clientLeft+8:16),right=Math.min(width-16,clip?clip.left+modal.clientLeft+modal.clientWidth-8:width-16);
+ const top=Math.max(16,clip?clip.top+modal.clientTop+8:16),bottom=Math.min(height-16,clip?clip.top+modal.clientTop+modal.clientHeight-8:height-16);
+ menu.style.width=Math.max(0,Math.min(292,right-left))+'px';menu.style.maxWidth=menu.style.width;
+ const box=menu.getBoundingClientRect(),button=trigger.getBoundingClientRect(),below=bottom-button.bottom-8,above=button.top-top-8,flip=box.height>below&&above>below;
+ menu.style.left=Math.max(left-box.left,Math.min(0,right-box.right))+'px';
+ menu.style.maxHeight=Math.max(0,Math.min(332,flip?above:below))+'px';
+ if(flip){menu.style.top='auto';menu.style.bottom='calc(100% + 8px)';}
+}
+function toggleColorPicker(prefix){const picker=$(prefix+'-color-picker'),wasOpen=picker?.classList.contains('expanded');closeColorPickers();if(picker&&!wasOpen){picker.classList.add('expanded');$(prefix+'-color-trigger').setAttribute('aria-expanded','true');if(prefix==='detail'){positionDetailColorPalette();($('detail-color-menu').querySelector('[aria-selected="true"]')||$('detail-color-menu').querySelector('[role="option"]'))?.focus();}}}
+function chooseColor(prefix,value){const select=$(prefix+'-color');if(!select)return;if(prefix==='detail'&&!detailColorOptions().some(item=>item[0]===value))return;const changed=select.value!==value;select.value=value;if(prefix==='detail')setupColorSelect(prefix,value);else updateColorSwatch(prefix);closeColorPickers();$(prefix+'-color-trigger').focus();if(prefix==='detail'&&changed){select.dispatchEvent(new Event('input',{bubbles:true}));select.dispatchEvent(new Event('change',{bubbles:true}));}}
 document.addEventListener('click',event=>{if(!event.target.closest('.color-picker'))closeColorPickers()});
+document.addEventListener('keydown',event=>{
+ const picker=$('detail-color-picker'),trigger=$('detail-color-trigger'),menu=$('detail-color-menu');if(!picker||!trigger||!menu)return;
+ const open=picker.classList.contains('expanded'),target=event.target;
+ if(open&&event.key==='Escape'){event.preventDefault();event.stopImmediatePropagation();closeColorPickers();trigger.focus();return;}
+ if(target===trigger&&['ArrowDown','ArrowUp','Home','End'].includes(event.key)){
+  event.preventDefault();if(!open)toggleColorPicker('detail');
+  const options=[...menu.querySelectorAll('[role="option"]')];
+  (event.key==='Home'?options[0]:event.key==='End'?options.at(-1):menu.querySelector('[aria-selected="true"]')||options[0])?.focus();return;
+ }
+ if(!open||!menu.contains(target)||!['ArrowDown','ArrowUp','ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;
+ event.preventDefault();const options=[...menu.querySelectorAll('[role="option"]')],at=options.indexOf(target);
+ const next=event.key==='Home'?0:event.key==='End'?options.length-1:(at+(['ArrowUp','ArrowLeft'].includes(event.key)?-1:1)+options.length)%options.length;
+ options[next]?.focus();
+},true);
+document.addEventListener('focusin',event=>{const picker=$('detail-color-picker');if(picker?.classList.contains('expanded')&&!picker.contains(event.target))closeColorPickers();});
+window.addEventListener('resize',()=>{if($('detail-color-picker')?.classList.contains('expanded'))closeColorPickers();});
 function stripMileage(value){return String(value??'').replace(/[^0-9]/g,'').slice(0,7)}
 function parseMileage(value){return Number(stripMileage(value)||0)}
 function formatMileageInput(input){
@@ -9302,7 +9347,7 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 <script type="module" src="assets/quick-calculator.js?v=2.17"></script>
 <script type="module" src="assets/vehicle-taxonomy-ui.js?v=2.20"></script>
 <script type="module" src="assets/income-settlement-parent.js?v=2.25"></script>
-<script src="assets/release-info.js?v=2.32" defer></script>
-<script src="assets/snote-encar-link.js?v=2.32" defer></script>
+<script src="assets/release-info.js?v=2.33" defer></script>
+<script src="assets/snote-encar-link.js?v=2.33" defer></script>
 </body>
 </html>
