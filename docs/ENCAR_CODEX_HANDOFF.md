@@ -8,6 +8,8 @@
 
 실제 HTML/Chromium **27/27 통과**(1회/실패0). PC1440·모바일390/320에서 색상 바의 인접 입력과 같은 폭·34/36높이·8px 모서리·전체 fill·흰색 경계, SVG viewBox/실제 경계·접근성 및 기존 팔레트·키보드·dirty/save·legacy 보존·엔카·사진 회귀를 확인했다. HTTP/DB/인증은 합성이며 실제 운영 자료에 쓰지 않았다. 로그 `/tmp/snote-vehicle-v2331-browser.log` 및 갱신된 top 스크린샷은 환경의 임시 파일이다.
 
+배포: 앱 `3e19aa7176cc0025ba4eb5fc2b91980ae4f1fcb2`를 main에 반영했고, 2026-11-03 19:45:59 KST에 [s-note Pages 완료 체크 125869677879](https://github.com/spooky1121/s-note/runs/125869677879)의 `succeeded / Deployed successfully`, Latest commit `3e19aa7`와 원격 SHA 일치를 확인했다. 개별 배포는 https://1c8f90ea.s-note.pages.dev , 운영 주소는 https://s-note.pages.dev/?release=2.33.1 이다. 실제 운영 HTTP/화면을 직접 확인한 것은 아니며 이후 문서 커밋과 무관하게 앱 기준은 `3e19aa7`다. 추가 설정은 없다.
+
 ## 2026-11-03 v2.33 — 사용자 제공 엔카 로고와 차량 상세 정리
 
 기존 E 선형 SVG 대신 사용자 첨부 Trust 엔카 이미지를 배경 제거한 `assets/encar-logo.png`를 쓴다. 모서리는 투명하고 안쪽 흰 글자는 남아 있다. `renderLookupButton`은 같은 장식 img를 유지하며 부모의 `엔카광고보기` aria-label/custom tooltip/busy 상태를 보존한다. 상단4버튼 native title은 제거해 풍선말 중복을 막는다. 엔카 검색·공식 검증·주소 저장 로직은 그대로다.
