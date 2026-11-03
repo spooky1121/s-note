@@ -30,7 +30,7 @@ async function geometry(p,root,selector='.snote-popup-close'){
   for(const root of roots){
    await p.evaluate(root=>{const e=document.querySelector(root);e.hidden=false;e.classList.add('open');e.setAttribute('aria-hidden','false');},root);
    const button=await geometry(p,root);assert(await button.getAttribute('onclick')||root==='#zc85-postcode-overlay',root+' preserves original handler');
-   if(root==='#zc76-receipt-overlay'){assert.equal(await p.locator(root+' .snote-popup-close').count(),1);assert.equal(await p.locator(root+' button[onclick="zc76PrintReceipt()"]').textContent(),'인수증 인쇄');}
+   if(root==='#zc76-receipt-overlay'){assert.equal(await p.locator(root+' .snote-popup-close').count(),1);assert.equal(await p.locator(root+' button[onclick="zc76PrintReceipt()"]').getAttribute('aria-label'),'인수증 인쇄');}
    const before=await button.boundingBox();await p.evaluate(root=>{const card=document.querySelector(root+' .snote-popup-card,.snote-zoom-body');if(card)card.scrollTop=1000},root);const after=await button.boundingBox();assert(Math.abs(before.y-after.y)<1,root+' fixed relative to its frame');
    if(root==='#overlay')await p.screenshot({path:path.join(ART,'registration-close-'+width+'.png')});
    await p.evaluate(root=>{const e=document.querySelector(root);e.classList.remove('open');e.hidden=true;e.setAttribute('aria-hidden','true');},root);

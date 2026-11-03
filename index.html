@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.44">
+<html lang="ko" data-snote-release="2.45">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -3182,6 +3182,7 @@ button, input, select, textarea { font-family: inherit; }
 <link rel="stylesheet" href="assets/document-mms.css?v=2.44">
 <link rel="stylesheet" href="assets/workspace-polish.css?v=2.44">
 <link rel="stylesheet" href="assets/reference-theme.css?v=2.44">
+<link rel="stylesheet" href="assets/document-actions.css?v=2.45">
 </head>
 <body class="snote-typography">
 
@@ -3333,10 +3334,10 @@ button, input, select, textarea { font-family: inherit; }
 <!-- v1.8: S-NOTE original minimalist, premium A4 sales quotation -->
 <div id="quote-overlay" class="overlay quote-overlay" role="dialog" aria-modal="true" aria-labelledby="quote-modal-title" aria-hidden="true">
  <div class="quote-window">
-  <header class="quote-toolbar"><div><strong id="quote-modal-title">차량 구매 견적서 · A4 미리보기</strong><p>계약서와 통일된 스타일 · 차량정보 자동 입력 · 깔끔한 1페이지 출력</p></div><div class="quote-toolbar-actions"><button class="btn-primary" type="button" onclick="printQuote()">▤ 인쇄 / PDF 저장</button><button class="quote-close" type="button" onclick="closeQuotePreview()" aria-label="견적서 닫고 상세로 돌아가기" title="닫기">×</button></div></header>
+  <header class="quote-toolbar"><div class="quote-toolbar-actions"><button class="btn-primary" type="button" onclick="printQuote()" aria-label="견적서 인쇄" title="견적서 인쇄" data-document-print><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 8V3h10v5M7 17H4V9h16v8h-3M7 14h10v7H7z"/><path d="M17 11h.01"/></svg></button><button class="quote-close" type="button" onclick="closeQuotePreview()" aria-label="견적서 닫고 상세로 돌아가기" title="닫기">×</button></div></header>
   <article id="quote-paper" class="quote-paper" aria-label="A4 차량 구매 견적서">
    <div class="q8-topline"><span>S-NOTE</span><span class="q8-id" id="quote-number">PURCHASE QUOTATION</span></div>
-   <header class="q8-head"><div class="q8-head-content"><div class="q8-en">VEHICLE PURCHASE ESTIMATE</div><h1>차량 구매 견적서</h1><div class="q8-meta-line"><p class="q8-sub">차량 정보와 비용을 깔끔하게 확인할 수 있는 견적서입니다.</p><div class="q8-date-inline"><label for="quote-date">견적서 작성일자</label><input id="quote-date" aria-label="견적 일자" type="text" maxlength="12" value="2026.10.13" /></div></div></div></header>
+   <header class="q8-head"><div class="q8-head-content"><div class="q8-en">VEHICLE PURCHASE ESTIMATE</div><h1 id="quote-modal-title">차량 구매 견적서</h1><div class="q8-meta-line"><p class="q8-sub">차량 정보와 비용을 깔끔하게 확인할 수 있는 견적서입니다.</p><div class="q8-date-inline"><label for="quote-date">견적서 작성일자</label><input id="quote-date" aria-label="견적 일자" type="text" maxlength="12" value="2026.10.13" /></div></div></div></header>
    <div class="q8-recipient"><span class="q8-light">견적 받는 분</span><div class="q8-customer"><input id="quote-customer" aria-label="받는 분" value="VIP" maxlength="22" /><span class="q8-recp-tail">고객님 귀하</span></div><div class="q8-recipient-note">담당자 안내용 견적서</div></div>
    <section class="q8-section"><div class="q8-section-title"><span class="q8-index">01</span><h2>차량 정보</h2><small>VEHICLE DETAILS</small></div><div class="q8-vehicle-card"><div class="q8-car-main"><span class="q8-car-label">차명 / 모델</span><input id="quote-car-name" readonly aria-label="차명" /></div><div class="q8-specs"><div class="q8-spec"><label>등급 · 트림</label><input id="quote-grade" readonly aria-label="등급" /></div><div class="q8-spec"><label>연식</label><input id="quote-year" readonly aria-label="연식" /></div><div class="q8-spec"><label>주행거리</label><input id="quote-km" readonly aria-label="주행거리" /></div><div class="q8-spec"><label>색상</label><input id="quote-color" readonly aria-label="차량 색상" /></div><div class="q8-spec"><label>차량번호</label><input id="quote-plate" readonly aria-label="차량번호" /></div><div class="q8-spec"><label>기타 · 비고</label><input class="q8-fine" id="quote-extra" readonly aria-label="기타" /></div></div></div></section>
    <section class="q8-section q8-cost-section"><div class="q8-section-title"><span class="q8-index">02</span><h2>항목별 비용</h2><small>PRICE BREAKDOWN</small></div>
@@ -3368,17 +3369,18 @@ button, input, select, textarea { font-family: inherit; }
 <div id="contract-overlay" class="overlay contract-overlay" role="dialog" aria-modal="true" aria-labelledby="contract-modal-title" aria-hidden="true">
  <div class="contract-window">
   <header class="contract-toolbar">
-    <div class="contract-toolbar-copy"><strong id="contract-modal-title">중고차 매매계약서 · A4 미리보기</strong><p>매도 / 매수 선택 · 계약금 및 상대방 정보 입력 · 개인정보는 별도로 저장하지 않습니다</p></div>
+
     <div class="contract-actions">
-      <div class="contract-toggle" role="group" aria-label="계약 구분"><button type="button" id="contract-sale-mode" class="active" onclick="setContractMode('sale')">매도 계약</button><button type="button" id="contract-purchase-mode" onclick="setContractMode('purchase')">매수 계약</button></div>
-      <button type="button" class="btn-primary" onclick="printContract()">▤ 인쇄 / PDF 저장</button><button type="button" class="contract-close" onclick="closeContractPreview()" aria-label="계약서 닫기" title="닫기">×</button>
+
+      <button type="button" class="btn-primary" onclick="printContract()" aria-label="계약서 인쇄" title="계약서 인쇄" data-document-print><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 8V3h10v5M7 17H4V9h16v8h-3M7 14h10v7H7z"/><path d="M17 11h.01"/></svg></button><button type="button" class="contract-close" onclick="closeContractPreview()" aria-label="계약서 닫기" title="닫기">×</button>
     </div>
   </header>
   <article id="contract-paper" class="contract-paper" aria-label="A4 차량 매매계약서">
    <header class="ct-doc-head">
     <div class="ct-doc-title">
+      <div class="contract-toggle" role="group" aria-label="계약 구분"><button type="button" id="contract-sale-mode" class="active" onclick="setContractMode('sale')">매도 계약</button><button type="button" id="contract-purchase-mode" onclick="setContractMode('purchase')">매수 계약</button></div>
       <span class="ct-mode-chip" id="ct-mode-label">자동차 매도 계약</span>
-      <h1>중고차 매매계약서</h1>
+      <h1 id="contract-modal-title">중고차 매매계약서</h1>
       <div class="ct-doc-meta-line"><p>차량 매매조건과 거래 당사자의 권리 의무를 확인하기 위한 계약문서입니다</p><div class="ct-doc-date-inline"><label>계약서 작성일자</label><input type="text" id="ct-contract-date" placeholder="YYYY-MM-DD" maxlength="10" /></div></div>
     </div>
    </header>
@@ -7652,7 +7654,7 @@ document.addEventListener('click',e=>{
 
 <div id="zc76-receipt-overlay" hidden role="presentation">
   <div class="zc76-window">
-    <div class="zc76-toolbar"><div><strong>차량 인수증 · 출력 미리보기</strong><p>S-NOTE 전용 서식 · A4 1장</p></div><div class="zc76-toolbar-actions"><button type="button" class="zc76-primary" onclick="zc76PrintReceipt()">인수증 인쇄</button><button type="button" onclick="zc76CloseReceipt()">닫기 ×</button></div></div>
+    <div class="zc76-toolbar"><div class="zc76-toolbar-actions"><button type="button" class="zc76-primary" onclick="zc76PrintReceipt()" aria-label="인수증 인쇄" title="인수증 인쇄" data-document-print><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 8V3h10v5M7 17H4V9h16v8h-3M7 14h10v7H7z"/><path d="M17 11h.01"/></svg></button><button type="button" onclick="zc76CloseReceipt()">닫기 ×</button></div></div>
     <article id="zc76-receipt-paper" aria-label="개인정보 수집 활용 동의 및 차량 인수증">
       <h1>개인정보 수집 활용 동의 및 차량 인수증</h1>
       <div class="zc76-title">□ 차량, 고객, 판매자 정보 (필수)</div>
@@ -9356,7 +9358,7 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 <script type="module" src="assets/quick-calculator.js?v=2.36"></script>
 <script type="module" src="assets/vehicle-taxonomy-ui.js?v=2.20"></script>
 <script type="module" src="assets/income-settlement-parent.js?v=2.41"></script>
-<script src="assets/release-info.js?v=2.44" defer></script>
+<script src="assets/release-info.js?v=2.45" defer></script>
 <script src="assets/snote-encar-link.js?v=2.40" defer></script>
 <script src="assets/document-mms.js?v=2.44" defer></script>
 <script src="assets/workspace-polish.js?v=2.44" defer></script>

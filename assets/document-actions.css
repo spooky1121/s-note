@@ -1,0 +1,13 @@
+/* Document controls stay outside the printed A4 sheet. */
+@media screen{
+ :is(#quote-overlay,#contract-overlay,#zc76-receipt-overlay) .snote-popup-card{background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;gap:0}
+ :is(#quote-overlay,#contract-overlay,#zc76-receipt-overlay) :is(.quote-toolbar,.contract-toolbar,.zc76-toolbar){position:sticky;top:0;display:flex;justify-content:flex-end;align-items:center;width:100%;height:50px;min-height:50px;margin:0;padding:5px 50px 5px 0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;z-index:20}
+ :is(.quote-toolbar-actions,.contract-actions,.zc76-toolbar-actions){margin:0;gap:0}
+ :is(#quote-overlay,#contract-overlay,#zc76-receipt-overlay) button[data-document-print]{display:grid;place-items:center;min-width:34px;width:34px;height:34px;min-height:34px;padding:7px;border:0;border-radius:6px;background:#fff;color:#59677d;box-shadow:none;cursor:pointer}
+ :is(#quote-overlay,#contract-overlay,#zc76-receipt-overlay) button[data-document-print]:hover{background:#eef0ff;color:#4455ed}
+ button[data-document-print] svg{display:block;width:20px;height:20px}
+ :is(#quote-overlay,#contract-overlay,#zc76-receipt-overlay) button.snote-popup-close{background:#fff!important;top:10px!important}
+ #contract-paper .contract-toggle{display:inline-flex;float:right;margin:0 0 5px 10px;background:#f5f6fa;border-radius:6px}
+ #contract-paper .contract-toggle button{font:500 11px/1.4 var(--snote-font-family);padding:6px 8px;min-height:28px}
+}
+@media print{[data-document-print],.contract-paper .contract-toggle{display:none!important}}
