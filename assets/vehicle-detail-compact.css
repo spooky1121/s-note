@@ -1,0 +1,32 @@
+/* v2.38: detail-only action icons and a single-line summary rail. */
+#vehicle-overlay :is(input,textarea)::placeholder{color:#b2bac4!important;opacity:1!important;font-weight:400}
+#vehicle-overlay .snote-detail-icon{position:relative;display:inline-grid;place-items:center;flex:none;width:36px;height:36px;min-width:36px;padding:7px;border:1px solid #e5eaf0;border-radius:9px;background:#fff;box-shadow:none;cursor:pointer;line-height:1}
+#vehicle-overlay .snote-detail-icon svg{display:block;width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#vehicle-overlay .snote-detail-icon.is-delete{color:#dc394c;border-color:#f1dce0;background:#fff8f9}
+#vehicle-overlay .snote-detail-icon.is-delete:hover{color:#bd263b;background:#ffedf0}
+#vehicle-overlay .snote-detail-icon:is(.is-add,.is-replace){color:#315cf5;border-color:#dce5ff;background:#f5f8ff}
+#vehicle-overlay .snote-detail-icon:is(.is-add,.is-replace):hover{background:#eaf0ff;border-color:#c5d5ff}
+#vehicle-overlay .snote-detail-icon:disabled{opacity:.4;cursor:default}
+#vehicle-overlay .snote-detail-icon:focus-visible{outline:3px solid #b8d3f6;outline-offset:2px}
+#vehicle-overlay .repair-row .repair-remove{width:36px;height:34px;min-width:36px;padding:6px}
+#vehicle-overlay .tile-controls .snote-detail-icon{width:30px;height:28px;min-width:30px;padding:4px}
+#vehicle-overlay .tile-controls .snote-detail-icon svg{width:19px;height:19px}
+#vehicle-overlay .photo-grid .photo-tile{overflow:visible}
+#vehicle-overlay .photo-grid .photo-thumb{overflow:hidden;border-radius:10px}
+#vehicle-overlay .photo-grid .add-tile.snote-detail-icon{width:100%;height:auto;min-height:82px;aspect-ratio:1;padding:12px;border:1px dashed #cad8f4;background:#f6f9ff}
+#vehicle-overlay .photo-grid .add-tile svg{width:30px;height:30px}
+#vehicle-overlay .doc-footer{justify-content:flex-end}
+#vehicle-overlay .doc-footer .small-action.snote-detail-icon{width:36px;height:34px;padding:6px}
+#vehicle-overlay #vehicle-overview.vehicle-overview{display:flex;flex-wrap:nowrap;align-items:center;gap:0;width:100%;min-width:0;margin:0 0 14px;padding:0;overflow-x:auto;overflow-y:hidden;border:1px solid #e6e9ee;border-radius:10px;background:#fff;scrollbar-width:thin;scrollbar-color:#cdd6e0 transparent;overscroll-behavior-x:contain}
+#vehicle-overlay #vehicle-overview>.vehicle-metric{display:flex;flex:0 0 auto;align-items:center;gap:7px;min-width:0;padding:10px 12px;border:0;border-right:1px solid #edf0f4;white-space:nowrap;background:transparent}
+#vehicle-overlay #vehicle-overview>.vehicle-metric:last-child{border-right:0}
+#vehicle-overlay #vehicle-overview .vehicle-metric>label{display:block;flex:none;margin:0;color:#8b96a5;font-size:10.5px;line-height:26px;font-weight:500;white-space:nowrap}
+#vehicle-overlay #vehicle-overview .vehicle-metric>strong{display:block;margin:0;font-size:12px;line-height:26px;font-weight:650;white-space:nowrap;font-variant-numeric:tabular-nums}
+#vehicle-overlay #vehicle-overview .status-select{height:26px;min-height:26px;min-width:74px;padding:3px 8px;font-size:11px;line-height:18px}
+#vehicle-overlay #vehicle-overview .vehicle-metric :is(.lender-pill,.zc-finance-label){margin:0;font-size:11px}
+#vehicle-overlay #vehicle-overview .acct-prestock-inline input{width:120px;min-width:120px;height:28px;margin:0;padding:4px 7px;font-size:12px}
+#vehicle-overlay #vehicle-overview .acct-prestock-inline>small{display:none}
+@media(max-width:650px){#vehicle-overlay #vehicle-overview>.vehicle-metric{padding:8px 11px}#vehicle-overlay #vehicle-overview .acct-prestock-inline input{font-size:16px;width:136px;min-width:136px}}
+@media print{#vehicle-overlay .snote-detail-icon{display:none!important}}
+#vehicle-overlay #vehicle-overview .vehicle-metric>strong{display:flex;align-items:center;height:26px}
+#vehicle-overlay #vehicle-overview .vehicle-metric :is(.zc-cash-badge,.zc-finance-label){height:24px;line-height:16px;padding:3px 7px;box-sizing:border-box;margin:0;font-size:10.5px}

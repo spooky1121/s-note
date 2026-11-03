@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.37">
+<html lang="ko" data-snote-release="2.38">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -3171,6 +3171,7 @@ button, input, select, textarea { font-family: inherit; }
 <script src="assets/popup-controls.js?v=2.36" defer></script>
 <link rel="stylesheet" href="assets/list-style.css?v=2.37">
 <script src="assets/customer-list.js?v=2.37.1" defer></script>
+<link rel="stylesheet" href="assets/vehicle-detail-compact.css?v=2.38">
 </head>
 <body class="snote-typography">
 
@@ -3285,8 +3286,8 @@ button, input, select, textarea { font-family: inherit; }
         </div>
       </section>
       <section class="sold-info-section" id="sold-info-section" style="display:none"><div class="car-identity-head"><h3>판매 완료 정보</h3><span>실제 판매 기준 · 수정 가능</span></div><div class="sold-fields"><label>판매 완료 날짜<input id="detail-sold-date" type="date" /></label><label>실제 판매가 (만원)<input id="detail-sold-price" class="detail-money-input" type="text" min="0" step="0.1" inputmode="decimal" oninput="updateDetailSummary()" autocomplete="off" spellcheck="false" placeholder="-" /></label></div></section>
-      <section class="car-cost-section" id="car-cost-section"><div class="car-cost-head"><div><h3>매입 · 부대비용</h3></div><span class="vehicle-section-unit">만원</span></div><div class="cost-edit core-cost-fields"><label>매입가 (만원)<input id="detail-buy" class="detail-money-input" type="text" min="0" step="0.1" oninput="updateDetailSummary()" inputmode="decimal" autocomplete="off" spellcheck="false" placeholder="-" /></label><label>판매예정가 (만원)<input id="detail-sell" class="detail-money-input" type="text" min="0" step="0.1" oninput="updateDetailSummary()" inputmode="decimal" autocomplete="off" spellcheck="false" placeholder="-" /></label><label>재고대출금 (만원)<input id="detail-inventory-loan" class="detail-money-input" type="text" min="0" max="100000000" step="0.1" inputmode="decimal" oninput="updateDetailSummary()" autocomplete="off" spellcheck="false" placeholder="-" /></label><label>재고 이자 (만원)<input id="detail-inventory-interest" class="detail-money-input" type="text" min="0" max="100000000" step="0.1" inputmode="decimal" oninput="updateDetailSummary()" autocomplete="off" spellcheck="false" placeholder="-" /></label></div><div class="detail-lender-row"><label for="detail-inventory-lender">재고금융사<select id="detail-inventory-lender"><option value="">미지정</option><option value="KB캐피탈">KB캐피탈</option><option value="JB우리금융">JB우리금융</option><option value="메리츠">메리츠</option><option value="현대캐피탈">현대캐피탈</option></select></label><p>재고대출금이 있는 차량의 금융사를 선택하세요. 경리 재고금융 관리 목록에도 반영됩니다.</p></div><div class="cost-edit" id="detail-cost-fields"></div><div class="repair-group detail-repair"><div class="repair-top"><div><strong>수리비용 상세 내역</strong><span>수리 내역을 메모하고 항목별 금액을 입력하세요.</span></div><button class="section-button" type="button" onclick="addRepairRow('detail')">＋ 수리 항목 추가</button></div><div class="repair-rows" id="detail-repair-items"></div><div class="repair-total">수리비 합계 <strong id="detail-repair-total">0만원</strong></div></div><div class="cost-summary detail-summary" id="detail-cost-summary"></div></section>
-      <div class="vehicle-media-grid"><section class="media-section vehicle-photo-panel"><div class="media-section-head"><div><h3>실차 사진 <span class="count-pill" id="photo-count">0 / 5</span></h3></div><button class="section-button" id="photo-add" type="button" onclick="triggerMediaInput('photos')">＋ 사진 추가</button></div><div class="photo-grid" id="photo-grid"></div><p id="zc-reference-hint" hidden></p></section>
+      <section class="car-cost-section" id="car-cost-section"><div class="car-cost-head"><div><h3>매입 · 부대비용</h3></div><span class="vehicle-section-unit">만원</span></div><div class="cost-edit core-cost-fields"><label>매입가 (만원)<input id="detail-buy" class="detail-money-input" type="text" min="0" step="0.1" oninput="updateDetailSummary()" inputmode="decimal" autocomplete="off" spellcheck="false" placeholder="-" /></label><label>판매예정가 (만원)<input id="detail-sell" class="detail-money-input" type="text" min="0" step="0.1" oninput="updateDetailSummary()" inputmode="decimal" autocomplete="off" spellcheck="false" placeholder="-" /></label><label>재고대출금 (만원)<input id="detail-inventory-loan" class="detail-money-input" type="text" min="0" max="100000000" step="0.1" inputmode="decimal" oninput="updateDetailSummary()" autocomplete="off" spellcheck="false" placeholder="-" /></label><label>재고 이자 (만원)<input id="detail-inventory-interest" class="detail-money-input" type="text" min="0" max="100000000" step="0.1" inputmode="decimal" oninput="updateDetailSummary()" autocomplete="off" spellcheck="false" placeholder="-" /></label></div><div class="detail-lender-row"><label for="detail-inventory-lender">재고금융사<select id="detail-inventory-lender"><option value="">미지정</option><option value="KB캐피탈">KB캐피탈</option><option value="JB우리금융">JB우리금융</option><option value="메리츠">메리츠</option><option value="현대캐피탈">현대캐피탈</option></select></label><p>재고대출금이 있는 차량의 금융사를 선택하세요. 경리 재고금융 관리 목록에도 반영됩니다.</p></div><div class="cost-edit" id="detail-cost-fields"></div><div class="repair-group detail-repair"><div class="repair-top"><div><strong>수리비용 상세 내역</strong><span>수리 내역을 메모하고 항목별 금액을 입력하세요.</span></div><button class="section-button snote-detail-icon is-add" type="button" onclick="addRepairRow('detail')" aria-label="수리 항목 추가" title="수리 항목 추가"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"/></svg></button></div><div class="repair-rows" id="detail-repair-items"></div><div class="repair-total">수리비 합계 <strong id="detail-repair-total">0만원</strong></div></div><div class="cost-summary detail-summary" id="detail-cost-summary"></div></section>
+      <div class="vehicle-media-grid"><section class="media-section vehicle-photo-panel"><div class="media-section-head"><div><h3>실차 사진 <span class="count-pill" id="photo-count">0 / 5</span></h3></div><button class="section-button snote-detail-icon is-add" id="photo-add" type="button" onclick="triggerMediaInput('photos')" aria-label="실차 사진 추가" title="사진 추가"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"/></svg></button></div><div class="photo-grid" id="photo-grid"></div><p id="zc-reference-hint" hidden></p></section>
       <section class="media-section vehicle-document-panel"><div class="media-section-head"><div><h3>차량 서류</h3></div></div><div class="doc-tabs" role="tablist" aria-label="차량 서류 종류"><button class="active" id="doc-tab-registration" type="button" role="tab" aria-selected="true" onclick="showDocTab('registration')">자동차등록증 <span>1장</span></button><button id="doc-tab-inspection" type="button" role="tab" aria-selected="false" onclick="showDocTab('inspection')">성능·상태점검기록부 <span>최대 2장</span></button></div><div class="doc-grid" id="doc-grid" role="tabpanel"></div>
        <div class="vin-ocr-zone" id="registration-ocr-zone" role="status" aria-live="polite" data-level="info">
          <div class="vin-ocr-head"><span class="vin-ocr-dot"></span><span>차대번호 인식</span></div>
@@ -4062,10 +4063,19 @@ function normalizeRepairItems(c){
   const legacy=Number(c?.costs?.repair||0);
   return legacy>0?[{memo:'기존 수리비',amount:legacy}]:[];
 }
+function snote238VehicleIcon(kind){
+ const paths={delete:'<path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7M14 10v7"/>',add:'<path d="M12 5v14M5 12h14"/>',replace:'<path d="M4 8a8.5 8.5 0 0 1 14-3l2 2M20 3v4h-4M20 16a8.5 8.5 0 0 1-14 3l-2-2M4 21v-4h4"/>'};
+ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">'+paths[kind]+'</svg>';
+}
+function snote238SetVehicleButton(button,kind,label){
+ if(!button)return;button.innerHTML=snote238VehicleIcon(kind);button.classList.add('snote-detail-icon');
+ for(const type of ['delete','replace','add'])button.classList.toggle('is-'+type,type===kind);
+ button.setAttribute('aria-label',label);button.setAttribute('title',label);button.removeAttribute('data-tooltip');
+}
 function repairRowHTML(prefix,item={memo:'',amount:0}){
  const memo=esc(String(item.memo||''));
  const amount=Number(item.amount)||0;
- return `<div class="repair-row"><input class="repair-memo" type="text" maxlength="120" aria-label="수리 항목 메모" placeholder="예: 앞범퍼 도색, 타이어 교환" value="${memo}" oninput="${prefix==='new'?'updateAddSummary()':'updateDetailSummary()'}" /><input class="repair-amount ${prefix==='detail'?'detail-money-input':''}" type="${prefix==='detail'?'text':'number'}" min="0" max="100000000" step="0.1" inputmode="decimal" aria-label="수리비 금액 (만원)" placeholder="${prefix==='detail'?'-':'금액(만원)'}" value="${prefix==='detail'?detailMoneyValue(amount):amount||''}" oninput="${prefix==='new'?'updateAddSummary()':'updateDetailSummary()'}" /><button class="repair-remove" type="button" onclick="removeRepairRow('${prefix}',this)" aria-label="수리 항목 삭제">삭제</button></div>`;
+ return `<div class="repair-row"><input class="repair-memo" type="text" maxlength="120" aria-label="수리 항목 메모" placeholder="예: 앞범퍼 도색, 타이어 교환" value="${memo}" oninput="${prefix==='new'?'updateAddSummary()':'updateDetailSummary()'}" /><input class="repair-amount ${prefix==='detail'?'detail-money-input':''}" type="${prefix==='detail'?'text':'number'}" min="0" max="100000000" step="0.1" inputmode="decimal" aria-label="수리비 금액 (만원)" placeholder="${prefix==='detail'?'-':'금액(만원)'}" value="${prefix==='detail'?detailMoneyValue(amount):amount||''}" oninput="${prefix==='new'?'updateAddSummary()':'updateDetailSummary()'}" /><button class="repair-remove${prefix==='detail'?' snote-detail-icon is-delete':''}" type="button" onclick="removeRepairRow('${prefix}',this)" aria-label="수리 항목 삭제" ${prefix==='detail'?'title="수리 항목 삭제"':''}>${prefix==='detail'?snote238VehicleIcon('delete'):'삭제'}</button></div>`;
 }
 function renderRepairRows(prefix,items=[]){$(prefix+'-repair-items').innerHTML=(items.length?items:[{memo:'',amount:0}]).map(x=>repairRowHTML(prefix,x)).join('');updateRepairTotal(prefix)}
 function addRepairRow(prefix){const parent=$(prefix+'-repair-items');if(parent.children.length>=40){toast('수리 항목은 최대 40개입니다.');return;}parent.insertAdjacentHTML('beforeend',repairRowHTML(prefix));parent.lastElementChild.querySelector('.repair-memo').focus();updateRepairTotal(prefix)}
@@ -6623,14 +6633,14 @@ function renderVehiclePhotos(car){
  $('photo-count').textContent=`${photos.length} / 5`;$('photo-add').disabled=photos.length>=5;
  const tiles=photos.map((item,index)=>{
   const name=`실차 사진 ${index+1}`,cover=item.id===featured?.id;
-  return `<div class="photo-tile"><button type="button" class="photo-thumb" aria-label="${name} 확대 보기" title="${esc(item.filename||name)}" onclick="${snoteVehicleMediaClick('openZoom',item.id)}"><img src="${esc(item.url)}" alt="${esc(item.filename||name)}" loading="lazy" /></button>${cover?'<span class="cover-badge">대표</span>':''}<div class="tile-controls"><button type="button" onclick="${snoteVehicleMediaClick('setCoverPhoto',item.id)}" ${cover?'disabled':''} aria-label="${name} 대표 사진으로 지정">${cover?'대표 ✓':'대표 지정'}</button><button type="button" class="delete" onclick="${snoteVehicleMediaClick('removeMedia',item.id)}" aria-label="${name} 삭제">삭제</button></div></div>`;
+  return `<div class="photo-tile"><button type="button" class="photo-thumb" aria-label="${name} 확대 보기" title="${esc(item.filename||name)}" onclick="${snoteVehicleMediaClick('openZoom',item.id)}"><img src="${esc(item.url)}" alt="${esc(item.filename||name)}" loading="lazy" /></button>${cover?'<span class="cover-badge">대표</span>':''}<div class="tile-controls"><button type="button" onclick="${snoteVehicleMediaClick('setCoverPhoto',item.id)}" ${cover?'disabled':''} aria-label="${name} 대표 사진으로 지정">${cover?'대표 ✓':'대표 지정'}</button><button type="button" class="delete snote-detail-icon is-delete" onclick="${snoteVehicleMediaClick('removeMedia',item.id)}" aria-label="${name} 삭제" title="${name} 삭제">${snote238VehicleIcon('delete')}</button></div></div>`;
  }).join('');
- $('photo-grid').innerHTML=tiles+(photos.length<5?`<button type="button" class="photo-tile add-tile" onclick="triggerMediaInput('photos')" aria-label="실차 사진 ${photos.length?'추가':'등록'}">${ico('plus')}<span>${photos.length?'사진 추가':'사진 등록'}</span></button>`:'');
+ $('photo-grid').innerHTML=tiles+(photos.length<5?`<button type="button" class="photo-tile add-tile snote-detail-icon is-add" onclick="triggerMediaInput('photos')" aria-label="실차 사진 ${photos.length?'추가':'등록'}">${snote238VehicleIcon('add')}</button>`:'');
  $('zc-reference-hint').textContent='';
 }
 function renderDocTab(){if(!activeCarId)return;const all=carFiles(activeCarId);for(const kind of ['registration','inspection']){const el=$('doc-tab-'+kind);el.classList.toggle('active',activeDocTab===kind);el.setAttribute('aria-selected',activeDocTab===kind?'true':'false')}
  const entries=activeDocTab==='registration'?[['registration','자동차등록증']]:[['inspection1','성능·상태점검기록부 · 1페이지'],['inspection2','성능·상태점검기록부 · 2페이지']];
- $('doc-grid').innerHTML=entries.map(([group,title])=>{const item=all.find(x=>x.group===group);return `<article class="doc-card"><div class="doc-title">${title}</div><div class="doc-body">${item?`<button type="button" class="doc-thumb" aria-label="${title} 확대 보기" title="${esc(item.filename||title)}" onclick="${snoteVehicleMediaClick('openZoom',item.id)}"><img src="${esc(item.url)}" alt="${title}" loading="lazy" /></button>`:`<div class="doc-placeholder" aria-hidden="true">${ico('clipboard')}</div>`}</div><div class="doc-footer"><button type="button" class="small-action primary" onclick="triggerMediaInput('${group}')" aria-label="${title} ${item?'이미지 교체':'사진 등록'}">${item?'교체':'사진 등록'}</button>${item?`<button type="button" class="small-action danger" onclick="${snoteVehicleMediaClick('removeMedia',item.id)}" aria-label="${title} 삭제">삭제</button>`:''}</div></article>`}).join('');
+ $('doc-grid').innerHTML=entries.map(([group,title])=>{const item=all.find(x=>x.group===group);return `<article class="doc-card"><div class="doc-title">${title}</div><div class="doc-body">${item?`<button type="button" class="doc-thumb" aria-label="${title} 확대 보기" title="${esc(item.filename||title)}" onclick="${snoteVehicleMediaClick('openZoom',item.id)}"><img src="${esc(item.url)}" alt="${title}" loading="lazy" /></button>`:`<div class="doc-placeholder" aria-hidden="true">${ico('clipboard')}</div>`}</div><div class="doc-footer"><button type="button" class="small-action primary snote-detail-icon ${item?'is-replace':'is-add'}" onclick="triggerMediaInput('${group}')" aria-label="${title} ${item?'이미지 교체':'사진 등록'}" title="${title} ${item?'이미지 교체':'사진 등록'}">${snote238VehicleIcon(item?'replace':'add')}</button>${item?`<button type="button" class="small-action danger snote-detail-icon is-delete" onclick="${snoteVehicleMediaClick('removeMedia',item.id)}" aria-label="${title} 삭제" title="${title} 삭제">${snote238VehicleIcon('delete')}</button>`:''}</div></article>`}).join('');
  updateVinOcrTab();
 }
 function openDateInputCalendar(input){
@@ -6677,7 +6687,7 @@ function renderAccountantVehicle(c){
  <section class="acct-registration-section" aria-label="담당 딜러 차량의 자동차등록증">
   <div class="acct-registration-head"><div><h4>자동차등록증</h4><p>해당 차량의 등록증을 등록하거나 교체합니다. 담당 딜러의 차량 서류와 연동됩니다.</p></div><span>차량별 1장</span></div>
   <div id="acct-registration-preview" class="acct-registration-preview"><span>등록증을 확인하는 중…</span></div>
-  <div class="acct-registration-actions"><button type="button" class="btn-ghost" onclick="openAccountantRegistrationPicker()" id="acct-registration-button">＋ 등록증 사진 업로드</button><span>이미지 최대 15MB · 현재 브라우저 저장</span></div>
+  <div class="acct-registration-actions"><button type="button" class="btn-ghost snote-detail-icon is-add" onclick="openAccountantRegistrationPicker()" id="acct-registration-button" aria-label="등록증 사진 업로드" title="등록증 사진 업로드">${snote238VehicleIcon('add')}</button><span>이미지 최대 15MB · 현재 브라우저 저장</span></div>
   <input id="acct-registration-input" type="file" accept="image/jpeg,image/png,image/webp,image/*" hidden onchange="handleAccountantRegistration(event)" />
  </section>`;
  loadAccountingRegistrationPreview(c);
@@ -6715,10 +6725,10 @@ async function loadAccountingRegistrationPreview(car){
   if(record?.blob){
    acctRegistrationUrl=URL.createObjectURL(record.blob);
    host.innerHTML=`<img src="${acctRegistrationUrl}" alt="등록된 자동차등록증" /><div><strong>등록된 자동차등록증</strong><small>${esc(record.filename||'등록증 사진')} · 담당 ${esc(dealerLabel(car))}</small></div>`;
-   const btn=$('acct-registration-button');if(btn)btn.textContent='등록증 사진 교체';
+   const btn=$('acct-registration-button');snote238SetVehicleButton(btn,'replace','등록증 사진 교체');
   }else{
    host.innerHTML='<div class="acct-registration-empty">▧</div><div><strong>등록된 자동차등록증이 없습니다.</strong><small>업로드하면 담당 딜러 차량 서류에 함께 저장됩니다.</small></div>';
-   const btn=$('acct-registration-button');if(btn)btn.textContent='＋ 등록증 사진 업로드';
+   const btn=$('acct-registration-button');snote238SetVehicleButton(btn,'add','등록증 사진 업로드');
   }
  }catch(err){
   if(token===acctRegistrationLoadToken&&activeCarId===carId)host.innerHTML='<span>등록증을 불러오지 못했습니다. 브라우저 저장소를 확인해주세요.</span>';
@@ -9286,7 +9296,7 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 <script type="module" src="assets/quick-calculator.js?v=2.36"></script>
 <script type="module" src="assets/vehicle-taxonomy-ui.js?v=2.20"></script>
 <script type="module" src="assets/income-settlement-parent.js?v=2.36"></script>
-<script src="assets/release-info.js?v=2.37" defer></script>
+<script src="assets/release-info.js?v=2.38" defer></script>
 <script src="assets/snote-encar-link.js?v=2.37" defer></script>
 </body>
 </html>
