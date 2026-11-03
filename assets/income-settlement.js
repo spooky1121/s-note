@@ -1,7 +1,7 @@
 if(window.parent!==window)document.documentElement.dataset.embedded='true';
-import {TEMPLATE,createDocument,normalizeDocument,calculate,parseMoney,draftDocument,invoiceCostSuggestions} from './income-settlement-model.js';
-import {buildForm} from './income-settlement-view.js?v=2.25';
-import {buildPrintSnapshot} from './income-settlement-print.js?v=2.25';
+import {TEMPLATE,createDocument,normalizeDocument,calculate,parseMoney,draftDocument,invoiceCostSuggestions} from './income-settlement-model.js?v=2.39';
+import {buildForm} from './income-settlement-view.js?v=2.39';
+import {buildPrintSnapshot} from './income-settlement-print.js?v=2.39';
 
 const $=id=>document.getElementById(id);
 const copy=value=>JSON.parse(JSON.stringify(value));
@@ -36,7 +36,7 @@ function formatInput(id){const input=inputNodes.get(id);if(!input||invalid.has(i
 function writeDocument(){if(!state.document)return;for(const id of inputNodes.keys())formatInput(id);$('income-purchase-kind').value=state.document.purchaseKind;formView.syncDocument(state.document,state.source);renderCalculation();updateControls();}
 function renderCalculation(){
   if(!state.document)return;
-  try{const result=calculate(state.document),moneyInvalid=[...invalid.keys()].some(id=>id==='_calculation'||TEMPLATE.inputs[id]?.kind==='money');formView.updateCalculation(moneyInvalid?null:result,state.document,state.source);
+  try{const result=calculate(state.document,state.source),moneyInvalid=[...invalid.keys()].some(id=>id==='_calculation'||TEMPLATE.inputs[id]?.kind==='money');formView.updateCalculation(moneyInvalid?null:result,state.document,state.source);
     const sourceWarnings=[...new Set(state.source?.warnings||[])],sourceHost=$('income-source-warnings');
     sourceHost.replaceChildren(...sourceWarnings.map(text=>{const li=document.createElement('li');li.textContent=text;return li;}));sourceHost.hidden=sourceWarnings.length===0;
     $('income-warnings').replaceChildren(...[...new Set(result.warnings||[])].map(text=>{const li=document.createElement('li');li.textContent=text;return li;}));
@@ -70,7 +70,7 @@ function reset(data={}){persistDraft();clearTimeout(state.pending?.timer);clearT
 function save(){
   if(!state.context?.canEdit||invalid.size||state.load||state.print||state.conflict)return;
   if(state.pending&&!state.uncertain)return;
-  if(!state.pending){try{const document=normalizeDocument(state.document);calculate(document);state.pending={requestId:newId(),document:copy(document),baseVersion:state.baseVersion,sourceVersion:state.sourceVersion,clientSeq:state.seq};}catch(error){message(error.message,'error');return;}}
+  if(!state.pending){try{const document=normalizeDocument(state.document);calculate(document,state.source);state.pending={requestId:newId(),document:copy(document),baseVersion:state.baseVersion,sourceVersion:state.sourceVersion,clientSeq:state.seq};}catch(error){message(error.message,'error');return;}}
   state.uncertain=false;const pending=state.pending;status('서버 저장 중…');message('서버의 실제 저장 결과를 확인하고 있습니다.');clearTimeout(pending.timer);pending.timer=setTimeout(()=>{if(state.pending!==pending)return;state.uncertain=true;pending.wasUncertain=true;status('저장 결과 확인 필요','error');message('응답을 받지 못했습니다. 내용을 바꾸지 않고 같은 요청의 저장 결과를 다시 확인해 주세요.','error');updateControls();},45000);send('SNOTE_INCOME_SAVE',{contextKey:state.context.key,requestId:pending.requestId,document:copy(pending.document),baseVersion:pending.baseVersion,sourceVersion:pending.sourceVersion,clientSeq:pending.clientSeq});updateControls();announceDirty();
 }
 function showConflict(kind,data){state.conflict={kind,data};$('income-conflict').hidden=false;$('income-apply-source').hidden=kind!=='source_changed';$('income-keep-local').hidden=kind==='source_changed';$('income-use-server').hidden=false;$('income-conflict-text').textContent=kind==='source_changed'?'차량의 매입·매출 정보가 변경되었습니다. 직접 수정한 칸을 유지하며 변경된 차량 정보를 반영하거나, 서버 정산표를 다시 불러와 주세요.':'다른 화면에서 서버 정산표가 변경되었습니다. 현재 작성본을 유지했습니다. 서버 자료를 불러오거나 현재 작성본을 기준으로 다시 저장할 수 있습니다.';status('변경 사항 확인 필요','error');message(data.message||'서버 변경 사항을 확인한 뒤 다시 저장해 주세요.','error');updateControls();}
@@ -86,7 +86,7 @@ function applySource(){if(!state.conflict?.data.source||!state.document)return;c
 function close(){if((state.dirty||invalid.size||state.pending)&&!window.confirm(state.pending?'저장 결과를 아직 확인 중입니다. 정산 화면을 닫을까요?':'미저장 내용이 있습니다. 정산 화면을 닫을까요?'))return;persistDraft();send('SNOTE_INCOME_CLOSE',{contextKey:state.context?.key,dirty:false});}
 function print(){if(!state.document||invalid.size||state.pending||state.print||state.load||state.conflict)return;const request={requestId:newId()};state.print=request;request.timer=setTimeout(()=>{if(state.print!==request)return;state.print=null;message('인쇄 전 차량 확인에 실패했습니다. 다시 시도해 주세요.','error');updateControls();},45000);send('SNOTE_INCOME_PRINT_VALIDATE',{contextKey:state.context.key,requestId:request.requestId,sourceVersion:state.sourceVersion,baseVersion:state.baseVersion});message('인쇄 전 차량의 판매 상태와 변경 여부를 확인하고 있습니다.');updateControls();}
 function printResult(data){if(!state.print||state.print.requestId!==data.requestId)return;clearTimeout(state.print.timer);state.print=null;if(data.state==='error'||data.ok===false||data.sourceVersion&&data.sourceVersion!==state.sourceVersion){if(data.code==='SOURCE_CHANGED'||data.sourceVersion&&data.sourceVersion!==state.sourceVersion)showConflict('source_changed',data);else if(data.code==='CONFLICT')showConflict('conflict',data);else message(data.message||'현재 차량 상태를 확인하지 못해 인쇄하지 않았습니다.','error');updateControls();return;}try{
-  const snapshot=buildPrintSnapshot(state.document,{stored:state.stored,dirty:state.dirty||data.baseVersion!==state.baseVersion,mode:state.context.mode});
+  const snapshot=buildPrintSnapshot(state.document,{stored:state.stored,dirty:state.dirty||data.baseVersion!==state.baseVersion,mode:state.context.mode,source:state.source});
   $('income-print-snapshot').replaceChildren(snapshot);$('income-print-snapshot').setAttribute('aria-hidden','false');message('현재 정산 내역의 인쇄 화면을 준비했습니다.');updateControls();requestAnimationFrame(()=>window.print());
  }catch(error){message(error.message||'인쇄할 정산 내역을 준비하지 못했습니다.','error');updateControls();}}
 

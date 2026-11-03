@@ -1,3 +1,4 @@
+import './inventory-interest.js';
 import { TEMPLATE, TEMPLATE_ID } from './income-settlement-template.js';
 export { TEMPLATE, TEMPLATE_ID };
 
@@ -113,7 +114,7 @@ function won(value) {
   return result.n <= BigInt(MAX_MONEY) && result.n >= -BigInt(MAX_MONEY) ? Number(result.n) : null;
 }
 
-export function createSource(car, { dealerName = '', companyName = '', ownerId } = {}) {
+export function createSource(car, { dealerName = '', companyName = '', ownerId, lenders = [] } = {}) {
   if (!plain(car)) invalid('차량 자료를 확인해 주세요.');
   const warnings = [], costs = plain(car.costs) ? car.costs : {};
   const convert = (value, label, required = false) => {
@@ -134,12 +135,15 @@ export function createSource(car, { dealerName = '', companyName = '', ownerId }
     } else amountWon = convert(costs[key], label);
     if (amountWon !== null && amountWon !== 0) costSuggestions.push({ key, label, amountWon });
   }
+  const interest = globalThis.SnoteInventoryInterest.calculate(car, lenders);
+  const inventoryInterestWon = interest.ready ? interest.amountWon : (convert(costs.inventoryInterest, '재고금융 이자') || 0);
+  if (!interest.ready && Number(car.inventoryLoan || 0) > 0) warnings.push(interest.reason + ' 기존 재고 이자를 반영합니다.');
   const unmapped = [];
-  for (const [key, label] of [['inventoryInterest', '재고금융 이자 (참고)'], ['incomeTax', '기존 소득세 (참고)']]) {
+  for (const [key, label] of [['incomeTax', '기존 소득세 (참고)']]) {
     const amountWon = convert(costs[key], label); if (amountWon !== null && amountWon !== 0) unmapped.push({ key, label, amountWon });
   }
   const year = car.year == null ? '' : String(car.year).trim();
-  return { carId: sourceId(car.id), ownerId: sourceId(ownerId ?? car.ownerId, true), status: sourceText(car.status, 40), model: sourceText(car.model, 200), plate: sourceText(car.plate, 30), year: /^\d{4}$/.test(year) ? year : '', purchaseAt: sourceDate(car.purchaseAt), soldAt: sourceDate(car.soldAt), buyWon, soldWon, acquisitionTaxWon, dealerName: sourceText(dealerName, 100), companyName: sourceText(companyName, 100), costSuggestions, unmapped, warnings };
+  return { carId: sourceId(car.id), ownerId: sourceId(ownerId ?? car.ownerId, true), status: sourceText(car.status, 40), model: sourceText(car.model, 200), plate: sourceText(car.plate, 30), year: /^\d{4}$/.test(year) ? year : '', purchaseAt: sourceDate(car.purchaseAt), soldAt: sourceDate(car.soldAt), buyWon, soldWon, acquisitionTaxWon, dealerName: sourceText(dealerName, 100), companyName: sourceText(companyName, 100), costSuggestions, inventoryInterestWon, unmapped, warnings };
 }
 
 export function createDocument(source) {
@@ -192,13 +196,16 @@ function range(start, end) {
   return cells;
 }
 
-export function calculate(raw) {
+export function calculate(raw, source = {}) {
+  const interest = source?.inventoryInterestWon ?? 0;
+  if (!Number.isSafeInteger(interest) || interest < 0 || interest > MAX_MONEY) invalid('재고 이자를 확인해 주세요.');
   const doc = normalizeDocument(raw), cache = new Map(), active = new Set();
   function cell(id) {
     if (cache.has(id)) return cache.get(id);
     if (active.has(id)) invalid('순환 수식은 계산할 수 없습니다.');
     active.add(id);
-    const value = FORMULAS[id] ? evaluate(FORMULAS[id]) : typeof doc.cells[id] === 'number' ? rational(BigInt(doc.cells[id])) : ZERO;
+    let value = FORMULAS[id] ? evaluate(FORMULAS[id]) : typeof doc.cells[id] === 'number' ? rational(BigInt(doc.cells[id])) : ZERO;
+    if (id === 'D28') value = add(value, rational(BigInt(interest)));
     active.delete(id); cache.set(id, value); return value;
   }
   function evaluate(node) {

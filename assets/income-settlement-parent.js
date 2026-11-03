@@ -1,4 +1,4 @@
-import {createSource,createDocument,sourceFingerprint} from './income-settlement-model.js';
+import {createSource,createDocument,sourceFingerprint} from './income-settlement-model.js?v=2.39';
 
 const bridge=()=>window.snoteIncomeSettlementBridge;
 const dialog=document.createElement('dialog');dialog.id='snote221-income-dialog';dialog.setAttribute('aria-label','차량 소득정산');
@@ -48,7 +48,7 @@ async function request(context,body){
 async function demoRequest(context,body){
  check(context);
  const info=bridge().demoSource(context.base);check(context);
- const source=createSource(info.car,{dealerName:info.dealerName,companyName:info.companyName,ownerId:context.base.ownerId});
+ const source=createSource(info.car,{dealerName:info.dealerName,companyName:info.companyName,ownerId:context.base.ownerId,lenders:info.lenders});
  const sourceVersion=await sourceFingerprint(source);check(context);
  if(body.action==='save')throw failure('ONLINE_REQUIRED','서버 저장은 온라인 계정으로 로그인한 뒤 사용할 수 있습니다. 현재 작성본은 인쇄할 수 있습니다.');
  return {ok:true,stored:false,source,sourceVersion,document:createDocument(source),baseVersion:null,revision:0};

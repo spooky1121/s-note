@@ -147,8 +147,14 @@ async function fresh(config, jwt, scope) {
   if (matching.length !== 1) fail(matching.length > 1 ? 'VALIDATION_ERROR' : 'FORBIDDEN');
   const { car, index } = matching[0];
   if (car.status !== '판매완료') fail('NOT_SOLD');
+  let lenders = [];
+  if (Number(car.inventoryLoan || 0) > 0) {
+    const finance = await fetchJson(config, jwt, '/rest/v1/zc_datasets', { query: { select: 'payload', company_id: `eq.${scope.company}`, owner_id: 'eq.00000000-0000-0000-0000-000000000000', dataset: 'eq.finance_limits', limit: '2' } });
+    if (!Array.isArray(finance) || finance.length > 1) fail('VALIDATION_ERROR');
+    if (finance.length) { if (!Array.isArray(finance[0].payload)) fail('VALIDATION_ERROR'); lenders = finance[0].payload; }
+  }
   let source;
-  try { source = createSource(car, { ownerId: scope.owner, dealerName, companyName: companies[0].name }); } catch { fail('VALIDATION_ERROR'); }
+  try { source = createSource(car, { ownerId: scope.owner, dealerName, companyName: companies[0].name, lenders }); } catch { fail('VALIDATION_ERROR'); }
   return { payload, revision, car, index, actor: actor.actor, source, sourceVersion: await sourceFingerprint(source) };
 }
 function document(value) {

@@ -1,4 +1,4 @@
-import {TEMPLATE,normalizeDocument,calculate} from './income-settlement-model.js';
+import {TEMPLATE,normalizeDocument,calculate} from './income-settlement-model.js?v=2.39';
 
 const money=value=>value==null?'':new Intl.NumberFormat('ko-KR').format(value);
 
@@ -30,9 +30,9 @@ function inputText(value,kind){
 // This builds a detached, readonly original-form snapshot without reading live
 // inputs or retaining the document (including H50) in application state/storage.
 export function buildPrintSnapshot(value,{
-  stored=false,dirty=false,mode='cloud',printedAt=new Date(),domDocument=globalThis.document
+  source={},stored=false,dirty=false,mode='cloud',printedAt=new Date(),domDocument=globalThis.document
 }={}){
-  const document=normalizeDocument(value),result=calculate(document);
+  const document=normalizeDocument(value),result=calculate(document,source);
   if(!domDocument?.createElement||!domDocument?.createDocumentFragment)throw new TypeError('인쇄 문서를 만들 수 없습니다.');
   const date=new Date(printedAt);
   if(!Number.isFinite(date.getTime()))throw new TypeError('인쇄 시각을 확인해 주세요.');
@@ -90,6 +90,7 @@ export function buildPrintSnapshot(value,{
   table.append(body);fragment.append(table);
   const footer=domDocument.createElement('p');footer.className='print-footer';
   footer.textContent=`첨부 원본 수식 기준 · ${stored===true&&dirty===false&&mode==='cloud'?'서버 저장 자료':'서버 미저장 작성본'} · ${date.toLocaleString('ko-KR')}`;
+  if(source.inventoryInterestWon)footer.textContent+=` · 차량 부대비용에 재고금융 이자 ${source.inventoryInterestWon.toLocaleString('ko-KR')}원 포함`;
   fragment.append(footer);
   return fragment;
 }

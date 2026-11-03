@@ -1,0 +1,9 @@
+#vehicle-overlay .snote-interest-basis{font-size:10px;line-height:1.5;color:#8e9aab;font-weight:400;overflow-wrap:anywhere}
+#vehicle-overlay #detail-inventory-interest[readonly]{background:#f6f8fc;color:#46637d;cursor:default}
+#snote-app #list-screen .status-select{min-width:76px;max-width:86px;width:80px;padding:5px 5px;font-size:11px}
+#snote-app .snote-list-encar{display:inline-grid;place-items:center;width:34px;height:34px;flex:none;border:0;border-radius:9px;background:transparent;vertical-align:middle}
+#snote-app .snote-list-encar img{display:block;width:30px;height:30px;object-fit:contain}
+#snote-app .snote-list-encar:hover{background:#fff0f2}
+#snote-app .snote-list-encar:focus-visible{outline:3px solid #b8d3f6;outline-offset:2px}
+#snote-app :is(#list-screen,#alt-content) .snote-encar-column{width:58px;text-align:center;padding-left:9px;padding-right:9px}
+.snote-encar-mobile:empty{display:none}

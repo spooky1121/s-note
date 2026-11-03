@@ -72,9 +72,9 @@ test('source converts manwon exactly with half-away-from-zero, without sale aski
 
 test('source is a known-field projection and never reuses existing tax, margin, loan principal or customer identity', () => {
   const source=createSource(car({margin:999,inventoryLoan:5000,costs:{bodywork:1,polish:2,advertising:3,purchaseFee:4,purchaseOther:5,repair:6,acquisitionTax:7,incomeTax:8,inventoryInterest:9},customer:{rrn:'0001013000000'},incomeSettlement:{privateCipher:'not-source'}}),{dealerName:'검증 담당',companyName:'검증 상사',ownerId:'verified-owner'});
-  assert.equal(source.ownerId,'verified-owner');assert.equal(source.acquisitionTaxWon,70000);
+  assert.equal(source.inventoryInterestWon,90000);assert.equal(source.ownerId,'verified-owner');assert.equal(source.acquisitionTaxWon,70000);
   assert.deepEqual(source.costSuggestions.map(value=>[value.key,value.amountWon]),[['bodywork',10000],['polish',20000],['advertising',30000],['purchaseFee',40000],['purchaseOther',50000],['repair',60000]]);
-  assert.deepEqual(source.unmapped.map(value=>[value.key,value.amountWon]),[['inventoryInterest',90000],['incomeTax',80000]]);
+  assert.deepEqual(source.unmapped.map(value=>[value.key,value.amountWon]),[['incomeTax',80000]]);
   assert.equal(JSON.stringify(source).includes('0001013000000'),false);assert.equal(Object.hasOwn(source,'margin'),false);assert.equal(Object.hasOwn(source,'inventoryLoan'),false);assert.equal(Object.hasOwn(source,'incomeSettlement'),false);
   const doc=createDocument(source);assert.equal(doc.cells.D31,70000);assert.equal(doc.cells.D47,null);assert.equal(doc.cells.H49,'');assert.equal(doc.cells.H50,'');
   for(let row=15;row<=20;row++){assert.equal(doc.cells['B'+row],'');assert.equal(doc.cells['D'+row],null);}
@@ -122,7 +122,7 @@ test('fingerprints sort object keys, retain exact stored metadata and distinguis
   assert.equal(await documentFingerprint(null),null);assert.equal(await documentFingerprint(undefined),null);
   assert.equal(await documentFingerprint({z:2,a:{b:1,c:0}}),await documentFingerprint({a:{c:0,b:1},z:2}));
   assert.notEqual(await documentFingerprint({document:serializePublic(document({})),privateCipher:'one'}),await documentFingerprint({document:serializePublic(document({})),privateCipher:'two'}));
-  const first=createSource(car()),same=createSource(car({unrelatedCustomer:'not copied',inventoryLoan:999})),changed=createSource(car({soldPrice:201}));
+  const first=createSource(car()),same=createSource(car({unrelatedCustomer:'not copied'})),changed=createSource(car({soldPrice:201}));
   assert.equal(await sourceFingerprint(first),await sourceFingerprint(same));assert.notEqual(await sourceFingerprint(first),await sourceFingerprint(changed));assert.match(await sourceFingerprint(first),/^[a-f0-9]{64}$/);
 });
 

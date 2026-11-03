@@ -66,7 +66,9 @@ export function buildForm({onInput=()=>{},onBlur=()=>{}}={}){
  function brokerVisibility(){brokerSummary.hidden=!hasBrokerData&&!broker.node.open;}
  function showRows(){for(let i=0;i<expenseRows.length;i++)expenseRows[i].hidden=i>=visibleRows;addButton.disabled=!editable||visibleRows>=expenseRows.length;addButton.querySelector('span').textContent=visibleRows>=expenseRows.length?'6개 항목 사용 중':'항목 추가';}
  function purchaseVisibility(doc){const kind=doc?.purchaseKind||'recycled';fieldNodes.get('D10').hidden=kind==='recycled'&&!filled(doc?.cells?.D10);fieldNodes.get('D11').hidden=kind==='invoice'&&!filled(doc?.cells?.D11);transaction.dataset.purchaseKind=kind;}
- function updateCalculation(result,doc){
+ const interestNote=el('p','income-interest-note');interestNote.hidden=true;summary.append(interestNote);
+ function updateCalculation(result,doc,source={}){
+  interestNote.hidden=!source?.inventoryInterestWon;interestNote.textContent=`재고금융 이자 ${number.format(source?.inventoryInterestWon||0)}원 자동 반영 (차량 부대비용 포함)`;
   for(const[id,nodes]of formulaNodes){const value=result?.cells?.[id];for(const{output,wrap}of nodes){output.textContent=Number.isFinite(value)?number.format(value):'—';wrap.dataset.negative=String(Number.isFinite(value)&&value<0);}}
   let total=0;for(let row=15;row<=20;row++)total+=Number.isFinite(result?.cells?.['D'+row])?result.cells['D'+row]:0;invoiceTotal.textContent=result?`${number.format(total)}원`:'—';
   purchaseVisibility(doc);hasBrokerData=['D47','H49','H50','H51'].some(id=>filled(doc?.cells?.[id]));brokerVisibility();

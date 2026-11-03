@@ -28,7 +28,7 @@ function fixture(t) {
       { user_id: OTHER, company_id: OTHER_COMPANY, role: 'dealer', active: true, display_name: '다른 상사 딜러' }
     ],
     datasets: new Map([[`${COMPANY}:${OWNER}`, { payload: [car(), { ...car('other-car'), status: '판매중', custom: { untouched: 'exact' } }], revision: 0 }], [`${COMPANY}:${PEER}`, { payload: [car()], revision: 0 }], [`${OTHER_COMPANY}:${OTHER}`, { payload: [car()], revision: 0 }]]),
-    calls: [], writes: [], writeHook: null, fetchHook: null, denyReadback: false
+    lenders: [], calls: [], writes: [], writeHook: null, fetchHook: null, denyReadback: false
   };
   const original = globalThis.fetch;
   const commit = body => {
@@ -53,6 +53,11 @@ function fixture(t) {
     }
     if (parsed.pathname === '/rest/v1/zc_datasets') {
       if (state.denyReadback) throw new Error('test-only readback network failure');
+      if (parsed.searchParams.get('dataset') === 'eq.finance_limits') {
+        assert.equal(parsed.searchParams.get('company_id'), 'eq.' + COMPANY);
+        assert.equal(parsed.searchParams.get('owner_id'), 'eq.00000000-0000-0000-0000-000000000000');
+        return answer(state.lenders.length ? [{ payload: copy(state.lenders) }] : []);
+      }
       assert.equal(parsed.searchParams.get('dataset'), 'eq.cars');
       assert.equal(parsed.searchParams.get('select'), 'payload,revision');
       const company = parsed.searchParams.get('company_id')?.slice(3), owner = parsed.searchParams.get('owner_id')?.slice(3);
@@ -288,4 +293,14 @@ test('plain H50 left in any stored owner record fails closed instead of leaking 
   const bad = copy(loaded.document); bad.cells.H50 = IDENTITY;
   dataset().payload[1].incomeSettlement = { ...record(bad, loaded.sourceVersion), document: bad };
   const failed = await call(saveBody(loaded)); assert.equal(failed.body.code, 'SETUP_REQUIRED'); assert.equal(JSON.stringify(failed.body).includes(IDENTITY), false); assert.equal(state.writes.length, 0);
+});
+
+
+test('financed settlement reads company shared rates using caller JWT and rejects a changed rate at save', async t => {
+ const {state}=fixture(t);const current=state.datasets.get(`${COMPANY}:${OWNER}`).payload[0];
+ current.inventoryLoan=1000;current.inventoryLender='검증금융';state.lenders=[['검증금융',100000,6]];
+ const loaded=await load();assert.equal(loaded.source.inventoryInterestWon,448767);
+ assert(!loaded.source.unmapped.some(x=>x.key==='inventoryInterest'));
+ state.lenders=[['검증금융',100000,12]];
+ const result=await call(saveBody(loaded));assert.equal(result.result.status,409);assert.equal(state.writes.length,0);
 });
