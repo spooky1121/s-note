@@ -1,4 +1,4 @@
-import {TEMPLATE} from './income-settlement-template.js';
+import {TEMPLATE} from './income-settlement-template.js?v=2.41';
 
 const icons={
  transaction:'M4 8h16M4 16h16M8 4 4 8l4 4m8 0 4 4-4 4',
@@ -49,7 +49,7 @@ export function buildForm({onInput=()=>{},onBlur=()=>{}}={}){
  addButton.addEventListener('click',()=>{if(!editable||visibleRows>=expenseRows.length)return;visibleRows++;showRows();inputNodes.get('B'+(14+visibleRows)).focus();});
 
  const other=disclosure('other-costs','추가 비용·정산 조정','영수증, 사무실 차감, 손익 조정','sliders');
- subgroup(other.body,'영수증·공과금',['D22','D23','D25','D26'],{D22:{label:'영수증 · 건당 3만원 이하'},D23:{label:'영수증 · 건당 3만원 초과'},D25:{label:'벌금 등'},D26:{label:'공과금 등'}});
+ subgroup(other.body,'영수증·공과금',['D22','D23','D25','D26'],{D22:{label:'영수증 · 건당 30,000원 이하'},D23:{label:'영수증 · 건당 30,000원 초과'},D25:{label:'벌금 등'},D26:{label:'공과금 등'}});
  const penalty=computed('D33','증빙불비가산세 · 자동 계산');penalty.classList.add('income-inline-result');other.body.append(penalty);
  subgroup(other.body,'사무실 차감',['D30','D31','D32'],{D30:{label:'판매입금 차감',help:'원본 양식의 사무실 차감 항목입니다.'},D31:{label:'취득세'},D32:{label:'성능보험료'}});
  subgroup(other.body,'손익 조정·참고',['D40','I39'],{D40:{label:'타차량 손익 조정',help:'차감할 금액은 음수로 입력해 주세요.'},I39:{label:'매입비차액 · 기록용',help:'자동 계산에는 포함되지 않는 참고 금액입니다.'}});

@@ -1,3 +1,4 @@
+import '../../assets/money.js';
 /** Customer phone-possession confirmation. This is not a legal-name identity check. */
 import { encryptIdentityCipher, decryptIdentityCipher } from '../_shared/customer-identity-codec.js';
 const MAX_BODY = 64 * 1024;
@@ -301,7 +302,9 @@ function auth(request) {
 }
 function car(value) {
   if (!object(value)) fail('UPSTREAM_ERROR');
-  return Object.fromEntries(['model', 'plate', 'year', 'km', 'color', 'sell'].map(key => [key, ['string', 'number'].includes(typeof value[key]) ? value[key] : '']));
+  const safe = Object.fromEntries(['model', 'plate', 'year', 'km', 'color', 'sell'].map(key => [key, ['string', 'number'].includes(typeof value[key]) ? value[key] : '']));
+  const amount = globalThis.SnoteMoney.toWon(safe.sell);
+  return { ...safe, sellWon: Number.isSafeInteger(amount) && amount >= 0 ? amount : null };
 }
 function safeInfo(data, rrnAvailable = false) {
   if (data.ok !== true) fail('UPSTREAM_ERROR');

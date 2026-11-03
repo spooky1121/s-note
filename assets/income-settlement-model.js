@@ -1,5 +1,6 @@
-import './inventory-interest.js';
-import { TEMPLATE, TEMPLATE_ID } from './income-settlement-template.js';
+import './money.js?v=2.41';
+import './inventory-interest.js?v=2.41';
+import { TEMPLATE, TEMPLATE_ID } from './income-settlement-template.js?v=2.41';
 export { TEMPLATE, TEMPLATE_ID };
 
 const TYPE = 'snote-income-settlement';
@@ -101,24 +102,25 @@ function sourceId(value, optional = false) {
   invalid('차량과 담당자 연결 정보를 확인해 주세요.');
 }
 function sourceDate(value) { if (typeof value !== 'string') return ''; try { return date(value); } catch { return ''; } }
-function manwonValue(value) {
+function moneyValue(value) {
   if (value == null || value === '') return null;
   if (!['number', 'string'].includes(typeof value) || (typeof value === 'string' && (!value.trim() || value.length > 200))) return null;
   const numeric = Number(value);
-  if (!Number.isFinite(numeric) || Math.abs(numeric) > MAX_MONEY / 10000) return null;
+  if (!Number.isFinite(numeric) || Math.abs(numeric) > MAX_MONEY) return null;
   try { return decimal(String(value).trim()); } catch { return null; }
 }
 function won(value) {
   if (!value) return null;
-  const result = round(multiply(value, rational(10000n)));
+  const result = round(value);
   return result.n <= BigInt(MAX_MONEY) && result.n >= -BigInt(MAX_MONEY) ? Number(result.n) : null;
 }
 
 export function createSource(car, { dealerName = '', companyName = '', ownerId, lenders = [] } = {}) {
   if (!plain(car)) invalid('차량 자료를 확인해 주세요.');
+  car = globalThis.SnoteMoney.car(car);
   const warnings = [], costs = plain(car.costs) ? car.costs : {};
   const convert = (value, label, required = false) => {
-    const amount = won(manwonValue(value));
+    const amount = won(moneyValue(value));
     if (amount === null && (required || (value != null && value !== ''))) warnings.push(label + ' 원 단위 금액을 확인해 주세요.');
     return amount;
   };
@@ -129,7 +131,7 @@ export function createSource(car, { dealerName = '', companyName = '', ownerId, 
     let amountWon;
     if (key === 'repair' && Array.isArray(car.repairItems)) {
       let total = ZERO, valid = true;
-      for (const item of car.repairItems) { const amount = plain(item) ? manwonValue(item.amount) : null; if (amount === null) { valid = false; break; } total = add(total, amount); }
+      for (const item of car.repairItems) { const amount = plain(item) ? moneyValue(item.amount) : null; if (amount === null) { valid = false; break; } total = add(total, amount); }
       amountWon = valid ? won(total) : null;
       if (!valid || amountWon === null) warnings.push('수리비 원 단위 금액을 확인해 주세요.');
     } else amountWon = convert(costs[key], label);

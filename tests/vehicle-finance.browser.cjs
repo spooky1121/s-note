@@ -3,13 +3,13 @@ const assert=require('node:assert/strict'),fs=require('node:fs');const {chromium
 (async()=>{const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium'});setBrowser(browser);try{
  for(const width of [1440,390,320]){
  const f=await fixture(width),p=f.page;
- await p.evaluate(()=>{ACC44_LENDER_LIMITS=[['KB캐피탈',150000,6],['JB우리금융',150000,12]];INVENTORY_LENDERS=ACC44_LENDER_LIMITS.map(x=>x[0]);const today=SnoteInventoryInterest.today(),date=new Date(today+'T00:00:00Z');date.setUTCDate(date.getUTCDate()-31);const c=cars[0];Object.assign(c,{purchaseAt:date.toISOString().slice(0,10),inventoryLoan:1000,inventoryLender:'KB캐피탈'});renderVehicle();});
- const interest=p.locator('#detail-inventory-interest');assert.equal(await interest.inputValue(),'5.0959');assert.equal(await interest.evaluate(e=>e.readOnly),true);assert.match(await p.locator('#detail-interest-basis').textContent(),/연 6% · 31일 · 50,959원/);
- assert.equal(await p.evaluate(()=>normalizeCosts(cars[0]).inventoryInterest),5.0959);
- assert.equal(await p.evaluate(()=>Math.round(totals(cars[0].buy,cars[0].sell,normalizeCosts(cars[0])).margin*10000)),1949041);
- await p.locator('#detail-inventory-loan').fill('2000');assert.equal(await interest.inputValue(),'10.1918');await p.locator('#detail-inventory-lender').selectOption('JB우리금융');assert.equal(await interest.inputValue(),'20.3836');
- await p.locator('#detail-inventory-loan').fill('1000');await p.locator('#detail-inventory-lender').selectOption('KB캐피탈');
- assert.equal(await p.locator('#car-cost-section .vehicle-section-unit').textContent(),'단위(만원)');assert.equal(await p.locator('#car-cost-section label').evaluateAll(es=>es.some(e=>e.childNodes[0]?.textContent.includes('(만원)'))),false);
+ await p.evaluate(()=>{ACC44_LENDER_LIMITS=[['KB캐피탈',150000,6],['JB우리금융',150000,12]];INVENTORY_LENDERS=ACC44_LENDER_LIMITS.map(x=>x[0]);const today=SnoteInventoryInterest.today(),date=new Date(today+'T00:00:00Z');date.setUTCDate(date.getUTCDate()-31);const c=cars[0];Object.assign(c,{purchaseAt:date.toISOString().slice(0,10),inventoryLoan:10000000,inventoryLender:'KB캐피탈'});renderVehicle();});
+ const interest=p.locator('#detail-inventory-interest');assert.equal(await interest.inputValue(),'50959');assert.equal(await interest.evaluate(e=>e.readOnly),true);assert.match(await p.locator('#detail-interest-basis').textContent(),/연 6% · 31일 · 50,959원/);
+ assert.equal(await p.evaluate(()=>normalizeCosts(cars[0]).inventoryInterest),50959);
+ assert.equal(await p.evaluate(()=>Math.round(totals(cars[0].buy,cars[0].sell,normalizeCosts(cars[0])).margin)),1949041);
+ await p.locator('#detail-inventory-loan').fill('20000000');assert.equal(await interest.inputValue(),'101918');await p.locator('#detail-inventory-lender').selectOption('JB우리금융');assert.equal(await interest.inputValue(),'203836');
+ await p.locator('#detail-inventory-loan').fill('10000000');await p.locator('#detail-inventory-lender').selectOption('KB캐피탈');
+ assert.equal(await p.locator('#car-cost-section .vehicle-section-unit').textContent(),'단위(원)');assert.equal(await p.locator('#car-cost-section label').evaluateAll(es=>es.some(e=>e.childNodes[0]?.textContent.includes('(만원)'))),false);
  await p.evaluate(()=>saveVehicleCosts({closeAfterSave:false}));await p.waitForFunction(()=>window.__encarFixtureCars[0].costs?.inventoryInterest===5.0959);
  assert.equal(await p.evaluate(()=>window.__encarFixtureCars[0].inventoryInterestSnapshot.amountWon),50959);
  await p.evaluate(()=>{closeVehicle({discard:true});cars[0].encarLinks={version:1,plate:cars[0].plate,verifiedAt:new Date().toISOString(),listings:[{id:'43000001',sellerUrl:'https://fem.encar.com/cars/detail/43000001'}]};cars[1].encarLinks={version:1,plate:'틀린번호',verifiedAt:new Date().toISOString(),listings:[{id:'43000002',sellerUrl:'https://fem.encar.com/cars/detail/43000002'}]};navigate('buy')});

@@ -1,7 +1,7 @@
 if(window.parent!==window)document.documentElement.dataset.embedded='true';
-import {TEMPLATE,createDocument,normalizeDocument,calculate,parseMoney,draftDocument,invoiceCostSuggestions} from './income-settlement-model.js?v=2.39';
-import {buildForm} from './income-settlement-view.js?v=2.39';
-import {buildPrintSnapshot} from './income-settlement-print.js?v=2.39';
+import {TEMPLATE,createDocument,normalizeDocument,calculate,parseMoney,draftDocument,invoiceCostSuggestions} from './income-settlement-model.js?v=2.41';
+import {buildForm} from './income-settlement-view.js?v=2.41';
+import {buildPrintSnapshot} from './income-settlement-print.js?v=2.41';
 
 const $=id=>document.getElementById(id);
 const copy=value=>JSON.parse(JSON.stringify(value));

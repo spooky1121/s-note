@@ -53,7 +53,7 @@ function fixture({role='dealer',owner=USER,server:initial}={}){
   const revision=row.revision+1;server.set(key(args.p_owner),{revision,payload:clone(args.p_payload)});events.push('rpc-ack');
   return{data:ackOverride?'invalid-ack':revision,error:null};
  }};
- vm.createContext(context);vm.runInContext(scrub+persist+storage+bridge+reset+reload+'\nwindow.flushActual=flush;window.persistActual=persistCars;window.reloadActual=reload;',context);
+ vm.createContext(context);vm.runInContext(fs.readFileSync(path.resolve(__dirname,'../../assets/money.js'),'utf8'),context);vm.runInContext(scrub+persist+storage+bridge+reset+reload+'\nwindow.flushActual=flush;window.persistActual=persistCars;window.reloadActual=reload;',context);
  return{context,S,server,calls,events,localStorage,bridge:context.snoteEncarLinksBridge,
   get restores(){return restores;},hold(){const entry={entered:deferred(),release:deferred()};gate=entry;return entry;},
   failNext(){failNext=true;},invalidAck(){ackOverride=true;},

@@ -650,3 +650,8 @@ test('new intake identity decrypts from authoritative details and never falls ba
   }
   assert.equal(calls.length, 5);
 });
+
+test('customer verification link exposes an exact integer won price while keeping old open clients compatible',async t=>{
+ const calls=mock(t,()=>response({ok:true,status:'pending',flowVersion:'wizard-v1',car:{...CAR,sell:2300.0001},companyName:'합성 상사',phoneMasked:'010-****-5678',expiresAt:'2099-01-01T00:00:00Z',rrnEnabled:true}));
+ const result=await call({action:'info',flowVersion:'wizard-v1',token:TOKEN},{env:RRN_ENV});assert.equal(result.result.status,200);assert.equal(result.body.car.sellWon,23000001);assert.equal(result.body.car.sell,2300.0001);assert(calls.every(x=>!x.url.includes('solapi')));
+});

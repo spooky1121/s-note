@@ -233,7 +233,7 @@
       $('car-year').textContent = car.year ? displayValue(car.year) + '년' : '미입력';
       const km = numberValue(car.km); $('car-km').textContent = km === null ? displayValue(car.km) : km.toLocaleString('ko-KR') + ' km';
       $('car-color').textContent = displayValue(car.color);
-      const price = numberValue(car.sell); $('car-price').textContent = price === null ? '담당자에게 확인' : price.toLocaleString('ko-KR') + '만원';
+      const price = numberValue(car.sellWon ?? (car.sell === '' || car.sell == null ? null : Math.round(Number(car.sell) * 10000))); $('car-price').textContent = price === null ? '담당자에게 확인' : price.toLocaleString('ko-KR') + '원';
       const masked = String(result.phoneMasked || ''); $('masked-phone').textContent = /[*•●xX]/.test(masked) ? masked.slice(0, 40) : '문자를 받은 휴대전화';
       $('link-expiry').textContent = dateText(result.expiresAt) ? '입력 가능 시간 · ' + dateText(result.expiresAt) + '까지' : '';
       showStage('car', false);
