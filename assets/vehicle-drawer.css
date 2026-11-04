@@ -74,3 +74,97 @@
 .snote-sale-complete svg{width:68px;height:68px;fill:none;stroke:#35ad85;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}.snote-sale-complete path{stroke-dasharray:50;stroke-dashoffset:50;animation:snote-complete-check .5s .15s ease forwards}.snote-sale-complete strong{font-size:21px;color:#26344b}.snote-sale-complete span{font-size:13px;color:#8992a2}
 @keyframes snote-complete-in{from{opacity:0;transform:translateY(10px) scale(.96)}to{opacity:1;transform:none}}@keyframes snote-complete-check{to{stroke-dashoffset:0}}
 @media(prefers-reduced-motion:reduce){.snote-sale-complete>div,.snote-sale-complete path{animation:none;stroke-dashoffset:0}}
+/* v2.55: quiet, compact registration panels; keep the detail drawer at its original width. */
+@media screen{
+ #overlay .snote-popup-frame,#zc-auto-reg-overlay .snote-popup-frame{width:min(748px,calc(100vw - 48px))}
+ #overlay .modal>.modal-top,#zc-auto-reg-overlay .zc71-wizard-header{min-height:56px;padding:16px 52px 14px 22px!important}
+ #overlay .modal-top h2,#zc-auto-reg-overlay .zc71-wizard-header h2{font-size:16px;font-weight:600;letter-spacing:-.35px;margin:0}
+ #overlay button.snote-popup-close,#zc-auto-reg-overlay button.snote-popup-close{inset:13px 12px auto auto!important}
+ #overlay .modal>.formgrid{grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;padding:16px 22px 0}
+ #overlay .formgrid>.formitem{grid-column:span 2;min-width:0}
+ #overlay .formgrid>.formitem:has(#new-vin){grid-column:span 3}
+ #overlay .formgrid>.formitem:has(#new-year){grid-column:span 1}
+ #overlay .formgrid>.formitem:has(:is(#new-buy,#new-sell)){grid-column:span 3}
+ #overlay .formgrid>.formitem.wide{grid-column:1/-1}
+ #overlay .catalog-fields{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+ #overlay .formitem{gap:4px}
+ #overlay .formitem label,#zc-auto-reg-overlay .zc71-fields label{font-size:11px;font-weight:500;line-height:1.45;color:#626c7e}
+ #overlay .formitem :is(input,select),#overlay #new-color-trigger,#zc-auto-reg-overlay .zc71-fields input{box-sizing:border-box;width:100%;min-width:0;height:32px;min-height:32px;padding:6px 9px;border:1px solid #e6e8ee;border-radius:7px;background:#fff;font-size:12px;font-weight:400;color:#283344;box-shadow:none}
+ #overlay .formitem :is(input,select):focus,#zc-auto-reg-overlay .zc71-fields input:focus{border-color:#7e89f4;outline:none;box-shadow:0 0 0 2px #4455ed0e}
+ #overlay .model-data-note{padding:7px 9px;font-size:10px;line-height:1.5;border-radius:7px;background:#f8f9fb;color:#9299a8}
+ #overlay .zc-register-visual{min-height:64px;padding:7px 10px;gap:10px;border-color:#eceef2;border-radius:9px;background:#fafbfc}
+ #overlay .zc-register-visual img{width:85px;height:52px;border-radius:6px;object-fit:contain}
+ #overlay .zc-register-visual div{min-width:0;gap:3px}
+ #overlay .zc-register-visual strong{font-size:11px;font-weight:500;color:#46516a}
+ #overlay .zc-register-visual span{font-size:10px;line-height:1.5;color:#9299a8}
+ #overlay .add-subtitle{padding-top:11px;margin-top:2px;font-size:11px;font-weight:600;color:#46516a}
+ #overlay .cost-fieldgrid{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+ #overlay .repair-group{margin:2px 0;padding:10px;border:1px solid #eceef3;border-radius:9px;background:#fafbfc}
+ #overlay .repair-top{gap:8px;margin-bottom:8px}
+ #overlay .repair-top strong{font-size:11px;font-weight:500}
+ #overlay .repair-top span{font-size:10px}
+ #overlay .repair-top button{padding:5px 8px;min-height:28px;font-size:10px;border-radius:6px}
+ #overlay .repair-row{grid-template-columns:minmax(0,1fr) 140px auto;gap:7px}
+ #overlay .repair-row input{height:32px;min-height:32px;padding:6px 8px;font-size:12px;border-radius:6px}
+ #overlay .repair-total{margin-top:7px;font-size:10px}
+ #overlay .cost-summary{gap:7px}
+ #overlay .sum-cell{padding:9px 10px;border-radius:8px}
+ #overlay .sum-cell small{font-size:10px}
+ #overlay .sum-cell strong{font-size:13px;font-weight:600}
+ #overlay .cost-policy{margin:0;font-size:10px;line-height:1.5;color:#939aaa}
+ #overlay .modal>.formtip{padding:0 22px;margin:10px 0;font-size:10px}
+ #overlay .modal>.modal-actions,#zc-auto-reg-overlay .zc71-footer{padding:12px 22px;border-color:#eceef2}
+ #overlay .modal-actions button,#zc-auto-reg-overlay .zc71-footer button{padding:7px 12px;min-height:32px;font-size:11px;border-radius:7px}
+ #zc-auto-reg-overlay .zc71-eyebrow{font-size:9px;font-weight:500;letter-spacing:.7px;margin:0 0 5px;color:#9299a8}
+ #zc-auto-reg-overlay .zc71-description{margin:7px 0 0;font-size:11px;line-height:1.5;color:#9299a8}
+ #zc-auto-reg-overlay .zc71-flow{padding:11px 22px;gap:7px;border-color:#eceef2}
+ #zc-auto-reg-overlay .zc71-flow span{padding:5px 8px;font-size:10px;font-weight:500;border-radius:6px}
+ #zc-auto-reg-overlay .snote201-privacy{margin:12px 22px 0;padding:0;font-size:10px;line-height:1.6;color:#9299a8}
+ #zc-auto-reg-overlay .zc71-upload-area{flex:0 0 auto;height:190px;min-height:160px;max-height:220px;margin:14px 22px 6px;border:1px dashed #d8dce5;border-radius:10px;background:#fafbfc}
+ #zc-auto-reg-overlay .zc71-upload-area img{width:100%;height:100%;max-height:218px;object-fit:contain}
+ #zc-auto-reg-overlay .zc71-upload-icon{font-size:26px}
+ #zc-auto-reg-overlay .zc71-upload-prompt{gap:7px}
+ #zc-auto-reg-overlay .zc71-upload-prompt strong{font-size:13px;font-weight:500}
+ #zc-auto-reg-overlay .zc71-upload-prompt small{font-size:10px;color:#9299a8}
+ #zc-auto-reg-overlay .zc71-choose{padding:7px 11px;font-size:11px;border-radius:6px}
+ #zc-auto-reg-overlay :is(.zc71-fileline,.snote201-file-tools){margin-left:22px;margin-right:22px;font-size:10px}
+ #zc-auto-reg-overlay .zc71-preview-head{margin:12px 22px 9px;font-size:11px}
+ #zc-auto-reg-overlay .zc71-preview-head strong{font-weight:600}
+ #zc-auto-reg-overlay .zc71-preview-head span{font-size:10px;color:#9299a8}
+ #zc-auto-reg-overlay .zc71-fields{grid-template-columns:minmax(0,1fr) minmax(0,1.5fr) 80px minmax(0,1.3fr);gap:9px;padding:0 22px 18px}
+ #zc-auto-reg-overlay .zc71-fields label{display:flex;flex-direction:column;gap:5px;min-width:0}
+ #zc-auto-reg-overlay .zc77-field-hint{font-size:10px;line-height:1.45}
+ #zc-auto-reg-overlay .zc71-footer{gap:12px;font-size:10px;line-height:1.5}
+}
+@media screen and (max-width:760px){
+ #overlay .snote-popup-frame,#zc-auto-reg-overlay .snote-popup-frame{width:100vw}
+ #overlay .modal>.modal-top,#zc-auto-reg-overlay .zc71-wizard-header{padding:calc(15px + env(safe-area-inset-top,0px)) 48px 13px 16px!important}
+ #overlay .modal>.formgrid{padding:14px 16px 0;gap:10px 8px}
+ #overlay .catalog-fields{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+ #overlay .formgrid>.formitem{grid-column:span 3}
+ #overlay .formgrid>.formitem:has(#new-plate){grid-column:span 2}
+ #overlay .formgrid>.formitem:has(#new-vin){grid-column:span 4}
+ #overlay .formgrid>.formitem:has(#new-year){grid-column:span 3}
+ #overlay .formgrid>.formitem.wide{grid-column:1/-1}
+ #overlay .cost-fieldgrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+ #overlay .formitem :is(input,select),#overlay #new-color-trigger,#overlay .repair-row input,#zc-auto-reg-overlay .zc71-fields input{height:38px;min-height:38px;font-size:16px;padding:7px 8px}
+ #overlay .repair-row{grid-template-columns:minmax(0,1fr) 104px auto;gap:5px}
+ #overlay .cost-summary{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #overlay .modal>.formtip{padding:0 16px}
+ #overlay .modal>.modal-actions,#zc-auto-reg-overlay .zc71-footer{padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px))}
+ #overlay button.snote-popup-close,#zc-auto-reg-overlay button.snote-popup-close{inset:calc(12px + env(safe-area-inset-top,0px)) 10px auto auto!important}
+ #zc-auto-reg-overlay .zc71-flow{padding:10px 16px}
+ #zc-auto-reg-overlay .snote201-privacy{margin-left:16px;margin-right:16px}
+ #zc-auto-reg-overlay .zc71-upload-area{height:170px;min-height:150px;margin-left:16px;margin-right:16px}
+ #zc-auto-reg-overlay :is(.zc71-fileline,.snote201-file-tools,.zc71-preview-head){margin-left:16px;margin-right:16px}
+ #zc-auto-reg-overlay .zc71-fields{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:0 16px 16px}
+ #zc-auto-reg-overlay .zc71-fields label:has(:is(#zc-auto-reg-model,#zc-auto-reg-vin)){grid-column:span 2}
+}
+@media screen{
+ #zc-auto-reg-overlay .zc71-fields input[data-ocr="ok"]{border-color:#a5cdb8;background:#fbfffd}
+ #zc-auto-reg-overlay .zc71-fields input[data-ocr="review"]{border-color:#e7cd99;background:#fffef9}
+ #zc-auto-reg-overlay .zc71-fields input[data-ocr="bad"]{border-color:#e6afb5;background:#fffafa}
+}
+@media screen and (max-width:760px){
+ #overlay,#zc-auto-reg-overlay{--snote-text-control:16px}
+}
