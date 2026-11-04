@@ -1,9 +1,12 @@
-# 상단 날씨
+# 상단 날씨 — 기상청 현재관측
 
-`GET /api/weather`는 Cloudflare의 접속 지역 좌표를 0.1도 단위로 반올림해 MET Norway Locationforecast compact API를 조회한다. 브라우저 GPS 권한, 외부 날씨 API 키, 고객 데이터 전송은 필요하지 않다. IP 지역은 사용자의 실제 현재 위치와 다를 수 있으며 표시값은 해당 지역의 가장 가까운 시간대 예보다.
+`GET /api/weather`는 기상청이 공개하는 전국 현재관측 XML(`https://www.kma.go.kr/XML/weather/sfc_web_map.xml`)을 서버에서 읽는다. 외국 예보 모델이나 고객 자료를 사용하지 않는다. 공개 관측 자료를 사용하므로 현재 구현에는 공공데이터포털 인증키가 필요하지 않다.
 
-- 출처: [MET Norway](https://www.met.no/en), [API](https://api.met.no/weatherapi/locationforecast/2.0/documentation), [이용 지침](https://api.met.no/doc/TermsOfService).
-- 서버 요청은 S-NOTE 앱과 사이트 URL을 User-Agent에 명시한다. 화면 날씨는 출처 링크와 접속 지역 기준 예보임을 안내한다.
-- 좌표별 내부 캐시는 10분, 브라우저 갱신은 10분이다. 사용자별 지역이 일반 공유 HTTP 캐시에 섞이지 않게 API 응답은 no-store로 반환한다.
-- 현재와 3시간 이상 차이나는 데이터, 잘못된 온도/코드, 연결 실패에는 온도를 만들지 않고 `—°`와 조회 불가 안내를 표시한다.
-- 실행 환경은 MET Norway 직접 네트워크 접근이 허용되어 있지 않아 테스트는 합성 응답으로 진행했다. 실제 서비스는 Cloudflare Functions의 외부 HTTPS 연결을 사용한다.
+- [기상청 현재관측 XML](https://www.kma.go.kr/XML/weather/sfc_web_map.xml): 관측시각(KST), 관측소, 현재 기온과 날씨 설명. 접속 지역 좌표에서 가까운 자료가 있는 ASOS 관측소를 선택하며 화면 설명에 실제 관측소명·관측시각·출처를 표시한다. 지역 대표 관측값이며 개별 실외 온도계의 측정값과는 다를 수 있다.
+- 위치는 Cloudflare 접속 지역 메타데이터를 사용한다. GPS 권한을 요청하지 않으며 좌표·고객정보를 기상청에 보내지 않는다. 위치가 없거나 한국 관측 범위를 벗어나면 임의 지역을 만들지 않는다. 고정 사업장 지역은 서버 환경변수 `WEATHER_LATITUDE`, `WEATHER_LONGITUDE`로 지정할 수 있다.
+- 허용 목록의 관측소는 `?station=108`(서울) 등으로 공개 조회할 수 있다. 임의 URL/호스트는 받지 않으며 선택한 관측소의 관측값이 없으면 오류를 반환한다.
+- 전국 관측 자료를 내부 캐시에10분간 재사용하고 브라우저도10분마다 갱신한다. API 응답은 사용자 지역이 공유 HTTP 캐시에 섞이지 않게 `no-store`로 반환한다.
+- 3시간 넘은 자료·미래 시각·결측 기온·비정상 XML·외부 엔티티/DTD·과대 응답·연결 실패는 표시하지 않는다. 화면은 `—°`와 조회 불가 설명을 보인다. 날씨 설명이 없을 때 맑음/흐림을 추측하지 않는다.
+- [공공데이터포털 기상청 단기예보 조회서비스](https://www.data.go.kr/data/15084084/openapi.do)의 초단기실황/격자 예보 OpenAPI는 별도 인증키가 필요하다. 현재 공개 관측 XML 경로와 구분한다. [단·중기예보 RSS는2025-03-31 종료](https://www.weather.go.kr/w/pop/rss-guide.do)되어 사용하지 않는다. [Open-Meteo의 KMA 모델 갱신 중단 안내](https://open-meteo.com/en/docs/kma-api)도 확인했으며 해당 중계 모델은 사용하지 않는다.
+
+서버 테스트는 기상청 형식의 합성 XML로 위치 선택/영하·0도/실패·결측·시각/캐시를 검증한다. 운영의 공개 XML 접근과 최신성은 배포 뒤 API 응답으로 별도 확인한다.

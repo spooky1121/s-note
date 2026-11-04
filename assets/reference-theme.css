@@ -179,3 +179,17 @@
  :is(.overlay,.snote-popup-overlay,[role="dialog"],dialog,#snote-calculator-panel) *::-webkit-scrollbar-track,
  html[data-embedded="true"]::-webkit-scrollbar-track,html[data-embedded="true"] *::-webkit-scrollbar-track{background:transparent!important}
 }
+/* Common icon balloons and a small desktop hover lift. Individual translate preserves existing transforms. */
+@media screen{
+ .snote-icon-tooltip{position:fixed;z-index:2147483000;box-sizing:border-box;max-width:min(280px,calc(100vw - 16px));width:max-content;padding:7px 10px;border:0;border-radius:7px;background:#303746;color:#fff;box-shadow:0 4px 14px #18203324;font:400 11px/1.5 var(--snote-font-family,sans-serif);white-space:normal;overflow-wrap:anywhere;pointer-events:none;text-align:center}
+ .snote-icon-tooltip[hidden]{display:none!important}
+ .snote-icon-tooltip::after{content:'';position:absolute;left:var(--snote-tooltip-arrow,50%);transform:translateX(-50%);border:5px solid transparent}
+ .snote-icon-tooltip[data-placement="above"]::after{top:100%;border-top-color:#303746}
+ .snote-icon-tooltip[data-placement="below"]::after{bottom:100%;border-bottom-color:#303746}
+ [data-snote-icon-help][data-tooltip]::after{display:none!important;content:none!important}
+}
+@media screen and (hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){
+ .snote-icon-interactive{transition:translate .16s ease,background-color .16s ease,color .16s ease,box-shadow .16s ease}
+ .snote-icon-interactive:not(:disabled):not([aria-disabled="true"]):hover{translate:0 -2px}
+}
+@media print{.snote-icon-tooltip{display:none!important}.snote-icon-interactive{translate:none!important}}
