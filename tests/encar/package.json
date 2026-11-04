@@ -5,7 +5,8 @@
   "description": "Offline regression tests for the S-NOTE Encar lookup integration",
   "scripts": {
     "test": "node --test --test-isolation=none server.test.mjs frontend.test.cjs integration.test.mjs catalog.test.mjs saved-bridge.test.cjs",
-    "test:browser": "node browser-smoke.cjs"
+    "test:browser": "node browser-smoke.cjs",
+    "test:mobile": "node mobile-workspace-browser.cjs"
   },
   "engines": {
     "node": ">=24.0.0"

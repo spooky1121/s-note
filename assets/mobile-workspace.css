@@ -1,0 +1,426 @@
+/* S-NOTE v2.58 — compact mobile workspace. Desktop and printed documents stay unchanged. */
+@media screen and (max-width: 760px) {
+  #snote-app .content {
+    width: 100%;
+    min-width: 0;
+    padding: 20px 16px max(32px, env(safe-area-inset-bottom));
+    color: #1d1d1f;
+  }
+
+  #snote-app .content :is(.section-grid, .panel, .panel-head, .searchrow, .vehicle-info,
+    .fin-top, .fin-filters, .fin-lender-grid, .snote90-panel, .zc157-panel) { min-width: 0; }
+
+  #snote-app .content :is(.panel, .stat, .acc44-card, .snote90-panel, .zc157-panel) {
+    border-color: #e5e5ea;
+    border-radius: 16px;
+    box-shadow: none;
+  }
+
+  #snote-app :is(#dashboard-screen, #list-screen, #alt-screen) > .panel {
+    border: 1px solid #e5e5ea;
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: none;
+  }
+
+  #snote-app .content .panel-head {
+    padding: 18px 16px 14px;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  #snote-app .content .panel-head > div { min-width: 0; }
+  #snote-app .content .panel-head h2 { font-size: 16px; font-weight: 700; letter-spacing: -.4px; }
+  #snote-app .content .panel-head p { margin-top: 5px; font-size: 12px; line-height: 1.5; color: #6e6e73; }
+  #snote-app .content .panel-head .more { flex-shrink: 0; min-height: 40px; padding: 0 4px; color: #007aff; font-size: 12px; }
+  #snote-app .content .pagehead { margin-bottom: 18px; }
+  #snote-app .content .section-grid { gap: 16px; }
+
+  #snote-app .content :is(.btn-primary, .btn-ghost, .section-button) {
+    min-height: 40px;
+    padding: 9px 12px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: none;
+  }
+  #snote-app .content .btn-primary { background: #007aff; }
+  #snote-app .content .btn-ghost { color: #007aff; background: #fff; border-color: #dedee4; }
+
+  /* Search stays on its own row so a long placeholder cannot squeeze the filter. */
+  #snote-app .content .searchrow {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+    padding: 0 16px 14px;
+  }
+  #snote-app .content :is(.searchrow, .fin-filters) .search {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    min-height: 44px;
+    padding: 8px 12px;
+    gap: 8px;
+    border: 1px solid #e5e5ea;
+    border-radius: 11px;
+    background: #f5f5f7;
+  }
+  #snote-app .content :is(.searchrow, .fin-filters) .search input {
+    font-size: 16px;
+    line-height: 1.4;
+    color: #1d1d1f;
+    min-height: 26px;
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+  #snote-app .content :is(.searchrow, .fin-filters) .search input::placeholder { color: #86868b; }
+  #snote-app .content :is(.searchrow, .fin-filters) .search svg { flex: 0 0 17px; width: 17px; height: 17px; }
+  #snote-app .content :is(.searchrow, .fin-filters) > .filter {
+    min-height: 44px;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    padding: 8px 12px;
+    font-size: 16px;
+    color: #424245;
+    border-radius: 10px;
+  }
+
+  #snote-app .content :is(input, select, textarea):not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="hidden"]) {
+    min-width: 0;
+    max-width: 100%;
+    font-size: 16px;
+    line-height: 1.4;
+    font-weight: 400;
+  }
+  #snote-app .content :is(input, select):not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="hidden"]) { min-height: 44px; }
+  #snote-app .content :is(input, select, textarea):focus-visible {
+    outline: 3px solid #007aff33;
+    outline-offset: 1px;
+  }
+  #snote-app .content .empty { padding: 28px 16px; font-size: 14px; }
+
+  /* A full vehicle name, then metadata, then actions. No squeezed side column. */
+  #snote-app .mobile-list { padding: 0 16px 6px; }
+  #snote-app .vehicle-card {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr);
+    gap: 10px 12px;
+    padding: 16px 0;
+    align-items: start;
+    border-color: #ededf0;
+  }
+  #snote-app :is(#dashboard-screen, #list-screen) .vehicle-card {
+    margin-bottom: 10px;
+    padding: 14px;
+    border-radius: 14px !important;
+  }
+  #snote-app .vehicle-card > .car-thumb {
+    grid-column: 1;
+    grid-row: 1;
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    font-size: 24px;
+  }
+  #snote-app .vehicle-card .vehicle-info { grid-column: 2; grid-row: 1; }
+  #snote-app .vehicle-title {
+    display: flex;
+    white-space: normal;
+    overflow: visible;
+    font-size: 14px;
+    line-height: 1.45;
+    font-weight: 650;
+    letter-spacing: -.25px;
+    gap: 6px;
+    color: #1d1d1f;
+  }
+  #snote-app .vehicle-title > span:first-child { min-width: 0; overflow-wrap: anywhere; }
+  #snote-app :is(.vehicle-meta, .mobile-media, .sale-date-chip) {
+    font-size: 12px;
+    color: #6e6e73;
+    line-height: 1.5;
+    margin-top: 5px;
+    overflow-wrap: anywhere;
+  }
+  #snote-app .vehicle-price { margin-top: 8px; font-size: 14px; font-weight: 650; color: #1d1d1f; overflow-wrap: anywhere; }
+  #snote-app .vehicle-inventory-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 12px;
+    margin-top: 8px;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  #snote-app .vehicle-inventory-meta > span { min-width: 0; overflow-wrap: anywhere; }
+  #snote-app .vehicle-inventory-meta b { font-size: 12px; font-weight: 500; color: #6e6e73; }
+  #snote-app .vehicle-card .vehicle-right {
+    grid-column: 2;
+    grid-row: 2;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    padding-top: 0;
+    width: 100%;
+    min-width: 0;
+  }
+  #snote-app .vehicle-right :is(.status-select, button) { max-width: 100%; min-height: 40px; }
+  #snote-app .vehicle-right .status-select { width: auto; min-width: 108px; font-size: 16px; }
+  #snote-app .vehicle-right .snote202-mobile-age { font-size: 12px; margin: 0; }
+  #snote-app .vehicle-right .snote221-income-button { margin: 0; }
+  #snote-app .prestock-mobile-line { font-size: 12px; line-height: 1.5; }
+  #snote-app .status { font-size: 12px; padding: 5px 8px; }
+  #snote-app .snote222-model-line { gap: 6px; }
+
+  /* The latest list has icon actions and a search hosted alongside its title. */
+  #snote-app #list-screen > .panel > .panel-head { position: relative; display: block; gap: 12px; }
+  #snote-app #list-screen .list-heading { width: 100%; }
+  #snote-app #list-screen .list-title-line { display: flex; flex-wrap: wrap; gap: 14px; }
+  #snote-app #list-screen .list-title-line h2 { width: 100%; padding-right: 104px; margin: 0; min-height: 44px; display: flex; align-items: center; }
+  #snote-app #buy-search-host { flex-basis: 100%; width: 100%; min-width: 0; max-width: none; }
+  #snote-app #buy-search-host .search { display: flex; min-height: 44px; padding: 8px 12px; border-radius: 11px; background: #f5f5f7; }
+  #snote-app #buy-search-host input { min-height: 26px; height: auto; font-size: 16px; background: transparent; }
+  #snote-app #list-screen .zc-list-actions { position: absolute; top: 18px; right: 16px; display: flex; flex-wrap: nowrap; width: auto; gap: 8px; }
+  #snote-app #list-screen .zc-list-actions :is(#zc80-buy-scan, #snote92-buy-manual) {
+    display: inline-grid; place-items: center; width: 44px; min-width: 44px; height: 44px; min-height: 44px;
+    flex: none; padding: 10px; border-radius: 11px;
+  }
+  #snote-app #list-screen .vehicle-card > .car-thumb { width: 44px; height: 44px; border-radius: 10px; }
+  #snote-app :is(#list-screen, #alt-content) .status-select {
+    width: auto; min-width: 110px; max-width: 100%; height: 44px; min-height: 44px;
+    padding: 7px 10px; font-size: 16px; border-radius: 9px;
+  }
+  #snote-app #list-screen .vehicle-right .status-select,
+  #snote-app #list-screen .acct-mobile-heading .status-select {
+    width: auto; min-width: 110px; max-width: 100%; height: 40px; min-height: 40px; padding: 7px 10px; font-size: 16px; border-radius: 9px;
+  }
+  #snote-app #list-screen .vehicle-right .snote-list-encar,
+  #snote-app #list-screen .snote-encar-mobile .snote-list-encar {
+    width: 44px; min-width: 44px; height: 44px; border-radius: 10px;
+  }
+  #snote-app #list-screen .vehicle-right .snote-list-encar img,
+  #snote-app #list-screen .snote-encar-mobile .snote-list-encar img { width: 28px; height: 28px; }
+
+  #snote-app .snote-sales-month-filter { margin: 0 16px 14px; padding: 12px; border-color: #e5e5ea; background: #f5f5f7; gap: 9px; }
+  #snote-app .snote-sales-month-control { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; }
+  #snote-app .snote-sales-month-control > label { grid-column: 1 / -1; font-size: 12px; }
+  #snote-app .snote-sales-month-picker { width: 100%; min-width: 0; }
+  #snote-app .snote-sales-month-picker select { width: 100%; min-width: 0; max-width: 100%; min-height: 44px; font-size: 16px; }
+  #snote-app .snote-sales-month-picker button { flex: 0 0 36px; min-height: 44px; }
+  #snote-app #snote-sales-current-month { min-height: 44px; font-size: 12px; padding: 8px 10px; }
+  #snote-app .snote-sales-month-summary { flex-wrap: wrap; gap: 6px 10px; font-size: 12px; }
+
+  /* Consistent, quiet summary cards and readable supporting labels. */
+  #snote-app .content .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 16px; }
+  #snote-app .content .stats > .stat {
+    display: grid; grid-template-rows: auto 1fr auto; gap: 9px; min-height: 0; padding: 14px !important;
+    border: 1px solid #e5e5ea !important; border-radius: 14px;
+  }
+  #snote-app .content .stats > .stat:nth-child(n) { border-right: 1px solid #e5e5ea !important; border-bottom: 1px solid #e5e5ea !important; }
+  #snote-app .stat-top { margin-bottom: 10px; align-items: flex-start; gap: 6px; }
+  #snote-app .stat .label { font-size: 12px; font-weight: 500; line-height: 1.4; color: #6e6e73; }
+  #snote-app .stat .value { font-size: 24px; letter-spacing: -.65px; overflow-wrap: anywhere; }
+  #snote-app :is(.stat-note, .quick-desc, .profit-subtext, .profit-note, .profit-compare-desc, .profit-chart-foot) { font-size: 12px; line-height: 1.5; }
+  #snote-app .quick { gap: 8px; }
+  #snote-app .quick > button { padding: 12px; border-color: #e5e5ea; border-radius: 12px; }
+  #snote-app .quick-label { font-size: 14px; font-weight: 600; }
+  #snote-app .quick-desc { color: #6e6e73; }
+  #snote-app .quick-ico { width: 36px; height: 36px; border-radius: 10px; }
+  #snote-app .actions { padding: 0 16px 16px; }
+  #snote-app .dashboard-analytics .analytics-shell { gap: 12px; }
+  #snote-app :is(.profit-overview, .profit-chart-card) { min-width: 0; }
+  #snote-app .profit-hero { min-height: 0; padding: 18px; border-radius: 14px; box-shadow: none; background: #f5f5f7; color: #1d1d1f; }
+  #snote-app .profit-hero-label { flex-wrap: wrap; font-size: 13px; }
+  #snote-app .profit-main-number { margin: 16px 0 8px; font-size: 30px; overflow-wrap: anywhere; }
+  #snote-app .profit-compare-label { display: block; font-size: 12px; }
+  #snote-app .profit-compare-label span { display: block; font-size: 11px; margin-top: 4px; }
+  #snote-app .profit-compare-value { font-size: 20px; white-space: normal; overflow-wrap: anywhere; }
+  #snote-app .profit-compare-delta { font-size: 11px; white-space: normal; }
+  #snote-app .profit-chart-card { min-height: 0; padding: 14px; border-color: #e5e5ea; background: #fff; }
+  #snote-app .profit-chart-head { flex-wrap: wrap; }
+  #snote-app .profit-chart-head h3 { font-size: 15px; }
+  #snote-app .profit-chart-head p { font-size: 12px; }
+  #snote-app .profit-chart-tag { font-size: 11px; }
+
+  #snote-app #alt-screen > .panel { padding: 16px; }
+  #snote-app #alt-screen > .panel:has(#prestock-card, .fin-top, .snote90-settings, .zc157-settings) {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    overflow: visible;
+  }
+  #snote-app #alt-content :is(.ps-head h3, .zc182-fin-head h3) { font-size: 20px; font-weight: 700; letter-spacing: -.5px; }
+  #snote-app #alt-content :is(.ps-head p, .zc182-fin-head p) { font-size: 12px; color: #6e6e73; }
+
+  /* Finance totals become three concise grouped rows, preserving exact amounts. */
+  #snote-app #alt-content .fin-top { margin-top: 0; gap: 14px; }
+  #snote-app #alt-content .zc182-fin-head { align-items: stretch; flex-direction: column; gap: 12px; }
+  #snote-app #alt-content .zc182-fin-head > .btn-primary { width: 100%; min-height: 44px; }
+  #snote-app #alt-content .fin-total { grid-template-columns: minmax(0, 1fr); padding: 2px 14px; border: 1px solid #e5e5ea; background: #fff; border-radius: 16px; box-shadow: none; }
+  #snote-app #alt-content .fin-kpi { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 10px; min-height: 66px; padding: 12px 0; }
+  #snote-app #alt-content .fin-kpi + .fin-kpi::before { top: 0; right: 0; left: 0; bottom: auto; height: 1px; width: auto; background: #ededf0; }
+  #snote-app #alt-content .fin-kpi .label { font-size: 12px; font-weight: 500; color: #6e6e73; }
+  #snote-app #alt-content .fin-kpi strong { display: block; font-size: 22px; line-height: 1.3; text-align: right; color: #1d1d1f; overflow-wrap: anywhere; }
+  #snote-app #alt-content .fin-kpi strong small { margin-left: 3px; font-size: 12px; color: #6e6e73; }
+  #snote-app .fin-lender-grid { grid-template-columns: minmax(0, 1fr); gap: 10px; margin: 14px 0; }
+  #snote-app .zc182-lender { padding: 16px; background: #fff; border-color: #e5e5ea; border-radius: 14px; box-shadow: none; }
+  #snote-app #alt-content .zc182-lender-h strong { font-size: 15px; font-weight: 650; color: #1d1d1f; }
+  #snote-app #alt-content .zc182-lender-h small { font-size: 12px; color: #6e6e73; }
+  #snote-app .zc182-lender-numbers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  #snote-app .zc182-lender-numbers > div { min-width: 0; }
+  #snote-app #alt-content .zc182-lender-numbers span { font-size: 12px; }
+  #snote-app #alt-content .zc182-lender-numbers b { font-size: clamp(13px, 3.4vw, 16px); white-space: normal; overflow-wrap: anywhere; line-height: 1.5; }
+  #snote-app #alt-content .zc182-lender-numbers b small { font-size: 11px; }
+  #snote-app #alt-content .zc182-lender-foot { font-size: 12px; }
+  #snote-app .fin-filters { gap: 8px; margin: 14px 0; }
+  #snote-app .fin-mobile-card { padding: 16px; margin-top: 10px; border-color: #e5e5ea; border-radius: 14px; }
+  #snote-app .fin-mobile-head { flex-wrap: wrap; gap: 8px; align-items: flex-start; }
+  #snote-app .fin-mobile-head > .snote222-model-line { flex: 1 1 100%; }
+  #snote-app #alt-content .fin-mobile-head strong { font-size: 14px; color: #1d1d1f; }
+  #snote-app #alt-content .fin-mobile-head > span { font-size: 17px; white-space: normal; overflow-wrap: anywhere; font-weight: 650; color: #007aff; }
+  #snote-app #alt-content .fin-mobile-card p { margin-top: 8px; font-size: 12px; color: #6e6e73; overflow-wrap: anywhere; }
+  #snote-app #alt-content .fin-mobile-card p strong { font-size: 13px; }
+  #snote-app .fin-mobile-actions { flex-wrap: wrap; gap: 8px; }
+  #snote-app .fin-mobile-actions .btn-ghost { min-height: 40px; font-size: 12px; }
+  #snote-app #alt-content .fin-note { font-size: 12px; color: #6e6e73; }
+
+  /* Advance inventory uses the same grouped summary and list rhythm. */
+  #snote-app #prestock-card .ps-head { margin-bottom: 12px; }
+  #snote-app #prestock-card .ps-bank-label { width: 100%; min-width: 0; padding: 12px 14px; text-align: left; background: #fff; border-color: #e5e5ea; }
+  #snote-app #alt-content .ps-bank-label strong { font-size: 14px; overflow-wrap: anywhere; }
+  #snote-app #prestock-card .ps-stats { display: block; padding: 2px 14px; margin-bottom: 16px; border: 1px solid #e5e5ea; border-radius: 16px; background: #fff; }
+  #snote-app #prestock-card .ps-stat { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 4px 10px; padding: 12px 0; border: 0; border-radius: 0; background: none; box-shadow: none; }
+  #snote-app #prestock-card .ps-stat + .ps-stat { border-top: 1px solid #ededf0; }
+  #snote-app #alt-content .ps-stat > span { font-size: 12px; color: #6e6e73; font-weight: 500; }
+  #snote-app #alt-content .ps-stat > strong { margin: 0; text-align: right; font-size: 22px; white-space: normal; overflow-wrap: anywhere; }
+  #snote-app #alt-content .ps-stat p { grid-column: 1 / -1; font-size: 12px !important; line-height: 1.5; }
+  #snote-app #prestock-card .ps-ledger-head { padding: 16px; gap: 8px; flex-wrap: wrap; border-color: #e5e5ea; }
+  #snote-app #prestock-card .ps-mobile-list { padding: 0 16px 6px; border-color: #e5e5ea; }
+  #snote-app #prestock-card .ps-mobile-row { padding: 16px 0; }
+  #snote-app .ps-mobile-title { align-items: flex-start; flex-wrap: wrap; }
+  #snote-app .ps-mobile-title > div { min-width: 0; flex: 1 1 150px; }
+  #snote-app #alt-content .ps-mobile-title strong { font-size: 14px; font-weight: 650; }
+  #snote-app .ps-mobile-meta { gap: 8px; margin-top: 10px; }
+  #snote-app #alt-content .ps-mobile-meta b { font-size: 14px; overflow-wrap: anywhere; }
+  #snote-app .ps-mobile-amount { flex-wrap: wrap; gap: 8px; margin-top: 10px; padding-top: 8px; }
+  #snote-app #prestock-card .ps-amount-trigger { min-height: 40px; padding: 6px 8px; max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
+  #snote-app #prestock-card .ps-mobile-amount .ps-amount-trigger { font-size: 16px; }
+  #snote-app #prestock-card .ps-entry-form { margin-top: 16px; padding: 16px; border-color: #e5e5ea; }
+  #snote-app .ps-form-title { flex-direction: column; align-items: flex-start; gap: 6px; }
+  #snote-app .ps-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  #snote-app .ps-fields label { font-size: 12px; font-weight: 500; color: #6e6e73; }
+  #snote-app .ps-fields label:nth-child(1) { grid-column: 1 / -1; }
+  #snote-app .ps-fields label:nth-child(2), #snote-app .ps-fields label:nth-child(5) { grid-column: 1 / -1; }
+  #snote-app .ps-fields input { font-size: 16px; min-height: 44px; font-weight: 400; }
+  #snote-app .ps-fields .ps-add { grid-column: 1 / -1; min-height: 44px; font-size: 14px; border-radius: 10px; background: #007aff; }
+  #snote-app #prestock-card .ps-mobile-row .ps-money-editor { flex: 1 1 100%; display: grid; grid-template-columns: minmax(0, 1fr) auto 40px; gap: 6px; width: 100%; }
+  #snote-app #prestock-card .ps-mobile-row .ps-money-editor input { width: 100%; min-width: 0; font-size: 16px; }
+  #snote-app #prestock-card .ps-money-editor button { min-height: 44px; font-size: 13px; }
+  #snote-app .ps-action-pop button { min-height: 44px; font-size: 14px; }
+  #snote-app .ps-list-controls { flex-wrap: wrap; gap: 8px; }
+  #snote-app .ps-list-controls button { min-height: 40px; font-size: 13px; }
+
+  /* Admin forms remain full width; field labels and controls share one scale. */
+  #snote-app :is(.snote90-settings, .zc157-settings) { grid-template-columns: minmax(0, 1fr); gap: 16px; margin-top: 0; }
+  #snote-app :is(.snote90-panel, .zc157-panel) { min-width: 0; padding: 16px; }
+  #snote-app #alt-content :is(.snote90-panel h3, .zc157-title h3) { font-size: 17px; font-weight: 700; color: #1d1d1f; }
+  #snote-app #alt-content :is(.snote90-panel p, .zc157-title p) { font-size: 12px; color: #6e6e73; }
+  #snote-app :is(.snote-company-fields, .snote203-bank-fields, .snote203-assets, .zc157-fields) { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+  #snote-app #alt-content :is(.snote-company-fields label, .snote203-bank-fields label, .snote203-lender label, .snote90-inline label, .snote90-member label, .zc157-settings label) { font-size: 12px; font-weight: 500; color: #6e6e73; }
+  #snote-app .snote90-settings :is(input:not([type="file"]), select),
+  #snote-app .zc157-settings :is(input, select) { height: 44px; border-color: #dedee4; background: #fbfbfd; border-radius: 10px; padding: 9px 11px; }
+  #snote-app .snote-company-address-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  #snote-app .snote-company-address-row button { width: 100%; }
+  #snote-app :is(.snote90-settings, .zc157-settings) button { min-height: 44px; font-size: 13px; }
+  #snote-app .snote-company-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+  #snote-app .snote-company-actions button { width: 100%; }
+  #snote-app .snote90-member { gap: 8px; align-items: stretch; }
+  #snote-app .snote90-member label { min-width: 0; max-width: none; flex-basis: 100%; }
+  #snote-app .snote90-member > span { display: inline-flex; align-items: center; font-size: 12px; }
+  #snote-app .snote203-lender { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 8px; padding: 16px 0; }
+  #snote-app .snote203-lender > label { width: 100%; min-width: 0; max-width: none; }
+  #snote-app .snote203-lender > strong { grid-column: 1 / -1; min-width: 0; font-size: 14px; }
+  #snote-app .snote90-inline { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  #snote-app .snote90-inline label { min-width: 0; }
+  #snote-app .snote203-bank-actions button { width: 100%; }
+  #snote-app .snote203-asset-actions { display: grid; grid-template-columns: minmax(0, 1fr) 64px; gap: 8px; }
+  #snote-app .snote203-asset-actions button { min-width: 0; padding: 8px; white-space: normal; }
+  #snote-app .zc157-finance-row { grid-template-columns: minmax(0, 1fr) auto auto; gap: 8px; }
+  #snote-app .zc157-finance-row .zc157-finance-name { grid-column: 1 / -1; font-size: 14px; }
+  #snote-app .zc157-add-finance { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  #snote-app .zc157-add-finance button { grid-column: 1; }
+
+  /* Accountant cards use the same density and alignment as dealer cards. */
+  #snote-app :is(.acc44-card, .acc59-card) { padding: 16px; margin-bottom: 16px; }
+  #snote-app :is(.acc59-head, .acc44-section-head) { gap: 10px; }
+  #snote-app .acc59-head p { font-size: 12px; color: #6e6e73; }
+  #snote-app :is(.acc59-mini-grid, .acc59-mini-grid.four, .acc59-finance-grid, .acc60-work-stats) { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  #snote-app :is(.acc59-mini-stat, .acc60-work-stats .acc59-mini-stat) { min-height: 112px; padding: 13px; background: #fff; border-color: #e5e5ea; border-radius: 12px; box-shadow: none; }
+  #snote-app :is(.acc59-mini-label, .acc60-work-stats .acc59-mini-label, .acc44-stat-label) { font-size: 12px; color: #6e6e73; line-height: 1.4; }
+  #snote-app :is(.acc59-mini-value, .acc60-work-stats .acc59-mini-value, .acc44-stat-value) { font-size: 24px; font-weight: 650; overflow-wrap: anywhere; }
+  #snote-app :is(.acc59-mini-note, .acc44-stat-note, .acc44-event-meta, .acc44-chart-caption) { font-size: 12px; line-height: 1.5; }
+  #snote-app :is(.acc44-controls, .acc58-chart-tools) { flex-wrap: wrap; gap: 8px; }
+  #snote-app .acc44-controls select { min-height: 44px; max-width: 100%; }
+  #snote-app :is(.acc58-chart-toggle, .acc58-prestock-open) { min-height: 44px; font-size: 13px; }
+  #snote-app .acc44-event-name { font-size: 14px; }
+  #snote-app .acct-mobile-card { margin-top: 10px; padding: 16px; border-color: #e5e5ea; border-radius: 14px; }
+  #snote-app .acct-mobile-heading { flex-wrap: wrap; align-items: flex-start; gap: 10px; }
+  #snote-app .acct-mobile-heading .snote222-model-line { flex-basis: 100%; }
+  #snote-app .acct-mobile-heading strong { font-size: 14px; font-weight: 650; color: #1d1d1f; }
+  #snote-app .acct-mobile-heading .status-select { max-width: 100%; min-height: 40px; }
+  #snote-app .acct-mobile-sub { font-size: 12px; }
+  #snote-app .acct-mobile-fields { gap: 12px; }
+  #snote-app .acct-mobile-fields label { font-size: 12px; color: #6e6e73; }
+  #snote-app .acct-mobile-fields strong { font-size: 14px; font-weight: 600; }
+  #snote-app .acct-finance-summary > div { padding: 14px; border-color: #e5e5ea; background: #fff; }
+  #snote-app .acct-finance-summary span { font-size: 12px; }
+
+
+  /* Sort controls, pagination, saved advertisements and customer cards retain their current behavior. */
+  #snote-app .snote-mobile-sort { gap: 8px; flex-wrap: wrap; font-size: 12px; margin-bottom: 12px; }
+  #snote-app .snote-mobile-sort label { gap: 8px; font-size: 12px; }
+  #snote-app .snote-mobile-sort select { min-height: 44px; height: 44px; max-width: min(190px, 56vw); padding: 8px 10px; border-radius: 10px; font-size: 16px; }
+  #snote-app .snote-mobile-sort button { width: 44px; min-width: 44px; height: 44px; padding: 8px; border-radius: 10px; font-size: 18px; }
+  #snote-app .snote-pagination { gap: 6px; padding-top: 4px; }
+  #snote-app .snote-pagination button { min-width: 44px; height: 44px; font-size: 13px; }
+  #snote-app .snote-customer-search { display: flex; margin: 12px 0 16px; gap: 8px; }
+  #snote-app .snote-customer-search .search { min-width: 0; max-width: none; width: 100%; min-height: 44px; flex-basis: 100%; padding: 8px 12px; background: #f5f5f7; border-radius: 11px; }
+  #snote-app .snote-customer-search input { height: auto; min-height: 26px; font-size: 16px; }
+  #snote-app .zc72-customers td small { font-size: 12px; line-height: 1.5; }
+  #snote-app .zc72-customers .snote202-car-open { font-size: 14px; line-height: 1.5; }
+  #snote-app .snote-list-action { width: 44px; height: 44px; min-width: 44px; padding: 10px; border-radius: 10px; }
+  #snote-app .snote-list-action svg { width: 22px; height: 22px; }
+
+  /* Wide financial tables keep their own horizontal scroll, not a squeezed font. */
+  #snote-app #alt-content .snote222-profit-scroll { max-width: 100%; overflow-x: auto; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; }
+  #snote-app #alt-content .snote222-profit-scroll .snote-profit-table { min-width: 780px; }
+  #snote-app #alt-content .snote222-profit-scroll :is(th, td) { padding: 12px; }
+}
+
+@media screen and (max-width: 360px) {
+  #snote-app .content { padding-left: 12px; padding-right: 12px; }
+  #snote-app .content :is(.panel-head, .snote90-panel, .zc157-panel) { padding-left: 14px; padding-right: 14px; }
+  #snote-app .content :is(.searchrow, .mobile-list, .actions) { padding-left: 14px; padding-right: 14px; }
+  #snote-app .content .stats { gap: 8px; }
+  #snote-app .content .stats > .stat { padding: 12px !important; }
+  #snote-app .stat .value { font-size: 22px; }
+  #snote-app #alt-content :is(.fin-kpi, .ps-stat) { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+  #snote-app #alt-content :is(.fin-kpi strong, .ps-stat > strong) { text-align: left; }
+  #snote-app #alt-content .ps-stat p { grid-column: 1; }
+  #snote-app .acc60-work-stats { grid-template-columns: minmax(0, 1fr); }
+  #snote-app .snote-sales-month-picker button { flex-basis: 30px; }
+}
+
+@media screen and (max-width: 650px) {
+  #snote-app #alt-content .zc72-customers tr { padding: 16px; border-color: #e5e5ea; border-radius: 14px; gap: 14px 12px; }
+  #snote-app #alt-content .zc72-customers td { font-size: 14px; line-height: 1.5; }
+  #snote-app #alt-content .zc72-customers td::before { font-size: 12px; color: #6e6e73; }
+  #snote-app #alt-content .zc72-customers .zc75-actions { flex-wrap: wrap; min-width: 0; gap: 4px; }
+  #snote-app #alt-content .zc72-customers td:last-child { grid-column: 1 / -1; }
+}
+@media screen and (min-width: 651px) and (max-width: 760px) {
+  #snote-app #alt-content .zc72-customers .tablewrap { display: block; width: 100%; max-width: 100%; overflow-x: auto; overscroll-behavior-x: contain; }
+}

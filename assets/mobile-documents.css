@@ -1,0 +1,430 @@
+/* S-NOTE v2.58 mobile companion pages. Financial data and A4 print geometry stay unchanged. */
+@media screen and (max-width: 760px) {
+  :root {
+    --snote-font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Segoe UI", sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Segoe UI", sans-serif;
+    color: #1d2738;
+    background: #f5f5f7;
+    --snote-text-body: 14px;
+    --snote-text-label: 12px;
+    --snote-text-meta: 12px;
+    --snote-text-control: 16px;
+    --snote-text-button: 13px;
+    --snote-text-kpi: 22px;
+    --snote-text-section: 16px;
+    --snote-line-body: 1.5;
+  }
+
+  /* The workbook lives inside the workspace's existing content gutter. */
+  #monthly-shell {
+    padding: 0 0 16px;
+    color: #293343;
+  }
+
+  #monthly-shell .workbook-toolbar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 8px;
+    padding: 0 0 12px;
+    margin: 0;
+    background: transparent;
+  }
+
+  #monthly-shell .month-control {
+    width: min(248px, 100%);
+    max-width: 100%;
+    border-color: #e1e4e9;
+    border-radius: 10px;
+  }
+
+  #monthly-shell .month-control button {
+    min-width: 40px;
+    min-height: 44px;
+    font-size: 24px;
+    color: #667385;
+  }
+
+  #monthly-shell .month-control input {
+    width: 100%;
+    min-width: 0;
+    min-height: 44px;
+    padding: 8px 2px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #273449;
+  }
+
+  #monthly-shell .save-status {
+    margin: 0;
+    max-width: 110px;
+    min-height: 0;
+    font-size: 12px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+  }
+
+  #monthly-shell .unit-note {
+    grid-column: 1 / -1;
+    justify-self: end;
+    margin: 0;
+    font-size: 12px;
+    color: #778190;
+  }
+
+  #monthly-shell .toolbar-actions {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+    width: 100%;
+    margin: 0;
+  }
+
+  #monthly-shell .button,
+  #monthly-shell .add-row {
+    min-height: 40px;
+    padding: 8px;
+    border-radius: 9px;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  #monthly-shell .button {
+    min-width: 0;
+    border-color: #e1e4e9;
+    box-shadow: none;
+  }
+
+  #monthly-shell .button.primary {
+    border-color: #4455ed;
+    background: #4455ed;
+  }
+
+  #monthly-shell .summary-grid {
+    gap: 8px;
+    margin: 0 0 12px;
+  }
+
+  #monthly-shell .summary-card {
+    padding: 12px;
+    border-color: #e6e8ed;
+    border-radius: 14px;
+  }
+
+  #monthly-shell .summary-card > span,
+  #monthly-shell .summary-card > small {
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  #monthly-shell .summary-card > span { color: #697586; }
+  #monthly-shell .summary-card > small { color: #7e8795; }
+
+  #monthly-shell .summary-card > strong {
+    margin: 7px 0 4px;
+    min-height: 29px;
+    font-size: 22px;
+    font-weight: 650;
+    line-height: 1.3;
+    letter-spacing: -.6px;
+    overflow-wrap: anywhere;
+  }
+
+  #monthly-shell .primary-grid,
+  #monthly-shell .secondary-grid { gap: 12px; }
+
+  #monthly-shell .panel {
+    border-color: #e3e6ec;
+    border-radius: 14px;
+    box-shadow: none;
+  }
+
+  #monthly-shell .panel-heading {
+    padding: 14px 12px;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  #monthly-shell .panel-heading > div { min-width: 0; }
+
+  #monthly-shell .panel-heading h2 {
+    font-size: 16px;
+    line-height: 1.4;
+    color: #2d394b;
+  }
+
+  #monthly-shell :is(.panel-heading p, .table-help, .section-help, .save-footer) {
+    font-size: 12px;
+    line-height: 1.6;
+    color: #778292;
+  }
+
+  #monthly-shell .panel-heading p { margin-top: 5px; }
+
+  #monthly-shell .add-row {
+    flex: none;
+    min-height: 40px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  #monthly-shell .table-scroll {
+    max-width: 100%;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #monthly-shell :is(thead th, tfoot th, tfoot td) {
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  #monthly-shell .cell-input {
+    min-height: 44px;
+    font-size: 16px;
+    line-height: 1.5;
+    padding: 9px 8px;
+  }
+
+  #monthly-shell .cell-output {
+    min-height: 44px;
+    padding-top: 12px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  #monthly-shell .delete-col { width: 44px; }
+  #monthly-shell .delete-row { min-height: 44px; }
+
+  #monthly-shell .opening-controls {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 7px;
+    padding: 14px 12px 0;
+  }
+
+  #monthly-shell .opening-controls label { font-size: 12px; }
+
+  #monthly-shell .opening-controls :is(select, input) {
+    grid-column: 1;
+    min-height: 44px;
+    font-size: 16px;
+    border-color: #e0e4eb;
+    border-radius: 9px;
+  }
+
+  #monthly-shell .calculation-list > div {
+    gap: 12px;
+    padding: 8px 0;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  #monthly-shell .calculation-list dt small { font-size: 12px; }
+  #monthly-shell .calculation-list dd { font-size: 14px; }
+  #monthly-shell .calculation-list .strong dd { font-size: 18px; }
+
+  #monthly-shell :is(.notice, .undo-notice, .month-note label) {
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  #monthly-shell .month-note textarea {
+    font-size: 16px;
+    line-height: 1.5;
+    border-radius: 9px;
+  }
+
+  #monthly-shell .legacy-section summary,
+  #monthly-shell .legacy-section summary > small,
+  #monthly-shell .legacy-toolbar {
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  #monthly-shell .notice-actions .button { white-space: normal; }
+
+  #reference-dialog,
+  #template-dialog {
+    padding: 16px;
+    border-color: #e1e5ec;
+    border-radius: 16px;
+  }
+
+  :is(#reference-dialog, #template-dialog) .dialog-heading h2 { font-size: 18px; }
+
+  :is(#reference-dialog, #template-dialog) :is(.dialog-note, .dialog-heading p, .template-label, .reference-table th, .reference-table td) {
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  :is(#reference-dialog, #template-dialog) :is(.close-dialog, .button) { min-height: 44px; }
+  :is(#reference-dialog, #template-dialog) .close-dialog { min-width: 44px; }
+  #template-month { min-height: 44px; font-size: 16px; }
+
+  /* Income settlement uses the same short spacing and readable control sizes. */
+  #income-app { padding: 0 14px 16px; }
+
+  #income-app .income-toolbar {
+    position: relative;
+    top: auto;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 18px 0 14px;
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  #income-app .income-heading h1 { font-size: 22px; letter-spacing: -.6px; }
+  #income-app .income-heading > p { font-size: 12px; line-height: 1.5; margin-top: 5px; }
+  #income-app .income-unit { font-size: 12px; }
+
+  #income-app .income-actions {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr) minmax(0, 1fr) 44px;
+    gap: 6px;
+    align-items: center;
+    padding-top: 0;
+  }
+
+  #income-app .income-actions #income-save-status {
+    position: static;
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+    max-width: 100%;
+    width: auto;
+    margin: 0 0 2px;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  #income-app .income-actions button {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    min-height: 44px;
+    margin: 0;
+    padding: 8px 6px;
+    border-radius: 10px;
+    font-size: 12px;
+  }
+
+  #income-app .income-actions button svg { width: 17px; height: 17px; }
+  #income-app #income-print { gap: 4px; }
+
+  html[data-embedded="true"] #income-app .income-actions {
+    grid-template-columns: 44px minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  html[data-embedded="true"] #income-close { display: none; }
+
+  #income-app :is(.income-message, .income-source-warnings, .income-notice) {
+    font-size: 12px;
+    line-height: 1.6;
+    margin-bottom: 12px;
+  }
+
+  #income-app .income-workspace { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  #income-app .income-form { gap: 12px; }
+  #income-app :is(.income-card, .income-summary-card) { padding: 16px; border-radius: 16px; }
+  #income-app .income-section-header { gap: 9px; margin-bottom: 16px; align-items: center; flex-wrap: wrap; }
+  #income-app .income-section-icon { width: 32px; height: 32px; border-radius: 10px; }
+  #income-app .income-section-title { flex: 1 1 140px; }
+  #income-app .income-section-title h2 { font-size: 16px; }
+  #income-app .income-section-title > p { max-width: none; font-size: 12px; line-height: 1.5; }
+
+  #income-app .income-add-cost {
+    min-height: 40px;
+    padding: 7px 10px;
+    font-size: 12px;
+    margin-left: auto;
+  }
+
+  #income-app .income-kind-control { flex-wrap: wrap; gap: 8px; margin-bottom: 14px; padding-bottom: 14px; }
+  #income-app .income-kind-control > label { font-size: 12px; }
+  #income-app .income-kind-control select { font-size: 16px; min-height: 44px; max-width: 100%; }
+  #income-app .income-fields { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+  #income-app .income-field-label { margin-bottom: 6px; font-size: 12px; color: #647083; }
+  #income-app .income-input-shell { border-radius: 10px; }
+
+  #income-app .income-input {
+    min-height: 44px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  #income-app .income-field--large .income-input {
+    min-height: 52px;
+    padding: 10px 0 10px 12px;
+    font-size: 22px;
+  }
+
+  #income-app .income-field--large .income-input::placeholder { font-size: 20px; }
+  #income-app .income-input-unit { font-size: 12px; }
+  #income-app .income-field-help { font-size: 12px; line-height: 1.6; margin-top: 6px; }
+  #income-app .income-card-footnote { font-size: 12px; line-height: 1.6; margin-top: 14px; }
+  #income-app .income-expense-list { gap: 12px; }
+  #income-app .income-expense-row { grid-template-columns: 16px minmax(0, 1fr); gap: 6px; padding-top: 12px; }
+  #income-app .income-expense-index { font-size: 12px; }
+  #income-app .income-expense-row .income-input { font-size: 16px; min-height: 44px; }
+  #income-app .income-expense-row .income-field-label { font-size: 12px; }
+  #income-app .income-expense-total { margin-top: 14px; padding-top: 14px; font-size: 12px; }
+  #income-app .income-expense-total strong { font-size: 14px; }
+  #income-app .income-disclosure { padding: 0; }
+  #income-app .income-disclosure > summary { padding: 16px; gap: 9px; }
+  #income-app .income-disclosure-title strong { font-size: 15px; }
+  #income-app .income-disclosure-title > span { font-size: 12px; }
+  #income-app .income-disclosure-body { padding: 0 16px 16px; }
+  #income-app .income-disclosure-body > .income-field { margin-top: 14px; }
+  #income-app .income-subgroup + .income-subgroup { padding-top: 16px; margin-top: 16px; }
+  #income-app .income-subgroup h3 { font-size: 12px; margin-bottom: 12px; }
+  #income-app .income-inline-result .income-result-label { font-size: 12px; }
+  #income-app .income-sidebar { display: flex; position: static; flex-direction: column; gap: 12px; }
+  #income-app .income-sidebar > :is(div, details) { width: 100%; }
+  #income-app .income-summary-heading { margin-bottom: 16px; }
+  #income-app .income-summary-heading > h2 { font-size: 14px; }
+  #income-app .income-live-badge { font-size: 12px; }
+  #income-app .income-summary-hero .income-result-value { font-size: 26px; letter-spacing: -.7px; }
+  #income-app .income-summary-hero .income-result-unit { font-size: 12px; }
+  #income-app :is(.income-summary-caption, .income-summary-label, .income-result-label) { font-size: 12px; line-height: 1.5; }
+  #income-app .income-result-value { font-size: 14px; }
+  #income-app .income-summary-results { gap: 12px; margin-top: 16px; padding-top: 14px; }
+  #income-app .income-breakdown { margin-top: 16px; padding-top: 14px; }
+  #income-app .income-breakdown > summary { min-height: 40px; font-size: 12px; }
+  #income-app .income-breakdown-body .income-result-label { font-size: 12px; }
+  #income-app .income-breakdown-body .income-result-value { font-size: 13px; }
+  #income-app .income-reference > summary { min-height: 44px; padding: 14px 16px; font-size: 12px; }
+  #income-app .income-reference-body { padding: 0 16px 16px; }
+  #income-app .income-reference-body > p { font-size: 12px; line-height: 1.6; }
+  #income-app .cost-reference p { font-size: 12px; }
+  #income-app .cost-reference button { min-height: 40px; font-size: 12px; }
+  #income-app :is(.income-unmapped-title, .income-unmapped-row) { font-size: 12px; }
+  #income-app .income-formula-notes { margin-top: 16px; }
+  #income-app .income-formula-notes > summary { min-height: 40px; font-size: 12px; }
+  #income-app .income-formula-notes > div { font-size: 12px; line-height: 1.6; }
+  #income-app .income-footer { font-size: 12px; line-height: 1.6; padding-top: 16px; }
+  #income-app .income-mobile-summary { padding: 12px 14px; border-radius: 12px; }
+  #income-app .income-mobile-summary .income-result-label { font-size: 12px; }
+  #income-app .income-mobile-summary .income-result-value { font-size: 22px; }
+  #income-app .notice-actions button { min-height: 40px; font-size: 12px; }
+
+  @media (max-width: 350px) {
+    #monthly-shell .month-control button { min-width: 36px; }
+    #monthly-shell .save-status { max-width: 90px; }
+    #monthly-shell .summary-card { padding: 10px; }
+    #monthly-shell .summary-card > strong { font-size: 20px; }
+    #income-app { padding-right: 12px; padding-left: 12px; }
+    #income-app :is(.income-card, .income-summary-card) { padding: 14px; }
+    #income-app .income-disclosure { padding: 0; }
+    #income-app .income-disclosure > summary { padding: 14px; }
+    #income-app .income-disclosure-body { padding: 0 14px 14px; }
+    #income-app .income-actions { grid-template-columns: 40px minmax(0, 1fr) minmax(0, 1fr) 40px; }
+    html[data-embedded="true"] #income-app .income-actions { grid-template-columns: 40px minmax(0, 1fr) minmax(0, 1fr); }
+    #income-app .income-actions button { font-size: 12px; }
+    #income-app .income-actions button svg { width: 15px; height: 15px; }
+  }
+}
