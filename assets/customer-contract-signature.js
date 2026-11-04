@@ -72,7 +72,14 @@
       const latest = sync();
       return latest.visible === value.visible && latest.image === value.image;
     }
-    return { set, clear, sync, ready };
+    async function setSaved(customer, expectedContext = current()) {
+      const live = () => usableContext(current()) && sameScope(current(),expectedContext);
+      if (!live()) return false;
+      const resolved = global.snoteResolveDocumentCustomer ? await global.snoteResolveDocumentCustomer(customer,live) : customer;
+      if (!live()) return false;
+      return set(resolved,expectedContext);
+    }
+    return { set, setSaved, clear, sync, ready };
   }
 
   global.snoteCreateCustomerContractSignature = createCustomerContractSignature;

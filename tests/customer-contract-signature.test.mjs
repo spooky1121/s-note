@@ -21,7 +21,7 @@ function fixture(extra = {}) {
   });
   const person = { ownerId: 'dealer-a', carId: 12, name: '고객 가', customerSignature: signature,
     customerSignatureSignedAt: '2026-11-01T10:00:00Z' };
-  return { controller, person, get context() { return context; }, set context(value) { context = value; },
+  return { sandbox, controller, person, get context() { return context; }, set context(value) { context = value; },
     get rendered() { return rendered; } };
 }
 
@@ -139,4 +139,16 @@ test('decode failure blocks printing while a contract without a signature remain
   const f = fixture({ imageReady: async () => { throw Error('decode'); } });
   f.controller.set(f.person); assert.equal(await f.controller.ready(), false);
   f.controller.clear(); assert.equal(await f.controller.ready(), true);
+});
+
+test('saved-customer resolution can attach the authenticated intake signature when canonical metadata is missing', async () => {
+ const f=fixture();let called=0;
+ f.sandbox.snoteResolveDocumentCustomer=async(customer,current)=>{assert.equal(current(),true);called++;return {...customer,customerSignature:signature};};
+ assert.equal(await f.controller.setSaved({...f.person,customerSignature:null}),true);
+ assert.equal(called,1);assert.equal(f.rendered.visible,true);assert.equal(f.rendered.image,png);
+});
+test('a delayed intake resolver cannot attach a signature after the document is closed', async () => {
+ const f=fixture();let release;f.sandbox.snoteResolveDocumentCustomer=customer=>new Promise(resolve=>release=()=>resolve(customer));
+ const pending=f.controller.setSaved(f.person);f.context={...f.context,open:false};f.controller.clear();release();
+ assert.equal(await pending,false);assert.equal(f.rendered.visible,false);
 });

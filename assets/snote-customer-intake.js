@@ -557,6 +557,36 @@
     const s = state;
     if (s && isCurrent(s)) { s.baseline = formValues(); s.unsavedImport = false; }
   };
+  // Older/existing customers may keep their original canonical row when a signed intake arrives.
+  // Resolve only through the authenticated owner/car API; never trust an image URL or a name alone.
+  window.snoteResolveDocumentCustomer = async function(customer, current = () => true) {
+    if (!customer || signatureValue(customer.customerSignature)) return customer;
+    const actor = typeof currentUser !== 'undefined' ? currentUser : null, cloud = window.zc86Cloud;
+    const owned = () => current() && actor && currentUser === actor && cloud === window.zc86Cloud && cloud?.ready === true &&
+      customer.ownerId === actor.username && typeof cars !== 'undefined' && cars.some(car => String(car.id) === String(customer.carId) && car.ownerId === actor.username);
+    if (!cloud?.ready || !actor || customer.ownerId !== actor.username) return customer;
+    if (!owned()) throw Error('문서의 고객이나 차량이 변경되었습니다.');
+    const token = await cloud.getAccessToken();
+    if (!owned()) throw Error('문서의 고객이나 차량이 변경되었습니다.');
+    if (!token) throw Error('고객 서명을 확인하려면 다시 로그인해 주세요.');
+    const controller = new AbortController(), timer = setTimeout(() => controller.abort(), 20000);
+    try {
+      const response = await fetch(API, {method:'POST',cache:'no-store',credentials:'same-origin',referrerPolicy:'no-referrer',signal:controller.signal,
+        headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({action:'list',carId:String(customer.carId)})});
+      const result = await response.json();
+      if (!owned()) throw Error('문서의 고객이나 차량이 변경되었습니다.');
+      if (!response.ok || result?.ok !== true || !Array.isArray(result.requests) || result.requests.length > 5) throw Error('휴대폰으로 접수된 고객 서명을 확인하지 못했습니다. 다시 열어 주세요.');
+      const name = value => text(value).trim().replace(/\s+/g,' '), phone = digits(customer.phone);
+      if (!name(customer.name) || !/^01\d{8,9}$/.test(phone)) return customer;
+      const source = result.requests.filter(item => item && item.submittedAt && !item.revokedAt && item.status === 'submitted' &&
+        (!customer.intakeSource?.requestId || customer.intakeSource.requestId === item.id) &&
+        name(item.submission?.name) === name(customer.name) && digits(item.submission?.phone || item.phone) === phone && signatureValue(item.submission?.signature))
+        .sort((a,b) => Date.parse(b.submittedAt)-Date.parse(a.submittedAt))[0];
+      if (!source) return customer;
+      return {...customer, customerSignature:signatureValue(source.submission.signature), customerSignatureSignedAt:source.submission.signedAt || source.submittedAt,
+        intakeSource:{requestId:source.id,submittedAt:source.submittedAt}};
+    } finally {clearTimeout(timer);}
+  };
   window.snoteRenderCustomerSignature = drawSignature;
   window.snoteCustomerSignatureImage = function (value) {
     const canvas = document.createElement('canvas'); canvas.width = 640; canvas.height = 240;
