@@ -21,6 +21,7 @@ async function fixture(width=1440){
  await context.route('**/*',async route=>{
   const url=new URL(route.request().url());
   if(url.origin!==ORIGIN){external.push(url.href);return route.abort();}
+  if(url.pathname==='/api/weather')return route.fulfill({contentType:'application/json',body:JSON.stringify({ok:true,temperature:18.4,code:0,region:'합성 지역',source:'MET Norway'})});
   if(url.pathname==='/'){
    const source=fs.readFileSync(path.join(ROOT,'index.html'),'utf8');
    assert(source.includes('\ninitializeAuth();'),'Expose only the real local sample-account initialization promise');
@@ -90,6 +91,7 @@ async function finish(f){assert.deepEqual(f.external,[],'No external network may
    await p.evaluate(()=>printContract());assert.equal(await p.evaluate(()=>window.__signatureFixturePrints),1,'Actual print entry point must reach printing after validation');
    const pdf=await p.pdf({format:'A4',printBackground:true,preferCSSPageSize:true,path:path.join(ARTIFACTS,'customer-contract-signature.pdf')});
    const pdfText=pdf.toString('latin1');assert.match(pdfText,/^%PDF-/);assert.equal((pdfText.match(/\/Type\s*\/Page\b/g)||[]).length,2,'The original contract print layout must produce exactly two A4 copies');
+   assert.match(pdfText,/\/SMask/,'Transparent signature alpha must survive PDF printing');
    assert.match(pdfText,/\/Width 640\s*\/Height 240/,'Printed PDF must embed the trusted canvas signature bitmap');
    await p.screenshot({path:path.join(ARTIFACTS,'customer-contract-signature-desktop.png')});
    console.log('PASS mobile-submission canonical record → actual sales contract buyer signature; unchanged company stamp; both clean-ID print copies and real two-page PDF include signature');
@@ -139,6 +141,27 @@ async function finish(f){assert.deepEqual(f.external,[],'No external network may
    await p.screenshot({path:path.join(ARTIFACTS,'customer-contract-signature-390.png')});
    await p.evaluate(()=>closeContractPreview({discard:true}));await assertHidden(p,{erased:true});await finish(f);
    console.log('PASS 390px actual sales contract displays its received signature without horizontal overflow and clears it on close');
+  }
+  for(const width of[1440,390,320]){
+   const f=await fixture(width),p=f.page;
+   await p.evaluate(async()=>{openVehicle('signature-car-1');await openSaleProgress();});
+   await p.getByRole('button',{name:'인수증 출력',exact:true}).click();await p.locator('#zc76-receipt-overlay').waitFor({state:'visible'});
+   const image=p.locator('#snote215-receipt-signature-image');await image.evaluate(image=>image.decode());await p.waitForTimeout(350);
+   const alpha=await image.evaluate(image=>{const canvas=document.createElement('canvas');canvas.width=image.naturalWidth;canvas.height=image.naturalHeight;const ctx=canvas.getContext('2d');ctx.drawImage(image,0,0);const pixels=ctx.getImageData(0,0,canvas.width,canvas.height).data;let transparent=0,ink=0;for(let i=3;i<pixels.length;i+=4){if(pixels[i]===0)transparent++;else ink++;}return{transparent,ink,total:pixels.length/4,corner:pixels[3]};});
+   assert.equal(alpha.corner,0);assert(alpha.transparent>alpha.total*.8);assert(alpha.ink>0);
+   assert.equal(await image.getAttribute('src'),await expected(p));
+   const sign=p.locator('#zc76-receipt-paper .zc76-sign-slot'),slot=await sign.boundingBox(),name=await p.locator('#zc76-sign-name').boundingBox(),box=await image.boundingBox();
+   assert(slot&&name&&box);assert(slot.x>=name.x+name.width-1&&slot.x-name.x-name.width<16);assert(Math.abs(box.x-slot.x)<1&&Math.abs(box.y-slot.y)<1,JSON.stringify({width,box,slot,name}));
+   assert.equal(await sign.locator('.zc76-sign-placeholder').evaluate(e=>getComputedStyle(e).visibility),'hidden');
+   assert.equal(await p.locator('#zc76-receipt-paper #snote215-receipt-signature-caption').count(),0);
+   const before=await p.evaluate(()=>window.__signatureFixturePrints||0);await p.evaluate(()=>zc76PrintReceipt());assert.equal(await p.evaluate(()=>window.__signatureFixturePrints),before+1);
+   const pdf=await p.pdf({format:'A4',printBackground:true,preferCSSPageSize:true,path:path.join(ARTIFACTS,'customer-receipt-signature-'+width+'.pdf')});const pdfText=pdf.toString('latin1');assert.equal((pdfText.match(/\/Type\s*\/Page\b/g)||[]).length,1);assert.match(pdfText,/\/SMask/);
+   await p.screenshot({path:path.join(ARTIFACTS,'customer-receipt-signature-'+width+'.png')});
+   await p.locator('#zc76-sign-name').fill('다른 고객');assert.equal(await image.getAttribute('src'),null);await p.locator('#zc76-sign-name').fill('모바일 서명 고객');await image.evaluate(image=>image.decode());assert.match(await image.getAttribute('src'),/^data:image\/png/);
+   await p.locator('#zc76-name').fill('다른 고객');assert.equal(await image.getAttribute('src'),null);await p.locator('#zc76-name').fill('모바일 서명 고객');await image.evaluate(image=>image.decode());
+   await p.evaluate(()=>{const image=document.getElementById('snote215-receipt-signature-image');image.decode=()=>new Promise(resolve=>window.__signatureReleaseDecode=resolve);window.__signaturePendingPrint=zc76PrintReceipt();});await p.waitForFunction(()=>typeof window.__signatureReleaseDecode==='function');await p.evaluate(async()=>{await zc76CloseReceipt({discard:true});window.__signatureReleaseDecode();await window.__signaturePendingPrint;});assert.equal(await p.evaluate(()=>window.__signatureFixturePrints),before+1);assert.equal(await image.getAttribute('src'),null);
+   await p.evaluate(async()=>{const person=await zc72ReadCar(currentUser.username,'signature-car-2');await zc76OpenReceipt(person,cars.find(c=>c.id==='signature-car-2'));});assert.equal(await image.getAttribute('src'),null);assert.equal(await p.locator('#snote215-receipt-signature').isVisible(),false);
+   await finish(f);console.log('PASS '+width+' mobile-origin receipt signature is transparent, inside the name-adjacent slot, retained in a one-page PDF; name edits/unsigned customer clear it and close during decode blocks late print');
   }
  }finally{await browser.close();}
 })().catch(error=>{console.error(error.stack);process.exitCode=1;});

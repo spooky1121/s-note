@@ -83,7 +83,7 @@
     if (!context) return false;
     const width = canvas.width, height = canvas.height;
     context.clearRect(0, 0, width, height);
-    context.fillStyle = '#fff'; context.fillRect(0, 0, width, height);
+    // Keep the background transparent so the original strokes sit on the document.
     context.strokeStyle = '#233b54'; context.lineWidth = Math.max(2, width / 230);
     context.lineCap = 'round'; context.lineJoin = 'round';
     for (const stroke of signature.strokes) {

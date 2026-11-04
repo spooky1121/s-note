@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.49">
+<html lang="ko" data-snote-release="2.50">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -3166,8 +3166,8 @@ button, input, select, textarea { font-family: inherit; }
 <link rel="stylesheet" href="assets/vehicle-detail-colors.css?v=2.33.1">
 <link rel="stylesheet" href="assets/sales-month-filter.css?v=2.26">
 <script src="assets/vehicle-colors.js?v=2.23"></script>
-<link rel="stylesheet" href="assets/customer-contract-signature.css?v=2.22">
-<script src="assets/customer-contract-signature.js?v=2.22"></script>
+<link rel="stylesheet" href="assets/customer-contract-signature.css?v=2.50">
+<script src="assets/customer-contract-signature.js?v=2.50"></script>
 <link rel="stylesheet" href="assets/sales-popup.css?v=2.35">
 <link rel="stylesheet" href="assets/popup-controls.css?v=2.36">
 <script src="assets/money.js?v=2.41"></script>
@@ -7739,7 +7739,7 @@ document.addEventListener('click',e=>{
        <p class="zc76-small">상기 본인(고객)은 위 차량을 매수함에 있어 양도증명서에 명시된 차량에 대한 이전등록 신고 및 현금영수증 발급함에 동의하며, 매수금액과 양도증명서상의 금액 상의로 인한 민,형사상 모든 책임은 알선종사원 및 알선상사에게 있음을 확인합니다.</p>
        <div class="zc76-check-line"><label>동의 , 위임함 <input class="zc76-check" type="checkbox" id="zc76-cash-confirm"></label></div>
       </section>
-      <div class="zc76-foot"><div class="date-row"><input type="date" id="zc76-doc-date" aria-label="작성일"></div><div class="zc76-sign"><span>위 내용을 설명 듣고 확인 하였음. / 위임, 동의 확인자 :</span><input type="text" id="zc76-sign-name" aria-label="확인자 이름"> <span>(서명,날인)</span><span id="snote215-receipt-signature" class="snote215-receipt-signature" hidden><img id="snote215-receipt-signature-image" alt="고객 원제출 서명"><small id="snote215-receipt-signature-caption"></small></span></div></div>
+      <div class="zc76-foot"><div class="date-row"><input type="date" id="zc76-doc-date" aria-label="작성일"></div><div class="zc76-sign"><span>위 내용을 설명 듣고 확인 하였음. / 위임, 동의 확인자 :</span><input type="text" id="zc76-sign-name" aria-label="확인자 이름"> <span class="zc76-sign-slot"><span class="zc76-sign-placeholder">(서명,날인)</span><span id="snote215-receipt-signature" class="snote215-receipt-signature" hidden><img id="snote215-receipt-signature-image" alt="고객 원제출 서명"></span></span></div></div>
      <div class="snote202-receipt-brand"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALAAAABoCAYAAABR2nocAAAWY0lEQVR42u1de4wlWVn/VXXfR/ft10xNz8yOs7g8FwNhQSHqYoSKLBIEI4lGEDBioquJMWA0hQE1GkmoGMV1MZqgRldFY1aMsmYVooXGDUEhC5I16xIxkYV9zNa8uqcf93bf8o/znb7f1FSdR73uvd31JTfd91bVqXO+853vfO8DZIDnB11YgO39dYCqD7r+lXm2rj6n7usUuVaiX51Zmr8WThBMg/hO5IA9P+hNY4XnjbduDuD5QWcaXGYeCdoKTy3rrg83TSyK48b4Gh9TzTJib1aJp+k+6XBRsu3OvNGGBOcYc88+jS8B4AIYAUAchSOJ3DgKh54fdOIoHHl+0IujcJ+eS+jZMcORE0fhnucHA7q+AGAfQA/A3QC+F8D7LLv5OICPAvgc/Z8AGNK7hkS0LhvDYRyF+3lEyMfGxg56dhxH4fC4zbMzRwTZLTsBaWJlnK1DhJgA+CEAvz/j6HgIwL0AdgDs0m9JBfjpzhuRO/M4EEaIRv0kIl0krjkE8D1EBMcRvgbgZfT/GMAhLcyx5NCmIoXp/Vm7wMwQcJPEXDUCPD9YA3CtVUcBAN8G4L/jKLzRihBTXHF5Mh9bcElLq0awGkfhNsnLyRTnsRSDnGsljpC/AGCbFJUWisEyKYhzp+Q5M0SMVtzc84NNAH9B8mzT8GkAHwPwrwD2SM48JGUQzIrhMDnUITmcWwcOSHlcpAV4EcBbaEzfNYVxfQeAR+eJkOeWA9ckKvw0gD8hBWZ3RsctzYMLAB4F8KKqXxFH4eVZZWbpa86cEe0mcaqnSzTzUQABgLPEHcfEAccAnsmzs86a6ER24nUAKxD26AEprDcArAF4rgoZeS44sPSYFN06dIK4ZkWZmsL6ADwAT9rKd1Vx0yw8WZrykiq355Q9OxPHZBJzAbwKwGctXzGIo3DHdu7ZAiusIJri1amLO1T5LCHiIoD/MWjmOwH8J5M3hwAOyG68RPIo6PoBbcXjOjhvEyZIRqAuG5uUsx3yLvboN+msWTLcxX4DwAdNx1DGKqXCVd5C8PygO/MiBE1QD8CW5tYLAK7EUbg3T8poU+1lteP5wTKJHCo4H0fhM60SV46AlRwgjsJjG9PREI7vAfApxS1n4yi8NIt9dwsOuFsRYWrbNeA+/ab6rOt/E+81bTfves7v/0KKXx5EdY+nFAHbdipDaO/bvljGMqjapbZV5rIlU9k1rXgVJU7bOIHUeztFQxfTz2UpTlnXdThmkWtjiKi4LHgZueVhIw83sVCntvUaWC5WAPwYgPtzbjkHYGceTD1zJEo8H8BXFbccmdamGUYwFzKw5wdnAaiUh/482GznjIA7ALoQrvlMWRjA1Vkg3Ftk4Doj/gvIwj0V8cZR6OiIdxYzFBTj7ZRtL2u8FnJ6T4pFmmi1Z22ZXt3z4MwgF+hDeJXyPEl/G0fhD9iIJKloNduYC+X9sxg7bYoLBdGozJYvj6PwsVnBx0yKECrFrYzJbFbktjkRJ2qZg9pEiKa3UsU7NxSX7yBvmvV2RZxhNGNEUos5siLYLELcM0XAFiko3Qon7Yri2mVVXINq6+IixKwQYRVbbY2LcgsiP7BRncgW106VjZeIgZA5bomJCaeFxiwSmwC+biJKTEs8c+teIab98PzA03CalngbBCLGqwDWVeKezY7G6cPzg24V1ZncKgjQ84PTEKGOH/b8YOT5wZ97fvASlbyaGsQLFFaHmVAa0sivY4GXNKd1qx5rHIU7cRRe14h7p0xEGXJMDTw/+C3PD64B+BsAz/f84LTnB6uVWiF0cZxk6goB/KzFu9YB7FN4H0/I7EOk4uQh6p1xFH68aguDjanJRjyyvLeWbbfCCLY+FXPpQaROZcEjAHxFLPIHAfyyBed3eJyzbmy2RukegNcB+MeCOFmBiM3dt9Bql2c1veeEycQPA3iT6Q6pIXoTWDIJjbWVgb+pBPECwkXZSYkQ96rwhkmQdgvTI94+RFxK3vUk9X0A4MUlX2vEtFyLQZyDWUaEbovgytga1GWc9lhqSi2y47RMQlX0u0FwiPm80RCHDoAvV4CfgW5+XAsk9iuatFPEebsALmm4vST6oQphqgxWw0U1NCG0dDikCeHLZ6TGzf52mR7QyXmua6nl11L7mES4MYD/Uty2z8ZZldJ9oJsfxwI5JuknJvAQgHdR57Zn2fLQJCcukUvWqP1VI9ueIpFvZCoCaOCVcRR+ydoKoei8h/Lp2tIica0I8VYZLEKcaZWQLouLbECkMA0BnIEw5t8LhVeqAfgagF8gjZ/PmySUHcbNl+pWenUOJ+jzF03gFQCe0EUdOgU6XxURG1kdaFtcpK+ywuQBu18SnwPgPIklIwA/DOAPWhXsFng9gM8TvtYJlwmArTgKd2mnBSbVhZL0giC7f1xjH18SR+FXTIXzTK1TZ8IgAXsEUVSjSlijNjsAbgPwlZbmZgYuQNjrxxC1iauExwG8KovuVLtuaTmTvG28DthOO88tGMCHAHxYikJFs2sWK1A8nFT1FsdCXmrh5MCpOAqv5lhOXFIOx7YKaZng8PU4Cq9xxSHjbIYNqPPaWjghoLMqFbWm1GKqIkXg7QD+cA5x/WcAfg2iBpsTR+EOBZuMSERKuP22bhMWYwoL8v2MSbwGwHsA/Pi8EbJp3bRU3Mwt+HYqRnaHED2N2IVnANwD4H9xc53eA/p+AJFx62Jix3To+z7dmxCRyFN9RlkF9Ph2l9p1ZC0y+X7p6RxzPYGek2VSD+VzmsmTiZf7vMYbO80ogShUzS0IhxDmQDkv6ZrFXQAPAvAbnqtzED6FYVkG4FRFuDQpG1BnVBSBTwF4m65KYgu17gK3A/i/ipv9PgBRWZu1q9i2jLY36RIl+7AN8fbZRwVvRDUeQNudpOy2b9U2c68Xno8KRZa0Eq4j3mUIm/IpAL9k+Kq/RwUWK6eiyVamnjD4XQBBuvYAbYl3QlQcV8E3A3iaH1BoaTGZVQ43M65kmk8Hwh5vUtBvE8C1jMqXxidElQkbcCpYrRdI7lTBVSK+A/bOAyYPDmg36BkibanJMqqzUPuhqT6QPP02iPNHVHAFwB2YnA+ySIquS8rZHsn5PZp/7auLHG1QloBfA+DfNbcNSJPvGGicMgPAxHZ8mlbvFVMudZLqQthWxff84AJt6SZi4ADC+TAyXBCrBozpTXEUWseau7ZI4cRmQLyrUvkyNJfsMflYB5cBXDZJDJTvLku8Vcbv1h0LrBprDid/swnxUlmvHQtcjuMofA6iKrwqIOofPD+4aIunMo4MHZe8LY7Cp0tOsqkXzwOw26YeWeP3NuK6V00fsdnm07uAtP1CXbC8ZyMqOQUHrosNNqrhwDReGfU0TG35fYiM5ccMu3aKyWRc3h4DWCDxRCLRSRU7kTbhMSb23C77/6bzmZntVb6D919eS1IT2GHjlbLiPjfq8/7Je5kdupvuG92LdOYK6yO3QSf0+zKEbfiqxbQvyf5miSL0LteEiXh+8G4AD+RcfkMchf9UNwGrOOMLyFKwmyeLsRPiD5FzwAoTDeS9tiGc7wLwMIDtVIaxnFSkCGDEi1ezw1PG7Lc+9XeYw2FucjxkJK/KMUkCHaffnZobSdRSN+iww2rkEWGuPMhFdWIRhUAmJHrZwAYmXshDhVy9BOEYcei+LYVM7KpMaDZWCevT6im/f0tlHWCcIIHwAC2QteKJnOceAPBTLJ7iJm7EiOK1AP6t3fybgTQh0XzI05DkgnsxgC/aECMR+xLyY4qNrUxOldw3XWqIBvurEAcLmsJbAfwzRPr9LbUZPD84D+CplrxqhaUsbkvcc5GsCk/ZLgZGEwkp6j2ImsOFubBtStFSHuvPWK3nUO5ETUBRE0KzE7RQDN4P4LdzRDqZflUmG2cFqfgHBUM0qsBvWxfCJrb36QoQuuP5wV2pBSSROYRwYa60dFcaxhCu4Puy5tjzg5dCBDyVTSXbhnkM+uszlP3SHNin7T3T/EEKxZ7nB6cKKAs62CRZ+hrz8sjIMVme6tmWFq3gLOHtClltXEYXp4lgKz+HJGO3zmOM2prOVaXVe3EUSqfCAuoNvjmDSTp+olA2jX3xJwh+EMAn00d/MQuL3GU7JcSzS1AUx84SDRUEvBJH4Q2VV9E1INwe22by4JDlxm2oOg7hP9+EcD54EOnTFywQ9ByAP8Lk3N+8VX4dwIsgMpXlZ4249SpxgR797UqlgjxN8rej71m/pf7v511jz3az2uXP0GdJtsl+76bb5m2xZ+UzKyQWnAXwUgB3xFH41+kFzwhDxgffbkm86wBeCOBbIZJwn0fvXNcsJK14kNFHew6csj3uKAaxC3Uw+8vjKHzM4NAUGzl7qemzkWfxUJe8ObPpu2Z+s+A0gBuK9nRHdi0Tce4q5vxMHIVxqaxkQwJejaNwW1O1RRYQGTPZVXqGpCdsUcZO2BByjq2xy7xTRye5M6eBg5u9WlmneR557KQJSN6fOgnzyHOW5Y0jxWWc4d3rsjnIyvBIUnOVYOJcWaAxORmKdvpeR3My0QcA/LoN0+C2fh4oxUxl0IiTA+pbh7j3ZzLuWYujcEvF9Gxk4HXkux6l/KSSnazD5Szl2FfHUfgFlXeshVs45ADmSQi3x1H4pOU7VAztqNSuolDKO+Io/MtSMnAGkabhvZi4g1WlUK23XZJjVwH8vMHtnyeuvWkqP51EovX8oE829KEF8Z6BWZx2ev5UFgzpoVXR4Y/q5tCGgPMa+SSABdpSDjS2RhU3yCX8OAp/U6Mccvi65wcJVcHsGU5stw5isZWtyzxv2P4ygF+xUNJWSHGMNUp8EbwmdM9AoTe9WteOa4KsVH2yNFyRsp+G291VRMuUslschdeYFm4ClyE8S1oiq0Mps+X8CuuA8WLRlFc9RyLg+w2avItwfcNW3JRcnr4uahialPPzxropcZNHxDZK3Cqyz7FYgYjOl8pL3n3SWrFXBcF4fvAQRGarCXwRwN3HPV44J9PiIkR1y8IKcYF+9CFCW7+Rc8sXALyWKZkJchwmuv7YlJZKFKY4R4b8kdaY18Y1ABdhlgCqQ/RbDE60l/BKCLe0XHBgVom9GSfKjmHqTh9Awk78+RyAb7F4VWbpp4KwqCBeALgbk3DSsUKU1WbxaNPqGfJWFNpkYrFqniQZtYpTzK+TJv08i8e36bMLYIWVE51JMCTeJSKaPcLJdQvifZwUZcfzg14FJQUSnYxN4uY+fUYKAr6ukoHjKBwtmshjBHnb77mCqUP7xBF/AsBfsa1EKgvjVPT/ke2WmWjkKn0Wwsv2EIDvtujDJWor/fsHICrW7GOSbQsIw/yIfboQ3q890qj7NAb5XSYzSlvwBuFxRNfkgupR/w9o0mRsxy4mGb99CDv8CwG8DzknBlnCAJOkgm1pM2e27QW5QzF8c+uBrNXsomAKPTGQPAVRl3MpRAhD71Leyvx+AF/KaGcAs5iIj9GHw2cAvN3zgy02uAXG6Q8ziHs/jsLXMS5QBj5En2MJOYHq3AmzxBhFn4hcJid8BMBPFnz1ckZfdsislwWPpvqlro2mScVWKWfdHNdl2bPCTOFsHIWXMrbVthyVRrSjxM5vNPD6W/IkU97SLCXu5+Io/IhMl8qiT1clb5FJZCC3fEXnnByE7bNAl7qgmyZeevcuC3K574TT7nKeXhJH4VMkCt1R07sfJpNcVkxEQkxuTSNCJJw+uX3ftVAglm0JmBMyyX8PVIiYNYizFEYGCsN7IezQmyeIaF8BkWDb15kPCYdbZCGqmuu+WeFQkhnXeUr4l7N0Mi4+2sRC5B7uYmM7JFFkEcUC3rchIpQqCbJuUMRpAn4EwINVuc49PyjkPgbwiwB+B6mcRo0F5e8AvCHj8uk4Cq+ozk52KxpsP8sEl0PsW0SIfQjbo/SuPZIj9A9IDFgli0dlGQIpEUcmGZ6GSGo8AxFDfIr+evTbBpkOV+j/0wDWWQyujPndoM8y7RY9aneNPhsQjp1l+n8NIo52QL/1aceQToE16sMALDaYiUkPKuaniMlyi8azDBEVlsWkhql+DADcRxGFpkztIId4gUnZgbyDv7t5afVZNQ1UkWH9KgiLFw3JeH9XExJYeZXG4xgIZILHLH0otRiSMrhJ1bDoKvSrdQroKia7Wmj1g6YKULfhkcduQamsW8s6+d1VrcK0Vm/bjo3oYbHtV16gr6hX0MRrpSpaza9N68DxErpDVVAoglFJeAWIZFxk4pmXp9PUJGaNzeCw726J9w0V1pGhaR+qWFip6qKdEmPaL7Koc651izJGzw86piFyUja9E8J3bs3q50WcaEWUxudQle2uzXl0LblI3lkJ56cx+DoIrSXexqGnmAutibOqyjxfbeehhYLiVx7D+IRJ+4um5pX0/UUHU0bWYxm7MvNVFoqT2bm8xu8BW6Qyym0Rk7w9l9oZYXKIYFqmd+iZMYQNd4ee2cfNVWzkO2TAkcv6M8Ik9nWB/ZXi2wImZ0uMcXM2MR+XVHg6rD35W8LGdMjmyc0gkIXUvaC/suzpAUSx8KFCdxmpnAs2+gXrTxreY0XAhoR1OE05kkUlraB8na4WsuEeAJ9FRhIun9OK7P4dAH+ac9mI0bl1YCCPeMtq2p4f3E+hki3x1gefBrDt+cHVotYOSzp5a85lIwODrUgwlZPnCVHDlrYahXViFhvyUPeiCm/BHdnINOtWuaIKEGbPICO61xLvVOGq5we/p+PCKgeRxi2NMhzYtryqym/dq8EYv45iEVEtVA9PxFF4Zw1MLMnh7o4J9y5yxMADAN6dcek0aa97JQcknSY24XybZCHoMtFoh/5ya8Ehs1rIE+wXmbYv89ykNUCGW3aYleGQWTTkSUgLrN2EWQ64BWGfWU94TQSZZ7fI2nUwyZUbgg4WTFldFpnFQh7C4rJ2O0zxln13Mcnzk/XTzpMi9e0GeD4XR+GzFRFul/pkVPG/SgJWceGVDLONyxANNqlj3FyIDszMtGygqPWrDK1sQc0RGZyB8JxJcyBws/mP09UhYxAuYxQL0BzzZUrARey6qgEu4OYiJ112PNR+RkXDbta9OuJVVaOcQYKorV9Vti3rStBhLI9A1G7IgucgSk7tZegqSQZTySu/ekbRHeNgoSIcWGsRICT02NbrplYrUluu/JiIH0aHKLZQTO9gJV7fAeCPNY8cnZlMuZOLbH5dJrYdsP9hMM/GsTVFDzocIL9wca041pVobYNxKpFNpbfzPyCquzcJ74yj8OOmN7spU0jPYHCcizYJayb1havOyqiL01VAZDqzVteivR7D35DEgCFESa6m4RMmtGjEgTOKRZumglQKdcm8s8qtZ61fFRSKMYWjc+Q0NUqO5r6KSoQ/A+D+GgfVyrzTJ+AliNT3x5tkUrXJwBkD3ET1Z7S1hDubxJzM0jy7Fa2eSyw9fRnCg7ZO5hCesr6MScp4n92/hEkK/SqEjXfbRIasKw2p4ryvqYojFbfVp3mSc7XM5lmenLrG5lSWIFilZzaIm6/r5vlYTd40kx4ViZmdMsQzT4mc06Sbyo6ateg4966lv0uuz+2/0kW70GRu3XE0uTU1JjbnR/Mna3rQHB/IwHdMAuVdpI4AO5be1DrT3E+yCDAv/Sm1M5Xp4KwOLr1DmLZRIEVceX2e5fUmx9NCCycG/h91Wo2v79UTZQAAAABJRU5ErkJggg==" alt="제로카 자동차 로고"><strong>제로카</strong></div>
     </article>
     <p class="zc76-hint">고객 원제출 서명이 있으면 함께 표시합니다. 원래 제출한 정보의 서명이며, 이후 수정한 내용이나 이 문서의 별도 확인 항목에 대한 새 서명이 아닙니다.</p>
@@ -7751,13 +7751,14 @@ document.addEventListener('click',e=>{
 /* v1.76 차량 인수증: 고객/차량 정보 자동 기입 + A4 1장 인쇄. 주민번호 및 개인정보 동의 상태는 보관하지 않음. */
 let zc76ReceiptOpen=false;
 function zc76Value(id,value){const el=document.getElementById(id);if(el)el.value=String(value??'');}
+function snote250ReceiptSignatureContext(){
+ const car=cars.find(item=>item.id===zc80ReceiptCarId),name=$('zc76-name').value.trim().replace(/\s+/g,' '),signName=$('zc76-sign-name').value.trim().replace(/\s+/g,' ');
+ return {actor:currentUser,ownerId:car?.ownerId||'',carId:zc80ReceiptCarId,view:snote214ReceiptView,mode:'sale',open:zc76ReceiptOpen&&!$('zc76-receipt-overlay').hidden,customerName:name===signName?name:''};
+}
 function snote215ReceiptSignature(person){
- const host=$('snote215-receipt-signature'),image=$('snote215-receipt-signature-image'),caption=$('snote215-receipt-signature-caption');
- const source=person&&window.snoteCustomerSignatureImage?.(person.customerSignature)||'';
- host.hidden=!source;image.removeAttribute('src');caption.textContent='';
- if(!source)return;
- image.src=source;const date=new Date(person.customerSignatureSignedAt||'');
- caption.textContent='고객 원제출 서명'+(Number.isFinite(date.getTime())?' · '+date.toLocaleDateString('ko-KR'):'');
+ let caption=$('snote215-receipt-signature-caption');
+ if(!caption){caption=document.createElement('p');caption.id='snote215-receipt-signature-caption';caption.className='ct-customer-signature-note';caption.hidden=true;$('zc76-receipt-paper').insertAdjacentElement('afterend',caption);}
+ if(person)window.snote250ReceiptSignature?.set(person,snote250ReceiptSignatureContext());else window.snote250ReceiptSignature?.clear();
 }
 function zc76ReadAmount(value){return Number(String(value??'').replace(/[^0-9]/g,''))||0;}
 function zc76SelectReset(){
@@ -7772,6 +7773,7 @@ async function zc76OpenReceipt(person,car){
  snote235SaleReturn=null;
  if(!currentUser||isAccountant()||!car||car.ownerId!==currentUser.username)return;
  const actor=currentUser,view=++snote214ReceiptView,routeAtStart=route,activeAtStart=activeCarId;
+ snote215ReceiptSignature(null);
  const account=await getAccount(currentUser.username).catch(()=>null);
  if(currentUser!==actor||view!==snote214ReceiptView||route!==routeAtStart||activeCarId!==activeAtStart)return;
  zc76SelectReset();
@@ -7800,8 +7802,8 @@ async function zc76OpenReceipt(person,car){
  zc76Value('zc76-doc-date',new Date().toLocaleDateString('en-CA'));
  zc76Value('zc76-delivery-at',''); // 인도 시각은 실제 인도 후 확인 입력
  zc76Value('zc76-sign-name',person.name||'');
- snote215ReceiptSignature(person);
  const overlay=document.getElementById('zc76-receipt-overlay');overlay.hidden=false;zc76ReceiptOpen=true;
+ snote215ReceiptSignature(person);
  // 민감정보는 페이지 메모리에서만 유지. 다른 고객을 열면 항상 초기화함.
  zc76FitReceipt();overlay.scrollTop=0;
 }
@@ -7823,13 +7825,16 @@ async function zc76CloseReceipt(options={}){
  await snote235ReturnToSale('receipt',actor,carId,view,options);
  return true;
 }
-function zc76PrintReceipt(){
+async function zc76PrintReceipt(){
  if(!zc76ReceiptOpen)return;
  const required=['zc76-car','zc76-name','zc76-address'];
  const missing=required.find(id=>!document.getElementById(id).value.trim());
  if(missing){toast('차량·고객 성명·등본상 주소를 먼저 확인하세요.');document.getElementById(missing).focus();return}
  const id=document.getElementById('zc76-rrn').value.trim();
  if(!id && !confirm('주민번호가 비어 있습니다. 암호화된 주민번호를 불러오지 못했습니다. 빈칸으로 출력할까요?')){document.getElementById('zc76-rrn').focus();return}
+ const actor=currentUser,carId=zc80ReceiptCarId,view=snote214ReceiptView;
+ if(window.snote250ReceiptSignature&&!await window.snote250ReceiptSignature.ready()){toast('고객 서명 표시를 확인한 뒤 다시 인쇄해 주세요.');return;}
+ if(!zc76ReceiptOpen||currentUser!==actor||zc80ReceiptCarId!==carId||snote214ReceiptView!==view)return;
  window.print();
 }
 window.addEventListener('resize',zc76FitReceipt);
@@ -9403,11 +9408,11 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 })();
 
 </script>
-<script src="assets/snote-customer-intake.js?v=2.35" defer></script>
+<script src="assets/snote-customer-intake.js?v=2.50" defer></script>
 <script type="module" src="assets/quick-calculator.js?v=2.36"></script>
 <script type="module" src="assets/vehicle-taxonomy-ui.js?v=2.20"></script>
 <script type="module" src="assets/income-settlement-parent.js?v=2.41"></script>
-<script src="assets/release-info.js?v=2.49" defer></script>
+<script src="assets/release-info.js?v=2.50" defer></script>
 <script src="assets/snote-encar-link.js?v=2.47" defer></script>
 <script src="assets/document-mms.js?v=2.44" defer></script>
 <script src="assets/workspace-polish.js?v=2.44" defer></script>

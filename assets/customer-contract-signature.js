@@ -132,5 +132,21 @@
       else if (!image.complete || !image.naturalWidth) throw Error('SIGNATURE_IMAGE_NOT_READY');
     }
   });
-  global.addEventListener('pagehide', () => global.snote222ContractSignature.clear());
+  function receiptNodes() {
+    return {host:byId('snote215-receipt-signature'),image:byId('snote215-receipt-signature-image'),caption:byId('snote215-receipt-signature-caption')};
+  }
+  global.snote250ReceiptSignature = createCustomerContractSignature({
+    currentContext: () => global.snote250ReceiptSignatureContext?.(),
+    imageFor: value => global.snoteCustomerSignatureImage?.(value) || '',
+    render: value => {
+      const {host,image,caption}=receiptNodes();if(!host||!image)return;
+      host.hidden=!value.visible;host.closest('.zc76-sign-slot')?.classList.toggle('has-customer-signature',value.visible);
+      if(value.visible){if(image.getAttribute('src')!==value.image)image.src=value.image;image.title=value.caption;}
+      else{image.removeAttribute('src');image.removeAttribute('title');}
+      if(caption){caption.hidden=!value.visible;caption.textContent=value.visible?value.caption+' · 원래 제출한 정보의 서명입니다. 이후 수정한 내용의 새 서명이 아닙니다.':'';}
+    },
+    imageReady: async () => {const {image,host}=receiptNodes();if(!image||host?.hidden)return;if(typeof image.decode==='function')await image.decode();else if(!image.complete||!image.naturalWidth)throw Error('SIGNATURE_IMAGE_NOT_READY');}
+  });
+  document.addEventListener('input',event=>{if(['zc76-name','zc76-sign-name'].includes(event.target.id))global.snote250ReceiptSignature.sync();});
+  global.addEventListener('pagehide', () => {global.snote222ContractSignature.clear();global.snote250ReceiptSignature.clear();});
 })(typeof window === 'undefined' ? globalThis : window);
