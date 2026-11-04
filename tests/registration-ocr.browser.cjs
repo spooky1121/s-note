@@ -41,6 +41,7 @@ async function until(check,label){for(let i=0;i<150;i++){if(await check())return
    assert(source.includes('\ninitializeAuth();'));
    return route.fulfill({contentType:'text/html;charset=utf-8',body:source.replace('\ninitializeAuth();','\nwindow.__registrationFixtureAuth=initializeAuth();')});
   }
+  if(url.pathname==='/api/weather')return route.fulfill({contentType:'application/json',body:JSON.stringify({ok:true,temperature:18,code:0,region:'합성 지역'})});
   if(url.pathname==='/api/ocr'){
    assert.equal(req.method(),'POST');assert.equal(req.headers().authorization,'Bearer fixture-only-ocr-session');assert.match(req.headers()['content-type'],/^image\//);
    const value=model,held=gate,synthetic=annotation;calls.push({model:value});if(held)await held.promise;

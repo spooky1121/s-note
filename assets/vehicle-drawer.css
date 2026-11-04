@@ -1,4 +1,4 @@
-/* Vehicle details alone use a full-height right drawer. Other dialogs keep their frames. */
+/* Vehicle and registration drawers use full viewport height. Document dialogs keep their frames. */
 @media screen{
  #vehicle-overlay{padding:0!important;align-items:stretch!important;justify-content:flex-end!important;overflow:hidden}
  #vehicle-overlay .vehicle-detail-frame{width:min(1120px,calc(100vw - 48px));max-width:100%;height:100dvh;max-height:100dvh;flex:none;margin:0;overflow:visible}
@@ -31,3 +31,34 @@
 }
 @keyframes snote-vehicle-slide{from{transform:translateX(100%)}to{transform:translateX(0)}}
 @media(prefers-reduced-motion:reduce){#vehicle-overlay.open .vehicle-detail-frame{animation:none!important}}
+/* v2.48: both registration flows share the vehicle drawer's geometry and motion. */
+@media screen{
+ #overlay,#zc-auto-reg-overlay{padding:0!important;align-items:stretch!important;justify-content:flex-end!important;overflow:hidden;transition:background-color .25s ease,backdrop-filter .25s ease}
+ #vehicle-overlay{transition:background-color .25s ease,backdrop-filter .25s ease}
+ #overlay .snote-popup-frame,#zc-auto-reg-overlay .snote-popup-frame{width:min(1120px,calc(100vw - 48px));max-width:100%;height:100dvh;max-height:100dvh;flex:none;margin:0;overflow:visible}
+ #overlay .snote-popup-frame>.modal,#zc-auto-reg-overlay .snote-popup-frame>.zc71-auto{display:flex;flex-direction:column;width:100%!important;height:100dvh!important;max-height:100dvh!important;margin:0!important;padding:0!important;border:0!important;border-left:1px solid #e7e8ef!important;border-radius:0!important;background:#fff;overflow:auto!important;overscroll-behavior:contain;scroll-padding:82px 0 90px;box-shadow:-12px 0 45px #19243a18!important;animation:none!important}
+ #overlay.open .snote-popup-frame,#zc-auto-reg-overlay:not([hidden]) .snote-popup-frame{animation:snote-vehicle-slide .3s cubic-bezier(.22,.75,.2,1)}
+ #overlay .modal>.modal-top,#zc-auto-reg-overlay .zc71-wizard-header{position:sticky;top:0;z-index:20;flex:none;background:#fff;border-bottom:1px solid #ececf1;padding:21px 58px 18px 26px!important;margin:0!important;min-height:66px}
+ #overlay .modal>.formgrid{flex:none;padding:20px 26px 0}
+ #overlay .modal>.formtip{padding:0 26px;margin:16px 0}
+ #overlay .modal>.modal-actions,#zc-auto-reg-overlay .zc71-footer{position:sticky;bottom:0;z-index:20;flex:none;margin-top:auto;padding:16px 26px;background:#fff;border-top:1px solid #ececf1}
+ #zc-auto-reg-overlay .zc71-auto>*{flex-shrink:0}
+ #zc-auto-reg-overlay .zc71-upload-area{flex:1 0 auto;min-height:clamp(220px,32dvh,380px);margin-left:26px;margin-right:26px}
+ #zc-auto-reg-overlay .zc71-upload-area img{max-height:380px}
+ #overlay button.snote-popup-close,#zc-auto-reg-overlay button.snote-popup-close{inset:18px 16px auto auto!important}
+ :is(#overlay,#vehicle-overlay,#zc-auto-reg-overlay)[data-snote-drawer-closing]{background-color:rgba(20,34,54,0)!important;backdrop-filter:blur(0);-webkit-backdrop-filter:blur(0)}
+ :is(#overlay,#vehicle-overlay,#zc-auto-reg-overlay)[data-snote-drawer-closing]>.snote-popup-frame,:is(#overlay,#vehicle-overlay,#zc-auto-reg-overlay)[data-snote-drawer-closing]>.vehicle-detail-frame{pointer-events:none}
+ #vehicle-overlay .vehicle-document-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:12px;padding-top:10px;border-top:1px solid #ececf1}
+ #vehicle-document-share::after{content:attr(data-tooltip);position:absolute;right:0;bottom:calc(100% + 7px);z-index:40;background:#28344b;color:#fff;box-shadow:0 4px 12px #19243a16;border-radius:6px;padding:6px 9px;font:400 11px/1.5 var(--snote-font-family);white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .15s ease}
+ #vehicle-document-share:is(:hover,:focus-visible)::after{opacity:1}
+}
+@media screen and (max-width:760px){
+ #overlay .snote-popup-frame,#zc-auto-reg-overlay .snote-popup-frame{width:100vw}
+ #overlay .modal>.modal-top,#zc-auto-reg-overlay .zc71-wizard-header{padding:calc(18px + env(safe-area-inset-top,0px)) 48px 16px 16px!important}
+ #overlay .modal>.formgrid{padding:16px 16px 0}
+ #overlay .modal>.formtip{padding:0 16px}
+ #overlay .modal>.modal-actions,#zc-auto-reg-overlay .zc71-footer{padding:14px 16px calc(16px + env(safe-area-inset-bottom,0px))}
+ #zc-auto-reg-overlay .zc71-upload-area{margin-left:16px;margin-right:16px}
+ #overlay button.snote-popup-close,#zc-auto-reg-overlay button.snote-popup-close{inset:calc(12px + env(safe-area-inset-top,0px)) 10px auto auto!important}
+}
+@media(prefers-reduced-motion:reduce){#overlay.open .snote-popup-frame,#zc-auto-reg-overlay:not([hidden]) .snote-popup-frame{animation:none!important}:is(#overlay,#vehicle-overlay,#zc-auto-reg-overlay){transition:none!important}#vehicle-document-share::after{transition:none!important}}
