@@ -10,3 +10,7 @@
 - [공공데이터포털 기상청 단기예보 조회서비스](https://www.data.go.kr/data/15084084/openapi.do)의 초단기실황/격자 예보 OpenAPI는 별도 인증키가 필요하다. 현재 공개 관측 XML 경로와 구분한다. [단·중기예보 RSS는2025-03-31 종료](https://www.weather.go.kr/w/pop/rss-guide.do)되어 사용하지 않는다. [Open-Meteo의 KMA 모델 갱신 중단 안내](https://open-meteo.com/en/docs/kma-api)도 확인했으며 해당 중계 모델은 사용하지 않는다.
 
 서버 테스트는 기상청 형식의 합성 XML로 위치 선택/영하·0도/실패·결측·시각/캐시를 검증한다. 운영의 공개 XML 접근과 최신성은 배포 뒤 API 응답으로 별도 확인한다.
+
+## v2.54 배포 확인 범위
+
+Cloudflare Pages s-note 배포 성공은 확인했다. 운영 API의 실제 기상청 관측값 수신은 웹 도구의 Pages 도메인 접근 불가와 실행 환경의 CONNECT proxy403으로 직접 확인하지 못했다. 기상청 XML URL은 웹 도구에서 XML 응답으로 인식됐지만 본문 파서가 지원하지 않아 최신 시각을 확인하지 못했다. 현재 관측값이 실제로 수신된다고 주장하지 않으며 오래된 자료는 서버에서 거부한다.
