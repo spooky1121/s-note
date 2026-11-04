@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.58">
+<html lang="ko" data-snote-release="2.59">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -3173,7 +3173,7 @@ button, input, select, textarea { font-family: inherit; }
 <script src="assets/money.js?v=2.41"></script>
 <script src="assets/inventory-interest.js?v=2.41"></script>
 <script src="assets/list-pagination.js?v=2.47"></script>
-<script src="assets/popup-controls.js?v=2.36" defer></script>
+<script src="assets/popup-controls.js?v=2.59" defer></script>
 <link rel="stylesheet" href="assets/list-style.css?v=2.37">
 <script src="assets/customer-list.js?v=2.47" defer></script>
 <link rel="stylesheet" href="assets/vehicle-detail-compact.css?v=2.38">
@@ -3181,13 +3181,16 @@ button, input, select, textarea { font-family: inherit; }
 <link rel="stylesheet" href="assets/vehicle-detail-layout.css?v=2.40">
 <link rel="stylesheet" href="assets/document-mms.css?v=2.44">
 <link rel="stylesheet" href="assets/workspace-polish.css?v=2.44">
-<link rel="stylesheet" href="assets/reference-theme.css?v=2.54">
-<link rel="stylesheet" href="assets/document-actions.css?v=2.53">
+<link rel="stylesheet" href="assets/reference-theme.css?v=2.59">
+<link rel="stylesheet" href="assets/document-actions.css?v=2.59">
 <link rel="stylesheet" href="assets/vehicle-drawer.css?v=2.55">
 <link rel="stylesheet" href="assets/workspace-refine.css?v=2.47">
 <script src="assets/icon-feedback.js?v=2.54" defer></script>
-<link rel="stylesheet" href="assets/mobile-shell.css?v=2.58">
-<link rel="stylesheet" href="assets/mobile-workspace.css?v=2.58">
+<script src="assets/action-controls.js?v=2.59" defer></script>
+<script src="assets/readable-type.js?v=2.59" defer></script>
+<link rel="stylesheet" href="assets/mobile-shell.css?v=2.59">
+<link rel="stylesheet" href="assets/mobile-workspace.css?v=2.59">
+<link rel="stylesheet" href="assets/screen-refinement.css?v=2.59">
 </head>
 <body class="snote-typography">
 
@@ -5307,17 +5310,17 @@ function buildInventoryFinance(){
  const lenderFilter=$('inventory-lender-filter')?.value||'all',keyword=$('inventory-finance-search')?.value||'';
  const companyCards=limits.map(([l,max])=>{
   const used=stat.used(l),remain=max-used,percent=max>0?used/max*100:used>0?100:0,reserveRatio=max>0?remain/max:0,reserveTone=(max>0&&reserveRatio<=.15)?'snote203-reserve-critical':(max>0&&reserveRatio<=.40)?'snote203-reserve-warning':'snote203-reserve-normal';
-  return `<article class="zc182-lender ${remain<0?'over':''}" data-lender="${esc(l)}"><div class="zc182-lender-h"><strong>${esc(l)}</strong><small>${stat.count(l)}대 사용</small></div>
+  return `<article class="zc182-lender ${remain<0?'over':''}" data-lender="${esc(l)}"><div class="zc182-lender-h"><strong>${esc(l)}</strong><small>${stat.count(l)}대 · ${max>0?percent.toFixed(1)+'%':used>0?'한도 미설정':'0.0%'}</small></div>
   <div class="zc182-lender-numbers"><div><span>총한도</span><b>${snote202Won(max)}<small>원</small></b></div><div class="used"><span>사용금액</span><b>${snote202Won(used)}<small>원</small></b></div><div class="remain ${reserveTone}"><span>잔여한도</span><b>${snote202Won(remain)}<small>원</small></b></div></div>
   <div class="zc182-meter" role="img" aria-label="${esc(l)} 한도 중 사용 ${percent.toFixed(1)}%"><span style="width:${Math.max(0,Math.min(100,percent))}%"></span></div>
   <div class="zc182-lender-foot"><span>사용률 <strong>${max>0?percent.toFixed(1):used>0?'한도 미설정':'0.0'}${max>0||used===0?'%':''}</strong></span></div></article>`;
  }).join('');
- const view=`<div class="fin-top"><div class="zc182-fin-head"><div><h3>재고금융 관리</h3><p>금융사별 총한도·사용금액·잔여한도를 한눈에 비교합니다.</p></div><button type="button" class="btn-primary" onclick="zc182OpenFinance()">＋ 신규 재고금융 등록</button></div>
- <div class="fin-total"><div class="fin-kpi"><span class="label">전체 한도</span><strong>${snote202Won(limitTotal)}<small>원</small></strong></div><div class="fin-kpi"><span class="label">현재 사용</span><strong>${snote202Won(loanTotal)}<small>원</small></strong></div><div class="fin-kpi"><span class="label">잔여한도</span><strong class="snote203-total-reserve" style="color:${limitTotal>0&&remainTotal/limitTotal<=.15?'#cf334c':limitTotal>0&&remainTotal/limitTotal<=.4?'#db7a21':'#171717'}">${snote202Won(remainTotal)}<small>원</small></strong></div></div></div>
+ const view=`<div class="fin-top"><div class="zc182-fin-head"><h3>재고금융 관리</h3>
+ <div class="fin-total"><div class="fin-kpi"><span class="label">전체 한도</span><strong>${snote202Won(limitTotal)}<small>원</small></strong></div><div class="fin-kpi"><span class="label">현재 사용</span><strong>${snote202Won(loanTotal)}<small>원</small></strong></div><div class="fin-kpi"><span class="label">잔여한도</span><strong class="snote203-total-reserve" style="color:${limitTotal>0&&remainTotal/limitTotal<=.15?'#cf334c':limitTotal>0&&remainTotal/limitTotal<=.4?'#db7a21':'#171717'}">${snote202Won(remainTotal)}<small>원</small></strong></div></div><button type="button" class="snote-finance-add" onclick="zc182OpenFinance()" aria-label="신규 재고 등록" data-tooltip="신규 재고 등록"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"/></svg></button></div></div>
  <div class="fin-lender-grid">${companyCards}</div>
  <div class="fin-filters"><label class="search"><span class="search-icon"></span><input id="inventory-finance-search" aria-label="재고금융 차량 검색" type="search" placeholder="차명 · 차량번호 · 담당딜러 검색" value="${esc(keyword)}" oninput="renderInventoryFinanceRows()"/></label><select class="filter" id="inventory-lender-filter" aria-label="재고금융사 필터" onchange="renderInventoryFinanceRows()"><option value="all">전체 금융사</option>${INVENTORY_LENDERS.map(l=>`<option value="${esc(l)}" ${lenderFilter===l?'selected':''}>${esc(l)}</option>`).join('')}</select></div>
  <div class="tablewrap fin-table"><table><thead><tr><th>매입일자</th><th>차명</th><th class="snote222-color-column">색상</th><th>차량번호</th><th>차량연식</th><th>주행거리</th><th class="snote-money-column">매입가격</th><th class="snote-money-column">재고대출금액</th><th class="snote-finance-column">재고금융사</th><th>담당 딜러</th><th>관리</th></tr></thead><tbody id="inventory-finance-tbody"></tbody></table></div><div id="inventory-finance-mobile" class="fin-mobile-list"></div><nav id="finance-pagination" class="snote-pagination" aria-label="재고금융 차량 목록 페이지"></nav>
- <p class="fin-note">※ 금융정보와 선재고 내역은 각각 별도 장부에 저장됩니다. 차량번호가 일치하는 경우 해당 차량의 대출금·금융사만 수정하며, 일치하지 않는 등록 건은 재고금융 장부에만 표시합니다. 판매완료 차량은 현재 사용액에서 제외됩니다. 금융사 한도는 관리자 설정에서 변경할 수 있습니다.</p>`;
+ `;
  $('alt-title').style.display='none';$('alt-copy').style.display='none';$('alt-content').innerHTML=view;renderInventoryFinanceRows();
 }
 function renderInventoryFinanceRows(){
@@ -6134,7 +6137,7 @@ function closeQuotePreview(){
  quoteCarId=null;
  if(activeCarId){$('vehicle-overlay').classList.add('open');$('vehicle-overlay').setAttribute('aria-hidden','false')}
 }
-function resizeQuotePreview(){const paper=$('quote-paper');if(!$('quote-overlay').classList.contains('open')||!paper)return;const width=window.innerWidth-60;if(window.innerWidth<800){const scale=Math.max(.32,Math.min(1,width/794));paper.style.setProperty('--quote-scale',scale);}else{paper.style.removeProperty('--quote-scale')}}
+function resizeQuotePreview(){const paper=$('quote-paper');if(!$('quote-overlay').classList.contains('open')||!paper)return;const width=paper.closest('.snote-popup-card')?.clientWidth||window.innerWidth-68;paper.style.setProperty('--quote-scale',Math.max(.1,Math.min(1,width/794)));}
 window.addEventListener('resize',resizeQuotePreview);
 async function printQuote(){if(!$('quote-overlay').classList.contains('open'))return;await snote95DocumentLogoReady;window.print()}
 
@@ -6353,7 +6356,7 @@ async function closeContractPreview(options={}){
  else if(activeCarId){$('vehicle-overlay').classList.add('open');$('vehicle-overlay').setAttribute('aria-hidden','false')}
  return true;
 }
-function resizeContractPreview(){const paper=$('contract-paper');if(!$('contract-overlay').classList.contains('open')||!paper)return;const width=window.innerWidth-60;if(window.innerWidth<800){paper.style.setProperty('--contract-scale',Math.max(.28,Math.min(1,width/794)))}else{paper.style.removeProperty('--contract-scale')}}
+function resizeContractPreview(){const paper=$('contract-paper');if(!$('contract-overlay').classList.contains('open')||!paper)return;const width=paper.closest('.snote-popup-card')?.clientWidth||window.innerWidth-68;paper.style.setProperty('--contract-scale',Math.max(.1,Math.min(1,width/794)));}
 window.addEventListener('resize',resizeContractPreview);
 async function printContract(){if(!$('contract-overlay').classList.contains('open'))return;const loadingActor=currentUser,loadingCar=contractCarId,loadingView=snote214ContractView;if(!await snote251ContractCustomerTask)return;if(currentUser!==loadingActor||contractCarId!==loadingCar||snote214ContractView!==loadingView||!$('contract-overlay').classList.contains('open'))return;if(!ctCompanyFieldsFit())return;if(ctReadMoney('ct-deposit')+ctReadMoney('ct-interim')>ctReadMoney('ct-total-price')){toast('계약금과 중도금의 합계가 매매금액을 초과합니다.');return}if(!$('ct-contract-date').value||!$('ct-plate').value.trim()||!$('ct-seller-name').value.trim()||!$('ct-buyer-name').value.trim()){toast('계약일·차량번호·매도인·매수인을 입력해주세요.');return}if(!fitContractSpecial()){toast('특약사항이 A4 출력 공간을 초과합니다. 내용을 조금 줄여주세요.');$('ct-special').focus();return}const actor=currentUser,car=contractCarId,view=snote214ContractView;await snote95DocumentLogoReady;if(currentUser!==actor||contractCarId!==car||snote214ContractView!==view||!$('contract-overlay').classList.contains('open'))return;if(window.snote222ContractSignature&&!await window.snote222ContractSignature.ready()){toast('고객 서명 표시를 확인한 뒤 다시 인쇄해 주세요.');return}if(currentUser!==actor||contractCarId!==car||snote214ContractView!==view||!$('contract-overlay').classList.contains('open'))return;buildContractPrintPages();if(typeof zc75ScheduleContractSave==='function')zc75ScheduleContractSave(true);window.print()}
 
@@ -7800,8 +7803,7 @@ function zc76SelectReset(){
 }
 function zc76FitReceipt(){
  const el=document.getElementById('zc76-receipt-paper');if(!el)return;
- if(window.innerWidth<=820){el.style.setProperty('--zc76-scale',String(Math.max(.28,Math.min(1,(window.innerWidth-60)/794))))}
- else el.style.removeProperty('--zc76-scale');
+ const width=el.closest('.snote-popup-card')?.clientWidth||window.innerWidth-68;el.style.setProperty('--zc76-scale',String(Math.max(.1,Math.min(1,width/794))));
 }
 async function zc76OpenReceipt(person,car){
  snote235SaleReturn=null;
@@ -9447,7 +9449,7 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 <script type="module" src="assets/quick-calculator.js?v=2.36"></script>
 <script type="module" src="assets/vehicle-taxonomy-ui.js?v=2.20"></script>
 <script type="module" src="assets/income-settlement-parent.js?v=2.41"></script>
-<script src="assets/release-info.js?v=2.58" defer></script>
+<script src="assets/release-info.js?v=2.59" defer></script>
 <script src="assets/snote-encar-link.js?v=2.47" defer></script>
 <script src="assets/document-mms.js?v=2.44" defer></script>
 <script src="assets/workspace-polish.js?v=2.44" defer></script>

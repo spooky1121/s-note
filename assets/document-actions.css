@@ -1,19 +1,18 @@
-/* Document controls stay outside the printed A4 sheet. */
+/* A4 documents scroll independently from the close/print rail at the popup's top right. */
 @media screen{
- :is(#quote-overlay,#contract-overlay,#zc76-receipt-overlay) .snote-popup-card{background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;gap:0}
- :is(#quote-overlay,#contract-overlay,#zc76-receipt-overlay) :is(.quote-toolbar,.contract-toolbar,.zc76-toolbar){position:sticky;top:0;display:flex;justify-content:flex-end;align-items:center;width:100%;height:50px;min-height:50px;margin:0;padding:5px 50px 5px 0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;z-index:20}
- :is(.quote-toolbar-actions,.contract-actions,.zc76-toolbar-actions){margin:0;gap:0}
- :is(#quote-overlay,#contract-overlay,#zc76-receipt-overlay) button[data-document-print]{display:grid;place-items:center;min-width:34px;width:34px;height:34px;min-height:34px;padding:7px;border:0;border-radius:6px;background:#fff;color:#59677d;box-shadow:none;cursor:pointer}
- :is(#quote-overlay,#contract-overlay,#zc76-receipt-overlay) button[data-document-print]:hover{background:#eef0ff;color:#4455ed}
- button[data-document-print] svg{display:block;width:20px;height:20px}
- :is(#quote-overlay,#contract-overlay,#zc76-receipt-overlay) button.snote-popup-close{background:#fff!important;top:10px!important}
+ :is(#quote-overlay,#contract-overlay,#zc76-receipt-overlay){padding:12px!important}
+ :is(#quote-overlay,#contract-overlay,#zc76-receipt-overlay) .snote-popup-frame{width:min(838px,100%);padding-right:44px;box-sizing:border-box}
+ :is(#quote-overlay,#contract-overlay,#zc76-receipt-overlay) .snote-popup-card{width:100%!important;max-height:calc(100dvh - 24px)!important;background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;gap:0}
+ :is(#quote-overlay,#contract-overlay,#zc76-receipt-overlay) :is(.quote-toolbar,.contract-toolbar,.zc76-toolbar){display:none!important}
+ .snote-document-controls{position:absolute;right:0;top:0;z-index:100;display:flex;flex-direction:column;align-items:center;gap:6px;width:36px}
+ :is(#quote-overlay,#contract-overlay,#zc76-receipt-overlay) .snote-document-controls :is(button.snote-popup-close,button[data-document-print]){position:static!important;inset:auto!important;display:grid!important;place-items:center;width:36px!important;min-width:36px!important;height:36px!important;min-height:36px!important;margin:0!important;padding:7px!important;border:1px solid #e5e7ed!important;border-radius:7px!important;background:#fff!important;box-shadow:0 2px 8px #26344b0d!important;cursor:pointer}
+ .snote-document-controls button[data-document-print] svg{display:block;width:20px;height:20px}
+ #quote-paper{zoom:var(--quote-scale,1)!important}
+ #contract-paper{zoom:var(--contract-scale,1)!important}
+ #zc76-receipt-paper{zoom:var(--zc76-scale,1)!important}
+ /* Screen readability can grow the paper; physical A4 printing keeps its existing sizes. */
+ :is(#quote-paper,#contract-paper,#zc76-receipt-paper){height:auto!important;min-height:297mm;max-height:none!important;overflow:visible}
  #contract-paper .contract-toggle{display:inline-flex;float:right;margin:0 0 5px 10px;background:#f5f6fa;border-radius:6px}
  #contract-paper .contract-toggle button{font:500 11px/1.4 var(--snote-font-family);padding:6px 8px;min-height:28px}
 }
-@media print{[data-document-print],.contract-paper .contract-toggle{display:none!important}}
-/* Keep centered documents and their paired controls together; scrolling stays usable. */
-@media screen{
- :is(#quote-overlay,#contract-overlay,#zc76-receipt-overlay) .snote-popup-frame{width:min(794px,100%)}
- :is(#quote-overlay,#contract-overlay,#zc76-receipt-overlay) :is(.quote-toolbar,.contract-toolbar,.zc76-toolbar){padding-right:47px!important;height:46px;min-height:46px}
- :is(#quote-overlay,#contract-overlay,#zc76-receipt-overlay) button.snote-popup-close{inset:8px 8px auto auto!important;width:34px!important;height:34px!important;min-width:34px!important;min-height:34px!important}
-}
+@media print{.snote-document-controls,[data-document-print],.contract-paper .contract-toggle{display:none!important}}

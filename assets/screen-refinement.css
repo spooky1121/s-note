@@ -1,0 +1,58 @@
+/* Shared printer/disk symbols: red print outlines and the vehicle-detail blue disk. */
+@media screen{
+ .snote-action-symbol{display:inline-block;flex:none;width:20px!important;height:20px!important;fill:none!important;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;vertical-align:middle}
+ .snote-print-control .snote-action-symbol{color:#dc3945!important;stroke:#dc3945!important}
+ .snote-save-control .snote-action-symbol{color:#1762bb!important;stroke:#1762bb!important}
+ button.snote-save-control{background:#edf4ff!important;border-color:#d5e4fa!important;color:#1762bb!important}
+ .snote-action-symbol:not(:only-child){margin-right:6px}
+ .snote-save-control.snote-action-icon-only{width:40px;min-width:40px;height:40px;min-height:40px;padding:9px;border-radius:6px}
+ .snote-print-control:not([data-document-print]){background:#fff!important;border-color:#e7e8ee!important;color:#9b2834!important}
+ #snote-app #alt-content .zc182-fin-head{display:grid;grid-template-columns:auto minmax(0,1fr) 36px;align-items:center;gap:20px}
+ #snote-app #alt-content .zc182-fin-head h3{margin:0;font-size:16px;font-weight:550;letter-spacing:-.35px;white-space:nowrap}
+ #snote-app #alt-content .fin-top{padding:0;margin-bottom:12px}
+ #snote-app #alt-content .fin-total{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin:0;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none}
+ #snote-app #alt-content .fin-kpi{padding:0;min-height:0;border:0;background:transparent;box-shadow:none}
+ #snote-app #alt-content .fin-kpi .label{font-size:10px;font-weight:400;color:#9399a6;line-height:1.4;margin:0 0 3px}
+ #snote-app #alt-content .fin-kpi strong{display:block;font-size:14px;font-weight:550;color:#303a4d;line-height:1.4;letter-spacing:-.2px;white-space:nowrap}
+ #snote-app #alt-content .fin-kpi small{font-size:10px;font-weight:400;margin-left:3px}
+ #snote-app #alt-content .snote-finance-add{display:grid;place-items:center;width:36px;height:36px;min-width:36px;padding:8px;border:1px solid #e0e8ff;border-radius:7px;background:#f3f6ff;color:#315cf5;cursor:pointer}
+ #snote-app #alt-content .snote-finance-add svg{width:20px;height:20px}
+ #snote-app #alt-content .fin-lender-grid{display:grid;grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:minmax(240px,1fr);gap:8px;margin:12px 0 14px;padding-bottom:4px;overflow-x:auto}
+ #snote-app #alt-content .zc182-lender{padding:10px 12px;min-width:0;border:1px solid #eceef2;border-radius:8px;background:#fff;box-shadow:none}
+ #snote-app #alt-content .zc182-lender-h{gap:8px}
+ #snote-app #alt-content .zc182-lender-h strong{font-size:12px;font-weight:550;white-space:nowrap}
+ #snote-app #alt-content .zc182-lender-h small{font-size:9px;font-weight:400;color:#969dab;white-space:nowrap}
+ #snote-app #alt-content .zc182-lender-numbers{display:grid;grid-template-columns:1fr;gap:4px;margin-top:8px}
+ #snote-app #alt-content .zc182-lender-numbers>div{display:flex;flex-direction:row;align-items:baseline;justify-content:space-between;gap:12px;min-width:0}
+ #snote-app #alt-content .zc182-lender-numbers span{font-size:9px;font-weight:400;color:#969dab}
+ #snote-app #alt-content .zc182-lender-numbers b{font-size:12px;font-weight:500;white-space:nowrap}
+ #snote-app #alt-content .zc182-lender-numbers b small{font-size:9px;font-weight:400;margin-left:2px}
+ #snote-app #alt-content .zc182-meter{height:3px;margin:9px 0 0;background:#f0f2f6;box-shadow:none}
+ #snote-app #alt-content .zc182-lender-foot{display:none}
+ #snote-app #alt-content :is(.fin-table,.fin-lender-grid){scrollbar-width:thin;scrollbar-color:#dedfe3 transparent}
+ #snote-app #alt-content :is(.fin-table,.fin-lender-grid)::-webkit-scrollbar{width:3px;height:3px}
+ #snote-app #alt-content :is(.fin-table,.fin-lender-grid)::-webkit-scrollbar-thumb{background:#dedfe3;border-radius:8px}
+ #snote-app #alt-content :is(.fin-table,.fin-lender-grid)::-webkit-scrollbar-track{background:transparent}
+ #snote-app #alt-content .fin-table{max-height:480px;overflow:auto}
+}
+@media screen and (max-width:1000px){
+ #snote-app #alt-content .zc182-fin-head{grid-template-columns:minmax(0,1fr) 36px;gap:12px}
+ #snote-app #alt-content .zc182-fin-head .fin-total{grid-column:1/-1;grid-row:2;gap:10px}
+ #snote-app #alt-content .snote-finance-add{grid-column:2;grid-row:1}
+}
+
+@media screen{
+ #snote-app #alt-content .fin-kpi{gap:0}
+ #snote-app #alt-content .fin-kpi::before{display:none}
+ #snote-app #alt-content .zc182-lender-h strong{min-width:0;overflow:hidden;text-overflow:ellipsis}
+}
+@media screen and (max-width:700px){
+ #snote-app #alt-content .zc182-fin-head .fin-total{grid-template-columns:1fr;gap:5px}
+ #snote-app #alt-content .fin-kpi{display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:10px}
+ #snote-app #alt-content .fin-kpi .label{margin:0}
+ #snote-app #alt-content .fin-kpi strong{font-size:14px}
+}
+@media screen{
+ /* Enlarged toolbar must leave form actions clear when a browser scrolls them into view. */
+ #income-app :is(button,input,select,textarea,details>summary){scroll-margin-top:180px;scroll-margin-bottom:24px}
+}
