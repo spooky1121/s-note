@@ -76,7 +76,7 @@
     return drawn ? { version: 1, strokes } : null;
   }
 
-  function drawSignature(canvas, value) {
+  function drawSignature(canvas, value, { documentInk = false } = {}) {
     const signature = signatureValue(value);
     if (!signature || !canvas?.getContext) return false;
     const context = canvas.getContext('2d');
@@ -84,7 +84,7 @@
     const width = canvas.width, height = canvas.height;
     context.clearRect(0, 0, width, height);
     // Keep the background transparent so the original strokes sit on the document.
-    context.strokeStyle = '#233b54'; context.lineWidth = Math.max(2, width / 230);
+    context.strokeStyle = '#233b54'; context.lineWidth = Math.max(2, width / (documentInk ? 96 : 230));
     context.lineCap = 'round'; context.lineJoin = 'round';
     for (const stroke of signature.strokes) {
       context.beginPath();
@@ -560,6 +560,6 @@
   window.snoteRenderCustomerSignature = drawSignature;
   window.snoteCustomerSignatureImage = function (value) {
     const canvas = document.createElement('canvas'); canvas.width = 640; canvas.height = 240;
-    return drawSignature(canvas, value) ? canvas.toDataURL('image/png') : '';
+    return drawSignature(canvas, value, { documentInk: true }) ? canvas.toDataURL('image/png') : '';
   };
 })();

@@ -105,8 +105,8 @@ async function finish(f){assert.deepEqual(f.external,[],'No external network may
 
    await savedContract(p);await assertShown(p);await savedContract(p,'signature-car-2');await assertHidden(p,{erased:true});assert.equal(await p.locator('#ct-buyer-name').inputValue(),'서명 없는 고객');
    await savedContract(p,'signature-car-3');const second=await assertShown(p,SECOND_SIGNATURE);assert.notEqual(first,second);
-   await p.evaluate(()=>{openVehicle('signature-car-2');openContractPreview();});await assertHidden(p,{erased:true});assert.equal(await p.locator('#ct-buyer-name').inputValue(),'');
-   console.log('PASS customer-management saved contract restores its own signature; switching to unsigned/different customers or a direct empty vehicle contract cannot reuse the previous image');
+   await p.evaluate(async()=>{openVehicle('signature-car-2');openContractPreview();await snote251ContractCustomerTask;});await assertHidden(p,{erased:true});assert.equal(await p.locator('#ct-buyer-name').inputValue(),'서명 없는 고객');
+   console.log('PASS customer-management saved contract restores its own signature; switching to unsigned/different customers or a direct unsigned vehicle contract cannot reuse the previous image');
 
    await p.evaluate(async()=>{
     await closeContractPreview({discard:true});closeVehicle();navigate('users');await zc75WriteQueue;
@@ -135,12 +135,27 @@ async function finish(f){assert.deepEqual(f.external,[],'No external network may
    await finish(f);console.log('PASS account-context reset clears signature image data and leaves no external/API requests or JavaScript errors');
   }
   {
-   const f=await fixture(390),p=f.page;await saleContract(p);await assertShown(p);
+   const f=await fixture(390),p=f.page;await p.evaluate(async()=>{openVehicle('signature-car-1');openContractPreview();await snote251ContractCustomerTask;});await assertShown(p);assert.equal(await p.locator('#ct-buyer-name').inputValue(),'모바일 서명 고객');
    assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,'390px actual index must not overflow horizontally');
    const image=await p.locator('#contract-paper '+IMAGE_SELECTOR).filter({visible:true}).boundingBox();assert(image&&image.width>0&&image.height>0,'Scaled mobile contract must show the signature');
    await p.screenshot({path:path.join(ARTIFACTS,'customer-contract-signature-390.png')});
    await p.evaluate(()=>closeContractPreview({discard:true}));await assertHidden(p,{erased:true});await finish(f);
-   console.log('PASS 390px actual sales contract displays its received signature without horizontal overflow and clears it on close');
+   console.log('PASS 390px direct vehicle contract loads the saved customer and displays its received signature without horizontal overflow and clears it on close');
+  }
+  {
+   const f=await fixture(),p=f.page;
+   await p.evaluate(()=>{window.__signatureDirectRead=zc72ReadCar;zc72ReadCar=async(...args)=>{const record=await window.__signatureDirectRead(...args);await new Promise(resolve=>window.__signatureDirectRelease=resolve);return record;};openVehicle('signature-car-1');openContractPreview();});
+   await p.waitForFunction(()=>typeof window.__signatureDirectRelease==='function');
+   await p.locator('#ct-special').fill('조회 중 작성한 특약');
+   await p.evaluate(async()=>{window.__signatureDirectRelease();await snote251ContractCustomerTask;zc72ReadCar=window.__signatureDirectRead;});assert.equal(await p.locator('#ct-special').inputValue(),'조회 중 작성한 특약');await assertHidden(p);
+   await p.evaluate(async()=>{await closeContractPreview({discard:true});openVehicle('signature-car-1');openContractPreview();await snote251ContractCustomerTask;});await assertShown(p);
+   const box=await p.locator('#contract-paper [data-customer-contract-signature-image="buyer"]').boundingBox(),slot=await p.locator('#ct-buyer-name').locator('..').locator('.ct-seal-slot').boundingBox();assert(box&&slot&&box.width>50);assert(Math.abs(box.x+box.width/2-slot.x-slot.width/2)<1);assert.equal(await p.locator('#ct-buyer-name').locator('..').locator('.stamp-mark').evaluate(e=>getComputedStyle(e).visibility),'hidden');
+   await p.screenshot({path:path.join(ARTIFACTS,'direct-contract-customer-signature.png')});
+   const printBefore=await p.evaluate(()=>window.__signatureFixturePrints||0);
+   await p.evaluate(async()=>{await closeContractPreview({discard:true});window.__signatureDirectRelease=null;zc72ReadCar=async(...args)=>{const record=await window.__signatureDirectRead(...args);await new Promise(resolve=>window.__signatureDirectRelease=resolve);return record;};openVehicle('signature-car-1');openContractPreview();window.__signatureDirectPrint=printContract();});await p.waitForFunction(()=>typeof window.__signatureDirectRelease==='function');assert.equal(await p.evaluate(()=>window.__signatureFixturePrints||0),printBefore);
+   await p.evaluate(async()=>{window.__signatureDirectRelease();await window.__signatureDirectPrint;zc72ReadCar=window.__signatureDirectRead;});assert.equal(await p.evaluate(()=>window.__signatureFixturePrints),printBefore+1);await assertShown(p);
+   await p.evaluate(async()=>{await closeContractPreview({discard:true});zc72ReadCar=async(...args)=>{const record=await window.__signatureDirectRead(...args);if(args[1]==='signature-car-1')await new Promise(resolve=>window.__signatureDirectRelease=resolve);return record;};window.__signatureDirectRelease=null;openVehicle('signature-car-1');openContractPreview();});await p.waitForFunction(()=>typeof window.__signatureDirectRelease==='function');
+   await p.evaluate(async()=>{openVehicle('signature-car-2');openContractPreview();await snote251ContractCustomerTask;window.__signatureDirectRelease();zc72ReadCar=window.__signatureDirectRead;});await p.waitForTimeout(100);await assertHidden(p,{erased:true});assert.equal(await p.locator('#ct-buyer-name').inputValue(),'서명 없는 고객');await finish(f);console.log('PASS direct contract hydrates its saved customer signature exactly over (인), preserves edits during lookup and ignores an old vehicle response');
   }
   for(const width of[1440,390,320]){
    const f=await fixture(width),p=f.page;
