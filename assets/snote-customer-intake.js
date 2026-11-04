@@ -97,7 +97,7 @@
   function renderSignature(s, value, signedAt) {
     if (!isCurrent(s)) return;
     s.signature.replaceChildren();
-    const signature = signatureValue(value);
+    const signature = s.signatureCleared ? null : signatureValue(value);
     s.signature.hidden = false;
     if (!signature) { s.signature.append(node('strong', '', '고객 원제출 서명'), node('p', 'snote-sale-signature-empty', '접수된 서명이 없습니다.')); return; }
     const canvas = node('canvas', 'snote-intake-signature-canvas');
@@ -460,6 +460,7 @@
       s.baseline = formValues();
       s.applied.add(submissionKey(item)); s.appliedIds.add(item.id);
       s.unsavedImport = item.canonicalApplied !== true;
+      s.signatureCleared = false;
       renderSignature(s, item.submission?.signature, item.submission?.signedAt);
       if (automatic && item.canonicalApplied === true) delete byId('zc72-sale-modal').dataset.snoteHistoryDirty;
       message(s, automatic ? '고객이 제출한 정보를 판매 입력칸에 자동으로 채웠습니다.' : '판매 입력칸에 불러왔습니다. 내용을 확인한 뒤 고객정보 저장 또는 기존 문서 절차로 저장해 주세요.', 'success');
@@ -548,7 +549,11 @@
     if (!document.hidden) refresh(s, false);
   });
   document.addEventListener('reset', event => {
-    if (event.target?.id === 'zc72-sale-form' && state && isCurrent(state)) state.unsavedImport = true;
+    if (event.target?.id === 'zc72-sale-form') {
+      if(state&&isCurrent(state)){state.unsavedImport=true;state.signatureCleared=true;renderSignature(state,null);}
+      const panel=byId('snote-sale-signature');if(panel)panel.replaceChildren(node('strong','','고객 원제출 서명'),node('p','snote-sale-signature-empty','접수된 서명이 없습니다.'));
+      window.snote222ContractSignature?.clear();window.snote250ReceiptSignature?.clear();
+    }
   });
   window.addEventListener('pagehide', close);
   window.snoteIntakeOpen = open;

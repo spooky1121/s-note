@@ -41,10 +41,10 @@ let stateCode='';
 function render(){
   const visible=current(),message=status||(pending.length?'차종 목록에 서버 저장을 확인할 항목 '+pending.length+'건이 있습니다.':'');
   const tip=document.querySelector('#overlay .formtip');
-  if(tip)tip.textContent=bridge()?.hasSession()?'차량은 서버에 저장하며, 직접 입력한 분류는 상사 공용 차종 목록에 추가합니다. 저장 상태를 확인해 주세요.':'로컬 예시 모드: 차량과 직접 입력 분류는 이 브라우저에만 저장합니다.';
+  if(tip){tip.textContent='';tip.hidden=true;}
   for(const item of notices){
     item.box.hidden=!visible||(!message&&!item.box.id.endsWith('-inline'));
-    if(visible&&!message&&item.box.id.endsWith('-inline'))item.text.textContent='직접 입력한 분류는 차량 저장 후 상사 공용 목록에 추가됩니다.';
+    if(visible&&!message&&item.box.id.endsWith('-inline')){item.box.hidden=true;item.text.textContent='';}
     else item.text.textContent=message;
     item.box.dataset.state=stateCode;
     item.retry.hidden=!pending.length&&stateCode!=='SETUP_REQUIRED'&&stateCode!=='NETWORK';
