@@ -38,3 +38,5 @@ CHROMIUM_PATH=/usr/bin/chromium node tests/document-actions.browser.cjs
 새 모바일 검사는 실제 index와 기존 합성 인증/DB/HTTP fixture를 사용한다. 320·390·430px에서 역할별 실제 메뉴, 입력/라벨 가독성, 화면 가로 넘침, 월결산·소득정산 iframe, 메뉴 이동·계산기·프로필 버튼을 확인한다. 고객·차량·직원·날씨 자료는 가상이며 실제 운영 계정이나 문자 발송을 사용하지 않는다.
 
 최종 통과 수와 배포 커밋은 `PROJECT_HISTORY.md`의 v2.58 기록에 남긴다. Chromium 화면 검사는 실제 iPhone/Safari 및 운영 로그인 화면의 직접 검증과 구분한다.
+
+배포 앱: `92e3e84983ba4f30f9dc36815490fed665add6df`. Cloudflare Pages: s-note 체크 `126483991511` 성공, 2026-11-04 17:55:42 KST. 서비스 https://s-note.pages.dev/?release=2.58 , 배포 https://0a4db6d5.s-note.pages.dev . 운영 주소 직접 GET은403으로 차단돼 화면 직접 검증과 구분한다.
