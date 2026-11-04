@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.60">
+<html lang="ko" data-snote-release="2.61">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -3192,6 +3192,9 @@ button, input, select, textarea { font-family: inherit; }
 <link rel="stylesheet" href="assets/mobile-workspace.css?v=2.59">
 <link rel="stylesheet" href="assets/screen-refinement.css?v=2.59">
 <link rel="stylesheet" href="assets/vehicle-sharing.css?v=2.60">
+<link rel="stylesheet" href="assets/settings-refinement.css?v=2.61">
+<script src="assets/settings-refinement.js?v=2.61" defer></script>
+<script src="assets/vehicle-notifications.js?v=2.61" defer></script>
 </head>
 <body class="snote-typography">
 
@@ -3233,7 +3236,7 @@ button, input, select, textarea { font-family: inherit; }
         <button type="button" class="profile topbar-profile" id="snote-profile-trigger" aria-haspopup="menu" aria-controls="snote-profile-menu" aria-expanded="false" onclick="snoteToggleProfileMenu()"><span id="profile-avatar" hidden></span><span class="profile-detail"><span class="pname" id="profile-name">내 프로필</span><span id="profile-role" hidden></span></span><svg class="snote-profile-chevron" viewBox="0 0 20 20" aria-hidden="true"><path d="m5 8 5 5 5-5"/></svg></button>
         <div class="snote-profile-menu" id="snote-profile-menu" role="menu" aria-labelledby="snote-profile-trigger" hidden>
           <button type="button" role="menuitem" tabindex="-1" onclick="snoteOpenProfileSettings()">프로필 설정</button>
-          <button type="button" role="menuitem" tabindex="-1" onclick="snoteCloseProfileMenu(true);toast('알림 기능은 추후 구현 예정입니다.')">알림</button>
+          <button type="button" role="menuitem" tabindex="-1" id="snote-profile-notifications" onclick="snoteCloseProfileMenu(true);document.getElementById('snote-notifications-button').click()">알림</button>
           <button type="button" role="menuitem" tabindex="-1" class="snote-profile-logout" onclick="snoteCloseProfileMenu(true);logout()">로그아웃</button>
         </div>
       </div>
@@ -4363,11 +4366,11 @@ function marginTrendSVG(series){const width=690,height=276,left=47,right=14,top=
  const dots=series.map((m,i)=>{const px=x(i),py=y(m.margin),lastIndex=i===series.length-1;return `<g><circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="${lastIndex?6:4}" fill="${m.margin<0?'#d85b68':'#22ad83'}" stroke="#fff" stroke-width="${lastIndex?3:2}"/><title>${m.label} 마진 ${num(m.margin)}원 / 판매완료 ${m.count}대</title></g>`}).join('');
  const labels=series.map((m,i)=>`<text x="${x(i).toFixed(1)}" y="${height-15}" fill="${i===series.length-1?'#315efb':'#91a0b0'}" font-size="12" font-weight="${i===series.length-1?'800':'600'}" text-anchor="middle">${m.label}</text>`).join('');
  const lastMargin=series.at(-1)?.margin||0, lx=last[0],ly=last[1],tagY=Math.min(height-bottom-14,Math.max(top+8,ly-15));
- return `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="최근 6개월 월별 마진 그래프"><defs><linearGradient id="margin-gradient-115" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4cc99a" stop-opacity=".20"/><stop offset="100%" stop-color="#4cc99a" stop-opacity=".015"/></linearGradient></defs>${grid}<line x1="${left}" y1="${baseline.toFixed(1)}" x2="${width-right}" y2="${baseline.toFixed(1)}" stroke="#bbc9d9" stroke-width="1.3"/><path d="${area}" fill="url(#margin-gradient-115)"/><path d="${curve}" fill="none" stroke="#20aa83" stroke-width="3.8" stroke-linejoin="round" stroke-linecap="round"/>${dots}${labels}<g><rect x="${(lx-90).toFixed(1)}" y="${(tagY-25).toFixed(1)}" width="91" height="24" rx="9" fill="#e9f9f3" stroke="#caefdf"/><text x="${(lx-44.5).toFixed(1)}" y="${(tagY-9).toFixed(1)}" text-anchor="middle" fill="#158d6b" font-size="11.2" font-weight="850">${num(lastMargin)}원</text></g></svg>`;
+ return `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="최근 6개월 월별 마진 그래프"><defs><linearGradient id="margin-gradient-115" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4cc99a" stop-opacity=".20"/><stop offset="100%" stop-color="#4cc99a" stop-opacity=".015"/></linearGradient></defs>${grid}<line x1="${left}" y1="${baseline.toFixed(1)}" x2="${width-right}" y2="${baseline.toFixed(1)}" stroke="#bbc9d9" stroke-width="1.3"/><path d="${area}" fill="url(#margin-gradient-115)"/><path d="${curve}" fill="none" stroke="#20aa83" stroke-width="3.8" stroke-linejoin="round" stroke-linecap="round"/>${dots}${labels}${series.map((m,i)=>`<g role="img" tabindex="0" data-tooltip="${esc(m.label)} · ${num(m.margin)}원" aria-label="${esc(m.label)} 마진 ${num(m.margin)}원"><rect x="${Math.max(left,x(i)-chartW/10)}" y="${top}" width="${chartW/5}" height="${chartH+bottom}" fill="transparent"/></g>`).join('')}<g><rect x="${(lx-90).toFixed(1)}" y="${(tagY-25).toFixed(1)}" width="91" height="24" rx="9" fill="#e9f9f3" stroke="#caefdf"/><text x="${(lx-44.5).toFixed(1)}" y="${(tagY-9).toFixed(1)}" text-anchor="middle" fill="#158d6b" font-size="11.2" font-weight="850">${num(lastMargin)}원</text></g></svg>`;
 }
 function renderDashboardAnalytics(){const wrap=$('dashboard-analytics');if(!wrap)return;if(isAccountant()){wrap.innerHTML='';return}const s=monthlyDashboardData();
  const compare=(title,date,period,delta)=>`<section class="profit-compare"><div class="profit-compare-label">${title}<span>${date}</span></div><strong class="profit-compare-value">${num(period.margin)}<small>원</small></strong><span class="profit-compare-delta ${delta.tone}">${delta.label}</span><p class="profit-compare-desc">${delta.description}</p></section>`;
- wrap.innerHTML=`<section class="panel"><div class="panel-head"><div><h2>이번달 마진 리포트</h2><p>이번 달 판매된 차량의 마진과 과거 실적을 비교합니다.</p></div><button class="btn-ghost" type="button" onclick="navigate('finance')">수익 상세 보기</button></div>
+ wrap.innerHTML=`<section class="panel"><div class="panel-head"><div><h2>이번달 마진 리포트</h2></div><button class="btn-ghost" type="button" onclick="navigate('finance')">수익 상세 보기</button></div>
  <div class="analytics-shell"><div class="profit-overview"><div class="profit-hero"><div class="profit-hero-label"><span>이번달 마진</span><span class="profit-month-tag">${s.currentLabel}</span></div><div class="profit-main-number">${num(s.current.margin)}<small>원</small></div><div class="profit-subtext">판매완료 ${s.current.count}대 · 매입가와 입력된 부대비용을 차감한 추정치</div></div>
  <div class="profit-compare-grid">${compare('전달 대비',s.previousLabel,s.previous,s.deltaMonth)}${compare('작년 동월 대비',s.yearLabel,s.lastYear,s.deltaYear)}</div><p class="profit-note">※ 실적은 판매 완료일 기준이며, 마진에는 입력된 비용(소득세 항목 포함)을 반영합니다. 실제 회계상 순이익과 다를 수 있습니다.</p></div>
  <div class="profit-chart-card"><div class="profit-chart-head"><div><h3>최근 6개월 마진 추이</h3><p>판매완료 차량 기준 · 월별 추정 마진 (원)</p></div><span class="profit-chart-tag">6개월 비교</span></div><div class="profit-svg-wrap">${marginTrendSVG(s.series)}</div><div class="profit-chart-foot"><span>이번달 판매 <b>${s.soldCount}대</b></span><span>이번달 매입 <b>${s.purchasedCount}대</b></span><span>재고 <b>${cars.filter(c=>c.status!=='판매완료').length}대</b></span></div></div></div></section>`;
@@ -4817,7 +4820,7 @@ async function zc157AddDealer(event){
  finally{btn.disabled=false}
 }
 function zc157FormatLimit(input){const v=input.value.replace(/[^0-9]/g,'').slice(0,13);input.value=v?Number(v).toLocaleString('ko-KR'):''}
-function zc157ParseLimit(input){const str=String(input||'').replaceAll(',','');return /^\d{1,9}$/.test(str)?Number(str):NaN}
+function zc157ParseLimit(input){const str=String(input||'').replaceAll(',','');return /^\d{1,13}$/.test(str)?Number(str):NaN}
 function zc157SaveLimit(button){
  if(!isFinanceManager())return;
  const row=button.closest('.zc157-finance-row'),input=row?.querySelector('input[data-finance]'),name=input?.dataset.finance,limit=zc157ParseLimit(input?.value);
@@ -5250,10 +5253,10 @@ function zc182OpenFinance(){
  const aliases=window.zc86Cloud?.membersAliases?.()||null;
  const dealers=dealerAccounts.filter(a=>a.role!=='accountant'&&(!aliases||aliases.includes(a.username)));
  $('zc182-dealer').innerHTML='<option value="">담당 딜러 선택</option>'+dealers.map(a=>`<option value="${esc(a.username)}">${esc(a.name||'직원')}</option>`).join('');
- overlay.hidden=false;document.body.classList.add('zc182-finance-open');zc182CheckMatch();$('zc182-model').focus();
+ window.snoteDrawerMotion?.cancel(overlay);overlay.dataset.financeView=String(Number(overlay.dataset.financeView||0)+1);overlay.hidden=false;document.body.classList.add('zc182-finance-open');zc182CheckMatch();$('zc182-model').focus();
 }
 document.addEventListener('keydown',function(event){if(event.key==='Escape'&&!$('zc182-finance-overlay')?.hidden){event.preventDefault();event.stopImmediatePropagation();zc182CloseFinance()}} ,true);
-function zc182CloseFinance(){const el=$('zc182-finance-overlay');if(el)el.hidden=true;document.body.classList.remove('zc182-finance-open')}
+function zc182CloseFinance(){const el=$('zc182-finance-overlay');if(!el||el.hidden)return;const view=el.dataset.financeView;const finish=()=>{el.hidden=true;document.body.classList.remove('zc182-finance-open');};return window.snoteDrawerMotion?.close(el,finish,()=>!el.hidden&&el.dataset.financeView===view)||finish();}
 function zc182CheckMatch(){
  const message=$('zc182-match');if(!message||$('zc182-finance-overlay')?.hidden)return;
  const plate=zc182Plate($('zc182-plate')?.value),dealerId=$('zc182-dealer')?.value;
@@ -9128,34 +9131,31 @@ function snoteRenderAdminSettings(){
  byId('snote90-company-address').addEventListener('input',e=>{if(e.isTrusted)byId('snote90-company-postcode').value='';});
  snoteLoadCompanyProfile();
  const oldMount=byId('zc86-invite-area');byId('snote90-invite-mount').appendChild(oldMount);oldMount.hidden=false;
+ snote90LenderDraft=ACC44_LENDER_LIMITS.map(row=>[...row]);
  byId('snote90-lender-add').addEventListener('click',()=>{
+  snote90CaptureLenders();
   const name=byId('snote90-lender-name').value.trim();const limit=zc157ParseLimit(byId('snote90-lender-limit').value);
   if(!name||name.length>45||!Number.isSafeInteger(limit)||limit<0||limit>1000000000000)return alert('금융사 이름과 한도 금액을 확인해주세요.');
-  if(INVENTORY_LENDERS.includes(name))return alert('이미 등록된 금융사입니다.');
-  if(INVENTORY_LENDERS.length>=30)return alert('금융사는 최대 30곳까지 가능합니다.');
-  if(persistFinanceCompanies([...ACC44_LENDER_LIMITS,[name,limit,0]])){snote90RenderLenders();byId('snote90-lender-name').value='';byId('snote90-lender-limit').value='';}
+  if(snote90LenderDraft.some(row=>row[0]===name))return alert('이미 등록된 금융사입니다.');
+  if(snote90LenderDraft.length>=30)return alert('금융사는 최대 30곳까지 가능합니다.');
+  snote90LenderDraft.push([name,limit,0]);snote90RenderLenders();byId('snote90-lender-name').value='';byId('snote90-lender-limit').value='';
  });
  snote90RenderLenders();snote203FillBank();snote203LoadAssets().catch(e=>console.warn('상사 이미지 미리보기',e));snote90RefreshMembers().catch(e=>byId('snote90-members').textContent='직원 조회 실패: '+errMsg(e));
 }
+let snote90LenderDraft=[];
+function snote90CaptureLenders(){for(const row of byId('snote90-lenders')?.querySelectorAll('.snote203-lender')||[]){const entry=snote90LenderDraft.find(x=>x[0]===row.dataset.name);if(entry){entry[1]=row.querySelector('[data-limit]').value;entry[2]=row.querySelector('[data-rate]').value;}}}
 function snote90RenderLenders(){
  const host=byId('snote90-lenders');if(!host)return;host.replaceChildren();
- for(const [name,limit,rate=null] of ACC44_LENDER_LIMITS){
-  const row=document.createElement('div');row.className='snote90-lender snote203-lender';
+ for(const [name,limit,rate=null] of snote90LenderDraft){
+  const row=document.createElement('div');row.className='snote90-lender snote203-lender';row.dataset.name=name;
   const strong=document.createElement('strong');strong.textContent=name;
-  const limitLabel=document.createElement('label');limitLabel.textContent='재고한도 (원)';
-  const input=document.createElement('input');input.type='text';input.inputMode='numeric';input.value=Number(limit).toLocaleString('ko-KR');input.setAttribute('aria-label',name+' 재고한도 (원)');limitLabel.append(input);
-  const rateLabel=document.createElement('label');rateLabel.textContent='재고 연이율 (%)';
-  const interest=document.createElement('input');interest.type='number';interest.step='0.01';interest.min='0';interest.max='100';interest.value=rate==null?'':String(rate);interest.setAttribute('aria-label',name+' 재고 연이율 (%)');rateLabel.append(interest);
-  const save=document.createElement('button');save.textContent='저장';save.type='button';save.className='snote203-btn-primary';save.addEventListener('click',()=>{
-   const n=zc157ParseLimit(input.value),r=Number(interest.value);
-   if(!Number.isSafeInteger(n)||n<0||!interest.value.trim()||!Number.isFinite(r)||r<0||r>100)return alert('재고한도와 연이율(0~100%)을 확인해주세요.');
-   if(snote203SaveLender(name,n,Math.round(r*100)/100)){snote90RenderLenders();toast(name+' 재고한도·연이율을 저장했습니다.');}
-  });
-  const del=document.createElement('button');del.type='button';del.textContent='삭제';del.className='snote90-danger';del.addEventListener('click',()=>{
-   if(cars.some(c=>c.inventoryLender===name)||INVENTORY_LENDERS.length<=1)return alert('사용 중이거나 마지막 금융사는 삭제할 수 없습니다.');
-   if(confirm(name+' 금융사를 삭제할까요?')&&persistFinanceCompanies(ACC44_LENDER_LIMITS.filter(x=>x[0]!==name)))snote90RenderLenders();
-  });row.append(strong,limitLabel,rateLabel,save,del);host.appendChild(row);
+  const limitLabel=document.createElement('label');limitLabel.textContent='한도';const input=document.createElement('input');input.type='text';input.inputMode='numeric';input.dataset.limit='';input.value=typeof limit==='number'?limit.toLocaleString('ko-KR'):limit;input.setAttribute('aria-label',name+' 재고한도 (원)');input.oninput=()=>{input.value=input.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',');};limitLabel.append(input);
+  const rateLabel=document.createElement('label');rateLabel.textContent='연이율 (%)';const interest=document.createElement('input');interest.type='number';interest.step='0.01';interest.min='0';interest.max='100';interest.dataset.rate='';interest.value=rate==null?'':String(rate);interest.setAttribute('aria-label',name+' 재고 연이율 (%)');rateLabel.append(interest);
+  const del=document.createElement('button');del.type='button';del.textContent='−';del.className='snote90-danger';del.setAttribute('aria-label',name+' 금융사 삭제');del.dataset.settingsSymbol='minus';del.onclick=()=>{snote90CaptureLenders();if(cars.some(c=>c.inventoryLender===name)||snote90LenderDraft.length<=1)return alert('사용 중이거나 마지막 금융사는 삭제할 수 없습니다.');if(confirm(name+' 금융사를 목록에서 삭제할까요? 아래 저장 버튼을 눌러 적용합니다.')){snote90LenderDraft=snote90LenderDraft.filter(x=>x[0]!==name);snote90RenderLenders();}};
+  row.append(strong,limitLabel,rateLabel,del);host.append(row);
  }
+ let save=byId('snote90-lenders-save');if(!save){const footer=document.createElement('div');footer.className='snote-settings-footer';save=document.createElement('button');save.id='snote90-lenders-save';save.type='button';save.textContent='금융사 설정 저장';footer.append(save);host.parentElement.append(footer);}
+ save.onclick=async()=>{snote90CaptureLenders();const next=snote90LenderDraft.map(([name,limit,rate])=>[name,zc157ParseLimit(limit),String(rate??'').trim()?Number(rate):null]);if(next.some(x=>!Number.isSafeInteger(x[1])||x[1]<0||x[1]>1000000000000||x[2]===null||!Number.isFinite(x[2])||x[2]<0||x[2]>100))return alert('모든 금융사의 한도와 연이율(0~100%)을 확인해주세요.');const actor=S.user?.id,company=S.company?.id;save.disabled=true;try{if(!persistFinanceCompanies(next))throw Error('설정 저장 실패');const result=await flush();if(S.user?.id!==actor||S.company?.id!==company)return;if(result?.ok!==true)throw Error('서버 저장 실패');snote90LenderDraft=next;toast('금융사 설정을 모두 저장했습니다.');}catch(e){toast('서버 저장을 확인하지 못했습니다. 입력을 유지하며 다시 저장할 수 있습니다.');}finally{save.disabled=false;}};
 }
 function snote203FillBank(){
  const cfg=snote203PrestockConfig();
@@ -9298,7 +9298,7 @@ async function snote90RefreshMembers(){
  const host=byId('snote90-members');if(!host||!isSnoteAdmin())return;
  const r=await S.client.from('zc_members').select('user_id,display_name,role,active').eq('company_id',S.company.id).order('joined_at',{ascending:true});
  if(r.error)throw r.error;host.replaceChildren();
- for(const m of r.data||[]){
+ for(const m of (r.data||[]).filter(member=>member.active!==false)){
   const row=document.createElement('div');row.className='snote90-member';
   const label=document.createElement('label');label.textContent='직원 이름';
   const input=document.createElement('input');input.value=m.display_name||'';input.maxLength=40;label.appendChild(input);
@@ -9312,7 +9312,7 @@ async function snote90RefreshMembers(){
     if(m.user_id===S.user.id){currentUser.name=name;byId('zc86-account').textContent=name;byId('profile-name').textContent=name+' · 관리자'}
     renderCars();renderAccountantBar();alert('직원 이름 저장 완료');
    }catch(e){alert('이름 변경 실패: '+errMsg(e))}
-  });row.append(label,role,save);host.appendChild(row);
+  });const remove=document.createElement('button');remove.type='button';remove.className='snote90-danger';remove.dataset.settingsSymbol='minus';remove.setAttribute('aria-label','직원 삭제');remove.textContent='−';remove.disabled=m.user_id===S.user.id||m.role==='admin'||!m.active;remove.onclick=async()=>{if(!confirm((m.display_name||'직원')+'님의 접근을 비활성화할까요? 기존 차량과 기록은 보존합니다.'))return;remove.disabled=true;try{const result=await S.client.rpc('zc_manage_member',{p_target:m.user_id,p_role:m.role,p_active:false});if(result.error)throw result.error;const member=S.members.find(x=>x.user_id===m.user_id);if(member)member.active=false;await snote90RefreshMembers();}catch(e){alert('직원 삭제 실패: '+errMsg(e));remove.disabled=false;}};row.append(label,role,save,remove);host.appendChild(row);
  }
 }
 
@@ -9447,6 +9447,7 @@ window.snoteVehicleShareBridge={
  owner(car){return S.members.find(m=>ownerAlias(m.user_id)===car?.ownerId)?.user_id||null;},
  async rpc(c,args){if(!this.current(c))throw Error('로그인 정보가 변경되었습니다.');const result=await S.client.rpc('snote_vehicle_share',args);if(!this.current(c))throw Error('로그인 정보가 변경되었습니다.');if(result.error)throw result.error;return result.data;},
  async flush(c){if(!this.current(c))throw Error('로그인 정보가 변경되었습니다.');const r=await flush();if(!this.current(c)||r?.ok!==true||S.conflict)throw Error('차량의 서버 저장 상태를 먼저 확인해 주세요.');},
+ async notification(c,args){if(!this.current(c))throw Error('CONTEXT_CHANGED');const r=await S.client.rpc('snote_vehicle_notifications',args);if(!this.current(c))throw Error('CONTEXT_CHANGED');if(r.error)throw r.error;return r.data;},
  async file(c,path){if(!this.current(c))throw Error('로그인 정보가 변경되었습니다.');const r=await S.client.storage.from('zc-vehicle-private').download(path);if(!this.current(c))throw Error('로그인 정보가 변경되었습니다.');if(r.error)throw r.error;return r.data;}
 };
 window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;const {data,error}=await S.client.auth.getSession();return error?null:data?.session?.access_token||null;},verifyPassword:async pass=>{if(!S.client||!S.user?.email)return false;const {data,error}=await S.client.auth.signInWithPassword({email:S.user.email,password:pass});return !error&&data?.user?.id===S.user.id;},get conflict(){return S.conflict},removeCarMedia:snote90RemoveCarMedia,membersAliases(){return S.members.map(m=>ownerAlias(m.user_id));},get isAdmin(){return S.members.some(m=>m.user_id===S.user?.id&&m.active&&m.role==='admin')},get ready(){return S.ready},get rrnEnabled(){return !!S.company?.rrn_enabled},get company(){return S.company?.name||''},get companyProfile(){if(!S.ready||!S.company)return null;return Object.fromEntries(['name','business_number','business_phone','representative_name','business_postcode','business_address','business_address_detail'].map(key=>[key,S.company[key]||'']));},flush,reload,signOut};
@@ -9459,10 +9460,10 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 <script type="module" src="assets/vehicle-taxonomy-ui.js?v=2.60"></script>
 <script type="module" src="assets/income-settlement-parent.js?v=2.41"></script>
 <script src="assets/vehicle-sharing.js?v=2.60" defer></script>
-<script src="assets/release-info.js?v=2.60" defer></script>
+<script src="assets/release-info.js?v=2.61" defer></script>
 <script src="assets/snote-encar-link.js?v=2.47" defer></script>
 <script src="assets/document-mms.js?v=2.44" defer></script>
-<script src="assets/workspace-polish.js?v=2.44" defer></script>
+<script src="assets/workspace-polish.js?v=2.61" defer></script>
 <script src="assets/list-sort.js?v=2.57" defer></script>
 <script src="assets/workspace-refine.js?v=2.54" defer></script>
 <script src="assets/drawer-motion.js?v=2.48" defer></script>

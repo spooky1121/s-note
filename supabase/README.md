@@ -1,5 +1,7 @@
 # 상사정보 저장 기능 적용
 
+공유 차량 변경 알림은 [알림 안내](../docs/vehicle-notifications.md)의 두 추가 마이그레이션을 사용한다. 운영 DB 적용과 권한 검증을 완료했다.
+
 딜러 간 차량 공유는 [공유 안내](../docs/vehicle-sharing.md)와 [공유 SQL](migrations/20261104153021_vehicle_scoped_dealer_sharing.sql)을 사용한다. 이 작업에서는 운영 DB에 적용 후 권한 검증까지 완료했다.
 
 휴대폰의 단계별 입력·주민번호·서명·자동 반영에는 [0004 SQL](migrations/202611010004_customer_intake_wizard.sql)을 적용합니다. [사용·적용 안내](../docs/customer-intake-wizard.md)를 확인하세요.
