@@ -14,8 +14,6 @@
 /* Keep centered documents and their paired controls together; scrolling stays usable. */
 @media screen{
  :is(#quote-overlay,#contract-overlay,#zc76-receipt-overlay) .snote-popup-frame{width:min(794px,100%)}
- :is(#quote-overlay,#contract-overlay,#zc76-receipt-overlay),:is(#quote-overlay,#contract-overlay,#zc76-receipt-overlay) .snote-popup-card{scrollbar-width:none;-ms-overflow-style:none}
- :is(#quote-overlay,#contract-overlay,#zc76-receipt-overlay)::-webkit-scrollbar,:is(#quote-overlay,#contract-overlay,#zc76-receipt-overlay) .snote-popup-card::-webkit-scrollbar{display:none;width:0;height:0}
  :is(#quote-overlay,#contract-overlay,#zc76-receipt-overlay) :is(.quote-toolbar,.contract-toolbar,.zc76-toolbar){padding-right:47px!important;height:46px;min-height:46px}
  :is(#quote-overlay,#contract-overlay,#zc76-receipt-overlay) button.snote-popup-close{inset:8px 8px auto auto!important;width:34px!important;height:34px!important;min-width:34px!important;min-height:34px!important}
 }

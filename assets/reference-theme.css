@@ -162,3 +162,20 @@
  #snote-app .profit-hero :is(.profit-hero-label,.profit-main-number,.profit-subtext,.profit-month-tag){color:#46516a;font-weight:500}
  #snote-app .profit-hero .profit-month-tag{border-color:#e1e3f1;background:#fff}
 }
+/* Popup scroll areas share a subtle grey thumb, including embedded document views. */
+@media screen{
+ :is(.overlay,.snote-popup-overlay,[role="dialog"],dialog,#snote-calculator-panel),
+ :is(.overlay,.snote-popup-overlay,[role="dialog"],dialog,#snote-calculator-panel) *,
+ html[data-embedded="true"],html[data-embedded="true"] *{
+  scrollbar-width:thin!important;scrollbar-color:#c5c5c5 transparent!important;
+ }
+ :is(.overlay,.snote-popup-overlay,[role="dialog"],dialog,#snote-calculator-panel)::-webkit-scrollbar,
+ :is(.overlay,.snote-popup-overlay,[role="dialog"],dialog,#snote-calculator-panel) *::-webkit-scrollbar,
+ html[data-embedded="true"]::-webkit-scrollbar,html[data-embedded="true"] *::-webkit-scrollbar{display:block!important;width:4px!important;height:4px!important}
+ :is(.overlay,.snote-popup-overlay,[role="dialog"],dialog,#snote-calculator-panel)::-webkit-scrollbar-thumb,
+ :is(.overlay,.snote-popup-overlay,[role="dialog"],dialog,#snote-calculator-panel) *::-webkit-scrollbar-thumb,
+ html[data-embedded="true"]::-webkit-scrollbar-thumb,html[data-embedded="true"] *::-webkit-scrollbar-thumb{background:#c5c5c5!important;border:0!important;border-radius:8px!important}
+ :is(.overlay,.snote-popup-overlay,[role="dialog"],dialog,#snote-calculator-panel)::-webkit-scrollbar-track,
+ :is(.overlay,.snote-popup-overlay,[role="dialog"],dialog,#snote-calculator-panel) *::-webkit-scrollbar-track,
+ html[data-embedded="true"]::-webkit-scrollbar-track,html[data-embedded="true"] *::-webkit-scrollbar-track{background:transparent!important}
+}
