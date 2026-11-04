@@ -1,3 +1,4 @@
+import {formatNumberInput} from './number-format.js?v=2.49';
 if(window.parent!==window)document.documentElement.dataset.embedded='true';
 import {TEMPLATE,createDocument,normalizeDocument,calculate,parseMoney,draftDocument,invoiceCostSuggestions} from './income-settlement-model.js?v=2.41';
 import {buildForm} from './income-settlement-view.js?v=2.41';
@@ -45,7 +46,7 @@ function renderCalculation(){
 }
 function inputChanged(id,input){
   if(!canEdit())return;
-  try{let value=input.value;const kind=TEMPLATE.inputs[id].kind;if(kind==='money')value=parseMoney(value);if(kind==='date'){const candidate=copy(state.document);candidate.cells[id]=value;value=normalizeDocument(candidate).cells[id];}if(kind==='identity'){const digits=value.replace(/[\s-]/g,'');if(digits&&!/^\d{13}$/.test(digits))throw new Error('주민등록번호는 숫자 13자리 또는 빈칸으로 입력해 주세요.');value=digits;}state.document.cells[id]=value;invalid.delete(id);input.removeAttribute('aria-invalid');if(!state.document.overrides.includes(id))state.document.overrides.push(id);if(id==='D10'||id==='D11'){state.document.purchaseKind='manual';$('income-purchase-kind').value='manual';}}
+  try{const kind=TEMPLATE.inputs[id].kind;if(kind==='money')formatNumberInput(input);let value=input.value;if(kind==='money')value=parseMoney(value);if(kind==='date'){const candidate=copy(state.document);candidate.cells[id]=value;value=normalizeDocument(candidate).cells[id];}if(kind==='identity'){const digits=value.replace(/[\s-]/g,'');if(digits&&!/^\d{13}$/.test(digits))throw new Error('주민등록번호는 숫자 13자리 또는 빈칸으로 입력해 주세요.');value=digits;}state.document.cells[id]=value;if(kind==='money')formatNumberInput(input);invalid.delete(id);input.removeAttribute('aria-invalid');if(!state.document.overrides.includes(id))state.document.overrides.push(id);if(id==='D10'||id==='D11'){state.document.purchaseKind='manual';$('income-purchase-kind').value='manual';}}
   catch(error){invalid.set(id,error.message||'입력값을 확인해 주세요.');input.setAttribute('aria-invalid','true');}
   state.seq++;state.dirty=true;invalid.delete('_calculation');renderCalculation();status(invalid.size?'입력 확인 필요':'미저장 작성본',invalid.size?'error':'');if(invalid.size)message([...invalid.values()][0],'error');else message('작성 중인 내용은 아직 서버에 저장되지 않았습니다.');queueDraft();updateControls();announceDirty();
 }

@@ -1,0 +1,6 @@
+const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs');
+const modulePromise=import('data:text/javascript;base64,'+fs.readFileSync(require('node:path').join(__dirname,'../assets/number-format.js')).toString('base64'));
+function input(value,start=value.length,end=start){return{value,selectionStart:start,selectionEnd:end,listeners:{},addEventListener(name,fn){this.listeners[name]=fn},setSelectionRange(a,b){this.selectionStart=a;this.selectionEnd=b}}}
+test('groups without Number precision loss and keeps decimal/sign text',async()=>{const{formatNumberInput:f}=await modulePromise;for(const[a,b]of[['12345678901234567890','12,345,678,901,234,567,890'],['-12345.60','-12,345.60'],['1234.','1,234.']]){const el=input(a);f(el);assert.equal(el.value,b);assert.equal(el.selectionStart,b.length)}});
+test('re-groups ongoing typing and preserves digit-relative middle selection',async()=>{const{formatNumberInput:f}=await modulePromise;const el=input('1,2345',4,5);f(el);assert.equal(el.value,'12,345');assert.equal(el.selectionStart,4);assert.equal(el.selectionEnd,5)});
+test('leaves invalid and unfinished values for existing validation',async()=>{const{formatNumberInput:f}=await modulePromise;for(const value of['','-','12x3','1.2.3']){const el=input(value);f(el);assert.equal(el.value,value)}});

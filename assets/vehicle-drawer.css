@@ -62,3 +62,15 @@
  #overlay button.snote-popup-close,#zc-auto-reg-overlay button.snote-popup-close{inset:calc(12px + env(safe-area-inset-top,0px)) 10px auto auto!important}
 }
 @media(prefers-reduced-motion:reduce){#overlay.open .snote-popup-frame,#zc-auto-reg-overlay:not([hidden]) .snote-popup-frame{animation:none!important}:is(#overlay,#vehicle-overlay,#zc-auto-reg-overlay){transition:none!important}#vehicle-document-share::after{transition:none!important}}
+
+/* Pin the first painted registration frame to the right; focus must not scroll the overlay. */
+@media screen{
+ #overlay,#zc-auto-reg-overlay{overflow:clip!important}
+ #overlay .snote-popup-frame,#zc-auto-reg-overlay .snote-popup-frame{position:fixed!important;inset:0 0 0 auto!important}
+ #overlay.open .snote-popup-frame,#zc-auto-reg-overlay:not([hidden]) .snote-popup-frame{animation-fill-mode:both}
+}
+.snote-sale-complete{position:fixed;inset:0;z-index:100000;display:grid;place-items:center;background:#26344b30;backdrop-filter:blur(5px)}
+.snote-sale-complete>div{display:flex;flex-direction:column;align-items:center;gap:12px;padding:36px 52px;border-radius:20px;background:#fff;box-shadow:0 20px 70px #19243a25;animation:snote-complete-in .28s ease both}
+.snote-sale-complete svg{width:68px;height:68px;fill:none;stroke:#35ad85;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}.snote-sale-complete path{stroke-dasharray:50;stroke-dashoffset:50;animation:snote-complete-check .5s .15s ease forwards}.snote-sale-complete strong{font-size:21px;color:#26344b}.snote-sale-complete span{font-size:13px;color:#8992a2}
+@keyframes snote-complete-in{from{opacity:0;transform:translateY(10px) scale(.96)}to{opacity:1;transform:none}}@keyframes snote-complete-check{to{stroke-dashoffset:0}}
+@media(prefers-reduced-motion:reduce){.snote-sale-complete>div,.snote-sale-complete path{animation:none;stroke-dashoffset:0}}

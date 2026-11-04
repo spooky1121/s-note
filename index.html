@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.48">
+<html lang="ko" data-snote-release="2.49">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -3183,7 +3183,7 @@ button, input, select, textarea { font-family: inherit; }
 <link rel="stylesheet" href="assets/workspace-polish.css?v=2.44">
 <link rel="stylesheet" href="assets/reference-theme.css?v=2.44">
 <link rel="stylesheet" href="assets/document-actions.css?v=2.46.1">
-<link rel="stylesheet" href="assets/vehicle-drawer.css?v=2.48">
+<link rel="stylesheet" href="assets/vehicle-drawer.css?v=2.49">
 <link rel="stylesheet" href="assets/workspace-refine.css?v=2.47">
 </head>
 <body class="snote-typography">
@@ -3267,7 +3267,7 @@ button, input, select, textarea { font-family: inherit; }
 <div class="zc-register-visual" id="new-visual-preview" aria-live="polite"></div>
 <div id="new-grade-custom-wrapper" hidden><input id="new-grade-custom" type="hidden"></div>
 <div class="formitem wide" id="manual-model-wrapper" style="display:none"><label for="new-model">등록증에 표시된 차량명 *</label><input id="new-model" oninput="updateNewCarPreview()" placeholder="예: 제조사 모델명 세대 등급" maxlength="100" /></div>
-<div class="formitem"><label for="new-plate">차량번호 *</label><input id="new-plate" placeholder="예: 123가4567" required maxlength="15" /></div><div class="formitem"><label for="new-vin">차대번호 (선택)</label><input id="new-vin" type="text" maxlength="25" autocomplete="off" autocapitalize="characters" placeholder="자동등록 기능 확장 예정" /></div><div class="formitem"><label for="new-year">연식 *</label><input id="new-year" type="number" placeholder="2026" min="1970" max="2035" required oninput="newYearTouched=true;showGradeProvenance('new')" /></div><div class="formitem"><label for="new-color-trigger">차량 색상</label><div class="color-picker" id="new-color-picker"><button id="new-color-trigger" class="color-trigger" type="button" aria-haspopup="listbox" aria-expanded="false" onclick="toggleColorPicker('new')"><span class="color-bar" id="new-color-swatch"></span><span id="new-color-caption" class="color-caption">색상 선택</span><span class="color-caret">⌄</span></button><div id="new-color-menu" class="color-menu" role="listbox" aria-label="차량 색상 목록"></div><select id="new-color" aria-hidden="true" tabindex="-1" hidden></select></div></div><div class="formitem"><label for="new-km">주행거리 (km)</label><input id="new-km" type="text" inputmode="numeric" maxlength="9" pattern="[0-9,]*" placeholder="예: 43,200" value="" oninput="formatMileageInput(this)" /></div><div class="formitem"><label for="new-purchase-date">매입 날짜</label><input id="new-purchase-date" type="date" onclick="openDateInputCalendar(this)" /></div><div class="formitem"><label for="new-buy">매입가 (원) *</label><input id="new-buy" type="number" placeholder="25000000" min="0" step="1" required oninput="updateAddSummary()" /></div><div class="formitem"><label for="new-sell">판매예정가 (원) *</label><input id="new-sell" type="number" placeholder="28000000" min="0" step="1" required oninput="updateAddSummary()" /></div><div class="add-subtitle">차량 매입 부대비용 </div><div class="cost-fieldgrid"><div class="formitem"><label for="new-bodywork">차량판금비용 (원)</label><input id="new-bodywork" type="number" min="0" max="1000000000000" step="1" value="0" inputmode="decimal" oninput="updateAddSummary()" /></div><div class="formitem"><label for="new-polish">차량광택비용 (원)</label><input id="new-polish" type="number" min="0" max="1000000000000" step="1" value="0" inputmode="decimal" oninput="updateAddSummary()" /></div><div class="formitem"><label for="new-advertising">광고비용 (원)</label><input id="new-advertising" type="number" min="0" max="1000000000000" step="1" value="0" inputmode="decimal" oninput="updateAddSummary()" /></div><div class="formitem"><label for="new-purchaseFee">매입수수료 (원)</label><input id="new-purchaseFee" type="number" min="0" max="1000000000000" step="1" value="0" inputmode="decimal" oninput="updateAddSummary()" /></div><div class="formitem"><label for="new-purchaseOther">매입비 (원)</label><input id="new-purchaseOther" type="number" min="0" max="1000000000000" step="1" value="0" inputmode="decimal" oninput="updateAddSummary()" /></div><div class="formitem"><label for="new-acquisitionTax">취득세 (원)</label><input id="new-acquisitionTax" type="number" min="0" max="1000000000000" step="1" value="0" inputmode="decimal" oninput="updateAddSummary()" /></div><div class="formitem"><label for="new-incomeTax">소득세 (원)</label><input id="new-incomeTax" type="number" min="0" max="1000000000000" step="1" value="0" inputmode="decimal" oninput="updateAddSummary()" /></div></div><div class="repair-group"><div class="repair-top"><div><strong>수리비용 상세 내역</strong><span>수리 항목별 메모와 금액을 입력하세요.</span></div><button class="section-button" type="button" onclick="addRepairRow('new')">＋ 수리 항목 추가</button></div><div class="repair-rows" id="new-repair-items"></div><div class="repair-total">수리비 합계 <strong id="new-repair-total">0원</strong></div></div>
+<div class="formitem"><label for="new-plate">차량번호 *</label><input id="new-plate" placeholder="예: 123가4567" required maxlength="15" /></div><div class="formitem"><label for="new-vin">차대번호 (선택)</label><input id="new-vin" type="text" maxlength="25" autocomplete="off" autocapitalize="characters" placeholder="자동등록 기능 확장 예정" /></div><div class="formitem"><label for="new-year">연식 *</label><input id="new-year" type="number" placeholder="2026" min="1970" max="2035" required oninput="newYearTouched=true;showGradeProvenance('new')" /></div><div class="formitem"><label for="new-color-trigger">차량 색상</label><div class="color-picker" id="new-color-picker"><button id="new-color-trigger" class="color-trigger" type="button" aria-haspopup="listbox" aria-expanded="false" onclick="toggleColorPicker('new')"><span class="color-bar" id="new-color-swatch"></span><span id="new-color-caption" class="color-caption">색상 선택</span><span class="color-caret">⌄</span></button><div id="new-color-menu" class="color-menu" role="listbox" aria-label="차량 색상 목록"></div><select id="new-color" aria-hidden="true" tabindex="-1" hidden></select></div></div><div class="formitem"><label for="new-km">주행거리 (km)</label><input id="new-km" type="text" inputmode="numeric" maxlength="9" pattern="[0-9,]*" placeholder="예: 43,200" value="" oninput="formatMileageInput(this)" /></div><div class="formitem"><label for="new-purchase-date">매입 날짜</label><input id="new-purchase-date" type="date" onclick="openDateInputCalendar(this)" /></div><div class="formitem"><label for="new-buy">매입가 (원) *</label><input id="new-buy" type="text" class="detail-money-input" inputmode="numeric" placeholder="25,000,000" min="0" step="1" required oninput="updateAddSummary()" /></div><div class="formitem"><label for="new-sell">판매예정가 (원) *</label><input id="new-sell" type="text" class="detail-money-input" inputmode="numeric" placeholder="28,000,000" min="0" step="1" required oninput="updateAddSummary()" /></div><div class="add-subtitle">차량 매입 부대비용 </div><div class="cost-fieldgrid"><div class="formitem"><label for="new-bodywork">차량판금비용 (원)</label><input id="new-bodywork" type="text" class="detail-money-input" min="0" max="1000000000000" step="1" value="0" inputmode="numeric" oninput="updateAddSummary()" /></div><div class="formitem"><label for="new-polish">차량광택비용 (원)</label><input id="new-polish" type="text" class="detail-money-input" min="0" max="1000000000000" step="1" value="0" inputmode="numeric" oninput="updateAddSummary()" /></div><div class="formitem"><label for="new-advertising">광고비용 (원)</label><input id="new-advertising" type="text" class="detail-money-input" min="0" max="1000000000000" step="1" value="0" inputmode="numeric" oninput="updateAddSummary()" /></div><div class="formitem"><label for="new-purchaseFee">매입수수료 (원)</label><input id="new-purchaseFee" type="text" class="detail-money-input" min="0" max="1000000000000" step="1" value="0" inputmode="numeric" oninput="updateAddSummary()" /></div><div class="formitem"><label for="new-purchaseOther">매입비 (원)</label><input id="new-purchaseOther" type="text" class="detail-money-input" min="0" max="1000000000000" step="1" value="0" inputmode="numeric" oninput="updateAddSummary()" /></div><div class="formitem"><label for="new-acquisitionTax">취득세 (원)</label><input id="new-acquisitionTax" type="text" class="detail-money-input" min="0" max="1000000000000" step="1" value="0" inputmode="numeric" oninput="updateAddSummary()" /></div><div class="formitem"><label for="new-incomeTax">소득세 (원)</label><input id="new-incomeTax" type="text" class="detail-money-input" min="0" max="1000000000000" step="1" value="0" inputmode="numeric" oninput="updateAddSummary()" /></div></div><div class="repair-group"><div class="repair-top"><div><strong>수리비용 상세 내역</strong><span>수리 항목별 메모와 금액을 입력하세요.</span></div><button class="section-button" type="button" onclick="addRepairRow('new')">＋ 수리 항목 추가</button></div><div class="repair-rows" id="new-repair-items"></div><div class="repair-total">수리비 합계 <strong id="new-repair-total">0원</strong></div></div>
 <div class="cost-summary" id="add-cost-summary"></div><p class="cost-policy">※ 예상 마진은 매입가와 입력한 모든 부대비용(소득세 포함)을 차감한 단순 추정치입니다. 실제 세무상 이익과는 다를 수 있습니다.</p></div><p class="formtip">* 체험용 시안: 차량 정보·비용·사진은 현재 브라우저에만 저장됩니다. 다른 기기와 공유되지 않습니다.</p><div class="modal-actions"><button class="btn-ghost" type="button" onclick="closeAdd({animate:true})">취소</button><button type="submit" class="btn-primary">차량 등록하기</button></div></form></div>
 
 <!-- 차량별 사진과 서류 관리: 모든 이미지가 차량 고유 ID에 연결됩니다. -->
@@ -3425,7 +3425,7 @@ button, input, select, textarea { font-family: inherit; }
 </div>
 <div class="overlay zoom-overlay" id="zoom-overlay" onclick="if(event.target===this)closeZoom()" aria-hidden="true"><div class="zoom-toolbar"><button onclick="downloadZoom()">원본 저장 ↓</button><button onclick="closeZoom()">닫기 ×</button></div><img id="zoom-image" alt="선택한 차량 이미지 크게 보기" /><div class="zoom-caption" id="zoom-caption"></div></div>
 
-<div class="overlay" id="status-overlay" role="presentation" aria-hidden="true"><section class="modal status-confirm-card" role="dialog" aria-modal="true" aria-labelledby="status-dialog-title"><div class="modal-top"><div><p class="confirm-eyebrow">STATUS CHANGE · 변경 확인</p><h2 id="status-dialog-title">차량 상태를 변경할까요?</h2></div><button class="close" aria-label="취소" type="button" onclick="closeStatusModal()">×</button></div><div id="status-confirm-car" class="confirm-car"></div><div id="status-confirm-copy" class="confirm-copy"></div><div class="confirm-compare"><span id="status-current"></span><span class="arrow">→</span><span id="status-target"></span></div><div class="confirm-sale-fields" id="confirm-sale-fields" style="display:none"><label>판매 완료 날짜 *<input id="confirm-sold-date" type="date" /></label><label>실제 판매가 (원) *<input id="confirm-sold-price" type="number" min="0.1" step="1" inputmode="decimal" placeholder="실제 판매금액" /></label></div><div class="confirm-warning" id="status-confirm-warning"></div><div class="modal-actions"><button class="btn-ghost" type="button" id="status-confirm-no" onclick="closeStatusModal()">취소</button><button class="btn-primary" type="button" id="status-confirm-submit" onclick="confirmStatusChange()">변경 확인</button></div></section></div>
+<div class="overlay" id="status-overlay" role="presentation" aria-hidden="true"><section class="modal status-confirm-card" role="dialog" aria-modal="true" aria-labelledby="status-dialog-title"><div class="modal-top"><div><p class="confirm-eyebrow">STATUS CHANGE · 변경 확인</p><h2 id="status-dialog-title">차량 상태를 변경할까요?</h2></div><button class="close" aria-label="취소" type="button" onclick="closeStatusModal()">×</button></div><div id="status-confirm-car" class="confirm-car"></div><div id="status-confirm-copy" class="confirm-copy"></div><div class="confirm-compare"><span id="status-current"></span><span class="arrow">→</span><span id="status-target"></span></div><div class="confirm-sale-fields" id="confirm-sale-fields" style="display:none"><label>판매 완료 날짜 *<input id="confirm-sold-date" type="date" /></label><label>실제 판매가 (원) *<input id="confirm-sold-price" type="text" class="detail-money-input" min="0.1" step="1" inputmode="numeric" placeholder="실제 판매금액" /></label></div><div class="confirm-warning" id="status-confirm-warning"></div><div class="modal-actions"><button class="btn-ghost" type="button" id="status-confirm-no" onclick="closeStatusModal()">취소</button><button class="btn-primary" type="button" id="status-confirm-submit" onclick="confirmStatusChange()">변경 확인</button></div></section></div>
 <div class="overlay" id="ps-confirm-overlay" aria-hidden="true" role="presentation">
   <section class="modal ps-confirm-card" role="dialog" aria-modal="true" aria-labelledby="ps-confirm-title" aria-describedby="ps-confirm-details">
     <div class="modal-top"><div><p class="ps-confirm-eye">ADVANCE INVENTORY · 확인</p><h2 id="ps-confirm-title"></h2></div><button type="button" class="close" aria-label="닫기" onclick="closePrestockConfirmation()">×</button></div>
@@ -4091,7 +4091,7 @@ function snote238SetVehicleButton(button,kind,label){
 function repairRowHTML(prefix,item={memo:'',amount:0}){
  const memo=esc(String(item.memo||''));
  const amount=Number(item.amount)||0;
- return `<div class="repair-row"><input class="repair-memo" type="text" maxlength="120" aria-label="수리 항목 메모" placeholder="예: 앞범퍼 도색, 타이어 교환" value="${memo}" oninput="${prefix==='new'?'updateAddSummary()':'updateDetailSummary()'}" /><input class="repair-amount ${prefix==='detail'?'detail-money-input':''}" type="${prefix==='detail'?'text':'number'}" min="0" max="1000000000000" step="1" inputmode="decimal" aria-label="수리비 금액 (원)" placeholder="${prefix==='detail'?'-':'금액(원)'}" value="${prefix==='detail'?detailMoneyValue(amount):amount||''}" oninput="${prefix==='new'?'updateAddSummary()':'updateDetailSummary()'}" /><button class="repair-remove${prefix==='detail'?' snote-detail-icon is-delete':''}" type="button" onclick="removeRepairRow('${prefix}',this)" aria-label="수리 항목 삭제" ${prefix==='detail'?'title="수리 항목 삭제"':''}>${prefix==='detail'?snote238VehicleIcon('remove'):'삭제'}</button></div>`;
+ return `<div class="repair-row"><input class="repair-memo" type="text" maxlength="120" aria-label="수리 항목 메모" placeholder="예: 앞범퍼 도색, 타이어 교환" value="${memo}" oninput="${prefix==='new'?'updateAddSummary()':'updateDetailSummary()'}" /><input class="repair-amount detail-money-input" type="text" min="0" max="1000000000000" step="1" inputmode="decimal" aria-label="수리비 금액 (원)" placeholder="${prefix==='detail'?'-':'금액(원)'}" value="${prefix==='detail'?detailMoneyValue(amount):amount||''}" oninput="${prefix==='new'?'updateAddSummary()':'updateDetailSummary()'}" /><button class="repair-remove${prefix==='detail'?' snote-detail-icon is-delete':''}" type="button" onclick="removeRepairRow('${prefix}',this)" aria-label="수리 항목 삭제" ${prefix==='detail'?'title="수리 항목 삭제"':''}>${prefix==='detail'?snote238VehicleIcon('remove'):'삭제'}</button></div>`;
 }
 function renderRepairRows(prefix,items=[]){$(prefix+'-repair-items').innerHTML=(items.length?items:[{memo:'',amount:0}]).map(x=>repairRowHTML(prefix,x)).join('');updateRepairTotal(prefix)}
 function addRepairRow(prefix){const parent=$(prefix+'-repair-items');if(parent.children.length>=40){toast('수리 항목은 최대 40개입니다.');return;}parent.insertAdjacentHTML('beforeend',repairRowHTML(prefix));parent.lastElementChild.querySelector('.repair-memo').focus();updateRepairTotal(prefix)}
@@ -4120,7 +4120,7 @@ function inventoryInvestmentOf(c){const costs=normalizeCosts(c);const t=totals(c
 function inventoryFinanceTotals(){const unsold=cars.filter(c=>c.status!=='판매완료');const inventoryTotal=unsold.reduce((sum,c)=>sum+inventoryInvestmentOf(c),0);const loans=unsold.reduce((sum,c)=>sum+inventoryLoanOf(c),0);return {inventoryTotal,loans,cashInvestment:inventoryTotal-loans}}
 function cleanLoanInput(id){const el=$(id),value=el?.value||'';const n=readDetailMoney(value);if(value!==''&&(!Number.isSafeInteger(n)||n<0||n>1000000000000))throw Error('재고대출금은 0 이상 금액으로 입력해주세요.');return Math.round(n||0)}
 function summaryHTML(buy,sell,costs){let x=totals(buy,sell,costs);return `<div class="sum-cell"><small>부대비용 합계</small><strong>${num(x.direct)}원</strong></div><div class="sum-cell"><small>총 투입원가</small><strong>${num(x.landed)}원</strong></div><div class="sum-cell ${x.margin>=0?'net':'loss'}"><small>예상 마진</small><strong>${num(x.margin)}원</strong></div>`}
-function updateAddSummary(){try{$('add-cost-summary').innerHTML=summaryHTML($('new-buy').value,$('new-sell').value,costInputs('new'))}catch(e){$('add-cost-summary').textContent=e.message}}
+function updateAddSummary(){try{$('add-cost-summary').innerHTML=summaryHTML(readDetailMoney($('new-buy').value),readDetailMoney($('new-sell').value),costInputs('new'))}catch(e){$('add-cost-summary').textContent=e.message}}
 function fillDetailCatalog(level){let make=$('detail-make').value,group=$('detail-group').value,model=$('detail-generation').value;
  if(level==='make'){selectOptions($('detail-make'),uniqueSorted(domesticTaxonomy().map(x=>x.make)),'제조사 선택',make);make=$('detail-make').value;level='group'}
  if(level==='group'){selectOptions($('detail-group'),uniqueSorted(domesticTaxonomy().filter(x=>x.make===make).map(x=>x.group)),'모델명 선택');group='';level='model'}
@@ -4151,7 +4151,7 @@ function detailMoneyValue(value){
  const n=readDetailMoney(value);
  return Number.isFinite(n)&&n!==0?n.toLocaleString('ko-KR'):'';
 }
-function detailMoneyField(el){return el instanceof HTMLInputElement&&el.classList.contains('detail-money-input')&&!!el.closest('#vehicle-overlay')}
+function detailMoneyField(el){return el instanceof HTMLInputElement&&el.classList.contains('detail-money-input')}
 function moneyInputWarning(){toast('숫자만 입력해주세요.');}
 // 원화 원 단위의 정수만 지원합니다.
 function validDetailMoney(text){const digits=String(text).replaceAll(',','');return /^[\d,]*$/.test(text)&&/^\d{0,13}$/.test(digits)&&(digits===''||Number(digits)<=1000000000000)}
@@ -4202,7 +4202,7 @@ document.addEventListener('focusin',event=>{
 },true);
 document.addEventListener('focusout',event=>{
  const el=event.target;if(!detailMoneyField(el))return;
- if(el.value===''||readDetailMoney(el.value)===0)el.value='';
+ if(el.value===''||(el.closest('#vehicle-overlay')&&readDetailMoney(el.value)===0))el.value='';
  else formatDetailMoneyInput(el);
  el.dataset.lastValidMoney=el.value;
 },true);
@@ -4524,7 +4524,7 @@ function changeVehicleStatus(event,id,options={}){event?.stopPropagation();if(!c
  $('status-current').innerHTML=`<span class="status ${statusClass(old)}">${esc(old)}</span>`;
  $('status-target').innerHTML=cancel?`<span class="status cancel-pill">${next==='매입취소'?'차량 삭제':'매입 관리 복귀'}</span>`:`<span class="status ${statusClass(next)}">${esc(next)}</span>`;
  const sale=next==='판매완료';$('confirm-sale-fields').style.display=sale?'grid':'none';
- $('confirm-sold-date').value=c.soldAt||todayLocal();$('confirm-sold-price').value=c.soldPrice??c.sell;
+ $('confirm-sold-date').value=c.soldAt||todayLocal();$('confirm-sold-price').value=detailMoneyValue(c.soldPrice??c.sell);
  $('status-confirm-copy').textContent=next==='매입취소'?'선택한 차량의 매입을 취소하고 삭제합니다. 계속하시겠습니까?':next==='판매취소'?'판매완료 처리를 취소하고 이 차량을 매입 관리로 되돌리시겠습니까?':sale?'판매를 완료하려면 판매 날짜와 실제 판매 금액을 입력한 뒤 확인해주세요.':'차량 상태를 변경하시겠습니까?';
  $('status-confirm-warning').textContent=next==='매입취소'?'주의: 차량 정보, 비용 내역, 차량 사진, 자동차등록증 및 성능점검기록부가 모두 삭제되며 복구할 수 없습니다.':next==='판매취소'?'차량과 첨부 사진·서류는 유지됩니다. 판매완료 날짜와 실제 판매가 기록은 삭제되고, 재고 및 매입관리 목록으로 이동합니다.':sale?'확인하면 차량이 판매 완료 페이지로 이동하고, 재고 및 매입관리 목록에서는 제외됩니다.':old==='판매완료'?'확인하면 차량이 재고 관리와 매입관리 목록으로 돌아갑니다. 기존 판매 날짜·금액은 기록으로 남지만 활성 재고의 마진 계산에는 사용되지 않습니다.':'상태 변경 후에도 차량정보와 등록한 사진·비용 내역은 유지됩니다.';
  if(isAccountant()){
@@ -4534,7 +4534,7 @@ function changeVehicleStatus(event,id,options={}){event?.stopPropagation();if(!c
  }
  $('status-confirm-no').textContent=cancel?'아니오':'취소';
  $('status-confirm-submit').textContent=cancel?'예':sale?'판매 완료 확정':'상태 변경 확인';
- $('status-confirm-submit').disabled=false;
+ $('status-confirm-submit').disabled=false;$('confirm-sold-date').disabled=false;$('confirm-sold-price').disabled=false;
  $('status-overlay').classList.add('open');$('status-overlay').setAttribute('aria-hidden','false');
  if(sale)$('confirm-sold-date').focus();else $('status-confirm-no').focus();
 }
@@ -4548,7 +4548,7 @@ async function confirmStatusChange(){
  if(isAccountant()){toast('경리 계정에는 차량 상태 변경 권한이 없습니다.');return;}
  const req=pendingStatusChange;if(!req||!currentUser||$('status-confirm-submit').disabled)return;
  if(req.actor&&req.actor!==currentUser){closeStatusModal();return;}
- const c=cars.find(x=>x.id===req.id&&canManageCar(x)&&x.ownerId===req.ownerId&&x.status===req.old);
+ const c=cars.find(x=>x.id===req.id&&canManageCar(x)&&x.ownerId===req.ownerId&&(x.status===req.old||(req.attempt&&x.status===req.next)));
  if(!c){closeStatusModal();toast('차량 상태가 변경되었습니다. 다시 확인해주세요.');return}
  if(req.next==='매입취소'){
   // IndexedDB 사진·서류 삭제 실패 시 차량 목록을 복원하여 재시도할 수 있게 합니다.
@@ -4597,9 +4597,41 @@ async function confirmStatusChange(){
  }
  let soldAt=c.soldAt,soldPrice=c.soldPrice;
  if(req.next==='판매완료'){
-  soldAt=$('confirm-sold-date').value;soldPrice=Number($('confirm-sold-price').value);
+  soldAt=$('confirm-sold-date').value;soldPrice=readDetailMoney($('confirm-sold-price').value);
   if(!soldAt||!/^\d{4}-\d{2}-\d{2}$/.test(soldAt)){toast('판매 완료 날짜를 입력해주세요.');return}
   if($('confirm-sold-price').value===''||!Number.isSafeInteger(soldPrice)||soldPrice<=0||soldPrice>1000000000000){toast('실제 판매 금액을 입력해주세요.');return}
+ }
+ if(req.next==='판매완료'){
+  const button=$('status-confirm-submit'),actor=currentUser,initialRoute=route,opening=snote224VehicleOpen,initialCar=activeCarId;
+  const locked=[$('vehicle-overlay')?.querySelector('.vehicle-detail-frame'),!$('zc72-sale-modal')?.hidden?$('zc72-sale-form'):null].filter(Boolean).map(node=>({node,inert:node.inert}));locked.forEach(({node})=>node.inert=true);
+  const current=()=>pendingStatusChange===req&&currentUser===actor&&route===initialRoute&&activeCarId===initialCar&&snote224VehicleOpen===opening&&cars.includes(c)&&canManageCar(c);
+  button.disabled=true;button.setAttribute('aria-busy','true');$('confirm-sold-date').disabled=true;$('confirm-sold-price').disabled=true;
+  try{
+   if(!window.zc86Cloud?.ready)throw Error('온라인 로그인과 서버 연결을 확인해 주세요.');
+   if(activeCarId===c.id&&$('vehicle-overlay').classList.contains('open')&&snoteVehicleHasChanges()){
+    if(!await saveVehicleCosts({closeAfterSave:false}))throw Error('변경사항을 먼저 저장해 주세요.');
+    hideVehicleSaveSuccess();
+   }
+   if(!current())return;
+   if(typeof zc72SaleCarId!=='undefined'&&zc72SaleCarId===c.id&&!$('zc72-sale-modal')?.hidden){
+    if(!await saleProgressContract({preventDefault(){}},'save'))throw Error('고객정보 저장을 확인해 주세요.');
+   }
+   if(!current())return;
+   const backup={...c};c.status=req.next;c.soldAt=soldAt;c.soldPrice=soldPrice;
+   const interest=snote239Interest(c);if(interest.ready){c.costs={...c.costs,inventoryInterest:interest.amountWon};c.inventoryInterestSnapshot=globalThis.SnoteInventoryInterest.snapshot(c,ACC44_LENDER_LIMITS);}
+   if(!persistCars(c.ownerId)){Object.assign(c,backup);throw Error('상태를 저장하지 못했습니다.');}
+   req.attempt=true;
+   const saved=await window.zc86Cloud.flush();if(saved?.ok!==true||window.zc86Cloud.conflict)throw Error('서버 저장을 확인하지 못했습니다. 연결 상태를 확인하고 다시 시도해 주세요.');
+   if(!current())return;
+   if(!await window.snoteSaleComplete(current))return;
+   if(!current())return;
+   button.disabled=false;button.removeAttribute('aria-busy');$('confirm-sold-date').disabled=false;$('confirm-sold-price').disabled=false;closeStatusModal();
+   if(activeCarId===c.id)closeVehicle({discard:true});
+   if(typeof zc72SaleCarId!=='undefined'&&zc72SaleCarId===c.id)closeSaleProgress();
+   buildStats();buildMenus();if(navigate('sell'))snote226SetSalesMonth(snote226SoldMonth(c)||'undated');
+  }catch(error){if(current())toast(error.message||'판매 완료를 저장하지 못했습니다.');}
+  finally{locked.forEach(({node,inert})=>node.inert=inert);if(pendingStatusChange===req){button.disabled=false;button.removeAttribute('aria-busy');$('confirm-sold-date').disabled=false;$('confirm-sold-price').disabled=false;if(!current())closeStatusModal();}}
+  return;
  }
  const backup={...c};c.status=req.next;
  if(req.next==='판매완료'){c.soldAt=soldAt;c.soldPrice=soldPrice;const interest=snote239Interest(c);if(interest.ready){c.costs={...c.costs,inventoryInterest:interest.amountWon};c.inventoryInterestSnapshot=globalThis.SnoteInventoryInterest.snapshot(c,ACC44_LENDER_LIMITS);}}
@@ -5952,7 +5984,7 @@ document.addEventListener('keydown',event=>{
 });
 
 function navigate(next,options={}){window.snoteCloseCalculator?.();if(!snotePageAllowed(next)){if(currentUser)toast('해당 메뉴에 접근할 권한이 없습니다.');return false;}if(next!==route&&!snotePrepareRouteChange())return false;const invitePane=$('zc86-invite-area'),inviteHome=$('zc86-admin-tools');if(invitePane&&inviteHome&&invitePane.parentElement!==inviteHome){inviteHome.appendChild(invitePane);invitePane.hidden=true;}if(next==='finance'&&currentUser&&!isAccountant()&&!isSnoteAdmin()&&!zcDashboardGateGranted){openDashboardGate();return;}if(document.body.classList.contains('mobile-drawer-visible'))closeMobileDrawer();document.body.classList.toggle('accountant-mode',isAccountant());if((['inventoryFinance','prestock','monthly','acctFinance'].includes(next)&&!isFinanceManager())||(next==='settings'&&!isSnoteAdmin())||(next==='users'&&isAccountant())){toast('해당 메뉴에 접근할 권한이 없습니다.');return}zcDashboardUnlocked=!isFinanceManager()&&next==='finance'&&zcDashboardGateGranted;if(next==='sell'&&route!=='sell')snote226ResetSalesMonth();route=next;let p=pages[next];$('breadcrumb').textContent=isAccountant()&&next==='finance'?'매입금액 현황':p.title;$('eyebrow').textContent=p.eyebrow;$('screen-title').textContent=isSnoteAdmin()&&next==='settings'?'설정':isAccountant()?({buy:'전체 딜러 매입 관리',sell:'전체 딜러 판매 완료',finance:'매입금액 현황',inventoryFinance:'재고금융 관리',prestock:'선재고 관리',settings:'설정',monthly:'월별 결산표'}[next]||p.head):p.head;$('screen-sub').textContent=isSnoteAdmin()&&next==='settings'?'직원 이름·상사명과 재고금융 설정을 관리합니다.':isAccountant()?(next==='monthly'?'딜러별 수수료·운영비·이월·잔액을 실시간으로 정리하고 결산표를 출력합니다.':next==='prestock'?'선재고 지급·상환 거래 내역과 현재 잔액을 확인합니다.':next==='inventoryFinance'?'모든 딜러의 재고대출금과 금융사별 현황을 한곳에서 관리합니다.':'모든 딜러의 차량과 매입·판매 정보를 한곳에서 관리합니다.'):p.sub;$('monthly-screen').style.display=next==='monthly'?'block':'none';$('list-screen').style.display=['buy','sell'].includes(next)?'block':'none';$('alt-screen').style.display=['finance','inventoryFinance','prestock','users','settings','acctFinance'].includes(next)?'block':'none';$('dealer-finance-overview').style.display=next==='finance'&&!isAccountant()?'block':'none';$('stats').style.display=next==='finance'&&!isAccountant()?'grid':'none';$('dashboard-analytics').style.display=next==='finance'&&!isAccountant()?'block':'none';$('main-add').style.display='none';$('zc80-buy-scan').hidden=next!=='buy'||isAccountant();$('snote92-buy-manual').hidden=next!=='buy'||isAccountant();renderAccountantBar();if(['buy','sell'].includes(next)){$('list-title').textContent=next==='sell'?'판매 완료 차량 목록':next==='buy'?'매입 관리 차량 목록':'재고 차량 목록';$('list-desc').textContent=next==='sell'?'판매가 완료된 차량만 표시합니다. 상태를 변경하면 다시 재고로 돌아갑니다.':next==='buy'?'판매 완료 전 차량만 표시합니다.':'판매중 차량만 표시합니다. 상태를 판매완료로 변경하면 판매 완료 페이지로 이동합니다.';$('list-filter').value=next==='sell'?'판매완료':'all';$('list-filter').style.display=['sell','buy'].includes(next)?'none':'';$('list-query').value=''}if(['finance','inventoryFinance','prestock','users','settings','acctFinance'].includes(next))buildAlt();buildMenus();renderCars();const accBar=$('accountant-bar');if(accBar)accBar.hidden=!isFinanceManager()||['inventoryFinance','prestock'].includes(next);if(options.history!=='none')snoteWriteWorkspaceHistory(next,options.history||'push');window.snoteMonthlyWorkbookRefresh?.();window.scrollTo({top:0,behavior:'instant'});return true}
-function openAdd(){window.snoteDrawerMotion?.cancel($('overlay'));snote220RegistrationSession++;const saveButton=$('overlay').querySelector('[type="submit"]');if(saveButton)saveButton.disabled=false;void snote220RefreshTaxonomy().catch(()=>{});delete $('overlay').dataset.snoteHistoryDirty;const previousHint=$('snote201-model-match-hint');previousHint?.remove();if(isAccountant()){toast('경리 화면에서는 각 딜러가 등록한 차량을 관리합니다.');return}$('overlay').classList.add('open');newYearTouched=false;delete $('new-model').dataset.snote98OcrFallback;SNOTE98_FIELDS.forEach(f=>{$('snote98-'+f+'-input').value='';});fillVehicleSelect('make');setupColorSelect('new');const hint=document.createElement('div');hint.id='snote201-model-match-hint';$('new-visual-preview')?.before(hint);$('new-year').value=String(new Date().getFullYear());$('new-purchase-date').value=todayLocal();$('new-km').value='';renderRepairRows('new',[]);$('new-make').focus();updateNewCarPreview();updateAddSummary()}
+function openAdd(){window.snoteDrawerMotion?.cancel($('overlay'));snote220RegistrationSession++;const saveButton=$('overlay').querySelector('[type="submit"]');if(saveButton)saveButton.disabled=false;void snote220RefreshTaxonomy().catch(()=>{});delete $('overlay').dataset.snoteHistoryDirty;const previousHint=$('snote201-model-match-hint');previousHint?.remove();if(isAccountant()){toast('경리 화면에서는 각 딜러가 등록한 차량을 관리합니다.');return}$('overlay').classList.add('open');newYearTouched=false;delete $('new-model').dataset.snote98OcrFallback;SNOTE98_FIELDS.forEach(f=>{$('snote98-'+f+'-input').value='';});fillVehicleSelect('make');setupColorSelect('new');const hint=document.createElement('div');hint.id='snote201-model-match-hint';$('new-visual-preview')?.before(hint);$('new-year').value=String(new Date().getFullYear());$('new-purchase-date').value=todayLocal();$('new-km').value='';renderRepairRows('new',[]);$('overlay').scrollLeft=0;$('new-make').focus({preventScroll:true});updateNewCarPreview();updateAddSummary()}
 function closeAdd({animate=false}={}){const root=$('overlay'),pending=window.snoteDrawerMotion?.pending(root);if(animate&&pending)return pending;const actor=currentUser,session=++snote220RegistrationSession;const finish=()=>{root.classList.remove('open');zcAutoRegPendingFile=null;return true;};if(animate&&root.classList.contains('open')&&window.snoteDrawerMotion)return window.snoteDrawerMotion.close(root,finish,()=>currentUser===actor&&session===snote220RegistrationSession&&root.classList.contains('open'));window.snoteDrawerMotion?.cancel(root);return finish();}
 async function saveCar(e){
  e.preventDefault();if(isAccountant()){toast('딜러 계정에서 차량을 등록해주세요.');return}
@@ -5960,7 +5992,7 @@ async function saveCar(e){
  const make=snote98Choice('make'),group=snote98Choice('group'),generation=snote98Choice('generation'),grade=snote98Choice('grade');
  const manuallyEntered=SNOTE98_FIELDS.some(f=>snote98RawChoice(f)==='__manual__');
  const model=ocr?$('new-model').value.trim():[make,generation,grade].filter(Boolean).join(' ').trim();
- const plate=$('new-plate').value.trim(),year=Number($('new-year').value),buy=Number($('new-buy').value),sell=Number($('new-sell').value);
+ const plate=$('new-plate').value.trim(),year=Number($('new-year').value),buy=readDetailMoney($('new-buy').value),sell=readDetailMoney($('new-sell').value);
  if(!Number.isSafeInteger(buy)||!Number.isSafeInteger(sell)||buy<0||sell<0||buy>1000000000000||sell>1000000000000){toast('금액은 원 단위 정수로 입력해주세요.');return}
  if(!currentUser||!model||!plate||(!ocr&&(!make||!group||!generation))){toast('제조사, 차명, 등급(세부모델)을 입력해주세요. 트림은 선택 사항입니다.');return}
  if(cars.some(c=>c.plate===plate)){toast('이미 등록된 차량번호입니다.');return}
@@ -7336,7 +7368,7 @@ async function saleProgressContract(event,documentType='contract'){
   if(signature!==snote214SaleSignature()){error.textContent='저장 중 추가로 수정한 내용이 있습니다. 현재 입력을 다시 저장해 주세요.';return;}
   delete $('zc72-sale-modal').dataset.snoteHistoryDirty;
   window.snoteIntakeCustomerSaved?.();
-  if(documentType==='save'){toast('고객정보와 입력한 식별번호를 저장했습니다.');return;}
+  if(documentType==='save'){toast('고객정보와 입력한 식별번호를 저장했습니다.');return true;}
   if(documentType==='receipt'){
    const draft={...record,rrn:zc72RrnDisplay(rrn)}; // 출력용 메모리 값; 암호문만 DB 저장
    closeSaleProgress();
@@ -9037,7 +9069,7 @@ function snoteRenderAdminSettings(){
  <div id="snote90-members">직원 목록 불러오는 중...</div></section>
  <section class="snote90-panel"><h3>직원 초대</h3><p>딜러·경리 권한을 선택해 초대 링크를 만드세요. 생성된 링크를 직원에게 전달하면 초대받은 이메일로 가입할 수 있습니다.</p><div id="snote90-invite-mount"></div></section>
  <section class="snote90-panel"><h3>재고금융사 및 한도 관리</h3><p>금융사별 한도(원)와 연이율(%)을 설정합니다. 금융사 설정은 클라우드에 동기화됩니다.</p>
- <div id="snote90-lenders"></div><div class="snote90-inline"><label>신규 금융사<input id="snote90-lender-name" maxlength="45" placeholder="금융사 이름"></label><label>한도 (원)<input id="snote90-lender-limit" inputmode="numeric" placeholder="예: 1000000000"></label><button type="button" class="btn-primary" id="snote90-lender-add">금융사 추가</button></div></section>
+ <div id="snote90-lenders"></div><div class="snote90-inline"><label>신규 금융사<input id="snote90-lender-name" maxlength="45" placeholder="금융사 이름"></label><label>한도 (원)<input id="snote90-lender-limit" class="detail-money-input" inputmode="numeric" placeholder="예: 1000000000"></label><button type="button" class="btn-primary" id="snote90-lender-add">금융사 추가</button></div></section>
  <section class="snote90-panel snote203-bank-card"><h3>선재고 설정</h3><p>선재고 통장 총액 및 연결 계좌 정보를 관리합니다. 실제 은행 계좌와 자동 연동되지 않습니다.</p>
  <div class="snote203-bank-fields"><label>선재고 총액 (원)<input id="snote203-bank-total" type="text" inputmode="numeric" placeholder="0" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\\B(?=(\\d{3})+(?!\\d))/g,',')"></label><label>은행명<input id="snote203-bank-name" maxlength="35" placeholder="우리은행"></label><label>계좌번호<input id="snote203-bank-account" maxlength="45" placeholder="계좌번호"></label><label>계좌명 / 예금주<input id="snote203-bank-holder" maxlength="45" placeholder="예금주 또는 계좌명"></label></div><div class="snote203-bank-actions"><button class="btn-primary" type="button" onclick="snote203SavePrestockSettings()">선재고 설정 저장</button></div>
  </section></div>`;
@@ -9375,12 +9407,13 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 <script type="module" src="assets/quick-calculator.js?v=2.36"></script>
 <script type="module" src="assets/vehicle-taxonomy-ui.js?v=2.20"></script>
 <script type="module" src="assets/income-settlement-parent.js?v=2.41"></script>
-<script src="assets/release-info.js?v=2.48" defer></script>
+<script src="assets/release-info.js?v=2.49" defer></script>
 <script src="assets/snote-encar-link.js?v=2.47" defer></script>
 <script src="assets/document-mms.js?v=2.44" defer></script>
 <script src="assets/workspace-polish.js?v=2.44" defer></script>
 <script src="assets/list-sort.js?v=2.47.1" defer></script>
 <script src="assets/workspace-refine.js?v=2.47" defer></script>
 <script src="assets/drawer-motion.js?v=2.48" defer></script>
+<script src="assets/sale-complete.js?v=2.49" defer></script>
 </body>
 </html>
