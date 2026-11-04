@@ -13,7 +13,7 @@ function value(row,state,key){const label=clean(state.label);if(custom.has(key))
  if(/부대비용|총투입원가|예상마진/.test(label)){const t=typeof totals==='function'?totals(car.buy,typeof salePrice==='function'?salePrice(car):car.sell,normalizeCosts(car)):{};return /부대/.test(label)?t.direct:/원가/.test(label)?t.landed:t.margin;}
  if(/담당|딜러/.test(label))return c.dealer||((typeof dealerLabel==='function')?dealerLabel({ownerId:c.dealerId||car.ownerId}):car.ownerId)||'';
  if(/지급액/.test(label))return number(c.amount);if(/경과일자/.test(label))return car.purchaseAt?Math.floor((Date.now()-Date.parse(car.purchaseAt+'T00:00:00'))/86400000):'';
- if(/엔카/.test(label))return car.encarLinks?.listings?.length||0;if(/사진|서류/.test(label))return typeof carFiles==='function'?carFiles(car.id).length:0;
+ if(/엔카|^광고$/.test(label))return car.encarLinks?.listings?.length||0;if(/사진|서류/.test(label))return typeof carFiles==='function'?carFiles(car.id).length:0;
  if(/고객/.test(label))return c.name||'';if(/주소/.test(label))return c.address||c.addressBase||'';if(/상태/.test(label))return car.status||'';
  return c.name||c.model||c.id||'';
 }
