@@ -32,11 +32,11 @@ const {fixture,setBrowser,finish}=require('./encar/browser-smoke.cjs');
    const [input,role,save,remove]=row.controls;
    for(const control of row.controls){assert(Math.abs(control.cy-input.cy)<.6,'Name, role, save and delete must share the input center: '+JSON.stringify({width,row}));assert(Math.abs(control.height-input.height)<.6,'All staff controls must use the same height');assert(control.x>=row.row.x-.6&&control.right<=row.row.right+.6,'Staff controls must fit their row');}
    assert(save.x>=role.right+5&&remove.x>=save.right+5,'Staff actions must have consistent visible gaps');
-   assert.equal(row.icons.length,2);row.icons.forEach((icon,i)=>{const button=row.controls[i+2];assert(Math.abs(icon.cx-button.cx)<.6&&Math.abs(icon.cy-button.cy)<.6,'Each glyph must be centered in its action');assert(Math.abs(Math.max(icon.inkWidth,icon.inkHeight)-Math.min(button.width,button.height)*.63)<.6,'Staff drawings must match the shared chain proportion');});
+   assert.equal(row.icons.length,2);row.icons.forEach((icon,i)=>{const button=row.controls[i+2];assert(Math.abs(icon.cx-button.cx)<.6&&Math.abs(icon.cy-button.cy)<.6,'Each glyph must be centered in its action');assert(Math.abs(Math.max(icon.inkWidth,icon.inkHeight)-20)<.3,'Staff drawings must match the20px customer-management reference');});
   }
   for(const row of rows.slice(1))for(let i=0;i<4;i++){assert(Math.abs(row.controls[i].x-rows[0].controls[i].x)<.6,'Staff columns must align across roles');assert(Math.abs(row.controls[i].width-rows[0].controls[i].width)<.6,'Staff columns must keep matching widths across roles');}
   assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
-  await p.locator('.snote-settings-staff').screenshot({path:'/tmp/snote-v263-staff-'+width+'.png'});
+  await p.locator('.snote-settings-staff').screenshot({path:'/tmp/snote-v271-staff-'+width+'.png'});
   await finish(f);console.log('PASS',width,'staff name/role/save/delete centers, matching heights, centered icons, consistent gaps and no overflow');
  }}finally{await browser.close();}
 })().catch(e=>{console.error(e.stack);process.exitCode=1});

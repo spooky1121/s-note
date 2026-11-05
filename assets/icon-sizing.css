@@ -1,7 +1,8 @@
-/* Enlarge the drawing inside an action control; its layout and click area stay fixed. */
+/* Match all action drawings to the frameless customer-management controls. */
 @media screen{
  svg.snote-sized-action-glyph,.snote-sized-action-text{scale:var(--snote-action-glyph-scale,1);transform-origin:50% 50%}
- .snote-sized-action-text{display:inline-block;line-height:1;vertical-align:middle;pointer-events:none}
+ .snote-flat-icon-control{background:transparent!important;border-color:transparent!important;box-shadow:none!important;transition-property:translate,transform,opacity!important}
+ .snote-flat-icon-control:hover{background:transparent!important;box-shadow:none!important}
  .snote-direction-glyph{position:absolute;left:50%;top:50%;translate:-50% -50%;pointer-events:none}
  .snote-original-direction-text{opacity:0;pointer-events:none}
  .snote-direction-anchor{position:relative}

@@ -3,10 +3,10 @@
  const bridge=()=>window.snoteVehicleShareBridge;
  const context=()=>{const b=bridge();return b?.badgeContext?b.badgeContext():b?.context?.();};
  const current=c=>{const b=bridge();return !!c&&(b?.badgeCurrent?b.badgeCurrent(c):b?.current?.(c));};
- const source='assets/shared-vehicle-icon.png?v=2.68';
+ const symbol='<svg class="snote-shared-vehicle-symbol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>';
  let account=null,epoch=0,shared=new Set(),job=null,queued=false,last=0,scheduled=false;
  const key=(owner,id)=>owner+'\n'+id;
- function mark(target,on,kind){if(!target)return;let marker=target.querySelector(':scope > .snote-shared-vehicle-marker');if(!on){marker?.remove();return;}if(marker)return;marker=document.createElement('span');marker.className='snote-shared-vehicle-marker snote-shared-vehicle-marker--'+kind;marker.setAttribute('role','img');marker.setAttribute('aria-label','공유 차량');marker.dataset.tooltip='공유 차량';const image=document.createElement('img');image.src=source;image.alt='';image.setAttribute('aria-hidden','true');image.draggable=false;image.decoding='async';marker.append(image);target.append(marker);}
+ function mark(target,on,kind){if(!target)return;let marker=target.querySelector(':scope > .snote-shared-vehicle-marker');if(!on){marker?.remove();return;}if(marker)return;marker=document.createElement('span');marker.className='snote-shared-vehicle-marker snote-shared-vehicle-marker--'+kind;marker.setAttribute('role','img');marker.setAttribute('aria-label','공유 차량');marker.dataset.tooltip='공유 차량';marker.innerHTML=symbol;target.append(marker);}
  function carFor(id){if(typeof cars==='undefined'||!id)return null;const matches=cars.filter(car=>String(car.id)===id);return matches.length===1?matches[0]:null;}
  function isShared(car){if(!car)return false;const owner=bridge()?.owner?.(car);return !!owner&&shared.has(key(owner,String(car.id)));}
  function rowId(row){const value=(row.getAttribute('onclick')||'').trim();const match=/^openVehicle\((['"])([^'"\\]+)\1\);?$/.exec(value);return match?.[2]||null;}

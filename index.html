@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.70">
+<html lang="ko" data-snote-release="2.71">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -3186,15 +3186,15 @@ button, input, select, textarea { font-family: inherit; }
 <link rel="stylesheet" href="assets/vehicle-drawer.css?v=2.55">
 <link rel="stylesheet" href="assets/workspace-refine.css?v=2.67">
 <script src="assets/icon-feedback.js?v=2.54" defer></script>
-<link rel="stylesheet" href="assets/icon-sizing.css?v=2.70">
-<script src="assets/icon-sizing.js?v=2.70" defer></script>
+<link rel="stylesheet" href="assets/icon-sizing.css?v=2.71">
+<script src="assets/icon-sizing.js?v=2.71" defer></script>
 <script src="assets/action-controls.js?v=2.60" defer></script>
 <script src="assets/readable-type.js?v=2.59" defer></script>
 <link rel="stylesheet" href="assets/mobile-shell.css?v=2.59">
 <link rel="stylesheet" href="assets/mobile-workspace.css?v=2.67">
 <link rel="stylesheet" href="assets/screen-refinement.css?v=2.59">
-<link rel="stylesheet" href="assets/vehicle-sharing.css?v=2.69">
-<link rel="stylesheet" href="assets/shared-vehicle-markers.css?v=2.68">
+<link rel="stylesheet" href="assets/vehicle-sharing.css?v=2.71">
+<link rel="stylesheet" href="assets/shared-vehicle-markers.css?v=2.71">
 <link rel="stylesheet" href="assets/settings-refinement.css?v=2.63">
 <script src="assets/settings-refinement.js?v=2.61" defer></script>
 <script src="assets/vehicle-notifications.js?v=2.63" defer></script>
@@ -4666,7 +4666,7 @@ function snote239EncarIcon(car){
  const saved=car?.encarLinks,plate=value=>String(value||'').normalize('NFKC').replace(/[\s-]+/g,'');
  if(saved?.version!==1||plate(saved.plate)!==plate(car.plate)||!Number.isFinite(Date.parse(saved.verifiedAt)))return '';
  const link=Array.isArray(saved.listings)&&saved.listings.find(item=>/^[1-9][0-9]{0,11}$/.test(String(item?.id))&&item.sellerUrl==='https://fem.encar.com/cars/detail/'+item.id);if(!link)return '';
- return `<a class="snote-list-encar" href="${esc(link.sellerUrl)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(car.model||car.plate||'차량')} 엔카 광고 보기" title="엔카 광고 보기" onclick="event.stopPropagation()" onkeydown="event.stopPropagation()"><img src="assets/encar-logo.png?v=2.33" width="30" height="30" alt="" aria-hidden="true"></a>`;
+ return `<a class="snote-list-encar" href="${esc(link.sellerUrl)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(car.model||car.plate||'차량')} 엔카 광고 보기" title="엔카 광고 보기" onclick="event.stopPropagation()" onkeydown="event.stopPropagation()"><svg class="snote-ad-action-symbol" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" style="color:#dc394c" aria-hidden="true" focusable="false"><path d="M3 11v4a1 1 0 0 0 1 1h3l10 4V6L7 10H4a1 1 0 0 0-1 1ZM7 16l2 5h3l-2-4M20 9a4 4 0 0 1 0 8"/></svg></a>`;
 }
 function snote202InventoryAge(value){
  const raw=String(value||'').trim().replaceAll('.','-').replaceAll('/','-');
@@ -9465,10 +9465,10 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 <script type="module" src="assets/quick-calculator.js?v=2.36"></script>
 <script type="module" src="assets/vehicle-taxonomy-ui.js?v=2.60"></script>
 <script type="module" src="assets/income-settlement-parent.js?v=2.41"></script>
-<script src="assets/vehicle-sharing.js?v=2.68" defer></script>
-<script src="assets/shared-vehicle-markers.js?v=2.68" defer></script>
-<script src="assets/release-info.js?v=2.70" defer></script>
-<script src="assets/snote-encar-link.js?v=2.47" defer></script>
+<script src="assets/vehicle-sharing.js?v=2.71" defer></script>
+<script src="assets/shared-vehicle-markers.js?v=2.71" defer></script>
+<script src="assets/release-info.js?v=2.71" defer></script>
+<script src="assets/snote-encar-link.js?v=2.71" defer></script>
 <script src="assets/document-mms.js?v=2.44" defer></script>
 <script src="assets/workspace-polish.js?v=2.64" defer></script>
 <script src="assets/list-sort.js?v=2.57" defer></script>

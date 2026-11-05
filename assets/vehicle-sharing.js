@@ -1,7 +1,7 @@
 /* Authenticated vehicle-scoped collaboration. Never copies a foreign owner's dataset to local storage. */
 (()=>{'use strict';if(window.snoteVehicleSharing)return;window.snoteVehicleSharing=true;
  const bridge=()=>window.snoteVehicleShareBridge;
- const symbol='<img class="snote-share-action-icon" src="assets/shared-vehicle-icon.png?v=2.68" width="20" height="20" alt="" aria-hidden="true" draggable="false">';
+ const symbol='<svg class="snote-share-action-symbol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>';
  const disk='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M5 3h12l4 4v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2ZM7 3v6h9V3M7 21v-7h10v7M13 5v2"/></svg>';
  const dialog=document.createElement('dialog');dialog.id='snote-vehicle-sharing';dialog.setAttribute('aria-labelledby','vehicle-sharing-title');dialog.innerHTML='<div class="vehicle-sharing-frame"><button type="button" class="snote-popup-close" aria-label="차량 공유 닫기">×</button><header><h2 id="vehicle-sharing-title">차량 공유</h2><p id="vehicle-sharing-subtitle"></p></header><p id="vehicle-sharing-status" role="status"></p><main id="vehicle-sharing-body"></main></div>';document.body.append(dialog);
  const body=dialog.querySelector('main'),status=dialog.querySelector('[role=status]'),title=dialog.querySelector('h2'),subtitle=dialog.querySelector('header p');let session=null,sequence=0,urls=[];
