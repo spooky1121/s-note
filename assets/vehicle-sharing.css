@@ -1,8 +1,10 @@
 @media screen{
  .snote-document-control .snote-action-symbol{color:#52617b;stroke:currentColor}
- #vehicle-header-share,#vehicle-shared-inbox{color:#4568b5;background:#f4f6fc;border:1px solid #e2e7f1;border-radius:7px;display:inline-grid;place-items:center;width:40px;height:40px;min-width:40px;padding:9px}
+ #vehicle-header-share,#vehicle-shared-inbox{color:#4568b5;background:transparent!important;border:0!important;box-shadow:none!important;border-radius:7px;display:inline-grid;place-items:center;box-sizing:border-box;width:40px;height:40px;min-width:40px;min-height:40px;padding:0!important}
+ #vehicle-header-share:is(:hover,:focus,:focus-visible,:active),#vehicle-shared-inbox:is(:hover,:focus,:focus-visible,:active){background:transparent!important;border:0!important;box-shadow:none!important}
+ #vehicle-header-share:focus-visible,#vehicle-shared-inbox:focus-visible{outline:2px solid #315cf5;outline-offset:3px}
  #vehicle-header-share svg,#vehicle-shared-inbox svg,#snote-vehicle-sharing button svg{width:20px;height:20px;fill:none}
- #vehicle-header-share .snote-share-action-icon,#vehicle-shared-inbox .snote-share-action-icon{display:block;width:22px;height:22px;object-fit:contain;background:transparent;pointer-events:none}
+ #vehicle-header-share .snote-share-action-icon,#vehicle-shared-inbox .snote-share-action-icon{display:block;width:100%;height:100%;max-width:100%;max-height:100%;object-fit:contain;background:transparent;pointer-events:none}
  #snote-vehicle-sharing{width:min(660px,calc(100vw - 28px));max-height:calc(100dvh - 32px);margin:auto;padding:0;border:1px solid #e6e8ed;border-radius:16px;background:#fff;color:#243147;box-shadow:0 24px 80px #18243d26;overflow:auto;scrollbar-width:thin;scrollbar-color:#d5d7dc transparent}
  #snote-vehicle-sharing::backdrop{background:#15213d42;backdrop-filter:blur(4px)}
  #snote-vehicle-sharing[open]{animation:snote-share-in .2s ease-out}

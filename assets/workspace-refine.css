@@ -1,6 +1,6 @@
 @media screen{
  #snote-app #list-screen .snote-list-encar{width:22px;height:26px;min-width:22px;border-radius:5px}
- #snote-app #list-screen .snote-list-encar img{width:18px;height:18px}
+ #snote-app #list-screen .snote-list-encar img{width:21px;height:21px}
  #snote-app #list-screen .snote-encar-column{width:38px;padding:8px 5px;text-align:center}
  #snote-app :is(#list-screen,#alt-content) .car-thumb{width:48px;height:40px;border-radius:8px;flex:none;overflow:hidden}
  #snote-app .car-thumb img{width:100%;height:100%;object-fit:cover}
