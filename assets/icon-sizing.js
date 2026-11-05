@@ -2,6 +2,7 @@
 (()=>{'use strict';
  if(window.SnoteIconSizing)return;
  const glyphSize=20,hosts='button,a,label,[role="button"]';
+ const closeControls='button.snote-popup-close,button.close-button,#close-search';
  const navigation='nav,.sidebar,.bottom-nav,#bottom-nav,.mobile-drawer,#mobile-drawer';
  const excluded='.topbar-profile,#snote-profile-trigger,#snote-weather,.snote-mobile-sort select,.snote-sort-header,.photo-thumb,.doc-thumb,.zoom-hit,.add-tile';
  const calculatorShapes={'+':'<path d="M12 4v16M4 12h16"/>','−':'<path d="M4 12h16"/>','×':'<path d="M5 5l14 14M19 5 5 19"/>','÷':'<path d="M4 12h16"/><circle cx="12" cy="5" r="1" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1" fill="currentColor" stroke="none"/>','=':'<path d="M4 8h16M4 16h16"/>','%':'<path d="M5 20 19 4"/><circle cx="7" cy="7" r="2.5"/><circle cx="17" cy="17" r="2.5"/>','+/−':'<path d="M3 6h7M6.5 2.5v7M17 3 8 21M16 18h6"/>'};
@@ -34,7 +35,7 @@
   const css=getComputedStyle(svg),cw=parseFloat(css.width),ch=parseFloat(css.height);if(!(cw>0&&ch>0)||css.display==='none')return;
   let box;try{box=svg.getBBox();}catch{return;}
   const sw=stroke(svg),w=box.width+sw,h=box.height+sw;if(!(w>0&&h>0))return;
-  const target=host.matches('#vehicle-overlay .vehicle-detail-frame>.detail-close')?16:glyphSize;
+  const target=host.matches(closeControls)?16:glyphSize;
   // Fit the viewBox to the ink first, so short '+' paths and full-size disks get the same visual weight.
   const pad=Math.max(w,h)*.01,x=box.x-sw/2-pad,y=box.y-sw/2-pad,vw=w+pad*2,vh=h+pad*2;
   const fitted=[x,y,vw,vh].map(n=>Number(n.toFixed(4))).join(' ');
@@ -59,9 +60,13 @@
  }
  function flat(host,nav,mixed){
   const plus=host.querySelector('.mobile-plus');if(plus)for(const[k,v]of[['background','transparent'],['box-shadow','none'],['color','rgb(49, 92, 245)'],['width','20px'],['height','20px'],['margin-top','0px']])if(plus.style.getPropertyValue(k)!==v||plus.style.getPropertyPriority(k)!=='important')plus.style.setProperty(k,v,'important');
+  // Every popup close uses the compact vehicle-drawer circle; action icons remain flat.
+  if(host.matches(closeControls)){
+   if(host.classList.contains('snote-flat-icon-control'))host.classList.remove('snote-flat-icon-control');
+   for(const[k,v]of[['background','var(--snote-close-background, #df3546)'],['border','0px solid transparent'],['border-radius','50%'],['box-shadow','none'],['color','rgb(255, 255, 255)'],['width','30px'],['height','30px'],['min-width','30px'],['min-height','30px'],['padding','0px'],['margin','0px'],['box-sizing','border-box']])if(host.style.getPropertyValue(k)!==v||host.style.getPropertyPriority(k)!=='important')host.style.setProperty(k,v,'important');
+   return;
+  }
   if(nav)return;
-  // Keep the vehicle drawer's compact red close circle and its smaller X.
-  if(host.matches('#vehicle-overlay .vehicle-detail-frame>.detail-close')){if(host.classList.contains('snote-flat-icon-control'))host.classList.remove('snote-flat-icon-control');for(const key of['background','border','box-shadow','color'])if(host.style.getPropertyValue(key))host.style.removeProperty(key);return;}
   if(!host.classList.contains('snote-flat-icon-control'))host.classList.add('snote-flat-icon-control');
   for(const[k,v]of[['background','transparent'],['border','0px solid transparent'],['box-shadow','none']])if(host.style.getPropertyValue(k)!==v||host.style.getPropertyPriority(k)!=='important')host.style.setProperty(k,v,'important');
   const css=getComputedStyle(host),white=/^rgba?\(\s*255[, ]+\s*255[, ]+\s*255/.test(css.color),close=host.matches('.snote-popup-close,.detail-close,.close,.close-button,[data-document-close]');

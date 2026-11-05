@@ -1,0 +1,40 @@
+/* The vehicle drawer is the shared reference for popup close controls. */
+@media screen{
+ button.snote-popup-close,button.close-button,#close-search{width:30px!important;height:30px!important;min-width:30px!important;min-height:30px!important;margin:0!important;padding:0!important;border:0!important;border-radius:50%!important;background:var(--snote-close-background,#df3546)!important;color:#fff!important;box-shadow:none!important;cursor:pointer}
+ button.snote-popup-close:hover,button.close-button:hover,#close-search:hover{--snote-close-background:#bf2435}
+ :is(button.snote-popup-close,button.close-button,#close-search) svg{fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+ .snote-popup-overlay .snote-popup-frame>button.snote-popup-close,
+ :is(#overlay,#zc-auto-reg-overlay,#zc182-finance-overlay) .snote-popup-frame>button.snote-popup-close,
+ #zc72-sale-modal .snote-sale-frame>button.snote-popup-close,
+ dialog.snote-popup-native>button.snote-popup-close,
+ #snote-vehicle-sharing.snote-popup-native>button.snote-popup-close,
+ #snote-calculator-panel>button.snote-popup-close{inset:6px auto auto -15px!important}
+ #mobile-drawer .mobile-drawer-header{position:relative;padding-left:52px}
+ #mobile-drawer .mobile-drawer-header>button.snote-popup-close{inset:6px auto auto 8px!important}
+ #income-close,#close-search{position:fixed;inset:6px auto auto 8px;z-index:100}
+ html:not([data-embedded="true"]) .income-heading{padding-left:44px}
+ .search-header{padding-left:52px}
+}
+@media screen and (max-width:760px){
+ /* Keep the inset mobile close above the independently scrolling dialog body. */
+ dialog.snote-popup-native:not(#snote221-income-dialog)>.snote-popup-native-body{margin-top:30px;max-height:calc(100dvh - 150px)}
+ html[data-embedded="true"] .income-heading{padding-left:28px}
+ html:not([data-embedded="true"]) .income-heading{padding-left:28px}
+ #snote-calculator-panel .snote-calculator-heading{padding-left:28px}
+ :is(#overlay,#status-overlay,#ps-confirm-overlay) .snote-popup-card .modal-top,
+ #vin-select-overlay .vin-select-head,
+ :is(#zc-auto-reg-overlay,#zc-dashboard-gate) .zc71-modal-header,
+ #zc-auto-reg-overlay .zc71-wizard-header,
+ #zc182-finance-overlay .zc182-modal-head,
+ #zc85-postcode-overlay .zc85-postcode-head,
+ #zc72-sale-modal .zc72-head{padding-left:52px!important;padding-right:16px!important}
+ .snote-popup-overlay .snote-popup-frame>button.snote-popup-close,
+ :is(#overlay,#zc-auto-reg-overlay,#zc182-finance-overlay) .snote-popup-frame>button.snote-popup-close,
+ #zc72-sale-modal .snote-sale-frame>button.snote-popup-close,
+ dialog.snote-popup-native>button.snote-popup-close,
+ #snote-vehicle-sharing.snote-popup-native>button.snote-popup-close,
+ #snote-calculator-panel>button.snote-popup-close,
+ #mobile-drawer .mobile-drawer-header>button.snote-popup-close,
+ #income-close,#close-search{inset:calc(6px + env(safe-area-inset-top,0px)) auto auto max(8px,env(safe-area-inset-left,0px))!important}
+}
+@media print{button.snote-popup-close,button.close-button,#close-search{display:none!important}}

@@ -1,11 +1,13 @@
-/* A4 documents scroll independently from the close/print rail at the popup's top right. */
+/* A4 documents scroll independently from the aligned close/print rail at the top left. */
 @media screen{
  :is(#quote-overlay,#contract-overlay,#zc76-receipt-overlay){padding:12px!important}
- :is(#quote-overlay,#contract-overlay,#zc76-receipt-overlay) .snote-popup-frame{width:min(838px,100%);padding-right:44px;box-sizing:border-box}
+ :is(#quote-overlay,#contract-overlay,#zc76-receipt-overlay) .snote-popup-frame{width:min(838px,100%);padding:0 0 0 44px;box-sizing:border-box}
  :is(#quote-overlay,#contract-overlay,#zc76-receipt-overlay) .snote-popup-card{width:100%!important;max-height:calc(100dvh - 24px)!important;background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;gap:0}
  :is(#quote-overlay,#contract-overlay,#zc76-receipt-overlay) :is(.quote-toolbar,.contract-toolbar,.zc76-toolbar){display:none!important}
- .snote-document-controls{position:absolute;right:0;top:0;z-index:100;display:flex;flex-direction:column;align-items:center;gap:6px;width:36px}
- :is(#quote-overlay,#contract-overlay,#zc76-receipt-overlay) .snote-document-controls :is(button.snote-popup-close,button[data-document-print]){position:static!important;inset:auto!important;display:grid!important;place-items:center;width:36px!important;min-width:36px!important;height:36px!important;min-height:36px!important;margin:0!important;padding:7px!important;border:1px solid #e5e7ed!important;border-radius:7px!important;background:#fff!important;box-shadow:0 2px 8px #26344b0d!important;cursor:pointer}
+ .snote-document-controls{position:absolute;left:0;right:auto;top:6px;z-index:100;display:flex;flex-direction:column;align-items:center;gap:8px;width:36px}
+ :is(#quote-overlay,#contract-overlay,#zc76-receipt-overlay) .snote-document-controls :is(button.snote-popup-close,button[data-document-print]){position:static!important;inset:auto!important;display:grid!important;place-items:center;margin:0!important;cursor:pointer}
+ :is(#quote-overlay,#contract-overlay,#zc76-receipt-overlay) .snote-document-controls button.snote-popup-close{position:relative!important;width:30px!important;min-width:30px!important;height:30px!important;min-height:30px!important;padding:0!important}
+ :is(#quote-overlay,#contract-overlay,#zc76-receipt-overlay) .snote-document-controls button[data-document-print]{width:36px!important;min-width:36px!important;height:36px!important;min-height:36px!important;padding:7px!important;border:0!important;background:transparent!important;box-shadow:none!important}
  .snote-document-controls button[data-document-print] svg{display:block;width:20px;height:20px}
  #quote-paper{zoom:var(--quote-scale,1)!important}
  #contract-paper{zoom:var(--contract-scale,1)!important}
