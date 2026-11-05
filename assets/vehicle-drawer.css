@@ -6,7 +6,7 @@
  #vehicle-overlay.open .vehicle-detail-frame{animation:snote-vehicle-slide .3s cubic-bezier(.22,.75,.2,1)}
  #vehicle-overlay .vehicle-header{padding:21px 26px 18px!important;background:#fff!important;min-height:84px;position:sticky;top:0;z-index:20}
  /* The close circle straddles the drawer edge and stays outside its scroll clip. */
- #vehicle-overlay .vehicle-detail-frame>button.detail-close{inset:18px auto auto -17px!important;box-sizing:border-box;width:34px!important;height:34px!important;min-width:34px!important;min-height:34px!important;border:2px solid #fff!important;border-radius:50%!important;background:#df3546!important;color:#fff!important;box-shadow:0 3px 10px #7a142c2e!important}
+ #vehicle-overlay .vehicle-detail-frame>button.detail-close{inset:6px auto auto -15px!important;box-sizing:border-box;width:30px!important;height:30px!important;min-width:30px!important;min-height:30px!important;border:0!important;border-radius:50%!important;background:#df3546!important;color:#fff!important;box-shadow:none!important}
  #vehicle-overlay .vehicle-detail-frame>button.detail-close:hover{background:#bf2435!important;color:#fff!important}
  #vehicle-overlay .vehicle-body{padding:24px 26px 36px}
 }
@@ -29,7 +29,7 @@
  #vehicle-overlay .vehicle-header{padding:calc(18px + env(safe-area-inset-top,0px)) 16px 16px!important}
  #vehicle-overlay .vehicle-name-links{padding:0 0 0 40px}
  #vehicle-overlay .vehicle-body{padding:16px 16px calc(30px + env(safe-area-inset-bottom,0px))}
- #vehicle-overlay .vehicle-detail-frame>button.detail-close{inset:calc(12px + env(safe-area-inset-top,0px)) auto auto max(8px,env(safe-area-inset-left,0px))!important}
+ #vehicle-overlay .vehicle-detail-frame>button.detail-close{inset:calc(6px + env(safe-area-inset-top,0px)) auto auto max(8px,env(safe-area-inset-left,0px))!important}
 }
 @keyframes snote-vehicle-slide{from{transform:translateX(100%)}to{transform:translateX(0)}}
 @media(prefers-reduced-motion:reduce){#vehicle-overlay.open .vehicle-detail-frame{animation:none!important}}

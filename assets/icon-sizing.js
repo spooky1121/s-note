@@ -34,7 +34,7 @@
   const css=getComputedStyle(svg),cw=parseFloat(css.width),ch=parseFloat(css.height);if(!(cw>0&&ch>0)||css.display==='none')return;
   let box;try{box=svg.getBBox();}catch{return;}
   const sw=stroke(svg),w=box.width+sw,h=box.height+sw;if(!(w>0&&h>0))return;
-  const target=glyphSize;
+  const target=host.matches('#vehicle-overlay .vehicle-detail-frame>.detail-close')?16:glyphSize;
   // Fit the viewBox to the ink first, so short '+' paths and full-size disks get the same visual weight.
   const pad=Math.max(w,h)*.01,x=box.x-sw/2-pad,y=box.y-sw/2-pad,vw=w+pad*2,vh=h+pad*2;
   const fitted=[x,y,vw,vh].map(n=>Number(n.toFixed(4))).join(' ');
@@ -60,7 +60,7 @@
  function flat(host,nav,mixed){
   const plus=host.querySelector('.mobile-plus');if(plus)for(const[k,v]of[['background','transparent'],['box-shadow','none'],['color','rgb(49, 92, 245)'],['width','20px'],['height','20px'],['margin-top','0px']])if(plus.style.getPropertyValue(k)!==v||plus.style.getPropertyPriority(k)!=='important')plus.style.setProperty(k,v,'important');
   if(nav)return;
-  // Keep the vehicle drawer's red close circle while fitting its X to the common glyph size.
+  // Keep the vehicle drawer's compact red close circle and its smaller X.
   if(host.matches('#vehicle-overlay .vehicle-detail-frame>.detail-close')){if(host.classList.contains('snote-flat-icon-control'))host.classList.remove('snote-flat-icon-control');for(const key of['background','border','box-shadow','color'])if(host.style.getPropertyValue(key))host.style.removeProperty(key);return;}
   if(!host.classList.contains('snote-flat-icon-control'))host.classList.add('snote-flat-icon-control');
   for(const[k,v]of[['background','transparent'],['border','0px solid transparent'],['box-shadow','none']])if(host.style.getPropertyValue(k)!==v||host.style.getPropertyPriority(k)!=='important')host.style.setProperty(k,v,'important');

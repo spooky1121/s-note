@@ -244,7 +244,7 @@
     const logo = document.createElement('img');
     logo.className = 'snote-encar-wordmark';
     logo.src = 'assets/encar-wordmark.png?v=2.73';
-    logo.width = 40; logo.height = 20;
+    logo.width = 34; logo.height = 17;
     logo.alt = ''; logo.setAttribute('aria-hidden', 'true');
     logo.draggable = false;
     button.replaceChildren(logo);
