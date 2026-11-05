@@ -4,8 +4,10 @@
  #vehicle-overlay .vehicle-detail-frame{width:min(1120px,calc(100vw - 48px));max-width:100%;height:100dvh;max-height:100dvh;flex:none;margin:0;overflow:visible}
  #vehicle-overlay .vehicle-modal{width:100%!important;height:100dvh!important;max-height:100dvh!important;margin:0!important;border:0!important;border-left:1px solid #e7e8ef!important;border-radius:0!important;overflow:auto!important;overscroll-behavior:contain;box-shadow:-12px 0 45px #19243a18!important;animation:none!important}
  #vehicle-overlay.open .vehicle-detail-frame{animation:snote-vehicle-slide .3s cubic-bezier(.22,.75,.2,1)}
- #vehicle-overlay .vehicle-header{padding:21px 58px 18px 26px!important;background:#fff!important;min-height:84px;position:sticky;top:0;z-index:20}
- #vehicle-overlay button.snote-popup-close{inset:18px 16px auto auto!important}
+ #vehicle-overlay .vehicle-header{padding:21px 26px 18px!important;background:#fff!important;min-height:84px;position:sticky;top:0;z-index:20}
+ /* The close circle straddles the drawer edge and stays outside its scroll clip. */
+ #vehicle-overlay .vehicle-detail-frame>button.detail-close{inset:18px auto auto -17px!important;box-sizing:border-box;width:34px!important;height:34px!important;min-width:34px!important;min-height:34px!important;border:2px solid #fff!important;border-radius:50%!important;background:#df3546!important;color:#fff!important;box-shadow:0 3px 10px #7a142c2e!important}
+ #vehicle-overlay .vehicle-detail-frame>button.detail-close:hover{background:#bf2435!important;color:#fff!important}
  #vehicle-overlay .vehicle-body{padding:24px 26px 36px}
 }
 @media screen and (min-width:1100px){
@@ -25,9 +27,9 @@
 @media screen and (max-width:760px){
  #vehicle-overlay .vehicle-detail-frame{width:100vw}
  #vehicle-overlay .vehicle-header{padding:calc(18px + env(safe-area-inset-top,0px)) 16px 16px!important}
- #vehicle-overlay .vehicle-name-links{padding-right:30px}
+ #vehicle-overlay .vehicle-name-links{padding:0 0 0 40px}
  #vehicle-overlay .vehicle-body{padding:16px 16px calc(30px + env(safe-area-inset-bottom,0px))}
- #vehicle-overlay button.snote-popup-close{inset:calc(12px + env(safe-area-inset-top,0px)) 10px auto auto!important}
+ #vehicle-overlay .vehicle-detail-frame>button.detail-close{inset:calc(12px + env(safe-area-inset-top,0px)) auto auto max(8px,env(safe-area-inset-left,0px))!important}
 }
 @keyframes snote-vehicle-slide{from{transform:translateX(100%)}to{transform:translateX(0)}}
 @media(prefers-reduced-motion:reduce){#vehicle-overlay.open .vehicle-detail-frame{animation:none!important}}

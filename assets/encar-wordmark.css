@@ -1,0 +1,11 @@
+/* A transparent brand wordmark needs its natural wide proportions. */
+@media screen{
+ #vehicle-overlay .snote-encar-button.vehicle-header-action,
+ #snote-app #list-screen .snote-list-encar{display:inline-grid;place-items:center;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important}
+ #snote-app #list-screen .snote-list-encar{width:44px;min-width:44px;height:32px;flex:none}
+ #vehicle-overlay .snote-encar-button.vehicle-header-action>img.snote-encar-wordmark,
+ #snote-app #list-screen .snote-list-encar>img.snote-encar-wordmark{display:block;width:40px!important;height:20px!important;max-width:100%;object-fit:contain;pointer-events:none}
+}
+@media screen and (max-width:760px){
+ #snote-app #list-screen .snote-list-encar{width:44px;min-width:44px;height:44px}
+}

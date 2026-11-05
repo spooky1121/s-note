@@ -240,18 +240,14 @@
     button.setAttribute('data-tooltip', '엔카광고보기');
     button.setAttribute('aria-busy', String(busy));
     button.classList.toggle('is-loading', busy);
-    if (button.querySelector('svg.snote-ad-action-symbol')) return;
-    const logo = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    logo.setAttribute('class', 'snote-ad-action-symbol');
-    logo.setAttribute('viewBox', '0 0 24 24');
-    logo.setAttribute('width', '20'); logo.setAttribute('height', '20');
-    logo.setAttribute('fill', 'none'); logo.setAttribute('stroke', 'currentColor');
-    logo.setAttribute('stroke-width', '1.65'); logo.setAttribute('stroke-linecap', 'round'); logo.setAttribute('stroke-linejoin', 'round');
-    logo.setAttribute('aria-hidden', 'true'); logo.setAttribute('focusable', 'false');
-    logo.style.color = '#dc394c';
-    const mark = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    mark.setAttribute('d', 'M3 11v4a1 1 0 0 0 1 1h3l10 4V6L7 10H4a1 1 0 0 0-1 1ZM7 16l2 5h3l-2-4M20 9a4 4 0 0 1 0 8');
-    logo.append(mark); button.replaceChildren(logo);
+    if (button.querySelector('img.snote-encar-wordmark')) return;
+    const logo = document.createElement('img');
+    logo.className = 'snote-encar-wordmark';
+    logo.src = 'assets/encar-wordmark.png?v=2.73';
+    logo.width = 40; logo.height = 20;
+    logo.alt = ''; logo.setAttribute('aria-hidden', 'true');
+    logo.draggable = false;
+    button.replaceChildren(logo);
   }
 
   function closeWaitingTab(job) {

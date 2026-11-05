@@ -60,6 +60,8 @@
  function flat(host,nav,mixed){
   const plus=host.querySelector('.mobile-plus');if(plus)for(const[k,v]of[['background','transparent'],['box-shadow','none'],['color','rgb(49, 92, 245)'],['width','20px'],['height','20px'],['margin-top','0px']])if(plus.style.getPropertyValue(k)!==v||plus.style.getPropertyPriority(k)!=='important')plus.style.setProperty(k,v,'important');
   if(nav)return;
+  // Keep the vehicle drawer's red close circle while fitting its X to the common glyph size.
+  if(host.matches('#vehicle-overlay .vehicle-detail-frame>.detail-close')){if(host.classList.contains('snote-flat-icon-control'))host.classList.remove('snote-flat-icon-control');for(const key of['background','border','box-shadow','color'])if(host.style.getPropertyValue(key))host.style.removeProperty(key);return;}
   if(!host.classList.contains('snote-flat-icon-control'))host.classList.add('snote-flat-icon-control');
   for(const[k,v]of[['background','transparent'],['border','0px solid transparent'],['box-shadow','none']])if(host.style.getPropertyValue(k)!==v||host.style.getPropertyPriority(k)!=='important')host.style.setProperty(k,v,'important');
   const css=getComputedStyle(host),white=/^rgba?\(\s*255[, ]+\s*255[, ]+\s*255/.test(css.color),close=host.matches('.snote-popup-close,.detail-close,.close,.close-button,[data-document-close]');
