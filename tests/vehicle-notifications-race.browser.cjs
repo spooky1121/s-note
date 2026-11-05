@@ -37,8 +37,9 @@ async function badge(page,{unread}){
  const present=unread>0;
  assert.equal(await page.locator('#snote-profile-trigger').evaluate(e=>e.classList.contains('snote-has-notifications')),present);
  assert.equal(await page.locator('#snote-profile-notifications').evaluate(e=>e.classList.contains('snote-has-notifications')),present);
- assert.equal(await page.locator('#snote-notifications-button .snote-notification-dot').isVisible(),present);
- assert.equal(await page.locator('#snote-notifications-button').getAttribute('aria-label'),present?'차량 변경 알림, 새 알림 '+unread+'개':'차량 변경 알림');
+ assert.equal(await page.locator('#snote-notifications-button').count(),0);
+ assert.equal(await page.locator('#snote-profile-trigger').getAttribute('data-unread-count'),String(unread));
+ assert.equal(await page.locator('#snote-profile-notifications').getAttribute('aria-label'),present?'알림, 새 알림 '+unread+'개':'알림');
 }
 
 (async()=>{
@@ -50,17 +51,17 @@ async function badge(page,{unread}){
     await p.evaluate(()=>{__notificationRace.holdSummary=true;window.dispatchEvent(new Event('snote-vehicle-changed'));});
     await p.waitForFunction(()=>__notificationRace.summaryPending===true);
     const before=await p.evaluate(()=>__notificationRace.summaryReturned);
-    await p.locator('#snote-notifications-button').click();
+    await p.evaluate(()=>{void window.snoteOpenNotifications();});
     await p.waitForFunction(()=>__notificationRace.readReturned&&!document.getElementById('snote-profile-trigger').classList.contains('snote-has-notifications'));
     await badge(p,{unread:0});
     await p.evaluate(()=>__notificationRace.releaseSummary());
     await p.waitForFunction(before=>__notificationRace.summaryReturned>before,before);await settle(p);
     await badge(p,{unread:0});
-    await finish(f);console.log('PASS',width,'a stale pre-read summary cannot relight profile, menu or bell badges after confirmed read');
+    await finish(f);console.log('PASS',width,'a stale pre-read summary cannot relight profile or menu badges without a bell after confirmed read');
    }
    {
     const f=await fixture(width),p=f.page;await setup(p,{holdRead:true});
-    await p.locator('#snote-notifications-button').click();await p.waitForFunction(()=>__notificationRace.readPending);
+    await p.evaluate(()=>{void window.snoteOpenNotifications();});await p.waitForFunction(()=>__notificationRace.readPending);
     await p.locator('#snote-notifications-dialog').getByRole('button',{name:'알림 닫기'}).click();
     await p.locator('#snote-notifications-dialog').waitFor({state:'hidden'});await badge(p,{unread:1});
     await p.evaluate(()=>__notificationRace.releaseRead());
@@ -70,10 +71,10 @@ async function badge(page,{unread}){
    }
    {
     const f=await fixture(width),p=f.page;await setup(p,{holdRead:true});
-    await p.locator('#snote-notifications-button').click();await p.waitForFunction(()=>__notificationRace.readPending);
+    await p.evaluate(()=>{void window.snoteOpenNotifications();});await p.waitForFunction(()=>__notificationRace.readPending);
     await p.evaluate(()=>{__notificationRace.account='account-b';window.dispatchEvent(new Event('snote-vehicle-changed'));});
     await p.locator('#snote-notifications-dialog').waitFor({state:'hidden'});
-    await p.waitForFunction(()=>document.getElementById('snote-notifications-button').getAttribute('aria-label')==='차량 변경 알림, 새 알림 2개');
+    await p.waitForFunction(()=>document.getElementById('snote-profile-notifications').getAttribute('aria-label')==='알림, 새 알림 2개');
     await p.evaluate(()=>__notificationRace.releaseRead());await p.waitForFunction(()=>__notificationRace.readReturned);await settle(p);
     await badge(p,{unread:2});
     await finish(f);console.log('PASS',width,'a previous-account read acknowledgement cannot change the newly selected account badges');

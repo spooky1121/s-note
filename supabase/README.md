@@ -1,5 +1,7 @@
 # 상사정보 저장 기능 적용
 
+v2.63 신규 공유 알림과 공유 표시에는 [신규 공유 SQL](migrations/20261105105113_shared_vehicle_registered_notifications.sql)을 추가 적용한다. 운영 적용·권한 확인을 완료했다.
+
 공유 차량 변경 알림은 [알림 안내](../docs/vehicle-notifications.md)의 두 추가 마이그레이션을 사용한다. 운영 DB 적용과 권한 검증을 완료했다.
 
 딜러 간 차량 공유는 [공유 안내](../docs/vehicle-sharing.md)와 [공유 SQL](migrations/20261104153021_vehicle_scoped_dealer_sharing.sql)을 사용한다. 이 작업에서는 운영 DB에 적용 후 권한 검증까지 완료했다.

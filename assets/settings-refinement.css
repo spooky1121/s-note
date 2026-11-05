@@ -73,10 +73,6 @@
 @media screen and (max-width:760px){#snote-app #alt-content .snote90-settings{grid-template-columns:1fr}#snote-app .snote-company-layout{grid-template-columns:1fr}#snote-app .snote203-assets{grid-template-columns:repeat(2,minmax(0,1fr))}#snote-app .snote203-asset{display:flex;flex-direction:column;gap:6px}#snote-app .snote203-asset-preview{height:90px;width:100%;order:2}#snote-app .snote203-asset-actions{order:3}#snote-app #alt-content .snote90-settings :is(input,select){font-size:16px}#snote-app #alt-content .zc182-fin-head .fin-total{grid-row:2;grid-column:1/-1;justify-self:stretch;width:100%;gap:6px}#snote-app #alt-content .fin-kpi{flex-direction:row;justify-content:space-between;align-items:center}#snote-app #alt-content .fin-filters{flex-wrap:wrap}#snote-app #alt-content .fin-filters .search{flex:1 1 100%;max-width:none}#snote-app #alt-content .fin-filters .filter{flex:1;width:auto}#snote90-invite-mount #zc86-invite-area{grid-template-columns:minmax(0,1fr) 80px}#snote90-invite-mount #zc86-invite-create{grid-column:1}#snote90-invite-mount #zc86-members-refresh{grid-column:2}#zc182-finance-overlay :is(input,select){font-size:16px}}
 @media (prefers-reduced-motion:reduce){#zc182-finance-overlay .snote-popup-frame{animation:none!important}}
 @media screen{
- #snote-notifications-button{position:relative;display:inline-grid;place-items:center;flex:none;width:36px;min-width:36px;height:36px;padding:8px;border:1px solid #e5e8ef;border-radius:8px;color:#8c96aa;background:#fff}
- #snote-notifications-button[hidden]{display:none!important}#snote-notifications-button svg{width:19px;height:19px}
- .snote-notification-dot{position:absolute;right:3px;top:2px;width:6px;height:6px;border:2px solid #fff;border-radius:50%;background:#e44552}
- .snote-notification-new{position:absolute;right:-8px;top:-9px;padding:1px 4px;border-radius:6px;background:#fff;color:#db3948;font-size:8px;white-space:nowrap}
  #snote-profile-trigger.snote-has-notifications{position:relative}#snote-profile-trigger.snote-has-notifications::after{content:'';position:absolute;right:2px;top:0;width:6px;height:6px;border:2px solid #fff;border-radius:50%;background:#e44552}
  #snote-notifications-dialog{box-sizing:border-box;width:min(600px,calc(100vw - 28px));max-height:80dvh;padding:24px;border:1px solid #e7eaf0;border-radius:15px;background:#fff;color:#29364b;scrollbar-width:thin;scrollbar-color:#d9dce3 transparent}
  #snote-notifications-dialog::backdrop{background:#18243b42;backdrop-filter:blur(4px)}
@@ -84,8 +80,8 @@
  .notification-item{position:relative;border-top:1px solid #edf0f5;padding:16px 0}.notification-item>strong{display:block;font-size:14px;margin-right:28px}.notification-meta{font-size:11px;color:#949cac;margin:6px 0 12px}.notification-tag{position:absolute;right:0;top:16px;font-size:10px;color:#dc3945}
  .notification-item dl{margin:0;display:grid;gap:8px}.notification-item dl>div{display:grid;grid-template-columns:80px minmax(0,1fr);gap:10px;font-size:12px;line-height:1.5}.notification-item dt{color:#8c95a5}.notification-item dd{margin:0;overflow-wrap:anywhere}
 }
-@media screen and (max-width:400px){#snote-notifications-button{width:30px;min-width:30px;height:34px;padding:6px}#snote-app .topbar .topright{gap:5px}#snote-notifications-dialog{padding:20px 16px}}
-@media print{#snote-notifications-button,#snote-notifications-dialog{display:none!important}}
+@media screen and (max-width:400px){#snote-notifications-dialog{padding:20px 16px}}
+@media print{#snote-notifications-dialog{display:none!important}}
 @media screen{#snote-profile-notifications.snote-has-notifications::after{content:'● 신규';font-size:10px;color:#df3e4d;margin-left:8px}}
 @media screen and (min-width:761px){
  #snote-app #alt-content .snote-settings-lenders{grid-column:1;grid-row:3}
@@ -110,3 +106,19 @@
  #snote-app #alt-content .fin-mobile-card:hover{background:#f8faff}
 }
 @media screen{#snote-app #alt-content .snote-settings-icon:disabled{opacity:.4;cursor:not-allowed}}
+/* Share the input row between roles and actions; labels occupy the caption row above it. */
+@media screen{
+ #snote-app #alt-content .snote90-member{grid-template-columns:minmax(80px,1fr) 64px 36px 36px;grid-template-rows:18px 36px;column-gap:8px;row-gap:5px;align-items:center}
+ #snote-app #alt-content .snote90-member>label{grid-column:1;grid-row:1/3;display:grid;grid-template-rows:18px 36px;gap:5px;width:100%;min-width:0;max-width:none;margin:0;line-height:18px;align-self:stretch}
+ #snote-app #alt-content .snote90-member>label>input{box-sizing:border-box;width:100%;height:36px;min-height:36px;margin:0}
+ #snote-app #alt-content .snote90-member>span{grid-column:2;grid-row:2;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;align-self:stretch;height:36px;min-height:36px;margin:0;padding:0 9px;line-height:1}
+ #snote-app #alt-content .snote90-member>button.snote-settings-icon{grid-row:2;box-sizing:border-box;align-self:center;width:36px!important;min-width:36px!important;height:36px!important;min-height:36px!important;margin:0}
+ #snote-app #alt-content .snote90-member>button.snote-settings-icon svg{display:block}
+}
+
+@media screen{
+ .notification-event{display:inline-block;margin:0 0 7px;color:#315cf5;font-size:11px;font-weight:550}
+ .notification-message{font-size:12px;line-height:1.6;color:#858fa1;margin:7px 0 0}
+ #snote-app :is(#list-screen,#alt-content) :is(.zc-finance-label,.zc-cash-badge),
+ #snote-app :is(#list-screen,#alt-content) :is(.zc-finance-label,.zc-cash-badge):hover{background:transparent!important;border:0!important;border-radius:0;box-shadow:none!important;padding:0!important}
+}

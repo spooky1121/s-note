@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.62">
+<html lang="ko" data-snote-release="2.63">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -3192,9 +3192,10 @@ button, input, select, textarea { font-family: inherit; }
 <link rel="stylesheet" href="assets/mobile-workspace.css?v=2.59">
 <link rel="stylesheet" href="assets/screen-refinement.css?v=2.59">
 <link rel="stylesheet" href="assets/vehicle-sharing.css?v=2.60">
-<link rel="stylesheet" href="assets/settings-refinement.css?v=2.61">
+<link rel="stylesheet" href="assets/settings-refinement.css?v=2.63">
+<link rel="stylesheet" href="assets/shared-vehicle-badges.css?v=2.63">
 <script src="assets/settings-refinement.js?v=2.61" defer></script>
-<script src="assets/vehicle-notifications.js?v=2.62" defer></script>
+<script src="assets/vehicle-notifications.js?v=2.63" defer></script>
 </head>
 <body class="snote-typography">
 
@@ -3236,7 +3237,7 @@ button, input, select, textarea { font-family: inherit; }
         <button type="button" class="profile topbar-profile" id="snote-profile-trigger" aria-haspopup="menu" aria-controls="snote-profile-menu" aria-expanded="false" onclick="snoteToggleProfileMenu()"><span id="profile-avatar" hidden></span><span class="profile-detail"><span class="pname" id="profile-name">내 프로필</span><span id="profile-role" hidden></span></span><svg class="snote-profile-chevron" viewBox="0 0 20 20" aria-hidden="true"><path d="m5 8 5 5 5-5"/></svg></button>
         <div class="snote-profile-menu" id="snote-profile-menu" role="menu" aria-labelledby="snote-profile-trigger" hidden>
           <button type="button" role="menuitem" tabindex="-1" onclick="snoteOpenProfileSettings()">프로필 설정</button>
-          <button type="button" role="menuitem" tabindex="-1" id="snote-profile-notifications" onclick="snoteCloseProfileMenu(true);document.getElementById('snote-notifications-button').click()">알림</button>
+          <button type="button" role="menuitem" tabindex="-1" id="snote-profile-notifications" onclick="snoteCloseProfileMenu(true);window.snoteOpenNotifications?.()">알림</button>
           <button type="button" role="menuitem" tabindex="-1" class="snote-profile-logout" onclick="snoteCloseProfileMenu(true);logout()">로그아웃</button>
         </div>
       </div>
@@ -9442,6 +9443,9 @@ async function snote90RemoveCarMedia(carId){
 }
 window.snoteRenderAdminSettings=snoteRenderAdminSettings;
 window.snoteVehicleShareBridge={
+ badgeContext(){const c=snote220CatalogContext();return c?{key:c.key,companyId:c.company_id,userId:c.user_id}:null;},
+ badgeCurrent(c){return !!c&&this.badgeContext()?.key===c.key;},
+ async badges(c){if(!this.badgeCurrent(c))throw Error('CONTEXT_CHANGED');const r=await S.client.rpc('snote_vehicle_share_badges');if(!this.badgeCurrent(c))throw Error('CONTEXT_CHANGED');if(r.error)throw r.error;return r.data;},
  context(){const c=snote220CatalogContext();return c?.canWrite?{key:c.key,companyId:c.company_id,userId:c.user_id}:null;},
  current(c){return !!c&&this.context()?.key===c.key;},
  owner(car){return S.members.find(m=>ownerAlias(m.user_id)===car?.ownerId)?.user_id||null;},
@@ -9459,8 +9463,9 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 <script type="module" src="assets/quick-calculator.js?v=2.36"></script>
 <script type="module" src="assets/vehicle-taxonomy-ui.js?v=2.60"></script>
 <script type="module" src="assets/income-settlement-parent.js?v=2.41"></script>
-<script src="assets/vehicle-sharing.js?v=2.60" defer></script>
-<script src="assets/release-info.js?v=2.62" defer></script>
+<script src="assets/vehicle-sharing.js?v=2.63" defer></script>
+<script src="assets/shared-vehicle-badges.js?v=2.63" defer></script>
+<script src="assets/release-info.js?v=2.63" defer></script>
 <script src="assets/snote-encar-link.js?v=2.47" defer></script>
 <script src="assets/document-mms.js?v=2.44" defer></script>
 <script src="assets/workspace-polish.js?v=2.61" defer></script>
