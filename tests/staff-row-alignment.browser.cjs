@@ -20,10 +20,11 @@ const {fixture,setBrowser,finish}=require('./encar/browser-smoke.cjs');
   });
   await p.locator('#snote90-members .snote90-member').nth(2).waitFor();
   await p.waitForFunction(()=>[...document.querySelectorAll('.snote90-member button')].every(e=>e.classList.contains('snote-settings-icon')&&e.querySelector('svg')));
+  await p.waitForFunction(()=>[...document.querySelectorAll('.snote90-member button svg')].every(e=>e.classList.contains('snote-sized-action-glyph')));
   await p.mouse.move(0,0);
   const rows=await p.locator('.snote90-member').evaluateAll(elements=>elements.map(row=>{
    const rect=e=>{const b=e.getBoundingClientRect();return{x:b.x,y:b.y,width:b.width,height:b.height,cx:b.x+b.width/2,cy:b.y+b.height/2,right:b.right};};
-   return{row:rect(row),controls:[...row.querySelectorAll('input,:scope>span,button')].map(rect),icons:[...row.querySelectorAll('button svg')].map(rect),labels:[...row.querySelectorAll('button')].map(e=>e.getAttribute('aria-label'))};
+   return{row:rect(row),controls:[...row.querySelectorAll('input,:scope>span,button')].map(rect),icons:[...row.querySelectorAll('button svg')].map(svg=>{const r=rect(svg),b=svg.getBBox(),v=svg.viewBox.baseVal,sw=parseFloat(getComputedStyle(svg).strokeWidth)||0,unit=Math.min(r.width/v.width,r.height/v.height);return{...r,inkWidth:(b.width+sw)*unit,inkHeight:(b.height+sw)*unit};}),labels:[...row.querySelectorAll('button')].map(e=>e.getAttribute('aria-label'))};
   }));
   assert.equal(rows.length,3);
   for(const row of rows){
@@ -31,7 +32,7 @@ const {fixture,setBrowser,finish}=require('./encar/browser-smoke.cjs');
    const [input,role,save,remove]=row.controls;
    for(const control of row.controls){assert(Math.abs(control.cy-input.cy)<.6,'Name, role, save and delete must share the input center: '+JSON.stringify({width,row}));assert(Math.abs(control.height-input.height)<.6,'All staff controls must use the same height');assert(control.x>=row.row.x-.6&&control.right<=row.row.right+.6,'Staff controls must fit their row');}
    assert(save.x>=role.right+5&&remove.x>=save.right+5,'Staff actions must have consistent visible gaps');
-   assert.equal(row.icons.length,2);row.icons.forEach((icon,i)=>{const button=row.controls[i+2];assert(Math.abs(icon.cx-button.cx)<.6&&Math.abs(icon.cy-button.cy)<.6,'Each glyph must be centered in its action');assert.equal(icon.width,19);assert.equal(icon.height,19);});
+   assert.equal(row.icons.length,2);row.icons.forEach((icon,i)=>{const button=row.controls[i+2];assert(Math.abs(icon.cx-button.cx)<.6&&Math.abs(icon.cy-button.cy)<.6,'Each glyph must be centered in its action');assert(Math.abs(Math.max(icon.inkWidth,icon.inkHeight)-Math.min(button.width,button.height)*.63)<.6,'Staff drawings must match the shared chain proportion');});
   }
   for(const row of rows.slice(1))for(let i=0;i<4;i++){assert(Math.abs(row.controls[i].x-rows[0].controls[i].x)<.6,'Staff columns must align across roles');assert(Math.abs(row.controls[i].width-rows[0].controls[i].width)<.6,'Staff columns must keep matching widths across roles');}
   assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);

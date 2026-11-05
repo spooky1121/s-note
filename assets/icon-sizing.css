@@ -1,0 +1,13 @@
+/* Enlarge the drawing inside an action control; its layout and click area stay fixed. */
+@media screen{
+ svg.snote-sized-action-glyph,.snote-sized-action-text{scale:var(--snote-action-glyph-scale,1);transform-origin:50% 50%}
+ .snote-sized-action-text{display:inline-block;line-height:1;vertical-align:middle;pointer-events:none}
+ .snote-direction-glyph{position:absolute;left:50%;top:50%;translate:-50% -50%;pointer-events:none}
+ .snote-original-direction-text{opacity:0;pointer-events:none}
+ .snote-direction-anchor{position:relative}
+ .snote-sized-mixed-action{column-gap:var(--snote-mixed-icon-gap,6px)!important}
+}
+@media print{
+ .snote-direction-glyph{display:none!important}
+ svg.snote-sized-action-glyph,.snote-sized-action-text{scale:none!important}
+}

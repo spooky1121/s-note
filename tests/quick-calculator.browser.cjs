@@ -22,6 +22,7 @@ async function fixture(width=1440,reducedMotion=false){
    assert(source.includes('\ninitializeAuth();'),'The test must expose the actual local sample initialization without replacing auth behavior');
    return route.fulfill({contentType:'text/html;charset=utf-8',body:source.replace('\ninitializeAuth();','\nwindow.__quickCalculatorFixtureAuth=initializeAuth();')});
   }
+  if(url.pathname==='/api/weather')return route.fulfill({contentType:'application/json',body:JSON.stringify({ok:true,temperature:18,code:0,region:'합성 지역',source:'synthetic'})});
   if(url.pathname==='/monthly.html')return route.fulfill({contentType:'text/html;charset=utf-8',body:fs.readFileSync(path.join(ROOT,'monthly.html'),'utf8')});
   if(url.pathname.startsWith('/assets/')){const relative=url.pathname.slice(1);if(!fs.existsSync(path.join(ROOT,relative))){blocked.push(url.pathname);return route.abort();}const types={'.js':'application/javascript','.css':'text/css','.png':'image/png','.svg':'image/svg+xml','.json':'application/json'};return route.fulfill({contentType:types[path.extname(relative)]||'application/octet-stream',body:fs.readFileSync(path.join(ROOT,relative))});}
   blocked.push(url.pathname);return route.abort();
