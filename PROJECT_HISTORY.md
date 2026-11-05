@@ -8,6 +8,8 @@
 - 인쇄 전 직접 넣은 기호SVG를 인라인으로 숨기고 원문기호를 표시한 후, 화면 복귀 시 다시20px로 적용한다. 63개 아이콘의 새 실제 UI 비교 HTML/PNG를 docs/icon-preview-v2.71.*로 추가했다.
 - 검증: 신규 fixed20/frameless·직원 정렬·공유 상태/철회·공유 수정·문서 인쇄·말풍선·계산기 회귀 통과.1440/390/320px에서 실제 그림20px·normal/hover 배경/테두리0·정렬·원래 클릭영역·idempotent refresh·숨긴 팝업·설정 재렌더·정렬/인쇄 원복·독립 정산문서의 글자간격/가로넘침 없음 확인. 광고 전체 Chromium smoke도 검색/수동검증/확인링크저장/차량전환/미저장입력보존/사진/팔레트까지 통과했다. 업무HTTP는 합성fixture이며 운영DB·고객정보·문자 변경은 없다.
 
+- 배포: 앱 커밋 `3134a71ccb8a4b8d2b2e7e0d8b026c7050a38d76`를 GitHub main에 반영했다. Cloudflare **Pages: s-note** 체크 `127333199082`가 completed/success, 2026-11-06 00:13:51 KST(2026-11-05T15:13:51Z)에 완료됐다. 서비스 https://s-note.pages.dev/?release=2.71 / 배포 https://98086dc3.s-note.pages.dev / 전체 미리보기 https://s-note.pages.dev/docs/icon-preview-v2.71.html .
+
 ## 2026-11-05 — v2.70 공통 아이콘 그림 확대·61종 전체 미리보기
 
 - 사용자가 유지하기로 한 현재 공유아이콘의 큰 체인 비율을 기준으로 다른 아이콘 그림을 확대했다. 공유 PNG는 변경하지 않았다. 실제 SVG 도형 경계와 선 두께를 측정해 버튼 짧은 변의 약 63%를 채우도록 맞추고, 기존 버튼·클릭 핸들러·색상을 유지한다.
