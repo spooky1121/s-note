@@ -3,7 +3,7 @@
  const bridge=()=>window.snoteVehicleShareBridge;
  const context=()=>{const b=bridge();return b?.badgeContext?b.badgeContext():b?.context?.();};
  const current=c=>{const b=bridge();return !!c&&(b?.badgeCurrent?b.badgeCurrent(c):b?.current?.(c));};
- const source='assets/shared-vehicle-icon.png?v=2.67';
+ const source='assets/shared-vehicle-icon.png?v=2.68';
  let account=null,epoch=0,shared=new Set(),job=null,queued=false,last=0,scheduled=false;
  const key=(owner,id)=>owner+'\n'+id;
  function mark(target,on,kind){if(!target)return;let marker=target.querySelector(':scope > .snote-shared-vehicle-marker');if(!on){marker?.remove();return;}if(marker)return;marker=document.createElement('span');marker.className='snote-shared-vehicle-marker snote-shared-vehicle-marker--'+kind;marker.setAttribute('role','img');marker.setAttribute('aria-label','공유 차량');marker.dataset.tooltip='공유 차량';const image=document.createElement('img');image.src=source;image.alt='';image.setAttribute('aria-hidden','true');image.draggable=false;image.decoding='async';marker.append(image);target.append(marker);}
