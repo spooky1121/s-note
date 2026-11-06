@@ -15,7 +15,7 @@ const fs=require('node:fs'),assert=require('node:assert/strict'),{PGlite}=requir
  create policy zc_members_read on public.zc_members for select to authenticated using(user_id=auth.uid() or public.zc_is_member(company_id));
  create policy zc_companies_read on public.zc_companies for select to authenticated using(public.zc_is_member(id));
  grant select on public.zc_members,public.zc_companies to authenticated;`);
- const migration=fs.readFileSync('supabase/migrations/20261106024758_personal_profile_editor.sql','utf8');
+ const migration=fs.readFileSync('supabase/migrations/20261106113504_personal_profile_editor.sql','utf8');
  await db.exec(migration);await db.exec(migration);
  const result=await db.exec(fs.readFileSync('tests/profile-editor.rollback.sql','utf8'));
  assert(result.some(r=>r.rows?.some(row=>String(row.result||'').startsWith('PASS'))));
