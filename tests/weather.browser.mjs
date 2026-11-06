@@ -1,0 +1,26 @@
+// Actual weather module + Pages function, with synthetic KMA upstream and browser clock.
+import assert from 'node:assert/strict';import fs from 'node:fs';import{createRequire}from'node:module';import{onRequest}from'../functions/api/weather.js';
+const require=createRequire(import.meta.url),{chromium}=require('./encar/node_modules/playwright');
+const source=fs.readFileSync(new URL('../assets/workspace-refine.js',import.meta.url),'utf8');
+const now=new Date();
+function xml(temperature=-2.4){const d=new Date(Date.now()+32400000);return `<?xml version="1.0" encoding="UTF-8"?><weather year="${d.getUTCFullYear()}" month="${d.getUTCMonth()+1}" day="${d.getUTCDate()}" hour="${d.getUTCHours()}"><local stn_id="108" desc="맑음" ta="${temperature}">서울</local></weather>`;}
+const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium'});
+try{for(const width of[1440,390,320]){
+ const context=await browser.newContext({viewport:{width,height:760}}),page=await context.newPage();let hits=0,mode='fail',invalid=null;
+ await page.clock.install({time:now});
+ await page.route('https://weather-check.example/',route=>route.fulfill({contentType:'text/html',body:'<!doctype html><html><head><meta charset="utf-8"></head><body><a id="snote-weather" class="snote-weather" href="https://www.weather.go.kr/" aria-label="날씨"><span data-weather-icon>☁</span><span data-weather-temp>—°</span></a></body></html>'}));
+ await page.route('**/api/weather',async route=>{hits++;if(mode==='fail')return route.fulfill({status:503,contentType:'application/json',body:'{"ok":false,"reason":"KMA_HTTP_UNAVAILABLE"}'});if(mode==='invalid')return route.fulfill({contentType:'application/json',body:JSON.stringify(invalid)});const previous=global.fetch;try{global.fetch=async()=>new Response(xml(0));const response=await onRequest({request:new Request(route.request().url())});await route.fulfill({status:response.status,contentType:'application/json',body:await response.text()});}finally{global.fetch=previous;}});
+ await page.goto('https://weather-check.example/');await page.addStyleTag({content:fs.readFileSync(new URL('../assets/workspace-refine.css',import.meta.url),'utf8')});await page.addScriptTag({content:source});
+ const badge=page.locator('#snote-weather');await page.waitForFunction(()=>document.querySelector('#snote-weather').dataset.state==='unavailable');assert.equal(hits,1);assert.equal(await badge.locator('[data-weather-temp]').textContent(),'—°');assert.match(await badge.getAttribute('aria-label'),/잠시 후 다시 확인/);
+ // A failed request is eligible after 30 seconds, not held for ten minutes.
+ mode='ok';await page.clock.fastForward(29900);assert.equal(hits,1);await page.clock.fastForward(200);await page.waitForFunction(()=>document.querySelector('#snote-weather').dataset.state==='ready');assert.equal(hits,2);assert.equal(await badge.locator('[data-weather-temp]').textContent(),'0°');const title=await badge.getAttribute('aria-label');assert.match(title,/서울/);assert.match(title,/서울 기준 \(접속 위치 확인 불가\)/);assert.match(title,/기상청 \d\d:\d\d 관측/);assert(!title.includes('undefined'));assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+ // Ten minute success cache and online recovery work independently of the failed request interval.
+ await page.clock.fastForward(599900);assert.equal(hits,2);mode='fail';await page.clock.fastForward(200);await page.waitForFunction(()=>document.querySelector('#snote-weather').dataset.state==='stale');assert.equal(hits,3);assert.equal(await badge.locator('[data-weather-temp]').textContent(),'0°');assert.match(await badge.getAttribute('aria-label'),/갱신 대기/);
+ mode='ok';await page.evaluate(()=>dispatchEvent(new Event('online')));await page.waitForFunction(()=>document.querySelector('#snote-weather').dataset.state==='ready');assert.equal(hits,4);
+ await page.evaluate(()=>{Object.defineProperty(document,'hidden',{value:false,configurable:true});document.dispatchEvent(new Event('visibilitychange'));});await page.waitForFunction(()=>document.querySelector('#snote-weather').dataset.state==='ready');await page.waitForTimeout(20);assert.equal(hits,5);
+ await page.screenshot({path:'/tmp/snote-v278-weather-'+width+'.png'});
+ // Bad/missing data cannot become a new observation, and an expired retained value disappears.
+ mode='invalid';for(const data of[{ok:true,temperature:'0',code:0,region:'서울',source:'기상청',observedAt:now.toISOString()},{ok:true,temperature:0,code:0,region:'',source:'기상청',observedAt:now.toISOString()},{ok:true,temperature:0,code:0,region:'서울',source:'기상청',observedAt:new Date(now.getTime()-14400000).toISOString()}]){invalid=data;await page.evaluate(()=>dispatchEvent(new Event('online')));await page.waitForFunction(()=>document.querySelector('#snote-weather').dataset.state==='stale');}
+ await page.clock.fastForward(14400000);await page.waitForFunction(()=>document.querySelector('#snote-weather').dataset.state==='unavailable');assert.equal(await badge.locator('[data-weather-temp]').textContent(),'—°');
+ await context.close();console.log('PASS',width,'actual Pages API → Korean station/zero temperature/KST time badge; 30s failure retry, 10m success cache, retained stale label, online/visible recovery, invalid/expired data rejected');
+}}finally{await browser.close();}

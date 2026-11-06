@@ -5,9 +5,8 @@
  #vehicle-overlay .vehicle-modal{width:100%!important;height:100dvh!important;max-height:100dvh!important;margin:0!important;border:0!important;border-left:1px solid #e7e8ef!important;border-radius:0!important;overflow:auto!important;overscroll-behavior:contain;box-shadow:-12px 0 45px #19243a18!important;animation:none!important}
  #vehicle-overlay.open .vehicle-detail-frame{animation:snote-vehicle-slide .3s cubic-bezier(.22,.75,.2,1)}
  #vehicle-overlay .vehicle-header{padding:21px 26px 18px!important;background:#fff!important;min-height:84px;position:sticky;top:0;z-index:20}
- /* The close circle straddles the drawer edge and stays outside its scroll clip. */
- #vehicle-overlay .vehicle-detail-frame>button.detail-close{inset:6px auto auto -15px!important;box-sizing:border-box;width:30px!important;height:30px!important;min-width:30px!important;min-height:30px!important;border:0!important;border-radius:50%!important;background:#df3546!important;color:#fff!important;box-shadow:none!important}
- #vehicle-overlay .vehicle-detail-frame>button.detail-close:hover{background:#bf2435!important;color:#fff!important}
+ /* Keep the close inside the frame and outside its scrolling content. */
+ #vehicle-overlay .vehicle-detail-frame>button.detail-close{inset:10px auto auto 10px!important}
  #vehicle-overlay .vehicle-body{padding:24px 26px 36px}
 }
 @media screen and (min-width:1100px){
@@ -29,7 +28,7 @@
  #vehicle-overlay .vehicle-header{padding:calc(18px + env(safe-area-inset-top,0px)) 16px 16px!important}
  #vehicle-overlay .vehicle-name-links{padding:0 0 0 40px}
  #vehicle-overlay .vehicle-body{padding:16px 16px calc(30px + env(safe-area-inset-bottom,0px))}
- #vehicle-overlay .vehicle-detail-frame>button.detail-close{inset:calc(6px + env(safe-area-inset-top,0px)) auto auto max(8px,env(safe-area-inset-left,0px))!important}
+ #vehicle-overlay .vehicle-detail-frame>button.detail-close{inset:calc(10px + env(safe-area-inset-top,0px)) auto auto max(10px,env(safe-area-inset-left,0px))!important}
 }
 @keyframes snote-vehicle-slide{from{transform:translateX(100%)}to{transform:translateX(0)}}
 @media(prefers-reduced-motion:reduce){#vehicle-overlay.open .vehicle-detail-frame{animation:none!important}}

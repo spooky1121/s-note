@@ -22,7 +22,8 @@ export function parseKmaObservations(xml,now=Date.now()){
  const root=xml.match(/<weather\b([^>]*)>/i);if(!root||!/<\/weather\s*>/i.test(xml))throw Error('INVALID_KMA_DATA');
  const a=attrs(root[1]),parts=['year','month','day','hour'].map(k=>Number(a[k]));
  if(parts.some(n=>!Number.isInteger(n))||parts[0]<2020||parts[1]<1||parts[1]>12||parts[2]<1||parts[2]>31||parts[3]<0||parts[3]>23)throw Error('INVALID_KMA_TIME');
- const observed=Date.UTC(parts[0],parts[1]-1,parts[2],parts[3]-9),age=now-observed;
+ const observed=Date.UTC(parts[0],parts[1]-1,parts[2],parts[3]-9),calendar=new Date(observed+32400000),age=now-observed;
+ if(calendar.getUTCFullYear()!==parts[0]||calendar.getUTCMonth()!==parts[1]-1||calendar.getUTCDate()!==parts[2])throw Error('INVALID_KMA_TIME');
  if(age< -1200000||age>10800000)throw Error('STALE_KMA_DATA');
  const rows=[];
  for(const local of xml.matchAll(/<local\b([^>]*)>([^<]*)<\/local\s*>/gi)){
@@ -39,27 +40,47 @@ function coordinates(cf,env){const fixed=env.WEATHER_LATITUDE!==undefined||env.W
  if(rawLat==null||rawLon==null||String(rawLat).trim()===''||String(rawLon).trim()==='')return null;
  const lat=Number(rawLat),lon=Number(rawLon);return Number.isFinite(lat)&&Number.isFinite(lon)&&lat>=32&&lat<=39.5&&lon>=124&&lon<=132?{lat,lon}:null;
 }
+export function decodeKmaFeed(data,contentType=''){
+ const prefix=Array.from(data.subarray(0,256),byte=>byte<128?String.fromCharCode(byte):' ').join('');
+ const declaration=prefix.match(/<\?xml[^>]*encoding\s*=\s*["']([^"']+)/i)?.[1];
+ const declared=(declaration||String(contentType).match(/charset\s*=\s*["']?([^;\s"']+)/i)?.[1]||'utf-8').toLowerCase().replace(/[_ ]/g,'-');
+ const encoding=/^(utf-8|utf8)$/.test(declared)?'utf-8':/^(euc-kr|ks-c-5601-1987|ks-c-5601|cp949|windows-949)$/.test(declared)?'euc-kr':null;
+ if(!encoding)throw Error('INVALID_KMA_ENCODING');
+ try{return new TextDecoder(encoding,{fatal:true}).decode(data);}catch{throw Error('INVALID_KMA_ENCODING');}
+}
 async function readFeed(signal){
- const response=await fetch(FEED,{signal,redirect:'error',headers:{Accept:'application/xml,text/xml','User-Agent':'S-NOTE/2.54 (+https://s-note.pages.dev)'}});
- if(!response.ok)throw Error('KMA_UNAVAILABLE');const reader=response.body?.getReader();if(!reader)throw Error('KMA_UNAVAILABLE');
+ let target=new URL(FEED),response;
+ for(let redirects=0;redirects<=2;redirects++){
+  response=await fetch(target.href,{signal,redirect:'manual',headers:{Accept:'application/xml,text/xml','User-Agent':'S-NOTE/2.78 (+https://s-note.pages.dev)'}});
+  if(![301,302,303,307,308].includes(response.status))break;
+  const location=response.headers.get('location');
+  if(!location||redirects===2)throw Error('KMA_REDIRECT_UNAVAILABLE');
+  const next=new URL(location,target);
+  if(next.protocol!=='https:'||!['www.kma.go.kr','www.weather.go.kr'].includes(next.hostname)||next.username||next.password)throw Error('KMA_REDIRECT_UNAVAILABLE');
+  target=next;
+ }
+ if(!response.ok)throw Error('KMA_HTTP_UNAVAILABLE');const reader=response.body?.getReader();if(!reader)throw Error('KMA_HTTP_UNAVAILABLE');
  let length=0;const chunks=[];while(true){const {done,value}=await reader.read();if(done)break;length+=value.length;if(length>262144){await reader.cancel();throw Error('KMA_TOO_LARGE');}chunks.push(value);}
  const data=new Uint8Array(length);let offset=0;for(const chunk of chunks){data.set(chunk,offset);offset+=chunk.length;}
- return parseKmaObservations(new TextDecoder().decode(data));
+ return parseKmaObservations(decodeKmaFeed(data,response.headers.get('content-type')));
 }
 export async function onRequest({request,env={}}){
- const reply=(data,status=200)=>new Response(JSON.stringify(data),{status,headers:{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});
+ const reply=(data,status=200)=>new Response(JSON.stringify(data),{status,headers:{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff',...(status===503?{'Retry-After':'30'}:{})}});
  if(request.method!=='GET')return reply({ok:false},405);
  const stationParam=new URL(request.url).searchParams.get('station'),requested=stationParam&&STATIONS.find(([id])=>String(id)===stationParam);
  if(stationParam&&!requested)return reply({ok:false,reason:'INVALID_STATION'},400);
- const point=requested?{lat:requested[1],lon:requested[2]}:coordinates(request.cf||{},env);if(!point)return reply({ok:false,reason:'LOCATION_UNAVAILABLE'},503);
- const cache=globalThis.caches?.default,key=new Request(new URL('/api/weather-cache/kma-observations-v1',request.url));
+ const configured=coordinates({},env),connected=coordinates(request.cf||{},{}),located=configured||connected;
+ const fallback=!requested&&!located,selected=requested||(fallback?STATIONS.find(([id])=>id===108):null);
+ const point=selected?{lat:selected[1],lon:selected[2]}:located;
+ const locationBasis=requested?'선택한 관측소':fallback?'서울 기준 (접속 위치 확인 불가)':configured?'설정한 상사 위치 인근 관측소':'접속 지역 인근 관측소';
+ const cache=globalThis.caches?.default,key=new Request(new URL('/api/weather-cache/kma-observations-v2',request.url));
  let feed=null;
- try{const saved=await cache?.match(key);if(saved){const cached=await saved.json();const age=Date.now()-Date.parse(cached.observedAt);if(age>=-1200000&&age<=10800000&&Array.isArray(cached.rows)&&cached.rows.length)feed=cached;}}catch{}
+ try{const saved=await cache?.match(key);if(saved){const cached=await saved.json();const age=Date.now()-Date.parse(cached.observedAt);if(age>=-1200000&&age<=10800000&&Array.isArray(cached.rows)&&cached.rows.length&&cached.rows.every(row=>Number.isInteger(row.station)&&typeof row.region==='string'&&row.region.trim()!==''&&row.region.length<=40&&Number.isFinite(row.temperature)&&row.temperature>=-80&&row.temperature<=60&&Number.isInteger(row.code)&&row.code>=0&&row.code<=100))feed=cached;}}catch{}
  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),6000);
  try{
   if(!feed){feed=await readFeed(controller.signal);if(cache)try{await cache.put(key,new Response(JSON.stringify(feed),{headers:{'Content-Type':'application/json','Cache-Control':'public, max-age=600'}}));}catch{}}
   const stations=STATIONS.map(([id,lat,lon])=>{const item=feed.rows.find(row=>row.station===id);return item?{item,distance:Math.hypot((lat-point.lat)*111,(lon-point.lon)*111*Math.cos(point.lat*Math.PI/180))}:null;}).filter(Boolean).sort((a,b)=>a.distance-b.distance);
   const nearest=stations[0];if(!nearest||nearest.distance>120||(requested&&nearest.item.station!==requested[0]))throw Error('NO_NEARBY_STATION');
-  return reply({ok:true,...nearest.item,source:'기상청',sourceUrl:FEED,observedAt:feed.observedAt,timezone:'Asia/Seoul',locationBasis:requested?'선택한 관측소':'접속 지역 인근 관측소',fetchedAt:new Date().toISOString()});
- }catch{return reply({ok:false,reason:'WEATHER_UNAVAILABLE'},503);}finally{clearTimeout(timer);}
+  return reply({ok:true,...nearest.item,source:'기상청',sourceUrl:FEED,observedAt:feed.observedAt,timezone:'Asia/Seoul',locationBasis,fetchedAt:new Date().toISOString()});
+ }catch(error){const allowed=['INVALID_KMA_DATA','INVALID_KMA_TIME','STALE_KMA_DATA','NO_KMA_OBSERVATIONS','INVALID_KMA_ENCODING','KMA_REDIRECT_UNAVAILABLE','KMA_HTTP_UNAVAILABLE','KMA_TOO_LARGE','NO_NEARBY_STATION'];const reason=controller.signal.aborted?'KMA_TIMEOUT':allowed.includes(error?.message)?error.message:'WEATHER_UNAVAILABLE';return reply({ok:false,reason},503);}finally{clearTimeout(timer);}
 }

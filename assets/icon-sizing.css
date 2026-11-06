@@ -8,6 +8,17 @@
  .snote-direction-anchor{position:relative}
  .snote-sized-mixed-action{column-gap:var(--snote-mixed-icon-gap,6px)!important}
 }
+/* Add/remove controls keep their meaning while using a smaller circular target. */
+@media screen{
+ .snote-original-step-prefix{display:none!important}
+ .snote-step-plus{--snote-step-background:#edf4ff;--snote-step-color:#315cf5}
+ .snote-step-minus{--snote-step-background:#fff0f1;--snote-step-color:#dc3945}
+ .snote-step-plus:is(:hover,:focus-visible){--snote-step-background:#dce9ff}
+ .snote-step-minus:is(:hover,:focus-visible){--snote-step-background:#ffe0e3}
+ .snote-step-circle{transition:background-color .15s ease,translate .14s ease,opacity .15s ease!important}
+ .snote-step-glyph-ring{display:inline-grid!important;place-items:center!important;box-sizing:border-box!important;flex:none!important;width:28px!important;height:28px!important;min-width:28px!important;min-height:28px!important;margin:0!important;padding:0!important;border:0!important;border-radius:50%!important;background:var(--snote-step-background,#edf4ff)!important;color:var(--snote-step-color,#315cf5)!important;box-shadow:none!important;line-height:1!important;pointer-events:none}
+ .snote-step-circle:focus-visible,.snote-step-glyph:focus-visible{outline:2px solid #8eaddf;outline-offset:3px}
+}
 @media print{
  .snote-direction-glyph{display:none!important}
  svg.snote-sized-action-glyph,.snote-sized-action-text{scale:none!important}
