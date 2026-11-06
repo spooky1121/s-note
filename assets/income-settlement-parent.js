@@ -1,4 +1,4 @@
-import {createSource,createDocument,sourceFingerprint} from './income-settlement-model.js?v=2.41';
+import {createSource,createDocument,sourceFingerprint} from './income-settlement-model.js?v=2.76';
 
 const bridge=()=>window.snoteIncomeSettlementBridge;
 const dialog=document.createElement('dialog');dialog.id='snote221-income-dialog';dialog.setAttribute('aria-label','차량 소득정산');

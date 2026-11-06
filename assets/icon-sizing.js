@@ -63,7 +63,7 @@
   // Every popup close uses the compact vehicle-drawer circle; action icons remain flat.
   if(host.matches(closeControls)){
    if(host.classList.contains('snote-flat-icon-control'))host.classList.remove('snote-flat-icon-control');
-   for(const[k,v]of[['background','var(--snote-close-background, #df3546)'],['border','0px solid transparent'],['border-radius','50%'],['box-shadow','none'],['color','rgb(255, 255, 255)'],['width','30px'],['height','30px'],['min-width','30px'],['min-height','30px'],['padding','0px'],['margin','0px'],['box-sizing','border-box']])if(host.style.getPropertyValue(k)!==v||host.style.getPropertyPriority(k)!=='important')host.style.setProperty(k,v,'important');
+   for(const[k,v]of[['background','var(--snote-close-background, #df3546)'],['border','var(--snote-close-border, 0px solid transparent)'],['border-radius','50%'],['box-shadow','var(--snote-close-shadow, none)'],['color','rgb(255, 255, 255)'],['width','30px'],['height','30px'],['min-width','30px'],['min-height','30px'],['padding','0px'],['margin','0px'],['box-sizing','border-box']])if(host.style.getPropertyValue(k)!==v||host.style.getPropertyPriority(k)!=='important')host.style.setProperty(k,v,'important');
    return;
   }
   if(nav)return;

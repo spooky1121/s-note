@@ -1,4 +1,4 @@
-import './money.js?v=2.41';
+import './money.js?v=2.76';
 import './inventory-interest.js?v=2.41';
 import { TEMPLATE, TEMPLATE_ID } from './income-settlement-template.js?v=2.41';
 export { TEMPLATE, TEMPLATE_ID };
@@ -6,7 +6,7 @@ export { TEMPLATE, TEMPLATE_ID };
 const TYPE = 'snote-income-settlement';
 const MAX_MONEY = 9_999_999_999_999;
 const INPUTS = Object.keys(TEMPLATE.inputs);
-const COSTS = [['bodywork', '차량판금비용'], ['polish', '차량광택비용'], ['advertising', '광고비용'], ['purchaseFee', '매입수수료'], ['purchaseOther', '매입비'], ['repair', '수리비']];
+const COSTS = [['bodywork', '차량판금비용'], ['polish', '차량광택비용'], ['performanceInspection', '성능점검비'], ['advertising', '광고비용'], ['purchaseFee', '매입수수료'], ['purchaseOther', '매입비'], ['repair', '수리비']];
 class IncomeError extends Error {
   constructor(message = '소득정산 입력 형식을 확인해 주세요.', cell) { super(message); this.code = 'VALIDATION_ERROR'; if (cell) this.cell = cell; }
 }

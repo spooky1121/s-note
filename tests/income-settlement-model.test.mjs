@@ -132,6 +132,20 @@ test('invoice suggestions are detached optional references, not automatic VAT-ba
   assert.equal(doc.cells.D15,null);assert.equal(calculate(doc).cells.H15,0);
 });
 
+test('performance inspection is a precise optional expense suggestion that affects income only after invoice application', async () => {
+  const original=car({costs:{performanceInspection:1.2345}}),source=createSource(original),doc=createDocument(source);
+  const suggestion=invoiceCostSuggestions(source).find(item=>item.key==='performanceInspection');
+  assert.deepEqual(suggestion,{key:'performanceInspection',label:'성능점검비',amountWon:12345});
+  assert.equal(original.costs.performanceInspection,1.2345,'The stored legacy source must stay unchanged');
+  assert.equal(doc.cells.D15,null);assert.equal(calculate(doc,source).cells.D28,0,'An expense without selected invoice evidence must not be silently claimed');
+  const base=calculate(doc,source);doc.cells.B15=suggestion.label;doc.cells.D15=suggestion.amountWon;
+  const applied=calculate(doc,source);assert.equal(applied.cells.D28,12345);assert.equal(applied.cells.F15,11223);assert.equal(applied.cells.H15,1122);
+  assert(applied.totals.purchaseNet<base.totals.purchaseNet);assert.equal(applied.cells.D28,calculate(doc,source).cells.D28,'Repeated calculation must not double count the suggestion');
+  const changed=createSource(car({costs:{performanceInspection:1.2346}}));assert.notEqual(await sourceFingerprint(source),await sourceFingerprint(changed));
+  for(const costs of [{},{performanceInspection:0}]){const missing=createSource(car({costs}));assert.equal(missing.costSuggestions.some(item=>item.key==='performanceInspection'),false);assert.equal(calculate(createDocument(missing),missing).cells.D28,0);}
+  const won=createSource({...car({costs:{performanceInspection:1}}),moneyUnit:'KRW'});assert.equal(won.costSuggestions.find(item=>item.key==='performanceInspection').amountWon,1);
+});
+
 test('bounded extreme input stays exact and all formula results remain safe integer numbers', () => {
   const doc=document({});for(const [cell,input]of Object.entries(TEMPLATE.inputs))if(input.kind==='money')doc.cells[cell]=cell==='D8'?9999999999999:-9999999999999;
   const result=calculate(doc);assert(Object.values(formulaValues(result)).every(Number.isSafeInteger));assert.equal(result.cells.H35,0);assert.equal(typeof result.cells.I36,'number');

@@ -1,7 +1,7 @@
 /* Application calculations use integer KRW. Legacy datasets retain their wire format. */
 (function(root){'use strict';if(root.SnoteMoney)return;
  const fields=['buy','sell','soldPrice','inventoryLoan'];
- const costs=['bodywork','polish','repair','advertising','purchaseFee','purchaseOther','acquisitionTax','incomeTax','inventoryInterest'];
+ const costs=['bodywork','polish','performanceInspection','repair','advertising','purchaseFee','purchaseOther','acquisitionTax','incomeTax','inventoryInterest'];
  function toWon(value){
   if(value==null||value===''||!['number','string'].includes(typeof value))return value;
   const match=/^([+-]?)(\d*)(?:\.(\d*))?(?:e([+-]?\d+))?$/i.exec(String(value).trim());

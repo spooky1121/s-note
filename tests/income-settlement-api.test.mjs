@@ -304,3 +304,16 @@ test('financed settlement reads company shared rates using caller JWT and reject
  state.lenders=[['검증금융',100000,12]];
  const result=await call(saveBody(loaded));assert.equal(result.result.status,409);assert.equal(state.writes.length,0);
 });
+
+test('inspection expense is returned with won precision, retained on save and invalidates stale settlement source', async t => {
+ const {state,dataset}=fixture(t),current=dataset().payload[0];current.costs.performanceInspection=1.2345;
+ const loaded=await load(),suggestion=loaded.source.costSuggestions.find(item=>item.key==='performanceInspection');
+ assert.deepEqual(suggestion,{key:'performanceInspection',label:'성능점검비',amountWon:12345});
+ loaded.document.cells.B15=suggestion.label;loaded.document.cells.D15=suggestion.amountWon;
+ const saved=await call(saveBody(loaded));assert.equal(saved.result.status,200);assert.equal(dataset().payload[0].costs.performanceInspection,1.2345);
+ assert.equal(dataset().payload[0].incomeSettlement.document.cells.D15,12345);
+ const reopened=await load();assert.equal(reopened.source.costSuggestions.find(item=>item.key==='performanceInspection').amountWon,12345);
+ const writes=state.writes.length;dataset().payload[0].costs.performanceInspection=1.2346;
+ const stale=await call(saveBody(reopened,reopened.document,'test-inspection-stale'));
+ assert.equal(stale.result.status,409);assert.equal(state.writes.length,writes);assert.equal(dataset().payload[0].costs.performanceInspection,1.2346);
+});

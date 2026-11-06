@@ -1,8 +1,8 @@
 import {formatNumberInput} from './number-format.js?v=2.49';
 if(window.parent!==window)document.documentElement.dataset.embedded='true';
-import {TEMPLATE,createDocument,normalizeDocument,calculate,parseMoney,draftDocument,invoiceCostSuggestions} from './income-settlement-model.js?v=2.41';
+import {TEMPLATE,createDocument,normalizeDocument,calculate,parseMoney,draftDocument,invoiceCostSuggestions} from './income-settlement-model.js?v=2.76';
 import {buildForm} from './income-settlement-view.js?v=2.41';
-import {buildPrintSnapshot} from './income-settlement-print.js?v=2.41';
+import {buildPrintSnapshot} from './income-settlement-print.js?v=2.76';
 
 const $=id=>document.getElementById(id);
 const copy=value=>JSON.parse(JSON.stringify(value));

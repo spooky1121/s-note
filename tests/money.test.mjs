@@ -16,6 +16,12 @@ test('finance ledger principal converts at its boundary; rates and native-won le
  assert.equal(M.toWon('0.00005'),1);assert.equal(M.toWon('-0.00005'),-1);assert.equal(M.toWon('1e-4'),1);assert.equal(M.toWon('bad'),'bad');assert.equal(M.toWon(null),null);
 });
 test('old fractional repair aggregates retain their whole-won total on conversion',()=>{const car=M.car({repairItems:[{amount:.000025},{amount:.000025}]});assert.equal(car.repairItems.reduce((n,r)=>n+r.amount,0),1);assert(car.repairItems.every(r=>Number.isSafeInteger(r.amount)));});
+test('performance inspection costs preserve integer-won precision and old datasets on repeated wire round trips',()=>{
+ const old={id:'inspection-test',buy:1000,costs:{bodywork:1,performanceInspection:12.3456,unknown:7},untouched:{memo:'keep'}};
+ let car=M.car(old);assert.equal(car.costs.performanceInspection,123456);assert.deepEqual(M.storeCar(car),old);
+ for(const amount of [0,1,123456,1000000000000]){car.costs.performanceInspection=amount;for(let i=0;i<10;i++){car=M.car(JSON.parse(JSON.stringify(M.storeCar(car))));assert.equal(car.costs.performanceInspection,amount);}assert.equal(car.costs.bodywork,10000);assert.equal(car.costs.unknown,7);assert.deepEqual(car.untouched,old.untouched);}
+ const absent={buy:1000,costs:{bodywork:1}};assert.equal(M.car(absent).costs.performanceInspection,undefined);assert.deepEqual(M.storeCar(M.car(absent)),absent);
+});
 test('legacy and won principals give exactly the same daily interest, including saved historical rates',()=>{
  const old={inventoryLoan:1000,inventoryLender:'검증금융',purchaseAt:'2026-01-01',soldAt:'2026-02-01',status:'판매완료'},rates=[['검증금융',150000,6]],won=M.car(old);
  assert.equal(SnoteInventoryInterest.calculate(won,rates).amountWon,50959);assert.deepEqual(SnoteInventoryInterest.calculate(won,rates),SnoteInventoryInterest.calculate(old,rates));
