@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.79">
+<html lang="ko" data-snote-release="2.80">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -3160,6 +3160,7 @@ button, input, select, textarea { font-family: inherit; }
 <link rel="stylesheet" href="assets/snote-customer-intake.css?v=2.15">
 <link rel="stylesheet" href="assets/quick-calculator.css?v=2.17">
 <link rel="stylesheet" href="assets/vehicle-taxonomy.css?v=2.20">
+<link rel="stylesheet" href="assets/vehicle-taxonomy-probe.css?v=2.80">
 <link rel="stylesheet" href="assets/income-settlement-parent.css?v=2.25">
 <link rel="stylesheet" href="assets/vehicle-colors.css?v=2.23">
 <link rel="stylesheet" href="assets/vehicle-detail.css?v=2.33">
@@ -9697,6 +9698,35 @@ window.snoteProfileBridge=Object.freeze({
 });
 
 window.snoteRenderAdminSettings=snoteRenderAdminSettings;
+// Provider samples are available only to the current verified company administrator.
+function snoteTaxonomyProbeContext(){
+ const context=snoteProfileContext();if(!context||currentUser?.role!=='admin')return null;
+ return S.members.some(member=>member.user_id===context.userId&&member.company_id===context.companyId&&member.active===true&&member.role==='admin')?context:null;
+}
+function snoteTaxonomyProbeCurrent(context){const now=snoteTaxonomyProbeContext();return !!context&&now?.key===context.key&&now.client===context.client;}
+function snoteTaxonomyProbeAssert(context){if(!snoteTaxonomyProbeCurrent(context))throw snoteProfileError('FORBIDDEN','현재 관리자 계정과 상사를 다시 확인해 주세요.');}
+async function snoteTaxonomyProbeRequest(context,manufacturer){
+ snoteTaxonomyProbeAssert(context);const bound=await snoteProfilePinned(context);snoteTaxonomyProbeAssert(context);
+ const probe=manufacturer!==undefined,controller=new AbortController(),timer=setTimeout(()=>controller.abort(),30000);
+ const url='/api/vehicle-taxonomy-probe'+(probe?'':'?companyId='+encodeURIComponent(context.companyId));
+ try{
+  const response=await fetch(url,{method:probe?'POST':'GET',credentials:'omit',cache:'no-store',redirect:'error',referrerPolicy:'no-referrer',headers:{Authorization:'Bearer '+bound.token,Accept:'application/json',...(probe?{'Content-Type':'application/json'}:{})},...(probe?{body:JSON.stringify({companyId:context.companyId,manufacturer})}:{}),signal:controller.signal});
+  let data;try{data=await response.json();}catch(_){data=null;}snoteTaxonomyProbeAssert(context);
+  if(!response.ok||data?.ok!==true){
+   const error=snoteProfileError(typeof data?.code==='string'?data.code:'NETWORK',typeof data?.error==='string'?data.error:'서버 응답을 확인하지 못했습니다. 잠시 후 다시 확인해 주세요.');
+   if(Number.isInteger(data?.providerRequestCount)&&data.providerRequestCount>=0&&data.providerRequestCount<=2)error.providerRequestCount=data.providerRequestCount;
+   if(Number.isFinite(data?.retryAfter)&&data.retryAfter>=0)error.retryAfter=data.retryAfter;throw error;
+  }
+  if(data.provider!=='encar-api.com'||typeof data.configured!=='boolean')throw snoteProfileError('INVALID_RESPONSE','차종 데이터 연결 응답을 확인하지 못했습니다.');
+  return data;
+ }catch(error){
+  snoteTaxonomyProbeAssert(context);
+  if(controller.signal.aborted)throw snoteProfileError('NETWORK','조회 시간이 초과되었습니다. 처리 결과를 확인한 후 다시 시도해 주세요.');
+  throw error;
+ }finally{clearTimeout(timer);}
+}
+window.snoteTaxonomyProbeBridge=Object.freeze({context:snoteTaxonomyProbeContext,current:snoteTaxonomyProbeCurrent,status:context=>snoteTaxonomyProbeRequest(context),probe:(context,{manufacturer})=>snoteTaxonomyProbeRequest(context,manufacturer)});
+
 // Recycle-bin operations use server acknowledgements and never enqueue an old snapshot.
 const snoteRecycleRequests=new Map();
 let snoteRecycleSession=null,snoteRecycleSessionEpoch=0;
@@ -9881,10 +9911,11 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 <script src="assets/snote-customer-intake.js?v=2.60" defer></script>
 <script type="module" src="assets/quick-calculator.js?v=2.36"></script>
 <script type="module" src="assets/vehicle-taxonomy-ui.js?v=2.60"></script>
+<script src="assets/vehicle-taxonomy-probe.js?v=2.80" defer></script>
 <script type="module" src="assets/income-settlement-parent.js?v=2.76"></script>
 <script src="assets/vehicle-sharing.js?v=2.71" defer></script>
 <script src="assets/shared-vehicle-markers.js?v=2.71" defer></script>
-<script src="assets/release-info.js?v=2.79" defer></script>
+<script src="assets/release-info.js?v=2.80" defer></script>
 <script src="assets/company-purchase.js?v=2.77" defer></script>
 <script src="assets/recycle-bin.js?v=2.77" defer></script>
 <script src="assets/profile-editor.js?v=2.79" defer></script>
