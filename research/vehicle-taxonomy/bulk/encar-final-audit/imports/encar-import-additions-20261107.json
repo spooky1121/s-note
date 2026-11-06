@@ -1,0 +1,198 @@
+{
+  "schemaVersion": 1,
+  "compiledAt": "2026-11-07",
+  "scope": "Encar import-history recheck: only three factual table rows absent from the previous curated source. No full catalog completeness or official-market-grade inference.",
+  "sources": [
+    {
+      "id": "encar-final-import-20261107-bmw-f10-cls",
+      "url": "https://www.encar.com/cc/common.do?bbsno=132832&method=view_modelHistoryframe&type=CLS",
+      "title": "엔카 BMW 5시리즈 6세대 등급표 재대조 누락3행",
+      "publisher": "엔카",
+      "retrievedAt": "2026-11-07",
+      "evidenceType": "provider_history_classification_table",
+      "sourceIdentifiers": {
+        "namespace": "encar_history_frame",
+        "bbsno": "132832",
+        "type": "CLS"
+      },
+      "parentHistoryUrl": "https://www.encar.com/mocha/history.do?mdlcd=039&mnfccd=012",
+      "recheckAcquisition": "fresh parent open followed by actual linked frame click; expected/actual source URL verified",
+      "notes": "웹 원문 등급표의 분류명·행 관계만 보존. 문서ID는 검색 분류 leaf code가 아니며 한국 전 연식 완전 분류표가 아니다."
+    },
+    {
+      "id": "encar-final-import-20261107-bmw-f10-parent",
+      "url": "https://www.encar.com/mocha/history.do?mdlcd=039&mnfccd=012",
+      "title": "엔카 BMW 5시리즈 6세대 부모 히스토리 재확인",
+      "publisher": "엔카",
+      "retrievedAt": "2026-11-07",
+      "evidenceType": "provider_history_parent_page",
+      "sourceIdentifiers": {
+        "namespace": "encar_mocha_history",
+        "mnfccd": "012",
+        "mdlcd": "039"
+      },
+      "notes": "부모 제목 BMW 5시리즈 6세대와 2010년 출시~당시 현재 표기를 확인. 현재는 과거 편집시점이며 모델연식/현판매 상태가 아니다."
+    },
+    {
+      "id": "encar-final-import-20261107-bmw-f10-eng",
+      "url": "https://www.encar.com/cc/common.do?bbsno=132832&method=view_modelHistoryframe&type=ENG",
+      "title": "엔카 BMW 5시리즈 세대 혼합 엔진표 검토",
+      "publisher": "엔카",
+      "retrievedAt": "2026-11-07",
+      "evidenceType": "provider_history_engine_table",
+      "sourceIdentifiers": {
+        "namespace": "encar_history_frame",
+        "bbsno": "132832",
+        "type": "ENG"
+      },
+      "notes": "03~현재 여러 세대가 한 표에 있고 550i/Active Hybrid의 실린더 표기에 오기가 관측되어 신규3행의 엔진·연료·변속기·연식을 채우지 않는다."
+    }
+  ],
+  "records": [
+    {
+      "make": "BMW",
+      "group": "5시리즈",
+      "model": "5시리즈 6세대 F10",
+      "grade": "550i xDrive",
+      "subgrade": "",
+      "modelYear": "",
+      "fuel": "",
+      "engine": "",
+      "drivetrain": "",
+      "transmission": "",
+      "recordType": "provider_history_trim_label",
+      "sourceId": "encar-final-import-20261107-bmw-f10-cls",
+      "sourceUrl": "https://www.encar.com/cc/common.do?bbsno=132832&method=view_modelHistoryframe&type=CLS",
+      "evidenceStatus": "provider_catalog_direct",
+      "market": "KR",
+      "mappingStatus": "review_required",
+      "rawParentLabel": "550i xDrive",
+      "rawTrimLabel": "550i xDrive",
+      "sourceModelRaw": "BMW 5시리즈 6세대",
+      "sourcePeriod": "2010년 출시~당시 본문의 현재",
+      "sourceLine": 23,
+      "supportingSourceIds": [
+        "encar-final-import-20261107-bmw-f10-parent",
+        "encar-final-import-20261107-bmw-f10-eng"
+      ],
+      "officialImportStatus": "not_confirmed",
+      "marketEvidence": "한국 중고차 정보 서비스의 히스토리 등급표 관측이며 공식 수입 사양·현행 검색 분류와는 별도 검토 필요.",
+      "providerClassificationCode": null,
+      "eligibleForAutomaticRuntimeImport": false,
+      "notes": "기존 hist-encar-5-6gen-grades 22행에 없던 실제 CLS 행. 원문 이름만 추가하며 엔진·연료·연식·구동은 추정하지 않음. M5 등은 편집 히스토리 표의 문맥으로 보존하며 현행 검색 모델군/등급 계층에 자동 연결하지 않는다.",
+      "sourceRecord": {
+        "parentLabel": "550i xDrive",
+        "trimLabel": "550i xDrive",
+        "sourceLine": 23,
+        "sourceId": "encar-final-import-20261107-bmw-f10-cls",
+        "observedParentSourceId": "hist-encar-5-6gen-grades"
+      }
+    },
+    {
+      "make": "BMW",
+      "group": "5시리즈",
+      "model": "5시리즈 6세대 F10",
+      "grade": "Active Hybrid 5",
+      "subgrade": "",
+      "modelYear": "",
+      "fuel": "",
+      "engine": "",
+      "drivetrain": "",
+      "transmission": "",
+      "recordType": "provider_history_trim_label",
+      "sourceId": "encar-final-import-20261107-bmw-f10-cls",
+      "sourceUrl": "https://www.encar.com/cc/common.do?bbsno=132832&method=view_modelHistoryframe&type=CLS",
+      "evidenceStatus": "provider_catalog_direct",
+      "market": "KR",
+      "mappingStatus": "review_required",
+      "rawParentLabel": "Active Hybrid 5",
+      "rawTrimLabel": "Active Hybrid 5",
+      "sourceModelRaw": "BMW 5시리즈 6세대",
+      "sourcePeriod": "2010년 출시~당시 본문의 현재",
+      "sourceLine": 24,
+      "supportingSourceIds": [
+        "encar-final-import-20261107-bmw-f10-parent",
+        "encar-final-import-20261107-bmw-f10-eng"
+      ],
+      "officialImportStatus": "not_confirmed",
+      "marketEvidence": "한국 중고차 정보 서비스의 히스토리 등급표 관측이며 공식 수입 사양·현행 검색 분류와는 별도 검토 필요.",
+      "providerClassificationCode": null,
+      "eligibleForAutomaticRuntimeImport": false,
+      "notes": "기존 hist-encar-5-6gen-grades 22행에 없던 실제 CLS 행. 원문 이름만 추가하며 엔진·연료·연식·구동은 추정하지 않음. M5 등은 편집 히스토리 표의 문맥으로 보존하며 현행 검색 모델군/등급 계층에 자동 연결하지 않는다.",
+      "sourceRecord": {
+        "parentLabel": "Active Hybrid 5",
+        "trimLabel": "Active Hybrid 5",
+        "sourceLine": 24,
+        "sourceId": "encar-final-import-20261107-bmw-f10-cls",
+        "observedParentSourceId": "hist-encar-5-6gen-grades"
+      }
+    },
+    {
+      "make": "BMW",
+      "group": "5시리즈",
+      "model": "5시리즈 6세대 F10",
+      "grade": "M5",
+      "subgrade": "",
+      "modelYear": "",
+      "fuel": "",
+      "engine": "",
+      "drivetrain": "",
+      "transmission": "",
+      "recordType": "provider_history_trim_label",
+      "sourceId": "encar-final-import-20261107-bmw-f10-cls",
+      "sourceUrl": "https://www.encar.com/cc/common.do?bbsno=132832&method=view_modelHistoryframe&type=CLS",
+      "evidenceStatus": "provider_catalog_direct",
+      "market": "KR",
+      "mappingStatus": "review_required",
+      "rawParentLabel": "M5",
+      "rawTrimLabel": "M5",
+      "sourceModelRaw": "BMW 5시리즈 6세대",
+      "sourcePeriod": "2010년 출시~당시 본문의 현재",
+      "sourceLine": 25,
+      "supportingSourceIds": [
+        "encar-final-import-20261107-bmw-f10-parent",
+        "encar-final-import-20261107-bmw-f10-eng"
+      ],
+      "officialImportStatus": "not_confirmed",
+      "marketEvidence": "한국 중고차 정보 서비스의 히스토리 등급표 관측이며 공식 수입 사양·현행 검색 분류와는 별도 검토 필요.",
+      "providerClassificationCode": null,
+      "eligibleForAutomaticRuntimeImport": false,
+      "notes": "기존 hist-encar-5-6gen-grades 22행에 없던 실제 CLS 행. 원문 이름만 추가하며 엔진·연료·연식·구동은 추정하지 않음. M5 등은 편집 히스토리 표의 문맥으로 보존하며 현행 검색 모델군/등급 계층에 자동 연결하지 않는다.",
+      "sourceRecord": {
+        "parentLabel": "M5",
+        "trimLabel": "M5",
+        "sourceLine": 25,
+        "sourceId": "encar-final-import-20261107-bmw-f10-cls",
+        "observedParentSourceId": "hist-encar-5-6gen-grades"
+      }
+    }
+  ],
+  "validation": {
+    "parentPagesRechecked": 38,
+    "framePagesRechecked": 76,
+    "expectedAndActualUrlsMatched": 76,
+    "oldProviderRowsChecked": 387,
+    "addedRows": 3,
+    "originalSourceFileUnchanged": true,
+    "existingSourceFile": "research/vehicle-taxonomy/sources/import-historical-expansion-20261106.json",
+    "existingSourceFileSha256": "ff659155ccf5ebd8b0021ba506a66a6a8f1793caaf7e4d97db0532b56f8141df"
+  },
+  "warnings": [
+    {
+      "sourceId": "hist-encar-c-w205-grades",
+      "code": "known_source_generation_mixture_excluded",
+      "labels": [
+        "C220 CDI 쿠페",
+        "C63 AMG"
+      ],
+      "action": "Retain prior exclusion; these are not new missing grade rows."
+    },
+    {
+      "sourceId": "hist-encar-a4-b8-grades",
+      "code": "source_literal_typo_retained",
+      "raw": "2.0 TDI Quatrro 프레스티지",
+      "suggestedReviewAlias": "2.0 TDI Quattro 프레스티지",
+      "action": "Preserve raw source label; do not silently rewrite."
+    }
+  ]
+}

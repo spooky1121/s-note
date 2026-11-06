@@ -1,0 +1,192 @@
+{
+  "sourceFile": "encar-final-domestic-expansion-20261107.json",
+  "sourceSha256": "2d35897f3bd3e20ab3a2f6843273b004f423a95e0b4c3116cf3b428dcca7edc1",
+  "models": 22,
+  "normalObservations": 222,
+  "quarantinedRows": 1,
+  "allPhysicalRowsAccounted": true,
+  "uniqueEvidenceIdentities": 222,
+  "perModel": [
+    {
+      "model": "SM3",
+      "sourceId": "encar-final-domestic-135407",
+      "physicalClassificationRows": 12,
+      "normalObservations": 12,
+      "quarantinedRows": 0,
+      "everyPhysicalClassificationRowAccounted": true
+    },
+    {
+      "model": "SM3 뉴 제너레이션",
+      "sourceId": "encar-final-domestic-135410",
+      "physicalClassificationRows": 15,
+      "normalObservations": 15,
+      "quarantinedRows": 0,
+      "everyPhysicalClassificationRowAccounted": true
+    },
+    {
+      "model": "뉴 SM3",
+      "sourceId": "encar-final-domestic-133403",
+      "physicalClassificationRows": 21,
+      "normalObservations": 21,
+      "quarantinedRows": 0,
+      "everyPhysicalClassificationRowAccounted": true
+    },
+    {
+      "model": "SM3 네오",
+      "sourceId": "encar-final-domestic-135423",
+      "physicalClassificationRows": 8,
+      "normalObservations": 8,
+      "quarantinedRows": 0,
+      "everyPhysicalClassificationRowAccounted": true
+    },
+    {
+      "model": "SM5",
+      "sourceId": "encar-final-domestic-135424",
+      "physicalClassificationRows": 9,
+      "normalObservations": 8,
+      "quarantinedRows": 1,
+      "everyPhysicalClassificationRowAccounted": true
+    },
+    {
+      "model": "뉴 SM5",
+      "sourceId": "encar-final-domestic-135458",
+      "physicalClassificationRows": 7,
+      "normalObservations": 7,
+      "quarantinedRows": 0,
+      "everyPhysicalClassificationRowAccounted": true
+    },
+    {
+      "model": "SM5 뉴 임프레션",
+      "sourceId": "encar-final-domestic-134098",
+      "physicalClassificationRows": 8,
+      "normalObservations": 8,
+      "quarantinedRows": 0,
+      "everyPhysicalClassificationRowAccounted": true
+    },
+    {
+      "model": "뉴 SM5 (신형)",
+      "sourceId": "encar-final-domestic-135460",
+      "physicalClassificationRows": 11,
+      "normalObservations": 11,
+      "quarantinedRows": 0,
+      "everyPhysicalClassificationRowAccounted": true
+    },
+    {
+      "model": "뉴 SM5 플래티넘",
+      "sourceId": "encar-final-domestic-133596",
+      "physicalClassificationRows": 18,
+      "normalObservations": 18,
+      "quarantinedRows": 0,
+      "everyPhysicalClassificationRowAccounted": true
+    },
+    {
+      "model": "SM5 노바",
+      "sourceId": "encar-final-domestic-143504",
+      "physicalClassificationRows": 7,
+      "normalObservations": 7,
+      "quarantinedRows": 0,
+      "everyPhysicalClassificationRowAccounted": true
+    },
+    {
+      "model": "SM7",
+      "sourceId": "encar-final-domestic-135488",
+      "physicalClassificationRows": 8,
+      "normalObservations": 8,
+      "quarantinedRows": 0,
+      "everyPhysicalClassificationRowAccounted": true
+    },
+    {
+      "model": "올 뉴 SM7",
+      "sourceId": "encar-final-domestic-140833",
+      "physicalClassificationRows": 11,
+      "normalObservations": 11,
+      "quarantinedRows": 0,
+      "everyPhysicalClassificationRowAccounted": true
+    },
+    {
+      "model": "제네시스 BH",
+      "sourceId": "encar-final-domestic-134041",
+      "physicalClassificationRows": 21,
+      "normalObservations": 21,
+      "quarantinedRows": 0,
+      "everyPhysicalClassificationRowAccounted": true
+    },
+    {
+      "model": "제네시스 DH",
+      "sourceId": "encar-final-domestic-134032",
+      "physicalClassificationRows": 5,
+      "normalObservations": 5,
+      "quarantinedRows": 0,
+      "everyPhysicalClassificationRowAccounted": true
+    },
+    {
+      "model": "제네시스 쿠페",
+      "sourceId": "encar-final-domestic-133446",
+      "physicalClassificationRows": 7,
+      "normalObservations": 7,
+      "quarantinedRows": 0,
+      "everyPhysicalClassificationRowAccounted": true
+    },
+    {
+      "model": "더 뉴 제네시스 쿠페",
+      "sourceId": "encar-final-domestic-136123",
+      "physicalClassificationRows": 4,
+      "normalObservations": 4,
+      "quarantinedRows": 0,
+      "everyPhysicalClassificationRowAccounted": true
+    },
+    {
+      "model": "EQ900",
+      "sourceId": "encar-final-domestic-157084",
+      "physicalClassificationRows": 7,
+      "normalObservations": 7,
+      "quarantinedRows": 0,
+      "everyPhysicalClassificationRowAccounted": true
+    },
+    {
+      "model": "K5",
+      "sourceId": "encar-final-domestic-132835",
+      "physicalClassificationRows": 13,
+      "normalObservations": 13,
+      "quarantinedRows": 0,
+      "everyPhysicalClassificationRowAccounted": true
+    },
+    {
+      "model": "더 뉴 K5",
+      "sourceId": "encar-final-domestic-136125",
+      "physicalClassificationRows": 10,
+      "normalObservations": 10,
+      "quarantinedRows": 0,
+      "everyPhysicalClassificationRowAccounted": true
+    },
+    {
+      "model": "K5 2세대",
+      "sourceId": "encar-final-domestic-152403",
+      "physicalClassificationRows": 14,
+      "normalObservations": 14,
+      "quarantinedRows": 0,
+      "everyPhysicalClassificationRowAccounted": true
+    },
+    {
+      "model": "K5 하이브리드",
+      "sourceId": "encar-final-domestic-142176",
+      "physicalClassificationRows": 4,
+      "normalObservations": 4,
+      "quarantinedRows": 0,
+      "everyPhysicalClassificationRowAccounted": true
+    },
+    {
+      "model": "K5 하이브리드 2세대",
+      "sourceId": "encar-final-domestic-156937",
+      "physicalClassificationRows": 3,
+      "normalObservations": 3,
+      "quarantinedRows": 0,
+      "everyPhysicalClassificationRowAccounted": true
+    }
+  ],
+  "limitations": [
+    "Historical period and model-year are separate.",
+    "Temporal-column names do not establish a current retail search parent hierarchy.",
+    "Displayed manufacturer Renault Korea (Samsung) is a grouping alias; raw Renault Samsung identity is retained."
+  ]
+}

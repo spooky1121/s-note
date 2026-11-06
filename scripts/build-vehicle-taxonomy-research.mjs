@@ -16,12 +16,25 @@ const writeJSON=(name,value)=>writeFileSync(join(outDir,name),JSON.stringify(val
 const identity=row=>[row.make,row.group,row.model,row.grade,row.subgrade,row.modelYear,row.fuel,row.engine,row.drivetrain,row.transmission,row.market,row.sourceMarket,row.recordType,row.optionPackage,row.powertrainChoice,row.seatLayout,row.seatingCapacity,row.bodyStyle,row.batteryRange,row.availability,row.sourcePeriod,row.sourcePublicationDate,row.sourceTimelineYear,row.trimStatus,row.launchStatus,JSON.stringify(row.qualifiers||{})].map(text);
 const statuses=new Set(['official_direct','official_search_excerpt','provider_catalog_direct','reference_direct','candidate']);
 
-export function normalizeResearchRecord(row,file,sources){
+export function normalizeResearchRecord(row,file,sources,errata=[]){
+  const sourceRecord=row;
+  const corrections=errata.filter(item=>item.sourceFile===file&&item.sourceId===row.sourceId&&Object.entries(item.match).every(([key,value])=>JSON.stringify(row[key])===JSON.stringify(value)));
+  const changedKeys=new Set();
+  for(const correction of corrections){
+    if(correction.status!=='verified_against_current_encar_frame')throw new Error('Unverified erratum: '+correction.id);
+    for(const key of Object.keys(correction.changes)){
+      if(!['engine','fuel','transmission','rawParentLabel','rawTrimLabel','sourceHierarchyRaw','sourceLabel','grade','subgrade'].includes(key))throw new Error('Unsupported erratum field: '+key);
+      if(changedKeys.has(key))throw new Error('Conflicting errata for '+file+' '+row.sourceId+' '+key);
+      changedKeys.add(key);
+    }
+    row={...row,...correction.changes};
+  }
   const sourceId=text(row.sourceId);
   const source=sources.find(source=>source.id===sourceId);
   if(!source)throw new Error(file+': missing source '+sourceId);
   const sourceUrl=url(row.sourceUrl||source.url);
-  const record={make:text(row.make),group:text(row.group),model:text(row.model),grade:text(row.grade),subgrade:text(row.subgrade),modelYear:text(row.modelYear),fuel:text(row.fuel),engine:text(row.engine),drivetrain:text(row.drivetrain||row.drive),transmission:text(row.transmission),market:text(row.market)||'KR',recordType:text(row.recordType)||'source_label',optionPackage:text(row.optionPackage),powertrainChoice:text(row.powertrainChoice),seatLayout:text(row.seatLayout),seatingCapacity:text(row.seatingCapacity??row.seats),bodyStyle:text(row.bodyStyle),batteryRange:text(row.batteryRange),availability:text(row.availability),sourceLabel:text(row.sourceLabel||row.trimLabel),sourceId,sourceUrl,retrievedAt:text(source.retrievedAt),evidenceStatus:text(row.evidenceStatus),mappingStatus:text(row.mappingStatus)||'needs_parent_match',notes:text(row.notes),sourceFile:file,sourceRecord:row};
+  const record={make:text(row.make),group:text(row.group),model:text(row.model),grade:text(row.grade),subgrade:text(row.subgrade),modelYear:text(row.modelYear),fuel:text(row.fuel),engine:text(row.engine),drivetrain:text(row.drivetrain||row.drive),transmission:text(row.transmission),market:text(row.market)||'KR',recordType:text(row.recordType)||'source_label',optionPackage:text(row.optionPackage),powertrainChoice:text(row.powertrainChoice),seatLayout:text(row.seatLayout),seatingCapacity:text(row.seatingCapacity??row.seats),bodyStyle:text(row.bodyStyle),batteryRange:text(row.batteryRange),availability:text(row.availability),sourceLabel:text(row.sourceLabel||row.trimLabel),sourceId,sourceUrl,retrievedAt:text(source.retrievedAt),evidenceStatus:text(row.evidenceStatus),mappingStatus:text(row.mappingStatus)||'needs_parent_match',notes:text(row.notes),sourceFile:file,sourceRecord};
+  if(corrections.length)record.sourceCorrections=corrections;
   for(const key of ['sourceMarket','sourceTimelineYear','trimStatus','launchStatus'])record[key]=text(row[key]);
   record.sourcePeriod=text(row.sourcePeriod||source.sourcePeriod);
   record.sourcePublicationDate=text(row.sourcePublicationDate||source.publishedAt||source.publicationDate||source.sourceDate||source.publishedOn);
@@ -39,6 +52,9 @@ export function build(){
   const baseline=read(join(research,'baseline/catalog.json'));
   if(!Array.isArray(baseline.records)||baseline.records.length<1000)throw new Error('Baseline catalog missing');
   const sourceFiles=readdirSync(join(research,'sources')).filter(name=>name.endsWith('.json')).sort();
+  const errataPath=join(research,'bulk/encar-final-audit/errata.json');
+  const errata=existsSync(errataPath)?read(errataPath).records:[];
+  if(!Array.isArray(errata)||new Set(errata.map(row=>row.id)).size!==errata.length)throw new Error('Errata IDs must be unique');
   const sources=[],records=[],otherEvidence=[],certifications=[],referenceDocuments=[],sourceFileContexts=[],quarantinedRecords=[],sourceIssues=[];
   for(const name of sourceFiles){
     const path=join(research,'sources',name),data=read(path),file=relative(root,path);
@@ -52,7 +68,11 @@ export function build(){
       if(sources.some(row=>row.id===source.id))throw new Error('Duplicate source id '+source.id);
       sources.push({...source,url:url(source.url),sourceFile:file});
     }
-    for(const row of data.records)records.push(normalizeResearchRecord(row,file,data.sources));
+    for(const row of data.records)records.push(normalizeResearchRecord(row,file,data.sources,errata));
+  }
+  for(const correction of errata){
+    const matched=records.filter(row=>row.sourceCorrections?.some(item=>item.id===correction.id)).length;
+    if(matched!==(correction.expectedMatches??1))throw new Error('Erratum match count differs: '+correction.id+' '+matched);
   }
   const unique=new Map();
   for(const row of records){
@@ -77,7 +97,7 @@ export function build(){
   const missing=[...baselineModels.values()].filter(rows=>!rows.some(row=>text(row.grade))).map(rows=>({make:rows[0].make,group:rows[0].group,model:rows[0].model,reason:'no_grade_in_baseline',status:'needs_model_year_and_powertrain_match',researchCandidates:normalized.filter(row=>row.make===rows[0].make&&row.group===rows[0].group).length}));
   const byMake=[...new Set([...makeSet,...normalized.map(row=>row.make)])].sort((a,b)=>a.localeCompare(b,'ko')).map(make=>({make,baselineRows:baselineRecords.filter(row=>row.make===make).length,baselineModels:[...baselineModels.values()].filter(rows=>rows[0].make===make).length,baselineModelsMissingGrade:missing.filter(row=>row.make===make).length,newOfficialDirectRecords:normalized.filter(row=>row.make===make&&row.evidenceStatus==='official_direct').length,newSearchExcerptRecords:normalized.filter(row=>row.make===make&&row.evidenceStatus==='official_search_excerpt').length}));
   const pickerCoverage=read(join(research,'baseline/coverage.json')).domesticPicker;
-  const bulkPaths=['global-vehicle-makes-models','government-tax-2026'].map(name=>join(research,'bulk',name,'archive-manifest.json')).filter(existsSync);
+  const bulkPaths=['global-vehicle-makes-models','government-tax-2026','encar-final-audit'].map(name=>join(research,'bulk',name,'archive-manifest.json')).filter(existsSync);
   const bulkReferences=bulkPaths.map(path=>({path:relative(root,path),...read(path)}));
   const dataset={schemaVersion:1,asOf:'2026-11-07',scope:'Korean-market vehicle classification reference research; not a complete official master',runtimeImportEnabled:false,baseline:{...baseline,records:baselineRecords},officialResearch:{records:normalized,sources,sourceFileContexts},listingObservations:observations,certificationObservations:certifications,referenceDocuments,otherEvidence,bulkReferences};
   const coverage={schemaVersion:1,asOf:'2026-11-07',complete:false,runtimeImportEnabled:false,baseline:{rows:baselineRecords.length,makes:makeSet.size,models:baselineModels.size,modelsWithoutGrade:missing.length,domesticPicker:pickerCoverage,verification:'Existing labels are preserved, not reverified by this research.'},newResearch:{sourceFiles:sourceFiles.length,sources:sources.length,uniqueSourceUrls:new Set(sources.map(row=>row.url)).size,rawRecords:records.length,uniqueRecords:normalized.length,koreanMarketRecords:normalized.filter(row=>row.market==='KR').length,otherMarketRecords:normalized.filter(row=>row.market!=='KR').length,officialDirectRecords:normalized.filter(row=>row.evidenceStatus==='official_direct').length,searchExcerptRecords:normalized.filter(row=>row.evidenceStatus==='official_search_excerpt').length,providerCatalogDirectRecords:normalized.filter(row=>row.evidenceStatus==='provider_catalog_direct').length,referenceDirectRecords:normalized.filter(row=>row.evidenceStatus==='reference_direct').length,candidateRecords:normalized.filter(row=>row.evidenceStatus==='candidate').length},listingObservations:observations.length,certificationObservations:certifications.length,bulkReferences:bulkReferences.map(({path,counts,market,license,completeForKoreanMarket,currentSnapshot})=>({path,counts,market,license,completeForKoreanMarket,currentSnapshot})),otherEvidence,byMake,limitations:['No source establishes all historical Korean-market model years, engines and discontinued trims.','New official records retain their original model-year and powertrain scope; matching a baseline family alone does not fill a generation gap.','An empty grade in the baseline can also be a named model variant; it does not prove that another retail grade exists.','Provider catalogs and independent automotive references are separated from manufacturer-authored evidence.','Listing Badge observations are not promoted to grade/subgrade or assigned parent codes.','A publication month is not a model year.','Global engine references do not establish Korean market availability or retail grades.','Government tax names/form codes and tax-reference prices do not establish retail generations/grades, model years, selling prices or unique manufacturer-form identities.','No existing company taxonomy, customer, vehicle or financial data is modified.']};
@@ -97,7 +117,7 @@ export function build(){
   writeFileSync(join(outDir,'certification-observations.csv'),csv(certifications,['certificateHolder','vehicleName','typeCode','fuelRaw','certificationNumber','certificationDate','sourceUrl','observedOn','evidenceStatus','acquisitionMethod','directFetchStatus','sourceFile']));
   writeFileSync(join(outDir,'review-queue.csv'),csv(missing,['make','group','model','reason','status','researchCandidates']));
   writeFileSync(join(outDir,'manufacturer-coverage.csv'),csv(byMake,['make','baselineRows','baselineModels','baselineModelsMissingGrade','newOfficialDirectRecords','newSearchExcerptRecords']));
-  const inputs=[join(research,'baseline/catalog.json'),join(research,'baseline/coverage.json'),...sourceFiles.map(name=>join(research,'sources',name)),...observationFiles.map(name=>join(research,'observations',name)),...bulkPaths];
+  const inputs=[join(research,'baseline/catalog.json'),join(research,'baseline/coverage.json'),...sourceFiles.map(name=>join(research,'sources',name)),...observationFiles.map(name=>join(research,'observations',name)),...bulkPaths,...(existsSync(errataPath)?[errataPath]:[])];
   const fileMeta=path=>{const data=readFileSync(path);return {path:relative(root,path),bytes:data.length,sha256:createHash('sha256').update(data).digest('hex')};};
   const manifest={schemaVersion:1,asOf:'2026-11-07',inputs:inputs.map(fileMeta),files:readdirSync(outDir).filter(name=>name!=='manifest.json').sort().map(name=>fileMeta(join(outDir,name)))};
   writeJSON('manifest.json',manifest);

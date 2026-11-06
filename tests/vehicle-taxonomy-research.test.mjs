@@ -70,6 +70,20 @@ test('same trim in different dated publications remains separate without inventi
   assert.equal(later.sourcePublicationDate,'2024-04-04');
 });
 
+test('verified source errata correct the selected observation and preserve the saved original evidence',()=>{
+  const original={...row,rawParentLabel:'상위',rawTrimLabel:'이전 표기',engine:'이전 엔진'};
+  const correction={id:'test-correction',sourceFile:'test.json',sourceId:'test-source',match:{model:'모델',grade:'캘리그래피',rawTrimLabel:'이전 표기'},changes:{rawTrimLabel:'원문 표기',engine:'확인한 엔진'},status:'verified_against_current_encar_frame'};
+  const corrected=normalizeResearchRecord(original,'test.json',sources,[correction]);
+  assert.equal(corrected.engine,'확인한 엔진');
+  assert.equal(corrected.qualifiers.rawTrimLabel,'원문 표기');
+  assert.deepEqual(corrected.sourceRecord,original);
+  assert.equal(original.engine,'이전 엔진');
+  assert.equal(corrected.sourceCorrections[0].id,correction.id);
+  assert.equal(normalizeResearchRecord({...original,model:'다른 모델'},'test.json',sources,[correction]).engine,'이전 엔진');
+  assert.throws(()=>normalizeResearchRecord(original,'test.json',sources,[{...correction,status:'unverified'}]),/Unverified/);
+  assert.throws(()=>normalizeResearchRecord(original,'test.json',sources,[correction,{...correction,id:'duplicate'}]),/Conflicting/);
+});
+
 test('CSV protects spreadsheet formula execution without changing JSON text',()=>{
   for(const value of ['=HYPERLINK("https://example.com")','+SUM(1,1)','-1+2','@SUM(1,1)','\t=1+1'])assert.match(csvCell(value),/^"'/);
   assert.equal(csvCell('인스퍼레이션'),'"인스퍼레이션"');

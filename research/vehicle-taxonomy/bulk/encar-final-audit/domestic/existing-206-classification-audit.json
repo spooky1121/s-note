@@ -1,0 +1,3379 @@
+{
+  "schemaVersion": 1,
+  "auditedOn": "2026-11-07",
+  "inputSha256": "fb5e1ef43fb29be66888c58007025c0b23ddb4065ef15cfa9dfff65f0532c21b",
+  "scope": "Existing 13 domestic history models and 206 distinct factual CLS observations only; no claim of complete domestic Encar hierarchy.",
+  "parentModelsChecked": 13,
+  "observationsChecked": 206,
+  "physicalSourceRows": 207,
+  "missingUniqueClassificationPathsFound": 0,
+  "duplicatePhysicalSourceRows": 1,
+  "perModel": [
+    {
+      "model": "아반떼 HD",
+      "sourceId": "encar-public-avante-hd-136040",
+      "documentId": "136040",
+      "sourceURL": "https://www.encar.com/cc/common.do?bbsno=136040&method=view_modelHistoryframe&type=CLS",
+      "observations": 22,
+      "physicalSourceRows": 22,
+      "unconsumedSourceRows": []
+    },
+    {
+      "model": "스파크",
+      "sourceId": "encar-public-spark-133723",
+      "documentId": "133723",
+      "sourceURL": "https://www.encar.com/cc/common.do?bbsno=133723&method=view_modelHistoryframe&type=CLS",
+      "observations": 23,
+      "physicalSourceRows": 23,
+      "unconsumedSourceRows": []
+    },
+    {
+      "model": "액티언",
+      "sourceId": "encar-public-actyon-135711",
+      "documentId": "135711",
+      "sourceURL": "https://www.encar.com/cc/common.do?bbsno=135711&method=view_modelHistoryframe&type=CLS",
+      "observations": 15,
+      "physicalSourceRows": 15,
+      "unconsumedSourceRows": []
+    },
+    {
+      "model": "올 뉴 쏘울",
+      "sourceId": "encar-public-soul-2-134505",
+      "documentId": "134505",
+      "sourceURL": "https://www.encar.com/cc/common.do?bbsno=134505&method=view_modelHistoryframe&type=CLS",
+      "observations": 13,
+      "physicalSourceRows": 13,
+      "unconsumedSourceRows": []
+    },
+    {
+      "model": "아반떼 하이브리드",
+      "sourceId": "encar-public-avante-hybrid-136088",
+      "documentId": "136088",
+      "sourceURL": "https://www.encar.com/cc/common.do?bbsno=136088&method=view_modelHistoryframe&type=CLS",
+      "observations": 5,
+      "physicalSourceRows": 5,
+      "unconsumedSourceRows": []
+    },
+    {
+      "model": "뉴 쏘나타 하이브리드",
+      "sourceId": "encar-public-sonata-lf-hybrid-142170",
+      "documentId": "142170",
+      "sourceURL": "https://www.encar.com/cc/common.do?bbsno=142170&method=view_modelHistoryframe&type=CLS",
+      "observations": 5,
+      "physicalSourceRows": 5,
+      "unconsumedSourceRows": []
+    },
+    {
+      "model": "로체",
+      "sourceId": "encar-public-lotze-134435",
+      "documentId": "134435",
+      "sourceURL": "https://www.encar.com/cc/common.do?bbsno=134435&method=view_modelHistoryframe&type=CLS",
+      "observations": 31,
+      "physicalSourceRows": 32,
+      "unconsumedSourceRows": [
+        {
+          "line": 27,
+          "raw": "L27: 모젠 최고급형  |"
+        }
+      ]
+    },
+    {
+      "model": "액티언 스포츠",
+      "sourceId": "encar-public-actyon-sports-140750",
+      "documentId": "140750",
+      "sourceURL": "https://www.encar.com/cc/common.do?bbsno=140750&method=view_modelHistoryframe&type=CLS",
+      "observations": 9,
+      "physicalSourceRows": 9,
+      "unconsumedSourceRows": []
+    },
+    {
+      "model": "코란도 스포츠",
+      "sourceId": "encar-public-korando-sports-140747",
+      "documentId": "140747",
+      "sourceURL": "https://www.encar.com/cc/common.do?bbsno=140747&method=view_modelHistoryframe&type=CLS",
+      "observations": 10,
+      "physicalSourceRows": 10,
+      "unconsumedSourceRows": []
+    },
+    {
+      "model": "아반떼 MD",
+      "sourceId": "encar-public-avante-md-134165",
+      "documentId": "134165",
+      "sourceURL": "https://www.encar.com/cc/common.do?bbsno=134165&method=view_modelHistoryframe&type=CLS",
+      "observations": 10,
+      "physicalSourceRows": 10,
+      "unconsumedSourceRows": []
+    },
+    {
+      "model": "아반떼 XD",
+      "sourceId": "encar-public-avante-xd-141963",
+      "documentId": "141963",
+      "sourceURL": "https://www.encar.com/cc/common.do?bbsno=141963&method=view_modelHistoryframe&type=CLS",
+      "observations": 31,
+      "physicalSourceRows": 31,
+      "unconsumedSourceRows": []
+    },
+    {
+      "model": "뉴 아반떼 XD",
+      "sourceId": "encar-public-new-avante-xd-136027",
+      "documentId": "136027",
+      "sourceURL": "https://www.encar.com/cc/common.do?bbsno=136027&method=view_modelHistoryframe&type=CLS",
+      "observations": 21,
+      "physicalSourceRows": 21,
+      "unconsumedSourceRows": []
+    },
+    {
+      "model": "그랜저 HG",
+      "sourceId": "encar-public-grandeur-hg-142070",
+      "documentId": "142070",
+      "sourceURL": "https://www.encar.com/cc/common.do?bbsno=142070&method=view_modelHistoryframe&type=CLS",
+      "observations": 11,
+      "physicalSourceRows": 11,
+      "unconsumedSourceRows": []
+    }
+  ],
+  "records": [
+    {
+      "sourceRecordOrdinal": 1,
+      "sourceId": "encar-public-avante-hd-136040",
+      "model": "아반떼 HD",
+      "sourceHierarchyRaw": [
+        "가솔린 1.6",
+        "E16",
+        "밸류"
+      ],
+      "sourceLine": 1,
+      "sourceLineRaw": "L1: 가솔린 1.6  | E16  | 밸류  | 밸류",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 2,
+      "sourceId": "encar-public-avante-hd-136040",
+      "model": "아반떼 HD",
+      "sourceHierarchyRaw": [
+        "가솔린 1.6",
+        "E16",
+        "디럭스"
+      ],
+      "sourceLine": 2,
+      "sourceLineRaw": "L2: 디럭스  | 디럭스",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 3,
+      "sourceId": "encar-public-avante-hd-136040",
+      "model": "아반떼 HD",
+      "sourceHierarchyRaw": [
+        "가솔린 1.6",
+        "S16",
+        "럭셔리"
+      ],
+      "sourceLine": 3,
+      "sourceLineRaw": "L3: S16  | 럭셔리  | 럭셔리",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 4,
+      "sourceId": "encar-public-avante-hd-136040",
+      "model": "아반떼 HD",
+      "sourceHierarchyRaw": [
+        "가솔린 1.6",
+        "S16",
+        "프리미어"
+      ],
+      "sourceLine": 4,
+      "sourceLineRaw": "L4: 프리미어  | 프리미어",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 5,
+      "sourceId": "encar-public-avante-hd-136040",
+      "model": "아반떼 HD",
+      "sourceHierarchyRaw": [
+        "가솔린 1.6",
+        "S16",
+        "월드컵 에디션"
+      ],
+      "sourceLine": 5,
+      "sourceLineRaw": "L5: 월드컵 에디션  |    | 월드컵 에디션 10년 4월 출시",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 6,
+      "sourceId": "encar-public-avante-hd-136040",
+      "model": "아반떼 HD",
+      "sourceHierarchyRaw": [
+        "가솔린 1.6",
+        "S16",
+        "파이브 밀리언"
+      ],
+      "sourceLine": 6,
+      "sourceLineRaw": "L6: 파이브 밀리언  | 파이브 밀리언 08년 12월 출시  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 7,
+      "sourceId": "encar-public-avante-hd-136040",
+      "model": "아반떼 HD",
+      "sourceHierarchyRaw": [
+        "가솔린 1.6",
+        "S16",
+        "럭셔리 어드밴스팩"
+      ],
+      "sourceLine": 7,
+      "sourceLineRaw": "L7: 럭셔리 어드밴스팩  |    | 럭셔리 어드밴스팩",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 8,
+      "sourceId": "encar-public-avante-hd-136040",
+      "model": "아반떼 HD",
+      "sourceHierarchyRaw": [
+        "가솔린 1.6",
+        "S16",
+        "엘레강스 스페셜"
+      ],
+      "sourceLine": 8,
+      "sourceLineRaw": "L8: 엘레강스 스페셜  | S16 엘레강스 스페셜 09년 3월 단종  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 9,
+      "sourceId": "encar-public-avante-hd-136040",
+      "model": "아반떼 HD",
+      "sourceHierarchyRaw": [
+        "가솔린 1.6",
+        "S16",
+        "탑"
+      ],
+      "sourceLine": 9,
+      "sourceLineRaw": "L9: 탑  | 탑 06년 9월 출시  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 10,
+      "sourceId": "encar-public-avante-hd-136040",
+      "model": "아반떼 HD",
+      "sourceHierarchyRaw": [
+        "가솔린 1.6",
+        "X16",
+        "프리미어"
+      ],
+      "sourceLine": 10,
+      "sourceLineRaw": "L10: X16  | 프리미어  | 프리미어 06년 7월 출시  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 11,
+      "sourceId": "encar-public-avante-hd-136040",
+      "model": "아반떼 HD",
+      "sourceHierarchyRaw": [
+        "가솔린 1.6",
+        "X16",
+        "탑"
+      ],
+      "sourceLine": 11,
+      "sourceLineRaw": "L11: 탑  | X16 탑 06년 9월 출시  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 12,
+      "sourceId": "encar-public-avante-hd-136040",
+      "model": "아반떼 HD",
+      "sourceHierarchyRaw": [
+        "가솔린 1.6",
+        "X16",
+        "럭셔리 블랙"
+      ],
+      "sourceLine": 12,
+      "sourceLineRaw": "L12: 럭셔리 블랙  |    | 럭셔리 블랙 10년 3월 단종",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 13,
+      "sourceId": "encar-public-avante-hd-136040",
+      "model": "아반떼 HD",
+      "sourceHierarchyRaw": [
+        "가솔린 1.6",
+        "X16",
+        "프리미어 블랙"
+      ],
+      "sourceLine": 13,
+      "sourceLineRaw": "L13: 프리미어 블랙  |    | X16 프리미어 블랙 10년 3월 단종",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 14,
+      "sourceId": "encar-public-avante-hd-136040",
+      "model": "아반떼 HD",
+      "sourceHierarchyRaw": [
+        "가솔린 1.6",
+        "X16",
+        "블랙 스페셜"
+      ],
+      "sourceLine": 14,
+      "sourceLineRaw": "L14: 블랙 스페셜  |    | 블랙 스페셜 10년 4월 ~ 10년 7월",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 15,
+      "sourceId": "encar-public-avante-hd-136040",
+      "model": "아반떼 HD",
+      "sourceHierarchyRaw": [
+        "가솔린 2.0",
+        "S20",
+        "프리미어"
+      ],
+      "sourceLine": 15,
+      "sourceLineRaw": "L15: 가솔린 2.0  | S20  | 프리미어  | 프리미어 08년 1월 단종  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 16,
+      "sourceId": "encar-public-avante-hd-136040",
+      "model": "아반떼 HD",
+      "sourceHierarchyRaw": [
+        "가솔린 2.0",
+        "S20",
+        "탑"
+      ],
+      "sourceLine": 16,
+      "sourceLineRaw": "L16: 탑  | 탑 06년 9월 ~ 08년 1월  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 17,
+      "sourceId": "encar-public-avante-hd-136040",
+      "model": "아반떼 HD",
+      "sourceHierarchyRaw": [
+        "가솔린 2.0",
+        "X20",
+        "탑"
+      ],
+      "sourceLine": 17,
+      "sourceLineRaw": "L17: X20  | 탑  | 탑 06년 9월 ~ 08년 1월  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 18,
+      "sourceId": "encar-public-avante-hd-136040",
+      "model": "아반떼 HD",
+      "sourceHierarchyRaw": [
+        "디젤 1.6",
+        "E16",
+        "밸류"
+      ],
+      "sourceLine": 18,
+      "sourceLineRaw": "L18: 디젤 1.6  | E16  | 밸류  | 밸류 07년 12월 출시  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 19,
+      "sourceId": "encar-public-avante-hd-136040",
+      "model": "아반떼 HD",
+      "sourceHierarchyRaw": [
+        "디젤 1.6",
+        "E16",
+        "디럭스"
+      ],
+      "sourceLine": 19,
+      "sourceLineRaw": "L19: 디럭스  | 디럭스  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 20,
+      "sourceId": "encar-public-avante-hd-136040",
+      "model": "아반떼 HD",
+      "sourceHierarchyRaw": [
+        "디젤 1.6",
+        "S16",
+        "럭셔리"
+      ],
+      "sourceLine": 20,
+      "sourceLineRaw": "L20: S16  | 럭셔리  | 럭셔리  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 21,
+      "sourceId": "encar-public-avante-hd-136040",
+      "model": "아반떼 HD",
+      "sourceHierarchyRaw": [
+        "디젤 1.6",
+        "S16",
+        "프리미어"
+      ],
+      "sourceLine": 21,
+      "sourceLineRaw": "L21: 프리미어  | 프리미어 06년 9월 출시  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 22,
+      "sourceId": "encar-public-avante-hd-136040",
+      "model": "아반떼 HD",
+      "sourceHierarchyRaw": [
+        "디젤 1.6",
+        "S16",
+        "탑"
+      ],
+      "sourceLine": 22,
+      "sourceLineRaw": "L22: 탑  | 탑 06년 9월 출시  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 23,
+      "sourceId": "encar-public-spark-133723",
+      "model": "스파크",
+      "sourceHierarchyRaw": [
+        "가솔린 1.0",
+        "밴"
+      ],
+      "sourceLine": 1,
+      "sourceLineRaw": "L1: 가솔린 1.0  | 밴  |  밴",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 24,
+      "sourceId": "encar-public-spark-133723",
+      "model": "스파크",
+      "sourceHierarchyRaw": [
+        "가솔린 1.0",
+        "L"
+      ],
+      "sourceLine": 2,
+      "sourceLineRaw": "L2: L  |  L",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 25,
+      "sourceId": "encar-public-spark-133723",
+      "model": "스파크",
+      "sourceHierarchyRaw": [
+        "가솔린 1.0",
+        "LS",
+        "기본형"
+      ],
+      "sourceLine": 3,
+      "sourceLineRaw": "L3: LS   |  기본형",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 26,
+      "sourceId": "encar-public-spark-133723",
+      "model": "스파크",
+      "sourceHierarchyRaw": [
+        "가솔린 1.0",
+        "LS",
+        "스타"
+      ],
+      "sourceLine": 4,
+      "sourceLineRaw": "L4:  스타 14년 3월 단종",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 27,
+      "sourceId": "encar-public-spark-133723",
+      "model": "스파크",
+      "sourceHierarchyRaw": [
+        "가솔린 1.0",
+        "LS+"
+      ],
+      "sourceLine": 5,
+      "sourceLineRaw": "L5:  LS+  |    |    |    |  LS+ 14년 3월 출시",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 28,
+      "sourceId": "encar-public-spark-133723",
+      "model": "스파크",
+      "sourceHierarchyRaw": [
+        "가솔린 1.0",
+        "LT"
+      ],
+      "sourceLine": 6,
+      "sourceLineRaw": "L6:  LT  | LT",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 29,
+      "sourceId": "encar-public-spark-133723",
+      "model": "스파크",
+      "sourceHierarchyRaw": [
+        "가솔린 1.0",
+        "LT",
+        "스페셜 에디션"
+      ],
+      "sourceLine": 7,
+      "sourceLineRaw": "L7:  스페셜 에디션  |    |    |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 30,
+      "sourceId": "encar-public-spark-133723",
+      "model": "스파크",
+      "sourceHierarchyRaw": [
+        "가솔린 1.0",
+        "트랜스포머 에디션"
+      ],
+      "sourceLine": 8,
+      "sourceLineRaw": "L8:  트랜스포머 에디션  | 트랜스포머 에디션 11년 7월 출시 ~ 11년 9월 단종   |    |    |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 31,
+      "sourceId": "encar-public-spark-133723",
+      "model": "스파크",
+      "sourceHierarchyRaw": [
+        "가솔린 1.0",
+        "스트라이프 에디션"
+      ],
+      "sourceLine": 9,
+      "sourceLineRaw": "L9:  스트라이프 에디션  |    |  스트라이프 에디션 12년 12월 단종  |    |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 32,
+      "sourceId": "encar-public-spark-133723",
+      "model": "스파크",
+      "sourceHierarchyRaw": [
+        "가솔린 1.0",
+        "타투 에디션"
+      ],
+      "sourceLine": 10,
+      "sourceLineRaw": "L10:  타투 에디션  |    |  타투 에디션 14년 1월 단종",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 33,
+      "sourceId": "encar-public-spark-133723",
+      "model": "스파크",
+      "sourceHierarchyRaw": [
+        "가솔린 1.0",
+        "씨티런"
+      ],
+      "sourceLine": 11,
+      "sourceLineRaw": "L11:  씨티런  |    | 씨티런 에디션  12년 12월 출시 ~ 14년 1월 단종",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 34,
+      "sourceId": "encar-public-spark-133723",
+      "model": "스파크",
+      "sourceHierarchyRaw": [
+        "가솔린 1.0",
+        "팝 에디션"
+      ],
+      "sourceLine": 12,
+      "sourceLineRaw": "L12:  팝 에디션  |    |    |    | 팝 에디션 14년 2월 출시",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 35,
+      "sourceId": "encar-public-spark-133723",
+      "model": "스파크",
+      "sourceHierarchyRaw": [
+        "가솔린 1.0",
+        "비트 에디션"
+      ],
+      "sourceLine": 13,
+      "sourceLineRaw": "L13:  비트 에디션  |    |    |    | 비트 에디션 14년 2월 출시",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 36,
+      "sourceId": "encar-public-spark-133723",
+      "model": "스파크",
+      "sourceHierarchyRaw": [
+        "가솔린 1.0 스파크 S",
+        "LS"
+      ],
+      "sourceLine": 14,
+      "sourceLineRaw": "L14: 가솔린 1.0 스파크 S   |  LS  |    |    |  LS  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 37,
+      "sourceId": "encar-public-spark-133723",
+      "model": "스파크",
+      "sourceHierarchyRaw": [
+        "가솔린 1.0 스파크 S",
+        "LS+"
+      ],
+      "sourceLine": 15,
+      "sourceLineRaw": "L15:  LS+  |    |    |    |  LS+",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 38,
+      "sourceId": "encar-public-spark-133723",
+      "model": "스파크",
+      "sourceHierarchyRaw": [
+        "가솔린 1.0 스파크 S",
+        "LT"
+      ],
+      "sourceLine": 16,
+      "sourceLineRaw": "L16:  LT  |    |    |  LT",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 39,
+      "sourceId": "encar-public-spark-133723",
+      "model": "스파크",
+      "sourceHierarchyRaw": [
+        "LPG 1.0",
+        "밴"
+      ],
+      "sourceLine": 17,
+      "sourceLineRaw": "L17: LPG 1.0   |  밴  |    |    |    | 밴",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 40,
+      "sourceId": "encar-public-spark-133723",
+      "model": "스파크",
+      "sourceHierarchyRaw": [
+        "LPG 1.0",
+        "L"
+      ],
+      "sourceLine": 18,
+      "sourceLineRaw": "L18:  L  |  L",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 41,
+      "sourceId": "encar-public-spark-133723",
+      "model": "스파크",
+      "sourceHierarchyRaw": [
+        "LPG 1.0",
+        "LS",
+        "기본형"
+      ],
+      "sourceLine": 19,
+      "sourceLineRaw": "L19: LS   |  기본형  |    |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 42,
+      "sourceId": "encar-public-spark-133723",
+      "model": "스파크",
+      "sourceHierarchyRaw": [
+        "LPG 1.0",
+        "LS",
+        "스타"
+      ],
+      "sourceLine": 20,
+      "sourceLineRaw": "L20:  스타 14년 3월 단종",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 43,
+      "sourceId": "encar-public-spark-133723",
+      "model": "스파크",
+      "sourceHierarchyRaw": [
+        "LPG 1.0",
+        "LS+"
+      ],
+      "sourceLine": 21,
+      "sourceLineRaw": "L21:  LS+  |    |    |    | LS+  14년 3월 출시",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 44,
+      "sourceId": "encar-public-spark-133723",
+      "model": "스파크",
+      "sourceHierarchyRaw": [
+        "LPG 1.0",
+        "LT"
+      ],
+      "sourceLine": 22,
+      "sourceLineRaw": "L22:  LT  |  LT",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 45,
+      "sourceId": "encar-public-spark-133723",
+      "model": "스파크",
+      "sourceHierarchyRaw": [
+        "LPG 1.0",
+        "LT",
+        "스페셜 에디션"
+      ],
+      "sourceLine": 23,
+      "sourceLineRaw": "L23: 스페셜 에디션   |    |    |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 46,
+      "sourceId": "encar-public-actyon-135711",
+      "model": "액티언",
+      "sourceHierarchyRaw": [
+        "2.0",
+        "CX5 2WD",
+        "고급형"
+      ],
+      "sourceLine": 1,
+      "sourceLineRaw": "L1: 2.0  | CX5 2WD  | 고급형 06년 3월 단종  | 고급형  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 47,
+      "sourceId": "encar-public-actyon-135711",
+      "model": "액티언",
+      "sourceHierarchyRaw": [
+        "2.0",
+        "CX5 2WD",
+        "최고급형"
+      ],
+      "sourceLine": 2,
+      "sourceLineRaw": "L2: 최고급형  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 48,
+      "sourceId": "encar-public-actyon-135711",
+      "model": "액티언",
+      "sourceHierarchyRaw": [
+        "2.0",
+        "CX5 2WD",
+        "기본형"
+      ],
+      "sourceLine": 3,
+      "sourceLineRaw": "L3:    |    | 기본형",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 49,
+      "sourceId": "encar-public-actyon-135711",
+      "model": "액티언",
+      "sourceHierarchyRaw": [
+        "2.0",
+        "CX5 클럽 2WD",
+        "클럽 (2WD)"
+      ],
+      "sourceLine": 4,
+      "sourceLineRaw": "L4: CX5 클럽 2WD  |    | 클럽 (2WD) 07년 12월 출시",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 50,
+      "sourceId": "encar-public-actyon-135711",
+      "model": "액티언",
+      "sourceHierarchyRaw": [
+        "2.0",
+        "CX5 클럽 2WD",
+        "레이디팩"
+      ],
+      "sourceLine": 5,
+      "sourceLineRaw": "L5:    |    | 레이디팩 10년 1월 출시",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 51,
+      "sourceId": "encar-public-actyon-135711",
+      "model": "액티언",
+      "sourceHierarchyRaw": [
+        "2.0",
+        "CX7 2WD",
+        "고급형"
+      ],
+      "sourceLine": 6,
+      "sourceLineRaw": "L6: CX7 2WD  | 고급형  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 52,
+      "sourceId": "encar-public-actyon-135711",
+      "model": "액티언",
+      "sourceHierarchyRaw": [
+        "2.0",
+        "CX7 2WD",
+        "최고급형"
+      ],
+      "sourceLine": 7,
+      "sourceLineRaw": "L7: 최고급형  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 53,
+      "sourceId": "encar-public-actyon-135711",
+      "model": "액티언",
+      "sourceHierarchyRaw": [
+        "2.0",
+        "하이퍼 2WD"
+      ],
+      "sourceLine": 8,
+      "sourceLineRaw": "L8: 하이퍼 2WD  |    | 하이퍼 06년 10월 출시  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 54,
+      "sourceId": "encar-public-actyon-135711",
+      "model": "액티언",
+      "sourceHierarchyRaw": [
+        "2.0",
+        "CX5 4WD",
+        "고급형"
+      ],
+      "sourceLine": 9,
+      "sourceLineRaw": "L9: CX5 4WD  | 고급형 06년 3월 단종  |    |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 55,
+      "sourceId": "encar-public-actyon-135711",
+      "model": "액티언",
+      "sourceHierarchyRaw": [
+        "2.0",
+        "CX5 4WD",
+        "최고급형"
+      ],
+      "sourceLine": 10,
+      "sourceLineRaw": "L10: 최고급형  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 56,
+      "sourceId": "encar-public-actyon-135711",
+      "model": "액티언",
+      "sourceHierarchyRaw": [
+        "2.0",
+        "CX5 클럽 4WD",
+        "클럽 (4WD)"
+      ],
+      "sourceLine": 11,
+      "sourceLineRaw": "L11: CX5 클럽 4WD  |    |    | 클럽 (4WD)",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 57,
+      "sourceId": "encar-public-actyon-135711",
+      "model": "액티언",
+      "sourceHierarchyRaw": [
+        "2.0",
+        "CX7 4WD",
+        "고급형"
+      ],
+      "sourceLine": 12,
+      "sourceLineRaw": "L12: CX7 4WD  | 고급형  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 58,
+      "sourceId": "encar-public-actyon-135711",
+      "model": "액티언",
+      "sourceHierarchyRaw": [
+        "2.0",
+        "CX7 4WD",
+        "최고급형"
+      ],
+      "sourceLine": 13,
+      "sourceLineRaw": "L13: 최고급형  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 59,
+      "sourceId": "encar-public-actyon-135711",
+      "model": "액티언",
+      "sourceHierarchyRaw": [
+        "2.0",
+        "CX7 4WD",
+        "CX7"
+      ],
+      "sourceLine": 14,
+      "sourceLineRaw": "L14:    |    | CX7",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 60,
+      "sourceId": "encar-public-actyon-135711",
+      "model": "액티언",
+      "sourceHierarchyRaw": [
+        "2.0",
+        "하이퍼 4WD"
+      ],
+      "sourceLine": 15,
+      "sourceLineRaw": "L15: 하이퍼 4WD  | 하이퍼  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 61,
+      "sourceId": "encar-public-soul-2-134505",
+      "model": "올 뉴 쏘울",
+      "sourceHierarchyRaw": [
+        "1.6 가솔린",
+        "럭셔리"
+      ],
+      "sourceLine": 1,
+      "sourceLineRaw": "L1: 1.6 가솔린  | 럭셔리  | 럭셔리",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 62,
+      "sourceId": "encar-public-soul-2-134505",
+      "model": "올 뉴 쏘울",
+      "sourceHierarchyRaw": [
+        "1.6 가솔린",
+        "트렌디"
+      ],
+      "sourceLine": 2,
+      "sourceLineRaw": "L2: 트렌디  |    |    | 트렌디",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 63,
+      "sourceId": "encar-public-soul-2-134505",
+      "model": "올 뉴 쏘울",
+      "sourceHierarchyRaw": [
+        "1.6 가솔린",
+        "프레스티지"
+      ],
+      "sourceLine": 3,
+      "sourceLineRaw": "L3: 프레스티지  | 프레스티지",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 64,
+      "sourceId": "encar-public-soul-2-134505",
+      "model": "올 뉴 쏘울",
+      "sourceHierarchyRaw": [
+        "1.6 가솔린",
+        "그린존"
+      ],
+      "sourceLine": 4,
+      "sourceLineRaw": "L4: 그린존 13년 10월 단종  |    |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 65,
+      "sourceId": "encar-public-soul-2-134505",
+      "model": "올 뉴 쏘울",
+      "sourceHierarchyRaw": [
+        "1.6 가솔린",
+        "레드존"
+      ],
+      "sourceLine": 5,
+      "sourceLineRaw": "L5: 레드존 13년 10월 단종  | 레드존",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 66,
+      "sourceId": "encar-public-soul-2-134505",
+      "model": "올 뉴 쏘울",
+      "sourceHierarchyRaw": [
+        "1.6 가솔린",
+        "노블레스"
+      ],
+      "sourceLine": 6,
+      "sourceLineRaw": "L6: 노블레스  | 노블레스",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 67,
+      "sourceId": "encar-public-soul-2-134505",
+      "model": "올 뉴 쏘울",
+      "sourceHierarchyRaw": [
+        "1.6 가솔린",
+        "브라운존"
+      ],
+      "sourceLine": 7,
+      "sourceLineRaw": "L7: 브라운존 13년 10월 단종  |    |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 68,
+      "sourceId": "encar-public-soul-2-134505",
+      "model": "올 뉴 쏘울",
+      "sourceHierarchyRaw": [
+        "1.6 디젤",
+        "프레스티지"
+      ],
+      "sourceLine": 8,
+      "sourceLineRaw": "L8: 1.6 디젤  | 프레스티지  | 프레스티지",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 69,
+      "sourceId": "encar-public-soul-2-134505",
+      "model": "올 뉴 쏘울",
+      "sourceHierarchyRaw": [
+        "1.6 디젤",
+        "노블레스"
+      ],
+      "sourceLine": 9,
+      "sourceLineRaw": "L9: 노블레스  | 노블레스",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 70,
+      "sourceId": "encar-public-soul-2-134505",
+      "model": "올 뉴 쏘울",
+      "sourceHierarchyRaw": [
+        "1.6 디젤",
+        "노블레스 스페셜"
+      ],
+      "sourceLine": 10,
+      "sourceLineRaw": "L10:    |    | 노블레스 스페셜",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 71,
+      "sourceId": "encar-public-soul-2-134505",
+      "model": "올 뉴 쏘울",
+      "sourceHierarchyRaw": [
+        "1.6 디젤",
+        "브라운존"
+      ],
+      "sourceLine": 11,
+      "sourceLineRaw": "L11: 브라운존 13년 10월 단종  |    |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 72,
+      "sourceId": "encar-public-soul-2-134505",
+      "model": "올 뉴 쏘울",
+      "sourceHierarchyRaw": [
+        "1.6 디젤",
+        "액티브존"
+      ],
+      "sourceLine": 12,
+      "sourceLineRaw": "L12: 액티브존  |    | 액티브존   |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 73,
+      "sourceId": "encar-public-soul-2-134505",
+      "model": "올 뉴 쏘울",
+      "sourceHierarchyRaw": [
+        "전기",
+        "EV"
+      ],
+      "sourceLine": 13,
+      "sourceLineRaw": "L13: 전기  | EV  | EV 14년 4월 출시",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 74,
+      "sourceId": "encar-public-avante-hybrid-136088",
+      "model": "아반떼 하이브리드",
+      "sourceHierarchyRaw": [
+        "1.6 하이브리드",
+        "Hde l",
+        "기본형"
+      ],
+      "sourceLine": 1,
+      "sourceLineRaw": "L1: 1.6 하이브리드  | Hde l  | 기본형  | 기본형",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 75,
+      "sourceId": "encar-public-avante-hybrid-136088",
+      "model": "아반떼 하이브리드",
+      "sourceHierarchyRaw": [
+        "1.6 하이브리드",
+        "Hde l",
+        "이지팩"
+      ],
+      "sourceLine": 2,
+      "sourceLineRaw": "L2: 이지팩  | 이지팩",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 76,
+      "sourceId": "encar-public-avante-hybrid-136088",
+      "model": "아반떼 하이브리드",
+      "sourceHierarchyRaw": [
+        "1.6 하이브리드",
+        "Hde ll",
+        "기본형"
+      ],
+      "sourceLine": 3,
+      "sourceLineRaw": "L3: Hde ll  | 기본형  | 기본형",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 77,
+      "sourceId": "encar-public-avante-hybrid-136088",
+      "model": "아반떼 하이브리드",
+      "sourceHierarchyRaw": [
+        "1.6 하이브리드",
+        "Hde lll",
+        "기본형"
+      ],
+      "sourceLine": 4,
+      "sourceLineRaw": "L4: Hde lll  | 기본형  | 기본형",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 78,
+      "sourceId": "encar-public-avante-hybrid-136088",
+      "model": "아반떼 하이브리드",
+      "sourceHierarchyRaw": [
+        "1.6 하이브리드",
+        "Hde lll",
+        "어드밴스팩"
+      ],
+      "sourceLine": 5,
+      "sourceLineRaw": "L5: 어드밴스팩  | 어드밴스팩  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 79,
+      "sourceId": "encar-public-sonata-lf-hybrid-142170",
+      "model": "뉴 쏘나타 하이브리드",
+      "sourceHierarchyRaw": [
+        "2.0 플러그인 하이브리드",
+        "프리미엄"
+      ],
+      "sourceLine": 1,
+      "sourceLineRaw": "L1: 2.0 플러그인 하이브리드  | 프리미엄  |    | 프리미엄",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 80,
+      "sourceId": "encar-public-sonata-lf-hybrid-142170",
+      "model": "뉴 쏘나타 하이브리드",
+      "sourceHierarchyRaw": [
+        "2.0 플러그인 하이브리드",
+        "익스클루시브"
+      ],
+      "sourceLine": 2,
+      "sourceLineRaw": "L2: 익스클루시브  |    | 익스클루시브",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 81,
+      "sourceId": "encar-public-sonata-lf-hybrid-142170",
+      "model": "뉴 쏘나타 하이브리드",
+      "sourceHierarchyRaw": [
+        "2.0 하이브리드",
+        "스마트"
+      ],
+      "sourceLine": 3,
+      "sourceLineRaw": "L3: 2.0 하이브리드  | 스마트  | 스마트",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 82,
+      "sourceId": "encar-public-sonata-lf-hybrid-142170",
+      "model": "뉴 쏘나타 하이브리드",
+      "sourceHierarchyRaw": [
+        "2.0 하이브리드",
+        "모던"
+      ],
+      "sourceLine": 4,
+      "sourceLineRaw": "L4: 모던  | 모던",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 83,
+      "sourceId": "encar-public-sonata-lf-hybrid-142170",
+      "model": "뉴 쏘나타 하이브리드",
+      "sourceHierarchyRaw": [
+        "2.0 하이브리드",
+        "프리미엄"
+      ],
+      "sourceLine": 5,
+      "sourceLineRaw": "L5: 프리미엄  | 프리미엄",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 84,
+      "sourceId": "encar-public-lotze-134435",
+      "model": "로체",
+      "sourceHierarchyRaw": [
+        "1.8 가솔린",
+        "LX18",
+        "기본형"
+      ],
+      "sourceLine": 1,
+      "sourceLineRaw": "L1: 1.8 가솔린  | LX18  | 기본형",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 85,
+      "sourceId": "encar-public-lotze-134435",
+      "model": "로체",
+      "sourceHierarchyRaw": [
+        "1.8 가솔린",
+        "LX18",
+        "고급형"
+      ],
+      "sourceLine": 2,
+      "sourceLineRaw": "L2: 고급형",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 86,
+      "sourceId": "encar-public-lotze-134435",
+      "model": "로체",
+      "sourceHierarchyRaw": [
+        "2.0 가솔린",
+        "LX20",
+        "기본형"
+      ],
+      "sourceLine": 3,
+      "sourceLineRaw": "L3: 2.0 가솔린  | LX20  | 기본형",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 87,
+      "sourceId": "encar-public-lotze-134435",
+      "model": "로체",
+      "sourceHierarchyRaw": [
+        "2.0 가솔린",
+        "LX20",
+        "고급형"
+      ],
+      "sourceLine": 4,
+      "sourceLineRaw": "L4: 고급형",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 88,
+      "sourceId": "encar-public-lotze-134435",
+      "model": "로체",
+      "sourceHierarchyRaw": [
+        "2.0 가솔린",
+        "LX20",
+        "모젠 고급형"
+      ],
+      "sourceLine": 5,
+      "sourceLineRaw": "L5: 모젠 고급형  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 89,
+      "sourceId": "encar-public-lotze-134435",
+      "model": "로체",
+      "sourceHierarchyRaw": [
+        "2.0 가솔린",
+        "LEX20",
+        "기본형"
+      ],
+      "sourceLine": 6,
+      "sourceLineRaw": "L6: LEX20  | 기본형",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 90,
+      "sourceId": "encar-public-lotze-134435",
+      "model": "로체",
+      "sourceHierarchyRaw": [
+        "2.0 가솔린",
+        "LEX20",
+        "모젠 기본형"
+      ],
+      "sourceLine": 7,
+      "sourceLineRaw": "L7: 모젠 기본형  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 91,
+      "sourceId": "encar-public-lotze-134435",
+      "model": "로체",
+      "sourceHierarchyRaw": [
+        "2.0 가솔린",
+        "LEX20",
+        "고급형"
+      ],
+      "sourceLine": 8,
+      "sourceLineRaw": "L8: 고급형",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 92,
+      "sourceId": "encar-public-lotze-134435",
+      "model": "로체",
+      "sourceHierarchyRaw": [
+        "2.0 가솔린",
+        "LEX20",
+        "모젠 고급형"
+      ],
+      "sourceLine": 9,
+      "sourceLineRaw": "L9: 모젠 고급형  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 93,
+      "sourceId": "encar-public-lotze-134435",
+      "model": "로체",
+      "sourceHierarchyRaw": [
+        "2.0 가솔린",
+        "LEX20",
+        "최고급형"
+      ],
+      "sourceLine": 10,
+      "sourceLineRaw": "L10: 최고급형",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 94,
+      "sourceId": "encar-public-lotze-134435",
+      "model": "로체",
+      "sourceHierarchyRaw": [
+        "2.0 가솔린",
+        "LEX20",
+        "모젠 최고급형"
+      ],
+      "sourceLine": 11,
+      "sourceLineRaw": "L11: 모젠 최고급형  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 95,
+      "sourceId": "encar-public-lotze-134435",
+      "model": "로체",
+      "sourceHierarchyRaw": [
+        "2.0 가솔린",
+        "LEX20 브라운 프리미엄",
+        "고급형"
+      ],
+      "sourceLine": 12,
+      "sourceLineRaw": "L12: LEX20 브라운 프리미엄  | 고급형",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 96,
+      "sourceId": "encar-public-lotze-134435",
+      "model": "로체",
+      "sourceHierarchyRaw": [
+        "2.0 가솔린",
+        "LEX20 브라운 프리미엄",
+        "모젠 고급형"
+      ],
+      "sourceLine": 13,
+      "sourceLineRaw": "L13: 모젠 고급형  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 97,
+      "sourceId": "encar-public-lotze-134435",
+      "model": "로체",
+      "sourceHierarchyRaw": [
+        "2.0 가솔린",
+        "LEX20 브라운 프리미엄",
+        "최고급형"
+      ],
+      "sourceLine": 14,
+      "sourceLineRaw": "L14: 최고급형",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 98,
+      "sourceId": "encar-public-lotze-134435",
+      "model": "로체",
+      "sourceHierarchyRaw": [
+        "2.0 가솔린",
+        "LEX20 브라운 프리미엄",
+        "모젠 최고급형"
+      ],
+      "sourceLine": 15,
+      "sourceLineRaw": "L15: 모젠 최고급형  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 99,
+      "sourceId": "encar-public-lotze-134435",
+      "model": "로체",
+      "sourceHierarchyRaw": [
+        "2.0 가솔린",
+        "LEX20 블랙 프리미엄",
+        "고급형"
+      ],
+      "sourceLine": 16,
+      "sourceLineRaw": "L16: LEX20 블랙 프리미엄  | 고급형",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 100,
+      "sourceId": "encar-public-lotze-134435",
+      "model": "로체",
+      "sourceHierarchyRaw": [
+        "2.0 가솔린",
+        "LEX20 블랙 프리미엄",
+        "모젠 고급형"
+      ],
+      "sourceLine": 17,
+      "sourceLineRaw": "L17: 모젠 고급형  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 101,
+      "sourceId": "encar-public-lotze-134435",
+      "model": "로체",
+      "sourceHierarchyRaw": [
+        "2.0 가솔린",
+        "LEX20 블랙 프리미엄",
+        "최고급형"
+      ],
+      "sourceLine": 18,
+      "sourceLineRaw": "L18: 최고급형",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 102,
+      "sourceId": "encar-public-lotze-134435",
+      "model": "로체",
+      "sourceHierarchyRaw": [
+        "2.0 가솔린",
+        "LEX20 블랙 프리미엄",
+        "모젠 최고급형"
+      ],
+      "sourceLine": 19,
+      "sourceLineRaw": "L19: 모젠 최고급형  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 103,
+      "sourceId": "encar-public-lotze-134435",
+      "model": "로체",
+      "sourceHierarchyRaw": [
+        "2.4 가솔린",
+        "LEX24",
+        "기본형"
+      ],
+      "sourceLine": 20,
+      "sourceLineRaw": "L20: 2.4 가솔린  | LEX24  | 기본형",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 104,
+      "sourceId": "encar-public-lotze-134435",
+      "model": "로체",
+      "sourceHierarchyRaw": [
+        "2.4 가솔린",
+        "LEX24",
+        "모젠 기본형"
+      ],
+      "sourceLine": 21,
+      "sourceLineRaw": "L21: 모젠 기본형  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 105,
+      "sourceId": "encar-public-lotze-134435",
+      "model": "로체",
+      "sourceHierarchyRaw": [
+        "2.4 가솔린",
+        "LEX24",
+        "고급형"
+      ],
+      "sourceLine": 22,
+      "sourceLineRaw": "L22: 고급형",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 106,
+      "sourceId": "encar-public-lotze-134435",
+      "model": "로체",
+      "sourceHierarchyRaw": [
+        "2.4 가솔린",
+        "LEX24",
+        "모젠 고급형"
+      ],
+      "sourceLine": 23,
+      "sourceLineRaw": "L23: 모젠 고급형  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 107,
+      "sourceId": "encar-public-lotze-134435",
+      "model": "로체",
+      "sourceHierarchyRaw": [
+        "2.4 가솔린",
+        "LEX24",
+        "최고급형"
+      ],
+      "sourceLine": 24,
+      "sourceLineRaw": "L24: 최고급형",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 108,
+      "sourceId": "encar-public-lotze-134435",
+      "model": "로체",
+      "sourceHierarchyRaw": [
+        "2.4 가솔린",
+        "LEX24",
+        "모젠 최고급형"
+      ],
+      "sourceLine": 25,
+      "sourceLineRaw": "L25: 모젠 최고급형  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 109,
+      "sourceId": "encar-public-lotze-134435",
+      "model": "로체",
+      "sourceHierarchyRaw": [
+        "2.4 가솔린",
+        "LEX24 블랙 프리미엄",
+        "고급형"
+      ],
+      "sourceLine": 26,
+      "sourceLineRaw": "L26: LEX24 블랙 프리미엄  | 고급형",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 110,
+      "sourceId": "encar-public-lotze-134435",
+      "model": "로체",
+      "sourceHierarchyRaw": [
+        "2.4 가솔린",
+        "LEX24 블랙 프리미엄",
+        "최고급형"
+      ],
+      "sourceLine": 28,
+      "sourceLineRaw": "L28: 최고급형",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 111,
+      "sourceId": "encar-public-lotze-134435",
+      "model": "로체",
+      "sourceHierarchyRaw": [
+        "2.4 가솔린",
+        "LEX24 블랙 프리미엄",
+        "모젠 최고급형"
+      ],
+      "sourceLine": 29,
+      "sourceLineRaw": "L29: 모젠 최고급형  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 112,
+      "sourceId": "encar-public-lotze-134435",
+      "model": "로체",
+      "sourceHierarchyRaw": [
+        "2.0 디젤",
+        "기본형"
+      ],
+      "sourceLine": 30,
+      "sourceLineRaw": "L30: 2.0 디젤  | 기본형  | 기본형",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 113,
+      "sourceId": "encar-public-lotze-134435",
+      "model": "로체",
+      "sourceHierarchyRaw": [
+        "2.0 디젤",
+        "고급형"
+      ],
+      "sourceLine": 31,
+      "sourceLineRaw": "L31: 고급형  | 고급형",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 114,
+      "sourceId": "encar-public-lotze-134435",
+      "model": "로체",
+      "sourceHierarchyRaw": [
+        "2.0 디젤",
+        "최고급형"
+      ],
+      "sourceLine": 32,
+      "sourceLineRaw": "L32: 최고급형  | 최고급형",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 115,
+      "sourceId": "encar-public-actyon-sports-140750",
+      "model": "액티언 스포츠",
+      "sourceHierarchyRaw": [
+        "2.0",
+        "AX5 유스 2WD"
+      ],
+      "sourceLine": 1,
+      "sourceLineRaw": "L1: 2.0  | AX5 유스 2WD  | AX5 유스 09년 12월 단종",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 116,
+      "sourceId": "encar-public-actyon-sports-140750",
+      "model": "액티언 스포츠",
+      "sourceHierarchyRaw": [
+        "2.0",
+        "AX5 클럽 2WD"
+      ],
+      "sourceLine": 2,
+      "sourceLineRaw": "L2: AX5 클럽 2WD  |    | AX5 클럽",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 117,
+      "sourceId": "encar-public-actyon-sports-140750",
+      "model": "액티언 스포츠",
+      "sourceHierarchyRaw": [
+        "2.0",
+        "AX5 패션 2WD"
+      ],
+      "sourceLine": 3,
+      "sourceLineRaw": "L3: AX5 패션 2WD  | AX5 패션",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 118,
+      "sourceId": "encar-public-actyon-sports-140750",
+      "model": "액티언 스포츠",
+      "sourceHierarchyRaw": [
+        "2.0",
+        "AX5 비젼 2WD"
+      ],
+      "sourceLine": 4,
+      "sourceLineRaw": "L4: AX5 비젼 2WD  | AX5 비전  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 119,
+      "sourceId": "encar-public-actyon-sports-140750",
+      "model": "액티언 스포츠",
+      "sourceHierarchyRaw": [
+        "2.0",
+        "AX7 유스 4WD"
+      ],
+      "sourceLine": 5,
+      "sourceLineRaw": "L5: AX7 유스 4WD  | AX7 유스  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 120,
+      "sourceId": "encar-public-actyon-sports-140750",
+      "model": "액티언 스포츠",
+      "sourceHierarchyRaw": [
+        "2.0",
+        "AX7 클럽 4WD"
+      ],
+      "sourceLine": 6,
+      "sourceLineRaw": "L6: AX7 클럽 4WD  |    | AX7 클럽",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 121,
+      "sourceId": "encar-public-actyon-sports-140750",
+      "model": "액티언 스포츠",
+      "sourceHierarchyRaw": [
+        "2.0",
+        "AX7 레저스페셜 4WD"
+      ],
+      "sourceLine": 7,
+      "sourceLineRaw": "L7: AX7 레저스페셜 4WD  |    | AX7 레저스페셜 11년 1월 출시",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 122,
+      "sourceId": "encar-public-actyon-sports-140750",
+      "model": "액티언 스포츠",
+      "sourceHierarchyRaw": [
+        "2.0",
+        "AX7 패션 4WD"
+      ],
+      "sourceLine": 8,
+      "sourceLineRaw": "L8: AX7 패션 4WD  | AX7 패션",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 123,
+      "sourceId": "encar-public-actyon-sports-140750",
+      "model": "액티언 스포츠",
+      "sourceHierarchyRaw": [
+        "2.0",
+        "AX7 비전 4WD"
+      ],
+      "sourceLine": 9,
+      "sourceLineRaw": "L9: AX7 비전 4WD  | AX7 비전",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 124,
+      "sourceId": "encar-public-korando-sports-140747",
+      "model": "코란도 스포츠",
+      "sourceHierarchyRaw": [
+        "2.0",
+        "CX5 2WD",
+        "에코"
+      ],
+      "sourceLine": 1,
+      "sourceLineRaw": "L1: 2.0  | CX5 2WD  | 에코",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 125,
+      "sourceId": "encar-public-korando-sports-140747",
+      "model": "코란도 스포츠",
+      "sourceHierarchyRaw": [
+        "2.0",
+        "CX5 2WD",
+        "클럽"
+      ],
+      "sourceLine": 2,
+      "sourceLineRaw": "L2: 클럽",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 126,
+      "sourceId": "encar-public-korando-sports-140747",
+      "model": "코란도 스포츠",
+      "sourceHierarchyRaw": [
+        "2.0",
+        "CX5 2WD",
+        "패션"
+      ],
+      "sourceLine": 3,
+      "sourceLineRaw": "L3: 패션",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 127,
+      "sourceId": "encar-public-korando-sports-140747",
+      "model": "코란도 스포츠",
+      "sourceHierarchyRaw": [
+        "2.0",
+        "CX7 4WD",
+        "매니아"
+      ],
+      "sourceLine": 4,
+      "sourceLineRaw": "L4: CX7 4WD  |    | 매니아",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 128,
+      "sourceId": "encar-public-korando-sports-140747",
+      "model": "코란도 스포츠",
+      "sourceHierarchyRaw": [
+        "2.0",
+        "CX7 4WD",
+        "클럽"
+      ],
+      "sourceLine": 5,
+      "sourceLineRaw": "L5: 클럽",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 129,
+      "sourceId": "encar-public-korando-sports-140747",
+      "model": "코란도 스포츠",
+      "sourceHierarchyRaw": [
+        "2.0",
+        "CX7 4WD",
+        "레저"
+      ],
+      "sourceLine": 6,
+      "sourceLineRaw": "L6: 레저  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 130,
+      "sourceId": "encar-public-korando-sports-140747",
+      "model": "코란도 스포츠",
+      "sourceHierarchyRaw": [
+        "2.0",
+        "CX7 4WD",
+        "패션"
+      ],
+      "sourceLine": 7,
+      "sourceLineRaw": "L7: 패션",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 131,
+      "sourceId": "encar-public-korando-sports-140747",
+      "model": "코란도 스포츠",
+      "sourceHierarchyRaw": [
+        "2.0",
+        "CX7 4WD",
+        "익스트림"
+      ],
+      "sourceLine": 8,
+      "sourceLineRaw": "L8:    | 익스트림 15년 6월 출시",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 132,
+      "sourceId": "encar-public-korando-sports-140747",
+      "model": "코란도 스포츠",
+      "sourceHierarchyRaw": [
+        "2.0",
+        "CX7 4WD",
+        "비전"
+      ],
+      "sourceLine": 9,
+      "sourceLineRaw": "L9: 비전",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 133,
+      "sourceId": "encar-public-korando-sports-140747",
+      "model": "코란도 스포츠",
+      "sourceHierarchyRaw": [
+        "2.0",
+        "CX7 4WD",
+        "어드벤처 60th 에디션"
+      ],
+      "sourceLine": 10,
+      "sourceLineRaw": "L10:    | 어드벤처 60th 에디션 14년 9월 출시",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 134,
+      "sourceId": "encar-public-avante-md-134165",
+      "model": "아반떼 MD",
+      "sourceHierarchyRaw": [
+        "1.6 가솔린",
+        "스타일"
+      ],
+      "sourceLine": 1,
+      "sourceLineRaw": "L1: 1.6 가솔린  | 스타일  |  | 스타일",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 135,
+      "sourceId": "encar-public-avante-md-134165",
+      "model": "아반떼 MD",
+      "sourceHierarchyRaw": [
+        "1.6 가솔린",
+        "디럭스"
+      ],
+      "sourceLine": 2,
+      "sourceLineRaw": "L2:  디럭스  | 디럭스  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 136,
+      "sourceId": "encar-public-avante-md-134165",
+      "model": "아반떼 MD",
+      "sourceHierarchyRaw": [
+        "1.6 가솔린",
+        "스마트"
+      ],
+      "sourceLine": 3,
+      "sourceLineRaw": "L3:  스마트  |    | 스마트",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 137,
+      "sourceId": "encar-public-avante-md-134165",
+      "model": "아반떼 MD",
+      "sourceHierarchyRaw": [
+        "1.6 가솔린",
+        "럭셔리"
+      ],
+      "sourceLine": 4,
+      "sourceLineRaw": "L4:  럭셔리  | 럭셔리  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 138,
+      "sourceId": "encar-public-avante-md-134165",
+      "model": "아반떼 MD",
+      "sourceHierarchyRaw": [
+        "1.6 가솔린",
+        "에비뉴"
+      ],
+      "sourceLine": 5,
+      "sourceLineRaw": "L5:  에비뉴  |    | 에비뉴 13년 1월 출시",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 139,
+      "sourceId": "encar-public-avante-md-134165",
+      "model": "아반떼 MD",
+      "sourceHierarchyRaw": [
+        "1.6 가솔린",
+        "모던"
+      ],
+      "sourceLine": 6,
+      "sourceLineRaw": "L6:  모던  |    |  모던",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 140,
+      "sourceId": "encar-public-avante-md-134165",
+      "model": "아반떼 MD",
+      "sourceHierarchyRaw": [
+        "1.6 가솔린",
+        "프리미어"
+      ],
+      "sourceLine": 7,
+      "sourceLineRaw": "L7:  프리미어  | 프리미어  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 141,
+      "sourceId": "encar-public-avante-md-134165",
+      "model": "아반떼 MD",
+      "sourceHierarchyRaw": [
+        "1.6 가솔린",
+        "프리미엄"
+      ],
+      "sourceLine": 8,
+      "sourceLineRaw": "L8:  프리미엄  |    | 프리미엄",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 142,
+      "sourceId": "encar-public-avante-md-134165",
+      "model": "아반떼 MD",
+      "sourceHierarchyRaw": [
+        "1.6 가솔린",
+        "탑"
+      ],
+      "sourceLine": 9,
+      "sourceLineRaw": "L9:  탑  | 탑  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 143,
+      "sourceId": "encar-public-avante-md-134165",
+      "model": "아반떼 MD",
+      "sourceHierarchyRaw": [
+        "1.6 가솔린",
+        "블루 세이버"
+      ],
+      "sourceLine": 10,
+      "sourceLineRaw": "L10:  블루 세이버  | 블루 세이버 11년 6월 출시 ~ 12년 12월 단종",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 144,
+      "sourceId": "encar-public-avante-xd-141963",
+      "model": "아반떼 XD",
+      "sourceHierarchyRaw": [
+        "1.5 DOHC",
+        "GL",
+        "기본형"
+      ],
+      "sourceLine": 1,
+      "sourceLineRaw": "L1: 1.5 DOHC  | GL  | 기본형  | 기본형",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 145,
+      "sourceId": "encar-public-avante-xd-141963",
+      "model": "아반떼 XD",
+      "sourceHierarchyRaw": [
+        "1.5 DOHC",
+        "GL",
+        "파워팩"
+      ],
+      "sourceLine": 2,
+      "sourceLineRaw": "L2: 파워팩  | 파워팩 00년 10월 단종  |    |    |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 146,
+      "sourceId": "encar-public-avante-xd-141963",
+      "model": "아반떼 XD",
+      "sourceHierarchyRaw": [
+        "1.5 DOHC",
+        "GL",
+        "고급형"
+      ],
+      "sourceLine": 3,
+      "sourceLineRaw": "L3: 고급형  |    |    | 고급형",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 147,
+      "sourceId": "encar-public-avante-xd-141963",
+      "model": "아반떼 XD",
+      "sourceHierarchyRaw": [
+        "1.5 DOHC",
+        "GLS",
+        "기본형"
+      ],
+      "sourceLine": 4,
+      "sourceLineRaw": "L4: GLS  | 기본형  |    |    | 기본형",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 148,
+      "sourceId": "encar-public-avante-xd-141963",
+      "model": "아반떼 XD",
+      "sourceHierarchyRaw": [
+        "1.5 DOHC",
+        "GLS",
+        "고급형"
+      ],
+      "sourceLine": 5,
+      "sourceLineRaw": "L5: 고급형  |    |    | 고급형",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 149,
+      "sourceId": "encar-public-avante-xd-141963",
+      "model": "아반떼 XD",
+      "sourceHierarchyRaw": [
+        "1.5 DOHC",
+        "디럭스",
+        "고급형"
+      ],
+      "sourceLine": 6,
+      "sourceLineRaw": "L6: 디럭스  | 고급형  |    |    | 고급형",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 150,
+      "sourceId": "encar-public-avante-xd-141963",
+      "model": "아반떼 XD",
+      "sourceHierarchyRaw": [
+        "1.5 DOHC",
+        "디럭스",
+        "슈퍼형"
+      ],
+      "sourceLine": 7,
+      "sourceLineRaw": "L7: 슈퍼형  |    |    | 슈퍼형",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 151,
+      "sourceId": "encar-public-avante-xd-141963",
+      "model": "아반떼 XD",
+      "sourceHierarchyRaw": [
+        "1.5 DOHC",
+        "디럭스",
+        "최고급형"
+      ],
+      "sourceLine": 8,
+      "sourceLineRaw": "L8: 최고급형  |    |    | 최고급형",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 152,
+      "sourceId": "encar-public-avante-xd-141963",
+      "model": "아반떼 XD",
+      "sourceHierarchyRaw": [
+        "1.5 DOHC",
+        "디럭스",
+        "월드컵"
+      ],
+      "sourceLine": 9,
+      "sourceLineRaw": "L9: 월드컵  |    |    | 월드컵 02년 5월 ~ 02년 8월  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 153,
+      "sourceId": "encar-public-avante-xd-141963",
+      "model": "아반떼 XD",
+      "sourceHierarchyRaw": [
+        "린번 1.5 DOHC",
+        "GLS",
+        "기본형"
+      ],
+      "sourceLine": 10,
+      "sourceLineRaw": "L10: 린번 1.5 DOHC  | GLS  | 기본형  | 기본형  |    |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 154,
+      "sourceId": "encar-public-avante-xd-141963",
+      "model": "아반떼 XD",
+      "sourceHierarchyRaw": [
+        "린번 1.5 DOHC",
+        "디럭스",
+        "기본형"
+      ],
+      "sourceLine": 11,
+      "sourceLineRaw": "L11: 디럭스  | 기본형  | 기본형  |    |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 155,
+      "sourceId": "encar-public-avante-xd-141963",
+      "model": "아반떼 XD",
+      "sourceHierarchyRaw": [
+        "린번 1.5 DOHC",
+        "디럭스",
+        "레더팩"
+      ],
+      "sourceLine": 12,
+      "sourceLineRaw": "L12: 레더팩  | 레더팩  |    |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 156,
+      "sourceId": "encar-public-avante-xd-141963",
+      "model": "아반떼 XD",
+      "sourceHierarchyRaw": [
+        "2.0 DOHC",
+        "골드",
+        "레더팩"
+      ],
+      "sourceLine": 13,
+      "sourceLineRaw": "L13: 2.0 DOHC  | 골드  | 레더팩  | 레더팩  |    |    |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 157,
+      "sourceId": "encar-public-avante-xd-141963",
+      "model": "아반떼 XD",
+      "sourceHierarchyRaw": [
+        "2.0 DOHC",
+        "골드",
+        "세이프티팩"
+      ],
+      "sourceLine": 14,
+      "sourceLineRaw": "L14: 세이프티팩  | 세이프티팩  |    |    |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 158,
+      "sourceId": "encar-public-avante-xd-141963",
+      "model": "아반떼 XD",
+      "sourceHierarchyRaw": [
+        "2.0 DOHC",
+        "골드",
+        "프라임팩"
+      ],
+      "sourceLine": 15,
+      "sourceLineRaw": "L15: 프라임팩  |    | 프라임팩  |    |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 159,
+      "sourceId": "encar-public-avante-xd-141963",
+      "model": "아반떼 XD",
+      "sourceHierarchyRaw": [
+        "2.0 DOHC",
+        "골드",
+        "고급형"
+      ],
+      "sourceLine": 16,
+      "sourceLineRaw": "L16: 고급형  |    |    | 고급형  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 160,
+      "sourceId": "encar-public-avante-xd-141963",
+      "model": "아반떼 XD",
+      "sourceHierarchyRaw": [
+        "2.0 DOHC",
+        "골드",
+        "최고급형"
+      ],
+      "sourceLine": 17,
+      "sourceLineRaw": "L17: 최고급형  |    |    | 최고급형  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 161,
+      "sourceId": "encar-public-avante-xd-141963",
+      "model": "아반떼 XD",
+      "sourceHierarchyRaw": [
+        "2.0 VVT",
+        "골드",
+        "기본형"
+      ],
+      "sourceLine": 18,
+      "sourceLineRaw": "L18: 2.0 VVT  | 골드  | 기본형  |    |    |    | 기본형",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 162,
+      "sourceId": "encar-public-avante-xd-141963",
+      "model": "아반떼 XD",
+      "sourceHierarchyRaw": [
+        "2.0 VVT",
+        "골드",
+        "고급형"
+      ],
+      "sourceLine": 19,
+      "sourceLineRaw": "L19: 고급형  |    |    |    | 고급형",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 163,
+      "sourceId": "encar-public-avante-xd-141963",
+      "model": "아반떼 XD",
+      "sourceHierarchyRaw": [
+        "2.0 VVT",
+        "골드",
+        "최고급형"
+      ],
+      "sourceLine": 20,
+      "sourceLineRaw": "L20: 최고급형  |    |    |    | 최고급형",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 164,
+      "sourceId": "encar-public-avante-xd-141963",
+      "model": "아반떼 XD",
+      "sourceHierarchyRaw": [
+        "5도어 1.5 DOHC",
+        "스포츠",
+        "기본형"
+      ],
+      "sourceLine": 21,
+      "sourceLineRaw": "L21: 5도어 1.5 DOHC  | 스포츠  | 기본형  | 기본형 00년 11월 출시",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 165,
+      "sourceId": "encar-public-avante-xd-141963",
+      "model": "아반떼 XD",
+      "sourceHierarchyRaw": [
+        "5도어 1.5 DOHC",
+        "스포츠",
+        "레더팩"
+      ],
+      "sourceLine": 22,
+      "sourceLineRaw": "L22: 레더팩  | 레더팩 00년 11월 출시  |    |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 166,
+      "sourceId": "encar-public-avante-xd-141963",
+      "model": "아반떼 XD",
+      "sourceHierarchyRaw": [
+        "5도어 1.5 DOHC",
+        "스포츠",
+        "고급형"
+      ],
+      "sourceLine": 23,
+      "sourceLineRaw": "L23: 고급형  |    |    | 고급형",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 167,
+      "sourceId": "encar-public-avante-xd-141963",
+      "model": "아반떼 XD",
+      "sourceHierarchyRaw": [
+        "5도어 1.5 DOHC",
+        "스포츠",
+        "최고급형"
+      ],
+      "sourceLine": 24,
+      "sourceLineRaw": "L24: 최고급형  |    |    | 최고급형",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 168,
+      "sourceId": "encar-public-avante-xd-141963",
+      "model": "아반떼 XD",
+      "sourceHierarchyRaw": [
+        "5도어 2.0 DOHC",
+        "레이싱",
+        "기본형"
+      ],
+      "sourceLine": 25,
+      "sourceLineRaw": "L25: 5도어 2.0 DOHC  | 레이싱  | 기본형  | 기본형 00년 11월 출시  |    |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 169,
+      "sourceId": "encar-public-avante-xd-141963",
+      "model": "아반떼 XD",
+      "sourceHierarchyRaw": [
+        "5도어 2.0 DOHC",
+        "레이싱",
+        "레더팩"
+      ],
+      "sourceLine": 26,
+      "sourceLineRaw": "L26: 레더팩  | 레더팩 00년 11월 출시  |    |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 170,
+      "sourceId": "encar-public-avante-xd-141963",
+      "model": "아반떼 XD",
+      "sourceHierarchyRaw": [
+        "5도어 2.0 DOHC",
+        "레이싱",
+        "세이프티팩"
+      ],
+      "sourceLine": 27,
+      "sourceLineRaw": "L27: 세이프티팩  | 세이프티팩 00년 11월 출시  |    |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 171,
+      "sourceId": "encar-public-avante-xd-141963",
+      "model": "아반떼 XD",
+      "sourceHierarchyRaw": [
+        "5도어 2.0 DOHC",
+        "레이싱",
+        "고급형"
+      ],
+      "sourceLine": 28,
+      "sourceLineRaw": "L28: 고급형  |    |    | 고급형  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 172,
+      "sourceId": "encar-public-avante-xd-141963",
+      "model": "아반떼 XD",
+      "sourceHierarchyRaw": [
+        "5도어 2.0 DOHC",
+        "레이싱",
+        "최고급형"
+      ],
+      "sourceLine": 29,
+      "sourceLineRaw": "L29: 최고급형  |    |    | 최고급형  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 173,
+      "sourceId": "encar-public-avante-xd-141963",
+      "model": "아반떼 XD",
+      "sourceHierarchyRaw": [
+        "5도어 2.0 VVT",
+        "레이싱",
+        "고급형"
+      ],
+      "sourceLine": 30,
+      "sourceLineRaw": "L30: 5도어 2.0 VVT  | 레이싱  | 고급형  |    |    |    | 고급형",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 174,
+      "sourceId": "encar-public-avante-xd-141963",
+      "model": "아반떼 XD",
+      "sourceHierarchyRaw": [
+        "5도어 2.0 VVT",
+        "레이싱",
+        "최고급형"
+      ],
+      "sourceLine": 31,
+      "sourceLineRaw": "L31: 최고급형  |    |    |    | 최고급형",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 175,
+      "sourceId": "encar-public-new-avante-xd-136027",
+      "model": "뉴 아반떼 XD",
+      "sourceHierarchyRaw": [
+        "가솔린 1.5 VVT",
+        "GL",
+        "기본형"
+      ],
+      "sourceLine": 1,
+      "sourceLineRaw": "L1: 가솔린 1.5 VVT  | GL  | 기본형  | 기본형  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 176,
+      "sourceId": "encar-public-new-avante-xd-136027",
+      "model": "뉴 아반떼 XD",
+      "sourceHierarchyRaw": [
+        "가솔린 1.5 VVT",
+        "GL",
+        "고급형"
+      ],
+      "sourceLine": 2,
+      "sourceLineRaw": "L2: 고급형  | 고급형  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 177,
+      "sourceId": "encar-public-new-avante-xd-136027",
+      "model": "뉴 아반떼 XD",
+      "sourceHierarchyRaw": [
+        "가솔린 1.5 VVT",
+        "GLS",
+        "기본형"
+      ],
+      "sourceLine": 3,
+      "sourceLineRaw": "L3: GLS  | 기본형  | 기본형  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 178,
+      "sourceId": "encar-public-new-avante-xd-136027",
+      "model": "뉴 아반떼 XD",
+      "sourceHierarchyRaw": [
+        "가솔린 1.5 VVT",
+        "디럭스",
+        "기본형"
+      ],
+      "sourceLine": 4,
+      "sourceLineRaw": "L4: 디럭스  | 기본형  | 기본형  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 179,
+      "sourceId": "encar-public-new-avante-xd-136027",
+      "model": "뉴 아반떼 XD",
+      "sourceHierarchyRaw": [
+        "가솔린 1.5 VVT",
+        "님프",
+        "기본형"
+      ],
+      "sourceLine": 5,
+      "sourceLineRaw": "L5: 님프  | 기본형  |    | 님프  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 180,
+      "sourceId": "encar-public-new-avante-xd-136027",
+      "model": "뉴 아반떼 XD",
+      "sourceHierarchyRaw": [
+        "가솔린 1.5 VVT",
+        "골드",
+        "기본형"
+      ],
+      "sourceLine": 6,
+      "sourceLineRaw": "L6: 골드  | 기본형  | 기본형  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 181,
+      "sourceId": "encar-public-new-avante-xd-136027",
+      "model": "뉴 아반떼 XD",
+      "sourceHierarchyRaw": [
+        "가솔린 1.5 VVT",
+        "골드",
+        "고급형"
+      ],
+      "sourceLine": 7,
+      "sourceLineRaw": "L7: 고급형  | 고급형  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 182,
+      "sourceId": "encar-public-new-avante-xd-136027",
+      "model": "뉴 아반떼 XD",
+      "sourceHierarchyRaw": [
+        "가솔린 1.5 VVT",
+        "골드",
+        "최고급형"
+      ],
+      "sourceLine": 8,
+      "sourceLineRaw": "L8: 최고급형  | 최고급형  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 183,
+      "sourceId": "encar-public-new-avante-xd-136027",
+      "model": "뉴 아반떼 XD",
+      "sourceHierarchyRaw": [
+        "가솔린 1.6 VVT",
+        "GL",
+        "기본형"
+      ],
+      "sourceLine": 9,
+      "sourceLineRaw": "L9: 가솔린 1.6 VVT  | GL  | 기본형  |    | 기본형 05년 7월 출시",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 184,
+      "sourceId": "encar-public-new-avante-xd-136027",
+      "model": "뉴 아반떼 XD",
+      "sourceHierarchyRaw": [
+        "가솔린 1.6 VVT",
+        "GL",
+        "고급형"
+      ],
+      "sourceLine": 10,
+      "sourceLineRaw": "L10: 고급형  |    | 고급형 05년 7월 출시",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 185,
+      "sourceId": "encar-public-new-avante-xd-136027",
+      "model": "뉴 아반떼 XD",
+      "sourceHierarchyRaw": [
+        "가솔린 1.6 VVT",
+        "GLS",
+        "기본형"
+      ],
+      "sourceLine": 11,
+      "sourceLineRaw": "L11: GLS  | 기본형  |    | 기본형 05년 7월 출시",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 186,
+      "sourceId": "encar-public-new-avante-xd-136027",
+      "model": "뉴 아반떼 XD",
+      "sourceHierarchyRaw": [
+        "가솔린 1.6 VVT",
+        "디럭스",
+        "기본형"
+      ],
+      "sourceLine": 12,
+      "sourceLineRaw": "L12: 디럭스  | 기본형  |    | 기본형",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 187,
+      "sourceId": "encar-public-new-avante-xd-136027",
+      "model": "뉴 아반떼 XD",
+      "sourceHierarchyRaw": [
+        "가솔린 1.6 VVT",
+        "님프",
+        "기본형"
+      ],
+      "sourceLine": 13,
+      "sourceLineRaw": "L13: 님프  | 기본형  |    | 님프 05년 7월 출시",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 188,
+      "sourceId": "encar-public-new-avante-xd-136027",
+      "model": "뉴 아반떼 XD",
+      "sourceHierarchyRaw": [
+        "가솔린 1.6 VVT",
+        "골드",
+        "기본형"
+      ],
+      "sourceLine": 14,
+      "sourceLineRaw": "L14: 골드  | 기본형  |    | 기본형",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 189,
+      "sourceId": "encar-public-new-avante-xd-136027",
+      "model": "뉴 아반떼 XD",
+      "sourceHierarchyRaw": [
+        "가솔린 1.6 VVT",
+        "골드",
+        "고급형"
+      ],
+      "sourceLine": 15,
+      "sourceLineRaw": "L15: 고급형  |    | 고급형",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 190,
+      "sourceId": "encar-public-new-avante-xd-136027",
+      "model": "뉴 아반떼 XD",
+      "sourceHierarchyRaw": [
+        "가솔린 1.6 VVT",
+        "골드",
+        "최고급형"
+      ],
+      "sourceLine": 16,
+      "sourceLineRaw": "L16: 최고급형  |    | 최고급형",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 191,
+      "sourceId": "encar-public-new-avante-xd-136027",
+      "model": "뉴 아반떼 XD",
+      "sourceHierarchyRaw": [
+        "가솔린 2.0 VVT",
+        "골드",
+        "기본형"
+      ],
+      "sourceLine": 17,
+      "sourceLineRaw": "L17: 가솔린 2.0 VVT  | 골드  | 기본형  | 기본형",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 192,
+      "sourceId": "encar-public-new-avante-xd-136027",
+      "model": "뉴 아반떼 XD",
+      "sourceHierarchyRaw": [
+        "가솔린 2.0 VVT",
+        "골드",
+        "고급형"
+      ],
+      "sourceLine": 18,
+      "sourceLineRaw": "L18: 고급형  | 고급형",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 193,
+      "sourceId": "encar-public-new-avante-xd-136027",
+      "model": "뉴 아반떼 XD",
+      "sourceHierarchyRaw": [
+        "디젤 1.5 VGT",
+        "디럭스",
+        "기본형"
+      ],
+      "sourceLine": 19,
+      "sourceLineRaw": "L19: 디젤 1.5 VGT  | 디럭스  | 기본형  |    | 기본형 05년 7월 출시 ~ 06년 2월 단종",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 194,
+      "sourceId": "encar-public-new-avante-xd-136027",
+      "model": "뉴 아반떼 XD",
+      "sourceHierarchyRaw": [
+        "디젤 1.5 VGT",
+        "골드",
+        "기본형"
+      ],
+      "sourceLine": 20,
+      "sourceLineRaw": "L20: 골드  | 기본형  |    | 기본형 05년 7월 출시 ~ 06년 2월 단종",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 195,
+      "sourceId": "encar-public-new-avante-xd-136027",
+      "model": "뉴 아반떼 XD",
+      "sourceHierarchyRaw": [
+        "디젤 1.5 VGT",
+        "골드",
+        "고급형"
+      ],
+      "sourceLine": 21,
+      "sourceLineRaw": "L21: 고급형  |    | 고급형 05년 9월 출시 ~ 06년 3월 단종",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 196,
+      "sourceId": "encar-public-grandeur-hg-142070",
+      "model": "그랜저 HG",
+      "sourceHierarchyRaw": [
+        "2.2",
+        "HG220",
+        "모던"
+      ],
+      "sourceLine": 1,
+      "sourceLineRaw": "L1: 2.2  | HG220  |    |    | 모던",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 197,
+      "sourceId": "encar-public-grandeur-hg-142070",
+      "model": "그랜저 HG",
+      "sourceHierarchyRaw": [
+        "2.2",
+        "HG220",
+        "프리미엄"
+      ],
+      "sourceLine": 2,
+      "sourceLineRaw": "L2:    |    | 프리미엄",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 198,
+      "sourceId": "encar-public-grandeur-hg-142070",
+      "model": "그랜저 HG",
+      "sourceHierarchyRaw": [
+        "2.4",
+        "HG240",
+        "럭셔리"
+      ],
+      "sourceLine": 3,
+      "sourceLineRaw": "L3: 2.4  | HG240  | 럭셔리  |    |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 199,
+      "sourceId": "encar-public-grandeur-hg-142070",
+      "model": "그랜저 HG",
+      "sourceHierarchyRaw": [
+        "2.4",
+        "HG240",
+        "모던"
+      ],
+      "sourceLine": 4,
+      "sourceLineRaw": "L4:    | 모던",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 200,
+      "sourceId": "encar-public-grandeur-hg-142070",
+      "model": "그랜저 HG",
+      "sourceHierarchyRaw": [
+        "3.0",
+        "HG300",
+        "프라임"
+      ],
+      "sourceLine": 5,
+      "sourceLineRaw": "L5: 3.0  | HG300  | 프라임  |    |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 201,
+      "sourceId": "encar-public-grandeur-hg-142070",
+      "model": "그랜저 HG",
+      "sourceHierarchyRaw": [
+        "3.0",
+        "HG300",
+        "프리미엄"
+      ],
+      "sourceLine": 6,
+      "sourceLineRaw": "L6:    | 프리미엄",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 202,
+      "sourceId": "encar-public-grandeur-hg-142070",
+      "model": "그랜저 HG",
+      "sourceHierarchyRaw": [
+        "3.0",
+        "HG300",
+        "노블"
+      ],
+      "sourceLine": 7,
+      "sourceLineRaw": "L7: 노블  |    |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 203,
+      "sourceId": "encar-public-grandeur-hg-142070",
+      "model": "그랜저 HG",
+      "sourceHierarchyRaw": [
+        "3.0",
+        "HG300",
+        "익스클루시브"
+      ],
+      "sourceLine": 8,
+      "sourceLineRaw": "L8:    | 익스클루시브",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 204,
+      "sourceId": "encar-public-grandeur-hg-142070",
+      "model": "그랜저 HG",
+      "sourceHierarchyRaw": [
+        "3.0",
+        "HG300",
+        "익스클루시브 스페셜"
+      ],
+      "sourceLine": 9,
+      "sourceLineRaw": "L9:    |    | 익스클루시브 스페셜",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 205,
+      "sourceId": "encar-public-grandeur-hg-142070",
+      "model": "그랜저 HG",
+      "sourceHierarchyRaw": [
+        "3.0",
+        "HG300",
+        "로얄"
+      ],
+      "sourceLine": 10,
+      "sourceLineRaw": "L10: 로얄  |    |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    },
+    {
+      "sourceRecordOrdinal": 206,
+      "sourceId": "encar-public-grandeur-hg-142070",
+      "model": "그랜저 HG",
+      "sourceHierarchyRaw": [
+        "3.3",
+        "HG330",
+        "셀러브리티"
+      ],
+      "sourceLine": 11,
+      "sourceLineRaw": "L11: 3.3  | HG330  | 셀러브리티 11년 9월 출시  |",
+      "leafLiteralAndSourceOrderingVerified": true,
+      "parentPathManuallyReviewed": true,
+      "modelIdentityParentPageReviewed": true,
+      "currentRetailCodesOrYearCompletenessVerified": false
+    }
+  ],
+  "limitations": [
+    "Timeline cell years are not model years.",
+    "Engine comparison tables also contain earlier/later models.",
+    "The repeated Lotze LEX24 black premium Mojin-highest source cell is not a missing distinct trim."
+  ]
+}

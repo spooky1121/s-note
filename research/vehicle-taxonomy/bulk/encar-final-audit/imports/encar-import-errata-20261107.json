@@ -1,0 +1,457 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-11-07",
+  "scope": "Only source-verified normalized annotation corrections. Original source file, sourceRecord and evidence bytes are retained. Composed grade names are not rewritten.",
+  "sourceFileSha256": "ff659155ccf5ebd8b0021ba506a66a6a8f1793caaf7e4d97db0532b56f8141df",
+  "records": [
+    {
+      "id": "encar-import-rawtrim-20261107-01",
+      "sourceFile": "research/vehicle-taxonomy/sources/import-historical-expansion-20261106.json",
+      "sourceId": "hist-encar-a6-c7-grades",
+      "match": {
+        "make": "아우디",
+        "group": "A6",
+        "model": "A6 C7",
+        "grade": "3.0 TFSI 콰트로 LED 헤드램프 패키지",
+        "subgrade": "",
+        "rawParentLabel": "3.0 TFSI 콰트로 LED 헤드램프 패키지",
+        "rawTrimLabel": "3.0 TFSI 콰트로 LED 헤드램프 패키지"
+      },
+      "changes": {
+        "rawTrimLabel": "LED 헤드램프 패키지"
+      },
+      "status": "verified_against_current_encar_frame",
+      "expectedMatches": 1,
+      "evidenceUrl": "https://www.encar.com/cc/common.do?bbsno=141131&method=view_modelHistoryframe&type=CLS",
+      "evidenceLine": 5,
+      "evidenceLiteralCell": "LED 헤드램프 패키지",
+      "reason": "Use the exact observed trim/year-cell label; the full composed grade remains supported.",
+      "checkedAt": "2026-11-07",
+      "preserveOriginalSourceRecord": true,
+      "originalFieldValue": "3.0 TFSI 콰트로 LED 헤드램프 패키지"
+    },
+    {
+      "id": "encar-import-rawtrim-20261107-02",
+      "sourceFile": "research/vehicle-taxonomy/sources/import-historical-expansion-20261106.json",
+      "sourceId": "hist-encar-a6-c7-grades",
+      "match": {
+        "make": "아우디",
+        "group": "A6",
+        "model": "A6 C7",
+        "grade": "3.0 TFSI 콰트로 다이나믹 LED 헤드램프 패키지",
+        "subgrade": "",
+        "rawParentLabel": "3.0 TFSI 콰트로 다이나믹 LED 헤드램프 패키지",
+        "rawTrimLabel": "3.0 TFSI 콰트로 다이나믹 LED 헤드램프 패키지"
+      },
+      "changes": {
+        "rawTrimLabel": "다이나믹 LED 헤드램프 패키지"
+      },
+      "status": "verified_against_current_encar_frame",
+      "expectedMatches": 1,
+      "evidenceUrl": "https://www.encar.com/cc/common.do?bbsno=141131&method=view_modelHistoryframe&type=CLS",
+      "evidenceLine": 7,
+      "evidenceLiteralCell": "다이나믹 LED 헤드램프 패키지",
+      "reason": "Use the exact observed trim/year-cell label; the full composed grade remains supported.",
+      "checkedAt": "2026-11-07",
+      "preserveOriginalSourceRecord": true,
+      "originalFieldValue": "3.0 TFSI 콰트로 다이나믹 LED 헤드램프 패키지"
+    },
+    {
+      "id": "encar-import-rawtrim-20261107-03",
+      "sourceFile": "research/vehicle-taxonomy/sources/import-historical-expansion-20261106.json",
+      "sourceId": "hist-encar-a6-c7-grades",
+      "match": {
+        "make": "아우디",
+        "group": "A6",
+        "model": "A6 C7",
+        "grade": "3.0 TDI 콰트로 LED 헤드램프 패키지",
+        "subgrade": "",
+        "rawParentLabel": "3.0 TDI 콰트로 LED 헤드램프 패키지",
+        "rawTrimLabel": "3.0 TDI 콰트로 LED 헤드램프 패키지"
+      },
+      "changes": {
+        "rawTrimLabel": "LED 헤드램프 패키지"
+      },
+      "status": "verified_against_current_encar_frame",
+      "expectedMatches": 1,
+      "evidenceUrl": "https://www.encar.com/cc/common.do?bbsno=141131&method=view_modelHistoryframe&type=CLS",
+      "evidenceLine": 11,
+      "evidenceLiteralCell": "LED 헤드램프 패키지",
+      "reason": "Use the exact observed trim/year-cell label; the full composed grade remains supported.",
+      "checkedAt": "2026-11-07",
+      "preserveOriginalSourceRecord": true,
+      "originalFieldValue": "3.0 TDI 콰트로 LED 헤드램프 패키지"
+    },
+    {
+      "id": "encar-import-rawtrim-20261107-04",
+      "sourceFile": "research/vehicle-taxonomy/sources/import-historical-expansion-20261106.json",
+      "sourceId": "hist-encar-a6-c7-grades",
+      "match": {
+        "make": "아우디",
+        "group": "A6",
+        "model": "A6 C7",
+        "grade": "3.0 TDI 콰트로 다이나믹 LED 헤드램프 패키지",
+        "subgrade": "",
+        "rawParentLabel": "3.0 TDI 콰트로 다이나믹 LED 헤드램프 패키지",
+        "rawTrimLabel": "3.0 TDI 콰트로 다이나믹 LED 헤드램프 패키지"
+      },
+      "changes": {
+        "rawTrimLabel": "다이나믹 LED 헤드램프 패키지"
+      },
+      "status": "verified_against_current_encar_frame",
+      "expectedMatches": 1,
+      "evidenceUrl": "https://www.encar.com/cc/common.do?bbsno=141131&method=view_modelHistoryframe&type=CLS",
+      "evidenceLine": 13,
+      "evidenceLiteralCell": "다이나믹 LED 헤드램프 패키지",
+      "reason": "Use the exact observed trim/year-cell label; the full composed grade remains supported.",
+      "checkedAt": "2026-11-07",
+      "preserveOriginalSourceRecord": true,
+      "originalFieldValue": "3.0 TDI 콰트로 다이나믹 LED 헤드램프 패키지"
+    },
+    {
+      "id": "encar-import-rawtrim-20261107-05",
+      "sourceFile": "research/vehicle-taxonomy/sources/import-historical-expansion-20261106.json",
+      "sourceId": "hist-encar-a7-4g-grades",
+      "match": {
+        "make": "아우디",
+        "group": "A7",
+        "model": "A7 4G",
+        "grade": "4.0 TFSI 콰트로 (S7)",
+        "subgrade": "",
+        "rawParentLabel": "4.0 TFSI 콰트로 (S7)",
+        "rawTrimLabel": "4.0 TFSI 콰트로 (S7)"
+      },
+      "changes": {
+        "rawTrimLabel": "4.0 TFSI 콰트로"
+      },
+      "status": "verified_against_current_encar_frame",
+      "expectedMatches": 1,
+      "evidenceUrl": "https://www.encar.com/cc/common.do?bbsno=133716&method=view_modelHistoryframe&type=CLS",
+      "evidenceLine": 7,
+      "evidenceLiteralCell": "4.0 TFSI 콰트로",
+      "reason": "Use the exact observed trim/year-cell label; the full composed grade remains supported.",
+      "checkedAt": "2026-11-07",
+      "preserveOriginalSourceRecord": true,
+      "originalFieldValue": "4.0 TFSI 콰트로 (S7)"
+    },
+    {
+      "id": "encar-import-rawtrim-20261107-06",
+      "sourceFile": "research/vehicle-taxonomy/sources/import-historical-expansion-20261106.json",
+      "sourceId": "hist-encar-a7-4g-grades",
+      "match": {
+        "make": "아우디",
+        "group": "A7",
+        "model": "A7 4G",
+        "grade": "4.0 TFSI 콰트로 (RS7)",
+        "subgrade": "",
+        "rawParentLabel": "4.0 TFSI 콰트로 (RS7)",
+        "rawTrimLabel": "4.0 TFSI 콰트로 (RS7)"
+      },
+      "changes": {
+        "rawTrimLabel": "4.0 TFSI 콰트로"
+      },
+      "status": "verified_against_current_encar_frame",
+      "expectedMatches": 1,
+      "evidenceUrl": "https://www.encar.com/cc/common.do?bbsno=133716&method=view_modelHistoryframe&type=CLS",
+      "evidenceLine": 8,
+      "evidenceLiteralCell": "4.0 TFSI 콰트로",
+      "reason": "Use the exact observed trim/year-cell label; the full composed grade remains supported.",
+      "checkedAt": "2026-11-07",
+      "preserveOriginalSourceRecord": true,
+      "originalFieldValue": "4.0 TFSI 콰트로 (RS7)"
+    },
+    {
+      "id": "encar-import-rawtrim-20261107-07",
+      "sourceFile": "research/vehicle-taxonomy/sources/import-historical-expansion-20261106.json",
+      "sourceId": "hist-encar-c-w204-grades",
+      "match": {
+        "make": "벤츠",
+        "group": "C클래스",
+        "model": "C클래스 W204",
+        "grade": "C250 AMG 패키지",
+        "subgrade": "",
+        "rawParentLabel": "C250",
+        "rawTrimLabel": "AMG 패키지"
+      },
+      "changes": {
+        "rawTrimLabel": "C250 AMG 패키지"
+      },
+      "status": "verified_against_current_encar_frame",
+      "expectedMatches": 1,
+      "evidenceUrl": "https://www.encar.com/cc/common.do?bbsno=141058&method=view_modelHistoryframe&type=CLS",
+      "evidenceLine": 15,
+      "evidenceLiteralCell": "C250 AMG 패키지",
+      "reason": "Use the exact observed trim/year-cell label; the full composed grade remains supported.",
+      "checkedAt": "2026-11-07",
+      "preserveOriginalSourceRecord": true,
+      "originalFieldValue": "AMG 패키지"
+    },
+    {
+      "id": "encar-import-rawtrim-20261107-08",
+      "sourceFile": "research/vehicle-taxonomy/sources/import-historical-expansion-20261106.json",
+      "sourceId": "hist-encar-c-w204-grades",
+      "match": {
+        "make": "벤츠",
+        "group": "C클래스",
+        "model": "C클래스 W204",
+        "grade": "C63 AMG 에디션 507",
+        "subgrade": "",
+        "rawParentLabel": "C63 AMG",
+        "rawTrimLabel": "에디션 507"
+      },
+      "changes": {
+        "rawTrimLabel": "C63 AMG 에디션 507"
+      },
+      "status": "verified_against_current_encar_frame",
+      "expectedMatches": 1,
+      "evidenceUrl": "https://www.encar.com/cc/common.do?bbsno=141058&method=view_modelHistoryframe&type=CLS",
+      "evidenceLine": 17,
+      "evidenceLiteralCell": "C63 AMG 에디션 507",
+      "reason": "Use the exact observed trim/year-cell label; the full composed grade remains supported.",
+      "checkedAt": "2026-11-07",
+      "preserveOriginalSourceRecord": true,
+      "originalFieldValue": "에디션 507"
+    },
+    {
+      "id": "encar-import-rawtrim-20261107-09",
+      "sourceFile": "research/vehicle-taxonomy/sources/import-historical-expansion-20261106.json",
+      "sourceId": "hist-encar-e-w212-grades",
+      "match": {
+        "make": "벤츠",
+        "group": "E클래스",
+        "model": "E클래스 9세대 W212 자료",
+        "grade": "E63 AMG 4MATIC",
+        "subgrade": "",
+        "rawParentLabel": "E63 AMG",
+        "rawTrimLabel": "4MATIC"
+      },
+      "changes": {
+        "rawTrimLabel": "E63 AMG 4MATIC"
+      },
+      "status": "verified_against_current_encar_frame",
+      "expectedMatches": 1,
+      "evidenceUrl": "https://www.encar.com/cc/common.do?bbsno=132833&method=view_modelHistoryframe&type=CLS",
+      "evidenceLine": 25,
+      "evidenceLiteralCell": "E63 AMG 4MATIC",
+      "reason": "Use the exact observed trim/year-cell label; the full composed grade remains supported.",
+      "checkedAt": "2026-11-07",
+      "preserveOriginalSourceRecord": true,
+      "originalFieldValue": "4MATIC"
+    },
+    {
+      "id": "encar-import-rawtrim-20261107-10",
+      "sourceFile": "research/vehicle-taxonomy/sources/import-historical-expansion-20261106.json",
+      "sourceId": "hist-encar-g-4-grades",
+      "match": {
+        "make": "인피니티",
+        "group": "G",
+        "model": "G시리즈 4세대",
+        "grade": "G25 스마트",
+        "subgrade": "",
+        "rawParentLabel": "G25",
+        "rawTrimLabel": "G25 스마트"
+      },
+      "changes": {
+        "rawTrimLabel": "스마트"
+      },
+      "status": "verified_against_current_encar_frame",
+      "expectedMatches": 1,
+      "evidenceUrl": "https://www.encar.com/cc/common.do?bbsno=134212&method=view_modelHistoryframe&type=CLS",
+      "evidenceLine": 1,
+      "evidenceLiteralCell": "스마트",
+      "reason": "Use the exact observed trim/year-cell label; the full composed grade remains supported.",
+      "checkedAt": "2026-11-07",
+      "preserveOriginalSourceRecord": true,
+      "originalFieldValue": "G25 스마트"
+    },
+    {
+      "id": "encar-import-rawtrim-20261107-11",
+      "sourceFile": "research/vehicle-taxonomy/sources/import-historical-expansion-20261106.json",
+      "sourceId": "hist-encar-g-4-grades",
+      "match": {
+        "make": "인피니티",
+        "group": "G",
+        "model": "G시리즈 4세대",
+        "grade": "G25 프리미엄",
+        "subgrade": "",
+        "rawParentLabel": "G25",
+        "rawTrimLabel": "G25 프리미엄"
+      },
+      "changes": {
+        "rawTrimLabel": "프리미엄"
+      },
+      "status": "verified_against_current_encar_frame",
+      "expectedMatches": 1,
+      "evidenceUrl": "https://www.encar.com/cc/common.do?bbsno=134212&method=view_modelHistoryframe&type=CLS",
+      "evidenceLine": 2,
+      "evidenceLiteralCell": "프리미엄",
+      "reason": "Use the exact observed trim/year-cell label; the full composed grade remains supported.",
+      "checkedAt": "2026-11-07",
+      "preserveOriginalSourceRecord": true,
+      "originalFieldValue": "G25 프리미엄"
+    },
+    {
+      "id": "encar-import-rawtrim-20261107-12",
+      "sourceFile": "research/vehicle-taxonomy/sources/import-historical-expansion-20261106.json",
+      "sourceId": "hist-encar-g-4-grades",
+      "match": {
+        "make": "인피니티",
+        "group": "G",
+        "model": "G시리즈 4세대",
+        "grade": "G25 럭셔리",
+        "subgrade": "",
+        "rawParentLabel": "G25",
+        "rawTrimLabel": "G25 럭셔리"
+      },
+      "changes": {
+        "rawTrimLabel": "럭셔리"
+      },
+      "status": "verified_against_current_encar_frame",
+      "expectedMatches": 1,
+      "evidenceUrl": "https://www.encar.com/cc/common.do?bbsno=134212&method=view_modelHistoryframe&type=CLS",
+      "evidenceLine": 3,
+      "evidenceLiteralCell": "럭셔리",
+      "reason": "Use the exact observed trim/year-cell label; the full composed grade remains supported.",
+      "checkedAt": "2026-11-07",
+      "preserveOriginalSourceRecord": true,
+      "originalFieldValue": "G25 럭셔리"
+    },
+    {
+      "id": "encar-import-rawtrim-20261107-13",
+      "sourceFile": "research/vehicle-taxonomy/sources/import-historical-expansion-20261106.json",
+      "sourceId": "hist-encar-g-4-grades",
+      "match": {
+        "make": "인피니티",
+        "group": "G",
+        "model": "G시리즈 4세대",
+        "grade": "G35 프리미엄",
+        "subgrade": "",
+        "rawParentLabel": "G35",
+        "rawTrimLabel": "G35 프리미엄"
+      },
+      "changes": {
+        "rawTrimLabel": "프리미엄"
+      },
+      "status": "verified_against_current_encar_frame",
+      "expectedMatches": 1,
+      "evidenceUrl": "https://www.encar.com/cc/common.do?bbsno=134212&method=view_modelHistoryframe&type=CLS",
+      "evidenceLine": 5,
+      "evidenceLiteralCell": "프리미엄",
+      "reason": "Use the exact observed trim/year-cell label; the full composed grade remains supported.",
+      "checkedAt": "2026-11-07",
+      "preserveOriginalSourceRecord": true,
+      "originalFieldValue": "G35 프리미엄"
+    },
+    {
+      "id": "encar-import-rawtrim-20261107-14",
+      "sourceFile": "research/vehicle-taxonomy/sources/import-historical-expansion-20261106.json",
+      "sourceId": "hist-encar-g-4-grades",
+      "match": {
+        "make": "인피니티",
+        "group": "G",
+        "model": "G시리즈 4세대",
+        "grade": "G35 스포츠",
+        "subgrade": "",
+        "rawParentLabel": "G35",
+        "rawTrimLabel": "G35 스포츠"
+      },
+      "changes": {
+        "rawTrimLabel": "스포츠"
+      },
+      "status": "verified_against_current_encar_frame",
+      "expectedMatches": 1,
+      "evidenceUrl": "https://www.encar.com/cc/common.do?bbsno=134212&method=view_modelHistoryframe&type=CLS",
+      "evidenceLine": 6,
+      "evidenceLiteralCell": "스포츠",
+      "reason": "Use the exact observed trim/year-cell label; the full composed grade remains supported.",
+      "checkedAt": "2026-11-07",
+      "preserveOriginalSourceRecord": true,
+      "originalFieldValue": "G35 스포츠"
+    },
+    {
+      "id": "encar-import-rawtrim-20261107-15",
+      "sourceFile": "research/vehicle-taxonomy/sources/import-historical-expansion-20261106.json",
+      "sourceId": "hist-encar-g-4-grades",
+      "match": {
+        "make": "인피니티",
+        "group": "G",
+        "model": "G시리즈 4세대",
+        "grade": "G37 프리미엄",
+        "subgrade": "",
+        "rawParentLabel": "G37",
+        "rawTrimLabel": "G37 프리미엄"
+      },
+      "changes": {
+        "rawTrimLabel": "프리미엄"
+      },
+      "status": "verified_against_current_encar_frame",
+      "expectedMatches": 1,
+      "evidenceUrl": "https://www.encar.com/cc/common.do?bbsno=134212&method=view_modelHistoryframe&type=CLS",
+      "evidenceLine": 7,
+      "evidenceLiteralCell": "프리미엄",
+      "reason": "Use the exact observed trim/year-cell label; the full composed grade remains supported.",
+      "checkedAt": "2026-11-07",
+      "preserveOriginalSourceRecord": true,
+      "originalFieldValue": "G37 프리미엄"
+    },
+    {
+      "id": "encar-import-rawtrim-20261107-16",
+      "sourceFile": "research/vehicle-taxonomy/sources/import-historical-expansion-20261106.json",
+      "sourceId": "hist-encar-g-4-grades",
+      "match": {
+        "make": "인피니티",
+        "group": "G",
+        "model": "G시리즈 4세대",
+        "grade": "G37 스포츠",
+        "subgrade": "",
+        "rawParentLabel": "G37",
+        "rawTrimLabel": "G37 스포츠"
+      },
+      "changes": {
+        "rawTrimLabel": "스포츠"
+      },
+      "status": "verified_against_current_encar_frame",
+      "expectedMatches": 1,
+      "evidenceUrl": "https://www.encar.com/cc/common.do?bbsno=134212&method=view_modelHistoryframe&type=CLS",
+      "evidenceLine": 8,
+      "evidenceLiteralCell": "스포츠",
+      "reason": "Use the exact observed trim/year-cell label; the full composed grade remains supported.",
+      "checkedAt": "2026-11-07",
+      "preserveOriginalSourceRecord": true,
+      "originalFieldValue": "G37 스포츠"
+    },
+    {
+      "id": "encar-import-rawtrim-20261107-17",
+      "sourceFile": "research/vehicle-taxonomy/sources/import-historical-expansion-20261106.json",
+      "sourceId": "hist-encar-q50-2014-grades",
+      "match": {
+        "make": "인피니티",
+        "group": "Q50",
+        "model": "Q50 (2014 국내 출시 자료)",
+        "grade": "Q50S 하이브리드",
+        "subgrade": "",
+        "rawParentLabel": "Q50S 하이브리드",
+        "rawTrimLabel": "Q50S 하이브리드"
+      },
+      "changes": {
+        "rawTrimLabel": "하이브리드"
+      },
+      "status": "verified_against_current_encar_frame",
+      "expectedMatches": 1,
+      "evidenceUrl": "https://www.encar.com/cc/common.do?bbsno=138523&method=view_modelHistoryframe&type=CLS",
+      "evidenceLine": 3,
+      "evidenceLiteralCell": "하이브리드",
+      "reason": "Use the exact observed trim/year-cell label; the full composed grade remains supported.",
+      "checkedAt": "2026-11-07",
+      "preserveOriginalSourceRecord": true,
+      "originalFieldValue": "Q50S 하이브리드"
+    }
+  ],
+  "counts": {
+    "matchedOriginalRows": 17,
+    "rawTrimLabelCorrections": 17,
+    "gradeChanges": 0,
+    "engineChanges": 0,
+    "unverifiedRawParentChanges": 0
+  }
+}

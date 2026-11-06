@@ -1,6 +1,7 @@
 # Research manifests hash exact bytes; keep checkout line endings reproducible.
 research/vehicle-taxonomy/** text eol=lf
 research/vehicle-taxonomy/exports/*.csv -text whitespace=cr-at-eol
+research/vehicle-taxonomy/bulk/**/*.csv -text whitespace=cr-at-eol
 research/vehicle-taxonomy/bulk/**/*.gz -text -diff
 research/vehicle-taxonomy/bulk/**/*.zip -text -diff
 research/vehicle-taxonomy/exports/*.sqlite -text -diff

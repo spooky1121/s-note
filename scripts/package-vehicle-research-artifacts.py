@@ -81,7 +81,7 @@ def main():
     (artifacts / 'artifact-manifest.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + '\n')
     args.bundle.parent.mkdir(parents=True, exist_ok=True)
     scripts = [path for path in (ROOT / 'scripts').iterdir()
-               if any(word in path.name for word in ('vehicle-taxonomy', 'vehicle-research', 'vehicle-gap', 'vehicle-brand', 'government', 'bulk-vehicle', 'archive-taxonomy-probe'))
+               if any(word in path.name for word in ('vehicle-taxonomy', 'vehicle-research', 'vehicle-gap', 'vehicle-brand', 'government', 'bulk-vehicle', 'archive-taxonomy-probe', 'encar-final'))
                and path.is_file()]
     with zipfile.ZipFile(args.bundle, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=6) as bundle:
         for path in sorted(DATA.rglob('*')) + sorted(scripts) + [ROOT/'tests/vehicle-taxonomy-research.test.mjs']:

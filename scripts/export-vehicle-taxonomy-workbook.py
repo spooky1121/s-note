@@ -132,6 +132,18 @@ def main():
             if isinstance(targets,dict):
                 targets=targets.get('rows',targets.get('targets',[]))
             sheet(book,'정부 이름 후보 대조',targets,[('targetId','대상 ID'),('make','제조사'),('group','차명군'),('model','기존 모델'),('baselineMissingGrade','기존 등급 공백'),('candidateState','이름 후보 상태'),('candidateRowCount','원문 후보 행 수'),('modelNameCandidateRowCount','모델 이름 후보 행 수'),('complete','완료 여부'),('generationVerified','세대 확인'),('gradeVerified','판매 등급 확인'),('remainingWork','남은 확인')])
+    audit=DATA/'bulk/encar-final-audit'
+    if (audit/'archive-manifest.json').exists():
+        metadata=read(audit/'archive-manifest.json')
+        sheet(book,'엔카 최종 검증',[{'item':key,'value':value}for key,value in metadata.items()],[('item','항목'),('value','내용')])
+        with gzip.open(audit/'name-audit/final-3128/encar-display-name-ledger.jsonl.gz','rt',encoding='utf-8')as f:
+            names=[json.loads(line)for line in f]
+        sheet(book,'엔카 모델명 대조',names,[('encarDisplayOrdinal','표시 순서'),('encarModelNameRaw','엔카 모델명 원문'),('comparisonState','대조 상태'),('duplicateRawLabelCount','동명 표시 수'),('candidateMakeLabels','기존 제조사 후보'),('multipleCandidateMakeLabels','복수 제조사 후보'),('baselineMatchCount','기존 모델 후보 수'),('researchMatchCount','조사 기록 후보 수'),('governmentSourceRowCount','정부 원문 후보 수'),('retailGradeCoverageVerified','판매등급 완전성 확인')])
+        makers=read(audit/'discovery/manufacturer-model-group-observations.json')['manufacturers']
+        sheet(book,'엔카 제조사 원문',makers,[('manufacturerNameRaw','제조사 선택 원문'),('carTypeRaw','차종 풀 원문'),('manufacturerCodeObservedInLinkedUrl','공개 시세 코드'),('sourceUrl','공개 선택 주소'),('modelGroupCodesObserved','모델군 코드 확인'),('completeRenderedPageCaptured','해당 화면 전체 읽음')])
+        corrections=read(audit/'errata.json')['records']
+        sheet(book,'엔카 원문 표기 교정',corrections,[('id','교정 ID'),('sourceId','기존 출처 ID'),('match','원래 기록 식별'),('changes','확인한 원문 표기'),('evidenceUrl','재확인 출처'),('evidenceLine','원문 행'),('reason','교정 이유'),('status','근거 상태')])
+        book['읽어주세요'].append(['엔카 최종 대조','공개 모델표시 1,858행·시세 제조사 70선택·기존593행 재검증. 신규225관측·표기17교정. 전체 현재 검색 등급 트리의 완전성은 미확인.'])
     book.save(target)
     saved = load_workbook(target, read_only=True, data_only=False)
     assert saved["차종 조사"].max_row == len(official) + 1

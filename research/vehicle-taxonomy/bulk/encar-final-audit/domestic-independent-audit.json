@@ -1,0 +1,4310 @@
+{
+  "schemaVersion": 1,
+  "independentReader": true,
+  "inputBuilderNotImportedOrExecuted": true,
+  "networkCalls": 0,
+  "sourceOrRepositoryFilesModified": false,
+  "status": "PASS",
+  "counts": {
+    "models": 22,
+    "normalObservations": 222,
+    "quarantinedRows": 1,
+    "physicalRows": 223,
+    "normalUniquePhysicalRows": 222,
+    "uniqueEvidenceIdentities": 222,
+    "leafEvidence": {
+      "exact_whitespace_normalized_literal_cell": 204,
+      "literal_name_with_explicit_time_annotation_removed": 18
+    },
+    "fuel": {
+      "unknown": 191,
+      "가솔린": 24,
+      "디젤": 7
+    },
+    "errors": 0
+  },
+  "allPhysicalRowsExactlyAccounted": true,
+  "sourceFrozenManifestHashesMatch": true,
+  "inputSha256": {
+    "additional-22-model-classification-observations.json": "2fc74d6eecb990cbcb4527b2896c77b9daa6a4fd53104dfae62024c25ff5b954",
+    "encar-final-domestic-expansion-20261107.json": "2d35897f3bd3e20ab3a2f6843273b004f423a95e0b4c3116cf3b428dcca7edc1",
+    "build-additional-domestic-observations.py": "4c0088936305a0845793a7a07524069c62d79a476adc61ef2f89b33aa6218faa",
+    "additional-22-verification.json": "044e136e60ec9edcbc9d9b92fa55548990495b225f4413666b63742f8912c0fd"
+  },
+  "domesticHandoffSha256": "668d9d3307330855aa9958345d2f43fffc366a3737312dc2c365f1f1f718fabc",
+  "limitations": [
+    "This is an independent audit of supplied factual observations, not a fresh website fetch.",
+    "A historical time-matrix path is not evidence of current Encar five-stage search codes.",
+    "Year-note removal is confined to display-name extraction; source rows and time headers are preserved."
+  ],
+  "warnings": [
+    {
+      "code": "SM7_FIXED_LABEL_AND_TEMPORAL_CELL_VARIATION",
+      "model": "SM7",
+      "sourceLine": 7,
+      "sourceRowRaw": "L7: RE35 블랙  |    | RE35",
+      "interpretation": "The fixed row-name RE35 블랙 is a literal observation; temporal cell RE35 is retained in sourceRowRaw. Do not treat the historical matrix as a single current retail hierarchy or infer time validity. Not a confirmed wrong observation."
+    }
+  ],
+  "errors": [],
+  "perModel": [
+    {
+      "model": "SM3",
+      "sourceId": "encar-final-domestic-135407",
+      "physicalRows": 12,
+      "normalRows": 12,
+      "quarantinedRows": 0,
+      "manufacturerCode": "005",
+      "modelCode": "002",
+      "allRowsAccounted": true
+    },
+    {
+      "model": "SM3 뉴 제너레이션",
+      "sourceId": "encar-final-domestic-135410",
+      "physicalRows": 15,
+      "normalRows": 15,
+      "quarantinedRows": 0,
+      "manufacturerCode": "005",
+      "modelCode": "005",
+      "allRowsAccounted": true
+    },
+    {
+      "model": "뉴 SM3",
+      "sourceId": "encar-final-domestic-133403",
+      "physicalRows": 21,
+      "normalRows": 21,
+      "quarantinedRows": 0,
+      "manufacturerCode": "005",
+      "modelCode": "054",
+      "allRowsAccounted": true
+    },
+    {
+      "model": "SM3 네오",
+      "sourceId": "encar-final-domestic-135423",
+      "physicalRows": 8,
+      "normalRows": 8,
+      "quarantinedRows": 0,
+      "manufacturerCode": "005",
+      "modelCode": "062",
+      "allRowsAccounted": true
+    },
+    {
+      "model": "SM5",
+      "sourceId": "encar-final-domestic-135424",
+      "physicalRows": 9,
+      "normalRows": 8,
+      "quarantinedRows": 1,
+      "manufacturerCode": "005",
+      "modelCode": "001",
+      "allRowsAccounted": true
+    },
+    {
+      "model": "뉴 SM5",
+      "sourceId": "encar-final-domestic-135458",
+      "physicalRows": 7,
+      "normalRows": 7,
+      "quarantinedRows": 0,
+      "manufacturerCode": "005",
+      "modelCode": "004",
+      "allRowsAccounted": true
+    },
+    {
+      "model": "SM5 뉴 임프레션",
+      "sourceId": "encar-final-domestic-134098",
+      "physicalRows": 8,
+      "normalRows": 8,
+      "quarantinedRows": 0,
+      "manufacturerCode": "005",
+      "modelCode": "006",
+      "allRowsAccounted": true
+    },
+    {
+      "model": "뉴 SM5 (신형)",
+      "sourceId": "encar-final-domestic-135460",
+      "physicalRows": 11,
+      "normalRows": 11,
+      "quarantinedRows": 0,
+      "manufacturerCode": "005",
+      "modelCode": "055",
+      "allRowsAccounted": true
+    },
+    {
+      "model": "뉴 SM5 플래티넘",
+      "sourceId": "encar-final-domestic-133596",
+      "physicalRows": 18,
+      "normalRows": 18,
+      "quarantinedRows": 0,
+      "manufacturerCode": "005",
+      "modelCode": "058",
+      "allRowsAccounted": true
+    },
+    {
+      "model": "SM5 노바",
+      "sourceId": "encar-final-domestic-143504",
+      "physicalRows": 7,
+      "normalRows": 7,
+      "quarantinedRows": 0,
+      "manufacturerCode": "005",
+      "modelCode": "064",
+      "allRowsAccounted": true
+    },
+    {
+      "model": "SM7",
+      "sourceId": "encar-final-domestic-135488",
+      "physicalRows": 8,
+      "normalRows": 8,
+      "quarantinedRows": 0,
+      "manufacturerCode": "005",
+      "modelCode": "003",
+      "allRowsAccounted": true
+    },
+    {
+      "model": "올 뉴 SM7",
+      "sourceId": "encar-final-domestic-140833",
+      "physicalRows": 11,
+      "normalRows": 11,
+      "quarantinedRows": 0,
+      "manufacturerCode": "005",
+      "modelCode": "057",
+      "allRowsAccounted": true
+    },
+    {
+      "model": "제네시스 BH",
+      "sourceId": "encar-final-domestic-134041",
+      "physicalRows": 21,
+      "normalRows": 21,
+      "quarantinedRows": 0,
+      "manufacturerCode": "001",
+      "modelCode": "088",
+      "allRowsAccounted": true
+    },
+    {
+      "model": "제네시스 DH",
+      "sourceId": "encar-final-domestic-134032",
+      "physicalRows": 5,
+      "normalRows": 5,
+      "quarantinedRows": 0,
+      "manufacturerCode": "001",
+      "modelCode": "124",
+      "allRowsAccounted": true
+    },
+    {
+      "model": "제네시스 쿠페",
+      "sourceId": "encar-final-domestic-133446",
+      "physicalRows": 7,
+      "normalRows": 7,
+      "quarantinedRows": 0,
+      "manufacturerCode": "001",
+      "modelCode": "093",
+      "allRowsAccounted": true
+    },
+    {
+      "model": "더 뉴 제네시스 쿠페",
+      "sourceId": "encar-final-domestic-136123",
+      "physicalRows": 4,
+      "normalRows": 4,
+      "quarantinedRows": 0,
+      "manufacturerCode": "001",
+      "modelCode": "112",
+      "allRowsAccounted": true
+    },
+    {
+      "model": "EQ900",
+      "sourceId": "encar-final-domestic-157084",
+      "physicalRows": 7,
+      "normalRows": 7,
+      "quarantinedRows": 0,
+      "manufacturerCode": "007",
+      "modelCode": "001",
+      "allRowsAccounted": true
+    },
+    {
+      "model": "K5",
+      "sourceId": "encar-final-domestic-132835",
+      "physicalRows": 13,
+      "normalRows": 13,
+      "quarantinedRows": 0,
+      "manufacturerCode": "002",
+      "modelCode": "092",
+      "allRowsAccounted": true
+    },
+    {
+      "model": "더 뉴 K5",
+      "sourceId": "encar-final-domestic-136125",
+      "physicalRows": 10,
+      "normalRows": 10,
+      "quarantinedRows": 0,
+      "manufacturerCode": "002",
+      "modelCode": "106",
+      "allRowsAccounted": true
+    },
+    {
+      "model": "K5 2세대",
+      "sourceId": "encar-final-domestic-152403",
+      "physicalRows": 14,
+      "normalRows": 14,
+      "quarantinedRows": 0,
+      "manufacturerCode": "002",
+      "modelCode": "118",
+      "allRowsAccounted": true
+    },
+    {
+      "model": "K5 하이브리드",
+      "sourceId": "encar-final-domestic-142176",
+      "physicalRows": 4,
+      "normalRows": 4,
+      "quarantinedRows": 0,
+      "manufacturerCode": "002",
+      "modelCode": "097",
+      "allRowsAccounted": true
+    },
+    {
+      "model": "K5 하이브리드 2세대",
+      "sourceId": "encar-final-domestic-156937",
+      "physicalRows": 3,
+      "normalRows": 3,
+      "quarantinedRows": 0,
+      "manufacturerCode": "002",
+      "modelCode": "121",
+      "allRowsAccounted": true
+    }
+  ],
+  "recordLedger": [
+    {
+      "sourceId": "encar-final-domestic-135407",
+      "model": "SM3",
+      "sourceLine": 1,
+      "sourceHierarchyRaw": [
+        "1.5",
+        "엔트리"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.5",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135407",
+      "model": "SM3",
+      "sourceLine": 2,
+      "sourceHierarchyRaw": [
+        "1.5",
+        "PE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.5",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135407",
+      "model": "SM3",
+      "sourceLine": 3,
+      "sourceHierarchyRaw": [
+        "1.5",
+        "SE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.5",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135407",
+      "model": "SM3",
+      "sourceLine": 4,
+      "sourceHierarchyRaw": [
+        "1.5",
+        "XE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.5",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135407",
+      "model": "SM3",
+      "sourceLine": 5,
+      "sourceHierarchyRaw": [
+        "1.5",
+        "FE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.5",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135407",
+      "model": "SM3",
+      "sourceLine": 6,
+      "sourceHierarchyRaw": [
+        "1.5",
+        "CE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.5",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135407",
+      "model": "SM3",
+      "sourceLine": 7,
+      "sourceHierarchyRaw": [
+        "1.5",
+        "LE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.5",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135407",
+      "model": "SM3",
+      "sourceLine": 8,
+      "sourceHierarchyRaw": [
+        "1.5",
+        "스페셜 에디션"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.5",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135407",
+      "model": "SM3",
+      "sourceLine": 9,
+      "sourceHierarchyRaw": [
+        "1.6",
+        "XE16"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.6",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135407",
+      "model": "SM3",
+      "sourceLine": 10,
+      "sourceHierarchyRaw": [
+        "1.6",
+        "FE16"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.6",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135407",
+      "model": "SM3",
+      "sourceLine": 11,
+      "sourceHierarchyRaw": [
+        "1.6",
+        "CE16"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.6",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135407",
+      "model": "SM3",
+      "sourceLine": 12,
+      "sourceHierarchyRaw": [
+        "1.6",
+        "LE16"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.6",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135410",
+      "model": "SM3 뉴 제너레이션",
+      "sourceLine": 1,
+      "sourceHierarchyRaw": [
+        "1.5",
+        "PE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.5",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135410",
+      "model": "SM3 뉴 제너레이션",
+      "sourceLine": 2,
+      "sourceHierarchyRaw": [
+        "1.6",
+        "PE16"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.6",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135410",
+      "model": "SM3 뉴 제너레이션",
+      "sourceLine": 3,
+      "sourceHierarchyRaw": [
+        "1.6",
+        "SE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.6",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135410",
+      "model": "SM3 뉴 제너레이션",
+      "sourceLine": 4,
+      "sourceHierarchyRaw": [
+        "1.6",
+        "SE16"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.6",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135410",
+      "model": "SM3 뉴 제너레이션",
+      "sourceLine": 5,
+      "sourceHierarchyRaw": [
+        "1.6",
+        "SE16 플러스"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.6",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135410",
+      "model": "SM3 뉴 제너레이션",
+      "sourceLine": 6,
+      "sourceHierarchyRaw": [
+        "1.6",
+        "XE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.6",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135410",
+      "model": "SM3 뉴 제너레이션",
+      "sourceLine": 7,
+      "sourceHierarchyRaw": [
+        "1.6",
+        "XE16"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.6",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135410",
+      "model": "SM3 뉴 제너레이션",
+      "sourceLine": 8,
+      "sourceHierarchyRaw": [
+        "1.6",
+        "Neo"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.6",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135410",
+      "model": "SM3 뉴 제너레이션",
+      "sourceLine": 9,
+      "sourceHierarchyRaw": [
+        "1.6",
+        "LE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.6",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135410",
+      "model": "SM3 뉴 제너레이션",
+      "sourceLine": 10,
+      "sourceHierarchyRaw": [
+        "1.6",
+        "LE16"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.6",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135410",
+      "model": "SM3 뉴 제너레이션",
+      "sourceLine": 11,
+      "sourceHierarchyRaw": [
+        "1.6",
+        "LE 플러스"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.6",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135410",
+      "model": "SM3 뉴 제너레이션",
+      "sourceLine": 12,
+      "sourceHierarchyRaw": [
+        "1.6",
+        "LE16 플러스"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.6",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135410",
+      "model": "SM3 뉴 제너레이션",
+      "sourceLine": 13,
+      "sourceHierarchyRaw": [
+        "1.6",
+        "CE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.6",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135410",
+      "model": "SM3 뉴 제너레이션",
+      "sourceLine": 14,
+      "sourceHierarchyRaw": [
+        "1.6",
+        "CE 플러스"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.6",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135410",
+      "model": "SM3 뉴 제너레이션",
+      "sourceLine": 15,
+      "sourceHierarchyRaw": [
+        "1.6",
+        "CE 프리미엄"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.6",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-133403",
+      "model": "뉴 SM3",
+      "sourceLine": 1,
+      "sourceHierarchyRaw": [
+        "1.6",
+        "PE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.6",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-133403",
+      "model": "뉴 SM3",
+      "sourceLine": 2,
+      "sourceHierarchyRaw": [
+        "1.6",
+        "SE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.6",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-133403",
+      "model": "뉴 SM3",
+      "sourceLine": 3,
+      "sourceHierarchyRaw": [
+        "1.6",
+        "SE 블랙"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.6",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-133403",
+      "model": "뉴 SM3",
+      "sourceLine": 4,
+      "sourceHierarchyRaw": [
+        "1.6",
+        "SE 플러스"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.6",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-133403",
+      "model": "뉴 SM3",
+      "sourceLine": 5,
+      "sourceHierarchyRaw": [
+        "1.6",
+        "SE 플러스 아트"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.6",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-133403",
+      "model": "뉴 SM3",
+      "sourceLine": 6,
+      "sourceHierarchyRaw": [
+        "1.6",
+        "SE 블랙 썸머 에디션"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.6",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-133403",
+      "model": "뉴 SM3",
+      "sourceLine": 7,
+      "sourceHierarchyRaw": [
+        "1.6",
+        "LE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.6",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-133403",
+      "model": "뉴 SM3",
+      "sourceLine": 8,
+      "sourceHierarchyRaw": [
+        "1.6",
+        "XE 리미티드 에디션"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.6",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-133403",
+      "model": "뉴 SM3",
+      "sourceLine": 9,
+      "sourceHierarchyRaw": [
+        "1.6",
+        "LE 플러스"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.6",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-133403",
+      "model": "뉴 SM3",
+      "sourceLine": 10,
+      "sourceHierarchyRaw": [
+        "1.6",
+        "LE 썸머 에디션"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.6",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-133403",
+      "model": "뉴 SM3",
+      "sourceLine": 11,
+      "sourceHierarchyRaw": [
+        "1.6",
+        "LE 익스클루시브"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.6",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-133403",
+      "model": "뉴 SM3",
+      "sourceLine": 12,
+      "sourceHierarchyRaw": [
+        "1.6",
+        "BOSE 스페셜 에디션"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.6",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-133403",
+      "model": "뉴 SM3",
+      "sourceLine": 13,
+      "sourceHierarchyRaw": [
+        "1.6",
+        "RE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.6",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-133403",
+      "model": "뉴 SM3",
+      "sourceLine": 14,
+      "sourceHierarchyRaw": [
+        "1.6",
+        "RE 썸머 에디션"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.6",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-133403",
+      "model": "뉴 SM3",
+      "sourceLine": 15,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "SE 20"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-133403",
+      "model": "뉴 SM3",
+      "sourceLine": 16,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "LE 20"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-133403",
+      "model": "뉴 SM3",
+      "sourceLine": 17,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "LE20 썸머 에디션"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-133403",
+      "model": "뉴 SM3",
+      "sourceLine": 18,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "LE 20 익스클루시브"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-133403",
+      "model": "뉴 SM3",
+      "sourceLine": 19,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "BOSE 20 스페셜 에디션"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-133403",
+      "model": "뉴 SM3",
+      "sourceLine": 20,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "RE 20"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-133403",
+      "model": "뉴 SM3",
+      "sourceLine": 21,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "RE 20 썸머 에디션"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135423",
+      "model": "SM3 네오",
+      "sourceLine": 1,
+      "sourceHierarchyRaw": [
+        "1.6 가솔린",
+        "PE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.6 가솔린",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": "가솔린",
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135423",
+      "model": "SM3 네오",
+      "sourceLine": 2,
+      "sourceHierarchyRaw": [
+        "1.6 가솔린",
+        "SE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.6 가솔린",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": "가솔린",
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135423",
+      "model": "SM3 네오",
+      "sourceLine": 3,
+      "sourceHierarchyRaw": [
+        "1.6 가솔린",
+        "SE 플러스"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.6 가솔린",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": "가솔린",
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135423",
+      "model": "SM3 네오",
+      "sourceLine": 4,
+      "sourceHierarchyRaw": [
+        "1.6 가솔린",
+        "R4U"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.6 가솔린",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": "가솔린",
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135423",
+      "model": "SM3 네오",
+      "sourceLine": 5,
+      "sourceHierarchyRaw": [
+        "1.6 가솔린",
+        "LE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.6 가솔린",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": "가솔린",
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135423",
+      "model": "SM3 네오",
+      "sourceLine": 6,
+      "sourceHierarchyRaw": [
+        "1.6 가솔린",
+        "RE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.6 가솔린",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": "가솔린",
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135423",
+      "model": "SM3 네오",
+      "sourceLine": 7,
+      "sourceHierarchyRaw": [
+        "1.5 디젤",
+        "SE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.5 디젤",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": "디젤",
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135423",
+      "model": "SM3 네오",
+      "sourceLine": 8,
+      "sourceHierarchyRaw": [
+        "1.5 디젤",
+        "LE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.5 디젤",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": "디젤",
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135424",
+      "model": "SM5",
+      "sourceLine": 1,
+      "sourceHierarchyRaw": [
+        "1.8",
+        "518"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.8",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135424",
+      "model": "SM5",
+      "sourceLine": 2,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "520"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135424",
+      "model": "SM5",
+      "sourceLine": 3,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "520SE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135424",
+      "model": "SM5",
+      "sourceLine": 4,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "520LE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135424",
+      "model": "SM5",
+      "sourceLine": 5,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "스페셜"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135424",
+      "model": "SM5",
+      "sourceLine": 6,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "스페셜 플러스"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135424",
+      "model": "SM5",
+      "sourceLine": 7,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "520V"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135424",
+      "model": "SM5",
+      "sourceLine": 8,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "520V 플러스"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135458",
+      "model": "뉴 SM5",
+      "sourceLine": 1,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "PE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135458",
+      "model": "뉴 SM5",
+      "sourceLine": 2,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "SE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135458",
+      "model": "뉴 SM5",
+      "sourceLine": 3,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "SE 플러스"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135458",
+      "model": "뉴 SM5",
+      "sourceLine": 4,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "XE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135458",
+      "model": "뉴 SM5",
+      "sourceLine": 5,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "LE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135458",
+      "model": "뉴 SM5",
+      "sourceLine": 6,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "LE 플러스"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135458",
+      "model": "뉴 SM5",
+      "sourceLine": 7,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "LE 블랙"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-134098",
+      "model": "SM5 뉴 임프레션",
+      "sourceLine": 1,
+      "sourceHierarchyRaw": [
+        "2.0 가솔린",
+        "PE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0 가솔린",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": "가솔린",
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-134098",
+      "model": "SM5 뉴 임프레션",
+      "sourceLine": 2,
+      "sourceHierarchyRaw": [
+        "2.0 가솔린",
+        "SE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0 가솔린",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": "가솔린",
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-134098",
+      "model": "SM5 뉴 임프레션",
+      "sourceLine": 3,
+      "sourceHierarchyRaw": [
+        "2.0 가솔린",
+        "SE 플러스"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0 가솔린",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": "가솔린",
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-134098",
+      "model": "SM5 뉴 임프레션",
+      "sourceLine": 4,
+      "sourceHierarchyRaw": [
+        "2.0 가솔린",
+        "SE 블랙"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0 가솔린",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": "가솔린",
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-134098",
+      "model": "SM5 뉴 임프레션",
+      "sourceLine": 5,
+      "sourceHierarchyRaw": [
+        "2.0 가솔린",
+        "XE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0 가솔린",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": "가솔린",
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-134098",
+      "model": "SM5 뉴 임프레션",
+      "sourceLine": 6,
+      "sourceHierarchyRaw": [
+        "2.0 가솔린",
+        "LE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0 가솔린",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": "가솔린",
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-134098",
+      "model": "SM5 뉴 임프레션",
+      "sourceLine": 7,
+      "sourceHierarchyRaw": [
+        "2.0 가솔린",
+        "LE 익스클루시브"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0 가솔린",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": "가솔린",
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-134098",
+      "model": "SM5 뉴 임프레션",
+      "sourceLine": 8,
+      "sourceHierarchyRaw": [
+        "2.0 가솔린",
+        "LE 플러스"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0 가솔린",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": "가솔린",
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135460",
+      "model": "뉴 SM5 (신형)",
+      "sourceLine": 1,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "PE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135460",
+      "model": "뉴 SM5 (신형)",
+      "sourceLine": 2,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "SE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135460",
+      "model": "뉴 SM5 (신형)",
+      "sourceLine": 3,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "SE 플러스"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135460",
+      "model": "뉴 SM5 (신형)",
+      "sourceLine": 4,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "SE 블랙"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135460",
+      "model": "뉴 SM5 (신형)",
+      "sourceLine": 5,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "XE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135460",
+      "model": "뉴 SM5 (신형)",
+      "sourceLine": 6,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "LE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135460",
+      "model": "뉴 SM5 (신형)",
+      "sourceLine": 7,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "LE 익스클루시브"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135460",
+      "model": "뉴 SM5 (신형)",
+      "sourceLine": 8,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "RE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135460",
+      "model": "뉴 SM5 (신형)",
+      "sourceLine": 9,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "BOSE 에디션"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135460",
+      "model": "뉴 SM5 (신형)",
+      "sourceLine": 10,
+      "sourceHierarchyRaw": [
+        "2.5",
+        "SE 플러스"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.5",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135460",
+      "model": "뉴 SM5 (신형)",
+      "sourceLine": 11,
+      "sourceHierarchyRaw": [
+        "2.5",
+        "RE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.5",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-133596",
+      "model": "뉴 SM5 플래티넘",
+      "sourceLine": 1,
+      "sourceHierarchyRaw": [
+        "1.5",
+        "D"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.5",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-133596",
+      "model": "뉴 SM5 플래티넘",
+      "sourceLine": 2,
+      "sourceHierarchyRaw": [
+        "1.5",
+        "D 스페셜"
+      ],
+      "leafEvidence": "literal_name_with_explicit_time_annotation_removed",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.5",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-133596",
+      "model": "뉴 SM5 플래티넘",
+      "sourceLine": 3,
+      "sourceHierarchyRaw": [
+        "1.6",
+        "TCE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.6",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-133596",
+      "model": "뉴 SM5 플래티넘",
+      "sourceLine": 4,
+      "sourceHierarchyRaw": [
+        "1.6",
+        "TCE S/S 컬렉션"
+      ],
+      "leafEvidence": "literal_name_with_explicit_time_annotation_removed",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.6",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-133596",
+      "model": "뉴 SM5 플래티넘",
+      "sourceLine": 5,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "PE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-133596",
+      "model": "뉴 SM5 플래티넘",
+      "sourceLine": 6,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "SE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-133596",
+      "model": "뉴 SM5 플래티넘",
+      "sourceLine": 7,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "SE 플러스"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-133596",
+      "model": "뉴 SM5 플래티넘",
+      "sourceLine": 8,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "SE ART"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-133596",
+      "model": "뉴 SM5 플래티넘",
+      "sourceLine": 9,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "SE 파노라마"
+      ],
+      "leafEvidence": "literal_name_with_explicit_time_annotation_removed",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-133596",
+      "model": "뉴 SM5 플래티넘",
+      "sourceLine": 10,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "SE S/S 컬렉션"
+      ],
+      "leafEvidence": "literal_name_with_explicit_time_annotation_removed",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-133596",
+      "model": "뉴 SM5 플래티넘",
+      "sourceLine": 11,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "LE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-133596",
+      "model": "뉴 SM5 플래티넘",
+      "sourceLine": 12,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "LE ART"
+      ],
+      "leafEvidence": "literal_name_with_explicit_time_annotation_removed",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-133596",
+      "model": "뉴 SM5 플래티넘",
+      "sourceLine": 13,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "LE 파노라마"
+      ],
+      "leafEvidence": "literal_name_with_explicit_time_annotation_removed",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-133596",
+      "model": "뉴 SM5 플래티넘",
+      "sourceLine": 14,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "LE S/S 컬렉션"
+      ],
+      "leafEvidence": "literal_name_with_explicit_time_annotation_removed",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-133596",
+      "model": "뉴 SM5 플래티넘",
+      "sourceLine": 15,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "RE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-133596",
+      "model": "뉴 SM5 플래티넘",
+      "sourceLine": 16,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "RE ART"
+      ],
+      "leafEvidence": "literal_name_with_explicit_time_annotation_removed",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-133596",
+      "model": "뉴 SM5 플래티넘",
+      "sourceLine": 17,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "RE 파노라마"
+      ],
+      "leafEvidence": "literal_name_with_explicit_time_annotation_removed",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-133596",
+      "model": "뉴 SM5 플래티넘",
+      "sourceLine": 18,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "RE S/S 컬렉션"
+      ],
+      "leafEvidence": "literal_name_with_explicit_time_annotation_removed",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-143504",
+      "model": "SM5 노바",
+      "sourceLine": 1,
+      "sourceHierarchyRaw": [
+        "1.5",
+        "D"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.5",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-143504",
+      "model": "SM5 노바",
+      "sourceLine": 2,
+      "sourceHierarchyRaw": [
+        "1.5",
+        "D 프리미엄"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.5",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-143504",
+      "model": "SM5 노바",
+      "sourceLine": 3,
+      "sourceHierarchyRaw": [
+        "1.6",
+        "TCE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.6",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-143504",
+      "model": "SM5 노바",
+      "sourceLine": 4,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "PE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-143504",
+      "model": "SM5 노바",
+      "sourceLine": 5,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "SE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-143504",
+      "model": "SM5 노바",
+      "sourceLine": 6,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "LE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-143504",
+      "model": "SM5 노바",
+      "sourceLine": 7,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "RE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135488",
+      "model": "SM7",
+      "sourceLine": 1,
+      "sourceHierarchyRaw": [
+        "2.3",
+        "SE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.3",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135488",
+      "model": "SM7",
+      "sourceLine": 2,
+      "sourceHierarchyRaw": [
+        "2.3",
+        "XE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.3",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135488",
+      "model": "SM7",
+      "sourceLine": 3,
+      "sourceHierarchyRaw": [
+        "2.3",
+        "LE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.3",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135488",
+      "model": "SM7",
+      "sourceLine": 4,
+      "sourceHierarchyRaw": [
+        "3.5",
+        "XE35"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "3.5",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135488",
+      "model": "SM7",
+      "sourceLine": 5,
+      "sourceHierarchyRaw": [
+        "3.5",
+        "LE35"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "3.5",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135488",
+      "model": "SM7",
+      "sourceLine": 6,
+      "sourceHierarchyRaw": [
+        "3.5",
+        "RE35"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "3.5",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135488",
+      "model": "SM7",
+      "sourceLine": 7,
+      "sourceHierarchyRaw": [
+        "3.5",
+        "RE35 블랙"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "3.5",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-135488",
+      "model": "SM7",
+      "sourceLine": 8,
+      "sourceHierarchyRaw": [
+        "3.5",
+        "프리미에르"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "3.5",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-140833",
+      "model": "올 뉴 SM7",
+      "sourceLine": 1,
+      "sourceHierarchyRaw": [
+        "2.5",
+        "SE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.5",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-140833",
+      "model": "올 뉴 SM7",
+      "sourceLine": 2,
+      "sourceHierarchyRaw": [
+        "2.5",
+        "LE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.5",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-140833",
+      "model": "올 뉴 SM7",
+      "sourceLine": 3,
+      "sourceHierarchyRaw": [
+        "2.5",
+        "LE 아트"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.5",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-140833",
+      "model": "올 뉴 SM7",
+      "sourceLine": 4,
+      "sourceHierarchyRaw": [
+        "2.5",
+        "LE 파노라마"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.5",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-140833",
+      "model": "올 뉴 SM7",
+      "sourceLine": 5,
+      "sourceHierarchyRaw": [
+        "2.5",
+        "LE S/S 컬렉션"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.5",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-140833",
+      "model": "올 뉴 SM7",
+      "sourceLine": 6,
+      "sourceHierarchyRaw": [
+        "2.5",
+        "RE"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.5",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-140833",
+      "model": "올 뉴 SM7",
+      "sourceLine": 7,
+      "sourceHierarchyRaw": [
+        "2.5",
+        "RE 파노라마"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.5",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-140833",
+      "model": "올 뉴 SM7",
+      "sourceLine": 8,
+      "sourceHierarchyRaw": [
+        "2.5",
+        "RE S/S 컬렉션"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.5",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-140833",
+      "model": "올 뉴 SM7",
+      "sourceLine": 9,
+      "sourceHierarchyRaw": [
+        "3.5",
+        "SE35"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "3.5",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-140833",
+      "model": "올 뉴 SM7",
+      "sourceLine": 10,
+      "sourceHierarchyRaw": [
+        "3.5",
+        "LE35"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "3.5",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-140833",
+      "model": "올 뉴 SM7",
+      "sourceLine": 11,
+      "sourceHierarchyRaw": [
+        "3.5",
+        "RE35"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "3.5",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-134041",
+      "model": "제네시스 BH",
+      "sourceLine": 1,
+      "sourceHierarchyRaw": [
+        "3.3",
+        "BH330 그랜드",
+        "기본형"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "3.3",
+      "middleLiteralOrVerifiedCarry": "BH330 그랜드",
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-134041",
+      "model": "제네시스 BH",
+      "sourceLine": 2,
+      "sourceHierarchyRaw": [
+        "3.3",
+        "BH330 그랜드",
+        "프라임팩"
+      ],
+      "leafEvidence": "literal_name_with_explicit_time_annotation_removed",
+      "powertrainPrefixLiteralOrVerifiedCarry": "3.3",
+      "middleLiteralOrVerifiedCarry": "BH330 그랜드",
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-134041",
+      "model": "제네시스 BH",
+      "sourceLine": 3,
+      "sourceHierarchyRaw": [
+        "3.3",
+        "BH330 럭셔리",
+        "기본형"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "3.3",
+      "middleLiteralOrVerifiedCarry": "BH330 럭셔리",
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-134041",
+      "model": "제네시스 BH",
+      "sourceLine": 4,
+      "sourceHierarchyRaw": [
+        "3.3",
+        "BH330 럭셔리",
+        "프라임팩"
+      ],
+      "leafEvidence": "literal_name_with_explicit_time_annotation_removed",
+      "powertrainPrefixLiteralOrVerifiedCarry": "3.3",
+      "middleLiteralOrVerifiedCarry": "BH330 럭셔리",
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-134041",
+      "model": "제네시스 BH",
+      "sourceLine": 5,
+      "sourceHierarchyRaw": [
+        "3.3",
+        "BH330 럭셔리",
+        "VIP팩"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "3.3",
+      "middleLiteralOrVerifiedCarry": "BH330 럭셔리",
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-134041",
+      "model": "제네시스 BH",
+      "sourceLine": 6,
+      "sourceHierarchyRaw": [
+        "3.3",
+        "BH330 모던",
+        "기본형"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "3.3",
+      "middleLiteralOrVerifiedCarry": "BH330 모던",
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-134041",
+      "model": "제네시스 BH",
+      "sourceLine": 7,
+      "sourceHierarchyRaw": [
+        "3.3",
+        "BH330 모던",
+        "스페셜"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "3.3",
+      "middleLiteralOrVerifiedCarry": "BH330 모던",
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-134041",
+      "model": "제네시스 BH",
+      "sourceLine": 8,
+      "sourceHierarchyRaw": [
+        "3.3",
+        "BH330 프리미엄",
+        "기본형"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "3.3",
+      "middleLiteralOrVerifiedCarry": "BH330 프리미엄",
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-134041",
+      "model": "제네시스 BH",
+      "sourceLine": 9,
+      "sourceHierarchyRaw": [
+        "3.3",
+        "BH330 프리미엄",
+        "스페셜"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "3.3",
+      "middleLiteralOrVerifiedCarry": "BH330 프리미엄",
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-134041",
+      "model": "제네시스 BH",
+      "sourceLine": 10,
+      "sourceHierarchyRaw": [
+        "3.3",
+        "BH330 다이나믹 에디션",
+        "기본형"
+      ],
+      "leafEvidence": "literal_name_with_explicit_time_annotation_removed",
+      "powertrainPrefixLiteralOrVerifiedCarry": "3.3",
+      "middleLiteralOrVerifiedCarry": "BH330 다이나믹 에디션",
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-134041",
+      "model": "제네시스 BH",
+      "sourceLine": 11,
+      "sourceHierarchyRaw": [
+        "3.3",
+        "BH330 다이나믹 에디션",
+        "스페셜"
+      ],
+      "leafEvidence": "literal_name_with_explicit_time_annotation_removed",
+      "powertrainPrefixLiteralOrVerifiedCarry": "3.3",
+      "middleLiteralOrVerifiedCarry": "BH330 다이나믹 에디션",
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-134041",
+      "model": "제네시스 BH",
+      "sourceLine": 12,
+      "sourceHierarchyRaw": [
+        "3.8",
+        "BH380 럭셔리"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "3.8",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-134041",
+      "model": "제네시스 BH",
+      "sourceLine": 13,
+      "sourceHierarchyRaw": [
+        "3.8",
+        "BH380 로얄",
+        "기본형"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "3.8",
+      "middleLiteralOrVerifiedCarry": "BH380 로얄",
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-134041",
+      "model": "제네시스 BH",
+      "sourceLine": 14,
+      "sourceHierarchyRaw": [
+        "3.8",
+        "BH380 로얄",
+        "VIP팩"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "3.8",
+      "middleLiteralOrVerifiedCarry": "BH380 로얄",
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-134041",
+      "model": "제네시스 BH",
+      "sourceLine": 15,
+      "sourceHierarchyRaw": [
+        "3.8",
+        "BH380 익스클루시브"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "3.8",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-134041",
+      "model": "제네시스 BH",
+      "sourceLine": 16,
+      "sourceHierarchyRaw": [
+        "3.8",
+        "BH380 다이나믹 에디션",
+        "기본형"
+      ],
+      "leafEvidence": "literal_name_with_explicit_time_annotation_removed",
+      "powertrainPrefixLiteralOrVerifiedCarry": "3.8",
+      "middleLiteralOrVerifiedCarry": "BH380 다이나믹 에디션",
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-134041",
+      "model": "제네시스 BH",
+      "sourceLine": 17,
+      "sourceHierarchyRaw": [
+        "3.8",
+        "BH380 프레스티지",
+        "기본형"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "3.8",
+      "middleLiteralOrVerifiedCarry": "BH380 프레스티지",
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-134041",
+      "model": "제네시스 BH",
+      "sourceLine": 18,
+      "sourceHierarchyRaw": [
+        "3.8",
+        "BH380 프레스티지",
+        "스페셜"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "3.8",
+      "middleLiteralOrVerifiedCarry": "BH380 프레스티지",
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-134041",
+      "model": "제네시스 BH",
+      "sourceLine": 19,
+      "sourceHierarchyRaw": [
+        "프라다",
+        "GP380"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "프라다",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-134041",
+      "model": "제네시스 BH",
+      "sourceLine": 20,
+      "sourceHierarchyRaw": [
+        "프라다",
+        "GP380 다이나믹 에디션",
+        "기본형"
+      ],
+      "leafEvidence": "literal_name_with_explicit_time_annotation_removed",
+      "powertrainPrefixLiteralOrVerifiedCarry": "프라다",
+      "middleLiteralOrVerifiedCarry": "GP380 다이나믹 에디션",
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-134041",
+      "model": "제네시스 BH",
+      "sourceLine": 21,
+      "sourceHierarchyRaw": [
+        "프라다",
+        "GP500"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "프라다",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-134032",
+      "model": "제네시스 DH",
+      "sourceLine": 1,
+      "sourceHierarchyRaw": [
+        "3.3 GDI 가솔린",
+        "GS330 모던"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "3.3 GDI 가솔린",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": "가솔린",
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-134032",
+      "model": "제네시스 DH",
+      "sourceLine": 2,
+      "sourceHierarchyRaw": [
+        "3.3 GDI 가솔린",
+        "GS330 프리미엄"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "3.3 GDI 가솔린",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": "가솔린",
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-134032",
+      "model": "제네시스 DH",
+      "sourceLine": 3,
+      "sourceHierarchyRaw": [
+        "3.8 GDI 가솔린",
+        "GS380 익스클루시브"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "3.8 GDI 가솔린",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": "가솔린",
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-134032",
+      "model": "제네시스 DH",
+      "sourceLine": 4,
+      "sourceHierarchyRaw": [
+        "3.8 GDI 가솔린",
+        "GS380 프레스티지"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "3.8 GDI 가솔린",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": "가솔린",
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-134032",
+      "model": "제네시스 DH",
+      "sourceLine": 5,
+      "sourceHierarchyRaw": [
+        "3.8 GDI 가솔린",
+        "GS380 파이니스트 에디션"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "3.8 GDI 가솔린",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": "가솔린",
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-133446",
+      "model": "제네시스 쿠페",
+      "sourceLine": 1,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "200 터보",
+        "터보 D"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": "200 터보",
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-133446",
+      "model": "제네시스 쿠페",
+      "sourceLine": 2,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "200 터보",
+        "터보 P"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": "200 터보",
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-133446",
+      "model": "제네시스 쿠페",
+      "sourceLine": 3,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "200 터보",
+        "터보 R"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": "200 터보",
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-133446",
+      "model": "제네시스 쿠페",
+      "sourceLine": 4,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "200 터보",
+        "터보 Rw"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": "200 터보",
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-133446",
+      "model": "제네시스 쿠페",
+      "sourceLine": 5,
+      "sourceHierarchyRaw": [
+        "3.8",
+        "380 GT",
+        "GT P"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "3.8",
+      "middleLiteralOrVerifiedCarry": "380 GT",
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-133446",
+      "model": "제네시스 쿠페",
+      "sourceLine": 6,
+      "sourceHierarchyRaw": [
+        "3.8",
+        "380 GT",
+        "GT R"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "3.8",
+      "middleLiteralOrVerifiedCarry": "380 GT",
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-133446",
+      "model": "제네시스 쿠페",
+      "sourceLine": 7,
+      "sourceHierarchyRaw": [
+        "3.8",
+        "380 GT",
+        "GT Rw"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "3.8",
+      "middleLiteralOrVerifiedCarry": "380 GT",
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-136123",
+      "model": "더 뉴 제네시스 쿠페",
+      "sourceLine": 1,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "200 터보",
+        "터보 D"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": "200 터보",
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-136123",
+      "model": "더 뉴 제네시스 쿠페",
+      "sourceLine": 2,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "200 터보",
+        "터보 S"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": "200 터보",
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-136123",
+      "model": "더 뉴 제네시스 쿠페",
+      "sourceLine": 3,
+      "sourceHierarchyRaw": [
+        "3.8",
+        "380 GT",
+        "GT P"
+      ],
+      "leafEvidence": "literal_name_with_explicit_time_annotation_removed",
+      "powertrainPrefixLiteralOrVerifiedCarry": "3.8",
+      "middleLiteralOrVerifiedCarry": "380 GT",
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-136123",
+      "model": "더 뉴 제네시스 쿠페",
+      "sourceLine": 4,
+      "sourceHierarchyRaw": [
+        "3.8",
+        "380 GT",
+        "GT R"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "3.8",
+      "middleLiteralOrVerifiedCarry": "380 GT",
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-157084",
+      "model": "EQ900",
+      "sourceLine": 1,
+      "sourceHierarchyRaw": [
+        "3.3 T-GDi",
+        "럭셔리"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "3.3 T-GDi",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-157084",
+      "model": "EQ900",
+      "sourceLine": 2,
+      "sourceHierarchyRaw": [
+        "3.3 T-GDi",
+        "프리미엄 럭셔리"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "3.3 T-GDi",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-157084",
+      "model": "EQ900",
+      "sourceLine": 3,
+      "sourceHierarchyRaw": [
+        "3.3 T-GDi",
+        "프레스티지"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "3.3 T-GDi",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-157084",
+      "model": "EQ900",
+      "sourceLine": 4,
+      "sourceHierarchyRaw": [
+        "3.8 GDi",
+        "럭셔리"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "3.8 GDi",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-157084",
+      "model": "EQ900",
+      "sourceLine": 5,
+      "sourceHierarchyRaw": [
+        "3.8 GDi",
+        "프리미엄 럭셔리"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "3.8 GDi",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-157084",
+      "model": "EQ900",
+      "sourceLine": 6,
+      "sourceHierarchyRaw": [
+        "3.8 GDi",
+        "프레스티지"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "3.8 GDi",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-157084",
+      "model": "EQ900",
+      "sourceLine": 7,
+      "sourceHierarchyRaw": [
+        "5.0 GDi",
+        "프레스티지"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "5.0 GDi",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-132835",
+      "model": "K5",
+      "sourceLine": 1,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "스마트",
+        "기본형"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": "스마트",
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-132835",
+      "model": "K5",
+      "sourceLine": 2,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "스마트",
+        "스페셜"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": "스마트",
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-132835",
+      "model": "K5",
+      "sourceLine": 3,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "디럭스"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-132835",
+      "model": "K5",
+      "sourceLine": 4,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "트렌디"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-132835",
+      "model": "K5",
+      "sourceLine": 5,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "럭셔리"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-132835",
+      "model": "K5",
+      "sourceLine": 6,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "프레스티지",
+        "기본형"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": "프레스티지",
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-132835",
+      "model": "K5",
+      "sourceLine": 7,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "프레스티지",
+        "브라운"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": "프레스티지",
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-132835",
+      "model": "K5",
+      "sourceLine": 8,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "에코플러스 프레스티지"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-132835",
+      "model": "K5",
+      "sourceLine": 9,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "노블레스"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-132835",
+      "model": "K5",
+      "sourceLine": 10,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "GDI 터보",
+        "프레스티지"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": "GDI 터보",
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-132835",
+      "model": "K5",
+      "sourceLine": 11,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "GDI 터보",
+        "노블레스"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": "GDI 터보",
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-132835",
+      "model": "K5",
+      "sourceLine": 12,
+      "sourceHierarchyRaw": [
+        "2.4",
+        "프레스티지"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.4",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-132835",
+      "model": "K5",
+      "sourceLine": 13,
+      "sourceHierarchyRaw": [
+        "2.4",
+        "노블레스"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.4",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-136125",
+      "model": "더 뉴 K5",
+      "sourceLine": 1,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "디럭스",
+        "디럭스 M/T"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": "디럭스",
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-136125",
+      "model": "더 뉴 K5",
+      "sourceLine": 2,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "디럭스",
+        "디럭스 A/T"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": "디럭스",
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-136125",
+      "model": "더 뉴 K5",
+      "sourceLine": 3,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "럭셔리",
+        "기본형"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": "럭셔리",
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-136125",
+      "model": "더 뉴 K5",
+      "sourceLine": 4,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "럭셔리",
+        "트랜디"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": "럭셔리",
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-136125",
+      "model": "더 뉴 K5",
+      "sourceLine": 5,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "럭셔리",
+        "W 스페셜"
+      ],
+      "leafEvidence": "literal_name_with_explicit_time_annotation_removed",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": "럭셔리",
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-136125",
+      "model": "더 뉴 K5",
+      "sourceLine": 6,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "럭셔리",
+        "스페셜"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": "럭셔리",
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-136125",
+      "model": "더 뉴 K5",
+      "sourceLine": 7,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "프레스티지"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-136125",
+      "model": "더 뉴 K5",
+      "sourceLine": 8,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "노블레스"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-136125",
+      "model": "더 뉴 K5",
+      "sourceLine": 9,
+      "sourceHierarchyRaw": [
+        "2.0 터보",
+        "프레스티지"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0 터보",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-136125",
+      "model": "더 뉴 K5",
+      "sourceLine": 10,
+      "sourceHierarchyRaw": [
+        "2.0 터보",
+        "노블레스"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0 터보",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-152403",
+      "model": "K5 2세대",
+      "sourceLine": 1,
+      "sourceHierarchyRaw": [
+        "2.0 가솔린",
+        "디럭스"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0 가솔린",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": "가솔린",
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-152403",
+      "model": "K5 2세대",
+      "sourceLine": 2,
+      "sourceHierarchyRaw": [
+        "2.0 가솔린",
+        "럭셔리"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0 가솔린",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": "가솔린",
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-152403",
+      "model": "K5 2세대",
+      "sourceLine": 3,
+      "sourceHierarchyRaw": [
+        "2.0 가솔린",
+        "프레스티지"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0 가솔린",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": "가솔린",
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-152403",
+      "model": "K5 2세대",
+      "sourceLine": 4,
+      "sourceHierarchyRaw": [
+        "2.0 가솔린",
+        "노블레스"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0 가솔린",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": "가솔린",
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-152403",
+      "model": "K5 2세대",
+      "sourceLine": 5,
+      "sourceHierarchyRaw": [
+        "2.0 가솔린",
+        "노블레스 스페셜"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0 가솔린",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": "가솔린",
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-152403",
+      "model": "K5 2세대",
+      "sourceLine": 6,
+      "sourceHierarchyRaw": [
+        "1.7 디젤",
+        "디럭스"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.7 디젤",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": "디젤",
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-152403",
+      "model": "K5 2세대",
+      "sourceLine": 7,
+      "sourceHierarchyRaw": [
+        "1.7 디젤",
+        "럭셔리"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.7 디젤",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": "디젤",
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-152403",
+      "model": "K5 2세대",
+      "sourceLine": 8,
+      "sourceHierarchyRaw": [
+        "1.7 디젤",
+        "프레스티지"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.7 디젤",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": "디젤",
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-152403",
+      "model": "K5 2세대",
+      "sourceLine": 9,
+      "sourceHierarchyRaw": [
+        "1.7 디젤",
+        "노블레스"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.7 디젤",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": "디젤",
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-152403",
+      "model": "K5 2세대",
+      "sourceLine": 10,
+      "sourceHierarchyRaw": [
+        "1.7 디젤",
+        "노블레스 스페셜"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.7 디젤",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": "디젤",
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-152403",
+      "model": "K5 2세대",
+      "sourceLine": 11,
+      "sourceHierarchyRaw": [
+        "1.6 T-GDi",
+        "럭셔리"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.6 T-GDi",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-152403",
+      "model": "K5 2세대",
+      "sourceLine": 12,
+      "sourceHierarchyRaw": [
+        "1.6 T-GDi",
+        "프레스티지"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.6 T-GDi",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-152403",
+      "model": "K5 2세대",
+      "sourceLine": 13,
+      "sourceHierarchyRaw": [
+        "1.6 T-GDi",
+        "노블레스"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "1.6 T-GDi",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-152403",
+      "model": "K5 2세대",
+      "sourceLine": 14,
+      "sourceHierarchyRaw": [
+        "2.0 T-GDi",
+        "노블레스 스페셜"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0 T-GDi",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-142176",
+      "model": "K5 하이브리드",
+      "sourceLine": 1,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "디럭스"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-142176",
+      "model": "K5 하이브리드",
+      "sourceLine": 2,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "럭셔리"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-142176",
+      "model": "K5 하이브리드",
+      "sourceLine": 3,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "프레스티지"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-142176",
+      "model": "K5 하이브리드",
+      "sourceLine": 4,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "노블레스"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-156937",
+      "model": "K5 하이브리드 2세대",
+      "sourceLine": 1,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "프레스티지"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-156937",
+      "model": "K5 하이브리드 2세대",
+      "sourceLine": 2,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "노블레스"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    },
+    {
+      "sourceId": "encar-final-domestic-156937",
+      "model": "K5 하이브리드 2세대",
+      "sourceLine": 3,
+      "sourceHierarchyRaw": [
+        "2.0",
+        "노블레스 스페셜"
+      ],
+      "leafEvidence": "exact_whitespace_normalized_literal_cell",
+      "powertrainPrefixLiteralOrVerifiedCarry": "2.0",
+      "middleLiteralOrVerifiedCarry": null,
+      "modelYear": null,
+      "engine": null,
+      "fuel": null,
+      "sourceTimeHeaderPreserved": true,
+      "currentRetailHierarchyVerified": false,
+      "automaticRuntimeImport": false
+    }
+  ]
+}

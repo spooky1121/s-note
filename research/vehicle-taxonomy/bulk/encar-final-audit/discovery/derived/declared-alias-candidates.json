@@ -1,0 +1,267 @@
+{
+  "baselineAliases": {
+    "DS": [
+      "시트로엥/DS"
+    ],
+    "시트로엥": [
+      "시트로엥/DS"
+    ],
+    "KGM": [
+      "KG모빌리티(쌍용)"
+    ],
+    "르노코리아": [
+      "르노코리아(삼성)"
+    ],
+    "대우": [
+      "쉐보레(GM대우)"
+    ],
+    "쉐보레": [
+      "쉐보레(GM대우)"
+    ],
+    "토요타": [
+      "도요타"
+    ]
+  },
+  "governmentAliases": {
+    "현대": [
+      "HYUNDAI",
+      "현대자동차",
+      "현대자동차(주)"
+    ],
+    "제네시스": [
+      "GENESIS"
+    ],
+    "기아": [
+      "KIA",
+      "기아자동차",
+      "기아자동차(주)"
+    ],
+    "쉐보레(GM대우)": [
+      "쉐보레",
+      "GM대우",
+      "대우",
+      "한국지엠",
+      "지엠대우",
+      "GM DAEWOO",
+      "GMDAEWOO",
+      "한국GM",
+      "한국지엠(주)"
+    ],
+    "르노코리아(삼성)": [
+      "르노코리아",
+      "르노삼성",
+      "르노코리아자동차",
+      "르노삼성자동차"
+    ],
+    "KG모빌리티(쌍용)": [
+      "KG모빌리티",
+      "쌍용",
+      "KGM",
+      "쌍용자동차"
+    ],
+    "벤츠": [
+      "MERCEDES-BENZ",
+      "MERCEDES BENZ",
+      "MERCEDESBENZ",
+      "MERCEDES-AMG"
+    ],
+    "아우디": [
+      "AUDI"
+    ],
+    "포르쉐": [
+      "PORSCHE"
+    ],
+    "랜드로버": [
+      "LANDROVER",
+      "LAND ROVER"
+    ],
+    "미니": [
+      "MINI"
+    ],
+    "BYD": [
+      "비야디"
+    ],
+    "닛산": [
+      "NISSAN"
+    ],
+    "다이하쯔": [
+      "다이하츠",
+      "DAIHATSU"
+    ],
+    "닷지": [
+      "DODGE"
+    ],
+    "도요타": [
+      "토요타",
+      "TOYOTA"
+    ],
+    "람보르기니": [
+      "LAMBORGHINI"
+    ],
+    "렉서스": [
+      "LEXUS"
+    ],
+    "MG로버": [
+      "MG ROVER",
+      "MGROVER",
+      "로버",
+      "ROVER"
+    ],
+    "로터스": [
+      "LOTUS"
+    ],
+    "롤스로이스": [
+      "ROLLS-ROYCE",
+      "ROLLS ROYCE",
+      "ROLLSROYCE"
+    ],
+    "르노": [
+      "RENAULT"
+    ],
+    "링컨": [
+      "LINCOLN"
+    ],
+    "마세라티": [
+      "MASERATI"
+    ],
+    "마이바흐": [
+      "MAYBACH"
+    ],
+    "마쯔다": [
+      "마쓰다",
+      "MAZDA"
+    ],
+    "맥라렌": [
+      "MCLAREN"
+    ],
+    "머큐리": [
+      "MERCURY"
+    ],
+    "미쯔비시": [
+      "미쓰비시",
+      "MITSUBISHI"
+    ],
+    "미쯔오까": [
+      "미쓰오카",
+      "MITSUOKA"
+    ],
+    "벤틀리": [
+      "BENTLEY"
+    ],
+    "볼보": [
+      "VOLVO"
+    ],
+    "부가티": [
+      "BUGATTI"
+    ],
+    "북기은상": [
+      "BAIC",
+      "BEIQIYINXIANG",
+      "BEIQI YINXIANG"
+    ],
+    "뷰익": [
+      "BUICK"
+    ],
+    "사브": [
+      "SAAB"
+    ],
+    "사이언": [
+      "SCION"
+    ],
+    "새턴": [
+      "SATURN"
+    ],
+    "쉐보레": [
+      "CHEVROLET"
+    ],
+    "스마트": [
+      "SMART"
+    ],
+    "스바루": [
+      "SUBARU"
+    ],
+    "스즈키": [
+      "SUZUKI"
+    ],
+    "시트로엥/DS": [
+      "시트로엥",
+      "시트로엥(DS)",
+      "CITROEN",
+      "DS"
+    ],
+    "알파 로메오": [
+      "알파로메오",
+      "ALFA ROMEO",
+      "ALFAROMEO"
+    ],
+    "애스턴마틴": [
+      "애스턴 마틴",
+      "ASTONMARTIN",
+      "ASTON MARTIN"
+    ],
+    "어큐라": [
+      "ACURA"
+    ],
+    "오펠": [
+      "OPEL"
+    ],
+    "올즈모빌": [
+      "OLDSMOBILE"
+    ],
+    "이스즈": [
+      "ISUZU"
+    ],
+    "인피니티": [
+      "INFINITI"
+    ],
+    "재규어": [
+      "JAGUAR"
+    ],
+    "지프": [
+      "JEEP"
+    ],
+    "캐딜락": [
+      "CADILLAC"
+    ],
+    "코닉세그": [
+      "KOENIGSEGG"
+    ],
+    "크라이슬러": [
+      "CHRYSLER"
+    ],
+    "파가니": [
+      "PAGANI"
+    ],
+    "페라리": [
+      "FERRARI"
+    ],
+    "포드": [
+      "FORD"
+    ],
+    "포톤": [
+      "FOTON"
+    ],
+    "폭스바겐": [
+      "VOLKSWAGEN"
+    ],
+    "폰티악": [
+      "PONTIAC"
+    ],
+    "폴스타": [
+      "POLESTAR"
+    ],
+    "푸조": [
+      "PEUGEOT"
+    ],
+    "피아트": [
+      "FIAT"
+    ],
+    "험머": [
+      "HUMMER"
+    ],
+    "혼다": [
+      "HONDA"
+    ]
+  },
+  "canonicalMappingApproved": false
+}

@@ -1,0 +1,874 @@
+[
+  {
+    "sourceId": "hist-encar-3-5gen-grades",
+    "clsUrl": "https://www.encar.com/cc/common.do?bbsno=137810&method=view_modelHistoryframe&type=CLS",
+    "historyUrl": "https://www.encar.com/mocha/history.do?mdlcd=001&mnfccd=012",
+    "engUrl": "https://www.encar.com/cc/common.do?bbsno=137810&method=view_modelHistoryframe&type=ENG",
+    "historyTitle": "BMW 3시리즈 5세대 모델 히스토리",
+    "storedRecords": 19,
+    "make": "BMW",
+    "model": "3시리즈 5세대",
+    "url": "https://www.encar.com/mocha/history.do?mdlcd=001&mnfccd=012",
+    "ref": "turn925501view0",
+    "heading": "BMW 3시리즈 5세대",
+    "period": "BMW 3시리즈 5세대 (2005년 출시 ~ 2012년 단종 )",
+    "tableLinks": {
+      "ENG": 34,
+      "CLS": 35
+    },
+    "status": "read_verified_url",
+    "engineOrGradeTableLinksFound": 2,
+    "generationCodeMentions": []
+  },
+  {
+    "sourceId": "hist-encar-3-6gen-grades",
+    "clsUrl": "https://www.encar.com/cc/common.do?bbsno=137727&method=view_modelHistoryframe&type=CLS",
+    "historyUrl": "https://www.encar.com/mocha/history.do?mdlcd=038&mnfccd=012",
+    "engUrl": "https://www.encar.com/cc/common.do?bbsno=137727&method=view_modelHistoryframe&type=ENG",
+    "historyTitle": "BMW 3시리즈 6세대 모델 히스토리",
+    "storedRecords": 28,
+    "make": "BMW",
+    "model": "3시리즈 6세대",
+    "url": "https://www.encar.com/mocha/history.do?mdlcd=038&mnfccd=012",
+    "ref": "turn586838view0",
+    "heading": "BMW 3시리즈 6세대",
+    "period": "BMW 3시리즈 6세대 (2012년 출시 ~ 현재 )",
+    "tableLinks": {
+      "ENG": 22,
+      "CLS": 23
+    },
+    "status": "read_verified_url",
+    "engineOrGradeTableLinksFound": 2,
+    "generationCodeMentions": [
+      "F30",
+      "F31"
+    ]
+  },
+  {
+    "sourceId": "hist-encar-5-6gen-grades",
+    "clsUrl": "https://www.encar.com/cc/common.do?bbsno=132832&method=view_modelHistoryframe&type=CLS",
+    "historyUrl": "https://www.encar.com/mocha/history.do?mdlcd=039&mnfccd=012",
+    "engUrl": "https://www.encar.com/cc/common.do?bbsno=132832&method=view_modelHistoryframe&type=ENG",
+    "historyTitle": "BMW 5시리즈 6세대 F10 모델 히스토리",
+    "storedRecords": 22,
+    "make": "BMW",
+    "model": "5시리즈 6세대 F10",
+    "url": "https://www.encar.com/mocha/history.do?mdlcd=039&mnfccd=012",
+    "ref": "turn855275view0",
+    "heading": "BMW 5시리즈 6세대",
+    "period": "BMW 5시리즈 6세대 (2010년 출시 ~ 현재 )",
+    "tableLinks": {
+      "ENG": 27,
+      "CLS": 30
+    },
+    "status": "read_verified_url",
+    "engineOrGradeTableLinksFound": 2,
+    "generationCodeMentions": [
+      "F10",
+      "F11",
+      "F07",
+      "E60",
+      "F30"
+    ]
+  },
+  {
+    "sourceId": "hist-encar-5-e60-grades",
+    "clsUrl": "https://www.encar.com/cc/common.do?bbsno=137837&method=view_modelHistoryframe&type=CLS",
+    "historyUrl": "https://www.encar.com/mocha/history.do?mdlcd=002&mnfccd=012",
+    "engUrl": "https://www.encar.com/cc/common.do?bbsno=137837&method=view_modelHistoryframe&type=ENG",
+    "historyTitle": "BMW 5시리즈 E60 자료 모델 히스토리",
+    "storedRecords": 11,
+    "make": "BMW",
+    "model": "5시리즈 E60 자료",
+    "url": "https://www.encar.com/mocha/history.do?mdlcd=002&mnfccd=012",
+    "ref": "turn122467view0",
+    "heading": "BMW 5시리즈 5세대",
+    "period": "BMW 5시리즈 5세대 (2003년 출시 ~ 2010년 단종 )",
+    "tableLinks": {
+      "ENG": 40,
+      "CLS": 41
+    },
+    "status": "read_verified_url",
+    "engineOrGradeTableLinksFound": 0,
+    "generationCodeMentions": [
+      "E60",
+      "E61"
+    ]
+  },
+  {
+    "sourceId": "hist-encar-7-f01-f02-grades",
+    "clsUrl": "https://www.encar.com/cc/common.do?bbsno=136933&method=view_modelHistoryframe&type=CLS",
+    "historyUrl": "https://www.encar.com/mocha/history.do?mdlcd=003&mnfccd=012",
+    "engUrl": "https://www.encar.com/cc/common.do?bbsno=136933&method=view_modelHistoryframe&type=ENG",
+    "historyTitle": "BMW 7시리즈 5세대 F01/F02 자료 모델 히스토리",
+    "storedRecords": 32,
+    "make": "BMW",
+    "model": "7시리즈 5세대 F01/F02 자료",
+    "url": "https://www.encar.com/mocha/history.do?mdlcd=003&mnfccd=012",
+    "ref": "turn492484view0",
+    "heading": "BMW 7시리즈 5세대",
+    "period": "BMW 7시리즈 5세대 (2009년 출시 ~ 현재 )",
+    "tableLinks": {
+      "ENG": 25,
+      "CLS": 26
+    },
+    "status": "read_verified_url",
+    "engineOrGradeTableLinksFound": 2,
+    "generationCodeMentions": [
+      "F01",
+      "F02"
+    ]
+  },
+  {
+    "sourceId": "hist-encar-a4-b8-grades",
+    "clsUrl": "https://www.encar.com/cc/common.do?bbsno=132889&method=view_modelHistoryframe&type=CLS",
+    "historyUrl": "https://www.encar.com/mocha/history.do?mdlcd=011&mnfccd=011",
+    "engUrl": "https://www.encar.com/cc/common.do?bbsno=132889&method=view_modelHistoryframe&type=ENG",
+    "historyTitle": "아우디 A4 B8 모델 히스토리",
+    "storedRecords": 17,
+    "make": "아우디",
+    "model": "A4 B8",
+    "url": "https://www.encar.com/mocha/history.do?mdlcd=011&mnfccd=011",
+    "ref": "turn837238view0",
+    "heading": "아우디 A4 4세대 (B8)",
+    "period": "아우디 A4 4세대 (B8) (2009년 출시 ~ 현재 )",
+    "tableLinks": {
+      "ENG": 23,
+      "CLS": 26
+    },
+    "status": "read_verified_url",
+    "engineOrGradeTableLinksFound": 2,
+    "generationCodeMentions": []
+  },
+  {
+    "sourceId": "hist-encar-a6-c7-grades",
+    "clsUrl": "https://www.encar.com/cc/common.do?bbsno=141131&method=view_modelHistoryframe&type=CLS",
+    "historyUrl": "https://www.encar.com/mocha/history.do?mdlcd=004&mnfccd=011",
+    "engUrl": "https://www.encar.com/cc/common.do?bbsno=141131&method=view_modelHistoryframe&type=ENG",
+    "historyTitle": "아우디 A6 C7 모델 히스토리",
+    "storedRecords": 20,
+    "make": "아우디",
+    "model": "A6 C7",
+    "url": "https://www.encar.com/mocha/history.do?mdlcd=004&mnfccd=011",
+    "ref": "turn633450view0",
+    "heading": "아우디 A6 4세대",
+    "period": "아우디 A6 4세대 (2011년 출시 ~ 현재 )",
+    "tableLinks": {
+      "ENG": 22,
+      "CLS": 25
+    },
+    "status": "read_verified_url",
+    "engineOrGradeTableLinksFound": 2,
+    "generationCodeMentions": []
+  },
+  {
+    "sourceId": "hist-encar-a7-4g-grades",
+    "clsUrl": "https://www.encar.com/cc/common.do?bbsno=133716&method=view_modelHistoryframe&type=CLS",
+    "historyUrl": "https://www.encar.com/mocha/history.do?mdlcd=030&mnfccd=011",
+    "engUrl": "https://www.encar.com/cc/common.do?bbsno=133716&method=view_modelHistoryframe&type=ENG",
+    "historyTitle": "아우디 A7 4G 모델 히스토리",
+    "storedRecords": 15,
+    "make": "아우디",
+    "model": "A7 4G",
+    "url": "https://www.encar.com/mocha/history.do?mdlcd=030&mnfccd=011",
+    "ref": "turn584019view0",
+    "heading": "아우디 A7",
+    "period": "아우디 A7 (2010년 출시 ~ 현재 )",
+    "tableLinks": {
+      "ENG": 9,
+      "CLS": 10
+    },
+    "status": "read_verified_url",
+    "engineOrGradeTableLinksFound": 2,
+    "generationCodeMentions": []
+  },
+  {
+    "sourceId": "hist-encar-accord-8-grades",
+    "clsUrl": "https://www.encar.com/cc/common.do?bbsno=141187&method=view_modelHistoryframe&type=CLS",
+    "historyUrl": "https://www.encar.com/mocha/history.do?mdlcd=014&mnfccd=027",
+    "engUrl": "https://www.encar.com/cc/common.do?bbsno=141187&method=view_modelHistoryframe&type=ENG",
+    "historyTitle": "혼다 어코드 8세대 모델 히스토리",
+    "storedRecords": 3,
+    "make": "혼다",
+    "model": "어코드 8세대",
+    "url": "https://www.encar.com/mocha/history.do?mdlcd=014&mnfccd=027",
+    "ref": "turn829370view0",
+    "heading": "혼다 어코드 8세대",
+    "period": "혼다 어코드 8세대 (2008년 출시 ~ 2012년 단종 )",
+    "tableLinks": {
+      "ENG": 29,
+      "CLS": 30
+    },
+    "status": "read_verified_url",
+    "engineOrGradeTableLinksFound": 2,
+    "generationCodeMentions": []
+  },
+  {
+    "sourceId": "hist-encar-altima-l33-grades",
+    "clsUrl": "https://www.encar.com/cc/common.do?bbsno=139185&method=view_modelHistoryframe&type=CLS",
+    "historyUrl": "https://www.encar.com/mocha/history.do?mdlcd=005&mnfccd=033",
+    "engUrl": "https://www.encar.com/cc/common.do?bbsno=139185&method=view_modelHistoryframe&type=ENG",
+    "historyTitle": "닛산 알티마 L33 모델 히스토리",
+    "storedRecords": 5,
+    "make": "닛산",
+    "model": "알티마 L33",
+    "url": "https://www.encar.com/mocha/history.do?mdlcd=005&mnfccd=033",
+    "ref": "turn694471view0",
+    "heading": "닛산 알티마 5세대",
+    "period": "닛산 알티마 5세대 (2013년 출시 ~ 현재 )",
+    "tableLinks": {
+      "ENG": 23,
+      "CLS": 24
+    },
+    "status": "read_verified_url",
+    "engineOrGradeTableLinksFound": 2,
+    "generationCodeMentions": [
+      "L33",
+      "L32"
+    ]
+  },
+  {
+    "sourceId": "hist-encar-c-w204-grades",
+    "clsUrl": "https://www.encar.com/cc/common.do?bbsno=141058&method=view_modelHistoryframe&type=CLS",
+    "historyUrl": "https://www.encar.com/mocha/history.do?mdlcd=012&mnfccd=013",
+    "engUrl": "https://www.encar.com/cc/common.do?bbsno=141058&method=view_modelHistoryframe&type=ENG",
+    "historyTitle": "벤츠 C클래스 W204 모델 히스토리",
+    "storedRecords": 19,
+    "make": "벤츠",
+    "model": "C클래스 W204",
+    "url": "https://www.encar.com/mocha/history.do?mdlcd=012&mnfccd=013",
+    "ref": "turn972583view0",
+    "heading": "벤츠 C클래스 3세대",
+    "period": "벤츠 C클래스 3세대 (2008년 출시 ~ 2014년 단종 )",
+    "tableLinks": {
+      "ENG": 36,
+      "CLS": 38
+    },
+    "status": "read_verified_url",
+    "engineOrGradeTableLinksFound": 2,
+    "generationCodeMentions": [
+      "W204"
+    ]
+  },
+  {
+    "sourceId": "hist-encar-c-w205-grades",
+    "clsUrl": "https://www.encar.com/cc/common.do?bbsno=141061&method=view_modelHistoryframe&type=CLS",
+    "historyUrl": "https://www.encar.com/mocha/history.do?mdlcd=067&mnfccd=013",
+    "engUrl": "https://www.encar.com/cc/common.do?bbsno=141061&method=view_modelHistoryframe&type=ENG",
+    "historyTitle": "벤츠 C클래스 W205 모델 히스토리",
+    "storedRecords": 7,
+    "make": "벤츠",
+    "model": "C클래스 W205",
+    "url": "https://www.encar.com/mocha/history.do?mdlcd=067&mnfccd=013",
+    "ref": "turn263905view0",
+    "heading": "벤츠 C클래스 4세대",
+    "period": "벤츠 C클래스 4세대 (2014년 출시 ~ 현재 )",
+    "tableLinks": {
+      "ENG": 23,
+      "CLS": 24
+    },
+    "status": "read_verified_url",
+    "engineOrGradeTableLinksFound": 2,
+    "generationCodeMentions": [
+      "W205"
+    ]
+  },
+  {
+    "sourceId": "hist-encar-camry-xv40-grades",
+    "clsUrl": "https://www.encar.com/cc/common.do?bbsno=141176&method=view_modelHistoryframe&type=CLS",
+    "historyUrl": "https://www.encar.com/mocha/history.do?mdlcd=001&mnfccd=031",
+    "engUrl": "https://www.encar.com/cc/common.do?bbsno=141176&method=view_modelHistoryframe&type=ENG",
+    "historyTitle": "토요타 캠리 XV40 모델 히스토리",
+    "storedRecords": 2,
+    "make": "토요타",
+    "model": "캠리 XV40",
+    "url": "https://www.encar.com/mocha/history.do?mdlcd=001&mnfccd=031",
+    "ref": "turn404339view0",
+    "heading": "도요타 캠리 8세대",
+    "period": "도요타 캠리 8세대 (2007년 출시 ~ 2011년 단종 )",
+    "tableLinks": {
+      "ENG": 33,
+      "CLS": 34
+    },
+    "status": "read_verified_url",
+    "engineOrGradeTableLinksFound": 2,
+    "generationCodeMentions": []
+  },
+  {
+    "sourceId": "hist-encar-camry-xv50-grades",
+    "clsUrl": "https://www.encar.com/cc/common.do?bbsno=133871&method=view_modelHistoryframe&type=CLS",
+    "historyUrl": "https://www.encar.com/mocha/history.do?mdlcd=047&mnfccd=031",
+    "engUrl": "https://www.encar.com/cc/common.do?bbsno=133871&method=view_modelHistoryframe&type=ENG",
+    "historyTitle": "토요타 캠리 XV50 모델 히스토리",
+    "storedRecords": 3,
+    "make": "토요타",
+    "model": "캠리 XV50",
+    "url": "https://www.encar.com/mocha/history.do?mdlcd=047&mnfccd=031",
+    "ref": "turn308807view0",
+    "heading": "도요타 캠리 9세대",
+    "period": "도요타 캠리 9세대 (2012년 출시 ~ 현재 )",
+    "tableLinks": {
+      "ENG": 25,
+      "CLS": 26
+    },
+    "status": "read_verified_url",
+    "engineOrGradeTableLinksFound": 2,
+    "generationCodeMentions": [
+      "XV40",
+      "XV50"
+    ]
+  },
+  {
+    "sourceId": "hist-encar-crv-3-grades",
+    "clsUrl": "https://www.encar.com/cc/common.do?bbsno=138904&method=view_modelHistoryframe&type=CLS",
+    "historyUrl": "https://www.encar.com/mocha/history.do?mdlcd=003&mnfccd=027",
+    "engUrl": "https://www.encar.com/cc/common.do?bbsno=138904&method=view_modelHistoryframe&type=ENG",
+    "historyTitle": "혼다 CR-V 3세대 모델 히스토리",
+    "storedRecords": 5,
+    "make": "혼다",
+    "model": "CR-V 3세대",
+    "url": "https://www.encar.com/mocha/history.do?mdlcd=003&mnfccd=027",
+    "ref": "turn462221view0",
+    "heading": "혼다 CR-V 3세대",
+    "period": "혼다 CR-V 3세대 (2007년 출시 ~ 2011년 단종 )",
+    "tableLinks": {
+      "ENG": 31,
+      "CLS": 32
+    },
+    "status": "read_verified_url",
+    "engineOrGradeTableLinksFound": 2,
+    "generationCodeMentions": []
+  },
+  {
+    "sourceId": "hist-encar-e-w211-grades",
+    "clsUrl": "https://www.encar.com/cc/common.do?bbsno=136503&method=view_modelHistoryframe&type=CLS",
+    "historyUrl": "https://www.encar.com/mocha/history.do?mdlcd=019&mnfccd=013",
+    "engUrl": "https://www.encar.com/cc/common.do?bbsno=136503&method=view_modelHistoryframe&type=ENG",
+    "historyTitle": "벤츠 E클래스 W211 모델 히스토리",
+    "storedRecords": 8,
+    "make": "벤츠",
+    "model": "E클래스 W211",
+    "url": "https://www.encar.com/mocha/history.do?mdlcd=019&mnfccd=013",
+    "ref": "turn273550view0",
+    "heading": "벤츠 E클래스 8세대",
+    "period": "벤츠 E클래스 8세대 (2003년 출시 ~ 2009년 단종 )",
+    "tableLinks": {
+      "ENG": 39,
+      "CLS": 40
+    },
+    "status": "read_verified_url",
+    "engineOrGradeTableLinksFound": 0,
+    "generationCodeMentions": [
+      "W211",
+      "W210",
+      "W212"
+    ]
+  },
+  {
+    "sourceId": "hist-encar-e-w212-grades",
+    "clsUrl": "https://www.encar.com/cc/common.do?bbsno=132833&method=view_modelHistoryframe&type=CLS",
+    "historyUrl": "https://www.encar.com/mocha/history.do?mdlcd=001&mnfccd=013",
+    "engUrl": "https://www.encar.com/cc/common.do?bbsno=132833&method=view_modelHistoryframe&type=ENG",
+    "historyTitle": "벤츠 E클래스 9세대 W212 자료 모델 히스토리",
+    "storedRecords": 25,
+    "make": "벤츠",
+    "model": "E클래스 9세대 W212 자료",
+    "url": "https://www.encar.com/mocha/history.do?mdlcd=001&mnfccd=013",
+    "ref": "turn782402view0",
+    "heading": "벤츠 E-클래스 9세대",
+    "period": "벤츠 E-클래스 9세대 (2010년 출시 ~ 현재 )",
+    "tableLinks": {
+      "ENG": 29,
+      "CLS": 33
+    },
+    "status": "read_verified_url",
+    "engineOrGradeTableLinksFound": 2,
+    "generationCodeMentions": [
+      "W212",
+      "W211"
+    ]
+  },
+  {
+    "sourceId": "hist-encar-es-5-grades",
+    "clsUrl": "https://www.encar.com/cc/common.do?bbsno=137146&method=view_modelHistoryframe&type=CLS",
+    "historyUrl": "https://www.encar.com/mocha/history.do?mdlcd=016&mnfccd=035",
+    "engUrl": "https://www.encar.com/cc/common.do?bbsno=137146&method=view_modelHistoryframe&type=ENG",
+    "historyTitle": "렉서스 ES 5세대 모델 히스토리",
+    "storedRecords": 2,
+    "make": "렉서스",
+    "model": "ES 5세대",
+    "url": "https://www.encar.com/mocha/history.do?mdlcd=016&mnfccd=035",
+    "ref": "turn376680view0",
+    "heading": "렉서스 ES 5세대",
+    "period": "렉서스 ES 5세대 (2006년 출시 ~ 2012년 단종 )",
+    "tableLinks": {
+      "ENG": 28,
+      "CLS": 29
+    },
+    "status": "read_verified_url",
+    "engineOrGradeTableLinksFound": 2,
+    "generationCodeMentions": [
+      "XV40"
+    ]
+  },
+  {
+    "sourceId": "hist-encar-es-6-grades",
+    "clsUrl": "https://www.encar.com/cc/common.do?bbsno=137143&method=view_modelHistoryframe&type=CLS",
+    "historyUrl": "https://www.encar.com/mocha/history.do?mdlcd=036&mnfccd=035",
+    "engUrl": "https://www.encar.com/cc/common.do?bbsno=137143&method=view_modelHistoryframe&type=ENG",
+    "historyTitle": "렉서스 ES 6세대 모델 히스토리",
+    "storedRecords": 6,
+    "make": "렉서스",
+    "model": "ES 6세대",
+    "url": "https://www.encar.com/mocha/history.do?mdlcd=036&mnfccd=035",
+    "ref": "turn381873view0",
+    "heading": "렉서스 ES 6세대",
+    "period": "렉서스 ES 6세대 (2012년 출시 ~ 현재 )",
+    "tableLinks": {
+      "ENG": 22,
+      "CLS": 23
+    },
+    "status": "read_verified_url",
+    "engineOrGradeTableLinksFound": 2,
+    "generationCodeMentions": [
+      "XV50"
+    ]
+  },
+  {
+    "sourceId": "hist-encar-g-4-grades",
+    "clsUrl": "https://www.encar.com/cc/common.do?bbsno=134212&method=view_modelHistoryframe&type=CLS",
+    "historyUrl": "https://www.encar.com/mocha/history.do?mdlcd=015&mnfccd=058",
+    "engUrl": "https://www.encar.com/cc/common.do?bbsno=134212&method=view_modelHistoryframe&type=ENG",
+    "historyTitle": "인피니티 G시리즈 4세대 모델 히스토리",
+    "storedRecords": 9,
+    "make": "인피니티",
+    "model": "G시리즈 4세대",
+    "url": "https://www.encar.com/mocha/history.do?mdlcd=015&mnfccd=058",
+    "ref": "turn796662view0",
+    "heading": "인피니티 G시리즈 (V36)",
+    "period": "인피니티 G시리즈 (V36) (2006년 출시 ~ 2013년 단종 )",
+    "tableLinks": {
+      "ENG": 33,
+      "CLS": 36
+    },
+    "status": "read_verified_url",
+    "engineOrGradeTableLinksFound": 2,
+    "generationCodeMentions": [
+      "V36",
+      "G25",
+      "G23",
+      "G37",
+      "G35",
+      "Q50"
+    ]
+  },
+  {
+    "sourceId": "hist-encar-glk-x204-grades",
+    "clsUrl": "https://www.encar.com/cc/common.do?bbsno=136384&method=view_modelHistoryframe&type=CLS",
+    "historyUrl": "https://www.encar.com/mocha/history.do?mdlcd=057&mnfccd=013",
+    "engUrl": "https://www.encar.com/cc/common.do?bbsno=136384&method=view_modelHistoryframe&type=ENG",
+    "historyTitle": "벤츠 GLK X204 모델 히스토리",
+    "storedRecords": 3,
+    "make": "벤츠",
+    "model": "GLK X204",
+    "url": "https://www.encar.com/mocha/history.do?mdlcd=057&mnfccd=013",
+    "ref": "turn917025view0",
+    "heading": "벤츠 GLK 클래스",
+    "period": "벤츠 GLK 클래스 (2009년 출시 ~ 현재 )",
+    "tableLinks": {
+      "ENG": 15,
+      "CLS": 16
+    },
+    "status": "read_verified_url",
+    "engineOrGradeTableLinksFound": 2,
+    "generationCodeMentions": [
+      "X204"
+    ]
+  },
+  {
+    "sourceId": "hist-encar-golf-mk6-grades",
+    "clsUrl": "https://www.encar.com/cc/common.do?bbsno=133063&method=view_modelHistoryframe&type=CLS",
+    "historyUrl": "https://www.encar.com/mocha/history.do?mdlcd=023&mnfccd=014",
+    "engUrl": "https://www.encar.com/cc/common.do?bbsno=133063&method=view_modelHistoryframe&type=ENG",
+    "historyTitle": "폭스바겐 골프 MK6 모델 히스토리",
+    "storedRecords": 8,
+    "make": "폭스바겐",
+    "model": "골프 MK6",
+    "url": "https://www.encar.com/mocha/history.do?mdlcd=023&mnfccd=014",
+    "ref": "turn328996view0",
+    "heading": "폭스바겐 골프 6세대 (MK6)",
+    "period": "폭스바겐 골프 6세대 (MK6) (2009년 출시 ~ 2013년 단종 )",
+    "tableLinks": {
+      "ENG": 22,
+      "CLS": 26
+    },
+    "status": "read_verified_url",
+    "engineOrGradeTableLinksFound": 2,
+    "generationCodeMentions": []
+  },
+  {
+    "sourceId": "hist-encar-golf-mk7-grades",
+    "clsUrl": "https://www.encar.com/cc/common.do?bbsno=134200&method=view_modelHistoryframe&type=CLS",
+    "historyUrl": "https://www.encar.com/mocha/history.do?mdlcd=031&mnfccd=014",
+    "engUrl": "https://www.encar.com/cc/common.do?bbsno=134200&method=view_modelHistoryframe&type=ENG",
+    "historyTitle": "폭스바겐 골프 MK7 모델 히스토리",
+    "storedRecords": 8,
+    "make": "폭스바겐",
+    "model": "골프 MK7",
+    "url": "https://www.encar.com/mocha/history.do?mdlcd=031&mnfccd=014",
+    "ref": "turn225606view0",
+    "heading": "폭스바겐 골프 7세대 (MK7)",
+    "period": "폭스바겐 골프 7세대 (MK7) (2013년 출시 ~ 현재 )",
+    "tableLinks": {
+      "ENG": 16,
+      "CLS": 19
+    },
+    "status": "read_verified_url",
+    "engineOrGradeTableLinksFound": 2,
+    "generationCodeMentions": []
+  },
+  {
+    "sourceId": "hist-encar-gs-l10-grades",
+    "clsUrl": "https://www.encar.com/cc/common.do?bbsno=137158&method=view_modelHistoryframe&type=CLS",
+    "historyUrl": "https://www.encar.com/mocha/history.do?mdlcd=031&mnfccd=035",
+    "engUrl": "https://www.encar.com/cc/common.do?bbsno=137158&method=view_modelHistoryframe&type=ENG",
+    "historyTitle": "렉서스 GS L10 모델 히스토리",
+    "storedRecords": 5,
+    "make": "렉서스",
+    "model": "GS L10",
+    "url": "https://www.encar.com/mocha/history.do?mdlcd=031&mnfccd=035",
+    "ref": "turn789987view0",
+    "heading": "렉서스 GS 4세대",
+    "period": "렉서스 GS 4세대 (2012년 출시 ~ 현재 )",
+    "tableLinks": {
+      "ENG": 22,
+      "CLS": 23
+    },
+    "status": "read_verified_url",
+    "engineOrGradeTableLinksFound": 2,
+    "generationCodeMentions": [
+      "L10"
+    ]
+  },
+  {
+    "sourceId": "hist-encar-passat-7-grades",
+    "clsUrl": "https://www.encar.com/cc/common.do?bbsno=133203&method=view_modelHistoryframe&type=CLS",
+    "historyUrl": "https://www.encar.com/mocha/history.do?mdlcd=029&mnfccd=014",
+    "engUrl": "https://www.encar.com/cc/common.do?bbsno=133203&method=view_modelHistoryframe&type=ENG",
+    "historyTitle": "폭스바겐 파사트 7세대 (국내 미국형 원문) 모델 히스토리",
+    "storedRecords": 2,
+    "make": "폭스바겐",
+    "model": "파사트 7세대 (국내 미국형 원문)",
+    "url": "https://www.encar.com/mocha/history.do?mdlcd=029&mnfccd=014",
+    "ref": "turn683961view0",
+    "heading": "폭스바겐 파사트 7세대",
+    "period": "폭스바겐 파사트 7세대 (2011년 출시 ~ 현재 )",
+    "tableLinks": {
+      "ENG": 17,
+      "CLS": 21
+    },
+    "status": "read_verified_url",
+    "engineOrGradeTableLinksFound": 2,
+    "generationCodeMentions": []
+  },
+  {
+    "sourceId": "hist-encar-q5-8r-grades",
+    "clsUrl": "https://www.encar.com/cc/common.do?bbsno=138324&method=view_modelHistoryframe&type=CLS",
+    "historyUrl": "https://www.encar.com/mocha/history.do?mdlcd=025&mnfccd=011",
+    "engUrl": "https://www.encar.com/cc/common.do?bbsno=138324&method=view_modelHistoryframe&type=ENG",
+    "historyTitle": "아우디 Q5 8R 모델 히스토리",
+    "storedRecords": 9,
+    "make": "아우디",
+    "model": "Q5 8R",
+    "url": "https://www.encar.com/mocha/history.do?mdlcd=025&mnfccd=011",
+    "ref": "turn403351view0",
+    "heading": "아우디 Q5",
+    "period": "아우디 Q5 (2009년 출시 ~ 현재 )",
+    "tableLinks": {
+      "ENG": 15,
+      "CLS": 16
+    },
+    "status": "read_verified_url",
+    "engineOrGradeTableLinksFound": 2,
+    "generationCodeMentions": []
+  },
+  {
+    "sourceId": "hist-encar-q50-2014-grades",
+    "clsUrl": "https://www.encar.com/cc/common.do?bbsno=138523&method=view_modelHistoryframe&type=CLS",
+    "historyUrl": "https://www.encar.com/mocha/history.do?mdlcd=030&mnfccd=058",
+    "engUrl": "https://www.encar.com/cc/common.do?bbsno=138523&method=view_modelHistoryframe&type=ENG",
+    "historyTitle": "인피니티 Q50 (2014 국내 출시 자료) 모델 히스토리",
+    "storedRecords": 3,
+    "make": "인피니티",
+    "model": "Q50 (2014 국내 출시 자료)",
+    "url": "https://www.encar.com/mocha/history.do?mdlcd=030&mnfccd=058",
+    "ref": "turn252470view0",
+    "heading": "인피니티 Q50",
+    "period": "인피니티 Q50 (2014년 출시 ~ 현재 )",
+    "tableLinks": {
+      "ENG": 22,
+      "CLS": 23
+    },
+    "status": "read_verified_url",
+    "engineOrGradeTableLinksFound": 2,
+    "generationCodeMentions": [
+      "Q50",
+      "Q60"
+    ]
+  },
+  {
+    "sourceId": "hist-encar-qashqai-2-grades",
+    "clsUrl": "https://www.encar.com/cc/common.do?bbsno=140842&method=view_modelHistoryframe&type=CLS",
+    "historyUrl": "https://www.encar.com/mocha/history.do?mdlcd=043&mnfccd=033",
+    "engUrl": "https://www.encar.com/cc/common.do?bbsno=140842&method=view_modelHistoryframe&type=ENG",
+    "historyTitle": "닛산 캐시카이 2세대 모델 히스토리",
+    "storedRecords": 3,
+    "make": "닛산",
+    "model": "캐시카이 2세대",
+    "url": "https://www.encar.com/mocha/history.do?mdlcd=043&mnfccd=033",
+    "ref": "turn155012view0",
+    "heading": "닛산 캐시카이 2세대",
+    "period": "닛산 캐시카이 2세대 (2013년 출시 ~ 현재 )",
+    "tableLinks": {
+      "ENG": 21,
+      "CLS": 22
+    },
+    "status": "read_verified_url",
+    "engineOrGradeTableLinksFound": 2,
+    "generationCodeMentions": []
+  },
+  {
+    "sourceId": "hist-encar-rx-al10-grades",
+    "clsUrl": "https://www.encar.com/cc/common.do?bbsno=137238&method=view_modelHistoryframe&type=CLS",
+    "historyUrl": "https://www.encar.com/mocha/history.do?mdlcd=015&mnfccd=035",
+    "engUrl": "https://www.encar.com/cc/common.do?bbsno=137238&method=view_modelHistoryframe&type=ENG",
+    "historyTitle": "렉서스 RX AL10 모델 히스토리",
+    "storedRecords": 10,
+    "make": "렉서스",
+    "model": "RX AL10",
+    "url": "https://www.encar.com/mocha/history.do?mdlcd=015&mnfccd=035",
+    "ref": "turn892454view0",
+    "heading": "렉서스 RX 3세대",
+    "period": "렉서스 RX 3세대 (2009년 출시 ~ 현재 )",
+    "tableLinks": {
+      "ENG": 22,
+      "CLS": 23
+    },
+    "status": "read_verified_url",
+    "engineOrGradeTableLinksFound": 2,
+    "generationCodeMentions": [
+      "AL10"
+    ]
+  },
+  {
+    "sourceId": "hist-encar-s-w221-grades",
+    "clsUrl": "https://www.encar.com/cc/common.do?bbsno=136743&method=view_modelHistoryframe&type=CLS",
+    "historyUrl": "https://www.encar.com/mocha/history.do?mdlcd=002&mnfccd=013",
+    "engUrl": "https://www.encar.com/cc/common.do?bbsno=136743&method=view_modelHistoryframe&type=ENG",
+    "historyTitle": "벤츠 S클래스 W221 모델 히스토리",
+    "storedRecords": 12,
+    "make": "벤츠",
+    "model": "S클래스 W221",
+    "url": "https://www.encar.com/mocha/history.do?mdlcd=002&mnfccd=013",
+    "ref": "turn322106view0",
+    "heading": "벤츠 S클래스 5세대",
+    "period": "벤츠 S클래스 5세대 (2005년 출시 ~ 2013년 단종 )",
+    "tableLinks": {
+      "ENG": 32,
+      "CLS": 33
+    },
+    "status": "read_verified_url",
+    "engineOrGradeTableLinksFound": 2,
+    "generationCodeMentions": [
+      "W221",
+      "W220",
+      "W222"
+    ]
+  },
+  {
+    "sourceId": "hist-encar-s80-2-grades",
+    "clsUrl": "https://www.encar.com/cc/common.do?bbsno=139343&method=view_modelHistoryframe&type=CLS",
+    "historyUrl": "https://www.encar.com/mocha/history.do?mdlcd=006&mnfccd=017",
+    "engUrl": "https://www.encar.com/cc/common.do?bbsno=139343&method=view_modelHistoryframe&type=ENG",
+    "historyTitle": "볼보 S80 2세대 모델 히스토리",
+    "storedRecords": 15,
+    "make": "볼보",
+    "model": "S80 2세대",
+    "url": "https://www.encar.com/mocha/history.do?mdlcd=006&mnfccd=017",
+    "ref": "turn300858view0",
+    "heading": "볼보 S80 2세대",
+    "period": "볼보 S80 2세대 (2006년 출시 ~ 현재 )",
+    "tableLinks": {
+      "ENG": 27,
+      "CLS": 28
+    },
+    "status": "read_verified_url",
+    "engineOrGradeTableLinksFound": 2,
+    "generationCodeMentions": [
+      "S80",
+      "Y286"
+    ]
+  },
+  {
+    "sourceId": "hist-encar-tiguan-5n-grades",
+    "clsUrl": "https://www.encar.com/cc/common.do?bbsno=133885&method=view_modelHistoryframe&type=CLS",
+    "historyUrl": "https://www.encar.com/mocha/history.do?mdlcd=022&mnfccd=014",
+    "engUrl": "https://www.encar.com/cc/common.do?bbsno=133885&method=view_modelHistoryframe&type=ENG",
+    "historyTitle": "폭스바겐 티구안 5N 모델 히스토리",
+    "storedRecords": 7,
+    "make": "폭스바겐",
+    "model": "티구안 5N",
+    "url": "https://www.encar.com/mocha/history.do?mdlcd=022&mnfccd=014",
+    "ref": "turn613943view0",
+    "heading": "폭스바겐 티구안 1세대",
+    "period": "폭스바겐 티구안 1세대 (2007년 출시 ~ 현재 )",
+    "tableLinks": {
+      "ENG": 15,
+      "CLS": 16
+    },
+    "status": "read_verified_url",
+    "engineOrGradeTableLinksFound": 2,
+    "generationCodeMentions": []
+  },
+  {
+    "sourceId": "hist-encar-v60-1-grades",
+    "clsUrl": "https://www.encar.com/cc/common.do?bbsno=139363&method=view_modelHistoryframe&type=CLS",
+    "historyUrl": "https://www.encar.com/mocha/history.do?mdlcd=018&mnfccd=017",
+    "engUrl": "https://www.encar.com/cc/common.do?bbsno=139363&method=view_modelHistoryframe&type=ENG",
+    "historyTitle": "볼보 V60 1세대 모델 히스토리",
+    "storedRecords": 6,
+    "make": "볼보",
+    "model": "V60 1세대",
+    "url": "https://www.encar.com/mocha/history.do?mdlcd=018&mnfccd=017",
+    "ref": "turn849297view0",
+    "heading": "볼보 V60",
+    "period": "볼보 V60 (2011년 출시 ~ 현재 )",
+    "tableLinks": {
+      "ENG": 14,
+      "CLS": 16
+    },
+    "status": "read_verified_url",
+    "engineOrGradeTableLinksFound": 2,
+    "generationCodeMentions": [
+      "V60",
+      "S60"
+    ]
+  },
+  {
+    "sourceId": "hist-encar-x1-e84-grades",
+    "clsUrl": "https://www.encar.com/cc/common.do?bbsno=137683&method=view_modelHistoryframe&type=CLS",
+    "historyUrl": "https://www.encar.com/mocha/history.do?mdlcd=021&mnfccd=012",
+    "engUrl": "https://www.encar.com/cc/common.do?bbsno=137683&method=view_modelHistoryframe&type=ENG",
+    "historyTitle": "BMW X1 E84 모델 히스토리",
+    "storedRecords": 8,
+    "make": "BMW",
+    "model": "X1 E84",
+    "url": "https://www.encar.com/mocha/history.do?mdlcd=021&mnfccd=012",
+    "ref": "turn297447view0",
+    "heading": "BMW X1",
+    "period": "BMW X1 (2009년 출시 ~ 현재 )",
+    "tableLinks": {
+      "ENG": 15,
+      "CLS": 16
+    },
+    "status": "read_verified_url",
+    "engineOrGradeTableLinksFound": 2,
+    "generationCodeMentions": [
+      "E84",
+      "E91"
+    ]
+  },
+  {
+    "sourceId": "hist-encar-x3-e83-grades",
+    "clsUrl": "https://www.encar.com/cc/common.do?bbsno=137976&method=view_modelHistoryframe&type=CLS",
+    "historyUrl": "https://www.encar.com/mocha/history.do?mdlcd=014&mnfccd=012",
+    "engUrl": "https://www.encar.com/cc/common.do?bbsno=137976&method=view_modelHistoryframe&type=ENG",
+    "historyTitle": "BMW X3 E83 모델 히스토리",
+    "storedRecords": 4,
+    "make": "BMW",
+    "model": "X3 E83",
+    "url": "https://www.encar.com/mocha/history.do?mdlcd=014&mnfccd=012",
+    "ref": "turn648459view0",
+    "heading": "BMW X3 1세대",
+    "period": "BMW X3 1세대 (2003년 출시 ~ 2010년 단종 )",
+    "tableLinks": {
+      "ENG": 22,
+      "CLS": 23
+    },
+    "status": "read_verified_url",
+    "engineOrGradeTableLinksFound": 2,
+    "generationCodeMentions": [
+      "E83"
+    ]
+  },
+  {
+    "sourceId": "hist-encar-x3-f25-grades",
+    "clsUrl": "https://www.encar.com/cc/common.do?bbsno=137943&method=view_modelHistoryframe&type=CLS",
+    "historyUrl": "https://www.encar.com/mocha/history.do?mdlcd=028&mnfccd=012",
+    "engUrl": "https://www.encar.com/cc/common.do?bbsno=137943&method=view_modelHistoryframe&type=ENG",
+    "historyTitle": "엔카 BMW X3 2세대 모델 히스토리",
+    "storedRecords": 11,
+    "make": "BMW",
+    "model": "X3 F25",
+    "url": "https://www.encar.com/mocha/history.do?mdlcd=028&mnfccd=012",
+    "ref": "turn560175view0",
+    "heading": "BMW X3 2세대",
+    "period": "BMW X3 2세대 (2011년 출시 ~ 현재 )",
+    "tableLinks": {
+      "ENG": 28,
+      "CLS": 29
+    },
+    "status": "read_verified_url",
+    "engineOrGradeTableLinksFound": 2,
+    "generationCodeMentions": [
+      "F25"
+    ]
+  },
+  {
+    "sourceId": "hist-encar-x5-e70-grades",
+    "clsUrl": "https://www.encar.com/cc/common.do?bbsno=137883&method=view_modelHistoryframe&type=CLS",
+    "historyUrl": "https://www.encar.com/mocha/history.do?mdlcd=022&mnfccd=012",
+    "engUrl": "https://www.encar.com/cc/common.do?bbsno=137883&method=view_modelHistoryframe&type=ENG",
+    "historyTitle": "BMW X5 E70 모델 히스토리",
+    "storedRecords": 7,
+    "make": "BMW",
+    "model": "X5 E70",
+    "url": "https://www.encar.com/mocha/history.do?mdlcd=022&mnfccd=012",
+    "ref": "turn132691view0",
+    "heading": "BMW X5 2세대",
+    "period": "BMW X5 2세대 (2006년 출시 ~ 2013년 단종 )",
+    "tableLinks": {
+      "ENG": 32,
+      "CLS": 33
+    },
+    "status": "read_verified_url",
+    "engineOrGradeTableLinksFound": 2,
+    "generationCodeMentions": [
+      "E70",
+      "F15"
+    ]
+  },
+  {
+    "sourceId": "hist-encar-xc60-1-grades",
+    "clsUrl": "https://www.encar.com/cc/common.do?bbsno=139364&method=view_modelHistoryframe&type=CLS",
+    "historyUrl": "https://www.encar.com/mocha/history.do?mdlcd=017&mnfccd=017",
+    "engUrl": "https://www.encar.com/cc/common.do?bbsno=139364&method=view_modelHistoryframe&type=ENG",
+    "historyTitle": "볼보 XC60 (2009 출시 자료) 모델 히스토리",
+    "storedRecords": 8,
+    "make": "볼보",
+    "model": "XC60 (2009 출시 자료)",
+    "url": "https://www.encar.com/mocha/history.do?mdlcd=017&mnfccd=017",
+    "ref": "turn187915view0",
+    "heading": "볼보 XC60",
+    "period": "볼보 XC60 (2009년 출시 ~ 현재 )",
+    "tableLinks": {
+      "ENG": 18,
+      "CLS": 19
+    },
+    "status": "read_verified_url",
+    "engineOrGradeTableLinksFound": 2,
+    "generationCodeMentions": [
+      "XC60"
+    ]
+  }
+]

@@ -45,3 +45,8 @@ python scripts/verify-government-tax-2026.py --database /tmp/snote-government-am
 ```
 
 자료는 GitHub의 별도 조사 자료집으로 보관한다. 운영 앱 v2.80·고객·차량·상사 DB에는 자동 연결하지 않으며 이 자료 보관을 위한 Cloudflare 앱 배포는 하지 않는다.
+
+
+## 엔카 최종 대조
+
+[encar-final-audit](encar-final-audit/FINAL_REVIEW.md)에 공개 모델 표시 1,858행, 시세 제조사 70선택/모델군 표시 1,334행, 기존 역사표 593관측 재검증·신규 225관측·원문 표기 17교정을 보존한다. 대조 전·후 이름 원장, 원천 시점열, 실제 연결 주소·코드, 독립 감사와 재현 도구를 포함한다. 표시명 미대응을 등급 누락 확정으로 바꾸지 않는다.

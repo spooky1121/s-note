@@ -1,0 +1,7458 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-11-06T16:55:45.976398+00:00",
+  "sourceUrl": "https://m.encar.com/ca/initString.json?method=initList&type=Is",
+  "acquisitionMethod": "five_overlapping_web_tool_rendered_line_windows",
+  "scope": "Complete 1858-entry rendered global model-label index; no manufacturer or parent codes exposed. Not the complete Encar retail grade hierarchy.",
+  "advertisedCount": 1858,
+  "webToolRemoteCacheFreshness": "not_exposed; current tool read, not guaranteed fresh origin HTTP fetch",
+  "contentTypeObserved": "text/html via web reader despite .json URL extension",
+  "modelIndex": {
+    "records": [
+      {
+        "displayOrdinal": 1,
+        "modelNameRaw": "쏠라티"
+      },
+      {
+        "displayOrdinal": 2,
+        "modelNameRaw": "i30 (PD)"
+      },
+      {
+        "displayOrdinal": 3,
+        "modelNameRaw": "더 뉴 그랜드 스타렉스"
+      },
+      {
+        "displayOrdinal": 4,
+        "modelNameRaw": "벨로스터 (JS)"
+      },
+      {
+        "displayOrdinal": 5,
+        "modelNameRaw": "더 뉴 아이오닉 하이브리드"
+      },
+      {
+        "displayOrdinal": 6,
+        "modelNameRaw": "코나 (SX2)"
+      },
+      {
+        "displayOrdinal": 7,
+        "modelNameRaw": "쏘나타 디 엣지(DN8)"
+      },
+      {
+        "displayOrdinal": 8,
+        "modelNameRaw": "싼타페 (MX5)"
+      },
+      {
+        "displayOrdinal": 9,
+        "modelNameRaw": "더 뉴 투싼 (NX4)"
+      },
+      {
+        "displayOrdinal": 10,
+        "modelNameRaw": "더 뉴 아이오닉5"
+      },
+      {
+        "displayOrdinal": 11,
+        "modelNameRaw": "더 뉴 캐스퍼"
+      },
+      {
+        "displayOrdinal": 12,
+        "modelNameRaw": "팰리세이드 (LX3)"
+      },
+      {
+        "displayOrdinal": 13,
+        "modelNameRaw": "넥쏘 (NH2)"
+      },
+      {
+        "displayOrdinal": 14,
+        "modelNameRaw": "더 뉴 아이오닉6"
+      },
+      {
+        "displayOrdinal": 15,
+        "modelNameRaw": "더 뉴 스타리아"
+      },
+      {
+        "displayOrdinal": 16,
+        "modelNameRaw": "더 뉴 그랜저 (GN7)"
+      },
+      {
+        "displayOrdinal": 17,
+        "modelNameRaw": "아반떼 (CN8)"
+      },
+      {
+        "displayOrdinal": 18,
+        "modelNameRaw": "더 뉴 i30"
+      },
+      {
+        "displayOrdinal": 19,
+        "modelNameRaw": "넥쏘"
+      },
+      {
+        "displayOrdinal": 20,
+        "modelNameRaw": "더 뉴 아이오닉 일렉트릭"
+      },
+      {
+        "displayOrdinal": 21,
+        "modelNameRaw": "더 뉴 싼타페"
+      },
+      {
+        "displayOrdinal": 22,
+        "modelNameRaw": "스타리아"
+      },
+      {
+        "displayOrdinal": 23,
+        "modelNameRaw": "아이오닉5"
+      },
+      {
+        "displayOrdinal": 24,
+        "modelNameRaw": "캐스퍼"
+      },
+      {
+        "displayOrdinal": 25,
+        "modelNameRaw": "더 뉴 팰리세이드"
+      },
+      {
+        "displayOrdinal": 26,
+        "modelNameRaw": "아이오닉6"
+      },
+      {
+        "displayOrdinal": 27,
+        "modelNameRaw": "코나 하이브리드 (SX2)"
+      },
+      {
+        "displayOrdinal": 28,
+        "modelNameRaw": "쏘나타 디 엣지 하이브리드(DN8)"
+      },
+      {
+        "displayOrdinal": 29,
+        "modelNameRaw": "더 뉴 투싼 하이브리드 (NX4)"
+      },
+      {
+        "displayOrdinal": 30,
+        "modelNameRaw": "더 뉴 그랜저 하이브리드 (GN7)"
+      },
+      {
+        "displayOrdinal": 31,
+        "modelNameRaw": "아반떼 하이브리드 (CN8)"
+      },
+      {
+        "displayOrdinal": 32,
+        "modelNameRaw": "아이오닉 하이브리드"
+      },
+      {
+        "displayOrdinal": 33,
+        "modelNameRaw": "싼타페 TM"
+      },
+      {
+        "displayOrdinal": 34,
+        "modelNameRaw": "팰리세이드"
+      },
+      {
+        "displayOrdinal": 35,
+        "modelNameRaw": "쏘나타 (DN8)"
+      },
+      {
+        "displayOrdinal": 36,
+        "modelNameRaw": "투싼 (NX4)"
+      },
+      {
+        "displayOrdinal": 37,
+        "modelNameRaw": "그랜저 (GN7)"
+      },
+      {
+        "displayOrdinal": 38,
+        "modelNameRaw": "더 뉴 아반떼 (CN7)"
+      },
+      {
+        "displayOrdinal": 39,
+        "modelNameRaw": "코나 일렉트릭 (SX2)"
+      },
+      {
+        "displayOrdinal": 40,
+        "modelNameRaw": "캐스퍼 일렉트릭"
+      },
+      {
+        "displayOrdinal": 41,
+        "modelNameRaw": "아이오닉 일렉트릭"
+      },
+      {
+        "displayOrdinal": 42,
+        "modelNameRaw": "쏘나타 하이브리드 (DN8)"
+      },
+      {
+        "displayOrdinal": 43,
+        "modelNameRaw": "더 뉴 코나"
+      },
+      {
+        "displayOrdinal": 44,
+        "modelNameRaw": "투싼 하이브리드 (NX4)"
+      },
+      {
+        "displayOrdinal": 45,
+        "modelNameRaw": "그랜저 하이브리드 (GN7)"
+      },
+      {
+        "displayOrdinal": 46,
+        "modelNameRaw": "더 뉴 아반떼 하이브리드 (CN7)"
+      },
+      {
+        "displayOrdinal": 47,
+        "modelNameRaw": "쏘나타 뉴 라이즈"
+      },
+      {
+        "displayOrdinal": 48,
+        "modelNameRaw": "더 뉴 그랜저 IG"
+      },
+      {
+        "displayOrdinal": 49,
+        "modelNameRaw": "아반떼 (CN7)"
+      },
+      {
+        "displayOrdinal": 50,
+        "modelNameRaw": "더 뉴 코나 하이브리드"
+      },
+      {
+        "displayOrdinal": 51,
+        "modelNameRaw": "쏘나타 뉴 라이즈 하이브리드"
+      },
+      {
+        "displayOrdinal": 52,
+        "modelNameRaw": "코나"
+      },
+      {
+        "displayOrdinal": 53,
+        "modelNameRaw": "더 뉴 그랜저 IG 하이브리드"
+      },
+      {
+        "displayOrdinal": 54,
+        "modelNameRaw": "아반떼 하이브리드 (CN7)"
+      },
+      {
+        "displayOrdinal": 55,
+        "modelNameRaw": "그랜저 IG"
+      },
+      {
+        "displayOrdinal": 56,
+        "modelNameRaw": "더 뉴 아반떼 AD"
+      },
+      {
+        "displayOrdinal": 57,
+        "modelNameRaw": "코나 하이브리드"
+      },
+      {
+        "displayOrdinal": 58,
+        "modelNameRaw": "아반떼 AD"
+      },
+      {
+        "displayOrdinal": 59,
+        "modelNameRaw": "그랜저 IG 하이브리드"
+      },
+      {
+        "displayOrdinal": 60,
+        "modelNameRaw": "코나 일렉트릭"
+      },
+      {
+        "displayOrdinal": 61,
+        "modelNameRaw": "블루온"
+      },
+      {
+        "displayOrdinal": 62,
+        "modelNameRaw": "베뉴"
+      },
+      {
+        "displayOrdinal": 63,
+        "modelNameRaw": "ST1"
+      },
+      {
+        "displayOrdinal": 64,
+        "modelNameRaw": "아이오닉9"
+      },
+      {
+        "displayOrdinal": 65,
+        "modelNameRaw": "i30(신형)"
+      },
+      {
+        "displayOrdinal": 66,
+        "modelNameRaw": "i30"
+      },
+      {
+        "displayOrdinal": 67,
+        "modelNameRaw": "i30 cw"
+      },
+      {
+        "displayOrdinal": 68,
+        "modelNameRaw": "더 뉴 i40"
+      },
+      {
+        "displayOrdinal": 69,
+        "modelNameRaw": "더 뉴 i40 살룬"
+      },
+      {
+        "displayOrdinal": 70,
+        "modelNameRaw": "i40"
+      },
+      {
+        "displayOrdinal": 71,
+        "modelNameRaw": "i40 살룬"
+      },
+      {
+        "displayOrdinal": 72,
+        "modelNameRaw": "갤로퍼 2"
+      },
+      {
+        "displayOrdinal": 73,
+        "modelNameRaw": "갤로퍼"
+      },
+      {
+        "displayOrdinal": 74,
+        "modelNameRaw": "그라나다"
+      },
+      {
+        "displayOrdinal": 75,
+        "modelNameRaw": "그랜저 HG 하이브리드"
+      },
+      {
+        "displayOrdinal": 76,
+        "modelNameRaw": "그랜저 HG"
+      },
+      {
+        "displayOrdinal": 77,
+        "modelNameRaw": "더 럭셔리 그랜저"
+      },
+      {
+        "displayOrdinal": 78,
+        "modelNameRaw": "그랜저 뉴 럭셔리"
+      },
+      {
+        "displayOrdinal": 79,
+        "modelNameRaw": "그랜저 TG"
+      },
+      {
+        "displayOrdinal": 80,
+        "modelNameRaw": "뉴 그랜저 XG"
+      },
+      {
+        "displayOrdinal": 81,
+        "modelNameRaw": "그랜저 XG"
+      },
+      {
+        "displayOrdinal": 82,
+        "modelNameRaw": "뉴 그랜저"
+      },
+      {
+        "displayOrdinal": 83,
+        "modelNameRaw": "그랜저"
+      },
+      {
+        "displayOrdinal": 84,
+        "modelNameRaw": "뉴그레이스"
+      },
+      {
+        "displayOrdinal": 85,
+        "modelNameRaw": "그레이스"
+      },
+      {
+        "displayOrdinal": 86,
+        "modelNameRaw": "다이너스티"
+      },
+      {
+        "displayOrdinal": 87,
+        "modelNameRaw": "라비타"
+      },
+      {
+        "displayOrdinal": 88,
+        "modelNameRaw": "마르샤"
+      },
+      {
+        "displayOrdinal": 89,
+        "modelNameRaw": "더 뉴 맥스크루즈"
+      },
+      {
+        "displayOrdinal": 90,
+        "modelNameRaw": "맥스크루즈"
+      },
+      {
+        "displayOrdinal": 91,
+        "modelNameRaw": "베라크루즈"
+      },
+      {
+        "displayOrdinal": 92,
+        "modelNameRaw": "베르나 트랜스폼"
+      },
+      {
+        "displayOrdinal": 93,
+        "modelNameRaw": "베르나(신형)"
+      },
+      {
+        "displayOrdinal": 94,
+        "modelNameRaw": "New 베르나"
+      },
+      {
+        "displayOrdinal": 95,
+        "modelNameRaw": "베르나"
+      },
+      {
+        "displayOrdinal": 96,
+        "modelNameRaw": "더 뉴 벨로스터"
+      },
+      {
+        "displayOrdinal": 97,
+        "modelNameRaw": "벨로스터"
+      },
+      {
+        "displayOrdinal": 98,
+        "modelNameRaw": "산타모"
+      },
+      {
+        "displayOrdinal": 99,
+        "modelNameRaw": "스쿠프"
+      },
+      {
+        "displayOrdinal": 100,
+        "modelNameRaw": "그랜드 스타렉스"
+      },
+      {
+        "displayOrdinal": 101,
+        "modelNameRaw": "스타렉스 점보"
+      },
+      {
+        "displayOrdinal": 102,
+        "modelNameRaw": "스타렉스"
+      },
+      {
+        "displayOrdinal": 103,
+        "modelNameRaw": "스텔라"
+      },
+      {
+        "displayOrdinal": 104,
+        "modelNameRaw": "싼타페 더 프라임"
+      },
+      {
+        "displayOrdinal": 105,
+        "modelNameRaw": "싼타페 DM"
+      },
+      {
+        "displayOrdinal": 106,
+        "modelNameRaw": "싼타페 CM"
+      },
+      {
+        "displayOrdinal": 107,
+        "modelNameRaw": "싼타페"
+      },
+      {
+        "displayOrdinal": 108,
+        "modelNameRaw": "LF 쏘나타"
+      },
+      {
+        "displayOrdinal": 109,
+        "modelNameRaw": "LF 쏘나타 하이브리드"
+      },
+      {
+        "displayOrdinal": 110,
+        "modelNameRaw": "쏘나타 더 브릴리언트"
+      },
+      {
+        "displayOrdinal": 111,
+        "modelNameRaw": "YF 쏘나타"
+      },
+      {
+        "displayOrdinal": 112,
+        "modelNameRaw": "쏘나타 하이브리드"
+      },
+      {
+        "displayOrdinal": 113,
+        "modelNameRaw": "NF 쏘나타 트랜스폼"
+      },
+      {
+        "displayOrdinal": 114,
+        "modelNameRaw": "NF 쏘나타"
+      },
+      {
+        "displayOrdinal": 115,
+        "modelNameRaw": "뉴 EF 쏘나타"
+      },
+      {
+        "displayOrdinal": 116,
+        "modelNameRaw": "EF 쏘나타"
+      },
+      {
+        "displayOrdinal": 117,
+        "modelNameRaw": "쏘나타 III"
+      },
+      {
+        "displayOrdinal": 118,
+        "modelNameRaw": "쏘나타 II"
+      },
+      {
+        "displayOrdinal": 119,
+        "modelNameRaw": "쏘나타"
+      },
+      {
+        "displayOrdinal": 120,
+        "modelNameRaw": "더 뉴 아반떼"
+      },
+      {
+        "displayOrdinal": 121,
+        "modelNameRaw": "아반떼 MD"
+      },
+      {
+        "displayOrdinal": 122,
+        "modelNameRaw": "아반떼 쿠페"
+      },
+      {
+        "displayOrdinal": 123,
+        "modelNameRaw": "아반떼 HD"
+      },
+      {
+        "displayOrdinal": 124,
+        "modelNameRaw": "아반떼 하이브리드"
+      },
+      {
+        "displayOrdinal": 125,
+        "modelNameRaw": "뉴 아반떼 XD"
+      },
+      {
+        "displayOrdinal": 126,
+        "modelNameRaw": "아반떼 XD"
+      },
+      {
+        "displayOrdinal": 127,
+        "modelNameRaw": "올 뉴 아반떼"
+      },
+      {
+        "displayOrdinal": 128,
+        "modelNameRaw": "아반떼"
+      },
+      {
+        "displayOrdinal": 129,
+        "modelNameRaw": "아슬란"
+      },
+      {
+        "displayOrdinal": 130,
+        "modelNameRaw": "아토스"
+      },
+      {
+        "displayOrdinal": 131,
+        "modelNameRaw": "에쿠스(신형)"
+      },
+      {
+        "displayOrdinal": 132,
+        "modelNameRaw": "에쿠스"
+      },
+      {
+        "displayOrdinal": 133,
+        "modelNameRaw": "엑센트(신형)"
+      },
+      {
+        "displayOrdinal": 134,
+        "modelNameRaw": "뉴 엑센트"
+      },
+      {
+        "displayOrdinal": 135,
+        "modelNameRaw": "엑센트"
+      },
+      {
+        "displayOrdinal": 136,
+        "modelNameRaw": "엑셀"
+      },
+      {
+        "displayOrdinal": 137,
+        "modelNameRaw": "뉴엘란트라"
+      },
+      {
+        "displayOrdinal": 138,
+        "modelNameRaw": "엘란트라"
+      },
+      {
+        "displayOrdinal": 139,
+        "modelNameRaw": "제네시스 DH"
+      },
+      {
+        "displayOrdinal": 140,
+        "modelNameRaw": "제네시스"
+      },
+      {
+        "displayOrdinal": 141,
+        "modelNameRaw": "더 뉴 제네시스 쿠페"
+      },
+      {
+        "displayOrdinal": 142,
+        "modelNameRaw": "제네시스 쿠페"
+      },
+      {
+        "displayOrdinal": 143,
+        "modelNameRaw": "코티나"
+      },
+      {
+        "displayOrdinal": 144,
+        "modelNameRaw": "뉴 클릭"
+      },
+      {
+        "displayOrdinal": 145,
+        "modelNameRaw": "클릭 하이브리드"
+      },
+      {
+        "displayOrdinal": 146,
+        "modelNameRaw": "클릭"
+      },
+      {
+        "displayOrdinal": 147,
+        "modelNameRaw": "테라칸"
+      },
+      {
+        "displayOrdinal": 148,
+        "modelNameRaw": "투스카니(신형)"
+      },
+      {
+        "displayOrdinal": 149,
+        "modelNameRaw": "투스카니"
+      },
+      {
+        "displayOrdinal": 150,
+        "modelNameRaw": "올 뉴 투싼"
+      },
+      {
+        "displayOrdinal": 151,
+        "modelNameRaw": "뉴 투싼 ix"
+      },
+      {
+        "displayOrdinal": 152,
+        "modelNameRaw": "투싼 ix"
+      },
+      {
+        "displayOrdinal": 153,
+        "modelNameRaw": "투싼"
+      },
+      {
+        "displayOrdinal": 154,
+        "modelNameRaw": "트라제 XG"
+      },
+      {
+        "displayOrdinal": 155,
+        "modelNameRaw": "티뷰론"
+      },
+      {
+        "displayOrdinal": 156,
+        "modelNameRaw": "포니투"
+      },
+      {
+        "displayOrdinal": 157,
+        "modelNameRaw": "포니"
+      },
+      {
+        "displayOrdinal": 158,
+        "modelNameRaw": "프레스토"
+      },
+      {
+        "displayOrdinal": 159,
+        "modelNameRaw": "더 뉴 카렌스"
+      },
+      {
+        "displayOrdinal": 160,
+        "modelNameRaw": "쏘울 부스터"
+      },
+      {
+        "displayOrdinal": 161,
+        "modelNameRaw": "K7 프리미어"
+      },
+      {
+        "displayOrdinal": 162,
+        "modelNameRaw": "모하비 더 마스터"
+      },
+      {
+        "displayOrdinal": 163,
+        "modelNameRaw": "스팅어 마이스터"
+      },
+      {
+        "displayOrdinal": 164,
+        "modelNameRaw": "더 뉴 K3 2세대"
+      },
+      {
+        "displayOrdinal": 165,
+        "modelNameRaw": "더 뉴 K9 2세대"
+      },
+      {
+        "displayOrdinal": 166,
+        "modelNameRaw": "더 뉴 기아 레이"
+      },
+      {
+        "displayOrdinal": 167,
+        "modelNameRaw": "더 뉴 모닝 (JA)"
+      },
+      {
+        "displayOrdinal": 168,
+        "modelNameRaw": "더 뉴 쏘렌토 4세대"
+      },
+      {
+        "displayOrdinal": 169,
+        "modelNameRaw": "더 뉴 K5 3세대"
+      },
+      {
+        "displayOrdinal": 170,
+        "modelNameRaw": "더 뉴 카니발 4세대"
+      },
+      {
+        "displayOrdinal": 171,
+        "modelNameRaw": "더 뉴 EV6"
+      },
+      {
+        "displayOrdinal": 172,
+        "modelNameRaw": "더 뉴 K8"
+      },
+      {
+        "displayOrdinal": 173,
+        "modelNameRaw": "더 뉴 스포티지 5세대"
+      },
+      {
+        "displayOrdinal": 174,
+        "modelNameRaw": "타스만"
+      },
+      {
+        "displayOrdinal": 175,
+        "modelNameRaw": "셀토스 2세대"
+      },
+      {
+        "displayOrdinal": 176,
+        "modelNameRaw": "더 뉴 니로 2세대"
+      },
+      {
+        "displayOrdinal": 177,
+        "modelNameRaw": "더 뉴 모하비"
+      },
+      {
+        "displayOrdinal": 178,
+        "modelNameRaw": "스팅어"
+      },
+      {
+        "displayOrdinal": 179,
+        "modelNameRaw": "올 뉴 K3"
+      },
+      {
+        "displayOrdinal": 180,
+        "modelNameRaw": "더 K9"
+      },
+      {
+        "displayOrdinal": 181,
+        "modelNameRaw": "쏘울 부스터 EV"
+      },
+      {
+        "displayOrdinal": 182,
+        "modelNameRaw": "K7 프리미어 하이브리드"
+      },
+      {
+        "displayOrdinal": 183,
+        "modelNameRaw": "쏘렌토 4세대"
+      },
+      {
+        "displayOrdinal": 184,
+        "modelNameRaw": "모닝 어반 (JA)"
+      },
+      {
+        "displayOrdinal": 185,
+        "modelNameRaw": "카니발 4세대"
+      },
+      {
+        "displayOrdinal": 186,
+        "modelNameRaw": "EV6"
+      },
+      {
+        "displayOrdinal": 187,
+        "modelNameRaw": "디 올 뉴 니로"
+      },
+      {
+        "displayOrdinal": 188,
+        "modelNameRaw": "더 뉴 셀토스"
+      },
+      {
+        "displayOrdinal": 189,
+        "modelNameRaw": "더 뉴 기아 레이 EV"
+      },
+      {
+        "displayOrdinal": 190,
+        "modelNameRaw": "더 뉴 K5 하이브리드 3세대"
+      },
+      {
+        "displayOrdinal": 191,
+        "modelNameRaw": "더 뉴 K8 하이브리드"
+      },
+      {
+        "displayOrdinal": 192,
+        "modelNameRaw": "더 뉴 스포티지 5세대 하이브리드"
+      },
+      {
+        "displayOrdinal": 193,
+        "modelNameRaw": "타스만 오픈베드"
+      },
+      {
+        "displayOrdinal": 194,
+        "modelNameRaw": "더 뉴 K9"
+      },
+      {
+        "displayOrdinal": 195,
+        "modelNameRaw": "더 뉴 K3"
+      },
+      {
+        "displayOrdinal": 196,
+        "modelNameRaw": "올 뉴 K7"
+      },
+      {
+        "displayOrdinal": 197,
+        "modelNameRaw": "더 뉴 쏘울"
+      },
+      {
+        "displayOrdinal": 198,
+        "modelNameRaw": "올 뉴 모닝 (JA)"
+      },
+      {
+        "displayOrdinal": 199,
+        "modelNameRaw": "더 뉴 쏘렌토"
+      },
+      {
+        "displayOrdinal": 200,
+        "modelNameRaw": "더 뉴 레이"
+      },
+      {
+        "displayOrdinal": 201,
+        "modelNameRaw": "더 뉴 카니발"
+      },
+      {
+        "displayOrdinal": 202,
+        "modelNameRaw": "셀토스"
+      },
+      {
+        "displayOrdinal": 203,
+        "modelNameRaw": "K5 3세대"
+      },
+      {
+        "displayOrdinal": 204,
+        "modelNameRaw": "K8"
+      },
+      {
+        "displayOrdinal": 205,
+        "modelNameRaw": "스포티지 5세대"
+      },
+      {
+        "displayOrdinal": 206,
+        "modelNameRaw": "디 올 뉴 니로 EV"
+      },
+      {
+        "displayOrdinal": 207,
+        "modelNameRaw": "더 뉴 K3 쿱"
+      },
+      {
+        "displayOrdinal": 208,
+        "modelNameRaw": "올 뉴 K7 하이브리드"
+      },
+      {
+        "displayOrdinal": 209,
+        "modelNameRaw": "K5 하이브리드 3세대"
+      },
+      {
+        "displayOrdinal": 210,
+        "modelNameRaw": "K8 하이브리드"
+      },
+      {
+        "displayOrdinal": 211,
+        "modelNameRaw": "스포티지 5세대 하이브리드"
+      },
+      {
+        "displayOrdinal": 212,
+        "modelNameRaw": "니로 플러스"
+      },
+      {
+        "displayOrdinal": 213,
+        "modelNameRaw": "더 뉴 K3 유로"
+      },
+      {
+        "displayOrdinal": 214,
+        "modelNameRaw": "더 뉴 K5 2세대"
+      },
+      {
+        "displayOrdinal": 215,
+        "modelNameRaw": "스포티지 더 볼드"
+      },
+      {
+        "displayOrdinal": 216,
+        "modelNameRaw": "더 뉴 니로"
+      },
+      {
+        "displayOrdinal": 217,
+        "modelNameRaw": "K3"
+      },
+      {
+        "displayOrdinal": 218,
+        "modelNameRaw": "스포티지 4세대"
+      },
+      {
+        "displayOrdinal": 219,
+        "modelNameRaw": "니로"
+      },
+      {
+        "displayOrdinal": 220,
+        "modelNameRaw": "더 뉴 K5 하이브리드 2세대"
+      },
+      {
+        "displayOrdinal": 221,
+        "modelNameRaw": "K5 2세대"
+      },
+      {
+        "displayOrdinal": 222,
+        "modelNameRaw": "니로 EV"
+      },
+      {
+        "displayOrdinal": 223,
+        "modelNameRaw": "K5 하이브리드 2세대"
+      },
+      {
+        "displayOrdinal": 224,
+        "modelNameRaw": "스토닉"
+      },
+      {
+        "displayOrdinal": 225,
+        "modelNameRaw": "씨드"
+      },
+      {
+        "displayOrdinal": 226,
+        "modelNameRaw": "텔루라이드"
+      },
+      {
+        "displayOrdinal": 227,
+        "modelNameRaw": "EV9"
+      },
+      {
+        "displayOrdinal": 228,
+        "modelNameRaw": "EV3"
+      },
+      {
+        "displayOrdinal": 229,
+        "modelNameRaw": "EV4"
+      },
+      {
+        "displayOrdinal": 230,
+        "modelNameRaw": "PV5"
+      },
+      {
+        "displayOrdinal": 231,
+        "modelNameRaw": "EV5"
+      },
+      {
+        "displayOrdinal": 232,
+        "modelNameRaw": "K3 쿱"
+      },
+      {
+        "displayOrdinal": 233,
+        "modelNameRaw": "K3 유로"
+      },
+      {
+        "displayOrdinal": 234,
+        "modelNameRaw": "더 뉴 K5"
+      },
+      {
+        "displayOrdinal": 235,
+        "modelNameRaw": "K5"
+      },
+      {
+        "displayOrdinal": 236,
+        "modelNameRaw": "K5 하이브리드"
+      },
+      {
+        "displayOrdinal": 237,
+        "modelNameRaw": "더 뉴 K7"
+      },
+      {
+        "displayOrdinal": 238,
+        "modelNameRaw": "K7 하이브리드"
+      },
+      {
+        "displayOrdinal": 239,
+        "modelNameRaw": "더 프레스티지 K7"
+      },
+      {
+        "displayOrdinal": 240,
+        "modelNameRaw": "K7"
+      },
+      {
+        "displayOrdinal": 241,
+        "modelNameRaw": "K9"
+      },
+      {
+        "displayOrdinal": 242,
+        "modelNameRaw": "X-TREK"
+      },
+      {
+        "displayOrdinal": 243,
+        "modelNameRaw": "델타"
+      },
+      {
+        "displayOrdinal": 244,
+        "modelNameRaw": "레토나"
+      },
+      {
+        "displayOrdinal": 245,
+        "modelNameRaw": "레이"
+      },
+      {
+        "displayOrdinal": 246,
+        "modelNameRaw": "로체 이노베이션"
+      },
+      {
+        "displayOrdinal": 247,
+        "modelNameRaw": "로체 어드밴스"
+      },
+      {
+        "displayOrdinal": 248,
+        "modelNameRaw": "로체"
+      },
+      {
+        "displayOrdinal": 249,
+        "modelNameRaw": "록스타 R2"
+      },
+      {
+        "displayOrdinal": 250,
+        "modelNameRaw": "록스타"
+      },
+      {
+        "displayOrdinal": 251,
+        "modelNameRaw": "리갈"
+      },
+      {
+        "displayOrdinal": 252,
+        "modelNameRaw": "리오"
+      },
+      {
+        "displayOrdinal": 253,
+        "modelNameRaw": "더 뉴 모닝"
+      },
+      {
+        "displayOrdinal": 254,
+        "modelNameRaw": "올 뉴 모닝"
+      },
+      {
+        "displayOrdinal": 255,
+        "modelNameRaw": "뉴모닝"
+      },
+      {
+        "displayOrdinal": 256,
+        "modelNameRaw": "모닝"
+      },
+      {
+        "displayOrdinal": 257,
+        "modelNameRaw": "모하비"
+      },
+      {
+        "displayOrdinal": 258,
+        "modelNameRaw": "하이베스타"
+      },
+      {
+        "displayOrdinal": 259,
+        "modelNameRaw": "베스타"
+      },
+      {
+        "displayOrdinal": 260,
+        "modelNameRaw": "봉고III 미니버스"
+      },
+      {
+        "displayOrdinal": 261,
+        "modelNameRaw": "브리샤"
+      },
+      {
+        "displayOrdinal": 262,
+        "modelNameRaw": "비스토"
+      },
+      {
+        "displayOrdinal": 263,
+        "modelNameRaw": "세피아2"
+      },
+      {
+        "displayOrdinal": 264,
+        "modelNameRaw": "세피아"
+      },
+      {
+        "displayOrdinal": 265,
+        "modelNameRaw": "슈마"
+      },
+      {
+        "displayOrdinal": 266,
+        "modelNameRaw": "스펙트라"
+      },
+      {
+        "displayOrdinal": 267,
+        "modelNameRaw": "더 뉴 스포티지 R"
+      },
+      {
+        "displayOrdinal": 268,
+        "modelNameRaw": "스포티지 R"
+      },
+      {
+        "displayOrdinal": 269,
+        "modelNameRaw": "New 스포티지"
+      },
+      {
+        "displayOrdinal": 270,
+        "modelNameRaw": "스포티지"
+      },
+      {
+        "displayOrdinal": 271,
+        "modelNameRaw": "뉴쎄라토"
+      },
+      {
+        "displayOrdinal": 272,
+        "modelNameRaw": "쎄라토"
+      },
+      {
+        "displayOrdinal": 273,
+        "modelNameRaw": "올 뉴 쏘렌토"
+      },
+      {
+        "displayOrdinal": 274,
+        "modelNameRaw": "뉴 쏘렌토 R"
+      },
+      {
+        "displayOrdinal": 275,
+        "modelNameRaw": "쏘렌토 R"
+      },
+      {
+        "displayOrdinal": 276,
+        "modelNameRaw": "뉴쏘렌토"
+      },
+      {
+        "displayOrdinal": 277,
+        "modelNameRaw": "쏘렌토"
+      },
+      {
+        "displayOrdinal": 278,
+        "modelNameRaw": "올 뉴 쏘울"
+      },
+      {
+        "displayOrdinal": 279,
+        "modelNameRaw": "쏘울"
+      },
+      {
+        "displayOrdinal": 280,
+        "modelNameRaw": "쏘울 EV"
+      },
+      {
+        "displayOrdinal": 281,
+        "modelNameRaw": "아벨라"
+      },
+      {
+        "displayOrdinal": 282,
+        "modelNameRaw": "엔터프라이즈"
+      },
+      {
+        "displayOrdinal": 283,
+        "modelNameRaw": "엘란"
+      },
+      {
+        "displayOrdinal": 284,
+        "modelNameRaw": "오피러스 프리미엄"
+      },
+      {
+        "displayOrdinal": 285,
+        "modelNameRaw": "뉴오피러스"
+      },
+      {
+        "displayOrdinal": 286,
+        "modelNameRaw": "오피러스"
+      },
+      {
+        "displayOrdinal": 287,
+        "modelNameRaw": "옵티마"
+      },
+      {
+        "displayOrdinal": 288,
+        "modelNameRaw": "올 뉴 카니발"
+      },
+      {
+        "displayOrdinal": 289,
+        "modelNameRaw": "카니발 R"
+      },
+      {
+        "displayOrdinal": 290,
+        "modelNameRaw": "그랜드 카니발"
+      },
+      {
+        "displayOrdinal": 291,
+        "modelNameRaw": "뉴카니발"
+      },
+      {
+        "displayOrdinal": 292,
+        "modelNameRaw": "카니발 II"
+      },
+      {
+        "displayOrdinal": 293,
+        "modelNameRaw": "카니발"
+      },
+      {
+        "displayOrdinal": 294,
+        "modelNameRaw": "올 뉴 카렌스"
+      },
+      {
+        "displayOrdinal": 295,
+        "modelNameRaw": "뉴카렌스"
+      },
+      {
+        "displayOrdinal": 296,
+        "modelNameRaw": "카렌스 II"
+      },
+      {
+        "displayOrdinal": 297,
+        "modelNameRaw": "카렌스"
+      },
+      {
+        "displayOrdinal": 298,
+        "modelNameRaw": "카스타"
+      },
+      {
+        "displayOrdinal": 299,
+        "modelNameRaw": "캐피탈"
+      },
+      {
+        "displayOrdinal": 300,
+        "modelNameRaw": "뉴콩코드"
+      },
+      {
+        "displayOrdinal": 301,
+        "modelNameRaw": "콩코드"
+      },
+      {
+        "displayOrdinal": 302,
+        "modelNameRaw": "크레도스 2"
+      },
+      {
+        "displayOrdinal": 303,
+        "modelNameRaw": "크레도스"
+      },
+      {
+        "displayOrdinal": 304,
+        "modelNameRaw": "타우너"
+      },
+      {
+        "displayOrdinal": 305,
+        "modelNameRaw": "토픽"
+      },
+      {
+        "displayOrdinal": 306,
+        "modelNameRaw": "파크타운"
+      },
+      {
+        "displayOrdinal": 307,
+        "modelNameRaw": "포르테"
+      },
+      {
+        "displayOrdinal": 308,
+        "modelNameRaw": "포르테 쿱"
+      },
+      {
+        "displayOrdinal": 309,
+        "modelNameRaw": "포르테 해치백"
+      },
+      {
+        "displayOrdinal": 310,
+        "modelNameRaw": "뉴포텐샤"
+      },
+      {
+        "displayOrdinal": 311,
+        "modelNameRaw": "포텐샤"
+      },
+      {
+        "displayOrdinal": 312,
+        "modelNameRaw": "더 뉴 프라이드"
+      },
+      {
+        "displayOrdinal": 313,
+        "modelNameRaw": "올 뉴 프라이드"
+      },
+      {
+        "displayOrdinal": 314,
+        "modelNameRaw": "프라이드(신형)"
+      },
+      {
+        "displayOrdinal": 315,
+        "modelNameRaw": "프라이드"
+      },
+      {
+        "displayOrdinal": 316,
+        "modelNameRaw": "프레지오"
+      },
+      {
+        "displayOrdinal": 317,
+        "modelNameRaw": "피아트132"
+      },
+      {
+        "displayOrdinal": 318,
+        "modelNameRaw": "임팔라"
+      },
+      {
+        "displayOrdinal": 319,
+        "modelNameRaw": "더 뉴 아베오 세단"
+      },
+      {
+        "displayOrdinal": 320,
+        "modelNameRaw": "올 뉴 크루즈"
+      },
+      {
+        "displayOrdinal": 321,
+        "modelNameRaw": "볼트(Volt)"
+      },
+      {
+        "displayOrdinal": 322,
+        "modelNameRaw": "더 뉴 스파크"
+      },
+      {
+        "displayOrdinal": 323,
+        "modelNameRaw": "더 뉴 말리부"
+      },
+      {
+        "displayOrdinal": 324,
+        "modelNameRaw": "더 뉴 카마로"
+      },
+      {
+        "displayOrdinal": 325,
+        "modelNameRaw": "뉴 볼트 EV"
+      },
+      {
+        "displayOrdinal": 326,
+        "modelNameRaw": "더 넥스트 이쿼녹스"
+      },
+      {
+        "displayOrdinal": 327,
+        "modelNameRaw": "트랙스 크로스오버"
+      },
+      {
+        "displayOrdinal": 328,
+        "modelNameRaw": "더 뉴 트레일블레이저"
+      },
+      {
+        "displayOrdinal": 329,
+        "modelNameRaw": "올 뉴 콜로라도"
+      },
+      {
+        "displayOrdinal": 330,
+        "modelNameRaw": "어메이징 뉴 크루즈"
+      },
+      {
+        "displayOrdinal": 331,
+        "modelNameRaw": "더 넥스트 스파크"
+      },
+      {
+        "displayOrdinal": 332,
+        "modelNameRaw": "올 뉴 말리부"
+      },
+      {
+        "displayOrdinal": 333,
+        "modelNameRaw": "올 뉴 카마로"
+      },
+      {
+        "displayOrdinal": 334,
+        "modelNameRaw": "더 뉴 아베오 해치백"
+      },
+      {
+        "displayOrdinal": 335,
+        "modelNameRaw": "더 뉴 트랙스"
+      },
+      {
+        "displayOrdinal": 336,
+        "modelNameRaw": "볼트 EV"
+      },
+      {
+        "displayOrdinal": 337,
+        "modelNameRaw": "이쿼녹스"
+      },
+      {
+        "displayOrdinal": 338,
+        "modelNameRaw": "트레일블레이저"
+      },
+      {
+        "displayOrdinal": 339,
+        "modelNameRaw": "리얼 뉴 콜로라도"
+      },
+      {
+        "displayOrdinal": 340,
+        "modelNameRaw": "어메이징 뉴 크루즈5"
+      },
+      {
+        "displayOrdinal": 341,
+        "modelNameRaw": "콜로라도"
+      },
+      {
+        "displayOrdinal": 342,
+        "modelNameRaw": "알페온"
+      },
+      {
+        "displayOrdinal": 343,
+        "modelNameRaw": "트래버스"
+      },
+      {
+        "displayOrdinal": 344,
+        "modelNameRaw": "볼트 EUV"
+      },
+      {
+        "displayOrdinal": 345,
+        "modelNameRaw": "타호"
+      },
+      {
+        "displayOrdinal": 346,
+        "modelNameRaw": "말리부"
+      },
+      {
+        "displayOrdinal": 347,
+        "modelNameRaw": "크루즈"
+      },
+      {
+        "displayOrdinal": 348,
+        "modelNameRaw": "크루즈5"
+      },
+      {
+        "displayOrdinal": 349,
+        "modelNameRaw": "아베오 세단"
+      },
+      {
+        "displayOrdinal": 350,
+        "modelNameRaw": "아베오 해치백"
+      },
+      {
+        "displayOrdinal": 351,
+        "modelNameRaw": "스파크"
+      },
+      {
+        "displayOrdinal": 352,
+        "modelNameRaw": "스파크 EV"
+      },
+      {
+        "displayOrdinal": 353,
+        "modelNameRaw": "트랙스"
+      },
+      {
+        "displayOrdinal": 354,
+        "modelNameRaw": "캡티바"
+      },
+      {
+        "displayOrdinal": 355,
+        "modelNameRaw": "올란도"
+      },
+      {
+        "displayOrdinal": 356,
+        "modelNameRaw": "카마로"
+      },
+      {
+        "displayOrdinal": 357,
+        "modelNameRaw": "콜벳"
+      },
+      {
+        "displayOrdinal": 358,
+        "modelNameRaw": "G2X"
+      },
+      {
+        "displayOrdinal": 359,
+        "modelNameRaw": "넥시아"
+      },
+      {
+        "displayOrdinal": 360,
+        "modelNameRaw": "누비라 2"
+      },
+      {
+        "displayOrdinal": 361,
+        "modelNameRaw": "누비라"
+      },
+      {
+        "displayOrdinal": 362,
+        "modelNameRaw": "뉴 다마스"
+      },
+      {
+        "displayOrdinal": 363,
+        "modelNameRaw": "다마스 II"
+      },
+      {
+        "displayOrdinal": 364,
+        "modelNameRaw": "다마스"
+      },
+      {
+        "displayOrdinal": 365,
+        "modelNameRaw": "라노스 II"
+      },
+      {
+        "displayOrdinal": 366,
+        "modelNameRaw": "라노스"
+      },
+      {
+        "displayOrdinal": 367,
+        "modelNameRaw": "뉴 라보"
+      },
+      {
+        "displayOrdinal": 368,
+        "modelNameRaw": "라보"
+      },
+      {
+        "displayOrdinal": 369,
+        "modelNameRaw": "라세티"
+      },
+      {
+        "displayOrdinal": 370,
+        "modelNameRaw": "라세티 프리미어"
+      },
+      {
+        "displayOrdinal": 371,
+        "modelNameRaw": "레간자"
+      },
+      {
+        "displayOrdinal": 372,
+        "modelNameRaw": "레조"
+      },
+      {
+        "displayOrdinal": 373,
+        "modelNameRaw": "로얄살롱"
+      },
+      {
+        "displayOrdinal": 374,
+        "modelNameRaw": "르망"
+      },
+      {
+        "displayOrdinal": 375,
+        "modelNameRaw": "마티즈"
+      },
+      {
+        "displayOrdinal": 376,
+        "modelNameRaw": "마티즈 II"
+      },
+      {
+        "displayOrdinal": 377,
+        "modelNameRaw": "마티즈 클래식"
+      },
+      {
+        "displayOrdinal": 378,
+        "modelNameRaw": "All New 마티즈"
+      },
+      {
+        "displayOrdinal": 379,
+        "modelNameRaw": "마티즈 크리에이티브"
+      },
+      {
+        "displayOrdinal": 380,
+        "modelNameRaw": "매그너스"
+      },
+      {
+        "displayOrdinal": 381,
+        "modelNameRaw": "맵시"
+      },
+      {
+        "displayOrdinal": 382,
+        "modelNameRaw": "베리타스"
+      },
+      {
+        "displayOrdinal": 383,
+        "modelNameRaw": "브로엄"
+      },
+      {
+        "displayOrdinal": 384,
+        "modelNameRaw": "슈퍼살롱"
+      },
+      {
+        "displayOrdinal": 385,
+        "modelNameRaw": "스테이츠맨"
+      },
+      {
+        "displayOrdinal": 386,
+        "modelNameRaw": "씨에로"
+      },
+      {
+        "displayOrdinal": 387,
+        "modelNameRaw": "아카디아"
+      },
+      {
+        "displayOrdinal": 388,
+        "modelNameRaw": "에스페로"
+      },
+      {
+        "displayOrdinal": 389,
+        "modelNameRaw": "윈스톰"
+      },
+      {
+        "displayOrdinal": 390,
+        "modelNameRaw": "윈스톰 맥스"
+      },
+      {
+        "displayOrdinal": 391,
+        "modelNameRaw": "임페리얼"
+      },
+      {
+        "displayOrdinal": 392,
+        "modelNameRaw": "젠트라"
+      },
+      {
+        "displayOrdinal": 393,
+        "modelNameRaw": "젠트라 X"
+      },
+      {
+        "displayOrdinal": 394,
+        "modelNameRaw": "칼로스"
+      },
+      {
+        "displayOrdinal": 395,
+        "modelNameRaw": "토스카"
+      },
+      {
+        "displayOrdinal": 396,
+        "modelNameRaw": "토스카 프리미엄6"
+      },
+      {
+        "displayOrdinal": 397,
+        "modelNameRaw": "티코"
+      },
+      {
+        "displayOrdinal": 398,
+        "modelNameRaw": "프린스"
+      },
+      {
+        "displayOrdinal": 399,
+        "modelNameRaw": "로얄 프린스"
+      },
+      {
+        "displayOrdinal": 400,
+        "modelNameRaw": "뉴프린스"
+      },
+      {
+        "displayOrdinal": 401,
+        "modelNameRaw": "뷰티풀 코란도"
+      },
+      {
+        "displayOrdinal": 402,
+        "modelNameRaw": "더 뉴 렉스턴 스포츠"
+      },
+      {
+        "displayOrdinal": 403,
+        "modelNameRaw": "더 뉴 티볼리"
+      },
+      {
+        "displayOrdinal": 404,
+        "modelNameRaw": "액티언 2세대"
+      },
+      {
+        "displayOrdinal": 405,
+        "modelNameRaw": "무쏘 (Q300)"
+      },
+      {
+        "displayOrdinal": 406,
+        "modelNameRaw": "뉴 토레스"
+      },
+      {
+        "displayOrdinal": 407,
+        "modelNameRaw": "더 뉴 렉스턴 스포츠 칸"
+      },
+      {
+        "displayOrdinal": 408,
+        "modelNameRaw": "코란도 EV (이모션)"
+      },
+      {
+        "displayOrdinal": 409,
+        "modelNameRaw": "더 뉴 티볼리 에어"
+      },
+      {
+        "displayOrdinal": 410,
+        "modelNameRaw": "더 뉴 토레스"
+      },
+      {
+        "displayOrdinal": 411,
+        "modelNameRaw": "무쏘 스포츠 (Q260)"
+      },
+      {
+        "displayOrdinal": 412,
+        "modelNameRaw": "뉴 스타일 코란도 C"
+      },
+      {
+        "displayOrdinal": 413,
+        "modelNameRaw": "렉스턴 스포츠"
+      },
+      {
+        "displayOrdinal": 414,
+        "modelNameRaw": "베리 뉴 티볼리"
+      },
+      {
+        "displayOrdinal": 415,
+        "modelNameRaw": "토레스 EVX"
+      },
+      {
+        "displayOrdinal": 416,
+        "modelNameRaw": "무쏘 스포츠 칸 (Q261)"
+      },
+      {
+        "displayOrdinal": 417,
+        "modelNameRaw": "티볼리 아머"
+      },
+      {
+        "displayOrdinal": 418,
+        "modelNameRaw": "렉스턴 스포츠 칸"
+      },
+      {
+        "displayOrdinal": 419,
+        "modelNameRaw": "토레스"
+      },
+      {
+        "displayOrdinal": 420,
+        "modelNameRaw": "무쏘 EV (O100)"
+      },
+      {
+        "displayOrdinal": 421,
+        "modelNameRaw": "티볼리 에어"
+      },
+      {
+        "displayOrdinal": 422,
+        "modelNameRaw": "렉스턴 뉴 아레나"
+      },
+      {
+        "displayOrdinal": 423,
+        "modelNameRaw": "더 뉴 코란도 스포츠"
+      },
+      {
+        "displayOrdinal": 424,
+        "modelNameRaw": "올 뉴 렉스턴"
+      },
+      {
+        "displayOrdinal": 425,
+        "modelNameRaw": "G4 렉스턴"
+      },
+      {
+        "displayOrdinal": 426,
+        "modelNameRaw": "렉스턴 W"
+      },
+      {
+        "displayOrdinal": 427,
+        "modelNameRaw": "슈퍼 렉스턴"
+      },
+      {
+        "displayOrdinal": 428,
+        "modelNameRaw": "렉스턴 II"
+      },
+      {
+        "displayOrdinal": 429,
+        "modelNameRaw": "뉴렉스턴"
+      },
+      {
+        "displayOrdinal": 430,
+        "modelNameRaw": "렉스턴"
+      },
+      {
+        "displayOrdinal": 431,
+        "modelNameRaw": "로디우스 유로"
+      },
+      {
+        "displayOrdinal": 432,
+        "modelNameRaw": "뉴로디우스"
+      },
+      {
+        "displayOrdinal": 433,
+        "modelNameRaw": "로디우스"
+      },
+      {
+        "displayOrdinal": 434,
+        "modelNameRaw": "무쏘"
+      },
+      {
+        "displayOrdinal": 435,
+        "modelNameRaw": "무쏘 스포츠"
+      },
+      {
+        "displayOrdinal": 436,
+        "modelNameRaw": "뉴무쏘"
+      },
+      {
+        "displayOrdinal": 437,
+        "modelNameRaw": "뉴무쏘 밴"
+      },
+      {
+        "displayOrdinal": 438,
+        "modelNameRaw": "액티언"
+      },
+      {
+        "displayOrdinal": 439,
+        "modelNameRaw": "액티언 스포츠"
+      },
+      {
+        "displayOrdinal": 440,
+        "modelNameRaw": "이스타나"
+      },
+      {
+        "displayOrdinal": 441,
+        "modelNameRaw": "뉴체어맨 W"
+      },
+      {
+        "displayOrdinal": 442,
+        "modelNameRaw": "체어맨 W"
+      },
+      {
+        "displayOrdinal": 443,
+        "modelNameRaw": "체어맨 H 뉴 클래식"
+      },
+      {
+        "displayOrdinal": 444,
+        "modelNameRaw": "체어맨 H"
+      },
+      {
+        "displayOrdinal": 445,
+        "modelNameRaw": "뉴체어맨"
+      },
+      {
+        "displayOrdinal": 446,
+        "modelNameRaw": "체어맨"
+      },
+      {
+        "displayOrdinal": 447,
+        "modelNameRaw": "칼리스타"
+      },
+      {
+        "displayOrdinal": 448,
+        "modelNameRaw": "뉴카이런"
+      },
+      {
+        "displayOrdinal": 449,
+        "modelNameRaw": "카이런"
+      },
+      {
+        "displayOrdinal": 450,
+        "modelNameRaw": "뉴코란도 C"
+      },
+      {
+        "displayOrdinal": 451,
+        "modelNameRaw": "코란도 C"
+      },
+      {
+        "displayOrdinal": 452,
+        "modelNameRaw": "코란도 스포츠"
+      },
+      {
+        "displayOrdinal": 453,
+        "modelNameRaw": "코란도 투리스모"
+      },
+      {
+        "displayOrdinal": 454,
+        "modelNameRaw": "뉴코란도"
+      },
+      {
+        "displayOrdinal": 455,
+        "modelNameRaw": "코란도 훼미리"
+      },
+      {
+        "displayOrdinal": 456,
+        "modelNameRaw": "코란도 지프"
+      },
+      {
+        "displayOrdinal": 457,
+        "modelNameRaw": "티볼리"
+      },
+      {
+        "displayOrdinal": 458,
+        "modelNameRaw": "뉴훼미리"
+      },
+      {
+        "displayOrdinal": 459,
+        "modelNameRaw": "SM3 네오"
+      },
+      {
+        "displayOrdinal": 460,
+        "modelNameRaw": "뉴QM3"
+      },
+      {
+        "displayOrdinal": 461,
+        "modelNameRaw": "더 뉴 QM6"
+      },
+      {
+        "displayOrdinal": 462,
+        "modelNameRaw": "더 뉴 SM6"
+      },
+      {
+        "displayOrdinal": 463,
+        "modelNameRaw": "SM6"
+      },
+      {
+        "displayOrdinal": 464,
+        "modelNameRaw": "QM6"
+      },
+      {
+        "displayOrdinal": 465,
+        "modelNameRaw": "트위지"
+      },
+      {
+        "displayOrdinal": 466,
+        "modelNameRaw": "클리오"
+      },
+      {
+        "displayOrdinal": 467,
+        "modelNameRaw": "마스터"
+      },
+      {
+        "displayOrdinal": 468,
+        "modelNameRaw": "XM3"
+      },
+      {
+        "displayOrdinal": 469,
+        "modelNameRaw": "캡처"
+      },
+      {
+        "displayOrdinal": 470,
+        "modelNameRaw": "조에"
+      },
+      {
+        "displayOrdinal": 471,
+        "modelNameRaw": "아르카나"
+      },
+      {
+        "displayOrdinal": 472,
+        "modelNameRaw": "그랑 콜레오스"
+      },
+      {
+        "displayOrdinal": 473,
+        "modelNameRaw": "세닉"
+      },
+      {
+        "displayOrdinal": 474,
+        "modelNameRaw": "필랑트"
+      },
+      {
+        "displayOrdinal": 475,
+        "modelNameRaw": "뉴SM3"
+      },
+      {
+        "displayOrdinal": 476,
+        "modelNameRaw": "SM3 뉴 제너레이션"
+      },
+      {
+        "displayOrdinal": 477,
+        "modelNameRaw": "SM3"
+      },
+      {
+        "displayOrdinal": 478,
+        "modelNameRaw": "SM3 Z.E."
+      },
+      {
+        "displayOrdinal": 479,
+        "modelNameRaw": "SM5 노바"
+      },
+      {
+        "displayOrdinal": 480,
+        "modelNameRaw": "뉴SM5 플래티넘"
+      },
+      {
+        "displayOrdinal": 481,
+        "modelNameRaw": "뉴SM5(신형)"
+      },
+      {
+        "displayOrdinal": 482,
+        "modelNameRaw": "SM5 뉴 임프레션"
+      },
+      {
+        "displayOrdinal": 483,
+        "modelNameRaw": "뉴SM5"
+      },
+      {
+        "displayOrdinal": 484,
+        "modelNameRaw": "SM5"
+      },
+      {
+        "displayOrdinal": 485,
+        "modelNameRaw": "SM7 노바"
+      },
+      {
+        "displayOrdinal": 486,
+        "modelNameRaw": "All New SM7"
+      },
+      {
+        "displayOrdinal": 487,
+        "modelNameRaw": "SM7 New Art"
+      },
+      {
+        "displayOrdinal": 488,
+        "modelNameRaw": "SM7"
+      },
+      {
+        "displayOrdinal": 489,
+        "modelNameRaw": "QM3"
+      },
+      {
+        "displayOrdinal": 490,
+        "modelNameRaw": "QM5 네오"
+      },
+      {
+        "displayOrdinal": 491,
+        "modelNameRaw": "뉴QM5"
+      },
+      {
+        "displayOrdinal": 492,
+        "modelNameRaw": "QM5"
+      },
+      {
+        "displayOrdinal": 493,
+        "modelNameRaw": "어울림모터스-스피라"
+      },
+      {
+        "displayOrdinal": 494,
+        "modelNameRaw": "기타"
+      },
+      {
+        "displayOrdinal": 495,
+        "modelNameRaw": "EQ900"
+      },
+      {
+        "displayOrdinal": 496,
+        "modelNameRaw": "G80 (RG3)"
+      },
+      {
+        "displayOrdinal": 497,
+        "modelNameRaw": "더 뉴 G70"
+      },
+      {
+        "displayOrdinal": 498,
+        "modelNameRaw": "G90 (RS4)"
+      },
+      {
+        "displayOrdinal": 499,
+        "modelNameRaw": "G90"
+      },
+      {
+        "displayOrdinal": 500,
+        "modelNameRaw": "일렉트리파이드 G80 (RG3)"
+      },
+      {
+        "displayOrdinal": 501,
+        "modelNameRaw": "더 뉴 G70 슈팅브레이크"
+      },
+      {
+        "displayOrdinal": 502,
+        "modelNameRaw": "G80"
+      },
+      {
+        "displayOrdinal": 503,
+        "modelNameRaw": "G70"
+      },
+      {
+        "displayOrdinal": 504,
+        "modelNameRaw": "GV80"
+      },
+      {
+        "displayOrdinal": 505,
+        "modelNameRaw": "GV70"
+      },
+      {
+        "displayOrdinal": 506,
+        "modelNameRaw": "GV60"
+      },
+      {
+        "displayOrdinal": 507,
+        "modelNameRaw": "일렉트리파이드 GV70"
+      },
+      {
+        "displayOrdinal": 508,
+        "modelNameRaw": "GV80 쿠페"
+      },
+      {
+        "displayOrdinal": 509,
+        "modelNameRaw": "이티밴 프로"
+      },
+      {
+        "displayOrdinal": 510,
+        "modelNameRaw": "A1"
+      },
+      {
+        "displayOrdinal": 511,
+        "modelNameRaw": "TT (8S)"
+      },
+      {
+        "displayOrdinal": 512,
+        "modelNameRaw": "TTS (8S)"
+      },
+      {
+        "displayOrdinal": 513,
+        "modelNameRaw": "Q7 (4M)"
+      },
+      {
+        "displayOrdinal": 514,
+        "modelNameRaw": "A4 (B9)"
+      },
+      {
+        "displayOrdinal": 515,
+        "modelNameRaw": "R8 (4S)"
+      },
+      {
+        "displayOrdinal": 516,
+        "modelNameRaw": "A8 (D5)"
+      },
+      {
+        "displayOrdinal": 517,
+        "modelNameRaw": "A7 (4K)"
+      },
+      {
+        "displayOrdinal": 518,
+        "modelNameRaw": "S7 (4K)"
+      },
+      {
+        "displayOrdinal": 519,
+        "modelNameRaw": "S6 (C8)"
+      },
+      {
+        "displayOrdinal": 520,
+        "modelNameRaw": "S8 (D5)"
+      },
+      {
+        "displayOrdinal": 521,
+        "modelNameRaw": "SQ5 (FY)"
+      },
+      {
+        "displayOrdinal": 522,
+        "modelNameRaw": "TTRS (8S)"
+      },
+      {
+        "displayOrdinal": 523,
+        "modelNameRaw": "S4 (B9)"
+      },
+      {
+        "displayOrdinal": 524,
+        "modelNameRaw": "RS7 (4K)"
+      },
+      {
+        "displayOrdinal": 525,
+        "modelNameRaw": "RS5 (F5)"
+      },
+      {
+        "displayOrdinal": 526,
+        "modelNameRaw": "RS6 (C8)"
+      },
+      {
+        "displayOrdinal": 527,
+        "modelNameRaw": "A3 (8Y)"
+      },
+      {
+        "displayOrdinal": 528,
+        "modelNameRaw": "S3 (8Y)"
+      },
+      {
+        "displayOrdinal": 529,
+        "modelNameRaw": "RS3 (8Y)"
+      },
+      {
+        "displayOrdinal": 530,
+        "modelNameRaw": "A5 (B10)"
+      },
+      {
+        "displayOrdinal": 531,
+        "modelNameRaw": "S5 (B10)"
+      },
+      {
+        "displayOrdinal": 532,
+        "modelNameRaw": "Q5 (80A)"
+      },
+      {
+        "displayOrdinal": 533,
+        "modelNameRaw": "A6 (C9)"
+      },
+      {
+        "displayOrdinal": 534,
+        "modelNameRaw": "Q3 (FJ)"
+      },
+      {
+        "displayOrdinal": 535,
+        "modelNameRaw": "뉴 A3"
+      },
+      {
+        "displayOrdinal": 536,
+        "modelNameRaw": "RS3"
+      },
+      {
+        "displayOrdinal": 537,
+        "modelNameRaw": "A5 (F5)"
+      },
+      {
+        "displayOrdinal": 538,
+        "modelNameRaw": "A6 (C8)"
+      },
+      {
+        "displayOrdinal": 539,
+        "modelNameRaw": "Q5 (FY)"
+      },
+      {
+        "displayOrdinal": 540,
+        "modelNameRaw": "Q3 (F3)"
+      },
+      {
+        "displayOrdinal": 541,
+        "modelNameRaw": "S5 (F5)"
+      },
+      {
+        "displayOrdinal": 542,
+        "modelNameRaw": "Q8 (4M)"
+      },
+      {
+        "displayOrdinal": 543,
+        "modelNameRaw": "e-트론"
+      },
+      {
+        "displayOrdinal": 544,
+        "modelNameRaw": "Q2"
+      },
+      {
+        "displayOrdinal": 545,
+        "modelNameRaw": "SQ8 (4M)"
+      },
+      {
+        "displayOrdinal": 546,
+        "modelNameRaw": "RSQ8 (4M)"
+      },
+      {
+        "displayOrdinal": 547,
+        "modelNameRaw": "e-트론 GT"
+      },
+      {
+        "displayOrdinal": 548,
+        "modelNameRaw": "RS e-트론 GT"
+      },
+      {
+        "displayOrdinal": 549,
+        "modelNameRaw": "Q4 e-트론 (F4)"
+      },
+      {
+        "displayOrdinal": 550,
+        "modelNameRaw": "SQ7 (4M)"
+      },
+      {
+        "displayOrdinal": 551,
+        "modelNameRaw": "Q8 e-트론 (GE)"
+      },
+      {
+        "displayOrdinal": 552,
+        "modelNameRaw": "SQ8 e-트론 (GE)"
+      },
+      {
+        "displayOrdinal": 553,
+        "modelNameRaw": "Q6 e-트론 (GF)"
+      },
+      {
+        "displayOrdinal": 554,
+        "modelNameRaw": "SQ6 e-트론 (GF)"
+      },
+      {
+        "displayOrdinal": 555,
+        "modelNameRaw": "A6 e-트론"
+      },
+      {
+        "displayOrdinal": 556,
+        "modelNameRaw": "S6 e-트론"
+      },
+      {
+        "displayOrdinal": 557,
+        "modelNameRaw": "S e-트론 GT"
+      },
+      {
+        "displayOrdinal": 558,
+        "modelNameRaw": "A3"
+      },
+      {
+        "displayOrdinal": 559,
+        "modelNameRaw": "뉴 A4"
+      },
+      {
+        "displayOrdinal": 560,
+        "modelNameRaw": "A4"
+      },
+      {
+        "displayOrdinal": 561,
+        "modelNameRaw": "A5"
+      },
+      {
+        "displayOrdinal": 562,
+        "modelNameRaw": "뉴 A6"
+      },
+      {
+        "displayOrdinal": 563,
+        "modelNameRaw": "A6"
+      },
+      {
+        "displayOrdinal": 564,
+        "modelNameRaw": "A7"
+      },
+      {
+        "displayOrdinal": 565,
+        "modelNameRaw": "뉴 A8"
+      },
+      {
+        "displayOrdinal": 566,
+        "modelNameRaw": "A8"
+      },
+      {
+        "displayOrdinal": 567,
+        "modelNameRaw": "S3"
+      },
+      {
+        "displayOrdinal": 568,
+        "modelNameRaw": "뉴 S4"
+      },
+      {
+        "displayOrdinal": 569,
+        "modelNameRaw": "S4"
+      },
+      {
+        "displayOrdinal": 570,
+        "modelNameRaw": "S5"
+      },
+      {
+        "displayOrdinal": 571,
+        "modelNameRaw": "S6"
+      },
+      {
+        "displayOrdinal": 572,
+        "modelNameRaw": "S7"
+      },
+      {
+        "displayOrdinal": 573,
+        "modelNameRaw": "S8"
+      },
+      {
+        "displayOrdinal": 574,
+        "modelNameRaw": "뉴 TT"
+      },
+      {
+        "displayOrdinal": 575,
+        "modelNameRaw": "TT"
+      },
+      {
+        "displayOrdinal": 576,
+        "modelNameRaw": "TTS"
+      },
+      {
+        "displayOrdinal": 577,
+        "modelNameRaw": "TTRS"
+      },
+      {
+        "displayOrdinal": 578,
+        "modelNameRaw": "RS4"
+      },
+      {
+        "displayOrdinal": 579,
+        "modelNameRaw": "RS5"
+      },
+      {
+        "displayOrdinal": 580,
+        "modelNameRaw": "RS6"
+      },
+      {
+        "displayOrdinal": 581,
+        "modelNameRaw": "RS7"
+      },
+      {
+        "displayOrdinal": 582,
+        "modelNameRaw": "Q3"
+      },
+      {
+        "displayOrdinal": 583,
+        "modelNameRaw": "Q5"
+      },
+      {
+        "displayOrdinal": 584,
+        "modelNameRaw": "Q7"
+      },
+      {
+        "displayOrdinal": 585,
+        "modelNameRaw": "SQ5"
+      },
+      {
+        "displayOrdinal": 586,
+        "modelNameRaw": "R8"
+      },
+      {
+        "displayOrdinal": 587,
+        "modelNameRaw": "V8"
+      },
+      {
+        "displayOrdinal": 588,
+        "modelNameRaw": "80"
+      },
+      {
+        "displayOrdinal": 589,
+        "modelNameRaw": "90"
+      },
+      {
+        "displayOrdinal": 590,
+        "modelNameRaw": "100"
+      },
+      {
+        "displayOrdinal": 591,
+        "modelNameRaw": "올로드 콰트로"
+      },
+      {
+        "displayOrdinal": 592,
+        "modelNameRaw": "기타"
+      },
+      {
+        "displayOrdinal": 593,
+        "modelNameRaw": "1M (E82)"
+      },
+      {
+        "displayOrdinal": 594,
+        "modelNameRaw": "M6 (F12)"
+      },
+      {
+        "displayOrdinal": 595,
+        "modelNameRaw": "M 쿠페/로드스터 (E85)"
+      },
+      {
+        "displayOrdinal": 596,
+        "modelNameRaw": "M 쿠페/로드스터 (E36)"
+      },
+      {
+        "displayOrdinal": 597,
+        "modelNameRaw": "6시리즈 GT (G32)"
+      },
+      {
+        "displayOrdinal": 598,
+        "modelNameRaw": "X4 (G02)"
+      },
+      {
+        "displayOrdinal": 599,
+        "modelNameRaw": "X5 (G05)"
+      },
+      {
+        "displayOrdinal": 600,
+        "modelNameRaw": "3시리즈 (G20)"
+      },
+      {
+        "displayOrdinal": 601,
+        "modelNameRaw": "Z4 (G29)"
+      },
+      {
+        "displayOrdinal": 602,
+        "modelNameRaw": "8시리즈 (G15)"
+      },
+      {
+        "displayOrdinal": 603,
+        "modelNameRaw": "X6 (G06)"
+      },
+      {
+        "displayOrdinal": 604,
+        "modelNameRaw": "X5M (G05)"
+      },
+      {
+        "displayOrdinal": 605,
+        "modelNameRaw": "X6M (G06)"
+      },
+      {
+        "displayOrdinal": 606,
+        "modelNameRaw": "4시리즈 (G22)"
+      },
+      {
+        "displayOrdinal": 607,
+        "modelNameRaw": "M3 (G80)"
+      },
+      {
+        "displayOrdinal": 608,
+        "modelNameRaw": "M4 (G82)"
+      },
+      {
+        "displayOrdinal": 609,
+        "modelNameRaw": "2시리즈 (G42)"
+      },
+      {
+        "displayOrdinal": 610,
+        "modelNameRaw": "7시리즈 (G70)"
+      },
+      {
+        "displayOrdinal": 611,
+        "modelNameRaw": "X1 (U11)"
+      },
+      {
+        "displayOrdinal": 612,
+        "modelNameRaw": "M2 (G87)"
+      },
+      {
+        "displayOrdinal": 613,
+        "modelNameRaw": "5시리즈 (G60)"
+      },
+      {
+        "displayOrdinal": 614,
+        "modelNameRaw": "X2 (U10)"
+      },
+      {
+        "displayOrdinal": 615,
+        "modelNameRaw": "X3 (G45)"
+      },
+      {
+        "displayOrdinal": 616,
+        "modelNameRaw": "M5 (G90)"
+      },
+      {
+        "displayOrdinal": 617,
+        "modelNameRaw": "1시리즈 (F70)"
+      },
+      {
+        "displayOrdinal": 618,
+        "modelNameRaw": "iX3 (NA5)"
+      },
+      {
+        "displayOrdinal": 619,
+        "modelNameRaw": "7시리즈 (G11)"
+      },
+      {
+        "displayOrdinal": 620,
+        "modelNameRaw": "X1 (F48)"
+      },
+      {
+        "displayOrdinal": 621,
+        "modelNameRaw": "3시리즈 (F30)"
+      },
+      {
+        "displayOrdinal": 622,
+        "modelNameRaw": "M2 (F87)"
+      },
+      {
+        "displayOrdinal": 623,
+        "modelNameRaw": "M3 (F80)"
+      },
+      {
+        "displayOrdinal": 624,
+        "modelNameRaw": "M4 (F82)"
+      },
+      {
+        "displayOrdinal": 625,
+        "modelNameRaw": "M6 (E63)"
+      },
+      {
+        "displayOrdinal": 626,
+        "modelNameRaw": "X5M (F15)"
+      },
+      {
+        "displayOrdinal": 627,
+        "modelNameRaw": "X6M (F16)"
+      },
+      {
+        "displayOrdinal": 628,
+        "modelNameRaw": "5시리즈 (G30)"
+      },
+      {
+        "displayOrdinal": 629,
+        "modelNameRaw": "X3 (G01)"
+      },
+      {
+        "displayOrdinal": 630,
+        "modelNameRaw": "M5 (F90)"
+      },
+      {
+        "displayOrdinal": 631,
+        "modelNameRaw": "X2 (F39)"
+      },
+      {
+        "displayOrdinal": 632,
+        "modelNameRaw": "1시리즈 (F40)"
+      },
+      {
+        "displayOrdinal": 633,
+        "modelNameRaw": "iX3"
+      },
+      {
+        "displayOrdinal": 634,
+        "modelNameRaw": "1시리즈 (F20)"
+      },
+      {
+        "displayOrdinal": 635,
+        "modelNameRaw": "5시리즈 (F10)"
+      },
+      {
+        "displayOrdinal": 636,
+        "modelNameRaw": "M3 (E90)"
+      },
+      {
+        "displayOrdinal": 637,
+        "modelNameRaw": "M5 (F10)"
+      },
+      {
+        "displayOrdinal": 638,
+        "modelNameRaw": "X5M (E70)"
+      },
+      {
+        "displayOrdinal": 639,
+        "modelNameRaw": "X6M (E71)"
+      },
+      {
+        "displayOrdinal": 640,
+        "modelNameRaw": "2시리즈 그란쿠페 (F74)"
+      },
+      {
+        "displayOrdinal": 641,
+        "modelNameRaw": "7시리즈 (E65)"
+      },
+      {
+        "displayOrdinal": 642,
+        "modelNameRaw": "M3 (E46)"
+      },
+      {
+        "displayOrdinal": 643,
+        "modelNameRaw": "M5 (E60)"
+      },
+      {
+        "displayOrdinal": 644,
+        "modelNameRaw": "1시리즈 (E82)"
+      },
+      {
+        "displayOrdinal": 645,
+        "modelNameRaw": "2시리즈 그란쿠페 (F44)"
+      },
+      {
+        "displayOrdinal": 646,
+        "modelNameRaw": "M3 (E36)"
+      },
+      {
+        "displayOrdinal": 647,
+        "modelNameRaw": "M5 (E39)"
+      },
+      {
+        "displayOrdinal": 648,
+        "modelNameRaw": "2시리즈 액티브 투어러 (U06)"
+      },
+      {
+        "displayOrdinal": 649,
+        "modelNameRaw": "M5 (E34)"
+      },
+      {
+        "displayOrdinal": 650,
+        "modelNameRaw": "M5 (E28)"
+      },
+      {
+        "displayOrdinal": 651,
+        "modelNameRaw": "X7 (G07)"
+      },
+      {
+        "displayOrdinal": 652,
+        "modelNameRaw": "X3M (G01)"
+      },
+      {
+        "displayOrdinal": 653,
+        "modelNameRaw": "X4M (G02)"
+      },
+      {
+        "displayOrdinal": 654,
+        "modelNameRaw": "M8 (G15)"
+      },
+      {
+        "displayOrdinal": 655,
+        "modelNameRaw": "i4"
+      },
+      {
+        "displayOrdinal": 656,
+        "modelNameRaw": "iX"
+      },
+      {
+        "displayOrdinal": 657,
+        "modelNameRaw": "i7 (G70)"
+      },
+      {
+        "displayOrdinal": 658,
+        "modelNameRaw": "iX1 (U11)"
+      },
+      {
+        "displayOrdinal": 659,
+        "modelNameRaw": "XM (G09)"
+      },
+      {
+        "displayOrdinal": 660,
+        "modelNameRaw": "i5 (G60)"
+      },
+      {
+        "displayOrdinal": 661,
+        "modelNameRaw": "iX2 (U10)"
+      },
+      {
+        "displayOrdinal": 662,
+        "modelNameRaw": "2시리즈 (F22)"
+      },
+      {
+        "displayOrdinal": 663,
+        "modelNameRaw": "2시리즈 액티브 투어러 (F45)"
+      },
+      {
+        "displayOrdinal": 664,
+        "modelNameRaw": "3시리즈 (E90)"
+      },
+      {
+        "displayOrdinal": 665,
+        "modelNameRaw": "3시리즈"
+      },
+      {
+        "displayOrdinal": 666,
+        "modelNameRaw": "4시리즈 (F32)"
+      },
+      {
+        "displayOrdinal": 667,
+        "modelNameRaw": "5시리즈 (E60)"
+      },
+      {
+        "displayOrdinal": 668,
+        "modelNameRaw": "5시리즈"
+      },
+      {
+        "displayOrdinal": 669,
+        "modelNameRaw": "6시리즈 (F12)"
+      },
+      {
+        "displayOrdinal": 670,
+        "modelNameRaw": "6시리즈 (E63)"
+      },
+      {
+        "displayOrdinal": 671,
+        "modelNameRaw": "7시리즈 (F01)"
+      },
+      {
+        "displayOrdinal": 672,
+        "modelNameRaw": "7시리즈"
+      },
+      {
+        "displayOrdinal": 673,
+        "modelNameRaw": "8시리즈"
+      },
+      {
+        "displayOrdinal": 674,
+        "modelNameRaw": "X1 (E84)"
+      },
+      {
+        "displayOrdinal": 675,
+        "modelNameRaw": "X3 (F25)"
+      },
+      {
+        "displayOrdinal": 676,
+        "modelNameRaw": "X3 (E83)"
+      },
+      {
+        "displayOrdinal": 677,
+        "modelNameRaw": "X4 (F26)"
+      },
+      {
+        "displayOrdinal": 678,
+        "modelNameRaw": "X5 (F15)"
+      },
+      {
+        "displayOrdinal": 679,
+        "modelNameRaw": "X5 (E70)"
+      },
+      {
+        "displayOrdinal": 680,
+        "modelNameRaw": "X5 (E53)"
+      },
+      {
+        "displayOrdinal": 681,
+        "modelNameRaw": "X6 (E71)"
+      },
+      {
+        "displayOrdinal": 682,
+        "modelNameRaw": "Z3"
+      },
+      {
+        "displayOrdinal": 683,
+        "modelNameRaw": "Z4 (E89)"
+      },
+      {
+        "displayOrdinal": 684,
+        "modelNameRaw": "Z4 (E85)"
+      },
+      {
+        "displayOrdinal": 685,
+        "modelNameRaw": "Z8"
+      },
+      {
+        "displayOrdinal": 686,
+        "modelNameRaw": "3시리즈 GT (F34)"
+      },
+      {
+        "displayOrdinal": 687,
+        "modelNameRaw": "5시리즈 GT (F07)"
+      },
+      {
+        "displayOrdinal": 688,
+        "modelNameRaw": "i3"
+      },
+      {
+        "displayOrdinal": 689,
+        "modelNameRaw": "i8"
+      },
+      {
+        "displayOrdinal": 690,
+        "modelNameRaw": "기타"
+      },
+      {
+        "displayOrdinal": 691,
+        "modelNameRaw": "X6 (F16)"
+      },
+      {
+        "displayOrdinal": 692,
+        "modelNameRaw": "SLC-클래스 R172"
+      },
+      {
+        "displayOrdinal": 693,
+        "modelNameRaw": "B-클래스 W246"
+      },
+      {
+        "displayOrdinal": 694,
+        "modelNameRaw": "CLS-클래스 C257"
+      },
+      {
+        "displayOrdinal": 695,
+        "modelNameRaw": "GLE-클래스 W167"
+      },
+      {
+        "displayOrdinal": 696,
+        "modelNameRaw": "A-클래스 W177"
+      },
+      {
+        "displayOrdinal": 697,
+        "modelNameRaw": "CLA-클래스 C118"
+      },
+      {
+        "displayOrdinal": 698,
+        "modelNameRaw": "GLS-클래스 X167"
+      },
+      {
+        "displayOrdinal": 699,
+        "modelNameRaw": "GLA-클래스 H247"
+      },
+      {
+        "displayOrdinal": 700,
+        "modelNameRaw": "S-클래스 W223"
+      },
+      {
+        "displayOrdinal": 701,
+        "modelNameRaw": "C-클래스 W206"
+      },
+      {
+        "displayOrdinal": 702,
+        "modelNameRaw": "EQE V295"
+      },
+      {
+        "displayOrdinal": 703,
+        "modelNameRaw": "SL-클래스 R232"
+      },
+      {
+        "displayOrdinal": 704,
+        "modelNameRaw": "GLC-클래스 X254"
+      },
+      {
+        "displayOrdinal": 705,
+        "modelNameRaw": "E-클래스 W214"
+      },
+      {
+        "displayOrdinal": 706,
+        "modelNameRaw": "G-클래스 W465"
+      },
+      {
+        "displayOrdinal": 707,
+        "modelNameRaw": "AMG GT C192"
+      },
+      {
+        "displayOrdinal": 708,
+        "modelNameRaw": "A-클래스 W176"
+      },
+      {
+        "displayOrdinal": 709,
+        "modelNameRaw": "AMG GT"
+      },
+      {
+        "displayOrdinal": 710,
+        "modelNameRaw": "GLE-클래스 W166"
+      },
+      {
+        "displayOrdinal": 711,
+        "modelNameRaw": "GLC-클래스 X253"
+      },
+      {
+        "displayOrdinal": 712,
+        "modelNameRaw": "E-클래스 W213"
+      },
+      {
+        "displayOrdinal": 713,
+        "modelNameRaw": "GLS-클래스 X166"
+      },
+      {
+        "displayOrdinal": 714,
+        "modelNameRaw": "CLK-클래스 C208"
+      },
+      {
+        "displayOrdinal": 715,
+        "modelNameRaw": "GL-클래스 X164"
+      },
+      {
+        "displayOrdinal": 716,
+        "modelNameRaw": "M-클래스 W164"
+      },
+      {
+        "displayOrdinal": 717,
+        "modelNameRaw": "G-클래스 W463b"
+      },
+      {
+        "displayOrdinal": 718,
+        "modelNameRaw": "EQE SUV X294"
+      },
+      {
+        "displayOrdinal": 719,
+        "modelNameRaw": "CL-클래스 C140"
+      },
+      {
+        "displayOrdinal": 720,
+        "modelNameRaw": "E-클래스 W210"
+      },
+      {
+        "displayOrdinal": 721,
+        "modelNameRaw": "E-클래스 W124"
+      },
+      {
+        "displayOrdinal": 722,
+        "modelNameRaw": "E-클래스 W123"
+      },
+      {
+        "displayOrdinal": 723,
+        "modelNameRaw": "EQC N293"
+      },
+      {
+        "displayOrdinal": 724,
+        "modelNameRaw": "GLB-클래스 X247"
+      },
+      {
+        "displayOrdinal": 725,
+        "modelNameRaw": "EQA H243"
+      },
+      {
+        "displayOrdinal": 726,
+        "modelNameRaw": "EQS V297"
+      },
+      {
+        "displayOrdinal": 727,
+        "modelNameRaw": "EQB X243"
+      },
+      {
+        "displayOrdinal": 728,
+        "modelNameRaw": "EQS SUV X296"
+      },
+      {
+        "displayOrdinal": 729,
+        "modelNameRaw": "CLE-클래스 C236"
+      },
+      {
+        "displayOrdinal": 730,
+        "modelNameRaw": "G-클래스 W460"
+      },
+      {
+        "displayOrdinal": 731,
+        "modelNameRaw": "A-클래스 W168"
+      },
+      {
+        "displayOrdinal": 732,
+        "modelNameRaw": "B-클래스 W245"
+      },
+      {
+        "displayOrdinal": 733,
+        "modelNameRaw": "C-클래스 W205"
+      },
+      {
+        "displayOrdinal": 734,
+        "modelNameRaw": "C-클래스 W204"
+      },
+      {
+        "displayOrdinal": 735,
+        "modelNameRaw": "C-클래스"
+      },
+      {
+        "displayOrdinal": 736,
+        "modelNameRaw": "CL-클래스 C216"
+      },
+      {
+        "displayOrdinal": 737,
+        "modelNameRaw": "CL-클래스 C215"
+      },
+      {
+        "displayOrdinal": 738,
+        "modelNameRaw": "CLA-클래스 C117"
+      },
+      {
+        "displayOrdinal": 739,
+        "modelNameRaw": "CLS-클래스 W218"
+      },
+      {
+        "displayOrdinal": 740,
+        "modelNameRaw": "CLS-클래스 W219"
+      },
+      {
+        "displayOrdinal": 741,
+        "modelNameRaw": "CLK-클래스 C209"
+      },
+      {
+        "displayOrdinal": 742,
+        "modelNameRaw": "E-클래스 W212"
+      },
+      {
+        "displayOrdinal": 743,
+        "modelNameRaw": "E-클래스 W211"
+      },
+      {
+        "displayOrdinal": 744,
+        "modelNameRaw": "G-클래스 W463"
+      },
+      {
+        "displayOrdinal": 745,
+        "modelNameRaw": "GL-클래스 X166"
+      },
+      {
+        "displayOrdinal": 746,
+        "modelNameRaw": "GLA-클래스 X156"
+      },
+      {
+        "displayOrdinal": 747,
+        "modelNameRaw": "GLK-클래스 X204"
+      },
+      {
+        "displayOrdinal": 748,
+        "modelNameRaw": "M-클래스 W166"
+      },
+      {
+        "displayOrdinal": 749,
+        "modelNameRaw": "M-클래스 W163"
+      },
+      {
+        "displayOrdinal": 750,
+        "modelNameRaw": "R-클래스"
+      },
+      {
+        "displayOrdinal": 751,
+        "modelNameRaw": "S-클래스 W222"
+      },
+      {
+        "displayOrdinal": 752,
+        "modelNameRaw": "S-클래스 W221"
+      },
+      {
+        "displayOrdinal": 753,
+        "modelNameRaw": "S-클래스"
+      },
+      {
+        "displayOrdinal": 754,
+        "modelNameRaw": "뉴 SL-클래스"
+      },
+      {
+        "displayOrdinal": 755,
+        "modelNameRaw": "SL-클래스"
+      },
+      {
+        "displayOrdinal": 756,
+        "modelNameRaw": "뉴 SLK-클래스"
+      },
+      {
+        "displayOrdinal": 757,
+        "modelNameRaw": "SLK-클래스"
+      },
+      {
+        "displayOrdinal": 758,
+        "modelNameRaw": "SLR"
+      },
+      {
+        "displayOrdinal": 759,
+        "modelNameRaw": "SLS AMG"
+      },
+      {
+        "displayOrdinal": 760,
+        "modelNameRaw": "SEL/SEC"
+      },
+      {
+        "displayOrdinal": 761,
+        "modelNameRaw": "V-클래스"
+      },
+      {
+        "displayOrdinal": 762,
+        "modelNameRaw": "190-클래스"
+      },
+      {
+        "displayOrdinal": 763,
+        "modelNameRaw": "스프린터"
+      },
+      {
+        "displayOrdinal": 764,
+        "modelNameRaw": "A-클래스 W169"
+      },
+      {
+        "displayOrdinal": 765,
+        "modelNameRaw": "기타"
+      },
+      {
+        "displayOrdinal": 766,
+        "modelNameRaw": "뉴 CC"
+      },
+      {
+        "displayOrdinal": 767,
+        "modelNameRaw": "파사트 GT(B8)"
+      },
+      {
+        "displayOrdinal": 768,
+        "modelNameRaw": "티구안 올스페이스"
+      },
+      {
+        "displayOrdinal": 769,
+        "modelNameRaw": "투아렉 3세대"
+      },
+      {
+        "displayOrdinal": 770,
+        "modelNameRaw": "제타 7세대"
+      },
+      {
+        "displayOrdinal": 771,
+        "modelNameRaw": "골프 8세대"
+      },
+      {
+        "displayOrdinal": 772,
+        "modelNameRaw": "티구안 2세대"
+      },
+      {
+        "displayOrdinal": 773,
+        "modelNameRaw": "코라도"
+      },
+      {
+        "displayOrdinal": 774,
+        "modelNameRaw": "아틀라스"
+      },
+      {
+        "displayOrdinal": 775,
+        "modelNameRaw": "아테온"
+      },
+      {
+        "displayOrdinal": 776,
+        "modelNameRaw": "티록"
+      },
+      {
+        "displayOrdinal": 777,
+        "modelNameRaw": "트랜스포터"
+      },
+      {
+        "displayOrdinal": 778,
+        "modelNameRaw": "ID.4"
+      },
+      {
+        "displayOrdinal": 779,
+        "modelNameRaw": "마이크로버스"
+      },
+      {
+        "displayOrdinal": 780,
+        "modelNameRaw": "ID.5"
+      },
+      {
+        "displayOrdinal": 781,
+        "modelNameRaw": "멀티밴"
+      },
+      {
+        "displayOrdinal": 782,
+        "modelNameRaw": "업"
+      },
+      {
+        "displayOrdinal": 783,
+        "modelNameRaw": "그랜드 캘리포니아"
+      },
+      {
+        "displayOrdinal": 784,
+        "modelNameRaw": "CC"
+      },
+      {
+        "displayOrdinal": 785,
+        "modelNameRaw": "EOS"
+      },
+      {
+        "displayOrdinal": 786,
+        "modelNameRaw": "골프 7세대"
+      },
+      {
+        "displayOrdinal": 787,
+        "modelNameRaw": "골프 6세대"
+      },
+      {
+        "displayOrdinal": 788,
+        "modelNameRaw": "골프 5세대"
+      },
+      {
+        "displayOrdinal": 789,
+        "modelNameRaw": "골프 4세대"
+      },
+      {
+        "displayOrdinal": 790,
+        "modelNameRaw": "골프 3세대"
+      },
+      {
+        "displayOrdinal": 791,
+        "modelNameRaw": "골프 2세대"
+      },
+      {
+        "displayOrdinal": 792,
+        "modelNameRaw": "골프 1세대"
+      },
+      {
+        "displayOrdinal": 793,
+        "modelNameRaw": "리알타"
+      },
+      {
+        "displayOrdinal": 794,
+        "modelNameRaw": "벤토"
+      },
+      {
+        "displayOrdinal": 795,
+        "modelNameRaw": "보라"
+      },
+      {
+        "displayOrdinal": 796,
+        "modelNameRaw": "더 비틀"
+      },
+      {
+        "displayOrdinal": 797,
+        "modelNameRaw": "뉴 비틀"
+      },
+      {
+        "displayOrdinal": 798,
+        "modelNameRaw": "비틀"
+      },
+      {
+        "displayOrdinal": 799,
+        "modelNameRaw": "사란"
+      },
+      {
+        "displayOrdinal": 800,
+        "modelNameRaw": "시로코"
+      },
+      {
+        "displayOrdinal": 801,
+        "modelNameRaw": "뉴 제타"
+      },
+      {
+        "displayOrdinal": 802,
+        "modelNameRaw": "제타"
+      },
+      {
+        "displayOrdinal": 803,
+        "modelNameRaw": "더 뉴 파사트"
+      },
+      {
+        "displayOrdinal": 804,
+        "modelNameRaw": "뉴 파사트"
+      },
+      {
+        "displayOrdinal": 805,
+        "modelNameRaw": "파사트"
+      },
+      {
+        "displayOrdinal": 806,
+        "modelNameRaw": "파사트 바리안트"
+      },
+      {
+        "displayOrdinal": 807,
+        "modelNameRaw": "페이톤"
+      },
+      {
+        "displayOrdinal": 808,
+        "modelNameRaw": "폴로"
+      },
+      {
+        "displayOrdinal": 809,
+        "modelNameRaw": "뉴 투아렉"
+      },
+      {
+        "displayOrdinal": 810,
+        "modelNameRaw": "투아렉"
+      },
+      {
+        "displayOrdinal": 811,
+        "modelNameRaw": "뉴 티구안"
+      },
+      {
+        "displayOrdinal": 812,
+        "modelNameRaw": "티구안"
+      },
+      {
+        "displayOrdinal": 813,
+        "modelNameRaw": "기타"
+      },
+      {
+        "displayOrdinal": 814,
+        "modelNameRaw": "718 카이맨"
+      },
+      {
+        "displayOrdinal": 815,
+        "modelNameRaw": "911 (992)"
+      },
+      {
+        "displayOrdinal": 816,
+        "modelNameRaw": "파나메라 (976)"
+      },
+      {
+        "displayOrdinal": 817,
+        "modelNameRaw": "마칸 EV"
+      },
+      {
+        "displayOrdinal": 818,
+        "modelNameRaw": "카이엔 일렉트릭 (E4)"
+      },
+      {
+        "displayOrdinal": 819,
+        "modelNameRaw": "911"
+      },
+      {
+        "displayOrdinal": 820,
+        "modelNameRaw": "파나메라 (971)"
+      },
+      {
+        "displayOrdinal": 821,
+        "modelNameRaw": "카이엔 (PO536)"
+      },
+      {
+        "displayOrdinal": 822,
+        "modelNameRaw": "타이칸"
+      },
+      {
+        "displayOrdinal": 823,
+        "modelNameRaw": "928"
+      },
+      {
+        "displayOrdinal": 824,
+        "modelNameRaw": "944"
+      },
+      {
+        "displayOrdinal": 825,
+        "modelNameRaw": "968"
+      },
+      {
+        "displayOrdinal": 826,
+        "modelNameRaw": "박스터"
+      },
+      {
+        "displayOrdinal": 827,
+        "modelNameRaw": "마칸"
+      },
+      {
+        "displayOrdinal": 828,
+        "modelNameRaw": "카레라 GT"
+      },
+      {
+        "displayOrdinal": 829,
+        "modelNameRaw": "카이맨"
+      },
+      {
+        "displayOrdinal": 830,
+        "modelNameRaw": "뉴 카이엔"
+      },
+      {
+        "displayOrdinal": 831,
+        "modelNameRaw": "카이엔"
+      },
+      {
+        "displayOrdinal": 832,
+        "modelNameRaw": "파나메라"
+      },
+      {
+        "displayOrdinal": 833,
+        "modelNameRaw": "기타"
+      },
+      {
+        "displayOrdinal": 834,
+        "modelNameRaw": "718 박스터"
+      },
+      {
+        "displayOrdinal": 835,
+        "modelNameRaw": "9-3 2세대"
+      },
+      {
+        "displayOrdinal": 836,
+        "modelNameRaw": "9-3 1세대"
+      },
+      {
+        "displayOrdinal": 837,
+        "modelNameRaw": "9-5 2세대"
+      },
+      {
+        "displayOrdinal": 838,
+        "modelNameRaw": "9-5 1세대"
+      },
+      {
+        "displayOrdinal": 839,
+        "modelNameRaw": "900"
+      },
+      {
+        "displayOrdinal": 840,
+        "modelNameRaw": "9000"
+      },
+      {
+        "displayOrdinal": 841,
+        "modelNameRaw": "기타"
+      },
+      {
+        "displayOrdinal": 842,
+        "modelNameRaw": "XC90 2세대"
+      },
+      {
+        "displayOrdinal": 843,
+        "modelNameRaw": "V90 크로스컨트리"
+      },
+      {
+        "displayOrdinal": 844,
+        "modelNameRaw": "XC60 2세대"
+      },
+      {
+        "displayOrdinal": 845,
+        "modelNameRaw": "V60 크로스컨트리 2세대"
+      },
+      {
+        "displayOrdinal": 846,
+        "modelNameRaw": "S60 3세대"
+      },
+      {
+        "displayOrdinal": 847,
+        "modelNameRaw": "V60 크로스컨트리"
+      },
+      {
+        "displayOrdinal": 848,
+        "modelNameRaw": "S60 크로스컨트리"
+      },
+      {
+        "displayOrdinal": 849,
+        "modelNameRaw": "C30"
+      },
+      {
+        "displayOrdinal": 850,
+        "modelNameRaw": "XC40"
+      },
+      {
+        "displayOrdinal": 851,
+        "modelNameRaw": "C40 리차지"
+      },
+      {
+        "displayOrdinal": 852,
+        "modelNameRaw": "XC40 리차지"
+      },
+      {
+        "displayOrdinal": 853,
+        "modelNameRaw": "EX30"
+      },
+      {
+        "displayOrdinal": 854,
+        "modelNameRaw": "EX40"
+      },
+      {
+        "displayOrdinal": 855,
+        "modelNameRaw": "EX30 크로스 컨트리"
+      },
+      {
+        "displayOrdinal": 856,
+        "modelNameRaw": "EX90"
+      },
+      {
+        "displayOrdinal": 857,
+        "modelNameRaw": "ES90"
+      },
+      {
+        "displayOrdinal": 858,
+        "modelNameRaw": "C70"
+      },
+      {
+        "displayOrdinal": 859,
+        "modelNameRaw": "S40"
+      },
+      {
+        "displayOrdinal": 860,
+        "modelNameRaw": "S60"
+      },
+      {
+        "displayOrdinal": 861,
+        "modelNameRaw": "S70"
+      },
+      {
+        "displayOrdinal": 862,
+        "modelNameRaw": "S80"
+      },
+      {
+        "displayOrdinal": 863,
+        "modelNameRaw": "S90"
+      },
+      {
+        "displayOrdinal": 864,
+        "modelNameRaw": "V40"
+      },
+      {
+        "displayOrdinal": 865,
+        "modelNameRaw": "V40 크로스컨트리"
+      },
+      {
+        "displayOrdinal": 866,
+        "modelNameRaw": "V50"
+      },
+      {
+        "displayOrdinal": 867,
+        "modelNameRaw": "V60"
+      },
+      {
+        "displayOrdinal": 868,
+        "modelNameRaw": "V70"
+      },
+      {
+        "displayOrdinal": 869,
+        "modelNameRaw": "XC60"
+      },
+      {
+        "displayOrdinal": 870,
+        "modelNameRaw": "XC70"
+      },
+      {
+        "displayOrdinal": 871,
+        "modelNameRaw": "XC90"
+      },
+      {
+        "displayOrdinal": 872,
+        "modelNameRaw": "740"
+      },
+      {
+        "displayOrdinal": 873,
+        "modelNameRaw": "760"
+      },
+      {
+        "displayOrdinal": 874,
+        "modelNameRaw": "850"
+      },
+      {
+        "displayOrdinal": 875,
+        "modelNameRaw": "940"
+      },
+      {
+        "displayOrdinal": 876,
+        "modelNameRaw": "960"
+      },
+      {
+        "displayOrdinal": 877,
+        "modelNameRaw": "기타"
+      },
+      {
+        "displayOrdinal": 878,
+        "modelNameRaw": "500"
+      },
+      {
+        "displayOrdinal": 879,
+        "modelNameRaw": "멀티피아"
+      },
+      {
+        "displayOrdinal": 880,
+        "modelNameRaw": "500X"
+      },
+      {
+        "displayOrdinal": 881,
+        "modelNameRaw": "124 스파이더"
+      },
+      {
+        "displayOrdinal": 882,
+        "modelNameRaw": "판다"
+      },
+      {
+        "displayOrdinal": 883,
+        "modelNameRaw": "500e"
+      },
+      {
+        "displayOrdinal": 884,
+        "modelNameRaw": "500L"
+      },
+      {
+        "displayOrdinal": 885,
+        "modelNameRaw": "두카토"
+      },
+      {
+        "displayOrdinal": 886,
+        "modelNameRaw": "500C"
+      },
+      {
+        "displayOrdinal": 887,
+        "modelNameRaw": "란치아"
+      },
+      {
+        "displayOrdinal": 888,
+        "modelNameRaw": "바르게타"
+      },
+      {
+        "displayOrdinal": 889,
+        "modelNameRaw": "쿠페"
+      },
+      {
+        "displayOrdinal": 890,
+        "modelNameRaw": "크로마"
+      },
+      {
+        "displayOrdinal": 891,
+        "modelNameRaw": "푼토"
+      },
+      {
+        "displayOrdinal": 892,
+        "modelNameRaw": "프리몬트"
+      },
+      {
+        "displayOrdinal": 893,
+        "modelNameRaw": "기타"
+      },
+      {
+        "displayOrdinal": 894,
+        "modelNameRaw": "XE"
+      },
+      {
+        "displayOrdinal": 895,
+        "modelNameRaw": "XF (X260)"
+      },
+      {
+        "displayOrdinal": 896,
+        "modelNameRaw": "F-PACE"
+      },
+      {
+        "displayOrdinal": 897,
+        "modelNameRaw": "New XF"
+      },
+      {
+        "displayOrdinal": 898,
+        "modelNameRaw": "E-PACE"
+      },
+      {
+        "displayOrdinal": 899,
+        "modelNameRaw": "I-PACE"
+      },
+      {
+        "displayOrdinal": 900,
+        "modelNameRaw": "XJ-C"
+      },
+      {
+        "displayOrdinal": 901,
+        "modelNameRaw": "E-TYPE"
+      },
+      {
+        "displayOrdinal": 902,
+        "modelNameRaw": "XF"
+      },
+      {
+        "displayOrdinal": 903,
+        "modelNameRaw": "All New XJ"
+      },
+      {
+        "displayOrdinal": 904,
+        "modelNameRaw": "New XJ"
+      },
+      {
+        "displayOrdinal": 905,
+        "modelNameRaw": "XJ-6"
+      },
+      {
+        "displayOrdinal": 906,
+        "modelNameRaw": "XJ-8"
+      },
+      {
+        "displayOrdinal": 907,
+        "modelNameRaw": "XJR"
+      },
+      {
+        "displayOrdinal": 908,
+        "modelNameRaw": "XJS"
+      },
+      {
+        "displayOrdinal": 909,
+        "modelNameRaw": "XK"
+      },
+      {
+        "displayOrdinal": 910,
+        "modelNameRaw": "XK8"
+      },
+      {
+        "displayOrdinal": 911,
+        "modelNameRaw": "XKR"
+      },
+      {
+        "displayOrdinal": 912,
+        "modelNameRaw": "XKR-S"
+      },
+      {
+        "displayOrdinal": 913,
+        "modelNameRaw": "F-TYPE"
+      },
+      {
+        "displayOrdinal": 914,
+        "modelNameRaw": "X-TYPE"
+      },
+      {
+        "displayOrdinal": 915,
+        "modelNameRaw": "S-TYPE"
+      },
+      {
+        "displayOrdinal": 916,
+        "modelNameRaw": "다임러"
+      },
+      {
+        "displayOrdinal": 917,
+        "modelNameRaw": "소버린"
+      },
+      {
+        "displayOrdinal": 918,
+        "modelNameRaw": "기타"
+      },
+      {
+        "displayOrdinal": 919,
+        "modelNameRaw": "디스커버리 5"
+      },
+      {
+        "displayOrdinal": 920,
+        "modelNameRaw": "레인지로버 이보크 2세대"
+      },
+      {
+        "displayOrdinal": 921,
+        "modelNameRaw": "디스커버리 스포츠 2세대"
+      },
+      {
+        "displayOrdinal": 922,
+        "modelNameRaw": "디펜더 (L663)"
+      },
+      {
+        "displayOrdinal": 923,
+        "modelNameRaw": "레인지로버 5세대"
+      },
+      {
+        "displayOrdinal": 924,
+        "modelNameRaw": "레인지로버 스포츠 3세대"
+      },
+      {
+        "displayOrdinal": 925,
+        "modelNameRaw": "디스커버리 4"
+      },
+      {
+        "displayOrdinal": 926,
+        "modelNameRaw": "레인지로버 벨라"
+      },
+      {
+        "displayOrdinal": 927,
+        "modelNameRaw": "디스커버리 3"
+      },
+      {
+        "displayOrdinal": 928,
+        "modelNameRaw": "디스커버리 2"
+      },
+      {
+        "displayOrdinal": 929,
+        "modelNameRaw": "디스커버리"
+      },
+      {
+        "displayOrdinal": 930,
+        "modelNameRaw": "디펜더"
+      },
+      {
+        "displayOrdinal": 931,
+        "modelNameRaw": "레인지로버 4세대"
+      },
+      {
+        "displayOrdinal": 932,
+        "modelNameRaw": "레인지로버"
+      },
+      {
+        "displayOrdinal": 933,
+        "modelNameRaw": "레인지로버 스포츠 2세대"
+      },
+      {
+        "displayOrdinal": 934,
+        "modelNameRaw": "레인지로버 스포츠"
+      },
+      {
+        "displayOrdinal": 935,
+        "modelNameRaw": "레인지로버 이보크"
+      },
+      {
+        "displayOrdinal": 936,
+        "modelNameRaw": "프리랜더2"
+      },
+      {
+        "displayOrdinal": 937,
+        "modelNameRaw": "프리랜더"
+      },
+      {
+        "displayOrdinal": 938,
+        "modelNameRaw": "기타"
+      },
+      {
+        "displayOrdinal": 939,
+        "modelNameRaw": "디스커버리 스포츠"
+      },
+      {
+        "displayOrdinal": 940,
+        "modelNameRaw": "107"
+      },
+      {
+        "displayOrdinal": 941,
+        "modelNameRaw": "508 2세대"
+      },
+      {
+        "displayOrdinal": 942,
+        "modelNameRaw": "e-208 2세대"
+      },
+      {
+        "displayOrdinal": 943,
+        "modelNameRaw": "2008 2세대"
+      },
+      {
+        "displayOrdinal": 944,
+        "modelNameRaw": "308 3세대"
+      },
+      {
+        "displayOrdinal": 945,
+        "modelNameRaw": "3008 3세대"
+      },
+      {
+        "displayOrdinal": 946,
+        "modelNameRaw": "5008 3세대"
+      },
+      {
+        "displayOrdinal": 947,
+        "modelNameRaw": "3008 2세대"
+      },
+      {
+        "displayOrdinal": 948,
+        "modelNameRaw": "5008 2세대"
+      },
+      {
+        "displayOrdinal": 949,
+        "modelNameRaw": "508SW 2세대"
+      },
+      {
+        "displayOrdinal": 950,
+        "modelNameRaw": "e-2008 2세대"
+      },
+      {
+        "displayOrdinal": 951,
+        "modelNameRaw": "5008 1세대"
+      },
+      {
+        "displayOrdinal": 952,
+        "modelNameRaw": "508 RXH"
+      },
+      {
+        "displayOrdinal": 953,
+        "modelNameRaw": "408"
+      },
+      {
+        "displayOrdinal": 954,
+        "modelNameRaw": "1007"
+      },
+      {
+        "displayOrdinal": 955,
+        "modelNameRaw": "205"
+      },
+      {
+        "displayOrdinal": 956,
+        "modelNameRaw": "206"
+      },
+      {
+        "displayOrdinal": 957,
+        "modelNameRaw": "206CC"
+      },
+      {
+        "displayOrdinal": 958,
+        "modelNameRaw": "206RC"
+      },
+      {
+        "displayOrdinal": 959,
+        "modelNameRaw": "206SW"
+      },
+      {
+        "displayOrdinal": 960,
+        "modelNameRaw": "207CC"
+      },
+      {
+        "displayOrdinal": 961,
+        "modelNameRaw": "207GT"
+      },
+      {
+        "displayOrdinal": 962,
+        "modelNameRaw": "207RC"
+      },
+      {
+        "displayOrdinal": 963,
+        "modelNameRaw": "207SW"
+      },
+      {
+        "displayOrdinal": 964,
+        "modelNameRaw": "208"
+      },
+      {
+        "displayOrdinal": 965,
+        "modelNameRaw": "2008"
+      },
+      {
+        "displayOrdinal": 966,
+        "modelNameRaw": "306"
+      },
+      {
+        "displayOrdinal": 967,
+        "modelNameRaw": "307CC"
+      },
+      {
+        "displayOrdinal": 968,
+        "modelNameRaw": "307SW"
+      },
+      {
+        "displayOrdinal": 969,
+        "modelNameRaw": "307"
+      },
+      {
+        "displayOrdinal": 970,
+        "modelNameRaw": "308 2세대"
+      },
+      {
+        "displayOrdinal": 971,
+        "modelNameRaw": "308"
+      },
+      {
+        "displayOrdinal": 972,
+        "modelNameRaw": "308CC"
+      },
+      {
+        "displayOrdinal": 973,
+        "modelNameRaw": "308SW 2세대"
+      },
+      {
+        "displayOrdinal": 974,
+        "modelNameRaw": "308SW"
+      },
+      {
+        "displayOrdinal": 975,
+        "modelNameRaw": "3008"
+      },
+      {
+        "displayOrdinal": 976,
+        "modelNameRaw": "405"
+      },
+      {
+        "displayOrdinal": 977,
+        "modelNameRaw": "406"
+      },
+      {
+        "displayOrdinal": 978,
+        "modelNameRaw": "407"
+      },
+      {
+        "displayOrdinal": 979,
+        "modelNameRaw": "407SW"
+      },
+      {
+        "displayOrdinal": 980,
+        "modelNameRaw": "407쿠페"
+      },
+      {
+        "displayOrdinal": 981,
+        "modelNameRaw": "508"
+      },
+      {
+        "displayOrdinal": 982,
+        "modelNameRaw": "508SW"
+      },
+      {
+        "displayOrdinal": 983,
+        "modelNameRaw": "605"
+      },
+      {
+        "displayOrdinal": 984,
+        "modelNameRaw": "607"
+      },
+      {
+        "displayOrdinal": 985,
+        "modelNameRaw": "806"
+      },
+      {
+        "displayOrdinal": 986,
+        "modelNameRaw": "807"
+      },
+      {
+        "displayOrdinal": 987,
+        "modelNameRaw": "RCZ"
+      },
+      {
+        "displayOrdinal": 988,
+        "modelNameRaw": "익스퍼트 티피"
+      },
+      {
+        "displayOrdinal": 989,
+        "modelNameRaw": "기타"
+      },
+      {
+        "displayOrdinal": 990,
+        "modelNameRaw": "C2"
+      },
+      {
+        "displayOrdinal": 991,
+        "modelNameRaw": "C4 피카소"
+      },
+      {
+        "displayOrdinal": 992,
+        "modelNameRaw": "C4 칵투스"
+      },
+      {
+        "displayOrdinal": 993,
+        "modelNameRaw": "DS4 2세대"
+      },
+      {
+        "displayOrdinal": 994,
+        "modelNameRaw": "DS4 크로스백"
+      },
+      {
+        "displayOrdinal": 995,
+        "modelNameRaw": "그랜드 C4 스페이스투어러"
+      },
+      {
+        "displayOrdinal": 996,
+        "modelNameRaw": "DS7 크로스백"
+      },
+      {
+        "displayOrdinal": 997,
+        "modelNameRaw": "C5 에어크로스"
+      },
+      {
+        "displayOrdinal": 998,
+        "modelNameRaw": "C3 에어크로스"
+      },
+      {
+        "displayOrdinal": 999,
+        "modelNameRaw": "DS3 크로스백"
+      },
+      {
+        "displayOrdinal": 1000,
+        "modelNameRaw": "C6"
+      },
+      {
+        "displayOrdinal": 1001,
+        "modelNameRaw": "C3"
+      },
+      {
+        "displayOrdinal": 1002,
+        "modelNameRaw": "그랜드 C4 피카소"
+      },
+      {
+        "displayOrdinal": 1003,
+        "modelNameRaw": "C5"
+      },
+      {
+        "displayOrdinal": 1004,
+        "modelNameRaw": "DS3"
+      },
+      {
+        "displayOrdinal": 1005,
+        "modelNameRaw": "DS3 카브리오"
+      },
+      {
+        "displayOrdinal": 1006,
+        "modelNameRaw": "DS4"
+      },
+      {
+        "displayOrdinal": 1007,
+        "modelNameRaw": "DS5"
+      },
+      {
+        "displayOrdinal": 1008,
+        "modelNameRaw": "XM"
+      },
+      {
+        "displayOrdinal": 1009,
+        "modelNameRaw": "잔티아"
+      },
+      {
+        "displayOrdinal": 1010,
+        "modelNameRaw": "기타"
+      },
+      {
+        "displayOrdinal": 1011,
+        "modelNameRaw": "200 2세대"
+      },
+      {
+        "displayOrdinal": 1012,
+        "modelNameRaw": "200 1세대"
+      },
+      {
+        "displayOrdinal": 1013,
+        "modelNameRaw": "프라울러"
+      },
+      {
+        "displayOrdinal": 1014,
+        "modelNameRaw": "더 뉴 300C"
+      },
+      {
+        "displayOrdinal": 1015,
+        "modelNameRaw": "올 뉴 300C"
+      },
+      {
+        "displayOrdinal": 1016,
+        "modelNameRaw": "300C"
+      },
+      {
+        "displayOrdinal": 1017,
+        "modelNameRaw": "300M"
+      },
+      {
+        "displayOrdinal": 1018,
+        "modelNameRaw": "LHS"
+      },
+      {
+        "displayOrdinal": 1019,
+        "modelNameRaw": "PT 크루저"
+      },
+      {
+        "displayOrdinal": 1020,
+        "modelNameRaw": "네온"
+      },
+      {
+        "displayOrdinal": 1021,
+        "modelNameRaw": "뉴요커"
+      },
+      {
+        "displayOrdinal": 1022,
+        "modelNameRaw": "레바론"
+      },
+      {
+        "displayOrdinal": 1023,
+        "modelNameRaw": "보이저"
+      },
+      {
+        "displayOrdinal": 1024,
+        "modelNameRaw": "그랜드 보이저"
+      },
+      {
+        "displayOrdinal": 1025,
+        "modelNameRaw": "비전"
+      },
+      {
+        "displayOrdinal": 1026,
+        "modelNameRaw": "뉴 세브링"
+      },
+      {
+        "displayOrdinal": 1027,
+        "modelNameRaw": "세브링"
+      },
+      {
+        "displayOrdinal": 1028,
+        "modelNameRaw": "스트라투스"
+      },
+      {
+        "displayOrdinal": 1029,
+        "modelNameRaw": "시러스"
+      },
+      {
+        "displayOrdinal": 1030,
+        "modelNameRaw": "이글 탈론"
+      },
+      {
+        "displayOrdinal": 1031,
+        "modelNameRaw": "인트리피드"
+      },
+      {
+        "displayOrdinal": 1032,
+        "modelNameRaw": "플리머스 레이저"
+      },
+      {
+        "displayOrdinal": 1033,
+        "modelNameRaw": "퍼시피카"
+      },
+      {
+        "displayOrdinal": 1034,
+        "modelNameRaw": "캐러밴"
+      },
+      {
+        "displayOrdinal": 1035,
+        "modelNameRaw": "콩코드"
+      },
+      {
+        "displayOrdinal": 1036,
+        "modelNameRaw": "크로스파이어"
+      },
+      {
+        "displayOrdinal": 1037,
+        "modelNameRaw": "타운 앤 컨트리"
+      },
+      {
+        "displayOrdinal": 1038,
+        "modelNameRaw": "기타"
+      },
+      {
+        "displayOrdinal": 1039,
+        "modelNameRaw": "E-Series"
+      },
+      {
+        "displayOrdinal": 1040,
+        "modelNameRaw": "몬데오 4세대"
+      },
+      {
+        "displayOrdinal": 1041,
+        "modelNameRaw": "쿠가 2세대"
+      },
+      {
+        "displayOrdinal": 1042,
+        "modelNameRaw": "트랜짓"
+      },
+      {
+        "displayOrdinal": 1043,
+        "modelNameRaw": "익스플로러 6세대"
+      },
+      {
+        "displayOrdinal": 1044,
+        "modelNameRaw": "브롱코 6세대"
+      },
+      {
+        "displayOrdinal": 1045,
+        "modelNameRaw": "레인저 4세대"
+      },
+      {
+        "displayOrdinal": 1046,
+        "modelNameRaw": "머스탱 7세대"
+      },
+      {
+        "displayOrdinal": 1047,
+        "modelNameRaw": "트랜짓 커넥트"
+      },
+      {
+        "displayOrdinal": 1048,
+        "modelNameRaw": "머스탱 마하 E"
+      },
+      {
+        "displayOrdinal": 1049,
+        "modelNameRaw": "피에스타"
+      },
+      {
+        "displayOrdinal": 1050,
+        "modelNameRaw": "에코스포츠"
+      },
+      {
+        "displayOrdinal": 1051,
+        "modelNameRaw": "플렉스"
+      },
+      {
+        "displayOrdinal": 1052,
+        "modelNameRaw": "레인저"
+      },
+      {
+        "displayOrdinal": 1053,
+        "modelNameRaw": "F150"
+      },
+      {
+        "displayOrdinal": 1054,
+        "modelNameRaw": "F250"
+      },
+      {
+        "displayOrdinal": 1055,
+        "modelNameRaw": "F350"
+      },
+      {
+        "displayOrdinal": 1056,
+        "modelNameRaw": "GT"
+      },
+      {
+        "displayOrdinal": 1057,
+        "modelNameRaw": "S-MAX"
+      },
+      {
+        "displayOrdinal": 1058,
+        "modelNameRaw": "레인저 3세대"
+      },
+      {
+        "displayOrdinal": 1059,
+        "modelNameRaw": "머스탱"
+      },
+      {
+        "displayOrdinal": 1060,
+        "modelNameRaw": "몬데오 3세대"
+      },
+      {
+        "displayOrdinal": 1061,
+        "modelNameRaw": "몬데오"
+      },
+      {
+        "displayOrdinal": 1062,
+        "modelNameRaw": "브롱코"
+      },
+      {
+        "displayOrdinal": 1063,
+        "modelNameRaw": "썬더버드"
+      },
+      {
+        "displayOrdinal": 1064,
+        "modelNameRaw": "윈드스타"
+      },
+      {
+        "displayOrdinal": 1065,
+        "modelNameRaw": "이스케이프"
+      },
+      {
+        "displayOrdinal": 1066,
+        "modelNameRaw": "이코노라인"
+      },
+      {
+        "displayOrdinal": 1067,
+        "modelNameRaw": "익스플로러"
+      },
+      {
+        "displayOrdinal": 1068,
+        "modelNameRaw": "익스플로러 스포츠트랙"
+      },
+      {
+        "displayOrdinal": 1069,
+        "modelNameRaw": "익스페디션"
+      },
+      {
+        "displayOrdinal": 1070,
+        "modelNameRaw": "컨투어"
+      },
+      {
+        "displayOrdinal": 1071,
+        "modelNameRaw": "뉴 토러스"
+      },
+      {
+        "displayOrdinal": 1072,
+        "modelNameRaw": "토러스"
+      },
+      {
+        "displayOrdinal": 1073,
+        "modelNameRaw": "파이브 헌드레드"
+      },
+      {
+        "displayOrdinal": 1074,
+        "modelNameRaw": "포커스"
+      },
+      {
+        "displayOrdinal": 1075,
+        "modelNameRaw": "프로브"
+      },
+      {
+        "displayOrdinal": 1076,
+        "modelNameRaw": "프리스타일"
+      },
+      {
+        "displayOrdinal": 1077,
+        "modelNameRaw": "퓨전"
+      },
+      {
+        "displayOrdinal": 1078,
+        "modelNameRaw": "기타"
+      },
+      {
+        "displayOrdinal": 1079,
+        "modelNameRaw": "비트"
+      },
+      {
+        "displayOrdinal": 1080,
+        "modelNameRaw": "N-BOX"
+      },
+      {
+        "displayOrdinal": 1081,
+        "modelNameRaw": "S660"
+      },
+      {
+        "displayOrdinal": 1082,
+        "modelNameRaw": "HR-V"
+      },
+      {
+        "displayOrdinal": 1083,
+        "modelNameRaw": "CR-V 6세대"
+      },
+      {
+        "displayOrdinal": 1084,
+        "modelNameRaw": "파일럿 4세대"
+      },
+      {
+        "displayOrdinal": 1085,
+        "modelNameRaw": "어코드 11세대"
+      },
+      {
+        "displayOrdinal": 1086,
+        "modelNameRaw": "파일럿 3세대"
+      },
+      {
+        "displayOrdinal": 1087,
+        "modelNameRaw": "CR-V 5세대"
+      },
+      {
+        "displayOrdinal": 1088,
+        "modelNameRaw": "어코드 10세대"
+      },
+      {
+        "displayOrdinal": 1089,
+        "modelNameRaw": "New CR-V"
+      },
+      {
+        "displayOrdinal": 1090,
+        "modelNameRaw": "스텝웨건"
+      },
+      {
+        "displayOrdinal": 1091,
+        "modelNameRaw": "라이프"
+      },
+      {
+        "displayOrdinal": 1092,
+        "modelNameRaw": "프리드"
+      },
+      {
+        "displayOrdinal": 1093,
+        "modelNameRaw": "N-WGN"
+      },
+      {
+        "displayOrdinal": 1094,
+        "modelNameRaw": "CR-V"
+      },
+      {
+        "displayOrdinal": 1095,
+        "modelNameRaw": "CR-Z"
+      },
+      {
+        "displayOrdinal": 1096,
+        "modelNameRaw": "Fit"
+      },
+      {
+        "displayOrdinal": 1097,
+        "modelNameRaw": "Fit Aria"
+      },
+      {
+        "displayOrdinal": 1098,
+        "modelNameRaw": "N-ONE"
+      },
+      {
+        "displayOrdinal": 1099,
+        "modelNameRaw": "S2000"
+      },
+      {
+        "displayOrdinal": 1100,
+        "modelNameRaw": "델솔"
+      },
+      {
+        "displayOrdinal": 1101,
+        "modelNameRaw": "댓츠"
+      },
+      {
+        "displayOrdinal": 1102,
+        "modelNameRaw": "레전드 5세대"
+      },
+      {
+        "displayOrdinal": 1103,
+        "modelNameRaw": "레전드 4세대"
+      },
+      {
+        "displayOrdinal": 1104,
+        "modelNameRaw": "레전드"
+      },
+      {
+        "displayOrdinal": 1105,
+        "modelNameRaw": "리지라인"
+      },
+      {
+        "displayOrdinal": 1106,
+        "modelNameRaw": "스트림"
+      },
+      {
+        "displayOrdinal": 1107,
+        "modelNameRaw": "시빅"
+      },
+      {
+        "displayOrdinal": 1108,
+        "modelNameRaw": "올뉴어코드"
+      },
+      {
+        "displayOrdinal": 1109,
+        "modelNameRaw": "어코드"
+      },
+      {
+        "displayOrdinal": 1110,
+        "modelNameRaw": "엘리멘트"
+      },
+      {
+        "displayOrdinal": 1111,
+        "modelNameRaw": "오딧세이"
+      },
+      {
+        "displayOrdinal": 1112,
+        "modelNameRaw": "인사이트"
+      },
+      {
+        "displayOrdinal": 1113,
+        "modelNameRaw": "인스파이어"
+      },
+      {
+        "displayOrdinal": 1114,
+        "modelNameRaw": "인테그라"
+      },
+      {
+        "displayOrdinal": 1115,
+        "modelNameRaw": "크로스로드"
+      },
+      {
+        "displayOrdinal": 1116,
+        "modelNameRaw": "크로스투어"
+      },
+      {
+        "displayOrdinal": 1117,
+        "modelNameRaw": "파일럿"
+      },
+      {
+        "displayOrdinal": 1118,
+        "modelNameRaw": "패스포트"
+      },
+      {
+        "displayOrdinal": 1119,
+        "modelNameRaw": "프렐류드"
+      },
+      {
+        "displayOrdinal": 1120,
+        "modelNameRaw": "기타"
+      },
+      {
+        "displayOrdinal": 1121,
+        "modelNameRaw": "로데오"
+      },
+      {
+        "displayOrdinal": 1122,
+        "modelNameRaw": "비크로스"
+      },
+      {
+        "displayOrdinal": 1123,
+        "modelNameRaw": "트루퍼"
+      },
+      {
+        "displayOrdinal": 1124,
+        "modelNameRaw": "기타"
+      },
+      {
+        "displayOrdinal": 1125,
+        "modelNameRaw": "626"
+      },
+      {
+        "displayOrdinal": 1126,
+        "modelNameRaw": "CX-5"
+      },
+      {
+        "displayOrdinal": 1127,
+        "modelNameRaw": "플레어 크로스오버"
+      },
+      {
+        "displayOrdinal": 1128,
+        "modelNameRaw": "CX-3"
+      },
+      {
+        "displayOrdinal": 1129,
+        "modelNameRaw": "비안테"
+      },
+      {
+        "displayOrdinal": 1130,
+        "modelNameRaw": "베리사"
+      },
+      {
+        "displayOrdinal": 1131,
+        "modelNameRaw": "AZ-1"
+      },
+      {
+        "displayOrdinal": 1132,
+        "modelNameRaw": "CX-7"
+      },
+      {
+        "displayOrdinal": 1133,
+        "modelNameRaw": "CX-9"
+      },
+      {
+        "displayOrdinal": 1134,
+        "modelNameRaw": "MPV"
+      },
+      {
+        "displayOrdinal": 1135,
+        "modelNameRaw": "MX-3"
+      },
+      {
+        "displayOrdinal": 1136,
+        "modelNameRaw": "MX-5 MIATA"
+      },
+      {
+        "displayOrdinal": 1137,
+        "modelNameRaw": "MX-6"
+      },
+      {
+        "displayOrdinal": 1138,
+        "modelNameRaw": "RX-7"
+      },
+      {
+        "displayOrdinal": 1139,
+        "modelNameRaw": "RX-8"
+      },
+      {
+        "displayOrdinal": 1140,
+        "modelNameRaw": "데미오"
+      },
+      {
+        "displayOrdinal": 1141,
+        "modelNameRaw": "마쯔다 3"
+      },
+      {
+        "displayOrdinal": 1142,
+        "modelNameRaw": "마쯔다 5"
+      },
+      {
+        "displayOrdinal": 1143,
+        "modelNameRaw": "마쯔다 6"
+      },
+      {
+        "displayOrdinal": 1144,
+        "modelNameRaw": "밀레니아"
+      },
+      {
+        "displayOrdinal": 1145,
+        "modelNameRaw": "유노스"
+      },
+      {
+        "displayOrdinal": 1146,
+        "modelNameRaw": "프로티지"
+      },
+      {
+        "displayOrdinal": 1147,
+        "modelNameRaw": "기타"
+      },
+      {
+        "displayOrdinal": 1148,
+        "modelNameRaw": "3000GT"
+      },
+      {
+        "displayOrdinal": 1149,
+        "modelNameRaw": "FTO"
+      },
+      {
+        "displayOrdinal": 1150,
+        "modelNameRaw": "GTO"
+      },
+      {
+        "displayOrdinal": 1151,
+        "modelNameRaw": "RVR"
+      },
+      {
+        "displayOrdinal": 1152,
+        "modelNameRaw": "갤랑"
+      },
+      {
+        "displayOrdinal": 1153,
+        "modelNameRaw": "랜서"
+      },
+      {
+        "displayOrdinal": 1154,
+        "modelNameRaw": "랜서 에볼루션"
+      },
+      {
+        "displayOrdinal": 1155,
+        "modelNameRaw": "몬테로"
+      },
+      {
+        "displayOrdinal": 1156,
+        "modelNameRaw": "아웃랜더"
+      },
+      {
+        "displayOrdinal": 1157,
+        "modelNameRaw": "아이"
+      },
+      {
+        "displayOrdinal": 1158,
+        "modelNameRaw": "이클립스"
+      },
+      {
+        "displayOrdinal": 1159,
+        "modelNameRaw": "파제로"
+      },
+      {
+        "displayOrdinal": 1160,
+        "modelNameRaw": "기타"
+      },
+      {
+        "displayOrdinal": 1161,
+        "modelNameRaw": "4Runner"
+      },
+      {
+        "displayOrdinal": 1162,
+        "modelNameRaw": "위시"
+      },
+      {
+        "displayOrdinal": 1163,
+        "modelNameRaw": "노아"
+      },
+      {
+        "displayOrdinal": 1164,
+        "modelNameRaw": "시엔타"
+      },
+      {
+        "displayOrdinal": 1165,
+        "modelNameRaw": "아이고"
+      },
+      {
+        "displayOrdinal": 1166,
+        "modelNameRaw": "아발론 5세대"
+      },
+      {
+        "displayOrdinal": 1167,
+        "modelNameRaw": "수프라 5세대"
+      },
+      {
+        "displayOrdinal": 1168,
+        "modelNameRaw": "시에나 4세대"
+      },
+      {
+        "displayOrdinal": 1169,
+        "modelNameRaw": "베르소"
+      },
+      {
+        "displayOrdinal": 1170,
+        "modelNameRaw": "GR86"
+      },
+      {
+        "displayOrdinal": 1171,
+        "modelNameRaw": "크라운 크로스오버"
+      },
+      {
+        "displayOrdinal": 1172,
+        "modelNameRaw": "하이랜더 4세대"
+      },
+      {
+        "displayOrdinal": 1173,
+        "modelNameRaw": "알파드 4세대"
+      },
+      {
+        "displayOrdinal": 1174,
+        "modelNameRaw": "프리우스 5세대"
+      },
+      {
+        "displayOrdinal": 1175,
+        "modelNameRaw": "캠리 (XV80)"
+      },
+      {
+        "displayOrdinal": 1176,
+        "modelNameRaw": "RAV4 6세대"
+      },
+      {
+        "displayOrdinal": 1177,
+        "modelNameRaw": "프리우스 4세대"
+      },
+      {
+        "displayOrdinal": 1178,
+        "modelNameRaw": "캠리 (XV70)"
+      },
+      {
+        "displayOrdinal": 1179,
+        "modelNameRaw": "RAV4 5세대"
+      },
+      {
+        "displayOrdinal": 1180,
+        "modelNameRaw": "프리우스 프라임"
+      },
+      {
+        "displayOrdinal": 1181,
+        "modelNameRaw": "프리우스 C"
+      },
+      {
+        "displayOrdinal": 1182,
+        "modelNameRaw": "벨파이어"
+      },
+      {
+        "displayOrdinal": 1183,
+        "modelNameRaw": "프레미오"
+      },
+      {
+        "displayOrdinal": 1184,
+        "modelNameRaw": "C-HR"
+      },
+      {
+        "displayOrdinal": 1185,
+        "modelNameRaw": "하이에이스"
+      },
+      {
+        "displayOrdinal": 1186,
+        "modelNameRaw": "카미"
+      },
+      {
+        "displayOrdinal": 1187,
+        "modelNameRaw": "라움"
+      },
+      {
+        "displayOrdinal": 1188,
+        "modelNameRaw": "복시"
+      },
+      {
+        "displayOrdinal": 1189,
+        "modelNameRaw": "에스콰이어"
+      },
+      {
+        "displayOrdinal": 1190,
+        "modelNameRaw": "사이"
+      },
+      {
+        "displayOrdinal": 1191,
+        "modelNameRaw": "아리스토"
+      },
+      {
+        "displayOrdinal": 1192,
+        "modelNameRaw": "루미"
+      },
+      {
+        "displayOrdinal": 1193,
+        "modelNameRaw": "아이시스"
+      },
+      {
+        "displayOrdinal": 1194,
+        "modelNameRaw": "86"
+      },
+      {
+        "displayOrdinal": 1195,
+        "modelNameRaw": "bB"
+      },
+      {
+        "displayOrdinal": 1196,
+        "modelNameRaw": "FJ 크루져"
+      },
+      {
+        "displayOrdinal": 1197,
+        "modelNameRaw": "iQ"
+      },
+      {
+        "displayOrdinal": 1198,
+        "modelNameRaw": "MR-2"
+      },
+      {
+        "displayOrdinal": 1199,
+        "modelNameRaw": "MR-S"
+      },
+      {
+        "displayOrdinal": 1200,
+        "modelNameRaw": "RAV4"
+      },
+      {
+        "displayOrdinal": 1201,
+        "modelNameRaw": "WiLL"
+      },
+      {
+        "displayOrdinal": 1202,
+        "modelNameRaw": "가이아"
+      },
+      {
+        "displayOrdinal": 1203,
+        "modelNameRaw": "락티스"
+      },
+      {
+        "displayOrdinal": 1204,
+        "modelNameRaw": "랜드크루저"
+      },
+      {
+        "displayOrdinal": 1205,
+        "modelNameRaw": "마크2"
+      },
+      {
+        "displayOrdinal": 1206,
+        "modelNameRaw": "마크X"
+      },
+      {
+        "displayOrdinal": 1207,
+        "modelNameRaw": "매트릭스"
+      },
+      {
+        "displayOrdinal": 1208,
+        "modelNameRaw": "벤자"
+      },
+      {
+        "displayOrdinal": 1209,
+        "modelNameRaw": "비스타"
+      },
+      {
+        "displayOrdinal": 1210,
+        "modelNameRaw": "세라"
+      },
+      {
+        "displayOrdinal": 1211,
+        "modelNameRaw": "세콰이어"
+      },
+      {
+        "displayOrdinal": 1212,
+        "modelNameRaw": "셀리카"
+      },
+      {
+        "displayOrdinal": 1213,
+        "modelNameRaw": "셀시오"
+      },
+      {
+        "displayOrdinal": 1214,
+        "modelNameRaw": "소아라"
+      },
+      {
+        "displayOrdinal": 1215,
+        "modelNameRaw": "솔라라"
+      },
+      {
+        "displayOrdinal": 1216,
+        "modelNameRaw": "수프라"
+      },
+      {
+        "displayOrdinal": 1217,
+        "modelNameRaw": "시에나"
+      },
+      {
+        "displayOrdinal": 1218,
+        "modelNameRaw": "아발론"
+      },
+      {
+        "displayOrdinal": 1219,
+        "modelNameRaw": "알테자"
+      },
+      {
+        "displayOrdinal": 1220,
+        "modelNameRaw": "알파드"
+      },
+      {
+        "displayOrdinal": 1221,
+        "modelNameRaw": "액스트라캡"
+      },
+      {
+        "displayOrdinal": 1222,
+        "modelNameRaw": "야리스(비츠)"
+      },
+      {
+        "displayOrdinal": 1223,
+        "modelNameRaw": "에스티마"
+      },
+      {
+        "displayOrdinal": 1224,
+        "modelNameRaw": "이스트"
+      },
+      {
+        "displayOrdinal": 1225,
+        "modelNameRaw": "입섬"
+      },
+      {
+        "displayOrdinal": 1226,
+        "modelNameRaw": "체이서"
+      },
+      {
+        "displayOrdinal": 1227,
+        "modelNameRaw": "카리나"
+      },
+      {
+        "displayOrdinal": 1228,
+        "modelNameRaw": "뉴 캠리"
+      },
+      {
+        "displayOrdinal": 1229,
+        "modelNameRaw": "캠리"
+      },
+      {
+        "displayOrdinal": 1230,
+        "modelNameRaw": "코로나"
+      },
+      {
+        "displayOrdinal": 1231,
+        "modelNameRaw": "코롤라"
+      },
+      {
+        "displayOrdinal": 1232,
+        "modelNameRaw": "코르사"
+      },
+      {
+        "displayOrdinal": 1233,
+        "modelNameRaw": "타코마"
+      },
+      {
+        "displayOrdinal": 1234,
+        "modelNameRaw": "크라운 마제스타"
+      },
+      {
+        "displayOrdinal": 1235,
+        "modelNameRaw": "크라운"
+      },
+      {
+        "displayOrdinal": 1236,
+        "modelNameRaw": "툰드라"
+      },
+      {
+        "displayOrdinal": 1237,
+        "modelNameRaw": "파쏘"
+      },
+      {
+        "displayOrdinal": 1238,
+        "modelNameRaw": "펀 카고"
+      },
+      {
+        "displayOrdinal": 1239,
+        "modelNameRaw": "프리비아"
+      },
+      {
+        "displayOrdinal": 1240,
+        "modelNameRaw": "포르테"
+      },
+      {
+        "displayOrdinal": 1241,
+        "modelNameRaw": "프리우스"
+      },
+      {
+        "displayOrdinal": 1242,
+        "modelNameRaw": "픽업"
+      },
+      {
+        "displayOrdinal": 1243,
+        "modelNameRaw": "하이랜더"
+      },
+      {
+        "displayOrdinal": 1244,
+        "modelNameRaw": "하이럭스 써프"
+      },
+      {
+        "displayOrdinal": 1245,
+        "modelNameRaw": "해리어"
+      },
+      {
+        "displayOrdinal": 1246,
+        "modelNameRaw": "기타"
+      },
+      {
+        "displayOrdinal": 1247,
+        "modelNameRaw": "프리우스 V"
+      },
+      {
+        "displayOrdinal": 1248,
+        "modelNameRaw": "모코"
+      },
+      {
+        "displayOrdinal": 1249,
+        "modelNameRaw": "맥시마 (A36)"
+      },
+      {
+        "displayOrdinal": 1250,
+        "modelNameRaw": "무라노 (Z52)"
+      },
+      {
+        "displayOrdinal": 1251,
+        "modelNameRaw": "리프 (ZE1)"
+      },
+      {
+        "displayOrdinal": 1252,
+        "modelNameRaw": "알티마 (L34)"
+      },
+      {
+        "displayOrdinal": 1253,
+        "modelNameRaw": "로그 (T33)"
+      },
+      {
+        "displayOrdinal": 1254,
+        "modelNameRaw": "리프"
+      },
+      {
+        "displayOrdinal": 1255,
+        "modelNameRaw": "로그 (T32)"
+      },
+      {
+        "displayOrdinal": 1256,
+        "modelNameRaw": "로그 (S35)"
+      },
+      {
+        "displayOrdinal": 1257,
+        "modelNameRaw": "엑스트레일"
+      },
+      {
+        "displayOrdinal": 1258,
+        "modelNameRaw": "세레나"
+      },
+      {
+        "displayOrdinal": 1259,
+        "modelNameRaw": "라페스타"
+      },
+      {
+        "displayOrdinal": 1260,
+        "modelNameRaw": "노트"
+      },
+      {
+        "displayOrdinal": 1261,
+        "modelNameRaw": "스테이지아"
+      },
+      {
+        "displayOrdinal": 1262,
+        "modelNameRaw": "로렐"
+      },
+      {
+        "displayOrdinal": 1263,
+        "modelNameRaw": "마치"
+      },
+      {
+        "displayOrdinal": 1264,
+        "modelNameRaw": "맥시마"
+      },
+      {
+        "displayOrdinal": 1265,
+        "modelNameRaw": "무라노"
+      },
+      {
+        "displayOrdinal": 1266,
+        "modelNameRaw": "버사"
+      },
+      {
+        "displayOrdinal": 1267,
+        "modelNameRaw": "베르사"
+      },
+      {
+        "displayOrdinal": 1268,
+        "modelNameRaw": "블루버드"
+      },
+      {
+        "displayOrdinal": 1269,
+        "modelNameRaw": "블루버드 실피"
+      },
+      {
+        "displayOrdinal": 1270,
+        "modelNameRaw": "세드릭"
+      },
+      {
+        "displayOrdinal": 1271,
+        "modelNameRaw": "세피로"
+      },
+      {
+        "displayOrdinal": 1272,
+        "modelNameRaw": "센트라"
+      },
+      {
+        "displayOrdinal": 1273,
+        "modelNameRaw": "스카이라인"
+      },
+      {
+        "displayOrdinal": 1274,
+        "modelNameRaw": "시마"
+      },
+      {
+        "displayOrdinal": 1275,
+        "modelNameRaw": "실비아"
+      },
+      {
+        "displayOrdinal": 1276,
+        "modelNameRaw": "알마다"
+      },
+      {
+        "displayOrdinal": 1277,
+        "modelNameRaw": "알티마"
+      },
+      {
+        "displayOrdinal": 1278,
+        "modelNameRaw": "엑스테라"
+      },
+      {
+        "displayOrdinal": 1279,
+        "modelNameRaw": "엘그란드"
+      },
+      {
+        "displayOrdinal": 1280,
+        "modelNameRaw": "윙로드"
+      },
+      {
+        "displayOrdinal": 1281,
+        "modelNameRaw": "쥬크"
+      },
+      {
+        "displayOrdinal": 1282,
+        "modelNameRaw": "캐시카이 2세대"
+      },
+      {
+        "displayOrdinal": 1283,
+        "modelNameRaw": "큐브"
+      },
+      {
+        "displayOrdinal": 1284,
+        "modelNameRaw": "퀘스트"
+      },
+      {
+        "displayOrdinal": 1285,
+        "modelNameRaw": "타이탄"
+      },
+      {
+        "displayOrdinal": 1286,
+        "modelNameRaw": "티아나"
+      },
+      {
+        "displayOrdinal": 1287,
+        "modelNameRaw": "파오"
+      },
+      {
+        "displayOrdinal": 1288,
+        "modelNameRaw": "펄사"
+      },
+      {
+        "displayOrdinal": 1289,
+        "modelNameRaw": "푸가"
+      },
+      {
+        "displayOrdinal": 1290,
+        "modelNameRaw": "패스파인더 4세대"
+      },
+      {
+        "displayOrdinal": 1291,
+        "modelNameRaw": "패스파인더"
+      },
+      {
+        "displayOrdinal": 1292,
+        "modelNameRaw": "프레리"
+      },
+      {
+        "displayOrdinal": 1293,
+        "modelNameRaw": "프레지던트"
+      },
+      {
+        "displayOrdinal": 1294,
+        "modelNameRaw": "프론티어"
+      },
+      {
+        "displayOrdinal": 1295,
+        "modelNameRaw": "휘가로"
+      },
+      {
+        "displayOrdinal": 1296,
+        "modelNameRaw": "GT-R"
+      },
+      {
+        "displayOrdinal": 1297,
+        "modelNameRaw": "NV"
+      },
+      {
+        "displayOrdinal": 1298,
+        "modelNameRaw": "180SX"
+      },
+      {
+        "displayOrdinal": 1299,
+        "modelNameRaw": "200SX"
+      },
+      {
+        "displayOrdinal": 1300,
+        "modelNameRaw": "240SX"
+      },
+      {
+        "displayOrdinal": 1301,
+        "modelNameRaw": "280ZX"
+      },
+      {
+        "displayOrdinal": 1302,
+        "modelNameRaw": "300ZX"
+      },
+      {
+        "displayOrdinal": 1303,
+        "modelNameRaw": "350Z"
+      },
+      {
+        "displayOrdinal": 1304,
+        "modelNameRaw": "370Z"
+      },
+      {
+        "displayOrdinal": 1305,
+        "modelNameRaw": "기타"
+      },
+      {
+        "displayOrdinal": 1306,
+        "modelNameRaw": "니트로"
+      },
+      {
+        "displayOrdinal": 1307,
+        "modelNameRaw": "다코타"
+      },
+      {
+        "displayOrdinal": 1308,
+        "modelNameRaw": "듀랑고"
+      },
+      {
+        "displayOrdinal": 1309,
+        "modelNameRaw": "램밴"
+      },
+      {
+        "displayOrdinal": 1310,
+        "modelNameRaw": "램픽업"
+      },
+      {
+        "displayOrdinal": 1311,
+        "modelNameRaw": "매그넘"
+      },
+      {
+        "displayOrdinal": 1312,
+        "modelNameRaw": "바이퍼"
+      },
+      {
+        "displayOrdinal": 1313,
+        "modelNameRaw": "밴"
+      },
+      {
+        "displayOrdinal": 1314,
+        "modelNameRaw": "어벤저"
+      },
+      {
+        "displayOrdinal": 1315,
+        "modelNameRaw": "인트레피드"
+      },
+      {
+        "displayOrdinal": 1316,
+        "modelNameRaw": "차저"
+      },
+      {
+        "displayOrdinal": 1317,
+        "modelNameRaw": "챌린저"
+      },
+      {
+        "displayOrdinal": 1318,
+        "modelNameRaw": "캐러밴"
+      },
+      {
+        "displayOrdinal": 1319,
+        "modelNameRaw": "그랜드 캐러밴"
+      },
+      {
+        "displayOrdinal": 1320,
+        "modelNameRaw": "캘리버"
+      },
+      {
+        "displayOrdinal": 1321,
+        "modelNameRaw": "기타"
+      },
+      {
+        "displayOrdinal": 1322,
+        "modelNameRaw": "뉴 IS200t"
+      },
+      {
+        "displayOrdinal": 1323,
+        "modelNameRaw": "RC200t"
+      },
+      {
+        "displayOrdinal": 1324,
+        "modelNameRaw": "뉴 GS200t"
+      },
+      {
+        "displayOrdinal": 1325,
+        "modelNameRaw": "LS500 5세대"
+      },
+      {
+        "displayOrdinal": 1326,
+        "modelNameRaw": "NX450h+ 2세대"
+      },
+      {
+        "displayOrdinal": 1327,
+        "modelNameRaw": "RX350h 5세대"
+      },
+      {
+        "displayOrdinal": 1328,
+        "modelNameRaw": "UX300h"
+      },
+      {
+        "displayOrdinal": 1329,
+        "modelNameRaw": "LX 4세대"
+      },
+      {
+        "displayOrdinal": 1330,
+        "modelNameRaw": "ES 8세대"
+      },
+      {
+        "displayOrdinal": 1331,
+        "modelNameRaw": "CT200h"
+      },
+      {
+        "displayOrdinal": 1332,
+        "modelNameRaw": "LS500h 5세대"
+      },
+      {
+        "displayOrdinal": 1333,
+        "modelNameRaw": "뉴 IS300"
+      },
+      {
+        "displayOrdinal": 1334,
+        "modelNameRaw": "ES300h 7세대"
+      },
+      {
+        "displayOrdinal": 1335,
+        "modelNameRaw": "UX250h"
+      },
+      {
+        "displayOrdinal": 1336,
+        "modelNameRaw": "RC300"
+      },
+      {
+        "displayOrdinal": 1337,
+        "modelNameRaw": "NX350h 2세대"
+      },
+      {
+        "displayOrdinal": 1338,
+        "modelNameRaw": "RX450h+ 5세대"
+      },
+      {
+        "displayOrdinal": 1339,
+        "modelNameRaw": "NX200t"
+      },
+      {
+        "displayOrdinal": 1340,
+        "modelNameRaw": "뉴 GS300"
+      },
+      {
+        "displayOrdinal": 1341,
+        "modelNameRaw": "UX300e"
+      },
+      {
+        "displayOrdinal": 1342,
+        "modelNameRaw": "RX500h 5세대"
+      },
+      {
+        "displayOrdinal": 1343,
+        "modelNameRaw": "RC F"
+      },
+      {
+        "displayOrdinal": 1344,
+        "modelNameRaw": "RX350 4세대"
+      },
+      {
+        "displayOrdinal": 1345,
+        "modelNameRaw": "RX450h 4세대"
+      },
+      {
+        "displayOrdinal": 1346,
+        "modelNameRaw": "NX300"
+      },
+      {
+        "displayOrdinal": 1347,
+        "modelNameRaw": "뉴 ES250"
+      },
+      {
+        "displayOrdinal": 1348,
+        "modelNameRaw": "뉴 GS F"
+      },
+      {
+        "displayOrdinal": 1349,
+        "modelNameRaw": "RX450hL 4세대"
+      },
+      {
+        "displayOrdinal": 1350,
+        "modelNameRaw": "LC"
+      },
+      {
+        "displayOrdinal": 1351,
+        "modelNameRaw": "RZ450e"
+      },
+      {
+        "displayOrdinal": 1352,
+        "modelNameRaw": "LM 2세대"
+      },
+      {
+        "displayOrdinal": 1353,
+        "modelNameRaw": "IS200"
+      },
+      {
+        "displayOrdinal": 1354,
+        "modelNameRaw": "뉴 IS250"
+      },
+      {
+        "displayOrdinal": 1355,
+        "modelNameRaw": "IS250"
+      },
+      {
+        "displayOrdinal": 1356,
+        "modelNameRaw": "IS300"
+      },
+      {
+        "displayOrdinal": 1357,
+        "modelNameRaw": "IS350"
+      },
+      {
+        "displayOrdinal": 1358,
+        "modelNameRaw": "IS F"
+      },
+      {
+        "displayOrdinal": 1359,
+        "modelNameRaw": "뉴 ES350"
+      },
+      {
+        "displayOrdinal": 1360,
+        "modelNameRaw": "뉴 ES300h"
+      },
+      {
+        "displayOrdinal": 1361,
+        "modelNameRaw": "ES350"
+      },
+      {
+        "displayOrdinal": 1362,
+        "modelNameRaw": "ES330"
+      },
+      {
+        "displayOrdinal": 1363,
+        "modelNameRaw": "ES300"
+      },
+      {
+        "displayOrdinal": 1364,
+        "modelNameRaw": "뉴 GS250"
+      },
+      {
+        "displayOrdinal": 1365,
+        "modelNameRaw": "뉴 GS350"
+      },
+      {
+        "displayOrdinal": 1366,
+        "modelNameRaw": "뉴 GS450h"
+      },
+      {
+        "displayOrdinal": 1367,
+        "modelNameRaw": "GS300"
+      },
+      {
+        "displayOrdinal": 1368,
+        "modelNameRaw": "GS350"
+      },
+      {
+        "displayOrdinal": 1369,
+        "modelNameRaw": "GS400"
+      },
+      {
+        "displayOrdinal": 1370,
+        "modelNameRaw": "GS430"
+      },
+      {
+        "displayOrdinal": 1371,
+        "modelNameRaw": "GS450h"
+      },
+      {
+        "displayOrdinal": 1372,
+        "modelNameRaw": "GS460"
+      },
+      {
+        "displayOrdinal": 1373,
+        "modelNameRaw": "GX470"
+      },
+      {
+        "displayOrdinal": 1374,
+        "modelNameRaw": "LS600hL"
+      },
+      {
+        "displayOrdinal": 1375,
+        "modelNameRaw": "LS460L"
+      },
+      {
+        "displayOrdinal": 1376,
+        "modelNameRaw": "LS460"
+      },
+      {
+        "displayOrdinal": 1377,
+        "modelNameRaw": "LS430"
+      },
+      {
+        "displayOrdinal": 1378,
+        "modelNameRaw": "LS400"
+      },
+      {
+        "displayOrdinal": 1379,
+        "modelNameRaw": "LX"
+      },
+      {
+        "displayOrdinal": 1380,
+        "modelNameRaw": "NX300h"
+      },
+      {
+        "displayOrdinal": 1381,
+        "modelNameRaw": "RX300"
+      },
+      {
+        "displayOrdinal": 1382,
+        "modelNameRaw": "RX330"
+      },
+      {
+        "displayOrdinal": 1383,
+        "modelNameRaw": "RX350"
+      },
+      {
+        "displayOrdinal": 1384,
+        "modelNameRaw": "RX400h"
+      },
+      {
+        "displayOrdinal": 1385,
+        "modelNameRaw": "RX450h"
+      },
+      {
+        "displayOrdinal": 1386,
+        "modelNameRaw": "SC300"
+      },
+      {
+        "displayOrdinal": 1387,
+        "modelNameRaw": "SC430"
+      },
+      {
+        "displayOrdinal": 1388,
+        "modelNameRaw": "기타"
+      },
+      {
+        "displayOrdinal": 1389,
+        "modelNameRaw": "GX460"
+      },
+      {
+        "displayOrdinal": 1390,
+        "modelNameRaw": "RC350"
+      },
+      {
+        "displayOrdinal": 1391,
+        "modelNameRaw": "그랜드 마퀴스"
+      },
+      {
+        "displayOrdinal": 1392,
+        "modelNameRaw": "미스틱"
+      },
+      {
+        "displayOrdinal": 1393,
+        "modelNameRaw": "빌리저"
+      },
+      {
+        "displayOrdinal": 1394,
+        "modelNameRaw": "세이블"
+      },
+      {
+        "displayOrdinal": 1395,
+        "modelNameRaw": "쿠거"
+      },
+      {
+        "displayOrdinal": 1396,
+        "modelNameRaw": "그랜드 비타라"
+      },
+      {
+        "displayOrdinal": 1397,
+        "modelNameRaw": "알토"
+      },
+      {
+        "displayOrdinal": 1398,
+        "modelNameRaw": "짐니"
+      },
+      {
+        "displayOrdinal": 1399,
+        "modelNameRaw": "웨건 R 소리오"
+      },
+      {
+        "displayOrdinal": 1400,
+        "modelNameRaw": "알토웍스"
+      },
+      {
+        "displayOrdinal": 1401,
+        "modelNameRaw": "이그니스"
+      },
+      {
+        "displayOrdinal": 1402,
+        "modelNameRaw": "스페이시아"
+      },
+      {
+        "displayOrdinal": 1403,
+        "modelNameRaw": "사이드킥"
+      },
+      {
+        "displayOrdinal": 1404,
+        "modelNameRaw": "스위프트"
+      },
+      {
+        "displayOrdinal": 1405,
+        "modelNameRaw": "알토라팡"
+      },
+      {
+        "displayOrdinal": 1406,
+        "modelNameRaw": "웨건 R"
+      },
+      {
+        "displayOrdinal": 1407,
+        "modelNameRaw": "카푸치노"
+      },
+      {
+        "displayOrdinal": 1408,
+        "modelNameRaw": "트윈"
+      },
+      {
+        "displayOrdinal": 1409,
+        "modelNameRaw": "허슬러"
+      },
+      {
+        "displayOrdinal": 1410,
+        "modelNameRaw": "X-90"
+      },
+      {
+        "displayOrdinal": 1411,
+        "modelNameRaw": "기타"
+      },
+      {
+        "displayOrdinal": 1412,
+        "modelNameRaw": "루미나"
+      },
+      {
+        "displayOrdinal": 1413,
+        "modelNameRaw": "에퀴녹스"
+      },
+      {
+        "displayOrdinal": 1414,
+        "modelNameRaw": "픽업트럭"
+      },
+      {
+        "displayOrdinal": 1415,
+        "modelNameRaw": "볼트(Volt)"
+      },
+      {
+        "displayOrdinal": 1416,
+        "modelNameRaw": "루미나 미니밴"
+      },
+      {
+        "displayOrdinal": 1417,
+        "modelNameRaw": "벤처"
+      },
+      {
+        "displayOrdinal": 1418,
+        "modelNameRaw": "트레일블레이저"
+      },
+      {
+        "displayOrdinal": 1419,
+        "modelNameRaw": "블레이저"
+      },
+      {
+        "displayOrdinal": 1420,
+        "modelNameRaw": "서버밴"
+      },
+      {
+        "displayOrdinal": 1421,
+        "modelNameRaw": "실버라도"
+      },
+      {
+        "displayOrdinal": 1422,
+        "modelNameRaw": "아발란치"
+      },
+      {
+        "displayOrdinal": 1423,
+        "modelNameRaw": "아스트로밴"
+      },
+      {
+        "displayOrdinal": 1424,
+        "modelNameRaw": "익스프레스밴"
+      },
+      {
+        "displayOrdinal": 1425,
+        "modelNameRaw": "체비밴"
+      },
+      {
+        "displayOrdinal": 1426,
+        "modelNameRaw": "카마로"
+      },
+      {
+        "displayOrdinal": 1427,
+        "modelNameRaw": "콜벳"
+      },
+      {
+        "displayOrdinal": 1428,
+        "modelNameRaw": "콜로라도"
+      },
+      {
+        "displayOrdinal": 1429,
+        "modelNameRaw": "타호"
+      },
+      {
+        "displayOrdinal": 1430,
+        "modelNameRaw": "HHR"
+      },
+      {
+        "displayOrdinal": 1431,
+        "modelNameRaw": "SSR"
+      },
+      {
+        "displayOrdinal": 1432,
+        "modelNameRaw": "S-10"
+      },
+      {
+        "displayOrdinal": 1433,
+        "modelNameRaw": "트랙커"
+      },
+      {
+        "displayOrdinal": 1434,
+        "modelNameRaw": "트럭밴"
+      },
+      {
+        "displayOrdinal": 1435,
+        "modelNameRaw": "기타"
+      },
+      {
+        "displayOrdinal": 1436,
+        "modelNameRaw": "벡트라"
+      },
+      {
+        "displayOrdinal": 1437,
+        "modelNameRaw": "비타"
+      },
+      {
+        "displayOrdinal": 1438,
+        "modelNameRaw": "스피드스터"
+      },
+      {
+        "displayOrdinal": 1439,
+        "modelNameRaw": "아스트라"
+      },
+      {
+        "displayOrdinal": 1440,
+        "modelNameRaw": "코르사"
+      },
+      {
+        "displayOrdinal": 1441,
+        "modelNameRaw": "티그라"
+      },
+      {
+        "displayOrdinal": 1442,
+        "modelNameRaw": "147"
+      },
+      {
+        "displayOrdinal": 1443,
+        "modelNameRaw": "159"
+      },
+      {
+        "displayOrdinal": 1444,
+        "modelNameRaw": "줄리에타"
+      },
+      {
+        "displayOrdinal": 1445,
+        "modelNameRaw": "4C"
+      },
+      {
+        "displayOrdinal": 1446,
+        "modelNameRaw": "미토"
+      },
+      {
+        "displayOrdinal": 1447,
+        "modelNameRaw": "줄리아"
+      },
+      {
+        "displayOrdinal": 1448,
+        "modelNameRaw": "156"
+      },
+      {
+        "displayOrdinal": 1449,
+        "modelNameRaw": "166"
+      },
+      {
+        "displayOrdinal": 1450,
+        "modelNameRaw": "브레라"
+      },
+      {
+        "displayOrdinal": 1451,
+        "modelNameRaw": "스파이더"
+      },
+      {
+        "displayOrdinal": 1452,
+        "modelNameRaw": "FF"
+      },
+      {
+        "displayOrdinal": 1453,
+        "modelNameRaw": "488 GTB"
+      },
+      {
+        "displayOrdinal": 1454,
+        "modelNameRaw": "GTC4 루쏘"
+      },
+      {
+        "displayOrdinal": 1455,
+        "modelNameRaw": "12 칠린드리"
+      },
+      {
+        "displayOrdinal": 1456,
+        "modelNameRaw": "488 스파이더"
+      },
+      {
+        "displayOrdinal": 1457,
+        "modelNameRaw": "12 칠린드리 스파이더"
+      },
+      {
+        "displayOrdinal": 1458,
+        "modelNameRaw": "488 피스타"
+      },
+      {
+        "displayOrdinal": 1459,
+        "modelNameRaw": "812 슈퍼패스트"
+      },
+      {
+        "displayOrdinal": 1460,
+        "modelNameRaw": "포르토피노"
+      },
+      {
+        "displayOrdinal": 1461,
+        "modelNameRaw": "512 TR"
+      },
+      {
+        "displayOrdinal": 1462,
+        "modelNameRaw": "F8 트리뷰토"
+      },
+      {
+        "displayOrdinal": 1463,
+        "modelNameRaw": "SF90 스트라달레"
+      },
+      {
+        "displayOrdinal": 1464,
+        "modelNameRaw": "812 GTS"
+      },
+      {
+        "displayOrdinal": 1465,
+        "modelNameRaw": "F8 스파이더"
+      },
+      {
+        "displayOrdinal": 1466,
+        "modelNameRaw": "로마"
+      },
+      {
+        "displayOrdinal": 1467,
+        "modelNameRaw": "SF90 스파이더"
+      },
+      {
+        "displayOrdinal": 1468,
+        "modelNameRaw": "296 GTB"
+      },
+      {
+        "displayOrdinal": 1469,
+        "modelNameRaw": "296 GTS"
+      },
+      {
+        "displayOrdinal": 1470,
+        "modelNameRaw": "라페라리"
+      },
+      {
+        "displayOrdinal": 1471,
+        "modelNameRaw": "푸로산게"
+      },
+      {
+        "displayOrdinal": 1472,
+        "modelNameRaw": "308 GTS"
+      },
+      {
+        "displayOrdinal": 1473,
+        "modelNameRaw": "328 GTB"
+      },
+      {
+        "displayOrdinal": 1474,
+        "modelNameRaw": "아말피"
+      },
+      {
+        "displayOrdinal": 1475,
+        "modelNameRaw": "849"
+      },
+      {
+        "displayOrdinal": 1476,
+        "modelNameRaw": "F40"
+      },
+      {
+        "displayOrdinal": 1477,
+        "modelNameRaw": "F50"
+      },
+      {
+        "displayOrdinal": 1478,
+        "modelNameRaw": "F355"
+      },
+      {
+        "displayOrdinal": 1479,
+        "modelNameRaw": "F430"
+      },
+      {
+        "displayOrdinal": 1480,
+        "modelNameRaw": "F12 베를리네타"
+      },
+      {
+        "displayOrdinal": 1481,
+        "modelNameRaw": "348"
+      },
+      {
+        "displayOrdinal": 1482,
+        "modelNameRaw": "360"
+      },
+      {
+        "displayOrdinal": 1483,
+        "modelNameRaw": "456"
+      },
+      {
+        "displayOrdinal": 1484,
+        "modelNameRaw": "458"
+      },
+      {
+        "displayOrdinal": 1485,
+        "modelNameRaw": "550"
+      },
+      {
+        "displayOrdinal": 1486,
+        "modelNameRaw": "575M"
+      },
+      {
+        "displayOrdinal": 1487,
+        "modelNameRaw": "599 GTB"
+      },
+      {
+        "displayOrdinal": 1488,
+        "modelNameRaw": "599 GTO"
+      },
+      {
+        "displayOrdinal": 1489,
+        "modelNameRaw": "599XX"
+      },
+      {
+        "displayOrdinal": 1490,
+        "modelNameRaw": "612"
+      },
+      {
+        "displayOrdinal": 1491,
+        "modelNameRaw": "엔초페라리"
+      },
+      {
+        "displayOrdinal": 1492,
+        "modelNameRaw": "캘리포니아"
+      },
+      {
+        "displayOrdinal": 1493,
+        "modelNameRaw": "그랑프리"
+      },
+      {
+        "displayOrdinal": 1494,
+        "modelNameRaw": "G8"
+      },
+      {
+        "displayOrdinal": 1495,
+        "modelNameRaw": "그랜드 앰"
+      },
+      {
+        "displayOrdinal": 1496,
+        "modelNameRaw": "트랜스 앰"
+      },
+      {
+        "displayOrdinal": 1497,
+        "modelNameRaw": "트랜스포트"
+      },
+      {
+        "displayOrdinal": 1498,
+        "modelNameRaw": "토렌트"
+      },
+      {
+        "displayOrdinal": 1499,
+        "modelNameRaw": "보네빌"
+      },
+      {
+        "displayOrdinal": 1500,
+        "modelNameRaw": "선파이어"
+      },
+      {
+        "displayOrdinal": 1501,
+        "modelNameRaw": "솔스티스"
+      },
+      {
+        "displayOrdinal": 1502,
+        "modelNameRaw": "파이어버드"
+      },
+      {
+        "displayOrdinal": 1503,
+        "modelNameRaw": "피에로"
+      },
+      {
+        "displayOrdinal": 1504,
+        "modelNameRaw": "ATS"
+      },
+      {
+        "displayOrdinal": 1505,
+        "modelNameRaw": "ATS-V"
+      },
+      {
+        "displayOrdinal": 1506,
+        "modelNameRaw": "CT6"
+      },
+      {
+        "displayOrdinal": 1507,
+        "modelNameRaw": "XT5"
+      },
+      {
+        "displayOrdinal": 1508,
+        "modelNameRaw": "에스컬레이드 IQ"
+      },
+      {
+        "displayOrdinal": 1509,
+        "modelNameRaw": "에스컬레이드 5세대"
+      },
+      {
+        "displayOrdinal": 1510,
+        "modelNameRaw": "XTS"
+      },
+      {
+        "displayOrdinal": 1511,
+        "modelNameRaw": "XT6"
+      },
+      {
+        "displayOrdinal": 1512,
+        "modelNameRaw": "CT4"
+      },
+      {
+        "displayOrdinal": 1513,
+        "modelNameRaw": "CT5"
+      },
+      {
+        "displayOrdinal": 1514,
+        "modelNameRaw": "XT4"
+      },
+      {
+        "displayOrdinal": 1515,
+        "modelNameRaw": "CT5-V"
+      },
+      {
+        "displayOrdinal": 1516,
+        "modelNameRaw": "CT6-V"
+      },
+      {
+        "displayOrdinal": 1517,
+        "modelNameRaw": "리릭"
+      },
+      {
+        "displayOrdinal": 1518,
+        "modelNameRaw": "BLS"
+      },
+      {
+        "displayOrdinal": 1519,
+        "modelNameRaw": "CTS 3세대"
+      },
+      {
+        "displayOrdinal": 1520,
+        "modelNameRaw": "CTS 2세대"
+      },
+      {
+        "displayOrdinal": 1521,
+        "modelNameRaw": "CTS 1세대"
+      },
+      {
+        "displayOrdinal": 1522,
+        "modelNameRaw": "CTS-V"
+      },
+      {
+        "displayOrdinal": 1523,
+        "modelNameRaw": "DTS"
+      },
+      {
+        "displayOrdinal": 1524,
+        "modelNameRaw": "올 뉴 SRX"
+      },
+      {
+        "displayOrdinal": 1525,
+        "modelNameRaw": "SRX"
+      },
+      {
+        "displayOrdinal": 1526,
+        "modelNameRaw": "뉴 STS"
+      },
+      {
+        "displayOrdinal": 1527,
+        "modelNameRaw": "STS"
+      },
+      {
+        "displayOrdinal": 1528,
+        "modelNameRaw": "XLR"
+      },
+      {
+        "displayOrdinal": 1529,
+        "modelNameRaw": "드빌"
+      },
+      {
+        "displayOrdinal": 1530,
+        "modelNameRaw": "스빌"
+      },
+      {
+        "displayOrdinal": 1531,
+        "modelNameRaw": "에스컬레이드"
+      },
+      {
+        "displayOrdinal": 1532,
+        "modelNameRaw": "엘도라도"
+      },
+      {
+        "displayOrdinal": 1533,
+        "modelNameRaw": "컨코어"
+      },
+      {
+        "displayOrdinal": 1534,
+        "modelNameRaw": "플리트우드"
+      },
+      {
+        "displayOrdinal": 1535,
+        "modelNameRaw": "기타"
+      },
+      {
+        "displayOrdinal": 1536,
+        "modelNameRaw": "MKC"
+      },
+      {
+        "displayOrdinal": 1537,
+        "modelNameRaw": "MKX 2세대"
+      },
+      {
+        "displayOrdinal": 1538,
+        "modelNameRaw": "컨티넨탈 10세대"
+      },
+      {
+        "displayOrdinal": 1539,
+        "modelNameRaw": "에비에이터 2세대"
+      },
+      {
+        "displayOrdinal": 1540,
+        "modelNameRaw": "노틸러스 2세대"
+      },
+      {
+        "displayOrdinal": 1541,
+        "modelNameRaw": "노틸러스 1세대"
+      },
+      {
+        "displayOrdinal": 1542,
+        "modelNameRaw": "LS"
+      },
+      {
+        "displayOrdinal": 1543,
+        "modelNameRaw": "코세어"
+      },
+      {
+        "displayOrdinal": 1544,
+        "modelNameRaw": "네비게이터"
+      },
+      {
+        "displayOrdinal": 1545,
+        "modelNameRaw": "뉴 MKS"
+      },
+      {
+        "displayOrdinal": 1546,
+        "modelNameRaw": "MKS"
+      },
+      {
+        "displayOrdinal": 1547,
+        "modelNameRaw": "MKT"
+      },
+      {
+        "displayOrdinal": 1548,
+        "modelNameRaw": "뉴 MKX"
+      },
+      {
+        "displayOrdinal": 1549,
+        "modelNameRaw": "MKX"
+      },
+      {
+        "displayOrdinal": 1550,
+        "modelNameRaw": "뉴 MKZ"
+      },
+      {
+        "displayOrdinal": 1551,
+        "modelNameRaw": "MKZ"
+      },
+      {
+        "displayOrdinal": 1552,
+        "modelNameRaw": "네비게이터 4세대"
+      },
+      {
+        "displayOrdinal": 1553,
+        "modelNameRaw": "에비에이터 1세대"
+      },
+      {
+        "displayOrdinal": 1554,
+        "modelNameRaw": "컨티넨탈"
+      },
+      {
+        "displayOrdinal": 1555,
+        "modelNameRaw": "타운카"
+      },
+      {
+        "displayOrdinal": 1556,
+        "modelNameRaw": "르사블"
+      },
+      {
+        "displayOrdinal": 1557,
+        "modelNameRaw": "센츄리"
+      },
+      {
+        "displayOrdinal": 1558,
+        "modelNameRaw": "리갈"
+      },
+      {
+        "displayOrdinal": 1559,
+        "modelNameRaw": "리비에라"
+      },
+      {
+        "displayOrdinal": 1560,
+        "modelNameRaw": "테라자"
+      },
+      {
+        "displayOrdinal": 1561,
+        "modelNameRaw": "파크애비뉴"
+      },
+      {
+        "displayOrdinal": 1562,
+        "modelNameRaw": "실루엣"
+      },
+      {
+        "displayOrdinal": 1563,
+        "modelNameRaw": "오로라"
+      },
+      {
+        "displayOrdinal": 1564,
+        "modelNameRaw": "커트라스"
+      },
+      {
+        "displayOrdinal": 1565,
+        "modelNameRaw": "브라바다"
+      },
+      {
+        "displayOrdinal": 1566,
+        "modelNameRaw": "알레로"
+      },
+      {
+        "displayOrdinal": 1567,
+        "modelNameRaw": "던"
+      },
+      {
+        "displayOrdinal": 1568,
+        "modelNameRaw": "고스트 2세대"
+      },
+      {
+        "displayOrdinal": 1569,
+        "modelNameRaw": "고스트"
+      },
+      {
+        "displayOrdinal": 1570,
+        "modelNameRaw": "컬리넌"
+      },
+      {
+        "displayOrdinal": 1571,
+        "modelNameRaw": "스펙터"
+      },
+      {
+        "displayOrdinal": 1572,
+        "modelNameRaw": "레이스"
+      },
+      {
+        "displayOrdinal": 1573,
+        "modelNameRaw": "실버스퍼"
+      },
+      {
+        "displayOrdinal": 1574,
+        "modelNameRaw": "코니쉬"
+      },
+      {
+        "displayOrdinal": 1575,
+        "modelNameRaw": "팬텀"
+      },
+      {
+        "displayOrdinal": 1576,
+        "modelNameRaw": "H1"
+      },
+      {
+        "displayOrdinal": 1577,
+        "modelNameRaw": "H2"
+      },
+      {
+        "displayOrdinal": 1578,
+        "modelNameRaw": "H3"
+      },
+      {
+        "displayOrdinal": 1579,
+        "modelNameRaw": "H3T"
+      },
+      {
+        "displayOrdinal": 1580,
+        "modelNameRaw": "가야르도"
+      },
+      {
+        "displayOrdinal": 1581,
+        "modelNameRaw": "우루스"
+      },
+      {
+        "displayOrdinal": 1582,
+        "modelNameRaw": "레부엘토"
+      },
+      {
+        "displayOrdinal": 1583,
+        "modelNameRaw": "테메라리오"
+      },
+      {
+        "displayOrdinal": 1584,
+        "modelNameRaw": "디아블로"
+      },
+      {
+        "displayOrdinal": 1585,
+        "modelNameRaw": "아벤타도르"
+      },
+      {
+        "displayOrdinal": 1586,
+        "modelNameRaw": "우라칸"
+      },
+      {
+        "displayOrdinal": 1587,
+        "modelNameRaw": "무르시엘라고"
+      },
+      {
+        "displayOrdinal": 1588,
+        "modelNameRaw": "레벤톤"
+      },
+      {
+        "displayOrdinal": 1589,
+        "modelNameRaw": "잘파"
+      },
+      {
+        "displayOrdinal": 1590,
+        "modelNameRaw": "기타"
+      },
+      {
+        "displayOrdinal": 1591,
+        "modelNameRaw": "뮬산"
+      },
+      {
+        "displayOrdinal": 1592,
+        "modelNameRaw": "플라잉스퍼 4세대"
+      },
+      {
+        "displayOrdinal": 1593,
+        "modelNameRaw": "컨티넨탈 GT 4세대"
+      },
+      {
+        "displayOrdinal": 1594,
+        "modelNameRaw": "컨티넨탈 GT 3세대"
+      },
+      {
+        "displayOrdinal": 1595,
+        "modelNameRaw": "플라잉스퍼 3세대"
+      },
+      {
+        "displayOrdinal": 1596,
+        "modelNameRaw": "플라잉스퍼 2세대"
+      },
+      {
+        "displayOrdinal": 1597,
+        "modelNameRaw": "플라잉스퍼 1세대"
+      },
+      {
+        "displayOrdinal": 1598,
+        "modelNameRaw": "벤테이가"
+      },
+      {
+        "displayOrdinal": 1599,
+        "modelNameRaw": "브룩랜즈"
+      },
+      {
+        "displayOrdinal": 1600,
+        "modelNameRaw": "아르나지"
+      },
+      {
+        "displayOrdinal": 1601,
+        "modelNameRaw": "아주르"
+      },
+      {
+        "displayOrdinal": 1602,
+        "modelNameRaw": "에이트"
+      },
+      {
+        "displayOrdinal": 1603,
+        "modelNameRaw": "컨티넨탈 GT 2세대"
+      },
+      {
+        "displayOrdinal": 1604,
+        "modelNameRaw": "컨티넨탈 GT 1세대"
+      },
+      {
+        "displayOrdinal": 1605,
+        "modelNameRaw": "마테리아"
+      },
+      {
+        "displayOrdinal": 1606,
+        "modelNameRaw": "탄토"
+      },
+      {
+        "displayOrdinal": 1607,
+        "modelNameRaw": "테리오스"
+      },
+      {
+        "displayOrdinal": 1608,
+        "modelNameRaw": "웨이크"
+      },
+      {
+        "displayOrdinal": 1609,
+        "modelNameRaw": "에쎄"
+      },
+      {
+        "displayOrdinal": 1610,
+        "modelNameRaw": "캐스트"
+      },
+      {
+        "displayOrdinal": 1611,
+        "modelNameRaw": "무브"
+      },
+      {
+        "displayOrdinal": 1612,
+        "modelNameRaw": "미라 코코아"
+      },
+      {
+        "displayOrdinal": 1613,
+        "modelNameRaw": "미라"
+      },
+      {
+        "displayOrdinal": 1614,
+        "modelNameRaw": "미라지노"
+      },
+      {
+        "displayOrdinal": 1615,
+        "modelNameRaw": "분"
+      },
+      {
+        "displayOrdinal": 1616,
+        "modelNameRaw": "코펜"
+      },
+      {
+        "displayOrdinal": 1617,
+        "modelNameRaw": "BRZ"
+      },
+      {
+        "displayOrdinal": 1618,
+        "modelNameRaw": "레보그"
+      },
+      {
+        "displayOrdinal": 1619,
+        "modelNameRaw": "R1"
+      },
+      {
+        "displayOrdinal": 1620,
+        "modelNameRaw": "SVX"
+      },
+      {
+        "displayOrdinal": 1621,
+        "modelNameRaw": "레거시"
+      },
+      {
+        "displayOrdinal": 1622,
+        "modelNameRaw": "아웃백"
+      },
+      {
+        "displayOrdinal": 1623,
+        "modelNameRaw": "임프레자"
+      },
+      {
+        "displayOrdinal": 1624,
+        "modelNameRaw": "포레스터"
+      },
+      {
+        "displayOrdinal": 1625,
+        "modelNameRaw": "르반떼"
+      },
+      {
+        "displayOrdinal": 1626,
+        "modelNameRaw": "그란투리스모 2세대"
+      },
+      {
+        "displayOrdinal": 1627,
+        "modelNameRaw": "그란카브리오 2세대"
+      },
+      {
+        "displayOrdinal": 1628,
+        "modelNameRaw": "그란스포츠"
+      },
+      {
+        "displayOrdinal": 1629,
+        "modelNameRaw": "MC20"
+      },
+      {
+        "displayOrdinal": 1630,
+        "modelNameRaw": "그레칼레"
+      },
+      {
+        "displayOrdinal": 1631,
+        "modelNameRaw": "MC푸라"
+      },
+      {
+        "displayOrdinal": 1632,
+        "modelNameRaw": "그란카브리오"
+      },
+      {
+        "displayOrdinal": 1633,
+        "modelNameRaw": "그란투리스모"
+      },
+      {
+        "displayOrdinal": 1634,
+        "modelNameRaw": "콰트로포르테"
+      },
+      {
+        "displayOrdinal": 1635,
+        "modelNameRaw": "기블리"
+      },
+      {
+        "displayOrdinal": 1636,
+        "modelNameRaw": "스파이더"
+      },
+      {
+        "displayOrdinal": 1637,
+        "modelNameRaw": "쿠페"
+      },
+      {
+        "displayOrdinal": 1638,
+        "modelNameRaw": "MC12"
+      },
+      {
+        "displayOrdinal": 1639,
+        "modelNameRaw": "3200"
+      },
+      {
+        "displayOrdinal": 1640,
+        "modelNameRaw": "기타"
+      },
+      {
+        "displayOrdinal": 1641,
+        "modelNameRaw": "쿠퍼 C 4세대"
+      },
+      {
+        "displayOrdinal": 1642,
+        "modelNameRaw": "쿠퍼 S 컨트리맨 3세대"
+      },
+      {
+        "displayOrdinal": 1643,
+        "modelNameRaw": "쿠퍼 S 컨버터블 4세대"
+      },
+      {
+        "displayOrdinal": 1644,
+        "modelNameRaw": "쿠퍼 S 4세대"
+      },
+      {
+        "displayOrdinal": 1645,
+        "modelNameRaw": "쿠퍼 컨트리맨 일렉트릭 3세대"
+      },
+      {
+        "displayOrdinal": 1646,
+        "modelNameRaw": "쿠퍼 C 컨버터블 4세대"
+      },
+      {
+        "displayOrdinal": 1647,
+        "modelNameRaw": "쿠퍼 일렉트릭 4세대"
+      },
+      {
+        "displayOrdinal": 1648,
+        "modelNameRaw": "쿠퍼 일렉트릭"
+      },
+      {
+        "displayOrdinal": 1649,
+        "modelNameRaw": "쿠퍼"
+      },
+      {
+        "displayOrdinal": 1650,
+        "modelNameRaw": "에이스맨 1세대"
+      },
+      {
+        "displayOrdinal": 1651,
+        "modelNameRaw": "쿠퍼 S"
+      },
+      {
+        "displayOrdinal": 1652,
+        "modelNameRaw": "쿠퍼 D"
+      },
+      {
+        "displayOrdinal": 1653,
+        "modelNameRaw": "쿠퍼 SD"
+      },
+      {
+        "displayOrdinal": 1654,
+        "modelNameRaw": "쿠퍼 컨버터블"
+      },
+      {
+        "displayOrdinal": 1655,
+        "modelNameRaw": "쿠퍼 S 컨버터블"
+      },
+      {
+        "displayOrdinal": 1656,
+        "modelNameRaw": "쿠퍼 쿠페"
+      },
+      {
+        "displayOrdinal": 1657,
+        "modelNameRaw": "쿠퍼 S 쿠페"
+      },
+      {
+        "displayOrdinal": 1658,
+        "modelNameRaw": "쿠퍼 SD 쿠페"
+      },
+      {
+        "displayOrdinal": 1659,
+        "modelNameRaw": "쿠퍼 로드스터"
+      },
+      {
+        "displayOrdinal": 1660,
+        "modelNameRaw": "쿠퍼 S 로드스터"
+      },
+      {
+        "displayOrdinal": 1661,
+        "modelNameRaw": "쿠퍼 클럽맨"
+      },
+      {
+        "displayOrdinal": 1662,
+        "modelNameRaw": "쿠퍼 S 클럽맨"
+      },
+      {
+        "displayOrdinal": 1663,
+        "modelNameRaw": "쿠퍼 D 클럽맨"
+      },
+      {
+        "displayOrdinal": 1664,
+        "modelNameRaw": "쿠퍼 SD 클럽맨"
+      },
+      {
+        "displayOrdinal": 1665,
+        "modelNameRaw": "쿠퍼 컨트리맨"
+      },
+      {
+        "displayOrdinal": 1666,
+        "modelNameRaw": "쿠퍼 S 컨트리맨"
+      },
+      {
+        "displayOrdinal": 1667,
+        "modelNameRaw": "쿠퍼 D 컨트리맨"
+      },
+      {
+        "displayOrdinal": 1668,
+        "modelNameRaw": "쿠퍼 SD 컨트리맨"
+      },
+      {
+        "displayOrdinal": 1669,
+        "modelNameRaw": "쿠퍼 D 페이스맨"
+      },
+      {
+        "displayOrdinal": 1670,
+        "modelNameRaw": "쿠퍼 SD 페이스맨"
+      },
+      {
+        "displayOrdinal": 1671,
+        "modelNameRaw": "로버 미니"
+      },
+      {
+        "displayOrdinal": 1672,
+        "modelNameRaw": "MGTF"
+      },
+      {
+        "displayOrdinal": 1673,
+        "modelNameRaw": "MGF"
+      },
+      {
+        "displayOrdinal": 1674,
+        "modelNameRaw": "75"
+      },
+      {
+        "displayOrdinal": 1675,
+        "modelNameRaw": "밴츄라"
+      },
+      {
+        "displayOrdinal": 1676,
+        "modelNameRaw": "터레인"
+      },
+      {
+        "displayOrdinal": 1677,
+        "modelNameRaw": "캐니언 3세대"
+      },
+      {
+        "displayOrdinal": 1678,
+        "modelNameRaw": "캐니언"
+      },
+      {
+        "displayOrdinal": 1679,
+        "modelNameRaw": "허머 EV"
+      },
+      {
+        "displayOrdinal": 1680,
+        "modelNameRaw": "아카디아"
+      },
+      {
+        "displayOrdinal": 1681,
+        "modelNameRaw": "사바나"
+      },
+      {
+        "displayOrdinal": 1682,
+        "modelNameRaw": "사파리"
+      },
+      {
+        "displayOrdinal": 1683,
+        "modelNameRaw": "소노마"
+      },
+      {
+        "displayOrdinal": 1684,
+        "modelNameRaw": "시에라"
+      },
+      {
+        "displayOrdinal": 1685,
+        "modelNameRaw": "유콘"
+      },
+      {
+        "displayOrdinal": 1686,
+        "modelNameRaw": "지미"
+      },
+      {
+        "displayOrdinal": 1687,
+        "modelNameRaw": "기타"
+      },
+      {
+        "displayOrdinal": 1688,
+        "modelNameRaw": "CL"
+      },
+      {
+        "displayOrdinal": 1689,
+        "modelNameRaw": "ILX"
+      },
+      {
+        "displayOrdinal": 1690,
+        "modelNameRaw": "TLX"
+      },
+      {
+        "displayOrdinal": 1691,
+        "modelNameRaw": "MDX"
+      },
+      {
+        "displayOrdinal": 1692,
+        "modelNameRaw": "NSX"
+      },
+      {
+        "displayOrdinal": 1693,
+        "modelNameRaw": "RDX"
+      },
+      {
+        "displayOrdinal": 1694,
+        "modelNameRaw": "RL"
+      },
+      {
+        "displayOrdinal": 1695,
+        "modelNameRaw": "RSX"
+      },
+      {
+        "displayOrdinal": 1696,
+        "modelNameRaw": "TL"
+      },
+      {
+        "displayOrdinal": 1697,
+        "modelNameRaw": "TSX"
+      },
+      {
+        "displayOrdinal": 1698,
+        "modelNameRaw": "기타"
+      },
+      {
+        "displayOrdinal": 1699,
+        "modelNameRaw": "Q50"
+      },
+      {
+        "displayOrdinal": 1700,
+        "modelNameRaw": "Q30"
+      },
+      {
+        "displayOrdinal": 1701,
+        "modelNameRaw": "Q60 (CV37)"
+      },
+      {
+        "displayOrdinal": 1702,
+        "modelNameRaw": "QX50 (P71A)"
+      },
+      {
+        "displayOrdinal": 1703,
+        "modelNameRaw": "M35h"
+      },
+      {
+        "displayOrdinal": 1704,
+        "modelNameRaw": "QX30"
+      },
+      {
+        "displayOrdinal": 1705,
+        "modelNameRaw": "Q60"
+      },
+      {
+        "displayOrdinal": 1706,
+        "modelNameRaw": "Q70"
+      },
+      {
+        "displayOrdinal": 1707,
+        "modelNameRaw": "QX50"
+      },
+      {
+        "displayOrdinal": 1708,
+        "modelNameRaw": "QX60"
+      },
+      {
+        "displayOrdinal": 1709,
+        "modelNameRaw": "QX70"
+      },
+      {
+        "displayOrdinal": 1710,
+        "modelNameRaw": "QX80"
+      },
+      {
+        "displayOrdinal": 1711,
+        "modelNameRaw": "G25"
+      },
+      {
+        "displayOrdinal": 1712,
+        "modelNameRaw": "G35"
+      },
+      {
+        "displayOrdinal": 1713,
+        "modelNameRaw": "G37"
+      },
+      {
+        "displayOrdinal": 1714,
+        "modelNameRaw": "I30"
+      },
+      {
+        "displayOrdinal": 1715,
+        "modelNameRaw": "I35"
+      },
+      {
+        "displayOrdinal": 1716,
+        "modelNameRaw": "M30d"
+      },
+      {
+        "displayOrdinal": 1717,
+        "modelNameRaw": "M35"
+      },
+      {
+        "displayOrdinal": 1718,
+        "modelNameRaw": "M37"
+      },
+      {
+        "displayOrdinal": 1719,
+        "modelNameRaw": "M45"
+      },
+      {
+        "displayOrdinal": 1720,
+        "modelNameRaw": "M56"
+      },
+      {
+        "displayOrdinal": 1721,
+        "modelNameRaw": "Q45"
+      },
+      {
+        "displayOrdinal": 1722,
+        "modelNameRaw": "EX30d"
+      },
+      {
+        "displayOrdinal": 1723,
+        "modelNameRaw": "EX35"
+      },
+      {
+        "displayOrdinal": 1724,
+        "modelNameRaw": "EX37"
+      },
+      {
+        "displayOrdinal": 1725,
+        "modelNameRaw": "FX30d"
+      },
+      {
+        "displayOrdinal": 1726,
+        "modelNameRaw": "FX35"
+      },
+      {
+        "displayOrdinal": 1727,
+        "modelNameRaw": "FX37"
+      },
+      {
+        "displayOrdinal": 1728,
+        "modelNameRaw": "FX45"
+      },
+      {
+        "displayOrdinal": 1729,
+        "modelNameRaw": "FX50"
+      },
+      {
+        "displayOrdinal": 1730,
+        "modelNameRaw": "JX35"
+      },
+      {
+        "displayOrdinal": 1731,
+        "modelNameRaw": "QX56"
+      },
+      {
+        "displayOrdinal": 1732,
+        "modelNameRaw": "QX4"
+      },
+      {
+        "displayOrdinal": 1733,
+        "modelNameRaw": "J30"
+      },
+      {
+        "displayOrdinal": 1734,
+        "modelNameRaw": "가류"
+      },
+      {
+        "displayOrdinal": 1735,
+        "modelNameRaw": "히미코"
+      },
+      {
+        "displayOrdinal": 1736,
+        "modelNameRaw": "레인보우"
+      },
+      {
+        "displayOrdinal": 1737,
+        "modelNameRaw": "록스타"
+      },
+      {
+        "displayOrdinal": 1738,
+        "modelNameRaw": "누에라"
+      },
+      {
+        "displayOrdinal": 1739,
+        "modelNameRaw": "라세드"
+      },
+      {
+        "displayOrdinal": 1740,
+        "modelNameRaw": "뷰트"
+      },
+      {
+        "displayOrdinal": 1741,
+        "modelNameRaw": "오로치"
+      },
+      {
+        "displayOrdinal": 1742,
+        "modelNameRaw": "에미라"
+      },
+      {
+        "displayOrdinal": 1743,
+        "modelNameRaw": "2-Eleven"
+      },
+      {
+        "displayOrdinal": 1744,
+        "modelNameRaw": "엘레트라"
+      },
+      {
+        "displayOrdinal": 1745,
+        "modelNameRaw": "에메야"
+      },
+      {
+        "displayOrdinal": 1746,
+        "modelNameRaw": "에보라"
+      },
+      {
+        "displayOrdinal": 1747,
+        "modelNameRaw": "에스프리"
+      },
+      {
+        "displayOrdinal": 1748,
+        "modelNameRaw": "엑시지"
+      },
+      {
+        "displayOrdinal": 1749,
+        "modelNameRaw": "엘리스"
+      },
+      {
+        "displayOrdinal": 1750,
+        "modelNameRaw": "유로파"
+      },
+      {
+        "displayOrdinal": 1751,
+        "modelNameRaw": "기타"
+      },
+      {
+        "displayOrdinal": 1752,
+        "modelNameRaw": "DB7"
+      },
+      {
+        "displayOrdinal": 1753,
+        "modelNameRaw": "밴티지 2세대"
+      },
+      {
+        "displayOrdinal": 1754,
+        "modelNameRaw": "DB11"
+      },
+      {
+        "displayOrdinal": 1755,
+        "modelNameRaw": "DBX"
+      },
+      {
+        "displayOrdinal": 1756,
+        "modelNameRaw": "DB12"
+      },
+      {
+        "displayOrdinal": 1757,
+        "modelNameRaw": "DB9"
+      },
+      {
+        "displayOrdinal": 1758,
+        "modelNameRaw": "DBS"
+      },
+      {
+        "displayOrdinal": 1759,
+        "modelNameRaw": "V8 Vantage"
+      },
+      {
+        "displayOrdinal": 1760,
+        "modelNameRaw": "V12 Vantage"
+      },
+      {
+        "displayOrdinal": 1761,
+        "modelNameRaw": "뱅퀴시"
+      },
+      {
+        "displayOrdinal": 1762,
+        "modelNameRaw": "뱅퀴시 S"
+      },
+      {
+        "displayOrdinal": 1763,
+        "modelNameRaw": "라피드"
+      },
+      {
+        "displayOrdinal": 1764,
+        "modelNameRaw": "비라지"
+      },
+      {
+        "displayOrdinal": 1765,
+        "modelNameRaw": "후에이라"
+      },
+      {
+        "displayOrdinal": 1766,
+        "modelNameRaw": "존다"
+      },
+      {
+        "displayOrdinal": 1767,
+        "modelNameRaw": "아제라"
+      },
+      {
+        "displayOrdinal": 1768,
+        "modelNameRaw": "CC"
+      },
+      {
+        "displayOrdinal": 1769,
+        "modelNameRaw": "EB110"
+      },
+      {
+        "displayOrdinal": 1770,
+        "modelNameRaw": "베이론 16.4"
+      },
+      {
+        "displayOrdinal": 1771,
+        "modelNameRaw": "기타"
+      },
+      {
+        "displayOrdinal": 1772,
+        "modelNameRaw": "알핀"
+      },
+      {
+        "displayOrdinal": 1773,
+        "modelNameRaw": "탈리스만"
+      },
+      {
+        "displayOrdinal": 1774,
+        "modelNameRaw": "메간"
+      },
+      {
+        "displayOrdinal": 1775,
+        "modelNameRaw": "클리오"
+      },
+      {
+        "displayOrdinal": 1776,
+        "modelNameRaw": "라구나"
+      },
+      {
+        "displayOrdinal": 1777,
+        "modelNameRaw": "S시리즈"
+      },
+      {
+        "displayOrdinal": 1778,
+        "modelNameRaw": "뷰"
+      },
+      {
+        "displayOrdinal": 1779,
+        "modelNameRaw": "스카이"
+      },
+      {
+        "displayOrdinal": 1780,
+        "modelNameRaw": "아스트라"
+      },
+      {
+        "displayOrdinal": 1781,
+        "modelNameRaw": "57"
+      },
+      {
+        "displayOrdinal": 1782,
+        "modelNameRaw": "57s"
+      },
+      {
+        "displayOrdinal": 1783,
+        "modelNameRaw": "62"
+      },
+      {
+        "displayOrdinal": 1784,
+        "modelNameRaw": "62s"
+      },
+      {
+        "displayOrdinal": 1785,
+        "modelNameRaw": "62 제플린"
+      },
+      {
+        "displayOrdinal": 1786,
+        "modelNameRaw": "57 제플린"
+      },
+      {
+        "displayOrdinal": 1787,
+        "modelNameRaw": "62s 렌들렛"
+      },
+      {
+        "displayOrdinal": 1788,
+        "modelNameRaw": "포투 쿠페 3세대"
+      },
+      {
+        "displayOrdinal": 1789,
+        "modelNameRaw": "포포 2세대"
+      },
+      {
+        "displayOrdinal": 1790,
+        "modelNameRaw": "포투 카브리오 3세대"
+      },
+      {
+        "displayOrdinal": 1791,
+        "modelNameRaw": "포투 쿠페"
+      },
+      {
+        "displayOrdinal": 1792,
+        "modelNameRaw": "포투 카브리오"
+      },
+      {
+        "displayOrdinal": 1793,
+        "modelNameRaw": "포포"
+      },
+      {
+        "displayOrdinal": 1794,
+        "modelNameRaw": "로드스터"
+      },
+      {
+        "displayOrdinal": 1795,
+        "modelNameRaw": "xA"
+      },
+      {
+        "displayOrdinal": 1796,
+        "modelNameRaw": "FR-S"
+      },
+      {
+        "displayOrdinal": 1797,
+        "modelNameRaw": "xB"
+      },
+      {
+        "displayOrdinal": 1798,
+        "modelNameRaw": "xD"
+      },
+      {
+        "displayOrdinal": 1799,
+        "modelNameRaw": "tC"
+      },
+      {
+        "displayOrdinal": 1800,
+        "modelNameRaw": "레니게이드"
+      },
+      {
+        "displayOrdinal": 1801,
+        "modelNameRaw": "CJ"
+      },
+      {
+        "displayOrdinal": 1802,
+        "modelNameRaw": "컴패스 2세대"
+      },
+      {
+        "displayOrdinal": 1803,
+        "modelNameRaw": "랭글러 (JL)"
+      },
+      {
+        "displayOrdinal": 1804,
+        "modelNameRaw": "그랜드 체로키(WL)"
+      },
+      {
+        "displayOrdinal": 1805,
+        "modelNameRaw": "랭글러 (JK)"
+      },
+      {
+        "displayOrdinal": 1806,
+        "modelNameRaw": "체로키(KL)"
+      },
+      {
+        "displayOrdinal": 1807,
+        "modelNameRaw": "랭글러 (TJ)"
+      },
+      {
+        "displayOrdinal": 1808,
+        "modelNameRaw": "랭글러 (YJ)"
+      },
+      {
+        "displayOrdinal": 1809,
+        "modelNameRaw": "글래디에이터 (JT)"
+      },
+      {
+        "displayOrdinal": 1810,
+        "modelNameRaw": "어벤저"
+      },
+      {
+        "displayOrdinal": 1811,
+        "modelNameRaw": "체로키"
+      },
+      {
+        "displayOrdinal": 1812,
+        "modelNameRaw": "그랜드 체로키"
+      },
+      {
+        "displayOrdinal": 1813,
+        "modelNameRaw": "컴패스"
+      },
+      {
+        "displayOrdinal": 1814,
+        "modelNameRaw": "커맨더"
+      },
+      {
+        "displayOrdinal": 1815,
+        "modelNameRaw": "패트리어트"
+      },
+      {
+        "displayOrdinal": 1816,
+        "modelNameRaw": "650S"
+      },
+      {
+        "displayOrdinal": 1817,
+        "modelNameRaw": "570S"
+      },
+      {
+        "displayOrdinal": 1818,
+        "modelNameRaw": "720S"
+      },
+      {
+        "displayOrdinal": 1819,
+        "modelNameRaw": "675LT"
+      },
+      {
+        "displayOrdinal": 1820,
+        "modelNameRaw": "570GT"
+      },
+      {
+        "displayOrdinal": 1821,
+        "modelNameRaw": "MP4-12C"
+      },
+      {
+        "displayOrdinal": 1822,
+        "modelNameRaw": "600LT"
+      },
+      {
+        "displayOrdinal": 1823,
+        "modelNameRaw": "GT"
+      },
+      {
+        "displayOrdinal": 1824,
+        "modelNameRaw": "765LT"
+      },
+      {
+        "displayOrdinal": 1825,
+        "modelNameRaw": "아투라"
+      },
+      {
+        "displayOrdinal": 1826,
+        "modelNameRaw": "540C"
+      },
+      {
+        "displayOrdinal": 1827,
+        "modelNameRaw": "750S"
+      },
+      {
+        "displayOrdinal": 1828,
+        "modelNameRaw": "세나"
+      },
+      {
+        "displayOrdinal": 1829,
+        "modelNameRaw": "툰랜드"
+      },
+      {
+        "displayOrdinal": 1830,
+        "modelNameRaw": "CK 미니밴"
+      },
+      {
+        "displayOrdinal": 1831,
+        "modelNameRaw": "CK 미니트럭"
+      },
+      {
+        "displayOrdinal": 1832,
+        "modelNameRaw": "켄보 600"
+      },
+      {
+        "displayOrdinal": 1833,
+        "modelNameRaw": "모델 S"
+      },
+      {
+        "displayOrdinal": 1834,
+        "modelNameRaw": "모델 X"
+      },
+      {
+        "displayOrdinal": 1835,
+        "modelNameRaw": "모델 3"
+      },
+      {
+        "displayOrdinal": 1836,
+        "modelNameRaw": "모델 Y"
+      },
+      {
+        "displayOrdinal": 1837,
+        "modelNameRaw": "사이버트럭"
+      },
+      {
+        "displayOrdinal": 1838,
+        "modelNameRaw": "C35"
+      },
+      {
+        "displayOrdinal": 1839,
+        "modelNameRaw": "C32"
+      },
+      {
+        "displayOrdinal": 1840,
+        "modelNameRaw": "C31"
+      },
+      {
+        "displayOrdinal": 1841,
+        "modelNameRaw": "펜콘 ix5"
+      },
+      {
+        "displayOrdinal": 1842,
+        "modelNameRaw": "SX6"
+      },
+      {
+        "displayOrdinal": 1843,
+        "modelNameRaw": "링지"
+      },
+      {
+        "displayOrdinal": 1844,
+        "modelNameRaw": "폴스타 2"
+      },
+      {
+        "displayOrdinal": 1845,
+        "modelNameRaw": "폴스타 4"
+      },
+      {
+        "displayOrdinal": 1846,
+        "modelNameRaw": "폴스타 3"
+      },
+      {
+        "displayOrdinal": 1847,
+        "modelNameRaw": "E6"
+      },
+      {
+        "displayOrdinal": 1848,
+        "modelNameRaw": "아토 3"
+      },
+      {
+        "displayOrdinal": 1849,
+        "modelNameRaw": "씰"
+      },
+      {
+        "displayOrdinal": 1850,
+        "modelNameRaw": "씨라이언 7"
+      },
+      {
+        "displayOrdinal": 1851,
+        "modelNameRaw": "돌핀"
+      },
+      {
+        "displayOrdinal": 1852,
+        "modelNameRaw": "씨라이언 6"
+      },
+      {
+        "displayOrdinal": 1853,
+        "modelNameRaw": "E6"
+      },
+      {
+        "displayOrdinal": 1854,
+        "modelNameRaw": "이티밴"
+      },
+      {
+        "displayOrdinal": 1855,
+        "modelNameRaw": "그레나디어"
+      },
+      {
+        "displayOrdinal": 1856,
+        "modelNameRaw": "SE-A2 밴"
+      },
+      {
+        "displayOrdinal": 1857,
+        "modelNameRaw": "7X"
+      },
+      {
+        "displayOrdinal": 1858,
+        "modelNameRaw": "기타"
+      }
+    ],
+    "recordCount": 1858,
+    "uniqueRawNames": 1805,
+    "completeWithinRenderedList": true,
+    "manufacturerParentCodesObserved": false,
+    "retailGradeHierarchyComplete": false
+  },
+  "comparisonToPriorSnapshot": {
+    "priorPath": "research/vehicle-taxonomy/sources/encar-public-catalog-expansion-20261106.json",
+    "priorRows": 1858,
+    "sameOrderAndNames": true,
+    "changedPositions": []
+  },
+  "automaticRuntimeImport": false
+}

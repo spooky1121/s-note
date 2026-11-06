@@ -1,0 +1,2159 @@
+{
+  "sourceUrl": "https://m.encar.com/ca/initString.json?method=initList&type=Is",
+  "requestedLine": 0,
+  "acquisitionMethod": "web_tool_rendered_line_window",
+  "records": [
+    {
+      "sourceLine": 17,
+      "modelNameRaw": "찜한차량"
+    },
+    {
+      "sourceLine": 18,
+      "modelNameRaw": "최근 본 차량"
+    },
+    {
+      "sourceLine": 19,
+      "modelNameRaw": "차량 검색"
+    },
+    {
+      "sourceLine": 34,
+      "modelNameRaw": "엔카믿고 내차 구매 처음부터 끝까지 '엔카믿고'"
+    },
+    {
+      "sourceLine": 35,
+      "modelNameRaw": "엔카진단†car.encar.com"
+    },
+    {
+      "sourceLine": 36,
+      "modelNameRaw": "엔카 차량리포트†car.encar.com"
+    },
+    {
+      "sourceLine": 37,
+      "modelNameRaw": "엔카종합보증"
+    },
+    {
+      "sourceLine": 38,
+      "modelNameRaw": "헛걸음보상†fem.encar.com"
+    },
+    {
+      "sourceLine": 42,
+      "modelNameRaw": "비교견적 판매 실시간 최고가 견적 받기†fem.encar.com"
+    },
+    {
+      "sourceLine": 45,
+      "modelNameRaw": "진단등록 예약 딜러회원 전용"
+    },
+    {
+      "sourceLine": 48,
+      "modelNameRaw": "엔카시세"
+    },
+    {
+      "sourceLine": 49,
+      "modelNameRaw": "엔카금융 중고차단지 방문 전 필수 '엔카금융'"
+    },
+    {
+      "sourceLine": 53,
+      "modelNameRaw": "엔카미디어"
+    },
+    {
+      "sourceLine": 54,
+      "modelNameRaw": "이차어때"
+    },
+    {
+      "sourceLine": 55,
+      "modelNameRaw": "전기차 이야기†www.evpost.co.kr"
+    },
+    {
+      "sourceLine": 57,
+      "modelNameRaw": "공지사항†fem.encar.com"
+    },
+    {
+      "sourceLine": 58,
+      "modelNameRaw": "이벤트"
+    },
+    {
+      "sourceLine": 59,
+      "modelNameRaw": "회사소개†encarcom.career.greetinghr.com"
+    },
+    {
+      "sourceLine": 60,
+      "modelNameRaw": "클린엔카"
+    },
+    {
+      "sourceLine": 61,
+      "modelNameRaw": "엔카지점†fem.encar.com"
+    },
+    {
+      "sourceLine": 62,
+      "modelNameRaw": "엔카직영성능점검장†fem.encar.com"
+    },
+    {
+      "sourceLine": 65,
+      "modelNameRaw": "쏠라티"
+    },
+    {
+      "sourceLine": 66,
+      "modelNameRaw": "i30 (PD)"
+    },
+    {
+      "sourceLine": 67,
+      "modelNameRaw": "더 뉴 그랜드 스타렉스"
+    },
+    {
+      "sourceLine": 68,
+      "modelNameRaw": "벨로스터 (JS)"
+    },
+    {
+      "sourceLine": 69,
+      "modelNameRaw": "더 뉴 아이오닉 하이브리드"
+    },
+    {
+      "sourceLine": 70,
+      "modelNameRaw": "코나 (SX2)"
+    },
+    {
+      "sourceLine": 71,
+      "modelNameRaw": "쏘나타 디 엣지(DN8)"
+    },
+    {
+      "sourceLine": 72,
+      "modelNameRaw": "싼타페 (MX5)"
+    },
+    {
+      "sourceLine": 73,
+      "modelNameRaw": "더 뉴 투싼 (NX4)"
+    },
+    {
+      "sourceLine": 74,
+      "modelNameRaw": "더 뉴 아이오닉5"
+    },
+    {
+      "sourceLine": 75,
+      "modelNameRaw": "더 뉴 캐스퍼"
+    },
+    {
+      "sourceLine": 76,
+      "modelNameRaw": "팰리세이드 (LX3)"
+    },
+    {
+      "sourceLine": 77,
+      "modelNameRaw": "넥쏘 (NH2)"
+    },
+    {
+      "sourceLine": 78,
+      "modelNameRaw": "더 뉴 아이오닉6"
+    },
+    {
+      "sourceLine": 79,
+      "modelNameRaw": "더 뉴 스타리아"
+    },
+    {
+      "sourceLine": 80,
+      "modelNameRaw": "더 뉴 그랜저 (GN7)"
+    },
+    {
+      "sourceLine": 81,
+      "modelNameRaw": "아반떼 (CN8)"
+    },
+    {
+      "sourceLine": 82,
+      "modelNameRaw": "더 뉴 i30"
+    },
+    {
+      "sourceLine": 83,
+      "modelNameRaw": "넥쏘"
+    },
+    {
+      "sourceLine": 84,
+      "modelNameRaw": "더 뉴 아이오닉 일렉트릭"
+    },
+    {
+      "sourceLine": 85,
+      "modelNameRaw": "더 뉴 싼타페"
+    },
+    {
+      "sourceLine": 86,
+      "modelNameRaw": "스타리아"
+    },
+    {
+      "sourceLine": 87,
+      "modelNameRaw": "아이오닉5"
+    },
+    {
+      "sourceLine": 88,
+      "modelNameRaw": "캐스퍼"
+    },
+    {
+      "sourceLine": 89,
+      "modelNameRaw": "더 뉴 팰리세이드"
+    },
+    {
+      "sourceLine": 90,
+      "modelNameRaw": "아이오닉6"
+    },
+    {
+      "sourceLine": 91,
+      "modelNameRaw": "코나 하이브리드 (SX2)"
+    },
+    {
+      "sourceLine": 92,
+      "modelNameRaw": "쏘나타 디 엣지 하이브리드(DN8)"
+    },
+    {
+      "sourceLine": 93,
+      "modelNameRaw": "더 뉴 투싼 하이브리드 (NX4)"
+    },
+    {
+      "sourceLine": 94,
+      "modelNameRaw": "더 뉴 그랜저 하이브리드 (GN7)"
+    },
+    {
+      "sourceLine": 95,
+      "modelNameRaw": "아반떼 하이브리드 (CN8)"
+    },
+    {
+      "sourceLine": 96,
+      "modelNameRaw": "아이오닉 하이브리드"
+    },
+    {
+      "sourceLine": 97,
+      "modelNameRaw": "싼타페 TM"
+    },
+    {
+      "sourceLine": 98,
+      "modelNameRaw": "팰리세이드"
+    },
+    {
+      "sourceLine": 99,
+      "modelNameRaw": "쏘나타 (DN8)"
+    },
+    {
+      "sourceLine": 100,
+      "modelNameRaw": "투싼 (NX4)"
+    },
+    {
+      "sourceLine": 101,
+      "modelNameRaw": "그랜저 (GN7)"
+    },
+    {
+      "sourceLine": 102,
+      "modelNameRaw": "더 뉴 아반떼 (CN7)"
+    },
+    {
+      "sourceLine": 103,
+      "modelNameRaw": "코나 일렉트릭 (SX2)"
+    },
+    {
+      "sourceLine": 104,
+      "modelNameRaw": "캐스퍼 일렉트릭"
+    },
+    {
+      "sourceLine": 105,
+      "modelNameRaw": "아이오닉 일렉트릭"
+    },
+    {
+      "sourceLine": 106,
+      "modelNameRaw": "쏘나타 하이브리드 (DN8)"
+    },
+    {
+      "sourceLine": 107,
+      "modelNameRaw": "더 뉴 코나"
+    },
+    {
+      "sourceLine": 108,
+      "modelNameRaw": "투싼 하이브리드 (NX4)"
+    },
+    {
+      "sourceLine": 109,
+      "modelNameRaw": "그랜저 하이브리드 (GN7)"
+    },
+    {
+      "sourceLine": 110,
+      "modelNameRaw": "더 뉴 아반떼 하이브리드 (CN7)"
+    },
+    {
+      "sourceLine": 111,
+      "modelNameRaw": "쏘나타 뉴 라이즈"
+    },
+    {
+      "sourceLine": 112,
+      "modelNameRaw": "더 뉴 그랜저 IG"
+    },
+    {
+      "sourceLine": 113,
+      "modelNameRaw": "아반떼 (CN7)"
+    },
+    {
+      "sourceLine": 114,
+      "modelNameRaw": "더 뉴 코나 하이브리드"
+    },
+    {
+      "sourceLine": 115,
+      "modelNameRaw": "쏘나타 뉴 라이즈 하이브리드"
+    },
+    {
+      "sourceLine": 116,
+      "modelNameRaw": "코나"
+    },
+    {
+      "sourceLine": 117,
+      "modelNameRaw": "더 뉴 그랜저 IG 하이브리드"
+    },
+    {
+      "sourceLine": 118,
+      "modelNameRaw": "아반떼 하이브리드 (CN7)"
+    },
+    {
+      "sourceLine": 119,
+      "modelNameRaw": "그랜저 IG"
+    },
+    {
+      "sourceLine": 120,
+      "modelNameRaw": "더 뉴 아반떼 AD"
+    },
+    {
+      "sourceLine": 121,
+      "modelNameRaw": "코나 하이브리드"
+    },
+    {
+      "sourceLine": 122,
+      "modelNameRaw": "아반떼 AD"
+    },
+    {
+      "sourceLine": 123,
+      "modelNameRaw": "그랜저 IG 하이브리드"
+    },
+    {
+      "sourceLine": 124,
+      "modelNameRaw": "코나 일렉트릭"
+    },
+    {
+      "sourceLine": 125,
+      "modelNameRaw": "블루온"
+    },
+    {
+      "sourceLine": 126,
+      "modelNameRaw": "베뉴"
+    },
+    {
+      "sourceLine": 127,
+      "modelNameRaw": "ST1"
+    },
+    {
+      "sourceLine": 128,
+      "modelNameRaw": "아이오닉9"
+    },
+    {
+      "sourceLine": 129,
+      "modelNameRaw": "i30(신형)"
+    },
+    {
+      "sourceLine": 130,
+      "modelNameRaw": "i30"
+    },
+    {
+      "sourceLine": 131,
+      "modelNameRaw": "i30 cw"
+    },
+    {
+      "sourceLine": 132,
+      "modelNameRaw": "더 뉴 i40"
+    },
+    {
+      "sourceLine": 133,
+      "modelNameRaw": "더 뉴 i40 살룬"
+    },
+    {
+      "sourceLine": 134,
+      "modelNameRaw": "i40"
+    },
+    {
+      "sourceLine": 135,
+      "modelNameRaw": "i40 살룬"
+    },
+    {
+      "sourceLine": 136,
+      "modelNameRaw": "갤로퍼 2"
+    },
+    {
+      "sourceLine": 137,
+      "modelNameRaw": "갤로퍼"
+    },
+    {
+      "sourceLine": 138,
+      "modelNameRaw": "그라나다"
+    },
+    {
+      "sourceLine": 139,
+      "modelNameRaw": "그랜저 HG 하이브리드"
+    },
+    {
+      "sourceLine": 140,
+      "modelNameRaw": "그랜저 HG"
+    },
+    {
+      "sourceLine": 141,
+      "modelNameRaw": "더 럭셔리 그랜저"
+    },
+    {
+      "sourceLine": 142,
+      "modelNameRaw": "그랜저 뉴 럭셔리"
+    },
+    {
+      "sourceLine": 143,
+      "modelNameRaw": "그랜저 TG"
+    },
+    {
+      "sourceLine": 144,
+      "modelNameRaw": "뉴 그랜저 XG"
+    },
+    {
+      "sourceLine": 145,
+      "modelNameRaw": "그랜저 XG"
+    },
+    {
+      "sourceLine": 146,
+      "modelNameRaw": "뉴 그랜저"
+    },
+    {
+      "sourceLine": 147,
+      "modelNameRaw": "그랜저"
+    },
+    {
+      "sourceLine": 148,
+      "modelNameRaw": "뉴그레이스"
+    },
+    {
+      "sourceLine": 149,
+      "modelNameRaw": "그레이스"
+    },
+    {
+      "sourceLine": 150,
+      "modelNameRaw": "다이너스티"
+    },
+    {
+      "sourceLine": 151,
+      "modelNameRaw": "라비타"
+    },
+    {
+      "sourceLine": 152,
+      "modelNameRaw": "마르샤"
+    },
+    {
+      "sourceLine": 153,
+      "modelNameRaw": "더 뉴 맥스크루즈"
+    },
+    {
+      "sourceLine": 154,
+      "modelNameRaw": "맥스크루즈"
+    },
+    {
+      "sourceLine": 155,
+      "modelNameRaw": "베라크루즈"
+    },
+    {
+      "sourceLine": 156,
+      "modelNameRaw": "베르나 트랜스폼"
+    },
+    {
+      "sourceLine": 157,
+      "modelNameRaw": "베르나(신형)"
+    },
+    {
+      "sourceLine": 158,
+      "modelNameRaw": "New 베르나"
+    },
+    {
+      "sourceLine": 159,
+      "modelNameRaw": "베르나"
+    },
+    {
+      "sourceLine": 160,
+      "modelNameRaw": "더 뉴 벨로스터"
+    },
+    {
+      "sourceLine": 161,
+      "modelNameRaw": "벨로스터"
+    },
+    {
+      "sourceLine": 162,
+      "modelNameRaw": "산타모"
+    },
+    {
+      "sourceLine": 163,
+      "modelNameRaw": "스쿠프"
+    },
+    {
+      "sourceLine": 164,
+      "modelNameRaw": "그랜드 스타렉스"
+    },
+    {
+      "sourceLine": 165,
+      "modelNameRaw": "스타렉스 점보"
+    },
+    {
+      "sourceLine": 166,
+      "modelNameRaw": "스타렉스"
+    },
+    {
+      "sourceLine": 167,
+      "modelNameRaw": "스텔라"
+    },
+    {
+      "sourceLine": 168,
+      "modelNameRaw": "싼타페 더 프라임"
+    },
+    {
+      "sourceLine": 169,
+      "modelNameRaw": "싼타페 DM"
+    },
+    {
+      "sourceLine": 170,
+      "modelNameRaw": "싼타페 CM"
+    },
+    {
+      "sourceLine": 171,
+      "modelNameRaw": "싼타페"
+    },
+    {
+      "sourceLine": 172,
+      "modelNameRaw": "LF 쏘나타"
+    },
+    {
+      "sourceLine": 173,
+      "modelNameRaw": "LF 쏘나타 하이브리드"
+    },
+    {
+      "sourceLine": 174,
+      "modelNameRaw": "쏘나타 더 브릴리언트"
+    },
+    {
+      "sourceLine": 175,
+      "modelNameRaw": "YF 쏘나타"
+    },
+    {
+      "sourceLine": 176,
+      "modelNameRaw": "쏘나타 하이브리드"
+    },
+    {
+      "sourceLine": 177,
+      "modelNameRaw": "NF 쏘나타 트랜스폼"
+    },
+    {
+      "sourceLine": 178,
+      "modelNameRaw": "NF 쏘나타"
+    },
+    {
+      "sourceLine": 179,
+      "modelNameRaw": "뉴 EF 쏘나타"
+    },
+    {
+      "sourceLine": 180,
+      "modelNameRaw": "EF 쏘나타"
+    },
+    {
+      "sourceLine": 181,
+      "modelNameRaw": "쏘나타 III"
+    },
+    {
+      "sourceLine": 182,
+      "modelNameRaw": "쏘나타 II"
+    },
+    {
+      "sourceLine": 183,
+      "modelNameRaw": "쏘나타"
+    },
+    {
+      "sourceLine": 184,
+      "modelNameRaw": "더 뉴 아반떼"
+    },
+    {
+      "sourceLine": 185,
+      "modelNameRaw": "아반떼 MD"
+    },
+    {
+      "sourceLine": 186,
+      "modelNameRaw": "아반떼 쿠페"
+    },
+    {
+      "sourceLine": 187,
+      "modelNameRaw": "아반떼 HD"
+    },
+    {
+      "sourceLine": 188,
+      "modelNameRaw": "아반떼 하이브리드"
+    },
+    {
+      "sourceLine": 189,
+      "modelNameRaw": "뉴 아반떼 XD"
+    },
+    {
+      "sourceLine": 190,
+      "modelNameRaw": "아반떼 XD"
+    },
+    {
+      "sourceLine": 191,
+      "modelNameRaw": "올 뉴 아반떼"
+    },
+    {
+      "sourceLine": 192,
+      "modelNameRaw": "아반떼"
+    },
+    {
+      "sourceLine": 193,
+      "modelNameRaw": "아슬란"
+    },
+    {
+      "sourceLine": 194,
+      "modelNameRaw": "아토스"
+    },
+    {
+      "sourceLine": 195,
+      "modelNameRaw": "에쿠스(신형)"
+    },
+    {
+      "sourceLine": 196,
+      "modelNameRaw": "에쿠스"
+    },
+    {
+      "sourceLine": 197,
+      "modelNameRaw": "엑센트(신형)"
+    },
+    {
+      "sourceLine": 198,
+      "modelNameRaw": "뉴 엑센트"
+    },
+    {
+      "sourceLine": 199,
+      "modelNameRaw": "엑센트"
+    },
+    {
+      "sourceLine": 200,
+      "modelNameRaw": "엑셀"
+    },
+    {
+      "sourceLine": 201,
+      "modelNameRaw": "뉴엘란트라"
+    },
+    {
+      "sourceLine": 202,
+      "modelNameRaw": "엘란트라"
+    },
+    {
+      "sourceLine": 203,
+      "modelNameRaw": "제네시스 DH"
+    },
+    {
+      "sourceLine": 204,
+      "modelNameRaw": "제네시스"
+    },
+    {
+      "sourceLine": 205,
+      "modelNameRaw": "더 뉴 제네시스 쿠페"
+    },
+    {
+      "sourceLine": 206,
+      "modelNameRaw": "제네시스 쿠페"
+    },
+    {
+      "sourceLine": 207,
+      "modelNameRaw": "코티나"
+    },
+    {
+      "sourceLine": 208,
+      "modelNameRaw": "뉴 클릭"
+    },
+    {
+      "sourceLine": 209,
+      "modelNameRaw": "클릭 하이브리드"
+    },
+    {
+      "sourceLine": 210,
+      "modelNameRaw": "클릭"
+    },
+    {
+      "sourceLine": 211,
+      "modelNameRaw": "테라칸"
+    },
+    {
+      "sourceLine": 212,
+      "modelNameRaw": "투스카니(신형)"
+    },
+    {
+      "sourceLine": 213,
+      "modelNameRaw": "투스카니"
+    },
+    {
+      "sourceLine": 214,
+      "modelNameRaw": "올 뉴 투싼"
+    },
+    {
+      "sourceLine": 215,
+      "modelNameRaw": "뉴 투싼 ix"
+    },
+    {
+      "sourceLine": 216,
+      "modelNameRaw": "투싼 ix"
+    },
+    {
+      "sourceLine": 217,
+      "modelNameRaw": "투싼"
+    },
+    {
+      "sourceLine": 218,
+      "modelNameRaw": "트라제 XG"
+    },
+    {
+      "sourceLine": 219,
+      "modelNameRaw": "티뷰론"
+    },
+    {
+      "sourceLine": 220,
+      "modelNameRaw": "포니투"
+    },
+    {
+      "sourceLine": 221,
+      "modelNameRaw": "포니"
+    },
+    {
+      "sourceLine": 222,
+      "modelNameRaw": "프레스토"
+    },
+    {
+      "sourceLine": 223,
+      "modelNameRaw": "더 뉴 카렌스"
+    },
+    {
+      "sourceLine": 224,
+      "modelNameRaw": "쏘울 부스터"
+    },
+    {
+      "sourceLine": 225,
+      "modelNameRaw": "K7 프리미어"
+    },
+    {
+      "sourceLine": 226,
+      "modelNameRaw": "모하비 더 마스터"
+    },
+    {
+      "sourceLine": 227,
+      "modelNameRaw": "스팅어 마이스터"
+    },
+    {
+      "sourceLine": 228,
+      "modelNameRaw": "더 뉴 K3 2세대"
+    },
+    {
+      "sourceLine": 229,
+      "modelNameRaw": "더 뉴 K9 2세대"
+    },
+    {
+      "sourceLine": 230,
+      "modelNameRaw": "더 뉴 기아 레이"
+    },
+    {
+      "sourceLine": 231,
+      "modelNameRaw": "더 뉴 모닝 (JA)"
+    },
+    {
+      "sourceLine": 232,
+      "modelNameRaw": "더 뉴 쏘렌토 4세대"
+    },
+    {
+      "sourceLine": 233,
+      "modelNameRaw": "더 뉴 K5 3세대"
+    },
+    {
+      "sourceLine": 234,
+      "modelNameRaw": "더 뉴 카니발 4세대"
+    },
+    {
+      "sourceLine": 235,
+      "modelNameRaw": "더 뉴 EV6"
+    },
+    {
+      "sourceLine": 236,
+      "modelNameRaw": "더 뉴 K8"
+    },
+    {
+      "sourceLine": 237,
+      "modelNameRaw": "더 뉴 스포티지 5세대"
+    },
+    {
+      "sourceLine": 238,
+      "modelNameRaw": "타스만"
+    },
+    {
+      "sourceLine": 239,
+      "modelNameRaw": "셀토스 2세대"
+    },
+    {
+      "sourceLine": 240,
+      "modelNameRaw": "더 뉴 니로 2세대"
+    },
+    {
+      "sourceLine": 241,
+      "modelNameRaw": "더 뉴 모하비"
+    },
+    {
+      "sourceLine": 242,
+      "modelNameRaw": "스팅어"
+    },
+    {
+      "sourceLine": 243,
+      "modelNameRaw": "올 뉴 K3"
+    },
+    {
+      "sourceLine": 244,
+      "modelNameRaw": "더 K9"
+    },
+    {
+      "sourceLine": 245,
+      "modelNameRaw": "쏘울 부스터 EV"
+    },
+    {
+      "sourceLine": 246,
+      "modelNameRaw": "K7 프리미어 하이브리드"
+    },
+    {
+      "sourceLine": 247,
+      "modelNameRaw": "쏘렌토 4세대"
+    },
+    {
+      "sourceLine": 248,
+      "modelNameRaw": "모닝 어반 (JA)"
+    },
+    {
+      "sourceLine": 249,
+      "modelNameRaw": "카니발 4세대"
+    },
+    {
+      "sourceLine": 250,
+      "modelNameRaw": "EV6"
+    },
+    {
+      "sourceLine": 251,
+      "modelNameRaw": "디 올 뉴 니로"
+    },
+    {
+      "sourceLine": 252,
+      "modelNameRaw": "더 뉴 셀토스"
+    },
+    {
+      "sourceLine": 253,
+      "modelNameRaw": "더 뉴 기아 레이 EV"
+    },
+    {
+      "sourceLine": 254,
+      "modelNameRaw": "더 뉴 K5 하이브리드 3세대"
+    },
+    {
+      "sourceLine": 255,
+      "modelNameRaw": "더 뉴 K8 하이브리드"
+    },
+    {
+      "sourceLine": 256,
+      "modelNameRaw": "더 뉴 스포티지 5세대 하이브리드"
+    },
+    {
+      "sourceLine": 257,
+      "modelNameRaw": "타스만 오픈베드"
+    },
+    {
+      "sourceLine": 258,
+      "modelNameRaw": "더 뉴 K9"
+    },
+    {
+      "sourceLine": 259,
+      "modelNameRaw": "더 뉴 K3"
+    },
+    {
+      "sourceLine": 260,
+      "modelNameRaw": "올 뉴 K7"
+    },
+    {
+      "sourceLine": 261,
+      "modelNameRaw": "더 뉴 쏘울"
+    },
+    {
+      "sourceLine": 262,
+      "modelNameRaw": "올 뉴 모닝 (JA)"
+    },
+    {
+      "sourceLine": 263,
+      "modelNameRaw": "더 뉴 쏘렌토"
+    },
+    {
+      "sourceLine": 264,
+      "modelNameRaw": "더 뉴 레이"
+    },
+    {
+      "sourceLine": 265,
+      "modelNameRaw": "더 뉴 카니발"
+    },
+    {
+      "sourceLine": 266,
+      "modelNameRaw": "셀토스"
+    },
+    {
+      "sourceLine": 267,
+      "modelNameRaw": "K5 3세대"
+    },
+    {
+      "sourceLine": 268,
+      "modelNameRaw": "K8"
+    },
+    {
+      "sourceLine": 269,
+      "modelNameRaw": "스포티지 5세대"
+    },
+    {
+      "sourceLine": 270,
+      "modelNameRaw": "디 올 뉴 니로 EV"
+    },
+    {
+      "sourceLine": 271,
+      "modelNameRaw": "더 뉴 K3 쿱"
+    },
+    {
+      "sourceLine": 272,
+      "modelNameRaw": "올 뉴 K7 하이브리드"
+    },
+    {
+      "sourceLine": 273,
+      "modelNameRaw": "K5 하이브리드 3세대"
+    },
+    {
+      "sourceLine": 274,
+      "modelNameRaw": "K8 하이브리드"
+    },
+    {
+      "sourceLine": 275,
+      "modelNameRaw": "스포티지 5세대 하이브리드"
+    },
+    {
+      "sourceLine": 276,
+      "modelNameRaw": "니로 플러스"
+    },
+    {
+      "sourceLine": 277,
+      "modelNameRaw": "더 뉴 K3 유로"
+    },
+    {
+      "sourceLine": 278,
+      "modelNameRaw": "더 뉴 K5 2세대"
+    },
+    {
+      "sourceLine": 279,
+      "modelNameRaw": "스포티지 더 볼드"
+    },
+    {
+      "sourceLine": 280,
+      "modelNameRaw": "더 뉴 니로"
+    },
+    {
+      "sourceLine": 281,
+      "modelNameRaw": "K3"
+    },
+    {
+      "sourceLine": 282,
+      "modelNameRaw": "스포티지 4세대"
+    },
+    {
+      "sourceLine": 283,
+      "modelNameRaw": "니로"
+    },
+    {
+      "sourceLine": 284,
+      "modelNameRaw": "더 뉴 K5 하이브리드 2세대"
+    },
+    {
+      "sourceLine": 285,
+      "modelNameRaw": "K5 2세대"
+    },
+    {
+      "sourceLine": 286,
+      "modelNameRaw": "니로 EV"
+    },
+    {
+      "sourceLine": 287,
+      "modelNameRaw": "K5 하이브리드 2세대"
+    },
+    {
+      "sourceLine": 288,
+      "modelNameRaw": "스토닉"
+    },
+    {
+      "sourceLine": 289,
+      "modelNameRaw": "씨드"
+    },
+    {
+      "sourceLine": 290,
+      "modelNameRaw": "텔루라이드"
+    },
+    {
+      "sourceLine": 291,
+      "modelNameRaw": "EV9"
+    },
+    {
+      "sourceLine": 292,
+      "modelNameRaw": "EV3"
+    },
+    {
+      "sourceLine": 293,
+      "modelNameRaw": "EV4"
+    },
+    {
+      "sourceLine": 294,
+      "modelNameRaw": "PV5"
+    },
+    {
+      "sourceLine": 295,
+      "modelNameRaw": "EV5"
+    },
+    {
+      "sourceLine": 296,
+      "modelNameRaw": "K3 쿱"
+    },
+    {
+      "sourceLine": 297,
+      "modelNameRaw": "K3 유로"
+    },
+    {
+      "sourceLine": 298,
+      "modelNameRaw": "더 뉴 K5"
+    },
+    {
+      "sourceLine": 299,
+      "modelNameRaw": "K5"
+    },
+    {
+      "sourceLine": 300,
+      "modelNameRaw": "K5 하이브리드"
+    },
+    {
+      "sourceLine": 301,
+      "modelNameRaw": "더 뉴 K7"
+    },
+    {
+      "sourceLine": 302,
+      "modelNameRaw": "K7 하이브리드"
+    },
+    {
+      "sourceLine": 303,
+      "modelNameRaw": "더 프레스티지 K7"
+    },
+    {
+      "sourceLine": 304,
+      "modelNameRaw": "K7"
+    },
+    {
+      "sourceLine": 305,
+      "modelNameRaw": "K9"
+    },
+    {
+      "sourceLine": 306,
+      "modelNameRaw": "X-TREK"
+    },
+    {
+      "sourceLine": 307,
+      "modelNameRaw": "델타"
+    },
+    {
+      "sourceLine": 308,
+      "modelNameRaw": "레토나"
+    },
+    {
+      "sourceLine": 309,
+      "modelNameRaw": "레이"
+    },
+    {
+      "sourceLine": 310,
+      "modelNameRaw": "로체 이노베이션"
+    },
+    {
+      "sourceLine": 311,
+      "modelNameRaw": "로체 어드밴스"
+    },
+    {
+      "sourceLine": 312,
+      "modelNameRaw": "로체"
+    },
+    {
+      "sourceLine": 313,
+      "modelNameRaw": "록스타 R2"
+    },
+    {
+      "sourceLine": 314,
+      "modelNameRaw": "록스타"
+    },
+    {
+      "sourceLine": 315,
+      "modelNameRaw": "리갈"
+    },
+    {
+      "sourceLine": 316,
+      "modelNameRaw": "리오"
+    },
+    {
+      "sourceLine": 317,
+      "modelNameRaw": "더 뉴 모닝"
+    },
+    {
+      "sourceLine": 318,
+      "modelNameRaw": "올 뉴 모닝"
+    },
+    {
+      "sourceLine": 319,
+      "modelNameRaw": "뉴모닝"
+    },
+    {
+      "sourceLine": 320,
+      "modelNameRaw": "모닝"
+    },
+    {
+      "sourceLine": 321,
+      "modelNameRaw": "모하비"
+    },
+    {
+      "sourceLine": 322,
+      "modelNameRaw": "하이베스타"
+    },
+    {
+      "sourceLine": 323,
+      "modelNameRaw": "베스타"
+    },
+    {
+      "sourceLine": 324,
+      "modelNameRaw": "봉고III 미니버스"
+    },
+    {
+      "sourceLine": 325,
+      "modelNameRaw": "브리샤"
+    },
+    {
+      "sourceLine": 326,
+      "modelNameRaw": "비스토"
+    },
+    {
+      "sourceLine": 327,
+      "modelNameRaw": "세피아2"
+    },
+    {
+      "sourceLine": 328,
+      "modelNameRaw": "세피아"
+    },
+    {
+      "sourceLine": 329,
+      "modelNameRaw": "슈마"
+    },
+    {
+      "sourceLine": 330,
+      "modelNameRaw": "스펙트라"
+    },
+    {
+      "sourceLine": 331,
+      "modelNameRaw": "더 뉴 스포티지 R"
+    },
+    {
+      "sourceLine": 332,
+      "modelNameRaw": "스포티지 R"
+    },
+    {
+      "sourceLine": 333,
+      "modelNameRaw": "New 스포티지"
+    },
+    {
+      "sourceLine": 334,
+      "modelNameRaw": "스포티지"
+    },
+    {
+      "sourceLine": 335,
+      "modelNameRaw": "뉴쎄라토"
+    },
+    {
+      "sourceLine": 336,
+      "modelNameRaw": "쎄라토"
+    },
+    {
+      "sourceLine": 337,
+      "modelNameRaw": "올 뉴 쏘렌토"
+    },
+    {
+      "sourceLine": 338,
+      "modelNameRaw": "뉴 쏘렌토 R"
+    },
+    {
+      "sourceLine": 339,
+      "modelNameRaw": "쏘렌토 R"
+    },
+    {
+      "sourceLine": 340,
+      "modelNameRaw": "뉴쏘렌토"
+    },
+    {
+      "sourceLine": 341,
+      "modelNameRaw": "쏘렌토"
+    },
+    {
+      "sourceLine": 342,
+      "modelNameRaw": "올 뉴 쏘울"
+    },
+    {
+      "sourceLine": 343,
+      "modelNameRaw": "쏘울"
+    },
+    {
+      "sourceLine": 344,
+      "modelNameRaw": "쏘울 EV"
+    },
+    {
+      "sourceLine": 345,
+      "modelNameRaw": "아벨라"
+    },
+    {
+      "sourceLine": 346,
+      "modelNameRaw": "엔터프라이즈"
+    },
+    {
+      "sourceLine": 347,
+      "modelNameRaw": "엘란"
+    },
+    {
+      "sourceLine": 348,
+      "modelNameRaw": "오피러스 프리미엄"
+    },
+    {
+      "sourceLine": 349,
+      "modelNameRaw": "뉴오피러스"
+    },
+    {
+      "sourceLine": 350,
+      "modelNameRaw": "오피러스"
+    },
+    {
+      "sourceLine": 351,
+      "modelNameRaw": "옵티마"
+    },
+    {
+      "sourceLine": 352,
+      "modelNameRaw": "올 뉴 카니발"
+    },
+    {
+      "sourceLine": 353,
+      "modelNameRaw": "카니발 R"
+    },
+    {
+      "sourceLine": 354,
+      "modelNameRaw": "그랜드 카니발"
+    },
+    {
+      "sourceLine": 355,
+      "modelNameRaw": "뉴카니발"
+    },
+    {
+      "sourceLine": 356,
+      "modelNameRaw": "카니발 II"
+    },
+    {
+      "sourceLine": 357,
+      "modelNameRaw": "카니발"
+    },
+    {
+      "sourceLine": 358,
+      "modelNameRaw": "올 뉴 카렌스"
+    },
+    {
+      "sourceLine": 359,
+      "modelNameRaw": "뉴카렌스"
+    },
+    {
+      "sourceLine": 360,
+      "modelNameRaw": "카렌스 II"
+    },
+    {
+      "sourceLine": 361,
+      "modelNameRaw": "카렌스"
+    },
+    {
+      "sourceLine": 362,
+      "modelNameRaw": "카스타"
+    },
+    {
+      "sourceLine": 363,
+      "modelNameRaw": "캐피탈"
+    },
+    {
+      "sourceLine": 364,
+      "modelNameRaw": "뉴콩코드"
+    },
+    {
+      "sourceLine": 365,
+      "modelNameRaw": "콩코드"
+    },
+    {
+      "sourceLine": 366,
+      "modelNameRaw": "크레도스 2"
+    },
+    {
+      "sourceLine": 367,
+      "modelNameRaw": "크레도스"
+    },
+    {
+      "sourceLine": 368,
+      "modelNameRaw": "타우너"
+    },
+    {
+      "sourceLine": 369,
+      "modelNameRaw": "토픽"
+    },
+    {
+      "sourceLine": 370,
+      "modelNameRaw": "파크타운"
+    },
+    {
+      "sourceLine": 371,
+      "modelNameRaw": "포르테"
+    },
+    {
+      "sourceLine": 372,
+      "modelNameRaw": "포르테 쿱"
+    },
+    {
+      "sourceLine": 373,
+      "modelNameRaw": "포르테 해치백"
+    },
+    {
+      "sourceLine": 374,
+      "modelNameRaw": "뉴포텐샤"
+    },
+    {
+      "sourceLine": 375,
+      "modelNameRaw": "포텐샤"
+    },
+    {
+      "sourceLine": 376,
+      "modelNameRaw": "더 뉴 프라이드"
+    },
+    {
+      "sourceLine": 377,
+      "modelNameRaw": "올 뉴 프라이드"
+    },
+    {
+      "sourceLine": 378,
+      "modelNameRaw": "프라이드(신형)"
+    },
+    {
+      "sourceLine": 379,
+      "modelNameRaw": "프라이드"
+    },
+    {
+      "sourceLine": 380,
+      "modelNameRaw": "프레지오"
+    },
+    {
+      "sourceLine": 381,
+      "modelNameRaw": "피아트132"
+    },
+    {
+      "sourceLine": 382,
+      "modelNameRaw": "임팔라"
+    },
+    {
+      "sourceLine": 383,
+      "modelNameRaw": "더 뉴 아베오 세단"
+    },
+    {
+      "sourceLine": 384,
+      "modelNameRaw": "올 뉴 크루즈"
+    },
+    {
+      "sourceLine": 385,
+      "modelNameRaw": "볼트(Volt)"
+    },
+    {
+      "sourceLine": 386,
+      "modelNameRaw": "더 뉴 스파크"
+    },
+    {
+      "sourceLine": 387,
+      "modelNameRaw": "더 뉴 말리부"
+    },
+    {
+      "sourceLine": 388,
+      "modelNameRaw": "더 뉴 카마로"
+    },
+    {
+      "sourceLine": 389,
+      "modelNameRaw": "뉴 볼트 EV"
+    },
+    {
+      "sourceLine": 390,
+      "modelNameRaw": "더 넥스트 이쿼녹스"
+    },
+    {
+      "sourceLine": 391,
+      "modelNameRaw": "트랙스 크로스오버"
+    },
+    {
+      "sourceLine": 392,
+      "modelNameRaw": "더 뉴 트레일블레이저"
+    },
+    {
+      "sourceLine": 393,
+      "modelNameRaw": "올 뉴 콜로라도"
+    },
+    {
+      "sourceLine": 394,
+      "modelNameRaw": "어메이징 뉴 크루즈"
+    },
+    {
+      "sourceLine": 395,
+      "modelNameRaw": "더 넥스트 스파크"
+    },
+    {
+      "sourceLine": 396,
+      "modelNameRaw": "올 뉴 말리부"
+    },
+    {
+      "sourceLine": 397,
+      "modelNameRaw": "올 뉴 카마로"
+    },
+    {
+      "sourceLine": 398,
+      "modelNameRaw": "더 뉴 아베오 해치백"
+    },
+    {
+      "sourceLine": 399,
+      "modelNameRaw": "더 뉴 트랙스"
+    },
+    {
+      "sourceLine": 400,
+      "modelNameRaw": "볼트 EV"
+    },
+    {
+      "sourceLine": 401,
+      "modelNameRaw": "이쿼녹스"
+    },
+    {
+      "sourceLine": 402,
+      "modelNameRaw": "트레일블레이저"
+    },
+    {
+      "sourceLine": 403,
+      "modelNameRaw": "리얼 뉴 콜로라도"
+    },
+    {
+      "sourceLine": 404,
+      "modelNameRaw": "어메이징 뉴 크루즈5"
+    },
+    {
+      "sourceLine": 405,
+      "modelNameRaw": "콜로라도"
+    },
+    {
+      "sourceLine": 406,
+      "modelNameRaw": "알페온"
+    },
+    {
+      "sourceLine": 407,
+      "modelNameRaw": "트래버스"
+    },
+    {
+      "sourceLine": 408,
+      "modelNameRaw": "볼트 EUV"
+    },
+    {
+      "sourceLine": 409,
+      "modelNameRaw": "타호"
+    },
+    {
+      "sourceLine": 410,
+      "modelNameRaw": "말리부"
+    },
+    {
+      "sourceLine": 411,
+      "modelNameRaw": "크루즈"
+    },
+    {
+      "sourceLine": 412,
+      "modelNameRaw": "크루즈5"
+    },
+    {
+      "sourceLine": 413,
+      "modelNameRaw": "아베오 세단"
+    },
+    {
+      "sourceLine": 414,
+      "modelNameRaw": "아베오 해치백"
+    },
+    {
+      "sourceLine": 415,
+      "modelNameRaw": "스파크"
+    },
+    {
+      "sourceLine": 416,
+      "modelNameRaw": "스파크 EV"
+    },
+    {
+      "sourceLine": 417,
+      "modelNameRaw": "트랙스"
+    },
+    {
+      "sourceLine": 418,
+      "modelNameRaw": "캡티바"
+    },
+    {
+      "sourceLine": 419,
+      "modelNameRaw": "올란도"
+    },
+    {
+      "sourceLine": 420,
+      "modelNameRaw": "카마로"
+    },
+    {
+      "sourceLine": 421,
+      "modelNameRaw": "콜벳"
+    },
+    {
+      "sourceLine": 422,
+      "modelNameRaw": "G2X"
+    },
+    {
+      "sourceLine": 423,
+      "modelNameRaw": "넥시아"
+    },
+    {
+      "sourceLine": 424,
+      "modelNameRaw": "누비라 2"
+    },
+    {
+      "sourceLine": 425,
+      "modelNameRaw": "누비라"
+    },
+    {
+      "sourceLine": 426,
+      "modelNameRaw": "뉴 다마스"
+    },
+    {
+      "sourceLine": 427,
+      "modelNameRaw": "다마스 II"
+    },
+    {
+      "sourceLine": 428,
+      "modelNameRaw": "다마스"
+    },
+    {
+      "sourceLine": 429,
+      "modelNameRaw": "라노스 II"
+    },
+    {
+      "sourceLine": 430,
+      "modelNameRaw": "라노스"
+    },
+    {
+      "sourceLine": 431,
+      "modelNameRaw": "뉴 라보"
+    },
+    {
+      "sourceLine": 432,
+      "modelNameRaw": "라보"
+    },
+    {
+      "sourceLine": 433,
+      "modelNameRaw": "라세티"
+    },
+    {
+      "sourceLine": 434,
+      "modelNameRaw": "라세티 프리미어"
+    },
+    {
+      "sourceLine": 435,
+      "modelNameRaw": "레간자"
+    },
+    {
+      "sourceLine": 436,
+      "modelNameRaw": "레조"
+    },
+    {
+      "sourceLine": 437,
+      "modelNameRaw": "로얄살롱"
+    },
+    {
+      "sourceLine": 438,
+      "modelNameRaw": "르망"
+    },
+    {
+      "sourceLine": 439,
+      "modelNameRaw": "마티즈"
+    },
+    {
+      "sourceLine": 440,
+      "modelNameRaw": "마티즈 II"
+    },
+    {
+      "sourceLine": 441,
+      "modelNameRaw": "마티즈 클래식"
+    },
+    {
+      "sourceLine": 442,
+      "modelNameRaw": "All New 마티즈"
+    },
+    {
+      "sourceLine": 443,
+      "modelNameRaw": "마티즈 크리에이티브"
+    },
+    {
+      "sourceLine": 444,
+      "modelNameRaw": "매그너스"
+    },
+    {
+      "sourceLine": 445,
+      "modelNameRaw": "맵시"
+    },
+    {
+      "sourceLine": 446,
+      "modelNameRaw": "베리타스"
+    },
+    {
+      "sourceLine": 447,
+      "modelNameRaw": "브로엄"
+    },
+    {
+      "sourceLine": 448,
+      "modelNameRaw": "슈퍼살롱"
+    },
+    {
+      "sourceLine": 449,
+      "modelNameRaw": "스테이츠맨"
+    },
+    {
+      "sourceLine": 450,
+      "modelNameRaw": "씨에로"
+    },
+    {
+      "sourceLine": 451,
+      "modelNameRaw": "아카디아"
+    },
+    {
+      "sourceLine": 452,
+      "modelNameRaw": "에스페로"
+    },
+    {
+      "sourceLine": 453,
+      "modelNameRaw": "윈스톰"
+    },
+    {
+      "sourceLine": 454,
+      "modelNameRaw": "윈스톰 맥스"
+    },
+    {
+      "sourceLine": 455,
+      "modelNameRaw": "임페리얼"
+    },
+    {
+      "sourceLine": 456,
+      "modelNameRaw": "젠트라"
+    },
+    {
+      "sourceLine": 457,
+      "modelNameRaw": "젠트라 X"
+    },
+    {
+      "sourceLine": 458,
+      "modelNameRaw": "칼로스"
+    },
+    {
+      "sourceLine": 459,
+      "modelNameRaw": "토스카"
+    },
+    {
+      "sourceLine": 460,
+      "modelNameRaw": "토스카 프리미엄6"
+    },
+    {
+      "sourceLine": 461,
+      "modelNameRaw": "티코"
+    },
+    {
+      "sourceLine": 462,
+      "modelNameRaw": "프린스"
+    },
+    {
+      "sourceLine": 463,
+      "modelNameRaw": "로얄 프린스"
+    },
+    {
+      "sourceLine": 464,
+      "modelNameRaw": "뉴프린스"
+    },
+    {
+      "sourceLine": 465,
+      "modelNameRaw": "뷰티풀 코란도"
+    },
+    {
+      "sourceLine": 466,
+      "modelNameRaw": "더 뉴 렉스턴 스포츠"
+    },
+    {
+      "sourceLine": 467,
+      "modelNameRaw": "더 뉴 티볼리"
+    },
+    {
+      "sourceLine": 468,
+      "modelNameRaw": "액티언 2세대"
+    },
+    {
+      "sourceLine": 469,
+      "modelNameRaw": "무쏘 (Q300)"
+    },
+    {
+      "sourceLine": 470,
+      "modelNameRaw": "뉴 토레스"
+    },
+    {
+      "sourceLine": 471,
+      "modelNameRaw": "더 뉴 렉스턴 스포츠 칸"
+    },
+    {
+      "sourceLine": 472,
+      "modelNameRaw": "코란도 EV (이모션)"
+    },
+    {
+      "sourceLine": 473,
+      "modelNameRaw": "더 뉴 티볼리 에어"
+    },
+    {
+      "sourceLine": 474,
+      "modelNameRaw": "더 뉴 토레스"
+    },
+    {
+      "sourceLine": 475,
+      "modelNameRaw": "무쏘 스포츠 (Q260)"
+    },
+    {
+      "sourceLine": 476,
+      "modelNameRaw": "뉴 스타일 코란도 C"
+    },
+    {
+      "sourceLine": 477,
+      "modelNameRaw": "렉스턴 스포츠"
+    },
+    {
+      "sourceLine": 478,
+      "modelNameRaw": "베리 뉴 티볼리"
+    },
+    {
+      "sourceLine": 479,
+      "modelNameRaw": "토레스 EVX"
+    },
+    {
+      "sourceLine": 480,
+      "modelNameRaw": "무쏘 스포츠 칸 (Q261)"
+    },
+    {
+      "sourceLine": 481,
+      "modelNameRaw": "티볼리 아머"
+    },
+    {
+      "sourceLine": 482,
+      "modelNameRaw": "렉스턴 스포츠 칸"
+    },
+    {
+      "sourceLine": 483,
+      "modelNameRaw": "토레스"
+    },
+    {
+      "sourceLine": 484,
+      "modelNameRaw": "무쏘 EV (O100)"
+    },
+    {
+      "sourceLine": 485,
+      "modelNameRaw": "티볼리 에어"
+    },
+    {
+      "sourceLine": 486,
+      "modelNameRaw": "렉스턴 뉴 아레나"
+    },
+    {
+      "sourceLine": 487,
+      "modelNameRaw": "더 뉴 코란도 스포츠"
+    },
+    {
+      "sourceLine": 488,
+      "modelNameRaw": "올 뉴 렉스턴"
+    },
+    {
+      "sourceLine": 489,
+      "modelNameRaw": "G4 렉스턴"
+    },
+    {
+      "sourceLine": 490,
+      "modelNameRaw": "렉스턴 W"
+    },
+    {
+      "sourceLine": 491,
+      "modelNameRaw": "슈퍼 렉스턴"
+    },
+    {
+      "sourceLine": 492,
+      "modelNameRaw": "렉스턴 II"
+    },
+    {
+      "sourceLine": 493,
+      "modelNameRaw": "뉴렉스턴"
+    },
+    {
+      "sourceLine": 494,
+      "modelNameRaw": "렉스턴"
+    },
+    {
+      "sourceLine": 495,
+      "modelNameRaw": "로디우스 유로"
+    },
+    {
+      "sourceLine": 496,
+      "modelNameRaw": "뉴로디우스"
+    },
+    {
+      "sourceLine": 497,
+      "modelNameRaw": "로디우스"
+    },
+    {
+      "sourceLine": 498,
+      "modelNameRaw": "무쏘"
+    },
+    {
+      "sourceLine": 499,
+      "modelNameRaw": "무쏘 스포츠"
+    },
+    {
+      "sourceLine": 500,
+      "modelNameRaw": "뉴무쏘"
+    },
+    {
+      "sourceLine": 501,
+      "modelNameRaw": "뉴무쏘 밴"
+    },
+    {
+      "sourceLine": 502,
+      "modelNameRaw": "액티언"
+    },
+    {
+      "sourceLine": 503,
+      "modelNameRaw": "액티언 스포츠"
+    },
+    {
+      "sourceLine": 504,
+      "modelNameRaw": "이스타나"
+    },
+    {
+      "sourceLine": 505,
+      "modelNameRaw": "뉴체어맨 W"
+    },
+    {
+      "sourceLine": 506,
+      "modelNameRaw": "체어맨 W"
+    },
+    {
+      "sourceLine": 507,
+      "modelNameRaw": "체어맨 H 뉴 클래식"
+    },
+    {
+      "sourceLine": 508,
+      "modelNameRaw": "체어맨 H"
+    },
+    {
+      "sourceLine": 509,
+      "modelNameRaw": "뉴체어맨"
+    },
+    {
+      "sourceLine": 510,
+      "modelNameRaw": "체어맨"
+    },
+    {
+      "sourceLine": 511,
+      "modelNameRaw": "칼리스타"
+    },
+    {
+      "sourceLine": 512,
+      "modelNameRaw": "뉴카이런"
+    },
+    {
+      "sourceLine": 513,
+      "modelNameRaw": "카이런"
+    },
+    {
+      "sourceLine": 514,
+      "modelNameRaw": "뉴코란도 C"
+    },
+    {
+      "sourceLine": 515,
+      "modelNameRaw": "코란도 C"
+    },
+    {
+      "sourceLine": 516,
+      "modelNameRaw": "코란도 스포츠"
+    },
+    {
+      "sourceLine": 517,
+      "modelNameRaw": "코란도 투리스모"
+    },
+    {
+      "sourceLine": 518,
+      "modelNameRaw": "뉴코란도"
+    },
+    {
+      "sourceLine": 519,
+      "modelNameRaw": "코란도 훼미리"
+    },
+    {
+      "sourceLine": 520,
+      "modelNameRaw": "코란도 지프"
+    },
+    {
+      "sourceLine": 521,
+      "modelNameRaw": "티볼리"
+    },
+    {
+      "sourceLine": 522,
+      "modelNameRaw": "뉴훼미리"
+    },
+    {
+      "sourceLine": 523,
+      "modelNameRaw": "SM3 네오"
+    },
+    {
+      "sourceLine": 524,
+      "modelNameRaw": "뉴QM3"
+    },
+    {
+      "sourceLine": 525,
+      "modelNameRaw": "더 뉴 QM6"
+    },
+    {
+      "sourceLine": 526,
+      "modelNameRaw": "더 뉴 SM6"
+    },
+    {
+      "sourceLine": 527,
+      "modelNameRaw": "SM6"
+    },
+    {
+      "sourceLine": 528,
+      "modelNameRaw": "QM6"
+    },
+    {
+      "sourceLine": 529,
+      "modelNameRaw": "트위지"
+    },
+    {
+      "sourceLine": 530,
+      "modelNameRaw": "클리오"
+    },
+    {
+      "sourceLine": 531,
+      "modelNameRaw": "마스터"
+    },
+    {
+      "sourceLine": 532,
+      "modelNameRaw": "XM3"
+    },
+    {
+      "sourceLine": 533,
+      "modelNameRaw": "캡처"
+    },
+    {
+      "sourceLine": 534,
+      "modelNameRaw": "조에"
+    },
+    {
+      "sourceLine": 535,
+      "modelNameRaw": "아르카나"
+    },
+    {
+      "sourceLine": 536,
+      "modelNameRaw": "그랑 콜레오스"
+    },
+    {
+      "sourceLine": 537,
+      "modelNameRaw": "세닉"
+    },
+    {
+      "sourceLine": 538,
+      "modelNameRaw": "필랑트"
+    },
+    {
+      "sourceLine": 539,
+      "modelNameRaw": "뉴SM3"
+    },
+    {
+      "sourceLine": 540,
+      "modelNameRaw": "SM3 뉴 제너레이션"
+    },
+    {
+      "sourceLine": 541,
+      "modelNameRaw": "SM3"
+    },
+    {
+      "sourceLine": 542,
+      "modelNameRaw": "SM3 Z.E."
+    },
+    {
+      "sourceLine": 543,
+      "modelNameRaw": "SM5 노바"
+    },
+    {
+      "sourceLine": 544,
+      "modelNameRaw": "뉴SM5 플래티넘"
+    },
+    {
+      "sourceLine": 545,
+      "modelNameRaw": "뉴SM5(신형)"
+    },
+    {
+      "sourceLine": 546,
+      "modelNameRaw": "SM5 뉴 임프레션"
+    },
+    {
+      "sourceLine": 547,
+      "modelNameRaw": "뉴SM5"
+    },
+    {
+      "sourceLine": 548,
+      "modelNameRaw": "SM5"
+    },
+    {
+      "sourceLine": 549,
+      "modelNameRaw": "SM7 노바"
+    },
+    {
+      "sourceLine": 550,
+      "modelNameRaw": "All New SM7"
+    },
+    {
+      "sourceLine": 551,
+      "modelNameRaw": "SM7 New Art"
+    },
+    {
+      "sourceLine": 552,
+      "modelNameRaw": "SM7"
+    },
+    {
+      "sourceLine": 553,
+      "modelNameRaw": "QM3"
+    },
+    {
+      "sourceLine": 554,
+      "modelNameRaw": "QM5 네오"
+    },
+    {
+      "sourceLine": 555,
+      "modelNameRaw": "뉴QM5"
+    },
+    {
+      "sourceLine": 556,
+      "modelNameRaw": "QM5"
+    },
+    {
+      "sourceLine": 557,
+      "modelNameRaw": "어울림모터스-스피라"
+    },
+    {
+      "sourceLine": 558,
+      "modelNameRaw": "기타"
+    },
+    {
+      "sourceLine": 559,
+      "modelNameRaw": "EQ900"
+    },
+    {
+      "sourceLine": 560,
+      "modelNameRaw": "G80 (RG3)"
+    },
+    {
+      "sourceLine": 561,
+      "modelNameRaw": "더 뉴 G70"
+    },
+    {
+      "sourceLine": 562,
+      "modelNameRaw": "G90 (RS4)"
+    },
+    {
+      "sourceLine": 563,
+      "modelNameRaw": "G90"
+    },
+    {
+      "sourceLine": 564,
+      "modelNameRaw": "일렉트리파이드 G80 (RG3)"
+    },
+    {
+      "sourceLine": 565,
+      "modelNameRaw": "더 뉴 G70 슈팅브레이크"
+    },
+    {
+      "sourceLine": 566,
+      "modelNameRaw": "G80"
+    },
+    {
+      "sourceLine": 567,
+      "modelNameRaw": "G70"
+    },
+    {
+      "sourceLine": 568,
+      "modelNameRaw": "GV80"
+    },
+    {
+      "sourceLine": 569,
+      "modelNameRaw": "GV70"
+    },
+    {
+      "sourceLine": 570,
+      "modelNameRaw": "GV60"
+    },
+    {
+      "sourceLine": 571,
+      "modelNameRaw": "일렉트리파이드 GV70"
+    },
+    {
+      "sourceLine": 572,
+      "modelNameRaw": "GV80 쿠페"
+    },
+    {
+      "sourceLine": 573,
+      "modelNameRaw": "이티밴 프로"
+    },
+    {
+      "sourceLine": 574,
+      "modelNameRaw": "A1"
+    },
+    {
+      "sourceLine": 575,
+      "modelNameRaw": "TT (8S)"
+    },
+    {
+      "sourceLine": 576,
+      "modelNameRaw": "TTS (8S)"
+    },
+    {
+      "sourceLine": 577,
+      "modelNameRaw": "Q7 (4M)"
+    },
+    {
+      "sourceLine": 578,
+      "modelNameRaw": "A4 (B9)"
+    },
+    {
+      "sourceLine": 579,
+      "modelNameRaw": "R8 (4S)"
+    },
+    {
+      "sourceLine": 580,
+      "modelNameRaw": "A8 (D5)"
+    },
+    {
+      "sourceLine": 581,
+      "modelNameRaw": "A7 (4K)"
+    }
+  ]
+}

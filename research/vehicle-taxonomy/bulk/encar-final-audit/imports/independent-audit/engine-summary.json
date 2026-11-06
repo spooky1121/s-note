@@ -1,0 +1,42 @@
+{
+  "scope": "Offline independent ENG numeric unit, architecture, fuel literal/rowspan, and transmission evidence audit. No live fetches, no repository changes.",
+  "records": 387,
+  "sources": 38,
+  "verifiedNonemptyEngFrames": 38,
+  "engineStatus": {
+    "candidate_row_unit_tuple_observed": 294,
+    "not_stored": 91,
+    "frame_only_unit_tuple_observed": 2
+  },
+  "fuelStatus": {
+    "candidate_rowspan_fuel_observed": 343,
+    "frame_only_fuel_observed": 6,
+    "not_stored": 35,
+    "candidate_rowspan_fuel_normalized_equivalent": 3
+  },
+  "transmissionStatus": {
+    "not_stored": 345,
+    "not_observed_in_eng": 42
+  },
+  "joinStatus": {
+    "review_required": 387
+  },
+  "candidateKinds": {
+    "eng_evidence_gap": 42,
+    "mapping_review": 8,
+    "additional_qualifier_not_observed": 7
+  },
+  "confirmedRawEngineOrFuelContradictions": 0,
+  "interpretation": "Candidate-row unit tuple match is only a source observation. All trim/year joins stay review_required. Frame-only matches and missing qualifiers are not verified joins; absence from ENG does not prove a value false.",
+  "normalization": [
+    "Whitespace/NBSP normalized only for typed fuel comparisons.",
+    "I/L/l/R architecture letters explicitly converted to inline I, preserving cylinder count and displacement numeric token.",
+    "Hyb4 remains Hyb4; no architecture inference from the word hybrid.",
+    "Fuel 하이브리드 and 가솔린+전기 treated as normalized broad equivalents, never literal equivalents.",
+    "Added engine qualifiers independently checked against candidate row."
+  ],
+  "inputSha256": {
+    "targets.json": "3daacacd6ccb9aea22cd6a8d5b838186a9576ca7ba993ef46fe63434e5ee8b1f",
+    "frame-table-facts.json": "506edc6e8c02ba68c420e25c3ea2df7f60b39ca8cf10987e17a2b7df29fec7f7"
+  }
+}

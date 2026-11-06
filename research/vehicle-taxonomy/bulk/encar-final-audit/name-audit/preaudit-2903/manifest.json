@@ -1,0 +1,131 @@
+{
+  "schemaVersion": 1,
+  "scope": "Research-only names audit; no source or application mutation",
+  "sourceSnapshot": {
+    "sourceDate": "2026-11-06T16:55:45.976398+00:00",
+    "sourceUrl": "https://m.encar.com/ca/initString.json?method=initList&type=Is",
+    "sourceKind": "provider_rendered_name_index",
+    "acquisitionMethod": "five_overlapping_web_tool_rendered_line_windows",
+    "webToolRemoteCacheFreshness": "not_exposed; current tool read, not guaranteed fresh origin HTTP fetch",
+    "comparisonToPriorSnapshot": {
+      "priorPath": "research/vehicle-taxonomy/sources/encar-public-catalog-expansion-20261106.json",
+      "priorRows": 1858,
+      "sameOrderAndNames": true,
+      "changedPositions": []
+    }
+  },
+  "inputs": {
+    "encar": {
+      "path": "current-index.json",
+      "pathBase": "external input basename; supply CLI path explicitly",
+      "bytes": 161706,
+      "sha256": "3dd05119ab0b1288c2eff48dc3c6bc7da2ac177b7b867ecba714c756339e455e"
+    },
+    "baseline": {
+      "path": "research/vehicle-taxonomy/baseline/catalog.json",
+      "pathBase": "repository_root",
+      "bytes": 632236,
+      "sha256": "c3b3d3fc75701cf2354bd05bce7b8393e9efe1eb286670e97091454342b9e4c4"
+    },
+    "research": {
+      "path": "research/vehicle-taxonomy/exports/official-research.json",
+      "pathBase": "repository_root",
+      "bytes": 9107406,
+      "sha256": "d3b0aab974e60897cedb23fbe5bb923992637b843a85adb55c1d26f11d619120"
+    },
+    "government": {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/amended/vehicle-records.raw.jsonl.gz",
+      "pathBase": "repository_root",
+      "bytes": 1994476,
+      "sha256": "b725edb280b148042a461244eade9dd2d42fd2e4ebe773dbbdf238d10426cea6"
+    }
+  },
+  "builder": {
+    "name": "build-encar-name-audit.py",
+    "sha256": "69a2a3ff1091af90e7581808c62c16da24a7e3c9ff721306a31a8d462668fe52"
+  },
+  "fixedExpectedCounts": {
+    "encarRows": 1858,
+    "governmentRows": 105383
+  },
+  "allDeclaredCountsAndIdentityAssertionsPassed": true,
+  "completeRetailHierarchy": false,
+  "governmentLinksCsvIncluded": false,
+  "files": [
+    {
+      "path": "baseline-model-ledger.csv.gz",
+      "bytes": 54186,
+      "sha256": "f3759dfe3b4c616d72fb1f9dc287be5c2dce9c9eb77b0d3824d6ddc103b0f6f2"
+    },
+    {
+      "path": "baseline-model-ledger.jsonl.gz",
+      "bytes": 58259,
+      "sha256": "fc01f34d91a681a660875b844f2eb5fac0f26cd1743e8fc96d6c46ba23bbf4bc"
+    },
+    {
+      "path": "confirmed-corrections.json",
+      "bytes": 228,
+      "sha256": "24baa8a36fb9728c630644050d311a812e989e78d0e7fb96aa90d4ddedefd86d"
+    },
+    {
+      "path": "duplicate-labels.json",
+      "bytes": 4677,
+      "sha256": "0f008bf901219257e98c5d79facbd1d6718d71d2bf039da9d714da8c12ecd351"
+    },
+    {
+      "path": "encar-ambiguous-display-rows.csv.gz",
+      "bytes": 3955,
+      "sha256": "e0a1629621bf39d7ec7cf54f48d1f2f635997465994ea7ad2455e79a9a321ee0"
+    },
+    {
+      "path": "encar-display-name-ledger.csv.gz",
+      "bytes": 30511,
+      "sha256": "f9e1958232b930b398aa56f861a6d4b4ed4f498b37d1f274d5ef045be5534b7e"
+    },
+    {
+      "path": "encar-display-name-ledger.jsonl.gz",
+      "bytes": 697294,
+      "sha256": "118ebab313f7b16eb9d467eaa9ffa27a92ef92eac5bf711639eb2a6eb0144164"
+    },
+    {
+      "path": "encar-unmapped-display-rows.csv.gz",
+      "bytes": 7420,
+      "sha256": "28aa25b3887b84a758e0090d5d60c94b15b5205ec2e897cfc48f58dc9c7a84f9"
+    },
+    {
+      "path": "government-name-links.jsonl.gz",
+      "bytes": 922495,
+      "sha256": "4908f199e3515ab1418a38932cc696ff1252d16bf427f2e2cb8e10a38470c1c6"
+    },
+    {
+      "path": "input-snapshots/baseline-source.c3b3d3fc7570.raw.gz",
+      "bytes": 22270,
+      "sha256": "062c1d62732a1f1126d11b2ba9aa4e23a956f0ea1566cd4308aacec7a1450876"
+    },
+    {
+      "path": "input-snapshots/encar-source.3dd05119ab0b.raw.gz",
+      "bytes": 16088,
+      "sha256": "d40d94e6912cdd65bdd0dafdb81ef700c4783b7b02dfb40eb4641b930ce5866b"
+    },
+    {
+      "path": "input-snapshots/research-source.d3b0aab974e6.raw.gz",
+      "bytes": 369591,
+      "sha256": "683afc5c3df2fd0c150393b5c11b1d51f1d70ba06f9854715cb72f2767f9f183"
+    },
+    {
+      "path": "research-record-ledger.csv.gz",
+      "bytes": 104532,
+      "sha256": "05d60cec9d5afc6fb3437aeb7de83ccd13dc9079aa881b4df0df3c63ef1f2d78"
+    },
+    {
+      "path": "research-record-ledger.jsonl.gz",
+      "bytes": 115907,
+      "sha256": "59a0dea6c703af880c9270fb8a2d66386cdd217114b612ec0c674a7358782c85"
+    },
+    {
+      "path": "summary.json",
+      "bytes": 4349,
+      "sha256": "b6d8d39be71268ba58e25180512d81e5a2a9c8c54ca0698c00e4cf9a5bfa45a0"
+    }
+  ]
+}

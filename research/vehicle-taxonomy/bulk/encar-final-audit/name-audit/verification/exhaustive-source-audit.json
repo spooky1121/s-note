@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "producerImported": false,
+  "allSourceNamesAndPositionsMatch": true,
+  "oldAndCurrentIndexOrderAndNamesIdentical": true,
+  "displayRowsVerified": 1858,
+  "baselineTargetsVerified": 1197,
+  "researchRecordsVerified": 2903,
+  "sourceTargetLinksVerified": {
+    "baselineMatches": 4417,
+    "researchMatches": 16682
+  },
+  "governmentRowsScannedForCompleteness": 105383,
+  "governmentNameLinksVerified": 29766,
+  "csvCellsVerified": 83689,
+  "allInputOutputManifestHashesMatch": true,
+  "allParentAndGradeVerificationDisabled": true,
+  "allLedgerRowsIncomplete": true,
+  "errors": 0
+}

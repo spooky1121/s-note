@@ -1,0 +1,7138 @@
+{
+  "scope": "Rechecked factual classification/engine table cells only. Editorial prose, photographs, adverts and listing/customer information excluded. Expected and actual URLs checked on every parent/frame.",
+  "checkedOn": "2026-11-07",
+  "frames": [
+    {
+      "parentSourceId": "hist-encar-3-5gen-grades",
+      "type": "CLS",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=137810&method=view_modelHistoryframe&type=CLS",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=001&mnfccd=012",
+      "parentSourceURLVerified": true,
+      "linkId": 35,
+      "ref": "turn410355view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=137810&method=view_modelHistoryframe&type=CLS",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 21,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "등급  | 2005년  | 2006년  | 2007년  | 2008년  | 2009년  | 2010년  | 2011년  | 2012년"
+        },
+        {
+          "sourceLine": 1,
+          "text": "320d  |    |    |    |    | 320d"
+        },
+        {
+          "sourceLine": 2,
+          "text": "320d 네비게이션 패키지  |    |    |    |    |    | 320d 네비게이션 패키지"
+        },
+        {
+          "sourceLine": 3,
+          "text": "320d M 스포츠  |    |    |    |    |    | 320d M 스포츠"
+        },
+        {
+          "sourceLine": 4,
+          "text": "320d ED 에디션  |    |    |    |    |    |    | 320d ED 에디션"
+        },
+        {
+          "sourceLine": 5,
+          "text": "320i SE  |    |    | 320i SE  |    |    |    |"
+        },
+        {
+          "sourceLine": 6,
+          "text": "320i  | 320i  |    |"
+        },
+        {
+          "sourceLine": 7,
+          "text": "320i M패키지  |    |    | 320i M패키지  |    |"
+        },
+        {
+          "sourceLine": 8,
+          "text": "320i CP  |    | 320i CP"
+        },
+        {
+          "sourceLine": 9,
+          "text": "325i  | 325i  |    |    |    |    |    |"
+        },
+        {
+          "sourceLine": 10,
+          "text": "325i S  | 325i S  |    |    |    |    |    |"
+        },
+        {
+          "sourceLine": 11,
+          "text": "328i  |    |    | 328i  |    |    |    |"
+        },
+        {
+          "sourceLine": 12,
+          "text": "328i M-Light  |    |    |    |    |    | 328i M-Light  |    |"
+        },
+        {
+          "sourceLine": 13,
+          "text": "328i 스포츠  |    |    | 328i 스포츠"
+        },
+        {
+          "sourceLine": 14,
+          "text": "330i  | 330i  |    |    |    |    |    |"
+        },
+        {
+          "sourceLine": 15,
+          "text": "335i  |    |    | 335i  |    |    |    |"
+        },
+        {
+          "sourceLine": 16,
+          "text": "335i 스포츠  |    |    |    |    | 335i 스포츠"
+        },
+        {
+          "sourceLine": 17,
+          "text": "328i 컨버터블  |    |    | 328i 컨버터블  |    |"
+        },
+        {
+          "sourceLine": 18,
+          "text": "335i 컨버터블  |    |    | 335i 컨버터블"
+        },
+        {
+          "sourceLine": 19,
+          "text": "M3  |    |    |    |    | M3"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-3-5gen-grades",
+      "type": "ENG",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=137810&method=view_modelHistoryframe&type=ENG",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=001&mnfccd=012",
+      "parentSourceURLVerified": true,
+      "linkId": 34,
+      "ref": "turn653048view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=137810&method=view_modelHistoryframe&type=ENG",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 54,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "[image omitted]  | 98년 ~ 00년  | 00년 ~ 07년  | 05년 ~ 07년  | 07년 ~ 12년  | 12년 ~ 현재"
+        },
+        {
+          "sourceLine": 1,
+          "text": "320d  | 디젤  | 2.0 (R4)"
+        },
+        {
+          "sourceLine": 2,
+          "text": "136마력 / --km/ℓ"
+        },
+        {
+          "sourceLine": 3,
+          "text": "01년 단종  | 2.0 (R4)"
+        },
+        {
+          "sourceLine": 4,
+          "text": "150마력 / --km/ℓ"
+        },
+        {
+          "sourceLine": 5,
+          "text": "01년 출시  |    | 2.0 (l4)"
+        },
+        {
+          "sourceLine": 6,
+          "text": "177마력 / 15.9km/ℓ"
+        },
+        {
+          "sourceLine": 7,
+          "text": "09년 출시  | 2.0 (l4)"
+        },
+        {
+          "sourceLine": 8,
+          "text": "184마력 / 22.1km/ℓ"
+        },
+        {
+          "sourceLine": 9,
+          "text": "13년 신연비 18.5km/ℓ"
+        },
+        {
+          "sourceLine": 10,
+          "text": "   | 2.0 (l4)"
+        },
+        {
+          "sourceLine": 11,
+          "text": "184마력 / 17.6km/ℓ"
+        },
+        {
+          "sourceLine": 12,
+          "text": "11년 출시  |"
+        },
+        {
+          "sourceLine": 13,
+          "text": "320d ED에디션  |    |    | 2.0 (l4)"
+        },
+        {
+          "sourceLine": 14,
+          "text": "163마력 / 24.2km/ℓ"
+        },
+        {
+          "sourceLine": 15,
+          "text": "11년 출시  | 2.0 (l4)"
+        },
+        {
+          "sourceLine": 16,
+          "text": "163마력 / 23.8km/ℓ"
+        },
+        {
+          "sourceLine": 17,
+          "text": "13년 신연비 19.7km/ℓ"
+        },
+        {
+          "sourceLine": 18,
+          "text": "325d  |    |    |    |    | 2.0 (l4)"
+        },
+        {
+          "sourceLine": 19,
+          "text": "218마력 / 15.7km/ℓ"
+        },
+        {
+          "sourceLine": 20,
+          "text": "13년형 (국내 14년형) 출시"
+        },
+        {
+          "sourceLine": 21,
+          "text": "320i(Ci)  | 가솔린  | 2.0 (R6)"
+        },
+        {
+          "sourceLine": 22,
+          "text": "150마력 / --km/ℓ  | 2.2 (R6)"
+        },
+        {
+          "sourceLine": 23,
+          "text": "170마력 / --km/ℓ  | 2.0 (l4)"
+        },
+        {
+          "sourceLine": 24,
+          "text": "150마력 / 10.8km/ℓ  | 2.0 (l4)"
+        },
+        {
+          "sourceLine": 25,
+          "text": "156마력 / 11.2km/ℓ  | 2.0 (l4)"
+        },
+        {
+          "sourceLine": 26,
+          "text": "184마력 / 11.4km/ℓ"
+        },
+        {
+          "sourceLine": 27,
+          "text": "13년 신연비 12.8km/ℓ"
+        },
+        {
+          "sourceLine": 28,
+          "text": "325i(xi)  |    | 2.5 (R6)"
+        },
+        {
+          "sourceLine": 29,
+          "text": "192마력 / --km/ℓ  | 2.5 (l6)"
+        },
+        {
+          "sourceLine": 30,
+          "text": "218마력 / 9.8km/ℓ  | 3.0 (l6)"
+        },
+        {
+          "sourceLine": 31,
+          "text": "218마력 / 7.4km/ℓ  |"
+        },
+        {
+          "sourceLine": 32,
+          "text": "328i(Ci)  | 2.8 (R6)"
+        },
+        {
+          "sourceLine": 33,
+          "text": "193마력 / --km/ℓ  |    |    | 3.0 (l6)"
+        },
+        {
+          "sourceLine": 34,
+          "text": "231마력 / 9.0km/ℓ  | 2.0 (l4)"
+        },
+        {
+          "sourceLine": 35,
+          "text": "245마력 /10.2km/ℓ"
+        },
+        {
+          "sourceLine": 36,
+          "text": "13년 신연비 11.4km/ℓ"
+        },
+        {
+          "sourceLine": 37,
+          "text": "330i  |    | 3.0 (l6)"
+        },
+        {
+          "sourceLine": 38,
+          "text": "231마력 / --km/ℓ  | 3.0 (l6)"
+        },
+        {
+          "sourceLine": 39,
+          "text": "258마력 / 9.2km/ℓ  |    |"
+        },
+        {
+          "sourceLine": 40,
+          "text": "335i  |    | 3.0 (l6)"
+        },
+        {
+          "sourceLine": 41,
+          "text": "306마력 / 9.1km/ℓ"
+        },
+        {
+          "sourceLine": 42,
+          "text": "06년출시  |"
+        },
+        {
+          "sourceLine": 43,
+          "text": "M3  |    | 3.2 (l6)"
+        },
+        {
+          "sourceLine": 44,
+          "text": "343마력 / --km/ℓ"
+        },
+        {
+          "sourceLine": 45,
+          "text": "01년 출시, 06년 단종  |    | 4.0 (V8)"
+        },
+        {
+          "sourceLine": 46,
+          "text": "420마력 / --km/ℓ"
+        },
+        {
+          "sourceLine": 47,
+          "text": "08년 출시, 11년 단종  |"
+        },
+        {
+          "sourceLine": 48,
+          "text": "액티브 하이브리드  | 가솔린+전기  |    |    |    |  3.0 (l6)"
+        },
+        {
+          "sourceLine": 49,
+          "text": "340마력 / 12.2km/ℓ"
+        },
+        {
+          "sourceLine": 50,
+          "text": "13년형 출시"
+        },
+        {
+          "sourceLine": 51,
+          "text": "특이사항  |    | ※320d ED에디션은 수동모델만 출시  | 하이브리드 합산마력"
+        },
+        {
+          "sourceLine": 52,
+          "text": "(가솔린 마력 + 모터 마력)"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-3-6gen-grades",
+      "type": "CLS",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=137727&method=view_modelHistoryframe&type=CLS",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=038&mnfccd=012",
+      "parentSourceURLVerified": true,
+      "linkId": 23,
+      "ref": "turn871148view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=137727&method=view_modelHistoryframe&type=CLS",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 31,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "등급  | 2012년  | 2013년  | 2014년  | 현재"
+        },
+        {
+          "sourceLine": 1,
+          "text": "320d  | 320d  |"
+        },
+        {
+          "sourceLine": 2,
+          "text": "   |    | 320d 커넥티드 드라이브"
+        },
+        {
+          "sourceLine": 3,
+          "text": "   | 320d xDrive  |"
+        },
+        {
+          "sourceLine": 4,
+          "text": "   |    | 320d xDrive 커넥티드 드라이브"
+        },
+        {
+          "sourceLine": 5,
+          "text": "320d 이피션시 디젤 에디션  |"
+        },
+        {
+          "sourceLine": 6,
+          "text": "   |    | 320d ED 에디션 커넥티드 드라이브"
+        },
+        {
+          "sourceLine": 7,
+          "text": "320d 럭셔리  |"
+        },
+        {
+          "sourceLine": 8,
+          "text": "   |    | 320d 럭셔리 커넥티드 드라이브"
+        },
+        {
+          "sourceLine": 9,
+          "text": "320d 모던  |    |"
+        },
+        {
+          "sourceLine": 10,
+          "text": "320d 스포츠"
+        },
+        {
+          "sourceLine": 11,
+          "text": "   |    | 320d 스포츠 커넥티드 드라이브"
+        },
+        {
+          "sourceLine": 12,
+          "text": "325d  |    |    | 325d 커넥티드 드라이브"
+        },
+        {
+          "sourceLine": 13,
+          "text": "   |    | 325d 스포츠  |"
+        },
+        {
+          "sourceLine": 14,
+          "text": "   |    | 325d 스포츠 커넥티드 드라이브"
+        },
+        {
+          "sourceLine": 15,
+          "text": "320d 투어링  |    | 320d 투어링  |"
+        },
+        {
+          "sourceLine": 16,
+          "text": "   |    | 320d 커넥티드 드라이브 투어링"
+        },
+        {
+          "sourceLine": 17,
+          "text": "   | 320d 커넥티드 드라이브 투어링  |"
+        },
+        {
+          "sourceLine": 18,
+          "text": "   |    | 320d xDrive 커넥티드 드라이브 투어링"
+        },
+        {
+          "sourceLine": 19,
+          "text": "   | 320d M 스포츠 투어링  |"
+        },
+        {
+          "sourceLine": 20,
+          "text": "   |    | 320d CD M 스포츠 투어링"
+        },
+        {
+          "sourceLine": 21,
+          "text": "320i  | 320i  |"
+        },
+        {
+          "sourceLine": 22,
+          "text": "   |    | 320i 커넥티드 드라이브"
+        },
+        {
+          "sourceLine": 23,
+          "text": "320i 럭셔리  |"
+        },
+        {
+          "sourceLine": 24,
+          "text": "320i 모던  |"
+        },
+        {
+          "sourceLine": 25,
+          "text": "320i 스포츠  |"
+        },
+        {
+          "sourceLine": 26,
+          "text": "328i  | 328i  |"
+        },
+        {
+          "sourceLine": 27,
+          "text": "   |    | 328i 스포츠  |"
+        },
+        {
+          "sourceLine": 28,
+          "text": "   |    | 328i 스포츠 커넥티드 드라이브"
+        },
+        {
+          "sourceLine": 29,
+          "text": "액티브 하이브리드  |    | 액티브 하이브리드"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-3-6gen-grades",
+      "type": "ENG",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=137727&method=view_modelHistoryframe&type=ENG",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=038&mnfccd=012",
+      "parentSourceURLVerified": true,
+      "linkId": 22,
+      "ref": "turn807831view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=137727&method=view_modelHistoryframe&type=ENG",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 40,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "[image omitted]  | 05년 ~ 07년  | 07년 ~ 12년  | 12년 ~ 현재  |"
+        },
+        {
+          "sourceLine": 1,
+          "text": "320d  | 디젤  |    | 2.0 (l4)"
+        },
+        {
+          "sourceLine": 2,
+          "text": "177마력 / 15.9km/ℓ"
+        },
+        {
+          "sourceLine": 3,
+          "text": "09년 출시  | 2.0 (l4)"
+        },
+        {
+          "sourceLine": 4,
+          "text": "184마력 / 22.1km/ℓ"
+        },
+        {
+          "sourceLine": 5,
+          "text": "13년 신연비 18.5km/ℓ  |"
+        },
+        {
+          "sourceLine": 6,
+          "text": "   | 2.0 (l4)"
+        },
+        {
+          "sourceLine": 7,
+          "text": "184마력 / 17.6km/ℓ"
+        },
+        {
+          "sourceLine": 8,
+          "text": "11년 출시  |    |"
+        },
+        {
+          "sourceLine": 9,
+          "text": "320d ED에디션  |    | 2.0 (l4)"
+        },
+        {
+          "sourceLine": 10,
+          "text": "163마력 / 23.8km/ℓ"
+        },
+        {
+          "sourceLine": 11,
+          "text": "13년 신연비 19.7km/ℓ  |"
+        },
+        {
+          "sourceLine": 12,
+          "text": "325d  |    |    | 2.0 (l4)"
+        },
+        {
+          "sourceLine": 13,
+          "text": "218마력 / 15.7km/ℓ"
+        },
+        {
+          "sourceLine": 14,
+          "text": "13년형 (국내 14년형) 출시  |"
+        },
+        {
+          "sourceLine": 15,
+          "text": "320i  | 가솔린  | 2.0 (l4)"
+        },
+        {
+          "sourceLine": 16,
+          "text": "150마력 / 10.8km/ℓ  | 2.0 (l4)"
+        },
+        {
+          "sourceLine": 17,
+          "text": "156마력 / 11.2km/ℓ  | 2.0 (l4)"
+        },
+        {
+          "sourceLine": 18,
+          "text": "184마력 / 11.4km/ℓ"
+        },
+        {
+          "sourceLine": 19,
+          "text": "13년 신연비 12.8km/ℓ  |"
+        },
+        {
+          "sourceLine": 20,
+          "text": "325i(xi)  | 2.5 (l6)"
+        },
+        {
+          "sourceLine": 21,
+          "text": "218마력 / 9.8km/ℓ  | 3.0 (l6)"
+        },
+        {
+          "sourceLine": 22,
+          "text": "218마력 / 7.4km/ℓ  |    |"
+        },
+        {
+          "sourceLine": 23,
+          "text": "328i  |    | 3.0 (l6)"
+        },
+        {
+          "sourceLine": 24,
+          "text": "231마력 / 9.0km/ℓ  | 2.0 (l4)"
+        },
+        {
+          "sourceLine": 25,
+          "text": "245마력 /10.2km/ℓ"
+        },
+        {
+          "sourceLine": 26,
+          "text": "13년 신연비 11.4km/ℓ  |"
+        },
+        {
+          "sourceLine": 27,
+          "text": "330i  | 3.0 (l6)"
+        },
+        {
+          "sourceLine": 28,
+          "text": "258마력 / 9.2km/ℓ  |    |    |"
+        },
+        {
+          "sourceLine": 29,
+          "text": "335i  | 3.0 (l6)"
+        },
+        {
+          "sourceLine": 30,
+          "text": "306마력 / 9.1km/ℓ"
+        },
+        {
+          "sourceLine": 31,
+          "text": "06년 출시  |    |"
+        },
+        {
+          "sourceLine": 32,
+          "text": "M3  |    | 4.0 (V8)"
+        },
+        {
+          "sourceLine": 33,
+          "text": "420마력 / --km/ℓ"
+        },
+        {
+          "sourceLine": 34,
+          "text": "08년 출시  |    |"
+        },
+        {
+          "sourceLine": 35,
+          "text": "액티브 하이브리드  | 가솔린+전기  |    |    | 3.0 (l6)"
+        },
+        {
+          "sourceLine": 36,
+          "text": "340마력 / 12.2km/ℓ"
+        },
+        {
+          "sourceLine": 37,
+          "text": "13년형 출시  |"
+        },
+        {
+          "sourceLine": 38,
+          "text": "특이사항  |    | 하이브리드 합산마력(가솔린 마력 + 모터 마력)  |"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-5-6gen-grades",
+      "type": "CLS",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=132832&method=view_modelHistoryframe&type=CLS",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=039&mnfccd=012",
+      "parentSourceURLVerified": true,
+      "linkId": 30,
+      "ref": "turn674958view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=132832&method=view_modelHistoryframe&type=CLS",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 27,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "등급  | 2010년  | 2011년  | 2012년  | 2013년  | 2014년  | 2015년  | 현재"
+        },
+        {
+          "sourceLine": 1,
+          "text": "520d  | 520d"
+        },
+        {
+          "sourceLine": 2,
+          "text": "520d 럭셔리  |    |    |    |    | 520d 럭셔리   |"
+        },
+        {
+          "sourceLine": 3,
+          "text": "   |    |    |    |    |    | 520d 럭셔리 플러스"
+        },
+        {
+          "sourceLine": 4,
+          "text": "520d xDrive  |    |    |    |    | 520d xDrive"
+        },
+        {
+          "sourceLine": 5,
+          "text": "520d xDrive 럭셔리  |    |    |    |    | 520d xDrive 럭셔리  |"
+        },
+        {
+          "sourceLine": 6,
+          "text": "   |    |    |    |    |    | 520d xDrive 럭셔리 플러스"
+        },
+        {
+          "sourceLine": 7,
+          "text": "520d M 스포츠  |    |    |    | 520d M 스포츠  |    |    |"
+        },
+        {
+          "sourceLine": 8,
+          "text": "525d  |    |    | 525d  |"
+        },
+        {
+          "sourceLine": 9,
+          "text": "525d xDrive  |    |    | 525d xDrive  |"
+        },
+        {
+          "sourceLine": 10,
+          "text": "530d xDrive M 스포츠  |    |    |    |    | 530d xDrive M 스포츠"
+        },
+        {
+          "sourceLine": 11,
+          "text": "535d M 스포츠  |    | 535d M 스포츠  |"
+        },
+        {
+          "sourceLine": 12,
+          "text": "M550d xDrive  |    |    |    |    | M550d xDrive  |"
+        },
+        {
+          "sourceLine": 13,
+          "text": "520i  |    |    | 520i   |    |    |"
+        },
+        {
+          "sourceLine": 14,
+          "text": "523i  | 523i  |    |    |    |    |"
+        },
+        {
+          "sourceLine": 15,
+          "text": "523i 컴포트  | 523i 컴포트  |    |    |    |    |    |"
+        },
+        {
+          "sourceLine": 16,
+          "text": "528i  | 528i"
+        },
+        {
+          "sourceLine": 17,
+          "text": "528i 럭셔리  |    |    |    |    | 528i 럭셔리"
+        },
+        {
+          "sourceLine": 18,
+          "text": "528i xDrive  |    |    | 528i xDrive"
+        },
+        {
+          "sourceLine": 19,
+          "text": "528i xDrive 럭셔리  |    |    |    |    | 528i xDrive 럭셔리"
+        },
+        {
+          "sourceLine": 20,
+          "text": "528i M 스포츠  |    |    |    | 528i M 스포츠  |    |    |"
+        },
+        {
+          "sourceLine": 21,
+          "text": "535i  | 535i  |    |    |"
+        },
+        {
+          "sourceLine": 22,
+          "text": "535i xDrive  |    | 535i xDrive  |    |    |"
+        },
+        {
+          "sourceLine": 23,
+          "text": "550i xDrive  |    | 550i xDrive  |    |    |"
+        },
+        {
+          "sourceLine": 24,
+          "text": "Active Hybrid 5  |    |    | Active Hybrid 5  |"
+        },
+        {
+          "sourceLine": 25,
+          "text": "M5  |    |    | M5"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-5-6gen-grades",
+      "type": "ENG",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=132832&method=view_modelHistoryframe&type=ENG",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=039&mnfccd=012",
+      "parentSourceURLVerified": true,
+      "linkId": 27,
+      "ref": "turn430734view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=132832&method=view_modelHistoryframe&type=ENG",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 59,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "[image omitted]  |  03년 ~ 07년  | 07년 ~ 10년  | 10년 ~ 11년  | 12년~현재  |"
+        },
+        {
+          "sourceLine": 1,
+          "text": "520d  | 디젤  | 2.0 (l4)"
+        },
+        {
+          "sourceLine": 2,
+          "text": "163마력/--km/ℓ  | 2.0 (l4)"
+        },
+        {
+          "sourceLine": 3,
+          "text": "177마력/15.9km/ℓ  | 2.0 (l4)"
+        },
+        {
+          "sourceLine": 4,
+          "text": "184마력 / 19.9km/ℓ   |"
+        },
+        {
+          "sourceLine": 5,
+          "text": "525d (xDrive)  | 디젤  | 2.5 (l6)"
+        },
+        {
+          "sourceLine": 6,
+          "text": "177마력 / --km/ℓ  | 3.0 (l6)"
+        },
+        {
+          "sourceLine": 7,
+          "text": "197마력 / --km/ℓ  |    | 2.0 (l4)"
+        },
+        {
+          "sourceLine": 8,
+          "text": "218마력/13.8km/ℓ  |"
+        },
+        {
+          "sourceLine": 9,
+          "text": "535d  | 디젤  | 3.0 (l6)"
+        },
+        {
+          "sourceLine": 10,
+          "text": "272마력 / --km/ℓ"
+        },
+        {
+          "sourceLine": 11,
+          "text": "04년 출시  | 3.0 (l6)"
+        },
+        {
+          "sourceLine": 12,
+          "text": "286마력/12.9km/ℓ  | 3.0 (l6)"
+        },
+        {
+          "sourceLine": 13,
+          "text": "313마력 / 13.3km/ℓ"
+        },
+        {
+          "sourceLine": 14,
+          "text": "11년 출시   |"
+        },
+        {
+          "sourceLine": 15,
+          "text": "520i  | 가솔린  | 2.2 (l6)"
+        },
+        {
+          "sourceLine": 16,
+          "text": "170마력 / --km/ℓ"
+        },
+        {
+          "sourceLine": 17,
+          "text": "05년 단종  | 2.0 (l4)"
+        },
+        {
+          "sourceLine": 18,
+          "text": "170마력 / --km/ℓ  |    | 2.0 (l4)"
+        },
+        {
+          "sourceLine": 19,
+          "text": "184마력/14.0km/ℓ  |"
+        },
+        {
+          "sourceLine": 20,
+          "text": "523i  | 가솔린  | 2.5 (l6)"
+        },
+        {
+          "sourceLine": 21,
+          "text": "177마력 / 8.5km/ℓ"
+        },
+        {
+          "sourceLine": 22,
+          "text": "05년 출시 국내 07년 단종  | 2.5 (l6)"
+        },
+        {
+          "sourceLine": 23,
+          "text": "190마력 / 9.9km/ℓ 해외 출시  | 2.5 (l6)"
+        },
+        {
+          "sourceLine": 24,
+          "text": "204마력/11.3km/ℓ  |    |"
+        },
+        {
+          "sourceLine": 25,
+          "text": "525i  | 가솔린  | 2.5 (l6)"
+        },
+        {
+          "sourceLine": 26,
+          "text": "192마력 / 9.5km/ℓ"
+        },
+        {
+          "sourceLine": 27,
+          "text": "05년 출시  |    |    |"
+        },
+        {
+          "sourceLine": 28,
+          "text": "528i (xDrive)  | 가솔린  |    | 3.0 (l6)"
+        },
+        {
+          "sourceLine": 29,
+          "text": "230마력 / 7.2km/ℓ  | 3.0 (l6)"
+        },
+        {
+          "sourceLine": 30,
+          "text": "258마력/12.8km/ℓ  | 2.0 (l4)"
+        },
+        {
+          "sourceLine": 31,
+          "text": "245마력/13.3km/ℓ  |"
+        },
+        {
+          "sourceLine": 32,
+          "text": "530i (xDrive)  | 가솔린  | 3.0 (l6)"
+        },
+        {
+          "sourceLine": 33,
+          "text": "231마력 / --km/ℓ"
+        },
+        {
+          "sourceLine": 34,
+          "text": "05년 출시  | 3.0 (l6)"
+        },
+        {
+          "sourceLine": 35,
+          "text": "272마력 / 8.8km/ℓ  |    |"
+        },
+        {
+          "sourceLine": 36,
+          "text": "535i (xDrive)  | 가솔린  |    | 3.0 (l6)"
+        },
+        {
+          "sourceLine": 37,
+          "text": "306마력 / --km/ℓ  | 3.0 (l4)"
+        },
+        {
+          "sourceLine": 38,
+          "text": "306마력 / 10.8km/ℓ  |"
+        },
+        {
+          "sourceLine": 39,
+          "text": "540i  | 가솔린  | 4.0 (V8)"
+        },
+        {
+          "sourceLine": 40,
+          "text": "306마력 / --km/ℓ"
+        },
+        {
+          "sourceLine": 41,
+          "text": "05년 출시    |    | 4.4 (V8)"
+        },
+        {
+          "sourceLine": 42,
+          "text": "407마력/6.3km/ℓ"
+        },
+        {
+          "sourceLine": 43,
+          "text": "11년 출시  |"
+        },
+        {
+          "sourceLine": 44,
+          "text": "550i (xDrive)  | 가솔린  | 4.8 (V8)"
+        },
+        {
+          "sourceLine": 45,
+          "text": "367마력 / 7.2km/ℓ"
+        },
+        {
+          "sourceLine": 46,
+          "text": "05년 출시   | 3.0 (V6)"
+        },
+        {
+          "sourceLine": 47,
+          "text": "306마력 / 11.4km/ℓ"
+        },
+        {
+          "sourceLine": 48,
+          "text": "12년 출시  |"
+        },
+        {
+          "sourceLine": 49,
+          "text": "Active Hybrid5  | 하이 브리드  |    |    | 3.0 (V6)"
+        },
+        {
+          "sourceLine": 50,
+          "text": "306마력/11.4km/ℓ"
+        },
+        {
+          "sourceLine": 51,
+          "text": "12년 출시  |"
+        },
+        {
+          "sourceLine": 52,
+          "text": "M5  | 가솔린  | 5.0 (V10)"
+        },
+        {
+          "sourceLine": 53,
+          "text": "507마력 / 6.0km/ℓ"
+        },
+        {
+          "sourceLine": 54,
+          "text": "05년 출시  | 4.4 (V8)"
+        },
+        {
+          "sourceLine": 55,
+          "text": "560마력 / 8.1km/ℓ"
+        },
+        {
+          "sourceLine": 56,
+          "text": "11년 출시   |"
+        },
+        {
+          "sourceLine": 57,
+          "text": "특이사항  |    |    |"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-5-e60-grades",
+      "type": "CLS",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=137837&method=view_modelHistoryframe&type=CLS",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=002&mnfccd=012",
+      "parentSourceURLVerified": true,
+      "linkId": 41,
+      "ref": "turn879839view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=137837&method=view_modelHistoryframe&type=CLS",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 13,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "등급  | 2003년  | 2004년  | 2005년  | 2006년  | 2007년  | 2008년  | 2009년  | 2010년"
+        },
+        {
+          "sourceLine": 1,
+          "text": "520d  | 520d"
+        },
+        {
+          "sourceLine": 2,
+          "text": "525d  | 525d"
+        },
+        {
+          "sourceLine": 3,
+          "text": "535d  | 535d"
+        },
+        {
+          "sourceLine": 4,
+          "text": "520i  | 520i  |    | 520i"
+        },
+        {
+          "sourceLine": 5,
+          "text": "523i  | 523i"
+        },
+        {
+          "sourceLine": 6,
+          "text": "528i  |    |    |    |    |    | 528i"
+        },
+        {
+          "sourceLine": 7,
+          "text": "530i  | 530i"
+        },
+        {
+          "sourceLine": 8,
+          "text": "535i  |    |    |    |    |    | 535i"
+        },
+        {
+          "sourceLine": 9,
+          "text": "540i  |    |    |  | 540i"
+        },
+        {
+          "sourceLine": 10,
+          "text": "550i  |    |    |    | 550i"
+        },
+        {
+          "sourceLine": 11,
+          "text": "M5  |    |    |    | M5"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-5-e60-grades",
+      "type": "ENG",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=137837&method=view_modelHistoryframe&type=ENG",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=002&mnfccd=012",
+      "parentSourceURLVerified": true,
+      "linkId": 40,
+      "ref": "turn222092view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=137837&method=view_modelHistoryframe&type=ENG",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 84,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "[image omitted]  | 95년 ~ 00년  | 00년 ~ 03년  | 03년 ~ 07년  | 07년 ~ 10년  | 10년 ~ 11년  | 12년 ~ 현재"
+        },
+        {
+          "sourceLine": 1,
+          "text": "520d  | 디젤  |    | 2.0 (l4)"
+        },
+        {
+          "sourceLine": 2,
+          "text": "136마력 / --km/ℓ  | 2.0 (l4)"
+        },
+        {
+          "sourceLine": 3,
+          "text": "163마력/--km/ℓ  | 2.0 (l4)"
+        },
+        {
+          "sourceLine": 4,
+          "text": "177마력/15.9km/ℓ  | 2.0 (l4)"
+        },
+        {
+          "sourceLine": 5,
+          "text": "184마력 / 19.9km/ℓ"
+        },
+        {
+          "sourceLine": 6,
+          "text": "13년 신연비 16.9km/ℓ"
+        },
+        {
+          "sourceLine": 7,
+          "text": "525d(xDrive)  |    | 2.5 (l6)"
+        },
+        {
+          "sourceLine": 8,
+          "text": "163마력 / --km/ℓ  | 2.5 (l6)"
+        },
+        {
+          "sourceLine": 9,
+          "text": "177마력 / --km/ℓ  | 3.0 (l6)"
+        },
+        {
+          "sourceLine": 10,
+          "text": "197마력 / --km/ℓ  |    | 2.0 (l4)"
+        },
+        {
+          "sourceLine": 11,
+          "text": "218마력 / 16.4km/ℓ"
+        },
+        {
+          "sourceLine": 12,
+          "text": "530d  |    |    | 3.0 (l6)"
+        },
+        {
+          "sourceLine": 13,
+          "text": "258마력 / 14.3km/ℓ"
+        },
+        {
+          "sourceLine": 14,
+          "text": "11년(국내 14년형) 출시"
+        },
+        {
+          "sourceLine": 15,
+          "text": "535d  |    | 3.0 (l6)"
+        },
+        {
+          "sourceLine": 16,
+          "text": "272마력 / --km/ℓ"
+        },
+        {
+          "sourceLine": 17,
+          "text": "04년 출시  | 3.0 (l6)"
+        },
+        {
+          "sourceLine": 18,
+          "text": "286마력 / 12.9km/ℓ  | 3.0 (l6)"
+        },
+        {
+          "sourceLine": 19,
+          "text": "313마력 / 14.9km/ℓ"
+        },
+        {
+          "sourceLine": 20,
+          "text": "11년 출시"
+        },
+        {
+          "sourceLine": 21,
+          "text": "M550d  |    |    |  | 3.0 (l6)"
+        },
+        {
+          "sourceLine": 22,
+          "text": "381마력 / 11.7km/ℓ"
+        },
+        {
+          "sourceLine": 23,
+          "text": "12년(국내 14년형)출시"
+        },
+        {
+          "sourceLine": 24,
+          "text": "520i  | 가솔린  | 2.0 (l6)"
+        },
+        {
+          "sourceLine": 25,
+          "text": "150마력 / --km/ℓ"
+        },
+        {
+          "sourceLine": 26,
+          "text": "96년 출시  | 2.2 (l6)"
+        },
+        {
+          "sourceLine": 27,
+          "text": "170마력 / --km/ℓ  | 2.2 (l6)"
+        },
+        {
+          "sourceLine": 28,
+          "text": "170마력 / --km/ℓ"
+        },
+        {
+          "sourceLine": 29,
+          "text": "05년 단종  | 2.0 (l4)"
+        },
+        {
+          "sourceLine": 30,
+          "text": "170마력 / --km/ℓ  |    | 2.0 (l4)"
+        },
+        {
+          "sourceLine": 31,
+          "text": "184마력 / 14.0km/ℓ"
+        },
+        {
+          "sourceLine": 32,
+          "text": "13년 신연비 11.2km/ℓ"
+        },
+        {
+          "sourceLine": 33,
+          "text": "523i  | 2.5 (l6)"
+        },
+        {
+          "sourceLine": 34,
+          "text": "170마력 /--km/ℓ  |    | 2.5 (l6)"
+        },
+        {
+          "sourceLine": 35,
+          "text": "177마력 / 8.5km/ℓ"
+        },
+        {
+          "sourceLine": 36,
+          "text": "05년 출시  | 2.5 (l6)"
+        },
+        {
+          "sourceLine": 37,
+          "text": "190마력 / 9.9km/ℓ  | 2.5 (l6)"
+        },
+        {
+          "sourceLine": 38,
+          "text": "204마력 / 11.3km/ℓ  |"
+        },
+        {
+          "sourceLine": 39,
+          "text": "525i  |    | 2.5 (l6)"
+        },
+        {
+          "sourceLine": 40,
+          "text": "192마력 / --km/ℓ  | 2.5 (l6)"
+        },
+        {
+          "sourceLine": 41,
+          "text": "192마력 / 9.5km/ℓ"
+        },
+        {
+          "sourceLine": 42,
+          "text": "05년 출시  |    |"
+        },
+        {
+          "sourceLine": 43,
+          "text": "528i(xDrive)  | 2.8 (l6)"
+        },
+        {
+          "sourceLine": 44,
+          "text": "193마력 / --km/ℓ  |    |    | 3.0 (l6)"
+        },
+        {
+          "sourceLine": 45,
+          "text": "230마력 / 7.2km/ℓ  | 3.0 (l6)"
+        },
+        {
+          "sourceLine": 46,
+          "text": "258마력 / 12.8km/ℓ  | 2.0 (l4)"
+        },
+        {
+          "sourceLine": 47,
+          "text": "245마력 / 13.3km/ℓ"
+        },
+        {
+          "sourceLine": 48,
+          "text": "13년 신연비 11.7km/ℓ"
+        },
+        {
+          "sourceLine": 49,
+          "text": "530i(xi)  |    | 3.0 (l6)"
+        },
+        {
+          "sourceLine": 50,
+          "text": "231마력 / --km/ℓ  | 3.0 (l6)"
+        },
+        {
+          "sourceLine": 51,
+          "text": "231마력 / --km/ℓ"
+        },
+        {
+          "sourceLine": 52,
+          "text": "05년 출시  | 3.0 (l6)"
+        },
+        {
+          "sourceLine": 53,
+          "text": "272마력 / 8.8km/ℓ  |"
+        },
+        {
+          "sourceLine": 54,
+          "text": "535i(xDrive)  | 3.5 (V8)"
+        },
+        {
+          "sourceLine": 55,
+          "text": "235마력 / --km/ℓ"
+        },
+        {
+          "sourceLine": 56,
+          "text": "96년 출시~ 98년 단종  | 3.5 (V8)"
+        },
+        {
+          "sourceLine": 57,
+          "text": "245마력 /--km/ℓ"
+        },
+        {
+          "sourceLine": 58,
+          "text": "98년출시  |    | 3.0 (l6)"
+        },
+        {
+          "sourceLine": 59,
+          "text": "306마력 / --km/ℓ  | 3.0 (l4)"
+        },
+        {
+          "sourceLine": 60,
+          "text": "306마력 / 10.8km/ℓ"
+        },
+        {
+          "sourceLine": 61,
+          "text": "13년 신연비 9.1km/ℓ"
+        },
+        {
+          "sourceLine": 62,
+          "text": "540i  | 4.4 (V8)"
+        },
+        {
+          "sourceLine": 63,
+          "text": "286마력 / --km/ℓ"
+        },
+        {
+          "sourceLine": 64,
+          "text": "96년 출시  | 4.0 (V8)"
+        },
+        {
+          "sourceLine": 65,
+          "text": "306마력 / --km/ℓ"
+        },
+        {
+          "sourceLine": 66,
+          "text": "05년 출시  |"
+        },
+        {
+          "sourceLine": 67,
+          "text": "550i(xDrive)  |    | 4.8 (V8)"
+        },
+        {
+          "sourceLine": 68,
+          "text": "367마력 / 7.2km/ℓ"
+        },
+        {
+          "sourceLine": 69,
+          "text": "05년 출시  | 4.4 (V8)"
+        },
+        {
+          "sourceLine": 70,
+          "text": "408마력 / 7.5km/ℓ"
+        },
+        {
+          "sourceLine": 71,
+          "text": "국내 11년형 출시"
+        },
+        {
+          "sourceLine": 72,
+          "text": "Active Hybrid 5  | 하이브리드  |    |    | 3.0 (V6)"
+        },
+        {
+          "sourceLine": 73,
+          "text": "340마력 / 11.4km/ℓ"
+        },
+        {
+          "sourceLine": 74,
+          "text": "11년(국내 12년형) 출시"
+        },
+        {
+          "sourceLine": 75,
+          "text": "M5  | 가솔린  | 5.0 (V8)"
+        },
+        {
+          "sourceLine": 76,
+          "text": "400마력 / -- km/ℓ"
+        },
+        {
+          "sourceLine": 77,
+          "text": "98년출시  | 5.0 (V10)"
+        },
+        {
+          "sourceLine": 78,
+          "text": "507마력 / 6.0km/ℓ"
+        },
+        {
+          "sourceLine": 79,
+          "text": "05년 출시  | 4.4 (V8)"
+        },
+        {
+          "sourceLine": 80,
+          "text": "560마력 / 8.1km/ℓ"
+        },
+        {
+          "sourceLine": 81,
+          "text": "11년(국내 12년) 출시"
+        },
+        {
+          "sourceLine": 82,
+          "text": "특이사항  |    |    | 하이브리드 합산마력(가솔린 마력 + 모터 마력)"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-7-f01-f02-grades",
+      "type": "CLS",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=136933&method=view_modelHistoryframe&type=CLS",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=003&mnfccd=012",
+      "parentSourceURLVerified": true,
+      "linkId": 26,
+      "ref": "turn845551view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=136933&method=view_modelHistoryframe&type=CLS",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 34,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "등급  | 2009년  | 2010년  | 2011년  | 2012년  | 2013년  | 2014년  | 현재"
+        },
+        {
+          "sourceLine": 1,
+          "text": "730d/Ld  |    |    | 730d/Ld  |"
+        },
+        {
+          "sourceLine": 2,
+          "text": "   |    |    |    |    | 730Ld 커넥티드 드라이브"
+        },
+        {
+          "sourceLine": 3,
+          "text": "   |    |    |    |    | 730Ld CD B&O 에디션"
+        },
+        {
+          "sourceLine": 4,
+          "text": "   |    |    |    |    | 730Ld CD 인디비쥬얼"
+        },
+        {
+          "sourceLine": 5,
+          "text": "   |    |    |    | 730d xDrive  |"
+        },
+        {
+          "sourceLine": 6,
+          "text": "   |    |    |    |    | 730d xDrive 커넥티드 드라이브"
+        },
+        {
+          "sourceLine": 7,
+          "text": "   |    |    |    |    | 730d xDrive M 스포츠  |"
+        },
+        {
+          "sourceLine": 8,
+          "text": "740d  |    |    |    |    | 740d  |"
+        },
+        {
+          "sourceLine": 9,
+          "text": "   |    |    |    | 740 xDrive  |"
+        },
+        {
+          "sourceLine": 10,
+          "text": "   |    |    |    |    | 740d xDrive 커넥티드 드라이브"
+        },
+        {
+          "sourceLine": 11,
+          "text": "   |    |    |    |    | 740d xDrive CD 인디비쥬얼"
+        },
+        {
+          "sourceLine": 12,
+          "text": "   |    |    |    |    | 740d xDrive M 스포츠"
+        },
+        {
+          "sourceLine": 13,
+          "text": "740i/Li  | 740i"
+        },
+        {
+          "sourceLine": 14,
+          "text": "740Li  |"
+        },
+        {
+          "sourceLine": 15,
+          "text": "   |    |    |    |    | 740Li 커넥티드 드라이브"
+        },
+        {
+          "sourceLine": 16,
+          "text": "   |    |    |    |    | 740Li CD B&O 에디션"
+        },
+        {
+          "sourceLine": 17,
+          "text": "   |    |    |    |    | 740Li CD 인디비쥬얼"
+        },
+        {
+          "sourceLine": 18,
+          "text": "   | 740i M 스포츠  |    |    |"
+        },
+        {
+          "sourceLine": 19,
+          "text": "   |    | 740i CE  |    |    |    |"
+        },
+        {
+          "sourceLine": 20,
+          "text": "   | 740Li M 스포츠  |    |    |"
+        },
+        {
+          "sourceLine": 21,
+          "text": "   |    | 740Li CE  |    |    |    |"
+        },
+        {
+          "sourceLine": 22,
+          "text": "750Li  | 750Li  |"
+        },
+        {
+          "sourceLine": 23,
+          "text": "   | 750Li M 스포츠  |    |    |"
+        },
+        {
+          "sourceLine": 24,
+          "text": "   |    | 750Li xDrive  |"
+        },
+        {
+          "sourceLine": 25,
+          "text": "   |    |    |    |    | 750Li xDrive 커넥티드 드라이브"
+        },
+        {
+          "sourceLine": 26,
+          "text": "   |    |    |    |    | 750Li xDrive CD B&O 에디션"
+        },
+        {
+          "sourceLine": 27,
+          "text": "   |    |    |    |    | 750Li xDrive CD 인디비쥬얼"
+        },
+        {
+          "sourceLine": 28,
+          "text": "760Li  |    | 760Li  |    |"
+        },
+        {
+          "sourceLine": 29,
+          "text": "   | 760Li 인디비쥬얼  |"
+        },
+        {
+          "sourceLine": 30,
+          "text": "   |    |    |    |    | 760Li 커넥티드 드라이브 인디비쥬얼"
+        },
+        {
+          "sourceLine": 31,
+          "text": "Active Hybrid7  |    | Active Hybrid7  |    |"
+        },
+        {
+          "sourceLine": 32,
+          "text": "   |    |    |    | Active Hybrid7 L"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-7-f01-f02-grades",
+      "type": "ENG",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=136933&method=view_modelHistoryframe&type=ENG",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=003&mnfccd=012",
+      "parentSourceURLVerified": true,
+      "linkId": 25,
+      "ref": "turn424327view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=136933&method=view_modelHistoryframe&type=ENG",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 34,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "[image omitted]  | 02년 ~ 04년  | 05년 ~ 08년  | 09년 ~ 12년  | 13년 ~ 현재  |"
+        },
+        {
+          "sourceLine": 1,
+          "text": "730d/Ld  | 디젤  | 3.0 (R6)"
+        },
+        {
+          "sourceLine": 2,
+          "text": "218마력 / --km/ℓ  | 3.0 (R6)"
+        },
+        {
+          "sourceLine": 3,
+          "text": "231마력 / --km/ℓ  | 3.0 (R6)"
+        },
+        {
+          "sourceLine": 4,
+          "text": "245마력 / 13.5km/ℓ  | 3.0 (R6)"
+        },
+        {
+          "sourceLine": 5,
+          "text": "258마력 / 15.2km/ℓ  |"
+        },
+        {
+          "sourceLine": 6,
+          "text": "740d  | 3.9 (V8)"
+        },
+        {
+          "sourceLine": 7,
+          "text": "258마력 / --km/ℓ"
+        },
+        {
+          "sourceLine": 8,
+          "text": "02년~05년  |    | 3.0 (R6)"
+        },
+        {
+          "sourceLine": 9,
+          "text": "306마력 / --km/ℓ"
+        },
+        {
+          "sourceLine": 10,
+          "text": "국내 미출시  | 3.0 (R6)"
+        },
+        {
+          "sourceLine": 11,
+          "text": "313마력 / 14.4km/ℓ  |"
+        },
+        {
+          "sourceLine": 12,
+          "text": "730i/Li  | 가솔린  | 3.0 (R6)"
+        },
+        {
+          "sourceLine": 13,
+          "text": "231마력 / 9.9km/ℓ  | 3.0 (R6)"
+        },
+        {
+          "sourceLine": 14,
+          "text": "258마력 / 8.5km/ℓ  |    |"
+        },
+        {
+          "sourceLine": 15,
+          "text": "735i/Li  | 3.6 (V8)"
+        },
+        {
+          "sourceLine": 16,
+          "text": "272마력 / --km/ℓ  |    |    |"
+        },
+        {
+          "sourceLine": 17,
+          "text": "740i/Li  |    | 4.0 (V8)"
+        },
+        {
+          "sourceLine": 18,
+          "text": "306마력 / 7.3km/ℓ  | 3.0 (R6)"
+        },
+        {
+          "sourceLine": 19,
+          "text": "326마력 / 8.5km/ℓ  | 3.0 (R6)"
+        },
+        {
+          "sourceLine": 20,
+          "text": "320마력 / 9.9km/ℓ  |"
+        },
+        {
+          "sourceLine": 21,
+          "text": "750i/Li  |    | 4.8 (V8)"
+        },
+        {
+          "sourceLine": 22,
+          "text": "367마력 / 7.3km/ℓ  | 4.4 (V8)"
+        },
+        {
+          "sourceLine": 23,
+          "text": "408마력 / 7.5km/ℓ  | 4.4 (V8)"
+        },
+        {
+          "sourceLine": 24,
+          "text": "450마력 / 8.2km/ℓ  |"
+        },
+        {
+          "sourceLine": 25,
+          "text": "760Li  | 6.0 (V12)"
+        },
+        {
+          "sourceLine": 26,
+          "text": "445마력 / --km/ℓ  | 6.0 (V12)"
+        },
+        {
+          "sourceLine": 27,
+          "text": "445마력 / 7.6km/ℓ  | 6.0 (V12)"
+        },
+        {
+          "sourceLine": 28,
+          "text": "544마력 / 6.4km/ℓ  |"
+        },
+        {
+          "sourceLine": 29,
+          "text": "Active Hybird7  | 가솔린+전기  |    | 4.4 (V8)"
+        },
+        {
+          "sourceLine": 30,
+          "text": "455마력 / 9.3km/ℓ  | 3.0 (R6)"
+        },
+        {
+          "sourceLine": 31,
+          "text": "354마력 / 10.8km/ℓ  |"
+        },
+        {
+          "sourceLine": 32,
+          "text": "특이사항  |    | 하이브리드 합산마력(가솔린 마력 + 모터 마력)  |"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-a4-b8-grades",
+      "type": "CLS",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=132889&method=view_modelHistoryframe&type=CLS",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=011&mnfccd=011",
+      "parentSourceURLVerified": true,
+      "linkId": 26,
+      "ref": "turn327303view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=132889&method=view_modelHistoryframe&type=CLS",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 19,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "등급  | 2009년  | 2010년   | 2011년  | 2012년  | 2013년  | 2014년  | 2015년  | 현재"
+        },
+        {
+          "sourceLine": 1,
+          "text": "2.0 TFSI  | 2.0 TFSI  |    |    |    |"
+        },
+        {
+          "sourceLine": 2,
+          "text": "2.0 TFSI Quattro  | 2.0 TFSI Quattro  |    |"
+        },
+        {
+          "sourceLine": 3,
+          "text": "2.0 TFSI Quattro 다이나믹  |    |"
+        },
+        {
+          "sourceLine": 4,
+          "text": "   |    |    |    | 2.0 TFSI Quattro 프레스티지  |    |"
+        },
+        {
+          "sourceLine": 5,
+          "text": "   |    | 2.0 TFSI Quattro 유로에디션  |    |    |    |"
+        },
+        {
+          "sourceLine": 6,
+          "text": "2.0 TDI  |    |    |    | 2.0 TDI  |    |"
+        },
+        {
+          "sourceLine": 7,
+          "text": "   |    |    |    | 2.0 TDI 다이나믹  |    |"
+        },
+        {
+          "sourceLine": 8,
+          "text": "2.0 TDI Quattro   |    |    |    |    | 2.0 TDI Quattro  |    |"
+        },
+        {
+          "sourceLine": 9,
+          "text": "   |    |    |    | 2.0 TDI Quattro 다이나믹  |    |"
+        },
+        {
+          "sourceLine": 10,
+          "text": "   |    |    |    | 2.0 TDI Quatrro 프레스티지  |    |"
+        },
+        {
+          "sourceLine": 11,
+          "text": "30 TDI  |    |    |    |    |    | 30 TDI"
+        },
+        {
+          "sourceLine": 12,
+          "text": "   |    |    |    |    | 30 TDI 다이나믹"
+        },
+        {
+          "sourceLine": 13,
+          "text": "35 TDI Quattro  |    |    |    |    |    | 35 TDI Quattro"
+        },
+        {
+          "sourceLine": 14,
+          "text": "   |    |    |    |    | 35 TDI Quattro 다이나믹"
+        },
+        {
+          "sourceLine": 15,
+          "text": "   |    |    |    |    | 35 TDI Quattro 프레스티지"
+        },
+        {
+          "sourceLine": 16,
+          "text": "40 TFSI Quattro  |    |    |    |    |    | 40 TFSI Quattro 다이나믹"
+        },
+        {
+          "sourceLine": 17,
+          "text": "   |    |    |    |    | 40 TFSI Quattro 프레스티지"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-a4-b8-grades",
+      "type": "ENG",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=132889&method=view_modelHistoryframe&type=ENG",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=011&mnfccd=011",
+      "parentSourceURLVerified": true,
+      "linkId": 23,
+      "ref": "turn532926view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=132889&method=view_modelHistoryframe&type=ENG",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 44,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "[image omitted]  |  05년 ~ 06년  | 07년 ~ 08년  | 09년 ~ 13년  | 13년 ~ 현재  |"
+        },
+        {
+          "sourceLine": 1,
+          "text": "2.0 TDI  | 디젤  |    | 2.0 (I4)"
+        },
+        {
+          "sourceLine": 2,
+          "text": "143마력/17.3km/ℓ"
+        },
+        {
+          "sourceLine": 3,
+          "text": "12년 연비변경 16.4km/ℓ"
+        },
+        {
+          "sourceLine": 4,
+          "text": "국내 12년형 출시  | 2.0 (I4)"
+        },
+        {
+          "sourceLine": 5,
+          "text": "150 마력 / 16.0km/ℓ"
+        },
+        {
+          "sourceLine": 6,
+          "text": "국내 14년 출시"
+        },
+        {
+          "sourceLine": 7,
+          "text": "30 TDI로 명칭변경  |"
+        },
+        {
+          "sourceLine": 8,
+          "text": "30 TDI  |    |    | 2.0 (l4)"
+        },
+        {
+          "sourceLine": 9,
+          "text": "150마력 / 16.0km/ℓ  |"
+        },
+        {
+          "sourceLine": 10,
+          "text": "2.0 TDI Quattro  |    | 2.0 (I4)"
+        },
+        {
+          "sourceLine": 11,
+          "text": "177마력 / 15.3km/ℓ"
+        },
+        {
+          "sourceLine": 12,
+          "text": "12년형(국내13년형) 출시"
+        },
+        {
+          "sourceLine": 13,
+          "text": "14년 단종  |"
+        },
+        {
+          "sourceLine": 14,
+          "text": "35 TDI Quattro  |    |    | 2.0 (l4)"
+        },
+        {
+          "sourceLine": 15,
+          "text": "190마력 / 14.6km/ℓ  |"
+        },
+        {
+          "sourceLine": 16,
+          "text": "1.8T  | 가솔린   | 1.8T (I4)"
+        },
+        {
+          "sourceLine": 17,
+          "text": "163마력 / --km/ℓ"
+        },
+        {
+          "sourceLine": 18,
+          "text": "05년 단종  |    |    |"
+        },
+        {
+          "sourceLine": 19,
+          "text": "2.0  | 2.0 (I4)"
+        },
+        {
+          "sourceLine": 20,
+          "text": "131마력 / --km/ℓ"
+        },
+        {
+          "sourceLine": 21,
+          "text": "05년 단종  |    |    |"
+        },
+        {
+          "sourceLine": 22,
+          "text": "2.0 TFSI  | 2.0 (I4)"
+        },
+        {
+          "sourceLine": 23,
+          "text": "170마력 / 10.5km/ℓ"
+        },
+        {
+          "sourceLine": 24,
+          "text": "06년형 출시  | 2.0 (I4)"
+        },
+        {
+          "sourceLine": 25,
+          "text": "180 마력/12.1km/ℓ  |    |"
+        },
+        {
+          "sourceLine": 26,
+          "text": "2.0 TFSI Quattro  | 2.0 (I4)"
+        },
+        {
+          "sourceLine": 27,
+          "text": "200마력 / 9.9km/ℓ"
+        },
+        {
+          "sourceLine": 28,
+          "text": "06년형 출시  | 2.0( (I4)"
+        },
+        {
+          "sourceLine": 29,
+          "text": "211마력/10.0km/ℓ 11년 연비10.5 km/ℓ 변경  | 2.0( (I4)"
+        },
+        {
+          "sourceLine": 30,
+          "text": "220마력/10.0km/ℓ 14년 출시  |"
+        },
+        {
+          "sourceLine": 31,
+          "text": "3.2 FSI Quattro  | 3.2 (V6)"
+        },
+        {
+          "sourceLine": 32,
+          "text": "255마력 / 8.8km/ℓ 06년형 출시  |    |"
+        },
+        {
+          "sourceLine": 33,
+          "text": "S4 3.0 TFSI Quattro  |    | 3.0 (V6)"
+        },
+        {
+          "sourceLine": 34,
+          "text": "333마력 / 8.5km/ℓ"
+        },
+        {
+          "sourceLine": 35,
+          "text": "09년형(국내10년형) 출시"
+        },
+        {
+          "sourceLine": 36,
+          "text": "13년형 연비변경 16.4km/ℓ  |"
+        },
+        {
+          "sourceLine": 37,
+          "text": "S4 4.2 Quattro  | 4.2 (V8)"
+        },
+        {
+          "sourceLine": 38,
+          "text": "344마력 / 8.4km/ℓ"
+        },
+        {
+          "sourceLine": 39,
+          "text": "06년형 출시  |    |"
+        },
+        {
+          "sourceLine": 40,
+          "text": "RS4 4.2 FSI Quattro  |    | 4.2 (V8)"
+        },
+        {
+          "sourceLine": 41,
+          "text": "420마력 / 7.3km/ℓ 07년 출시  |    |"
+        },
+        {
+          "sourceLine": 42,
+          "text": "특이사항  |    |    |"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-a6-c7-grades",
+      "type": "CLS",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=141131&method=view_modelHistoryframe&type=CLS",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=004&mnfccd=011",
+      "parentSourceURLVerified": true,
+      "linkId": 25,
+      "ref": "turn222453view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=141131&method=view_modelHistoryframe&type=CLS",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 22,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "등급  | 2012년  | 2013년  | 2014년  | 현재"
+        },
+        {
+          "sourceLine": 1,
+          "text": "2.0 TFSI  | 2.0 TFSI  |    |    |"
+        },
+        {
+          "sourceLine": 2,
+          "text": "2.0 TFSI 다이나믹  |    |    |"
+        },
+        {
+          "sourceLine": 3,
+          "text": "   | 2.0 TFSI 콰트로 다이나믹  |"
+        },
+        {
+          "sourceLine": 4,
+          "text": "3.0 TFSI 콰트로  | 3.0 TFSI 콰트로  |"
+        },
+        {
+          "sourceLine": 5,
+          "text": "   | LED 헤드램프 패키지  |    |"
+        },
+        {
+          "sourceLine": 6,
+          "text": "3.0 TFSI 콰트로 다이나믹  |    | 3.0 TFSI 콰트로 다이나믹  |"
+        },
+        {
+          "sourceLine": 7,
+          "text": "   | 다이나믹 LED 헤드램프 패키지  |    |"
+        },
+        {
+          "sourceLine": 8,
+          "text": "2.0 TDI  |    | 2.0 TDI  |"
+        },
+        {
+          "sourceLine": 9,
+          "text": "   | 2.0 TDI 다이나믹  |"
+        },
+        {
+          "sourceLine": 10,
+          "text": "3.0 TDI 콰트로  | 3.0 TDI 콰트로  |"
+        },
+        {
+          "sourceLine": 11,
+          "text": "   | LED 헤드램프 패키지  |    |"
+        },
+        {
+          "sourceLine": 12,
+          "text": "3.0 TDI 콰트로 다이나믹  |    | 3.0 TDI 콰트로 다이나믹  |"
+        },
+        {
+          "sourceLine": 13,
+          "text": "   | 다이나믹 LED 헤드램프 패키지  |    |"
+        },
+        {
+          "sourceLine": 14,
+          "text": "35 TDI  |    |    | 35 TDI"
+        },
+        {
+          "sourceLine": 15,
+          "text": "   |    | 35 TDI 다이나믹"
+        },
+        {
+          "sourceLine": 16,
+          "text": "40 TFSI  |    |    | 40 TFSI 콰트로 다이나믹"
+        },
+        {
+          "sourceLine": 17,
+          "text": "50 TFSI  |    |    | 50 TFSI 콰트로"
+        },
+        {
+          "sourceLine": 18,
+          "text": "   |    | 50 TFSI 콰트로 다이나믹"
+        },
+        {
+          "sourceLine": 19,
+          "text": "45 TDI  |    |    | 45 TDI 콰트로"
+        },
+        {
+          "sourceLine": 20,
+          "text": "   |    | 45 TDI 콰트로 다이나믹"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-a6-c7-grades",
+      "type": "ENG",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=141131&method=view_modelHistoryframe&type=ENG",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=004&mnfccd=011",
+      "parentSourceURLVerified": true,
+      "linkId": 22,
+      "ref": "turn624668view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=141131&method=view_modelHistoryframe&type=ENG",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 72,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "[image omitted]  | 04년 ~ 09년  | 10년 ~ 11년  | 11년 ~ 12년  | 13년 ~ 현재  |"
+        },
+        {
+          "sourceLine": 1,
+          "text": "2.0 TDI  | 디젤  |    |    | 2.0 (L4)"
+        },
+        {
+          "sourceLine": 2,
+          "text": "177마력 / 15.9km/ℓ"
+        },
+        {
+          "sourceLine": 3,
+          "text": "35 TDI로 명칭변경  |"
+        },
+        {
+          "sourceLine": 4,
+          "text": "35 TDI  |    |    | 2.0 (L4)"
+        },
+        {
+          "sourceLine": 5,
+          "text": "177마력 / 15.9km/ℓ"
+        },
+        {
+          "sourceLine": 6,
+          "text": "3.0 TDI 명칭변경"
+        },
+        {
+          "sourceLine": 7,
+          "text": "14년 출시  |"
+        },
+        {
+          "sourceLine": 8,
+          "text": "2.7 TDI  | 2.7 (V6)"
+        },
+        {
+          "sourceLine": 9,
+          "text": "180마력 / 11.8km/ℓ  |    |    |"
+        },
+        {
+          "sourceLine": 10,
+          "text": "3.0 TDI 콰트로  | 3.0 (V6)"
+        },
+        {
+          "sourceLine": 11,
+          "text": "225마력 / 10.4km/ℓ"
+        },
+        {
+          "sourceLine": 12,
+          "text": "05 ~ 06년"
+        },
+        {
+          "sourceLine": 13,
+          "text": "07~08년 233마력 변경  | 3.0 (V6)"
+        },
+        {
+          "sourceLine": 14,
+          "text": "240마력 / 11.1km/ℓ"
+        },
+        {
+          "sourceLine": 15,
+          "text": "11년형 출시  | 3.0 (V6)"
+        },
+        {
+          "sourceLine": 16,
+          "text": "245마력 / 13.5km/ℓ  | 3.0 (V6)"
+        },
+        {
+          "sourceLine": 17,
+          "text": "245마력 / 13.1km/ℓ"
+        },
+        {
+          "sourceLine": 18,
+          "text": "신연비 적용"
+        },
+        {
+          "sourceLine": 19,
+          "text": "45 TDI로 명칭변경  |"
+        },
+        {
+          "sourceLine": 20,
+          "text": "45 TDI 콰트로  |    |    |    | 3.0 (V6)"
+        },
+        {
+          "sourceLine": 21,
+          "text": "245마력 /13.1km/ℓ"
+        },
+        {
+          "sourceLine": 22,
+          "text": "3.0 TDI 명칭변경"
+        },
+        {
+          "sourceLine": 23,
+          "text": "14년 출시  |"
+        },
+        {
+          "sourceLine": 24,
+          "text": "2.0 TFSI(콰트로)  | 가솔린  | 2.0 (L4)"
+        },
+        {
+          "sourceLine": 25,
+          "text": "170마력 / 8.9km/ℓ"
+        },
+        {
+          "sourceLine": 26,
+          "text": "07년 출시  | 2.0 (L4)"
+        },
+        {
+          "sourceLine": 27,
+          "text": "211마력 / 13.8km/ℓ"
+        },
+        {
+          "sourceLine": 28,
+          "text": "13년 단종  | 2.0 (L4)"
+        },
+        {
+          "sourceLine": 29,
+          "text": "220마력 / 13.8km/ℓ"
+        },
+        {
+          "sourceLine": 30,
+          "text": "국내 14년출시"
+        },
+        {
+          "sourceLine": 31,
+          "text": "40 TFSI로 명칭변경  |"
+        },
+        {
+          "sourceLine": 32,
+          "text": "40 TFSI 콰트로  |    |    |    | 2.0 (L4)"
+        },
+        {
+          "sourceLine": 33,
+          "text": "220마력 / 9.0km/ℓ"
+        },
+        {
+          "sourceLine": 34,
+          "text": "2.0 TFSI 명칭변경"
+        },
+        {
+          "sourceLine": 35,
+          "text": "14년 출시  |"
+        },
+        {
+          "sourceLine": 36,
+          "text": "2.4 FSI  | 2.4 (L4)"
+        },
+        {
+          "sourceLine": 37,
+          "text": "177마력 / 9.3km/ℓ"
+        },
+        {
+          "sourceLine": 38,
+          "text": "05년형 출시"
+        },
+        {
+          "sourceLine": 39,
+          "text": "08년 단종  |    |    |    |"
+        },
+        {
+          "sourceLine": 40,
+          "text": "3.0 FSI 콰트로  | 3.0 (V6)"
+        },
+        {
+          "sourceLine": 41,
+          "text": "218마력 /8.9km/ℓ"
+        },
+        {
+          "sourceLine": 42,
+          "text": "05년형 출시"
+        },
+        {
+          "sourceLine": 43,
+          "text": "08년 단종  |    |    |    |"
+        },
+        {
+          "sourceLine": 44,
+          "text": "3.0 TFSI 콰트로  | 3.0 (V6)"
+        },
+        {
+          "sourceLine": 45,
+          "text": "300마력 /8.0km/ℓ"
+        },
+        {
+          "sourceLine": 46,
+          "text": "09년 출시  | 3.0 (V6)"
+        },
+        {
+          "sourceLine": 47,
+          "text": "310마력 / 9.5km/ℓ  | 3.0 (V6)"
+        },
+        {
+          "sourceLine": 48,
+          "text": "310마력 / 9.0km/ℓ"
+        },
+        {
+          "sourceLine": 49,
+          "text": "신연비 적용"
+        },
+        {
+          "sourceLine": 50,
+          "text": "50 TFSI로 명칭변경  |"
+        },
+        {
+          "sourceLine": 51,
+          "text": "50 TFSI 콰트로  |    |    |    | 3.0 (V6)"
+        },
+        {
+          "sourceLine": 52,
+          "text": "310마력 / 9.0km/ℓ"
+        },
+        {
+          "sourceLine": 53,
+          "text": "3.0 TFSI 명칭변경"
+        },
+        {
+          "sourceLine": 54,
+          "text": "14년 출시  |"
+        },
+        {
+          "sourceLine": 55,
+          "text": "3.2 FSI(콰트로)  | 3.2 (V6)"
+        },
+        {
+          "sourceLine": 56,
+          "text": "255마력 /9.3km/ℓ"
+        },
+        {
+          "sourceLine": 57,
+          "text": "07년 ~ 09년  | 3.2 (V6)"
+        },
+        {
+          "sourceLine": 58,
+          "text": "263마력 /10km/ℓ  |    |    |"
+        },
+        {
+          "sourceLine": 59,
+          "text": "4.2 FSI 콰트로  | 4.2 (V8)"
+        },
+        {
+          "sourceLine": 60,
+          "text": "335마력 /7.7km/ℓ"
+        },
+        {
+          "sourceLine": 61,
+          "text": "05년형 출시"
+        },
+        {
+          "sourceLine": 62,
+          "text": "350마력 /7.5km/ℓ"
+        },
+        {
+          "sourceLine": 63,
+          "text": "07년 ~ 08년  |    |    |    |"
+        },
+        {
+          "sourceLine": 64,
+          "text": "4.0 TFSI(S6)  |    |    |    | 4.0 (V8)"
+        },
+        {
+          "sourceLine": 65,
+          "text": "420마력 / 7.9km/ℓ"
+        },
+        {
+          "sourceLine": 66,
+          "text": "13년형 출시  |"
+        },
+        {
+          "sourceLine": 67,
+          "text": "5.2 FSI(S6)  | 5.2 (V10)"
+        },
+        {
+          "sourceLine": 68,
+          "text": "435마력 / 6.9km/ℓ"
+        },
+        {
+          "sourceLine": 69,
+          "text": "07년 출시  |    |    |"
+        },
+        {
+          "sourceLine": 70,
+          "text": "특이사항  |    |    |"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-a7-4g-grades",
+      "type": "CLS",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=133716&method=view_modelHistoryframe&type=CLS",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=030&mnfccd=011",
+      "parentSourceURLVerified": true,
+      "linkId": 10,
+      "ref": "turn175224view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=133716&method=view_modelHistoryframe&type=CLS",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 17,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "등급  | 2011년  | 2012년  | 2013년  | 2014년  | 현재"
+        },
+        {
+          "sourceLine": 1,
+          "text": "3.0 TFSI 콰트로  | 3.0 TFSI 콰트로 엔트리  |"
+        },
+        {
+          "sourceLine": 2,
+          "text": "3.0 TFSI 콰트로 다이나믹  |"
+        },
+        {
+          "sourceLine": 3,
+          "text": "3.0 TFSI 콰트로 프레스티지  |"
+        },
+        {
+          "sourceLine": 4,
+          "text": "3.0 TDI 콰트로  | 3.0 TDI 콰트로 엔트리  |"
+        },
+        {
+          "sourceLine": 5,
+          "text": "3.0 TDI 콰트로 다이나믹  |"
+        },
+        {
+          "sourceLine": 6,
+          "text": "   |    | 3.0 TDI 콰트로 프레스티지  |"
+        },
+        {
+          "sourceLine": 7,
+          "text": "4.0 TFSI 콰트로 (S7)  |    |    | 4.0 TFSI 콰트로"
+        },
+        {
+          "sourceLine": 8,
+          "text": "4.0 TFSI 콰트로 (RS7)  |    |    |    | 4.0 TFSI 콰트로"
+        },
+        {
+          "sourceLine": 9,
+          "text": "55 TDI 콰트로  |    |    |    | 55 TDI 콰트로 다이나믹"
+        },
+        {
+          "sourceLine": 10,
+          "text": "   |    |    | 55 TDI 콰트로 프레스티지"
+        },
+        {
+          "sourceLine": 11,
+          "text": "50 TFSI 콰트로  |    |    |    | 50 TFSI 콰트로"
+        },
+        {
+          "sourceLine": 12,
+          "text": "   |    |    | 50 TFSI 콰트로 다이나믹"
+        },
+        {
+          "sourceLine": 13,
+          "text": "   |    |    | 50 TFSI 콰트로 프레스티지"
+        },
+        {
+          "sourceLine": 14,
+          "text": "45 TDI 콰트로  |    |    |    | 45 TDI 콰트로"
+        },
+        {
+          "sourceLine": 15,
+          "text": "   |    |    | 45 TDI 콰트로 다이나믹"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-a7-4g-grades",
+      "type": "ENG",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=133716&method=view_modelHistoryframe&type=ENG",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=030&mnfccd=011",
+      "parentSourceURLVerified": true,
+      "linkId": 9,
+      "ref": "turn784956view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=133716&method=view_modelHistoryframe&type=ENG",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 16,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "[image omitted]  |  |  10년 ~ 현재  |"
+        },
+        {
+          "sourceLine": 1,
+          "text": "3.0 TFSI 콰트로  | 가솔린  |    |  3.0 (V6) 310 마력 / 9.4 km/ℓ 11년형 국내 출시 12년형 연비변경 9.0km/ℓ 50 TFSI로 명칭변경  |"
+        },
+        {
+          "sourceLine": 2,
+          "text": "50 TFSI 콰트로  |    |    | 3.0 (V6)"
+        },
+        {
+          "sourceLine": 3,
+          "text": "310마력 /  9.0km/ℓ"
+        },
+        {
+          "sourceLine": 4,
+          "text": "3.0 TFSI 명칭변경"
+        },
+        {
+          "sourceLine": 5,
+          "text": "14년 출시  |"
+        },
+        {
+          "sourceLine": 6,
+          "text": " 4.0 TFSI 콰트로(S7)  |    |    | 4.0 (V8) 420마력 / 7.9 km/ℓ 12년형 (국내 13년형)출시  |"
+        },
+        {
+          "sourceLine": 7,
+          "text": " 4.0 TFSI 콰트로 (RS7)  |    |    | 4.0 (V8) 560마력 / 7.9 km/ℓ 13년(14년형) 출시  |"
+        },
+        {
+          "sourceLine": 8,
+          "text": " 3.0 TDI 콰트로  |  디젤  |    | 3.0 (V6) 245마력 / 13.5 km/ℓ (1) 11년형 국내 출시  |  3.0 (V6) 245마력 / 13.1 km/ℓ (2)45 TDI로 명칭변경  |"
+        },
+        {
+          "sourceLine": 9,
+          "text": "45 TDI 콰트로  |    |    | 3.0 (V6)"
+        },
+        {
+          "sourceLine": 10,
+          "text": "245마력 / 59.2kg.m / 13.1km/ℓ"
+        },
+        {
+          "sourceLine": 11,
+          "text": "3.0 TDI 명칭변경"
+        },
+        {
+          "sourceLine": 12,
+          "text": "14년 출시  |"
+        },
+        {
+          "sourceLine": 13,
+          "text": " 55 TDI 콰트로  |    |    |  3.0 (V6) 313마력 / 12.7 km/ℓ 14년형 국내 출시  |"
+        },
+        {
+          "sourceLine": 14,
+          "text": "특이사항   |    | (1) 12년형 연비 변경 13.5 → 13.0 km/ℓ (2) 13년 3월 7단 듀얼 클러치 (S트로닉) →  8단 자동 (팁트로닉)으로 변경 14년 1월 8단 자동 → 7단 듀얼 클러치로 재변경, 토크민 연비 변경  |"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-accord-8-grades",
+      "type": "CLS",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=141187&method=view_modelHistoryframe&type=CLS",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=014&mnfccd=027",
+      "parentSourceURLVerified": true,
+      "linkId": 30,
+      "ref": "turn296750view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=141187&method=view_modelHistoryframe&type=CLS",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 5,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "등급  | 2008년  | 2009년  | 2010년  | 2011년  | 2012년"
+        },
+        {
+          "sourceLine": 1,
+          "text": "2.4  | 2.4"
+        },
+        {
+          "sourceLine": 2,
+          "text": "   |    |    | 2.4 디럭스"
+        },
+        {
+          "sourceLine": 3,
+          "text": "3.5  | 3.5"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-accord-8-grades",
+      "type": "ENG",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=141187&method=view_modelHistoryframe&type=ENG",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=014&mnfccd=027",
+      "parentSourceURLVerified": true,
+      "linkId": 29,
+      "ref": "turn292546view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=141187&method=view_modelHistoryframe&type=ENG",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 14,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "[image omitted]  | 03년 ~ 07년  | 08년 ~ 10년  | 11년 ~ 12년  | 13년 ~ 현재"
+        },
+        {
+          "sourceLine": 1,
+          "text": "2.4  | 가솔린  | 2.4 (L4)"
+        },
+        {
+          "sourceLine": 2,
+          "text": "180마력 / 11.2km/ℓ  | 2.4 (L4)"
+        },
+        {
+          "sourceLine": 3,
+          "text": "180마력 / 10.9km/ℓ  | 2.4 (L4)"
+        },
+        {
+          "sourceLine": 4,
+          "text": "180마력 / 11.1km/ℓ  | 2.4 (l4)"
+        },
+        {
+          "sourceLine": 5,
+          "text": "188마력 / 12.5km/ℓ"
+        },
+        {
+          "sourceLine": 6,
+          "text": "3.0  | 3.0 (V6)"
+        },
+        {
+          "sourceLine": 7,
+          "text": "275마력 / 9.4km/ℓ  |    |"
+        },
+        {
+          "sourceLine": 8,
+          "text": "3.5  |    | 3.5 (V6)"
+        },
+        {
+          "sourceLine": 9,
+          "text": "275마력 / 9.8km/ℓ  | 3.5 (V6)"
+        },
+        {
+          "sourceLine": 10,
+          "text": "275마력 / 9.9km/ℓ  | 3.5 (V6)"
+        },
+        {
+          "sourceLine": 11,
+          "text": "282마력 / 10.5km/ℓ"
+        },
+        {
+          "sourceLine": 12,
+          "text": "특이사항  |    |    |    |"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-altima-l33-grades",
+      "type": "CLS",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=139185&method=view_modelHistoryframe&type=CLS",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=005&mnfccd=033",
+      "parentSourceURLVerified": true,
+      "linkId": 24,
+      "ref": "turn485761view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=139185&method=view_modelHistoryframe&type=CLS",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 7,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "등급  | 2013년  | 2014년  | 현재"
+        },
+        {
+          "sourceLine": 1,
+          "text": "2.5  | 2.5"
+        },
+        {
+          "sourceLine": 2,
+          "text": "2.5 Smart  |"
+        },
+        {
+          "sourceLine": 3,
+          "text": "   | 2.5 TECH"
+        },
+        {
+          "sourceLine": 4,
+          "text": "3.5  | 3.5"
+        },
+        {
+          "sourceLine": 5,
+          "text": "   | 3.5 TECH  |"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-altima-l33-grades",
+      "type": "ENG",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=139185&method=view_modelHistoryframe&type=ENG",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=005&mnfccd=033",
+      "parentSourceURLVerified": true,
+      "linkId": 23,
+      "ref": "turn958112view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=139185&method=view_modelHistoryframe&type=ENG",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 11,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "[image omitted]  | 07년 ~ 09년  | 10년 ~ 12년  | 13년 ~ 현재  |"
+        },
+        {
+          "sourceLine": 1,
+          "text": "2.5  | 가솔린  | 2.5 (L4)"
+        },
+        {
+          "sourceLine": 2,
+          "text": "170마력 / 11.6km/ℓ  | 2.5 (L4)"
+        },
+        {
+          "sourceLine": 3,
+          "text": "180마력 / 12.8km/ℓ  |"
+        },
+        {
+          "sourceLine": 4,
+          "text": "3.5  | 3.5 (V6)"
+        },
+        {
+          "sourceLine": 5,
+          "text": "271마력 / 9.7km/ℓ  | 3.5 (V6)"
+        },
+        {
+          "sourceLine": 6,
+          "text": "271마력 / 10.3km/ℓ"
+        },
+        {
+          "sourceLine": 7,
+          "text": "연비개선  | 3.5 (V6)"
+        },
+        {
+          "sourceLine": 8,
+          "text": "273마력 / 10.5km/ℓ  |"
+        },
+        {
+          "sourceLine": 9,
+          "text": "특이사항  |    |    |"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-c-w204-grades",
+      "type": "CLS",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=141058&method=view_modelHistoryframe&type=CLS",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=012&mnfccd=013",
+      "parentSourceURLVerified": true,
+      "linkId": 38,
+      "ref": "turn740825view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=141058&method=view_modelHistoryframe&type=CLS",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 21,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "등급  | 2008년  | 2009년  | 2010년  | 2011년  | 2012년  | 2013년  | 2014년"
+        },
+        {
+          "sourceLine": 1,
+          "text": "C200K  | C200K  |    |    |    |"
+        },
+        {
+          "sourceLine": 2,
+          "text": "아방가르드  |    |    |    |"
+        },
+        {
+          "sourceLine": 3,
+          "text": "C200 CGI  |    |    |    | C200 CGI"
+        },
+        {
+          "sourceLine": 4,
+          "text": "   |    |    | 아방가르드  |    |"
+        },
+        {
+          "sourceLine": 5,
+          "text": "   |    |    |    |    | 아방가르드 스타일패키지  |"
+        },
+        {
+          "sourceLine": 6,
+          "text": "   |    |    |    |    |    | 아방가르드 에디션C"
+        },
+        {
+          "sourceLine": 7,
+          "text": "C220 CDI  | 엘레강스  |    |    |    |    |"
+        },
+        {
+          "sourceLine": 8,
+          "text": "   |    |    |    |    | C220 CDI"
+        },
+        {
+          "sourceLine": 9,
+          "text": "아방가르드  |"
+        },
+        {
+          "sourceLine": 10,
+          "text": "   |    |    |    |    |    | 아방가르드 에디션C"
+        },
+        {
+          "sourceLine": 11,
+          "text": "   |    |    |    |    |    | 4MATIC 에디션C"
+        },
+        {
+          "sourceLine": 12,
+          "text": "   |    |    |    | 쿠페"
+        },
+        {
+          "sourceLine": 13,
+          "text": "C230  | 아방가르드  |    |    |    |    |"
+        },
+        {
+          "sourceLine": 14,
+          "text": "C250  |    |    | 아방가르드"
+        },
+        {
+          "sourceLine": 15,
+          "text": "   |    | C250 AMG 패키지  |    |"
+        },
+        {
+          "sourceLine": 16,
+          "text": "C63 AMG  | C63 AMG  |"
+        },
+        {
+          "sourceLine": 17,
+          "text": "   |    |    |    |    |    | C63 AMG 에디션 507"
+        },
+        {
+          "sourceLine": 18,
+          "text": "   |    |    |    | 쿠페"
+        },
+        {
+          "sourceLine": 19,
+          "text": "   |    |    |    |    | 쿠페 론치에디션  |"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-c-w204-grades",
+      "type": "ENG",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=141058&method=view_modelHistoryframe&type=ENG",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=012&mnfccd=013",
+      "parentSourceURLVerified": true,
+      "linkId": 36,
+      "ref": "turn708180view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=141058&method=view_modelHistoryframe&type=ENG",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 46,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "[image omitted]  | 01년 ~ 02년  | 02년 ~ 07년  | 08년 ~ 10년  | 10년 ~ 14년  | 14년 ~ 현재"
+        },
+        {
+          "sourceLine": 1,
+          "text": "C180K  | 가솔린  |    | 1.8L (L4)"
+        },
+        {
+          "sourceLine": 2,
+          "text": "143마력 / 10.6km/ℓ  |    |"
+        },
+        {
+          "sourceLine": 3,
+          "text": "C200K  | 가솔린  | 2.0L (L4)"
+        },
+        {
+          "sourceLine": 4,
+          "text": "163마력 / 9.0km/ℓ  | 1.8L (L4)"
+        },
+        {
+          "sourceLine": 5,
+          "text": "163마력 / 9.4km/ℓ  | 1.8L (L4)"
+        },
+        {
+          "sourceLine": 6,
+          "text": "184마력 / 10.6km/ℓ  |    |"
+        },
+        {
+          "sourceLine": 7,
+          "text": "C200 CGI  | 가솔린  |    | 1.8L (L4)"
+        },
+        {
+          "sourceLine": 8,
+          "text": "170마력 / --km/ℓ"
+        },
+        {
+          "sourceLine": 9,
+          "text": "05년 단종  |    | 1.8L (L4)"
+        },
+        {
+          "sourceLine": 10,
+          "text": "184마력 / 11.9km/ℓ  | 2.0 (L4)"
+        },
+        {
+          "sourceLine": 11,
+          "text": "184마력 / 12.1km/ℓ"
+        },
+        {
+          "sourceLine": 12,
+          "text": "C220 CDI  | 디젤  |    | 2.2L (L4)"
+        },
+        {
+          "sourceLine": 13,
+          "text": "150마력 / --km/ℓ"
+        },
+        {
+          "sourceLine": 14,
+          "text": "04년 출시  | 2.2L (L4)"
+        },
+        {
+          "sourceLine": 15,
+          "text": "170마력 / 12.9km/ℓ  | 2.2L (L4)"
+        },
+        {
+          "sourceLine": 16,
+          "text": "170마력 / 16.8km/ℓ  | 2.2 (L4)"
+        },
+        {
+          "sourceLine": 17,
+          "text": "170마력 / 17.4km/ℓ"
+        },
+        {
+          "sourceLine": 18,
+          "text": "C230K  | 가솔린  |    | 1.8L (L4)"
+        },
+        {
+          "sourceLine": 19,
+          "text": "192마력 / 8.9km/ℓ"
+        },
+        {
+          "sourceLine": 20,
+          "text": "04년-05년  |    |"
+        },
+        {
+          "sourceLine": 21,
+          "text": "C230  | 가솔린  |    | 2.5L (V6)"
+        },
+        {
+          "sourceLine": 22,
+          "text": "204마력 / --km/ℓ"
+        },
+        {
+          "sourceLine": 23,
+          "text": "05년형 출시  | 2.5L (L4)"
+        },
+        {
+          "sourceLine": 24,
+          "text": "204마력 / 9.1km/ℓ"
+        },
+        {
+          "sourceLine": 25,
+          "text": "09년형 단종  |    |"
+        },
+        {
+          "sourceLine": 26,
+          "text": "C240  | 가솔린  | 2.6 (V6)"
+        },
+        {
+          "sourceLine": 27,
+          "text": "170마력 / 7.4km/ℓ"
+        },
+        {
+          "sourceLine": 28,
+          "text": "05년형 단종  |    |"
+        },
+        {
+          "sourceLine": 29,
+          "text": "C250  | 가솔린  |    |    | 2.5L (L4)"
+        },
+        {
+          "sourceLine": 30,
+          "text": "204마력 / 9.1km/ℓ  |"
+        },
+        {
+          "sourceLine": 31,
+          "text": "C320  | 가솔린  | 3.2L (L4)"
+        },
+        {
+          "sourceLine": 32,
+          "text": "218마력 / 8.6km/ℓ"
+        },
+        {
+          "sourceLine": 33,
+          "text": "05년형 단종  |    |    |"
+        },
+        {
+          "sourceLine": 34,
+          "text": "C63 AMG  | 가솔린  |    | 6.2L (V8)"
+        },
+        {
+          "sourceLine": 35,
+          "text": "457마력 / 6.7km/ℓ  |"
+        },
+        {
+          "sourceLine": 36,
+          "text": "C63 AMG 507 에디션  | 가솔린  |    |    | 6.2L (V8)"
+        },
+        {
+          "sourceLine": 37,
+          "text": "507마력 / 6.4km/ℓ"
+        },
+        {
+          "sourceLine": 38,
+          "text": "14년형 출시"
+        },
+        {
+          "sourceLine": 39,
+          "text": "10대 한정판매  |"
+        },
+        {
+          "sourceLine": 40,
+          "text": "C63 AMG 쿠페 론치 에디션  | 가솔린  |    |    | 6.2L (V8)"
+        },
+        {
+          "sourceLine": 41,
+          "text": "487마력 / 6.5km/ℓ"
+        },
+        {
+          "sourceLine": 42,
+          "text": "13년형 출시"
+        },
+        {
+          "sourceLine": 43,
+          "text": "10대 한정판매  |"
+        },
+        {
+          "sourceLine": 44,
+          "text": "특이사항  |    |    |"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-c-w205-grades",
+      "type": "CLS",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=141061&method=view_modelHistoryframe&type=CLS",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=067&mnfccd=013",
+      "parentSourceURLVerified": true,
+      "linkId": 24,
+      "ref": "turn671358view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=141061&method=view_modelHistoryframe&type=CLS",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 11,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "등급  | 2014년  | 2015년  | 현재"
+        },
+        {
+          "sourceLine": 1,
+          "text": "C200  | C200"
+        },
+        {
+          "sourceLine": 2,
+          "text": "C200 AV"
+        },
+        {
+          "sourceLine": 3,
+          "text": "C200D  |    | C200D"
+        },
+        {
+          "sourceLine": 4,
+          "text": "C220  | C220 BlueTEC AV"
+        },
+        {
+          "sourceLine": 5,
+          "text": "C220 BlueTEC AV Panoramic Sunroof  |    |"
+        },
+        {
+          "sourceLine": 6,
+          "text": "C220 BlueTEC EX"
+        },
+        {
+          "sourceLine": 7,
+          "text": "C220 CDI 쿠페"
+        },
+        {
+          "sourceLine": 8,
+          "text": "C250  |    | C250 BlueTEC 4MATIC"
+        },
+        {
+          "sourceLine": 9,
+          "text": "C63 AMG  | C63 AMG"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-c-w205-grades",
+      "type": "ENG",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=141061&method=view_modelHistoryframe&type=ENG",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=067&mnfccd=013",
+      "parentSourceURLVerified": true,
+      "linkId": 23,
+      "ref": "turn149244view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=141061&method=view_modelHistoryframe&type=ENG",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 31,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "[image omitted]  | 08년 ~ 10년  | 10년 ~ 14년  | 14년 ~ 현재  |"
+        },
+        {
+          "sourceLine": 1,
+          "text": "C200K  | 가솔린  | 1.8L (L4)"
+        },
+        {
+          "sourceLine": 2,
+          "text": "184마력 / 10.6km/ℓ  |    |    |"
+        },
+        {
+          "sourceLine": 3,
+          "text": "C200 CGI  | 가솔린  |    | 1.8L (L4)"
+        },
+        {
+          "sourceLine": 4,
+          "text": "184마력 / 11.9km/ℓ  | 2.0 (L4)"
+        },
+        {
+          "sourceLine": 5,
+          "text": "184마력 / 12.1km/ℓ  |"
+        },
+        {
+          "sourceLine": 6,
+          "text": "C200 CDI  | 디젤  | 2.2L (L4)"
+        },
+        {
+          "sourceLine": 7,
+          "text": "170마력 / 12.9km/ℓ  | 2.2L (L4)"
+        },
+        {
+          "sourceLine": 8,
+          "text": "170마력 / 16.8km/ℓ  | 2.2 (L4)"
+        },
+        {
+          "sourceLine": 9,
+          "text": "170마력 / 17.4km/ℓ  |"
+        },
+        {
+          "sourceLine": 10,
+          "text": "C200D  | 디젤  |    |    | 1.6 (L4)"
+        },
+        {
+          "sourceLine": 11,
+          "text": "136마력 / 13.2km/ℓ 15년 출시  |"
+        },
+        {
+          "sourceLine": 12,
+          "text": "C230  | 가솔린  | 2.5L (L4)"
+        },
+        {
+          "sourceLine": 13,
+          "text": "204마력 / 9.1km/ℓ"
+        },
+        {
+          "sourceLine": 14,
+          "text": "09년형 단종  |    |    |"
+        },
+        {
+          "sourceLine": 15,
+          "text": "C250  | 가솔린  |    | 2.5L (L4)"
+        },
+        {
+          "sourceLine": 16,
+          "text": "204마력 / 9.1km/ℓ  | 2.2 (L4)"
+        },
+        {
+          "sourceLine": 17,
+          "text": "204마력 / 15.5km/ℓ 15년형 출시  |"
+        },
+        {
+          "sourceLine": 18,
+          "text": "C63 AMG  | 가솔린  | 6.2L (V8)"
+        },
+        {
+          "sourceLine": 19,
+          "text": "457마력 / 6.7km/ℓ  | 6.2L (V8)"
+        },
+        {
+          "sourceLine": 20,
+          "text": "457마력 / 6.7km/ℓ  |"
+        },
+        {
+          "sourceLine": 21,
+          "text": "C63 AMG 507 에디션  | 가솔린  |    | 6.2L (V8)"
+        },
+        {
+          "sourceLine": 22,
+          "text": "507마력 / 6.4km/ℓ"
+        },
+        {
+          "sourceLine": 23,
+          "text": "14년형 출시"
+        },
+        {
+          "sourceLine": 24,
+          "text": "10대 한정판매  |    |"
+        },
+        {
+          "sourceLine": 25,
+          "text": "C63 AMG 쿠페 론치 에디션  | 가솔린  |    | 6.2L (V8)"
+        },
+        {
+          "sourceLine": 26,
+          "text": "487마력 / 6.5km/ℓ"
+        },
+        {
+          "sourceLine": 27,
+          "text": "13년형 출시"
+        },
+        {
+          "sourceLine": 28,
+          "text": "10대 한정판매  |    |"
+        },
+        {
+          "sourceLine": 29,
+          "text": "특이사항  |    |    |"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-camry-xv40-grades",
+      "type": "CLS",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=141176&method=view_modelHistoryframe&type=CLS",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=001&mnfccd=031",
+      "parentSourceURLVerified": true,
+      "linkId": 34,
+      "ref": "turn770153view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=141176&method=view_modelHistoryframe&type=CLS",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 4,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "등급  | 2006년  | 2007년  | 2008년  | 2009년  | 2010년  | 2011년"
+        },
+        {
+          "sourceLine": 1,
+          "text": "2.5 XLE  |    |    |    |    | 2.5 XLE"
+        },
+        {
+          "sourceLine": 2,
+          "text": "2.4 하이브리드 XLE  |    |    |    |    | 2.4 하이브리드 XLE"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-camry-xv40-grades",
+      "type": "ENG",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=141176&method=view_modelHistoryframe&type=ENG",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=001&mnfccd=031",
+      "parentSourceURLVerified": true,
+      "linkId": 33,
+      "ref": "turn167760view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=141176&method=view_modelHistoryframe&type=ENG",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 35,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "[image omitted]  | 02년 ~ 06년  | 07년 ~ 09년  | 10년 ~ 11년  | 12년 ~ 현재"
+        },
+        {
+          "sourceLine": 1,
+          "text": "2.4  | 가솔린  | 2.4 (l4)"
+        },
+        {
+          "sourceLine": 2,
+          "text": "157마력 / 11.6km/ℓ  | 2.4 (L4)"
+        },
+        {
+          "sourceLine": 3,
+          "text": "158마력 / 11.7km/ℓ"
+        },
+        {
+          "sourceLine": 4,
+          "text": "09년형 단종  |    |"
+        },
+        {
+          "sourceLine": 5,
+          "text": "2.5  |    |    | 2.5 (L4)"
+        },
+        {
+          "sourceLine": 6,
+          "text": "169마력 / --km/ℓ"
+        },
+        {
+          "sourceLine": 7,
+          "text": "10년형 출시  |"
+        },
+        {
+          "sourceLine": 8,
+          "text": "   |    |  2.5 (L4)"
+        },
+        {
+          "sourceLine": 9,
+          "text": "175마력 / 12.0km/ℓ"
+        },
+        {
+          "sourceLine": 10,
+          "text": "10년형 국내 출시  | 2.5 (L4)"
+        },
+        {
+          "sourceLine": 11,
+          "text": "181마력 / 11.5km/ℓ"
+        },
+        {
+          "sourceLine": 12,
+          "text": "3.0  | 3.0 (V6)"
+        },
+        {
+          "sourceLine": 13,
+          "text": "192마력 / 9.7km/ℓ"
+        },
+        {
+          "sourceLine": 14,
+          "text": "02년형 단종  | 3.0 (V6)"
+        },
+        {
+          "sourceLine": 15,
+          "text": "210마력 / 9.7km/ℓ"
+        },
+        {
+          "sourceLine": 16,
+          "text": "03년형 출시  |  3.5 (V6)"
+        },
+        {
+          "sourceLine": 17,
+          "text": "268마력 / 8.0km/ℓ  |"
+        },
+        {
+          "sourceLine": 18,
+          "text": "3.3  | 3.3 (V6)"
+        },
+        {
+          "sourceLine": 19,
+          "text": "225마력 / 9.8km/ℓ"
+        },
+        {
+          "sourceLine": 20,
+          "text": "04년형 출시  |    |"
+        },
+        {
+          "sourceLine": 21,
+          "text": "3.5  |    |    |  3.5 (V6)"
+        },
+        {
+          "sourceLine": 22,
+          "text": "277마력 / 10.4km/ℓ"
+        },
+        {
+          "sourceLine": 23,
+          "text": "2.4  | 하이브리드  |    |  2.4 (L4)"
+        },
+        {
+          "sourceLine": 24,
+          "text": "192마력 / --km/ℓ"
+        },
+        {
+          "sourceLine": 25,
+          "text": "08년형 단종  | 2.4 (L4)"
+        },
+        {
+          "sourceLine": 26,
+          "text": "187마력 / --km/ℓ"
+        },
+        {
+          "sourceLine": 27,
+          "text": "09년형 출시  |"
+        },
+        {
+          "sourceLine": 28,
+          "text": "   |    |  2.4 (L4)"
+        },
+        {
+          "sourceLine": 29,
+          "text": "196마력 / 19.7km/ℓ"
+        },
+        {
+          "sourceLine": 30,
+          "text": "10년형 국내 출시  |"
+        },
+        {
+          "sourceLine": 31,
+          "text": "2.5  |    |    |  2.5 (L4)"
+        },
+        {
+          "sourceLine": 32,
+          "text": "203마력 / 16.4km/ℓ"
+        },
+        {
+          "sourceLine": 33,
+          "text": "특이사항  |    |    |"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-camry-xv50-grades",
+      "type": "CLS",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=133871&method=view_modelHistoryframe&type=CLS",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=047&mnfccd=031",
+      "parentSourceURLVerified": true,
+      "linkId": 26,
+      "ref": "turn943771view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=133871&method=view_modelHistoryframe&type=CLS",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 7,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": ""
+        },
+        {
+          "sourceLine": 1,
+          "text": ""
+        },
+        {
+          "sourceLine": 2,
+          "text": "등급  |  2012년  | 2013년  | 2014년  | 2015년  | 현재"
+        },
+        {
+          "sourceLine": 3,
+          "text": " 2.5 XLE  | 2.5 XLE"
+        },
+        {
+          "sourceLine": 4,
+          "text": " 3.5 XLE  |    | 3.5 XLE"
+        },
+        {
+          "sourceLine": 5,
+          "text": " 2.5 하이브리드 XLE  |  2.5 하이브리드 XLE"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-camry-xv50-grades",
+      "type": "ENG",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=133871&method=view_modelHistoryframe&type=ENG",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=047&mnfccd=031",
+      "parentSourceURLVerified": true,
+      "linkId": 25,
+      "ref": "turn683300view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=133871&method=view_modelHistoryframe&type=ENG",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 10,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "[image omitted]  |  07년 ~ 09년  | 10년 ~ 11년   | 12년 ~ 현재   |"
+        },
+        {
+          "sourceLine": 1,
+          "text": " 2.4  |  가솔린  | 2.4 (L4)158마력 / 11.7 km/ℓ 09년형 단종  |    |    |"
+        },
+        {
+          "sourceLine": 2,
+          "text": " 2.5  |  | 2.5 (L4)169마력 / --km/ℓ 10년형 출시  |    |"
+        },
+        {
+          "sourceLine": 3,
+          "text": "   |  2.5 (L4)175마력 / 12.0 km/ℓ 10년형 국내 출시  | 2.5 (L4)181마력 / 11.5 km/ℓ  |"
+        },
+        {
+          "sourceLine": 4,
+          "text": " 3.5  |  3.5 (V6)268마력 / 8.0 km/ℓ  |  3.5 (V6)277마력 / 10.4 km/ℓ  |"
+        },
+        {
+          "sourceLine": 5,
+          "text": " 2.4  |  하이브리드  |  2.4 (L4)192마력 / --km/ℓ 08년형 단종  | 2.4 (L4)187마력 / --km/ℓ 09년형 출시   |    |"
+        },
+        {
+          "sourceLine": 6,
+          "text": "   |  2.4 (L4)196마력 / 19.7 km/ℓ 10년형 국내 출시  |    |"
+        },
+        {
+          "sourceLine": 7,
+          "text": " 2.5  |    |  2.5 (L4)203마력 / 16.4 km/ℓ  |"
+        },
+        {
+          "sourceLine": 8,
+          "text": " 특이사항  |    |    |"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-crv-3-grades",
+      "type": "CLS",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=138904&method=view_modelHistoryframe&type=CLS",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=003&mnfccd=027",
+      "parentSourceURLVerified": true,
+      "linkId": 32,
+      "ref": "turn779826view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=138904&method=view_modelHistoryframe&type=CLS",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 7,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "등급  | 2007년  | 2008년  | 2009년  | 2010년  | 2011년"
+        },
+        {
+          "sourceLine": 1,
+          "text": "2.4  | 2.4"
+        },
+        {
+          "sourceLine": 2,
+          "text": "2.4 4WD  | 2.4 4WD  |    |"
+        },
+        {
+          "sourceLine": 3,
+          "text": "2.4 Urban  |    |    |    | 2.4 Urban"
+        },
+        {
+          "sourceLine": 4,
+          "text": "2.4 Audio 4WD  |    |    |    | 2.4 Audio 4WD"
+        },
+        {
+          "sourceLine": 5,
+          "text": "2.4 Nav 4WD  |    |    |    | 2.4 Nav 4WD"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-crv-3-grades",
+      "type": "ENG",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=138904&method=view_modelHistoryframe&type=ENG",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=003&mnfccd=027",
+      "parentSourceURLVerified": true,
+      "linkId": 31,
+      "ref": "turn442830view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=138904&method=view_modelHistoryframe&type=ENG",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 13,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "[image omitted]  | 02년 ~ 06년  | 07년 ~ 11년  | 12년 ~ 현재"
+        },
+        {
+          "sourceLine": 1,
+          "text": "2.4 2WD  | 가솔린  | 2.4 (l4)"
+        },
+        {
+          "sourceLine": 2,
+          "text": "160마력 / 10.6km/ℓ  | 2.4 (l4)"
+        },
+        {
+          "sourceLine": 3,
+          "text": "170마력 / 10.4km/ℓ  | 2.4 (l4)"
+        },
+        {
+          "sourceLine": 4,
+          "text": "190마력 / 11.9km/ℓ 신연비 적용"
+        },
+        {
+          "sourceLine": 5,
+          "text": "2.4 4WD  | 2.4 (l4)"
+        },
+        {
+          "sourceLine": 6,
+          "text": "160마력 / 10.2km/ℓ  | 2.4 (l4)"
+        },
+        {
+          "sourceLine": 7,
+          "text": "170마력 / 10.0km/ℓ  | 2.4 (l4)"
+        },
+        {
+          "sourceLine": 8,
+          "text": "190마력 / 11.3km/ℓ 신연비 적용"
+        },
+        {
+          "sourceLine": 9,
+          "text": "특이사항  |    |    | 13년도 신연비 적용"
+        },
+        {
+          "sourceLine": 10,
+          "text": "2.4엔진 11.9km/ℓ → 10.7km/ℓ 변경"
+        },
+        {
+          "sourceLine": 11,
+          "text": "2.4 4WD 엔진 11.3km/ℓ → 10.4km/ℓ 변경"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-e-w211-grades",
+      "type": "CLS",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=136503&method=view_modelHistoryframe&type=CLS",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=019&mnfccd=013",
+      "parentSourceURLVerified": true,
+      "linkId": 40,
+      "ref": "turn516444view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=136503&method=view_modelHistoryframe&type=CLS",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 10,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "등급  | 2003년  | 2004년  | 2005년  | 2006년  | 2007년  | 2008년  | 2009년"
+        },
+        {
+          "sourceLine": 1,
+          "text": "E200K  | E200K"
+        },
+        {
+          "sourceLine": 2,
+          "text": "E220 CDI  |    |    |    | E220 CDI"
+        },
+        {
+          "sourceLine": 3,
+          "text": "E240  | E240  |    |    |"
+        },
+        {
+          "sourceLine": 4,
+          "text": "E280  |    |    |    | E280"
+        },
+        {
+          "sourceLine": 5,
+          "text": "E350(4MATIC)  |    |    | E350"
+        },
+        {
+          "sourceLine": 6,
+          "text": "   |    | E350 (4MATIC)"
+        },
+        {
+          "sourceLine": 7,
+          "text": "E55 AMG  | E55 AMG  |    |    |"
+        },
+        {
+          "sourceLine": 8,
+          "text": "E63 AMG  |    |    |    |    | E63 AMG"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-e-w211-grades",
+      "type": "ENG",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=136503&method=view_modelHistoryframe&type=ENG",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=019&mnfccd=013",
+      "parentSourceURLVerified": true,
+      "linkId": 39,
+      "ref": "turn150434view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=136503&method=view_modelHistoryframe&type=ENG",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 48,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "[image omitted]  | 95년 ~ 99년  | 00년 ~ 02년  | 03년 ~ 06년  | 06년 ~ 09년  | 10년 ~ 12년  | 13년 ~ 현재"
+        },
+        {
+          "sourceLine": 1,
+          "text": "E200K  | 가솔린  |    | 2.0L (L4)"
+        },
+        {
+          "sourceLine": 2,
+          "text": "163마력 / 10.2km/ℓ  | 1.8L (L4)"
+        },
+        {
+          "sourceLine": 3,
+          "text": "163마력 / 23.5kg.m/10.2km/ℓ  | 1.8L (L4)"
+        },
+        {
+          "sourceLine": 4,
+          "text": "184마력 / 10.2km/ℓ  |"
+        },
+        {
+          "sourceLine": 5,
+          "text": "E200 CGI  | 가솔린  |    |    | 1.8L (L4)"
+        },
+        {
+          "sourceLine": 6,
+          "text": "184마력 / 27.5kg.m/11.6km/ℓ"
+        },
+        {
+          "sourceLine": 7,
+          "text": "11년형 출시  | 1.8L (L4)"
+        },
+        {
+          "sourceLine": 8,
+          "text": "184마력/27.5kg.m/10.7km/ℓ"
+        },
+        {
+          "sourceLine": 9,
+          "text": "(1)"
+        },
+        {
+          "sourceLine": 10,
+          "text": "E220 CDI  | 디젤  |    |    | 2.1L (L4)"
+        },
+        {
+          "sourceLine": 11,
+          "text": "170마력 / 12.5km/ℓ  | 2.1L (L4)"
+        },
+        {
+          "sourceLine": 12,
+          "text": "170마력 / 40.8kg.m / 17.1km/ℓ"
+        },
+        {
+          "sourceLine": 13,
+          "text": "E240  | 가솔린  |    | 2.4(V6)"
+        },
+        {
+          "sourceLine": 14,
+          "text": "170마력 / --km/ℓ  | 2.6(V6)"
+        },
+        {
+          "sourceLine": 15,
+          "text": "177마력 / 24.5kg.m/ 7.8km/ℓ  |    |"
+        },
+        {
+          "sourceLine": 16,
+          "text": "E250 CDI  | 디젤  |    |    | 2.1L (L4)"
+        },
+        {
+          "sourceLine": 17,
+          "text": "204마력 / 51.0kg.m / 14.9km/ℓ"
+        },
+        {
+          "sourceLine": 18,
+          "text": "국내 13년형 출시"
+        },
+        {
+          "sourceLine": 19,
+          "text": "E300  | 가솔린  |    |    | 3.0L (V6)"
+        },
+        {
+          "sourceLine": 20,
+          "text": "231마력 / 30.6kg.m/9.2km/ℓ"
+        },
+        {
+          "sourceLine": 21,
+          "text": "2010년 단종  | 3.5L (V6)"
+        },
+        {
+          "sourceLine": 22,
+          "text": "252마력 / 34.7kg.m/9.4km/ℓ"
+        },
+        {
+          "sourceLine": 23,
+          "text": "2011년형 출시"
+        },
+        {
+          "sourceLine": 24,
+          "text": "E350  | 가솔린  |    |    | 3.5L (V6)"
+        },
+        {
+          "sourceLine": 25,
+          "text": "272마력 / 8.7km/ℓ"
+        },
+        {
+          "sourceLine": 26,
+          "text": "2005년형 출시  | 3.5L (V6)"
+        },
+        {
+          "sourceLine": 27,
+          "text": "306마력 / 37.7kg.m / 10.3km/ℓ"
+        },
+        {
+          "sourceLine": 28,
+          "text": "   |    | 3.5L (V6) 4MATIC"
+        },
+        {
+          "sourceLine": 29,
+          "text": "272마력 / 7.8km/ℓ"
+        },
+        {
+          "sourceLine": 30,
+          "text": "2005년형 출시  | 3.5L (V6) 4MATIC"
+        },
+        {
+          "sourceLine": 31,
+          "text": "306마력 / 37.7kg.m / 9.5km/ℓ"
+        },
+        {
+          "sourceLine": 32,
+          "text": "E55 AMG  | 가솔린  |    | 5.5L (V8)"
+        },
+        {
+          "sourceLine": 33,
+          "text": "354마력 / 8.2km/ℓ"
+        },
+        {
+          "sourceLine": 34,
+          "text": "1998년형 출시  | 5.5L (V8)"
+        },
+        {
+          "sourceLine": 35,
+          "text": "476마력 / 6.5km/ℓ  |    |"
+        },
+        {
+          "sourceLine": 36,
+          "text": "E63 AMG  | 가솔린  |    |    | 6.2 (V8)"
+        },
+        {
+          "sourceLine": 37,
+          "text": "514마력 / 6.8km/ℓ 2007년형 출시  | 6.2L (V8)"
+        },
+        {
+          "sourceLine": 38,
+          "text": "525마력 / 64.3kg.m / 6.5km/ℓ"
+        },
+        {
+          "sourceLine": 39,
+          "text": "(2)"
+        },
+        {
+          "sourceLine": 40,
+          "text": "특이사항  |    |    | (1) E200 CGI 14년형에 엔진변경"
+        },
+        {
+          "sourceLine": 41,
+          "text": " > 1.8L(L4) (184마력/27.5kg.m/10.7km/ℓ)"
+        },
+        {
+          "sourceLine": 42,
+          "text": " > 2.0L(L4) (184마력/30.6kg.m/12.0km/ℓ)(2) E63 AMG 12년형에 엔진변경,"
+        },
+        {
+          "sourceLine": 43,
+          "text": "                   14년형에 엔진성능 개선"
+        },
+        {
+          "sourceLine": 44,
+          "text": " > 6.2L(V8) (525마력/64.3kg.m/6.5km/ℓ)"
+        },
+        {
+          "sourceLine": 45,
+          "text": " > 5.5 (V8) (525마력/71.4kg.m/8.0km/ℓ)"
+        },
+        {
+          "sourceLine": 46,
+          "text": " > 5.5 (V8) (557마력/73.5kg.m/7.6km/ℓ)"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-e-w212-grades",
+      "type": "CLS",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=132833&method=view_modelHistoryframe&type=CLS",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=001&mnfccd=013",
+      "parentSourceURLVerified": true,
+      "linkId": 33,
+      "ref": "turn985374view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=132833&method=view_modelHistoryframe&type=CLS",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 27,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "등급  | 2010년  | 2011년  | 2012년  | 2013년  | 2014년  | 2015년  | 현재"
+        },
+        {
+          "sourceLine": 1,
+          "text": "E200  | 아방가르드  |    | 아방가르드"
+        },
+        {
+          "sourceLine": 2,
+          "text": "   | 블루이피션시   |    |    |"
+        },
+        {
+          "sourceLine": 3,
+          "text": "   |    |    |    | 엘레강스  |"
+        },
+        {
+          "sourceLine": 4,
+          "text": "   |    |    |    | 쿠페"
+        },
+        {
+          "sourceLine": 5,
+          "text": "   |    |    |    | 카브리올레"
+        },
+        {
+          "sourceLine": 6,
+          "text": "E22 0  | 아방가르드"
+        },
+        {
+          "sourceLine": 7,
+          "text": "   |    |    |    |    | 블루텍 아방가르드"
+        },
+        {
+          "sourceLine": 8,
+          "text": "   |    |    |    |    | 블루텍 아방가르드 스포츠"
+        },
+        {
+          "sourceLine": 9,
+          "text": "E25 0  |    |    |    | 4MATIC 아방가르드"
+        },
+        {
+          "sourceLine": 10,
+          "text": "E300  | 엘레강스"
+        },
+        {
+          "sourceLine": 11,
+          "text": "아방가르드"
+        },
+        {
+          "sourceLine": 12,
+          "text": "   | 4MATIC 아방가르드"
+        },
+        {
+          "sourceLine": 13,
+          "text": "   |    | 아방가르드 스포츠 패키지  |    |    |"
+        },
+        {
+          "sourceLine": 14,
+          "text": "   |    |    |    | 블루텍 하이브리드 아방가르드"
+        },
+        {
+          "sourceLine": 15,
+          "text": "E350 (4MATIC)   | 아방가르드  |    |    |"
+        },
+        {
+          "sourceLine": 16,
+          "text": "4MATIC 아방가르드  |"
+        },
+        {
+          "sourceLine": 17,
+          "text": "   |    |    |    | 4MATIC 아방가르드 인텔리전트  |"
+        },
+        {
+          "sourceLine": 18,
+          "text": "쿠페  |"
+        },
+        {
+          "sourceLine": 19,
+          "text": "카브리올레  |"
+        },
+        {
+          "sourceLine": 20,
+          "text": "   |    |    |    |    | 블루텍 4MATIC"
+        },
+        {
+          "sourceLine": 21,
+          "text": "E400  |    |    |    |    | 4MATIC 인텔리전트 드라이브"
+        },
+        {
+          "sourceLine": 22,
+          "text": "   |    |    |    | 쿠페"
+        },
+        {
+          "sourceLine": 23,
+          "text": "   |    |    |    | 카브리올레"
+        },
+        {
+          "sourceLine": 24,
+          "text": "E63 AMG   | E63 AMG  |    |    |"
+        },
+        {
+          "sourceLine": 25,
+          "text": "   |    |    |    | E63 AMG 4MATIC"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-e-w212-grades",
+      "type": "ENG",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=132833&method=view_modelHistoryframe&type=ENG",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=001&mnfccd=013",
+      "parentSourceURLVerified": true,
+      "linkId": 29,
+      "ref": "turn335768view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=132833&method=view_modelHistoryframe&type=ENG",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 34,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "[image omitted]  |  03년 ~ 06년  | 06년 ~ 09년  | 10년 ~ 12년  | 13년 ~ 현재  |"
+        },
+        {
+          "sourceLine": 1,
+          "text": "E200K  | 가솔린  | 1.8L (L4)"
+        },
+        {
+          "sourceLine": 2,
+          "text": "163마력/10.2km/ℓ  | 1.8L (L4)"
+        },
+        {
+          "sourceLine": 3,
+          "text": "184마력/10.2km/ℓ  |    |"
+        },
+        {
+          "sourceLine": 4,
+          "text": "E200 CGI  | 디젤  |    | 1.8L (L4) 184마력/11.6km/ℓ  | 1.8L (L4) 184마력/10.7km/ℓ (1)  |"
+        },
+        {
+          "sourceLine": 5,
+          "text": "E220 CDI  | 가솔린  |    | 2.1L (L4)"
+        },
+        {
+          "sourceLine": 6,
+          "text": "170마력 / 12.5km/ℓ  | 2.1L (L4)"
+        },
+        {
+          "sourceLine": 7,
+          "text": "170마력/17.1km/ℓ  |"
+        },
+        {
+          "sourceLine": 8,
+          "text": "E240  | 가솔린  | 2.6(V6)"
+        },
+        {
+          "sourceLine": 9,
+          "text": "177마력/7.8km/ℓ  |    |    |    |"
+        },
+        {
+          "sourceLine": 10,
+          "text": "E250 CDI  | 디젤  |    | 2.1L (L4)"
+        },
+        {
+          "sourceLine": 11,
+          "text": "204마력/14.9km/ℓ  |"
+        },
+        {
+          "sourceLine": 12,
+          "text": "E300  | 가솔린  |    | 3.0L (V6)"
+        },
+        {
+          "sourceLine": 13,
+          "text": "231마력/9.2km/ℓ 10년 단종  | 3.0L (V6)"
+        },
+        {
+          "sourceLine": 14,
+          "text": "252마력/9.4km/ℓ 11년형 출시  |"
+        },
+        {
+          "sourceLine": 15,
+          "text": "E350   | 가솔린  |    | 3.5L (V6)"
+        },
+        {
+          "sourceLine": 16,
+          "text": "272마력 / 8.7km/ℓ 05년형 출시  | 3.5L (V6)"
+        },
+        {
+          "sourceLine": 17,
+          "text": "306마력/10.3km/ℓ  |"
+        },
+        {
+          "sourceLine": 18,
+          "text": "   | 3.5L (V6) 4MATIC"
+        },
+        {
+          "sourceLine": 19,
+          "text": "272마력 / 7.8km/ℓ 05년형 출시  | 3.5L (V6) 4MATIC"
+        },
+        {
+          "sourceLine": 20,
+          "text": "306마력/9.5km/ℓ  |"
+        },
+        {
+          "sourceLine": 21,
+          "text": "E55 AMG  | 가솔린  | 5.5L (V8)"
+        },
+        {
+          "sourceLine": 22,
+          "text": "476마력 / 6.5km/ℓ  |    |    |"
+        },
+        {
+          "sourceLine": 23,
+          "text": "E63 AMG  | 가솔린  |    | 6.2 (V8)"
+        },
+        {
+          "sourceLine": 24,
+          "text": "514마력 / 6.8km/ℓ 07 년형 출시  | 6.2L (V8)"
+        },
+        {
+          "sourceLine": 25,
+          "text": "525마력/64.3kg.m/6.5km/ℓ (2)  |"
+        },
+        {
+          "sourceLine": 26,
+          "text": " 특이사항  |    |   (1) E200 CGI 14년형에 엔진변경"
+        },
+        {
+          "sourceLine": 27,
+          "text": "    1.8L(L4) (184마력/10.7km/ℓ)"
+        },
+        {
+          "sourceLine": 28,
+          "text": " > 2.0L(L4) (184마력/12.0km/ℓ)   (2) E63 AMG 12년형에 엔진변경,"
+        },
+        {
+          "sourceLine": 29,
+          "text": "                   14년형에 엔진성능 개선"
+        },
+        {
+          "sourceLine": 30,
+          "text": " > 6.2L(V8) (525마력/6.5km/ℓ)"
+        },
+        {
+          "sourceLine": 31,
+          "text": " > 5.5 (V8) (525마력/8.0km/ℓ)"
+        },
+        {
+          "sourceLine": 32,
+          "text": " > 5.5 (V8) (557마력/7.6km/ℓ)       |"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-es-5-grades",
+      "type": "CLS",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=137146&method=view_modelHistoryframe&type=CLS",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=016&mnfccd=035",
+      "parentSourceURLVerified": true,
+      "linkId": 29,
+      "ref": "turn420986view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=137146&method=view_modelHistoryframe&type=CLS",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 4,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "등급  | 2006년  | 2007년  | 2008년  | 2009년  | 2010년  | 2011년  | 2012년"
+        },
+        {
+          "sourceLine": 1,
+          "text": "ES350  | 슈페리엄"
+        },
+        {
+          "sourceLine": 2,
+          "text": "프리미엄"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-es-5-grades",
+      "type": "ENG",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=137146&method=view_modelHistoryframe&type=ENG",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=016&mnfccd=035",
+      "parentSourceURLVerified": true,
+      "linkId": 28,
+      "ref": "turn165443view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=137146&method=view_modelHistoryframe&type=ENG",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 12,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "[image omitted]  | 01년 ~ 03년  | 04년 ~ 06년  | 06년 ~ 12년  | 12년 ~ 현재"
+        },
+        {
+          "sourceLine": 1,
+          "text": "ES300  | 가솔린  | 3.0L (V6)"
+        },
+        {
+          "sourceLine": 2,
+          "text": "210마력 / 8.6km/ℓ  |    |  |"
+        },
+        {
+          "sourceLine": 3,
+          "text": "ES330  |    | 3.3L (V6)"
+        },
+        {
+          "sourceLine": 4,
+          "text": "228마력 / 10.2km/ℓ   |    |"
+        },
+        {
+          "sourceLine": 5,
+          "text": "ES350  |    | 3.5L(V6)"
+        },
+        {
+          "sourceLine": 6,
+          "text": "277마력 / 9.8 km/ℓ  | 3.5L(V6)"
+        },
+        {
+          "sourceLine": 7,
+          "text": "277마력 / 10.2km/ℓ"
+        },
+        {
+          "sourceLine": 8,
+          "text": "ES300H  | 하이브리드  |    |    | 2.5L(Hyb4)"
+        },
+        {
+          "sourceLine": 9,
+          "text": "158마력 / 16.4km/ℓ"
+        },
+        {
+          "sourceLine": 10,
+          "text": "특이사항  |    |    |"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-es-6-grades",
+      "type": "CLS",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=137143&method=view_modelHistoryframe&type=CLS",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=036&mnfccd=035",
+      "parentSourceURLVerified": true,
+      "linkId": 23,
+      "ref": "turn419160view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=137143&method=view_modelHistoryframe&type=CLS",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 8,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "등급  | 2012년  | 2013년  | 2014년  | 현재"
+        },
+        {
+          "sourceLine": 1,
+          "text": "ES350  |    |    | 프리미엄"
+        },
+        {
+          "sourceLine": 2,
+          "text": "슈프림"
+        },
+        {
+          "sourceLine": 3,
+          "text": "이그제큐티브"
+        },
+        {
+          "sourceLine": 4,
+          "text": "ES300H  |    |    | 프리미엄 하이브리드"
+        },
+        {
+          "sourceLine": 5,
+          "text": "슈프림 하이브리드"
+        },
+        {
+          "sourceLine": 6,
+          "text": "이그제큐티브 하이브리드"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-es-6-grades",
+      "type": "ENG",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=137143&method=view_modelHistoryframe&type=ENG",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=036&mnfccd=035",
+      "parentSourceURLVerified": true,
+      "linkId": 22,
+      "ref": "turn455499view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=137143&method=view_modelHistoryframe&type=ENG",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 8,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "[image omitted]  | 06년 ~ 12년  | 12년 ~ 현재  |"
+        },
+        {
+          "sourceLine": 1,
+          "text": "ES350  | 가솔린  | 3.5L (V6)"
+        },
+        {
+          "sourceLine": 2,
+          "text": "277마력 / 9.8 km/ℓ  | 3.5L (V6)"
+        },
+        {
+          "sourceLine": 3,
+          "text": "277마력 / 10.2km/ℓ  |"
+        },
+        {
+          "sourceLine": 4,
+          "text": "ES300H  | 하이브리드  |    | 2.5L (Hyb4)"
+        },
+        {
+          "sourceLine": 5,
+          "text": "158마력 / 16.4km/ℓ  |"
+        },
+        {
+          "sourceLine": 6,
+          "text": "특이사항  |    |    |"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-g-4-grades",
+      "type": "CLS",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=134212&method=view_modelHistoryframe&type=CLS",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=015&mnfccd=058",
+      "parentSourceURLVerified": true,
+      "linkId": 36,
+      "ref": "turn206117view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=134212&method=view_modelHistoryframe&type=CLS",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 11,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "등급  | 2007년  | 2008년  | 2009년  | 2010년  | 2011년  | 2012년  | 2013년"
+        },
+        {
+          "sourceLine": 1,
+          "text": "G25  | 스마트  |    |    |    |    |    |    | 스마트"
+        },
+        {
+          "sourceLine": 2,
+          "text": "프리미엄  |    |    |    |    | 프리미엄"
+        },
+        {
+          "sourceLine": 3,
+          "text": "럭셔리  |    |    |    |    |    |  럭셔리"
+        },
+        {
+          "sourceLine": 4,
+          "text": "레이싱 에디션  |    |    |    |    |    | G25 R  |"
+        },
+        {
+          "sourceLine": 5,
+          "text": "G35  |  프리미엄  | 프리미엄  |    |    |    |    |"
+        },
+        {
+          "sourceLine": 6,
+          "text": "스포츠  | 스포츠  |    |    |    |    |"
+        },
+        {
+          "sourceLine": 7,
+          "text": "G37  | 프리미엄  |    |    | 프리미엄  |    |"
+        },
+        {
+          "sourceLine": 8,
+          "text": "스포츠  |    |    |  스포츠"
+        },
+        {
+          "sourceLine": 9,
+          "text": "레이싱 에디션  |    |    |    |    |    | G37 R  |"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-g-4-grades",
+      "type": "ENG",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=134212&method=view_modelHistoryframe&type=ENG",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=015&mnfccd=058",
+      "parentSourceURLVerified": true,
+      "linkId": 33,
+      "ref": "turn491898view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=134212&method=view_modelHistoryframe&type=ENG",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 20,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "[image omitted]  | 2002년 ~ 2006년  | 2006년 ~ 2009년  | 2010년 ~ 2013년  | 2014년 ~ 현재"
+        },
+        {
+          "sourceLine": 1,
+          "text": "2.5  |  가솔린  |    |    | 2.5 (V6)"
+        },
+        {
+          "sourceLine": 2,
+          "text": "221마력 /11.0km/ℓ"
+        },
+        {
+          "sourceLine": 3,
+          "text": "10년 출시"
+        },
+        {
+          "sourceLine": 4,
+          "text": "13년 신연비적용 9.7km/ℓ   |"
+        },
+        {
+          "sourceLine": 5,
+          "text": "3.5  |  3.5 (V6)"
+        },
+        {
+          "sourceLine": 6,
+          "text": "302마력 / --km/ℓ  | 3.5 (V6)"
+        },
+        {
+          "sourceLine": 7,
+          "text": "315마력 /8.8km/ℓ"
+        },
+        {
+          "sourceLine": 8,
+          "text": "07년형 출시, 08년 단종  |    |"
+        },
+        {
+          "sourceLine": 9,
+          "text": " 3.7  |    |  3.7 (V6)"
+        },
+        {
+          "sourceLine": 10,
+          "text": "330마력 /9.5km/ℓ"
+        },
+        {
+          "sourceLine": 11,
+          "text": "08년형 출시"
+        },
+        {
+          "sourceLine": 12,
+          "text": "13년 신연비적용 9.0km/ℓ  |"
+        },
+        {
+          "sourceLine": 13,
+          "text": " 3.5 하이브리드  |  가솔린+전기  |    |    | 3.5 (V6)"
+        },
+        {
+          "sourceLine": 14,
+          "text": "364마력 /12.6km/ℓ"
+        },
+        {
+          "sourceLine": 15,
+          "text": " 2.2  | 디젤   |    |    | 2.2 (I4)"
+        },
+        {
+          "sourceLine": 16,
+          "text": "170마력 /15.1km/ℓ"
+        },
+        {
+          "sourceLine": 17,
+          "text": "특이사항   |  G35 05년 국내출시  | G25 11년 국내출시"
+        },
+        {
+          "sourceLine": 18,
+          "text": "G37 08년(09년형) 국내출시  |  하이브리드 합산마력(가솔린 마력 + 모터 마력)"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-glk-x204-grades",
+      "type": "CLS",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=136384&method=view_modelHistoryframe&type=CLS",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=057&mnfccd=013",
+      "parentSourceURLVerified": true,
+      "linkId": 16,
+      "ref": "turn928424view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=136384&method=view_modelHistoryframe&type=CLS",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 5,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "등급  | 2009  | 2010  | 2011  | 2012  | 2013  | 2014  | 현재"
+        },
+        {
+          "sourceLine": 1,
+          "text": "GLK 220 CDI  | GLK 220 CDI BlueEFFICIENCY  |    |    |"
+        },
+        {
+          "sourceLine": 2,
+          "text": "GLK 220 CDI 프리미엄"
+        },
+        {
+          "sourceLine": 3,
+          "text": "   |    |    |    | GLK 220 CDI"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-glk-x204-grades",
+      "type": "ENG",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=136384&method=view_modelHistoryframe&type=ENG",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=057&mnfccd=013",
+      "parentSourceURLVerified": true,
+      "linkId": 15,
+      "ref": "turn982897view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=136384&method=view_modelHistoryframe&type=ENG",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 10,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "[image omitted]  |    | 09년 ~ 현재  |"
+        },
+        {
+          "sourceLine": 1,
+          "text": "GLK220 CDI 4Matic  | 디젤  |    | 2.1 (I4)"
+        },
+        {
+          "sourceLine": 2,
+          "text": "170마력 / 14.2km/ℓ"
+        },
+        {
+          "sourceLine": 3,
+          "text": "(1)  | 2.1 (I4)"
+        },
+        {
+          "sourceLine": 4,
+          "text": "170마력 / 13.1km/ℓ"
+        },
+        {
+          "sourceLine": 5,
+          "text": "(2)  |"
+        },
+        {
+          "sourceLine": 6,
+          "text": "특이사항  |    | (1) GLK220 CDI 4Matic"
+        },
+        {
+          "sourceLine": 7,
+          "text": " > 12년형에 연비변경 (14.2km/ℓ→14.1km/ℓ)(2) GLK220 CDI 4Matic"
+        },
+        {
+          "sourceLine": 8,
+          "text": " > 13년형에 연비변경 (14.1km/ℓ→13.1km/ℓ)  |"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-golf-mk6-grades",
+      "type": "CLS",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=133063&method=view_modelHistoryframe&type=CLS",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=023&mnfccd=014",
+      "parentSourceURLVerified": true,
+      "linkId": 26,
+      "ref": "turn997311view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=133063&method=view_modelHistoryframe&type=CLS",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 10,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "등급  | 2010년  |  2011년  |  2012년  |  2013년"
+        },
+        {
+          "sourceLine": 1,
+          "text": "1.4 TSI  |    |  1.4 TSI"
+        },
+        {
+          "sourceLine": 2,
+          "text": "1.6 TDI 블루모션 디젤   |    | 1.6 TDI 블루모션 디젤  |"
+        },
+        {
+          "sourceLine": 3,
+          "text": " 1.6 TDI 블루모션 스타일 에디션  |    |    |    | 1.6 TDI 블루모션 스타일 에디션"
+        },
+        {
+          "sourceLine": 4,
+          "text": "2.0 TDI 디젤  | 2.0 TDI 디젤  |"
+        },
+        {
+          "sourceLine": 5,
+          "text": "2.0 TDI 스타일 에디션  |    |    |    |  2.0 TDI 스타일 에디션"
+        },
+        {
+          "sourceLine": 6,
+          "text": " 2.0 GTD 디젤  |  2.0 GTD 디젤"
+        },
+        {
+          "sourceLine": 7,
+          "text": "2.0 GTI  |  2.0 GTI"
+        },
+        {
+          "sourceLine": 8,
+          "text": " 2.0 TDI 블루모션 카브리올레 디젤  |    |    |    |  2.0 TDI 블루모션 카브리올레 디젤"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-golf-mk6-grades",
+      "type": "ENG",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=133063&method=view_modelHistoryframe&type=ENG",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=023&mnfccd=014",
+      "parentSourceURLVerified": true,
+      "linkId": 22,
+      "ref": "turn717492view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=133063&method=view_modelHistoryframe&type=ENG",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 12,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "[image omitted]  | 0 3년 ~ 09년  | 10년 ~ 13년   | 13년 ~ 현재"
+        },
+        {
+          "sourceLine": 1,
+          "text": "1.6 TDI 블루모션  | 디젤  |    | 1.6 (L4) 105마력 / 21.9km/ℓ 11년 출시 18.9km/ℓ 신연비  | 1.6 (L4) 105마력 / 18.9 km/ℓ"
+        },
+        {
+          "sourceLine": 2,
+          "text": "2.0 TDI   | 2.0 (L4) 140마력 / 15.7km/ℓ  | 2.0 (L4) 140마력 / 17.9km/ℓ 16.2km/ℓ 신연비  | 2.0 (L4) 150마력 / 16.7 km/ℓ"
+        },
+        {
+          "sourceLine": 3,
+          "text": "2.0 TDI 블루모션   |    | 2.0 (L4) 140마력 / 16.7km/ℓ 12년 출시"
+        },
+        {
+          "sourceLine": 4,
+          "text": "2.0 GT 스포트 TDI   | 2.0 (L4) 170마력 / 14.6km/ℓ 08년 ~ 09년 출시   |    |"
+        },
+        {
+          "sourceLine": 5,
+          "text": "2.0 GTD  | 2.5 (L6) 177마력 / 8.5 km/ℓ 05년 출시  | 2.0 (L4) 170마력 / 17.8 km/ℓ 15.3km/ℓ 신연비  |"
+        },
+        {
+          "sourceLine": 6,
+          "text": "1.4 TSI  | 가솔린  | 2.5 (L6) 192마력 / 9.5 km/ℓ 05년 출시  | 1.4 (L4) 160마력 / 14.6 km/ℓ 12.5km/ℓ 신연비 11년 출시  |"
+        },
+        {
+          "sourceLine": 7,
+          "text": " 2.0 FSI  |  2.0 (L4) 150마력 / 11.9 km/ℓ  |    |"
+        },
+        {
+          "sourceLine": 8,
+          "text": " 2.0 GTI  | 2.0 (L4) 200마력 / 12.0 km/ℓ   | 2.0 (L4) 211마력 / 12.6 km/ℓ 11.5 km/ℓ 신연비   |"
+        },
+        {
+          "sourceLine": 9,
+          "text": " R32  | 3.2 (V6) 250마력 / 9.0 km/ℓ 09년 단종   |    |"
+        },
+        {
+          "sourceLine": 10,
+          "text": "특이사항  |    |    |"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-golf-mk7-grades",
+      "type": "CLS",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=134200&method=view_modelHistoryframe&type=CLS",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=031&mnfccd=014",
+      "parentSourceURLVerified": true,
+      "linkId": 19,
+      "ref": "turn678119view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=134200&method=view_modelHistoryframe&type=CLS",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 10,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "등급  | 2013년  | 2014년  | 2015년  | 현재"
+        },
+        {
+          "sourceLine": 1,
+          "text": "1.6 TDI  | 1.6 TDI"
+        },
+        {
+          "sourceLine": 2,
+          "text": "2.0 TDI  |  2.0 TDI"
+        },
+        {
+          "sourceLine": 3,
+          "text": " 2.0 TDI 프리미엄"
+        },
+        {
+          "sourceLine": 4,
+          "text": "   | 2.0 TDI 40th Anniversary 에디션"
+        },
+        {
+          "sourceLine": 5,
+          "text": " 2.0 GTI  |    | 2.0 GTI"
+        },
+        {
+          "sourceLine": 6,
+          "text": " 2.0 GTD  |    |  2.0 GTD"
+        },
+        {
+          "sourceLine": 7,
+          "text": "1.4 TSI  |    |  1.4 TSI"
+        },
+        {
+          "sourceLine": 8,
+          "text": "   |  1.4 TSI 프리미엄"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-golf-mk7-grades",
+      "type": "ENG",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=134200&method=view_modelHistoryframe&type=ENG",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=031&mnfccd=014",
+      "parentSourceURLVerified": true,
+      "linkId": 16,
+      "ref": "turn127692view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=134200&method=view_modelHistoryframe&type=ENG",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 30,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "[image omitted]  | 10년 ~ 13년  | 13년 ~ 현재  |"
+        },
+        {
+          "sourceLine": 1,
+          "text": "1.6 TDI 블루모션  | 디젤  |  1.6 (l4)"
+        },
+        {
+          "sourceLine": 2,
+          "text": "105마력 / 21.9km/ℓ"
+        },
+        {
+          "sourceLine": 3,
+          "text": "18.9km/ℓ 신연비"
+        },
+        {
+          "sourceLine": 4,
+          "text": "11년 출시  |  1.6 (l4)"
+        },
+        {
+          "sourceLine": 5,
+          "text": "105마력 / 18.9km/ℓ / 25.5kg.m  |"
+        },
+        {
+          "sourceLine": 6,
+          "text": "2.0 TDI  |  2.0 (l4)"
+        },
+        {
+          "sourceLine": 7,
+          "text": "140마력 / 17.9km/ℓ"
+        },
+        {
+          "sourceLine": 8,
+          "text": "16.2km/ℓ 신연비  |  2.0 (l4)"
+        },
+        {
+          "sourceLine": 9,
+          "text": "150마력 / 16.7km/ℓ / 32.6kg.m  |"
+        },
+        {
+          "sourceLine": 10,
+          "text": " 2.0 TDI 블루모션  |  2.0 (l4)"
+        },
+        {
+          "sourceLine": 11,
+          "text": "140마력 / 16.7km/ℓ"
+        },
+        {
+          "sourceLine": 12,
+          "text": "12년 출시  |"
+        },
+        {
+          "sourceLine": 13,
+          "text": " 2.0 GTD  |  2.0 (l4)"
+        },
+        {
+          "sourceLine": 14,
+          "text": "170마력 / 17.8km/ℓ"
+        },
+        {
+          "sourceLine": 15,
+          "text": "15.3km/ℓ 신연비  |  2.0(L4)"
+        },
+        {
+          "sourceLine": 16,
+          "text": "184마력 / 16.1km/ℓ / 38.7kg.m"
+        },
+        {
+          "sourceLine": 17,
+          "text": "14년 출시  |"
+        },
+        {
+          "sourceLine": 18,
+          "text": " 1.4 TSI  | 가솔린  |  1.4 (l4)"
+        },
+        {
+          "sourceLine": 19,
+          "text": "160마력 / 14.6km/ℓ"
+        },
+        {
+          "sourceLine": 20,
+          "text": "12.5km/ℓ 신연비"
+        },
+        {
+          "sourceLine": 21,
+          "text": "11년 출시  |  1.4 (L4)"
+        },
+        {
+          "sourceLine": 22,
+          "text": "140마력 / 13.5km/ℓ / 25.5kg.m 14년 출시  |"
+        },
+        {
+          "sourceLine": 23,
+          "text": " 2.0 GTI  |  2.0 (l4)"
+        },
+        {
+          "sourceLine": 24,
+          "text": "211마력 / 12.6km/ℓ"
+        },
+        {
+          "sourceLine": 25,
+          "text": "11.5km/ℓ 신연비  |  2.0(L4)"
+        },
+        {
+          "sourceLine": 26,
+          "text": "211마력 / 11.5km/ℓ / 35.7kg.m"
+        },
+        {
+          "sourceLine": 27,
+          "text": "14년 출시  |"
+        },
+        {
+          "sourceLine": 28,
+          "text": "특이사항  |    |    |"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-gs-l10-grades",
+      "type": "CLS",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=137158&method=view_modelHistoryframe&type=CLS",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=031&mnfccd=035",
+      "parentSourceURLVerified": true,
+      "linkId": 23,
+      "ref": "turn973806view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=137158&method=view_modelHistoryframe&type=CLS",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 7,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "등급  | 2012년  | 2013년  | 2014년  | 현재"
+        },
+        {
+          "sourceLine": 1,
+          "text": "GS250  | 슈프림"
+        },
+        {
+          "sourceLine": 2,
+          "text": "GS350  | 슈프림"
+        },
+        {
+          "sourceLine": 3,
+          "text": "이그제큐티브"
+        },
+        {
+          "sourceLine": 4,
+          "text": "F-Sport"
+        },
+        {
+          "sourceLine": 5,
+          "text": "GS450h  |    | Hybrid"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-gs-l10-grades",
+      "type": "ENG",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=137158&method=view_modelHistoryframe&type=ENG",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=031&mnfccd=035",
+      "parentSourceURLVerified": true,
+      "linkId": 22,
+      "ref": "turn967064view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=137158&method=view_modelHistoryframe&type=ENG",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 27,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "[image omitted]  | 05년 ~ 06년  | 07년 ~ 11년  | 12년 ~ 현재  |"
+        },
+        {
+          "sourceLine": 1,
+          "text": "GS250  | 가솔린  |    | 2.5 (V6)"
+        },
+        {
+          "sourceLine": 2,
+          "text": "208마력 / 9.9km/ℓ  |"
+        },
+        {
+          "sourceLine": 3,
+          "text": "GS300  | 3.0 (V6)"
+        },
+        {
+          "sourceLine": 4,
+          "text": "245마력 / 10.6km/ℓ  |    |    |"
+        },
+        {
+          "sourceLine": 5,
+          "text": "GS350  |    | 3.5 (V6)"
+        },
+        {
+          "sourceLine": 6,
+          "text": "307마력 / 10.3km/ℓ"
+        },
+        {
+          "sourceLine": 7,
+          "text": "06년 출시"
+        },
+        {
+          "sourceLine": 8,
+          "text": "07년형 국내 출시  | 3.5 (V6)"
+        },
+        {
+          "sourceLine": 9,
+          "text": "310마력 / 9.5km/ℓ  |"
+        },
+        {
+          "sourceLine": 10,
+          "text": "GS430  | 4.3 (V8)"
+        },
+        {
+          "sourceLine": 11,
+          "text": "283마력 / 8.9km/ℓ"
+        },
+        {
+          "sourceLine": 12,
+          "text": "07년 단종  |    |    |"
+        },
+        {
+          "sourceLine": 13,
+          "text": "GS460  |    | 4.6 (V8)"
+        },
+        {
+          "sourceLine": 14,
+          "text": "347마력 / 8.7km/ℓ"
+        },
+        {
+          "sourceLine": 15,
+          "text": "08년형 출시  |    |"
+        },
+        {
+          "sourceLine": 16,
+          "text": "GS450h  | 가솔린 + 전기  |    | 3.5 (V6)"
+        },
+        {
+          "sourceLine": 17,
+          "text": "344마력 / 12.7km/ℓ"
+        },
+        {
+          "sourceLine": 18,
+          "text": "06년출시"
+        },
+        {
+          "sourceLine": 19,
+          "text": "08년형 국내 출시  | 3.5 (V6)"
+        },
+        {
+          "sourceLine": 20,
+          "text": "345마력 / 12.7km/ℓ"
+        },
+        {
+          "sourceLine": 21,
+          "text": "13년형 국내 출시  |"
+        },
+        {
+          "sourceLine": 22,
+          "text": "특이사항  | 하이브리드 엔진출력 + 모터출력  | 하이브리드 엔진출력 + 모터출력   GS350"
+        },
+        {
+          "sourceLine": 23,
+          "text": "- 14년형에 변속기 변경에 따른 연비변경"
+        },
+        {
+          "sourceLine": 24,
+          "text": "6단 자동변속기 -> 8단 자동변속기"
+        },
+        {
+          "sourceLine": 25,
+          "text": "(9.5km/ℓ -> 9.6km/ℓ)  |"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-passat-7-grades",
+      "type": "CLS",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=133203&method=view_modelHistoryframe&type=CLS",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=029&mnfccd=014",
+      "parentSourceURLVerified": true,
+      "linkId": 21,
+      "ref": "turn739913view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=133203&method=view_modelHistoryframe&type=CLS",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 4,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "등급  | 2012년  |  2013년  | 2014 년  | 현재"
+        },
+        {
+          "sourceLine": 1,
+          "text": "2.0 TDI  | 2.0 TDI"
+        },
+        {
+          "sourceLine": 2,
+          "text": " 2.5 TSI  |    | 2.5 TSI   |    |"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-passat-7-grades",
+      "type": "ENG",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=133203&method=view_modelHistoryframe&type=ENG",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=029&mnfccd=014",
+      "parentSourceURLVerified": true,
+      "linkId": 17,
+      "ref": "turn936041view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=133203&method=view_modelHistoryframe&type=ENG",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 11,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "[image omitted]  |  06년 ~ 08년  | 09년 ~ 10년   | 11년 ~ 현재  |"
+        },
+        {
+          "sourceLine": 1,
+          "text": "2.0 TDI  | 디젤  | 2.0 (l4)140마력 / 13.7km/ℓ  | 2.0 (l4)140마력 / 15.1 km/ℓ  | 2.0 (l4)140마력 / 14.6km/ℓ  |"
+        },
+        {
+          "sourceLine": 2,
+          "text": "2,0 (l4)170마력 / --km/ℓ  | 2.0 (l4)170마력 / 13.9 km/ℓ   |    |"
+        },
+        {
+          "sourceLine": 3,
+          "text": "2.0 FSI   | 가솔린  |  2.0 (l4)150마력 / --km/ℓ  |    |"
+        },
+        {
+          "sourceLine": 4,
+          "text": "2.0 TFSI   | 2.0 (l4)200마력 / --km/ℓ 07년 단종   |    |    |"
+        },
+        {
+          "sourceLine": 5,
+          "text": "2.0 TSI  |  2.0 (l4)170마력 / 10.5 km/ℓ 08년 출시  |    |"
+        },
+        {
+          "sourceLine": 6,
+          "text": "   | 2.0 (l4)200마력 / 10.2 km/ℓ   |    |"
+        },
+        {
+          "sourceLine": 7,
+          "text": "2.5 TSI  |    | 2.5 (l5)170마력 / 10.3 km/ℓ 14년 단종   |"
+        },
+        {
+          "sourceLine": 8,
+          "text": "3.6 FSI 4MOTION  |  3.6 (V6)280마력 / 7.9 km/ℓ  |    |"
+        },
+        {
+          "sourceLine": 9,
+          "text": "특이사항  | 09년형 2.0TDI 엔진 PD(펌프-듀스)방식에서 CR(커먼레일)으로 변경 15.1km/ℓ연비상승  |    |"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-q5-8r-grades",
+      "type": "CLS",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=138324&method=view_modelHistoryframe&type=CLS",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=025&mnfccd=011",
+      "parentSourceURLVerified": true,
+      "linkId": 16,
+      "ref": "turn941303view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=138324&method=view_modelHistoryframe&type=CLS",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 12,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "등급  | 2009년  | 2010년  | 2011년  | 2012년  | 2013년  | 2014년  | 현재"
+        },
+        {
+          "sourceLine": 1,
+          "text": "2.0 TDI 콰트로  | 2.0 TDI 콰트로 엔트리  |"
+        },
+        {
+          "sourceLine": 2,
+          "text": "2.0 TDI 콰트로 다이나믹  |"
+        },
+        {
+          "sourceLine": 3,
+          "text": "3.0 TDI 콰트로  |    | 3.0 TDI 콰트로  |"
+        },
+        {
+          "sourceLine": 4,
+          "text": "   |    |    |    | 3.0 TDI 콰트로  |"
+        },
+        {
+          "sourceLine": 5,
+          "text": "   |    |    |    | 3.0 TDI 콰트로 (SQ5)"
+        },
+        {
+          "sourceLine": 6,
+          "text": "35 TDI 콰트로  |    |    |    |    | 35 TDI 콰트로"
+        },
+        {
+          "sourceLine": 7,
+          "text": "   |    |    |    | 35 TDI 콰트로 다이나믹"
+        },
+        {
+          "sourceLine": 8,
+          "text": "45 TDI 콰트로  |    |    |    |    | 45 TDI 콰트로"
+        },
+        {
+          "sourceLine": 9,
+          "text": "   |    |    |    | 45 TDI 콰트로 다이나믹"
+        },
+        {
+          "sourceLine": 10,
+          "text": "   |    |    |    | 45 TDI 오프로드"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-q5-8r-grades",
+      "type": "ENG",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=138324&method=view_modelHistoryframe&type=ENG",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=025&mnfccd=011",
+      "parentSourceURLVerified": true,
+      "linkId": 15,
+      "ref": "turn743568view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=138324&method=view_modelHistoryframe&type=ENG",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 19,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "[image omitted]  |    | 09년 ~ 12년  | 13년 ~ 현재  |"
+        },
+        {
+          "sourceLine": 1,
+          "text": "2.0 TDI 콰트로  | 디젤  |    | 2.0 (L4)"
+        },
+        {
+          "sourceLine": 2,
+          "text": "170마력 / 14.0km/ℓ  | 2.0 (L4)"
+        },
+        {
+          "sourceLine": 3,
+          "text": "177마력 / 12.8km/ℓ"
+        },
+        {
+          "sourceLine": 4,
+          "text": "35 TDI로 명칭 변경  |"
+        },
+        {
+          "sourceLine": 5,
+          "text": "35 TDI 콰트로  |    |    | 2.0 (L4)"
+        },
+        {
+          "sourceLine": 6,
+          "text": "177마력 / 12.8km/ℓ"
+        },
+        {
+          "sourceLine": 7,
+          "text": "2.0 TDI 명칭 변경"
+        },
+        {
+          "sourceLine": 8,
+          "text": "14년 출시  |"
+        },
+        {
+          "sourceLine": 9,
+          "text": "3.0 TDI 콰트로  |    | 3.0 (V6)"
+        },
+        {
+          "sourceLine": 10,
+          "text": "240마력 / 12.8km/ℓ  | 3.0 (V6)"
+        },
+        {
+          "sourceLine": 11,
+          "text": "245마력 / 11.9km/ℓ"
+        },
+        {
+          "sourceLine": 12,
+          "text": "45 TDI로 명칭 변경  |"
+        },
+        {
+          "sourceLine": 13,
+          "text": "45 TDI 콰트로  |    |    | 3.0 (V6)"
+        },
+        {
+          "sourceLine": 14,
+          "text": "245마력 / 11.9km/ℓ"
+        },
+        {
+          "sourceLine": 15,
+          "text": "3.0 TDI 명칭 변경"
+        },
+        {
+          "sourceLine": 16,
+          "text": "14년 출시  |"
+        },
+        {
+          "sourceLine": 17,
+          "text": "특이사항  |    |    |"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-q50-2014-grades",
+      "type": "CLS",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=138523&method=view_modelHistoryframe&type=CLS",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=030&mnfccd=058",
+      "parentSourceURLVerified": true,
+      "linkId": 23,
+      "ref": "turn723854view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=138523&method=view_modelHistoryframe&type=CLS",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 5,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "등급  | 2014년  | 현재"
+        },
+        {
+          "sourceLine": 1,
+          "text": "2.2d  | 프리미엄"
+        },
+        {
+          "sourceLine": 2,
+          "text": "익스클루시브"
+        },
+        {
+          "sourceLine": 3,
+          "text": "Q50S 하이브리드  | 하이브리드"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-q50-2014-grades",
+      "type": "ENG",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=138523&method=view_modelHistoryframe&type=ENG",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=030&mnfccd=058",
+      "parentSourceURLVerified": true,
+      "linkId": 22,
+      "ref": "turn755546view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=138523&method=view_modelHistoryframe&type=ENG",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 19,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "[image omitted]  | 06년 ~ 09년  | 10년 ~ 13년  | 14년 ~ 현재  |"
+        },
+        {
+          "sourceLine": 1,
+          "text": "2.5  | 가솔린  |    | 2.5 (V6)"
+        },
+        {
+          "sourceLine": 2,
+          "text": "221마력 / 11.0km/ℓ"
+        },
+        {
+          "sourceLine": 3,
+          "text": "10년 출시"
+        },
+        {
+          "sourceLine": 4,
+          "text": "13년 신연비 적용 9.7km/ℓ  |    |"
+        },
+        {
+          "sourceLine": 5,
+          "text": "3.5  | 3.5 (V6)"
+        },
+        {
+          "sourceLine": 6,
+          "text": "315마력 / 8.8km/ℓ"
+        },
+        {
+          "sourceLine": 7,
+          "text": "07년형 출시 08년 단종  |    |    |"
+        },
+        {
+          "sourceLine": 8,
+          "text": "3.7  | 3.7 (V6)"
+        },
+        {
+          "sourceLine": 9,
+          "text": "330마력 / 9.5km/ℓ"
+        },
+        {
+          "sourceLine": 10,
+          "text": "08년형 출시"
+        },
+        {
+          "sourceLine": 11,
+          "text": "13년 신연비 적용 9.0km/ℓ  |    |"
+        },
+        {
+          "sourceLine": 12,
+          "text": "3.5 하이브리드  | 가솔린+전기  |    | 3.5 (V6)"
+        },
+        {
+          "sourceLine": 13,
+          "text": "364마력 / 12.6km/ℓ  |"
+        },
+        {
+          "sourceLine": 14,
+          "text": "2.2  | 디젤  |    | 2.2 (I4)"
+        },
+        {
+          "sourceLine": 15,
+          "text": "170마력 / 15.1km/ℓ  |"
+        },
+        {
+          "sourceLine": 16,
+          "text": "특이사항  | G25 11년 국내출시"
+        },
+        {
+          "sourceLine": 17,
+          "text": "G37 08년(09년형) 국내출시  | 하이브리드 합산마력(가솔린 마력 + 모터 마력)  |"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-qashqai-2-grades",
+      "type": "CLS",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=140842&method=view_modelHistoryframe&type=CLS",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=043&mnfccd=033",
+      "parentSourceURLVerified": true,
+      "linkId": 22,
+      "ref": "turn961102view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=140842&method=view_modelHistoryframe&type=CLS",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 5,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "등급  | 2014년  | 현재"
+        },
+        {
+          "sourceLine": 1,
+          "text": "1.6  | 1.6 S"
+        },
+        {
+          "sourceLine": 2,
+          "text": "1.6 SL"
+        },
+        {
+          "sourceLine": 3,
+          "text": "1.6 플래티넘"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-qashqai-2-grades",
+      "type": "ENG",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=140842&method=view_modelHistoryframe&type=ENG",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=043&mnfccd=033",
+      "parentSourceURLVerified": true,
+      "linkId": 21,
+      "ref": "turn533052view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=140842&method=view_modelHistoryframe&type=ENG",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 5,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "[image omitted]  | 국내 미출시  | 14년 ~ 현재  |"
+        },
+        {
+          "sourceLine": 1,
+          "text": "1.6  | 디젤  |    | 1.6 (L4)"
+        },
+        {
+          "sourceLine": 2,
+          "text": "131마력 / 15.3km/ℓ  |"
+        },
+        {
+          "sourceLine": 3,
+          "text": "특이사항  |    | 국내 14년에 출시  |"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-rx-al10-grades",
+      "type": "CLS",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=137238&method=view_modelHistoryframe&type=CLS",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=015&mnfccd=035",
+      "parentSourceURLVerified": true,
+      "linkId": 23,
+      "ref": "turn730534view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=137238&method=view_modelHistoryframe&type=CLS",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 12,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "등급  | 2009년  | 2010년  | 2011년  | 2012년  | 2013년  | 2014년  | 현재"
+        },
+        {
+          "sourceLine": 1,
+          "text": "RX350  | 럭셔리  |    |    |"
+        },
+        {
+          "sourceLine": 2,
+          "text": "프리미엄  |    |    |"
+        },
+        {
+          "sourceLine": 3,
+          "text": "RX450h  | RX450h  |    |    |"
+        },
+        {
+          "sourceLine": 4,
+          "text": "크리스탈  |    |    |"
+        },
+        {
+          "sourceLine": 5,
+          "text": "RX350  |    |    |    |    | 슈프림"
+        },
+        {
+          "sourceLine": 6,
+          "text": "   |    |    |    | 이그제큐티브"
+        },
+        {
+          "sourceLine": 7,
+          "text": "   |    |    |    |    | F-Sport"
+        },
+        {
+          "sourceLine": 8,
+          "text": "RX450h  |    |    |    |    | 슈프림"
+        },
+        {
+          "sourceLine": 9,
+          "text": "   |    |    |    | 이그제큐티브"
+        },
+        {
+          "sourceLine": 10,
+          "text": "   |    |    |    |    | F-Sport"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-rx-al10-grades",
+      "type": "ENG",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=137238&method=view_modelHistoryframe&type=ENG",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=015&mnfccd=035",
+      "parentSourceURLVerified": true,
+      "linkId": 22,
+      "ref": "turn388077view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=137238&method=view_modelHistoryframe&type=ENG",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 16,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "[image omitted]  | 03년 ~ 06년  | 06년 ~ 09년  | 09년 ~ 현재  |"
+        },
+        {
+          "sourceLine": 1,
+          "text": "3.3  | 가솔린  | 3.3 (V6)"
+        },
+        {
+          "sourceLine": 2,
+          "text": "233마력 / 7.4km/ℓ  |    |    |"
+        },
+        {
+          "sourceLine": 3,
+          "text": "3.5  |    | 3.5 (V6)"
+        },
+        {
+          "sourceLine": 4,
+          "text": "276마력 / 8.9km/ℓ  | 3.5 (V6)"
+        },
+        {
+          "sourceLine": 5,
+          "text": "277마력 / 9.1km/ℓ"
+        },
+        {
+          "sourceLine": 6,
+          "text": "※13년 신연비 8.3km/ℓ  |"
+        },
+        {
+          "sourceLine": 7,
+          "text": "4.0 하이브리드  | 가솔린+전기  |    | 3.3 (V6)"
+        },
+        {
+          "sourceLine": 8,
+          "text": "272마력 / 12.9km/ℓ"
+        },
+        {
+          "sourceLine": 9,
+          "text": "07년식 출시  |    |"
+        },
+        {
+          "sourceLine": 10,
+          "text": "4.5 하이브리드  |    | 3.5 (V6)"
+        },
+        {
+          "sourceLine": 11,
+          "text": "299마력 / 16.4km/ℓ"
+        },
+        {
+          "sourceLine": 12,
+          "text": "※13년 신연비 12.1km/ℓ  |"
+        },
+        {
+          "sourceLine": 13,
+          "text": "특이사항  | ※ 하이브리드: 합산마력(엔진+모터)  | 2010년 형으로 출시"
+        },
+        {
+          "sourceLine": 14,
+          "text": "※ 하이브리드: 합산마력(엔진+모터)  |"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-s-w221-grades",
+      "type": "CLS",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=136743&method=view_modelHistoryframe&type=CLS",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=002&mnfccd=013",
+      "parentSourceURLVerified": true,
+      "linkId": 33,
+      "ref": "turn273217view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=136743&method=view_modelHistoryframe&type=CLS",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 14,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "등급  | 2006년  | 2007년  | 2008년  | 2009년  | 2010년  | 2011년  | 2012년"
+        },
+        {
+          "sourceLine": 1,
+          "text": "S320 CDI  |    |    | CDI  |    |    |"
+        },
+        {
+          "sourceLine": 2,
+          "text": "S350 CDI  |    |    |    |    | CDI  |    |"
+        },
+        {
+          "sourceLine": 3,
+          "text": "   |    |    |    |    | CDI 블루텍"
+        },
+        {
+          "sourceLine": 4,
+          "text": "   |    |    |    |    |    | CDI 익스큐티브"
+        },
+        {
+          "sourceLine": 5,
+          "text": "S350L  | S350L  |"
+        },
+        {
+          "sourceLine": 6,
+          "text": "   |    |    |    |    |    | 블루이피션시"
+        },
+        {
+          "sourceLine": 7,
+          "text": "   |    |    |    |    |    | Ent 패키지"
+        },
+        {
+          "sourceLine": 8,
+          "text": "S400L 하이브리드  |    |    |    |    | 하이브리드"
+        },
+        {
+          "sourceLine": 9,
+          "text": "S500L (4MATIC)  | S500L (4MATIC)"
+        },
+        {
+          "sourceLine": 10,
+          "text": "   |    |    |    |    |    | 블루이피션시"
+        },
+        {
+          "sourceLine": 11,
+          "text": "S600L  | S600L"
+        },
+        {
+          "sourceLine": 12,
+          "text": "S63L AMG  |    |    |    |    | S63L AMG"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-s-w221-grades",
+      "type": "ENG",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=136743&method=view_modelHistoryframe&type=ENG",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=002&mnfccd=013",
+      "parentSourceURLVerified": true,
+      "linkId": 32,
+      "ref": "turn808368view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=136743&method=view_modelHistoryframe&type=ENG",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 49,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "[image omitted]  | 98년 ~ 02년  | 03년 ~ 05년  | 06년 ~ 09년  | 10년 ~ 13년  | 14년 ~ 현재"
+        },
+        {
+          "sourceLine": 1,
+          "text": "S320  | 가솔린  | 3.2L (V6)"
+        },
+        {
+          "sourceLine": 2,
+          "text": " 224마력 / 7.0km/ℓ  |    |    |"
+        },
+        {
+          "sourceLine": 3,
+          "text": "디젤  |    | 3.2CDI"
+        },
+        {
+          "sourceLine": 4,
+          "text": "235마력 / 10km/ℓ"
+        },
+        {
+          "sourceLine": 5,
+          "text": "08년~09년  |    |"
+        },
+        {
+          "sourceLine": 6,
+          "text": "S350  | 가솔린  |    | 3.7L"
+        },
+        {
+          "sourceLine": 7,
+          "text": "245마력 / 8.4km/ℓ  | 3.5L V6"
+        },
+        {
+          "sourceLine": 8,
+          "text": "272마력 / 8.3km/ℓ  | 3.5 V6 블루이피션시 L"
+        },
+        {
+          "sourceLine": 9,
+          "text": "306마력 / 9.1km/ℓ  |"
+        },
+        {
+          "sourceLine": 10,
+          "text": "디젤  |    |    | 3.0 V6 블루텍"
+        },
+        {
+          "sourceLine": 11,
+          "text": "258마력 / 12.6km/ℓ  | 3.0(V6) 블루텍"
+        },
+        {
+          "sourceLine": 12,
+          "text": "258마력 / 12.9km/ℓ / 63.2kg.m"
+        },
+        {
+          "sourceLine": 13,
+          "text": "   |    | 3.0(V6) 블루텍 L"
+        },
+        {
+          "sourceLine": 14,
+          "text": "258마력 / 13.0km/ℓ / 63.2kg.m"
+        },
+        {
+          "sourceLine": 15,
+          "text": "S400L  | 하이브리드  |    |    | 4.0 V6 하이브리드 L"
+        },
+        {
+          "sourceLine": 16,
+          "text": "279마력 / 9.2km/ℓ  |"
+        },
+        {
+          "sourceLine": 17,
+          "text": "S430  | 가솔린  |  4.3L (V8)"
+        },
+        {
+          "sourceLine": 18,
+          "text": "279마력 / 8.0km/ℓ  |    |"
+        },
+        {
+          "sourceLine": 19,
+          "text": "S500(S550)  | 가솔린  | 5.0L (V8)"
+        },
+        {
+          "sourceLine": 20,
+          "text": "306마력 / 7.7km/ℓ  | 5.5 L (V8)"
+        },
+        {
+          "sourceLine": 21,
+          "text": "388마력 / 6.9km/ℓ  | 4.7 V8 블루이피션시 L"
+        },
+        {
+          "sourceLine": 22,
+          "text": "435마력 / 8.0km/ℓ  | 4.7 L (V8)"
+        },
+        {
+          "sourceLine": 23,
+          "text": "455마력 /8.5km/ℓ / 71.4kg.m"
+        },
+        {
+          "sourceLine": 24,
+          "text": "5.5L V8 4MATIC"
+        },
+        {
+          "sourceLine": 25,
+          "text": "388마력 / 6.5km/ℓ  | 4.7 V8 4MATIC 블루이피션시 L"
+        },
+        {
+          "sourceLine": 26,
+          "text": "435마력 / 7.8km/ℓ  | 4.7 L (V8) 4MATIC"
+        },
+        {
+          "sourceLine": 27,
+          "text": "455마력 /8.0km/ℓ / 71.4kg.m"
+        },
+        {
+          "sourceLine": 28,
+          "text": "S600L  | 가솔린  | 5.8L (V12)"
+        },
+        {
+          "sourceLine": 29,
+          "text": " 367마력 / 7.4km/ℓ  | 5.5L (V12)"
+        },
+        {
+          "sourceLine": 30,
+          "text": " 500마력 / 6.7km/ℓ  | 5.5L (V12)"
+        },
+        {
+          "sourceLine": 31,
+          "text": "517마력 / 6.0km/ℓ  |"
+        },
+        {
+          "sourceLine": 32,
+          "text": "S55 AMG  | 가솔린  | 5.4L (V8)"
+        },
+        {
+          "sourceLine": 33,
+          "text": "360마력 / 7.7km/ℓ  | 5.4L (V8)"
+        },
+        {
+          "sourceLine": 34,
+          "text": "500마력 / 7.6km/ℓ  |    |"
+        },
+        {
+          "sourceLine": 35,
+          "text": "S63 AMG  | 6.2L (V12)"
+        },
+        {
+          "sourceLine": 36,
+          "text": "444마력 / 6.9km/ℓ"
+        },
+        {
+          "sourceLine": 37,
+          "text": "2001년~2002년 독일  | 6.2L (V8)"
+        },
+        {
+          "sourceLine": 38,
+          "text": "525마력 / 5.7km/ℓ  | 5.5L (V8)"
+        },
+        {
+          "sourceLine": 39,
+          "text": "544마력 / 7.6km/ℓ"
+        },
+        {
+          "sourceLine": 40,
+          "text": "10년 출시  | 5.5 L (V8) 4MATIC"
+        },
+        {
+          "sourceLine": 41,
+          "text": "585마력 / 7.3km/ℓ / 91.8kg.m"
+        },
+        {
+          "sourceLine": 42,
+          "text": "S65 AMG  | 6.0L (V12)"
+        },
+        {
+          "sourceLine": 43,
+          "text": "612마력 / 6.6km/ℓ"
+        },
+        {
+          "sourceLine": 44,
+          "text": "2004년~2005년 독일  | 6.0L (V12)"
+        },
+        {
+          "sourceLine": 45,
+          "text": "612마력 / 6.8km/ℓ  | 6.0L (V12)"
+        },
+        {
+          "sourceLine": 46,
+          "text": "630마력 / 7.0km/ℓ  |"
+        },
+        {
+          "sourceLine": 47,
+          "text": "특이사항  |    |    |"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-s80-2-grades",
+      "type": "CLS",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=139343&method=view_modelHistoryframe&type=CLS",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=006&mnfccd=017",
+      "parentSourceURLVerified": true,
+      "linkId": 28,
+      "ref": "turn496870view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=139343&method=view_modelHistoryframe&type=CLS",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 17,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "등급  | 2006 년  | 2007년  | 2008년  | 2009년  | 2010년  | 2011년  | 2012년  | 2013년  | 2014년  | 현재"
+        },
+        {
+          "sourceLine": 1,
+          "text": "3.2  | 3.2  |    |    |    |    |    |"
+        },
+        {
+          "sourceLine": 2,
+          "text": "   |    | 3.2 Executive  |    |    |    |    |    |"
+        },
+        {
+          "sourceLine": 3,
+          "text": "   |    |    | 3.2 AWD  |    |    |    |    |    |"
+        },
+        {
+          "sourceLine": 4,
+          "text": "4.4  | 4.4  |    |    |    |    |    |"
+        },
+        {
+          "sourceLine": 5,
+          "text": "4.4 Executive  |    |    |    |    |"
+        },
+        {
+          "sourceLine": 6,
+          "text": "T5  |    |    |    |    |    |    |    |    | T5 프리미엄"
+        },
+        {
+          "sourceLine": 7,
+          "text": "T6  |    |    |    |    | T6  |"
+        },
+        {
+          "sourceLine": 8,
+          "text": "   |    |    |    |    | T6 EXE  |"
+        },
+        {
+          "sourceLine": 9,
+          "text": "   |    |    |    |    |    |    |    | T6 INSCRIPTION"
+        },
+        {
+          "sourceLine": 10,
+          "text": "D5  |    |    |    |    | D5  |"
+        },
+        {
+          "sourceLine": 11,
+          "text": "   |    |    |    |    |    |    |    | D5 INSCRIPTION  |"
+        },
+        {
+          "sourceLine": 12,
+          "text": "D3  |    |    |    |    |    |    | D3  |    |    |"
+        },
+        {
+          "sourceLine": 13,
+          "text": "D4  |    |    |    |    |    |    |    | D4  |"
+        },
+        {
+          "sourceLine": 14,
+          "text": "   |    |    |    |    |    |    |    | D4 프리미엄"
+        },
+        {
+          "sourceLine": 15,
+          "text": "D2  |    |    |    |    |    |    |    |    | D2"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-s80-2-grades",
+      "type": "ENG",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=139343&method=view_modelHistoryframe&type=ENG",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=006&mnfccd=017",
+      "parentSourceURLVerified": true,
+      "linkId": 27,
+      "ref": "turn328805view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=139343&method=view_modelHistoryframe&type=ENG",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 54,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "[image omitted]  | 98년 ~ 01년  | 02년 ~ 06년  | 06년 ~ 10년  | 11년 ~ 현재  |"
+        },
+        {
+          "sourceLine": 1,
+          "text": "2.4  | 가솔린  | 2.4 (L 5)"
+        },
+        {
+          "sourceLine": 2,
+          "text": "--마력 / --km/ℓ  |    |"
+        },
+        {
+          "sourceLine": 3,
+          "text": "2.0 T  | 2.0T (L 5)"
+        },
+        {
+          "sourceLine": 4,
+          "text": "179마력 / --km/ℓ"
+        },
+        {
+          "sourceLine": 5,
+          "text": "00년형 출시  |    |"
+        },
+        {
+          "sourceLine": 6,
+          "text": "2.9  | 2.9 (L6)"
+        },
+        {
+          "sourceLine": 7,
+          "text": "204마력 / --km/ℓ  | 2.9 (L6)"
+        },
+        {
+          "sourceLine": 8,
+          "text": "196마력 / --km/ℓ"
+        },
+        {
+          "sourceLine": 9,
+          "text": "(1)  |    |"
+        },
+        {
+          "sourceLine": 10,
+          "text": "2.0 TS  |    |    | 3.0 (L4)"
+        },
+        {
+          "sourceLine": 11,
+          "text": "245마력 / 12.0km/ℓ"
+        },
+        {
+          "sourceLine": 12,
+          "text": "14년형 출시  |"
+        },
+        {
+          "sourceLine": 13,
+          "text": "T6  | 2.8 (L6)"
+        },
+        {
+          "sourceLine": 14,
+          "text": "272마력 / --km/ℓ"
+        },
+        {
+          "sourceLine": 15,
+          "text": "01년 단종  | 2.9 (L6)"
+        },
+        {
+          "sourceLine": 16,
+          "text": "272마력 / --km/ℓ"
+        },
+        {
+          "sourceLine": 17,
+          "text": "엔진변경  |    |"
+        },
+        {
+          "sourceLine": 18,
+          "text": "T6 AWD  |    | 3.0 (L6)"
+        },
+        {
+          "sourceLine": 19,
+          "text": "285마력 / 8.8km/ℓ"
+        },
+        {
+          "sourceLine": 20,
+          "text": "07년형 출시  | 3.0 (L6)"
+        },
+        {
+          "sourceLine": 21,
+          "text": "304마력 / 8.9km/ℓ"
+        },
+        {
+          "sourceLine": 22,
+          "text": "(1)  |"
+        },
+        {
+          "sourceLine": 23,
+          "text": "3.2  |    | 3.2 (L6)"
+        },
+        {
+          "sourceLine": 24,
+          "text": "238마력 / 8.7km/ℓ  |    |"
+        },
+        {
+          "sourceLine": 25,
+          "text": "3.2 AWD  |    | 3.2 (L6)"
+        },
+        {
+          "sourceLine": 26,
+          "text": "238마력 / 7.8km/ℓ"
+        },
+        {
+          "sourceLine": 27,
+          "text": "07년형 출시 09년 단종  |    |"
+        },
+        {
+          "sourceLine": 28,
+          "text": "4.4 AWD  |    | 4.4 (V8)"
+        },
+        {
+          "sourceLine": 29,
+          "text": "315마력 / 7.3km/ℓ 10년 단종  |    |"
+        },
+        {
+          "sourceLine": 30,
+          "text": "1.6 D2  | 디젤  |    |    | 1.6 (L4)"
+        },
+        {
+          "sourceLine": 31,
+          "text": "115마력 / 16.9km/ℓ"
+        },
+        {
+          "sourceLine": 32,
+          "text": "14년 국내 출시  |"
+        },
+        {
+          "sourceLine": 33,
+          "text": "2.0 D3  |    |    | 2.0 (L5)"
+        },
+        {
+          "sourceLine": 34,
+          "text": "163마력 / 13.8km/ℓ"
+        },
+        {
+          "sourceLine": 35,
+          "text": "12년 단종  |"
+        },
+        {
+          "sourceLine": 36,
+          "text": "2.0 D4  |    |    | 2.0 (L5)"
+        },
+        {
+          "sourceLine": 37,
+          "text": "163마력 / 14.0km/ℓ"
+        },
+        {
+          "sourceLine": 38,
+          "text": "13년형 출시  |"
+        },
+        {
+          "sourceLine": 39,
+          "text": "2.4 D5  |    | 2.4 (L5)"
+        },
+        {
+          "sourceLine": 40,
+          "text": "185마력 / 13.0km/ℓ  | 2.4 (L5)"
+        },
+        {
+          "sourceLine": 41,
+          "text": "205마력 / 13.3km/ℓ 11년 단종  |"
+        },
+        {
+          "sourceLine": 42,
+          "text": "   |    | 2.4 (L5)"
+        },
+        {
+          "sourceLine": 43,
+          "text": "215마력 / 15.2km/ℓ"
+        },
+        {
+          "sourceLine": 44,
+          "text": "(2)  |"
+        },
+        {
+          "sourceLine": 45,
+          "text": "특이사항  | (1) 2.9"
+        },
+        {
+          "sourceLine": 46,
+          "text": "> 02년형에 엔진변경"
+        },
+        {
+          "sourceLine": 47,
+          "text": "> 04년 단종  | (1) T6"
+        },
+        {
+          "sourceLine": 48,
+          "text": "> 11년형에 엔진변경"
+        },
+        {
+          "sourceLine": 49,
+          "text": "> 12년형에 연비변경 (8.9km/ℓ→7.9km/ℓ)(2) 2.4(D5)"
+        },
+        {
+          "sourceLine": 50,
+          "text": " > 12년형 출시"
+        },
+        {
+          "sourceLine": 51,
+          "text": " > 엔진 변경"
+        },
+        {
+          "sourceLine": 52,
+          "text": " > 13년형에 연비 변경 (15.2km/ℓ→14.2km/ℓ)  |"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-tiguan-5n-grades",
+      "type": "CLS",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=133885&method=view_modelHistoryframe&type=CLS",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=022&mnfccd=014",
+      "parentSourceURLVerified": true,
+      "linkId": 16,
+      "ref": "turn184203view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=133885&method=view_modelHistoryframe&type=CLS",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 9,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "등급  | 2008년  | 2009년  | 2010년  | 2011년  | 2012년  | 2013년  | 2014년  | 현재"
+        },
+        {
+          "sourceLine": 1,
+          "text": "2.0 TSI   |  2.0 TSI SE  |    |    |    |    |"
+        },
+        {
+          "sourceLine": 2,
+          "text": "   |    |    |  2.0 TSI SE 4Motion  |    |    |    |"
+        },
+        {
+          "sourceLine": 3,
+          "text": " 2.0 TDI  |  2.0 TDI SE  |    |    |    |    |"
+        },
+        {
+          "sourceLine": 4,
+          "text": "   |    |    |  2.0 TDI 4Motion  |    |    |    |"
+        },
+        {
+          "sourceLine": 5,
+          "text": "   |    |    |    |  2.0 TDI 컴포트"
+        },
+        {
+          "sourceLine": 6,
+          "text": "   |    |    |    |  2.0 TDI 프리미엄"
+        },
+        {
+          "sourceLine": 7,
+          "text": "   |    |    |    |  2.0 TDI R-Line"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-tiguan-5n-grades",
+      "type": "ENG",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=133885&method=view_modelHistoryframe&type=ENG",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=022&mnfccd=014",
+      "parentSourceURLVerified": true,
+      "linkId": 15,
+      "ref": "turn793332view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=133885&method=view_modelHistoryframe&type=ENG",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 6,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "[image omitted]  |  | 07년 ~ 11년  | 12년 ~ 현재  |"
+        },
+        {
+          "sourceLine": 1,
+          "text": " 2.0 TSI  | 가솔린   |  | 2.0 (L4) 200마력 / 9.8 km/ℓ    |    |"
+        },
+        {
+          "sourceLine": 2,
+          "text": " 2.0 TDI  | 디젤  |    | 2.0 (L4) 140마력 / 12.2km/ℓ"
+        },
+        {
+          "sourceLine": 3,
+          "text": "2.0 (L4) 140마력 / 15.0 km/ℓ (1)  | 2.0 (L4) 140마력 / 18.1 km/ℓ (2) 2.0 (L4) 140마력 / 13.8 km/ℓ (3)  |"
+        },
+        {
+          "sourceLine": 4,
+          "text": " 특이사항  |    |  (1) 2.0TDI 11년형에 7단 DSG 변속기       적용으로 연비변경  (2) 2.0TDI 12년형에 스타트-스탑,       에너지 회생 시스템 등의 적용으로 연비 변경 (3) 2.0TDI 13년형에 신연비 적용으로 연비변경  |"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-v60-1-grades",
+      "type": "CLS",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=139363&method=view_modelHistoryframe&type=CLS",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=018&mnfccd=017",
+      "parentSourceURLVerified": true,
+      "linkId": 16,
+      "ref": "turn296224view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=139363&method=view_modelHistoryframe&type=CLS",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 8,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "등급  | 2011년  | 2012년  | 2013년  | 2014년  | 현재"
+        },
+        {
+          "sourceLine": 1,
+          "text": "D2  |    |    |    | D2"
+        },
+        {
+          "sourceLine": 2,
+          "text": "D3  |    | D3  |    |    |"
+        },
+        {
+          "sourceLine": 3,
+          "text": "D4  |    |    | D4  |    |"
+        },
+        {
+          "sourceLine": 4,
+          "text": "   |    |    | D4 R-Design"
+        },
+        {
+          "sourceLine": 5,
+          "text": "D5  | D5  |    |    |"
+        },
+        {
+          "sourceLine": 6,
+          "text": "   |    | D5 R-Design  |    |"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-v60-1-grades",
+      "type": "ENG",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=139363&method=view_modelHistoryframe&type=ENG",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=018&mnfccd=017",
+      "parentSourceURLVerified": true,
+      "linkId": 14,
+      "ref": "turn472027view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=139363&method=view_modelHistoryframe&type=ENG",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 15,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "[image omitted]  |  | 11년  ~ 12년  | 13년 ~ 현재  |"
+        },
+        {
+          "sourceLine": 1,
+          "text": "D2  | 디젤  |    | 1.6 (L4)"
+        },
+        {
+          "sourceLine": 2,
+          "text": "115마력 / 16.5km/ℓ"
+        },
+        {
+          "sourceLine": 3,
+          "text": "14년 국내 출시  |"
+        },
+        {
+          "sourceLine": 4,
+          "text": "D3 / D4  |    | 2.0 (L5)"
+        },
+        {
+          "sourceLine": 5,
+          "text": "163마력 / 14.0km/ℓ  |"
+        },
+        {
+          "sourceLine": 6,
+          "text": "D4 R-Design  |    |    | 2.0 (L4)"
+        },
+        {
+          "sourceLine": 7,
+          "text": "181마력 / 15.8km/ℓ"
+        },
+        {
+          "sourceLine": 8,
+          "text": "14년 출시  |"
+        },
+        {
+          "sourceLine": 9,
+          "text": "D5  |    | 2.4 (L5)"
+        },
+        {
+          "sourceLine": 10,
+          "text": "215마력 / 15.3km/ℓ"
+        },
+        {
+          "sourceLine": 11,
+          "text": "14년형에 연비변경"
+        },
+        {
+          "sourceLine": 12,
+          "text": "15.3km/ℓ → 14.3km/ℓ  |"
+        },
+        {
+          "sourceLine": 13,
+          "text": "특이사항  |    | 13년형에 등급명 변경 (D3→D4 엔진은 동일)  |"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-x1-e84-grades",
+      "type": "CLS",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=137683&method=view_modelHistoryframe&type=CLS",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=021&mnfccd=012",
+      "parentSourceURLVerified": true,
+      "linkId": 16,
+      "ref": "turn475012view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=137683&method=view_modelHistoryframe&type=CLS",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 10,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "등급  | 2010년  | 2011년  | 2012년  | 2013년  | 2014년  | 현재"
+        },
+        {
+          "sourceLine": 1,
+          "text": "xDrive18d  | xDrive18d  |"
+        },
+        {
+          "sourceLine": 2,
+          "text": "xDrive18d 라이트  | xDrive18d 라이트  |    |    |    |"
+        },
+        {
+          "sourceLine": 3,
+          "text": "xDrive18d High  |    |    | xDrive18d High"
+        },
+        {
+          "sourceLine": 4,
+          "text": "xDrive20d  | xDrive20d"
+        },
+        {
+          "sourceLine": 5,
+          "text": "xDrive23d  | xDrive23d  |    |    |"
+        },
+        {
+          "sourceLine": 6,
+          "text": "xDrive25d  |    |    |    | xDrive25d  |    |"
+        },
+        {
+          "sourceLine": 7,
+          "text": "xDrive25d High  |    |    |    | xDrive25d High  |"
+        },
+        {
+          "sourceLine": 8,
+          "text": "xDrive25d Sport  |    |    |    |    | xDrive25d Sport  |"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-x1-e84-grades",
+      "type": "ENG",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=137683&method=view_modelHistoryframe&type=ENG",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=021&mnfccd=012",
+      "parentSourceURLVerified": true,
+      "linkId": 15,
+      "ref": "turn282780view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=137683&method=view_modelHistoryframe&type=ENG",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 16,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "[image omitted]  |    | 09년 ~ 12년  | 12 년 ~ 현재  |"
+        },
+        {
+          "sourceLine": 1,
+          "text": "xDrive18d  | 디젤  |    | 2.0 (L4)"
+        },
+        {
+          "sourceLine": 2,
+          "text": "143마력 / 15.6km/ℓ"
+        },
+        {
+          "sourceLine": 3,
+          "text": "※신연비 15.5km/ℓ  |"
+        },
+        {
+          "sourceLine": 4,
+          "text": "xDrive20d  |    | 2.0 (L4)"
+        },
+        {
+          "sourceLine": 5,
+          "text": "177마력 / 14.7km/ℓ  | 2.0 (L4)"
+        },
+        {
+          "sourceLine": 6,
+          "text": "184마력 / 15.2km/ℓ"
+        },
+        {
+          "sourceLine": 7,
+          "text": "※국내 13년형 출시  |"
+        },
+        {
+          "sourceLine": 8,
+          "text": "xDrive23d  |    | 2.0 (L4)"
+        },
+        {
+          "sourceLine": 9,
+          "text": "204마력 / 14.1km/ℓ(트윈터보)  |    |"
+        },
+        {
+          "sourceLine": 10,
+          "text": "xDrive25d  |    |    | 2.0 (L4)"
+        },
+        {
+          "sourceLine": 11,
+          "text": "218마력 / 14.5km/ℓ"
+        },
+        {
+          "sourceLine": 12,
+          "text": "(트윈터보)"
+        },
+        {
+          "sourceLine": 13,
+          "text": "※국내 13년형 출시  |"
+        },
+        {
+          "sourceLine": 14,
+          "text": "특이사항  |    |    |"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-x3-e83-grades",
+      "type": "CLS",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=137976&method=view_modelHistoryframe&type=CLS",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=014&mnfccd=012",
+      "parentSourceURLVerified": true,
+      "linkId": 23,
+      "ref": "turn828507view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=137976&method=view_modelHistoryframe&type=CLS",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 6,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "등급  | 2004년  | 2005년  | 2006년  | 2007년  | 2008년  | 2009년  | 2010년"
+        },
+        {
+          "sourceLine": 1,
+          "text": "20d / xDrive20d  |    |    |    | 20d / xDrive20d"
+        },
+        {
+          "sourceLine": 2,
+          "text": "25i  | 25i  |    |    |    |"
+        },
+        {
+          "sourceLine": 3,
+          "text": "30si / xDrive30i  |    |    | 30si / xDrive30i"
+        },
+        {
+          "sourceLine": 4,
+          "text": "xDrive30d  |    |    |    | xDrive30d"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-x3-e83-grades",
+      "type": "ENG",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=137976&method=view_modelHistoryframe&type=ENG",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=014&mnfccd=012",
+      "parentSourceURLVerified": true,
+      "linkId": 22,
+      "ref": "turn705655view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=137976&method=view_modelHistoryframe&type=ENG",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 31,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "[image omitted]  |    | 03년 ~ 06년  | 07년 ~ 10년  | 11년 ~ 현재"
+        },
+        {
+          "sourceLine": 1,
+          "text": "20d/"
+        },
+        {
+          "sourceLine": 2,
+          "text": "xDrive20d  | 디젤  |    |    | 2.0 (L4)"
+        },
+        {
+          "sourceLine": 3,
+          "text": "177마력 / 13.9km/ℓ"
+        },
+        {
+          "sourceLine": 4,
+          "text": "07년 출시  | 2.0 (L4)"
+        },
+        {
+          "sourceLine": 5,
+          "text": "184마력 / 17.2km/ℓ"
+        },
+        {
+          "sourceLine": 6,
+          "text": "※신연비 14.5km/ℓ"
+        },
+        {
+          "sourceLine": 7,
+          "text": "11년식 출시"
+        },
+        {
+          "sourceLine": 8,
+          "text": "30d/"
+        },
+        {
+          "sourceLine": 9,
+          "text": "xDrive30d  |    | 3.0 (L6)"
+        },
+        {
+          "sourceLine": 10,
+          "text": "204마력 / - km/ℓ"
+        },
+        {
+          "sourceLine": 11,
+          "text": "04년 단종  | 3.0 (L6)"
+        },
+        {
+          "sourceLine": 12,
+          "text": "218마력 / 11.0 km/ℓ"
+        },
+        {
+          "sourceLine": 13,
+          "text": "04년 출시~11년 단종  | 3.0 (L6)"
+        },
+        {
+          "sourceLine": 14,
+          "text": "258마력 / 16.9km/ℓ"
+        },
+        {
+          "sourceLine": 15,
+          "text": "※신연비 13.9km/ℓ"
+        },
+        {
+          "sourceLine": 16,
+          "text": "xDrive35d  |    |    | 3.0 (L6)"
+        },
+        {
+          "sourceLine": 17,
+          "text": "313마력 / 13.7km/ℓ (트윈터보)"
+        },
+        {
+          "sourceLine": 18,
+          "text": "※국내 12년 정식출시"
+        },
+        {
+          "sourceLine": 19,
+          "text": "25i  | 가솔린  |    | 2.5 (L6)"
+        },
+        {
+          "sourceLine": 20,
+          "text": "192마력 / 10.7 km/ℓ"
+        },
+        {
+          "sourceLine": 21,
+          "text": "04년도 출시  |    |"
+        },
+        {
+          "sourceLine": 22,
+          "text": "xDrive28i  |    |    |    | 2.0 (L4)"
+        },
+        {
+          "sourceLine": 23,
+          "text": "245마력 / 9.8km/ℓ"
+        },
+        {
+          "sourceLine": 24,
+          "text": "※국내 13년 정식출시"
+        },
+        {
+          "sourceLine": 25,
+          "text": "30si/"
+        },
+        {
+          "sourceLine": 26,
+          "text": "xDrive30i  |    |    | 3.0 (L6)"
+        },
+        {
+          "sourceLine": 27,
+          "text": "272마력 / 8.8 km/ℓ"
+        },
+        {
+          "sourceLine": 28,
+          "text": "06년 출시~10년 단종  |"
+        },
+        {
+          "sourceLine": 29,
+          "text": "특이사항  |    | 08년 이후 전체등급명 xDrive 추가  |"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-x3-f25-grades",
+      "type": "CLS",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=137943&method=view_modelHistoryframe&type=CLS",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=028&mnfccd=012",
+      "parentSourceURLVerified": true,
+      "linkId": 29,
+      "ref": "turn338850view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=137943&method=view_modelHistoryframe&type=CLS",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 13,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "등급  | 2011년  | 2012년  | 2013년  | 2014년  | 현재"
+        },
+        {
+          "sourceLine": 1,
+          "text": "xDrive20d  | xDrive20d  |"
+        },
+        {
+          "sourceLine": 2,
+          "text": "xDrive20d High  |"
+        },
+        {
+          "sourceLine": 3,
+          "text": "   | xDrive20d M Sport Package  |"
+        },
+        {
+          "sourceLine": 4,
+          "text": "   |    |    | xDrive20d xLine"
+        },
+        {
+          "sourceLine": 5,
+          "text": "xDrive30d  | xDrive30d"
+        },
+        {
+          "sourceLine": 6,
+          "text": "xDrive30d High  |"
+        },
+        {
+          "sourceLine": 7,
+          "text": "   | xDrive30d M Sport Package"
+        },
+        {
+          "sourceLine": 8,
+          "text": "xDrive35d  |    | xDrive35d  |"
+        },
+        {
+          "sourceLine": 9,
+          "text": "   | xDrive35d High  |"
+        },
+        {
+          "sourceLine": 10,
+          "text": "   | xDrive35d M Sport Package  |"
+        },
+        {
+          "sourceLine": 11,
+          "text": "xDrive28i  |    |    | xDrive28i  |"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-x3-f25-grades",
+      "type": "ENG",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=137943&method=view_modelHistoryframe&type=ENG",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=028&mnfccd=012",
+      "parentSourceURLVerified": true,
+      "linkId": 28,
+      "ref": "turn923721view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=137943&method=view_modelHistoryframe&type=ENG",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 32,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "[image omitted]  | 03년 ~ 06년  | 07년 ~ 10년  | 11년 ~ 14년  | 14년 ~ 현재  |"
+        },
+        {
+          "sourceLine": 1,
+          "text": "20d/xDrive20d  | 디젤  |    | 2.0 (L4)"
+        },
+        {
+          "sourceLine": 2,
+          "text": "177마력 / 13.9km/ℓ"
+        },
+        {
+          "sourceLine": 3,
+          "text": "07년 출시  | 2.0 (L4)"
+        },
+        {
+          "sourceLine": 4,
+          "text": "184마력 / 17.2km/ℓ"
+        },
+        {
+          "sourceLine": 5,
+          "text": "※신연비 14.5km/ℓ"
+        },
+        {
+          "sourceLine": 6,
+          "text": "11년식 출시  | 2.0 (L4)"
+        },
+        {
+          "sourceLine": 7,
+          "text": "190마력 / 14.1km/ℓ"
+        },
+        {
+          "sourceLine": 8,
+          "text": "15년형 출시  |"
+        },
+        {
+          "sourceLine": 9,
+          "text": "30d/xDrive30d  | 3.0 (L6)"
+        },
+        {
+          "sourceLine": 10,
+          "text": "204마력 / - km/ℓ"
+        },
+        {
+          "sourceLine": 11,
+          "text": "04년 단종  | 3.0 (L6)"
+        },
+        {
+          "sourceLine": 12,
+          "text": "218마력 / 11.0 km/ℓ"
+        },
+        {
+          "sourceLine": 13,
+          "text": "04년 출시~11년 단종  | 3.0 (L6)"
+        },
+        {
+          "sourceLine": 14,
+          "text": "258마력 / 16.9km/ℓ"
+        },
+        {
+          "sourceLine": 15,
+          "text": "※신연비 13.9km/ℓ  | 3.0 (L6)"
+        },
+        {
+          "sourceLine": 16,
+          "text": "258마력 / 12.2km/ℓ"
+        },
+        {
+          "sourceLine": 17,
+          "text": "15년형 출시  |"
+        },
+        {
+          "sourceLine": 18,
+          "text": "xDrive35d  |    | 3.0 (L6)"
+        },
+        {
+          "sourceLine": 19,
+          "text": "313마력 / 13.7km/ℓ (트윈터보)"
+        },
+        {
+          "sourceLine": 20,
+          "text": "※국내 12년 정식출시  |    |"
+        },
+        {
+          "sourceLine": 21,
+          "text": "25i  | 가솔린  | 2.5 (L6)"
+        },
+        {
+          "sourceLine": 22,
+          "text": "192마력 / 10.7 km/ℓ"
+        },
+        {
+          "sourceLine": 23,
+          "text": "04년도 출시  |    |    |"
+        },
+        {
+          "sourceLine": 24,
+          "text": "xDrive28i  |    | 2.0 (L4)"
+        },
+        {
+          "sourceLine": 25,
+          "text": "245마력 / 9.8km/ℓ"
+        },
+        {
+          "sourceLine": 26,
+          "text": "※국내 13년 정식출시  |    |"
+        },
+        {
+          "sourceLine": 27,
+          "text": "30si/xDrive30i  |    | 3.0 (L6)"
+        },
+        {
+          "sourceLine": 28,
+          "text": "272마력 / 8.8 km/ℓ"
+        },
+        {
+          "sourceLine": 29,
+          "text": "06년 출시~10년 단종  |    |"
+        },
+        {
+          "sourceLine": 30,
+          "text": "특이사항  | 08년 이후 전체등급명 xDrive 추가  |    |"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-x5-e70-grades",
+      "type": "CLS",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=137883&method=view_modelHistoryframe&type=CLS",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=022&mnfccd=012",
+      "parentSourceURLVerified": true,
+      "linkId": 33,
+      "ref": "turn906763view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=137883&method=view_modelHistoryframe&type=CLS",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 9,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "등급  | 2007년  | 2008년  | 2009년  | 2010년  | 2011년  | 2012년  | 2013년"
+        },
+        {
+          "sourceLine": 1,
+          "text": "xDrive30i  | xDrive30i  |    |    |"
+        },
+        {
+          "sourceLine": 2,
+          "text": "xDrive35i  |    |    |    | xDrive35i"
+        },
+        {
+          "sourceLine": 3,
+          "text": "xDrive48i  | xDrive48i  |    |    |"
+        },
+        {
+          "sourceLine": 4,
+          "text": "xDrive50i  |    |    |    | xDrive50i"
+        },
+        {
+          "sourceLine": 5,
+          "text": "xDrive30d  | xDrive30d"
+        },
+        {
+          "sourceLine": 6,
+          "text": "xDrive40d  |    |    |    |    | xDrive40d"
+        },
+        {
+          "sourceLine": 7,
+          "text": "X5 M  |    |    |    | X5 M"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-x5-e70-grades",
+      "type": "ENG",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=137883&method=view_modelHistoryframe&type=ENG",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=022&mnfccd=012",
+      "parentSourceURLVerified": true,
+      "linkId": 32,
+      "ref": "turn459100view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=137883&method=view_modelHistoryframe&type=ENG",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 47,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "[image omitted]  | 98년 ~ 03년  | 03년 ~ 06년  | 06년 ~ 10년  | 10년 ~ 13년  | 14년 ~ 현재"
+        },
+        {
+          "sourceLine": 1,
+          "text": "30d/xDrive30d  | 디젤  | 3.0 (R6)"
+        },
+        {
+          "sourceLine": 2,
+          "text": "184마력 / -km/ℓ"
+        },
+        {
+          "sourceLine": 3,
+          "text": "01년 출시  | 3.0 (R6)"
+        },
+        {
+          "sourceLine": 4,
+          "text": "218마력 / -km/ℓ  | 3.0 (R6)"
+        },
+        {
+          "sourceLine": 5,
+          "text": "235마력 / 10.5km/ℓ"
+        },
+        {
+          "sourceLine": 6,
+          "text": "07년 출시  | 3.0 (R6)"
+        },
+        {
+          "sourceLine": 7,
+          "text": "245마력 / 12.6km/ℓ"
+        },
+        {
+          "sourceLine": 8,
+          "text": "※13년도 신연비 11.6km/ℓ  | 3.0 (R6)"
+        },
+        {
+          "sourceLine": 9,
+          "text": "258마력 / 12.3km/ℓ"
+        },
+        {
+          "sourceLine": 10,
+          "text": "xDrive40d  |    |    | 3.0 (R6)"
+        },
+        {
+          "sourceLine": 11,
+          "text": "306마력 / 13.3km/ℓ"
+        },
+        {
+          "sourceLine": 12,
+          "text": "※13년도 신연비 11.3km/ℓ  | 3.0(R6)"
+        },
+        {
+          "sourceLine": 13,
+          "text": "313마력 / 13.4km/ℓ"
+        },
+        {
+          "sourceLine": 14,
+          "text": "X5 M50d  |    |    | 3.0 (R6)"
+        },
+        {
+          "sourceLine": 15,
+          "text": "381마력 / 11.7km/ℓ (트라이터보)"
+        },
+        {
+          "sourceLine": 16,
+          "text": "30i  | 가솔린  | 3.0 (R6)"
+        },
+        {
+          "sourceLine": 17,
+          "text": "231마력 / 9.9km/ℓ"
+        },
+        {
+          "sourceLine": 18,
+          "text": "00년 출시  |    |"
+        },
+        {
+          "sourceLine": 19,
+          "text": "30si/xDrive30i  |    | 3.0 (R6)"
+        },
+        {
+          "sourceLine": 20,
+          "text": "272마력 / 8.3km/ℓ"
+        },
+        {
+          "sourceLine": 21,
+          "text": "07년형 출시  |    |"
+        },
+        {
+          "sourceLine": 22,
+          "text": "xDrive35i  |    |    | 3.0 (R6)"
+        },
+        {
+          "sourceLine": 23,
+          "text": "306마력 / 9.0km/ℓ"
+        },
+        {
+          "sourceLine": 24,
+          "text": "※13년도 신연비 8.5km/ℓ  |"
+        },
+        {
+          "sourceLine": 25,
+          "text": "44i  | 4.4 (V8)"
+        },
+        {
+          "sourceLine": 26,
+          "text": "286마력 / -km/ℓ"
+        },
+        {
+          "sourceLine": 27,
+          "text": "00년 출시  | 4.4 (V8)"
+        },
+        {
+          "sourceLine": 28,
+          "text": "320마력 / 8.0km/ℓ  |    |"
+        },
+        {
+          "sourceLine": 29,
+          "text": "46is  | 4.6 (V8)"
+        },
+        {
+          "sourceLine": 30,
+          "text": "347마력 / -km/ℓ"
+        },
+        {
+          "sourceLine": 31,
+          "text": "02년 출시  |    |    |"
+        },
+        {
+          "sourceLine": 32,
+          "text": "48is  |    | 4.6 (V8)"
+        },
+        {
+          "sourceLine": 33,
+          "text": "360마력 / -km/ℓ"
+        },
+        {
+          "sourceLine": 34,
+          "text": "04년 출시  |    |"
+        },
+        {
+          "sourceLine": 35,
+          "text": "48i/xDrive48i  |    | 4.8 (V8)"
+        },
+        {
+          "sourceLine": 36,
+          "text": "355마력 / 6.7km/ℓ"
+        },
+        {
+          "sourceLine": 37,
+          "text": "07년형 출시  |    |"
+        },
+        {
+          "sourceLine": 38,
+          "text": "xDrive50i  |    |    | 4.4 (V8)"
+        },
+        {
+          "sourceLine": 39,
+          "text": "408마력 / 6.5km/ℓ"
+        },
+        {
+          "sourceLine": 40,
+          "text": "※13년도 신연비 7.0km/ℓ  |"
+        },
+        {
+          "sourceLine": 41,
+          "text": "X5 M  |    |    | 4.4 (V8)"
+        },
+        {
+          "sourceLine": 42,
+          "text": "555마력 / 6.3km/ℓ"
+        },
+        {
+          "sourceLine": 43,
+          "text": "09년 출시"
+        },
+        {
+          "sourceLine": 44,
+          "text": "※13년도 신연비 6.2km/ℓ  |"
+        },
+        {
+          "sourceLine": 45,
+          "text": "특이사항  | ※3.0i, 4.4i 모델만 국내 정식 출시  | ※08년형 이후로 등급명 xDrive 추가  |"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-xc60-1-grades",
+      "type": "CLS",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=139364&method=view_modelHistoryframe&type=CLS",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=017&mnfccd=017",
+      "parentSourceURLVerified": true,
+      "linkId": 19,
+      "ref": "turn305592view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=139364&method=view_modelHistoryframe&type=CLS",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 10,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "등급  | 2009년  | 2010년  | 2011년  | 2012년  | 2013년  | 2014년  | 현재"
+        },
+        {
+          "sourceLine": 1,
+          "text": "D3  |    |    |    | D3  |    |    |"
+        },
+        {
+          "sourceLine": 2,
+          "text": "D4  |    |    |    |    | D4"
+        },
+        {
+          "sourceLine": 3,
+          "text": "D5  | D5 AWD"
+        },
+        {
+          "sourceLine": 4,
+          "text": "   | D5 프리미엄  |    |    |    |"
+        },
+        {
+          "sourceLine": 5,
+          "text": "   |    |    |    |    | 니보매트 AWD  |"
+        },
+        {
+          "sourceLine": 6,
+          "text": "   |    |    |    |    | INSCRIPTION"
+        },
+        {
+          "sourceLine": 7,
+          "text": "T6  |    | T6  |    | T6  |    |"
+        },
+        {
+          "sourceLine": 8,
+          "text": "   |    |    |    |    | T6 R-Design"
+        }
+      ]
+    },
+    {
+      "parentSourceId": "hist-encar-xc60-1-grades",
+      "type": "ENG",
+      "expectedUrl": "https://www.encar.com/cc/common.do?bbsno=139364&method=view_modelHistoryframe&type=ENG",
+      "parentUrl": "https://www.encar.com/mocha/history.do?mdlcd=017&mnfccd=017",
+      "parentSourceURLVerified": true,
+      "linkId": 18,
+      "ref": "turn265962view0",
+      "url": "https://www.encar.com/cc/common.do?bbsno=139364&method=view_modelHistoryframe&type=ENG",
+      "sourceMatched": true,
+      "status": "read_verified_url",
+      "observedTotalLines": 18,
+      "lines": [
+        {
+          "sourceLine": 0,
+          "text": "[image omitted]  |    | 09년 ~ 11년  | 12년 ~ 현재  |"
+        },
+        {
+          "sourceLine": 1,
+          "text": "D3  | 디젤  |    |    | 2.0 (L5)"
+        },
+        {
+          "sourceLine": 2,
+          "text": "163마력 / 11.7km/ℓ  |"
+        },
+        {
+          "sourceLine": 3,
+          "text": "D4  |    |    | 2.0 (L5)"
+        },
+        {
+          "sourceLine": 4,
+          "text": "163마력 / 11.7km/ℓ(1)  |"
+        },
+        {
+          "sourceLine": 5,
+          "text": "D5  |    | 2.4 (L5)"
+        },
+        {
+          "sourceLine": 6,
+          "text": "185마력 / 11.6km/ℓ  |    |"
+        },
+        {
+          "sourceLine": 7,
+          "text": "   | 2.4 (L5)"
+        },
+        {
+          "sourceLine": 8,
+          "text": "205마력 / 11.6km/ℓ(2)  | 2.4 (L5)"
+        },
+        {
+          "sourceLine": 9,
+          "text": "215마력 / 13.9km/ℓ  |"
+        },
+        {
+          "sourceLine": 10,
+          "text": "T6  | 가솔린  |    |  3.0 (L6)"
+        },
+        {
+          "sourceLine": 11,
+          "text": "285마력 / 8.6km/ℓ"
+        },
+        {
+          "sourceLine": 12,
+          "text": "10년형 국내 출시 ~"
+        },
+        {
+          "sourceLine": 13,
+          "text": "10년 단종  | 3.0 (L6)"
+        },
+        {
+          "sourceLine": 14,
+          "text": "304마력 / 7.8km/ℓ  |"
+        },
+        {
+          "sourceLine": 15,
+          "text": "특이사항  |    |  (1) 13년형에 D3→D4로 등급명 변경     (엔진변경 없음)"
+        },
+        {
+          "sourceLine": 16,
+          "text": " (2) 10년형에 엔진변경  |"
+        }
+      ]
+    }
+  ]
+}

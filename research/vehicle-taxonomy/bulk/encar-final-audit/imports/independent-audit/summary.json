@@ -1,0 +1,64 @@
+{
+  "scope": "Offline independent audit of supplied source-URL-verified factual CLS cells. Original 387 records retained in stable sourceId + one-based source ordinal order.",
+  "sources": 38,
+  "recordsAudited": 387,
+  "verifiedNonemptyCLSSources": 38,
+  "observedCLSDataRows": 394,
+  "representedUniqueRecordRows": 387,
+  "repeatSameTrimLabelRows": 2,
+  "newMissingTrimRows": 3,
+  "knownExcludedMixedGenerationRows": 2,
+  "fieldLiteralCounts": {
+    "rawParentLabel": {
+      "observed_literal_cell": 383,
+      "not_a_literal_cell": 4
+    },
+    "rawTrimLabel": {
+      "observed_literal_cell": 373,
+      "not_a_literal_cell": 14
+    },
+    "grade": {
+      "observed_literal_cell": 307,
+      "not_a_literal_cell": 80
+    }
+  },
+  "gradesLiteral": 307,
+  "gradesSupportedByContextualComposition": 80,
+  "rawTrimNonliteralCorrections": 14,
+  "rawTrimParentVersusChildRoleCorrections": 3,
+  "rawParentNonliteralReviewCandidates": 4,
+  "limitations": [
+    "Whitespace and NBSP are normalized for matching; spelling, case, punctuation and lexical labels are preserved.",
+    "Literal presence does not by itself prove a parent/child role or an ENG-to-CLS join.",
+    "Markdown collapses rowspan cells. The four A6 rawParent candidates require HTML parent-role confirmation.",
+    "Provider historical present-tense labels are not interpreted as the 2026 vehicle market.",
+    "The two W205 exclusions are identified from the parent auditor's documented accessNotes review, not from these three supplied JSON extracts alone."
+  ],
+  "sourceSpellingsPreserved": [
+    {
+      "sourceId": "hist-encar-a4-b8-grades",
+      "sourceLine": 10,
+      "label": "2.0 TDI Quatrro 프레스티지"
+    },
+    {
+      "sourceId": "hist-encar-7-f01-f02-grades",
+      "sourceLine": 9,
+      "label": "740 xDrive"
+    },
+    {
+      "sourceId": "hist-encar-e-w212-grades",
+      "sourceLine": 6,
+      "label": "E22 0"
+    },
+    {
+      "sourceId": "hist-encar-e-w212-grades",
+      "sourceLine": 9,
+      "label": "E25 0"
+    }
+  ],
+  "inputSha256": {
+    "targets.json": "3daacacd6ccb9aea22cd6a8d5b838186a9576ca7ba993ef46fe63434e5ee8b1f",
+    "frame-table-facts.json": "506edc6e8c02ba68c420e25c3ea2df7f60b39ca8cf10987e17a2b7df29fec7f7",
+    "parent-audits-verified.json": "b3fb8719da91cdef33c3a21d6f28b6861e1d877056bfe65263162be7288a9dd1"
+  }
+}

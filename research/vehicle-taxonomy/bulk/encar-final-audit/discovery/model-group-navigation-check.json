@@ -1,0 +1,12 @@
+{
+  "sourceUrl": "https://m.encar.com/pr/model.json?carType=for&method=carList&mnfccd=012",
+  "actionObserved": "Followed a rendered BMW model-group action after freshly opening the exact maker URL.",
+  "resultUrl": "https://m.encar.com/pr/model.json?carType=for&method=carList&mnfccd=012",
+  "result": "same_manufacturer_choice_page_not_a_model_group_selection",
+  "modelGroupOrGradeCodesObserved": false,
+  "inference": "The text browsing tool did not advance the JavaScript selection state; this does not prove that the live browser UI has no lower classification data.",
+  "automaticallyImported": false,
+  "auditSnapshotCheckedAtUtc": "2026-11-06 16:57:47 UTC",
+  "exactNavigationCallTimestampRecorded": false,
+  "timePrecisionNote": "Navigation check occurred during this audit after the recorded source-snapshot observation; its exact individual call timestamp was not separately recorded."
+}

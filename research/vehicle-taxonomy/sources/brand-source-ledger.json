@@ -24,6 +24,7 @@
     {
       "make": "BMW",
       "sourceUrls": [
+        "https://www.encar.com/cc/common.do?bbsno=132832&method=view_modelHistoryframe&type=CLS",
         "https://www.press.bmwgroup.com/korea/article/detail/T0128192KO/bmw-%EC%BD%94%EB%A6%AC%EC%95%84-%EB%89%B4-3-%EC%8B%9C%EB%A6%AC%EC%A6%88-%EA%B0%80%EC%86%94%EB%A6%B0-%EB%AA%A8%EB%8D%B8-%EC%B6%9C%EC%8B%9C?language=ko",
         "https://www.newswire.co.kr/newsRead.php?no=605255",
         "https://www.press.bmwgroup.com/korea/article/detail/T0079021KO/bmw-%EC%BD%94%EB%A6%AC%EC%95%84-6%EC%84%B8%EB%8C%80-%EB%89%B4-5%EC%8B%9C%EB%A6%AC%EC%A6%88-%EC%95%84%EC%8B%9C%EC%95%84-%EC%B5%9C%EC%B4%88-%EC%B6%9C%EC%8B%9C?language=ko",
@@ -34,7 +35,6 @@
         "https://www.encar.com/cc/common.do?bbsno=137943&method=view_modelHistoryframe&type=CLS",
         "https://www.encar.com/cc/common.do?bbsno=137810&method=view_modelHistoryframe&type=CLS",
         "https://www.encar.com/cc/common.do?bbsno=137727&method=view_modelHistoryframe&type=CLS",
-        "https://www.encar.com/cc/common.do?bbsno=132832&method=view_modelHistoryframe&type=CLS",
         "https://www.encar.com/cc/common.do?bbsno=137837&method=view_modelHistoryframe&type=CLS",
         "https://www.encar.com/cc/common.do?bbsno=136933&method=view_modelHistoryframe&type=CLS",
         "https://www.encar.com/cc/common.do?bbsno=137883&method=view_modelHistoryframe&type=CLS",
@@ -49,21 +49,22 @@
       "researchStatus": "current_research_available",
       "notes": "초기 자료원 접근 결과는 initialSourceCheckNote와 checkedAt에 보존한다. 아래의 현재 관측 건수는 원문의 시장·국가·근거 수준별로 해석하며, 전체 연식·등급 완성을 뜻하지 않는다.",
       "checkedAt": "2026-11-06",
-      "researchRecords": 206,
+      "researchRecords": 209,
       "researchFiles": [
+        "encar-final-import-additions-20261107.json",
         "import-historical-expansion-20261106.json",
         "import-official.json"
       ],
       "evidenceCounts": {
-        "official_direct": 64,
-        "provider_catalog_direct": 142
+        "provider_catalog_direct": 145,
+        "official_direct": 64
       },
       "historicalCoverageComplete": false,
       "allTrimsComplete": false,
       "baselineModelGroups": 30,
       "baselineGenerationsWithoutTrim": 73,
       "initialSourceCheckNote": "같은제조사표기의공식조사자료에직접확인또는발췌등급행이있음. 출처파일의개별evidenceStatus와시장·연식범위를따라야함. 별도자료행이있다는뜻이며브랜드전체·과거전연식자료가완료됐다는뜻은아님.",
-      "koreanMarketResearchRecords": 206,
+      "koreanMarketResearchRecords": 209,
       "otherMarketResearchRecords": 0
     },
     {
@@ -260,6 +261,11 @@
         "https://www.kia.com/kr/vehicles/ev4/price",
         "https://www.kia.com/kr/vehicles/ev5/price",
         "https://www.kia.com/kr/vehicles/tasman/price",
+        "https://www.encar.com/cc/common.do?bbsno=132835&method=view_modelHistoryframe&type=CLS",
+        "https://www.encar.com/cc/common.do?bbsno=136125&method=view_modelHistoryframe&type=CLS",
+        "https://www.encar.com/cc/common.do?bbsno=152403&method=view_modelHistoryframe&type=CLS",
+        "https://www.encar.com/cc/common.do?bbsno=142176&method=view_modelHistoryframe&type=CLS",
+        "https://www.encar.com/cc/common.do?bbsno=156937&method=view_modelHistoryframe&type=CLS",
         "https://www.encar.com/cc/common.do?bbsno=134505&method=view_modelHistoryframe&type=CLS",
         "https://www.encar.com/cc/common.do?bbsno=134435&method=view_modelHistoryframe&type=CLS",
         "https://www.newswire.co.kr/newsRead.php?no=797762",
@@ -336,16 +342,17 @@
       "researchStatus": "current_research_available",
       "notes": "초기 자료원 접근 결과는 initialSourceCheckNote와 checkedAt에 보존한다. 아래의 현재 관측 건수는 원문의 시장·국가·근거 수준별로 해석하며, 전체 연식·등급 완성을 뜻하지 않는다.",
       "checkedAt": "2026-11-06",
-      "researchRecords": 495,
+      "researchRecords": 539,
       "researchFiles": [
         "domestic-official.json",
+        "encar-final-domestic-expansion-20261107.json",
         "encar-public-catalog-expansion-20261106.json",
         "historical-domestic-official.json",
         "kia-genesis-expansion-20261106.json"
       ],
       "evidenceCounts": {
         "official_direct": 447,
-        "provider_catalog_direct": 44,
+        "provider_catalog_direct": 88,
         "candidate": 4
       },
       "historicalCoverageComplete": false,
@@ -353,7 +360,7 @@
       "baselineModelGroups": 38,
       "baselineGenerationsWithoutTrim": 122,
       "initialSourceCheckNote": "같은제조사표기의공식조사자료에직접확인또는발췌등급행이있음. 출처파일의개별evidenceStatus와시장·연식범위를따라야함. 별도자료행이있다는뜻이며브랜드전체·과거전연식자료가완료됐다는뜻은아님.",
-      "koreanMarketResearchRecords": 495,
+      "koreanMarketResearchRecords": 539,
       "otherMarketResearchRecords": 0
     },
     {
@@ -591,6 +598,18 @@
     {
       "make": "르노코리아(삼성)",
       "sourceUrls": [
+        "https://www.encar.com/cc/common.do?bbsno=135407&method=view_modelHistoryframe&type=CLS",
+        "https://www.encar.com/cc/common.do?bbsno=135410&method=view_modelHistoryframe&type=CLS",
+        "https://www.encar.com/cc/common.do?bbsno=133403&method=view_modelHistoryframe&type=CLS",
+        "https://www.encar.com/cc/common.do?bbsno=135423&method=view_modelHistoryframe&type=CLS",
+        "https://www.encar.com/cc/common.do?bbsno=135424&method=view_modelHistoryframe&type=CLS",
+        "https://www.encar.com/cc/common.do?bbsno=135458&method=view_modelHistoryframe&type=CLS",
+        "https://www.encar.com/cc/common.do?bbsno=134098&method=view_modelHistoryframe&type=CLS",
+        "https://www.encar.com/cc/common.do?bbsno=135460&method=view_modelHistoryframe&type=CLS",
+        "https://www.encar.com/cc/common.do?bbsno=133596&method=view_modelHistoryframe&type=CLS",
+        "https://www.encar.com/cc/common.do?bbsno=143504&method=view_modelHistoryframe&type=CLS",
+        "https://www.encar.com/cc/common.do?bbsno=135488&method=view_modelHistoryframe&type=CLS",
+        "https://www.encar.com/cc/common.do?bbsno=140833&method=view_modelHistoryframe&type=CLS",
         "https://www.newswire.co.kr/newsRead.php?no=181451",
         "https://www.newswire.co.kr/newsRead.php?no=432036",
         "https://www.newswire.co.kr/newsRead.php?no=380312",
@@ -610,12 +629,14 @@
       "researchStatus": "current_research_available",
       "notes": "초기 자료원 접근 결과는 initialSourceCheckNote와 checkedAt에 보존한다. 아래의 현재 관측 건수는 원문의 시장·국가·근거 수준별로 해석하며, 전체 연식·등급 완성을 뜻하지 않는다.",
       "checkedAt": "2026-11-06",
-      "researchRecords": 96,
+      "researchRecords": 230,
       "researchFiles": [
+        "encar-final-domestic-expansion-20261107.json",
         "other-domestic-historical-expansion-20261106.json",
         "other-domestic-official.json"
       ],
       "evidenceCounts": {
+        "provider_catalog_direct": 134,
         "official_direct": 96
       },
       "historicalCoverageComplete": false,
@@ -623,7 +644,7 @@
       "baselineModelGroups": 12,
       "baselineGenerationsWithoutTrim": 32,
       "initialSourceCheckNote": "같은제조사표기의공식조사자료에직접확인또는발췌등급행이있음. 출처파일의개별evidenceStatus와시장·연식범위를따라야함. 별도자료행이있다는뜻이며브랜드전체·과거전연식자료가완료됐다는뜻은아님.",
-      "koreanMarketResearchRecords": 96,
+      "koreanMarketResearchRecords": 230,
       "otherMarketResearchRecords": 0,
       "aliasCandidates": [
         "르노코리아"
@@ -1128,6 +1149,7 @@
       "sourceUrls": [
         "https://www.hyundaimotorgroup.com/ko/news/CONT0000000000198453",
         "https://www.hyundaimotorgroup.com/ko/news/CONT0000000000190135",
+        "https://www.encar.com/cc/common.do?bbsno=157084&method=view_modelHistoryframe&type=CLS",
         "https://www.genesis.com/kr/ko/support/pr-center/detail.html?seq=0000000180",
         "https://www.genesis.com/kr/ko/support/pr-center/detail.html?seq=0000000227",
         "https://www.genesis.com/kr/ko/support/pr-center/detail.html?seq=0000000246",
@@ -1151,13 +1173,15 @@
       "researchStatus": "current_research_available",
       "notes": "초기 자료원 접근 결과는 initialSourceCheckNote와 checkedAt에 보존한다. 아래의 현재 관측 건수는 원문의 시장·국가·근거 수준별로 해석하며, 전체 연식·등급 완성을 뜻하지 않는다.",
       "checkedAt": "2026-11-06",
-      "researchRecords": 77,
+      "researchRecords": 84,
       "researchFiles": [
         "domestic-official.json",
+        "encar-final-domestic-expansion-20261107.json",
         "kia-genesis-expansion-20261106.json"
       ],
       "evidenceCounts": {
         "official_direct": 75,
+        "provider_catalog_direct": 7,
         "candidate": 2
       },
       "historicalCoverageComplete": false,
@@ -1165,7 +1189,7 @@
       "baselineModelGroups": 9,
       "baselineGenerationsWithoutTrim": 21,
       "initialSourceCheckNote": "같은제조사표기의공식조사자료에직접확인또는발췌등급행이있음. 출처파일의개별evidenceStatus와시장·연식범위를따라야함. 별도자료행이있다는뜻이며브랜드전체·과거전연식자료가완료됐다는뜻은아님.",
-      "koreanMarketResearchRecords": 77,
+      "koreanMarketResearchRecords": 84,
       "otherMarketResearchRecords": 0
     },
     {
@@ -1514,6 +1538,10 @@
         "https://www.hyundaimotorgroup.com/ko/news/CONT0000000000152873",
         "https://www.hyundai.com/contents/repn-car/catalog/grandeur-hybrid-price.pdf",
         "https://www.hyundaimotorgroup.com/ko/news/hyundai-motor-company-2027-ioniq-9-launch",
+        "https://www.encar.com/cc/common.do?bbsno=134041&method=view_modelHistoryframe&type=CLS",
+        "https://www.encar.com/cc/common.do?bbsno=134032&method=view_modelHistoryframe&type=CLS",
+        "https://www.encar.com/cc/common.do?bbsno=133446&method=view_modelHistoryframe&type=CLS",
+        "https://www.encar.com/cc/common.do?bbsno=136123&method=view_modelHistoryframe&type=CLS",
         "https://www.encar.com/cc/common.do?bbsno=136040&method=view_modelHistoryframe&type=CLS",
         "https://www.encar.com/cc/common.do?bbsno=136088&method=view_modelHistoryframe&type=CLS",
         "https://www.encar.com/cc/common.do?bbsno=142170&method=view_modelHistoryframe&type=CLS",
@@ -1628,9 +1656,10 @@
       "researchStatus": "current_research_available",
       "notes": "초기 자료원 접근 결과는 initialSourceCheckNote와 checkedAt에 보존한다. 아래의 현재 관측 건수는 원문의 시장·국가·근거 수준별로 해석하며, 전체 연식·등급 완성을 뜻하지 않는다.",
       "checkedAt": "2026-11-06",
-      "researchRecords": 907,
+      "researchRecords": 944,
       "researchFiles": [
         "domestic-official.json",
+        "encar-final-domestic-expansion-20261107.json",
         "encar-public-catalog-expansion-20261106.json",
         "historical-domestic-official.json",
         "hyundai-historical-expansion-20261106.json",
@@ -1638,7 +1667,7 @@
       ],
       "evidenceCounts": {
         "official_direct": 468,
-        "provider_catalog_direct": 105,
+        "provider_catalog_direct": 142,
         "reference_direct": 334
       },
       "historicalCoverageComplete": false,
@@ -1646,7 +1675,7 @@
       "baselineModelGroups": 36,
       "baselineGenerationsWithoutTrim": 128,
       "initialSourceCheckNote": "같은제조사표기의공식조사자료에직접확인또는발췌등급행이있음. 출처파일의개별evidenceStatus와시장·연식범위를따라야함. 별도자료행이있다는뜻이며브랜드전체·과거전연식자료가완료됐다는뜻은아님.",
-      "koreanMarketResearchRecords": 907,
+      "koreanMarketResearchRecords": 944,
       "otherMarketResearchRecords": 0
     },
     {

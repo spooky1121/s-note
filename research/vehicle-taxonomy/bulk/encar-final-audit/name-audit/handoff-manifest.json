@@ -1,0 +1,154 @@
+{
+  "schemaVersion": 1,
+  "frozen": true,
+  "phase": "preaudit_2903_records_before_final_encar_corrections_and_additions",
+  "sourceIndexSha256": "3dd05119ab0b1288c2eff48dc3c6bc7da2ac177b7b867ecba714c756339e455e",
+  "sourceIndexMatchesPriorOrderAndNames": true,
+  "builderSha256": "69a2a3ff1091af90e7581808c62c16da24a7e3c9ff721306a31a8d462668fe52",
+  "allDisplayedRows": 1858,
+  "uniqueRawLabels": 1805,
+  "baselineModels": 1197,
+  "researchRecords": 2903,
+  "governmentRowsRead": 105383,
+  "governmentNameLinks": 29766,
+  "displayRowStates": {
+    "literal_name_candidate": 393,
+    "presentation_only_hint": 134,
+    "family_hint_only": 492,
+    "government_name_only_candidate": 132,
+    "not_found_under_declared_rules": 587,
+    "government_name_hint_only": 87,
+    "generic_label_unclassifiable": 33
+  },
+  "existingResearchOnlyCountsMustNotBeReportedAsFinalCountsAfterNewSourceIntegration": true,
+  "allGovernmentNamesMatchedFromExplicitNameFieldsOnly": true,
+  "retailGradeCoverageVerified": false,
+  "automaticRuntimeImport": false,
+  "producerImportedByVerifier": false,
+  "verificationScope": "Separate verifier by same producing agent, exhaustive source/CSV/reverse/manifest checks; not independent-agent review",
+  "verificationReport": "verification/exhaustive-source-audit.json",
+  "deterministicReplayReport": "verification/deterministic-replay.json",
+  "newFinalAuditInstruction": "Keep preaudit-2903 unchanged and rerun this CLI with the final updated research JSON into a different folder. Baseline target IDs match the existing government crosswalk.",
+  "doNotIntegrate": [
+    "current-index-reviewed",
+    "deterministic-replay",
+    "replay-inputs"
+  ],
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 7188,
+      "sha256": "8cea4adbd70853e1175de1272fa81ee4f1ceab5025a7fabbc7c5d717fa3587a1"
+    },
+    {
+      "path": "build-encar-name-audit.py",
+      "bytes": 28138,
+      "sha256": "69a2a3ff1091af90e7581808c62c16da24a7e3c9ff721306a31a8d462668fe52"
+    },
+    {
+      "path": "code-snapshots/build-encar-name-audit.69a2a3ff1091.py",
+      "bytes": 28138,
+      "sha256": "69a2a3ff1091af90e7581808c62c16da24a7e3c9ff721306a31a8d462668fe52"
+    },
+    {
+      "path": "code-snapshots/build-encar-name-audit.d322f6961244.py",
+      "bytes": 27725,
+      "sha256": "d322f6961244129530bb871cbf4e641574eb793a4323f997559bb6f90aa4b8ad"
+    },
+    {
+      "path": "preaudit-2903/baseline-model-ledger.csv.gz",
+      "bytes": 54186,
+      "sha256": "f3759dfe3b4c616d72fb1f9dc287be5c2dce9c9eb77b0d3824d6ddc103b0f6f2"
+    },
+    {
+      "path": "preaudit-2903/baseline-model-ledger.jsonl.gz",
+      "bytes": 58259,
+      "sha256": "fc01f34d91a681a660875b844f2eb5fac0f26cd1743e8fc96d6c46ba23bbf4bc"
+    },
+    {
+      "path": "preaudit-2903/confirmed-corrections.json",
+      "bytes": 228,
+      "sha256": "24baa8a36fb9728c630644050d311a812e989e78d0e7fb96aa90d4ddedefd86d"
+    },
+    {
+      "path": "preaudit-2903/duplicate-labels.json",
+      "bytes": 4677,
+      "sha256": "0f008bf901219257e98c5d79facbd1d6718d71d2bf039da9d714da8c12ecd351"
+    },
+    {
+      "path": "preaudit-2903/encar-ambiguous-display-rows.csv.gz",
+      "bytes": 3955,
+      "sha256": "e0a1629621bf39d7ec7cf54f48d1f2f635997465994ea7ad2455e79a9a321ee0"
+    },
+    {
+      "path": "preaudit-2903/encar-display-name-ledger.csv.gz",
+      "bytes": 30511,
+      "sha256": "f9e1958232b930b398aa56f861a6d4b4ed4f498b37d1f274d5ef045be5534b7e"
+    },
+    {
+      "path": "preaudit-2903/encar-display-name-ledger.jsonl.gz",
+      "bytes": 697294,
+      "sha256": "118ebab313f7b16eb9d467eaa9ffa27a92ef92eac5bf711639eb2a6eb0144164"
+    },
+    {
+      "path": "preaudit-2903/encar-unmapped-display-rows.csv.gz",
+      "bytes": 7420,
+      "sha256": "28aa25b3887b84a758e0090d5d60c94b15b5205ec2e897cfc48f58dc9c7a84f9"
+    },
+    {
+      "path": "preaudit-2903/government-name-links.jsonl.gz",
+      "bytes": 922495,
+      "sha256": "4908f199e3515ab1418a38932cc696ff1252d16bf427f2e2cb8e10a38470c1c6"
+    },
+    {
+      "path": "preaudit-2903/input-snapshots/baseline-source.c3b3d3fc7570.raw.gz",
+      "bytes": 22270,
+      "sha256": "062c1d62732a1f1126d11b2ba9aa4e23a956f0ea1566cd4308aacec7a1450876"
+    },
+    {
+      "path": "preaudit-2903/input-snapshots/encar-source.3dd05119ab0b.raw.gz",
+      "bytes": 16088,
+      "sha256": "d40d94e6912cdd65bdd0dafdb81ef700c4783b7b02dfb40eb4641b930ce5866b"
+    },
+    {
+      "path": "preaudit-2903/input-snapshots/research-source.d3b0aab974e6.raw.gz",
+      "bytes": 369591,
+      "sha256": "683afc5c3df2fd0c150393b5c11b1d51f1d70ba06f9854715cb72f2767f9f183"
+    },
+    {
+      "path": "preaudit-2903/manifest.json",
+      "bytes": 4640,
+      "sha256": "3e81aca2d9d4741e67f88f3cb14993043abdd6db203d9cf338c2e1a90c47784d"
+    },
+    {
+      "path": "preaudit-2903/research-record-ledger.csv.gz",
+      "bytes": 104532,
+      "sha256": "05d60cec9d5afc6fb3437aeb7de83ccd13dc9079aa881b4df0df3c63ef1f2d78"
+    },
+    {
+      "path": "preaudit-2903/research-record-ledger.jsonl.gz",
+      "bytes": 115907,
+      "sha256": "59a0dea6c703af880c9270fb8a2d66386cdd217114b612ec0c674a7358782c85"
+    },
+    {
+      "path": "preaudit-2903/summary.json",
+      "bytes": 4349,
+      "sha256": "b6d8d39be71268ba58e25180512d81e5a2a9c8c54ca0698c00e4cf9a5bfa45a0"
+    },
+    {
+      "path": "verification/deterministic-replay.json",
+      "bytes": 173,
+      "sha256": "e4733ac9bad806425508e628697f5252d077232759b35ff8a700e9e8f83ed23e"
+    },
+    {
+      "path": "verification/exhaustive-source-audit.json",
+      "bytes": 601,
+      "sha256": "a7ff13d2a70d42d77bc41ae2e83b6dfab889f7711ab37fd232004e0584ee80ae"
+    },
+    {
+      "path": "verify-encar-name-audit.py",
+      "bytes": 14377,
+      "sha256": "f46d8583b24f84da1f0b2018b0d0f02da5de2910c814f9499ad388287845911c"
+    }
+  ]
+}

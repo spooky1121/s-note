@@ -75,12 +75,35 @@ def main():
             for row in index.get('records',[]):
                 model_rows.append((index['sourceId'],row['displayOrdinal'],row['modelNameRaw'],dump(row)))
     db.executemany('insert into provider_model_index values (?,?,?,?)',model_rows)
+    audit_dir=DATA/'bulk/encar-final-audit'
+    audit_counts={}
+    if (audit_dir/'errata.json').exists():
+        errata=json.loads((audit_dir/'errata.json').read_text())['records']
+        db.execute('create table source_errata(id text primary key,source_file text not null,source_id text not null references sources(id),changes_json text not null,evidence_url text not null,payload_json text not null)')
+        db.executemany('insert into source_errata values (?,?,?,?,?,?)',[(e['id'],e['sourceFile'],e['sourceId'],dump(e['changes']),e['evidenceUrl'],dump(e))for e in errata])
+        audit_counts['source_errata']=len(errata)
+    makers_path=audit_dir/'discovery/manufacturer-model-group-observations.json'
+    if makers_path.exists():
+        makers=json.loads(makers_path.read_text())['manufacturers']
+        db.execute('create table encar_price_manufacturers(position integer primary key,name_raw text not null,car_type_raw text,provider_code_raw text,source_url text not null,payload_json text not null)')
+        db.execute('create table encar_price_group_display(position integer primary key,manufacturer_position integer not null references encar_price_manufacturers(position),section_raw text not null,name_raw text not null,payload_json text not null)')
+        db.executemany('insert into encar_price_manufacturers values (?,?,?,?,?,?)',[(i,m['manufacturerNameRaw'],m['carTypeRaw'],m['manufacturerCodeObservedInLinkedUrl'],m['sourceUrl'],dump(m))for i,m in enumerate(makers,1)])
+        groups=[(i,r)for i,m in enumerate(makers,1)for r in m['rows']]
+        db.executemany('insert into encar_price_group_display values (?,?,?,?,?)',[(p,i,r['displayGroupRaw'],r['groupNameRaw'],dump(r))for p,(i,r)in enumerate(groups,1)])
+        audit_counts.update(encar_price_manufacturers=len(makers),encar_price_group_display=len(groups))
+    final_ledger=audit_dir/'name-audit/final-3128/encar-display-name-ledger.jsonl.gz'
+    if final_ledger.exists():
+        with gzip.open(final_ledger,'rt',encoding='utf-8')as f:
+            names=[json.loads(line)for line in f]
+        db.execute('create table encar_display_name_audit(display_ordinal integer primary key,name_raw text not null,comparison_state text not null,payload_json text not null)')
+        db.executemany('insert into encar_display_name_audit values (?,?,?,?)',[(r['encarDisplayOrdinal'],r['encarModelNameRaw'],r['comparisonState'],dump(r))for r in names])
+        audit_counts['encar_display_name_audit']=len(names)
     search_rows=db.execute('select id,make,model from record_search where record_search match ? limit 5',('캐스퍼',)).fetchall()
     assert search_rows and all(row[0] and row[1] and row[2] for row in search_rows)
     for identifier,make,model in search_rows:
         assert db.execute('select make,model from records where id=?',(identifier,)).fetchone()==(make,model)
     counts = {'external_reference_components':len(data.get('bulkReferences',[])),'sources':len(official['sources']),'records':len(official['records']),'baseline':len(data['baseline']['records']),'api_observations':len(data['listingObservations']),'government_certifications':len(data['certificationObservations']),'reference_documents':len(data['referenceDocuments']),'source_contexts':len(contexts),'provider_model_index':len(model_rows)}
-    results = [finish(db,temp,curated,counts)]
+    results = [finish(db,temp,curated,{**counts,**audit_counts})]
 
     bulk = DATA / 'bulk/global-vehicle-makes-models'
     if (bulk / 'archive-manifest.json').exists():

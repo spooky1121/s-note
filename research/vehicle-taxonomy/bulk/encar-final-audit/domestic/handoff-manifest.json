@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "frozen": true,
+  "asOf": "2026-11-07",
+  "existingModelsAudited": 13,
+  "existingUniqueObservationsAudited": 206,
+  "existingPhysicalRows": 207,
+  "newModelsRead": 22,
+  "newNormalObservations": 222,
+  "newQuarantinedRows": 1,
+  "newPhysicalRowsAllAccounted": 223,
+  "newSourceUrls": 22,
+  "uniqueNewSourceHierarchyIdentities": 222,
+  "existingSourceFilesModified": false,
+  "repositoryModified": false,
+  "runtimeImportEnabled": false,
+  "allDomesticEncarCatalogComplete": false,
+  "currentSearchHierarchyVerified": false,
+  "independentNewRowsAuditPassed": true,
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 3088,
+      "sha256": "b28d4adfa6ca907215950cd3189117ed2d9016e3d0a89a3e85e7f8fa6c0f80db"
+    },
+    {
+      "path": "source-warnings.json",
+      "bytes": 4787,
+      "sha256": "abcc3922abd11e483f8f6ec1c4bc1a62d663ab45a998bf6c1aa6841ea7674dad"
+    },
+    {
+      "path": "encar-final-domestic-expansion-20261107.json",
+      "bytes": 438612,
+      "sha256": "2d35897f3bd3e20ab3a2f6843273b004f423a95e0b4c3116cf3b428dcca7edc1"
+    },
+    {
+      "path": "additional-22-model-classification-observations.json",
+      "bytes": 27787,
+      "sha256": "2fc74d6eecb990cbcb4527b2896c77b9daa6a4fd53104dfae62024c25ff5b954"
+    },
+    {
+      "path": "additional-22-verification.json",
+      "bytes": 6021,
+      "sha256": "044e136e60ec9edcbc9d9b92fa55548990495b225f4413666b63742f8912c0fd"
+    },
+    {
+      "path": "build-additional-domestic-observations.py",
+      "bytes": 12111,
+      "sha256": "4c0088936305a0845793a7a07524069c62d79a476adc61ef2f89b33aa6218faa"
+    },
+    {
+      "path": "existing-13-observed-CLS.json",
+      "bytes": 14430,
+      "sha256": "d5783faaaebf8cc6f25a0c5c1e18360a98c340878eaf72f1b0df866dc8c0f8a7"
+    },
+    {
+      "path": "existing-206-classification-audit.json",
+      "bytes": 112056,
+      "sha256": "c78d71427330c249e0e9a2f76e341219000c2da7cb84f8dfa84a9328b787079c"
+    },
+    {
+      "path": "audit-existing-domestic-observations.py",
+      "bytes": 3745,
+      "sha256": "07bb238ffe52450fa1b7638aaf106be5e0b733620e304f8cdbc0a9c108000e37"
+    },
+    {
+      "path": "independent-audit/summary.json",
+      "bytes": 1446,
+      "sha256": "6846eb5afae4602058294552cb37847d8b93284e7dd5b2f23789e56adb67de22"
+    },
+    {
+      "path": "independent-audit/record-ledger.json",
+      "bytes": 72302,
+      "sha256": "97df04157f23d55e9074d2589015df77b375ebd841a719b3b601128182cb1af0"
+    },
+    {
+      "path": "independent-audit/audit_new_domestic.py",
+      "bytes": 7983,
+      "sha256": "a304eb6e9ba4a624606da893d2a353634ca28bfc55075b13dbfd91282bafb2e7"
+    }
+  ]
+}

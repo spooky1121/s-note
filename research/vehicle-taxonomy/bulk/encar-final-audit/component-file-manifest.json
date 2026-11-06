@@ -1,0 +1,553 @@
+{
+  "schemaVersion": 1,
+  "pathBase": "repository_root",
+  "scope": "Frozen Encar observations, before/after comparisons, exact errata, source audits and reproduction scripts",
+  "completeCurrentEncarRetailHierarchy": false,
+  "files": [
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/FINAL_REVIEW.md",
+      "bytes": 4135,
+      "sha256": "fffd88f5fd4af75944ce0b8d6a8f21c3c6eef70ead60c854adf2cbf3876c9813"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/README.md",
+      "bytes": 370,
+      "sha256": "9ab6fec7a6d6ae6a21cd22e57128bfbe1eb1cea9b53b7c4f191d4992c912245b"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/archive-manifest.json",
+      "bytes": 2663,
+      "sha256": "46b8fe18a646000d09b1da5c6a187bc669ed77afe90e0287203cf5d680582d8e"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/audit-domestic-final-independent.py",
+      "bytes": 13001,
+      "sha256": "3c9837bca229ce14b1be23d737e774f28bccc773b05f4d4e99efbdd18d818071"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/current-index/current-index.json",
+      "bytes": 161706,
+      "sha256": "3dd05119ab0b1288c2eff48dc3c6bc7da2ac177b7b867ecba714c756339e455e"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/current-index/names-section-0.json",
+      "bytes": 42061,
+      "sha256": "ccc0eed695ad7834f8b02ff9bff772c18bb5f7fa175c11cc1d6ae14da5ca35fe"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/current-index/names-section-1000.json",
+      "bytes": 44265,
+      "sha256": "6243ab783327686d160665b81041cd0274c5ced6331078f18efa2bd122a1cca0"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/current-index/names-section-1500.json",
+      "bytes": 43832,
+      "sha256": "fd2b06c453635032fc191bc29b60c02a8c9087e52247d32222726c641ec68f33"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/current-index/names-section-1850.json",
+      "bytes": 42681,
+      "sha256": "b80a1ddb5893dcf25c2a34a795b074caa85718d9bfd6daf8f3470c7fb1e7751a"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/current-index/names-section-500.json",
+      "bytes": 43452,
+      "sha256": "3be08e4de058e96c63fb591afaba28a6882cbd236d2a6a2064bed447d21df2ad"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/discovery/README.md",
+      "bytes": 6974,
+      "sha256": "2a3eb627698f22b70b6436f446fcff03feda5baca37f7e32514b5c24b3319c6e"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/discovery/build-manufacturer-audit.py",
+      "bytes": 15177,
+      "sha256": "ce169da0bbd9a5e63e80745fabc0d03163fba572538150ccf1b651df0979de11"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/discovery/derived/baseline-manufacturer-comparison.csv",
+      "bytes": 22499,
+      "sha256": "107e72aebe7b6b2e329d43c62a696429e9c4cffb2cdfaf68f9b26808272d8ac7"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/discovery/derived/declared-alias-candidates.json",
+      "bytes": 4168,
+      "sha256": "0736f9c5834dfc62d21a13ada7bf18c34dffd60655c2a6d703e16db28fd232d4"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/discovery/derived/encar-manufacturer-coverage.csv",
+      "bytes": 11723,
+      "sha256": "f05ba1ca1d599126aebf7eb47ff9e7c8e5c594771dd4e4d4806b09cb0241dde9"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/discovery/derived/government-maker-comparison.csv",
+      "bytes": 1110843,
+      "sha256": "c8665b2bef7a34fcf9b6e3834543a0a4321b185fcc3925be595e5c6f5810e0ea"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/discovery/derived/manufacturer-comparison.json",
+      "bytes": 2099290,
+      "sha256": "6d7d5aa00fc9ef6b54bb9c71e0c00b3811c34735710de3f550a32b6ca678a802"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/discovery/derived/model-group-comparison.json",
+      "bytes": 799234,
+      "sha256": "fef9a94ae3ab0df8149dfcd59ee465a757e6d5024fc70df19ad9b019adc251a7"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/discovery/derived/model-group-observations.csv",
+      "bytes": 233749,
+      "sha256": "1eb41da61b767fe402cceeb44ec73cdcbd34bac8452ed3ddb16755658a0a8f9d"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/discovery/derived/summary.json",
+      "bytes": 3056,
+      "sha256": "5f8ba28422694208c00960e7e4a8befb9cc814d4443192575c319d53cf05912e"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/discovery/manifest.json",
+      "bytes": 3795,
+      "sha256": "7a8ea91e20f48d8a9ae4e17b88f15070b27f2e0c88fde239ce8b4c1d8ed5bb25"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/discovery/manufacturer-model-group-observations.json",
+      "bytes": 586240,
+      "sha256": "f1fe7b4676f9edca7c33ea65f61bf61f925a0652b7f24324abd073c15e82ee71"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/discovery/model-group-navigation-check.json",
+      "bytes": 900,
+      "sha256": "7458847d1251905dfde6afdb6331ac5ae4e5e0248e40b024bc44425258aa67f7"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/discovery/verification.json",
+      "bytes": 558,
+      "sha256": "b768d94bb5e0d1b675d98504cd7932d4bfddb0cd6bf26641f81c26f983884de4"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/discovery/verify-manufacturer-audit.py",
+      "bytes": 5412,
+      "sha256": "3a25886b57c44372f524a8b18cf7831f2eaeaa86b314719713ac6def86ddfcbb"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/domestic/README.md",
+      "bytes": 3088,
+      "sha256": "b28d4adfa6ca907215950cd3189117ed2d9016e3d0a89a3e85e7f8fa6c0f80db"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/domestic/additional-22-model-classification-observations.json",
+      "bytes": 27787,
+      "sha256": "2fc74d6eecb990cbcb4527b2896c77b9daa6a4fd53104dfae62024c25ff5b954"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/domestic/additional-22-verification.json",
+      "bytes": 6021,
+      "sha256": "044e136e60ec9edcbc9d9b92fa55548990495b225f4413666b63742f8912c0fd"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/domestic/audit-existing-domestic-observations.py",
+      "bytes": 3745,
+      "sha256": "07bb238ffe52450fa1b7638aaf106be5e0b733620e304f8cdbc0a9c108000e37"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/domestic/build-additional-domestic-observations.py",
+      "bytes": 12111,
+      "sha256": "4c0088936305a0845793a7a07524069c62d79a476adc61ef2f89b33aa6218faa"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/domestic/encar-final-domestic-expansion-20261107.json",
+      "bytes": 438612,
+      "sha256": "2d35897f3bd3e20ab3a2f6843273b004f423a95e0b4c3116cf3b428dcca7edc1"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/domestic/existing-13-observed-CLS.json",
+      "bytes": 14430,
+      "sha256": "d5783faaaebf8cc6f25a0c5c1e18360a98c340878eaf72f1b0df866dc8c0f8a7"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/domestic/existing-206-classification-audit.json",
+      "bytes": 112056,
+      "sha256": "c78d71427330c249e0e9a2f76e341219000c2da7cb84f8dfa84a9328b787079c"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/domestic/handoff-manifest.json",
+      "bytes": 2646,
+      "sha256": "668d9d3307330855aa9958345d2f43fffc366a3737312dc2c365f1f1f718fabc"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/domestic/independent-audit/audit_new_domestic.py",
+      "bytes": 7983,
+      "sha256": "a304eb6e9ba4a624606da893d2a353634ca28bfc55075b13dbfd91282bafb2e7"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/domestic/independent-audit/record-ledger.json",
+      "bytes": 72302,
+      "sha256": "97df04157f23d55e9074d2589015df77b375ebd841a719b3b601128182cb1af0"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/domestic/independent-audit/summary.json",
+      "bytes": 1446,
+      "sha256": "6846eb5afae4602058294552cb37847d8b93284e7dd5b2f23789e56adb67de22"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/domestic/source-warnings.json",
+      "bytes": 4787,
+      "sha256": "abcc3922abd11e483f8f6ec1c4bc1a62d663ab45a998bf6c1aa6841ea7674dad"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/domestic-independent-audit.json",
+      "bytes": 132320,
+      "sha256": "af5adc17bede139cdff24c09e6754ce1c1fb737d69ae09e805d33f3b428eab76"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/errata.json",
+      "bytes": 18731,
+      "sha256": "d975dac82afea9466ad40596427c1e5905e4e64d4207b0058cbf9e50b1d1fa65"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/imports/README.md",
+      "bytes": 2629,
+      "sha256": "dc1eeac7188237b4a0513013b339a63bff52369d326dbfdaf3dace07f3fc71f7"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/imports/encar-import-additions-20261107.json",
+      "bytes": 8978,
+      "sha256": "27670c5a6052126d331504985f46c4aa16aeb1122944cb1250fa04356c628627"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/imports/encar-import-errata-20261107.json",
+      "bytes": 18731,
+      "sha256": "d975dac82afea9466ad40596427c1e5905e4e64d4207b0058cbf9e50b1d1fa65"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/imports/field-review-resolution.json",
+      "bytes": 19312,
+      "sha256": "5a2d2461718194748d8fd3a963d70fbe777978d666dea5792291107f60ffeb6e"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/imports/frame-table-facts.json",
+      "bytes": 203807,
+      "sha256": "506edc6e8c02ba68c420e25c3ea2df7f60b39ca8cf10987e17a2b7df29fec7f7"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/imports/handoff-manifest.json",
+      "bytes": 4681,
+      "sha256": "0f2a57ccf4d6a5515f932cebddd5c47b5471819a696e7712add9ae007531f262"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/imports/independent-audit/audit_cls.py",
+      "bytes": 16106,
+      "sha256": "7e27dd7fecc953c2b07cb5beab03367cb0560a8f293ea1864f70b6546520f96e"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/imports/independent-audit/audit_engine.py",
+      "bytes": 12651,
+      "sha256": "4fc41eab1d63b9773b9a2a128544a64130b42ba14ecb6e31a25d636cee71155e"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/imports/independent-audit/cls-table-rows.json",
+      "bytes": 340428,
+      "sha256": "593d3b5bca3399699d69bb1762e459454b4e21237753f7d9d4d4dabab0603af1"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/imports/independent-audit/corrections-proposed.json",
+      "bytes": 21928,
+      "sha256": "833dd9801060ec1ea23dd02581da4eb5f3e9de95bb040c0879bfdec76db1a305"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/imports/independent-audit/engine-audit.json",
+      "bytes": 1004705,
+      "sha256": "cf75881f2b95294cbe9897aadab3ab3dc0b22a2ada078bac258cc90487b8893b"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/imports/independent-audit/engine-candidates.json",
+      "bytes": 23569,
+      "sha256": "07191578edc1f699488b938688529f329d1c763131967bc00654c746921f3569"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/imports/independent-audit/engine-summary.json",
+      "bytes": 1784,
+      "sha256": "112166c278faee1405ac81ade6272a32f1b0468f8fabc6f06f619fb94aa76384"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/imports/independent-audit/findings.json",
+      "bytes": 29343,
+      "sha256": "9bfe28a63273522ebf2e64e5ef72e23a23e1fa92c8c643c214099dbe8e5e1fb4"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/imports/independent-audit/record-ledger.json",
+      "bytes": 1083615,
+      "sha256": "f591ab0aa2f59bb6f96a72e39fddecb032b91dc4e7563f4db3682534a2f40d4a"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/imports/independent-audit/source-summary.json",
+      "bytes": 8919,
+      "sha256": "c292a03754c9123d55ad3a8618c6dd289a8c1c8a2ff7f50657bc003aa32cae3b"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/imports/independent-audit/summary.json",
+      "bytes": 2335,
+      "sha256": "52c6bc1b0b5dcbafc93e62ccad9e0fa99e53ec7e2795e6f46f30be13b7352f50"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/imports/independent-audit/summary.md",
+      "bytes": 1466,
+      "sha256": "42eb81d2c69e8c0afe792a41cef7dcae47b6bfe11988aa72aab7e03362e33bc6"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/imports/parent-audits-verified.json",
+      "bytes": 33735,
+      "sha256": "b3fb8719da91cdef33c3a21d6f28b6861e1d877056bfe65263162be7288a9dd1"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/imports/parent-support-facts.json",
+      "bytes": 1970,
+      "sha256": "628472ab6dc59fe149d1b6bd08bb825e8b6077add79c4a61a1ba429a888c3c0d"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/imports/targets.json",
+      "bytes": 570774,
+      "sha256": "3daacacd6ccb9aea22cd6a8d5b838186a9576ca7ba993ef46fe63434e5ee8b1f"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/name-audit/README.md",
+      "bytes": 7188,
+      "sha256": "8cea4adbd70853e1175de1272fa81ee4f1ceab5025a7fabbc7c5d717fa3587a1"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/name-audit/build-encar-name-audit.py",
+      "bytes": 28138,
+      "sha256": "69a2a3ff1091af90e7581808c62c16da24a7e3c9ff721306a31a8d462668fe52"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/name-audit/code-snapshots/build-encar-name-audit.69a2a3ff1091.py",
+      "bytes": 28138,
+      "sha256": "69a2a3ff1091af90e7581808c62c16da24a7e3c9ff721306a31a8d462668fe52"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/name-audit/code-snapshots/build-encar-name-audit.d322f6961244.py",
+      "bytes": 27725,
+      "sha256": "d322f6961244129530bb871cbf4e641574eb793a4323f997559bb6f90aa4b8ad"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/name-audit/final-3128/baseline-model-ledger.csv.gz",
+      "bytes": 54186,
+      "sha256": "f3759dfe3b4c616d72fb1f9dc287be5c2dce9c9eb77b0d3824d6ddc103b0f6f2"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/name-audit/final-3128/baseline-model-ledger.jsonl.gz",
+      "bytes": 58259,
+      "sha256": "fc01f34d91a681a660875b844f2eb5fac0f26cd1743e8fc96d6c46ba23bbf4bc"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/name-audit/final-3128/confirmed-corrections.json",
+      "bytes": 228,
+      "sha256": "24baa8a36fb9728c630644050d311a812e989e78d0e7fb96aa90d4ddedefd86d"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/name-audit/final-3128/duplicate-labels.json",
+      "bytes": 4677,
+      "sha256": "0f008bf901219257e98c5d79facbd1d6718d71d2bf039da9d714da8c12ecd351"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/name-audit/final-3128/encar-ambiguous-display-rows.csv.gz",
+      "bytes": 3955,
+      "sha256": "d26c0b20360518b4c84f52e0686706c42883e9fd57de1a63ddcd1c958706c0a8"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/name-audit/final-3128/encar-display-name-ledger.csv.gz",
+      "bytes": 30540,
+      "sha256": "b3bd30e1a4f1a59cbe377336baefe7facce73071296953a6386e65bd99a5588f"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/name-audit/final-3128/encar-display-name-ledger.jsonl.gz",
+      "bytes": 741475,
+      "sha256": "21b78440631b3bf2f569fa0ae29df2218eaa0d83b41203155a7542b3cc1cd2da"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/name-audit/final-3128/encar-unmapped-display-rows.csv.gz",
+      "bytes": 7380,
+      "sha256": "606e2999649bf4ff08205107f202d93f625fabdb6c84522f0cc577139dd615d5"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/name-audit/final-3128/government-name-links.jsonl.gz",
+      "bytes": 922495,
+      "sha256": "4908f199e3515ab1418a38932cc696ff1252d16bf427f2e2cb8e10a38470c1c6"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/name-audit/final-3128/input-snapshots/baseline-source.c3b3d3fc7570.raw.gz",
+      "bytes": 22270,
+      "sha256": "062c1d62732a1f1126d11b2ba9aa4e23a956f0ea1566cd4308aacec7a1450876"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/name-audit/final-3128/input-snapshots/encar-source.3dd05119ab0b.raw.gz",
+      "bytes": 16088,
+      "sha256": "d40d94e6912cdd65bdd0dafdb81ef700c4783b7b02dfb40eb4641b930ce5866b"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/name-audit/final-3128/input-snapshots/research-source.8bd4bd4a4412.raw.gz",
+      "bytes": 405211,
+      "sha256": "dfd260117d7c322b32e41e6aa8272ea2aafe101b191b248adc3319f2a3247a6c"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/name-audit/final-3128/manifest.json",
+      "bytes": 4668,
+      "sha256": "4592ff1cbcc0f0d6f32f4c9efa358a0f7549c07f55ec575a3cf63a78073f693d"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/name-audit/final-3128/research-record-ledger.csv.gz",
+      "bytes": 111620,
+      "sha256": "7372fb1cc438433b5afca949307937ce6edc6c53718a510aa684725b3aa9a392"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/name-audit/final-3128/research-record-ledger.jsonl.gz",
+      "bytes": 124006,
+      "sha256": "da51c0e6f268dd78630ce9dc34bb280a694df8111633b8d3d71aea92b7ee3d06"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/name-audit/final-3128/summary.json",
+      "bytes": 4349,
+      "sha256": "a02137ba28bc39eab7d86a835b272ef50a65d94f888d085db27bcb1e4af9b421"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/name-audit/final-3128/verification.json",
+      "bytes": 601,
+      "sha256": "ceb483d01fa4d564afafca246bdbf52d8f423c8398cedca726152f3ed58c7da4"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/name-audit/handoff-manifest.json",
+      "bytes": 5790,
+      "sha256": "82b386047e767b0d5ad9217d62a5a144f57c6e7f42a50561f7827a0e823d8f07"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/name-audit/preaudit-2903/baseline-model-ledger.csv.gz",
+      "bytes": 54186,
+      "sha256": "f3759dfe3b4c616d72fb1f9dc287be5c2dce9c9eb77b0d3824d6ddc103b0f6f2"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/name-audit/preaudit-2903/baseline-model-ledger.jsonl.gz",
+      "bytes": 58259,
+      "sha256": "fc01f34d91a681a660875b844f2eb5fac0f26cd1743e8fc96d6c46ba23bbf4bc"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/name-audit/preaudit-2903/confirmed-corrections.json",
+      "bytes": 228,
+      "sha256": "24baa8a36fb9728c630644050d311a812e989e78d0e7fb96aa90d4ddedefd86d"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/name-audit/preaudit-2903/duplicate-labels.json",
+      "bytes": 4677,
+      "sha256": "0f008bf901219257e98c5d79facbd1d6718d71d2bf039da9d714da8c12ecd351"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/name-audit/preaudit-2903/encar-ambiguous-display-rows.csv.gz",
+      "bytes": 3955,
+      "sha256": "e0a1629621bf39d7ec7cf54f48d1f2f635997465994ea7ad2455e79a9a321ee0"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/name-audit/preaudit-2903/encar-display-name-ledger.csv.gz",
+      "bytes": 30511,
+      "sha256": "f9e1958232b930b398aa56f861a6d4b4ed4f498b37d1f274d5ef045be5534b7e"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/name-audit/preaudit-2903/encar-display-name-ledger.jsonl.gz",
+      "bytes": 697294,
+      "sha256": "118ebab313f7b16eb9d467eaa9ffa27a92ef92eac5bf711639eb2a6eb0144164"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/name-audit/preaudit-2903/encar-unmapped-display-rows.csv.gz",
+      "bytes": 7420,
+      "sha256": "28aa25b3887b84a758e0090d5d60c94b15b5205ec2e897cfc48f58dc9c7a84f9"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/name-audit/preaudit-2903/government-name-links.jsonl.gz",
+      "bytes": 922495,
+      "sha256": "4908f199e3515ab1418a38932cc696ff1252d16bf427f2e2cb8e10a38470c1c6"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/name-audit/preaudit-2903/input-snapshots/baseline-source.c3b3d3fc7570.raw.gz",
+      "bytes": 22270,
+      "sha256": "062c1d62732a1f1126d11b2ba9aa4e23a956f0ea1566cd4308aacec7a1450876"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/name-audit/preaudit-2903/input-snapshots/encar-source.3dd05119ab0b.raw.gz",
+      "bytes": 16088,
+      "sha256": "d40d94e6912cdd65bdd0dafdb81ef700c4783b7b02dfb40eb4641b930ce5866b"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/name-audit/preaudit-2903/input-snapshots/research-source.d3b0aab974e6.raw.gz",
+      "bytes": 369591,
+      "sha256": "683afc5c3df2fd0c150393b5c11b1d51f1d70ba06f9854715cb72f2767f9f183"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/name-audit/preaudit-2903/manifest.json",
+      "bytes": 4640,
+      "sha256": "3e81aca2d9d4741e67f88f3cb14993043abdd6db203d9cf338c2e1a90c47784d"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/name-audit/preaudit-2903/research-record-ledger.csv.gz",
+      "bytes": 104532,
+      "sha256": "05d60cec9d5afc6fb3437aeb7de83ccd13dc9079aa881b4df0df3c63ef1f2d78"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/name-audit/preaudit-2903/research-record-ledger.jsonl.gz",
+      "bytes": 115907,
+      "sha256": "59a0dea6c703af880c9270fb8a2d66386cdd217114b612ec0c674a7358782c85"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/name-audit/preaudit-2903/summary.json",
+      "bytes": 4349,
+      "sha256": "b6d8d39be71268ba58e25180512d81e5a2a9c8c54ca0698c00e4cf9a5bfa45a0"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/name-audit/verification/deterministic-replay.json",
+      "bytes": 173,
+      "sha256": "e4733ac9bad806425508e628697f5252d077232759b35ff8a700e9e8f83ed23e"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/name-audit/verification/exhaustive-source-audit.json",
+      "bytes": 601,
+      "sha256": "a7ff13d2a70d42d77bc41ae2e83b6dfab889f7711ab37fd232004e0584ee80ae"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/name-audit/verify-encar-name-audit.py",
+      "bytes": 14377,
+      "sha256": "f46d8583b24f84da1f0b2018b0d0f02da5de2910c814f9499ad388287845911c"
+    },
+    {
+      "path": "scripts/build-encar-final-review.py",
+      "bytes": 9301,
+      "sha256": "e13619541c54cd1ce62a7fd6d8e4e91014ba08e2f562b7d3c38608092c57e32a"
+    },
+    {
+      "path": "scripts/build-vehicle-gap-ledger.py",
+      "bytes": 4852,
+      "sha256": "fddfb30ad6952f2928936b42d7f28918777f3dfc210afadd154cc51d4c92821e"
+    },
+    {
+      "path": "scripts/build-vehicle-taxonomy-research.mjs",
+      "bytes": 17253,
+      "sha256": "6d3980acbc4e1065d14686522a02b9669fcee2b409f71c6a194d61ec690e75aa"
+    },
+    {
+      "path": "scripts/export-vehicle-research-databases.py",
+      "bytes": 10963,
+      "sha256": "598fcc5de85de43370ffa1c02cc774d064f809bf7cfb465c86724ebefac88dc2"
+    },
+    {
+      "path": "scripts/export-vehicle-taxonomy-workbook.py",
+      "bytes": 14589,
+      "sha256": "a1d9ff2558376bed112f7f0e5601611d2edcf083daa743ecfc255db8b16c249f"
+    },
+    {
+      "path": "scripts/package-vehicle-research-artifacts.py",
+      "bytes": 5523,
+      "sha256": "1316df85143b2356a4b0e2aaa8936dd1a7205623a2614a3e3971cf06e9b35c37"
+    },
+    {
+      "path": "scripts/update-vehicle-brand-source-ledger.py",
+      "bytes": 16583,
+      "sha256": "67d3efc88bf8ff8b1a481506d9498612171678466051ceb917781597c57a8c72"
+    }
+  ]
+}

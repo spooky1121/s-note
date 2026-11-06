@@ -1,0 +1,75 @@
+[
+  {
+    "sourceId": "hist-encar-3-6gen-grades",
+    "url": "https://www.encar.com/mocha/history.do?mdlcd=038&mnfccd=012",
+    "sourceActualUrl": "https://www.encar.com/mocha/history.do?mdlcd=038&mnfccd=012",
+    "facts": [
+      {
+        "sourceLine": 23,
+        "technicalTerms": [
+          "8단 스포츠 자동변속기"
+        ]
+      }
+    ]
+  },
+  {
+    "sourceId": "hist-encar-x3-f25-grades",
+    "url": "https://www.encar.com/mocha/history.do?mdlcd=028&mnfccd=012",
+    "sourceActualUrl": "https://www.encar.com/mocha/history.do?mdlcd=028&mnfccd=012",
+    "facts": [
+      {
+        "sourceLine": 23,
+        "technicalTerms": [
+          "ZF 8단 자동변속기",
+          "델에 적용하였다. 이후 디젤 트윈터보 xDrive3",
+          " 가솔린 트윈파워터보 xDrive2"
+        ]
+      }
+    ]
+  },
+  {
+    "sourceId": "hist-encar-qashqai-2-grades",
+    "url": "https://www.encar.com/mocha/history.do?mdlcd=043&mnfccd=033",
+    "sourceActualUrl": "https://www.encar.com/mocha/history.do?mdlcd=043&mnfccd=033",
+    "facts": [
+      {
+        "sourceLine": 24,
+        "technicalTerms": [
+          "CVT"
+        ]
+      }
+    ]
+  },
+  {
+    "sourceId": "hist-encar-crv-3-grades",
+    "url": "https://www.encar.com/mocha/history.do?mdlcd=003&mnfccd=027",
+    "sourceActualUrl": "https://www.encar.com/mocha/history.do?mdlcd=003&mnfccd=027",
+    "facts": [
+      {
+        "sourceLine": 24,
+        "technicalTerms": [
+          "i-VTEC"
+        ]
+      },
+      {
+        "sourceLine": 52,
+        "technicalTerms": [
+          "CVT"
+        ]
+      }
+    ]
+  },
+  {
+    "sourceId": "hist-encar-q50-2014-grades",
+    "url": "https://www.encar.com/mocha/history.do?mdlcd=030&mnfccd=058",
+    "sourceActualUrl": "https://www.encar.com/mocha/history.do?mdlcd=030&mnfccd=058",
+    "facts": [
+      {
+        "sourceLine": 24,
+        "technicalTerms": [
+          " 들어오진 않았지만 2.0가솔린 터보"
+        ]
+      }
+    ]
+  }
+]

@@ -16,10 +16,10 @@ BMW,4시리즈,4시리즈 F32,not_yet_found,not_attested,needs_source_review,0,0
 BMW,4시리즈,4시리즈 F36 그란쿠페,not_yet_found,not_attested,needs_source_review,0,0,0,,family_or_series_hint_only,93,0,baseline-7502c43fe57272b9,False
 BMW,4시리즈,4시리즈 G22,not_yet_found,not_attested,needs_source_review,0,0,0,,family_or_series_hint_only,93,0,baseline-5994c72d7d428663,False
 BMW,4시리즈,4시리즈 G26 그란쿠페,not_yet_found,not_attested,needs_source_review,0,0,0,,family_or_series_hint_only,93,0,baseline-fdcb85f5ec372ec0,False
-BMW,5시리즈,5시리즈 E39,family_evidence_only,not_attested,needs_source_review,0,0,39,,family_or_series_hint_only,187,0,baseline-513c6ba76c0abfa0,False
-BMW,5시리즈,5시리즈 E60,family_evidence_only,not_attested,needs_source_review,0,0,39,,family_or_series_hint_only,187,0,baseline-d853a457e8a194f5,False
-BMW,5시리즈,5시리즈 F10,family_evidence_only,not_attested,needs_source_review,0,0,39,,family_or_series_hint_only,187,0,baseline-09bb248371550137,False
-BMW,5시리즈,5시리즈 GT F07,family_evidence_only,not_attested,needs_source_review,0,0,39,,family_or_series_hint_only,187,0,baseline-0272eb7f3b761357,False
+BMW,5시리즈,5시리즈 E39,family_evidence_only,not_attested,needs_source_review,0,0,42,,family_or_series_hint_only,187,0,baseline-513c6ba76c0abfa0,False
+BMW,5시리즈,5시리즈 E60,family_evidence_only,not_attested,needs_source_review,0,0,42,,family_or_series_hint_only,187,0,baseline-d853a457e8a194f5,False
+BMW,5시리즈,5시리즈 F10,family_evidence_only,not_attested,needs_source_review,0,0,42,,family_or_series_hint_only,187,0,baseline-09bb248371550137,False
+BMW,5시리즈,5시리즈 GT F07,family_evidence_only,not_attested,needs_source_review,0,0,42,,family_or_series_hint_only,187,0,baseline-0272eb7f3b761357,False
 BMW,6시리즈,6시리즈 E63,not_yet_found,not_attested,needs_source_review,0,0,0,,family_or_series_hint_only,74,0,baseline-43ded50645632089,False
 BMW,6시리즈,6시리즈 F12,not_yet_found,not_attested,needs_source_review,0,0,0,,family_or_series_hint_only,74,0,baseline-92d038f8a2519230,False
 BMW,6시리즈,6시리즈 F13,not_yet_found,not_attested,needs_source_review,0,0,0,,family_or_series_hint_only,74,0,baseline-8da4798a6f907e88,False
@@ -139,13 +139,13 @@ KG모빌리티(쌍용),티볼리,티볼리 에어,exact_model_label_evidence,not
 기아,K3,더 뉴 K3 BD,family_evidence_only,not_attested,needs_source_review,0,0,45,,family_or_series_hint_only,203,0,baseline-28795cb25b4851f0,False
 기아,K3,더 뉴 K3 YD,declared_alias_candidate,not_attested,needs_source_review,0,16,45,https://www.newswire.co.kr/newsRead.php?no=810963 | https://www.newswire.co.kr/newsRead.php?no=812684,family_or_series_hint_only,203,0,baseline-2cf963c90126c0c6,False
 기아,K3,올 뉴 K3 BD,declared_alias_candidate,not_attested,needs_source_review,0,12,45,https://www.kia.com/content/dam/kwcms/kr/ko/files/XYD/price/price_k3_be.pdf | https://www.newswire.co.kr/newsRead.php?no=865190 | https://www.newswire.co.kr/newsRead.php?no=876495,family_or_series_hint_only,203,0,baseline-c3df7c181157c970,False
-기아,K5,K5 DL3,family_evidence_only,not_attested,needs_source_review,0,0,36,,family_or_series_hint_only,788,0,baseline-0836a40235515418,False
-기아,K5,K5 JF,exact_model_label_evidence,not_attested,needs_source_review,16,0,36,https://www.newswire.co.kr/newsRead.php?no=797762,family_or_series_hint_only,788,0,baseline-18e8b63be8ce3a57,False
-기아,K5,K5 TF,declared_alias_candidate,not_attested,needs_source_review,0,3,36,https://www.newswire.co.kr/newsRead.php?no=470913,family_or_series_hint_only,788,0,baseline-0457b56928e44367,False
-기아,K5,K5 하이브리드,family_evidence_only,not_attested,needs_source_review,0,0,36,,model_name_candidate_found,788,116,baseline-d6f1309fa4c2b538,False
-기아,K5,더 뉴 K5 DL3,family_evidence_only,not_attested,needs_source_review,0,0,36,,family_or_series_hint_only,788,0,baseline-27af2b81a93572f6,False
-기아,K5,더 뉴 K5 JF,family_evidence_only,not_attested,needs_source_review,0,0,36,,family_or_series_hint_only,788,0,baseline-432c2cb393b8cbdc,False
-기아,K5,더 뉴 K5 TF,family_evidence_only,not_attested,needs_source_review,0,0,36,,family_or_series_hint_only,788,0,baseline-5deafa6e2fa2426a,False
+기아,K5,K5 DL3,family_evidence_only,not_attested,needs_source_review,0,0,80,,family_or_series_hint_only,788,0,baseline-0836a40235515418,False
+기아,K5,K5 JF,exact_model_label_evidence,not_attested,needs_source_review,16,0,80,https://www.newswire.co.kr/newsRead.php?no=797762,family_or_series_hint_only,788,0,baseline-18e8b63be8ce3a57,False
+기아,K5,K5 TF,declared_alias_candidate,not_attested,needs_source_review,0,3,80,https://www.newswire.co.kr/newsRead.php?no=470913,family_or_series_hint_only,788,0,baseline-0457b56928e44367,False
+기아,K5,K5 하이브리드,exact_model_label_evidence,not_attested,needs_source_review,4,0,80,https://www.encar.com/cc/common.do?bbsno=142176&method=view_modelHistoryframe&type=CLS,model_name_candidate_found,788,116,baseline-d6f1309fa4c2b538,False
+기아,K5,더 뉴 K5 DL3,family_evidence_only,not_attested,needs_source_review,0,0,80,,family_or_series_hint_only,788,0,baseline-27af2b81a93572f6,False
+기아,K5,더 뉴 K5 JF,family_evidence_only,not_attested,needs_source_review,0,0,80,,family_or_series_hint_only,788,0,baseline-432c2cb393b8cbdc,False
+기아,K5,더 뉴 K5 TF,family_evidence_only,not_attested,needs_source_review,0,0,80,,family_or_series_hint_only,788,0,baseline-5deafa6e2fa2426a,False
 기아,K7,K7 VG,declared_alias_candidate,not_attested,needs_source_review,0,9,19,https://www.newswire.co.kr/newsRead.php?no=442239 | https://www.newswire.co.kr/newsRead.php?no=580717,model_name_candidate_found,265,9,baseline-8101223a2c268e85,False
 기아,K7,K7 프리미어,family_evidence_only,not_attested,needs_source_review,0,0,19,,family_or_series_hint_only,265,0,baseline-659aab8a9986362f,False
 기아,K7,K7 하이브리드,family_evidence_only,not_attested,needs_source_review,0,0,19,,model_name_candidate_found,265,28,baseline-96f705efade8dc58,False
@@ -348,23 +348,23 @@ KG모빌리티(쌍용),티볼리,티볼리 에어,exact_model_label_evidence,not
 르노코리아(삼성),QM6,QM6 HZG,family_evidence_only,not_attested,needs_source_review,0,0,3,,family_or_series_hint_only,28,0,baseline-5a1498809585232e,False
 르노코리아(삼성),QM6,QM6 LPe,family_evidence_only,not_attested,needs_source_review,0,0,3,,family_or_series_hint_only,28,0,baseline-9e06e3a48935f110,False
 르노코리아(삼성),QM6,뉴 QM6,family_evidence_only,not_attested,needs_source_review,0,0,3,,family_or_series_hint_only,28,0,baseline-43dbfdd88f57eda1,False
-르노코리아(삼성),SM3,SM3 L38,family_evidence_only,not_attested,needs_source_review,0,0,16,,family_or_series_hint_only,114,0,baseline-134ddcb99572c23b,False
-르노코리아(삼성),SM3,SM3 N16,family_evidence_only,not_attested,needs_source_review,0,0,16,,family_or_series_hint_only,114,0,baseline-8fbebc69bcb29184,False
-르노코리아(삼성),SM3,SM3 Z.E.,family_evidence_only,not_attested,needs_source_review,0,0,16,,model_name_candidate_found,114,11,baseline-ad72f27f44463bc7,False
-르노코리아(삼성),SM3,SM3 네오,family_evidence_only,not_attested,needs_source_review,0,0,16,,model_name_candidate_found,114,4,baseline-b217162efd16a3ca,False
-르노코리아(삼성),SM3,뉴 SM3,family_evidence_only,not_attested,needs_source_review,0,0,16,,family_or_series_hint_only,114,0,baseline-5db074db250e2376,False
-르노코리아(삼성),SM5,SM5 A34,family_evidence_only,not_attested,needs_source_review,0,0,24,,family_or_series_hint_only,92,0,baseline-1751c2b3ec2f9913,False
-르노코리아(삼성),SM5,SM5 노바,family_evidence_only,not_attested,needs_source_review,0,0,24,,model_name_candidate_found,92,11,baseline-67df8c2425c65b27,False
-르노코리아(삼성),SM5,SM5 임프레션,family_evidence_only,not_attested,needs_source_review,0,0,24,,family_or_series_hint_only,92,0,baseline-3acc490c336fb675,False
-르노코리아(삼성),SM5,SM5 플래티넘,exact_model_label_evidence,not_attested,needs_source_review,10,0,24,https://t1.daumcdn.net/cfile/tistory/242DEC3850F8282422,family_or_series_hint_only,92,0,baseline-a6662a7db44ccbbb,False
-르노코리아(삼성),SM5,뉴 SM5 EX1,family_evidence_only,not_attested,needs_source_review,0,0,24,,family_or_series_hint_only,92,0,baseline-8839042f8de69fa7,False
-르노코리아(삼성),SM5,뉴 SM5 L43,family_evidence_only,not_attested,needs_source_review,0,0,24,,family_or_series_hint_only,92,0,baseline-e635c600fed72fca,False
+르노코리아(삼성),SM3,SM3 L38,family_evidence_only,not_attested,needs_source_review,0,0,72,,family_or_series_hint_only,114,0,baseline-134ddcb99572c23b,False
+르노코리아(삼성),SM3,SM3 N16,family_evidence_only,not_attested,needs_source_review,0,0,72,,family_or_series_hint_only,114,0,baseline-8fbebc69bcb29184,False
+르노코리아(삼성),SM3,SM3 Z.E.,family_evidence_only,not_attested,needs_source_review,0,0,72,,model_name_candidate_found,114,11,baseline-ad72f27f44463bc7,False
+르노코리아(삼성),SM3,SM3 네오,exact_model_label_evidence,not_attested,needs_source_review,8,0,72,https://www.encar.com/cc/common.do?bbsno=135423&method=view_modelHistoryframe&type=CLS,model_name_candidate_found,114,4,baseline-b217162efd16a3ca,False
+르노코리아(삼성),SM3,뉴 SM3,exact_model_label_evidence,not_attested,needs_source_review,21,0,72,https://www.encar.com/cc/common.do?bbsno=133403&method=view_modelHistoryframe&type=CLS,family_or_series_hint_only,114,0,baseline-5db074db250e2376,False
+르노코리아(삼성),SM5,SM5 A34,family_evidence_only,not_attested,needs_source_review,0,0,83,,family_or_series_hint_only,92,0,baseline-1751c2b3ec2f9913,False
+르노코리아(삼성),SM5,SM5 노바,exact_model_label_evidence,not_attested,needs_source_review,7,0,83,https://www.encar.com/cc/common.do?bbsno=143504&method=view_modelHistoryframe&type=CLS,model_name_candidate_found,92,11,baseline-67df8c2425c65b27,False
+르노코리아(삼성),SM5,SM5 임프레션,family_evidence_only,not_attested,needs_source_review,0,0,83,,family_or_series_hint_only,92,0,baseline-3acc490c336fb675,False
+르노코리아(삼성),SM5,SM5 플래티넘,exact_model_label_evidence,not_attested,needs_source_review,10,0,83,https://t1.daumcdn.net/cfile/tistory/242DEC3850F8282422,family_or_series_hint_only,92,0,baseline-a6662a7db44ccbbb,False
+르노코리아(삼성),SM5,뉴 SM5 EX1,family_evidence_only,not_attested,needs_source_review,0,0,83,,family_or_series_hint_only,92,0,baseline-8839042f8de69fa7,False
+르노코리아(삼성),SM5,뉴 SM5 L43,family_evidence_only,not_attested,needs_source_review,0,0,83,,family_or_series_hint_only,92,0,baseline-e635c600fed72fca,False
 르노코리아(삼성),SM6,SM6 LFD,family_evidence_only,not_attested,needs_source_review,0,0,4,,family_or_series_hint_only,41,0,baseline-067572929cb91d61,False
 르노코리아(삼성),SM6,더 뉴 SM6,family_evidence_only,not_attested,needs_source_review,0,0,4,,family_or_series_hint_only,41,0,baseline-d3fb076d0dc1aec7,False
-르노코리아(삼성),SM7,SM7 EX2,family_evidence_only,not_attested,needs_source_review,0,0,14,,family_or_series_hint_only,71,0,baseline-e645df47d4169d6a,False
-르노코리아(삼성),SM7,SM7 노바,family_evidence_only,not_attested,needs_source_review,0,0,14,,model_name_candidate_found,71,6,baseline-0307eff3ab6a427e,False
-르노코리아(삼성),SM7,SM7 뉴 아트,exact_model_label_evidence,not_attested,needs_source_review,2,0,14,https://www.newswire.co.kr/newsRead.php?no=309361,family_or_series_hint_only,71,0,baseline-30bfc547a4bd2d18,False
-르노코리아(삼성),SM7,올 뉴 SM7 L47,family_evidence_only,not_attested,needs_source_review,0,0,14,,family_or_series_hint_only,71,0,baseline-96fdc6a14ddec6b0,False
+르노코리아(삼성),SM7,SM7 EX2,family_evidence_only,not_attested,needs_source_review,0,0,33,,family_or_series_hint_only,71,0,baseline-e645df47d4169d6a,False
+르노코리아(삼성),SM7,SM7 노바,family_evidence_only,not_attested,needs_source_review,0,0,33,,model_name_candidate_found,71,6,baseline-0307eff3ab6a427e,False
+르노코리아(삼성),SM7,SM7 뉴 아트,exact_model_label_evidence,not_attested,needs_source_review,2,0,33,https://www.newswire.co.kr/newsRead.php?no=309361,family_or_series_hint_only,71,0,baseline-30bfc547a4bd2d18,False
+르노코리아(삼성),SM7,올 뉴 SM7 L47,family_evidence_only,not_attested,needs_source_review,0,0,33,,family_or_series_hint_only,71,0,baseline-96fdc6a14ddec6b0,False
 르노코리아(삼성),XM3,XM3 LJL,not_yet_found,not_attested,needs_source_review,0,0,0,,family_or_series_hint_only,23,0,baseline-259a5c1e0cb5e7fc,False
 르노코리아(삼성),XM3,뉴 XM3,not_yet_found,not_attested,needs_source_review,0,0,0,,family_or_series_hint_only,23,0,baseline-39a17a5b7e5c592c,False
 르노코리아(삼성),XM3,아르카나,not_yet_found,not_attested,needs_source_review,0,0,0,,family_or_series_hint_only,23,0,baseline-371d4eff9fff1e03,False
@@ -589,9 +589,9 @@ KG모빌리티(쌍용),티볼리,티볼리 에어,exact_model_label_evidence,not
 제네시스,G80,G80 전동화 모델,family_evidence_only,not_attested,needs_source_review,0,0,12,,family_or_series_hint_only,254,0,baseline-34db2660157663c2,False
 제네시스,G80,더 올 뉴 G80,family_evidence_only,not_attested,needs_source_review,0,0,12,,family_or_series_hint_only,254,0,baseline-2ba9fa8869badcf3,False
 제네시스,G80,제네시스 G80 DH,family_evidence_only,not_attested,needs_source_review,0,0,12,,family_or_series_hint_only,254,0,baseline-3b51f46428f3e9f4,False
-제네시스,G90,EQ900 HI,family_evidence_only,not_attested,needs_source_review,0,0,23,,family_or_series_hint_only,191,0,baseline-0d2ae8e7e7154a61,False
-제네시스,G90,G90 HI,declared_alias_candidate,not_attested,needs_source_review,0,16,23,https://www.genesis.com/kr/ko/support/genesis-events/detail/0476.html | https://www.genesis.com/kr/ko/support/pr-center/detail.html?seq=0000000240,family_or_series_hint_only,191,0,baseline-416c7a82d88eba90,False
-제네시스,G90,G90 롱휠베이스,family_evidence_only,not_attested,needs_source_review,0,0,23,,model_name_candidate_found,191,8,baseline-0e76d38e55d3f494,False
+제네시스,G90,EQ900 HI,family_evidence_only,not_attested,needs_source_review,0,0,30,,family_or_series_hint_only,191,0,baseline-0d2ae8e7e7154a61,False
+제네시스,G90,G90 HI,declared_alias_candidate,not_attested,needs_source_review,0,16,30,https://www.genesis.com/kr/ko/support/genesis-events/detail/0476.html | https://www.genesis.com/kr/ko/support/pr-center/detail.html?seq=0000000240,family_or_series_hint_only,191,0,baseline-416c7a82d88eba90,False
+제네시스,G90,G90 롱휠베이스,family_evidence_only,not_attested,needs_source_review,0,0,30,,model_name_candidate_found,191,8,baseline-0e76d38e55d3f494,False
 제네시스,GV60,GV60 JW,not_yet_found,not_attested,needs_source_review,0,0,0,,family_or_series_hint_only,28,0,baseline-349adeebf1bfce67,False
 제네시스,GV60,GV60 마그마,not_yet_found,not_attested,needs_source_review,0,0,0,,family_or_series_hint_only,28,0,baseline-fe4ad6d89cf336d0,False
 제네시스,GV60,더 뉴 GV60,not_yet_found,not_attested,needs_source_review,0,0,0,,family_or_series_hint_only,28,0,baseline-20a0f26d56ce2ca8,False
@@ -842,8 +842,8 @@ KG모빌리티(쌍용),티볼리,티볼리 에어,exact_model_label_evidence,not
 현대,엑센트,뉴 엑센트,family_evidence_only,not_attested,needs_source_review,0,0,15,,family_or_series_hint_only,502,0,baseline-d56bd580c6b06b39,False
 현대,엑센트,엑센트 RB,declared_alias_candidate,not_attested,needs_source_review,0,15,15,https://www.newswire.co.kr/newsRead.php?no=508677 | https://www.newswire.co.kr/newsRead.php?no=682657,family_or_series_hint_only,502,0,baseline-bb97d6379497e94a,False
 현대,엑센트,엑센트 위트,family_evidence_only,not_attested,needs_source_review,0,0,15,,family_or_series_hint_only,502,0,baseline-d2f0cdecabba06e7,False
-현대,제네시스,제네시스 BH,exact_model_label_evidence,not_attested,needs_source_review,10,0,20,https://www.newswire.co.kr/newsRead.php?no=309939 | https://www.newswire.co.kr/newsRead.php?no=531192,model_name_candidate_found,452,37,baseline-99a71f58581d164b,False
-현대,제네시스,제네시스 DH,declared_alias_candidate,not_attested,needs_source_review,0,10,20,https://www.newswire.co.kr/newsRead.php?no=725083 | https://www.newswire.co.kr/newsRead.php?no=784824,family_or_series_hint_only,452,0,baseline-76c9d49aa0fbeec3,False
+현대,제네시스,제네시스 BH,exact_model_label_evidence,not_attested,needs_source_review,31,0,46,https://www.encar.com/cc/common.do?bbsno=134041&method=view_modelHistoryframe&type=CLS | https://www.newswire.co.kr/newsRead.php?no=309939 | https://www.newswire.co.kr/newsRead.php?no=531192,model_name_candidate_found,452,37,baseline-99a71f58581d164b,False
+현대,제네시스,제네시스 DH,exact_model_label_evidence,not_attested,needs_source_review,5,10,46,https://www.encar.com/cc/common.do?bbsno=134032&method=view_modelHistoryframe&type=CLS,family_or_series_hint_only,452,0,baseline-76c9d49aa0fbeec3,False
 현대,캐스퍼,2027 캐스퍼,exact_model_label_evidence,not_attested,needs_source_review,3,0,20,https://casper.hyundai.com/vehicles/price,family_or_series_hint_only,53,0,baseline-de48585d739bab75,False
 현대,캐스퍼,캐스퍼 AX1,family_evidence_only,not_attested,needs_source_review,0,0,20,,family_or_series_hint_only,53,0,baseline-3a6d44d06d55f974,False
 현대,캐스퍼,캐스퍼 일렉트릭,family_evidence_only,not_attested,needs_source_review,0,0,20,,model_name_candidate_found,53,4,baseline-dfba56a4d185fe3d,False

@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 1,
+  "filePathBase": "this directory",
+  "scope": "Complete rendered Encar mobile price-search maker/model-group choice observations and candidate comparisons; not an official complete retail hierarchy",
+  "frozen": true,
+  "counts": {
+    "baselineMakeLabels": 46,
+    "baselineLabelStates": {
+      "same_label_candidate": 39,
+      "declared_alias_candidate": 6,
+      "not_in_price_selector": 1
+    },
+    "encarPriceManufacturerChoices": 70,
+    "encarGenericBuckets": 2,
+    "encarChoicesWithoutBaselineCandidate": 27,
+    "modelGroupDisplayAppearances": 1334,
+    "modelGroupNameListRows": 1124,
+    "modelGroupNameListRowsWithBaselineSameFamilyLabelCandidates": 381,
+    "modelGroupNameListRowsWithoutBaselineSameFamilyLabelCandidates": 743,
+    "modelGroupNameListPlaceholderOrOtherRows": 43,
+    "modelGroupNameListNonPlaceholderRows": 1081,
+    "modelGroupNonPlaceholderNameRowsWithoutSameBaselineFamilyCandidate": 700,
+    "governmentObservationRows": 105383,
+    "governmentRawMakerLabels": 2065,
+    "governmentRawLabelsWithChoiceCandidates": 61,
+    "governmentRawLabelsWithoutChoiceCandidate": 2004,
+    "verifiedRetailGradesAdded": 0,
+    "automaticallyMergedMakers": 0
+  },
+  "sourceUrl": "https://m.encar.com/pr/company.json?method=carList",
+  "checkedAtUtc": "2026-11-06 16:57:47 UTC",
+  "runtimeImportEnabled": false,
+  "canonicalMappingApproved": false,
+  "verifiedRetailGradesAdded": 0,
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 6974,
+      "sha256": "2a3eb627698f22b70b6436f446fcff03feda5baca37f7e32514b5c24b3319c6e"
+    },
+    {
+      "path": "build-manufacturer-audit.py",
+      "bytes": 15177,
+      "sha256": "ce169da0bbd9a5e63e80745fabc0d03163fba572538150ccf1b651df0979de11"
+    },
+    {
+      "path": "derived/baseline-manufacturer-comparison.csv",
+      "bytes": 22499,
+      "sha256": "107e72aebe7b6b2e329d43c62a696429e9c4cffb2cdfaf68f9b26808272d8ac7"
+    },
+    {
+      "path": "derived/declared-alias-candidates.json",
+      "bytes": 4168,
+      "sha256": "0736f9c5834dfc62d21a13ada7bf18c34dffd60655c2a6d703e16db28fd232d4"
+    },
+    {
+      "path": "derived/encar-manufacturer-coverage.csv",
+      "bytes": 11723,
+      "sha256": "f05ba1ca1d599126aebf7eb47ff9e7c8e5c594771dd4e4d4806b09cb0241dde9"
+    },
+    {
+      "path": "derived/government-maker-comparison.csv",
+      "bytes": 1110843,
+      "sha256": "c8665b2bef7a34fcf9b6e3834543a0a4321b185fcc3925be595e5c6f5810e0ea"
+    },
+    {
+      "path": "derived/manufacturer-comparison.json",
+      "bytes": 2099290,
+      "sha256": "6d7d5aa00fc9ef6b54bb9c71e0c00b3811c34735710de3f550a32b6ca678a802"
+    },
+    {
+      "path": "derived/model-group-comparison.json",
+      "bytes": 799234,
+      "sha256": "fef9a94ae3ab0df8149dfcd59ee465a757e6d5024fc70df19ad9b019adc251a7"
+    },
+    {
+      "path": "derived/model-group-observations.csv",
+      "bytes": 233749,
+      "sha256": "1eb41da61b767fe402cceeb44ec73cdcbd34bac8452ed3ddb16755658a0a8f9d"
+    },
+    {
+      "path": "derived/summary.json",
+      "bytes": 3056,
+      "sha256": "5f8ba28422694208c00960e7e4a8befb9cc814d4443192575c319d53cf05912e"
+    },
+    {
+      "path": "manufacturer-model-group-observations.json",
+      "bytes": 586240,
+      "sha256": "f1fe7b4676f9edca7c33ea65f61bf61f925a0652b7f24324abd073c15e82ee71"
+    },
+    {
+      "path": "model-group-navigation-check.json",
+      "bytes": 900,
+      "sha256": "7458847d1251905dfde6afdb6331ac5ae4e5e0248e40b024bc44425258aa67f7"
+    },
+    {
+      "path": "verification.json",
+      "bytes": 558,
+      "sha256": "b768d94bb5e0d1b675d98504cd7932d4bfddb0cd6bf26641f81c26f983884de4"
+    },
+    {
+      "path": "verify-manufacturer-audit.py",
+      "bytes": 5412,
+      "sha256": "3a25886b57c44372f524a8b18cf7831f2eaeaa86b314719713ac6def86ddfcbb"
+    }
+  ]
+}

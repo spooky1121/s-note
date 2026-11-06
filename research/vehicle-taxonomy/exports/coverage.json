@@ -35,19 +35,19 @@
     "verification": "Existing labels are preserved, not reverified by this research."
   },
   "newResearch": {
-    "sourceFiles": 18,
-    "sources": 541,
-    "uniqueSourceUrls": 541,
-    "rawRecords": 2903,
-    "uniqueRecords": 2903,
-    "koreanMarketRecords": 2749,
+    "sourceFiles": 20,
+    "sources": 566,
+    "uniqueSourceUrls": 563,
+    "rawRecords": 3128,
+    "uniqueRecords": 3128,
+    "koreanMarketRecords": 2974,
     "otherMarketRecords": 154,
     "officialDirectRecords": 1895,
     "searchExcerptRecords": 10,
-    "providerCatalogDirectRecords": 601,
+    "providerCatalogDirectRecords": 826,
     "referenceDirectRecords": 391,
     "candidateRecords": 6,
-    "sourcesUsedByRecords": 447
+    "sourcesUsedByRecords": 470
   },
   "listingObservations": 3,
   "certificationObservations": 20,
@@ -82,6 +82,35 @@
       "license": "Official government notice/annex provenance under Copyright Act Article 7(2); no blanket KOGL-1 claim",
       "completeForKoreanMarket": false,
       "currentSnapshot": "amended"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/encar-final-audit/archive-manifest.json",
+      "counts": {
+        "modelDisplayRows": 1858,
+        "uniqueRawModelLabels": 1805,
+        "duplicateExcessDisplayRows": 53,
+        "genericModelDisplayRows": 33,
+        "priceManufacturerChoices": 70,
+        "priceManufacturerNames": 68,
+        "priceManufacturerGenericBuckets": 2,
+        "priceModelGroupDisplayRows": 1334,
+        "priceModelGroupNameSectionRows": 1124,
+        "existingHistoryModelsAudited": 51,
+        "existingEncarClassObservationsAudited": 593,
+        "additionalHistoryModelsRead": 22,
+        "newHistoryObservations": 225,
+        "confirmedPreviouslyOmittedSourceTableRows": 3,
+        "rawLabelCorrections": 17,
+        "newConflictingSourceRowsQuarantined": 1,
+        "curatedRecordsBefore": 2903,
+        "curatedRecordsAfter": 3128,
+        "baselineModelTargetsCompared": 1197,
+        "governmentRawRowsCompared": 105383,
+        "unmatchedDisplayRowsUnderDeclaredRules": 584
+      },
+      "market": "ENCAR_PUBLIC_DISPLAY_PRICE_CHOICES_AND_EDITORIAL_HISTORY",
+      "license": "Source-attributed classification facts; descriptions, photos and listings are not republished.",
+      "completeForKoreanMarket": false
     }
   ],
   "otherEvidence": [
@@ -484,6 +513,6 @@
     "Government tax names/form codes and tax-reference prices do not establish retail generations/grades, model years, selling prices or unique manufacturer-form identities.",
     "No existing company taxonomy, customer, vehicle or financial data is modified."
   ],
-  "quarantinedRecordCount": 44,
+  "quarantinedRecordCount": 45,
   "quarantinedSourceIssueCount": 1
 }

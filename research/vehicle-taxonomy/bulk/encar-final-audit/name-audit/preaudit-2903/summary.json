@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "auditKind": "exhaustive_lexical_display_name_comparison",
+  "sourceSnapshot": {
+    "sourceDate": "2026-11-06T16:55:45.976398+00:00",
+    "sourceUrl": "https://m.encar.com/ca/initString.json?method=initList&type=Is",
+    "sourceKind": "provider_rendered_name_index",
+    "acquisitionMethod": "five_overlapping_web_tool_rendered_line_windows",
+    "webToolRemoteCacheFreshness": "not_exposed; current tool read, not guaranteed fresh origin HTTP fetch",
+    "comparisonToPriorSnapshot": {
+      "priorPath": "research/vehicle-taxonomy/sources/encar-public-catalog-expansion-20261106.json",
+      "priorRows": 1858,
+      "sameOrderAndNames": true,
+      "changedPositions": []
+    }
+  },
+  "completeLiveEncarRetailHierarchyVerified": false,
+  "currentWebToolRenderedListCompared": true,
+  "rawOriginCacheFreshnessVerified": false,
+  "allDisplayedRowsCompared": true,
+  "normalization": "Unicode NFKC, casefold, collapse whitespace; retain punctuation, engine/year/generation text",
+  "presentationHintRule": "NFKC/casefold then remove whitespace and ()[]{}._-·ㆍ/ separators only; hint, never identity proof",
+  "manufacturerFieldAbsentInAllRows": true,
+  "displayRows": 1858,
+  "uniqueRawLabels": 1805,
+  "duplicateExcessRows": 53,
+  "duplicatedRawLabels": 22,
+  "genericDisplayRows": 33,
+  "displayRowStates": {
+    "literal_name_candidate": 393,
+    "presentation_only_hint": 134,
+    "family_hint_only": 492,
+    "government_name_only_candidate": 132,
+    "not_found_under_declared_rules": 587,
+    "government_name_hint_only": 87,
+    "generic_label_unclassifiable": 33
+  },
+  "uniqueRawLabelStates": {
+    "literal_name_candidate": 388,
+    "presentation_only_hint": 134,
+    "family_hint_only": 487,
+    "government_name_only_candidate": 129,
+    "not_found_under_declared_rules": 580,
+    "government_name_hint_only": 86,
+    "generic_label_unclassifiable": 1
+  },
+  "baselineRawRows": 1615,
+  "baselineModelTargets": 1197,
+  "baselineTargetStates": {
+    "family_hint_only": 604,
+    "presentation_only_hint": 144,
+    "literal_name_candidate": 369,
+    "not_found_under_declared_rules": 80
+  },
+  "researchRecords": 2903,
+  "researchRecordStates": {
+    "family_hint_only": 1690,
+    "literal_name_candidate": 805,
+    "presentation_only_hint": 152,
+    "declared_alias_candidate": 45,
+    "not_found_under_declared_rules": 211
+  },
+  "researchStatesByMarket": {
+    "GLOBAL": {
+      "not_found_under_declared_rules": 120,
+      "family_hint_only": 21,
+      "literal_name_candidate": 13
+    },
+    "KR": {
+      "family_hint_only": 1669,
+      "literal_name_candidate": 792,
+      "presentation_only_hint": 152,
+      "declared_alias_candidate": 45,
+      "not_found_under_declared_rules": 91
+    }
+  },
+  "governmentRawRowsRead": 105383,
+  "governmentExplicitNameFieldRows": {
+    "차명": 75819,
+    "기종명": 29564
+  },
+  "governmentNameLinks": 29766,
+  "governmentDistinctLinkedSourceRows": 27333,
+  "governmentNameMatchMethods": {
+    "literal_name_equal": 12518,
+    "presentation_folded_equal_hint": 1883,
+    "model_name_prefix_in_longer_tax_name_hint": 15227,
+    "nfkc_whitespace_casefold_equal": 138
+  },
+  "multipleCandidateMakeLabelDisplayRows": 108,
+  "confirmedRetailGradeCorrections": 0,
+  "verifiedRetailHierarchiesAdded": 0,
+  "completeOfficialMaster": false,
+  "automaticRuntimeImport": false,
+  "limitations": [
+    "This run compares every row of the archived Encar display list, not every current live Encar classification node.",
+    "A display-only name without manufacturer/parent codes cannot establish a complete Encar manufacturer-model-grade hierarchy.",
+    "Repeated labels and corporate alias labels remain separate; candidate make labels do not assign an Encar manufacturer.",
+    "Name equality and explicit source aliases are candidate relations, not verified generation, engine, year or grade links.",
+    "Presentation folding and group/prefix containment are weaker lexical hints; they never close a gap.",
+    "Not found means unmatched under the declared rules and input snapshot, not confirmed omission or absence from Encar.",
+    "Government prices/form codes and source year are not retail selling prices, grade IDs or vehicle model years.",
+    "Global-market research rows are separately counted and need not be present in a Korean-market vehicle list."
+  ]
+}

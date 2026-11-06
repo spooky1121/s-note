@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "checkedAtUtc": "2026-11-06 16:57:47 UTC",
+  "sourceScope": "Complete rendered choice lists within Encar mobile price-search manufacturer/model-group pages; not all Encar sale classifiers or all Korean-market manufacturer/model-year grades",
+  "runtimeImportEnabled": false,
+  "completeOfficialMaster": false,
+  "counts": {
+    "baselineMakeLabels": 46,
+    "baselineLabelStates": {
+      "same_label_candidate": 39,
+      "declared_alias_candidate": 6,
+      "not_in_price_selector": 1
+    },
+    "encarPriceManufacturerChoices": 70,
+    "encarGenericBuckets": 2,
+    "encarChoicesWithoutBaselineCandidate": 27,
+    "modelGroupDisplayAppearances": 1334,
+    "modelGroupNameListRows": 1124,
+    "modelGroupNameListRowsWithBaselineSameFamilyLabelCandidates": 381,
+    "modelGroupNameListRowsWithoutBaselineSameFamilyLabelCandidates": 743,
+    "modelGroupNameListPlaceholderOrOtherRows": 43,
+    "modelGroupNameListNonPlaceholderRows": 1081,
+    "modelGroupNonPlaceholderNameRowsWithoutSameBaselineFamilyCandidate": 700,
+    "governmentObservationRows": 105383,
+    "governmentRawMakerLabels": 2065,
+    "governmentRawLabelsWithChoiceCandidates": 61,
+    "governmentRawLabelsWithoutChoiceCandidate": 2004,
+    "verifiedRetailGradesAdded": 0,
+    "automaticallyMergedMakers": 0
+  },
+  "limitations": [
+    "The price-search chooser is a service-specific subset; Tesla is not shown there although Tesla models occur in Encar model-name search.",
+    "Government maker labels also include bodybuilders, importers and motorcycles; unmatched labels are not proof of missing retail car manufacturers.",
+    "Manufacturer spelling/corporate aliases are declared review candidates, not provider-approved canonical merges.",
+    "Same family display labels cannot verify generations, fuel/engine, model year, grade/subgrade or full historical availability.",
+    "Popular section duplicates remain original display observations and are never counted as additional families.",
+    "Other/unused/hyphen source options are preserved as generic or reserved placeholders, not real model groups.",
+    "Candidate counts can overlap between differently scoped choices, notably Korean versus imported Chevrolet; do not sum them as distinct models."
+  ],
+  "inputs": [
+    {
+      "role": "observed",
+      "filename": "manufacturer-model-group-observations.json",
+      "bytes": 586240,
+      "sha256": "f1fe7b4676f9edca7c33ea65f61bf61f925a0652b7f24324abd073c15e82ee71"
+    },
+    {
+      "role": "baseline",
+      "filename": "catalog.json",
+      "bytes": 632236,
+      "sha256": "c3b3d3fc75701cf2354bd05bce7b8393e9efe1eb286670e97091454342b9e4c4"
+    },
+    {
+      "role": "research",
+      "filename": "official-research.json",
+      "bytes": 9140549,
+      "sha256": "08b81430fed72fac779c48d1b8ab139c4e0e9e61a2581b88e77208764a9253bf"
+    },
+    {
+      "role": "government",
+      "filename": "vehicle-records.raw.jsonl.gz",
+      "bytes": 1994476,
+      "sha256": "b725edb280b148042a461244eade9dd2d42fd2e4ebe773dbbdf238d10426cea6"
+    }
+  ]
+}

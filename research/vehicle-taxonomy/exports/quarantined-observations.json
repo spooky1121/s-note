@@ -3,6 +3,24 @@
   "automaticRuntimeImport": false,
   "records": [
     {
+      "sourceFile": "research/vehicle-taxonomy/sources/encar-final-domestic-expansion-20261107.json",
+      "make": "르노코리아(삼성)",
+      "group": "SM5",
+      "model": "SM5",
+      "sourceId": "encar-final-domestic-135424",
+      "sourceUrl": "https://www.encar.com/cc/common.do?bbsno=135424&method=view_modelHistoryframe&type=CLS",
+      "sourceRowNumber": 9,
+      "sourceRowRaw": "L9: 2.5  | 525V  | LE 블랙",
+      "sourceHierarchyRaw": [
+        "2.5",
+        "525V",
+        "LE 블랙"
+      ],
+      "reasonCode": "FIXED_GRADE_AND_TEMPORAL_CELL_LABEL_CONFLICT",
+      "decision": "525V 고정행의 시점셀 LE블랙을 하위등급으로 결합하지 않는다. 독립자료 확인전 정상등급 관측에서 제외.",
+      "eligibleForRuntimeImport": false
+    },
+    {
       "sourceFile": "research/vehicle-taxonomy/sources/remaining-brands-expansion-20261106.json",
       "quarantineId": "remaining-carwiki-001",
       "sourceId": "remaining-jaguar-xf-2017-carwiki",

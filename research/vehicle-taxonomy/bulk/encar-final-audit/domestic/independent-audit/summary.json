@@ -1,0 +1,42 @@
+{
+  "pass": true,
+  "normalObservations": 222,
+  "quarantinedRows": 1,
+  "sourceModels": 22,
+  "physicalRowsAccounted": 223,
+  "allPhysicalRowsExactlyOnce": true,
+  "sourceSha256": "2d35897f3bd3e20ab3a2f6843273b004f423a95e0b4c3116cf3b428dcca7edc1",
+  "rawObservationSha256": "2fc74d6eecb990cbcb4527b2896c77b9daa6a4fd53104dfae62024c25ff5b954",
+  "countsByModel": {
+    "SM3": 12,
+    "SM3 뉴 제너레이션": 15,
+    "뉴 SM3": 21,
+    "SM3 네오": 8,
+    "SM5": 8,
+    "뉴 SM5": 7,
+    "SM5 뉴 임프레션": 8,
+    "뉴 SM5 (신형)": 11,
+    "뉴 SM5 플래티넘": 18,
+    "SM5 노바": 7,
+    "SM7": 8,
+    "올 뉴 SM7": 11,
+    "제네시스 BH": 21,
+    "제네시스 DH": 5,
+    "제네시스 쿠페": 7,
+    "더 뉴 제네시스 쿠페": 4,
+    "EQ900": 7,
+    "K5": 13,
+    "더 뉴 K5": 10,
+    "K5 2세대": 14,
+    "K5 하이브리드": 4,
+    "K5 하이브리드 2세대": 3
+  },
+  "errors": [],
+  "scope": "Independent full audit against captured public CLS facts; does not independently re-fetch all websites or attest current retail search taxonomy",
+  "manualReviewNotes": [
+    "Temporal-column label variants remain observations, never canonical current search hierarchy.",
+    "SM5 525V/LE black row remains quarantined.",
+    "Prada in Genesis BH remains a source product-line label, not an inferred engine.",
+    "Renault current display alias retains raw Renault Samsung identity and pending parent matching."
+  ]
+}

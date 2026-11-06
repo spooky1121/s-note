@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "reviewedOn": "2026-11-07",
+  "warnings": [
+    {
+      "code": "EXISTING_NF_SONATA_HEADER_SM5_BODY_MISMATCH_RECONFIRMED",
+      "sourceUrl": "https://www.encar.com/dc/dc_catalog.do?company=005&model=001&yr=2004",
+      "headingObserved": "현대 / NF 쏘나타",
+      "bodyNamesObserved": ["SM525V A/T", "SM520V+ A/T", "SM520V A/T", "SM520LE M/T", "SM520LE A/T", "SM520SE M/T", "SM520SE A/T", "SM520 M/T", "SM520 A/T", "SM518 M/T", "SM518 A/T", "SM5 LPG"],
+      "decision": "기존 격리 유지. URL query 연식이나 헤더만 믿고 NF 쏘나타 등급으로 수집하지 않음.",
+      "reconfirmedFromCurrentPublicBody": true
+    },
+    {
+      "code": "NEW_SM5_525V_TEMPORAL_CELL_LABEL_CONFLICT",
+      "sourceId": "encar-final-domestic-135424",
+      "sourceUrl": "https://www.encar.com/cc/common.do?bbsno=135424&method=view_modelHistoryframe&type=CLS",
+      "line": 9,
+      "rowRaw": "2.5 | 525V | LE 블랙",
+      "decision": "고정 등급명과 시점셀 명칭을 부모/자식으로 연결하지 않음. 새 normal 222행에서 제외하고 quarantinedRecords 1행으로 원문 보존."
+    },
+    {
+      "code": "ENGINE_FRAME_CONTAINS_ADJACENT_GENERATIONS",
+      "sourceDocuments": ["136040", "133723", "135711", "134505", "140750", "140747", "134165", "142070"],
+      "examples": ["아반떼 HD ENG에는 뉴 아반떼 XD와 아반떼 MD의 비교 열도 존재", "스파크 ENG에는 마티즈 크리에이티브와 넥스트 스파크 비교 엔진도 존재"],
+      "decision": "같은 프레임에 등장한 모든 엔진을 현재 모델의 모든 트림에 복사하지 않음. 추가 222행은 engine=null을 유지. 기존 206행의 CLS 명칭 감사와 ENG-CLS 연도별 결합 검증은 구분."
+    },
+    {
+      "code": "LOTZE_DUPLICATE_PHYSICAL_LABEL",
+      "sourceId": "encar-public-lotze-134435",
+      "sourceUrl": "https://www.encar.com/cc/common.do?bbsno=134435&method=view_modelHistoryframe&type=CLS",
+      "sourceLines": [27, 29],
+      "sourceLabel": "2.4 가솔린 > LEX24 블랙 프리미엄 > 모젠 최고급형",
+      "decision": "동일 표기 원문 두 행을 별도 판매등급으로 늘리지 않음. 원문 물리행 32개와 고유 분류 관측 31개를 구분. 모젠 고급형으로 임의 교정하지 않음."
+    },
+    {
+      "code": "HISTORICAL_PRESENT_MARKER_NOT_CURRENT_SALE_STATUS",
+      "decision": "모델 히스토리와 CLS 표의 '현재'는 편집 시점 표현. 2026 현재 판매 상태·모델연식·완전한 최신 검색 분류의 증거로 쓰지 않음. 모든 추가 행에 sourceModelPeriodRaw와 sourceTimeColumnsRaw를 그대로 보존."
+    },
+    {
+      "code": "ALL_NEW_SOUL_DISCONTINUED_AT_MODEL_LAUNCH_MONTH",
+      "sourceId": "encar-public-soul-2-134505",
+      "sourceUrl": "https://www.encar.com/cc/common.do?bbsno=134505&method=view_modelHistoryframe&type=CLS",
+      "sourceModelLaunchRaw": "2013년 10월",
+      "affectedPaths": [["1.6 가솔린", "그린존"], ["1.6 가솔린", "브라운존"], ["1.6 디젤", "브라운존"]],
+      "cellLabelRaw": "13년 10월 단종",
+      "decision": "라벨 관측은 보존하되 해당 세대의 판매기간·연식별 적용 확정으로 쓰지 않음. 원문 기간 상충은 독립 자료 추가 확인 대상."
+    },
+    {
+      "code": "TEMPORAL_NAME_CHANGE_NOT_FIXED_SEARCH_CHILD",
+      "sourceId": "encar-final-domestic-133596",
+      "sourceUrl": "https://www.encar.com/cc/common.do?bbsno=133596&method=view_modelHistoryframe&type=CLS",
+      "examples": ["D → D 스페셜", "TCE → TCE S/S 컬렉션", "SE / SE 플러스 / SE ART / SE 파노라마 / SE S/S 컬렉션", "LE / LE ART / LE 파노라마 / LE S/S 컬렉션", "RE / RE ART / RE 파노라마 / RE S/S 컬렉션"],
+      "decision": "시점별로 실제 등장한 이름만 별도 명칭 관측으로 저장하고 원문행·시점header를 함께 보존. 같은 물리행·rowspan에 들어갔다고 현재 검색의 상하위 등급 코드로 만들지 않음."
+    },
+    {
+      "code": "SOURCE_SPELLING_AND_TIME_HEADER_VARIANTS_RETAINED",
+      "examples": ["더 뉴 K5 CLS의 트랜디 표기를 트렌디로 임의 교정하지 않음", "액티언 스포츠 AX5 비젼 헤더/비전 시점셀을 원문에서 구분", "뉴 SM3의 10년10월~11년9월 및 11년1월~12년8월처럼 겹치는 시점 header를 모델연식으로 변환하지 않음"],
+      "decision": "상태·철자·연식 확정은 별도 근거가 필요. 표시명 비교를 위한 NFKC/공백 정리와 원문 교정은 구분."
+    }
+  ],
+  "existingSourceRecordsModified": false,
+  "confirmedErrataRequiringExistingRecordReplacement": 0,
+  "newNormalObservations": 222,
+  "newQuarantinedPhysicalRows": 1,
+  "allEncarDomesticCatalogAttested": false
+}

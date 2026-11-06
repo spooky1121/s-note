@@ -1,0 +1,246 @@
+{
+  "sourceSnapshot": {
+    "sourceDate": "2026-11-06T16:55:45.976398+00:00",
+    "sourceUrl": "https://m.encar.com/ca/initString.json?method=initList&type=Is",
+    "sourceKind": "provider_rendered_name_index",
+    "acquisitionMethod": "five_overlapping_web_tool_rendered_line_windows",
+    "webToolRemoteCacheFreshness": "not_exposed; current tool read, not guaranteed fresh origin HTTP fetch",
+    "comparisonToPriorSnapshot": {
+      "priorPath": "research/vehicle-taxonomy/sources/encar-public-catalog-expansion-20261106.json",
+      "priorRows": 1858,
+      "sameOrderAndNames": true,
+      "changedPositions": []
+    }
+  },
+  "rows": [
+    {
+      "modelNameRaw": "록스타",
+      "displayOrdinals": [
+        250,
+        1737
+      ],
+      "count": 2,
+      "manufacturerProvided": false
+    },
+    {
+      "modelNameRaw": "리갈",
+      "displayOrdinals": [
+        251,
+        1558
+      ],
+      "count": 2,
+      "manufacturerProvided": false
+    },
+    {
+      "modelNameRaw": "콩코드",
+      "displayOrdinals": [
+        301,
+        1035
+      ],
+      "count": 2,
+      "manufacturerProvided": false
+    },
+    {
+      "modelNameRaw": "포르테",
+      "displayOrdinals": [
+        307,
+        1240
+      ],
+      "count": 2,
+      "manufacturerProvided": false
+    },
+    {
+      "modelNameRaw": "볼트(Volt)",
+      "displayOrdinals": [
+        321,
+        1415
+      ],
+      "count": 2,
+      "manufacturerProvided": false
+    },
+    {
+      "modelNameRaw": "트레일블레이저",
+      "displayOrdinals": [
+        338,
+        1418
+      ],
+      "count": 2,
+      "manufacturerProvided": false
+    },
+    {
+      "modelNameRaw": "콜로라도",
+      "displayOrdinals": [
+        341,
+        1428
+      ],
+      "count": 2,
+      "manufacturerProvided": false
+    },
+    {
+      "modelNameRaw": "타호",
+      "displayOrdinals": [
+        345,
+        1429
+      ],
+      "count": 2,
+      "manufacturerProvided": false
+    },
+    {
+      "modelNameRaw": "카마로",
+      "displayOrdinals": [
+        356,
+        1426
+      ],
+      "count": 2,
+      "manufacturerProvided": false
+    },
+    {
+      "modelNameRaw": "콜벳",
+      "displayOrdinals": [
+        357,
+        1427
+      ],
+      "count": 2,
+      "manufacturerProvided": false
+    },
+    {
+      "modelNameRaw": "아카디아",
+      "displayOrdinals": [
+        387,
+        1680
+      ],
+      "count": 2,
+      "manufacturerProvided": false
+    },
+    {
+      "modelNameRaw": "클리오",
+      "displayOrdinals": [
+        466,
+        1775
+      ],
+      "count": 2,
+      "manufacturerProvided": false
+    },
+    {
+      "modelNameRaw": "기타",
+      "displayOrdinals": [
+        494,
+        592,
+        690,
+        765,
+        813,
+        833,
+        841,
+        877,
+        893,
+        918,
+        938,
+        989,
+        1010,
+        1038,
+        1078,
+        1120,
+        1124,
+        1147,
+        1160,
+        1246,
+        1305,
+        1321,
+        1388,
+        1411,
+        1435,
+        1535,
+        1590,
+        1640,
+        1687,
+        1698,
+        1751,
+        1771,
+        1858
+      ],
+      "count": 33,
+      "manufacturerProvided": false
+    },
+    {
+      "modelNameRaw": "CC",
+      "displayOrdinals": [
+        784,
+        1768
+      ],
+      "count": 2,
+      "manufacturerProvided": false
+    },
+    {
+      "modelNameRaw": "쿠페",
+      "displayOrdinals": [
+        889,
+        1637
+      ],
+      "count": 2,
+      "manufacturerProvided": false
+    },
+    {
+      "modelNameRaw": "캐러밴",
+      "displayOrdinals": [
+        1034,
+        1318
+      ],
+      "count": 2,
+      "manufacturerProvided": false
+    },
+    {
+      "modelNameRaw": "GT",
+      "displayOrdinals": [
+        1056,
+        1823
+      ],
+      "count": 2,
+      "manufacturerProvided": false
+    },
+    {
+      "modelNameRaw": "코르사",
+      "displayOrdinals": [
+        1232,
+        1440
+      ],
+      "count": 2,
+      "manufacturerProvided": false
+    },
+    {
+      "modelNameRaw": "어벤저",
+      "displayOrdinals": [
+        1314,
+        1810
+      ],
+      "count": 2,
+      "manufacturerProvided": false
+    },
+    {
+      "modelNameRaw": "아스트라",
+      "displayOrdinals": [
+        1439,
+        1780
+      ],
+      "count": 2,
+      "manufacturerProvided": false
+    },
+    {
+      "modelNameRaw": "스파이더",
+      "displayOrdinals": [
+        1451,
+        1636
+      ],
+      "count": 2,
+      "manufacturerProvided": false
+    },
+    {
+      "modelNameRaw": "E6",
+      "displayOrdinals": [
+        1847,
+        1853
+      ],
+      "count": 2,
+      "manufacturerProvided": false
+    }
+  ]
+}

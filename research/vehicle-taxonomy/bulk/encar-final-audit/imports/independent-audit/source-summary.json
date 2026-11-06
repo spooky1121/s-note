@@ -1,0 +1,382 @@
+[
+  {
+    "sourceId": "hist-encar-3-5gen-grades",
+    "storedRecords": 19,
+    "sourceVerified": true,
+    "sourceRowsObserved": 19,
+    "representedRows": 19,
+    "repeatRows": 0,
+    "newMissingRows": 0,
+    "knownExcludedRows": 0
+  },
+  {
+    "sourceId": "hist-encar-3-6gen-grades",
+    "storedRecords": 28,
+    "sourceVerified": true,
+    "sourceRowsObserved": 29,
+    "representedRows": 28,
+    "repeatRows": 1,
+    "newMissingRows": 0,
+    "knownExcludedRows": 0
+  },
+  {
+    "sourceId": "hist-encar-5-6gen-grades",
+    "storedRecords": 22,
+    "sourceVerified": true,
+    "sourceRowsObserved": 25,
+    "representedRows": 22,
+    "repeatRows": 0,
+    "newMissingRows": 3,
+    "knownExcludedRows": 0
+  },
+  {
+    "sourceId": "hist-encar-5-e60-grades",
+    "storedRecords": 11,
+    "sourceVerified": true,
+    "sourceRowsObserved": 11,
+    "representedRows": 11,
+    "repeatRows": 0,
+    "newMissingRows": 0,
+    "knownExcludedRows": 0
+  },
+  {
+    "sourceId": "hist-encar-7-f01-f02-grades",
+    "storedRecords": 32,
+    "sourceVerified": true,
+    "sourceRowsObserved": 32,
+    "representedRows": 32,
+    "repeatRows": 0,
+    "newMissingRows": 0,
+    "knownExcludedRows": 0
+  },
+  {
+    "sourceId": "hist-encar-a4-b8-grades",
+    "storedRecords": 17,
+    "sourceVerified": true,
+    "sourceRowsObserved": 17,
+    "representedRows": 17,
+    "repeatRows": 0,
+    "newMissingRows": 0,
+    "knownExcludedRows": 0
+  },
+  {
+    "sourceId": "hist-encar-a6-c7-grades",
+    "storedRecords": 20,
+    "sourceVerified": true,
+    "sourceRowsObserved": 20,
+    "representedRows": 20,
+    "repeatRows": 0,
+    "newMissingRows": 0,
+    "knownExcludedRows": 0
+  },
+  {
+    "sourceId": "hist-encar-a7-4g-grades",
+    "storedRecords": 15,
+    "sourceVerified": true,
+    "sourceRowsObserved": 15,
+    "representedRows": 15,
+    "repeatRows": 0,
+    "newMissingRows": 0,
+    "knownExcludedRows": 0
+  },
+  {
+    "sourceId": "hist-encar-accord-8-grades",
+    "storedRecords": 3,
+    "sourceVerified": true,
+    "sourceRowsObserved": 3,
+    "representedRows": 3,
+    "repeatRows": 0,
+    "newMissingRows": 0,
+    "knownExcludedRows": 0
+  },
+  {
+    "sourceId": "hist-encar-altima-l33-grades",
+    "storedRecords": 5,
+    "sourceVerified": true,
+    "sourceRowsObserved": 5,
+    "representedRows": 5,
+    "repeatRows": 0,
+    "newMissingRows": 0,
+    "knownExcludedRows": 0
+  },
+  {
+    "sourceId": "hist-encar-c-w204-grades",
+    "storedRecords": 19,
+    "sourceVerified": true,
+    "sourceRowsObserved": 19,
+    "representedRows": 19,
+    "repeatRows": 0,
+    "newMissingRows": 0,
+    "knownExcludedRows": 0
+  },
+  {
+    "sourceId": "hist-encar-c-w205-grades",
+    "storedRecords": 7,
+    "sourceVerified": true,
+    "sourceRowsObserved": 9,
+    "representedRows": 7,
+    "repeatRows": 0,
+    "newMissingRows": 0,
+    "knownExcludedRows": 2
+  },
+  {
+    "sourceId": "hist-encar-camry-xv40-grades",
+    "storedRecords": 2,
+    "sourceVerified": true,
+    "sourceRowsObserved": 2,
+    "representedRows": 2,
+    "repeatRows": 0,
+    "newMissingRows": 0,
+    "knownExcludedRows": 0
+  },
+  {
+    "sourceId": "hist-encar-camry-xv50-grades",
+    "storedRecords": 3,
+    "sourceVerified": true,
+    "sourceRowsObserved": 3,
+    "representedRows": 3,
+    "repeatRows": 0,
+    "newMissingRows": 0,
+    "knownExcludedRows": 0
+  },
+  {
+    "sourceId": "hist-encar-crv-3-grades",
+    "storedRecords": 5,
+    "sourceVerified": true,
+    "sourceRowsObserved": 5,
+    "representedRows": 5,
+    "repeatRows": 0,
+    "newMissingRows": 0,
+    "knownExcludedRows": 0
+  },
+  {
+    "sourceId": "hist-encar-e-w211-grades",
+    "storedRecords": 8,
+    "sourceVerified": true,
+    "sourceRowsObserved": 8,
+    "representedRows": 8,
+    "repeatRows": 0,
+    "newMissingRows": 0,
+    "knownExcludedRows": 0
+  },
+  {
+    "sourceId": "hist-encar-e-w212-grades",
+    "storedRecords": 25,
+    "sourceVerified": true,
+    "sourceRowsObserved": 25,
+    "representedRows": 25,
+    "repeatRows": 0,
+    "newMissingRows": 0,
+    "knownExcludedRows": 0
+  },
+  {
+    "sourceId": "hist-encar-es-5-grades",
+    "storedRecords": 2,
+    "sourceVerified": true,
+    "sourceRowsObserved": 2,
+    "representedRows": 2,
+    "repeatRows": 0,
+    "newMissingRows": 0,
+    "knownExcludedRows": 0
+  },
+  {
+    "sourceId": "hist-encar-es-6-grades",
+    "storedRecords": 6,
+    "sourceVerified": true,
+    "sourceRowsObserved": 6,
+    "representedRows": 6,
+    "repeatRows": 0,
+    "newMissingRows": 0,
+    "knownExcludedRows": 0
+  },
+  {
+    "sourceId": "hist-encar-g-4-grades",
+    "storedRecords": 9,
+    "sourceVerified": true,
+    "sourceRowsObserved": 9,
+    "representedRows": 9,
+    "repeatRows": 0,
+    "newMissingRows": 0,
+    "knownExcludedRows": 0
+  },
+  {
+    "sourceId": "hist-encar-glk-x204-grades",
+    "storedRecords": 3,
+    "sourceVerified": true,
+    "sourceRowsObserved": 3,
+    "representedRows": 3,
+    "repeatRows": 0,
+    "newMissingRows": 0,
+    "knownExcludedRows": 0
+  },
+  {
+    "sourceId": "hist-encar-golf-mk6-grades",
+    "storedRecords": 8,
+    "sourceVerified": true,
+    "sourceRowsObserved": 8,
+    "representedRows": 8,
+    "repeatRows": 0,
+    "newMissingRows": 0,
+    "knownExcludedRows": 0
+  },
+  {
+    "sourceId": "hist-encar-golf-mk7-grades",
+    "storedRecords": 8,
+    "sourceVerified": true,
+    "sourceRowsObserved": 8,
+    "representedRows": 8,
+    "repeatRows": 0,
+    "newMissingRows": 0,
+    "knownExcludedRows": 0
+  },
+  {
+    "sourceId": "hist-encar-gs-l10-grades",
+    "storedRecords": 5,
+    "sourceVerified": true,
+    "sourceRowsObserved": 5,
+    "representedRows": 5,
+    "repeatRows": 0,
+    "newMissingRows": 0,
+    "knownExcludedRows": 0
+  },
+  {
+    "sourceId": "hist-encar-passat-7-grades",
+    "storedRecords": 2,
+    "sourceVerified": true,
+    "sourceRowsObserved": 2,
+    "representedRows": 2,
+    "repeatRows": 0,
+    "newMissingRows": 0,
+    "knownExcludedRows": 0
+  },
+  {
+    "sourceId": "hist-encar-q5-8r-grades",
+    "storedRecords": 9,
+    "sourceVerified": true,
+    "sourceRowsObserved": 10,
+    "representedRows": 9,
+    "repeatRows": 1,
+    "newMissingRows": 0,
+    "knownExcludedRows": 0
+  },
+  {
+    "sourceId": "hist-encar-q50-2014-grades",
+    "storedRecords": 3,
+    "sourceVerified": true,
+    "sourceRowsObserved": 3,
+    "representedRows": 3,
+    "repeatRows": 0,
+    "newMissingRows": 0,
+    "knownExcludedRows": 0
+  },
+  {
+    "sourceId": "hist-encar-qashqai-2-grades",
+    "storedRecords": 3,
+    "sourceVerified": true,
+    "sourceRowsObserved": 3,
+    "representedRows": 3,
+    "repeatRows": 0,
+    "newMissingRows": 0,
+    "knownExcludedRows": 0
+  },
+  {
+    "sourceId": "hist-encar-rx-al10-grades",
+    "storedRecords": 10,
+    "sourceVerified": true,
+    "sourceRowsObserved": 10,
+    "representedRows": 10,
+    "repeatRows": 0,
+    "newMissingRows": 0,
+    "knownExcludedRows": 0
+  },
+  {
+    "sourceId": "hist-encar-s-w221-grades",
+    "storedRecords": 12,
+    "sourceVerified": true,
+    "sourceRowsObserved": 12,
+    "representedRows": 12,
+    "repeatRows": 0,
+    "newMissingRows": 0,
+    "knownExcludedRows": 0
+  },
+  {
+    "sourceId": "hist-encar-s80-2-grades",
+    "storedRecords": 15,
+    "sourceVerified": true,
+    "sourceRowsObserved": 15,
+    "representedRows": 15,
+    "repeatRows": 0,
+    "newMissingRows": 0,
+    "knownExcludedRows": 0
+  },
+  {
+    "sourceId": "hist-encar-tiguan-5n-grades",
+    "storedRecords": 7,
+    "sourceVerified": true,
+    "sourceRowsObserved": 7,
+    "representedRows": 7,
+    "repeatRows": 0,
+    "newMissingRows": 0,
+    "knownExcludedRows": 0
+  },
+  {
+    "sourceId": "hist-encar-v60-1-grades",
+    "storedRecords": 6,
+    "sourceVerified": true,
+    "sourceRowsObserved": 6,
+    "representedRows": 6,
+    "repeatRows": 0,
+    "newMissingRows": 0,
+    "knownExcludedRows": 0
+  },
+  {
+    "sourceId": "hist-encar-x1-e84-grades",
+    "storedRecords": 8,
+    "sourceVerified": true,
+    "sourceRowsObserved": 8,
+    "representedRows": 8,
+    "repeatRows": 0,
+    "newMissingRows": 0,
+    "knownExcludedRows": 0
+  },
+  {
+    "sourceId": "hist-encar-x3-e83-grades",
+    "storedRecords": 4,
+    "sourceVerified": true,
+    "sourceRowsObserved": 4,
+    "representedRows": 4,
+    "repeatRows": 0,
+    "newMissingRows": 0,
+    "knownExcludedRows": 0
+  },
+  {
+    "sourceId": "hist-encar-x3-f25-grades",
+    "storedRecords": 11,
+    "sourceVerified": true,
+    "sourceRowsObserved": 11,
+    "representedRows": 11,
+    "repeatRows": 0,
+    "newMissingRows": 0,
+    "knownExcludedRows": 0
+  },
+  {
+    "sourceId": "hist-encar-x5-e70-grades",
+    "storedRecords": 7,
+    "sourceVerified": true,
+    "sourceRowsObserved": 7,
+    "representedRows": 7,
+    "repeatRows": 0,
+    "newMissingRows": 0,
+    "knownExcludedRows": 0
+  },
+  {
+    "sourceId": "hist-encar-xc60-1-grades",
+    "storedRecords": 8,
+    "sourceVerified": true,
+    "sourceRowsObserved": 8,
+    "representedRows": 8,
+    "repeatRows": 0,
+    "newMissingRows": 0,
+    "knownExcludedRows": 0
+  }
+]

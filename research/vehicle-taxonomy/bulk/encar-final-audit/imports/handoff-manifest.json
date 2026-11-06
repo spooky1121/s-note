@@ -1,0 +1,135 @@
+{
+  "schemaVersion": 1,
+  "frozen": true,
+  "checkedOn": "2026-11-07",
+  "filePathBase": "this directory",
+  "sourceScope": "Existing imported-car Encar editorial history observations, not the complete current search taxonomy.",
+  "sourceFile": "research/vehicle-taxonomy/sources/import-historical-expansion-20261106.json",
+  "sourceFileSha256": "ff659155ccf5ebd8b0021ba506a66a6a8f1793caaf7e4d97db0532b56f8141df",
+  "originalProviderRecords": 387,
+  "modelParentsRechecked": 38,
+  "framesRechecked": 76,
+  "actualFrameUrlsVerified": 76,
+  "sourceMismatches": 0,
+  "clsDataRowsObserved": 394,
+  "existingRowsRepresented": 387,
+  "duplicateDisplayRows": 2,
+  "knownMixedGenerationExclusions": 2,
+  "newMissingRows": 3,
+  "normalizedRawTrimCorrections": 17,
+  "gradeNameChanges": 0,
+  "rawParentReviewOnly": 4,
+  "confirmedStoredEngineOrFuelContradictions": 0,
+  "engineJoinReviewRemainsRequired": true,
+  "parentTransmissionEvidenceResolvedRows": 42,
+  "parentEngineQualifierEvidenceResolvedRows": 5,
+  "unresolvedAdditionalFieldReviewFlags": 10,
+  "rawSourceFileModified": false,
+  "runtimeOrDatabaseModified": false,
+  "additionSourceFile": "encar-import-additions-20261107.json",
+  "normalizationErrataFile": "encar-import-errata-20261107.json",
+  "exhaustiveWithinDeclaredSourceScope": true,
+  "completeCurrentEncarCatalog": false,
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 2629,
+      "sha256": "dc1eeac7188237b4a0513013b339a63bff52369d326dbfdaf3dace07f3fc71f7"
+    },
+    {
+      "path": "encar-import-additions-20261107.json",
+      "bytes": 8978,
+      "sha256": "27670c5a6052126d331504985f46c4aa16aeb1122944cb1250fa04356c628627"
+    },
+    {
+      "path": "encar-import-errata-20261107.json",
+      "bytes": 18731,
+      "sha256": "d975dac82afea9466ad40596427c1e5905e4e64d4207b0058cbf9e50b1d1fa65"
+    },
+    {
+      "path": "field-review-resolution.json",
+      "bytes": 19312,
+      "sha256": "5a2d2461718194748d8fd3a963d70fbe777978d666dea5792291107f60ffeb6e"
+    },
+    {
+      "path": "frame-table-facts.json",
+      "bytes": 203807,
+      "sha256": "506edc6e8c02ba68c420e25c3ea2df7f60b39ca8cf10987e17a2b7df29fec7f7"
+    },
+    {
+      "path": "independent-audit/audit_cls.py",
+      "bytes": 16106,
+      "sha256": "7e27dd7fecc953c2b07cb5beab03367cb0560a8f293ea1864f70b6546520f96e"
+    },
+    {
+      "path": "independent-audit/audit_engine.py",
+      "bytes": 12651,
+      "sha256": "4fc41eab1d63b9773b9a2a128544a64130b42ba14ecb6e31a25d636cee71155e"
+    },
+    {
+      "path": "independent-audit/cls-table-rows.json",
+      "bytes": 340428,
+      "sha256": "593d3b5bca3399699d69bb1762e459454b4e21237753f7d9d4d4dabab0603af1"
+    },
+    {
+      "path": "independent-audit/corrections-proposed.json",
+      "bytes": 21928,
+      "sha256": "833dd9801060ec1ea23dd02581da4eb5f3e9de95bb040c0879bfdec76db1a305"
+    },
+    {
+      "path": "independent-audit/engine-audit.json",
+      "bytes": 1004705,
+      "sha256": "cf75881f2b95294cbe9897aadab3ab3dc0b22a2ada078bac258cc90487b8893b"
+    },
+    {
+      "path": "independent-audit/engine-candidates.json",
+      "bytes": 23569,
+      "sha256": "07191578edc1f699488b938688529f329d1c763131967bc00654c746921f3569"
+    },
+    {
+      "path": "independent-audit/engine-summary.json",
+      "bytes": 1784,
+      "sha256": "112166c278faee1405ac81ade6272a32f1b0468f8fabc6f06f619fb94aa76384"
+    },
+    {
+      "path": "independent-audit/findings.json",
+      "bytes": 29343,
+      "sha256": "9bfe28a63273522ebf2e64e5ef72e23a23e1fa92c8c643c214099dbe8e5e1fb4"
+    },
+    {
+      "path": "independent-audit/record-ledger.json",
+      "bytes": 1083615,
+      "sha256": "f591ab0aa2f59bb6f96a72e39fddecb032b91dc4e7563f4db3682534a2f40d4a"
+    },
+    {
+      "path": "independent-audit/source-summary.json",
+      "bytes": 8919,
+      "sha256": "c292a03754c9123d55ad3a8618c6dd289a8c1c8a2ff7f50657bc003aa32cae3b"
+    },
+    {
+      "path": "independent-audit/summary.json",
+      "bytes": 2335,
+      "sha256": "52c6bc1b0b5dcbafc93e62ccad9e0fa99e53ec7e2795e6f46f30be13b7352f50"
+    },
+    {
+      "path": "independent-audit/summary.md",
+      "bytes": 1466,
+      "sha256": "42eb81d2c69e8c0afe792a41cef7dcae47b6bfe11988aa72aab7e03362e33bc6"
+    },
+    {
+      "path": "parent-audits-verified.json",
+      "bytes": 33735,
+      "sha256": "b3fb8719da91cdef33c3a21d6f28b6861e1d877056bfe65263162be7288a9dd1"
+    },
+    {
+      "path": "parent-support-facts.json",
+      "bytes": 1970,
+      "sha256": "628472ab6dc59fe149d1b6bd08bb825e8b6077add79c4a61a1ba429a888c3c0d"
+    },
+    {
+      "path": "targets.json",
+      "bytes": 570774,
+      "sha256": "3daacacd6ccb9aea22cd6a8d5b838186a9576ca7ba993ef46fe63434e5ee8b1f"
+    }
+  ]
+}
