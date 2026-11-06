@@ -8,6 +8,7 @@
 // Omit CHROMIUM_PATH to use Playwright's installed Chromium (playwright install chromium).
 const fs=require('node:fs');const assert=require('node:assert/strict');const {pathToFileURL}=require('node:url');
 const crypto=require('node:crypto');const path=require('node:path');const {chromium}=require('playwright');const {PGlite}=require('@electric-sql/pglite');
+const {bootstrapCurrent,runFixtureRpc}=require('./customer-identity.browser.cjs');
 const ROOT=path.resolve(__dirname,'..'),ORIGIN='https://s-note.example';
 const ACTOR='11111111-1111-4111-8111-111111111111',OTHER='22222222-2222-4222-8222-222222222222';
 const COMPANY='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',OTHER_COMPANY='bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
@@ -41,18 +42,17 @@ async function as(db,role,actor,fn){
 const rpcQueues=new WeakMap();
 function rpc(db,role,actor,name,args={}){
  assert(/^[a-z_][a-z0-9_]*$/.test(name));const keys=Object.keys(args);assert(keys.every(key=>/^[a-z_][a-z0-9_]*$/.test(key)));
- const previous=rpcQueues.get(db)||Promise.resolve();const task=previous.catch(()=>{}).then(()=>as(db,role,actor,async()=>{
-  const params=keys.map((key,i)=>key+' => $'+(i+1)).join(',');const values=keys.map(key=>args[key]!==null&&typeof args[key]==='object'?JSON.stringify(args[key]):args[key]);
-  return(await db.query('select public.'+name+'('+params+') as result',values)).rows[0].result;
- }));rpcQueues.set(db,task);return task;
+ const previous=rpcQueues.get(db)||Promise.resolve();const task=previous.catch(()=>{}).then(()=>runFixtureRpc(db,role,actor,name,args));rpcQueues.set(db,task);return task;
 }
 
 
-const JWT='a'.repeat(22)+'.'+'b'.repeat(22)+'.'+'c'.repeat(22),OTHER_JWT='d'.repeat(22)+'.'+'e'.repeat(22)+'.'+'f'.repeat(22);
+// Synthetic JWTs carry the same actor as getSession; signatures are never sent to a real service.
+const tokenFor=id=>Buffer.from(JSON.stringify({alg:'HS256',typ:'JWT'})).toString('base64url')+'.'+Buffer.from(JSON.stringify({sub:id,role:'authenticated',exp:4102444800})).toString('base64url')+'.fixture-signature';
+const JWT=tokenFor(ACTOR),OTHER_JWT=tokenFor(OTHER);
 const RAW13='0001013000000',FORMATTED13='000101-3000000',RAW10='9876543210';
 const serviceKey='test-service-role-key';const messages=[],requests=[],apiResults=[];
 const env={SUPABASE_SERVICE_ROLE_KEY:serviceKey,CUSTOMER_INTAKE_PUBLIC_ORIGIN:ORIGIN,SOLAPI_API_KEY:'test-key',SOLAPI_API_SECRET:'test-api-secret',SOLAPI_SENDER:'0212345678',SUPABASE_URL:'https://test-project.supabase.co',SUPABASE_PUBLISHABLE_KEY:'test-public-key',CUSTOMER_INTAKE_OTP_SECRET:'test-identity-key-source-'.repeat(3)};
-const counters={writes:[],identity:[],legacy:[],external:[],errors:[],casMisses:0};
+const counters={writes:[],identity:[],legacy:[],pinned:[],external:[],errors:[],casMisses:0};
 let db,api,intakeApi,browser,source,failNextWrite=false,holdWrite=null,holdIdentity=null,holdRead=null;
 const originalFetch=global.fetch;
 function deferred(){let resolve;const promise=new Promise(r=>resolve=r);return {promise,resolve};}
@@ -64,7 +64,7 @@ async function serverFetch(url,options={}){
  const u=new URL(url);
  if(u.origin==='https://api.solapi.com'){messages.push(JSON.parse(options.body).message);return response({statusCode:'2000',messageId:'TEST_MESSAGE_'+messages.length});}
  assert.equal(u.origin,env.SUPABASE_URL,'Unexpected actual network blocked');
- if(u.pathname.startsWith('/rest/v1/rpc/')){const name=u.pathname.split('/').at(-1),args=JSON.parse(options.body),headers=new Headers(options.headers),isService=headers.get('apikey')===serviceKey;try{return response(await rpc(db,isService?'service_role':'authenticated',isService?null:ACTOR,name,args));}catch(error){console.log('DB RPC ERROR',name,error.code,error.message);return response({code:error.code||'SQL_ERROR',message:'Local fixture database rejected RPC'},400);}}
+ if(u.pathname.startsWith('/rest/v1/rpc/')){const name=u.pathname.split('/').at(-1),args=JSON.parse(options.body),headers=new Headers(options.headers),isService=headers.get('apikey')===serviceKey,token=headers.get('Authorization'),requestActor=token==='Bearer '+JWT?ACTOR:token==='Bearer '+OTHER_JWT?OTHER:null;if(!isService&&!requestActor)return response({message:'test auth required'},401);try{return response(await rpc(db,isService?'service_role':'authenticated',isService?null:requestActor,name,args));}catch(error){console.log('DB RPC ERROR',name,error.code,error.message);return response({code:error.code||'SQL_ERROR',message:'Local fixture database rejected RPC'},400);}}
 
  const headers=new Headers(options.headers),token=headers.get('Authorization');const actor=token==='Bearer '+JWT?ACTOR:token==='Bearer '+OTHER_JWT?OTHER:null;
  if(!actor)return response({message:'test auth required'},401);
@@ -84,32 +84,37 @@ async function serverFetch(url,options={}){
  throw Error('Unexpected actual network request blocked: '+u.pathname);
 }
 async function canonical(body){
- const {table,operation,filters={},value}=body;if(table==='zc_media')return {data:[],error:null};if(table!=='zc_customers')throw Error('Unexpected UI table '+table);
+ const {table,operation,filters={},value}=body;if(table==='zc_media')return {data:[],error:null};if(table==='zc_datasets'&&operation==='select'){let rows=(await db.query('select * from public.zc_datasets where company_id=$1',[filters.company_id||COMPANY])).rows;for(const key of['owner_id','dataset'])if(filters[key]!==undefined)rows=rows.filter(row=>row[key]===filters[key]);return{data:body.single?(rows[0]||null):rows,error:null};}if(table!=='zc_customers')throw Error('Unexpected UI table '+table);
  if(operation==='select'){
-  const rows=(await db.query('select * from public.zc_customers where company_id=$1 and owner_id=$2',[filters.company_id||COMPANY,filters.owner_id||ACTOR])).rows.filter(row=>filters.car_id===undefined||row.car_id===filters.car_id);
+  const rows=(await db.query('select to_jsonb(c) row from public.zc_customers c where company_id=$1 and owner_id=$2',[filters.company_id||COMPANY,filters.owner_id||ACTOR])).rows.map(result=>result.row).filter(row=>filters.car_id===undefined||row.car_id===filters.car_id);
   if(holdRead&&holdRead.match(body)){const held=holdRead;holdRead=null;held.entered();await held.wait;}
   return {data:body.single?(rows[0]||null):rows,error:null};
  }
- if(operation==='delete'){await db.query('delete from public.zc_customers where company_id=$1 and owner_id=$2 and car_id=$3',[filters.company_id,filters.owner_id,filters.car_id]);return {data:[],error:null};}
- assert(['update','insert'].includes(operation),'Blind customer upsert is forbidden');assert(value&&typeof value.payload==='object');assert.equal(rawInPayload(value.payload),false,'Plain manual identity must never enter canonical JSON');
- counters.writes.push(structuredClone(body));
- if(holdWrite&&holdWrite.match(body)){const held=holdWrite;holdWrite=null;held.entered();await held.wait;}
- if(failNextWrite){failNextWrite=false;return {data:null,error:{code:'TEST_WRITE_FAILED',message:'검증용 저장 실패'}};}
- if(operation==='update'){
-  const match=filters.updated_at===null?'updated_at is null':'updated_at=$7::timestamptz';
-  const args=[value.payload,value.updated_by,value.updated_at,filters.company_id,filters.owner_id,filters.car_id];if(filters.updated_at!==null)args.push(filters.updated_at);
-  const rows=(await db.query(`update public.zc_customers set payload=$1::jsonb,updated_by=$2,updated_at=$3::timestamptz where company_id=$4 and owner_id=$5 and car_id=$6 and ${match} returning car_id`,args)).rows;
-  if(!rows.length)counters.casMisses++;return {data:rows,error:null};
+ throw Error('Customer writes must call the actual save/trash RPC, not REST '+operation);
+}
+async function uiRpc(body){
+ const {name,args={}}=body;if(['zc_read_rrn','zc_save_rrn'].includes(name)){counters.legacy.push(name);return{data:null,error:{message:'Legacy identity RPC must not be used'}};}
+ let write;if(name==='snote_customer_save'){
+  assert.equal(rawInPayload(args.p_payload),false,'Plain manual identity must never enter canonical JSON');
+  write={table:'zc_customers',operation:args.p_expected_updated_at===null?'insert':'update',filters:{company_id:args.p_company,owner_id:args.p_owner,car_id:args.p_car_id,updated_at:args.p_expected_updated_at},value:{company_id:args.p_company,owner_id:args.p_owner,car_id:args.p_car_id,payload:args.p_payload,updated_by:ACTOR},acknowledged:false};counters.writes.push(write);
+  if(holdWrite&&holdWrite.match(write)){const held=holdWrite;holdWrite=null;held.entered();await held.wait;}
+  if(failNextWrite){failNextWrite=false;return{data:null,error:{code:'XX000',message:'검증용 저장 실패'}};}
  }
- try{const result=await db.query('insert into public.zc_customers(company_id,owner_id,car_id,payload,updated_by,updated_at) values($1,$2,$3,$4::jsonb,$5,$6) returning car_id',[value.company_id,value.owner_id,value.car_id,value.payload,value.updated_by,value.updated_at]);return {data:result.rows,error:null};}
- catch(error){return {data:null,error:{code:error.code,message:'Local test insert rejected'}};}
+ try{const data=await runFixtureRpc(db,'authenticated',ACTOR,name,args);if(write){write.acknowledged=true;write.value.updated_at=data.updatedAt;}return{data,error:null};}
+ catch(error){if(error.code==='40001')counters.casMisses++;return{data:null,error:{code:error.code||'SQL_ERROR',message:error.message}};}
 }
 function html(){return source.replace("const NIL='00000000-0000-0000-0000-000000000000';","window.__identityState=S;\nconst NIL='00000000-0000-0000-0000-000000000000';").replace('\ninitializeAuth();','\nwindow.__identityReady=initializeAuth();');}
 async function routeContext(page){
  page.setDefaultTimeout(12000);
  page.on('pageerror',e=>counters.errors.push(e.message));page.on('dialog',d=>d.accept());
  await page.context().route('**/*',async route=>{
-  const req=route.request(),u=new URL(req.url());if(u.origin==='https://t1.kakaocdn.net'&&u.pathname==='/mapjsapi/bundle/postcode/prod/postcode.v2.js')return route.fulfill({contentType:'text/javascript',body:mockSdk});if(u.origin!==ORIGIN){counters.external.push(u.origin);return route.abort()}
+  const req=route.request(),u=new URL(req.url());if(u.origin===env.SUPABASE_URL&&u.pathname.startsWith('/rest/v1/rpc/')){
+   const headers={'Access-Control-Allow-Origin':ORIGIN,'Access-Control-Allow-Headers':'authorization,apikey,content-type','Access-Control-Allow-Methods':'POST,OPTIONS'};
+   if(req.method()==='OPTIONS')return route.fulfill({status:204,headers});
+   assert.equal(req.method(),'POST');assert.equal(req.headers().authorization,'Bearer '+JWT);assert.equal(req.headers().apikey,env.SUPABASE_PUBLISHABLE_KEY);
+   const name=decodeURIComponent(u.pathname.split('/').at(-1)),args=JSON.parse(req.postData());counters.pinned.push(name);
+   const result=await uiRpc({name,args});return route.fulfill({status:result.error?400:200,headers,contentType:'application/json',body:JSON.stringify(result.error||result.data)});
+  }if(u.origin==='https://t1.kakaocdn.net'&&u.pathname==='/mapjsapi/bundle/postcode/prod/postcode.v2.js')return route.fulfill({contentType:'text/javascript',body:mockSdk});if(u.origin!==ORIGIN){counters.external.push(u.origin);return route.abort()}
   if(u.pathname==='/api/customer-identity'){
    const body=JSON.parse(req.postData());counters.identity.push(structuredClone(body));
    if(holdIdentity&&holdIdentity.match(body)){const held=holdIdentity;holdIdentity=null;held.entered();await held.wait;}
@@ -118,7 +123,7 @@ async function routeContext(page){
   if(u.pathname==='/api/customer-intake'){const body=JSON.parse(req.postData());requests.push(body);const result=await intakeApi.onRequestPost({request:new Request(req.url(),{method:'POST',headers:req.headers(),body:req.postData()}),env});const text=await result.text();apiResults.push({action:body.action,status:result.status,result:JSON.parse(text)});return route.fulfill({status:result.status,headers:Object.fromEntries(result.headers),body:text});}
   if(u.pathname==='/customer.html'||u.pathname==='/address-search.html')return route.fulfill({contentType:'text/html; charset=utf-8',body:fs.readFileSync(ROOT+u.pathname,'utf8'),headers:headersFor(u.pathname==='/customer.html'?'/customer*':'/address-search*')});
   if(u.pathname==='/__fixture/canonical')return route.fulfill({contentType:'application/json',body:JSON.stringify(await canonical(JSON.parse(req.postData())))});
-  if(u.pathname==='/__fixture/rpc'){const body=JSON.parse(req.postData());counters.legacy.push(body.name);if(body.name==='zc_write_dataset')return route.fulfill({contentType:'application/json',body:JSON.stringify({data:1,error:null})});return route.fulfill({contentType:'application/json',body:JSON.stringify({data:null,error:{message:'Legacy identity RPC must not be used'}})});}
+  if(u.pathname==='/__fixture/rpc')return route.fulfill({contentType:'application/json',body:JSON.stringify(await uiRpc(JSON.parse(req.postData())))});
   if(u.pathname==='/')return route.fulfill({contentType:'text/html; charset=utf-8',body:html()});
   if(u.pathname.startsWith('/assets/'))return route.fulfill({path:ROOT+u.pathname});
   return route.abort();
@@ -127,18 +132,18 @@ async function routeContext(page){
 async function boot(page,carId='test-car-1'){
  await page.goto(ORIGIN,{waitUntil:'networkidle'});await page.waitForFunction(()=>!!window.__identityReady);await page.evaluate(()=>window.__identityReady);
  const cars=(await db.query("select payload from public.zc_datasets where owner_id=$1 and dataset='cars'",[ACTOR])).rows[0].payload;
- await page.evaluate(async({actor,company,jwt,cars:all,carId})=>{
+ await page.evaluate(async({actor,company,jwt,cars:all,carId,supabaseUrl,publishable})=>{
   const alias='cld_'+actor.replace(/-/g,'').slice(0,18);await enterWorkspace({username:alias,name:'검증용 딜러',role:'dealer',company:'검증용 상사',employeeNo:'TEST',union:''});
   const S=window.__identityState;S.user={id:actor};S.company={id:company,name:'검증용 상사',rrn_enabled:false};S.members=[{user_id:actor,company_id:company,display_name:'검증용 딜러',role:'dealer',active:true}];
   const send=async(path,body)=>{const r=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});return r.json()};
-  S.client={auth:{getSession:async()=>({data:{session:{access_token:jwt,user:{id:actor}}},error:null})},rpc:async(name,args)=>send('/__fixture/rpc',{name,args}),from(table){
+  S.client={supabaseUrl,supabaseKey:publishable,auth:{getSession:async()=>({data:{session:{access_token:jwt,user:{id:actor}}},error:null})},rpc:async(name,args)=>send('/__fixture/rpc',{name,args}),from(table){
    const query={table,operation:'select',filters:{},single:false,value:null};const chain={
     select(){return chain},eq(key,value){query.filters[key]=value;return chain},is(key,value){query.filters[key]=value;return chain},order(){return chain},limit(){return chain},maybeSingle(){query.single=true;return chain},single(){query.single=true;return chain},
     update(value){query.operation='update';query.value=value;return chain},insert(value){query.operation='insert';query.value=value;return chain},upsert(value){query.operation='upsert';query.value=value;return chain},delete(){query.operation='delete';return chain},
     then(resolve,reject){return send('/__fixture/canonical',query).then(resolve,reject)}
    };return chain;
-  }};S.ready=true;document.getElementById('zc-cloud-gate').hidden=true;cars=all;openVehicle(carId);await openSaleProgress();
- },{actor:ACTOR,company:COMPANY,jwt:JWT,cars,carId});
+  }};S.revisions.set('cars:'+actor,1);S.revisions.set('covers:'+actor,1);S.ready=true;document.getElementById('zc-cloud-gate').hidden=true;cars=all;openVehicle(carId);await openSaleProgress();
+ },{actor:ACTOR,company:COMPANY,jwt:JWT,cars,carId,supabaseUrl:env.SUPABASE_URL,publishable:env.SUPABASE_PUBLISHABLE_KEY});
 }
 async function fill(page,value,name='수동 검증 고객'){
  await page.locator('#zc72-name').fill(name);await page.locator('#zc72-phone').fill('01012345678');await page.locator('#zc72-address').fill('서울시 테스트로 1');await page.locator('#zc73-address-detail').fill('101호');await page.locator('#zc72-rrn').fill(value);await page.locator('#zc72-rrn').dispatchEvent('change');
@@ -146,7 +151,7 @@ async function fill(page,value,name='수동 검증 고객'){
 async function saved(carId='test-car-1'){return (await db.query('select * from public.zc_customers where company_id=$1 and owner_id=$2 and car_id=$3',[COMPANY,ACTOR,carId])).rows[0]}
 async function apiCall(body,jwt=JWT){const result=await api.onRequestPost({request:new Request(ORIGIN+'/api/customer-identity',{method:'POST',headers:{Origin:ORIGIN,'Content-Type':'application/json',Authorization:'Bearer '+jwt},body:JSON.stringify(body)}),env});return {status:result.status,...await result.json()}}
 async function initialize(){
- db=await bootstrap();
+ db=await bootstrapCurrent();
  api=await import(pathToFileURL(ROOT+'/functions/api/customer-identity.js').href);intakeApi=await import(pathToFileURL(ROOT+'/functions/api/customer-intake.js').href);source=fs.readFileSync(ROOT+'/index.html','utf8');global.fetch=serverFetch;
 }
 
@@ -273,7 +278,8 @@ async function runBrowser(){await initialize();browser=await chromium.launch({he
  console.log('PASS actual 390px mobile submission → existing unsigned customer → authenticated intake fallback → contract (인); metadata repair preserves all customer fields and is idempotent');
 
 
- assert.deepEqual(counters.external,[]);assert.deepEqual(counters.errors,[]);console.log('COUNTERS',JSON.stringify({browserRequests:requests.length,uiWrites:counters.writes.length,smsMocks:messages.length,apiResults:apiResults.map(r=>({action:r.action,status:r.status}))}));
+ assert(counters.pinned.includes('snote_customer_save'),'Post-submission dealer edits must use the actor-pinned HTTP RPC transport');
+ assert.deepEqual(counters.external,[]);assert.deepEqual(counters.errors,[]);console.log('COUNTERS',JSON.stringify({browserRequests:requests.length,uiWrites:counters.writes.length,pinnedRpc:counters.pinned.length,smsMocks:messages.length,apiResults:apiResults.map(r=>({action:r.action,status:r.status}))}));
  }finally{await browser.close();global.fetch=originalFetch;await db.close();}}
 
 (async()=>{await runSql(false);await runSql(true);await runBrowser();console.log('TOTAL SQL PASS',passed);})().catch(error=>{console.error(error.name,error.message);process.exitCode=1;});
