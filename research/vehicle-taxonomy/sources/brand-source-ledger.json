@@ -1,0 +1,1104 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-11-06",
+  "scope": "기존번들의46개제조사표기를모두추적하는공식자료원발견·접근성원장. 별칭을포함한표기수이며46개독립법인수나전체등급수집완료를의미하지않음.",
+  "completedScope": "기존46개표기에대한자료원/접근성/추출상태기록",
+  "taxonomyCompletenessKnown": false,
+  "autoImport": false,
+  "statusMeaning": {
+    "current_research_available": "동일make표기로별도자료집에구체적관측행이있음. 전체브랜드/전연식완성아님.",
+    "source_found_not_extracted": "공식자료원은찾았지만이make의등급자료행추출미완료.",
+    "official_source_not_readable": "공식진입점은있으나현재도구에서인증/스크립트/방화벽/리디렉션/접속불가로모델본문미확인.",
+    "historical_brand_source_gap": "후속회사기업자료만확인;원래레거시브랜드차량별당시자료미확보."
+  },
+  "method": "2026-11-06공식사이트직접읽기. 이미동일작업에서본문을직접확인해별도자료로저장한출처는그자료파일을재사용. 홈페이지·모델메뉴만확인한경우등급데이터추출성공으로세지않음.",
+  "requirementsForCompletion": [
+    "각표기의한국정식판매·병행수입·해외내수시장을구분",
+    "단종세대및연식별엔진/트림/패키지변경의당시공식자료확인",
+    "공급자분류코드·부모관계가없으면새코드나임의단계를생성하지않음",
+    "KGM·르노코리아·쉐보레의다른표기는검토전까지자동병합금지",
+    "자료접근실패는차량/등급없음을뜻하지않음"
+  ],
+  "manufacturers": [
+    {
+      "make": "BMW",
+      "sourceUrls": [
+        "https://www.bmw.co.kr/content/dam/bmw/marketKR/bmw_co_kr/Pricelist/pricelist_oct2026.pdf.asset.1792129034710.pdf"
+      ],
+      "marketScope": "KR_saved_official_research",
+      "accessStatus": "verified_via_saved_research_evidence",
+      "researchStatus": "current_research_available",
+      "notes": "같은제조사표기의공식조사자료에직접확인또는발췌등급행이있음. 출처파일의개별evidenceStatus와시장·연식범위를따라야함. 별도자료행이있다는뜻이며브랜드전체·과거전연식자료가완료됐다는뜻은아님.",
+      "checkedAt": "2026-11-06",
+      "researchRecords": 30,
+      "researchFiles": [
+        "import-official.json"
+      ],
+      "evidenceCounts": {
+        "official_direct": 30
+      },
+      "historicalCoverageComplete": false,
+      "allTrimsComplete": false,
+      "baselineModelGroups": 30,
+      "baselineGenerationsWithoutTrim": 73
+    },
+    {
+      "make": "BYD",
+      "sourceUrls": [
+        "https://www.bydauto.kr/brand/news-view/179",
+        "https://www.bydauto.kr/",
+        "https://www.bydauto.kr/car/byd-dolphin",
+        "https://www.bydauto.kr/car/byd-atto3",
+        "https://www.bydauto.kr/car/byd-seal",
+        "https://www.bydauto.kr/car/byd-sealion7",
+        "https://www.bydauto.kr/car/byd-sealion6"
+      ],
+      "marketScope": "KR",
+      "accessStatus": "body_verified_news_homepage_timeout",
+      "researchStatus": "current_research_available",
+      "notes": "공식한국뉴스 본문과한국모델 메뉴 확인. 메인은2회시간초과. 씨라이언6DM-i AWD 출시문은찾았으나등급자료행은아직추출하지않음. 별도자료행이있다는뜻이며브랜드전체·과거전연식자료가완료됐다는뜻은아님.",
+      "checkedAt": "2026-11-06",
+      "researchRecords": 11,
+      "researchFiles": [
+        "additional-import-official.json"
+      ],
+      "evidenceCounts": {
+        "official_direct": 11
+      },
+      "historicalCoverageComplete": false,
+      "allTrimsComplete": false,
+      "baselineModelGroups": 4,
+      "baselineGenerationsWithoutTrim": 4
+    },
+    {
+      "make": "DS",
+      "sourceUrls": [
+        "https://www.dsautomobiles.co.kr/"
+      ],
+      "marketScope": "KR_site_with_legacy_content",
+      "accessStatus": "body_verified",
+      "researchStatus": "source_found_not_extracted",
+      "notes": "한국공식페이지에모델·서비스메뉴가있으나2023표기와실제판매차량상이안내가있음. 현재판매확정및단종연식등급자료는별도확인필요.",
+      "checkedAt": "2026-11-06",
+      "researchRecords": 0,
+      "researchFiles": [],
+      "evidenceCounts": {},
+      "historicalCoverageComplete": false,
+      "allTrimsComplete": false,
+      "baselineModelGroups": 4,
+      "baselineGenerationsWithoutTrim": 5,
+      "nextNeeded": "한국시장별공식가격표·카탈로그·판매보도자료의모델/연식/엔진/트림연결추출. 단종세대는당시자료추가필요."
+    },
+    {
+      "make": "GMC",
+      "sourceUrls": [
+        "https://www.gmckorea.co.kr/",
+        "https://news.gmckorea.co.kr/ko/gmc/newsroom.detail.html/Pages/news/kr/ko/2026/jan/0127_GMC_ACADIA.html",
+        "https://www.gmckorea.co.kr/suvs/acadia",
+        "https://www.gmckorea.co.kr/trucks/canyon",
+        "https://www.gmckorea.co.kr/electric/hummer-ev/suv",
+        "https://news.chevrolet.co.kr/ko/chevrolet/newsroom.detail.html/Pages/news/kr/ko/2026/apr/0417_GMC_Sierra-Denali.html"
+      ],
+      "marketScope": "KR",
+      "accessStatus": "body_verified",
+      "researchStatus": "current_research_available",
+      "notes": "정확한공식한국주소gmckorea.co.kr와아카디아국내출시문직접확인. 출시문에드날리얼티밋단일트림이있지만이원장에서는등급자료행을추출하지않음. 별도자료행이있다는뜻이며브랜드전체·과거전연식자료가완료됐다는뜻은아님.",
+      "checkedAt": "2026-11-06",
+      "researchRecords": 5,
+      "researchFiles": [
+        "additional-import-official.json"
+      ],
+      "evidenceCounts": {
+        "official_direct": 5
+      },
+      "historicalCoverageComplete": false,
+      "allTrimsComplete": false,
+      "baselineModelGroups": 3,
+      "baselineGenerationsWithoutTrim": 4
+    },
+    {
+      "make": "KGM",
+      "sourceUrls": [
+        "https://www.kg-mobility.com/"
+      ],
+      "marketScope": "KR",
+      "accessStatus": "limited_readable_shell",
+      "researchStatus": "source_found_not_extracted",
+      "notes": "공식KGM사이트제목확인,메인추출본문은추적태그뿐. KG모빌리티(쌍용)명의공식PDF조사자료가별도로있음. 원래제조사표기병합은보류.",
+      "checkedAt": "2026-11-06",
+      "researchRecords": 0,
+      "researchFiles": [],
+      "evidenceCounts": {},
+      "historicalCoverageComplete": false,
+      "allTrimsComplete": false,
+      "baselineModelGroups": 9,
+      "baselineGenerationsWithoutTrim": 9,
+      "aliasCandidates": [
+        "KG모빌리티(쌍용)"
+      ],
+      "aliasAutoMerged": false,
+      "nextNeeded": "한국시장별공식가격표·카탈로그·판매보도자료의모델/연식/엔진/트림연결추출. 단종세대는당시자료추가필요."
+    },
+    {
+      "make": "KG모빌리티(쌍용)",
+      "sourceUrls": [
+        "https://www.kg-mobility.com/attached/contents/display/file/2000001000100010011/20260430140242870_Ugwwx4.pdf",
+        "https://www.kg-mobility.com/attached/contents/display/file/2000001000100070004/20260530222112241_SJzDFa.pdf",
+        "https://www.kg-mobility.com/attached/contents/display/file/2000001000100180001/20260529151052815_zXL9oW.pdf",
+        "https://www.kg-mobility.com/attached/contents/display/file/2000001000100120001/20251031112436593_mZEqqb.pdf",
+        "https://www.kg-mobility.com/attached/contents/display/file/200000200010012/20260228234258004_JNYcqu.pdf",
+        "https://www.kg-mobility.com/attached/contents/display/file/2000001000100130001/20251031113346123_Wu5aiv.pdf",
+        "https://www.kg-mobility.com/attached/contents/display/file/2000001000100090002/20260331142902625_04nI7r.pdf",
+        "https://allways.kg-mobility.com/kgm-%EB%89%B4-%ED%86%A0%EB%A0%88%EC%8A%A4-%EC%B6%9C%EC%8B%9C-%ED%8C%8C%EC%9B%8C%ED%8A%B8%EB%A0%88%EC%9D%B8-%EC%97%85%EA%B7%B8%EB%A0%88%EC%9D%B4%EB%93%9C-%EC%A0%95%ED%86%B5-suv-%EA%B0%90%EC%84%B1/",
+        "https://allways.kg-mobility.com/kgm-2025%EB%A0%89%EC%8A%A4%ED%84%B4%EB%9D%BC%EC%9D%B8%EC%97%85/"
+      ],
+      "marketScope": "KR_saved_official_research",
+      "accessStatus": "verified_via_saved_research_evidence",
+      "researchStatus": "current_research_available",
+      "notes": "같은제조사표기의공식조사자료에직접확인또는발췌등급행이있음. 출처파일의개별evidenceStatus와시장·연식범위를따라야함. 별도자료행이있다는뜻이며브랜드전체·과거전연식자료가완료됐다는뜻은아님.",
+      "checkedAt": "2026-11-06",
+      "researchRecords": 32,
+      "researchFiles": [
+        "other-domestic-official.json"
+      ],
+      "evidenceCounts": {
+        "official_direct": 32
+      },
+      "historicalCoverageComplete": false,
+      "allTrimsComplete": false,
+      "baselineModelGroups": 11,
+      "baselineGenerationsWithoutTrim": 45,
+      "aliasCandidates": [
+        "KGM"
+      ],
+      "aliasAutoMerged": false
+    },
+    {
+      "make": "기아",
+      "sourceUrls": [
+        "https://www.hyundaimotorgroup.com/ko/news/CONT0000000000180659",
+        "https://www.hyundaimotorgroup.com/ko/news/kia-all-new-seltos-sales-launch",
+        "https://www.hyundaimotorgroup.com/ko/news/CONT0000000000178271",
+        "https://www.hyundaimotorgroup.com/ko/news/kia-customer-focused-ev-solutions",
+        "https://www.kia.com/kr/vehicles/ev3/price",
+        "https://www.kia.com/kr/vehicles/ev4/price",
+        "https://www.kia.com/kr/vehicles/ev5/price",
+        "https://www.kia.com/kr/vehicles/tasman/price",
+        "https://www.newswire.co.kr/newsRead.php?no=797762",
+        "https://www.newswire.co.kr/newsRead.php?no=898766",
+        "https://www.newswire.co.kr/newsRead.php?no=816096",
+        "https://www.newswire.co.kr/newsRead.php?no=840676",
+        "https://www.newswire.co.kr/newsRead.php?no=761768",
+        "https://www.newswire.co.kr/newsRead.php?no=853380",
+        "https://www.newswire.co.kr/newsRead.php?no=902568",
+        "https://www.newswire.co.kr/newsRead.php?no=803496",
+        "https://www.newswire.co.kr/newsRead.php?no=806349",
+        "https://www.newswire.co.kr/newsRead.php?no=911051",
+        "https://www.newswire.co.kr/newsRead.php?no=927337"
+      ],
+      "marketScope": "KR_saved_official_research",
+      "accessStatus": "verified_via_saved_research_evidence",
+      "researchStatus": "current_research_available",
+      "notes": "같은제조사표기의공식조사자료에직접확인또는발췌등급행이있음. 출처파일의개별evidenceStatus와시장·연식범위를따라야함. 별도자료행이있다는뜻이며브랜드전체·과거전연식자료가완료됐다는뜻은아님.",
+      "checkedAt": "2026-11-06",
+      "researchRecords": 157,
+      "researchFiles": [
+        "domestic-official.json",
+        "historical-domestic-official.json"
+      ],
+      "evidenceCounts": {
+        "official_direct": 157
+      },
+      "historicalCoverageComplete": false,
+      "allTrimsComplete": false,
+      "baselineModelGroups": 38,
+      "baselineGenerationsWithoutTrim": 122
+    },
+    {
+      "make": "닛산",
+      "sourceUrls": [
+        "https://www.nissan.co.kr/"
+      ],
+      "marketScope": "KR_service_and_legacy_support",
+      "accessStatus": "body_verified",
+      "researchStatus": "source_found_not_extracted",
+      "notes": "한국공식사이트는서비스센터·고객지원·서비스캠페인과국내철수계획안내중심. 현행신차전체트림원장으로사용할수없으며국내판매과거카탈로그가필요.",
+      "checkedAt": "2026-11-06",
+      "researchRecords": 0,
+      "researchFiles": [],
+      "evidenceCounts": {},
+      "historicalCoverageComplete": false,
+      "allTrimsComplete": false,
+      "baselineModelGroups": 10,
+      "baselineGenerationsWithoutTrim": 18,
+      "nextNeeded": "한국시장별공식가격표·카탈로그·판매보도자료의모델/연식/엔진/트림연결추출. 단종세대는당시자료추가필요."
+    },
+    {
+      "make": "대우",
+      "sourceUrls": [
+        "https://www.gm-korea.co.kr/ko/home.html"
+      ],
+      "marketScope": "KR_successor_corporate_only",
+      "accessStatus": "body_verified_successor_page_only",
+      "researchStatus": "historical_brand_source_gap",
+      "notes": "기존레거시제조사표기를보존. 확인한GM한국기업페이지는대우차량의과거카탈로그·등급표가아니므로후속브랜드자료를대우등급으로자동매핑하지않음.",
+      "checkedAt": "2026-11-06",
+      "researchRecords": 0,
+      "researchFiles": [],
+      "evidenceCounts": {},
+      "historicalCoverageComplete": false,
+      "allTrimsComplete": false,
+      "baselineModelGroups": 13,
+      "baselineGenerationsWithoutTrim": 20,
+      "aliasCandidates": [
+        "쉐보레(GM대우)"
+      ],
+      "aliasAutoMerged": false,
+      "nextNeeded": "한국시장별공식가격표·카탈로그·판매보도자료의모델/연식/엔진/트림연결추출. 단종세대는당시자료추가필요."
+    },
+    {
+      "make": "람보르기니",
+      "sourceUrls": [
+        "https://www.lamborghini.com/ko-en"
+      ],
+      "marketScope": "Korean_locale_global_specification",
+      "accessStatus": "body_verified",
+      "researchStatus": "source_found_not_extracted",
+      "notes": "한국어공식글로벌페이지와모델·역사메뉴확인. 사이트의사양지역은접속IP에따라달라질수있다고안내하므로한국인증·판매트림자료로자동간주하지않음.",
+      "checkedAt": "2026-11-06",
+      "researchRecords": 0,
+      "researchFiles": [],
+      "evidenceCounts": {},
+      "historicalCoverageComplete": false,
+      "allTrimsComplete": false,
+      "baselineModelGroups": 5,
+      "baselineGenerationsWithoutTrim": 13,
+      "nextNeeded": "한국시장별공식가격표·카탈로그·판매보도자료의모델/연식/엔진/트림연결추출. 단종세대는당시자료추가필요."
+    },
+    {
+      "make": "랜드로버",
+      "sourceUrls": [
+        "https://www.landroverkorea.co.kr/index.html",
+        "https://www.landroverkorea.co.kr/content/dam/lrdx/pdfs/kr/250401_DEF_PRICE%20CHART_DX.pdf",
+        "https://www.rangerover.com/ko-kr/range-rover/price-and-spec.html"
+      ],
+      "marketScope": "KR_site_with_global_specification_caution",
+      "accessStatus": "body_verified",
+      "researchStatus": "current_research_available",
+      "notes": "한국공식사이트와3개제품군링크확인. 사이트는유럽기준사양이한국판매사양과다를수있다고명시; 한국가격표·과거연식별브로셔를구분해야함. 별도자료행이있다는뜻이며브랜드전체·과거전연식자료가완료됐다는뜻은아님.",
+      "checkedAt": "2026-11-06",
+      "researchRecords": 39,
+      "researchFiles": [
+        "extended-import-official.json"
+      ],
+      "evidenceCounts": {
+        "official_direct": 39
+      },
+      "historicalCoverageComplete": false,
+      "allTrimsComplete": false,
+      "baselineModelGroups": 7,
+      "baselineGenerationsWithoutTrim": 15
+    },
+    {
+      "make": "렉서스",
+      "sourceUrls": [
+        "https://certified.lexus.co.kr/car-list/"
+      ],
+      "marketScope": "KR_saved_official_research",
+      "accessStatus": "verified_via_saved_research_evidence",
+      "researchStatus": "current_research_available",
+      "notes": "같은제조사표기의공식조사자료에직접확인또는발췌등급행이있음. 출처파일의개별evidenceStatus와시장·연식범위를따라야함. 별도자료행이있다는뜻이며브랜드전체·과거전연식자료가완료됐다는뜻은아님.",
+      "checkedAt": "2026-11-06",
+      "researchRecords": 4,
+      "researchFiles": [
+        "import-official.json"
+      ],
+      "evidenceCounts": {
+        "official_search_excerpt": 4
+      },
+      "historicalCoverageComplete": false,
+      "allTrimsComplete": false,
+      "baselineModelGroups": 13,
+      "baselineGenerationsWithoutTrim": 22
+    },
+    {
+      "make": "로터스",
+      "sourceUrls": [
+        "https://www.lotuscars.com/ko-KR"
+      ],
+      "marketScope": "KR_locale_country_explicit",
+      "accessStatus": "body_verified",
+      "researchStatus": "source_found_not_extracted",
+      "notes": "페이지국가South Korea, 모델과Heritage메뉴직접확인. 모델페이지의국내판매트림및과거세대별자료추출은미완료.",
+      "checkedAt": "2026-11-06",
+      "researchRecords": 0,
+      "researchFiles": [],
+      "evidenceCounts": {},
+      "historicalCoverageComplete": false,
+      "allTrimsComplete": false,
+      "baselineModelGroups": 4,
+      "baselineGenerationsWithoutTrim": 4,
+      "nextNeeded": "한국시장별공식가격표·카탈로그·판매보도자료의모델/연식/엔진/트림연결추출. 단종세대는당시자료추가필요."
+    },
+    {
+      "make": "롤스로이스",
+      "sourceUrls": [
+        "https://www.rolls-roycemotorcars.com/ko_KR/home.html"
+      ],
+      "marketScope": "KR_locale_global_brand_content",
+      "accessStatus": "body_verified",
+      "researchStatus": "source_found_not_extracted",
+      "notes": "한국어공식모델·프로비넌스메뉴확인. Bespoke구성과표준판매파생모델을분리하고과거국내판매명칭을추가확인해야함.",
+      "checkedAt": "2026-11-06",
+      "researchRecords": 0,
+      "researchFiles": [],
+      "evidenceCounts": {},
+      "historicalCoverageComplete": false,
+      "allTrimsComplete": false,
+      "baselineModelGroups": 6,
+      "baselineGenerationsWithoutTrim": 9,
+      "nextNeeded": "한국시장별공식가격표·카탈로그·판매보도자료의모델/연식/엔진/트림연결추출. 단종세대는당시자료추가필요."
+    },
+    {
+      "make": "르노코리아",
+      "sourceUrls": [
+        "https://www.renault.co.kr/"
+      ],
+      "marketScope": "KR",
+      "accessStatus": "homepage_forbidden_verified_pdfs_in_alias_research",
+      "researchStatus": "source_found_not_extracted",
+      "notes": "공식메인직접요청은403. 르노코리아(삼성)명의별도자료집에는직접확인한공식가격표PDF가있음. 표기별자료행을자동합치지않음.",
+      "checkedAt": "2026-11-06",
+      "researchRecords": 0,
+      "researchFiles": [],
+      "evidenceCounts": {},
+      "historicalCoverageComplete": false,
+      "allTrimsComplete": false,
+      "baselineModelGroups": 6,
+      "baselineGenerationsWithoutTrim": 6,
+      "aliasCandidates": [
+        "르노코리아(삼성)"
+      ],
+      "aliasAutoMerged": false,
+      "nextNeeded": "한국시장별공식가격표·카탈로그·판매보도자료의모델/연식/엔진/트림연결추출. 단종세대는당시자료추가필요."
+    },
+    {
+      "make": "르노코리아(삼성)",
+      "sourceUrls": [
+        "https://cdn.renault.co.kr/upload/asset/price/price_koleos_202606.pdf",
+        "https://cdn.renault.co.kr/upload/asset/price/price_Arkana_202610.pdf",
+        "https://cdn.renault.co.kr/upload/asset/price/price_qm6_202512.pdf",
+        "https://cdn.renault.co.kr/upload/asset/price/price_scenic_202601.pdf",
+        "https://cdn.renault.co.kr/upload/asset/price/price_sm6_202405.pdf"
+      ],
+      "marketScope": "KR_saved_official_research",
+      "accessStatus": "verified_via_saved_research_evidence",
+      "researchStatus": "current_research_available",
+      "notes": "같은제조사표기의공식조사자료에직접확인또는발췌등급행이있음. 출처파일의개별evidenceStatus와시장·연식범위를따라야함. 별도자료행이있다는뜻이며브랜드전체·과거전연식자료가완료됐다는뜻은아님.",
+      "checkedAt": "2026-11-06",
+      "researchRecords": 19,
+      "researchFiles": [
+        "other-domestic-official.json"
+      ],
+      "evidenceCounts": {
+        "official_direct": 19
+      },
+      "historicalCoverageComplete": false,
+      "allTrimsComplete": false,
+      "baselineModelGroups": 12,
+      "baselineGenerationsWithoutTrim": 32,
+      "aliasCandidates": [
+        "르노코리아"
+      ],
+      "aliasAutoMerged": false
+    },
+    {
+      "make": "링컨",
+      "sourceUrls": [
+        "https://www.lincoln-korea.com/",
+        "https://flak.co.kr/",
+        "https://www.suninford.co.kr/_lincoln/models/nautilus2024.html",
+        "https://www.suninford.co.kr/_lincoln/models/aviator.html"
+      ],
+      "marketScope": "KR_official_entry_redirect",
+      "accessStatus": "redirect_to_unreadable_site",
+      "researchStatus": "current_research_available",
+      "notes": "이전공식한국진입주소가flak.co.kr로리디렉션되며현재도구에서본문0줄. 판매종료나트림없음으로해석하지않음; 과거한국브로셔및읽을수있는현행자료필요. 별도자료행이있다는뜻이며브랜드전체·과거전연식자료가완료됐다는뜻은아님.",
+      "checkedAt": "2026-11-06",
+      "researchRecords": 4,
+      "researchFiles": [
+        "additional-import-official.json"
+      ],
+      "evidenceCounts": {
+        "official_direct": 4
+      },
+      "historicalCoverageComplete": false,
+      "allTrimsComplete": false,
+      "baselineModelGroups": 6,
+      "baselineGenerationsWithoutTrim": 8
+    },
+    {
+      "make": "마세라티",
+      "sourceUrls": [
+        "https://www.maserati.com/kr/ko"
+      ],
+      "marketScope": "KR_locale",
+      "accessStatus": "body_verified",
+      "researchStatus": "source_found_not_extracted",
+      "notes": "공식한국지역모델·Legacy cars·문서메뉴확인. 한국판매엔진/트림별표와과거세대자료는아직추출하지않음.",
+      "checkedAt": "2026-11-06",
+      "researchRecords": 0,
+      "researchFiles": [],
+      "evidenceCounts": {},
+      "historicalCoverageComplete": false,
+      "allTrimsComplete": false,
+      "baselineModelGroups": 6,
+      "baselineGenerationsWithoutTrim": 8,
+      "nextNeeded": "한국시장별공식가격표·카탈로그·판매보도자료의모델/연식/엔진/트림연결추출. 단종세대는당시자료추가필요."
+    },
+    {
+      "make": "맥라렌",
+      "sourceUrls": [
+        "https://cars.mclaren.com/kr-ko",
+        "https://www.mclaren.com/cars/gl_en"
+      ],
+      "marketScope": "GLOBAL_fallback_KR_path_unreadable",
+      "accessStatus": "KR_path_unavailable_global_limited_shell",
+      "researchStatus": "source_found_not_extracted",
+      "notes": "한국지역경로는읽기불가. 공식글로벌경로는새mclaren.com주소로연결되나소매점/뉴스레터위주의제한본문만읽힘. 글로벌모델을한국판매트림으로확정하지않음.",
+      "checkedAt": "2026-11-06",
+      "researchRecords": 0,
+      "researchFiles": [],
+      "evidenceCounts": {},
+      "historicalCoverageComplete": false,
+      "allTrimsComplete": false,
+      "baselineModelGroups": 5,
+      "baselineGenerationsWithoutTrim": 5,
+      "nextNeeded": "한국시장별공식가격표·카탈로그·판매보도자료의모델/연식/엔진/트림연결추출. 단종세대는당시자료추가필요."
+    },
+    {
+      "make": "미니",
+      "sourceUrls": [
+        "https://www.mini.co.kr/ko_KR/home.html",
+        "https://www.mini.co.kr/content/dam/MINI/marketKR/mini_co_kr/pricelist/MINI-All-Models-Price-List_251203.pdf.asset.1765173984642.pdf"
+      ],
+      "marketScope": "KR",
+      "accessStatus": "body_verified",
+      "researchStatus": "current_research_available",
+      "notes": "공식한국모델·제원·가격메뉴직접확인. 현재별도조사자료가생성되면동일제조사표기의기록건수에만반영. 별도자료행이있다는뜻이며브랜드전체·과거전연식자료가완료됐다는뜻은아님.",
+      "checkedAt": "2026-11-06",
+      "researchRecords": 40,
+      "researchFiles": [
+        "extended-import-official.json"
+      ],
+      "evidenceCounts": {
+        "official_direct": 40
+      },
+      "historicalCoverageComplete": false,
+      "allTrimsComplete": false,
+      "baselineModelGroups": 10,
+      "baselineGenerationsWithoutTrim": 20
+    },
+    {
+      "make": "벤츠",
+      "sourceUrls": [
+        "https://www.mercedes-benz.co.kr/passengercars/brand/news-events/news-story/2024/news-20240617.html",
+        "https://www.mercedes-benz.co.kr/passengercars/brand/news-events/news-story/2023/news-20230608.html"
+      ],
+      "marketScope": "KR_saved_official_research",
+      "accessStatus": "verified_via_saved_research_evidence",
+      "researchStatus": "current_research_available",
+      "notes": "같은제조사표기의공식조사자료에직접확인또는발췌등급행이있음. 출처파일의개별evidenceStatus와시장·연식범위를따라야함. 별도자료행이있다는뜻이며브랜드전체·과거전연식자료가완료됐다는뜻은아님.",
+      "checkedAt": "2026-11-06",
+      "researchRecords": 4,
+      "researchFiles": [
+        "import-official.json"
+      ],
+      "evidenceCounts": {
+        "official_direct": 4
+      },
+      "historicalCoverageComplete": false,
+      "allTrimsComplete": false,
+      "baselineModelGroups": 28,
+      "baselineGenerationsWithoutTrim": 65
+    },
+    {
+      "make": "벤틀리",
+      "sourceUrls": [
+        "https://www.bentleymotors.com/en.html"
+      ],
+      "marketScope": "GLOBAL_country_selector_includes_KR",
+      "accessStatus": "body_verified",
+      "researchStatus": "source_found_not_extracted",
+      "notes": "글로벌공식모델페이지와South Korea국가선택표시를확인. 한국용가격표/판매사양을직접추출한상태는아님.",
+      "checkedAt": "2026-11-06",
+      "researchRecords": 0,
+      "researchFiles": [],
+      "evidenceCounts": {},
+      "historicalCoverageComplete": false,
+      "allTrimsComplete": false,
+      "baselineModelGroups": 5,
+      "baselineGenerationsWithoutTrim": 9,
+      "nextNeeded": "한국시장별공식가격표·카탈로그·판매보도자료의모델/연식/엔진/트림연결추출. 단종세대는당시자료추가필요."
+    },
+    {
+      "make": "볼보",
+      "sourceUrls": [
+        "https://www.volvocars.com/kr/news/culture/20250804-New-XC60-Officially-Launched/",
+        "https://www.volvocars.com/kr/news/culture/20250702-The-new-Volvo-XC90-S90/",
+        "https://www.volvocars.com/kr/news/culture/20251015-Launch-of-the-XC40/"
+      ],
+      "marketScope": "KR_saved_official_research",
+      "accessStatus": "verified_via_saved_research_evidence",
+      "researchStatus": "current_research_available",
+      "notes": "같은제조사표기의공식조사자료에직접확인또는발췌등급행이있음. 출처파일의개별evidenceStatus와시장·연식범위를따라야함. 별도자료행이있다는뜻이며브랜드전체·과거전연식자료가완료됐다는뜻은아님.",
+      "checkedAt": "2026-11-06",
+      "researchRecords": 12,
+      "researchFiles": [
+        "import-official.json"
+      ],
+      "evidenceCounts": {
+        "official_direct": 12
+      },
+      "historicalCoverageComplete": false,
+      "allTrimsComplete": false,
+      "baselineModelGroups": 17,
+      "baselineGenerationsWithoutTrim": 20
+    },
+    {
+      "make": "쉐보레",
+      "sourceUrls": [
+        "https://www.chevrolet.co.kr/"
+      ],
+      "marketScope": "KR",
+      "accessStatus": "body_verified",
+      "researchStatus": "source_found_not_extracted",
+      "notes": "한국공식페이지·국내모델·카탈로그/가격표메뉴직접확인. 쉐보레(GM대우)명의조사자료와표기병합은자동수행하지않음.",
+      "checkedAt": "2026-11-06",
+      "researchRecords": 0,
+      "researchFiles": [],
+      "evidenceCounts": {},
+      "historicalCoverageComplete": false,
+      "allTrimsComplete": false,
+      "baselineModelGroups": 10,
+      "baselineGenerationsWithoutTrim": 10,
+      "aliasCandidates": [
+        "쉐보레(GM대우)"
+      ],
+      "aliasAutoMerged": false,
+      "nextNeeded": "한국시장별공식가격표·카탈로그·판매보도자료의모델/연식/엔진/트림연결추출. 단종세대는당시자료추가필요."
+    },
+    {
+      "make": "쉐보레(GM대우)",
+      "sourceUrls": [
+        "https://www.chevrolet.co.kr/cuvs/trax-crossover",
+        "https://www.chevrolet.co.kr/suvs/trailblazer",
+        "https://www.chevrolet.co.kr/finance/type-price"
+      ],
+      "marketScope": "KR_saved_official_research",
+      "accessStatus": "verified_via_saved_research_evidence",
+      "researchStatus": "current_research_available",
+      "notes": "같은제조사표기의공식조사자료에직접확인또는발췌등급행이있음. 출처파일의개별evidenceStatus와시장·연식범위를따라야함. 별도자료행이있다는뜻이며브랜드전체·과거전연식자료가완료됐다는뜻은아님.",
+      "checkedAt": "2026-11-06",
+      "researchRecords": 8,
+      "researchFiles": [
+        "other-domestic-official.json"
+      ],
+      "evidenceCounts": {
+        "official_direct": 8
+      },
+      "historicalCoverageComplete": false,
+      "allTrimsComplete": false,
+      "baselineModelGroups": 18,
+      "baselineGenerationsWithoutTrim": 34,
+      "aliasCandidates": [
+        "쉐보레",
+        "대우"
+      ],
+      "aliasAutoMerged": false
+    },
+    {
+      "make": "스바루",
+      "sourceUrls": [
+        "https://www.subaru.jp/"
+      ],
+      "marketScope": "JP_only_KR_source_not_established",
+      "accessStatus": "body_verified",
+      "researchStatus": "source_found_not_extracted",
+      "notes": "일본공식모델·카탈로그·취급설명서메뉴확인. 일본내수등급을한국수입/등록차량등급으로옮기지않음; 과거한국판매및병행수입시장구분필요.",
+      "checkedAt": "2026-11-06",
+      "researchRecords": 0,
+      "researchFiles": [],
+      "evidenceCounts": {},
+      "historicalCoverageComplete": false,
+      "allTrimsComplete": false,
+      "baselineModelGroups": 5,
+      "baselineGenerationsWithoutTrim": 5,
+      "nextNeeded": "한국시장별공식가격표·카탈로그·판매보도자료의모델/연식/엔진/트림연결추출. 단종세대는당시자료추가필요."
+    },
+    {
+      "make": "스즈키",
+      "sourceUrls": [
+        "https://www.globalsuzuki.com/automobile/"
+      ],
+      "marketScope": "GLOBAL_only_KR_source_not_established",
+      "accessStatus": "body_verified",
+      "researchStatus": "source_found_not_extracted",
+      "notes": "글로벌공식자동차모델목록직접확인. 국내자동차판매용모델·시장별명칭/등급은미확인. 이륜차한국사이트로자동대체하지않음.",
+      "checkedAt": "2026-11-06",
+      "researchRecords": 0,
+      "researchFiles": [],
+      "evidenceCounts": {},
+      "historicalCoverageComplete": false,
+      "allTrimsComplete": false,
+      "baselineModelGroups": 3,
+      "baselineGenerationsWithoutTrim": 3,
+      "nextNeeded": "한국시장별공식가격표·카탈로그·판매보도자료의모델/연식/엔진/트림연결추출. 단종세대는당시자료추가필요."
+    },
+    {
+      "make": "시트로엥",
+      "sourceUrls": [
+        "https://www.citroen-kr.com/"
+      ],
+      "marketScope": "KR_service_links_with_FR_sales_template",
+      "accessStatus": "body_verified_mixed_market",
+      "researchStatus": "source_found_not_extracted",
+      "notes": "한국서비스/부품링크는확인됐으나판매본문은프랑스어및프랑스판매도메인으로연결됨. 이를현재한국판매모델목록으로간주하지않음; 과거국내브로셔필요.",
+      "checkedAt": "2026-11-06",
+      "researchRecords": 0,
+      "researchFiles": [],
+      "evidenceCounts": {},
+      "historicalCoverageComplete": false,
+      "allTrimsComplete": false,
+      "baselineModelGroups": 6,
+      "baselineGenerationsWithoutTrim": 10,
+      "nextNeeded": "한국시장별공식가격표·카탈로그·판매보도자료의모델/연식/엔진/트림연결추출. 단종세대는당시자료추가필요."
+    },
+    {
+      "make": "아우디",
+      "sourceUrls": [
+        "https://www.audi.co.kr/ko/aboutaudi/news_article/250701/20250701"
+      ],
+      "marketScope": "KR_saved_official_research",
+      "accessStatus": "verified_via_saved_research_evidence",
+      "researchStatus": "current_research_available",
+      "notes": "같은제조사표기의공식조사자료에직접확인또는발췌등급행이있음. 출처파일의개별evidenceStatus와시장·연식범위를따라야함. 별도자료행이있다는뜻이며브랜드전체·과거전연식자료가완료됐다는뜻은아님.",
+      "checkedAt": "2026-11-06",
+      "researchRecords": 7,
+      "researchFiles": [
+        "import-official.json"
+      ],
+      "evidenceCounts": {
+        "official_direct": 7
+      },
+      "historicalCoverageComplete": false,
+      "allTrimsComplete": false,
+      "baselineModelGroups": 19,
+      "baselineGenerationsWithoutTrim": 38
+    },
+    {
+      "make": "애스턴마틴",
+      "sourceUrls": [
+        "https://www.astonmartin.com/ko",
+        "https://www.astonmartin.com/en"
+      ],
+      "marketScope": "GLOBAL_fallback_KR_path_unreadable",
+      "accessStatus": "KR_path_unavailable_global_body_verified",
+      "researchStatus": "source_found_not_extracted",
+      "notes": "한국어경로는읽기불가, 공식영문글로벌페이지확인. 한국시장판매사양과과거세대카탈로그는별도조사대상.",
+      "checkedAt": "2026-11-06",
+      "researchRecords": 0,
+      "researchFiles": [],
+      "evidenceCounts": {},
+      "historicalCoverageComplete": false,
+      "allTrimsComplete": false,
+      "baselineModelGroups": 5,
+      "baselineGenerationsWithoutTrim": 5,
+      "nextNeeded": "한국시장별공식가격표·카탈로그·판매보도자료의모델/연식/엔진/트림연결추출. 단종세대는당시자료추가필요."
+    },
+    {
+      "make": "인피니티",
+      "sourceUrls": [
+        "https://www.infiniti.co.kr/",
+        "https://www.infiniti.com/"
+      ],
+      "marketScope": "GLOBAL_fallback_KR_access_failed",
+      "accessStatus": "KR_timeout_global_body_verified",
+      "researchStatus": "source_found_not_extracted",
+      "notes": "한국공식진입주소시간초과, 공식글로벌모델·Legacy Vehicles메뉴확인. 현재글로벌차종을과거한국판매트림에적용하지않음.",
+      "checkedAt": "2026-11-06",
+      "researchRecords": 0,
+      "researchFiles": [],
+      "evidenceCounts": {},
+      "historicalCoverageComplete": false,
+      "allTrimsComplete": false,
+      "baselineModelGroups": 6,
+      "baselineGenerationsWithoutTrim": 6,
+      "nextNeeded": "한국시장별공식가격표·카탈로그·판매보도자료의모델/연식/엔진/트림연결추출. 단종세대는당시자료추가필요."
+    },
+    {
+      "make": "재규어",
+      "sourceUrls": [
+        "https://www.jaguarkorea.co.kr/",
+        "https://www.jaguar.com/ko-kr/index.html"
+      ],
+      "marketScope": "KR_locale_brand_and_owner_support",
+      "accessStatus": "canonical_body_verified_original_redirect_failed",
+      "researchStatus": "source_found_not_extracted",
+      "notes": "한국기존주소의리디렉션요청은실패했으나최종jaguar.com한국지역페이지본문을직접확인. 브랜드비전·오너지원·인증중고차중심이므로과거차종별판매트림확인필요.",
+      "checkedAt": "2026-11-06",
+      "researchRecords": 0,
+      "researchFiles": [],
+      "evidenceCounts": {},
+      "historicalCoverageComplete": false,
+      "allTrimsComplete": false,
+      "baselineModelGroups": 7,
+      "baselineGenerationsWithoutTrim": 9,
+      "nextNeeded": "한국시장별공식가격표·카탈로그·판매보도자료의모델/연식/엔진/트림연결추출. 단종세대는당시자료추가필요."
+    },
+    {
+      "make": "제네시스",
+      "sourceUrls": [
+        "https://www.hyundaimotorgroup.com/ko/news/CONT0000000000198453",
+        "https://www.hyundaimotorgroup.com/ko/news/CONT0000000000190135"
+      ],
+      "marketScope": "KR_saved_official_research",
+      "accessStatus": "verified_via_saved_research_evidence",
+      "researchStatus": "current_research_available",
+      "notes": "같은제조사표기의공식조사자료에직접확인또는발췌등급행이있음. 출처파일의개별evidenceStatus와시장·연식범위를따라야함. 별도자료행이있다는뜻이며브랜드전체·과거전연식자료가완료됐다는뜻은아님.",
+      "checkedAt": "2026-11-06",
+      "researchRecords": 8,
+      "researchFiles": [
+        "domestic-official.json"
+      ],
+      "evidenceCounts": {
+        "official_direct": 8
+      },
+      "historicalCoverageComplete": false,
+      "allTrimsComplete": false,
+      "baselineModelGroups": 9,
+      "baselineGenerationsWithoutTrim": 21
+    },
+    {
+      "make": "지프",
+      "sourceUrls": [
+        "https://www.jeep.co.kr/"
+      ],
+      "marketScope": "KR",
+      "accessStatus": "body_verified",
+      "researchStatus": "source_found_not_extracted",
+      "notes": "공식한국홈페이지에국내한정판·모델·트림설명확인. 홈페이지광고만으로전세대/전연식등급원장이완성된것은아님.",
+      "checkedAt": "2026-11-06",
+      "researchRecords": 0,
+      "researchFiles": [],
+      "evidenceCounts": {},
+      "historicalCoverageComplete": false,
+      "allTrimsComplete": false,
+      "baselineModelGroups": 7,
+      "baselineGenerationsWithoutTrim": 10,
+      "nextNeeded": "한국시장별공식가격표·카탈로그·판매보도자료의모델/연식/엔진/트림연결추출. 단종세대는당시자료추가필요."
+    },
+    {
+      "make": "캐딜락",
+      "sourceUrls": [
+        "https://www.cadillac.co.kr/",
+        "https://news.chevrolet.co.kr/ko/chevrolet/newsroom.detail.html/Pages/news/kr/ko/2026/feb/0224_Feb_Cadillac_The-New-Escalade.html",
+        "https://www.cadillac.co.kr/suvs/escalade/trim",
+        "https://news.cadillac.co.kr/ko/cadillac/newsroom.detail.html/Pages/news/kr/ko/2025/nov/1119_November_Cadillac_EscaladeIQ.html",
+        "https://news.cadillac.co.kr/ko/cadillac/newsroom.detail.html/Pages/news/kr/ko/2026/may/0522_Cadillac_ESCALADE-IQL.html",
+        "https://www.cadillac.co.kr/campaign/brandstory-view-1st.gm"
+      ],
+      "marketScope": "KR",
+      "accessStatus": "limited_readable_shell",
+      "researchStatus": "current_research_available",
+      "notes": "공식한국페이지는열렸지만도구본문은전시장/견적/시승안내위주11줄. 전차종트림구성은확인되지않음; 별도공식가격표·뉴스룸필요. 별도자료행이있다는뜻이며브랜드전체·과거전연식자료가완료됐다는뜻은아님.",
+      "checkedAt": "2026-11-06",
+      "researchRecords": 7,
+      "researchFiles": [
+        "additional-import-official.json"
+      ],
+      "evidenceCounts": {
+        "official_direct": 7
+      },
+      "historicalCoverageComplete": false,
+      "allTrimsComplete": false,
+      "baselineModelGroups": 9,
+      "baselineGenerationsWithoutTrim": 9
+    },
+    {
+      "make": "테슬라",
+      "sourceUrls": [
+        "https://www.tesla.com/ko_kr"
+      ],
+      "marketScope": "KR_locale",
+      "accessStatus": "unreadable_dynamic_shell",
+      "researchStatus": "official_source_not_readable",
+      "notes": "공식대한민국페이지제목은확인되나본문0줄. 차량없음이나서비스장애로단정하지않음; 한국용구성기·사용설명서/과거모델자료의별도접근필요.",
+      "checkedAt": "2026-11-06",
+      "researchRecords": 0,
+      "researchFiles": [],
+      "evidenceCounts": {},
+      "historicalCoverageComplete": false,
+      "allTrimsComplete": false,
+      "baselineModelGroups": 5,
+      "baselineGenerationsWithoutTrim": 13,
+      "nextNeeded": "한국시장별공식가격표·카탈로그·판매보도자료의모델/연식/엔진/트림연결추출. 단종세대는당시자료추가필요."
+    },
+    {
+      "make": "토요타",
+      "sourceUrls": [
+        "https://www.toyota.co.kr/models/rav4hev/",
+        "https://www.toyota.co.kr/models/camry/",
+        "https://www.toyota.co.kr/models/crown/",
+        "https://toyota.co.kr/download/model/PRIUS-HEV_spec.pdf",
+        "https://www.toyota.co.kr/models/alphard/",
+        "https://www.toyota.co.kr/models/highlander/",
+        "https://www.toyota.co.kr/download/model/HIGHLANDER_spec_v20230721.pdf?v=20230721.1",
+        "https://www.toyota.co.kr/models/sienna/"
+      ],
+      "marketScope": "KR_saved_official_research",
+      "accessStatus": "verified_via_saved_research_evidence",
+      "researchStatus": "current_research_available",
+      "notes": "같은제조사표기의공식조사자료에직접확인또는발췌등급행이있음. 출처파일의개별evidenceStatus와시장·연식범위를따라야함. 별도자료행이있다는뜻이며브랜드전체·과거전연식자료가완료됐다는뜻은아님.",
+      "checkedAt": "2026-11-06",
+      "researchRecords": 14,
+      "researchFiles": [
+        "import-official.json"
+      ],
+      "evidenceCounts": {
+        "official_direct": 14
+      },
+      "historicalCoverageComplete": false,
+      "allTrimsComplete": false,
+      "baselineModelGroups": 14,
+      "baselineGenerationsWithoutTrim": 25
+    },
+    {
+      "make": "페라리",
+      "sourceUrls": [
+        "https://www.ferrari.com/ko-KR/auto"
+      ],
+      "marketScope": "KR_locale",
+      "accessStatus": "javascript_verification_required",
+      "researchStatus": "official_source_not_readable",
+      "notes": "공식한국지역페이지가자바스크립트인증화면을반환해모델본문미확인. 인증을우회하지않으며공식보도자료·과거모델아카이브를추가확인해야함.",
+      "checkedAt": "2026-11-06",
+      "researchRecords": 0,
+      "researchFiles": [],
+      "evidenceCounts": {},
+      "historicalCoverageComplete": false,
+      "allTrimsComplete": false,
+      "baselineModelGroups": 12,
+      "baselineGenerationsWithoutTrim": 21,
+      "nextNeeded": "한국시장별공식가격표·카탈로그·판매보도자료의모델/연식/엔진/트림연결추출. 단종세대는당시자료추가필요."
+    },
+    {
+      "make": "포드",
+      "sourceUrls": [
+        "https://www.ford.co.kr/",
+        "https://flak.co.kr/",
+        "https://www.suninford.co.kr/_ford/models/explorer.html",
+        "https://www.suninford.co.kr/_ford/models/expedition.html",
+        "https://www.suninford.co.kr/_ford/models/bronco.html",
+        "https://www.suninford.co.kr/_ford/models/mustang.html"
+      ],
+      "marketScope": "KR_official_entry_redirect",
+      "accessStatus": "redirect_to_unreadable_site",
+      "researchStatus": "current_research_available",
+      "notes": "이전공식한국진입주소가flak.co.kr로리디렉션되며현재도구본문0줄. 과거국내판매등급·현재수입사자료는미확인; 글로벌미국트림으로대체하지않음. 별도자료행이있다는뜻이며브랜드전체·과거전연식자료가완료됐다는뜻은아님.",
+      "checkedAt": "2026-11-06",
+      "researchRecords": 9,
+      "researchFiles": [
+        "additional-import-official.json"
+      ],
+      "evidenceCounts": {
+        "official_direct": 9
+      },
+      "historicalCoverageComplete": false,
+      "allTrimsComplete": false,
+      "baselineModelGroups": 10,
+      "baselineGenerationsWithoutTrim": 17
+    },
+    {
+      "make": "포르쉐",
+      "sourceUrls": [
+        "https://www.porsche.com/korea/ko/"
+      ],
+      "marketScope": "KR_locale",
+      "accessStatus": "body_verified",
+      "researchStatus": "source_found_not_extracted",
+      "notes": "공식한국모델페이지본문과일부모델주문불가안내확인. 현재주문·재고·단종모델과옵션/파생모델을구분한등급추출은미완료.",
+      "checkedAt": "2026-11-06",
+      "researchRecords": 0,
+      "researchFiles": [],
+      "evidenceCounts": {},
+      "historicalCoverageComplete": false,
+      "allTrimsComplete": false,
+      "baselineModelGroups": 10,
+      "baselineGenerationsWithoutTrim": 20,
+      "nextNeeded": "한국시장별공식가격표·카탈로그·판매보도자료의모델/연식/엔진/트림연결추출. 단종세대는당시자료추가필요."
+    },
+    {
+      "make": "폭스바겐",
+      "sourceUrls": [
+        "https://www.volkswagen.co.kr/ko/promotion_news/news/new-2025/2025-05-26.html",
+        "https://www.vwgk.co.kr/mediaCntr/press-releasesView?idx=1058",
+        "https://www.volkswagen.co.kr/ko/promotion_news/News_2026/2026-04-08.html"
+      ],
+      "marketScope": "KR_saved_official_research",
+      "accessStatus": "verified_via_saved_research_evidence",
+      "researchStatus": "current_research_available",
+      "notes": "같은제조사표기의공식조사자료에직접확인또는발췌등급행이있음. 출처파일의개별evidenceStatus와시장·연식범위를따라야함. 별도자료행이있다는뜻이며브랜드전체·과거전연식자료가완료됐다는뜻은아님.",
+      "checkedAt": "2026-11-06",
+      "researchRecords": 6,
+      "researchFiles": [
+        "import-official.json"
+      ],
+      "evidenceCounts": {
+        "official_direct": 6
+      },
+      "historicalCoverageComplete": false,
+      "allTrimsComplete": false,
+      "baselineModelGroups": 13,
+      "baselineGenerationsWithoutTrim": 26
+    },
+    {
+      "make": "폴스타",
+      "sourceUrls": [
+        "https://www.polestar.com/kr/",
+        "https://www.polestar.com/kr/polestar-2/specifications/",
+        "https://www.polestar.com/kr/polestar-3/specifications/",
+        "https://www.polestar.com/kr/polestar-4-models/polestar-4-coupe/specifications/"
+      ],
+      "marketScope": "KR",
+      "accessStatus": "body_verified",
+      "researchStatus": "current_research_available",
+      "notes": "공식대한민국모델·주문·빠른출고메뉴확인. 배터리/모터/패키지별한국사양과연식별변경은미추출. 별도자료행이있다는뜻이며브랜드전체·과거전연식자료가완료됐다는뜻은아님.",
+      "checkedAt": "2026-11-06",
+      "researchRecords": 9,
+      "researchFiles": [
+        "additional-import-official.json"
+      ],
+      "evidenceCounts": {
+        "official_direct": 9
+      },
+      "historicalCoverageComplete": false,
+      "allTrimsComplete": false,
+      "baselineModelGroups": 4,
+      "baselineGenerationsWithoutTrim": 4
+    },
+    {
+      "make": "푸조",
+      "sourceUrls": [
+        "https://www.epeugeot.co.kr/",
+        "https://www.peugeot.co.kr/"
+      ],
+      "marketScope": "KR",
+      "accessStatus": "canonical_body_verified_other_entry_unavailable",
+      "researchStatus": "source_found_not_extracted",
+      "notes": "실제공식한국주소epeugeot.co.kr의국내모델·브로셔메뉴를직접확인. peugeot.co.kr경로는읽기불가. 과거디젤/전기·연식별트림추가조사필요.",
+      "checkedAt": "2026-11-06",
+      "researchRecords": 0,
+      "researchFiles": [],
+      "evidenceCounts": {},
+      "historicalCoverageComplete": false,
+      "allTrimsComplete": false,
+      "baselineModelGroups": 9,
+      "baselineGenerationsWithoutTrim": 17,
+      "nextNeeded": "한국시장별공식가격표·카탈로그·판매보도자료의모델/연식/엔진/트림연결추출. 단종세대는당시자료추가필요."
+    },
+    {
+      "make": "피아트",
+      "sourceUrls": [
+        "https://www.fiat.com/"
+      ],
+      "marketScope": "GLOBAL_only_KR_source_not_established",
+      "accessStatus": "body_verified",
+      "researchStatus": "source_found_not_extracted",
+      "notes": "글로벌공식브랜드/모델안내직접확인. 현행글로벌상품명이나트림은과거국내정식판매명칭을대체하지못함. 한국판매과거카탈로그필요.",
+      "checkedAt": "2026-11-06",
+      "researchRecords": 0,
+      "researchFiles": [],
+      "evidenceCounts": {},
+      "historicalCoverageComplete": false,
+      "allTrimsComplete": false,
+      "baselineModelGroups": 3,
+      "baselineGenerationsWithoutTrim": 3,
+      "nextNeeded": "한국시장별공식가격표·카탈로그·판매보도자료의모델/연식/엔진/트림연결추출. 단종세대는당시자료추가필요."
+    },
+    {
+      "make": "현대",
+      "sourceUrls": [
+        "https://www.hyundaimotorgroup.com/ko/news/CONT0000000000089782",
+        "https://casper.hyundai.com/wcontents/repn-car/catalog/AX06/AX_CASPER_price.pdf",
+        "https://www.hyundaimotorgroup.com/ko/news/CONT0000000000180743",
+        "https://casper.hyundai.com/vehicles/price",
+        "https://www.hyundaimotorgroup.com/ko/news/hyundai-motor-company-casper-electric-2027",
+        "https://www.hyundaimotorgroup.com/ko/news/CONT0000000000152873",
+        "https://www.hyundai.com/contents/repn-car/catalog/grandeur-hybrid-price.pdf",
+        "https://www.hyundaimotorgroup.com/ko/news/hyundai-motor-company-2027-ioniq-9-launch",
+        "https://www.newswire.co.kr/newsRead.php?no=802888",
+        "https://www.newswire.co.kr/newsRead.php?no=809654",
+        "https://www.newswire.co.kr/newsRead.php?no=521822",
+        "https://www.newswire.co.kr/newsRead.php?no=840243",
+        "https://www.newswire.co.kr/newsRead.php?no=897505",
+        "https://www.newswire.co.kr/newsRead.php?no=743071",
+        "https://www.newswire.co.kr/newsRead.php?no=885242",
+        "https://www.newswire.co.kr/newsRead.php?no=903447",
+        "https://www.newswire.co.kr/newsRead.php?no=909190"
+      ],
+      "marketScope": "KR_saved_official_research",
+      "accessStatus": "verified_via_saved_research_evidence",
+      "researchStatus": "current_research_available",
+      "notes": "같은제조사표기의공식조사자료에직접확인또는발췌등급행이있음. 출처파일의개별evidenceStatus와시장·연식범위를따라야함. 별도자료행이있다는뜻이며브랜드전체·과거전연식자료가완료됐다는뜻은아님.",
+      "checkedAt": "2026-11-06",
+      "researchRecords": 111,
+      "researchFiles": [
+        "domestic-official.json",
+        "historical-domestic-official.json"
+      ],
+      "evidenceCounts": {
+        "official_direct": 111
+      },
+      "historicalCoverageComplete": false,
+      "allTrimsComplete": false,
+      "baselineModelGroups": 36,
+      "baselineGenerationsWithoutTrim": 128
+    },
+    {
+      "make": "혼다",
+      "sourceUrls": [
+        "https://auto.hondakorea.co.kr/",
+        "https://www.hondakorea.co.kr/",
+        "https://global.honda/en/newsroom/news/2026/4260423beng.html"
+      ],
+      "marketScope": "KR",
+      "accessStatus": "auto_site_unavailable_notice_main_site_firewall",
+      "researchStatus": "current_research_available",
+      "notes": "공식자동차사이트는현재접속불가안내,기업메인과공식보관PDF요청은웹방화벽안내를반환. 검색발췌만으로과거CR-V표를현행한국전체트림으로승격하지않음. 별도자료행이있다는뜻이며브랜드전체·과거전연식자료가완료됐다는뜻은아님.",
+      "checkedAt": "2026-11-06",
+      "researchRecords": 2,
+      "researchFiles": [
+        "additional-import-official.json"
+      ],
+      "evidenceCounts": {
+        "official_direct": 2
+      },
+      "historicalCoverageComplete": false,
+      "allTrimsComplete": false,
+      "baselineModelGroups": 8,
+      "baselineGenerationsWithoutTrim": 16
+    }
+  ],
+  "summary": {
+    "manufacturerLabels": 46,
+    "withResearchRows": 22,
+    "researchStatusCounts": {
+      "current_research_available": 22,
+      "source_found_not_extracted": 21,
+      "historical_brand_source_gap": 1,
+      "official_source_not_readable": 2
+    },
+    "allTrimsComplete": false
+  }
+}

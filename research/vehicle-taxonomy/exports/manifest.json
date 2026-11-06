@@ -1,0 +1,118 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-11-06",
+  "inputs": [
+    {
+      "path": "research/vehicle-taxonomy/baseline/catalog.json",
+      "bytes": 632236,
+      "sha256": "c3b3d3fc75701cf2354bd05bce7b8393e9efe1eb286670e97091454342b9e4c4"
+    },
+    {
+      "path": "research/vehicle-taxonomy/baseline/coverage.json",
+      "bytes": 17856,
+      "sha256": "3bfb9aeaf490be63b14ffb989f1aadb5ef57fc12261850f87abc6ba122e30a96"
+    },
+    {
+      "path": "research/vehicle-taxonomy/sources/additional-import-official.json",
+      "bytes": 42558,
+      "sha256": "e0861054e70a97c80b0515b080dda92a9bcc1cca2ba3b9375068ef41544c4c58"
+    },
+    {
+      "path": "research/vehicle-taxonomy/sources/brand-source-ledger.json",
+      "bytes": 52154,
+      "sha256": "bc45cde590b62007af124f50deb18fb39d6bcea3fa931fb98cf900953de224d5"
+    },
+    {
+      "path": "research/vehicle-taxonomy/sources/domestic-official.json",
+      "bytes": 111709,
+      "sha256": "825b0b1656f9aa19cf3fd5318ae1fba1549cbc88042fd2a7a923e6b2a4f5af0b"
+    },
+    {
+      "path": "research/vehicle-taxonomy/sources/extended-import-official.json",
+      "bytes": 55900,
+      "sha256": "8200230f66fda8d0755b5e1c1828e00af9ff16df106289a28afd249bcf9197b0"
+    },
+    {
+      "path": "research/vehicle-taxonomy/sources/government-certification-observations.json",
+      "bytes": 20706,
+      "sha256": "c54c4d83fc8d11df6887e189ed638cb46a401fa145c420e5f94e240aff3d254e"
+    },
+    {
+      "path": "research/vehicle-taxonomy/sources/historical-domestic-official.json",
+      "bytes": 151787,
+      "sha256": "075256b00487595471986f9c3e8580219d81493359888f32e63c10f1f904f338"
+    },
+    {
+      "path": "research/vehicle-taxonomy/sources/import-official.json",
+      "bytes": 57014,
+      "sha256": "94c0ef5750fe9db323638771f49377333fa7d854e2aecd6e0855afdf21f6ffc5"
+    },
+    {
+      "path": "research/vehicle-taxonomy/sources/master-source-survey.json",
+      "bytes": 12995,
+      "sha256": "c89d1c545e8e6a1bd41323fca7ae5053c0620fada09a15b8ff106a40d9ef9609"
+    },
+    {
+      "path": "research/vehicle-taxonomy/sources/other-domestic-official.json",
+      "bytes": 41727,
+      "sha256": "3816f49ab21f34d702499e9be69035ee7e29e122d05a6f77d8b5b371e80184da"
+    },
+    {
+      "path": "research/vehicle-taxonomy/observations/encar-api.com-2026-11-06T13-57-31-629Z.json",
+      "bytes": 2193,
+      "sha256": "c9a9f20a9ffd2422729fe9c382bac4056e15ef1c6840c3ff9ba17329c1e22bc6"
+    }
+  ],
+  "files": [
+    {
+      "path": "research/vehicle-taxonomy/exports/api-observations.csv",
+      "bytes": 950,
+      "sha256": "9b513a3846165f5f6a772d5c94eb90e752ba3e169e8b91a136c25ff77365d803"
+    },
+    {
+      "path": "research/vehicle-taxonomy/exports/api-observations.json",
+      "bytes": 1580,
+      "sha256": "07f8c393cb2c13996b636f93b3f33546c262b37c597bb315bb76677a96f4b923"
+    },
+    {
+      "path": "research/vehicle-taxonomy/exports/catalog-reference.json",
+      "bytes": 2677726,
+      "sha256": "635e705ef96f4b2d88af41693e840856f9ffd415007f0efd6bb4080fb7e68dd1"
+    },
+    {
+      "path": "research/vehicle-taxonomy/exports/certification-observations.csv",
+      "bytes": 6872,
+      "sha256": "9522ad4b7dbd529e4d3707db6694a3687b5ed150778b77ba5ff47add530af2c1"
+    },
+    {
+      "path": "research/vehicle-taxonomy/exports/certification-observations.json",
+      "bytes": 21366,
+      "sha256": "b5f548e6c564cff9dacce3ddf66a559e40c477467cec9043b69a3e1b6544497d"
+    },
+    {
+      "path": "research/vehicle-taxonomy/exports/coverage.json",
+      "bytes": 11788,
+      "sha256": "5bba1e838e8d7fd6f94c8f8b8ecc1cfc66e996f1fbd759f86dca633b5f618c74"
+    },
+    {
+      "path": "research/vehicle-taxonomy/exports/manufacturer-coverage.csv",
+      "bytes": 1761,
+      "sha256": "02a489a3cfe70431b2ef3d02872a8b6172ccfbe9bc01e4a58dfa6d9c66c6ec61"
+    },
+    {
+      "path": "research/vehicle-taxonomy/exports/official-research.csv",
+      "bytes": 231349,
+      "sha256": "9942a777daf357ede72cd7ef65d537ccbafaccdded38d0b7df8e8e3bbd20439a"
+    },
+    {
+      "path": "research/vehicle-taxonomy/exports/official-research.json",
+      "bytes": 1736777,
+      "sha256": "f739f18e0d5cd136a76a7ecc3acbe74398bf4ea2f8aabc2551e7854ca55d6dd7"
+    },
+    {
+      "path": "research/vehicle-taxonomy/exports/review-queue.csv",
+      "bytes": 105611,
+      "sha256": "a7ddc7703a550593fd7387287d6e658216c7a07f9ded61a3fe56082dfe7e788b"
+    }
+  ]
+}

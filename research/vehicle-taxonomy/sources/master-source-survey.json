@@ -1,0 +1,275 @@
+{
+  "schemaVersion": 1,
+  "researchedOn": "2026-11-06",
+  "title": "한국 중고차 차종 마스터 원천 조사",
+  "conclusion": "공개 1차 자료로 확인한 이름·제원과 원천 목록은 보관할 수 있으나, 모든 제조사/과거 세대/판매등급/세부등급의 전수성과 부모 연결을 단일 공개 무료 원천에서 확인하지 못했다.",
+  "sources": [
+    {
+      "id": "encar-api-current-docs",
+      "name": "encar-api.com 문서",
+      "url": "https://www.encar-api.com/docs",
+      "supportingUrls": [
+        "https://www.encar-api.com/docs/listing-fields",
+        "https://www.encar-api.com/docs/search-parameters",
+        "https://www.encar-api.com/api"
+      ],
+      "authority": "해당 API 공급자",
+      "accessStatus": "public_documentation_read",
+      "hierarchyCoverage": [
+        "manufacturer_label",
+        "model_label",
+        "combined_badge_label",
+        "translated_model_group_label"
+      ],
+      "parentClassificationCodes": "이번 공개 문서에서 전체 분류 및 부모 코드 endpoint 미확인",
+      "documentedEndpoints": [
+        "GET /cars",
+        "GET /car?id=",
+        "GET /count"
+      ],
+      "pagination": {
+        "zeroBased": true,
+        "maximumListingsPerPage": 500
+      },
+      "authentication": "x-api-key; 기존 S-NOTE 키는 이 공급자에만 전달",
+      "fullMasterStatus": "not_established",
+      "inventoryScope": "live_listings",
+      "usableFor": "실제 관측된 이름과 연료/연식 근거 보강. 누락된 분류 존재 여부 판정 불가.",
+      "limitation": "신차·단종·희귀 등급 전체 목록이나 5단계 부모 연결을 문서에서 보증하지 않는다. 마케팅의 brand/model index 표현을 별도 taxonomy endpoint로 해석하지 않는다.",
+      "requestsUsingUserKey": 0
+    },
+    {
+      "id": "encar-public-search",
+      "name": "Encar 자체 검색 UI",
+      "url": "https://www.encar.com/dc/dc_carsearchlist.do?carType=kor&searchType=model&TG.R=A",
+      "supportingUrls": [
+        "https://www.encar.com/dc/dc_carpopularlist.do?carType=kor&pagenum=590",
+        "https://www.encar.com/pd/pd_carlist.do"
+      ],
+      "authority": "엔카",
+      "accessStatus": "explicit_traffic_restriction_response",
+      "hierarchyCoverage": [
+        "manufacturer_ui",
+        "model_ui",
+        "detail_model_ui",
+        "grade_ui",
+        "detail_grade_ui"
+      ],
+      "parentClassificationCodes": "실제 목록/부모코드 미수집",
+      "fullMasterStatus": "not_retrieved",
+      "usableFor": "검색 UI에 5단계 분류가 존재한다는 근거",
+      "limitation": "현재 직접 검색 페이지가 비정상 트래픽 접속 제한을 반환했다. 제한 우회나 인증 우회는 하지 않았다. UI 존재를 데이터 확보로 계산하지 않는다."
+    },
+    {
+      "id": "encar-search-endpoint",
+      "name": "Encar 검색 JSON 경로",
+      "url": "https://api.encar.com/search/car/list/general",
+      "attemptedPublicUrl": "https://api.encar.com/search/car/list/general?count=true&q=(And.Hidden.N._.CarType.Y.)&sr=%7CModifiedDate%7C0%7C0",
+      "authority": "엔카 호스트",
+      "accessStatus": "not_accessible_in_web_tool",
+      "hierarchyCoverage": [],
+      "parentClassificationCodes": "not_observed",
+      "fullMasterStatus": "not_retrieved",
+      "usableFor": "현재 수집 경로로 사용하지 않음",
+      "limitation": "공식 제3자 개발 문서나 응답 스키마를 확보하지 못했다. 비공식 코드 예시를 공식 지원 계약으로 취급하지 않는다."
+    },
+    {
+      "id": "encar-catalog-ui",
+      "name": "Encar 신차 카탈로그 UI",
+      "url": "https://www.encar.com/dc/dc_catalog.do?company=&method=catalog",
+      "authority": "엔카",
+      "accessStatus": "public_page_read",
+      "hierarchyCoverage": [
+        "manufacturer_selector",
+        "model_selector"
+      ],
+      "parentClassificationCodes": "not_observed",
+      "fullMasterStatus": "not_established",
+      "usableFor": "과거 카탈로그의 보조 출처",
+      "limitation": "선택 상자와 기본 NF 쏘나타 안내만 보였고 전체 분류 데이터 파일은 확보하지 못했다."
+    },
+    {
+      "id": "encarapi-alternative",
+      "name": "EnCarAPI 대체 공급자",
+      "url": "https://encarapi.com/documentation",
+      "supportingUrls": [
+        "https://api.encarapi.com/openapi.json"
+      ],
+      "authority": "별도 API 공급자",
+      "accessStatus": "public_documentation_and_openapi_read",
+      "hierarchyCoverage": [
+        "make_label",
+        "model_label",
+        "badge_label",
+        "body_style_at_badge",
+        "current_selection_facets"
+      ],
+      "documentedDownloads": [
+        {
+          "url": "https://api.encarapi.com/api/taxonomy/makes.csv",
+          "columns": [
+            "make",
+            "make_ko",
+            "count"
+          ]
+        },
+        {
+          "url": "https://api.encarapi.com/api/taxonomy/models.csv",
+          "columns": [
+            "make",
+            "model",
+            "model_ko",
+            "count"
+          ]
+        },
+        {
+          "url": "https://api.encarapi.com/api/taxonomy/badges.csv",
+          "columns": [
+            "make",
+            "model",
+            "badge",
+            "badge_ko",
+            "count"
+          ]
+        }
+      ],
+      "otherDiscoveryEndpoints": [
+        "GET /api/nav",
+        "GET /api/enums",
+        "GET /api/model-search"
+      ],
+      "parentClassificationCodes": "문서 CSV 열에는 5단계 분류 ID/부모 ID 없음; nav의 필터 값은 별도 실응답 검증 필요",
+      "fullMasterStatus": "active_inventory_reference_not_historical_complete_master",
+      "authentication": "별도 공급자 키와 유료 플랜 필요. 기존 encar-api.com 키 호환은 확인되지 않았으며 전송하지 않음.",
+      "cacheRecommendationHours": 24,
+      "usableFor": "유료 자료 도입을 별도로 선택할 때 제조사-모델-배지 조합의 범위 확대",
+      "limitation": "공개 스펙만 확인했으며 보호된 CSV를 내려받지 않았다. 현재 매물 counts 기반이라 미출품/단종 희귀등급의 전수 보장이 아니다. 새 구독이나 체험을 신청하지 않았다.",
+      "requestsUsingUserKey": 0
+    },
+    {
+      "id": "ts-registration-statistics",
+      "name": "한국교통안전공단 신규등록 통계",
+      "url": "https://www.data.go.kr/data/15059401/openapi.do",
+      "supportingUrls": [
+        "https://www.data.go.kr/catalog/15059401/openapi.json"
+      ],
+      "authority": "한국교통안전공단 / 공공데이터포털",
+      "accessStatus": "primary_source_search_and_catalog_metadata_read",
+      "hierarchyCoverage": [
+        "car_name_code",
+        "fuel_code",
+        "displacement_band",
+        "vehicle_class",
+        "registration_month"
+      ],
+      "apiBaseUrl": "https://apis.data.go.kr/B553881/newRegistlnfoService_02",
+      "parentClassificationCodes": "판매 등급·세부등급 부모 코드가 아님",
+      "fullMasterStatus": "registration_statistics_not_retail_trim_master",
+      "authentication": "공공데이터포털 별도 서비스키/활용신청",
+      "licenseObserved": "이용허락범위 제한 없음",
+      "usableFor": "차명과 연료/배기량 범주의 교차 확인",
+      "limitation": "API의 차명코드를 엔카 모델/등급 코드와 동일시하지 않는다. 통계 범위와 판매트림 범위가 다르다. 실제 인증 호출은 하지 않았다."
+    },
+    {
+      "id": "molit-comprehensive",
+      "name": "국토교통부 자동차종합정보",
+      "url": "https://www.data.go.kr/data/15071233/openapi.do",
+      "authority": "국토교통부 / 공공데이터포털",
+      "accessStatus": "primary_source_search_read",
+      "hierarchyCoverage": [
+        "per_vehicle_specification",
+        "registration_history"
+      ],
+      "parentClassificationCodes": "판매 등급의 전체 부모 분류표 미확인",
+      "fullMasterStatus": "per_vehicle_service_not_open_trim_master",
+      "authentication": "서비스별 별도 연계/운영 심의; 일반 첨부형 정보는 자동차등록번호와 소유주명 및 제3자 동의 기반",
+      "licenseObserved": "공공누리 제3유형(출처표시·변경금지)",
+      "usableFor": "사용자가 적법하게 조회한 개별 차량의 제원 확인",
+      "limitation": "전 차종 판매등급 마스터를 얻기 위해 고객/차량 식별정보를 수집하는 경로로 사용하지 않는다. 실제 개인 차량 조회 없음."
+    },
+    {
+      "id": "kea-transport",
+      "name": "한국에너지공단 자동차 표시연비 검색",
+      "url": "https://min24.energy.or.kr/trans_hp/AHP/HP_03/HP_03_01_010.do",
+      "supportingUrls": [
+        "https://www.energy.or.kr/front/conts/105002003001000.do"
+      ],
+      "authority": "한국에너지공단",
+      "accessStatus": "public_page_read_model_rows_not_rendered",
+      "hierarchyCoverage": [
+        "certificate_holder_or_manufacturer",
+        "fuel",
+        "powertrain_type",
+        "release_year",
+        "model_name_search"
+      ],
+      "parentClassificationCodes": "판매 등급 부모 관계 없음",
+      "fullMasterStatus": "energy_certification_reference_not_retail_trim_master",
+      "usableFor": "제조사·차명·동력원·공인 연비 제원 검증",
+      "limitation": "공개 검색/엑셀 UI는 확인했으나 현재 도구의 정적 페이지에는 실제 모델 행이 없어 미수집. 연비 효율등급 1~5를 판매등급으로 혼동하지 않는다."
+    },
+    {
+      "id": "kencis-ev-certification",
+      "name": "국립환경과학원 전기차 인증현황",
+      "url": "https://kencis.me.go.kr/new_kencis/hms/cs01/hmscs01ev.do",
+      "supportingUrls": [
+        "https://kencis.me.go.kr/new_kencis/hms/cs01/hmscs01ev.do?pageIndex=4"
+      ],
+      "authority": "국립환경과학원 모빌리티환경연구센터",
+      "accessStatus": "primary_source_search_index_rows_read_direct_fetch_502_or_timeout",
+      "hierarchyCoverage": [
+        "certificate_holder",
+        "vehicle_name",
+        "type_code",
+        "fuel",
+        "certification_number",
+        "certification_date"
+      ],
+      "parentClassificationCodes": "인증번호/형식은 판매트림 분류 ID가 아님",
+      "fullMasterStatus": "partial_electric_certification_observations",
+      "observationsFile": "government-certification-observations.json",
+      "observedRowCount": 20,
+      "paginationObserved": {
+        "page": 1,
+        "totalPages": 119,
+        "fullTraversalPerformed": false
+      },
+      "usableFor": "수입 전기차의 정확한 인증차명과 형식을 독립 관측 자료로 보관",
+      "limitation": "인증일은 모델연도/판매일이 아니다. 변경인증이 중복될 수 있고 전산 미발급 과거 인증서는 제외된다는 원천 안내가 있다. 직접 재조회 미완료를 구분한다."
+    },
+    {
+      "id": "danawa-encyclopedia",
+      "name": "다나와 자동차백과",
+      "url": "https://auto.danawa.com/auto/",
+      "supportingUrls": [
+        "https://auto.danawa.com/auto/?Brand=303&Work=brand",
+        "https://auto.danawa.com/auto/?Brand=380&Work=brand"
+      ],
+      "authority": "자동차 정보 제공자 자체 서비스",
+      "accessStatus": "public_page_read",
+      "hierarchyCoverage": [
+        "domestic_imported_brand_directory",
+        "brand_model_catalog"
+      ],
+      "parentClassificationCodes": "다나와 내부 ID는 타사 공식 분류 코드가 아님",
+      "fullMasterStatus": "reference_directory_not_canonical_master",
+      "usableFor": "누락 브랜드/모델 조사 대상과 공식 제조사 원천을 찾는 보조 탐색",
+      "limitation": "페이지에 재가공/콘텐츠 이용조건과 제조사 공식정보 확인 안내가 있다. 전체 데이터베이스를 복제하지 않았고 브랜드 존재를 한국 전 차종의 판매 가능 상태로 간주하지 않는다."
+    }
+  ],
+  "providerIdentityWarning": "encar-api.com, encarapi.com, api.encar.com은 서로 다른 호스트/권한 경계다. 기존 키를 다른 공급자에 보내지 않는다.",
+  "collectionActions": {
+    "paidSubscriptionsCreated": 0,
+    "providerKeyCalls": 0,
+    "accountsCreated": 0,
+    "contactMessagesSent": 0,
+    "blockedAccessBypass": false
+  },
+  "promotionRule": [
+    "원문명과 출처/확인일/취득 방식을 보존한다.",
+    "인증 데이터와 매물 관측을 판매분류 마스터와 구분한다.",
+    "세대·동력원·연식·등급 연결을 출처가 직접 증명한 경우에만 검토 후 승격한다.",
+    "관측되지 않은 모델이 존재하지 않는다고 판단하지 않는다.",
+    "분류 완성률 분모를 단순 현매물 수 또는 등록통계 코드 수로 삼지 않는다."
+  ]
+}

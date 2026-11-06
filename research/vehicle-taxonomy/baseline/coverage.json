@@ -1,0 +1,683 @@
+{
+  "schemaVersion": 1,
+  "auditDate": "2026-11-06",
+  "source": {
+    "repository": "spooky1121/s-note",
+    "commit": "ccff8fe4fcac199bd971bee6b209ad08f97d6055",
+    "path": "index.html",
+    "constant": "BUNDLED_CATALOG_V118 after HEYDEALER_PUBLIC_REFERENCES and ZEROCAR_ADDED_MODELS_V194 pushes",
+    "constants": [
+      "BUNDLED_CATALOG_V118",
+      "HEYDEALER_PUBLIC_REFERENCES",
+      "ZEROCAR_ADDED_MODELS_V194"
+    ],
+    "fileSha256": "2f14c6e7f09f24cba951aa91c55d27503df68978b5b8a25fa6a717fb6eacf5e3",
+    "arrayRows": {
+      "BUNDLED_CATALOG_V118": 1493,
+      "HEYDEALER_PUBLIC_REFERENCES": 33,
+      "ZEROCAR_ADDED_MODELS_V194": 90
+    },
+    "deduplication": "taxonomyKey identity make/group/model/grade/subgrade; first row wins unless a later official/official_price_page replaces a non-official row, as snote220PublicRows"
+  },
+  "rawArrayRecords": 1616,
+  "exactIdentityDuplicateRows": 1,
+  "allCatalog": {
+    "records": 1615,
+    "manufacturers": 46,
+    "modelGroups": 491,
+    "generations": 1197,
+    "generationsWithAtLeastOneTrim": 211,
+    "generationsWithoutAnyTrim": 986,
+    "gradeRows": 629,
+    "emptyGradeRows": 986,
+    "subgradeRows": 0,
+    "legacyOfficialMarkedRows": 365,
+    "recordsWithSourceUrl": 406,
+    "distinctSourceUrls": 65,
+    "byVerification": {
+      "listing_reference": 32,
+      "model_only": 986,
+      "official": 39,
+      "official_price_page": 326,
+      "starter_reference": 232
+    },
+    "byMarket": {
+      "KR": 397,
+      "KR_REVIEW": 232,
+      "UNSPECIFIED": 986
+    }
+  },
+  "domesticPicker": {
+    "records": 1383,
+    "manufacturers": 46,
+    "modelGroups": 480,
+    "generations": 1089,
+    "generationsWithAtLeastOneTrim": 103,
+    "generationsWithoutAnyTrim": 986,
+    "gradeRows": 397,
+    "emptyGradeRows": 986,
+    "subgradeRows": 0,
+    "legacyOfficialMarkedRows": 365,
+    "recordsWithSourceUrl": 406,
+    "distinctSourceUrls": 65,
+    "byVerification": {
+      "listing_reference": 32,
+      "model_only": 986,
+      "official": 39,
+      "official_price_page": 326
+    },
+    "byMarket": {
+      "KR": 397,
+      "UNSPECIFIED": 986
+    }
+  },
+  "excludedMarketRows": 232,
+  "domesticNormalizationDuplicates": 0,
+  "existingOfficialMarksWereReverified": false,
+  "completenessKnown": false,
+  "manufacturerCoverage": [
+    {
+      "make": "BMW",
+      "catalog_records": 123,
+      "picker_records": 104,
+      "model_groups": 30,
+      "generations": 83,
+      "generations_with_trim": 10,
+      "generations_without_trim": 73,
+      "grade_rows": 31,
+      "legacy_official_marked_rows": 26,
+      "source_urls": 3
+    },
+    {
+      "make": "BYD",
+      "catalog_records": 4,
+      "picker_records": 4,
+      "model_groups": 4,
+      "generations": 4,
+      "generations_with_trim": 0,
+      "generations_without_trim": 4,
+      "grade_rows": 0,
+      "legacy_official_marked_rows": 0,
+      "source_urls": 0
+    },
+    {
+      "make": "DS",
+      "catalog_records": 5,
+      "picker_records": 5,
+      "model_groups": 4,
+      "generations": 5,
+      "generations_with_trim": 0,
+      "generations_without_trim": 5,
+      "grade_rows": 0,
+      "legacy_official_marked_rows": 0,
+      "source_urls": 0
+    },
+    {
+      "make": "GMC",
+      "catalog_records": 4,
+      "picker_records": 4,
+      "model_groups": 3,
+      "generations": 4,
+      "generations_with_trim": 0,
+      "generations_without_trim": 4,
+      "grade_rows": 0,
+      "legacy_official_marked_rows": 0,
+      "source_urls": 0
+    },
+    {
+      "make": "KGM",
+      "catalog_records": 9,
+      "picker_records": 9,
+      "model_groups": 9,
+      "generations": 9,
+      "generations_with_trim": 0,
+      "generations_without_trim": 9,
+      "grade_rows": 0,
+      "legacy_official_marked_rows": 0,
+      "source_urls": 0
+    },
+    {
+      "make": "KG모빌리티(쌍용)",
+      "catalog_records": 59,
+      "picker_records": 49,
+      "model_groups": 11,
+      "generations": 47,
+      "generations_with_trim": 2,
+      "generations_without_trim": 45,
+      "grade_rows": 4,
+      "legacy_official_marked_rows": 4,
+      "source_urls": 2
+    },
+    {
+      "make": "기아",
+      "catalog_records": 312,
+      "picker_records": 269,
+      "model_groups": 38,
+      "generations": 148,
+      "generations_with_trim": 26,
+      "generations_without_trim": 122,
+      "grade_rows": 147,
+      "legacy_official_marked_rows": 144,
+      "source_urls": 19
+    },
+    {
+      "make": "닛산",
+      "catalog_records": 20,
+      "picker_records": 18,
+      "model_groups": 10,
+      "generations": 18,
+      "generations_with_trim": 0,
+      "generations_without_trim": 18,
+      "grade_rows": 0,
+      "legacy_official_marked_rows": 0,
+      "source_urls": 0
+    },
+    {
+      "make": "대우",
+      "catalog_records": 20,
+      "picker_records": 20,
+      "model_groups": 13,
+      "generations": 20,
+      "generations_with_trim": 0,
+      "generations_without_trim": 20,
+      "grade_rows": 0,
+      "legacy_official_marked_rows": 0,
+      "source_urls": 0
+    },
+    {
+      "make": "람보르기니",
+      "catalog_records": 13,
+      "picker_records": 13,
+      "model_groups": 5,
+      "generations": 13,
+      "generations_with_trim": 0,
+      "generations_without_trim": 13,
+      "grade_rows": 0,
+      "legacy_official_marked_rows": 0,
+      "source_urls": 0
+    },
+    {
+      "make": "랜드로버",
+      "catalog_records": 21,
+      "picker_records": 19,
+      "model_groups": 7,
+      "generations": 18,
+      "generations_with_trim": 3,
+      "generations_without_trim": 15,
+      "grade_rows": 4,
+      "legacy_official_marked_rows": 0,
+      "source_urls": 1
+    },
+    {
+      "make": "렉서스",
+      "catalog_records": 40,
+      "picker_records": 34,
+      "model_groups": 13,
+      "generations": 26,
+      "generations_with_trim": 4,
+      "generations_without_trim": 22,
+      "grade_rows": 12,
+      "legacy_official_marked_rows": 12,
+      "source_urls": 3
+    },
+    {
+      "make": "로터스",
+      "catalog_records": 4,
+      "picker_records": 4,
+      "model_groups": 4,
+      "generations": 4,
+      "generations_with_trim": 0,
+      "generations_without_trim": 4,
+      "grade_rows": 0,
+      "legacy_official_marked_rows": 0,
+      "source_urls": 0
+    },
+    {
+      "make": "롤스로이스",
+      "catalog_records": 9,
+      "picker_records": 9,
+      "model_groups": 6,
+      "generations": 9,
+      "generations_with_trim": 0,
+      "generations_without_trim": 9,
+      "grade_rows": 0,
+      "legacy_official_marked_rows": 0,
+      "source_urls": 0
+    },
+    {
+      "make": "르노코리아",
+      "catalog_records": 6,
+      "picker_records": 6,
+      "model_groups": 6,
+      "generations": 6,
+      "generations_with_trim": 0,
+      "generations_without_trim": 6,
+      "grade_rows": 0,
+      "legacy_official_marked_rows": 0,
+      "source_urls": 0
+    },
+    {
+      "make": "르노코리아(삼성)",
+      "catalog_records": 40,
+      "picker_records": 34,
+      "model_groups": 12,
+      "generations": 33,
+      "generations_with_trim": 1,
+      "generations_without_trim": 32,
+      "grade_rows": 2,
+      "legacy_official_marked_rows": 2,
+      "source_urls": 1
+    },
+    {
+      "make": "링컨",
+      "catalog_records": 9,
+      "picker_records": 8,
+      "model_groups": 6,
+      "generations": 8,
+      "generations_with_trim": 0,
+      "generations_without_trim": 8,
+      "grade_rows": 0,
+      "legacy_official_marked_rows": 0,
+      "source_urls": 0
+    },
+    {
+      "make": "마세라티",
+      "catalog_records": 10,
+      "picker_records": 8,
+      "model_groups": 6,
+      "generations": 8,
+      "generations_with_trim": 0,
+      "generations_without_trim": 8,
+      "grade_rows": 0,
+      "legacy_official_marked_rows": 0,
+      "source_urls": 0
+    },
+    {
+      "make": "맥라렌",
+      "catalog_records": 5,
+      "picker_records": 5,
+      "model_groups": 5,
+      "generations": 5,
+      "generations_with_trim": 0,
+      "generations_without_trim": 5,
+      "grade_rows": 0,
+      "legacy_official_marked_rows": 0,
+      "source_urls": 0
+    },
+    {
+      "make": "미니",
+      "catalog_records": 23,
+      "picker_records": 21,
+      "model_groups": 10,
+      "generations": 21,
+      "generations_with_trim": 1,
+      "generations_without_trim": 20,
+      "grade_rows": 1,
+      "legacy_official_marked_rows": 0,
+      "source_urls": 1
+    },
+    {
+      "make": "벤츠",
+      "catalog_records": 101,
+      "picker_records": 90,
+      "model_groups": 28,
+      "generations": 74,
+      "generations_with_trim": 9,
+      "generations_without_trim": 65,
+      "grade_rows": 25,
+      "legacy_official_marked_rows": 14,
+      "source_urls": 3
+    },
+    {
+      "make": "벤틀리",
+      "catalog_records": 9,
+      "picker_records": 9,
+      "model_groups": 5,
+      "generations": 9,
+      "generations_with_trim": 0,
+      "generations_without_trim": 9,
+      "grade_rows": 0,
+      "legacy_official_marked_rows": 0,
+      "source_urls": 0
+    },
+    {
+      "make": "볼보",
+      "catalog_records": 53,
+      "picker_records": 45,
+      "model_groups": 17,
+      "generations": 28,
+      "generations_with_trim": 8,
+      "generations_without_trim": 20,
+      "grade_rows": 25,
+      "legacy_official_marked_rows": 25,
+      "source_urls": 8
+    },
+    {
+      "make": "쉐보레",
+      "catalog_records": 10,
+      "picker_records": 10,
+      "model_groups": 10,
+      "generations": 10,
+      "generations_with_trim": 0,
+      "generations_without_trim": 10,
+      "grade_rows": 0,
+      "legacy_official_marked_rows": 0,
+      "source_urls": 0
+    },
+    {
+      "make": "쉐보레(GM대우)",
+      "catalog_records": 51,
+      "picker_records": 43,
+      "model_groups": 18,
+      "generations": 36,
+      "generations_with_trim": 2,
+      "generations_without_trim": 34,
+      "grade_rows": 9,
+      "legacy_official_marked_rows": 9,
+      "source_urls": 2
+    },
+    {
+      "make": "스바루",
+      "catalog_records": 5,
+      "picker_records": 5,
+      "model_groups": 5,
+      "generations": 5,
+      "generations_with_trim": 0,
+      "generations_without_trim": 5,
+      "grade_rows": 0,
+      "legacy_official_marked_rows": 0,
+      "source_urls": 0
+    },
+    {
+      "make": "스즈키",
+      "catalog_records": 3,
+      "picker_records": 3,
+      "model_groups": 3,
+      "generations": 3,
+      "generations_with_trim": 0,
+      "generations_without_trim": 3,
+      "grade_rows": 0,
+      "legacy_official_marked_rows": 0,
+      "source_urls": 0
+    },
+    {
+      "make": "시트로엥",
+      "catalog_records": 10,
+      "picker_records": 10,
+      "model_groups": 6,
+      "generations": 10,
+      "generations_with_trim": 0,
+      "generations_without_trim": 10,
+      "grade_rows": 0,
+      "legacy_official_marked_rows": 0,
+      "source_urls": 0
+    },
+    {
+      "make": "아우디",
+      "catalog_records": 70,
+      "picker_records": 62,
+      "model_groups": 19,
+      "generations": 45,
+      "generations_with_trim": 7,
+      "generations_without_trim": 38,
+      "grade_rows": 24,
+      "legacy_official_marked_rows": 22,
+      "source_urls": 6
+    },
+    {
+      "make": "애스턴마틴",
+      "catalog_records": 5,
+      "picker_records": 5,
+      "model_groups": 5,
+      "generations": 5,
+      "generations_with_trim": 0,
+      "generations_without_trim": 5,
+      "grade_rows": 0,
+      "legacy_official_marked_rows": 0,
+      "source_urls": 0
+    },
+    {
+      "make": "인피니티",
+      "catalog_records": 8,
+      "picker_records": 6,
+      "model_groups": 6,
+      "generations": 6,
+      "generations_with_trim": 0,
+      "generations_without_trim": 6,
+      "grade_rows": 0,
+      "legacy_official_marked_rows": 0,
+      "source_urls": 0
+    },
+    {
+      "make": "재규어",
+      "catalog_records": 11,
+      "picker_records": 9,
+      "model_groups": 7,
+      "generations": 9,
+      "generations_with_trim": 0,
+      "generations_without_trim": 9,
+      "grade_rows": 0,
+      "legacy_official_marked_rows": 0,
+      "source_urls": 0
+    },
+    {
+      "make": "제네시스",
+      "catalog_records": 43,
+      "picker_records": 30,
+      "model_groups": 9,
+      "generations": 24,
+      "generations_with_trim": 3,
+      "generations_without_trim": 21,
+      "grade_rows": 9,
+      "legacy_official_marked_rows": 8,
+      "source_urls": 3
+    },
+    {
+      "make": "지프",
+      "catalog_records": 13,
+      "picker_records": 11,
+      "model_groups": 7,
+      "generations": 11,
+      "generations_with_trim": 1,
+      "generations_without_trim": 10,
+      "grade_rows": 1,
+      "legacy_official_marked_rows": 0,
+      "source_urls": 1
+    },
+    {
+      "make": "캐딜락",
+      "catalog_records": 10,
+      "picker_records": 9,
+      "model_groups": 9,
+      "generations": 9,
+      "generations_with_trim": 0,
+      "generations_without_trim": 9,
+      "grade_rows": 0,
+      "legacy_official_marked_rows": 0,
+      "source_urls": 0
+    },
+    {
+      "make": "테슬라",
+      "catalog_records": 23,
+      "picker_records": 13,
+      "model_groups": 5,
+      "generations": 13,
+      "generations_with_trim": 0,
+      "generations_without_trim": 13,
+      "grade_rows": 0,
+      "legacy_official_marked_rows": 0,
+      "source_urls": 0
+    },
+    {
+      "make": "토요타",
+      "catalog_records": 30,
+      "picker_records": 27,
+      "model_groups": 14,
+      "generations": 26,
+      "generations_with_trim": 1,
+      "generations_without_trim": 25,
+      "grade_rows": 2,
+      "legacy_official_marked_rows": 2,
+      "source_urls": 1
+    },
+    {
+      "make": "페라리",
+      "catalog_records": 21,
+      "picker_records": 21,
+      "model_groups": 12,
+      "generations": 21,
+      "generations_with_trim": 0,
+      "generations_without_trim": 21,
+      "grade_rows": 0,
+      "legacy_official_marked_rows": 0,
+      "source_urls": 0
+    },
+    {
+      "make": "포드",
+      "catalog_records": 19,
+      "picker_records": 17,
+      "model_groups": 10,
+      "generations": 17,
+      "generations_with_trim": 0,
+      "generations_without_trim": 17,
+      "grade_rows": 0,
+      "legacy_official_marked_rows": 0,
+      "source_urls": 0
+    },
+    {
+      "make": "포르쉐",
+      "catalog_records": 33,
+      "picker_records": 21,
+      "model_groups": 10,
+      "generations": 21,
+      "generations_with_trim": 1,
+      "generations_without_trim": 20,
+      "grade_rows": 1,
+      "legacy_official_marked_rows": 0,
+      "source_urls": 1
+    },
+    {
+      "make": "폭스바겐",
+      "catalog_records": 31,
+      "picker_records": 26,
+      "model_groups": 13,
+      "generations": 26,
+      "generations_with_trim": 0,
+      "generations_without_trim": 26,
+      "grade_rows": 0,
+      "legacy_official_marked_rows": 0,
+      "source_urls": 0
+    },
+    {
+      "make": "폴스타",
+      "catalog_records": 4,
+      "picker_records": 4,
+      "model_groups": 4,
+      "generations": 4,
+      "generations_with_trim": 0,
+      "generations_without_trim": 4,
+      "grade_rows": 0,
+      "legacy_official_marked_rows": 0,
+      "source_urls": 0
+    },
+    {
+      "make": "푸조",
+      "catalog_records": 19,
+      "picker_records": 17,
+      "model_groups": 9,
+      "generations": 17,
+      "generations_with_trim": 0,
+      "generations_without_trim": 17,
+      "grade_rows": 0,
+      "legacy_official_marked_rows": 0,
+      "source_urls": 0
+    },
+    {
+      "make": "피아트",
+      "catalog_records": 3,
+      "picker_records": 3,
+      "model_groups": 3,
+      "generations": 3,
+      "generations_with_trim": 0,
+      "generations_without_trim": 3,
+      "grade_rows": 0,
+      "legacy_official_marked_rows": 0,
+      "source_urls": 0
+    },
+    {
+      "make": "현대",
+      "catalog_records": 273,
+      "picker_records": 228,
+      "model_groups": 36,
+      "generations": 152,
+      "generations_with_trim": 24,
+      "generations_without_trim": 128,
+      "grade_rows": 100,
+      "legacy_official_marked_rows": 97,
+      "source_urls": 19
+    },
+    {
+      "make": "혼다",
+      "catalog_records": 21,
+      "picker_records": 16,
+      "model_groups": 8,
+      "generations": 16,
+      "generations_with_trim": 0,
+      "generations_without_trim": 16,
+      "grade_rows": 0,
+      "legacy_official_marked_rows": 0,
+      "source_urls": 0
+    }
+  ],
+  "possibleAliasesRequiringReview": [
+    [
+      "KGM",
+      "KG모빌리티(쌍용)"
+    ],
+    [
+      "르노코리아",
+      "르노코리아(삼성)"
+    ],
+    [
+      "쉐보레",
+      "쉐보레(GM대우)"
+    ],
+    [
+      "대우",
+      "쉐보레(GM대우)"
+    ]
+  ],
+  "duplicateIdentities": [
+    {
+      "identity": [
+        "혼다",
+        "어코드",
+        "어코드 10세대",
+        "1.5 터보",
+        ""
+      ],
+      "occurrences": [
+        {
+          "constant": "BUNDLED_CATALOG_V118",
+          "arrayIndex": 1478,
+          "verification": "starter_reference",
+          "market": "KR_REVIEW"
+        },
+        {
+          "constant": "HEYDEALER_PUBLIC_REFERENCES",
+          "arrayIndex": 23,
+          "verification": "listing_reference",
+          "market": "KR"
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "Snapshot is bundled data, not a live operational database inventory.",
+    "Official verification labels and URLs are inherited metadata; this extraction does not revalidate current official prices or years.",
+    "One observed trim is not evidence that all trims for that generation have been collected.",
+    "The bundle has no separate nonempty subgrade rows and no provider parent classification codes.",
+    "KR_REVIEW rows are excluded by the online domestic selector; do not equate allCatalog counts with picker counts.",
+    "Manufacturer alias groups are review candidates only; historical brands and generations must not be merged without evidence."
+  ]
+}

@@ -1,0 +1,440 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-11-06",
+  "complete": false,
+  "runtimeImportEnabled": false,
+  "baseline": {
+    "rows": 1615,
+    "makes": 46,
+    "models": 1197,
+    "modelsWithoutGrade": 986,
+    "domesticPicker": {
+      "records": 1383,
+      "manufacturers": 46,
+      "modelGroups": 480,
+      "generations": 1089,
+      "generationsWithAtLeastOneTrim": 103,
+      "generationsWithoutAnyTrim": 986,
+      "gradeRows": 397,
+      "emptyGradeRows": 986,
+      "subgradeRows": 0,
+      "legacyOfficialMarkedRows": 365,
+      "recordsWithSourceUrl": 406,
+      "distinctSourceUrls": 65,
+      "byVerification": {
+        "listing_reference": 32,
+        "model_only": 986,
+        "official": 39,
+        "official_price_page": 326
+      },
+      "byMarket": {
+        "KR": 397,
+        "UNSPECIFIED": 986
+      }
+    },
+    "verification": "Existing labels are preserved, not reverified by this research."
+  },
+  "newResearch": {
+    "sourceFiles": 9,
+    "sources": 102,
+    "rawRecords": 538,
+    "uniqueRecords": 538,
+    "officialDirectRecords": 534,
+    "searchExcerptRecords": 4,
+    "candidateRecords": 0
+  },
+  "listingObservations": 3,
+  "certificationObservations": 20,
+  "otherEvidence": [
+    {
+      "path": "research/vehicle-taxonomy/sources/brand-source-ledger.json",
+      "kind": "기존번들의46개제조사표기를모두추적하는공식자료원발견·접근성원장. 별칭을포함한표기수이며46개독립법인수나전체등급수집완료를의미하지않음."
+    },
+    {
+      "path": "research/vehicle-taxonomy/sources/government-certification-observations.json",
+      "kind": "certification_observed",
+      "records": 20
+    },
+    {
+      "path": "research/vehicle-taxonomy/sources/master-source-survey.json",
+      "kind": "source_survey"
+    }
+  ],
+  "byMake": [
+    {
+      "make": "기아",
+      "baselineRows": 312,
+      "baselineModels": 167,
+      "baselineModelsMissingGrade": 122,
+      "newOfficialDirectRecords": 157,
+      "newSearchExcerptRecords": 0
+    },
+    {
+      "make": "닛산",
+      "baselineRows": 20,
+      "baselineModels": 19,
+      "baselineModelsMissingGrade": 18,
+      "newOfficialDirectRecords": 0,
+      "newSearchExcerptRecords": 0
+    },
+    {
+      "make": "대우",
+      "baselineRows": 20,
+      "baselineModels": 20,
+      "baselineModelsMissingGrade": 20,
+      "newOfficialDirectRecords": 0,
+      "newSearchExcerptRecords": 0
+    },
+    {
+      "make": "람보르기니",
+      "baselineRows": 13,
+      "baselineModels": 13,
+      "baselineModelsMissingGrade": 13,
+      "newOfficialDirectRecords": 0,
+      "newSearchExcerptRecords": 0
+    },
+    {
+      "make": "랜드로버",
+      "baselineRows": 21,
+      "baselineModels": 19,
+      "baselineModelsMissingGrade": 15,
+      "newOfficialDirectRecords": 39,
+      "newSearchExcerptRecords": 0
+    },
+    {
+      "make": "렉서스",
+      "baselineRows": 40,
+      "baselineModels": 29,
+      "baselineModelsMissingGrade": 22,
+      "newOfficialDirectRecords": 0,
+      "newSearchExcerptRecords": 4
+    },
+    {
+      "make": "로터스",
+      "baselineRows": 4,
+      "baselineModels": 4,
+      "baselineModelsMissingGrade": 4,
+      "newOfficialDirectRecords": 0,
+      "newSearchExcerptRecords": 0
+    },
+    {
+      "make": "롤스로이스",
+      "baselineRows": 9,
+      "baselineModels": 9,
+      "baselineModelsMissingGrade": 9,
+      "newOfficialDirectRecords": 0,
+      "newSearchExcerptRecords": 0
+    },
+    {
+      "make": "르노코리아",
+      "baselineRows": 6,
+      "baselineModels": 6,
+      "baselineModelsMissingGrade": 6,
+      "newOfficialDirectRecords": 0,
+      "newSearchExcerptRecords": 0
+    },
+    {
+      "make": "르노코리아(삼성)",
+      "baselineRows": 40,
+      "baselineModels": 36,
+      "baselineModelsMissingGrade": 32,
+      "newOfficialDirectRecords": 19,
+      "newSearchExcerptRecords": 0
+    },
+    {
+      "make": "링컨",
+      "baselineRows": 9,
+      "baselineModels": 9,
+      "baselineModelsMissingGrade": 8,
+      "newOfficialDirectRecords": 4,
+      "newSearchExcerptRecords": 0
+    },
+    {
+      "make": "마세라티",
+      "baselineRows": 10,
+      "baselineModels": 9,
+      "baselineModelsMissingGrade": 8,
+      "newOfficialDirectRecords": 0,
+      "newSearchExcerptRecords": 0
+    },
+    {
+      "make": "맥라렌",
+      "baselineRows": 5,
+      "baselineModels": 5,
+      "baselineModelsMissingGrade": 5,
+      "newOfficialDirectRecords": 0,
+      "newSearchExcerptRecords": 0
+    },
+    {
+      "make": "미니",
+      "baselineRows": 23,
+      "baselineModels": 22,
+      "baselineModelsMissingGrade": 20,
+      "newOfficialDirectRecords": 40,
+      "newSearchExcerptRecords": 0
+    },
+    {
+      "make": "벤츠",
+      "baselineRows": 101,
+      "baselineModels": 80,
+      "baselineModelsMissingGrade": 65,
+      "newOfficialDirectRecords": 4,
+      "newSearchExcerptRecords": 0
+    },
+    {
+      "make": "벤틀리",
+      "baselineRows": 9,
+      "baselineModels": 9,
+      "baselineModelsMissingGrade": 9,
+      "newOfficialDirectRecords": 0,
+      "newSearchExcerptRecords": 0
+    },
+    {
+      "make": "볼보",
+      "baselineRows": 53,
+      "baselineModels": 32,
+      "baselineModelsMissingGrade": 20,
+      "newOfficialDirectRecords": 12,
+      "newSearchExcerptRecords": 0
+    },
+    {
+      "make": "쉐보레",
+      "baselineRows": 10,
+      "baselineModels": 10,
+      "baselineModelsMissingGrade": 10,
+      "newOfficialDirectRecords": 0,
+      "newSearchExcerptRecords": 0
+    },
+    {
+      "make": "쉐보레(GM대우)",
+      "baselineRows": 51,
+      "baselineModels": 40,
+      "baselineModelsMissingGrade": 34,
+      "newOfficialDirectRecords": 8,
+      "newSearchExcerptRecords": 0
+    },
+    {
+      "make": "스바루",
+      "baselineRows": 5,
+      "baselineModels": 5,
+      "baselineModelsMissingGrade": 5,
+      "newOfficialDirectRecords": 0,
+      "newSearchExcerptRecords": 0
+    },
+    {
+      "make": "스즈키",
+      "baselineRows": 3,
+      "baselineModels": 3,
+      "baselineModelsMissingGrade": 3,
+      "newOfficialDirectRecords": 0,
+      "newSearchExcerptRecords": 0
+    },
+    {
+      "make": "시트로엥",
+      "baselineRows": 10,
+      "baselineModels": 10,
+      "baselineModelsMissingGrade": 10,
+      "newOfficialDirectRecords": 0,
+      "newSearchExcerptRecords": 0
+    },
+    {
+      "make": "아우디",
+      "baselineRows": 70,
+      "baselineModels": 49,
+      "baselineModelsMissingGrade": 38,
+      "newOfficialDirectRecords": 7,
+      "newSearchExcerptRecords": 0
+    },
+    {
+      "make": "애스턴마틴",
+      "baselineRows": 5,
+      "baselineModels": 5,
+      "baselineModelsMissingGrade": 5,
+      "newOfficialDirectRecords": 0,
+      "newSearchExcerptRecords": 0
+    },
+    {
+      "make": "인피니티",
+      "baselineRows": 8,
+      "baselineModels": 7,
+      "baselineModelsMissingGrade": 6,
+      "newOfficialDirectRecords": 0,
+      "newSearchExcerptRecords": 0
+    },
+    {
+      "make": "재규어",
+      "baselineRows": 11,
+      "baselineModels": 10,
+      "baselineModelsMissingGrade": 9,
+      "newOfficialDirectRecords": 0,
+      "newSearchExcerptRecords": 0
+    },
+    {
+      "make": "제네시스",
+      "baselineRows": 43,
+      "baselineModels": 29,
+      "baselineModelsMissingGrade": 21,
+      "newOfficialDirectRecords": 8,
+      "newSearchExcerptRecords": 0
+    },
+    {
+      "make": "지프",
+      "baselineRows": 13,
+      "baselineModels": 12,
+      "baselineModelsMissingGrade": 10,
+      "newOfficialDirectRecords": 0,
+      "newSearchExcerptRecords": 0
+    },
+    {
+      "make": "캐딜락",
+      "baselineRows": 10,
+      "baselineModels": 10,
+      "baselineModelsMissingGrade": 9,
+      "newOfficialDirectRecords": 7,
+      "newSearchExcerptRecords": 0
+    },
+    {
+      "make": "테슬라",
+      "baselineRows": 23,
+      "baselineModels": 17,
+      "baselineModelsMissingGrade": 13,
+      "newOfficialDirectRecords": 0,
+      "newSearchExcerptRecords": 0
+    },
+    {
+      "make": "토요타",
+      "baselineRows": 30,
+      "baselineModels": 28,
+      "baselineModelsMissingGrade": 25,
+      "newOfficialDirectRecords": 14,
+      "newSearchExcerptRecords": 0
+    },
+    {
+      "make": "페라리",
+      "baselineRows": 21,
+      "baselineModels": 21,
+      "baselineModelsMissingGrade": 21,
+      "newOfficialDirectRecords": 0,
+      "newSearchExcerptRecords": 0
+    },
+    {
+      "make": "포드",
+      "baselineRows": 19,
+      "baselineModels": 18,
+      "baselineModelsMissingGrade": 17,
+      "newOfficialDirectRecords": 9,
+      "newSearchExcerptRecords": 0
+    },
+    {
+      "make": "포르쉐",
+      "baselineRows": 33,
+      "baselineModels": 25,
+      "baselineModelsMissingGrade": 20,
+      "newOfficialDirectRecords": 0,
+      "newSearchExcerptRecords": 0
+    },
+    {
+      "make": "폭스바겐",
+      "baselineRows": 31,
+      "baselineModels": 29,
+      "baselineModelsMissingGrade": 26,
+      "newOfficialDirectRecords": 6,
+      "newSearchExcerptRecords": 0
+    },
+    {
+      "make": "폴스타",
+      "baselineRows": 4,
+      "baselineModels": 4,
+      "baselineModelsMissingGrade": 4,
+      "newOfficialDirectRecords": 9,
+      "newSearchExcerptRecords": 0
+    },
+    {
+      "make": "푸조",
+      "baselineRows": 19,
+      "baselineModels": 18,
+      "baselineModelsMissingGrade": 17,
+      "newOfficialDirectRecords": 0,
+      "newSearchExcerptRecords": 0
+    },
+    {
+      "make": "피아트",
+      "baselineRows": 3,
+      "baselineModels": 3,
+      "baselineModelsMissingGrade": 3,
+      "newOfficialDirectRecords": 0,
+      "newSearchExcerptRecords": 0
+    },
+    {
+      "make": "현대",
+      "baselineRows": 273,
+      "baselineModels": 171,
+      "baselineModelsMissingGrade": 128,
+      "newOfficialDirectRecords": 111,
+      "newSearchExcerptRecords": 0
+    },
+    {
+      "make": "혼다",
+      "baselineRows": 21,
+      "baselineModels": 19,
+      "baselineModelsMissingGrade": 16,
+      "newOfficialDirectRecords": 2,
+      "newSearchExcerptRecords": 0
+    },
+    {
+      "make": "BMW",
+      "baselineRows": 123,
+      "baselineModels": 92,
+      "baselineModelsMissingGrade": 73,
+      "newOfficialDirectRecords": 30,
+      "newSearchExcerptRecords": 0
+    },
+    {
+      "make": "BYD",
+      "baselineRows": 4,
+      "baselineModels": 4,
+      "baselineModelsMissingGrade": 4,
+      "newOfficialDirectRecords": 11,
+      "newSearchExcerptRecords": 0
+    },
+    {
+      "make": "DS",
+      "baselineRows": 5,
+      "baselineModels": 5,
+      "baselineModelsMissingGrade": 5,
+      "newOfficialDirectRecords": 0,
+      "newSearchExcerptRecords": 0
+    },
+    {
+      "make": "GMC",
+      "baselineRows": 4,
+      "baselineModels": 4,
+      "baselineModelsMissingGrade": 4,
+      "newOfficialDirectRecords": 5,
+      "newSearchExcerptRecords": 0
+    },
+    {
+      "make": "KG모빌리티(쌍용)",
+      "baselineRows": 59,
+      "baselineModels": 52,
+      "baselineModelsMissingGrade": 45,
+      "newOfficialDirectRecords": 32,
+      "newSearchExcerptRecords": 0
+    },
+    {
+      "make": "KGM",
+      "baselineRows": 9,
+      "baselineModels": 9,
+      "baselineModelsMissingGrade": 9,
+      "newOfficialDirectRecords": 0,
+      "newSearchExcerptRecords": 0
+    }
+  ],
+  "limitations": [
+    "No source establishes all historical Korean-market model years, engines and discontinued trims.",
+    "New official records retain their original model-year and powertrain scope; matching a baseline family alone does not fill a generation gap.",
+    "Listing Badge observations are not promoted to grade/subgrade or assigned parent codes.",
+    "A publication month is not a model year.",
+    "No existing company taxonomy, customer, vehicle or financial data is modified."
+  ]
+}

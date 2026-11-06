@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "repositoryCommit": "ccff8fe4fcac199bd971bee6b209ad08f97d6055",
+  "sourceFileSha256": "2f14c6e7f09f24cba951aa91c55d27503df68978b5b8a25fa6a717fb6eacf5e3",
+  "files": [
+    {
+      "path": "research/vehicle-taxonomy/baseline/catalog.json",
+      "bytes": 632236,
+      "sha256": "c3b3d3fc75701cf2354bd05bce7b8393e9efe1eb286670e97091454342b9e4c4"
+    },
+    {
+      "path": "research/vehicle-taxonomy/baseline/catalog.csv",
+      "bytes": 257099,
+      "sha256": "4a0f0f33449b2d404644807de70089d518e4eb9d66eaf5ff726493028243383e"
+    },
+    {
+      "path": "research/vehicle-taxonomy/baseline/manufacturer-coverage.csv",
+      "bytes": 1622,
+      "sha256": "ac5562ce1d97d85a2ec6bedabbfbfb564df5915273a5616ecedb6d28845e79b1"
+    },
+    {
+      "path": "research/vehicle-taxonomy/baseline/missing-trims.csv",
+      "bytes": 115525,
+      "sha256": "13de316dffffafc2e2531277772febde75c1db4195c6d54b4acc5ec85af29da1"
+    },
+    {
+      "path": "research/vehicle-taxonomy/baseline/sources.csv",
+      "bytes": 9704,
+      "sha256": "d41d50b7dfe589af481ba7dd07b70b1def0cf9a76dff0a90457d48bf3a24596a"
+    },
+    {
+      "path": "research/vehicle-taxonomy/baseline/coverage.json",
+      "bytes": 17856,
+      "sha256": "3bfb9aeaf490be63b14ffb989f1aadb5ef57fc12261850f87abc6ba122e30a96"
+    }
+  ]
+}
