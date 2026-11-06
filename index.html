@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.78">
+<html lang="ko" data-snote-release="2.79">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -3201,7 +3201,7 @@ button, input, select, textarea { font-family: inherit; }
 <script src="assets/vehicle-notifications.js?v=2.76" defer></script>
 <link rel="stylesheet" href="assets/close-controls.css?v=2.78">
 <link rel="stylesheet" href="assets/recycle-bin.css?v=2.77">
-<link rel="stylesheet" href="assets/profile-editor.css?v=2.77">
+<link rel="stylesheet" href="assets/profile-editor.css?v=2.79">
 </head>
 <body class="snote-typography">
 
@@ -3252,8 +3252,14 @@ button, input, select, textarea { font-family: inherit; }
       <section class="snote-profile-panel" tabindex="-1">
         <header class="snote-profile-head"><button type="button" id="snote-profile-close" class="snote-popup-close" aria-label="프로필 설정 닫기">×</button><div><h2 id="snote-profile-dialog-title">프로필 설정</h2><p id="snote-profile-role-label">내 계정</p></div><button type="submit" form="snote-profile-form" id="snote-profile-save" class="snote-profile-save-icon" aria-label="프로필 저장" data-tooltip="프로필 저장"></button></header>
         <div class="snote-profile-body">
-          <form id="snote-profile-form" class="snote-profile-section" autocomplete="on"><h3>기본 정보</h3><label>이름<input id="snote-profile-name" name="name" autocomplete="name" maxlength="40" required></label><label>상사명<input id="snote-profile-company" name="organization" autocomplete="organization" maxlength="100" required><small id="snote-profile-company-note">상사명은 관리자만 변경할 수 있습니다.</small></label><label>개인 연락처<input id="snote-profile-phone" name="tel" type="tel" inputmode="tel" autocomplete="tel-national" maxlength="20" placeholder="010-0000-0000" required></label><label>주소<textarea id="snote-profile-address" name="street-address" autocomplete="street-address" rows="2" maxlength="300" placeholder="주소를 입력해 주세요"></textarea></label><p class="snote-profile-help">여기에 저장한 연락처와 주소는 본인만 확인할 수 있습니다. 등록된 문자 발신번호는 변경되지 않습니다.</p><p id="snote-profile-message" class="snote-profile-message" role="status" aria-live="polite"></p><button type="button" id="snote-profile-reload" class="snote-profile-text-button" hidden>다시 불러오기</button></form>
-          <form id="snote-profile-email-form" class="snote-profile-section"><h3>이메일</h3><div class="snote-profile-current-email"><span>현재 이메일</span><strong id="snote-profile-current-email"></strong></div><p id="snote-profile-email-pending" class="snote-profile-help" hidden></p><label>새 이메일<input id="snote-profile-email" type="email" name="email" autocomplete="email" maxlength="254" placeholder="새 이메일 주소" required></label><p class="snote-profile-help">확인 메일의 링크를 누르면 변경됩니다. 기존 이메일에도 확인이 필요할 수 있습니다.</p><button type="submit" id="snote-profile-email-save" class="snote-profile-section-save"><span class="snote-profile-disk"></span>변경 메일 보내기</button><p id="snote-profile-email-message" class="snote-profile-message" role="status" aria-live="polite"></p></form>
+          <section class="snote-profile-section">
+            <div class="snote-profile-section-heading"><h3>기본 정보</h3><img id="snote-profile-company-logo" class="snote-profile-company-logo" alt="상사 로고" referrerpolicy="no-referrer" hidden></div>
+            <div class="snote-profile-identity"><button type="button" id="snote-profile-avatar-pick" class="snote-profile-avatar-pick" aria-label="프로필 사진 등록 또는 변경" data-tooltip="프로필 사진 등록·변경"><img id="snote-profile-avatar" alt="내 프로필 사진" referrerpolicy="no-referrer" hidden><span id="snote-profile-avatar-placeholder" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 21v-2a7 7 0 0 1 14 0v2"/></svg></span><span class="snote-profile-avatar-edit" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 5v6h-6M4 19v-6h6M5.5 8a7 7 0 0 1 11.6-2L20 9M4 15l2.9 3A7 7 0 0 0 18.5 16"/></svg></span></button><div><strong>프로필 사진</strong><p>사진을 눌러 등록·변경</p><small>JPG·PNG·WebP · 최대 5MB</small><div class="snote-profile-login-email"><span>로그인 이메일</span><span id="snote-profile-current-email"></span></div></div><input id="snote-profile-avatar-file" type="file" accept="image/jpeg,image/png,image/webp" hidden></div>
+            <p id="snote-profile-avatar-message" class="snote-profile-message" role="status" aria-live="polite"></p>
+            <form id="snote-profile-form" autocomplete="on"><label>이름<input id="snote-profile-name" name="name" autocomplete="name" maxlength="40" required></label><label>상사명<input id="snote-profile-company" name="organization" autocomplete="organization" maxlength="100" required><small id="snote-profile-company-note">상사명은 관리자만 변경할 수 있습니다.</small></label><label>상사 주소<textarea id="snote-profile-address" name="street-address" autocomplete="street-address" rows="2" maxlength="600" readonly placeholder="등록된 상사 주소가 없습니다"></textarea><small>상사 정보에 등록된 주소가 자동으로 표시됩니다.</small></label></form>
+            <p id="snote-profile-message" class="snote-profile-message" role="status" aria-live="polite"></p><button type="button" id="snote-profile-reload" class="snote-profile-text-button" hidden>다시 불러오기</button>
+            <form id="snote-profile-phone-form" class="snote-profile-phone-form" autocomplete="off"><label for="snote-profile-phone">개인 연락처</label><p id="snote-profile-current-phone" class="snote-profile-current-phone"></p><div class="snote-profile-phone-row"><input id="snote-profile-phone" name="tel" type="tel" inputmode="tel" autocomplete="tel-national" maxlength="20" placeholder="010-0000-0000"><button type="button" id="snote-profile-phone-send" class="snote-profile-code-button">인증번호 받기</button></div><div id="snote-profile-phone-code-row" class="snote-profile-code-row" hidden><label for="snote-profile-phone-code">인증번호</label><div class="snote-profile-phone-row"><input id="snote-profile-phone-code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="6자리 숫자"><button type="submit" id="snote-profile-phone-confirm" class="snote-profile-code-button">인증 후 변경</button></div><small id="snote-profile-phone-countdown"></small></div><small>새 번호의 문자 인증을 마치면 연락처가 변경됩니다. 등록된 문자 발신번호는 유지됩니다.</small><p id="snote-profile-phone-message" class="snote-profile-message" role="status" aria-live="polite"></p></form>
+          </section>
           <details class="snote-profile-section snote-profile-password-section"><summary>비밀번호 변경<span aria-hidden="true">⌄</span></summary><form id="snote-profile-password-form" autocomplete="off"><label>현재 비밀번호<input id="snote-profile-password-current" type="password" autocomplete="current-password" maxlength="128" required></label><label>새 비밀번호<input id="snote-profile-password-new" type="password" autocomplete="new-password" minlength="8" maxlength="128" placeholder="8자 이상" required></label><label>새 비밀번호 확인<input id="snote-profile-password-confirm" type="password" autocomplete="new-password" minlength="8" maxlength="128" required></label><button type="submit" id="snote-profile-password-save" class="snote-profile-section-save"><span class="snote-profile-disk"></span>비밀번호 변경</button><p id="snote-profile-password-message" class="snote-profile-message" role="status" aria-live="polite"></p></form></details>
         </div>
       </section>
@@ -7008,7 +7014,7 @@ async function loginAccount(event){event.preventDefault();clearAuthError('login'
 async function loginAccountingDemo(){$('login-id').value='accounting';$('login-pw').value='account1234';await loginAccount({preventDefault(){}})}
 async function loginDemo(){try{const account=await getAccount('demo');if(account){await zc80RememberLogin('demo1234',account);await enterWorkspace(account);} else showAuthError('login','테스트 계정이 준비되지 않았습니다.')}catch(_){showAuthError('login','체험 계정에 로그인할 수 없습니다.')}}
 async function enterWorkspace(account,options={}){window.snote236ResetPagination?.();snote226ResetSalesMonth();snote222ResetContractSession();window.snoteResetWorkspaceUi?.();window.snoteResetDocumentMms?.();window.snoteResetIncomeSettlement?.();window.snoteResetVehicleTaxonomy?.();window.snoteResetCalculator?.();zcDashboardUnlocked=false;if(zc80SensitiveUser!==account.username)zc80SensitiveLock();currentUser={username:account.username,name:account.name,company:account.company,union:account.union,employeeNo:account.employeeNo,role:account.role||'dealer'};sessionStorage.setItem('zerocar-office-v12-session',account.username);dealerAccounts=await getAllAccounts();loadCarsForUser();loadCovers();$('auth-shell').classList.add('hidden');$('profile-name').textContent=account.name+(isAccountant()?' · 경리':isSnoteAdmin()?' · 관리자':' · 딜러');$('profile-role').textContent=isAccountant()?'재고금융 및 월정산 관리':isSnoteAdmin()?'상사 관리자 · 전체 업무':account.company;$('profile-avatar').textContent=account.name.slice(0,1);if(fileDB)await refreshMedia();else {mediaByCar={};modelPhotos=[];}buildStats();if(options.restoreHistory===false){navigate(snoteDefaultPage(),{history:'none'});}else snoteEnterWorkspaceRoute();window.snoteMonthlyWorkbookRefresh?.();}
-function logout(){if(window.zc86Cloud?.ready){window.zc86Cloud.signOut();return;}if(!currentUser)return;if(!confirm('로그아웃하시겠습니까?'))return;snote222ResetContractSession();window.snoteResetWorkspaceUi?.();window.snoteResetDocumentMms?.();window.snoteResetIncomeSettlement?.();window.snoteResetCalculator?.();window.snoteResetVehicleTaxonomy?.();window.snoteMonthlyWorkbookReset?.();zc80DismissUnlock(false);zc80SensitiveLock();closeDashboardGate();closeAutoRegistration();zcDashboardGateGranted=false;zcDashboardUnlocked=false;closeMobileDrawer();document.body.classList.remove('accountant-mode');sessionStorage.removeItem('zerocar-office-v12-session');currentUser=null;cars=[];covers={};mediaByCar={};modelPhotos=[];modelPhotoUrls.forEach(u=>URL.revokeObjectURL(u));modelPhotoUrls=[];mediaObjectUrls.forEach(u=>URL.revokeObjectURL(u));mediaObjectUrls=[];closeVehicle();closeAdd();$('auth-shell').classList.remove('hidden');$('login-id').value='';$('login-pw').value='';showAuthMode('login');$('login-id').focus();snoteResetWorkspaceNavigation();snoteWriteAuthHistory('login','replace')}
+function logout(){if(window.zc86Cloud?.ready){window.zc86Cloud.signOut();return;}if(!currentUser)return;if(!confirm('로그아웃하시겠습니까?'))return;window.snoteProfileEditor?.close({force:true});window.snoteResetProfileAssets?.();snote222ResetContractSession();window.snoteResetWorkspaceUi?.();window.snoteResetDocumentMms?.();window.snoteResetIncomeSettlement?.();window.snoteResetCalculator?.();window.snoteResetVehicleTaxonomy?.();window.snoteMonthlyWorkbookReset?.();zc80DismissUnlock(false);zc80SensitiveLock();closeDashboardGate();closeAutoRegistration();zcDashboardGateGranted=false;zcDashboardUnlocked=false;closeMobileDrawer();document.body.classList.remove('accountant-mode');sessionStorage.removeItem('zerocar-office-v12-session');currentUser=null;cars=[];covers={};mediaByCar={};modelPhotos=[];modelPhotoUrls.forEach(u=>URL.revokeObjectURL(u));modelPhotoUrls=[];mediaObjectUrls.forEach(u=>URL.revokeObjectURL(u));mediaObjectUrls=[];closeVehicle();closeAdd();$('auth-shell').classList.remove('hidden');$('login-id').value='';$('login-pw').value='';showAuthMode('login');$('login-id').focus();snoteResetWorkspaceNavigation();snoteWriteAuthHistory('login','replace')}
 async function seedSampleAccount(username,password,name,role,employeeNo){
  if(await getAccount(username))return;
  const salt=bytesHex(crypto.getRandomValues(new Uint8Array(16)));
@@ -8263,6 +8269,7 @@ function snoteShowOnboarding(){
  gate.scrollTop=0;
 }
 async function hydrateWorkspace(pass){
+ window.snoteProfileEditor?.close({force:true});snoteProfileResetAssets();
  snote221ResetIncome();snote220InvalidateCatalog();snote216ResetMonthly();
  S.ready=false;
  if(!await readCompany()){
@@ -8285,7 +8292,7 @@ async function hydrateWorkspace(pass){
  byId('zc72-rrn').placeholder='000000-0000000 또는 000-00-00000';
  byId('zc86-rrn-mode').textContent='고객 식별번호 서버 암호화 저장 · 목록과 문서에 전체 표시';
  showStatus('● 서버 연결 및 저장 준비 완료');
- void snote220RefreshTaxonomy().catch(()=>{});snote216InitMonthly();
+ void snote220RefreshTaxonomy().catch(()=>{});snote216InitMonthly();void snoteProfileRefreshAvatar();
  await refreshMedia();
 }
 async function doSignIn(e){e?.preventDefault?.();if(S.busy)return;S.busy=true;const button=byId('zc-cloud-submit');button.disabled=true;
@@ -8991,7 +8998,7 @@ window.addEventListener('online',()=>{if(S.ready&&!S.conflict)flush()});
 window.addEventListener('offline',()=>{if(S.ready)showStatus('● 인터넷 연결 끊김 · 저장 불가','bad')});
 
 async function signOut(){if(!confirm('온라인 계정에서 로그아웃할까요?'))return;
- await flush();if(S.queue.size||S.saving||S.conflict){alert('서버에 아직 저장하지 못한 변경사항이 있어 로그아웃을 중단했습니다. 연결 상태를 확인하세요.');return;}snote221ResetIncome();snote216ResetMonthly();snote220InvalidateCatalog();window.snoteResetCalculator?.();S.ready=false;S.authPassword=null;await S.client.auth.signOut();localStorage.removeItem(snote95RememberKey);byId('snote95-remember').checked=false;S.user=null;S.company=null;S.members=[];
+ await flush();if(S.queue.size||S.saving||S.conflict){alert('서버에 아직 저장하지 못한 변경사항이 있어 로그아웃을 중단했습니다. 연결 상태를 확인하세요.');return;}snote221ResetIncome();snote216ResetMonthly();snote220InvalidateCatalog();window.snoteResetCalculator?.();S.ready=false;window.snoteProfileEditor?.close({force:true});snoteProfileResetAssets();S.authPassword=null;await S.client.auth.signOut();localStorage.removeItem(snote95RememberKey);byId('snote95-remember').checked=false;S.user=null;S.company=null;S.members=[];
  if(currentUser){zc80SensitiveLock();currentUser=null;cars=[];covers={};}
  sessionStorage.removeItem('zerocar-office-v12-session');snoteResetWorkspaceNavigation();
  byId('zc86-topbar').hidden=true;status.hidden=true;snoteShowAuth('login',true,true);msg('로그아웃되었습니다.');
@@ -9482,82 +9489,213 @@ async function snote90RemoveCarMedia(carId){
  const ids=(mediaByCar[String(carId)]||[]).map(row=>String(row.id));if(!ids.length)return;
  return snoteRecycleWriteMedia([],ids);
 }
-// Personal profile boundary: trusted active membership, exact client/account context,
-// and server-verified Auth identity are checked around every asynchronous request.
+// Profile actions use one verified identity and a captured JWT throughout each request.
+let snoteProfileSession=null,snoteProfileEpoch=0,snoteProfileAvatarMeta=null,snoteProfileAvatarImageCache=null;
+function snoteProfileResetAssets(){
+ if(snoteProfileAvatarImageCache?.url)URL.revokeObjectURL(snoteProfileAvatarImageCache.url);
+ snoteProfileAvatarImageCache=null;snoteProfileAvatarMeta=null;snoteProfileSession=null;snoteProfileEpoch++;
+ const host=byId('profile-avatar');if(host)host.textContent=(currentUser?.name||'S').slice(0,1);
+}
+window.snoteResetProfileAssets=snoteProfileResetAssets;
 function snoteProfileContext(){
- const member=S.members.find(m=>m.user_id===S.user?.id&&m.active);
- if(!S.ready||!S.client||!S.company?.id||!S.user?.id||!member||member.company_id!==S.company.id)return null;
- return {key:S.company.id+':'+S.user.id,userId:S.user.id,companyId:S.company.id,client:S.client};
+ const member=S.members.find(m=>m.user_id===S.user?.id&&m.active===true);
+ if(!S.ready||!S.client||!S.company?.id||!S.user?.id||!member||member.company_id!==S.company.id||!['admin','dealer','accountant'].includes(member.role)){
+  if(snoteProfileSession)snoteProfileResetAssets();return null;
+ }
+ if(!snoteProfileSession||snoteProfileSession.user!==S.user||snoteProfileSession.actor!==currentUser||snoteProfileSession.client!==S.client||snoteProfileSession.companyId!==S.company.id){
+  snoteProfileResetAssets();snoteProfileSession={user:S.user,actor:currentUser,client:S.client,companyId:S.company.id};
+ }
+ return {key:S.company.id+':'+S.user.id+':'+snoteProfileEpoch,userId:S.user.id,companyId:S.company.id,client:S.client};
 }
 function snoteProfileCurrent(context){const now=snoteProfileContext();return !!context&&now?.key===context.key&&now.client===context.client;}
-function snoteProfileAssert(context){if(!snoteProfileCurrent(context))throw Object.assign(Error('로그인 정보가 변경되었습니다.'),{code:'SNOTE_PROFILE_CONTEXT'});}
-async function snoteProfileAuth(context){
- snoteProfileAssert(context);const {data,error}=await context.client.auth.getUser();snoteProfileAssert(context);
- if(error)throw error;if(data?.user?.id!==context.userId)throw Object.assign(Error('본인 계정 인증을 확인해 주세요.'),{code:'42501'});return data.user;
+function snoteProfileError(code,message){return Object.assign(Error(message),{code});}
+function snoteProfileAssert(context){if(!snoteProfileCurrent(context))throw snoteProfileError('SNOTE_PROFILE_CONTEXT','로그인 정보가 변경되었습니다.');}
+async function snoteProfilePinned(context){
+ snoteProfileAssert(context);const result=await context.client.auth.getSession();snoteProfileAssert(context);
+ if(result.error)throw result.error;const session=result.data?.session;
+ if(session?.user?.id!==context.userId||typeof session.access_token!=='string'||!session.access_token||session.access_token.length>32768)throw snoteProfileError('42501','본인 계정 인증을 확인해 주세요.');
+ const verified=await context.client.auth.getUser(session.access_token);snoteProfileAssert(context);
+ if(verified.error)throw verified.error;if(verified.data?.user?.id!==context.userId)throw snoteProfileError('42501','본인 계정 인증을 확인해 주세요.');
+ let config=S.rpcConfig?.client===context.client?S.rpcConfig:null;
+ if(!config&&typeof context.client.supabaseUrl==='string'&&typeof context.client.supabaseKey==='string'){
+  const url=new URL(context.client.supabaseUrl);if(url.protocol==='https:'&&url.hostname.endsWith('.supabase.co'))config={url:url.origin,key:context.client.supabaseKey};
+ }
+ config=config||publicDefault||validConfig(parsePayload(localStorage.getItem(keyConfig))||{});
+ if(!config)throw snoteProfileError('SNOTE_PROFILE_INPUT','인증 연결을 확인해 주세요.');
+ return {url:new URL(config.url).origin,key:config.key,token:session.access_token,session,user:verified.data.user};
+}
+async function snoteProfileResponse(response){
+ let data;try{data=await response.json();}catch(_){data=null;}
+ if(!response.ok||data?.ok===false){
+  const code=data?.code==='PROFILE_CONFLICT'?'40001':typeof data?.code==='string'?data.code:[401,403].includes(response.status)?'42501':'NETWORK';
+  const message=typeof data?.error==='string'?data.error:typeof data?.message==='string'?data.message:'서버 응답을 확인하지 못했습니다.';
+  const error=snoteProfileError(code,message);error.status=response.status;if(Number.isFinite(data?.retryAfter))error.retryAfter=data.retryAfter;throw error;
+ }
+ return data;
+}
+async function snoteProfileRpc(context,bound,name,args={}){
+ snoteProfileAssert(context);
+ const response=await fetch(bound.url+'/rest/v1/rpc/'+encodeURIComponent(name),{method:'POST',credentials:'omit',cache:'no-store',redirect:'error',referrerPolicy:'no-referrer',headers:{apikey:bound.key,Authorization:'Bearer '+bound.token,'Content-Type':'application/json'},body:JSON.stringify(args)});
+ const data=await snoteProfileResponse(response);snoteProfileAssert(context);return data;
 }
 async function snoteProfileBoundAuth(context){
- snoteProfileAssert(context);
- const {data,error}=await context.client.auth.getSession();snoteProfileAssert(context);if(error)throw error;
- const session=data?.session;
- if(session?.user?.id!==context.userId||!session.access_token||!session.refresh_token)throw Object.assign(Error('본인 계정 인증을 확인해 주세요.'),{code:'42501'});
- // The captured JWT is verified by Auth. Its session is then confined to this
- // private in-memory client, so SDK waits cannot pick up a different login.
- const verified=await context.client.auth.getUser(session.access_token);snoteProfileAssert(context);if(verified.error)throw verified.error;
- if(verified.data?.user?.id!==context.userId)throw Object.assign(Error('본인 계정 인증을 확인해 주세요.'),{code:'42501'});
- const conf=publicDefault||validConfig(parsePayload(localStorage.getItem(keyConfig))||{});if(!conf)throw Error('인증 연결을 확인해 주세요.');
+ const bound=await snoteProfilePinned(context);if(!bound.session.refresh_token)throw snoteProfileError('42501','다시 로그인해 주세요.');
  const lib=await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/+esm');snoteProfileAssert(context);
- const client=lib.createClient(conf.url,conf.key,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false,storageKey:'snote-profile-action'}});
- const bound=await client.auth.setSession({access_token:session.access_token,refresh_token:session.refresh_token});snoteProfileAssert(context);if(bound.error)throw bound.error;
- if(bound.data?.user?.id!==context.userId)throw Object.assign(Error('본인 계정 인증을 확인해 주세요.'),{code:'42501'});
+ const client=lib.createClient(bound.url,bound.key,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false,storageKey:'snote-profile-action'}});
+ const initialized=await client.auth.setSession({access_token:bound.token,refresh_token:bound.session.refresh_token});snoteProfileAssert(context);if(initialized.error)throw initialized.error;
+ if(initialized.data?.user?.id!==context.userId)throw snoteProfileError('42501','본인 계정 인증을 확인해 주세요.');
  const authenticated=await client.auth.getUser();snoteProfileAssert(context);if(authenticated.error)throw authenticated.error;
- if(authenticated.data?.user?.id!==context.userId)throw Object.assign(Error('본인 계정 인증을 확인해 주세요.'),{code:'42501'});
- return {client,user:authenticated.data.user,config:conf,createClient:lib.createClient};
+ if(authenticated.data?.user?.id!==context.userId)throw snoteProfileError('42501','본인 계정 인증을 확인해 주세요.');
+ return {client,user:authenticated.data.user,config:{url:bound.url,key:bound.key},createClient:lib.createClient};
 }
 function snoteProfileCheck(context,profile){
  if(profile?.user_id!==context.userId||profile?.company_id!==context.companyId||!['admin','dealer','accountant'].includes(profile?.role)||!Number.isSafeInteger(profile.revision)||profile.revision<0)throw Error('프로필 저장 결과를 확인하지 못했습니다.');
  return profile;
+}
+function snoteProfilePaintAvatar(context){
+ snoteProfileAssert(context);const host=byId('profile-avatar');if(!host)return;
+ if(snoteProfileAvatarImageCache?.key===context.key&&snoteProfileAvatarImageCache.url){
+  if(host.querySelector('img')?.src===snoteProfileAvatarImageCache.url)return;
+  const image=document.createElement('img');image.src=snoteProfileAvatarImageCache.url;image.alt='내 프로필 사진';image.style.cssText='display:block;width:100%;height:100%;object-fit:cover;border-radius:inherit';host.replaceChildren(image);
+ }else host.textContent=(currentUser?.name||'S').slice(0,1);
 }
 function snoteProfileApply(context,profile){
  snoteProfileAssert(context);snoteProfileCheck(context,profile);
  const member=S.members.find(m=>m.user_id===context.userId);if(member)member.display_name=profile.display_name;
  S.company.name=profile.company_name;
  if(currentUser){currentUser.name=profile.display_name;currentUser.company=profile.company_name;}
- for(const account of dealerAccounts){account.company=profile.company_name;if(account.username===ownerAlias(context.userId))account.name=profile.display_name;}
+ const companyAccounts=new Set(S.members.filter(member=>member.company_id===context.companyId).map(member=>ownerAlias(member.user_id)));
+ for(const account of dealerAccounts){if(companyAccounts.has(account.username))account.company=profile.company_name;if(account.username===ownerAlias(context.userId))account.name=profile.display_name;}
  const suffix=profile.role==='admin'?'관리자':profile.role==='accountant'?'경리':'딜러';
- byId('profile-name').textContent=profile.display_name+' · '+suffix;byId('profile-avatar').textContent=profile.display_name.slice(0,1);
+ byId('profile-name').textContent=profile.display_name+' · '+suffix;snoteProfilePaintAvatar(context);
  byId('profile-role').textContent=profile.role==='admin'?'상사 관리자 · 전체 업무':profile.role==='accountant'?'재고금융 및 월정산 관리':profile.company_name;
  byId('zc86-company-name').textContent=profile.company_name;byId('zc86-account').textContent=profile.display_name;
  if(typeof snote95UpdateDocumentCompany==='function')snote95UpdateDocumentCompany();
 }
+function snoteProfileAvatarPath(context,path){
+ if(typeof path!=='string')return false;const parts=path.split('/');
+ return parts.length===3&&parts[0]===context.companyId&&parts[1]===context.userId&&/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.(jpg|png|webp)$/.test(parts[2]);
+}
+function snoteProfileAvatarCheck(context,metadata){
+ if(metadata?.user_id!==context.userId||metadata?.company_id!==context.companyId||!Number.isSafeInteger(metadata.avatar_revision)||metadata.avatar_revision<0||(metadata.avatar_path!==null&&!snoteProfileAvatarPath(context,metadata.avatar_path)))throw Error('프로필 사진 정보를 확인하지 못했습니다.');
+ if(snoteProfileAvatarMeta?.key===context.key){
+  const previous=snoteProfileAvatarMeta.value;if(previous.avatar_revision>metadata.avatar_revision)return previous;
+  if(previous.avatar_revision===metadata.avatar_revision&&previous.avatar_path!==metadata.avatar_path)throw Error('프로필 사진 정보가 변경되었습니다. 다시 불러와 주세요.');
+ }
+ snoteProfileAvatarMeta={key:context.key,value:metadata};return metadata;
+}
+function snoteProfileAvatarFallback(context,metadata,message){
+ snoteProfileAssert(context);const avatar=snoteProfileAvatarCheck(context,metadata);
+ const avatarURL=snoteProfileAvatarImageCache?.key===context.key&&snoteProfileAvatarImageCache.path===avatar.avatar_path?snoteProfileAvatarImageCache.url:null;
+ return {avatar,avatarURL,avatarError:avatarURL?undefined:message};
+}
+function snoteProfileImageMime(bytes){
+ if(bytes.length>=3&&bytes[0]===255&&bytes[1]===216&&bytes[2]===255)return 'image/jpeg';
+ if(bytes.length>=8&&[137,80,78,71,13,10,26,10].every((v,i)=>bytes[i]===v))return 'image/png';
+ if(bytes.length>=12&&[82,73,70,70].every((v,i)=>bytes[i]===v)&&[87,69,66,80].every((v,i)=>bytes[i+8]===v))return 'image/webp';
+ return null;
+}
+async function snoteProfileAvatarResult(context,bound,metadata){
+ snoteProfileAssert(context);const avatar=snoteProfileAvatarCheck(context,metadata);
+ if(!avatar.avatar_path){
+  if(snoteProfileAvatarImageCache?.url)URL.revokeObjectURL(snoteProfileAvatarImageCache.url);snoteProfileAvatarImageCache=null;snoteProfilePaintAvatar(context);return {avatar,avatarURL:null};
+ }
+ if(snoteProfileAvatarImageCache?.key===context.key&&snoteProfileAvatarImageCache.path===avatar.avatar_path)return {avatar,avatarURL:snoteProfileAvatarImageCache.url};
+ const encoded=avatar.avatar_path.split('/').map(encodeURIComponent).join('/');
+ const response=await fetch(bound.url+'/storage/v1/object/authenticated/snote-profile-photos/'+encoded,{credentials:'omit',cache:'no-store',redirect:'error',referrerPolicy:'no-referrer',headers:{apikey:bound.key,Authorization:'Bearer '+bound.token}});
+ if(!response.ok)throw snoteProfileError('SNOTE_PROFILE_IMAGE','사진을 불러오지 못했습니다. 다시 시도해 주세요.');
+ const blob=await response.blob();snoteProfileAssert(context);
+ const mime=snoteProfileImageMime(new Uint8Array(await blob.slice(0,16).arrayBuffer()));snoteProfileAssert(context);
+ if(!blob.size||blob.size>5242880||!mime)throw snoteProfileError('SNOTE_PROFILE_IMAGE','사진 형식을 확인해 주세요.');
+ const latest=snoteProfileAvatarMeta?.value;
+ if(latest&&latest.avatar_revision>avatar.avatar_revision)return snoteProfileAvatarResult(context,bound,latest);
+ if(snoteProfileAvatarImageCache?.key===context.key&&snoteProfileAvatarImageCache.path===avatar.avatar_path)return {avatar,avatarURL:snoteProfileAvatarImageCache.url};
+ const url=URL.createObjectURL(blob),old=snoteProfileAvatarImageCache;
+ snoteProfileAvatarImageCache={key:context.key,path:avatar.avatar_path,url};snoteProfilePaintAvatar(context);if(old?.url)URL.revokeObjectURL(old.url);
+ return {avatar,avatarURL:url};
+}
+async function snoteProfileAvatarRead(context,bound){
+ const metadata=snoteProfileAvatarCheck(context,await snoteProfileRpc(context,bound,'snote_profile_avatar_read',{p_company:context.companyId}));
+ try{return await snoteProfileAvatarResult(context,bound,metadata);}
+ catch(error){return snoteProfileAvatarFallback(context,metadata,'프로필 사진을 불러오지 못했습니다. 다른 사진을 등록하거나 다시 불러와 주세요.');}
+}
+async function snoteProfileRefreshAvatar(){
+ const context=snoteProfileContext();if(!context)return;
+ try{const bound=await snoteProfilePinned(context);await snoteProfileAvatarRead(context,bound);}catch(_){/* An image error never prevents workspace login. */}
+}
+async function snoteProfilePhoneRequest(context,body){
+ const bound=await snoteProfilePinned(context);snoteProfileAssert(context);
+ const response=await fetch('/api/profile-phone',{method:'POST',credentials:'omit',cache:'no-store',redirect:'error',referrerPolicy:'no-referrer',headers:{Authorization:'Bearer '+bound.token,'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify({...body,companyId:context.companyId})});
+ const data=await snoteProfileResponse(response);snoteProfileAssert(context);return {data,user:bound.user};
+}
+async function snoteProfileAvatarDelete(context,bound,path){
+ if(!snoteProfileCurrent(context)||!snoteProfileAvatarPath(context,path))return;
+ try{await fetch(bound.url+'/storage/v1/object/snote-profile-photos',{method:'DELETE',credentials:'omit',cache:'no-store',redirect:'error',referrerPolicy:'no-referrer',headers:{apikey:bound.key,Authorization:'Bearer '+bound.token,'Content-Type':'application/json'},body:JSON.stringify({prefixes:[path]})});}catch(_){/* Referenced objects are protected by Storage policy. */}
+}
 window.snoteProfileBridge=Object.freeze({
  context:snoteProfileContext,current:snoteProfileCurrent,
  async read(context){
-  const user=await snoteProfileAuth(context);const {data,error}=await context.client.rpc('snote_profile_read');snoteProfileAssert(context);if(error)throw error;
-  const profile=snoteProfileCheck(context,data);snoteProfileApply(context,profile);return {profile,user};
+  const bound=await snoteProfilePinned(context);
+  const profile=snoteProfileCheck(context,await snoteProfileRpc(context,bound,'snote_profile_read'));
+  const [picture,logo]=await Promise.allSettled([snoteProfileAvatarRead(context,bound),window.snoteLoadDocumentLogo?.()]);
+  snoteProfileAssert(context);snoteProfileApply(context,profile);
+  const avatar=picture.status==='fulfilled'?picture.value.avatar:null,avatarURL=picture.status==='fulfilled'?picture.value.avatarURL:null;
+  return {profile,user:bound.user,avatar,avatarURL,avatarError:picture.status==='fulfilled'?picture.value.avatarError:'사진 정보를 불러오지 못했습니다. 다시 불러와 주세요.',companyLogoURL:logo.status==='fulfilled'?logo.value:null};
  },
  async save(context,expected,profile){
-  const user=await snoteProfileAuth(context);
-  const {data,error}=await context.client.rpc('snote_profile_save',{p_expected:expected,p_profile:profile});snoteProfileAssert(context);if(error)throw error;
-  snoteProfileApply(context,data);return {profile:data,user};
+  const bound=await snoteProfilePinned(context),data=await snoteProfileRpc(context,bound,'snote_profile_save',{p_expected:expected,p_profile:profile});
+  snoteProfileApply(context,data);return {profile:data,user:bound.user};
  },
- async changeEmail(context,email){
-  const bound=await snoteProfileBoundAuth(context);snoteProfileAssert(context);
-  const {data,error}=await bound.client.auth.updateUser({email},{emailRedirectTo:location.origin+location.pathname});snoteProfileAssert(context);if(error)throw error;
-  if(data?.user?.id!==context.userId)throw Error('이메일 변경 결과를 확인하지 못했습니다.');S.user=data.user;return data.user;
+ async phoneSend(context,{phone,expected,requestId}){
+  const result=await snoteProfilePhoneRequest(context,{action:'send-code',phone,expected,requestId:requestId||crypto.randomUUID()});
+  return {...result.data,retryAfterSeconds:result.data.retryAfter};
+ },
+ async phoneConfirm(context,{phone,challengeId,code}){
+  const result=await snoteProfilePhoneRequest(context,{action:'verify',phone,challengeId,code});snoteProfileCheck(context,result.data.profile);
+  if(result.data.profile.phone!==phone)throw Error('연락처 변경 결과를 확인하지 못했습니다.');
+  snoteProfileApply(context,result.data.profile);return {profile:result.data.profile,user:result.user};
+ },
+ async avatarSave(context,file,expectedAvatar){
+  snoteProfileAssert(context);snoteProfileAvatarCheck(context,expectedAvatar);
+  if(!(file instanceof Blob)||!file.size||file.size>5242880)throw snoteProfileError('SNOTE_PROFILE_INPUT','사진은 최대 5MB까지 등록할 수 있습니다.');
+  const mime=snoteProfileImageMime(new Uint8Array(await file.slice(0,16).arrayBuffer()));snoteProfileAssert(context);
+  if(!mime||(file.type&&file.type!==mime))throw snoteProfileError('SNOTE_PROFILE_INPUT','JPG·PNG·WebP 사진을 선택해 주세요.');
+  let image;try{image=await createImageBitmap(file);snoteProfileAssert(context);if(!image.width||!image.height||image.width*image.height>40000000)throw Error();}
+  catch(error){if(error?.code==='SNOTE_PROFILE_CONTEXT')throw error;throw snoteProfileError('SNOTE_PROFILE_INPUT','사진 파일을 읽지 못했습니다. 다른 사진을 선택해 주세요.');}finally{image?.close();}
+  const bound=await snoteProfilePinned(context),extension=mime==='image/jpeg'?'jpg':mime==='image/png'?'png':'webp';
+  const path=context.companyId+'/'+context.userId+'/'+crypto.randomUUID()+'.'+extension,encoded=path.split('/').map(encodeURIComponent).join('/');
+  snoteProfileAssert(context);
+  let uploaded;
+  try{uploaded=await fetch(bound.url+'/storage/v1/object/snote-profile-photos/'+encoded,{method:'POST',credentials:'omit',cache:'no-store',redirect:'error',referrerPolicy:'no-referrer',headers:{apikey:bound.key,Authorization:'Bearer '+bound.token,'Content-Type':mime,'x-upsert':'false'},body:file});}
+  catch(error){await snoteProfileAvatarDelete(context,bound,path);throw error;}
+  if(!uploaded.ok){await snoteProfileAvatarDelete(context,bound,path);throw snoteProfileError('SNOTE_PROFILE_IMAGE','사진을 업로드하지 못했습니다. 다시 시도해 주세요.');}
+  snoteProfileAssert(context);
+  const args={p_company:context.companyId,p_expected_revision:expectedAvatar.avatar_revision,p_file_path:path};let metadata,lastError;
+  for(let attempt=0;attempt<2;attempt++){
+   try{metadata=await snoteProfileRpc(context,bound,'snote_profile_avatar_save',args);break;}
+   catch(error){lastError=error;if(!snoteProfileCurrent(context))throw error;if(error?.code&&error.code!=='NETWORK'&&!String(error.code).startsWith('08')&&!(error.status>=500)){await snoteProfileAvatarDelete(context,bound,path);throw error;}}
+  }
+  if(!metadata)throw snoteProfileError('SNOTE_PROFILE_RELOAD','사진 저장 결과를 확인하지 못했습니다. 다시 불러와 확인해 주세요.');
+  if(metadata.avatar_path!==path||metadata.avatar_revision!==expectedAvatar.avatar_revision+1)throw Error('사진 저장 결과를 확인하지 못했습니다.');
+  let result;
+  try{result=await snoteProfileAvatarResult(context,bound,metadata);}
+  catch(error){return snoteProfileAvatarFallback(context,metadata,'사진은 저장했지만 미리보기를 불러오지 못했습니다. 다시 불러와 주세요.');}
+  if(metadata.previous_path&&metadata.previous_path!==path)await snoteProfileAvatarDelete(context,bound,metadata.previous_path);
+  return result;
  },
  async changePassword(context,currentPassword,newPassword){
   const bound=await snoteProfileBoundAuth(context),user=bound.user;snoteProfileAssert(context);
-  // A transient client prevents reauthentication from replacing the active app
-  // session if this request finishes after the user switches accounts.
   const transient=bound.createClient(bound.config.url,bound.config.key,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false,storageKey:'snote-profile-reauth'}});
   try{
    const verified=await transient.auth.signInWithPassword({email:user.email,password:currentPassword});snoteProfileAssert(context);if(verified.error)throw verified.error;
-   if(verified.data?.user?.id!==context.userId)throw Object.assign(Error('본인 계정 인증을 확인해 주세요.'),{code:'42501'});
+   if(verified.data?.user?.id!==context.userId)throw snoteProfileError('42501','본인 계정 인증을 확인해 주세요.');
    const {data,error}=await bound.client.auth.updateUser({password:newPassword,current_password:currentPassword});snoteProfileAssert(context);if(error)throw error;
-   if(data?.user?.id!==context.userId)throw Error('비밀번호 변경 결과를 확인하지 못했습니다.');S.user=data.user;
-  }finally{try{await transient.auth.signOut({scope:'local'});}catch(_){/* No persistent storage belongs to this transient client. */}currentPassword=null;newPassword=null;}
+   if(data?.user?.id!==context.userId)throw Error('비밀번호 변경 결과를 확인하지 못했습니다.');
+   Object.assign(S.user,data.user);
+  }finally{try{await transient.auth.signOut({scope:'local'});}catch(_){}currentPassword=null;newPassword=null;}
  }
 });
+
 window.snoteRenderAdminSettings=snoteRenderAdminSettings;
 // Recycle-bin operations use server acknowledgements and never enqueue an old snapshot.
 const snoteRecycleRequests=new Map();
@@ -9746,10 +9884,10 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 <script type="module" src="assets/income-settlement-parent.js?v=2.76"></script>
 <script src="assets/vehicle-sharing.js?v=2.71" defer></script>
 <script src="assets/shared-vehicle-markers.js?v=2.71" defer></script>
-<script src="assets/release-info.js?v=2.78" defer></script>
+<script src="assets/release-info.js?v=2.79" defer></script>
 <script src="assets/company-purchase.js?v=2.77" defer></script>
 <script src="assets/recycle-bin.js?v=2.77" defer></script>
-<script src="assets/profile-editor.js?v=2.77" defer></script>
+<script src="assets/profile-editor.js?v=2.79" defer></script>
 <script src="assets/snote-encar-link.js?v=2.74" defer></script>
 <script src="assets/document-mms.js?v=2.44" defer></script>
 <script src="assets/workspace-polish.js?v=2.77" defer></script>
