@@ -1,0 +1,151 @@
+{
+  "schemaVersion": 1,
+  "frozenAt": "2026-11-06T16:37:48.831241+00:00",
+  "scope": "Research-only candidate crosswalk, no application/runtime/DB import",
+  "repositoryPath": "research/vehicle-taxonomy/bulk/government-tax-2026/crosswalk",
+  "sourceSnapshot": "2026-37 amended full replacement",
+  "sourceRecords": {
+    "path": "research/vehicle-taxonomy/bulk/government-tax-2026/amended/vehicle-records.raw.jsonl.gz",
+    "sha256": "b725edb280b148042a461244eade9dd2d42fd2e4ebe773dbbdf238d10426cea6",
+    "rows": 105383
+  },
+  "sourceArchive": {
+    "path": "research/vehicle-taxonomy/bulk/government-tax-2026/amended/source-original.zip",
+    "sha256": "250495924795cddd5a825f5a788d5bcd13d76de4246ae5b2e5c3f2f93e9d99d7"
+  },
+  "allTargets": 1197,
+  "missingGradeTargets": 986,
+  "candidateLinks": 300616,
+  "distinctLinkedSourceRows": 43396,
+  "allTargetStates": {
+    "family_or_series_hint_only": 880,
+    "no_candidate_under_declared_rules": 69,
+    "model_name_candidate_found": 248
+  },
+  "missingGradeTargetStates": {
+    "family_or_series_hint_only": 721,
+    "model_name_candidate_found": 211,
+    "no_candidate_under_declared_rules": 54
+  },
+  "candidateRecordSetSha256": "1807271df5f59bafa084c9b9910283b2f359e63e25b36918f48eb721e72f7919",
+  "fixedResearchSnapshotSha256": "7f43b6967052f5d0cd4172e5310e97f07de665fb8e6b0e15cb1f2ee8c4051329",
+  "previouslyNotYetFoundTargetsWithRawNameCandidates": 391,
+  "noCandidateInEitherDeclaredSearch": 46,
+  "verifiedRetailGradesAdded": 0,
+  "completedTargets": 0,
+  "complete": false,
+  "automaticRuntimeImport": false,
+  "publicMetadataPathsRelativeToRepository": true,
+  "largeCandidateCsvIncluded": false,
+  "independentAudit": {
+    "path": "amended-audit-notes.json",
+    "sha256": "31b03bc28bdf1c585bfdb541a4c0eb1bfdd843af24f25dbe4f2c3b8e9bc48820",
+    "candidateRecordsExhaustivelyChecked": 300616,
+    "sourceRecordsExactlyReconstructed": true,
+    "errors": 0,
+    "environmentAbsolutePathOccurrences": 0
+  },
+  "filePathBase": "this crosswalk directory; source paths above are relative to repository root",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 7636,
+      "sha256": "5e392feee4809ca7ec8db13f2d690a449c902e37521ff0e5a3d6f8c0c8fdc8ac"
+    },
+    {
+      "path": "amended-2026-reviewed/candidate-links.jsonl.gz",
+      "bytes": 9273852,
+      "sha256": "04b2cff44a6a73367f4c996ffd28966e25b17f767c66f8c21cf8521e2a275e47"
+    },
+    {
+      "path": "amended-2026-reviewed/manifest.json",
+      "bytes": 4552,
+      "sha256": "f91b713c1ac08d84691433117cab310b1189ab223e657d7bf3695ed5e4499a5a"
+    },
+    {
+      "path": "amended-2026-reviewed/missing-grade-no-candidate.csv.gz",
+      "bytes": 1769,
+      "sha256": "aaf2a42633243b3096e0d306470bed126ca0e9817713dc9457e1826e6cd04d0a"
+    },
+    {
+      "path": "amended-2026-reviewed/missing-grade-targets.csv.gz",
+      "bytes": 23089,
+      "sha256": "0706c5621baf81d8500c5e66637a8e89f3682379356cc2f21a15754c0f59c509"
+    },
+    {
+      "path": "amended-2026-reviewed/summary.json",
+      "bytes": 20723,
+      "sha256": "0b8cf0a03a0a18670cc63d6019b538ff9629b8131c50e3288a4a2f4535e20a8e"
+    },
+    {
+      "path": "amended-2026-reviewed/target-ledger.csv.gz",
+      "bytes": 28120,
+      "sha256": "ecabb9c2aec56d92ac715ed81a00dd98803fd89ac9864590e3e58b1f78f18400"
+    },
+    {
+      "path": "amended-2026-reviewed/target-ledger.json",
+      "bytes": 3511223,
+      "sha256": "9d9cf0c5498e802a2ca680b9fb5a8969d0a7bf7b0e6e3345136105e3671cfc18"
+    },
+    {
+      "path": "amended-audit-notes.json",
+      "bytes": 21422,
+      "sha256": "31b03bc28bdf1c585bfdb541a4c0eb1bfdd843af24f25dbe4f2c3b8e9bc48820"
+    },
+    {
+      "path": "build-government-crosswalk.py",
+      "bytes": 18720,
+      "sha256": "6c34201709a9cb55c6f53304394bd915d89f9e2faea94ed3d92f4a4eea2cb993"
+    },
+    {
+      "path": "candidate-aliases.json",
+      "bytes": 16564,
+      "sha256": "098b1d4c72f6f7b299daeecabca076ccb5658b6740754f3d932d46e7819957aa"
+    },
+    {
+      "path": "compare-research-progress.py",
+      "bytes": 3948,
+      "sha256": "011aa8a044fe74faead5a0d839d99e86b4049dde3328a235ecc0d2754c705ba9"
+    },
+    {
+      "path": "input-snapshots/build-government-crosswalk.amended-work.86251c35.py",
+      "bytes": 18625,
+      "sha256": "86251c35dca2ba6319181ac574b7eef162f8422af61f0433d1597673194d477f"
+    },
+    {
+      "path": "input-snapshots/build-government-crosswalk.base-2026.10fb341f.py",
+      "bytes": 18239,
+      "sha256": "10fb341f18a54480ec511bab27c11348cfc11229f05818213ef5a0a1461ce019"
+    },
+    {
+      "path": "input-snapshots/gap-research-progress.7f43b6967052.json",
+      "bytes": 595237,
+      "sha256": "7f43b6967052f5d0cd4172e5310e97f07de665fb8e6b0e15cb1f2ee8c4051329"
+    },
+    {
+      "path": "research-comparison-amended-2026/no-candidate-in-either-search.csv.gz",
+      "bytes": 1683,
+      "sha256": "93c27cf87bca057649e973241788851c25a718c43c7e7c4314d34f256f65352a"
+    },
+    {
+      "path": "research-comparison-amended-2026/summary.json",
+      "bytes": 2909,
+      "sha256": "20f6e3cd0396103f49f8e36e88d3074c59dc98d17b212959e7a31314945a1b75"
+    },
+    {
+      "path": "research-comparison-amended-2026/target-comparison.csv.gz",
+      "bytes": 24105,
+      "sha256": "09fed295877c056ed9fb25c4de93a6d972f1de751567c8cc41e16ee3d337c5f4"
+    },
+    {
+      "path": "research-comparison-amended-2026/target-comparison.json",
+      "bytes": 750790,
+      "sha256": "92309db96c29c76edfab1a7142e073a23a81ecf14b4a5a11533ef289539bf94d"
+    },
+    {
+      "path": "verification-amended.json",
+      "bytes": 2113,
+      "sha256": "5af4c24e73608c481d77d9ff1f358d6d5f2452c0d91dc3bb67557f587a01d75b"
+    }
+  ]
+}

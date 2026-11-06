@@ -1,0 +1,2425 @@
+{
+  "sheets": [
+    {
+      "name": "국산 1-1.승용(형식)",
+      "vehicleClassificationSheet": true,
+      "headerRow": 4,
+      "headerRaw": [
+        "연번",
+        "차종",
+        "제작사",
+        "차명",
+        "형식",
+        "기준가격"
+      ],
+      "prefaceRowsRaw": [
+        {
+          "sheet": "국산 1-1.승용(형식)",
+          "row": 1,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "1-1.형식분류"
+            }
+          ]
+        },
+        {
+          "sheet": "국산 1-1.승용(형식)",
+          "row": 2,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "가.국산"
+            }
+          ]
+        },
+        {
+          "sheet": "국산 1-1.승용(형식)",
+          "row": 3,
+          "cells": [
+            {
+              "column": "F",
+              "cellType": "s",
+              "valueRaw": "(단위:천원)"
+            }
+          ]
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "observations": 13621,
+      "numberedObservations": 13621,
+      "missingSerialObservations": 0,
+      "unparsedPostHeaderRows": [],
+      "nonemptyWorkbookRows": 13625
+    },
+    {
+      "name": "외산 1-1.승용(형식)",
+      "vehicleClassificationSheet": true,
+      "headerRow": 4,
+      "headerRaw": [
+        "연번",
+        "차종",
+        "제작사",
+        "차명",
+        "형식",
+        "기준가격"
+      ],
+      "prefaceRowsRaw": [
+        {
+          "sheet": "외산 1-1.승용(형식)",
+          "row": 1,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "1-1. 형식분류"
+            }
+          ]
+        },
+        {
+          "sheet": "외산 1-1.승용(형식)",
+          "row": 2,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": " 나. 외국산"
+            }
+          ]
+        },
+        {
+          "sheet": "외산 1-1.승용(형식)",
+          "row": 3,
+          "cells": [
+            {
+              "column": "F",
+              "cellType": "s",
+              "valueRaw": "(단위 : 천원)"
+            }
+          ]
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "observations": 3873,
+      "numberedObservations": 3873,
+      "missingSerialObservations": 0,
+      "unparsedPostHeaderRows": [],
+      "nonemptyWorkbookRows": 3877
+    },
+    {
+      "name": "국산 1-2.승용(기종)",
+      "vehicleClassificationSheet": true,
+      "headerRow": 4,
+      "headerRaw": [
+        "연번",
+        "제작사",
+        "기종명",
+        "기준가격"
+      ],
+      "prefaceRowsRaw": [
+        {
+          "sheet": "국산 1-2.승용(기종)",
+          "row": 1,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "1-2. 기종분류"
+            }
+          ]
+        },
+        {
+          "sheet": "국산 1-2.승용(기종)",
+          "row": 2,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": " 가. 국 산"
+            }
+          ]
+        },
+        {
+          "sheet": "국산 1-2.승용(기종)",
+          "row": 3,
+          "cells": [
+            {
+              "column": "D",
+              "cellType": "s",
+              "valueRaw": "(단위 : 천원)"
+            }
+          ]
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "observations": 11023,
+      "numberedObservations": 11023,
+      "missingSerialObservations": 0,
+      "unparsedPostHeaderRows": [],
+      "nonemptyWorkbookRows": 11027
+    },
+    {
+      "name": "외산 1-2.승용(기종)",
+      "vehicleClassificationSheet": true,
+      "headerRow": 4,
+      "headerRaw": [
+        "연번",
+        "제작사",
+        "기종명",
+        "기준가격"
+      ],
+      "prefaceRowsRaw": [
+        {
+          "sheet": "외산 1-2.승용(기종)",
+          "row": 1,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "1-2. 기종분류"
+            }
+          ]
+        },
+        {
+          "sheet": "외산 1-2.승용(기종)",
+          "row": 2,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": " 나. 외국산"
+            }
+          ]
+        },
+        {
+          "sheet": "외산 1-2.승용(기종)",
+          "row": 3,
+          "cells": [
+            {
+              "column": "D",
+              "cellType": "s",
+              "valueRaw": "(단위 : 천원)"
+            }
+          ]
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "observations": 3547,
+      "numberedObservations": 3547,
+      "missingSerialObservations": 0,
+      "unparsedPostHeaderRows": [],
+      "nonemptyWorkbookRows": 3551
+    },
+    {
+      "name": "국산 1-3.승용(친환경)_형식",
+      "vehicleClassificationSheet": true,
+      "headerRow": 5,
+      "headerRaw": [
+        "연번",
+        "제작사",
+        "차명",
+        "형식",
+        "연료원",
+        "기준가격"
+      ],
+      "prefaceRowsRaw": [
+        {
+          "sheet": "국산 1-3.승용(친환경)_형식",
+          "row": 1,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "1-3.친환경분류"
+            }
+          ]
+        },
+        {
+          "sheet": "국산 1-3.승용(친환경)_형식",
+          "row": 2,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "가.국산"
+            }
+          ]
+        },
+        {
+          "sheet": "국산 1-3.승용(친환경)_형식",
+          "row": 3,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "<형식별>"
+            }
+          ]
+        },
+        {
+          "sheet": "국산 1-3.승용(친환경)_형식",
+          "row": 4,
+          "cells": [
+            {
+              "column": "F",
+              "cellType": "s",
+              "valueRaw": "(단위:천원)"
+            }
+          ]
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "observations": 1802,
+      "numberedObservations": 1802,
+      "missingSerialObservations": 0,
+      "unparsedPostHeaderRows": [],
+      "nonemptyWorkbookRows": 1807
+    },
+    {
+      "name": "외산 1-3.승용(친환경)_형식",
+      "vehicleClassificationSheet": true,
+      "headerRow": 5,
+      "headerRaw": [
+        "연번",
+        "제작사",
+        "차명",
+        "형식",
+        "연료원",
+        "기준가격"
+      ],
+      "prefaceRowsRaw": [
+        {
+          "sheet": "외산 1-3.승용(친환경)_형식",
+          "row": 1,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "1-3. 친환경분류"
+            }
+          ]
+        },
+        {
+          "sheet": "외산 1-3.승용(친환경)_형식",
+          "row": 2,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": " 나. 외국산"
+            }
+          ]
+        },
+        {
+          "sheet": "외산 1-3.승용(친환경)_형식",
+          "row": 3,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "<형식별>"
+            }
+          ]
+        },
+        {
+          "sheet": "외산 1-3.승용(친환경)_형식",
+          "row": 4,
+          "cells": [
+            {
+              "column": "F",
+              "cellType": "s",
+              "valueRaw": "(단위:천원)"
+            }
+          ]
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "observations": 547,
+      "numberedObservations": 546,
+      "missingSerialObservations": 1,
+      "unparsedPostHeaderRows": [],
+      "nonemptyWorkbookRows": 552
+    },
+    {
+      "name": "국산 1-3.승용(친환경)_기종",
+      "vehicleClassificationSheet": true,
+      "headerRow": 5,
+      "headerRaw": [
+        "연번",
+        "제작사",
+        "기종명",
+        "연료원",
+        "기준가격"
+      ],
+      "prefaceRowsRaw": [
+        {
+          "sheet": "국산 1-3.승용(친환경)_기종",
+          "row": 1,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "1-3. 친환경분류"
+            }
+          ]
+        },
+        {
+          "sheet": "국산 1-3.승용(친환경)_기종",
+          "row": 2,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": " 가. 국산"
+            }
+          ]
+        },
+        {
+          "sheet": "국산 1-3.승용(친환경)_기종",
+          "row": 3,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "<기종별>"
+            }
+          ]
+        },
+        {
+          "sheet": "국산 1-3.승용(친환경)_기종",
+          "row": 4,
+          "cells": [
+            {
+              "column": "E",
+              "cellType": "s",
+              "valueRaw": "(단위 : 천원)"
+            }
+          ]
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "observations": 198,
+      "numberedObservations": 198,
+      "missingSerialObservations": 0,
+      "unparsedPostHeaderRows": [],
+      "nonemptyWorkbookRows": 203
+    },
+    {
+      "name": "외산 1-3.승용(친환경)_기종",
+      "vehicleClassificationSheet": true,
+      "headerRow": 5,
+      "headerRaw": [
+        "연번",
+        "제작사",
+        "기종명",
+        "연료원",
+        "기준가격"
+      ],
+      "prefaceRowsRaw": [
+        {
+          "sheet": "외산 1-3.승용(친환경)_기종",
+          "row": 1,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "1-3. 친환경분류"
+            }
+          ]
+        },
+        {
+          "sheet": "외산 1-3.승용(친환경)_기종",
+          "row": 2,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": " 나. 외국산"
+            }
+          ]
+        },
+        {
+          "sheet": "외산 1-3.승용(친환경)_기종",
+          "row": 3,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "<기종별>"
+            }
+          ]
+        },
+        {
+          "sheet": "외산 1-3.승용(친환경)_기종",
+          "row": 4,
+          "cells": [
+            {
+              "column": "E",
+              "cellType": "s",
+              "valueRaw": "(단위 : 천원)"
+            }
+          ]
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "observations": 92,
+      "numberedObservations": 92,
+      "missingSerialObservations": 0,
+      "unparsedPostHeaderRows": [],
+      "nonemptyWorkbookRows": 97
+    },
+    {
+      "name": "국산 2-1.승합(형식)",
+      "vehicleClassificationSheet": true,
+      "headerRow": 4,
+      "headerRaw": [
+        "연번",
+        "차종",
+        "제작사",
+        "차명",
+        "형식",
+        "기준가격"
+      ],
+      "prefaceRowsRaw": [
+        {
+          "sheet": "국산 2-1.승합(형식)",
+          "row": 1,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "2-1. 형식분류"
+            }
+          ]
+        },
+        {
+          "sheet": "국산 2-1.승합(형식)",
+          "row": 2,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": " 가. 국 산"
+            }
+          ]
+        },
+        {
+          "sheet": "국산 2-1.승합(형식)",
+          "row": 3,
+          "cells": [
+            {
+              "column": "F",
+              "cellType": "s",
+              "valueRaw": "(단위 : 천원)"
+            }
+          ]
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "observations": 8158,
+      "numberedObservations": 8158,
+      "missingSerialObservations": 0,
+      "unparsedPostHeaderRows": [],
+      "nonemptyWorkbookRows": 8162
+    },
+    {
+      "name": "외산 2-1.승합(형식)",
+      "vehicleClassificationSheet": true,
+      "headerRow": 4,
+      "headerRaw": [
+        "연번",
+        "차종",
+        "제작사",
+        "차명",
+        "형식",
+        "기준가격"
+      ],
+      "prefaceRowsRaw": [
+        {
+          "sheet": "외산 2-1.승합(형식)",
+          "row": 1,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "2-1.형식분류"
+            }
+          ]
+        },
+        {
+          "sheet": "외산 2-1.승합(형식)",
+          "row": 2,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "나.외국산"
+            }
+          ]
+        },
+        {
+          "sheet": "외산 2-1.승합(형식)",
+          "row": 3,
+          "cells": [
+            {
+              "column": "F",
+              "cellType": "s",
+              "valueRaw": "(단위:천원)"
+            }
+          ]
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "observations": 1810,
+      "numberedObservations": 1810,
+      "missingSerialObservations": 0,
+      "unparsedPostHeaderRows": [],
+      "nonemptyWorkbookRows": 1814
+    },
+    {
+      "name": "국산 2-2.승합(기종)",
+      "vehicleClassificationSheet": true,
+      "headerRow": 4,
+      "headerRaw": [
+        "연번",
+        "제작사",
+        "기종명",
+        "기준가격"
+      ],
+      "prefaceRowsRaw": [
+        {
+          "sheet": "국산 2-2.승합(기종)",
+          "row": 1,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "2-2. 기종분류"
+            }
+          ]
+        },
+        {
+          "sheet": "국산 2-2.승합(기종)",
+          "row": 2,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": " 가. 국 산"
+            }
+          ]
+        },
+        {
+          "sheet": "국산 2-2.승합(기종)",
+          "row": 3,
+          "cells": [
+            {
+              "column": "D",
+              "cellType": "s",
+              "valueRaw": "(단위 : 천원)"
+            }
+          ]
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "observations": 3344,
+      "numberedObservations": 3344,
+      "missingSerialObservations": 0,
+      "unparsedPostHeaderRows": [],
+      "nonemptyWorkbookRows": 3348
+    },
+    {
+      "name": "외산 2-2.승합(기종)",
+      "vehicleClassificationSheet": true,
+      "headerRow": 4,
+      "headerRaw": [
+        "연번",
+        "제작사",
+        "기종명",
+        "기준가격"
+      ],
+      "prefaceRowsRaw": [
+        {
+          "sheet": "외산 2-2.승합(기종)",
+          "row": 1,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "2-2. 기종분류"
+            }
+          ]
+        },
+        {
+          "sheet": "외산 2-2.승합(기종)",
+          "row": 2,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": " 나. 외국산"
+            }
+          ]
+        },
+        {
+          "sheet": "외산 2-2.승합(기종)",
+          "row": 3,
+          "cells": [
+            {
+              "column": "D",
+              "cellType": "s",
+              "valueRaw": "(단위 : 천원)"
+            }
+          ]
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "observations": 119,
+      "numberedObservations": 119,
+      "missingSerialObservations": 0,
+      "unparsedPostHeaderRows": [],
+      "nonemptyWorkbookRows": 123
+    },
+    {
+      "name": "국산 2-3.승합(친환경)_형식",
+      "vehicleClassificationSheet": true,
+      "headerRow": 5,
+      "headerRaw": [
+        "연번",
+        "제작사",
+        "차명",
+        "형식",
+        "연료원",
+        "기준가격"
+      ],
+      "prefaceRowsRaw": [
+        {
+          "sheet": "국산 2-3.승합(친환경)_형식",
+          "row": 1,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "2-3. 친환경분류"
+            }
+          ]
+        },
+        {
+          "sheet": "국산 2-3.승합(친환경)_형식",
+          "row": 2,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": " 가. 국산"
+            }
+          ]
+        },
+        {
+          "sheet": "국산 2-3.승합(친환경)_형식",
+          "row": 3,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "<형식별>"
+            }
+          ]
+        },
+        {
+          "sheet": "국산 2-3.승합(친환경)_형식",
+          "row": 4,
+          "cells": [
+            {
+              "column": "F",
+              "cellType": "s",
+              "valueRaw": "(단위 : 천원)"
+            }
+          ]
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "observations": 284,
+      "numberedObservations": 284,
+      "missingSerialObservations": 0,
+      "unparsedPostHeaderRows": [],
+      "nonemptyWorkbookRows": 289
+    },
+    {
+      "name": "외산 2-3.승합(친환경)_형식만있음",
+      "vehicleClassificationSheet": true,
+      "headerRow": 5,
+      "headerRaw": [
+        "연번",
+        "제작사",
+        "차명",
+        "형식",
+        "연료원",
+        "기준가격"
+      ],
+      "prefaceRowsRaw": [
+        {
+          "sheet": "외산 2-3.승합(친환경)_형식만있음",
+          "row": 1,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "2-3. 친환경분류"
+            }
+          ]
+        },
+        {
+          "sheet": "외산 2-3.승합(친환경)_형식만있음",
+          "row": 2,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": " 나. 외국산"
+            }
+          ]
+        },
+        {
+          "sheet": "외산 2-3.승합(친환경)_형식만있음",
+          "row": 3,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "<형식별>"
+            }
+          ]
+        },
+        {
+          "sheet": "외산 2-3.승합(친환경)_형식만있음",
+          "row": 4,
+          "cells": [
+            {
+              "column": "F",
+              "cellType": "s",
+              "valueRaw": "(단위 : 천원)"
+            }
+          ]
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "observations": 56,
+      "numberedObservations": 56,
+      "missingSerialObservations": 0,
+      "unparsedPostHeaderRows": [],
+      "nonemptyWorkbookRows": 61
+    },
+    {
+      "name": "국산 2-3.승합(친환경)_기종",
+      "vehicleClassificationSheet": true,
+      "headerRow": 5,
+      "headerRaw": [
+        "연번",
+        "제작사",
+        "기종명",
+        null,
+        "연료원",
+        "기준가격"
+      ],
+      "prefaceRowsRaw": [
+        {
+          "sheet": "국산 2-3.승합(친환경)_기종",
+          "row": 1,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "2-3. 친환경분류"
+            }
+          ]
+        },
+        {
+          "sheet": "국산 2-3.승합(친환경)_기종",
+          "row": 2,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": " 가. 국산"
+            }
+          ]
+        },
+        {
+          "sheet": "국산 2-3.승합(친환경)_기종",
+          "row": 3,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "<기종별>"
+            }
+          ]
+        },
+        {
+          "sheet": "국산 2-3.승합(친환경)_기종",
+          "row": 4,
+          "cells": [
+            {
+              "column": "F",
+              "cellType": "s",
+              "valueRaw": "(단위 : 천원)"
+            }
+          ]
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "observations": 4,
+      "numberedObservations": 4,
+      "missingSerialObservations": 0,
+      "unparsedPostHeaderRows": [],
+      "nonemptyWorkbookRows": 9
+    },
+    {
+      "name": "국산 3-1.화물(형식)",
+      "vehicleClassificationSheet": true,
+      "headerRow": 4,
+      "headerRaw": [
+        "연번",
+        "차종",
+        "제작사",
+        "차명",
+        "형식",
+        "기준가격"
+      ],
+      "prefaceRowsRaw": [
+        {
+          "sheet": "국산 3-1.화물(형식)",
+          "row": 1,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "3-1. 형식분류"
+            }
+          ]
+        },
+        {
+          "sheet": "국산 3-1.화물(형식)",
+          "row": 2,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": " 가. 국 산"
+            }
+          ]
+        },
+        {
+          "sheet": "국산 3-1.화물(형식)",
+          "row": 3,
+          "cells": [
+            {
+              "column": "F",
+              "cellType": "s",
+              "valueRaw": "(단위 : 천원)"
+            }
+          ]
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "observations": 37392,
+      "numberedObservations": 37392,
+      "missingSerialObservations": 0,
+      "unparsedPostHeaderRows": [],
+      "nonemptyWorkbookRows": 37396
+    },
+    {
+      "name": "외산 3-1.화물(형식)",
+      "vehicleClassificationSheet": true,
+      "headerRow": 4,
+      "headerRaw": [
+        "연번",
+        "차종",
+        "제작사",
+        "차명",
+        "형식",
+        "기준가격"
+      ],
+      "prefaceRowsRaw": [
+        {
+          "sheet": "외산 3-1.화물(형식)",
+          "row": 1,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "3-1. 형식분류"
+            }
+          ]
+        },
+        {
+          "sheet": "외산 3-1.화물(형식)",
+          "row": 2,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": " 나. 외국산"
+            }
+          ]
+        },
+        {
+          "sheet": "외산 3-1.화물(형식)",
+          "row": 3,
+          "cells": [
+            {
+              "column": "F",
+              "cellType": "s",
+              "valueRaw": "(단위 : 천원)"
+            }
+          ]
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "observations": 5493,
+      "numberedObservations": 5493,
+      "missingSerialObservations": 0,
+      "unparsedPostHeaderRows": [],
+      "nonemptyWorkbookRows": 5497
+    },
+    {
+      "name": "국산 3-2.화물(기종)",
+      "vehicleClassificationSheet": true,
+      "headerRow": 4,
+      "headerRaw": [
+        "연번",
+        "제작사",
+        "기종명",
+        "기준가격"
+      ],
+      "prefaceRowsRaw": [
+        {
+          "sheet": "국산 3-2.화물(기종)",
+          "row": 1,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "3-2. 기종분류"
+            }
+          ]
+        },
+        {
+          "sheet": "국산 3-2.화물(기종)",
+          "row": 2,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": " 가. 국 산"
+            }
+          ]
+        },
+        {
+          "sheet": "국산 3-2.화물(기종)",
+          "row": 3,
+          "cells": [
+            {
+              "column": "D",
+              "cellType": "s",
+              "valueRaw": "(단위 : 천원)"
+            }
+          ]
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "observations": 8976,
+      "numberedObservations": 8976,
+      "missingSerialObservations": 0,
+      "unparsedPostHeaderRows": [],
+      "nonemptyWorkbookRows": 8980
+    },
+    {
+      "name": "외산 3-2.화물(기종)",
+      "vehicleClassificationSheet": true,
+      "headerRow": 4,
+      "headerRaw": [
+        "연번",
+        "제작사",
+        "기종명",
+        "기준가격"
+      ],
+      "prefaceRowsRaw": [
+        {
+          "sheet": "외산 3-2.화물(기종)",
+          "row": 1,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "3-2. 기종분류"
+            }
+          ]
+        },
+        {
+          "sheet": "외산 3-2.화물(기종)",
+          "row": 2,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": " 나. 외국산"
+            }
+          ]
+        },
+        {
+          "sheet": "외산 3-2.화물(기종)",
+          "row": 3,
+          "cells": [
+            {
+              "column": "D",
+              "cellType": "s",
+              "valueRaw": "(단위 : 천원)"
+            }
+          ]
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "observations": 72,
+      "numberedObservations": 72,
+      "missingSerialObservations": 0,
+      "unparsedPostHeaderRows": [],
+      "nonemptyWorkbookRows": 76
+    },
+    {
+      "name": "국산 3-3.화물(친환경)_형식",
+      "vehicleClassificationSheet": true,
+      "headerRow": 5,
+      "headerRaw": [
+        "연번",
+        "제작사",
+        "차명",
+        "형식",
+        "연료원",
+        "기준가격"
+      ],
+      "prefaceRowsRaw": [
+        {
+          "sheet": "국산 3-3.화물(친환경)_형식",
+          "row": 1,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "3-3. 친환경분류"
+            }
+          ]
+        },
+        {
+          "sheet": "국산 3-3.화물(친환경)_형식",
+          "row": 2,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": " 가. 국산"
+            }
+          ]
+        },
+        {
+          "sheet": "국산 3-3.화물(친환경)_형식",
+          "row": 3,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "<형식별>"
+            }
+          ]
+        },
+        {
+          "sheet": "국산 3-3.화물(친환경)_형식",
+          "row": 4,
+          "cells": [
+            {
+              "column": "F",
+              "cellType": "s",
+              "valueRaw": "(단위 : 천원)"
+            }
+          ]
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "observations": 137,
+      "numberedObservations": 137,
+      "missingSerialObservations": 0,
+      "unparsedPostHeaderRows": [],
+      "nonemptyWorkbookRows": 142
+    },
+    {
+      "name": "외산 3-3.화물(친환경)_형식",
+      "vehicleClassificationSheet": true,
+      "headerRow": 5,
+      "headerRaw": [
+        "연번",
+        "제작사",
+        "차명",
+        "형식",
+        "연료원",
+        "기준가격"
+      ],
+      "prefaceRowsRaw": [
+        {
+          "sheet": "외산 3-3.화물(친환경)_형식",
+          "row": 1,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "3-3. 친환경분류"
+            }
+          ]
+        },
+        {
+          "sheet": "외산 3-3.화물(친환경)_형식",
+          "row": 2,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": " 가. 외산"
+            }
+          ]
+        },
+        {
+          "sheet": "외산 3-3.화물(친환경)_형식",
+          "row": 3,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "<형식별>"
+            }
+          ]
+        },
+        {
+          "sheet": "외산 3-3.화물(친환경)_형식",
+          "row": 4,
+          "cells": [
+            {
+              "column": "F",
+              "cellType": "s",
+              "valueRaw": "(단위 : 천원)"
+            }
+          ]
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "observations": 12,
+      "numberedObservations": 12,
+      "missingSerialObservations": 0,
+      "unparsedPostHeaderRows": [],
+      "nonemptyWorkbookRows": 17
+    },
+    {
+      "name": "국산 3-3.화물(친환경)_기종",
+      "vehicleClassificationSheet": true,
+      "headerRow": 5,
+      "headerRaw": [
+        "연번",
+        "제작사",
+        "기종명",
+        "연료원",
+        "기준가격"
+      ],
+      "prefaceRowsRaw": [
+        {
+          "sheet": "국산 3-3.화물(친환경)_기종",
+          "row": 1,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "2-3. 친환경분류"
+            }
+          ]
+        },
+        {
+          "sheet": "국산 3-3.화물(친환경)_기종",
+          "row": 2,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": " 가. 국산"
+            }
+          ]
+        },
+        {
+          "sheet": "국산 3-3.화물(친환경)_기종",
+          "row": 3,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "<기종별>"
+            }
+          ]
+        },
+        {
+          "sheet": "국산 3-3.화물(친환경)_기종",
+          "row": 4,
+          "cells": [
+            {
+              "column": "E",
+              "cellType": "s",
+              "valueRaw": "(단위 : 천원)"
+            }
+          ]
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "observations": 14,
+      "numberedObservations": 14,
+      "missingSerialObservations": 0,
+      "unparsedPostHeaderRows": [],
+      "nonemptyWorkbookRows": 19
+    },
+    {
+      "name": "국산 4-1.이륜(형식)",
+      "vehicleClassificationSheet": true,
+      "headerRow": 4,
+      "headerRaw": [
+        "연번",
+        "차종",
+        "제작사",
+        "차명",
+        "형식",
+        "기준가격"
+      ],
+      "prefaceRowsRaw": [
+        {
+          "sheet": "국산 4-1.이륜(형식)",
+          "row": 1,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "4-1. 형식분류"
+            }
+          ]
+        },
+        {
+          "sheet": "국산 4-1.이륜(형식)",
+          "row": 2,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": " 가. 국 산"
+            }
+          ]
+        },
+        {
+          "sheet": "국산 4-1.이륜(형식)",
+          "row": 3,
+          "cells": [
+            {
+              "column": "F",
+              "cellType": "s",
+              "valueRaw": "(단위 : 천원)"
+            }
+          ]
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "observations": 458,
+      "numberedObservations": 458,
+      "missingSerialObservations": 0,
+      "unparsedPostHeaderRows": [],
+      "nonemptyWorkbookRows": 462
+    },
+    {
+      "name": "외산 4-1.이륜(형식)",
+      "vehicleClassificationSheet": true,
+      "headerRow": 4,
+      "headerRaw": [
+        "연번",
+        "차종",
+        "제작사",
+        "차명",
+        "형식",
+        "기준가격"
+      ],
+      "prefaceRowsRaw": [
+        {
+          "sheet": "외산 4-1.이륜(형식)",
+          "row": 1,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "4-1. 형식분류"
+            }
+          ]
+        },
+        {
+          "sheet": "외산 4-1.이륜(형식)",
+          "row": 2,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": " 나. 외국산"
+            }
+          ]
+        },
+        {
+          "sheet": "외산 4-1.이륜(형식)",
+          "row": 3,
+          "cells": [
+            {
+              "column": "F",
+              "cellType": "s",
+              "valueRaw": "(단위 : 천원)"
+            }
+          ]
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "observations": 2131,
+      "numberedObservations": 2131,
+      "missingSerialObservations": 0,
+      "unparsedPostHeaderRows": [],
+      "nonemptyWorkbookRows": 2135
+    },
+    {
+      "name": "외산 4-2.이륜(기종)",
+      "vehicleClassificationSheet": true,
+      "headerRow": 4,
+      "headerRaw": [
+        "연번",
+        "제작사",
+        "기종명",
+        "기준가격"
+      ],
+      "prefaceRowsRaw": [
+        {
+          "sheet": "외산 4-2.이륜(기종)",
+          "row": 1,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "4-2. 기종분류"
+            }
+          ]
+        },
+        {
+          "sheet": "외산 4-2.이륜(기종)",
+          "row": 2,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": " 나. 외국산"
+            }
+          ]
+        },
+        {
+          "sheet": "외산 4-2.이륜(기종)",
+          "row": 3,
+          "cells": [
+            {
+              "column": "D",
+              "cellType": "s",
+              "valueRaw": "(단위 : 천원)"
+            }
+          ]
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "observations": 1891,
+      "numberedObservations": 1891,
+      "missingSerialObservations": 0,
+      "unparsedPostHeaderRows": [],
+      "nonemptyWorkbookRows": 1895
+    },
+    {
+      "name": "국산 4-2.이륜(기종)",
+      "vehicleClassificationSheet": true,
+      "headerRow": 4,
+      "headerRaw": [
+        "연번",
+        "제작사",
+        "기종명",
+        "기준가격"
+      ],
+      "prefaceRowsRaw": [
+        {
+          "sheet": "국산 4-2.이륜(기종)",
+          "row": 1,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "4-2. 기종분류"
+            }
+          ]
+        },
+        {
+          "sheet": "국산 4-2.이륜(기종)",
+          "row": 2,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": " 가. 국 산"
+            }
+          ]
+        },
+        {
+          "sheet": "국산 4-2.이륜(기종)",
+          "row": 3,
+          "cells": [
+            {
+              "column": "D",
+              "cellType": "s",
+              "valueRaw": "(단위 : 천원)"
+            }
+          ]
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "observations": 284,
+      "numberedObservations": 284,
+      "missingSerialObservations": 0,
+      "unparsedPostHeaderRows": [],
+      "nonemptyWorkbookRows": 288
+    },
+    {
+      "name": "국산 4-3.이륜(친환경)_형식만있음",
+      "vehicleClassificationSheet": true,
+      "headerRow": 5,
+      "headerRaw": [
+        "연번",
+        "제작사",
+        "차명",
+        "형식",
+        "연료원",
+        "기준가격"
+      ],
+      "prefaceRowsRaw": [
+        {
+          "sheet": "국산 4-3.이륜(친환경)_형식만있음",
+          "row": 1,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "4-3. 친환경분류"
+            }
+          ]
+        },
+        {
+          "sheet": "국산 4-3.이륜(친환경)_형식만있음",
+          "row": 2,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": " 가. 국산"
+            }
+          ]
+        },
+        {
+          "sheet": "국산 4-3.이륜(친환경)_형식만있음",
+          "row": 3,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "<형식별>"
+            }
+          ]
+        },
+        {
+          "sheet": "국산 4-3.이륜(친환경)_형식만있음",
+          "row": 4,
+          "cells": [
+            {
+              "column": "F",
+              "cellType": "s",
+              "valueRaw": "(단위 : 천원)"
+            }
+          ]
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "observations": 39,
+      "numberedObservations": 39,
+      "missingSerialObservations": 0,
+      "unparsedPostHeaderRows": [],
+      "nonemptyWorkbookRows": 44
+    },
+    {
+      "name": "외산 4-3.이륜(친환경)_형식만있음",
+      "vehicleClassificationSheet": true,
+      "headerRow": 5,
+      "headerRaw": [
+        "연번",
+        "제작사",
+        "차명",
+        "형식",
+        "연료원",
+        "기준가격"
+      ],
+      "prefaceRowsRaw": [
+        {
+          "sheet": "외산 4-3.이륜(친환경)_형식만있음",
+          "row": 1,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "4-3. 친환경분류"
+            }
+          ]
+        },
+        {
+          "sheet": "외산 4-3.이륜(친환경)_형식만있음",
+          "row": 2,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": " 나. 외국산"
+            }
+          ]
+        },
+        {
+          "sheet": "외산 4-3.이륜(친환경)_형식만있음",
+          "row": 3,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "<형식별>"
+            }
+          ]
+        },
+        {
+          "sheet": "외산 4-3.이륜(친환경)_형식만있음",
+          "row": 4,
+          "cells": [
+            {
+              "column": "F",
+              "cellType": "s",
+              "valueRaw": "(단위 : 천원)"
+            }
+          ]
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "observations": 6,
+      "numberedObservations": 6,
+      "missingSerialObservations": 0,
+      "unparsedPostHeaderRows": [],
+      "nonemptyWorkbookRows": 11
+    },
+    {
+      "name": "5-1.원동기변경_동일형식변경",
+      "vehicleClassificationSheet": false,
+      "headerRow": 4,
+      "headerRaw": [
+        "연번",
+        "변경구분",
+        "차종",
+        "변경전엔진상태",
+        "변경후엔진상태",
+        "기준가격"
+      ],
+      "prefaceRowsRaw": [
+        {
+          "sheet": "5-1.원동기변경_동일형식변경",
+          "row": 1,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "5-1. 원동기변경"
+            }
+          ]
+        },
+        {
+          "sheet": "5-1.원동기변경_동일형식변경",
+          "row": 2,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "(1) 동일형식 변경(노후 및 파손 등 사유로 원동기 전체교환)"
+            }
+          ]
+        },
+        {
+          "sheet": "5-1.원동기변경_동일형식변경",
+          "row": 3,
+          "cells": [
+            {
+              "column": "F",
+              "cellType": "s",
+              "valueRaw": "(단위: 천원)"
+            }
+          ]
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "observations": 36,
+      "numberedObservations": 36,
+      "missingSerialObservations": 0,
+      "unparsedPostHeaderRows": [],
+      "nonemptyWorkbookRows": 40
+    },
+    {
+      "name": "5-1.원동기변경_상이형식변경",
+      "vehicleClassificationSheet": false,
+      "headerRow": 4,
+      "headerRaw": [
+        "연번",
+        "변경구분",
+        "차종",
+        "변경전엔진상태",
+        "변경후엔진상태",
+        "기준가격"
+      ],
+      "prefaceRowsRaw": [
+        {
+          "sheet": "5-1.원동기변경_상이형식변경",
+          "row": 1,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "5-1. 원동기변경"
+            }
+          ]
+        },
+        {
+          "sheet": "5-1.원동기변경_상이형식변경",
+          "row": 2,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "(2) 상이형식 변경(연료절감 등 목적)"
+            }
+          ]
+        },
+        {
+          "sheet": "5-1.원동기변경_상이형식변경",
+          "row": 3,
+          "cells": [
+            {
+              "column": "F",
+              "cellType": "s",
+              "valueRaw": "(단위: 천원)"
+            }
+          ]
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "observations": 36,
+      "numberedObservations": 36,
+      "missingSerialObservations": 0,
+      "unparsedPostHeaderRows": [],
+      "nonemptyWorkbookRows": 40
+    },
+    {
+      "name": "5-1.원동기변경_국산품으로변경",
+      "vehicleClassificationSheet": false,
+      "headerRow": 4,
+      "headerRaw": [
+        "연번",
+        "차종",
+        "변경전엔진상태",
+        "규격",
+        "기종",
+        "기준가격"
+      ],
+      "prefaceRowsRaw": [
+        {
+          "sheet": "5-1.원동기변경_국산품으로변경",
+          "row": 1,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "5-1. 원동기변경"
+            }
+          ]
+        },
+        {
+          "sheet": "5-1.원동기변경_국산품으로변경",
+          "row": 2,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "(3) 국산품으로 변경(두산인프라코어>대우종합기계>구한국기계)"
+            }
+          ]
+        },
+        {
+          "sheet": "5-1.원동기변경_국산품으로변경",
+          "row": 3,
+          "cells": [
+            {
+              "column": "F",
+              "cellType": "s",
+              "valueRaw": "(단위: 천원)"
+            }
+          ]
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "observations": 20,
+      "numberedObservations": 20,
+      "missingSerialObservations": 0,
+      "unparsedPostHeaderRows": [],
+      "nonemptyWorkbookRows": 24
+    },
+    {
+      "name": "5-2.차체변경_탑설치",
+      "vehicleClassificationSheet": false,
+      "headerRow": 4,
+      "headerRaw": [
+        "연번",
+        "톤수",
+        "종류",
+        "기준가격"
+      ],
+      "prefaceRowsRaw": [
+        {
+          "sheet": "5-2.차체변경_탑설치",
+          "row": 1,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "5-2. 차체변경"
+            }
+          ]
+        },
+        {
+          "sheet": "5-2.차체변경_탑설치",
+          "row": 2,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "(1) 탑설치"
+            }
+          ]
+        },
+        {
+          "sheet": "5-2.차체변경_탑설치",
+          "row": 3,
+          "cells": [
+            {
+              "column": "D",
+              "cellType": "s",
+              "valueRaw": "(단위: 천원)"
+            }
+          ]
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "observations": 33,
+      "numberedObservations": 33,
+      "missingSerialObservations": 0,
+      "unparsedPostHeaderRows": [],
+      "nonemptyWorkbookRows": 37
+    },
+    {
+      "name": "5-2.차체변경_탱크로리 설치",
+      "vehicleClassificationSheet": false,
+      "headerRow": 4,
+      "headerRaw": [
+        "연번",
+        "용량별",
+        "종류",
+        "기준가격"
+      ],
+      "prefaceRowsRaw": [
+        {
+          "sheet": "5-2.차체변경_탱크로리 설치",
+          "row": 1,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "5-2. 차체변경"
+            }
+          ]
+        },
+        {
+          "sheet": "5-2.차체변경_탱크로리 설치",
+          "row": 2,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "(2) 탱크로리 설치"
+            }
+          ]
+        },
+        {
+          "sheet": "5-2.차체변경_탱크로리 설치",
+          "row": 3,
+          "cells": [
+            {
+              "column": "D",
+              "cellType": "s",
+              "valueRaw": "(단위: 천원)"
+            }
+          ]
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "observations": 52,
+      "numberedObservations": 52,
+      "missingSerialObservations": 0,
+      "unparsedPostHeaderRows": [],
+      "nonemptyWorkbookRows": 56
+    },
+    {
+      "name": "5-2.차체변경_유압식크레인설치(광림)_1",
+      "vehicleClassificationSheet": false,
+      "headerRow": 4,
+      "headerRaw": [
+        "연번",
+        "종 ",
+        "기 종",
+        "최대인양능력(ton․m)",
+        "기준가격"
+      ],
+      "prefaceRowsRaw": [
+        {
+          "sheet": "5-2.차체변경_유압식크레인설치(광림)_1",
+          "row": 1,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "5-2. 차체변경"
+            }
+          ]
+        },
+        {
+          "sheet": "5-2.차체변경_유압식크레인설치(광림)_1",
+          "row": 2,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "(3) 유압식크레인 설치(광림)"
+            }
+          ]
+        },
+        {
+          "sheet": "5-2.차체변경_유압식크레인설치(광림)_1",
+          "row": 3,
+          "cells": [
+            {
+              "column": "E",
+              "cellType": "s",
+              "valueRaw": "(단위: 천원)"
+            }
+          ]
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "observations": 24,
+      "numberedObservations": 24,
+      "missingSerialObservations": 0,
+      "unparsedPostHeaderRows": [],
+      "nonemptyWorkbookRows": 28
+    },
+    {
+      "name": "5-2.차체변경_유압식크레인설치(광림)_2",
+      "vehicleClassificationSheet": false,
+      "headerRow": 4,
+      "headerRaw": [
+        "연번",
+        "종 류",
+        "기 종",
+        "형 식",
+        "기준가격"
+      ],
+      "prefaceRowsRaw": [
+        {
+          "sheet": "5-2.차체변경_유압식크레인설치(광림)_2",
+          "row": 1,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "5-2. 차체변경"
+            }
+          ]
+        },
+        {
+          "sheet": "5-2.차체변경_유압식크레인설치(광림)_2",
+          "row": 2,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "(3) 유압식크레인 설치(광림)"
+            }
+          ]
+        },
+        {
+          "sheet": "5-2.차체변경_유압식크레인설치(광림)_2",
+          "row": 3,
+          "cells": [
+            {
+              "column": "E",
+              "cellType": "s",
+              "valueRaw": "(단위: 천원)"
+            }
+          ]
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "observations": 70,
+      "numberedObservations": 70,
+      "missingSerialObservations": 0,
+      "unparsedPostHeaderRows": [],
+      "nonemptyWorkbookRows": 74
+    },
+    {
+      "name": "5-2.차체변경_유압식크레인설치(수산중공업)_1",
+      "vehicleClassificationSheet": false,
+      "headerRow": 4,
+      "headerRaw": [
+        "연번",
+        "구분",
+        "크기",
+        "기종명",
+        "최대하중능력(ton/m)",
+        "기준가격"
+      ],
+      "prefaceRowsRaw": [
+        {
+          "sheet": "5-2.차체변경_유압식크레인설치(수산중공업)_1",
+          "row": 1,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "5-2. 차체변경"
+            }
+          ]
+        },
+        {
+          "sheet": "5-2.차체변경_유압식크레인설치(수산중공업)_1",
+          "row": 2,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "(3) 유압식크레인 설치(수산중공업)"
+            }
+          ]
+        },
+        {
+          "sheet": "5-2.차체변경_유압식크레인설치(수산중공업)_1",
+          "row": 3,
+          "cells": [
+            {
+              "column": "F",
+              "cellType": "s",
+              "valueRaw": "(단위: 천원)"
+            }
+          ]
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "observations": 27,
+      "numberedObservations": 27,
+      "missingSerialObservations": 0,
+      "unparsedPostHeaderRows": [],
+      "nonemptyWorkbookRows": 31
+    },
+    {
+      "name": "5-2.차체변경_유압식크레인설치(수산중공업)_2",
+      "vehicleClassificationSheet": false,
+      "headerRow": 4,
+      "headerRaw": [
+        "연번",
+        "기 종",
+        "기준가격"
+      ],
+      "prefaceRowsRaw": [
+        {
+          "sheet": "5-2.차체변경_유압식크레인설치(수산중공업)_2",
+          "row": 1,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "5-2. 차체변경"
+            }
+          ]
+        },
+        {
+          "sheet": "5-2.차체변경_유압식크레인설치(수산중공업)_2",
+          "row": 2,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "(3) 유압식크레인 설치(수산중공업)"
+            }
+          ]
+        },
+        {
+          "sheet": "5-2.차체변경_유압식크레인설치(수산중공업)_2",
+          "row": 3,
+          "cells": [
+            {
+              "column": "C",
+              "cellType": "s",
+              "valueRaw": "(단위: 천원)"
+            }
+          ]
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "observations": 44,
+      "numberedObservations": 44,
+      "missingSerialObservations": 0,
+      "unparsedPostHeaderRows": [],
+      "nonemptyWorkbookRows": 48
+    },
+    {
+      "name": "5-2.차체변경_유압식크레인설치(구 동양기전)",
+      "vehicleClassificationSheet": false,
+      "headerRow": 4,
+      "headerRaw": [
+        "연번",
+        "구분",
+        "크기",
+        "기종명",
+        "최대인양능력(ton․m)",
+        "기준가격"
+      ],
+      "prefaceRowsRaw": [
+        {
+          "sheet": "5-2.차체변경_유압식크레인설치(구 동양기전)",
+          "row": 1,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "5-2. 차체변경"
+            }
+          ]
+        },
+        {
+          "sheet": "5-2.차체변경_유압식크레인설치(구 동양기전)",
+          "row": 2,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "(3) 유압식크레인 설치(DY)"
+            }
+          ]
+        },
+        {
+          "sheet": "5-2.차체변경_유압식크레인설치(구 동양기전)",
+          "row": 3,
+          "cells": [
+            {
+              "column": "F",
+              "cellType": "s",
+              "valueRaw": "(단위: 천원)"
+            }
+          ]
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "observations": 2,
+      "numberedObservations": 2,
+      "missingSerialObservations": 0,
+      "unparsedPostHeaderRows": [],
+      "nonemptyWorkbookRows": 6
+    },
+    {
+      "name": "5-2.차체변경_픽업덮개 설치",
+      "vehicleClassificationSheet": false,
+      "headerRow": 4,
+      "headerRaw": [
+        "연번",
+        "차종",
+        "구분",
+        "기준가격"
+      ],
+      "prefaceRowsRaw": [
+        {
+          "sheet": "5-2.차체변경_픽업덮개 설치",
+          "row": 1,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "5-2. 차체변경"
+            }
+          ]
+        },
+        {
+          "sheet": "5-2.차체변경_픽업덮개 설치",
+          "row": 2,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "(4) 픽업덮개 설치"
+            }
+          ]
+        },
+        {
+          "sheet": "5-2.차체변경_픽업덮개 설치",
+          "row": 3,
+          "cells": [
+            {
+              "column": "D",
+              "cellType": "s",
+              "valueRaw": "(단위: 천원)"
+            }
+          ]
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "observations": 13,
+      "numberedObservations": 13,
+      "missingSerialObservations": 0,
+      "unparsedPostHeaderRows": [],
+      "nonemptyWorkbookRows": 17
+    },
+    {
+      "name": "5-2.차체변경_파워 게이트(리프트 게이트)",
+      "vehicleClassificationSheet": false,
+      "headerRow": 4,
+      "headerRaw": [
+        "연번",
+        "규격",
+        "구분",
+        "기준가격",
+        "비고"
+      ],
+      "prefaceRowsRaw": [
+        {
+          "sheet": "5-2.차체변경_파워 게이트(리프트 게이트)",
+          "row": 1,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "5-2. 차체변경"
+            }
+          ]
+        },
+        {
+          "sheet": "5-2.차체변경_파워 게이트(리프트 게이트)",
+          "row": 2,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "(5) 파워게이트(리프트 게이트)"
+            }
+          ]
+        },
+        {
+          "sheet": "5-2.차체변경_파워 게이트(리프트 게이트)",
+          "row": 3,
+          "cells": [
+            {
+              "column": "E",
+              "cellType": "s",
+              "valueRaw": "(단위: 천원)"
+            }
+          ]
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "observations": 10,
+      "numberedObservations": 10,
+      "missingSerialObservations": 0,
+      "unparsedPostHeaderRows": [],
+      "nonemptyWorkbookRows": 14
+    },
+    {
+      "name": "5-2.차체변경_윙바디 설치",
+      "vehicleClassificationSheet": false,
+      "headerRow": 4,
+      "headerRaw": [
+        "연번",
+        "규격",
+        "구분",
+        "기준가격"
+      ],
+      "prefaceRowsRaw": [
+        {
+          "sheet": "5-2.차체변경_윙바디 설치",
+          "row": 1,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "5-2. 차체변경"
+            }
+          ]
+        },
+        {
+          "sheet": "5-2.차체변경_윙바디 설치",
+          "row": 2,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "(6) 윙바디 설치"
+            }
+          ]
+        },
+        {
+          "sheet": "5-2.차체변경_윙바디 설치",
+          "row": 3,
+          "cells": [
+            {
+              "column": "D",
+              "cellType": "s",
+              "valueRaw": "(단위: 천원)"
+            }
+          ]
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "observations": 13,
+      "numberedObservations": 13,
+      "missingSerialObservations": 0,
+      "unparsedPostHeaderRows": [],
+      "nonemptyWorkbookRows": 17
+    },
+    {
+      "name": "5-2.차체변경_분리형캠퍼",
+      "vehicleClassificationSheet": false,
+      "headerRow": 5,
+      "headerRaw": [
+        "연번",
+        "제작사",
+        "구분",
+        "기준가격"
+      ],
+      "prefaceRowsRaw": [
+        {
+          "sheet": "5-2.차체변경_분리형캠퍼",
+          "row": 1,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "5-2. 차체변경"
+            }
+          ]
+        },
+        {
+          "sheet": "5-2.차체변경_분리형캠퍼",
+          "row": 2,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "(7) 분리형캠퍼"
+            }
+          ]
+        },
+        {
+          "sheet": "5-2.차체변경_분리형캠퍼",
+          "row": 4,
+          "cells": [
+            {
+              "column": "D",
+              "cellType": "s",
+              "valueRaw": "(단위: 천원)"
+            }
+          ]
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "observations": 36,
+      "numberedObservations": 36,
+      "missingSerialObservations": 0,
+      "unparsedPostHeaderRows": [],
+      "nonemptyWorkbookRows": 40
+    },
+    {
+      "name": "5-3.차체변경_캠핑카",
+      "vehicleClassificationSheet": false,
+      "headerRow": 5,
+      "headerRaw": [
+        "연번",
+        "제작사",
+        "구분1 (차종)",
+        "구분2 (제품명)",
+        "기준가격"
+      ],
+      "prefaceRowsRaw": [
+        {
+          "sheet": "5-3.차체변경_캠핑카",
+          "row": 1,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "5-2. 차체변경"
+            }
+          ]
+        },
+        {
+          "sheet": "5-3.차체변경_캠핑카",
+          "row": 2,
+          "cells": [
+            {
+              "column": "A",
+              "cellType": "s",
+              "valueRaw": "(8) 캠핑카 (승용, 승합차 변경)"
+            }
+          ]
+        },
+        {
+          "sheet": "5-3.차체변경_캠핑카",
+          "row": 4,
+          "cells": [
+            {
+              "column": "E",
+              "cellType": "s",
+              "valueRaw": "(단위: 천원)"
+            }
+          ]
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "observations": 15,
+      "numberedObservations": 15,
+      "missingSerialObservations": 0,
+      "unparsedPostHeaderRows": [],
+      "nonemptyWorkbookRows": 19
+    }
+  ],
+  "vehicleObservationRows": 105383,
+  "modificationObservationRows": 431,
+  "nonemptyWorkbookRows": 105998
+}

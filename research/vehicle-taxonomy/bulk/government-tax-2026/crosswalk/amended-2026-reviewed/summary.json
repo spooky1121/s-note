@@ -1,0 +1,743 @@
+{
+  "schemaVersion": 1,
+  "sourceLabel": "amended-2026-37-user-upload",
+  "rawInputRows": 105383,
+  "rawNameSheetContextGroups": 52656,
+  "rawManufacturerLabels": 2065,
+  "allTargets": 1197,
+  "missingGradeTargets": 986,
+  "allTargetCandidateStates": {
+    "family_or_series_hint_only": 880,
+    "no_candidate_under_declared_rules": 69,
+    "model_name_candidate_found": 248
+  },
+  "missingGradeCandidateStates": {
+    "family_or_series_hint_only": 721,
+    "model_name_candidate_found": 211,
+    "no_candidate_under_declared_rules": 54
+  },
+  "candidateLinks": 300616,
+  "distinctRawRowsWithAnyCandidate": 43396,
+  "candidateLinksByMethod": {
+    "name_series_variant_hint": 9600,
+    "family_name_phrase_candidate": 247637,
+    "model_name_phrase_candidate": 20921,
+    "exact_model_name_text": 3864,
+    "configured_family_alias_candidate": 6554,
+    "producer_name_family_hint": 7845,
+    "normalized_model_name_text": 4105,
+    "explicit_name_alias_candidate": 90
+  },
+  "completeTargets": 0,
+  "newVerifiedGrades": 0,
+  "allTargetsRemainIncomplete": true,
+  "allMissingGradeTargetsRemainMissing": true,
+  "manufacturerCoverage": [
+    {
+      "make": "BMW",
+      "targets": 92,
+      "missingGradeTargets": 73,
+      "candidateStates": {
+        "family_or_series_hint_only": 89,
+        "no_candidate_under_declared_rules": 1,
+        "model_name_candidate_found": 2
+      },
+      "missingGradeCandidateStates": {
+        "family_or_series_hint_only": 72,
+        "model_name_candidate_found": 1
+      },
+      "candidateLinks": 6108,
+      "completeTargets": 0
+    },
+    {
+      "make": "BYD",
+      "targets": 4,
+      "missingGradeTargets": 4,
+      "candidateStates": {
+        "model_name_candidate_found": 3,
+        "no_candidate_under_declared_rules": 1
+      },
+      "missingGradeCandidateStates": {
+        "model_name_candidate_found": 3,
+        "no_candidate_under_declared_rules": 1
+      },
+      "candidateLinks": 3,
+      "completeTargets": 0
+    },
+    {
+      "make": "DS",
+      "targets": 5,
+      "missingGradeTargets": 5,
+      "candidateStates": {
+        "no_candidate_under_declared_rules": 1,
+        "family_or_series_hint_only": 3,
+        "model_name_candidate_found": 1
+      },
+      "missingGradeCandidateStates": {
+        "no_candidate_under_declared_rules": 1,
+        "family_or_series_hint_only": 3,
+        "model_name_candidate_found": 1
+      },
+      "candidateLinks": 25,
+      "completeTargets": 0
+    },
+    {
+      "make": "GMC",
+      "targets": 4,
+      "missingGradeTargets": 4,
+      "candidateStates": {
+        "family_or_series_hint_only": 2,
+        "no_candidate_under_declared_rules": 2
+      },
+      "missingGradeCandidateStates": {
+        "family_or_series_hint_only": 2,
+        "no_candidate_under_declared_rules": 2
+      },
+      "candidateLinks": 22,
+      "completeTargets": 0
+    },
+    {
+      "make": "KGM",
+      "targets": 9,
+      "missingGradeTargets": 9,
+      "candidateStates": {
+        "model_name_candidate_found": 9
+      },
+      "missingGradeCandidateStates": {
+        "model_name_candidate_found": 9
+      },
+      "candidateLinks": 1744,
+      "completeTargets": 0
+    },
+    {
+      "make": "KG모빌리티(쌍용)",
+      "targets": 52,
+      "missingGradeTargets": 45,
+      "candidateStates": {
+        "model_name_candidate_found": 31,
+        "family_or_series_hint_only": 21
+      },
+      "missingGradeCandidateStates": {
+        "model_name_candidate_found": 27,
+        "family_or_series_hint_only": 18
+      },
+      "candidateLinks": 15586,
+      "completeTargets": 0
+    },
+    {
+      "make": "기아",
+      "targets": 167,
+      "missingGradeTargets": 122,
+      "candidateStates": {
+        "model_name_candidate_found": 48,
+        "family_or_series_hint_only": 115,
+        "no_candidate_under_declared_rules": 4
+      },
+      "missingGradeCandidateStates": {
+        "family_or_series_hint_only": 82,
+        "model_name_candidate_found": 37,
+        "no_candidate_under_declared_rules": 3
+      },
+      "candidateLinks": 109233,
+      "completeTargets": 0
+    },
+    {
+      "make": "닛산",
+      "targets": 19,
+      "missingGradeTargets": 18,
+      "candidateStates": {
+        "model_name_candidate_found": 1,
+        "family_or_series_hint_only": 18
+      },
+      "missingGradeCandidateStates": {
+        "model_name_candidate_found": 1,
+        "family_or_series_hint_only": 17
+      },
+      "candidateLinks": 95,
+      "completeTargets": 0
+    },
+    {
+      "make": "대우",
+      "targets": 20,
+      "missingGradeTargets": 20,
+      "candidateStates": {
+        "model_name_candidate_found": 11,
+        "family_or_series_hint_only": 7,
+        "no_candidate_under_declared_rules": 2
+      },
+      "missingGradeCandidateStates": {
+        "model_name_candidate_found": 11,
+        "family_or_series_hint_only": 7,
+        "no_candidate_under_declared_rules": 2
+      },
+      "candidateLinks": 1836,
+      "completeTargets": 0
+    },
+    {
+      "make": "람보르기니",
+      "targets": 13,
+      "missingGradeTargets": 13,
+      "candidateStates": {
+        "family_or_series_hint_only": 12,
+        "no_candidate_under_declared_rules": 1
+      },
+      "missingGradeCandidateStates": {
+        "family_or_series_hint_only": 12,
+        "no_candidate_under_declared_rules": 1
+      },
+      "candidateLinks": 159,
+      "completeTargets": 0
+    },
+    {
+      "make": "랜드로버",
+      "targets": 19,
+      "missingGradeTargets": 15,
+      "candidateStates": {
+        "family_or_series_hint_only": 19
+      },
+      "missingGradeCandidateStates": {
+        "family_or_series_hint_only": 15
+      },
+      "candidateLinks": 1004,
+      "completeTargets": 0
+    },
+    {
+      "make": "렉서스",
+      "targets": 29,
+      "missingGradeTargets": 22,
+      "candidateStates": {
+        "family_or_series_hint_only": 23,
+        "model_name_candidate_found": 6
+      },
+      "missingGradeCandidateStates": {
+        "family_or_series_hint_only": 16,
+        "model_name_candidate_found": 6
+      },
+      "candidateLinks": 644,
+      "completeTargets": 0
+    },
+    {
+      "make": "로터스",
+      "targets": 4,
+      "missingGradeTargets": 4,
+      "candidateStates": {
+        "no_candidate_under_declared_rules": 1,
+        "family_or_series_hint_only": 3
+      },
+      "missingGradeCandidateStates": {
+        "no_candidate_under_declared_rules": 1,
+        "family_or_series_hint_only": 3
+      },
+      "candidateLinks": 17,
+      "completeTargets": 0
+    },
+    {
+      "make": "롤스로이스",
+      "targets": 9,
+      "missingGradeTargets": 9,
+      "candidateStates": {
+        "family_or_series_hint_only": 8,
+        "no_candidate_under_declared_rules": 1
+      },
+      "missingGradeCandidateStates": {
+        "family_or_series_hint_only": 8,
+        "no_candidate_under_declared_rules": 1
+      },
+      "candidateLinks": 82,
+      "completeTargets": 0
+    },
+    {
+      "make": "르노코리아",
+      "targets": 6,
+      "missingGradeTargets": 6,
+      "candidateStates": {
+        "model_name_candidate_found": 3,
+        "no_candidate_under_declared_rules": 3
+      },
+      "missingGradeCandidateStates": {
+        "model_name_candidate_found": 3,
+        "no_candidate_under_declared_rules": 3
+      },
+      "candidateLinks": 164,
+      "completeTargets": 0
+    },
+    {
+      "make": "르노코리아(삼성)",
+      "targets": 36,
+      "missingGradeTargets": 32,
+      "candidateStates": {
+        "no_candidate_under_declared_rules": 5,
+        "family_or_series_hint_only": 24,
+        "model_name_candidate_found": 7
+      },
+      "missingGradeCandidateStates": {
+        "no_candidate_under_declared_rules": 3,
+        "family_or_series_hint_only": 23,
+        "model_name_candidate_found": 6
+      },
+      "candidateLinks": 2231,
+      "completeTargets": 0
+    },
+    {
+      "make": "링컨",
+      "targets": 9,
+      "missingGradeTargets": 8,
+      "candidateStates": {
+        "family_or_series_hint_only": 9
+      },
+      "missingGradeCandidateStates": {
+        "family_or_series_hint_only": 8
+      },
+      "candidateLinks": 67,
+      "completeTargets": 0
+    },
+    {
+      "make": "마세라티",
+      "targets": 9,
+      "missingGradeTargets": 8,
+      "candidateStates": {
+        "model_name_candidate_found": 1,
+        "family_or_series_hint_only": 8
+      },
+      "missingGradeCandidateStates": {
+        "model_name_candidate_found": 1,
+        "family_or_series_hint_only": 7
+      },
+      "candidateLinks": 124,
+      "completeTargets": 0
+    },
+    {
+      "make": "맥라렌",
+      "targets": 5,
+      "missingGradeTargets": 5,
+      "candidateStates": {
+        "model_name_candidate_found": 3,
+        "no_candidate_under_declared_rules": 1,
+        "family_or_series_hint_only": 1
+      },
+      "missingGradeCandidateStates": {
+        "model_name_candidate_found": 3,
+        "no_candidate_under_declared_rules": 1,
+        "family_or_series_hint_only": 1
+      },
+      "candidateLinks": 8,
+      "completeTargets": 0
+    },
+    {
+      "make": "미니",
+      "targets": 22,
+      "missingGradeTargets": 20,
+      "candidateStates": {
+        "family_or_series_hint_only": 21,
+        "no_candidate_under_declared_rules": 1
+      },
+      "missingGradeCandidateStates": {
+        "family_or_series_hint_only": 19,
+        "no_candidate_under_declared_rules": 1
+      },
+      "candidateLinks": 1266,
+      "completeTargets": 0
+    },
+    {
+      "make": "벤츠",
+      "targets": 80,
+      "missingGradeTargets": 65,
+      "candidateStates": {
+        "family_or_series_hint_only": 67,
+        "no_candidate_under_declared_rules": 13
+      },
+      "missingGradeCandidateStates": {
+        "family_or_series_hint_only": 58,
+        "no_candidate_under_declared_rules": 7
+      },
+      "candidateLinks": 6071,
+      "completeTargets": 0
+    },
+    {
+      "make": "벤틀리",
+      "targets": 9,
+      "missingGradeTargets": 9,
+      "candidateStates": {
+        "family_or_series_hint_only": 9
+      },
+      "missingGradeCandidateStates": {
+        "family_or_series_hint_only": 9
+      },
+      "candidateLinks": 347,
+      "completeTargets": 0
+    },
+    {
+      "make": "볼보",
+      "targets": 32,
+      "missingGradeTargets": 20,
+      "candidateStates": {
+        "family_or_series_hint_only": 22,
+        "no_candidate_under_declared_rules": 5,
+        "model_name_candidate_found": 5
+      },
+      "missingGradeCandidateStates": {
+        "family_or_series_hint_only": 12,
+        "no_candidate_under_declared_rules": 3,
+        "model_name_candidate_found": 5
+      },
+      "candidateLinks": 517,
+      "completeTargets": 0
+    },
+    {
+      "make": "쉐보레",
+      "targets": 10,
+      "missingGradeTargets": 10,
+      "candidateStates": {
+        "model_name_candidate_found": 7,
+        "family_or_series_hint_only": 2,
+        "no_candidate_under_declared_rules": 1
+      },
+      "missingGradeCandidateStates": {
+        "model_name_candidate_found": 7,
+        "family_or_series_hint_only": 2,
+        "no_candidate_under_declared_rules": 1
+      },
+      "candidateLinks": 329,
+      "completeTargets": 0
+    },
+    {
+      "make": "쉐보레(GM대우)",
+      "targets": 40,
+      "missingGradeTargets": 34,
+      "candidateStates": {
+        "model_name_candidate_found": 11,
+        "family_or_series_hint_only": 26,
+        "no_candidate_under_declared_rules": 3
+      },
+      "missingGradeCandidateStates": {
+        "model_name_candidate_found": 8,
+        "family_or_series_hint_only": 26
+      },
+      "candidateLinks": 2342,
+      "completeTargets": 0
+    },
+    {
+      "make": "스바루",
+      "targets": 5,
+      "missingGradeTargets": 5,
+      "candidateStates": {
+        "no_candidate_under_declared_rules": 3,
+        "family_or_series_hint_only": 2
+      },
+      "missingGradeCandidateStates": {
+        "no_candidate_under_declared_rules": 3,
+        "family_or_series_hint_only": 2
+      },
+      "candidateLinks": 6,
+      "completeTargets": 0
+    },
+    {
+      "make": "스즈키",
+      "targets": 3,
+      "missingGradeTargets": 3,
+      "candidateStates": {
+        "no_candidate_under_declared_rules": 1,
+        "family_or_series_hint_only": 2
+      },
+      "missingGradeCandidateStates": {
+        "no_candidate_under_declared_rules": 1,
+        "family_or_series_hint_only": 2
+      },
+      "candidateLinks": 119,
+      "completeTargets": 0
+    },
+    {
+      "make": "시트로엥",
+      "targets": 10,
+      "missingGradeTargets": 10,
+      "candidateStates": {
+        "family_or_series_hint_only": 8,
+        "model_name_candidate_found": 2
+      },
+      "missingGradeCandidateStates": {
+        "family_or_series_hint_only": 8,
+        "model_name_candidate_found": 2
+      },
+      "candidateLinks": 102,
+      "completeTargets": 0
+    },
+    {
+      "make": "아우디",
+      "targets": 49,
+      "missingGradeTargets": 38,
+      "candidateStates": {
+        "family_or_series_hint_only": 45,
+        "model_name_candidate_found": 2,
+        "no_candidate_under_declared_rules": 2
+      },
+      "missingGradeCandidateStates": {
+        "family_or_series_hint_only": 34,
+        "model_name_candidate_found": 2,
+        "no_candidate_under_declared_rules": 2
+      },
+      "candidateLinks": 1915,
+      "completeTargets": 0
+    },
+    {
+      "make": "애스턴마틴",
+      "targets": 5,
+      "missingGradeTargets": 5,
+      "candidateStates": {
+        "model_name_candidate_found": 3,
+        "family_or_series_hint_only": 2
+      },
+      "missingGradeCandidateStates": {
+        "model_name_candidate_found": 3,
+        "family_or_series_hint_only": 2
+      },
+      "candidateLinks": 34,
+      "completeTargets": 0
+    },
+    {
+      "make": "인피니티",
+      "targets": 7,
+      "missingGradeTargets": 6,
+      "candidateStates": {
+        "model_name_candidate_found": 1,
+        "family_or_series_hint_only": 6
+      },
+      "missingGradeCandidateStates": {
+        "family_or_series_hint_only": 6
+      },
+      "candidateLinks": 31,
+      "completeTargets": 0
+    },
+    {
+      "make": "재규어",
+      "targets": 10,
+      "missingGradeTargets": 9,
+      "candidateStates": {
+        "family_or_series_hint_only": 9,
+        "model_name_candidate_found": 1
+      },
+      "missingGradeCandidateStates": {
+        "family_or_series_hint_only": 9
+      },
+      "candidateLinks": 455,
+      "completeTargets": 0
+    },
+    {
+      "make": "제네시스",
+      "targets": 29,
+      "missingGradeTargets": 21,
+      "candidateStates": {
+        "model_name_candidate_found": 8,
+        "family_or_series_hint_only": 20,
+        "no_candidate_under_declared_rules": 1
+      },
+      "missingGradeCandidateStates": {
+        "family_or_series_hint_only": 16,
+        "model_name_candidate_found": 4,
+        "no_candidate_under_declared_rules": 1
+      },
+      "candidateLinks": 5922,
+      "completeTargets": 0
+    },
+    {
+      "make": "지프",
+      "targets": 12,
+      "missingGradeTargets": 10,
+      "candidateStates": {
+        "family_or_series_hint_only": 12
+      },
+      "missingGradeCandidateStates": {
+        "family_or_series_hint_only": 10
+      },
+      "candidateLinks": 348,
+      "completeTargets": 0
+    },
+    {
+      "make": "캐딜락",
+      "targets": 10,
+      "missingGradeTargets": 9,
+      "candidateStates": {
+        "model_name_candidate_found": 6,
+        "family_or_series_hint_only": 3,
+        "no_candidate_under_declared_rules": 1
+      },
+      "missingGradeCandidateStates": {
+        "model_name_candidate_found": 6,
+        "family_or_series_hint_only": 2,
+        "no_candidate_under_declared_rules": 1
+      },
+      "candidateLinks": 96,
+      "completeTargets": 0
+    },
+    {
+      "make": "테슬라",
+      "targets": 17,
+      "missingGradeTargets": 13,
+      "candidateStates": {
+        "family_or_series_hint_only": 16,
+        "no_candidate_under_declared_rules": 1
+      },
+      "missingGradeCandidateStates": {
+        "family_or_series_hint_only": 12,
+        "no_candidate_under_declared_rules": 1
+      },
+      "candidateLinks": 147,
+      "completeTargets": 0
+    },
+    {
+      "make": "토요타",
+      "targets": 28,
+      "missingGradeTargets": 25,
+      "candidateStates": {
+        "model_name_candidate_found": 3,
+        "family_or_series_hint_only": 25
+      },
+      "missingGradeCandidateStates": {
+        "model_name_candidate_found": 3,
+        "family_or_series_hint_only": 22
+      },
+      "candidateLinks": 540,
+      "completeTargets": 0
+    },
+    {
+      "make": "페라리",
+      "targets": 21,
+      "missingGradeTargets": 21,
+      "candidateStates": {
+        "no_candidate_under_declared_rules": 3,
+        "family_or_series_hint_only": 16,
+        "model_name_candidate_found": 2
+      },
+      "missingGradeCandidateStates": {
+        "no_candidate_under_declared_rules": 3,
+        "family_or_series_hint_only": 16,
+        "model_name_candidate_found": 2
+      },
+      "candidateLinks": 75,
+      "completeTargets": 0
+    },
+    {
+      "make": "포드",
+      "targets": 18,
+      "missingGradeTargets": 17,
+      "candidateStates": {
+        "family_or_series_hint_only": 17,
+        "no_candidate_under_declared_rules": 1
+      },
+      "missingGradeCandidateStates": {
+        "family_or_series_hint_only": 16,
+        "no_candidate_under_declared_rules": 1
+      },
+      "candidateLinks": 620,
+      "completeTargets": 0
+    },
+    {
+      "make": "포르쉐",
+      "targets": 25,
+      "missingGradeTargets": 20,
+      "candidateStates": {
+        "family_or_series_hint_only": 23,
+        "no_candidate_under_declared_rules": 1,
+        "model_name_candidate_found": 1
+      },
+      "missingGradeCandidateStates": {
+        "family_or_series_hint_only": 19,
+        "no_candidate_under_declared_rules": 1
+      },
+      "candidateLinks": 1106,
+      "completeTargets": 0
+    },
+    {
+      "make": "폭스바겐",
+      "targets": 29,
+      "missingGradeTargets": 26,
+      "candidateStates": {
+        "no_candidate_under_declared_rules": 4,
+        "family_or_series_hint_only": 25
+      },
+      "missingGradeCandidateStates": {
+        "no_candidate_under_declared_rules": 4,
+        "family_or_series_hint_only": 22
+      },
+      "candidateLinks": 814,
+      "completeTargets": 0
+    },
+    {
+      "make": "폴스타",
+      "targets": 4,
+      "missingGradeTargets": 4,
+      "candidateStates": {
+        "family_or_series_hint_only": 2,
+        "no_candidate_under_declared_rules": 2
+      },
+      "missingGradeCandidateStates": {
+        "family_or_series_hint_only": 2,
+        "no_candidate_under_declared_rules": 2
+      },
+      "candidateLinks": 8,
+      "completeTargets": 0
+    },
+    {
+      "make": "푸조",
+      "targets": 18,
+      "missingGradeTargets": 17,
+      "candidateStates": {
+        "family_or_series_hint_only": 16,
+        "model_name_candidate_found": 2
+      },
+      "missingGradeCandidateStates": {
+        "family_or_series_hint_only": 15,
+        "model_name_candidate_found": 2
+      },
+      "candidateLinks": 305,
+      "completeTargets": 0
+    },
+    {
+      "make": "피아트",
+      "targets": 3,
+      "missingGradeTargets": 3,
+      "candidateStates": {
+        "model_name_candidate_found": 2,
+        "no_candidate_under_declared_rules": 1
+      },
+      "missingGradeCandidateStates": {
+        "model_name_candidate_found": 2,
+        "no_candidate_under_declared_rules": 1
+      },
+      "candidateLinks": 19,
+      "completeTargets": 0
+    },
+    {
+      "make": "현대",
+      "targets": 171,
+      "missingGradeTargets": 128,
+      "candidateStates": {
+        "family_or_series_hint_only": 104,
+        "model_name_candidate_found": 66,
+        "no_candidate_under_declared_rules": 1
+      },
+      "missingGradeCandidateStates": {
+        "family_or_series_hint_only": 71,
+        "model_name_candidate_found": 56,
+        "no_candidate_under_declared_rules": 1
+      },
+      "candidateLinks": 137526,
+      "completeTargets": 0
+    },
+    {
+      "make": "혼다",
+      "targets": 19,
+      "missingGradeTargets": 16,
+      "candidateStates": {
+        "family_or_series_hint_only": 18,
+        "no_candidate_under_declared_rules": 1
+      },
+      "missingGradeCandidateStates": {
+        "family_or_series_hint_only": 15,
+        "no_candidate_under_declared_rules": 1
+      },
+      "candidateLinks": 404,
+      "completeTargets": 0
+    }
+  ],
+  "interpretation": "More searchable raw-name evidence is not completed taxonomy. Model-name candidates may contain a generation word explicitly; none prove generation hierarchy, retail trim, model year or market. Family/series hints intentionally recur over multiple generation targets."
+}

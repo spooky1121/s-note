@@ -1,0 +1,94 @@
+{
+  "schemaVersion": 1,
+  "sourceYear": 2026,
+  "sourceYearIsModelYear": false,
+  "inputFiles": [
+    {
+      "relativePath": "vehicle-records.raw.jsonl.gz",
+      "sha256": "f1df67bf424dedcb7c8ca3c10506e0490b3d9270d4b3226da3a1fd74746cb861",
+      "bytes": 1944173,
+      "role": "required_raw_input",
+      "hashVerified": true
+    },
+    {
+      "relativePath": "workbook-rows.raw.jsonl.gz",
+      "sha256": "ddf3ea309f8b6998e8637f6614bc2dfaac9e6f2d8a847cf01426fff814c628c9",
+      "bytes": 1765079,
+      "role": "required_raw_input",
+      "hashVerified": true
+    },
+    {
+      "relativePath": "source-original.zip",
+      "sha256": "dc12435b699dfdd0a4c6b2089676f6963baff02ac751c4e28d52477f792e142c",
+      "bytes": 7496166,
+      "role": "original_user_supplied_archive",
+      "hashVerified": true
+    },
+    {
+      "relativePath": "source-original.zip!1. 차량/2026 차량.xlsx",
+      "sha256": "879676902bfed308c109ecee54a8586cf6e68afc26918a413f7c024248758d9b",
+      "bytes": 5112624,
+      "role": "original_vehicle_workbook_archive_member",
+      "hashVerified": true,
+      "containerRelativePath": "source-original.zip",
+      "archiveMember": "1. 차량/2026 차량.xlsx"
+    },
+    {
+      "relativePath": "archive-manifest.json",
+      "sha256": "339e0e09114e7cd8a52e9d762774432b9addd21a64827d75442c152a92a98f42",
+      "bytes": 32863,
+      "role": "input_manifest",
+      "hashVerified": false
+    },
+    {
+      "relativePath": "vehicle-export-manifest.json",
+      "sha256": "3efbc685f451b23610ce37d3ab6ac1764cd05b673bc47182868498148adfef07",
+      "bytes": 67162,
+      "role": "input_manifest",
+      "hashVerified": false
+    }
+  ],
+  "sourceArchiveSha256": "dc12435b699dfdd0a4c6b2089676f6963baff02ac751c4e28d52477f792e142c",
+  "sourceWorkbookSha256": "879676902bfed308c109ecee54a8586cf6e68afc26918a413f7c024248758d9b",
+  "sourceArchiveHashVerifiedLocally": true,
+  "sourceWorkbookHashVerifiedFromArchive": true,
+  "snapshotNotice": "행정안전부고시 제2025-83호 (2025-12-29 개정, 2026-01-01 시행)",
+  "snapshotVersion": "base-2025-83",
+  "laterNoticesApplied": false,
+  "all2026NoticesComplete": false,
+  "vehicleRows": 105370,
+  "modificationRows": 431,
+  "typeNameConflictGroups": 1558,
+  "validationPassed": true,
+  "builderScriptSha256": "bef77213e4b9532337a262f7d527495d6f51c48156f9edd114bf2b16b5295d29",
+  "patchesAppliedByBuilder": false,
+  "outputs": [
+    {
+      "relativePath": "government-tax-2026.sqlite",
+      "bytes": 110632960,
+      "sha256": "eb42e38f3aecdbfd93f013f5db4b5bdd5c2df36df7de2cce43e8c7a4d3de1538"
+    },
+    {
+      "relativePath": "vehicle-records.organized.csv.gz",
+      "bytes": 13493299,
+      "sha256": "22b259b781d8088ad0ca3a9e2211c4fb6a26c4f2d9f38c23c50f0b9b633cc495"
+    },
+    {
+      "relativePath": "modification-records.organized.csv.gz",
+      "bytes": 53210,
+      "sha256": "4b4f3a3d9b23150ba9722504056f0062c4b0197ce1d5fa0258458c95d1b5403c"
+    },
+    {
+      "relativePath": "schema.sql",
+      "bytes": 4621,
+      "sha256": "5563bf9736969070549a49767ffb4141555188cc10f21eec22dc739d9758b29f"
+    },
+    {
+      "relativePath": "validation-log.json",
+      "bytes": 4772,
+      "sha256": "732b1dce77c2d23ebbce8d603236b749922b9ab61d645024a747ae344b6bb194"
+    }
+  ],
+  "generatedOutputLocation": "workspace-only reconstruction; generated output filenames below are relative to that build directory",
+  "repositoryArtifactPolicy": "Only amended compressed SQLite and organized CSV are committed; base outputs remain reproducible work artifacts."
+}

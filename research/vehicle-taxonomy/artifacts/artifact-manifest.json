@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-11-07",
+  "completeKoreanMaster": false,
+  "runtimeImportEnabled": false,
+  "artifacts": [
+    {
+      "path": "research/vehicle-taxonomy/artifacts/global-engine-reference-ODbL.sqlite.gz",
+      "bytes": 2141806,
+      "sha256": "1d55353ce2df5d1a41269f6984b9fe65bae189a419b3d29febdbd64ad8f79c19",
+      "uncompressedBytes": 12713984,
+      "uncompressedSha256": "d70d7a88bed3d322d01783ce373dfef54bc38c0a832cbdf0e230a729e017e97d",
+      "license": "ODbL-1.0; global reference, Korean-market retail classifications unverified"
+    },
+    {
+      "path": "research/vehicle-taxonomy/artifacts/government-tax-2026-amended.modifications.csv.gz",
+      "bytes": 53233,
+      "sha256": "fa1fd7f0f5fe9ee675ff70c84f81ad803a3092db490e15d19f9b89c81fe05d45",
+      "sourceScope": "2026-37 amended government tax-reference snapshot; not retail prices or grade master",
+      "rightsNote": "Attributed government public-notice factual material; no blanket KOGL license asserted for the user-supplied ZIP"
+    },
+    {
+      "path": "research/vehicle-taxonomy/artifacts/s-note-classification-research.sqlite.gz",
+      "bytes": 937971,
+      "sha256": "c12128cc2db8d0a260bdd17ae80d2cc06e8ab6d9d888bcff46ceb18b8923162b",
+      "uncompressedBytes": 15052800,
+      "uncompressedSha256": "226c1ed4bde9e341dbdb7c0513fa1bc27f7702bc67192e587ab0ba002672e9bf",
+      "licenseNote": "Retain individual source attribution; global engine worksheet is a separate ODbL-1.0 reference"
+    },
+    {
+      "path": "research/vehicle-taxonomy/artifacts/s-note-vehicle-taxonomy-research-2026-11-07.xlsx",
+      "bytes": 3918605,
+      "sha256": "f5ceff716d340726452ddfe15e22c7332e28ad2ba5c6b2f90812a14527208c5c",
+      "licenseNote": "Retain individual source attribution; global engine worksheet is a separate ODbL-1.0 reference"
+    },
+    {
+      "path": "research/vehicle-taxonomy/artifacts/government-tax-2026-amended.sqlite.gz",
+      "bytes": 26805720,
+      "sha256": "327b915634a71c580f96b38c726476d988a5cb3405ea042560b0aa67ac7c1841",
+      "repositoryStorage": {
+        "manifest": "research/vehicle-taxonomy/artifacts/storage-manifest.json",
+        "parts": [
+          {
+            "path": "government-tax-2026-amended.sqlite.gz.parts/001.part",
+            "bytes": 8388608,
+            "sha256": "1ffcac950ba1c35e3b8fb63afebf091d93d27a3bc12aa841c818a2a722092a71"
+          },
+          {
+            "path": "government-tax-2026-amended.sqlite.gz.parts/002.part",
+            "bytes": 8388608,
+            "sha256": "6532fe1671e09a1c8339b9cf75da62e7f4f2860a34d881c46890955b2e10c2e0"
+          },
+          {
+            "path": "government-tax-2026-amended.sqlite.gz.parts/003.part",
+            "bytes": 8388608,
+            "sha256": "9995ee521d750d35f70f613c85bb61b04985046e53f77bee446cb6e57f9d25c0"
+          },
+          {
+            "path": "government-tax-2026-amended.sqlite.gz.parts/004.part",
+            "bytes": 1639896,
+            "sha256": "256cca63173acd69ff9386ae0affc6bffcc562de04e05128f71d926a83036fe3"
+          }
+        ]
+      },
+      "downloadBundleStorage": "complete_file",
+      "uncompressedBytes": 110641152,
+      "uncompressedSha256": "7f0e1306364e538ce0249317bf8267821e16d2e32e60353979c626ae71b649b5",
+      "sourceScope": "2026-37 amended government tax-reference snapshot; not retail prices or grade master",
+      "rightsNote": "Attributed government public-notice factual material; no blanket KOGL license asserted for the user-supplied ZIP"
+    },
+    {
+      "path": "research/vehicle-taxonomy/artifacts/government-tax-2026-amended.vehicles.csv.gz",
+      "bytes": 13495020,
+      "sha256": "b025c9cf6e1d9650635eeda69683f2e47bcb5dd18b88aac3ff7e9e2d840f1c22",
+      "repositoryStorage": {
+        "manifest": "research/vehicle-taxonomy/artifacts/storage-manifest.json",
+        "parts": [
+          {
+            "path": "government-tax-2026-amended.vehicles.csv.gz.parts/001.part",
+            "bytes": 8388608,
+            "sha256": "c9400a16b25d123345d091dc6e39ea06b368e5820ac854260c832d5efc6a1983"
+          },
+          {
+            "path": "government-tax-2026-amended.vehicles.csv.gz.parts/002.part",
+            "bytes": 5106412,
+            "sha256": "3b487dbbc55733e634daaa5cdc19008cbf6468bb4cf7116187d69446de21a45c"
+          }
+        ]
+      },
+      "downloadBundleStorage": "complete_file",
+      "sourceScope": "2026-37 amended government tax-reference snapshot; not retail prices or grade master",
+      "rightsNote": "Attributed government public-notice factual material; no blanket KOGL license asserted for the user-supplied ZIP"
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "buildScriptSha256": "6c34201709a9cb55c6f53304394bd915d89f9e2faea94ed3d92f4a4eea2cb993",
+  "lexicalRegressionChecks": [
+    {
+      "name": "A7 3.0 TDI Quattro",
+      "phrase": "A7",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "name": "A70",
+      "phrase": "A7",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "K5000",
+      "phrase": "K5",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "K5 LPG",
+      "phrase": "K5",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "name": "GLC300",
+      "phrase": "C300",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "MINI Cooper Countryman",
+      "phrase": "COUNTRYMAN",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "name": "MINICooperSClubman",
+      "phrase": "CLUBMAN",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "name": "C300 4MATIC",
+      "phrase": "C300",
+      "expected": true,
+      "actual": true
+    }
+  ],
+  "expectedHashMismatchRejected": true,
+  "hashMismatchExitCode": 1,
+  "hashMismatchMessage": "records SHA256 mismatch",
+  "amendedRunManifest": "research/vehicle-taxonomy/bulk/government-tax-2026/crosswalk/amended-2026-reviewed/manifest.json",
+  "amendedRunManifestSha256": "f91b713c1ac08d84691433117cab310b1189ab223e657d7bf3695ed5e4499a5a",
+  "largeCandidateCsvAbsentByRequest": true,
+  "candidateRecordSetSha256": "1807271df5f59bafa084c9b9910283b2f359e63e25b36918f48eb721e72f7919",
+  "candidateRecordSetHashPolicy": "SHA256 of newline-joined per-line SHA256s sorted by (targetId,sourceSheet,sourceRow), final newline included; excludes gzip metadata and JSONL row ordering.",
+  "publicCandidateRecordsExactlyMatchIndependentlyAuditedWorkRun": true,
+  "candidateRecordsCompared": 300616,
+  "publicInputMetadataPathsRelativeToRepository": true,
+  "serialMissingSourceRecords": 1,
+  "serialMissingLinksExactlyPreserved": 5,
+  "observationMetadataPolicy": "Full reconstruction and the null-serial TESLA links are independently verified in amended-audit-notes.json."
+}

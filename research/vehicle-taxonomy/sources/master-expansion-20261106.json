@@ -1,0 +1,299 @@
+{
+  "schemaVersion": 1,
+  "researchedOn": "2026-11-06",
+  "purpose": "완성되지 않은 차종 자료의 실질적인 대규모 원천 확보 및 모델 범위 검증",
+  "scopeWarning": "세금의 차량 형식 참조표는 제조사-세대-엔진-판매등급-세부등급의 공식 부모 분류 트리와 다르다. 형식코드를 판매등급코드로 변환하지 않는다.",
+  "sources": [
+    {
+      "id": "master-expansion-seoul-2026-tax",
+      "url": "https://data.seoul.go.kr/dataList/OA-22864/S/1/datasetView.do",
+      "title": "서울특별시 시가표준액(차량)",
+      "publisher": "서울특별시 / 저작권자 행정안전부 부동산세제과",
+      "retrievedAt": "2026-11-06",
+      "evidenceType": "official_open_data_catalog",
+      "accessStatus": "catalog_and_indexed_sheet_preview_verified",
+      "licenseObserved": "공공누리 1유형: 출처표시, 상업적 이용 및 변경 가능; 제3저작권자 없음",
+      "listedFiles": [
+        {
+          "name": "2026년 시가표준액(차량).csv",
+          "listedSizeMB": 7.47
+        },
+        {
+          "name": "★2026 차량 시가표준액표1 합본(서울).pdf",
+          "listedSizeMB": 16.26
+        },
+        {
+          "name": "★2026 차량 시가표준액표2 합본(서울).PDF",
+          "listedSizeMB": 21.73
+        }
+      ],
+      "columns": [
+        "구분",
+        "분류",
+        "산지구분",
+        "차종",
+        "제작사",
+        "차명",
+        "형식",
+        "기종명",
+        "연료원",
+        "기준가격(천원)"
+      ],
+      "rawBytesDownloaded": false,
+      "downloadUrlStatus": "HTML downloadFile(seq) 인자를 확인해야 함",
+      "downloadHostCandidate": "datafile.seoul.go.kr",
+      "previewObservationCount": 7,
+      "fullDatasetRowCount": null,
+      "notes": "공식 안내는 미리보기 최대1000건이며 전체는CSV를 내려받으라고 명시. 가격/기준가격은 세금계산값이므로 차종 참조 자료에서는 사용하지 않는다."
+    },
+    {
+      "id": "master-expansion-mois-2026-tax",
+      "url": "https://www.mois.go.kr/frt/bbs/type001/commonSelectBoardArticle.do?bbsId=BBSMSTR_000000000016&nttId=122833",
+      "title": "2026년 지방세 시가표준액 산정을 위한 기준가격 고시(행정안전부고시 제2025-83호)",
+      "publisher": "행정안전부",
+      "retrievedAt": "2026-11-06",
+      "evidenceType": "official_download_link",
+      "accessStatus": "source_page_and_zip_download_content_type_verified",
+      "downloadUrl": "https://www.mois.go.kr/cmm/fms/FileDown.do?atchFileId=FILE_00141702OA0BHAR&fileSn=1",
+      "filename": "[별표] 2026년 지방세 시가표준액 산정을 위한 기준가격.zip",
+      "listedSizeMB": 7.1,
+      "downloadResponseContentTypeObserved": "application/x-msdownload",
+      "rawBytesDownloaded": false,
+      "notes": "직접 링크는 공개 첨부파일이며 인증키 불필요. 웹 읽기 도구는 바이너리 형식을 처리하지 않아 실제 ZIP 저장은 실행 환경의 정상 네트워크 접근이 필요하다."
+    },
+    {
+      "id": "master-expansion-bupyeong-2026-tax",
+      "url": "https://www.icbp.go.kr/main/bbs/bbsMsgDetail.do?bcd=standard&msg_seq=5&pgno=1",
+      "title": "2026년 적용 기타물건 시가표준액 기준가격 안내",
+      "publisher": "인천광역시 부평구",
+      "retrievedAt": "2026-11-06",
+      "evidenceType": "official_download_link",
+      "accessStatus": "source_page_and_zip_download_content_type_verified",
+      "downloadUrl": "https://www.icbp.go.kr/main/bbs/bbsMsgFileDown.do?bcd=standard&fileno=1&msg_seq=5",
+      "filename": "2026년_기타물건_기준가격_목록.zip",
+      "listedSizeMB": 7,
+      "downloadResponseContentTypeObserved": "application/octet-stream",
+      "licenseObserved": "공공누리 출처표시",
+      "rawBytesDownloaded": false,
+      "scope": "차량(승용/승합/화물/이륜 등) 및 기계장비/선박/항공기 등10유형",
+      "notes": "2026-01-01 적용. 차량 파일/시트를 분리해 실제 행수를 확인할 수 있는 공개 원천. 전 차량 형식과 전 판매등급을 동일시하지 않는다."
+    }
+  ],
+  "referenceObservations": [
+    {
+      "sourceId": "master-expansion-seoul-2026-tax",
+      "sourceUrl": "https://data.seoul.go.kr/dataList/OA-22864/S/1/datasetView.do",
+      "acquiredOn": "2026-11-06",
+      "acquisitionMethod": "primary_source_search_index_sheet_preview",
+      "recordType": "tax_type_reference",
+      "certificateHolder": "CT&T",
+      "vehicleName": "이존(e-ZONE)",
+      "typeCode": "CTNT-E70LG-0L",
+      "rawColumns": {
+        "구분": "일반",
+        "분류": "형식",
+        "산지구분": "국산",
+        "차종": "승용",
+        "제작사": "CT&T",
+        "차명": "이존(e-ZONE)",
+        "형식": "CTNT-E70LG-0L",
+        "기종명": "",
+        "연료원": ""
+      },
+      "canonicalSalesGrade": null,
+      "canonicalGeneration": null,
+      "modelYear": null,
+      "eligibleForAutomaticRuntimeImport": false
+    },
+    {
+      "sourceId": "master-expansion-seoul-2026-tax",
+      "sourceUrl": "https://data.seoul.go.kr/dataList/OA-22864/S/1/datasetView.do",
+      "acquiredOn": "2026-11-06",
+      "acquisitionMethod": "primary_source_search_index_sheet_preview",
+      "recordType": "tax_type_reference",
+      "certificateHolder": "CT&T",
+      "vehicleName": "이존(e-ZONE)",
+      "typeCode": "CTNT-E70PB-0L",
+      "rawColumns": {
+        "구분": "일반",
+        "분류": "형식",
+        "산지구분": "국산",
+        "차종": "승용",
+        "제작사": "CT&T",
+        "차명": "이존(e-ZONE)",
+        "형식": "CTNT-E70PB-0L",
+        "기종명": "",
+        "연료원": ""
+      },
+      "canonicalSalesGrade": null,
+      "canonicalGeneration": null,
+      "modelYear": null,
+      "eligibleForAutomaticRuntimeImport": false
+    },
+    {
+      "sourceId": "master-expansion-seoul-2026-tax",
+      "sourceUrl": "https://data.seoul.go.kr/dataList/OA-22864/S/1/datasetView.do",
+      "acquiredOn": "2026-11-06",
+      "acquisitionMethod": "primary_source_search_index_sheet_preview",
+      "recordType": "tax_type_reference",
+      "certificateHolder": "글로밴",
+      "vehicleName": "글로밴카니발리무진",
+      "typeCode": "YP9ABB-S-O",
+      "rawColumns": {
+        "구분": "일반",
+        "분류": "형식",
+        "산지구분": "국산",
+        "차종": "승용",
+        "제작사": "글로밴",
+        "차명": "글로밴카니발리무진",
+        "형식": "YP9ABB-S-O",
+        "기종명": "",
+        "연료원": ""
+      },
+      "canonicalSalesGrade": null,
+      "canonicalGeneration": null,
+      "modelYear": null,
+      "eligibleForAutomaticRuntimeImport": false
+    },
+    {
+      "sourceId": "master-expansion-seoul-2026-tax",
+      "sourceUrl": "https://data.seoul.go.kr/dataList/OA-22864/S/1/datasetView.do",
+      "acquiredOn": "2026-11-06",
+      "acquisitionMethod": "primary_source_search_index_sheet_preview",
+      "recordType": "tax_type_reference",
+      "certificateHolder": "글로밴",
+      "vehicleName": "글로밴카니발리무진",
+      "typeCode": "YP9ABC",
+      "rawColumns": {
+        "구분": "일반",
+        "분류": "형식",
+        "산지구분": "국산",
+        "차종": "승용",
+        "제작사": "글로밴",
+        "차명": "글로밴카니발리무진",
+        "형식": "YP9ABC",
+        "기종명": "",
+        "연료원": ""
+      },
+      "canonicalSalesGrade": null,
+      "canonicalGeneration": null,
+      "modelYear": null,
+      "eligibleForAutomaticRuntimeImport": false
+    },
+    {
+      "sourceId": "master-expansion-seoul-2026-tax",
+      "sourceUrl": "https://data.seoul.go.kr/dataList/OA-22864/S/1/datasetView.do",
+      "acquiredOn": "2026-11-06",
+      "acquisitionMethod": "primary_source_search_index_sheet_preview",
+      "recordType": "tax_type_reference",
+      "certificateHolder": "기아",
+      "vehicleName": "K3",
+      "typeCode": "BD47AB-P-8",
+      "rawColumns": {
+        "구분": "일반",
+        "분류": "형식",
+        "산지구분": "국산",
+        "차종": "승용",
+        "제작사": "기아",
+        "차명": "K3",
+        "형식": "BD47AB-P-8",
+        "기종명": "",
+        "연료원": ""
+      },
+      "canonicalSalesGrade": null,
+      "canonicalGeneration": null,
+      "modelYear": null,
+      "eligibleForAutomaticRuntimeImport": false
+    },
+    {
+      "sourceId": "master-expansion-seoul-2026-tax",
+      "sourceUrl": "https://data.seoul.go.kr/dataList/OA-22864/S/1/datasetView.do",
+      "acquiredOn": "2026-11-06",
+      "acquisitionMethod": "primary_source_search_index_sheet_preview",
+      "recordType": "tax_type_reference",
+      "certificateHolder": "기아",
+      "vehicleName": "K3",
+      "typeCode": "BD47AC-P-8",
+      "rawColumns": {
+        "구분": "일반",
+        "분류": "형식",
+        "산지구분": "국산",
+        "차종": "승용",
+        "제작사": "기아",
+        "차명": "K3",
+        "형식": "BD47AC-P-8",
+        "기종명": "",
+        "연료원": ""
+      },
+      "canonicalSalesGrade": null,
+      "canonicalGeneration": null,
+      "modelYear": null,
+      "eligibleForAutomaticRuntimeImport": false
+    },
+    {
+      "sourceId": "master-expansion-seoul-2026-tax",
+      "sourceUrl": "https://data.seoul.go.kr/dataList/OA-22864/S/1/datasetView.do",
+      "acquiredOn": "2026-11-06",
+      "acquisitionMethod": "primary_source_search_index_sheet_preview",
+      "recordType": "tax_type_reference",
+      "certificateHolder": "기아",
+      "vehicleName": "K3",
+      "typeCode": "BD47GB-H-8",
+      "rawColumns": {
+        "구분": "일반",
+        "분류": "형식",
+        "산지구분": "국산",
+        "차종": "승용",
+        "제작사": "기아",
+        "차명": "K3",
+        "형식": "BD47GB-H-8",
+        "기종명": "",
+        "연료원": ""
+      },
+      "canonicalSalesGrade": null,
+      "canonicalGeneration": null,
+      "modelYear": null,
+      "eligibleForAutomaticRuntimeImport": false
+    }
+  ],
+  "investigatedButNotCollected": [
+    {
+      "url": "https://www.carnoon.co.kr/service/botPolicy",
+      "status": "public_policy_verified",
+      "reason": "정책은 미승인자동화에합성/변형응답과정확성비보장을명시한다. 무승인전수복제를완전성원천으로채택하지않음."
+    },
+    {
+      "url": "https://kidi.or.kr/user/car/carprice.do",
+      "status": "public_source_verified",
+      "reason": "자동차보험계약외목적사용금지와허락필요를명시하고일5/월10/년20조회제한. 공개무상전수마스터다운로드경로가아님."
+    },
+    {
+      "url": "https://www.encar.com/mocha/history.do?mdlcd=028&mnfccd=012",
+      "status": "public_history_page_verified",
+      "reason": "BMWX3 2세대F25자료와코드를확인했지만'현재'가F25인과거편집본문이다. 전체제조사모델코드목록이나등급부모트리는미확보. 현행완성도판정용으로쓰지않음."
+    },
+    {
+      "url": "https://auto.danawa.com/auto/?Brand=303&Work=brand",
+      "status": "public_timeline_page_verified",
+      "reason": "현재/과거모델과모델별링크가있어범위대조에는유용하지만, 전체5단계CSV다운로드미확보. 출처별공식가격표검증을대체하지않음."
+    },
+    {
+      "url": "https://aihub.or.kr/aihubdata/data/view.do?currMenu=115&dataSetSn=172&topMenu=100",
+      "status": "public_dataset_metadata_verified",
+      "reason": "2020년구축차량이미지분류데이터의제조사/차종/연식라벨이며등급/엔진/트림부모가없다. 전체파일다운로드는별도승인필요."
+    }
+  ],
+  "requestedNetworkHosts": [
+    "data.seoul.go.kr",
+    "datafile.seoul.go.kr",
+    "news.seoul.go.kr",
+    "www.mois.go.kr",
+    "www.icbp.go.kr"
+  ],
+  "collectorScript": "/workspace/work/master-expansion/fetch-public-tax-master.py",
+  "collectorStatus": "prepared_and_syntax_checked_not_run; plain urllib access to data.seoul.go.kr denied by execution network sandbox",
+  "operationalDataChanged": false,
+  "userApiKeyCalls": 0,
+  "newSubscriptions": 0,
+  "accessControlBypass": false
+}

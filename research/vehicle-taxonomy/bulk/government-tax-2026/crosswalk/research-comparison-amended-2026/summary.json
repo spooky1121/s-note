@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-11-06T16:31:39.398024+00:00",
+  "inputs": {
+    "ledger": {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/crosswalk/amended-2026-reviewed/target-ledger.json",
+      "sha256": "9d9cf0c5498e802a2ca680b9fb5a8969d0a7bf7b0e6e3345136105e3671cfc18"
+    },
+    "research_progress": {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/crosswalk/input-snapshots/gap-research-progress.7f43b6967052.json",
+      "sha256": "7f43b6967052f5d0cd4172e5310e97f07de665fb8e6b0e15cb1f2ee8c4051329"
+    }
+  },
+  "buildScriptSha256": "011aa8a044fe74faead5a0d839d99e86b4049dde3328a235ecc0d2754c705ba9",
+  "researchSnapshotAsOf": "2026-11-07",
+  "baselineMissingGradeTargets": 986,
+  "rawNameCandidatesAddedToPreviouslyNotYetFoundTargets": 391,
+  "noCandidateInEitherDeclaredSearch": 46,
+  "matrix": [
+    {
+      "priorResearchStatus": "declared_alias_candidate",
+      "governmentCandidateState": "family_or_series_hint_only",
+      "targets": 47
+    },
+    {
+      "priorResearchStatus": "declared_alias_candidate",
+      "governmentCandidateState": "model_name_candidate_found",
+      "targets": 10
+    },
+    {
+      "priorResearchStatus": "exact_model_label_evidence",
+      "governmentCandidateState": "family_or_series_hint_only",
+      "targets": 43
+    },
+    {
+      "priorResearchStatus": "exact_model_label_evidence",
+      "governmentCandidateState": "model_name_candidate_found",
+      "targets": 44
+    },
+    {
+      "priorResearchStatus": "exact_model_label_evidence",
+      "governmentCandidateState": "no_candidate_under_declared_rules",
+      "targets": 2
+    },
+    {
+      "priorResearchStatus": "family_evidence_only",
+      "governmentCandidateState": "family_or_series_hint_only",
+      "targets": 322
+    },
+    {
+      "priorResearchStatus": "family_evidence_only",
+      "governmentCandidateState": "model_name_candidate_found",
+      "targets": 75
+    },
+    {
+      "priorResearchStatus": "family_evidence_only",
+      "governmentCandidateState": "no_candidate_under_declared_rules",
+      "targets": 6
+    },
+    {
+      "priorResearchStatus": "not_yet_found",
+      "governmentCandidateState": "family_or_series_hint_only",
+      "targets": 309
+    },
+    {
+      "priorResearchStatus": "not_yet_found",
+      "governmentCandidateState": "model_name_candidate_found",
+      "targets": 82
+    },
+    {
+      "priorResearchStatus": "not_yet_found",
+      "governmentCandidateState": "no_candidate_under_declared_rules",
+      "targets": 46
+    }
+  ],
+  "completeTargets": 0,
+  "verifiedRetailGradesAdded": 0,
+  "researchStatusesChanged": 0,
+  "interpretation": "Searchable evidence increased; no missing retail grade was completed. A target with no candidate remains unresolved under the declared search rules, not proven absent from the sources. The government and prior research snapshots are independently hashed."
+}

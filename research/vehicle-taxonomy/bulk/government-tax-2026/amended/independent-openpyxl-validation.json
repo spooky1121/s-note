@@ -1,0 +1,223 @@
+{
+  "everyNonemptyCellCompared": true,
+  "sheets": [
+    {
+      "sheet": "국산 1-1.승용(형식)",
+      "nonemptyRows": 13625,
+      "cellsCompared": 81735
+    },
+    {
+      "sheet": "외산 1-1.승용(형식)",
+      "nonemptyRows": 3877,
+      "cellsCompared": 23246
+    },
+    {
+      "sheet": "국산 1-2.승용(기종)",
+      "nonemptyRows": 11027,
+      "cellsCompared": 44099
+    },
+    {
+      "sheet": "외산 1-2.승용(기종)",
+      "nonemptyRows": 3551,
+      "cellsCompared": 14195
+    },
+    {
+      "sheet": "국산 1-3.승용(친환경)_형식",
+      "nonemptyRows": 1807,
+      "cellsCompared": 10822
+    },
+    {
+      "sheet": "외산 1-3.승용(친환경)_형식",
+      "nonemptyRows": 552,
+      "cellsCompared": 3291
+    },
+    {
+      "sheet": "국산 1-3.승용(친환경)_기종",
+      "nonemptyRows": 203,
+      "cellsCompared": 999
+    },
+    {
+      "sheet": "외산 1-3.승용(친환경)_기종",
+      "nonemptyRows": 97,
+      "cellsCompared": 469
+    },
+    {
+      "sheet": "국산 2-1.승합(형식)",
+      "nonemptyRows": 8162,
+      "cellsCompared": 48957
+    },
+    {
+      "sheet": "외산 2-1.승합(형식)",
+      "nonemptyRows": 1814,
+      "cellsCompared": 10869
+    },
+    {
+      "sheet": "국산 2-2.승합(기종)",
+      "nonemptyRows": 3348,
+      "cellsCompared": 13383
+    },
+    {
+      "sheet": "외산 2-2.승합(기종)",
+      "nonemptyRows": 123,
+      "cellsCompared": 483
+    },
+    {
+      "sheet": "국산 2-3.승합(친환경)_형식",
+      "nonemptyRows": 289,
+      "cellsCompared": 1714
+    },
+    {
+      "sheet": "외산 2-3.승합(친환경)_형식만있음",
+      "nonemptyRows": 61,
+      "cellsCompared": 346
+    },
+    {
+      "sheet": "국산 2-3.승합(친환경)_기종",
+      "nonemptyRows": 9,
+      "cellsCompared": 29
+    },
+    {
+      "sheet": "국산 3-1.화물(형식)",
+      "nonemptyRows": 37396,
+      "cellsCompared": 224361
+    },
+    {
+      "sheet": "외산 3-1.화물(형식)",
+      "nonemptyRows": 5497,
+      "cellsCompared": 32967
+    },
+    {
+      "sheet": "국산 3-2.화물(기종)",
+      "nonemptyRows": 8980,
+      "cellsCompared": 35911
+    },
+    {
+      "sheet": "외산 3-2.화물(기종)",
+      "nonemptyRows": 76,
+      "cellsCompared": 295
+    },
+    {
+      "sheet": "국산 3-3.화물(친환경)_형식",
+      "nonemptyRows": 142,
+      "cellsCompared": 832
+    },
+    {
+      "sheet": "외산 3-3.화물(친환경)_형식",
+      "nonemptyRows": 17,
+      "cellsCompared": 82
+    },
+    {
+      "sheet": "국산 3-3.화물(친환경)_기종",
+      "nonemptyRows": 19,
+      "cellsCompared": 79
+    },
+    {
+      "sheet": "국산 4-1.이륜(형식)",
+      "nonemptyRows": 462,
+      "cellsCompared": 2757
+    },
+    {
+      "sheet": "외산 4-1.이륜(형식)",
+      "nonemptyRows": 2135,
+      "cellsCompared": 12794
+    },
+    {
+      "sheet": "외산 4-2.이륜(기종)",
+      "nonemptyRows": 1895,
+      "cellsCompared": 7571
+    },
+    {
+      "sheet": "국산 4-2.이륜(기종)",
+      "nonemptyRows": 288,
+      "cellsCompared": 1143
+    },
+    {
+      "sheet": "국산 4-3.이륜(친환경)_형식만있음",
+      "nonemptyRows": 44,
+      "cellsCompared": 244
+    },
+    {
+      "sheet": "외산 4-3.이륜(친환경)_형식만있음",
+      "nonemptyRows": 11,
+      "cellsCompared": 46
+    },
+    {
+      "sheet": "5-1.원동기변경_동일형식변경",
+      "nonemptyRows": 40,
+      "cellsCompared": 225
+    },
+    {
+      "sheet": "5-1.원동기변경_상이형식변경",
+      "nonemptyRows": 40,
+      "cellsCompared": 225
+    },
+    {
+      "sheet": "5-1.원동기변경_국산품으로변경",
+      "nonemptyRows": 24,
+      "cellsCompared": 129
+    },
+    {
+      "sheet": "5-2.차체변경_탑설치",
+      "nonemptyRows": 37,
+      "cellsCompared": 139
+    },
+    {
+      "sheet": "5-2.차체변경_탱크로리 설치",
+      "nonemptyRows": 56,
+      "cellsCompared": 215
+    },
+    {
+      "sheet": "5-2.차체변경_유압식크레인설치(광림)_1",
+      "nonemptyRows": 28,
+      "cellsCompared": 126
+    },
+    {
+      "sheet": "5-2.차체변경_유압식크레인설치(광림)_2",
+      "nonemptyRows": 74,
+      "cellsCompared": 330
+    },
+    {
+      "sheet": "5-2.차체변경_유압식크레인설치(수산중공업)_1",
+      "nonemptyRows": 31,
+      "cellsCompared": 157
+    },
+    {
+      "sheet": "5-2.차체변경_유압식크레인설치(수산중공업)_2",
+      "nonemptyRows": 48,
+      "cellsCompared": 138
+    },
+    {
+      "sheet": "5-2.차체변경_유압식크레인설치(구 동양기전)",
+      "nonemptyRows": 6,
+      "cellsCompared": 21
+    },
+    {
+      "sheet": "5-2.차체변경_픽업덮개 설치",
+      "nonemptyRows": 17,
+      "cellsCompared": 59
+    },
+    {
+      "sheet": "5-2.차체변경_파워 게이트(리프트 게이트)",
+      "nonemptyRows": 14,
+      "cellsCompared": 58
+    },
+    {
+      "sheet": "5-2.차체변경_윙바디 설치",
+      "nonemptyRows": 17,
+      "cellsCompared": 59
+    },
+    {
+      "sheet": "5-2.차체변경_분리형캠퍼",
+      "nonemptyRows": 40,
+      "cellsCompared": 151
+    },
+    {
+      "sheet": "5-3.차체변경_캠핑카",
+      "nonemptyRows": 19,
+      "cellsCompared": 83
+    }
+  ],
+  "nonemptyRows": 105998,
+  "cellsCompared": 575834,
+  "formulas": 0
+}

@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "scope": "Government tax observed names only; not verified retail parent/grade taxonomy.",
+  "sourceExamplesAreExhaustive": false,
+  "maxSourceExamplesPerNameIndexEntry": 3,
+  "fullRowReferences": "Use vehicle-records.raw.jsonl.gz and its sourceSheet/sourceRow/fieldsRaw/fieldCellTypesRaw; name-index examples are selected illustrations only.",
+  "allOriginalRowsPreserved": true,
+  "numericVsTextIdentity": "Original numeric/text cell types remain available in the full raw corpus; the display-name index groups lexical labels.",
+  "sourceYearIsModelYear": false
+}

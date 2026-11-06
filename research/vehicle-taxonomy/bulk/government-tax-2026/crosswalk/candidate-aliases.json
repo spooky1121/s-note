@@ -1,0 +1,1058 @@
+{
+  "schemaVersion": 1,
+  "policy": "Finite reviewer-authored lexical candidate rules, not verified corporate identities, retail hierarchies, model years, grade IDs or Korean market eligibility. All links require review. Raw manufacturer labels remain distinct.",
+  "manufacturerCandidateLabels": {
+    "현대": [
+      "현대"
+    ],
+    "기아": [
+      "기아"
+    ],
+    "제네시스": [
+      "제네시스",
+      "현대"
+    ],
+    "KG모빌리티(쌍용)": [
+      "쌍용",
+      "쌍용자동차",
+      "케이지모빌리티",
+      "KGM"
+    ],
+    "KGM": [
+      "쌍용",
+      "쌍용자동차",
+      "케이지모빌리티",
+      "KGM"
+    ],
+    "대우": [
+      "대우",
+      "한국지엠",
+      "한국지엠주식회사",
+      "GM대우",
+      "GM DAEWOO"
+    ],
+    "쉐보레(GM대우)": [
+      "쉐보레",
+      "한국지엠",
+      "한국지엠주식회사",
+      "CHEVROLET",
+      "대우",
+      "GM"
+    ],
+    "쉐보레": [
+      "쉐보레",
+      "한국지엠",
+      "한국지엠주식회사",
+      "CHEVROLET",
+      "GM"
+    ],
+    "르노코리아(삼성)": [
+      "르노삼성",
+      "르노삼성자동차",
+      "르노코리아",
+      "르노코리아자동차",
+      "르노",
+      "RENAULT",
+      "삼성"
+    ],
+    "르노코리아": [
+      "르노삼성",
+      "르노삼성자동차",
+      "르노코리아",
+      "르노코리아자동차",
+      "르노",
+      "RENAULT",
+      "삼성"
+    ],
+    "BMW": [
+      "BMW"
+    ],
+    "미니": [
+      "MINI",
+      "BMW"
+    ],
+    "벤츠": [
+      "MERCEDES-BENZ",
+      "MERCEDES BENZ",
+      "BENZ"
+    ],
+    "아우디": [
+      "AUDI"
+    ],
+    "폭스바겐": [
+      "VOLKSWAGEN"
+    ],
+    "볼보": [
+      "VOLVO"
+    ],
+    "렉서스": [
+      "LEXUS"
+    ],
+    "토요타": [
+      "TOYOTA"
+    ],
+    "포르쉐": [
+      "PORSCHE"
+    ],
+    "테슬라": [
+      "TESLA"
+    ],
+    "랜드로버": [
+      "LANDROVER",
+      "LAND ROVER"
+    ],
+    "페라리": [
+      "FERRARI"
+    ],
+    "혼다": [
+      "HONDA"
+    ],
+    "닛산": [
+      "NISSAN"
+    ],
+    "포드": [
+      "FORD"
+    ],
+    "푸조": [
+      "PEUGEOT"
+    ],
+    "람보르기니": [
+      "LAMBORGHINI"
+    ],
+    "지프": [
+      "JEEP",
+      "CHRYSLER"
+    ],
+    "재규어": [
+      "JAGUAR"
+    ],
+    "마세라티": [
+      "MASERATI"
+    ],
+    "시트로엥": [
+      "CITROEN",
+      "CITROËN"
+    ],
+    "캐딜락": [
+      "CADILLAC"
+    ],
+    "롤스로이스": [
+      "ROLLS-ROYCE",
+      "ROLLS ROYCE"
+    ],
+    "링컨": [
+      "LINCOLN",
+      "FORD"
+    ],
+    "벤틀리": [
+      "BENTLEY"
+    ],
+    "인피니티": [
+      "INFINITI",
+      "NISSAN"
+    ],
+    "DS": [
+      "DS",
+      "CITROEN",
+      "CITROËN"
+    ],
+    "맥라렌": [
+      "MCLAREN"
+    ],
+    "애스턴마틴": [
+      "ASTONMARTIN",
+      "ASTON MARTIN"
+    ],
+    "스바루": [
+      "SUBARU"
+    ],
+    "BYD": [
+      "BYD",
+      "BYD Auto"
+    ],
+    "GMC": [
+      "GMC",
+      "GM",
+      "HUMMER"
+    ],
+    "폴스타": [
+      "POLESTAR"
+    ],
+    "로터스": [
+      "LOTUS"
+    ],
+    "스즈키": [
+      "SUZUKI"
+    ],
+    "피아트": [
+      "FIAT"
+    ]
+  },
+  "familyNameAliases": {
+    "그랜저": [
+      "그랜져",
+      "GRANDEUR"
+    ],
+    "쏘나타": [
+      "소나타",
+      "SONATA"
+    ],
+    "싼타페": [
+      "산타페",
+      "SANTAFE"
+    ],
+    "그랜드 싼타페": [
+      "GRANDSANTAFE"
+    ],
+    "아반떼": [
+      "아반테",
+      "AVANTE",
+      "ELANTRA"
+    ],
+    "팰리세이드": [
+      "PALISADE"
+    ],
+    "투싼": [
+      "TUCSON"
+    ],
+    "코나": [
+      "KONA"
+    ],
+    "포터": [
+      "PORTER"
+    ],
+    "포터 II": [
+      "포터2",
+      "PORTERII"
+    ],
+    "아이오닉": [
+      "IONIQ"
+    ],
+    "넥쏘": [
+      "NEXO"
+    ],
+    "스타렉스": [
+      "STAREX"
+    ],
+    "그랜드 스타렉스": [
+      "GRANDSTAREX"
+    ],
+    "스타리아": [
+      "STARIA"
+    ],
+    "캐스퍼": [
+      "CASPER"
+    ],
+    "제네시스": [
+      "GENESIS"
+    ],
+    "에쿠스": [
+      "EQUUS"
+    ],
+    "카니발": [
+      "CARNIVAL"
+    ],
+    "쏘렌토": [
+      "소렌토",
+      "SORENTO"
+    ],
+    "스포티지": [
+      "SPORTAGE"
+    ],
+    "모닝": [
+      "MORNING",
+      "PICANTO"
+    ],
+    "모하비": [
+      "MOHAVE"
+    ],
+    "니로": [
+      "NIRO"
+    ],
+    "쏘울": [
+      "SOUL"
+    ],
+    "셀토스": [
+      "SELTOS"
+    ],
+    "스팅어": [
+      "STINGER"
+    ],
+    "티볼리": [
+      "TIVOLI"
+    ],
+    "렉스턴": [
+      "REXTON"
+    ],
+    "코란도": [
+      "KORANDO"
+    ],
+    "토레스": [
+      "TORRES"
+    ],
+    "체어맨": [
+      "CHAIRMAN"
+    ],
+    "말리부": [
+      "MALIBU"
+    ],
+    "스파크": [
+      "SPARK"
+    ],
+    "크루즈": [
+      "CRUZE"
+    ],
+    "카마로": [
+      "CAMARO"
+    ],
+    "이쿼녹스": [
+      "EQUINOX"
+    ],
+    "콜로라도": [
+      "COLORADO"
+    ],
+    "타호": [
+      "TAHOE"
+    ],
+    "트래버스": [
+      "TRAVERSE"
+    ],
+    "트랙스": [
+      "TRAX"
+    ],
+    "트레일블레이저": [
+      "TRAILBLAZER"
+    ],
+    "볼트": [
+      "VOLT",
+      "BOLT"
+    ],
+    "볼트 EV": [
+      "BOLTEV"
+    ],
+    "볼트 EUV": [
+      "BOLTEUV"
+    ],
+    "골프": [
+      "GOLF"
+    ],
+    "제타": [
+      "JETTA"
+    ],
+    "파사트": [
+      "PASSAT"
+    ],
+    "티구안": [
+      "TIGUAN"
+    ],
+    "투아렉": [
+      "TOUAREG"
+    ],
+    "아테온": [
+      "ARTEON"
+    ],
+    "비틀": [
+      "BEETLE"
+    ],
+    "폴로": [
+      "POLO"
+    ],
+    "시로코": [
+      "SCIROCCO"
+    ],
+    "캠리": [
+      "CAMRY"
+    ],
+    "코롤라": [
+      "COROLLA"
+    ],
+    "프리우스": [
+      "PRIUS"
+    ],
+    "라브4": [
+      "RAV4"
+    ],
+    "RAV4": [
+      "라브4"
+    ],
+    "수프라": [
+      "SUPRA"
+    ],
+    "GR 수프라": [
+      "GRSUPRA"
+    ],
+    "시에나": [
+      "SIENNA"
+    ],
+    "알파드": [
+      "ALPHARD"
+    ],
+    "크라운": [
+      "CROWN"
+    ],
+    "하이랜더": [
+      "HIGHLANDER"
+    ],
+    "랜드크루저": [
+      "LANDCRUISER"
+    ],
+    "모델 3": [
+      "MODEL3"
+    ],
+    "모델 S": [
+      "MODELS"
+    ],
+    "모델 X": [
+      "MODELX"
+    ],
+    "모델 Y": [
+      "MODELY"
+    ],
+    "사이버트럭": [
+      "CYBERTRUCK"
+    ],
+    "카이엔": [
+      "CAYENNE"
+    ],
+    "파나메라": [
+      "PANAMERA"
+    ],
+    "마칸": [
+      "MACAN"
+    ],
+    "타이칸": [
+      "TAYCAN"
+    ],
+    "박스터": [
+      "BOXSTER"
+    ],
+    "카이맨": [
+      "CAYMAN"
+    ],
+    "718 박스터": [
+      "718BOXSTER"
+    ],
+    "718 카이맨": [
+      "718CAYMAN"
+    ],
+    "디스커버리": [
+      "DISCOVERY"
+    ],
+    "디스커버리 스포츠": [
+      "DISCOVERYSPORT"
+    ],
+    "디펜더": [
+      "DEFENDER"
+    ],
+    "레인지로버": [
+      "RANGEROVER"
+    ],
+    "레인지로버 스포츠": [
+      "RANGEROVERSPORT"
+    ],
+    "레인지로버 이보크": [
+      "RANGEROVEREVOQUE"
+    ],
+    "레인지로버 벨라": [
+      "RANGEROVERVELAR"
+    ],
+    "머스탱": [
+      "MUSTANG"
+    ],
+    "익스플로러": [
+      "EXPLORER"
+    ],
+    "레인저": [
+      "RANGER"
+    ],
+    "브롱코": [
+      "BRONCO"
+    ],
+    "몬데오": [
+      "MONDEO"
+    ],
+    "토러스": [
+      "TAURUS"
+    ],
+    "이스케이프": [
+      "ESCAPE"
+    ],
+    "에지": [
+      "EDGE"
+    ],
+    "어코드": [
+      "ACCORD"
+    ],
+    "시빅": [
+      "CIVIC"
+    ],
+    "오딧세이": [
+      "ODYSSEY"
+    ],
+    "파일럿": [
+      "PILOT"
+    ],
+    "레전드": [
+      "LEGEND"
+    ],
+    "알티마": [
+      "ALTIMA"
+    ],
+    "리프": [
+      "LEAF"
+    ],
+    "맥시마": [
+      "MAXIMA"
+    ],
+    "무라노": [
+      "MURANO"
+    ],
+    "캐시카이": [
+      "QASHQAI"
+    ],
+    "로그": [
+      "ROGUE"
+    ],
+    "엑스트레일": [
+      "XTRAIL"
+    ],
+    "패스파인더": [
+      "PATHFINDER"
+    ],
+    "랭글러": [
+      "WRANGLER"
+    ],
+    "체로키": [
+      "CHEROKEE"
+    ],
+    "그랜드 체로키": [
+      "GRANDCHEROKEE"
+    ],
+    "컴패스": [
+      "COMPASS"
+    ],
+    "레니게이드": [
+      "RENEGADE"
+    ],
+    "글래디에이터": [
+      "GLADIATOR"
+    ],
+    "콰트로포르테": [
+      "QUATTROPORTE"
+    ],
+    "기블리": [
+      "GHIBLI"
+    ],
+    "르반떼": [
+      "LEVANTE"
+    ],
+    "그란투리스모": [
+      "GRANTURISMO"
+    ],
+    "그레칼레": [
+      "GRECALE"
+    ],
+    "고스트": [
+      "GHOST"
+    ],
+    "팬텀": [
+      "PHANTOM"
+    ],
+    "레이스": [
+      "WRAITH"
+    ],
+    "던": [
+      "DAWN"
+    ],
+    "컬리넌": [
+      "CULLINAN"
+    ],
+    "스펙터": [
+      "SPECTRE"
+    ],
+    "컨티넨탈": [
+      "CONTINENTAL"
+    ],
+    "컨티넨탈 GT": [
+      "CONTINENTALGT"
+    ],
+    "플라잉스퍼": [
+      "FLYINGSPUR"
+    ],
+    "벤테이가": [
+      "BENTAYGA"
+    ],
+    "뮬산": [
+      "MULSANNE"
+    ],
+    "에스컬레이드": [
+      "ESCALADE"
+    ],
+    "리릭": [
+      "LYRIQ"
+    ],
+    "옵틱": [
+      "OPTIQ"
+    ],
+    "시에라": [
+      "SIERRA"
+    ],
+    "유콘": [
+      "YUKON"
+    ],
+    "허머 EV": [
+      "HUMMEREV"
+    ],
+    "아웃백": [
+      "OUTBACK"
+    ],
+    "임프레자": [
+      "IMPREZA"
+    ],
+    "포레스터": [
+      "FORESTER"
+    ],
+    "스위프트": [
+      "SWIFT"
+    ],
+    "짐니": [
+      "JIMNY"
+    ],
+    "비타라": [
+      "VITARA"
+    ],
+    "컨트리맨": [
+      "COUNTRYMAN"
+    ],
+    "클럽맨": [
+      "CLUBMAN"
+    ],
+    "페이스맨": [
+      "PACEMAN"
+    ],
+    "쿠퍼": [
+      "COOPER"
+    ],
+    "쿠퍼 컨버터블": [
+      "COOPERCONVERTIBLE"
+    ],
+    "쿠퍼 3도어": [
+      "MINICOOPER"
+    ],
+    "쿠퍼 5도어": [
+      "FIVEDOOR"
+    ],
+    "로마": [
+      "ROMA"
+    ],
+    "포르토피노": [
+      "PORTOFINO"
+    ],
+    "푸로산게": [
+      "PUROSANGUE"
+    ],
+    "우루스": [
+      "URUS"
+    ],
+    "우라칸": [
+      "HURACAN"
+    ],
+    "아벤타도르": [
+      "AVENTADOR"
+    ],
+    "레부엘토": [
+      "REVUELTO"
+    ],
+    "밴티지": [
+      "VANTAGE"
+    ],
+    "뱅퀴시": [
+      "VANQUISH"
+    ],
+    "엘리스": [
+      "ELISE"
+    ],
+    "에미라": [
+      "EMIRA"
+    ],
+    "에메야": [
+      "EMEYA"
+    ],
+    "엘레트라": [
+      "ELETRE"
+    ],
+    "폴스타 2": [
+      "POLESTAR2"
+    ],
+    "폴스타 3": [
+      "POLESTAR3"
+    ],
+    "폴스타 4": [
+      "POLESTAR4"
+    ],
+    "폴스타 5": [
+      "POLESTAR5"
+    ],
+    "아토 3": [
+      "ATTO3"
+    ],
+    "씰": [
+      "SEAL"
+    ],
+    "돌핀": [
+      "DOLPHIN"
+    ],
+    "씨라이언 7": [
+      "SEALION7"
+    ],
+    "그랑 콜레오스": [
+      "GRANDKOLEOS"
+    ],
+    "마스터": [
+      "MASTER"
+    ],
+    "아르카나": [
+      "ARKANA"
+    ],
+    "조에": [
+      "ZOE"
+    ],
+    "세닉": [
+      "SCENIC"
+    ],
+    "네비게이터": [
+      "NAVIGATOR"
+    ],
+    "노틸러스": [
+      "NAUTILUS"
+    ],
+    "에비에이터": [
+      "AVIATOR"
+    ],
+    "코세어": [
+      "CORSAIR"
+    ],
+    "3도어": [
+      "MINICOOPER"
+    ],
+    "5도어": [
+      "FIVEDOOR",
+      "FIVE DOOR"
+    ],
+    "머스탱 마하-E": [
+      "MUSTANGMACHE"
+    ],
+    "아투라": [
+      "ARTURA"
+    ],
+    "e-tron": [
+      "ETRON"
+    ],
+    "e-트론": [
+      "ETRON"
+    ],
+    "C5 에어크로스": [
+      "C5AIRCROSS"
+    ],
+    "V60 크로스컨트리": [
+      "V60CROSSCOUNTRY"
+    ],
+    "V90 크로스컨트리": [
+      "V90CROSSCOUNTRY"
+    ],
+    "전동화 G80": [
+      "G80전기",
+      "G80EV",
+      "G80ELECTRIFIED"
+    ],
+    "전동화 GV70": [
+      "GV70전기",
+      "GV70EV",
+      "GV70ELECTRIFIED"
+    ]
+  },
+  "explicitModelNameAliases": {
+    "현대|그랜저|그랜저 XG": [
+      "XG그랜저",
+      "XG그랜져"
+    ],
+    "현대|그랜저|뉴 그랜저 XG": [
+      "뉴XG그랜저",
+      "뉴XG그랜져"
+    ],
+    "현대|그랜저|그랜저 TG": [
+      "TG그랜저",
+      "TG그랜져"
+    ],
+    "현대|쏘나타|쏘나타 EF": [
+      "EF쏘나타",
+      "EF소나타"
+    ],
+    "현대|쏘나타|뉴 EF 쏘나타": [
+      "뉴EF쏘나타",
+      "뉴EF소나타"
+    ],
+    "현대|쏘나타|쏘나타 NF": [
+      "NF쏘나타",
+      "NF소나타"
+    ],
+    "현대|쏘나타|쏘나타 YF": [
+      "YF쏘나타",
+      "YF소나타"
+    ],
+    "현대|쏘나타|쏘나타 LF": [
+      "LF쏘나타",
+      "LF소나타"
+    ],
+    "현대|아반떼|아반떼 XD": [
+      "XD아반떼"
+    ],
+    "현대|아반떼|뉴 아반떼 XD": [
+      "뉴XD아반떼"
+    ],
+    "현대|아반떼|아반떼 HD": [
+      "HD아반떼"
+    ],
+    "현대|아반떼|아반떼 MD": [
+      "MD아반떼"
+    ],
+    "현대|아반떼|아반떼 AD": [
+      "AD아반떼"
+    ],
+    "기아|K5|K5 1세대 TF": [
+      "K5TF"
+    ],
+    "기아|K5|K5 2세대 JF": [
+      "K5JF"
+    ],
+    "기아|K5|K5 3세대 DL3": [
+      "K5DL3"
+    ]
+  },
+  "seriesNameVariantHints": {
+    "BMW|1시리즈": [
+      "114",
+      "116",
+      "118",
+      "120",
+      "123",
+      "125",
+      "128",
+      "130",
+      "135",
+      "140"
+    ],
+    "BMW|2시리즈": [
+      "214",
+      "216",
+      "218",
+      "220",
+      "225",
+      "228",
+      "230",
+      "235",
+      "240"
+    ],
+    "BMW|2시리즈 액티브 투어러": [
+      "ACTIVETOURER",
+      "액티브투어러"
+    ],
+    "BMW|3시리즈": [
+      "316",
+      "318",
+      "320",
+      "323",
+      "325",
+      "328",
+      "330",
+      "335",
+      "340"
+    ],
+    "BMW|4시리즈": [
+      "418",
+      "420",
+      "425",
+      "428",
+      "430",
+      "435",
+      "440"
+    ],
+    "BMW|5시리즈": [
+      "518",
+      "520",
+      "523",
+      "525",
+      "528",
+      "530",
+      "535",
+      "540",
+      "545",
+      "550"
+    ],
+    "BMW|6시리즈": [
+      "620",
+      "630",
+      "635",
+      "640",
+      "645",
+      "650"
+    ],
+    "BMW|6시리즈 GT": [
+      "620DGT",
+      "630IGT",
+      "640IGT"
+    ],
+    "BMW|7시리즈": [
+      "725",
+      "728",
+      "730",
+      "735",
+      "740",
+      "745",
+      "750",
+      "760"
+    ],
+    "BMW|8시리즈": [
+      "840",
+      "850"
+    ],
+    "벤츠|A클래스": [
+      "A160",
+      "A170",
+      "A180",
+      "A200",
+      "A220",
+      "A250",
+      "A35",
+      "A45"
+    ],
+    "벤츠|A-클래스": [
+      "A160",
+      "A170",
+      "A180",
+      "A200",
+      "A220",
+      "A250",
+      "A35",
+      "A45"
+    ],
+    "벤츠|B클래스": [
+      "B170",
+      "B180",
+      "B200",
+      "B220",
+      "B250"
+    ],
+    "벤츠|C클래스": [
+      "C180",
+      "C200",
+      "C220",
+      "C230",
+      "C240",
+      "C250",
+      "C280",
+      "C300",
+      "C320",
+      "C350",
+      "C400",
+      "C450",
+      "C43",
+      "C63"
+    ],
+    "벤츠|C-클래스": [
+      "C180",
+      "C200",
+      "C220",
+      "C230",
+      "C240",
+      "C250",
+      "C280",
+      "C300",
+      "C320",
+      "C350",
+      "C400",
+      "C450",
+      "C43",
+      "C63"
+    ],
+    "벤츠|E클래스": [
+      "E200",
+      "E220",
+      "E230",
+      "E240",
+      "E250",
+      "E280",
+      "E300",
+      "E320",
+      "E350",
+      "E400",
+      "E420",
+      "E430",
+      "E450",
+      "E500",
+      "E53",
+      "E55",
+      "E63"
+    ],
+    "벤츠|E-클래스": [
+      "E200",
+      "E220",
+      "E230",
+      "E240",
+      "E250",
+      "E280",
+      "E300",
+      "E320",
+      "E350",
+      "E400",
+      "E420",
+      "E430",
+      "E450",
+      "E500",
+      "E53",
+      "E55",
+      "E63"
+    ],
+    "벤츠|S클래스": [
+      "S280",
+      "S300",
+      "S320",
+      "S350",
+      "S400",
+      "S420",
+      "S430",
+      "S450",
+      "S500",
+      "S550",
+      "S560",
+      "S580",
+      "S600",
+      "S63",
+      "S65",
+      "S680"
+    ],
+    "벤츠|S-클래스": [
+      "S280",
+      "S300",
+      "S320",
+      "S350",
+      "S400",
+      "S420",
+      "S430",
+      "S450",
+      "S500",
+      "S550",
+      "S560",
+      "S580",
+      "S600",
+      "S63",
+      "S65",
+      "S680"
+    ]
+  },
+  "notes": [
+    "Latin aliases and corporate manufacturer labels are manually declared lexical review aids; not external evidence of equivalence.",
+    "No alias is generated from a raw 형식 code. Generation codes appearing only in 형식 never contribute to matching.",
+    "Model-family hints repeat across generation targets deliberately and cannot fill missing grades."
+  ]
+}

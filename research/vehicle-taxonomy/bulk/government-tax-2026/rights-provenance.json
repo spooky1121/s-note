@@ -1,0 +1,139 @@
+{
+  "schemaVersion": 1,
+  "checkedLocalDateKST": "2026-11-07",
+  "scope": "Read-only review of the user-supplied 2026 government tax-reference base and amended annex archives. This metadata does not declare a complete retail manufacturer/model/grade master.",
+  "acquisition": {
+    "method": "user_attachment",
+    "officialRemoteBytesDownloaded": false,
+    "officialRemoteHashCompared": false,
+    "officialAssociationBasis": "The exact attachment title and legal notice are publicly identified on the MOIS notice page. The supplied ZIP was archived byte-for-byte and hashed locally; the locally supplied bytes were not hash-compared to a separately downloaded central official copy.",
+    "archive": "amended/source-original.zip",
+    "archiveBytes": 7479769,
+    "archiveSha256": "250495924795cddd5a825f5a788d5bcd13d76de4246ae5b2e5c3f2f93e9d99d7",
+    "workbook": "amended/source-original.zip!★ 2026년 지방세 기준가격 산정을 위한 기준가격 고시/1. 차량/2026 차량.xlsx",
+    "workbookBytes": 5093539,
+    "workbookSha256": "b5c2cdef501228014ab057f5f683c5615273872dc0c235b73bbd2a58612ff4fd"
+  },
+  "sources": [
+    {
+      "id": "mois-base-2025-83",
+      "publisher": "행정안전부",
+      "url": "https://www.mois.go.kr/frt/bbs/type001/commonSelectBoardArticle.do?bbsId=BBSMSTR_000000000016&nttId=122833",
+      "title": "2026년 지방세 시가표준액 산정을 위한 기준가격 고시(행정안전부 고시 제2025-83호, 2025.12.29. 개정)",
+      "evidenceType": "official_direct",
+      "publishedAt": "2025-12-31",
+      "noticeDate": "2025-12-29",
+      "effectiveDate": "2026-01-01",
+      "rawRevisionLabelOnMois": "개정",
+      "attachmentTitle": "[별표] 2026년 지방세 시가표준액 산정을 위한 기준가격.zip",
+      "attachmentUrl": "https://www.mois.go.kr/cmm/fms/FileDown.do?atchFileId=FILE_00141702OA0BHAR&fileSn=1",
+      "noticeDocumentUrl": "https://www.mois.go.kr/cmm/fms/FileDown.do?atchFileId=FILE_00141702OA0BHAR&fileSn=0"
+    },
+    {
+      "id": "law-base-2025-83",
+      "publisher": "국가법령정보센터",
+      "url": "https://www.law.go.kr/LSW/admRulLsInfoP.do?admRulSeq=2100000270914",
+      "evidenceType": "official_search_excerpt",
+      "rawRevisionLabelOnLaw": "제정",
+      "status": "연혁",
+      "article2Quote": "기준가격은 별표와 같다.",
+      "labelDifferencePolicy": "The MOIS page labels the base notice 개정 while the law-center version labels it 제정. Both source labels are retained; this review does not silently resolve the publisher difference."
+    },
+    {
+      "id": "mois-amended-2026-37",
+      "publisher": "행정안전부",
+      "url": "https://www.mois.go.kr/frt/bbs/type001/commonSelectBoardArticle.do?bbsId=BBSMSTR_000000000016&nttId=127567",
+      "title": "2026년 지방세 시가표준액 산정을 위한 기준가격 재산정 및 추가산정 고시(행정안전부고시 제2026-37호, 2026.5.27. 제정)",
+      "evidenceType": "official_direct",
+      "noticeDate": "2026-05-27",
+      "effectiveDate": "2026-05-27",
+      "publishedAt": "2026-07-06",
+      "attachmentTitle": "[별표] 2026년 지방세 시가표준액 산정을 위한 기준가격(재산정 및 추가산정 반영).zip",
+      "attachmentUrl": "https://www.mois.go.kr/cmm/fms/FileDown.do?atchFileId=FILE_001468860gto_sJ&fileSn=1",
+      "noticeDocumentUrl": "https://www.mois.go.kr/cmm/fms/FileDown.do?atchFileId=FILE_001468860gto_sJ&fileSn=0",
+      "sourceStatus": "Official page and attachment URLs verified. Web text reader cannot parse the binary application/x-msdownload content; user-supplied archive independently read locally."
+    },
+    {
+      "id": "law-amended-2026-37",
+      "publisher": "국가법령정보센터",
+      "url": "https://www.law.go.kr/admRulLsInfoP.do?admRulSeq=2100000279896",
+      "currentVersionUrl": "https://law.go.kr/LSW/admRulLsInfoP.do?admRulId=80259&efYd=0",
+      "headerEvidenceType": "official_direct",
+      "clausesEvidenceType": "official_search_excerpt",
+      "effectiveDate": "2026-05-27",
+      "article2Quote": "재산정 및 추가산정한 2026년 지방세 시가표준액 산정을 위한 기준가격(이하 \"기준가격\"이라 한다)은 별표와 같다.",
+      "supplementaryEffectiveRule": "발령한 날부터 시행",
+      "supplementaryApplicationRule": "고시 시행 이후 납세의무가 성립하는 분부터 적용. 다만 재산정한 기준가격은 2026년 1월 1일 이후 납세의무가 성립하는 분부터 적용.",
+      "interpretationLimit": "Notice issuance, website posting, local municipality application dates, and a vehicle model year are distinct metadata. No vehicle model year is inferred from the year 2026 or these legal dates."
+    },
+    {
+      "id": "yeosu-amendment-vehicle-excerpt",
+      "publisher": "여수시",
+      "url": "https://m.yeosu.go.kr/contents/2422/value_260530_2.pdf",
+      "title": "2026년 기타물건 기준가격 재고시 대상(재산정 및 추가산정 등)",
+      "evidenceType": "official_search_excerpt",
+      "amountUnitRaw": "원",
+      "corroboration": "Indexed table explicitly lists new Sorento/Casper/Sorento Hybrid/Lexus RX350h/Tesla rows and deletes BMW X6 xDrive40i CY61 former serial432, with 중복 삭제 (1153번). These observed changes match the supplied amended workbook delta. The full PDF could not be read directly, so no total vehicle change count is inferred from its search excerpt.",
+      "unitPolicy": "This amendment change-list PDF uses 원. Both supplied full vehicle workbooks use 천원. Keep these source-specific units separate."
+    },
+    {
+      "id": "copyright-act-art7",
+      "publisher": "국가법령정보센터",
+      "url": "https://www.law.go.kr/lsLinkCommonInfo.do?lsJoLnkSeq=1029423769",
+      "title": "저작권법 제7조(보호받지 못하는 저작물)",
+      "evidenceType": "official_direct",
+      "lawEffectiveDate": "2026-10-29",
+      "lawNumber": "법률 제21595호",
+      "quote": "국가 또는 지방자치단체의 고시ㆍ공고ㆍ훈령 그 밖에 이와 유사한 것"
+    },
+    {
+      "id": "mois-copyright-policy",
+      "publisher": "행정안전부",
+      "url": "https://www.mois.go.kr/frt/sub/a08/copyrightPolicy/screen.do",
+      "title": "저작권정책",
+      "evidenceType": "official_search_excerpt",
+      "policyObservation": "MOIS policy states that KOGL Type1-marked materials may be freely used with specific source attribution and that the item-level KOGL mark should be checked. The extracted tax-notice pages did not establish an item-level KOGL Type1 license for the complete ZIP."
+    }
+  ],
+  "rightsProvenance": {
+    "reviewPurpose": "Source and rights provenance accuracy; not legal advice or a blanket reuse license determination.",
+    "officialNoticeAnnexAssociationVerified": true,
+    "officialNoticeAnnexBasis": "Both MOIS pages identify the respective archive as [별표], and each legal notice article2 refers its reference prices to the annex. Korean Copyright Act article7(2) expressly names national/local government notices as unprotected works under that Act.",
+    "blanketKogl1LicenseVerified": false,
+    "licenseClaimForCompleteZip": null,
+    "doNotInfer": [
+      "Do not declare all MOIS site content or every ZIP member KOGL Type1 from the site's general policy.",
+      "Do not apply the notice/annex provenance statement to unrelated third-party pictures, trademarks, bundled Office metadata, or third-party sources.",
+      "Do not declare a separately downloaded remote official hash match when only locally supplied bytes have been hashed.",
+      "Do not merge source licensing with separately acquired commercial/provider/global datasets."
+    ],
+    "recommendedAttribution": "행정안전부, 2026년 지방세 시가표준액 산정을 위한 기준가격 재산정 및 추가산정 고시 제2026-37호(2026.5.27.), [별표] 중 2026 차량.xlsx. 공식 게시일2026.7.6.; 사용자가 제공한 첨부 사본을 2026.11.7.(KST)에 보존·검증."
+  },
+  "currentNoticeSearch": {
+    "verifiedCurrentVersion": "행정안전부고시 제2026-37호",
+    "verifiedCurrentVersionEffectiveDate": "2026-05-27",
+    "laterCentralNoticeFound": false,
+    "sourcesChecked": "MOIS 훈령·예규·고시 board pages1–10 and query variants, official MOIS and law-center searches for 2026 tax reference prices, recalculation/additional calculation and corrections, current law-center admRulId80259 version.",
+    "searchLimitation": "No distinct later central notice was found. Board pages are not an atomic export: web snapshots show different totals and shifted page boundaries. This is a dated search result, not a guarantee that all future or unindexed corrections are absent.",
+    "boardEvidenceFile": "official-board-full-year-evidence.json",
+    "notConfusedWith": "2026-36 office-tel standard prices and municipal building/other-property notices are separate from the vehicle annex."
+  },
+  "validatedScope": {
+    "snapshotKind": "full_replacement_annex",
+    "vehicleSheets": 28,
+    "modificationSheets": 15,
+    "vehicleRows": 105383,
+    "numberedVehicleRows": 105382,
+    "vehicleRowsMissingSerial": 1,
+    "modificationRows": 431,
+    "allNonemptyWorkbookRows": 105998,
+    "formulaCells": 0,
+    "workbookPriceUnitRawEverySheet": "천원",
+    "scopeLimit": "Administrative tax-reference vehicle/type/name observations; no universal retail manufacturer/model/trim hierarchy or model-year relationship is supplied.",
+    "baselineComparison": "Against base105370 vehicle+431 modification rows:16 added vehicle rows,3 deleted vehicle rows,2 one-to-one price-only changes; modification rows unchanged.51048 other rows only moved in source row/serial. No ambiguous non-price identity group remained.",
+    "nullSerialPolicy": "The source-null serial on TESLA Model3 Premium Long Range RWD (foreign eco passenger type sheet, Excel row455) remains null and is retained as a vehicle observation. No invented serial.",
+    "comparisonDetailFile": "amended/complete-vehicle-and-modification-diff.json",
+    "independentEveryCellValidationFile": "amended/independent-openpyxl-validation.json"
+  },
+  "checkedOnUTC": "2026-11-06"
+}

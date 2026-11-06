@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "auditReport": "independent-source-data-audit.json.gz",
+  "preservedAuditBytesSha256": "20c214c8cb72030b8ad2f25590979186b04d14919c41fb3b20ac0bd3b2e2512e",
+  "auditScope": "Full original source fields and data types, Decimal price conversion and conflict-member preservation; prior work-directory generated database hash is retained in the preserved audit.",
+  "currentBuildScope": "Repository-path cleanup changes only manifests and derived provenance metadata. Current derived SQLite hash/integrity/acceptance are recorded separately in the amended build-summary/validation files.",
+  "rawZipAndJsonlBytesChanged": false,
+  "oldWorkspacePathsAreHistoricalAuditEvidence": true
+}

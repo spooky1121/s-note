@@ -1,0 +1,517 @@
+{
+  "schemaVersion": 1,
+  "comparisonPolicy": "Multiset exact-content matching excluding sheet-local serial, then one-to-one non-price matching. Numeric lexical equivalents compare by exact Decimal; original lexical text and types remain in both raw snapshots. No whitespace or maker/model name canonicalization. Source row/serial shifts alone are not additions/deletions. Ambiguous multi-price identities retain every raw candidate.",
+  "baseObservationRows": 105801,
+  "amendedObservationRows": 105814,
+  "baseVehicleObservationRows": 105370,
+  "amendedVehicleObservationRows": 105383,
+  "baseModificationObservationRows": 431,
+  "amendedModificationObservationRows": 431,
+  "unchangedContentRows": 105796,
+  "unchangedContentButSourceRowChanged": 51048,
+  "unchangedContentButSerialChanged": 51048,
+  "priceOnlyChanges": [
+    {
+      "before": {
+        "sourceSheet": "국산 3-1.화물(형식)",
+        "sourceRow": 8897,
+        "fieldsRaw": {
+          "연번": "8893",
+          "차종": "화물",
+          "제작사": "두성특장",
+          "차명": "두성49.4㎥사료호퍼트레일러",
+          "형식": "ZDBGAL01-49402",
+          "기준가격": "62650"
+        },
+        "fieldCellTypesRaw": {
+          "연번": "n",
+          "차종": "s",
+          "제작사": "s",
+          "차명": "s",
+          "형식": "s",
+          "기준가격": "n"
+        },
+        "amountUnitRaw": "천원"
+      },
+      "after": {
+        "sourceSheet": "국산 3-1.화물(형식)",
+        "sourceRow": 8898,
+        "fieldsRaw": {
+          "연번": "8894",
+          "차종": "화물",
+          "제작사": "두성특장",
+          "차명": "두성49.4㎥사료호퍼트레일러",
+          "형식": "ZDBGAL01-49402",
+          "기준가격": "55730"
+        },
+        "fieldCellTypesRaw": {
+          "연번": "n",
+          "차종": "s",
+          "제작사": "s",
+          "차명": "s",
+          "형식": "s",
+          "기준가격": "n"
+        },
+        "amountUnitRaw": "천원"
+      },
+      "matchingPolicy": "exact same sheet and every non-serial/non-price field including source cell types; one-to-one"
+    },
+    {
+      "before": {
+        "sourceSheet": "국산 3-1.화물(형식)",
+        "sourceRow": 27490,
+        "fieldsRaw": {
+          "연번": "27486",
+          "차종": "화물",
+          "제작사": "한국특장차",
+          "차명": "한특23㎥수소가스운송트레일러",
+          "형식": "KTTO2-4DNXM",
+          "기준가격": "174600"
+        },
+        "fieldCellTypesRaw": {
+          "연번": "n",
+          "차종": "s",
+          "제작사": "s",
+          "차명": "s",
+          "형식": "s",
+          "기준가격": "n"
+        },
+        "amountUnitRaw": "천원"
+      },
+      "after": {
+        "sourceSheet": "국산 3-1.화물(형식)",
+        "sourceRow": 27491,
+        "fieldsRaw": {
+          "연번": "27487",
+          "차종": "화물",
+          "제작사": "한국특장차",
+          "차명": "한특23㎥수소가스운송트레일러",
+          "형식": "KTTO2-4DNXM",
+          "기준가격": "25000"
+        },
+        "fieldCellTypesRaw": {
+          "연번": "n",
+          "차종": "s",
+          "제작사": "s",
+          "차명": "s",
+          "형식": "s",
+          "기준가격": "n"
+        },
+        "amountUnitRaw": "천원"
+      },
+      "matchingPolicy": "exact same sheet and every non-serial/non-price field including source cell types; one-to-one"
+    }
+  ],
+  "ambiguousPriceIdentityGroups": [],
+  "addedRowsUnmatched": [
+    {
+      "sourceSheet": "국산 1-1.승용(형식)",
+      "sourceRow": 2995,
+      "fieldsRaw": {
+        "연번": "2991",
+        "차종": "승용",
+        "제작사": "기아",
+        "차명": "쏘렌토",
+        "형식": "MQ45BGH-L2-H1Y",
+        "기준가격": "32040"
+      },
+      "fieldCellTypesRaw": {
+        "연번": "n",
+        "차종": "s",
+        "제작사": "s",
+        "차명": "s",
+        "형식": "s",
+        "기준가격": "n"
+      },
+      "amountUnitRaw": "천원"
+    },
+    {
+      "sourceSheet": "국산 1-1.승용(형식)",
+      "sourceRow": 12442,
+      "fieldsRaw": {
+        "연번": "12438",
+        "차종": "승용",
+        "제작사": "현대",
+        "차명": "캐스퍼",
+        "형식": "AX15CAE-T7-G3A",
+        "기준가격": "16360"
+      },
+      "fieldCellTypesRaw": {
+        "연번": "n",
+        "차종": "s",
+        "제작사": "s",
+        "차명": "s",
+        "형식": "s",
+        "기준가격": "n"
+      },
+      "amountUnitRaw": "천원"
+    },
+    {
+      "sourceSheet": "국산 1-3.승용(친환경)_형식",
+      "sourceRow": 600,
+      "fieldsRaw": {
+        "연번": "595",
+        "제작사": "기아",
+        "차명": "쏘렌토 하이브리드",
+        "형식": "MQ4H5GDH-L8-G5A",
+        "연료원": "하이브리드",
+        "기준가격": "37430"
+      },
+      "fieldCellTypesRaw": {
+        "연번": "n",
+        "제작사": "s",
+        "차명": "s",
+        "형식": "s",
+        "연료원": "s",
+        "기준가격": "n"
+      },
+      "amountUnitRaw": "천원"
+    },
+    {
+      "sourceSheet": "국산 2-1.승합(형식)",
+      "sourceRow": 5942,
+      "fieldsRaw": {
+        "연번": "5938",
+        "차종": "승합",
+        "제작사": "현대",
+        "차명": "스타리아",
+        "형식": "US453BG-C7DF-G4A",
+        "기준가격": "28300"
+      },
+      "fieldCellTypesRaw": {
+        "연번": "n",
+        "차종": "s",
+        "제작사": "s",
+        "차명": "s",
+        "형식": "s",
+        "기준가격": "n"
+      },
+      "amountUnitRaw": "천원"
+    },
+    {
+      "sourceSheet": "국산 3-1.화물(형식)",
+      "sourceRow": 4273,
+      "fieldsRaw": {
+        "연번": "4269",
+        "차종": "화물",
+        "제작사": "기아",
+        "차명": "봉고Ⅲ 하이내장차",
+        "형식": "PU12T8BV-PDVS-G5A",
+        "기준가격": "23920"
+      },
+      "fieldCellTypesRaw": {
+        "연번": "n",
+        "차종": "s",
+        "제작사": "s",
+        "차명": "s",
+        "형식": "s",
+        "기준가격": "n"
+      },
+      "amountUnitRaw": "천원"
+    },
+    {
+      "sourceSheet": "국산 3-1.화물(형식)",
+      "sourceRow": 34197,
+      "fieldsRaw": {
+        "연번": "34193",
+        "차종": "승합",
+        "제작사": "현대",
+        "차명": "포터Ⅱ (PORTERⅡ)",
+        "형식": "HRE8BZ-G5A",
+        "기준가격": "19300"
+      },
+      "fieldCellTypesRaw": {
+        "연번": "n",
+        "차종": "s",
+        "제작사": "s",
+        "차명": "s",
+        "형식": "s",
+        "기준가격": "n"
+      },
+      "amountUnitRaw": "천원"
+    },
+    {
+      "sourceSheet": "국산 3-1.화물(형식)",
+      "sourceRow": 34405,
+      "fieldsRaw": {
+        "연번": "34401",
+        "차종": "승합",
+        "제작사": "현대",
+        "차명": "포터Ⅱ (PORTERⅡ)",
+        "형식": "HRL8BZ-G5A",
+        "기준가격": "19450"
+      },
+      "fieldCellTypesRaw": {
+        "연번": "n",
+        "차종": "s",
+        "제작사": "s",
+        "차명": "s",
+        "형식": "s",
+        "기준가격": "n"
+      },
+      "amountUnitRaw": "천원"
+    },
+    {
+      "sourceSheet": "국산 3-1.화물(형식)",
+      "sourceRow": 35191,
+      "fieldsRaw": {
+        "연번": "35187",
+        "차종": "화물",
+        "제작사": "현대",
+        "차명": "포터Ⅱ 냉동탑차",
+        "형식": "HR-3NRSKKA-26A1-G5A",
+        "기준가격": "26310"
+      },
+      "fieldCellTypesRaw": {
+        "연번": "n",
+        "차종": "s",
+        "제작사": "s",
+        "차명": "s",
+        "형식": "s",
+        "기준가격": "n"
+      },
+      "amountUnitRaw": "천원"
+    },
+    {
+      "sourceSheet": "국산 3-1.화물(형식)",
+      "sourceRow": 35907,
+      "fieldsRaw": {
+        "연번": "35903",
+        "차종": "화물",
+        "제작사": "현대",
+        "차명": "포터Ⅱ 하이내장탑차",
+        "형식": "HR-3HDSKKA-26A1-G5A",
+        "기준가격": "23420"
+      },
+      "fieldCellTypesRaw": {
+        "연번": "n",
+        "차종": "s",
+        "제작사": "s",
+        "차명": "s",
+        "형식": "s",
+        "기준가격": "n"
+      },
+      "amountUnitRaw": "천원"
+    },
+    {
+      "sourceSheet": "외산 1-3.승용(친환경)_형식",
+      "sourceRow": 113,
+      "fieldsRaw": {
+        "연번": "108",
+        "제작사": "BMW",
+        "차명": "i5 eDrive40",
+        "형식": "61HG",
+        "연료원": "전기",
+        "기준가격": "68850"
+      },
+      "fieldCellTypesRaw": {
+        "연번": "n",
+        "제작사": "s",
+        "차명": "s",
+        "형식": "s",
+        "연료원": "s",
+        "기준가격": "n"
+      },
+      "amountUnitRaw": "천원"
+    },
+    {
+      "sourceSheet": "외산 1-3.승용(친환경)_형식",
+      "sourceRow": 178,
+      "fieldsRaw": {
+        "연번": "173",
+        "제작사": "BYD Auto",
+        "차명": "BYD DOLPHIN",
+        "형식": "EM2EAH",
+        "연료원": "전기",
+        "기준가격": "19870"
+      },
+      "fieldCellTypesRaw": {
+        "연번": "n",
+        "제작사": "s",
+        "차명": "s",
+        "형식": "s",
+        "연료원": "s",
+        "기준가격": "n"
+      },
+      "amountUnitRaw": "천원"
+    },
+    {
+      "sourceSheet": "외산 1-3.승용(친환경)_형식",
+      "sourceRow": 252,
+      "fieldsRaw": {
+        "연번": "247",
+        "제작사": "LEXUS",
+        "차명": "RX350h",
+        "형식": "A25A",
+        "연료원": "하이브리드",
+        "기준가격": "71660"
+      },
+      "fieldCellTypesRaw": {
+        "연번": "n",
+        "제작사": "s",
+        "차명": "s",
+        "형식": "s",
+        "연료원": "s",
+        "기준가격": "n"
+      },
+      "amountUnitRaw": "천원"
+    },
+    {
+      "sourceSheet": "외산 1-3.승용(친환경)_형식",
+      "sourceRow": 455,
+      "fieldsRaw": {
+        "연번": null,
+        "제작사": "TESLA",
+        "차명": "Model 3 Premium Long Range RWD",
+        "형식": "3",
+        "연료원": "전기",
+        "기준가격": "42970"
+      },
+      "fieldCellTypesRaw": {
+        "연번": null,
+        "제작사": "s",
+        "차명": "s",
+        "형식": "n",
+        "연료원": "s",
+        "기준가격": "n"
+      },
+      "amountUnitRaw": "천원"
+    },
+    {
+      "sourceSheet": "외산 1-3.승용(친환경)_형식",
+      "sourceRow": 476,
+      "fieldsRaw": {
+        "연번": "470",
+        "제작사": "TESLA",
+        "차명": "Model Y L AWD",
+        "형식": "3",
+        "연료원": "전기",
+        "기준가격": "56760"
+      },
+      "fieldCellTypesRaw": {
+        "연번": "n",
+        "제작사": "s",
+        "차명": "s",
+        "형식": "n",
+        "연료원": "s",
+        "기준가격": "n"
+      },
+      "amountUnitRaw": "천원"
+    },
+    {
+      "sourceSheet": "외산 1-3.승용(친환경)_형식",
+      "sourceRow": 478,
+      "fieldsRaw": {
+        "연번": "472",
+        "제작사": "TESLA",
+        "차명": "Model Y Premium RWD ",
+        "형식": "3",
+        "연료원": "전기",
+        "기준가격": "40540"
+      },
+      "fieldCellTypesRaw": {
+        "연번": "n",
+        "제작사": "s",
+        "차명": "s",
+        "형식": "n",
+        "연료원": "s",
+        "기준가격": "n"
+      },
+      "amountUnitRaw": "천원"
+    },
+    {
+      "sourceSheet": "외산 1-3.승용(친환경)_형식",
+      "sourceRow": 479,
+      "fieldsRaw": {
+        "연번": "473",
+        "제작사": "TESLA",
+        "차명": "Model Y Premium Long Range AWD",
+        "형식": "3",
+        "연료원": "전기",
+        "기준가격": "51890"
+      },
+      "fieldCellTypesRaw": {
+        "연번": "n",
+        "제작사": "s",
+        "차명": "s",
+        "형식": "n",
+        "연료원": "s",
+        "기준가격": "n"
+      },
+      "amountUnitRaw": "천원"
+    }
+  ],
+  "deletedRowsUnmatched": [
+    {
+      "sourceSheet": "외산 1-1.승용(형식)",
+      "sourceRow": 436,
+      "fieldsRaw": {
+        "연번": "432",
+        "차종": "승용",
+        "제작사": "BMW",
+        "차명": "X6 xDrive40i",
+        "형식": "CY61",
+        "기준가격": "106000"
+      },
+      "fieldCellTypesRaw": {
+        "연번": "n",
+        "차종": "s",
+        "제작사": "s",
+        "차명": "s",
+        "형식": "s",
+        "기준가격": "n"
+      },
+      "amountUnitRaw": "천원"
+    },
+    {
+      "sourceSheet": "외산 1-3.승용(친환경)_형식",
+      "sourceRow": 438,
+      "fieldsRaw": {
+        "연번": "433",
+        "제작사": "PORSCHE",
+        "차명": "Cayenne E-Hybrid",
+        "형식": "9YA",
+        "연료원": "하이브리드",
+        "기준가격": "156870"
+      },
+      "fieldCellTypesRaw": {
+        "연번": "n",
+        "제작사": "s",
+        "차명": "s",
+        "형식": "s",
+        "연료원": "s",
+        "기준가격": "n"
+      },
+      "amountUnitRaw": "천원"
+    },
+    {
+      "sourceSheet": "외산 1-3.승용(친환경)_형식",
+      "sourceRow": 439,
+      "fieldsRaw": {
+        "연번": "434",
+        "제작사": "PORSCHE",
+        "차명": "Cayenne E-Hybrid Coupe",
+        "형식": "9YA",
+        "연료원": "하이브리드",
+        "기준가격": "160150"
+      },
+      "fieldCellTypesRaw": {
+        "연번": "n",
+        "제작사": "s",
+        "차명": "s",
+        "형식": "s",
+        "연료원": "s",
+        "기준가격": "n"
+      },
+      "amountUnitRaw": "천원"
+    }
+  ],
+  "counts": {
+    "priceOnlyChangeRows": 2,
+    "ambiguousGroups": 0,
+    "ambiguousOldRows": 0,
+    "ambiguousNewRows": 0,
+    "addedRowsUnmatched": 16,
+    "deletedRowsUnmatched": 3
+  }
+}

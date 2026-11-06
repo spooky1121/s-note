@@ -1,0 +1,738 @@
+{
+  "schemaVersion": 1,
+  "vehicleDataRows": 105370,
+  "uniqueRawManufacturerNames": 2065,
+  "uniqueOriginCategoryMakerFieldNameTuples": 52534,
+  "uniqueRawVehicleNameStrings": 49791,
+  "topManufacturerRawCounts": [
+    [
+      "현대",
+      30074
+    ],
+    [
+      "기아",
+      16476
+    ],
+    [
+      "대우",
+      3053
+    ],
+    [
+      "한국쓰리축",
+      2848
+    ],
+    [
+      "BMW",
+      1850
+    ],
+    [
+      "한국상용트럭",
+      1759
+    ],
+    [
+      "타타대우상용차",
+      1630
+    ],
+    [
+      "케이지모빌리티",
+      1626
+    ],
+    [
+      "한국토미",
+      1307
+    ],
+    [
+      "MERCEDES-BENZ",
+      1197
+    ],
+    [
+      "한성특장",
+      1131
+    ],
+    [
+      "대우버스",
+      907
+    ],
+    [
+      "한국특장기술",
+      906
+    ],
+    [
+      "기타",
+      901
+    ],
+    [
+      "HONDA",
+      740
+    ],
+    [
+      "한국쓰리축공업",
+      706
+    ],
+    [
+      "쌍용",
+      665
+    ],
+    [
+      "자일대우버스",
+      627
+    ],
+    [
+      "함코",
+      594
+    ],
+    [
+      "AUDI",
+      568
+    ],
+    [
+      "한국지엠",
+      528
+    ],
+    [
+      "한중특장",
+      497
+    ],
+    [
+      "HARLEY-DAVIDSON",
+      458
+    ],
+    [
+      "FORD",
+      452
+    ],
+    [
+      "르노삼성",
+      445
+    ],
+    [
+      "광림",
+      433
+    ],
+    [
+      "아시아",
+      419
+    ],
+    [
+      "삼부",
+      411
+    ],
+    [
+      "YAMAHA",
+      394
+    ],
+    [
+      "SUZUKI",
+      390
+    ]
+  ],
+  "requiredFieldEmptyCounts": {
+    "형식": 1,
+    "차종": 1
+  },
+  "requiredFieldEmptyExamples": {
+    "형식": [
+      {
+        "sourceSheet": "외산 1-1.승용(형식)",
+        "sourceRow": 3773,
+        "fieldsRaw": {
+          "연번": "3769",
+          "차종": "승용",
+          "제작사": "에이치케이모터즈 주식회사",
+          "차명": "부가티시론(CHIRON)",
+          "형식": null,
+          "기준가격": "4276360"
+        }
+      }
+    ],
+    "차종": [
+      {
+        "sourceSheet": "외산 4-1.이륜(형식)",
+        "sourceRow": 1118,
+        "fieldsRaw": {
+          "연번": "1114",
+          "차종": null,
+          "제작사": "KAWASAKI",
+          "차명": "ELIMINATOR",
+          "형식": "EL450A",
+          "기준가격": "7520"
+        }
+      }
+    ]
+  },
+  "nonPlainNumericPriceCount": 1,
+  "nonPlainNumericPriceExamples": [
+    {
+      "sourceSheet": "국산 4-1.이륜(형식)",
+      "sourceRow": 198,
+      "priceRaw": " 2,590",
+      "priceCodepoints": [
+        "U+00A0",
+        "U+0032",
+        "U+002C",
+        "U+0035",
+        "U+0039",
+        "U+0030"
+      ]
+    }
+  ],
+  "serialDuplicateCountsBySheet": {
+    "국산 1-1.승용(형식)": 0,
+    "외산 1-1.승용(형식)": 0,
+    "국산 1-2.승용(기종)": 0,
+    "외산 1-2.승용(기종)": 0,
+    "국산 1-3.승용(친환경)_형식": 0,
+    "외산 1-3.승용(친환경)_형식": 0,
+    "국산 1-3.승용(친환경)_기종": 0,
+    "외산 1-3.승용(친환경)_기종": 0,
+    "국산 2-1.승합(형식)": 0,
+    "외산 2-1.승합(형식)": 0,
+    "국산 2-2.승합(기종)": 0,
+    "외산 2-2.승합(기종)": 0,
+    "국산 2-3.승합(친환경)_형식": 0,
+    "외산 2-3.승합(친환경)_형식만있음": 0,
+    "국산 2-3.승합(친환경)_기종": 0,
+    "국산 3-1.화물(형식)": 0,
+    "외산 3-1.화물(형식)": 0,
+    "국산 3-2.화물(기종)": 0,
+    "외산 3-2.화물(기종)": 0,
+    "국산 3-3.화물(친환경)_형식": 0,
+    "외산 3-3.화물(친환경)_형식": 0,
+    "국산 3-3.화물(친환경)_기종": 0,
+    "국산 4-1.이륜(형식)": 0,
+    "외산 4-1.이륜(형식)": 0,
+    "외산 4-2.이륜(기종)": 0,
+    "국산 4-2.이륜(기종)": 0,
+    "국산 4-3.이륜(친환경)_형식만있음": 0,
+    "외산 4-3.이륜(친환경)_형식만있음": 0
+  },
+  "interpretation": "가격은 지방세 기준가격의 천원 원문이다. 숫자로 강제 변환하거나 판매가로 사용하지 않음. 빈 필드·병합 헤더 위치·중복된 이름을 보완/삭제하지 않음. 미확인 소매 등급·연식·부모 코드는 생성하지 않음.",
+  "numericCellCountsInTextualNameFields": {
+    "차명": 3,
+    "형식": 180
+  },
+  "numericCellExamples": [
+    {
+      "sourceSheet": "외산 1-1.승용(형식)",
+      "sourceRow": 450,
+      "column": "D",
+      "fieldRaw": "차명",
+      "cellType": "n",
+      "valueRaw": "120"
+    },
+    {
+      "sourceSheet": "외산 1-1.승용(형식)",
+      "sourceRow": 1500,
+      "column": "D",
+      "fieldRaw": "차명",
+      "cellType": "n",
+      "valueRaw": "500"
+    },
+    {
+      "sourceSheet": "외산 1-1.승용(형식)",
+      "sourceRow": 2016,
+      "column": "E",
+      "fieldRaw": "형식",
+      "cellType": "n",
+      "valueRaw": "834"
+    },
+    {
+      "sourceSheet": "외산 1-1.승용(형식)",
+      "sourceRow": 2017,
+      "column": "E",
+      "fieldRaw": "형식",
+      "cellType": "n",
+      "valueRaw": "834"
+    },
+    {
+      "sourceSheet": "외산 1-1.승용(형식)",
+      "sourceRow": 2020,
+      "column": "E",
+      "fieldRaw": "형식",
+      "cellType": "n",
+      "valueRaw": "834"
+    },
+    {
+      "sourceSheet": "외산 1-1.승용(형식)",
+      "sourceRow": 2021,
+      "column": "E",
+      "fieldRaw": "형식",
+      "cellType": "n",
+      "valueRaw": "834"
+    },
+    {
+      "sourceSheet": "외산 1-1.승용(형식)",
+      "sourceRow": 2033,
+      "column": "E",
+      "fieldRaw": "형식",
+      "cellType": "n",
+      "valueRaw": "724"
+    },
+    {
+      "sourceSheet": "외산 1-1.승용(형식)",
+      "sourceRow": 2035,
+      "column": "E",
+      "fieldRaw": "형식",
+      "cellType": "n",
+      "valueRaw": "724"
+    },
+    {
+      "sourceSheet": "외산 1-1.승용(형식)",
+      "sourceRow": 2036,
+      "column": "E",
+      "fieldRaw": "형식",
+      "cellType": "n",
+      "valueRaw": "724"
+    },
+    {
+      "sourceSheet": "외산 1-1.승용(형식)",
+      "sourceRow": 2353,
+      "column": "E",
+      "fieldRaw": "형식",
+      "cellType": "n",
+      "valueRaw": "203084"
+    },
+    {
+      "sourceSheet": "외산 1-1.승용(형식)",
+      "sourceRow": 2354,
+      "column": "E",
+      "fieldRaw": "형식",
+      "cellType": "n",
+      "valueRaw": "209361"
+    },
+    {
+      "sourceSheet": "외산 1-1.승용(형식)",
+      "sourceRow": 2355,
+      "column": "E",
+      "fieldRaw": "형식",
+      "cellType": "n",
+      "valueRaw": "219376"
+    }
+  ],
+  "longDecimalTaxPriceCount": 2,
+  "longDecimalTaxPriceExamples": [
+    {
+      "sourceSheet": "국산 3-1.화물(형식)",
+      "sourceRow": 10090,
+      "priceRaw": "3499.9999999999995",
+      "fieldsRaw": {
+        "연번": "10086",
+        "차종": "화물",
+        "제작사": "미도테크",
+        "차명": "미도테크보트트레일러",
+        "형식": "MDT-6000",
+        "기준가격": "3499.9999999999995"
+      },
+      "policy": "원시 십진 문자열을 유지하며 int 절삭·판매가격 자동 환산에 사용하지 않음."
+    },
+    {
+      "sourceSheet": "국산 3-1.화물(형식)",
+      "sourceRow": 10091,
+      "priceRaw": "3899.9999999999995",
+      "fieldsRaw": {
+        "연번": "10087",
+        "차종": "화물",
+        "제작사": "미도테크",
+        "차명": "미도테크보트트레일러",
+        "형식": "MDT-6500",
+        "기준가격": "3899.9999999999995"
+      },
+      "policy": "원시 십진 문자열을 유지하며 int 절삭·판매가격 자동 환산에 사용하지 않음."
+    }
+  ],
+  "rawVehicleCategoryCounts": {
+    "승용": 17493,
+    "승합": 9964,
+    "특수": 4282,
+    "화물": 38601,
+    "이륜": 2588,
+    "null": 1
+  },
+  "fuelFieldPresentRows": 3185,
+  "fuelFieldAbsentRows": 102185,
+  "fuelRawCounts": {
+    "전기": 1146,
+    "하이브리드": 1793,
+    "수소": 77,
+    "하이브리드(경유+전기)": 47,
+    "CNG": 122
+  },
+  "repeatedSheetMakerNameTypeKeys": 15,
+  "repeatedKeysWithDifferentTaxPrices": 15,
+  "repeatedKeyExamples": [
+    {
+      "sourceSheet": "국산 1-1.승용(형식)",
+      "manufacturerRaw": "케이지모빌리티",
+      "vehicleNameRaw": "코란도투리스모",
+      "typeRaw": "A9DL22A4-01H",
+      "occurrences": [
+        {
+          "sourceRow": 6722,
+          "priceRaw": "27340",
+          "serialRaw": "6718"
+        },
+        {
+          "sourceRow": 6796,
+          "priceRaw": "27560",
+          "serialRaw": "6792"
+        }
+      ]
+    },
+    {
+      "sourceSheet": "외산 1-1.승용(형식)",
+      "manufacturerRaw": "BMW",
+      "vehicleNameRaw": "X6 xDrive40i",
+      "typeRaw": "CY61",
+      "occurrences": [
+        {
+          "sourceRow": 436,
+          "priceRaw": "106000",
+          "serialRaw": "432"
+        },
+        {
+          "sourceRow": 1157,
+          "priceRaw": "103600",
+          "serialRaw": "1153"
+        }
+      ]
+    },
+    {
+      "sourceSheet": "외산 1-3.승용(친환경)_형식",
+      "manufacturerRaw": "AUDI",
+      "vehicleNameRaw": "Q7 45 TDI Quattro",
+      "typeRaw": "4M",
+      "occurrences": [
+        {
+          "sourceRow": 33,
+          "priceRaw": "85470",
+          "serialRaw": "28"
+        },
+        {
+          "sourceRow": 34,
+          "priceRaw": "78990",
+          "serialRaw": "29"
+        }
+      ]
+    },
+    {
+      "sourceSheet": "외산 1-3.승용(친환경)_형식",
+      "manufacturerRaw": "LANDROVER",
+      "vehicleNameRaw": "RangeRover D350 LWB",
+      "typeRaw": "LK-LWB",
+      "occurrences": [
+        {
+          "sourceRow": 221,
+          "priceRaw": "192000",
+          "serialRaw": "216"
+        },
+        {
+          "sourceRow": 222,
+          "priceRaw": "204360",
+          "serialRaw": "217"
+        }
+      ]
+    },
+    {
+      "sourceSheet": "외산 1-3.승용(친환경)_형식",
+      "manufacturerRaw": "MERCEDES-BENZ",
+      "vehicleNameRaw": "CLS450 4Matic",
+      "typeRaw": "257359",
+      "occurrences": [
+        {
+          "sourceRow": 278,
+          "priceRaw": "96000",
+          "serialRaw": "273"
+        },
+        {
+          "sourceRow": 339,
+          "priceRaw": "96240",
+          "serialRaw": "334"
+        }
+      ]
+    },
+    {
+      "sourceSheet": "외산 1-3.승용(친환경)_형식",
+      "manufacturerRaw": "MERCEDES-BENZ",
+      "vehicleNameRaw": "E300 e 4MATIC",
+      "typeRaw": "213054",
+      "occurrences": [
+        {
+          "sourceRow": 283,
+          "priceRaw": "72480",
+          "serialRaw": "278"
+        },
+        {
+          "sourceRow": 358,
+          "priceRaw": "72470",
+          "serialRaw": "353"
+        }
+      ]
+    },
+    {
+      "sourceSheet": "외산 1-3.승용(친환경)_형식",
+      "manufacturerRaw": "PORSCHE",
+      "vehicleNameRaw": "Cayenne E-Hybrid",
+      "typeRaw": "9YA",
+      "occurrences": [
+        {
+          "sourceRow": 417,
+          "priceRaw": "110200",
+          "serialRaw": "412"
+        },
+        {
+          "sourceRow": 438,
+          "priceRaw": "156870",
+          "serialRaw": "433"
+        }
+      ]
+    },
+    {
+      "sourceSheet": "외산 1-3.승용(친환경)_형식",
+      "manufacturerRaw": "PORSCHE",
+      "vehicleNameRaw": "Cayenne E-Hybrid Coupe",
+      "typeRaw": "9YA",
+      "occurrences": [
+        {
+          "sourceRow": 418,
+          "priceRaw": "115380",
+          "serialRaw": "413"
+        },
+        {
+          "sourceRow": 439,
+          "priceRaw": "160150",
+          "serialRaw": "434"
+        }
+      ]
+    },
+    {
+      "sourceSheet": "외산 1-3.승용(친환경)_형식",
+      "manufacturerRaw": "PORSCHE",
+      "vehicleNameRaw": "Panamera Turbo S E-Hybrid",
+      "typeRaw": "971",
+      "occurrences": [
+        {
+          "sourceRow": 424,
+          "priceRaw": "274460",
+          "serialRaw": "419"
+        },
+        {
+          "sourceRow": 447,
+          "priceRaw": "278190",
+          "serialRaw": "442"
+        }
+      ]
+    },
+    {
+      "sourceSheet": "국산 2-2.승합(기종)",
+      "manufacturerRaw": "현대",
+      "vehicleNameRaw": "카운티디젤4.0(장축)스페셜자가용(25인승)(M/T)",
+      "typeRaw": null,
+      "occurrences": [
+        {
+          "sourceRow": 3268,
+          "priceRaw": "74700",
+          "serialRaw": "3264"
+        },
+        {
+          "sourceRow": 3269,
+          "priceRaw": "78520",
+          "serialRaw": "3265"
+        }
+      ]
+    },
+    {
+      "sourceSheet": "국산 3-1.화물(형식)",
+      "manufacturerRaw": "한국특장차",
+      "vehicleNameRaw": "한특40피트평판트레일러",
+      "typeRaw": "KFBO3-4DLXF",
+      "occurrences": [
+        {
+          "sourceRow": 27623,
+          "priceRaw": "39300",
+          "serialRaw": "27619"
+        },
+        {
+          "sourceRow": 27625,
+          "priceRaw": "37610",
+          "serialRaw": "27621"
+        }
+      ]
+    },
+    {
+      "sourceSheet": "외산 3-1.화물(형식)",
+      "manufacturerRaw": "한성특장",
+      "vehicleNameRaw": "한성6.5톤카고",
+      "typeRaw": "HS6.5T-AG78",
+      "occurrences": [
+        {
+          "sourceRow": 4757,
+          "priceRaw": "95810",
+          "serialRaw": "4753"
+        },
+        {
+          "sourceRow": 4769,
+          "priceRaw": "93000",
+          "serialRaw": "4765"
+        }
+      ]
+    }
+  ],
+  "deduplicationPolicy": "전체 원문행을 보존했다. 동일한 제작사·차명·형식이라도 기준가격이 다르면 별도 원문 사실행이며 삭제/병합하지 않는다.",
+  "sheetClassificationPolicy": "승용/승합/화물/이륜 시트명 분류는 별도 문맥이다. 원문 차종 셀 특수 등을 시트 분류로 덮어쓰지 않았다.",
+  "crossSheetSameClassKindMakerNameTypeRepeatGroups": 47,
+  "crossSheetRepeatedKeyDifferentTaxPrices": 44,
+  "crossSheetRepeatedKeyExamples": [
+    [
+      {
+        "sourceSheet": "국산 1-1.승용(형식)",
+        "sourceRow": 6722,
+        "priceRaw": "27340"
+      },
+      {
+        "sourceSheet": "국산 1-1.승용(형식)",
+        "sourceRow": 6796,
+        "priceRaw": "27560"
+      }
+    ],
+    [
+      {
+        "sourceSheet": "국산 1-1.승용(형식)",
+        "sourceRow": 8116,
+        "priceRaw": "93900"
+      },
+      {
+        "sourceSheet": "국산 1-3.승용(친환경)_형식",
+        "sourceRow": 1012,
+        "priceRaw": "87310"
+      }
+    ],
+    [
+      {
+        "sourceSheet": "외산 1-1.승용(형식)",
+        "sourceRow": 436,
+        "priceRaw": "106000"
+      },
+      {
+        "sourceSheet": "외산 1-1.승용(형식)",
+        "sourceRow": 1157,
+        "priceRaw": "103600"
+      }
+    ],
+    [
+      {
+        "sourceSheet": "외산 1-1.승용(형식)",
+        "sourceRow": 595,
+        "priceRaw": "58450"
+      },
+      {
+        "sourceSheet": "외산 1-3.승용(친환경)_형식",
+        "sourceRow": 69,
+        "priceRaw": "59460"
+      }
+    ],
+    [
+      {
+        "sourceSheet": "외산 1-1.승용(형식)",
+        "sourceRow": 2115,
+        "priceRaw": "216000"
+      },
+      {
+        "sourceSheet": "외산 1-3.승용(친환경)_형식",
+        "sourceRow": 226,
+        "priceRaw": "224030"
+      }
+    ],
+    [
+      {
+        "sourceSheet": "외산 1-1.승용(형식)",
+        "sourceRow": 2116,
+        "priceRaw": "202790"
+      },
+      {
+        "sourceSheet": "외산 1-3.승용(친환경)_형식",
+        "sourceRow": 227,
+        "priceRaw": "208590"
+      }
+    ],
+    [
+      {
+        "sourceSheet": "외산 1-1.승용(형식)",
+        "sourceRow": 3201,
+        "priceRaw": "111170"
+      },
+      {
+        "sourceSheet": "외산 1-3.승용(친환경)_형식",
+        "sourceRow": 422,
+        "priceRaw": "95100"
+      }
+    ],
+    [
+      {
+        "sourceSheet": "외산 1-1.승용(형식)",
+        "sourceRow": 3386,
+        "priceRaw": "41720"
+      },
+      {
+        "sourceSheet": "외산 1-3.승용(친환경)_형식",
+        "sourceRow": 480,
+        "priceRaw": "41210"
+      }
+    ],
+    [
+      {
+        "sourceSheet": "외산 1-1.승용(형식)",
+        "sourceRow": 3387,
+        "priceRaw": "38450"
+      },
+      {
+        "sourceSheet": "외산 1-3.승용(친환경)_형식",
+        "sourceRow": 481,
+        "priceRaw": "36840"
+      }
+    ],
+    [
+      {
+        "sourceSheet": "외산 1-1.승용(형식)",
+        "sourceRow": 3388,
+        "priceRaw": "38630"
+      },
+      {
+        "sourceSheet": "외산 1-3.승용(친환경)_형식",
+        "sourceRow": 482,
+        "priceRaw": "37380"
+      }
+    ],
+    [
+      {
+        "sourceSheet": "외산 1-1.승용(형식)",
+        "sourceRow": 3392,
+        "priceRaw": "26900"
+      },
+      {
+        "sourceSheet": "외산 1-3.승용(친환경)_형식",
+        "sourceRow": 483,
+        "priceRaw": "32250"
+      }
+    ],
+    [
+      {
+        "sourceSheet": "외산 1-1.승용(형식)",
+        "sourceRow": 3433,
+        "priceRaw": "29720"
+      },
+      {
+        "sourceSheet": "외산 1-3.승용(친환경)_형식",
+        "sourceRow": 489,
+        "priceRaw": "29550"
+      }
+    ]
+  ],
+  "crossSheetRepeatedKeyDefinition": [
+    "시트명 차종분류",
+    "표종류 형식/기종",
+    "제작사 원문과 셀 자료형",
+    "차명/기종명 원문과 셀 자료형",
+    "형식 원문과 셀 자료형"
+  ],
+  "rawCellTypePolicy": "fieldCellTypesRaw preserves original OOXML n/s cell types. A numeric 120 and text 120 are not automatically merged as identical source keys."
+}

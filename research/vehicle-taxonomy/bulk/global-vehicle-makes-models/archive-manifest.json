@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "repository": "gor3a/vehicle-makes-models",
+  "commit": "ee99776470a45214bf524cdfe22e5dbf4bd67f93",
+  "retrievedOn": "2026-11-06",
+  "market": "GLOBAL_UNVERIFIED_FOR_KR",
+  "license": "ODbL-1.0",
+  "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+  "attribution": [
+    "vehicle-makes-models project, Mina Sameh",
+    "autoevolution.com (upstream factual source)"
+  ],
+  "changes": "Lossless gzip packaging only (mtime=0); original data bytes unchanged. No Korean-market or grade mapping inferred.",
+  "counts": {
+    "groups": 164,
+    "makes": 164,
+    "models": 2649,
+    "generations": 7217,
+    "engines": 30535
+  },
+  "completeWithinDownloadedSnapshot": true,
+  "completeForKoreanMarket": false,
+  "files": [
+    {
+      "archive": "all.json.gz",
+      "archiveBytes": 3614601,
+      "archiveSha256": "91171c772fa9620847ef7fe778d07dec699641b217fa2bf017b3879a692e44e5",
+      "original": {
+        "path": "data/json/all.json",
+        "bytes": 84443772,
+        "sha256": "f1bdfb03dbd84f74e5111ac1eab06e53ccd3d09aded3c2c98f38187bd561902a",
+        "sourceUrl": "https://raw.githubusercontent.com/gor3a/vehicle-makes-models/ee99776470a45214bf524cdfe22e5dbf4bd67f93/data/json/all.json"
+      }
+    },
+    {
+      "archive": "engines.csv.gz",
+      "archiveBytes": 619113,
+      "archiveSha256": "f6b699973a32daba882e742b0081b4d83a18509bb6213c2a4c3a0bf79adc31aa",
+      "original": {
+        "path": "data/csv/engines.csv",
+        "bytes": 5286009,
+        "sha256": "6a2283e932beb936f7c1128356584a6ba9401b9144de3b8a126bf5bf10127343",
+        "sourceUrl": "https://raw.githubusercontent.com/gor3a/vehicle-makes-models/ee99776470a45214bf524cdfe22e5dbf4bd67f93/data/csv/engines.csv"
+      }
+    },
+    {
+      "archive": "makes-models.csv.gz",
+      "archiveBytes": 21216,
+      "archiveSha256": "d0e56707661cc0b409f6bbd6218700588cb9c8828074ea099ae4a5e45100b215",
+      "original": {
+        "path": "data/csv/makes-models.csv",
+        "bytes": 86919,
+        "sha256": "7db36a8d9fe96d70f7f3aca8ef422a23f20be62ad3c0ff0344ca32e4d4fb54cd",
+        "sourceUrl": "https://raw.githubusercontent.com/gor3a/vehicle-makes-models/ee99776470a45214bf524cdfe22e5dbf4bd67f93/data/csv/makes-models.csv"
+      }
+    }
+  ],
+  "licenseAndDescriptionFiles": [
+    {
+      "path": "LICENSE-DATA",
+      "bytes": 1648,
+      "sha256": "929002c598eb35029cbcd8fc40a9c47626da4d13eda06bba25cbafba531b8cb8",
+      "sourceUrl": "https://raw.githubusercontent.com/gor3a/vehicle-makes-models/ee99776470a45214bf524cdfe22e5dbf4bd67f93/LICENSE-DATA"
+    },
+    {
+      "path": "LICENSE",
+      "bytes": 1067,
+      "sha256": "751b581a2e2b7a1dbb5efd422fb5bc664d91abcd951e37b9d103aaaac242811c",
+      "sourceUrl": "https://raw.githubusercontent.com/gor3a/vehicle-makes-models/ee99776470a45214bf524cdfe22e5dbf4bd67f93/LICENSE"
+    },
+    {
+      "path": "README.md",
+      "bytes": 6501,
+      "sha256": "34dd14c1b2da0fe45440b03bf6bc029eaba586702b43a8c9fc7a1a0b3e3a1799",
+      "sourceUrl": "https://raw.githubusercontent.com/gor3a/vehicle-makes-models/ee99776470a45214bf524cdfe22e5dbf4bd67f93/README.md"
+    }
+  ]
+}

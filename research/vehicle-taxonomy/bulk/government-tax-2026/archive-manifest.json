@@ -1,0 +1,130 @@
+{
+  "schemaVersion": 1,
+  "component": "government-tax-2026",
+  "retrievedOn": "2026-11-06",
+  "currentSnapshot": "amended",
+  "sourceYear": 2026,
+  "sourceYearIsModelYear": false,
+  "market": "GOVERNMENT_TAX_REFERENCE_NOT_RETAIL",
+  "license": "Official government notice/annex provenance under Copyright Act Article 7(2); no blanket KOGL-1 claim",
+  "licenseUrl": "https://www.law.go.kr/lsLinkCommonInfo.do?lsJoLnkSeq=1029423769",
+  "rightsProvenancePath": "research/vehicle-taxonomy/bulk/government-tax-2026/rights-provenance.json",
+  "completeWithinArchivedSnapshot": true,
+  "completeForKoreanMarket": false,
+  "runtimeImportEnabled": false,
+  "normalizedCurrentOnly": true,
+  "independentSnapshotsNoBlindUnion": true,
+  "counts": {
+    "vehicleRows": 105383,
+    "numberedVehicleRows": 105382,
+    "vehicleRowsMissingSerial": 1,
+    "modificationRows": 431,
+    "workbookSheets": 43,
+    "vehicleSheets": 28,
+    "modificationSheets": 15,
+    "typeNameConflictGroups": 1558,
+    "archivedSnapshots": 2
+  },
+  "snapshots": {
+    "base": {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/base",
+      "snapshotVersion": "base-2025-83",
+      "notice": "행정안전부고시 제2025-83호 (2025-12-29 개정, 2026-01-01 시행)",
+      "effectiveDate": "2026-01-01",
+      "counts": {
+        "vehicleRows": 105370,
+        "modificationRows": 431,
+        "nonemptyWorkbookRows": 105985
+      },
+      "archiveManifestPath": "research/vehicle-taxonomy/bulk/government-tax-2026/base/archive-manifest.json",
+      "rawDataManifestPath": "research/vehicle-taxonomy/bulk/government-tax-2026/base/vehicle-export-manifest.json",
+      "sourceArchive": {
+        "path": "research/vehicle-taxonomy/bulk/government-tax-2026/base/source-original.zip",
+        "bytes": 7496166,
+        "sha256": "dc12435b699dfdd0a4c6b2089676f6963baff02ac751c4e28d52477f792e142c"
+      },
+      "workbookSha256": "879676902bfed308c109ecee54a8586cf6e68afc26918a413f7c024248758d9b",
+      "validationPath": "research/vehicle-taxonomy/bulk/government-tax-2026/base/validation-log.json"
+    },
+    "amended": {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/amended",
+      "snapshotVersion": "2026-37",
+      "notice": "행정안전부고시 제2026-37호 (2026-05-27 제정, 2026-05-27 시행)",
+      "effectiveDate": "2026-05-27",
+      "counts": {
+        "vehicleRows": 105383,
+        "modificationRows": 431,
+        "nonemptyWorkbookRows": 105998
+      },
+      "archiveManifestPath": "research/vehicle-taxonomy/bulk/government-tax-2026/amended/archive-manifest.json",
+      "rawDataManifestPath": "research/vehicle-taxonomy/bulk/government-tax-2026/amended/vehicle-export-manifest.json",
+      "sourceArchive": {
+        "path": "research/vehicle-taxonomy/bulk/government-tax-2026/amended/source-original.zip",
+        "bytes": 7479769,
+        "sha256": "250495924795cddd5a825f5a788d5bcd13d76de4246ae5b2e5c3f2f93e9d99d7"
+      },
+      "workbookSha256": "b5c2cdef501228014ab057f5f683c5615273872dc0c235b73bbd2a58612ff4fd",
+      "validationPath": "research/vehicle-taxonomy/bulk/government-tax-2026/amended/validation-log.json"
+    }
+  },
+  "artifacts": {
+    "database": {
+      "path": "research/vehicle-taxonomy/artifacts/government-tax-2026-amended.sqlite.gz",
+      "bytes": 26805720,
+      "sha256": "327b915634a71c580f96b38c726476d988a5cb3405ea042560b0aa67ac7c1841",
+      "uncompressedSha256": "7f0e1306364e538ce0249317bf8267821e16d2e32e60353979c626ae71b649b5",
+      "repositoryStorage": {
+        "path": "research/vehicle-taxonomy/artifacts/storage-manifest.json",
+        "format": "ordered_byte_parts",
+        "restoreScript": "scripts/restore-vehicle-research-artifacts.py"
+      },
+      "pathIsLogicalCompleteFile": true,
+      "downloadBundleContainsCompleteFile": true
+    },
+    "vehicles": {
+      "path": "research/vehicle-taxonomy/artifacts/government-tax-2026-amended.vehicles.csv.gz",
+      "bytes": 13495020,
+      "sha256": "b025c9cf6e1d9650635eeda69683f2e47bcb5dd18b88aac3ff7e9e2d840f1c22",
+      "repositoryStorage": {
+        "path": "research/vehicle-taxonomy/artifacts/storage-manifest.json",
+        "format": "ordered_byte_parts",
+        "restoreScript": "scripts/restore-vehicle-research-artifacts.py"
+      },
+      "pathIsLogicalCompleteFile": true,
+      "downloadBundleContainsCompleteFile": true
+    },
+    "modifications": {
+      "path": "research/vehicle-taxonomy/artifacts/government-tax-2026-amended.modifications.csv.gz",
+      "bytes": 53233,
+      "sha256": "fa1fd7f0f5fe9ee675ff70c84f81ad803a3092db490e15d19f9b89c81fe05d45"
+    }
+  },
+  "scripts": {
+    "builder": {
+      "path": "scripts/build-government-tax-2026.py",
+      "sha256": "bef77213e4b9532337a262f7d527495d6f51c48156f9edd114bf2b16b5295d29"
+    },
+    "verifier": {
+      "path": "scripts/verify-government-tax-2026.py",
+      "sha256": "757d84062ecf80d12a4e854f713f182324dcc85e1108015c537b1db462402d11"
+    }
+  },
+  "provenance": {
+    "acquisitionMethod": "user_supplied_copy_of_public_government_attachment",
+    "localArchiveAndWorkbookHashesVerified": true,
+    "remoteOfficialBytesHashCompared": false,
+    "officialNoticeAnnexAssociationVerified": true,
+    "rawZipAndTypedJsonlBytesChanged": false
+  },
+  "amountPolicy": {
+    "sourceWorkbookUnit": "천원",
+    "normalizedUnit": "원",
+    "arithmetic": "Decimal; 원 ×1 / 천원 ×1000 only with explicit unitSource",
+    "sourcePriceRawPreserved": true,
+    "fractionalSourceArtifactsRequireReview": 2,
+    "undeterminedModificationPricesRemainNull": 33,
+    "sellingPriceOrApplicationCalculationUse": false
+  },
+  "scope": "Administrative vehicle/type/name tax-reference observations. No retail generation/grade/detail-parent or model-year relationships are inferred.",
+  "componentFileManifestPath": "research/vehicle-taxonomy/bulk/government-tax-2026/component-file-manifest.json"
+}

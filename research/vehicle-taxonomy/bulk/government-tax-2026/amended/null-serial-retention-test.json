@@ -1,0 +1,16 @@
+{
+  "passed": true,
+  "records": [
+    {
+      "sheet_name": "외산 1-3.승용(친환경)_형식",
+      "source_row": 455,
+      "original_serial_raw": null,
+      "manufacturer_raw": "TESLA",
+      "vehicle_name_raw": "Model 3 Premium Long Range RWD",
+      "type_raw": "3",
+      "fuel_raw": "전기",
+      "sourcePriceThousandsRaw": "42970",
+      "wonInteger": 42970000
+    }
+  ]
+}

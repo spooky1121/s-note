@@ -1,0 +1,191 @@
+{
+  "priceUnitAndExactArithmeticCases": [
+    {
+      "sourcePriceRaw": "17810",
+      "sourcePriceUnitRaw": "천원",
+      "unitSource": "acceptance_test_explicit_unit",
+      "sourcePriceThousandsRaw": "17810",
+      "sourcePriceWonRaw": null,
+      "priceCellTypeRaw": "n",
+      "wonExact": "17810000",
+      "wonInteger": 17810000,
+      "wonRoundingCandidate": null,
+      "amountParseStatus": "exact_integer_won",
+      "requiresReview": 0,
+      "reviewReasons": []
+    },
+    {
+      "sourcePriceRaw": " 2,590",
+      "sourcePriceUnitRaw": "천원",
+      "unitSource": "acceptance_test_explicit_unit",
+      "sourcePriceThousandsRaw": " 2,590",
+      "sourcePriceWonRaw": null,
+      "priceCellTypeRaw": "s",
+      "wonExact": "2590000",
+      "wonInteger": 2590000,
+      "wonRoundingCandidate": null,
+      "amountParseStatus": "exact_integer_won",
+      "requiresReview": 0,
+      "reviewReasons": []
+    },
+    {
+      "sourcePriceRaw": "17810",
+      "sourcePriceUnitRaw": "원",
+      "unitSource": "acceptance_test_explicit_unit",
+      "sourcePriceThousandsRaw": null,
+      "sourcePriceWonRaw": "17810",
+      "priceCellTypeRaw": "n",
+      "wonExact": "17810",
+      "wonInteger": 17810,
+      "wonRoundingCandidate": null,
+      "amountParseStatus": "exact_integer_won",
+      "requiresReview": 0,
+      "reviewReasons": []
+    },
+    {
+      "sourcePriceRaw": "0",
+      "sourcePriceUnitRaw": "원",
+      "unitSource": "acceptance_test_explicit_unit",
+      "sourcePriceThousandsRaw": null,
+      "sourcePriceWonRaw": "0",
+      "priceCellTypeRaw": "n",
+      "wonExact": "0",
+      "wonInteger": 0,
+      "wonRoundingCandidate": null,
+      "amountParseStatus": "exact_integer_won",
+      "requiresReview": 0,
+      "reviewReasons": []
+    },
+    {
+      "sourcePriceRaw": "3499.9999999999995",
+      "sourcePriceUnitRaw": "천원",
+      "unitSource": "acceptance_test_explicit_unit",
+      "sourcePriceThousandsRaw": "3499.9999999999995",
+      "sourcePriceWonRaw": null,
+      "priceCellTypeRaw": "n",
+      "wonExact": "3499999.9999999995",
+      "wonInteger": null,
+      "wonRoundingCandidate": "3500000",
+      "amountParseStatus": "source_float_artifact_requires_review",
+      "requiresReview": 1,
+      "reviewReasons": [
+        "exact_source_value_produces_fractional_won",
+        "long_fractional_numeric_representation_in_source"
+      ]
+    },
+    {
+      "sourcePriceRaw": "3899.9999999999995",
+      "sourcePriceUnitRaw": "천원",
+      "unitSource": "acceptance_test_explicit_unit",
+      "sourcePriceThousandsRaw": "3899.9999999999995",
+      "sourcePriceWonRaw": null,
+      "priceCellTypeRaw": "n",
+      "wonExact": "3899999.9999999995",
+      "wonInteger": null,
+      "wonRoundingCandidate": "3900000",
+      "amountParseStatus": "source_float_artifact_requires_review",
+      "requiresReview": 1,
+      "reviewReasons": [
+        "exact_source_value_produces_fractional_won",
+        "long_fractional_numeric_representation_in_source"
+      ]
+    },
+    {
+      "sourcePriceRaw": null,
+      "sourcePriceUnitRaw": "천원",
+      "unitSource": "acceptance_test_explicit_unit",
+      "sourcePriceThousandsRaw": null,
+      "sourcePriceWonRaw": null,
+      "priceCellTypeRaw": "s",
+      "wonExact": null,
+      "wonInteger": null,
+      "wonRoundingCandidate": null,
+      "amountParseStatus": "missing",
+      "requiresReview": 1,
+      "reviewReasons": [
+        "source_price_missing"
+      ]
+    },
+    {
+      "sourcePriceRaw": "",
+      "sourcePriceUnitRaw": "천원",
+      "unitSource": "acceptance_test_explicit_unit",
+      "sourcePriceThousandsRaw": "",
+      "sourcePriceWonRaw": null,
+      "priceCellTypeRaw": "s",
+      "wonExact": null,
+      "wonInteger": null,
+      "wonRoundingCandidate": null,
+      "amountParseStatus": "missing",
+      "requiresReview": 1,
+      "reviewReasons": [
+        "source_price_missing"
+      ]
+    },
+    {
+      "sourcePriceRaw": "-",
+      "sourcePriceUnitRaw": "천원",
+      "unitSource": "acceptance_test_explicit_unit",
+      "sourcePriceThousandsRaw": "-",
+      "sourcePriceWonRaw": null,
+      "priceCellTypeRaw": "s",
+      "wonExact": null,
+      "wonInteger": null,
+      "wonRoundingCandidate": null,
+      "amountParseStatus": "undetermined_marker",
+      "requiresReview": 1,
+      "reviewReasons": [
+        "source_price_undetermined_not_zero"
+      ]
+    },
+    {
+      "sourcePriceRaw": "－",
+      "sourcePriceUnitRaw": "천원",
+      "unitSource": "acceptance_test_explicit_unit",
+      "sourcePriceThousandsRaw": "－",
+      "sourcePriceWonRaw": null,
+      "priceCellTypeRaw": "s",
+      "wonExact": null,
+      "wonInteger": null,
+      "wonRoundingCandidate": null,
+      "amountParseStatus": "undetermined_marker",
+      "requiresReview": 1,
+      "reviewReasons": [
+        "source_price_undetermined_not_zero"
+      ]
+    }
+  ],
+  "strictUnknownUnitRejection": true,
+  "numericVsTextJsonTypesPreserved": true,
+  "sqliteIntegrity": "ok",
+  "foreignKeyViolations": 0,
+  "vehicleRows": 105370,
+  "modificationRows": 431,
+  "floatSourceRows": [
+    {
+      "sourcePriceThousandsRaw": "3499.9999999999995",
+      "wonExact": "3499999.9999999995",
+      "wonInteger": null,
+      "wonRoundingCandidate": "3500000",
+      "requiresReview": 1
+    },
+    {
+      "sourcePriceThousandsRaw": "3899.9999999999995",
+      "wonExact": "3899999.9999999995",
+      "wonInteger": null,
+      "wonRoundingCandidate": "3900000",
+      "requiresReview": 1
+    }
+  ],
+  "undeterminedPricesNullNotZero": 33,
+  "numericNamesPreserved": 3,
+  "numericTypeCodesPreserved": 180,
+  "blankHeaderDPositionPreserved": true,
+  "missingOriginalCategoryNotFilled": true,
+  "sameNameTypeDifferentPricesRetained": true,
+  "fuelNotInferred": true,
+  "literalSearchAndFtsExamplesPassed": true,
+  "organizedCsvRowCountsMatch": true,
+  "readOnlyVerificationChangedDatabase": false,
+  "passed": true
+}

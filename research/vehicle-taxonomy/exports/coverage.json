@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "asOf": "2026-11-06",
+  "asOf": "2026-11-07",
   "complete": false,
   "runtimeImportEnabled": false,
   "baseline": {
@@ -35,16 +35,55 @@
     "verification": "Existing labels are preserved, not reverified by this research."
   },
   "newResearch": {
-    "sourceFiles": 9,
-    "sources": 102,
-    "rawRecords": 538,
-    "uniqueRecords": 538,
-    "officialDirectRecords": 534,
-    "searchExcerptRecords": 4,
-    "candidateRecords": 0
+    "sourceFiles": 18,
+    "sources": 541,
+    "uniqueSourceUrls": 541,
+    "rawRecords": 2903,
+    "uniqueRecords": 2903,
+    "koreanMarketRecords": 2749,
+    "otherMarketRecords": 154,
+    "officialDirectRecords": 1895,
+    "searchExcerptRecords": 10,
+    "providerCatalogDirectRecords": 601,
+    "referenceDirectRecords": 391,
+    "candidateRecords": 6,
+    "sourcesUsedByRecords": 447
   },
   "listingObservations": 3,
   "certificationObservations": 20,
+  "bulkReferences": [
+    {
+      "path": "research/vehicle-taxonomy/bulk/global-vehicle-makes-models/archive-manifest.json",
+      "counts": {
+        "groups": 164,
+        "makes": 164,
+        "models": 2649,
+        "generations": 7217,
+        "engines": 30535
+      },
+      "market": "GLOBAL_UNVERIFIED_FOR_KR",
+      "license": "ODbL-1.0",
+      "completeForKoreanMarket": false
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/archive-manifest.json",
+      "counts": {
+        "vehicleRows": 105383,
+        "numberedVehicleRows": 105382,
+        "vehicleRowsMissingSerial": 1,
+        "modificationRows": 431,
+        "workbookSheets": 43,
+        "vehicleSheets": 28,
+        "modificationSheets": 15,
+        "typeNameConflictGroups": 1558,
+        "archivedSnapshots": 2
+      },
+      "market": "GOVERNMENT_TAX_REFERENCE_NOT_RETAIL",
+      "license": "Official government notice/annex provenance under Copyright Act Article 7(2); no blanket KOGL-1 claim",
+      "completeForKoreanMarket": false,
+      "currentSnapshot": "amended"
+    }
+  ],
   "otherEvidence": [
     {
       "path": "research/vehicle-taxonomy/sources/brand-source-ledger.json",
@@ -54,6 +93,10 @@
       "path": "research/vehicle-taxonomy/sources/government-certification-observations.json",
       "kind": "certification_observed",
       "records": 20
+    },
+    {
+      "path": "research/vehicle-taxonomy/sources/master-expansion-20261106.json",
+      "kind": "source_survey"
     },
     {
       "path": "research/vehicle-taxonomy/sources/master-source-survey.json",
@@ -66,7 +109,7 @@
       "baselineRows": 312,
       "baselineModels": 167,
       "baselineModelsMissingGrade": 122,
-      "newOfficialDirectRecords": 157,
+      "newOfficialDirectRecords": 447,
       "newSearchExcerptRecords": 0
     },
     {
@@ -82,7 +125,7 @@
       "baselineRows": 20,
       "baselineModels": 20,
       "baselineModelsMissingGrade": 20,
-      "newOfficialDirectRecords": 0,
+      "newOfficialDirectRecords": 56,
       "newSearchExcerptRecords": 0
     },
     {
@@ -90,7 +133,7 @@
       "baselineRows": 13,
       "baselineModels": 13,
       "baselineModelsMissingGrade": 13,
-      "newOfficialDirectRecords": 0,
+      "newOfficialDirectRecords": 23,
       "newSearchExcerptRecords": 0
     },
     {
@@ -114,7 +157,7 @@
       "baselineRows": 4,
       "baselineModels": 4,
       "baselineModelsMissingGrade": 4,
-      "newOfficialDirectRecords": 0,
+      "newOfficialDirectRecords": 10,
       "newSearchExcerptRecords": 0
     },
     {
@@ -122,7 +165,7 @@
       "baselineRows": 9,
       "baselineModels": 9,
       "baselineModelsMissingGrade": 9,
-      "newOfficialDirectRecords": 0,
+      "newOfficialDirectRecords": 8,
       "newSearchExcerptRecords": 0
     },
     {
@@ -138,7 +181,7 @@
       "baselineRows": 40,
       "baselineModels": 36,
       "baselineModelsMissingGrade": 32,
-      "newOfficialDirectRecords": 19,
+      "newOfficialDirectRecords": 96,
       "newSearchExcerptRecords": 0
     },
     {
@@ -154,7 +197,7 @@
       "baselineRows": 10,
       "baselineModels": 9,
       "baselineModelsMissingGrade": 8,
-      "newOfficialDirectRecords": 0,
+      "newOfficialDirectRecords": 9,
       "newSearchExcerptRecords": 0
     },
     {
@@ -162,7 +205,7 @@
       "baselineRows": 5,
       "baselineModels": 5,
       "baselineModelsMissingGrade": 5,
-      "newOfficialDirectRecords": 0,
+      "newOfficialDirectRecords": 11,
       "newSearchExcerptRecords": 0
     },
     {
@@ -186,7 +229,7 @@
       "baselineRows": 9,
       "baselineModels": 9,
       "baselineModelsMissingGrade": 9,
-      "newOfficialDirectRecords": 0,
+      "newOfficialDirectRecords": 12,
       "newSearchExcerptRecords": 0
     },
     {
@@ -210,7 +253,7 @@
       "baselineRows": 51,
       "baselineModels": 40,
       "baselineModelsMissingGrade": 34,
-      "newOfficialDirectRecords": 8,
+      "newOfficialDirectRecords": 66,
       "newSearchExcerptRecords": 0
     },
     {
@@ -218,7 +261,7 @@
       "baselineRows": 5,
       "baselineModels": 5,
       "baselineModelsMissingGrade": 5,
-      "newOfficialDirectRecords": 0,
+      "newOfficialDirectRecords": 23,
       "newSearchExcerptRecords": 0
     },
     {
@@ -226,7 +269,7 @@
       "baselineRows": 3,
       "baselineModels": 3,
       "baselineModelsMissingGrade": 3,
-      "newOfficialDirectRecords": 0,
+      "newOfficialDirectRecords": 12,
       "newSearchExcerptRecords": 0
     },
     {
@@ -234,7 +277,7 @@
       "baselineRows": 10,
       "baselineModels": 10,
       "baselineModelsMissingGrade": 10,
-      "newOfficialDirectRecords": 0,
+      "newOfficialDirectRecords": 6,
       "newSearchExcerptRecords": 0
     },
     {
@@ -250,15 +293,15 @@
       "baselineRows": 5,
       "baselineModels": 5,
       "baselineModelsMissingGrade": 5,
-      "newOfficialDirectRecords": 0,
-      "newSearchExcerptRecords": 0
+      "newOfficialDirectRecords": 1,
+      "newSearchExcerptRecords": 6
     },
     {
       "make": "인피니티",
       "baselineRows": 8,
       "baselineModels": 7,
       "baselineModelsMissingGrade": 6,
-      "newOfficialDirectRecords": 0,
+      "newOfficialDirectRecords": 3,
       "newSearchExcerptRecords": 0
     },
     {
@@ -266,7 +309,7 @@
       "baselineRows": 11,
       "baselineModels": 10,
       "baselineModelsMissingGrade": 9,
-      "newOfficialDirectRecords": 0,
+      "newOfficialDirectRecords": 12,
       "newSearchExcerptRecords": 0
     },
     {
@@ -274,7 +317,7 @@
       "baselineRows": 43,
       "baselineModels": 29,
       "baselineModelsMissingGrade": 21,
-      "newOfficialDirectRecords": 8,
+      "newOfficialDirectRecords": 75,
       "newSearchExcerptRecords": 0
     },
     {
@@ -282,7 +325,7 @@
       "baselineRows": 13,
       "baselineModels": 12,
       "baselineModelsMissingGrade": 10,
-      "newOfficialDirectRecords": 0,
+      "newOfficialDirectRecords": 3,
       "newSearchExcerptRecords": 0
     },
     {
@@ -298,7 +341,7 @@
       "baselineRows": 23,
       "baselineModels": 17,
       "baselineModelsMissingGrade": 13,
-      "newOfficialDirectRecords": 0,
+      "newOfficialDirectRecords": 4,
       "newSearchExcerptRecords": 0
     },
     {
@@ -314,7 +357,7 @@
       "baselineRows": 21,
       "baselineModels": 21,
       "baselineModelsMissingGrade": 21,
-      "newOfficialDirectRecords": 0,
+      "newOfficialDirectRecords": 85,
       "newSearchExcerptRecords": 0
     },
     {
@@ -330,7 +373,7 @@
       "baselineRows": 33,
       "baselineModels": 25,
       "baselineModelsMissingGrade": 20,
-      "newOfficialDirectRecords": 0,
+      "newOfficialDirectRecords": 53,
       "newSearchExcerptRecords": 0
     },
     {
@@ -354,7 +397,7 @@
       "baselineRows": 19,
       "baselineModels": 18,
       "baselineModelsMissingGrade": 17,
-      "newOfficialDirectRecords": 0,
+      "newOfficialDirectRecords": 7,
       "newSearchExcerptRecords": 0
     },
     {
@@ -362,7 +405,7 @@
       "baselineRows": 3,
       "baselineModels": 3,
       "baselineModelsMissingGrade": 3,
-      "newOfficialDirectRecords": 0,
+      "newOfficialDirectRecords": 6,
       "newSearchExcerptRecords": 0
     },
     {
@@ -370,7 +413,7 @@
       "baselineRows": 273,
       "baselineModels": 171,
       "baselineModelsMissingGrade": 128,
-      "newOfficialDirectRecords": 111,
+      "newOfficialDirectRecords": 468,
       "newSearchExcerptRecords": 0
     },
     {
@@ -378,7 +421,7 @@
       "baselineRows": 21,
       "baselineModels": 19,
       "baselineModelsMissingGrade": 16,
-      "newOfficialDirectRecords": 2,
+      "newOfficialDirectRecords": 4,
       "newSearchExcerptRecords": 0
     },
     {
@@ -386,7 +429,7 @@
       "baselineRows": 123,
       "baselineModels": 92,
       "baselineModelsMissingGrade": 73,
-      "newOfficialDirectRecords": 30,
+      "newOfficialDirectRecords": 64,
       "newSearchExcerptRecords": 0
     },
     {
@@ -402,7 +445,7 @@
       "baselineRows": 5,
       "baselineModels": 5,
       "baselineModelsMissingGrade": 5,
-      "newOfficialDirectRecords": 0,
+      "newOfficialDirectRecords": 3,
       "newSearchExcerptRecords": 0
     },
     {
@@ -418,7 +461,7 @@
       "baselineRows": 59,
       "baselineModels": 52,
       "baselineModelsMissingGrade": 45,
-      "newOfficialDirectRecords": 32,
+      "newOfficialDirectRecords": 161,
       "newSearchExcerptRecords": 0
     },
     {
@@ -433,8 +476,14 @@
   "limitations": [
     "No source establishes all historical Korean-market model years, engines and discontinued trims.",
     "New official records retain their original model-year and powertrain scope; matching a baseline family alone does not fill a generation gap.",
+    "An empty grade in the baseline can also be a named model variant; it does not prove that another retail grade exists.",
+    "Provider catalogs and independent automotive references are separated from manufacturer-authored evidence.",
     "Listing Badge observations are not promoted to grade/subgrade or assigned parent codes.",
     "A publication month is not a model year.",
+    "Global engine references do not establish Korean market availability or retail grades.",
+    "Government tax names/form codes and tax-reference prices do not establish retail generations/grades, model years, selling prices or unique manufacturer-form identities.",
     "No existing company taxonomy, customer, vehicle or financial data is modified."
-  ]
+  ],
+  "quarantinedRecordCount": 44,
+  "quarantinedSourceIssueCount": 1
 }

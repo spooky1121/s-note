@@ -1,0 +1,596 @@
+{
+  "schemaVersion": 1,
+  "recordType": "independent_public_amended_government_crosswalk_audit",
+  "status": "passed_with_declared_limitations",
+  "auditedAt": "2026-11-06T16:36:46.151860+00:00",
+  "pathBase": "repository_root",
+  "scope": "Public research-only raw-name candidate crosswalk. This audit does not approve retail generation, engine, grade, model-year or market inference. Only this audit JSON was written by the independent auditor.",
+  "sourceInput": {
+    "path": "research/vehicle-taxonomy/bulk/government-tax-2026/amended/vehicle-records.raw.jsonl.gz",
+    "sha256": "b725edb280b148042a461244eade9dd2d42fd2e4ebe773dbbdf238d10426cea6",
+    "sourceArchiveSha256": "250495924795cddd5a825f5a788d5bcd13d76de4246ae5b2e5c3f2f93e9d99d7",
+    "rawRows": 105383,
+    "uniqueSourceSheetSourceRowRefs": 105383,
+    "missingSerialRows": 1,
+    "archiveHashNote": "The source archive digest was independently verified in the preceding amended-source audit; the public raw export has the identical pinned digest."
+  },
+  "auditedArtifacts": [
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/crosswalk/build-government-crosswalk.py",
+      "sha256": "6c34201709a9cb55c6f53304394bd915d89f9e2faea94ed3d92f4a4eea2cb993"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/crosswalk/compare-research-progress.py",
+      "sha256": "011aa8a044fe74faead5a0d839d99e86b4049dde3328a235ecc0d2754c705ba9"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/crosswalk/candidate-aliases.json",
+      "sha256": "098b1d4c72f6f7b299daeecabca076ccb5658b6740754f3d932d46e7819957aa"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/crosswalk/amended-2026-reviewed/candidate-links.jsonl.gz",
+      "sha256": "04b2cff44a6a73367f4c996ffd28966e25b17f767c66f8c21cf8521e2a275e47"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/crosswalk/amended-2026-reviewed/manifest.json",
+      "sha256": "f91b713c1ac08d84691433117cab310b1189ab223e657d7bf3695ed5e4499a5a"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/crosswalk/amended-2026-reviewed/missing-grade-no-candidate.csv.gz",
+      "sha256": "aaf2a42633243b3096e0d306470bed126ca0e9817713dc9457e1826e6cd04d0a"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/crosswalk/amended-2026-reviewed/missing-grade-targets.csv.gz",
+      "sha256": "0706c5621baf81d8500c5e66637a8e89f3682379356cc2f21a15754c0f59c509"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/crosswalk/amended-2026-reviewed/summary.json",
+      "sha256": "0b8cf0a03a0a18670cc63d6019b538ff9629b8131c50e3288a4a2f4535e20a8e"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/crosswalk/amended-2026-reviewed/target-ledger.csv.gz",
+      "sha256": "ecabb9c2aec56d92ac715ed81a00dd98803fd89ac9864590e3e58b1f78f18400"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/crosswalk/amended-2026-reviewed/target-ledger.json",
+      "sha256": "9d9cf0c5498e802a2ca680b9fb5a8969d0a7bf7b0e6e3345136105e3671cfc18"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/crosswalk/research-comparison-amended-2026/no-candidate-in-either-search.csv.gz",
+      "sha256": "93c27cf87bca057649e973241788851c25a718c43c7e7c4314d34f256f65352a"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/crosswalk/research-comparison-amended-2026/summary.json",
+      "sha256": "20f6e3cd0396103f49f8e36e88d3074c59dc98d17b212959e7a31314945a1b75"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/crosswalk/research-comparison-amended-2026/target-comparison.csv.gz",
+      "sha256": "09fed295877c056ed9fb25c4de93a6d972f1de751567c8cc41e16ee3d337c5f4"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/crosswalk/research-comparison-amended-2026/target-comparison.json",
+      "sha256": "92309db96c29c76edfab1a7142e073a23a81ecf14b4a5a11533ef289539bf94d"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/crosswalk/input-snapshots/build-government-crosswalk.amended-work.86251c35.py",
+      "sha256": "86251c35dca2ba6319181ac574b7eef162f8422af61f0433d1597673194d477f"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/crosswalk/input-snapshots/build-government-crosswalk.base-2026.10fb341f.py",
+      "sha256": "10fb341f18a54480ec511bab27c11348cfc11229f05818213ef5a0a1461ce019"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/crosswalk/input-snapshots/gap-research-progress.7f43b6967052.json",
+      "sha256": "7f43b6967052f5d0cd4172e5310e97f07de665fb8e6b0e15cb1f2ee8c4051329"
+    }
+  ],
+  "candidateLinksExhaustivelyChecked": 300616,
+  "fullSourceRecordsExactlyReconstructed": 300616,
+  "reconstructionFormula": "observationMetadataRaw + {fieldsRaw, fieldCellTypesRaw} equals each complete original raw record, including serialMissing and amountUnitSourceRaw.",
+  "uniqueLinkedRawRows": 43396,
+  "targets": 1197,
+  "missingTargets": 986,
+  "allTargetStates": {
+    "family_or_series_hint_only": 880,
+    "no_candidate_under_declared_rules": 69,
+    "model_name_candidate_found": 248
+  },
+  "missingTargetStates": {
+    "family_or_series_hint_only": 721,
+    "model_name_candidate_found": 211,
+    "no_candidate_under_declared_rules": 54
+  },
+  "methodCounts": {
+    "name_series_variant_hint": 9600,
+    "family_name_phrase_candidate": 247637,
+    "model_name_phrase_candidate": 20921,
+    "exact_model_name_text": 3864,
+    "configured_family_alias_candidate": 6554,
+    "producer_name_family_hint": 7845,
+    "normalized_model_name_text": 4105,
+    "explicit_name_alias_candidate": 90
+  },
+  "manufacturerRelationCounts": {
+    "configured_corporate_label_candidate": 292771,
+    "unmapped_producer_name_only_candidate": 7845
+  },
+  "smallCsvRowsChecked": {
+    "target-ledger.csv.gz": 1197,
+    "missing-grade-targets.csv.gz": 986,
+    "missing-grade-no-candidate.csv.gz": 54
+  },
+  "candidateCsvOmission": {
+    "declared": true,
+    "largeCsvPresent": false,
+    "coverage": "All candidate JSONL links exhaustively checked against raw source; smaller target CSV exports also exhaustively checked."
+  },
+  "observationMetadataKeyShapes": [
+    {
+      "keys": [
+        "sourceSheet",
+        "sourceRow",
+        "recordType",
+        "sourceYear",
+        "sourceYearBasis",
+        "amountUnitRaw",
+        "amountUnitSourceRaw",
+        "serialMissing"
+      ],
+      "links": 300616
+    }
+  ],
+  "missingSerialTesla": {
+    "rawSourceRows": 1,
+    "candidateLinks": 5,
+    "observations": [
+      {
+        "target": {
+          "make": "테슬라",
+          "group": "모델 3",
+          "model": "모델 3"
+        },
+        "sourceRef": {
+          "rawRecordsSha256": "b725edb280b148042a461244eade9dd2d42fd2e4ebe773dbbdf238d10426cea6",
+          "sourceArchiveSha256": "250495924795cddd5a825f5a788d5bcd13d76de4246ae5b2e5c3f2f93e9d99d7",
+          "sourceSheet": "외산 1-3.승용(친환경)_형식",
+          "sourceRow": 455
+        },
+        "fieldsRaw": {
+          "연번": null,
+          "제작사": "TESLA",
+          "차명": "Model 3 Premium Long Range RWD",
+          "형식": "3",
+          "연료원": "전기",
+          "기준가격": "42970"
+        },
+        "fieldCellTypesRaw": {
+          "연번": null,
+          "제작사": "s",
+          "차명": "s",
+          "형식": "n",
+          "연료원": "s",
+          "기준가격": "n"
+        },
+        "observationMetadataRaw": {
+          "sourceSheet": "외산 1-3.승용(친환경)_형식",
+          "sourceRow": 455,
+          "recordType": "government_tax_vehicle_observation",
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; source effective year is not each vehicle model year",
+          "amountUnitRaw": "천원",
+          "amountUnitSourceRaw": [
+            "(단위:천원)"
+          ],
+          "serialMissing": true
+        },
+        "matchMethod": "configured_family_alias_candidate",
+        "modelYear": null,
+        "generationVerified": false
+      },
+      {
+        "target": {
+          "make": "테슬라",
+          "group": "모델 3",
+          "model": "모델 3 RWD"
+        },
+        "sourceRef": {
+          "rawRecordsSha256": "b725edb280b148042a461244eade9dd2d42fd2e4ebe773dbbdf238d10426cea6",
+          "sourceArchiveSha256": "250495924795cddd5a825f5a788d5bcd13d76de4246ae5b2e5c3f2f93e9d99d7",
+          "sourceSheet": "외산 1-3.승용(친환경)_형식",
+          "sourceRow": 455
+        },
+        "fieldsRaw": {
+          "연번": null,
+          "제작사": "TESLA",
+          "차명": "Model 3 Premium Long Range RWD",
+          "형식": "3",
+          "연료원": "전기",
+          "기준가격": "42970"
+        },
+        "fieldCellTypesRaw": {
+          "연번": null,
+          "제작사": "s",
+          "차명": "s",
+          "형식": "n",
+          "연료원": "s",
+          "기준가격": "n"
+        },
+        "observationMetadataRaw": {
+          "sourceSheet": "외산 1-3.승용(친환경)_형식",
+          "sourceRow": 455,
+          "recordType": "government_tax_vehicle_observation",
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; source effective year is not each vehicle model year",
+          "amountUnitRaw": "천원",
+          "amountUnitSourceRaw": [
+            "(단위:천원)"
+          ],
+          "serialMissing": true
+        },
+        "matchMethod": "configured_family_alias_candidate",
+        "modelYear": null,
+        "generationVerified": false
+      },
+      {
+        "target": {
+          "make": "테슬라",
+          "group": "모델 3",
+          "model": "모델 3 롱레인지"
+        },
+        "sourceRef": {
+          "rawRecordsSha256": "b725edb280b148042a461244eade9dd2d42fd2e4ebe773dbbdf238d10426cea6",
+          "sourceArchiveSha256": "250495924795cddd5a825f5a788d5bcd13d76de4246ae5b2e5c3f2f93e9d99d7",
+          "sourceSheet": "외산 1-3.승용(친환경)_형식",
+          "sourceRow": 455
+        },
+        "fieldsRaw": {
+          "연번": null,
+          "제작사": "TESLA",
+          "차명": "Model 3 Premium Long Range RWD",
+          "형식": "3",
+          "연료원": "전기",
+          "기준가격": "42970"
+        },
+        "fieldCellTypesRaw": {
+          "연번": null,
+          "제작사": "s",
+          "차명": "s",
+          "형식": "n",
+          "연료원": "s",
+          "기준가격": "n"
+        },
+        "observationMetadataRaw": {
+          "sourceSheet": "외산 1-3.승용(친환경)_형식",
+          "sourceRow": 455,
+          "recordType": "government_tax_vehicle_observation",
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; source effective year is not each vehicle model year",
+          "amountUnitRaw": "천원",
+          "amountUnitSourceRaw": [
+            "(단위:천원)"
+          ],
+          "serialMissing": true
+        },
+        "matchMethod": "configured_family_alias_candidate",
+        "modelYear": null,
+        "generationVerified": false
+      },
+      {
+        "target": {
+          "make": "테슬라",
+          "group": "모델 3",
+          "model": "모델 3 퍼포먼스"
+        },
+        "sourceRef": {
+          "rawRecordsSha256": "b725edb280b148042a461244eade9dd2d42fd2e4ebe773dbbdf238d10426cea6",
+          "sourceArchiveSha256": "250495924795cddd5a825f5a788d5bcd13d76de4246ae5b2e5c3f2f93e9d99d7",
+          "sourceSheet": "외산 1-3.승용(친환경)_형식",
+          "sourceRow": 455
+        },
+        "fieldsRaw": {
+          "연번": null,
+          "제작사": "TESLA",
+          "차명": "Model 3 Premium Long Range RWD",
+          "형식": "3",
+          "연료원": "전기",
+          "기준가격": "42970"
+        },
+        "fieldCellTypesRaw": {
+          "연번": null,
+          "제작사": "s",
+          "차명": "s",
+          "형식": "n",
+          "연료원": "s",
+          "기준가격": "n"
+        },
+        "observationMetadataRaw": {
+          "sourceSheet": "외산 1-3.승용(친환경)_형식",
+          "sourceRow": 455,
+          "recordType": "government_tax_vehicle_observation",
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; source effective year is not each vehicle model year",
+          "amountUnitRaw": "천원",
+          "amountUnitSourceRaw": [
+            "(단위:천원)"
+          ],
+          "serialMissing": true
+        },
+        "matchMethod": "configured_family_alias_candidate",
+        "modelYear": null,
+        "generationVerified": false
+      },
+      {
+        "target": {
+          "make": "테슬라",
+          "group": "모델 3",
+          "model": "모델 3 하이랜드"
+        },
+        "sourceRef": {
+          "rawRecordsSha256": "b725edb280b148042a461244eade9dd2d42fd2e4ebe773dbbdf238d10426cea6",
+          "sourceArchiveSha256": "250495924795cddd5a825f5a788d5bcd13d76de4246ae5b2e5c3f2f93e9d99d7",
+          "sourceSheet": "외산 1-3.승용(친환경)_형식",
+          "sourceRow": 455
+        },
+        "fieldsRaw": {
+          "연번": null,
+          "제작사": "TESLA",
+          "차명": "Model 3 Premium Long Range RWD",
+          "형식": "3",
+          "연료원": "전기",
+          "기준가격": "42970"
+        },
+        "fieldCellTypesRaw": {
+          "연번": null,
+          "제작사": "s",
+          "차명": "s",
+          "형식": "n",
+          "연료원": "s",
+          "기준가격": "n"
+        },
+        "observationMetadataRaw": {
+          "sourceSheet": "외산 1-3.승용(친환경)_형식",
+          "sourceRow": 455,
+          "recordType": "government_tax_vehicle_observation",
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; source effective year is not each vehicle model year",
+          "amountUnitRaw": "천원",
+          "amountUnitSourceRaw": [
+            "(단위:천원)"
+          ],
+          "serialMissing": true
+        },
+        "matchMethod": "configured_family_alias_candidate",
+        "modelYear": null,
+        "generationVerified": false
+      }
+    ]
+  },
+  "hyundaiContainingOtherMakerLinks": [
+    {
+      "manufacturerRaw": "현대월드특장",
+      "manufacturerRelation": "unmapped_producer_name_only_candidate",
+      "matchMethod": "producer_name_family_hint",
+      "links": 27
+    },
+    {
+      "manufacturerRaw": "천안현대특장",
+      "manufacturerRelation": "unmapped_producer_name_only_candidate",
+      "matchMethod": "producer_name_family_hint",
+      "links": 3
+    }
+  ],
+  "staticMatchingAudit": {
+    "methodsForArguments": [
+      "name_raw",
+      "name_search",
+      "model",
+      "model_norm",
+      "group_norm",
+      "explicit",
+      "family",
+      "series"
+    ],
+    "matchingCalls": [
+      "methods_for(g['name'], g['nameSearch'], model, modelnorm, groupnorm, explicit, family, series)"
+    ],
+    "matchingFunctionAstParityWithPriorAudit": {
+      "norm": true,
+      "lexical_name": true,
+      "contains": true,
+      "methods_for": true,
+      "target_key": true,
+      "tid": true
+    },
+    "matchingUsesRawTypeCode": false,
+    "matchingUsesTaxPrice": false,
+    "sourceYearPromotedToModelYear": false
+  },
+  "lexicalRegressionChecks": [
+    {
+      "name": "A7 3.0 TDI Quattro",
+      "phrase": "A7",
+      "expected": true,
+      "actual": true,
+      "passed": true
+    },
+    {
+      "name": "A70",
+      "phrase": "A7",
+      "expected": false,
+      "actual": false,
+      "passed": true
+    },
+    {
+      "name": "K5000",
+      "phrase": "K5",
+      "expected": false,
+      "actual": false,
+      "passed": true
+    },
+    {
+      "name": "K5 LPG",
+      "phrase": "K5",
+      "expected": true,
+      "actual": true,
+      "passed": true
+    },
+    {
+      "name": "GLC300",
+      "phrase": "C300",
+      "expected": false,
+      "actual": false,
+      "passed": true
+    },
+    {
+      "name": "MINI Cooper Countryman",
+      "phrase": "COUNTRYMAN",
+      "expected": true,
+      "actual": true,
+      "passed": true
+    },
+    {
+      "name": "MINICooperSClubman",
+      "phrase": "CLUBMAN",
+      "expected": true,
+      "actual": true,
+      "passed": true
+    },
+    {
+      "name": "C300 4MATIC",
+      "phrase": "C300",
+      "expected": true,
+      "actual": true,
+      "passed": true
+    }
+  ],
+  "priorAuditedCandidateSetComparison": {
+    "referenceDescription": "Previously independently audited amended snapshot with identical raw-input SHA256 and matching rules.",
+    "referenceCandidateRecords": 300616,
+    "publicCandidateRecords": 300616,
+    "recordIdentity": [
+      "targetId",
+      "sourceRef.sourceSheet",
+      "sourceRef.sourceRow"
+    ],
+    "canonicalRecordSetEqual": true,
+    "mismatchedRecords": 0,
+    "publicOnlyRecords": 0,
+    "orderingPolicy": "Record order and gzip bytes may vary because declared manufacturer candidates are traversed as a set. Equality here is by complete canonical JSON record at each source-linked target identity, not file byte order."
+  },
+  "publicMetadataPathScan": {
+    "jsonDocumentsScanned": 8,
+    "candidateJsonlRecordsScanned": 300616,
+    "stringValuesScanned": 12288230,
+    "absoluteExecutionEnvironmentOrOpaquePathsFound": 0,
+    "allAuditArtifactPathsRelativeToRepository": true
+  },
+  "researchComparisonAudit": {
+    "status": "passed",
+    "targetRows": 986,
+    "previousNotYetFound": 437,
+    "newRawNameCandidates": 391,
+    "modelNameCandidatesAmongNew": 82,
+    "familyHintsAmongNew": 309,
+    "noCandidateInEitherDeclaredSearch": 46,
+    "researchStatusesChanged": 0,
+    "completedTargets": 0,
+    "verifiedGradesAdded": 0,
+    "csvRowsChecked": {
+      "target-comparison.csv.gz": 986,
+      "no-candidate-in-either-search.csv.gz": 46
+    },
+    "fixedResearchInput": {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/crosswalk/input-snapshots/gap-research-progress.7f43b6967052.json",
+      "sha256": "7f43b6967052f5d0cd4172e5310e97f07de665fb8e6b0e15cb1f2ee8c4051329"
+    },
+    "matrix": [
+      {
+        "priorResearchStatus": "declared_alias_candidate",
+        "governmentCandidateState": "family_or_series_hint_only",
+        "targets": 47
+      },
+      {
+        "priorResearchStatus": "declared_alias_candidate",
+        "governmentCandidateState": "model_name_candidate_found",
+        "targets": 10
+      },
+      {
+        "priorResearchStatus": "exact_model_label_evidence",
+        "governmentCandidateState": "family_or_series_hint_only",
+        "targets": 43
+      },
+      {
+        "priorResearchStatus": "exact_model_label_evidence",
+        "governmentCandidateState": "model_name_candidate_found",
+        "targets": 44
+      },
+      {
+        "priorResearchStatus": "exact_model_label_evidence",
+        "governmentCandidateState": "no_candidate_under_declared_rules",
+        "targets": 2
+      },
+      {
+        "priorResearchStatus": "family_evidence_only",
+        "governmentCandidateState": "family_or_series_hint_only",
+        "targets": 322
+      },
+      {
+        "priorResearchStatus": "family_evidence_only",
+        "governmentCandidateState": "model_name_candidate_found",
+        "targets": 75
+      },
+      {
+        "priorResearchStatus": "family_evidence_only",
+        "governmentCandidateState": "no_candidate_under_declared_rules",
+        "targets": 6
+      },
+      {
+        "priorResearchStatus": "not_yet_found",
+        "governmentCandidateState": "family_or_series_hint_only",
+        "targets": 309
+      },
+      {
+        "priorResearchStatus": "not_yet_found",
+        "governmentCandidateState": "model_name_candidate_found",
+        "targets": 82
+      },
+      {
+        "priorResearchStatus": "not_yet_found",
+        "governmentCandidateState": "no_candidate_under_declared_rules",
+        "targets": 46
+      }
+    ],
+    "errors": []
+  },
+  "supportingVerification": {
+    "path": "research/vehicle-taxonomy/bulk/government-tax-2026/crosswalk/verification-amended.json",
+    "sha256": "5af4c24e73608c481d77d9ff1f358d6d5f2452c0d91dc3bb67557f587a01d75b",
+    "note": "Supporting parent verification; candidate reconstruction and eight lexical fixtures were also independently checked by this auditor."
+  },
+  "errors": {},
+  "errorExamples": {},
+  "nonblockingFindings": [
+    {
+      "code": "candidate_evidence_not_completed_taxonomy",
+      "detail": "All 1197 model targets and 986 missing-grade targets remain incomplete. Family hints intentionally recur across generation/year/engine variants and do not prove compatibility. No grade is verified or automatically imported."
+    },
+    {
+      "code": "unused_declared_k5_alias_keys",
+      "entries": {
+        "기아|K5|K5 1세대 TF": [
+          "K5TF"
+        ],
+        "기아|K5|K5 2세대 JF": [
+          "K5JF"
+        ],
+        "기아|K5|K5 3세대 DL3": [
+          "K5DL3"
+        ]
+      }
+    },
+    {
+      "code": "version_specific_source_refs",
+      "detail": "Each candidate retains the amended raw-input hash plus amended sheet and row. Row numbers are not treated as persistent IDs across government source versions."
+    }
+  ]
+}

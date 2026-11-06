@@ -1,0 +1,144 @@
+{
+  "expectedSourceCounts": {
+    "vehicleRows": 105370,
+    "sheetCount": 43,
+    "vehicleUnknownFuelRows": 102185,
+    "sourceFloatArtifactRows": 2,
+    "numericSourceVehicleNames": 3,
+    "numericSourceTypeCodes": 180,
+    "specialCategoryInTruckSheetsPreserved": 4279,
+    "modificationRows": 431,
+    "undeterminedModificationPrices": 33,
+    "typeNameConflictGroups": 1558
+  },
+  "vehicleRows": 105370,
+  "modificationRows": 431,
+  "sheetCount": 43,
+  "typeNameConflictGroups": 1558,
+  "typeNameConflictMembers": 4605,
+  "foreignKeyViolations": [],
+  "integrityCheck": [
+    "ok"
+  ],
+  "vehicleUnknownFuelRows": 102185,
+  "vehicleModelYearPopulatedRows": 0,
+  "sourceFloatArtifactRows": 2,
+  "floatArtifactsHaveNullCanonicalInteger": true,
+  "undeterminedModificationPrices": 33,
+  "undeterminedPricesAreNullNotZero": true,
+  "numericSourceVehicleNames": 3,
+  "numericSourceTypeCodes": 180,
+  "specialCategoryInTruckSheetsPreserved": 4279,
+  "searchExamples": {
+    "CT&T": [
+      {
+        "record_id": "43edac03b1fe28e23a926ff1f4c00fd41c8837b85b728961e9a1e9b51d1805b0",
+        "sheet_name": "국산 1-1.승용(형식)",
+        "source_row": 5,
+        "manufacturer_raw": "CT&T",
+        "vehicle_name_raw": "이존(e-ZONE)",
+        "type_model_name_raw": null,
+        "type_raw": "CTNT-E70LG-0L",
+        "fuel_raw": null
+      },
+      {
+        "record_id": "cc8b6b9c53ab5976a22f67bb809f1ec98b918ff77ca04fd3a23a9809c64e9fd2",
+        "sheet_name": "국산 1-1.승용(형식)",
+        "source_row": 6,
+        "manufacturer_raw": "CT&T",
+        "vehicle_name_raw": "이존(e-ZONE)",
+        "type_model_name_raw": null,
+        "type_raw": "CTNT-E70PB-0L",
+        "fuel_raw": null
+      },
+      {
+        "record_id": "313b7502891268c354eb047b5aa1c7716157ba55b1899b82127ebb4866add842",
+        "sheet_name": "국산 1-2.승용(기종)",
+        "source_row": 5,
+        "manufacturer_raw": "CT&T",
+        "vehicle_name_raw": null,
+        "type_model_name_raw": "이존(E-ZONE)EDP,CTNT-E70PB-0L",
+        "type_raw": null,
+        "fuel_raw": null
+      }
+    ],
+    "글로밴": [
+      {
+        "record_id": "6979fc6ec3f6970b6c45c6e2d182210ea56df0ccddc69f1ff68c63941368647b",
+        "sheet_name": "국산 1-1.승용(형식)",
+        "source_row": 7,
+        "manufacturer_raw": "글로밴",
+        "vehicle_name_raw": "글로밴카니발리무진",
+        "type_model_name_raw": null,
+        "type_raw": "YP9ABB-S-O",
+        "fuel_raw": null
+      },
+      {
+        "record_id": "be9274d8d4955915c1036f6b52103d7cd05618f330c780c1f96c72a0d1c9a46f",
+        "sheet_name": "국산 1-1.승용(형식)",
+        "source_row": 8,
+        "manufacturer_raw": "글로밴",
+        "vehicle_name_raw": "글로밴카니발리무진",
+        "type_model_name_raw": null,
+        "type_raw": "YP9ABC",
+        "fuel_raw": null
+      },
+      {
+        "record_id": "911ddb667126e340fc01d1836aba49a6f9d2b8ef1b63429ccf6e43034388903a",
+        "sheet_name": "국산 1-1.승용(형식)",
+        "source_row": 4160,
+        "manufacturer_raw": "기아",
+        "vehicle_name_raw": "아트원글로밴리무진",
+        "type_model_name_raw": null,
+        "type_raw": "YP91BF-T-9",
+        "fuel_raw": null
+      }
+    ],
+    "CTNT-E70LG-0L": [
+      {
+        "record_id": "43edac03b1fe28e23a926ff1f4c00fd41c8837b85b728961e9a1e9b51d1805b0",
+        "sheet_name": "국산 1-1.승용(형식)",
+        "source_row": 5,
+        "manufacturer_raw": "CT&T",
+        "vehicle_name_raw": "이존(e-ZONE)",
+        "type_model_name_raw": null,
+        "type_raw": "CTNT-E70LG-0L",
+        "fuel_raw": null
+      }
+    ],
+    "기아": [
+      {
+        "record_id": "577da416ff62b27af75743ce8f8f15b73b8b4fa0795eda36f0eb6b9b39339b47",
+        "sheet_name": "국산 1-1.승용(형식)",
+        "source_row": 9,
+        "manufacturer_raw": "기아",
+        "vehicle_name_raw": "K3",
+        "type_model_name_raw": null,
+        "type_raw": "BD47AB-P-8",
+        "fuel_raw": null
+      },
+      {
+        "record_id": "f457e926c184bbdcd4af51a380bb7d5ac658bec8f58ed92f308a6b1046841366",
+        "sheet_name": "국산 1-1.승용(형식)",
+        "source_row": 10,
+        "manufacturer_raw": "기아",
+        "vehicle_name_raw": "K3",
+        "type_model_name_raw": null,
+        "type_raw": "BD47AC-P-8",
+        "fuel_raw": null
+      },
+      {
+        "record_id": "1285669facb526102c10d7511f9c961879f8d786a6b8b0687cc681bae70a31b8",
+        "sheet_name": "국산 1-1.승용(형식)",
+        "source_row": 11,
+        "manufacturer_raw": "기아",
+        "vehicle_name_raw": "K3",
+        "type_model_name_raw": null,
+        "type_raw": "BD47GB-H-8",
+        "fuel_raw": null
+      }
+    ]
+  },
+  "ftsExternalContentIntegrityCheck": "ok",
+  "passed": true
+}

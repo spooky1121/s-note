@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "storage": "ordered_byte_parts",
+  "partSizeLimit": 8388608,
+  "format": "Concatenate listed parts in order; original gzip bytes are unchanged.",
+  "downloadBundleContainsCompleteFiles": true,
+  "files": [
+    {
+      "name": "government-tax-2026-amended.sqlite.gz",
+      "bytes": 26805720,
+      "sha256": "327b915634a71c580f96b38c726476d988a5cb3405ea042560b0aa67ac7c1841",
+      "uncompressedBytes": 110641152,
+      "uncompressedSha256": "7f0e1306364e538ce0249317bf8267821e16d2e32e60353979c626ae71b649b5",
+      "parts": [
+        {
+          "path": "government-tax-2026-amended.sqlite.gz.parts/001.part",
+          "bytes": 8388608,
+          "sha256": "1ffcac950ba1c35e3b8fb63afebf091d93d27a3bc12aa841c818a2a722092a71"
+        },
+        {
+          "path": "government-tax-2026-amended.sqlite.gz.parts/002.part",
+          "bytes": 8388608,
+          "sha256": "6532fe1671e09a1c8339b9cf75da62e7f4f2860a34d881c46890955b2e10c2e0"
+        },
+        {
+          "path": "government-tax-2026-amended.sqlite.gz.parts/003.part",
+          "bytes": 8388608,
+          "sha256": "9995ee521d750d35f70f613c85bb61b04985046e53f77bee446cb6e57f9d25c0"
+        },
+        {
+          "path": "government-tax-2026-amended.sqlite.gz.parts/004.part",
+          "bytes": 1639896,
+          "sha256": "256cca63173acd69ff9386ae0affc6bffcc562de04e05128f71d926a83036fe3"
+        }
+      ]
+    },
+    {
+      "name": "government-tax-2026-amended.vehicles.csv.gz",
+      "bytes": 13495020,
+      "sha256": "b025c9cf6e1d9650635eeda69683f2e47bcb5dd18b88aac3ff7e9e2d840f1c22",
+      "uncompressedBytes": 79099326,
+      "uncompressedSha256": "416cff16da3ea6fe015324c02f8cc29799f1d3f304d9bc8e8fdf6d04d52a5a4e",
+      "parts": [
+        {
+          "path": "government-tax-2026-amended.vehicles.csv.gz.parts/001.part",
+          "bytes": 8388608,
+          "sha256": "c9400a16b25d123345d091dc6e39ea06b368e5820ac854260c832d5efc6a1983"
+        },
+        {
+          "path": "government-tax-2026-amended.vehicles.csv.gz.parts/002.part",
+          "bytes": 5106412,
+          "sha256": "3b487dbbc55733e634daaa5cdc19008cbf6468bb4cf7116187d69446de21a45c"
+        }
+      ]
+    }
+  ]
+}

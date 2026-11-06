@@ -1,0 +1,7 @@
+{
+  "passed": true,
+  "test": "one changed byte in required raw gzip must be rejected before database/output creation",
+  "rejected": true,
+  "error": "Raw input SHA-256/size mismatch: vehicle-records.raw.jsonl.gz",
+  "sourceFilesChanged": false
+}

@@ -1,0 +1,2298 @@
+{
+  "schemaVersion": 1,
+  "acquisitionMethod": "user_supplied_copy_of_public_government_attachment",
+  "remoteBytesCompared": false,
+  "remoteHashCompared": false,
+  "workbookSha256": "b5c2cdef501228014ab057f5f683c5615273872dc0c235b73bbd2a58612ff4fd",
+  "originalAmountUnit": "천원",
+  "amountPolicy": "Raw tax reference prices only; never interpreted as retail selling prices or used in application calculations. No conversion applied.",
+  "headerPolicy": "Original header spelling/spacing and source columns preserved; no implicit merge-cell fill-down.",
+  "classificationPolicy": "Government tax vehicle/type/name observations only, not a retail manufacturer→generation→grade master. No trim/year/parent code invented.",
+  "sheets": [
+    {
+      "sheetIndex": 1,
+      "name": "국산 1-1.승용(형식)",
+      "xmlPart": "xl/worksheets/sheet1.xml",
+      "dimensionRaw": "A1:F13625",
+      "declaredMaxRow": 13625,
+      "serializedXmlRows": 13625,
+      "nonemptyRows": 13625,
+      "blankRowsThroughDeclaredMax": 0,
+      "lastNonemptyRow": 13625,
+      "formulaCount": 0,
+      "mergedCellRanges": [],
+      "vehicleClassificationSheet": true,
+      "headerRow": 4,
+      "headerRaw": [
+        "연번",
+        "차종",
+        "제작사",
+        "차명",
+        "형식",
+        "기준가격"
+      ],
+      "dataRows": 13621,
+      "duplicateRowsIgnoringSerial": 0,
+      "duplicateExamples": [],
+      "nonNumericPostHeaderExamples": [],
+      "samples": [
+        {
+          "sourceSheet": "국산 1-1.승용(형식)",
+          "sourceRow": 5,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "1",
+            "차종": "승용",
+            "제작사": "CT&T",
+            "차명": "이존(e-ZONE)",
+            "형식": "CTNT-E70LG-0L",
+            "기준가격": "17810"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        },
+        {
+          "sourceSheet": "국산 1-1.승용(형식)",
+          "sourceRow": 6,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "2",
+            "차종": "승용",
+            "제작사": "CT&T",
+            "차명": "이존(e-ZONE)",
+            "형식": "CTNT-E70PB-0L",
+            "기준가격": "13800"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "amountUnitSourceRaw": [
+        "(단위:천원)"
+      ],
+      "numberedDataRows": 13621,
+      "vehicleRowsMissingSerial": 0,
+      "individualRawCsvKeptInWorkOnly": true
+    },
+    {
+      "sheetIndex": 2,
+      "name": "외산 1-1.승용(형식)",
+      "xmlPart": "xl/worksheets/sheet2.xml",
+      "dimensionRaw": "A1:F3877",
+      "declaredMaxRow": 3877,
+      "serializedXmlRows": 3877,
+      "nonemptyRows": 3877,
+      "blankRowsThroughDeclaredMax": 0,
+      "lastNonemptyRow": 3877,
+      "formulaCount": 0,
+      "mergedCellRanges": [],
+      "vehicleClassificationSheet": true,
+      "headerRow": 4,
+      "headerRaw": [
+        "연번",
+        "차종",
+        "제작사",
+        "차명",
+        "형식",
+        "기준가격"
+      ],
+      "dataRows": 3873,
+      "duplicateRowsIgnoringSerial": 0,
+      "duplicateExamples": [],
+      "nonNumericPostHeaderExamples": [],
+      "samples": [
+        {
+          "sourceSheet": "외산 1-1.승용(형식)",
+          "sourceRow": 5,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "1",
+            "차종": "승용",
+            "제작사": "ASTONMARTIN",
+            "차명": "DB 11",
+            "형식": "FA",
+            "기준가격": "295450"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        },
+        {
+          "sourceSheet": "외산 1-1.승용(형식)",
+          "sourceRow": 6,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "2",
+            "차종": "승용",
+            "제작사": "ASTONMARTIN",
+            "차명": "DB 11 V8 Coupe",
+            "형식": "FA",
+            "기준가격": "295450"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "amountUnitSourceRaw": [
+        "(단위 : 천원)"
+      ],
+      "numberedDataRows": 3873,
+      "vehicleRowsMissingSerial": 0,
+      "individualRawCsvKeptInWorkOnly": true
+    },
+    {
+      "sheetIndex": 3,
+      "name": "국산 1-2.승용(기종)",
+      "xmlPart": "xl/worksheets/sheet3.xml",
+      "dimensionRaw": "A1:D11027",
+      "declaredMaxRow": 11027,
+      "serializedXmlRows": 11027,
+      "nonemptyRows": 11027,
+      "blankRowsThroughDeclaredMax": 0,
+      "lastNonemptyRow": 11027,
+      "formulaCount": 0,
+      "mergedCellRanges": [],
+      "vehicleClassificationSheet": true,
+      "headerRow": 4,
+      "headerRaw": [
+        "연번",
+        "제작사",
+        "기종명",
+        "기준가격"
+      ],
+      "dataRows": 11023,
+      "duplicateRowsIgnoringSerial": 0,
+      "duplicateExamples": [],
+      "nonNumericPostHeaderExamples": [],
+      "samples": [
+        {
+          "sourceSheet": "국산 1-2.승용(기종)",
+          "sourceRow": 5,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "1",
+            "제작사": "CT&T",
+            "기종명": "이존(E-ZONE)EDP,CTNT-E70PB-0L",
+            "기준가격": "12640"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        },
+        {
+          "sourceSheet": "국산 1-2.승용(기종)",
+          "sourceRow": 6,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "2",
+            "제작사": "CT&T",
+            "기종명": "이존(E-ZONE)EDP,납축",
+            "기준가격": "13730"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "amountUnitSourceRaw": [
+        "(단위 : 천원)"
+      ],
+      "numberedDataRows": 11023,
+      "vehicleRowsMissingSerial": 0,
+      "individualRawCsvKeptInWorkOnly": true
+    },
+    {
+      "sheetIndex": 4,
+      "name": "외산 1-2.승용(기종)",
+      "xmlPart": "xl/worksheets/sheet4.xml",
+      "dimensionRaw": "A1:D3551",
+      "declaredMaxRow": 3551,
+      "serializedXmlRows": 3551,
+      "nonemptyRows": 3551,
+      "blankRowsThroughDeclaredMax": 0,
+      "lastNonemptyRow": 3551,
+      "formulaCount": 0,
+      "mergedCellRanges": [],
+      "vehicleClassificationSheet": true,
+      "headerRow": 4,
+      "headerRaw": [
+        "연번",
+        "제작사",
+        "기종명",
+        "기준가격"
+      ],
+      "dataRows": 3547,
+      "duplicateRowsIgnoringSerial": 0,
+      "duplicateExamples": [],
+      "nonNumericPostHeaderExamples": [],
+      "samples": [
+        {
+          "sourceSheet": "외산 1-2.승용(기종)",
+          "sourceRow": 5,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "1",
+            "제작사": "ASTONMARTIN",
+            "기종명": "DB11 AMR V12 Coupe",
+            "기준가격": "268180"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        },
+        {
+          "sourceSheet": "외산 1-2.승용(기종)",
+          "sourceRow": 6,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "2",
+            "제작사": "ASTONMARTIN",
+            "기종명": "DB9 Coupe",
+            "기준가격": "235450"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "amountUnitSourceRaw": [
+        "(단위 : 천원)"
+      ],
+      "numberedDataRows": 3547,
+      "vehicleRowsMissingSerial": 0,
+      "individualRawCsvKeptInWorkOnly": true
+    },
+    {
+      "sheetIndex": 5,
+      "name": "국산 1-3.승용(친환경)_형식",
+      "xmlPart": "xl/worksheets/sheet5.xml",
+      "dimensionRaw": "A1:F1807",
+      "declaredMaxRow": 1807,
+      "serializedXmlRows": 1807,
+      "nonemptyRows": 1807,
+      "blankRowsThroughDeclaredMax": 0,
+      "lastNonemptyRow": 1807,
+      "formulaCount": 0,
+      "mergedCellRanges": [],
+      "vehicleClassificationSheet": true,
+      "headerRow": 5,
+      "headerRaw": [
+        "연번",
+        "제작사",
+        "차명",
+        "형식",
+        "연료원",
+        "기준가격"
+      ],
+      "dataRows": 1802,
+      "duplicateRowsIgnoringSerial": 0,
+      "duplicateExamples": [],
+      "nonNumericPostHeaderExamples": [],
+      "samples": [
+        {
+          "sourceSheet": "국산 1-3.승용(친환경)_형식",
+          "sourceRow": 6,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "1",
+            "제작사": "기아",
+            "차명": "EV3",
+            "형식": "SV1AA-G7DF-G7A",
+            "연료원": "전기",
+            "기준가격": "40290"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        },
+        {
+          "sourceSheet": "국산 1-3.승용(친환경)_형식",
+          "sourceRow": 7,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "2",
+            "제작사": "기아",
+            "차명": "EV3",
+            "형식": "SV1AA-G7DO-G7A",
+            "연료원": "전기",
+            "기준가격": "41920"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "amountUnitSourceRaw": [
+        "(단위:천원)"
+      ],
+      "numberedDataRows": 1802,
+      "vehicleRowsMissingSerial": 0,
+      "individualRawCsvKeptInWorkOnly": true
+    },
+    {
+      "sheetIndex": 6,
+      "name": "외산 1-3.승용(친환경)_형식",
+      "xmlPart": "xl/worksheets/sheet6.xml",
+      "dimensionRaw": "A1:F552",
+      "declaredMaxRow": 552,
+      "serializedXmlRows": 552,
+      "nonemptyRows": 552,
+      "blankRowsThroughDeclaredMax": 0,
+      "lastNonemptyRow": 552,
+      "formulaCount": 0,
+      "mergedCellRanges": [],
+      "vehicleClassificationSheet": true,
+      "headerRow": 5,
+      "headerRaw": [
+        "연번",
+        "제작사",
+        "차명",
+        "형식",
+        "연료원",
+        "기준가격"
+      ],
+      "dataRows": 547,
+      "duplicateRowsIgnoringSerial": 0,
+      "duplicateExamples": [],
+      "nonNumericPostHeaderExamples": [],
+      "samples": [
+        {
+          "sourceSheet": "외산 1-3.승용(친환경)_형식",
+          "sourceRow": 6,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "1",
+            "제작사": "AUDI",
+            "차명": "A3 40 TFSI",
+            "형식": "GY",
+            "연료원": "하이브리드",
+            "기준가격": "35710"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        },
+        {
+          "sourceSheet": "외산 1-3.승용(친환경)_형식",
+          "sourceRow": 7,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "2",
+            "제작사": "AUDI",
+            "차명": "A3 Sportbacke-tron",
+            "형식": "8V",
+            "연료원": "하이브리드",
+            "기준가격": "36700"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "amountUnitSourceRaw": [
+        "(단위:천원)"
+      ],
+      "numberedDataRows": 546,
+      "vehicleRowsMissingSerial": 1,
+      "individualRawCsvKeptInWorkOnly": true
+    },
+    {
+      "sheetIndex": 7,
+      "name": "국산 1-3.승용(친환경)_기종",
+      "xmlPart": "xl/worksheets/sheet7.xml",
+      "dimensionRaw": "A1:E203",
+      "declaredMaxRow": 203,
+      "serializedXmlRows": 203,
+      "nonemptyRows": 203,
+      "blankRowsThroughDeclaredMax": 0,
+      "lastNonemptyRow": 203,
+      "formulaCount": 0,
+      "mergedCellRanges": [],
+      "vehicleClassificationSheet": true,
+      "headerRow": 5,
+      "headerRaw": [
+        "연번",
+        "제작사",
+        "기종명",
+        "연료원",
+        "기준가격"
+      ],
+      "dataRows": 198,
+      "duplicateRowsIgnoringSerial": 0,
+      "duplicateExamples": [],
+      "nonNumericPostHeaderExamples": [],
+      "samples": [
+        {
+          "sourceSheet": "국산 1-3.승용(친환경)_기종",
+          "sourceRow": 6,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "1",
+            "제작사": "기아",
+            "기종명": "EV6전기GTA/T",
+            "연료원": "전기",
+            "기준가격": "60720"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        },
+        {
+          "sourceSheet": "국산 1-3.승용(친환경)_기종",
+          "sourceRow": 7,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "2",
+            "제작사": "기아",
+            "기종명": "EV6전기롱레인지GT-line2WDA/T",
+            "연료원": "전기",
+            "기준가격": "50080"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "amountUnitSourceRaw": [
+        "(단위 : 천원)"
+      ],
+      "numberedDataRows": 198,
+      "vehicleRowsMissingSerial": 0,
+      "individualRawCsvKeptInWorkOnly": true
+    },
+    {
+      "sheetIndex": 8,
+      "name": "외산 1-3.승용(친환경)_기종",
+      "xmlPart": "xl/worksheets/sheet8.xml",
+      "dimensionRaw": "A1:E97",
+      "declaredMaxRow": 97,
+      "serializedXmlRows": 97,
+      "nonemptyRows": 97,
+      "blankRowsThroughDeclaredMax": 0,
+      "lastNonemptyRow": 97,
+      "formulaCount": 0,
+      "mergedCellRanges": [],
+      "vehicleClassificationSheet": true,
+      "headerRow": 5,
+      "headerRaw": [
+        "연번",
+        "제작사",
+        "기종명",
+        "연료원",
+        "기준가격"
+      ],
+      "dataRows": 92,
+      "duplicateRowsIgnoringSerial": 0,
+      "duplicateExamples": [],
+      "nonNumericPostHeaderExamples": [],
+      "samples": [
+        {
+          "sourceSheet": "외산 1-3.승용(친환경)_기종",
+          "sourceRow": 6,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "1",
+            "제작사": "BMW",
+            "기종명": "330e iPerformance M Sports Package",
+            "연료원": "하이브리드",
+            "기준가격": "46670"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        },
+        {
+          "sourceSheet": "외산 1-3.승용(친환경)_기종",
+          "sourceRow": 7,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "2",
+            "제작사": "BMW",
+            "기종명": "740e iPerformance M Sport Package",
+            "연료원": "하이브리드",
+            "기준가격": "131390"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "amountUnitSourceRaw": [
+        "(단위 : 천원)"
+      ],
+      "numberedDataRows": 92,
+      "vehicleRowsMissingSerial": 0,
+      "individualRawCsvKeptInWorkOnly": true
+    },
+    {
+      "sheetIndex": 9,
+      "name": "국산 2-1.승합(형식)",
+      "xmlPart": "xl/worksheets/sheet9.xml",
+      "dimensionRaw": "A1:F8162",
+      "declaredMaxRow": 8162,
+      "serializedXmlRows": 8162,
+      "nonemptyRows": 8162,
+      "blankRowsThroughDeclaredMax": 0,
+      "lastNonemptyRow": 8162,
+      "formulaCount": 0,
+      "mergedCellRanges": [],
+      "vehicleClassificationSheet": true,
+      "headerRow": 4,
+      "headerRaw": [
+        "연번",
+        "차종",
+        "제작사",
+        "차명",
+        "형식",
+        "기준가격"
+      ],
+      "dataRows": 8158,
+      "duplicateRowsIgnoringSerial": 0,
+      "duplicateExamples": [],
+      "nonNumericPostHeaderExamples": [],
+      "samples": [
+        {
+          "sourceSheet": "국산 2-1.승합(형식)",
+          "sourceRow": 5,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "1",
+            "차종": "승합",
+            "제작사": "JK다원모터스",
+            "차명": "다원캠핑트레일러",
+            "형식": "DW-17",
+            "기준가격": "13000"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        },
+        {
+          "sourceSheet": "국산 2-1.승합(형식)",
+          "sourceRow": 6,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "2",
+            "차종": "승합",
+            "제작사": "JK다원모터스",
+            "차명": "다원캠핑트레일러",
+            "형식": "JKD-3",
+            "기준가격": "4000"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "amountUnitSourceRaw": [
+        "(단위 : 천원)"
+      ],
+      "numberedDataRows": 8158,
+      "vehicleRowsMissingSerial": 0,
+      "individualRawCsvKeptInWorkOnly": true
+    },
+    {
+      "sheetIndex": 10,
+      "name": "외산 2-1.승합(형식)",
+      "xmlPart": "xl/worksheets/sheet10.xml",
+      "dimensionRaw": "A1:F1814",
+      "declaredMaxRow": 1814,
+      "serializedXmlRows": 1814,
+      "nonemptyRows": 1814,
+      "blankRowsThroughDeclaredMax": 0,
+      "lastNonemptyRow": 1814,
+      "formulaCount": 0,
+      "mergedCellRanges": [],
+      "vehicleClassificationSheet": true,
+      "headerRow": 4,
+      "headerRaw": [
+        "연번",
+        "차종",
+        "제작사",
+        "차명",
+        "형식",
+        "기준가격"
+      ],
+      "dataRows": 1810,
+      "duplicateRowsIgnoringSerial": 0,
+      "duplicateExamples": [],
+      "nonNumericPostHeaderExamples": [],
+      "samples": [
+        {
+          "sourceSheet": "외산 2-1.승합(형식)",
+          "sourceRow": 5,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "1",
+            "차종": "승합",
+            "제작사": "BH카라반모터스",
+            "차명": "베일리(BAILEY)캠핑트레일러",
+            "형식": "BAILEY",
+            "기준가격": "34090"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        },
+        {
+          "sourceSheet": "외산 2-1.승합(형식)",
+          "sourceRow": 6,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "2",
+            "차종": "승합",
+            "제작사": "BH카라반모터스",
+            "차명": "베일리(BAILEY)캠핑트레일러",
+            "형식": "DISCOVERYD4-4",
+            "기준가격": "30900"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "amountUnitSourceRaw": [
+        "(단위:천원)"
+      ],
+      "numberedDataRows": 1810,
+      "vehicleRowsMissingSerial": 0,
+      "individualRawCsvKeptInWorkOnly": true
+    },
+    {
+      "sheetIndex": 11,
+      "name": "국산 2-2.승합(기종)",
+      "xmlPart": "xl/worksheets/sheet11.xml",
+      "dimensionRaw": "A1:D3348",
+      "declaredMaxRow": 3348,
+      "serializedXmlRows": 3348,
+      "nonemptyRows": 3348,
+      "blankRowsThroughDeclaredMax": 0,
+      "lastNonemptyRow": 3348,
+      "formulaCount": 0,
+      "mergedCellRanges": [],
+      "vehicleClassificationSheet": true,
+      "headerRow": 4,
+      "headerRaw": [
+        "연번",
+        "제작사",
+        "기종명",
+        "기준가격"
+      ],
+      "dataRows": 3344,
+      "duplicateRowsIgnoringSerial": 0,
+      "duplicateExamples": [],
+      "nonNumericPostHeaderExamples": [],
+      "samples": [
+        {
+          "sourceSheet": "국산 2-2.승합(기종)",
+          "sourceRow": 5,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "1",
+            "제작사": "기아",
+            "기종명": "2022년형기아카니발디젤2.2(11인승)노블레스A/T",
+            "기준가격": "29750"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        },
+        {
+          "sourceSheet": "국산 2-2.승합(기종)",
+          "sourceRow": 6,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "2",
+            "제작사": "기아",
+            "기종명": "2022년형기아카니발디젤2.2(11인승)시그니처A/T",
+            "기준가격": "37070"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "amountUnitSourceRaw": [
+        "(단위 : 천원)"
+      ],
+      "numberedDataRows": 3344,
+      "vehicleRowsMissingSerial": 0,
+      "individualRawCsvKeptInWorkOnly": true
+    },
+    {
+      "sheetIndex": 12,
+      "name": "외산 2-2.승합(기종)",
+      "xmlPart": "xl/worksheets/sheet12.xml",
+      "dimensionRaw": "A1:D123",
+      "declaredMaxRow": 123,
+      "serializedXmlRows": 123,
+      "nonemptyRows": 123,
+      "blankRowsThroughDeclaredMax": 0,
+      "lastNonemptyRow": 123,
+      "formulaCount": 0,
+      "mergedCellRanges": [],
+      "vehicleClassificationSheet": true,
+      "headerRow": 4,
+      "headerRaw": [
+        "연번",
+        "제작사",
+        "기종명",
+        "기준가격"
+      ],
+      "dataRows": 119,
+      "duplicateRowsIgnoringSerial": 0,
+      "duplicateExamples": [],
+      "nonNumericPostHeaderExamples": [],
+      "samples": [
+        {
+          "sourceSheet": "외산 2-2.승합(기종)",
+          "sourceRow": 5,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "1",
+            "제작사": "CHRYSLER",
+            "기종명": "Dodge Caravan 2.4",
+            "기준가격": "30430"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        },
+        {
+          "sourceSheet": "외산 2-2.승합(기종)",
+          "sourceRow": 6,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "2",
+            "제작사": "CHRYSLER",
+            "기종명": "Dodge Caravan 3.3F",
+            "기준가격": "37810"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "amountUnitSourceRaw": [
+        "(단위 : 천원)"
+      ],
+      "numberedDataRows": 119,
+      "vehicleRowsMissingSerial": 0,
+      "individualRawCsvKeptInWorkOnly": true
+    },
+    {
+      "sheetIndex": 13,
+      "name": "국산 2-3.승합(친환경)_형식",
+      "xmlPart": "xl/worksheets/sheet13.xml",
+      "dimensionRaw": "A1:F289",
+      "declaredMaxRow": 289,
+      "serializedXmlRows": 289,
+      "nonemptyRows": 289,
+      "blankRowsThroughDeclaredMax": 0,
+      "lastNonemptyRow": 289,
+      "formulaCount": 0,
+      "mergedCellRanges": [],
+      "vehicleClassificationSheet": true,
+      "headerRow": 5,
+      "headerRaw": [
+        "연번",
+        "제작사",
+        "차명",
+        "형식",
+        "연료원",
+        "기준가격"
+      ],
+      "dataRows": 284,
+      "duplicateRowsIgnoringSerial": 0,
+      "duplicateExamples": [],
+      "nonNumericPostHeaderExamples": [],
+      "samples": [
+        {
+          "sourceSheet": "국산 2-3.승합(친환경)_형식",
+          "sourceRow": 6,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "1",
+            "제작사": "범한자동차",
+            "차명": "E-STAR 11",
+            "형식": "E-STAR 11",
+            "연료원": "전기",
+            "기준가격": "352280"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        },
+        {
+          "sourceSheet": "국산 2-3.승합(친환경)_형식",
+          "sourceRow": 7,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "2",
+            "제작사": "범한자동차",
+            "차명": "E-STAR 8 V1",
+            "형식": "E-STAR8V1",
+            "연료원": "전기",
+            "기준가격": "313290"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "amountUnitSourceRaw": [
+        "(단위 : 천원)"
+      ],
+      "numberedDataRows": 284,
+      "vehicleRowsMissingSerial": 0,
+      "individualRawCsvKeptInWorkOnly": true
+    },
+    {
+      "sheetIndex": 14,
+      "name": "외산 2-3.승합(친환경)_형식만있음",
+      "xmlPart": "xl/worksheets/sheet14.xml",
+      "dimensionRaw": "A1:G61",
+      "declaredMaxRow": 61,
+      "serializedXmlRows": 61,
+      "nonemptyRows": 61,
+      "blankRowsThroughDeclaredMax": 0,
+      "lastNonemptyRow": 61,
+      "formulaCount": 0,
+      "mergedCellRanges": [],
+      "vehicleClassificationSheet": true,
+      "headerRow": 5,
+      "headerRaw": [
+        "연번",
+        "제작사",
+        "차명",
+        "형식",
+        "연료원",
+        "기준가격"
+      ],
+      "dataRows": 56,
+      "duplicateRowsIgnoringSerial": 0,
+      "duplicateExamples": [],
+      "nonNumericPostHeaderExamples": [],
+      "samples": [
+        {
+          "sourceSheet": "외산 2-3.승합(친환경)_형식만있음",
+          "sourceRow": 6,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "1",
+            "제작사": "GS글로벌",
+            "차명": "BYD eBus11",
+            "형식": "B11A01A",
+            "연료원": "전기",
+            "기준가격": "350000"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        },
+        {
+          "sourceSheet": "외산 2-3.승합(친환경)_형식만있음",
+          "sourceRow": 7,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "2",
+            "제작사": "GS글로벌",
+            "차명": "BYD eBus7",
+            "형식": "B75A01",
+            "연료원": "전기",
+            "기준가격": "215000"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "amountUnitSourceRaw": [
+        "(단위 : 천원)"
+      ],
+      "numberedDataRows": 56,
+      "vehicleRowsMissingSerial": 0,
+      "individualRawCsvKeptInWorkOnly": true
+    },
+    {
+      "sheetIndex": 15,
+      "name": "국산 2-3.승합(친환경)_기종",
+      "xmlPart": "xl/worksheets/sheet15.xml",
+      "dimensionRaw": "A1:F9",
+      "declaredMaxRow": 9,
+      "serializedXmlRows": 9,
+      "nonemptyRows": 9,
+      "blankRowsThroughDeclaredMax": 0,
+      "lastNonemptyRow": 9,
+      "formulaCount": 0,
+      "mergedCellRanges": [
+        "C6:D6",
+        "C5:D5",
+        "C7:D7",
+        "C8:D8",
+        "C9:D9"
+      ],
+      "vehicleClassificationSheet": true,
+      "headerRow": 5,
+      "headerRaw": [
+        "연번",
+        "제작사",
+        "기종명",
+        null,
+        "연료원",
+        "기준가격"
+      ],
+      "dataRows": 4,
+      "duplicateRowsIgnoringSerial": 0,
+      "duplicateExamples": [],
+      "nonNumericPostHeaderExamples": [],
+      "samples": [
+        {
+          "sourceSheet": "국산 2-3.승합(친환경)_기종",
+          "sourceRow": 6,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "1",
+            "제작사": "에디슨모터스",
+            "기종명": "e-FIBIRDPLUG-IN136kW(PIEV)",
+            "__column_D": null,
+            "연료원": "전기",
+            "기준가격": "342800"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        },
+        {
+          "sourceSheet": "국산 2-3.승합(친환경)_기종",
+          "sourceRow": 7,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "2",
+            "제작사": "현대",
+            "기종명": "뉴슈퍼에어로시티CNG하이브리드초저상도시표준블루시티(27+22+1석)M/T",
+            "__column_D": null,
+            "연료원": "하이브리드",
+            "기준가격": "250480"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "amountUnitSourceRaw": [
+        "(단위 : 천원)"
+      ],
+      "numberedDataRows": 4,
+      "vehicleRowsMissingSerial": 0,
+      "individualRawCsvKeptInWorkOnly": true
+    },
+    {
+      "sheetIndex": 16,
+      "name": "국산 3-1.화물(형식)",
+      "xmlPart": "xl/worksheets/sheet16.xml",
+      "dimensionRaw": "A1:F37396",
+      "declaredMaxRow": 37396,
+      "serializedXmlRows": 37396,
+      "nonemptyRows": 37396,
+      "blankRowsThroughDeclaredMax": 0,
+      "lastNonemptyRow": 37396,
+      "formulaCount": 0,
+      "mergedCellRanges": [],
+      "vehicleClassificationSheet": true,
+      "headerRow": 4,
+      "headerRaw": [
+        "연번",
+        "차종",
+        "제작사",
+        "차명",
+        "형식",
+        "기준가격"
+      ],
+      "dataRows": 37392,
+      "duplicateRowsIgnoringSerial": 0,
+      "duplicateExamples": [],
+      "nonNumericPostHeaderExamples": [],
+      "samples": [
+        {
+          "sourceSheet": "국산 3-1.화물(형식)",
+          "sourceRow": 5,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "1",
+            "차종": "화물",
+            "제작사": " 골드밴",
+            "차명": "골드밴3.8톤냉동탑차",
+            "형식": "GV3.8FNA-TDEE6XB2",
+            "기준가격": "94380"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        },
+        {
+          "sourceSheet": "국산 3-1.화물(형식)",
+          "sourceRow": 6,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "2",
+            "차종": "화물",
+            "제작사": " 골드밴",
+            "차명": "골드밴3축냉동탑차",
+            "형식": "ECKH5.0-CBE",
+            "기준가격": "63470"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "amountUnitSourceRaw": [
+        "(단위 : 천원)"
+      ],
+      "numberedDataRows": 37392,
+      "vehicleRowsMissingSerial": 0,
+      "individualRawCsvKeptInWorkOnly": true
+    },
+    {
+      "sheetIndex": 17,
+      "name": "외산 3-1.화물(형식)",
+      "xmlPart": "xl/worksheets/sheet17.xml",
+      "dimensionRaw": "A1:F5504",
+      "declaredMaxRow": 5504,
+      "serializedXmlRows": 5504,
+      "nonemptyRows": 5497,
+      "blankRowsThroughDeclaredMax": 7,
+      "lastNonemptyRow": 5497,
+      "formulaCount": 0,
+      "mergedCellRanges": [],
+      "vehicleClassificationSheet": true,
+      "headerRow": 4,
+      "headerRaw": [
+        "연번",
+        "차종",
+        "제작사",
+        "차명",
+        "형식",
+        "기준가격"
+      ],
+      "dataRows": 5493,
+      "duplicateRowsIgnoringSerial": 0,
+      "duplicateExamples": [],
+      "nonNumericPostHeaderExamples": [],
+      "samples": [
+        {
+          "sourceSheet": "외산 3-1.화물(형식)",
+          "sourceRow": 5,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "1",
+            "차종": "특수",
+            "제작사": "BH카라반모터스",
+            "차명": "베일리(BAILEY)캠핑트레일러",
+            "형식": "ALICANTO-FARO",
+            "기준가격": "53560"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        },
+        {
+          "sourceSheet": "외산 3-1.화물(형식)",
+          "sourceRow": 6,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "2",
+            "차종": "특수",
+            "제작사": "BH카라반모터스",
+            "차명": "베일리(BAILEY)캠핑트레일러",
+            "형식": "DISCOVERY_4D-4",
+            "기준가격": "32720"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "amountUnitSourceRaw": [
+        "(단위 : 천원)"
+      ],
+      "numberedDataRows": 5493,
+      "vehicleRowsMissingSerial": 0,
+      "individualRawCsvKeptInWorkOnly": true
+    },
+    {
+      "sheetIndex": 18,
+      "name": "국산 3-2.화물(기종)",
+      "xmlPart": "xl/worksheets/sheet18.xml",
+      "dimensionRaw": "A1:D8980",
+      "declaredMaxRow": 8980,
+      "serializedXmlRows": 8980,
+      "nonemptyRows": 8980,
+      "blankRowsThroughDeclaredMax": 0,
+      "lastNonemptyRow": 8980,
+      "formulaCount": 0,
+      "mergedCellRanges": [],
+      "vehicleClassificationSheet": true,
+      "headerRow": 4,
+      "headerRaw": [
+        "연번",
+        "제작사",
+        "기종명",
+        "기준가격"
+      ],
+      "dataRows": 8976,
+      "duplicateRowsIgnoringSerial": 0,
+      "duplicateExamples": [],
+      "nonNumericPostHeaderExamples": [],
+      "samples": [
+        {
+          "sourceSheet": "국산 3-2.화물(기종)",
+          "sourceRow": 5,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "1",
+            "제작사": "ACROSSCAR",
+            "기종명": "PREMIUM430DD",
+            "기준가격": "28180"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        },
+        {
+          "sourceSheet": "국산 3-2.화물(기종)",
+          "sourceRow": 6,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "2",
+            "제작사": "AIRVAN",
+            "기종명": "MCT루프탑캠핑형",
+            "기준가격": "5360"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "amountUnitSourceRaw": [
+        "(단위 : 천원)"
+      ],
+      "numberedDataRows": 8976,
+      "vehicleRowsMissingSerial": 0,
+      "individualRawCsvKeptInWorkOnly": true
+    },
+    {
+      "sheetIndex": 19,
+      "name": "외산 3-2.화물(기종)",
+      "xmlPart": "xl/worksheets/sheet19.xml",
+      "dimensionRaw": "A1:D76",
+      "declaredMaxRow": 76,
+      "serializedXmlRows": 76,
+      "nonemptyRows": 76,
+      "blankRowsThroughDeclaredMax": 0,
+      "lastNonemptyRow": 76,
+      "formulaCount": 0,
+      "mergedCellRanges": [],
+      "vehicleClassificationSheet": true,
+      "headerRow": 4,
+      "headerRaw": [
+        "연번",
+        "제작사",
+        "기종명",
+        "기준가격"
+      ],
+      "dataRows": 72,
+      "duplicateRowsIgnoringSerial": 0,
+      "duplicateExamples": [],
+      "nonNumericPostHeaderExamples": [],
+      "samples": [
+        {
+          "sourceSheet": "외산 3-2.화물(기종)",
+          "sourceRow": 5,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "1",
+            "제작사": "CHEVROLET",
+            "기종명": "쉐보레트레일러3 2.0T",
+            "기준가격": "12050"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        },
+        {
+          "sourceSheet": "외산 3-2.화물(기종)",
+          "sourceRow": 6,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "2",
+            "제작사": "CHRYSLER",
+            "기종명": "DODGE DAKOTA",
+            "기준가격": "44810"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "amountUnitSourceRaw": [
+        "(단위 : 천원)"
+      ],
+      "numberedDataRows": 72,
+      "vehicleRowsMissingSerial": 0,
+      "individualRawCsvKeptInWorkOnly": true
+    },
+    {
+      "sheetIndex": 20,
+      "name": "국산 3-3.화물(친환경)_형식",
+      "xmlPart": "xl/worksheets/sheet20.xml",
+      "dimensionRaw": "A1:F142",
+      "declaredMaxRow": 142,
+      "serializedXmlRows": 142,
+      "nonemptyRows": 142,
+      "blankRowsThroughDeclaredMax": 0,
+      "lastNonemptyRow": 142,
+      "formulaCount": 0,
+      "mergedCellRanges": [],
+      "vehicleClassificationSheet": true,
+      "headerRow": 5,
+      "headerRaw": [
+        "연번",
+        "제작사",
+        "차명",
+        "형식",
+        "연료원",
+        "기준가격"
+      ],
+      "dataRows": 137,
+      "duplicateRowsIgnoringSerial": 0,
+      "duplicateExamples": [],
+      "nonNumericPostHeaderExamples": [],
+      "samples": [
+        {
+          "sourceSheet": "국산 3-3.화물(친환경)_형식",
+          "sourceRow": 6,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "1",
+            "제작사": "계백자동차",
+            "차명": "계백노면먼지청소차",
+            "형식": "GV050CM-QV15.5-ELEC.",
+            "연료원": "CNG",
+            "기준가격": "254610"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        },
+        {
+          "sourceSheet": "국산 3-3.화물(친환경)_형식",
+          "sourceRow": 7,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "2",
+            "제작사": "기아",
+            "차명": "봉고Ⅲ 1톤 EV",
+            "형식": "PUEVJZNFC-G7A",
+            "연료원": "전기",
+            "기준가격": "36630"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "amountUnitSourceRaw": [
+        "(단위 : 천원)"
+      ],
+      "numberedDataRows": 137,
+      "vehicleRowsMissingSerial": 0,
+      "individualRawCsvKeptInWorkOnly": true
+    },
+    {
+      "sheetIndex": 21,
+      "name": "외산 3-3.화물(친환경)_형식",
+      "xmlPart": "xl/worksheets/sheet21.xml",
+      "dimensionRaw": "A1:F104",
+      "declaredMaxRow": 104,
+      "serializedXmlRows": 104,
+      "nonemptyRows": 17,
+      "blankRowsThroughDeclaredMax": 87,
+      "lastNonemptyRow": 17,
+      "formulaCount": 0,
+      "mergedCellRanges": [],
+      "vehicleClassificationSheet": true,
+      "headerRow": 5,
+      "headerRaw": [
+        "연번",
+        "제작사",
+        "차명",
+        "형식",
+        "연료원",
+        "기준가격"
+      ],
+      "dataRows": 12,
+      "duplicateRowsIgnoringSerial": 0,
+      "duplicateExamples": [],
+      "nonNumericPostHeaderExamples": [],
+      "samples": [
+        {
+          "sourceSheet": "외산 3-3.화물(친환경)_형식",
+          "sourceRow": 6,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "1",
+            "제작사": "GS글로벌",
+            "차명": "T4K",
+            "형식": "T4K",
+            "연료원": "전기",
+            "기준가격": "35200"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        },
+        {
+          "sourceSheet": "외산 3-3.화물(친환경)_형식",
+          "sourceRow": 7,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "2",
+            "제작사": "GS글로벌",
+            "차명": "T4K냉동탑차",
+            "형식": "T4K",
+            "연료원": "전기",
+            "기준가격": "46270"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "amountUnitSourceRaw": [
+        "(단위 : 천원)"
+      ],
+      "numberedDataRows": 12,
+      "vehicleRowsMissingSerial": 0,
+      "individualRawCsvKeptInWorkOnly": true
+    },
+    {
+      "sheetIndex": 22,
+      "name": "국산 3-3.화물(친환경)_기종",
+      "xmlPart": "xl/worksheets/sheet22.xml",
+      "dimensionRaw": "A1:R35627",
+      "declaredMaxRow": 35627,
+      "serializedXmlRows": 1390,
+      "nonemptyRows": 19,
+      "blankRowsThroughDeclaredMax": 35608,
+      "lastNonemptyRow": 19,
+      "formulaCount": 0,
+      "mergedCellRanges": [],
+      "vehicleClassificationSheet": true,
+      "headerRow": 5,
+      "headerRaw": [
+        "연번",
+        "제작사",
+        "기종명",
+        "연료원",
+        "기준가격"
+      ],
+      "dataRows": 14,
+      "duplicateRowsIgnoringSerial": 0,
+      "duplicateExamples": [],
+      "nonNumericPostHeaderExamples": [],
+      "samples": [
+        {
+          "sourceSheet": "국산 3-3.화물(친환경)_기종",
+          "sourceRow": 6,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "1",
+            "제작사": "기아",
+            "기종명": "봉고3전기(내장탑차/윙바디/파워게이트)(특장차)내장탑차저상형킹캡초장축GLA/T",
+            "연료원": "전기",
+            "기준가격": "41240"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        },
+        {
+          "sourceSheet": "국산 3-3.화물(친환경)_기종",
+          "sourceRow": 7,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "2",
+            "제작사": "기아",
+            "기종명": "봉고3전기(내장탑차/윙바디/파워게이트)(특장차)내장탑차표준형킹캡초장축GLA/T",
+            "연료원": "전기",
+            "기준가격": "42050"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "amountUnitSourceRaw": [
+        "(단위 : 천원)"
+      ],
+      "numberedDataRows": 14,
+      "vehicleRowsMissingSerial": 0,
+      "individualRawCsvKeptInWorkOnly": true
+    },
+    {
+      "sheetIndex": 23,
+      "name": "국산 4-1.이륜(형식)",
+      "xmlPart": "xl/worksheets/sheet23.xml",
+      "dimensionRaw": "A1:F463",
+      "declaredMaxRow": 463,
+      "serializedXmlRows": 463,
+      "nonemptyRows": 462,
+      "blankRowsThroughDeclaredMax": 1,
+      "lastNonemptyRow": 462,
+      "formulaCount": 0,
+      "mergedCellRanges": [],
+      "vehicleClassificationSheet": true,
+      "headerRow": 4,
+      "headerRaw": [
+        "연번",
+        "차종",
+        "제작사",
+        "차명",
+        "형식",
+        "기준가격"
+      ],
+      "dataRows": 458,
+      "duplicateRowsIgnoringSerial": 0,
+      "duplicateExamples": [],
+      "nonNumericPostHeaderExamples": [],
+      "samples": [
+        {
+          "sourceSheet": "국산 4-1.이륜(형식)",
+          "sourceRow": 5,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "1",
+            "차종": "이륜",
+            "제작사": "KR모터스",
+            "차명": "(사륜)와우100Ⅱ",
+            "형식": "ALT100",
+            "기준가격": "2360"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        },
+        {
+          "sourceSheet": "국산 4-1.이륜(형식)",
+          "sourceRow": 6,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "2",
+            "차종": "이륜",
+            "제작사": "KR모터스",
+            "차명": "AEON125",
+            "형식": "HA-125",
+            "기준가격": "2900"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "amountUnitSourceRaw": [
+        "(단위 : 천원)"
+      ],
+      "numberedDataRows": 458,
+      "vehicleRowsMissingSerial": 0,
+      "individualRawCsvKeptInWorkOnly": true
+    },
+    {
+      "sheetIndex": 24,
+      "name": "외산 4-1.이륜(형식)",
+      "xmlPart": "xl/worksheets/sheet24.xml",
+      "dimensionRaw": "A1:F2135",
+      "declaredMaxRow": 2135,
+      "serializedXmlRows": 2135,
+      "nonemptyRows": 2135,
+      "blankRowsThroughDeclaredMax": 0,
+      "lastNonemptyRow": 2135,
+      "formulaCount": 0,
+      "mergedCellRanges": [],
+      "vehicleClassificationSheet": true,
+      "headerRow": 4,
+      "headerRaw": [
+        "연번",
+        "차종",
+        "제작사",
+        "차명",
+        "형식",
+        "기준가격"
+      ],
+      "dataRows": 2131,
+      "duplicateRowsIgnoringSerial": 0,
+      "duplicateExamples": [],
+      "nonNumericPostHeaderExamples": [],
+      "samples": [
+        {
+          "sourceSheet": "외산 4-1.이륜(형식)",
+          "sourceRow": 5,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "1",
+            "차종": "이륜",
+            "제작사": "ADLY MOTO",
+            "차명": "RT100 ROAD TRACER",
+            "형식": "RT100",
+            "기준가격": "1530"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        },
+        {
+          "sourceSheet": "외산 4-1.이륜(형식)",
+          "sourceRow": 6,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "2",
+            "차종": "이륜",
+            "제작사": "AJS Motorcycles Ltd.",
+            "차명": "MODENA 125",
+            "형식": "ZNBD125",
+            "기준가격": "2270"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "amountUnitSourceRaw": [
+        "(단위 : 천원)"
+      ],
+      "numberedDataRows": 2131,
+      "vehicleRowsMissingSerial": 0,
+      "individualRawCsvKeptInWorkOnly": true
+    },
+    {
+      "sheetIndex": 25,
+      "name": "외산 4-2.이륜(기종)",
+      "xmlPart": "xl/worksheets/sheet25.xml",
+      "dimensionRaw": "A1:D1895",
+      "declaredMaxRow": 1895,
+      "serializedXmlRows": 1895,
+      "nonemptyRows": 1895,
+      "blankRowsThroughDeclaredMax": 0,
+      "lastNonemptyRow": 1895,
+      "formulaCount": 0,
+      "mergedCellRanges": [],
+      "vehicleClassificationSheet": true,
+      "headerRow": 4,
+      "headerRaw": [
+        "연번",
+        "제작사",
+        "기종명",
+        "기준가격"
+      ],
+      "dataRows": 1891,
+      "duplicateRowsIgnoringSerial": 0,
+      "duplicateExamples": [],
+      "nonNumericPostHeaderExamples": [],
+      "samples": [
+        {
+          "sourceSheet": "외산 4-2.이륜(기종)",
+          "sourceRow": 5,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "1",
+            "제작사": "AEON",
+            "기종명": "(사륜)AVENGER/8×8",
+            "기준가격": "40000"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        },
+        {
+          "sourceSheet": "외산 4-2.이륜(기종)",
+          "sourceRow": 6,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "2",
+            "제작사": "AEON",
+            "기종명": "(사륜)BIGFOOT/6×6",
+            "기준가격": "22000"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "amountUnitSourceRaw": [
+        "(단위 : 천원)"
+      ],
+      "numberedDataRows": 1891,
+      "vehicleRowsMissingSerial": 0,
+      "individualRawCsvKeptInWorkOnly": true
+    },
+    {
+      "sheetIndex": 26,
+      "name": "국산 4-2.이륜(기종)",
+      "xmlPart": "xl/worksheets/sheet26.xml",
+      "dimensionRaw": "A1:D288",
+      "declaredMaxRow": 288,
+      "serializedXmlRows": 288,
+      "nonemptyRows": 288,
+      "blankRowsThroughDeclaredMax": 0,
+      "lastNonemptyRow": 288,
+      "formulaCount": 0,
+      "mergedCellRanges": [],
+      "vehicleClassificationSheet": true,
+      "headerRow": 4,
+      "headerRaw": [
+        "연번",
+        "제작사",
+        "기종명",
+        "기준가격"
+      ],
+      "dataRows": 284,
+      "duplicateRowsIgnoringSerial": 0,
+      "duplicateExamples": [],
+      "nonNumericPostHeaderExamples": [],
+      "samples": [
+        {
+          "sourceSheet": "국산 4-2.이륜(기종)",
+          "sourceRow": 5,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "1",
+            "제작사": "KR모터스",
+            "기종명": "(사륜)와우100RⅡ",
+            "기준가격": "1620"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        },
+        {
+          "sourceSheet": "국산 4-2.이륜(기종)",
+          "sourceRow": 6,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "2",
+            "제작사": "KR모터스",
+            "기종명": "AIGLE125",
+            "기준가격": "3260"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "amountUnitSourceRaw": [
+        "(단위 : 천원)"
+      ],
+      "numberedDataRows": 284,
+      "vehicleRowsMissingSerial": 0,
+      "individualRawCsvKeptInWorkOnly": true
+    },
+    {
+      "sheetIndex": 27,
+      "name": "국산 4-3.이륜(친환경)_형식만있음",
+      "xmlPart": "xl/worksheets/sheet27.xml",
+      "dimensionRaw": "A1:H44",
+      "declaredMaxRow": 44,
+      "serializedXmlRows": 44,
+      "nonemptyRows": 44,
+      "blankRowsThroughDeclaredMax": 0,
+      "lastNonemptyRow": 44,
+      "formulaCount": 0,
+      "mergedCellRanges": [],
+      "vehicleClassificationSheet": true,
+      "headerRow": 5,
+      "headerRaw": [
+        "연번",
+        "제작사",
+        "차명",
+        "형식",
+        "연료원",
+        "기준가격"
+      ],
+      "dataRows": 39,
+      "duplicateRowsIgnoringSerial": 0,
+      "duplicateExamples": [],
+      "nonNumericPostHeaderExamples": [],
+      "samples": [
+        {
+          "sourceSheet": "국산 4-3.이륜(친환경)_형식만있음",
+          "sourceRow": 6,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "1",
+            "제작사": "시티플라이",
+            "차명": "C40A",
+            "형식": "C-7240A",
+            "연료원": "전기",
+            "기준가격": "3190"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        },
+        {
+          "sourceSheet": "국산 4-3.이륜(친환경)_형식만있음",
+          "sourceRow": 7,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "2",
+            "제작사": "젠트로피",
+            "차명": "ZENTROPY Z",
+            "형식": "XCZ001",
+            "연료원": "전기",
+            "기준가격": "3420"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "amountUnitSourceRaw": [
+        "(단위 : 천원)"
+      ],
+      "numberedDataRows": 39,
+      "vehicleRowsMissingSerial": 0,
+      "individualRawCsvKeptInWorkOnly": true
+    },
+    {
+      "sheetIndex": 28,
+      "name": "외산 4-3.이륜(친환경)_형식만있음",
+      "xmlPart": "xl/worksheets/sheet28.xml",
+      "dimensionRaw": "A1:F11",
+      "declaredMaxRow": 11,
+      "serializedXmlRows": 11,
+      "nonemptyRows": 11,
+      "blankRowsThroughDeclaredMax": 0,
+      "lastNonemptyRow": 11,
+      "formulaCount": 0,
+      "mergedCellRanges": [],
+      "vehicleClassificationSheet": true,
+      "headerRow": 5,
+      "headerRaw": [
+        "연번",
+        "제작사",
+        "차명",
+        "형식",
+        "연료원",
+        "기준가격"
+      ],
+      "dataRows": 6,
+      "duplicateRowsIgnoringSerial": 0,
+      "duplicateExamples": [],
+      "nonNumericPostHeaderExamples": [],
+      "samples": [
+        {
+          "sourceSheet": "외산 4-3.이륜(친환경)_형식만있음",
+          "sourceRow": 6,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "1",
+            "제작사": "BMW",
+            "차명": "C EVOLUTION",
+            "형식": "0C03",
+            "연료원": "전기",
+            "기준가격": "22350"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        },
+        {
+          "sourceSheet": "외산 4-3.이륜(친환경)_형식만있음",
+          "sourceRow": 7,
+          "recordType": "government_tax_vehicle_observation",
+          "fieldsRaw": {
+            "연번": "2",
+            "제작사": " CFMOTO",
+            "차명": "AE8",
+            "형식": "ZH5000DT",
+            "연료원": "전기",
+            "기준가격": "5650"
+          },
+          "sourceYear": 2026,
+          "sourceYearBasis": "archive and workbook member filenames; effective-year government notice separately confirmed",
+          "amountUnitRaw": "천원"
+        }
+      ],
+      "amountUnitRaw": "천원",
+      "amountUnitSourceRaw": [
+        "(단위 : 천원)"
+      ],
+      "numberedDataRows": 6,
+      "vehicleRowsMissingSerial": 0,
+      "individualRawCsvKeptInWorkOnly": true
+    },
+    {
+      "sheetIndex": 29,
+      "name": "5-1.원동기변경_동일형식변경",
+      "xmlPart": "xl/worksheets/sheet29.xml",
+      "dimensionRaw": "A1:F40",
+      "declaredMaxRow": 40,
+      "serializedXmlRows": 40,
+      "nonemptyRows": 40,
+      "blankRowsThroughDeclaredMax": 0,
+      "lastNonemptyRow": 40,
+      "formulaCount": 0,
+      "mergedCellRanges": [],
+      "vehicleClassificationSheet": false,
+      "headerRow": null,
+      "headerRaw": null,
+      "dataRows": 0,
+      "duplicateRowsIgnoringSerial": 0,
+      "duplicateExamples": [],
+      "nonNumericPostHeaderExamples": [],
+      "samples": [],
+      "amountUnitRaw": "천원",
+      "amountUnitSourceRaw": [
+        "(단위: 천원)"
+      ]
+    },
+    {
+      "sheetIndex": 30,
+      "name": "5-1.원동기변경_상이형식변경",
+      "xmlPart": "xl/worksheets/sheet30.xml",
+      "dimensionRaw": "A1:F40",
+      "declaredMaxRow": 40,
+      "serializedXmlRows": 40,
+      "nonemptyRows": 40,
+      "blankRowsThroughDeclaredMax": 0,
+      "lastNonemptyRow": 40,
+      "formulaCount": 0,
+      "mergedCellRanges": [],
+      "vehicleClassificationSheet": false,
+      "headerRow": null,
+      "headerRaw": null,
+      "dataRows": 0,
+      "duplicateRowsIgnoringSerial": 0,
+      "duplicateExamples": [],
+      "nonNumericPostHeaderExamples": [],
+      "samples": [],
+      "amountUnitRaw": "천원",
+      "amountUnitSourceRaw": [
+        "(단위: 천원)"
+      ]
+    },
+    {
+      "sheetIndex": 31,
+      "name": "5-1.원동기변경_국산품으로변경",
+      "xmlPart": "xl/worksheets/sheet31.xml",
+      "dimensionRaw": "A1:L24",
+      "declaredMaxRow": 24,
+      "serializedXmlRows": 24,
+      "nonemptyRows": 24,
+      "blankRowsThroughDeclaredMax": 0,
+      "lastNonemptyRow": 24,
+      "formulaCount": 0,
+      "mergedCellRanges": [],
+      "vehicleClassificationSheet": false,
+      "headerRow": null,
+      "headerRaw": null,
+      "dataRows": 0,
+      "duplicateRowsIgnoringSerial": 0,
+      "duplicateExamples": [],
+      "nonNumericPostHeaderExamples": [],
+      "samples": [],
+      "amountUnitRaw": "천원",
+      "amountUnitSourceRaw": [
+        "(단위: 천원)"
+      ]
+    },
+    {
+      "sheetIndex": 32,
+      "name": "5-2.차체변경_탑설치",
+      "xmlPart": "xl/worksheets/sheet32.xml",
+      "dimensionRaw": "A1:D37",
+      "declaredMaxRow": 37,
+      "serializedXmlRows": 37,
+      "nonemptyRows": 37,
+      "blankRowsThroughDeclaredMax": 0,
+      "lastNonemptyRow": 37,
+      "formulaCount": 0,
+      "mergedCellRanges": [],
+      "vehicleClassificationSheet": false,
+      "headerRow": null,
+      "headerRaw": null,
+      "dataRows": 0,
+      "duplicateRowsIgnoringSerial": 0,
+      "duplicateExamples": [],
+      "nonNumericPostHeaderExamples": [],
+      "samples": [],
+      "amountUnitRaw": "천원",
+      "amountUnitSourceRaw": [
+        "(단위: 천원)"
+      ]
+    },
+    {
+      "sheetIndex": 33,
+      "name": "5-2.차체변경_탱크로리 설치",
+      "xmlPart": "xl/worksheets/sheet33.xml",
+      "dimensionRaw": "A1:E56",
+      "declaredMaxRow": 56,
+      "serializedXmlRows": 56,
+      "nonemptyRows": 56,
+      "blankRowsThroughDeclaredMax": 0,
+      "lastNonemptyRow": 56,
+      "formulaCount": 0,
+      "mergedCellRanges": [],
+      "vehicleClassificationSheet": false,
+      "headerRow": null,
+      "headerRaw": null,
+      "dataRows": 0,
+      "duplicateRowsIgnoringSerial": 0,
+      "duplicateExamples": [],
+      "nonNumericPostHeaderExamples": [],
+      "samples": [],
+      "amountUnitRaw": "천원",
+      "amountUnitSourceRaw": [
+        "(단위: 천원)"
+      ]
+    },
+    {
+      "sheetIndex": 34,
+      "name": "5-2.차체변경_유압식크레인설치(광림)_1",
+      "xmlPart": "xl/worksheets/sheet34.xml",
+      "dimensionRaw": "A1:E28",
+      "declaredMaxRow": 28,
+      "serializedXmlRows": 28,
+      "nonemptyRows": 28,
+      "blankRowsThroughDeclaredMax": 0,
+      "lastNonemptyRow": 28,
+      "formulaCount": 0,
+      "mergedCellRanges": [],
+      "vehicleClassificationSheet": false,
+      "headerRow": null,
+      "headerRaw": null,
+      "dataRows": 0,
+      "duplicateRowsIgnoringSerial": 0,
+      "duplicateExamples": [],
+      "nonNumericPostHeaderExamples": [],
+      "samples": [],
+      "amountUnitRaw": "천원",
+      "amountUnitSourceRaw": [
+        "(단위: 천원)"
+      ]
+    },
+    {
+      "sheetIndex": 35,
+      "name": "5-2.차체변경_유압식크레인설치(광림)_2",
+      "xmlPart": "xl/worksheets/sheet35.xml",
+      "dimensionRaw": "A1:E74",
+      "declaredMaxRow": 74,
+      "serializedXmlRows": 74,
+      "nonemptyRows": 74,
+      "blankRowsThroughDeclaredMax": 0,
+      "lastNonemptyRow": 74,
+      "formulaCount": 0,
+      "mergedCellRanges": [],
+      "vehicleClassificationSheet": false,
+      "headerRow": null,
+      "headerRaw": null,
+      "dataRows": 0,
+      "duplicateRowsIgnoringSerial": 0,
+      "duplicateExamples": [],
+      "nonNumericPostHeaderExamples": [],
+      "samples": [],
+      "amountUnitRaw": "천원",
+      "amountUnitSourceRaw": [
+        "(단위: 천원)"
+      ]
+    },
+    {
+      "sheetIndex": 36,
+      "name": "5-2.차체변경_유압식크레인설치(수산중공업)_1",
+      "xmlPart": "xl/worksheets/sheet36.xml",
+      "dimensionRaw": "A1:F31",
+      "declaredMaxRow": 31,
+      "serializedXmlRows": 31,
+      "nonemptyRows": 31,
+      "blankRowsThroughDeclaredMax": 0,
+      "lastNonemptyRow": 31,
+      "formulaCount": 0,
+      "mergedCellRanges": [],
+      "vehicleClassificationSheet": false,
+      "headerRow": null,
+      "headerRaw": null,
+      "dataRows": 0,
+      "duplicateRowsIgnoringSerial": 0,
+      "duplicateExamples": [],
+      "nonNumericPostHeaderExamples": [],
+      "samples": [],
+      "amountUnitRaw": "천원",
+      "amountUnitSourceRaw": [
+        "(단위: 천원)"
+      ]
+    },
+    {
+      "sheetIndex": 37,
+      "name": "5-2.차체변경_유압식크레인설치(수산중공업)_2",
+      "xmlPart": "xl/worksheets/sheet37.xml",
+      "dimensionRaw": "A1:C48",
+      "declaredMaxRow": 48,
+      "serializedXmlRows": 48,
+      "nonemptyRows": 48,
+      "blankRowsThroughDeclaredMax": 0,
+      "lastNonemptyRow": 48,
+      "formulaCount": 0,
+      "mergedCellRanges": [],
+      "vehicleClassificationSheet": false,
+      "headerRow": null,
+      "headerRaw": null,
+      "dataRows": 0,
+      "duplicateRowsIgnoringSerial": 0,
+      "duplicateExamples": [],
+      "nonNumericPostHeaderExamples": [],
+      "samples": [],
+      "amountUnitRaw": "천원",
+      "amountUnitSourceRaw": [
+        "(단위: 천원)"
+      ]
+    },
+    {
+      "sheetIndex": 38,
+      "name": "5-2.차체변경_유압식크레인설치(구 동양기전)",
+      "xmlPart": "xl/worksheets/sheet38.xml",
+      "dimensionRaw": "A1:F6",
+      "declaredMaxRow": 6,
+      "serializedXmlRows": 6,
+      "nonemptyRows": 6,
+      "blankRowsThroughDeclaredMax": 0,
+      "lastNonemptyRow": 6,
+      "formulaCount": 0,
+      "mergedCellRanges": [],
+      "vehicleClassificationSheet": false,
+      "headerRow": null,
+      "headerRaw": null,
+      "dataRows": 0,
+      "duplicateRowsIgnoringSerial": 0,
+      "duplicateExamples": [],
+      "nonNumericPostHeaderExamples": [],
+      "samples": [],
+      "amountUnitRaw": "천원",
+      "amountUnitSourceRaw": [
+        "(단위: 천원)"
+      ]
+    },
+    {
+      "sheetIndex": 39,
+      "name": "5-2.차체변경_픽업덮개 설치",
+      "xmlPart": "xl/worksheets/sheet39.xml",
+      "dimensionRaw": "A1:D17",
+      "declaredMaxRow": 17,
+      "serializedXmlRows": 17,
+      "nonemptyRows": 17,
+      "blankRowsThroughDeclaredMax": 0,
+      "lastNonemptyRow": 17,
+      "formulaCount": 0,
+      "mergedCellRanges": [],
+      "vehicleClassificationSheet": false,
+      "headerRow": null,
+      "headerRaw": null,
+      "dataRows": 0,
+      "duplicateRowsIgnoringSerial": 0,
+      "duplicateExamples": [],
+      "nonNumericPostHeaderExamples": [],
+      "samples": [],
+      "amountUnitRaw": "천원",
+      "amountUnitSourceRaw": [
+        "(단위: 천원)"
+      ]
+    },
+    {
+      "sheetIndex": 40,
+      "name": "5-2.차체변경_파워 게이트(리프트 게이트)",
+      "xmlPart": "xl/worksheets/sheet40.xml",
+      "dimensionRaw": "A1:E14",
+      "declaredMaxRow": 14,
+      "serializedXmlRows": 14,
+      "nonemptyRows": 14,
+      "blankRowsThroughDeclaredMax": 0,
+      "lastNonemptyRow": 14,
+      "formulaCount": 0,
+      "mergedCellRanges": [],
+      "vehicleClassificationSheet": false,
+      "headerRow": null,
+      "headerRaw": null,
+      "dataRows": 0,
+      "duplicateRowsIgnoringSerial": 0,
+      "duplicateExamples": [],
+      "nonNumericPostHeaderExamples": [],
+      "samples": [],
+      "amountUnitRaw": "천원",
+      "amountUnitSourceRaw": [
+        "(단위: 천원)"
+      ]
+    },
+    {
+      "sheetIndex": 41,
+      "name": "5-2.차체변경_윙바디 설치",
+      "xmlPart": "xl/worksheets/sheet41.xml",
+      "dimensionRaw": "A1:D17",
+      "declaredMaxRow": 17,
+      "serializedXmlRows": 17,
+      "nonemptyRows": 17,
+      "blankRowsThroughDeclaredMax": 0,
+      "lastNonemptyRow": 17,
+      "formulaCount": 0,
+      "mergedCellRanges": [],
+      "vehicleClassificationSheet": false,
+      "headerRow": null,
+      "headerRaw": null,
+      "dataRows": 0,
+      "duplicateRowsIgnoringSerial": 0,
+      "duplicateExamples": [],
+      "nonNumericPostHeaderExamples": [],
+      "samples": [],
+      "amountUnitRaw": "천원",
+      "amountUnitSourceRaw": [
+        "(단위: 천원)"
+      ]
+    },
+    {
+      "sheetIndex": 42,
+      "name": "5-2.차체변경_분리형캠퍼",
+      "xmlPart": "xl/worksheets/sheet42.xml",
+      "dimensionRaw": "A1:G41",
+      "declaredMaxRow": 41,
+      "serializedXmlRows": 41,
+      "nonemptyRows": 40,
+      "blankRowsThroughDeclaredMax": 1,
+      "lastNonemptyRow": 41,
+      "formulaCount": 0,
+      "mergedCellRanges": [],
+      "vehicleClassificationSheet": false,
+      "headerRow": null,
+      "headerRaw": null,
+      "dataRows": 0,
+      "duplicateRowsIgnoringSerial": 0,
+      "duplicateExamples": [],
+      "nonNumericPostHeaderExamples": [],
+      "samples": [],
+      "amountUnitRaw": "천원",
+      "amountUnitSourceRaw": [
+        "(단위: 천원)"
+      ]
+    },
+    {
+      "sheetIndex": 43,
+      "name": "5-3.차체변경_캠핑카",
+      "xmlPart": "xl/worksheets/sheet43.xml",
+      "dimensionRaw": "A1:F20",
+      "declaredMaxRow": 20,
+      "serializedXmlRows": 19,
+      "nonemptyRows": 19,
+      "blankRowsThroughDeclaredMax": 1,
+      "lastNonemptyRow": 20,
+      "formulaCount": 0,
+      "mergedCellRanges": [],
+      "vehicleClassificationSheet": false,
+      "headerRow": null,
+      "headerRaw": null,
+      "dataRows": 0,
+      "duplicateRowsIgnoringSerial": 0,
+      "duplicateExamples": [],
+      "nonNumericPostHeaderExamples": [],
+      "samples": [],
+      "amountUnitRaw": "천원",
+      "amountUnitSourceRaw": [
+        "(단위: 천원)"
+      ]
+    }
+  ],
+  "formulaCount": 0,
+  "formulaSamples": [],
+  "nonemptyWorkbookRows": 105998,
+  "vehicleDataRows": 105383,
+  "vehicleOtherPostHeaderRows": 0,
+  "workbookMetadataDates": {
+    "created": "2017-09-08T06:14:30Z",
+    "modified": "2026-05-19T06:16:25Z"
+  },
+  "macroBinaryPresent": false,
+  "printerSettingsBinaryCount": 43,
+  "independentOpenpyxlNonemptyCountsMatch": true,
+  "independentValidationStatus": "all nonempty source rows/cells and their types independently compared using openpyxl and OOXML raw extraction",
+  "snapshot": "2026-37 amended full replacement",
+  "upstreamOriginalArchivePath": "source-original.zip",
+  "sheetCount": 43,
+  "vehicleSheetCount": 28,
+  "dataRowsByVehicleCategory": {
+    "승용": 34703,
+    "승합": 13775,
+    "화물": 52096,
+    "이륜": 4809
+  },
+  "duplicateVehicleRowsIgnoringSerialWithinSheet": 0,
+  "exportFiles": [
+    {
+      "path": "workbook-rows.raw.jsonl.gz",
+      "bytes": 1765417,
+      "sha256": "dddd3ef7475738bb472a91f8f82e8ca0c7ac21e4ceb570cfa9638b4fdda7b955"
+    },
+    {
+      "path": "vehicle-records.raw.jsonl.gz",
+      "bytes": 1994476,
+      "sha256": "b725edb280b148042a461244eade9dd2d42fd2e4ebe773dbbdf238d10426cea6"
+    },
+    {
+      "path": "modification-records.raw.jsonl.gz",
+      "bytes": 8835,
+      "sha256": "ced65b36cac9cd0510db13170d4401989ef6f092cdc9c8b40661b7e67f985739"
+    }
+  ],
+  "vehicleNumberedDataRows": 105382,
+  "vehicleRowsMissingSerial": 1,
+  "vehicleObservationPolicy": "Numbered rows plus one complete vehicle record with a source-null serial; null is preserved without inventing a serial.",
+  "modificationDataRows": 431,
+  "unitPolicy": "Every sheet preface directly verified. Vehicle workbook sheets state 천원; separate official amendment change-list PDF states 원 and is not used to override the workbook unit.",
+  "workbookFilename": "2026 차량.xlsx",
+  "snapshotNotice": "행정안전부고시 제2026-37호 (2026-05-27 제정, 2026-05-27 시행)",
+  "snapshotVersion": "2026-37",
+  "snapshotEffectiveDate": "2026-05-27",
+  "governmentPostingDate": "2026-07-06",
+  "claimedYear": 2026,
+  "workbookContainerPath": "source-original.zip",
+  "workbookArchiveMember": "★ 2026년 지방세 기준가격 산정을 위한 기준가격 고시/1. 차량/2026 차량.xlsx",
+  "pathBase": "this snapshot directory",
+  "standaloneWorkbookRequired": false,
+  "sourceYear": 2026
+}

@@ -55,9 +55,19 @@ test('unknown engine, year and child trim remain empty; original evidence is ret
 });
 
 test('year, fuel, engine, drive, market, option, seat and body variants never share a research identity',()=>{
-  const variants=[{}, {modelYear:'2025'}, {modelYear:'2026'}, {fuel:'디젤'}, {engine:'1.6'}, {drivetrain:'AWD'}, {transmission:'6단 수동'}, {transmission:'7단 DCT'}, {market:'EU'}, {recordType:'engine_option'}, {optionPackage:'액티브 II'}, {powertrainChoice:'터보 선택'}, {seats:7}, {seats:6}, {bodyStyle:'밴'}, {batteryRange:'롱레인지'}];
+  const variants=[{}, {modelYear:'2025'}, {modelYear:'2026'}, {fuel:'디젤'}, {engine:'1.6'}, {drivetrain:'AWD'}, {transmission:'6단 수동'}, {transmission:'7단 DCT'}, {market:'EU'}, {sourceMarket:'UK'}, {sourceMarket:'JP'}, {sourcePeriod:'2025-01'}, {effectiveMonth:'2025-02'}, {availability:'prelaunch'}, {motorPowerKW:100}, {batteryKWh:55}, {optionalDrivetrain:['AWD']}, {manufacturerOptionCode:'OPTION-A'}, {cab:'더블캡'}, {driveOptions:['2WD','4WD']}, {recordType:'engine_option'}, {optionPackage:'액티브 II'}, {powertrainChoice:'터보 선택'}, {seats:7}, {seats:6}, {bodyStyle:'밴'}, {batteryRange:'롱레인지'}];
   const ids=variants.map(variant=>normalizeResearchRecord({...row,...variant},'test.json',sources).researchId);
   assert.equal(new Set(ids).size,variants.length);
+});
+
+test('same trim in different dated publications remains separate without inventing a model year',()=>{
+  const first=normalizeResearchRecord(row,'test.json',[{...sources[0],publishedAt:'2021-02-12'}]);
+  const later=normalizeResearchRecord(row,'test.json',[{...sources[0],publishedAt:'2024-04-04'}]);
+  assert.notEqual(first.researchId,later.researchId);
+  assert.equal(first.modelYear,'');
+  assert.equal(later.modelYear,'');
+  assert.equal(first.sourcePublicationDate,'2021-02-12');
+  assert.equal(later.sourcePublicationDate,'2024-04-04');
 });
 
 test('CSV protects spreadsheet formula execution without changing JSON text',()=>{
@@ -91,8 +101,31 @@ test('baseline is unmodified; API and government evidence are not promoted to sa
   assert.equal(output.runtimeImportEnabled,false);
   assert.equal(output.listingObservations.length,3);
   assert.equal(output.certificationObservations.length,20);
+  const government=output.bulkReferences.find(row=>row.path.endsWith('/government-tax-2026/archive-manifest.json'));
+  assert.equal(government.currentSnapshot,'amended');
+  assert.equal(government.counts.vehicleRows,105383);
+  assert.equal(government.counts.modificationRows,431);
+  assert.equal(government.completeForKoreanMarket,false);
   for(const observation of output.listingObservations)assert.equal(observation.mappingStatus,'needs_review');
   for(const observation of output.certificationObservations){assert.equal(observation.canonicalGrade,null);assert.equal(observation.modelYear,null);assert.equal(observation.eligibleForAutomaticRuntimeImport,false);}
+});
+
+test('quarantined responses remain separate and are not used as normalized source evidence',()=>{
+  const quarantine=read(join(dir,'exports/quarantined-observations.json'));
+  const output=read(join(dir,'exports/official-research.json'));
+  let originalCount=0;
+  for(const name of readdirSync(join(dir,'sources')).filter(value=>value.endsWith('.json'))){
+    const source=read(join(dir,'sources',name));
+    for(const record of source.quarantinedRecords||[]){
+      originalCount++;
+      const {sourceFile,...saved}=quarantine.records.find(row=>row.sourceFile==='research/vehicle-taxonomy/sources/'+name&&JSON.stringify((({sourceFile,...rest})=>rest)(row))===JSON.stringify(record))||{};
+      assert.equal(sourceFile,'research/vehicle-taxonomy/sources/'+name);
+      assert.deepEqual(saved,record);
+    }
+  }
+  assert.equal(quarantine.records.length,originalCount);
+  assert.equal(quarantine.automaticRuntimeImport,false);
+  assert.equal(output.records.some(row=>new URL(row.sourceUrl).hostname==='www.carwiki.co.kr'),false);
 });
 
 test('manifest hashes match every research input and exported artifact',()=>{

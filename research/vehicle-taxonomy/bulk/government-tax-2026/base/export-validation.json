@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "passed": true,
+  "rowsComparedToOriginalOpenpyxl": 105370,
+  "fieldsCompared": 573404,
+  "csvFilesVerified": 28,
+  "jsonlAndCsvRowTotalsMatch": true,
+  "exportHashesMatch": true,
+  "rawStringWhitespacePreserved": true,
+  "numericXmlValuesPreservedAsRawStrings": true,
+  "rawAmountUnit": "천원",
+  "noPriceConversion": true,
+  "noParentGradeInference": true,
+  "fieldCellTypesComparedToOriginalNativeValues": true
+}

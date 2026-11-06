@@ -1,0 +1,123 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-11-06T16:30:13.892347+00:00",
+  "sourceLabel": "amended-2026-37-user-upload",
+  "sourceArchiveSha256": "250495924795cddd5a825f5a788d5bcd13d76de4246ae5b2e5c3f2f93e9d99d7",
+  "inputs": {
+    "records": {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/amended/vehicle-records.raw.jsonl.gz",
+      "sha256": "b725edb280b148042a461244eade9dd2d42fd2e4ebe773dbbdf238d10426cea6"
+    },
+    "baseline": {
+      "path": "research/vehicle-taxonomy/baseline/catalog.json",
+      "sha256": "c3b3d3fc75701cf2354bd05bce7b8393e9efe1eb286670e97091454342b9e4c4"
+    },
+    "missing": {
+      "path": "research/vehicle-taxonomy/baseline/missing-trims.csv",
+      "sha256": "13de316dffffafc2e2531277772febde75c1db4195c6d54b4acc5ec85af29da1"
+    },
+    "aliases": {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/crosswalk/candidate-aliases.json",
+      "sha256": "098b1d4c72f6f7b299daeecabca076ccb5658b6740754f3d932d46e7819957aa"
+    }
+  },
+  "buildScript": {
+    "path": "research/vehicle-taxonomy/bulk/government-tax-2026/crosswalk/build-government-crosswalk.py",
+    "sha256": "6c34201709a9cb55c6f53304394bd915d89f9e2faea94ed3d92f4a4eea2cb993"
+  },
+  "baselineSource": {
+    "repository": "spooky1121/s-note",
+    "commit": "ccff8fe4fcac199bd971bee6b209ad08f97d6055",
+    "path": "index.html",
+    "constant": "BUNDLED_CATALOG_V118 after HEYDEALER_PUBLIC_REFERENCES and ZEROCAR_ADDED_MODELS_V194 pushes",
+    "constants": [
+      "BUNDLED_CATALOG_V118",
+      "HEYDEALER_PUBLIC_REFERENCES",
+      "ZEROCAR_ADDED_MODELS_V194"
+    ],
+    "fileSha256": "2f14c6e7f09f24cba951aa91c55d27503df68978b5b8a25fa6a717fb6eacf5e3",
+    "arrayRows": {
+      "BUNDLED_CATALOG_V118": 1493,
+      "HEYDEALER_PUBLIC_REFERENCES": 33,
+      "ZEROCAR_ADDED_MODELS_V194": 90
+    },
+    "deduplication": "taxonomyKey identity make/group/model/grade/subgrade; first row wins unless a later official/official_price_page replaces a non-official row, as snote220PublicRows"
+  },
+  "sourceYearsObserved": {
+    "2026": 105383
+  },
+  "policy": {
+    "purpose": "reviewable raw name evidence candidates only",
+    "complete": false,
+    "autoImport": false,
+    "gradeIdsCreated": 0,
+    "modelYearsAssigned": 0,
+    "marketAssigned": false,
+    "manufacturerLabelsMerged": false,
+    "matchingUsesRawTypeCode": false,
+    "matchingUsesTaxPrice": false,
+    "allRowsPreservedBySourceSheetAndRow": true,
+    "sourceYearIsNotModelYear": true,
+    "rawTaxPricesRemainOriginalUnitAndString": true,
+    "retailHierarchyVerified": false
+  },
+  "methodPriority": {
+    "exact_model_name_text": 0,
+    "normalized_model_name_text": 1,
+    "model_name_phrase_candidate": 2,
+    "explicit_name_alias_candidate": 3,
+    "family_name_phrase_candidate": 4,
+    "configured_family_alias_candidate": 5,
+    "name_series_variant_hint": 6
+  },
+  "rowReferencePolicy": "Each candidate link retains exactly one raw sourceSheet/sourceRow. Repeated names/types/tax prices are separate observations. Examples in target JSON are capped at 5; candidate-links files contain all links.",
+  "candidateCsvIncluded": false,
+  "counts": {
+    "rawRows": 105383,
+    "baselineTargets": 1197,
+    "baselineMissingGradeTargets": 986,
+    "candidateLinks": 300616
+  },
+  "outputs": [
+    {
+      "path": "candidate-links.jsonl.gz",
+      "bytes": 9273852,
+      "sha256": "04b2cff44a6a73367f4c996ffd28966e25b17f767c66f8c21cf8521e2a275e47"
+    },
+    {
+      "path": "missing-grade-no-candidate.csv.gz",
+      "bytes": 1769,
+      "sha256": "aaf2a42633243b3096e0d306470bed126ca0e9817713dc9457e1826e6cd04d0a"
+    },
+    {
+      "path": "missing-grade-targets.csv.gz",
+      "bytes": 23089,
+      "sha256": "0706c5621baf81d8500c5e66637a8e89f3682379356cc2f21a15754c0f59c509"
+    },
+    {
+      "path": "summary.json",
+      "bytes": 20723,
+      "sha256": "0b8cf0a03a0a18670cc63d6019b538ff9629b8131c50e3288a4a2f4535e20a8e"
+    },
+    {
+      "path": "target-ledger.csv.gz",
+      "bytes": 28120,
+      "sha256": "ecabb9c2aec56d92ac715ed81a00dd98803fd89ac9864590e3e58b1f78f18400"
+    },
+    {
+      "path": "target-ledger.json",
+      "bytes": 3511223,
+      "sha256": "9d9cf0c5498e802a2ca680b9fb5a8969d0a7bf7b0e6e3345136105e3671cfc18"
+    }
+  ],
+  "validation": {
+    "uniqueRawRowRefs": 105383,
+    "rawRowsRetainedBeforeMatching": 105383,
+    "targetIdsUnique": true,
+    "baselineCountsMatchExpected": true,
+    "allTargetsIncomplete": true,
+    "gradeIdsCreated": 0,
+    "typeCodesUsedForMatching": 0,
+    "sourceYearsPromotedToModelYears": 0
+  }
+}

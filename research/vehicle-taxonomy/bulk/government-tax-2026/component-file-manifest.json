@@ -1,0 +1,202 @@
+{
+  "schemaVersion": 1,
+  "pathBase": "repository root",
+  "scope": "Government raw snapshots, source evidence, audits and validation files; crosswalk is a separate component.",
+  "files": [
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/README.md",
+      "bytes": 7325,
+      "sha256": "a52c15ee48c6156a90b4223bd49aa00bdc649bbffba085ba919fcbeb7ef66923"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/amended/acceptance-tests.json",
+      "bytes": 5896,
+      "sha256": "635cce20591f610078290411fd28b9e96e6d2c8ee527601b3e475942fb1b52a4"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/amended/amended-quality-summary.json",
+      "bytes": 2221,
+      "sha256": "9300143e6fb5cc5879520718a18bdc09766fd54e6ee9366706ba7650d70ebeb2"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/amended/amended-sheet-validation.json",
+      "bytes": 59380,
+      "sha256": "dfcf431aa77a5358380ff40da5816aef7362c74b3a2e0be03c86b92c29e0d51e"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/amended/archive-manifest.json",
+      "bytes": 29553,
+      "sha256": "472b446bfb7b65276ae82e3a094b1e11def53125d27954d3bb2fb82ce744ec3b"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/amended/build-summary.json",
+      "bytes": 3672,
+      "sha256": "f4940dc91ff4b1e2bc2e7deb5693c766e7394ec4ebd238519651f18503f9c9e9"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/amended/complete-vehicle-and-modification-diff.json",
+      "bytes": 13903,
+      "sha256": "ae13573bde29aea7cc7476c3aeae2c92e33129e6e02cf6141b16dd9e9a95a120"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/amended/final-export-validation.json",
+      "bytes": 234,
+      "sha256": "0393c3ac328b9942534aa6ed8fb20572d228b936ad67ca375f08780074e9299e"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/amended/independent-audit-scope.json",
+      "bytes": 705,
+      "sha256": "631f922e542652561f63c7edf1c7639a98273ab99303d45f936ae1ef74874466"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/amended/independent-openpyxl-validation.json",
+      "bytes": 5326,
+      "sha256": "340e57ae425372eacc6049667ab1a3562509ef1e6be9d992328437f0ffac86fd"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/amended/independent-source-data-audit.json.gz",
+      "bytes": 128136,
+      "sha256": "9846f0a99326eeb5371ea93db0f7e19d28191d7b9f2577721c3ad406b3d47745"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/amended/modification-records.raw.jsonl.gz",
+      "bytes": 8835,
+      "sha256": "ced65b36cac9cd0510db13170d4401989ef6f092cdc9c8b40661b7e67f985739"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/amended/null-serial-retention-test.json",
+      "bytes": 389,
+      "sha256": "1388f146bf905e10630648702790dcd9c218c3e88c5478e891a791cf65ac13e3"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/amended/schema.sql",
+      "bytes": 4621,
+      "sha256": "5563bf9736969070549a49767ffb4141555188cc10f21eec22dc739d9758b29f"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/amended/source-original.zip",
+      "bytes": 7479769,
+      "sha256": "250495924795cddd5a825f5a788d5bcd13d76de4246ae5b2e5c3f2f93e9d99d7"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/amended/validation-log.json",
+      "bytes": 4772,
+      "sha256": "9839785f2241d108d4571bda1a5de654f7aff1d42cc2019c2bfefce36e448dd1"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/amended/vehicle-export-manifest.json",
+      "bytes": 74293,
+      "sha256": "ca8d2eaeb63655d62ae1ccaa01fa59f3e86bd937732ee62b8c47d62943105881"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/amended/vehicle-records.raw.jsonl.gz",
+      "bytes": 1994476,
+      "sha256": "b725edb280b148042a461244eade9dd2d42fd2e4ebe773dbbdf238d10426cea6"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/amended/workbook-rows.raw.jsonl.gz",
+      "bytes": 1765417,
+      "sha256": "dddd3ef7475738bb472a91f8f82e8ca0c7ac21e4ceb570cfa9638b4fdda7b955"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/archive-manifest.json",
+      "bytes": 5884,
+      "sha256": "f914bbb288481ef9f0dabd6b9478fa57f4735601cc3f6eedaaa5ee28c8b590ed"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/base/acceptance-tests.json",
+      "bytes": 5896,
+      "sha256": "44a1d9df7386e615b6163adc6486993e4021edf2bfaa7196327ae51992e8ee68"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/base/archive-manifest.json",
+      "bytes": 32863,
+      "sha256": "339e0e09114e7cd8a52e9d762774432b9addd21a64827d75442c152a92a98f42"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/base/build-summary.json",
+      "bytes": 3534,
+      "sha256": "2d5eee1c2749d0b5deda6a3ec53de9fbe90b9e0b4a3f4711eed62dbeaae92168"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/base/export-validation.json",
+      "bytes": 444,
+      "sha256": "0dbcd83d9a0fcaab97e070c2f04fee717ece174b110f380466cd2f6070d79ebb"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/base/independent-audit-scope.json",
+      "bytes": 705,
+      "sha256": "62961076dd66c74b915da29e401ba401259656154f94d7cd0404a15a4bb425b4"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/base/independent-source-data-audit.json.gz",
+      "bytes": 128056,
+      "sha256": "7c0b7fc7a79499975635c41a0f0f179677b2ff459aa4b26a4c1ccd138c9c121f"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/base/schema.sql",
+      "bytes": 4621,
+      "sha256": "5563bf9736969070549a49767ffb4141555188cc10f21eec22dc739d9758b29f"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/base/source-original.zip",
+      "bytes": 7496166,
+      "sha256": "dc12435b699dfdd0a4c6b2089676f6963baff02ac751c4e28d52477f792e142c"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/base/validation-log.json",
+      "bytes": 4772,
+      "sha256": "732b1dce77c2d23ebbce8d603236b749922b9ab61d645024a747ae344b6bb194"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/base/vehicle-export-manifest.json",
+      "bytes": 67162,
+      "sha256": "3efbc685f451b23610ce37d3ab6ac1764cd05b673bc47182868498148adfef07"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/base/vehicle-quality-summary.json",
+      "bytes": 17429,
+      "sha256": "17dc081be7665427a5f9b7ac7142871fec947fac38bc13f4a49a2cd24a9cf8a1"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/base/vehicle-records.raw.jsonl.gz",
+      "bytes": 1944173,
+      "sha256": "f1df67bf424dedcb7c8ca3c10506e0490b3d9270d4b3226da3a1fd74746cb861"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/base/workbook-inspection.json",
+      "bytes": 82148,
+      "sha256": "64f69bf9f028217c9beb901d789d4973a2cdaa1ee91d760c3028b883cb857bd0"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/base/workbook-rows.raw.jsonl.gz",
+      "bytes": 1765079,
+      "sha256": "ddf3ea309f8b6998e8637f6614bc2dfaac9e6f2d8a847cf01426fff814c628c9"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/input-hash-rejection-test.json",
+      "bytes": 248,
+      "sha256": "de5b9def3264f460864cb90a45bc9f21d8e8fbe0fbb0de22de3318913f74542b"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/name-index-scope.json",
+      "bytes": 592,
+      "sha256": "8a3d3d0e34011ea9d73208ebf63f82b7bf9c229221e665e743a830ee94e3035d"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/official-board-full-year-evidence.json",
+      "bytes": 35784,
+      "sha256": "13c7557787f4a48a9240d114e6e6ab43b04c8b2e836a51fb47ab635436270800"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/official-board-page-evidence.json",
+      "bytes": 16581,
+      "sha256": "4f65dcb66184d43d0f93df2fd8f862aab8890eb9f6c5a8637e4522772d73700d"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/rights-provenance.json",
+      "bytes": 10227,
+      "sha256": "6c7bf4172dcd7b1047014109e190552a728c1872e799e9dce9b3b54baebb5dce"
+    }
+  ]
+}

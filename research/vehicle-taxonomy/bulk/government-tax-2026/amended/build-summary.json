@@ -1,0 +1,94 @@
+{
+  "schemaVersion": 1,
+  "sourceYear": 2026,
+  "sourceYearIsModelYear": false,
+  "inputFiles": [
+    {
+      "relativePath": "vehicle-records.raw.jsonl.gz",
+      "sha256": "b725edb280b148042a461244eade9dd2d42fd2e4ebe773dbbdf238d10426cea6",
+      "bytes": 1994476,
+      "role": "required_raw_input",
+      "hashVerified": true
+    },
+    {
+      "relativePath": "workbook-rows.raw.jsonl.gz",
+      "sha256": "dddd3ef7475738bb472a91f8f82e8ca0c7ac21e4ceb570cfa9638b4fdda7b955",
+      "bytes": 1765417,
+      "role": "required_raw_input",
+      "hashVerified": true
+    },
+    {
+      "relativePath": "source-original.zip",
+      "sha256": "250495924795cddd5a825f5a788d5bcd13d76de4246ae5b2e5c3f2f93e9d99d7",
+      "bytes": 7479769,
+      "role": "original_user_supplied_archive",
+      "hashVerified": true
+    },
+    {
+      "relativePath": "source-original.zip!★ 2026년 지방세 기준가격 산정을 위한 기준가격 고시/1. 차량/2026 차량.xlsx",
+      "sha256": "b5c2cdef501228014ab057f5f683c5615273872dc0c235b73bbd2a58612ff4fd",
+      "bytes": 5093539,
+      "role": "original_vehicle_workbook_archive_member",
+      "hashVerified": true,
+      "containerRelativePath": "source-original.zip",
+      "archiveMember": "★ 2026년 지방세 기준가격 산정을 위한 기준가격 고시/1. 차량/2026 차량.xlsx"
+    },
+    {
+      "relativePath": "archive-manifest.json",
+      "sha256": "472b446bfb7b65276ae82e3a094b1e11def53125d27954d3bb2fb82ce744ec3b",
+      "bytes": 29553,
+      "role": "input_manifest",
+      "hashVerified": false
+    },
+    {
+      "relativePath": "vehicle-export-manifest.json",
+      "sha256": "ca8d2eaeb63655d62ae1ccaa01fa59f3e86bd937732ee62b8c47d62943105881",
+      "bytes": 74293,
+      "role": "input_manifest",
+      "hashVerified": false
+    }
+  ],
+  "sourceArchiveSha256": "250495924795cddd5a825f5a788d5bcd13d76de4246ae5b2e5c3f2f93e9d99d7",
+  "sourceWorkbookSha256": "b5c2cdef501228014ab057f5f683c5615273872dc0c235b73bbd2a58612ff4fd",
+  "sourceArchiveHashVerifiedLocally": true,
+  "sourceWorkbookHashVerifiedFromArchive": true,
+  "snapshotNotice": "행정안전부고시 제2026-37호 (2026-05-27 제정, 2026-05-27 시행)",
+  "snapshotVersion": "2026-37",
+  "laterNoticesApplied": true,
+  "all2026NoticesComplete": false,
+  "vehicleRows": 105383,
+  "modificationRows": 431,
+  "typeNameConflictGroups": 1558,
+  "validationPassed": true,
+  "builderScriptSha256": "bef77213e4b9532337a262f7d527495d6f51c48156f9edd114bf2b16b5295d29",
+  "patchesAppliedByBuilder": false,
+  "outputs": [
+    {
+      "relativePath": "government-tax-2026.sqlite",
+      "bytes": 110641152,
+      "sha256": "7f0e1306364e538ce0249317bf8267821e16d2e32e60353979c626ae71b649b5"
+    },
+    {
+      "relativePath": "vehicle-records.organized.csv.gz",
+      "bytes": 13495020,
+      "sha256": "b025c9cf6e1d9650635eeda69683f2e47bcb5dd18b88aac3ff7e9e2d840f1c22"
+    },
+    {
+      "relativePath": "modification-records.organized.csv.gz",
+      "bytes": 53233,
+      "sha256": "fa1fd7f0f5fe9ee675ff70c84f81ad803a3092db490e15d19f9b89c81fe05d45"
+    },
+    {
+      "relativePath": "schema.sql",
+      "bytes": 4621,
+      "sha256": "5563bf9736969070549a49767ffb4141555188cc10f21eec22dc739d9758b29f"
+    },
+    {
+      "relativePath": "validation-log.json",
+      "bytes": 4772,
+      "sha256": "9839785f2241d108d4571bda1a5de654f7aff1d42cc2019c2bfefce36e448dd1"
+    }
+  ],
+  "generatedOutputLocation": "workspace-only reconstruction; generated output filenames below are relative to that build directory",
+  "repositoryArtifactPolicy": "Only amended compressed SQLite and organized CSV are committed; base outputs remain reproducible work artifacts."
+}

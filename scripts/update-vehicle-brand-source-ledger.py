@@ -66,16 +66,23 @@ for b in baseline:
         assert rows,('uncovered manufacturer',make)
         urls=[];market='KR_saved_official_research';status='verified_via_saved_research_evidence';research='current_research_available';note='같은제조사표기의공식조사자료에직접확인또는발췌등급행이있음. 출처파일의개별evidenceStatus와시장·연식범위를따라야함.'
     if rows:
-        research='current_research_available'
+        research='current_research_available' if any(r.get('market','KR')=='KR' for _,r in rows) else 'global_reference_only'
         for _,row in rows:
             if row.get('sourceUrl') and row['sourceUrl'] not in urls:urls.append(row['sourceUrl'])
         note+=' 별도자료행이있다는뜻이며브랜드전체·과거전연식자료가완료됐다는뜻은아님.'
     item={'make':make,'sourceUrls':urls,'marketScope':market,'accessStatus':status,'researchStatus':research,'notes':note,'checkedAt':observedAt,'researchRecords':len(rows),'researchFiles':sorted({name for name,_ in rows}),'evidenceCounts':dict(collections.Counter(r.get('evidenceStatus','unspecified') for _,r in rows)),'historicalCoverageComplete':False,'allTrimsComplete':False,'baselineModelGroups':b['model_groups'],'baselineGenerationsWithoutTrim':b['generations_without_trim']}
+    item['initialSourceCheckNote']=note
+    item['notes']='초기 자료원 접근 결과는 initialSourceCheckNote와 checkedAt에 보존한다. 아래의 현재 관측 건수는 원문의 시장·국가·근거 수준별로 해석하며, 전체 연식·등급 완성을 뜻하지 않는다.'
+    item['koreanMarketResearchRecords']=sum(r.get('market','KR')=='KR' for _,r in rows)
+    item['otherMarketResearchRecords']=len(rows)-item['koreanMarketResearchRecords']
     if make in aliases:item['aliasCandidates']=aliases[make];item['aliasAutoMerged']=False
     if not rows:item['nextNeeded']='한국시장별공식가격표·카탈로그·판매보도자료의모델/연식/엔진/트림연결추출. 단종세대는당시자료추가필요.'
     out.append(item)
 assert len(out)==46
 assert {r['make'] for r in out}=={r['make'] for r in baseline}
 ledger={'schemaVersion':1,'asOf':'2026-11-06','scope':'기존번들의46개제조사표기를모두추적하는공식자료원발견·접근성원장. 별칭을포함한표기수이며46개독립법인수나전체등급수집완료를의미하지않음.','completedScope':'기존46개표기에대한자료원/접근성/추출상태기록','taxonomyCompletenessKnown':False,'autoImport':False,'statusMeaning':{'current_research_available':'동일make표기로별도자료집에구체적관측행이있음. 전체브랜드/전연식완성아님.','source_found_not_extracted':'공식자료원은찾았지만이make의등급자료행추출미완료.','official_source_not_readable':'공식진입점은있으나현재도구에서인증/스크립트/방화벽/리디렉션/접속불가로모델본문미확인.','historical_brand_source_gap':'후속회사기업자료만확인;원래레거시브랜드차량별당시자료미확보.'},'method':'2026-11-06공식사이트직접읽기. 이미동일작업에서본문을직접확인해별도자료로저장한출처는그자료파일을재사용. 홈페이지·모델메뉴만확인한경우등급데이터추출성공으로세지않음.','requirementsForCompletion':['각표기의한국정식판매·병행수입·해외내수시장을구분','단종세대및연식별엔진/트림/패키지변경의당시공식자료확인','공급자분류코드·부모관계가없으면새코드나임의단계를생성하지않음','KGM·르노코리아·쉐보레의다른표기는검토전까지자동병합금지','자료접근실패는차량/등급없음을뜻하지않음'], 'manufacturers':out,'summary':{'manufacturerLabels':len(out),'withResearchRows':sum(bool(x['researchRecords']) for x in out),'researchStatusCounts':dict(collections.Counter(x['researchStatus'] for x in out)),'allTrimsComplete':False}}
+ledger['asOf']='2026-11-07'
+ledger['statusMeaning']['global_reference_only']='해외 시장의 관측만 있으며, 한국 판매사양 확인 자료로 전환하지 않는다.'
+ledger['summary']['withKoreanMarketRows']=sum(x['koreanMarketResearchRecords']>0 for x in out)
 (root/'sources/brand-source-ledger.json').write_text(json.dumps(ledger,ensure_ascii=False,indent=2)+'\n')
 print(json.dumps(ledger['summary'],ensure_ascii=False))
