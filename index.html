@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.76">
+<html lang="ko" data-snote-release="2.77">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -3200,6 +3200,8 @@ button, input, select, textarea { font-family: inherit; }
 <script src="assets/settings-refinement.js?v=2.61" defer></script>
 <script src="assets/vehicle-notifications.js?v=2.76" defer></script>
 <link rel="stylesheet" href="assets/close-controls.css?v=2.76">
+<link rel="stylesheet" href="assets/recycle-bin.css?v=2.77">
+<link rel="stylesheet" href="assets/profile-editor.css?v=2.77">
 </head>
 <body class="snote-typography">
 
@@ -3246,7 +3248,16 @@ button, input, select, textarea { font-family: inherit; }
         </div>
       </div>
     </div><p class="subtitle" id="screen-sub">차량 재고와 매입·판매 현황을 한눈에 확인하세요.</p></header>
-    <dialog class="snote-profile-dialog" id="snote-profile-dialog" aria-labelledby="snote-profile-dialog-title"><h2 id="snote-profile-dialog-title">프로필 설정</h2><dl><dt>이름</dt><dd id="snote-profile-dialog-name"></dd><dt>권한</dt><dd id="snote-profile-dialog-role"></dd><dt>상사명</dt><dd id="snote-profile-dialog-company"></dd></dl><p>프로필 정보 변경은 상사 관리자에게 요청해 주세요.</p><form method="dialog"><button type="submit" autofocus>닫기</button></form></dialog>
+    <div id="snote-profile-dialog" class="snote-profile-drawer" role="dialog" aria-modal="true" aria-labelledby="snote-profile-dialog-title" hidden>
+      <section class="snote-profile-panel" tabindex="-1">
+        <header class="snote-profile-head"><button type="button" id="snote-profile-close" class="snote-popup-close" aria-label="프로필 설정 닫기">×</button><div><h2 id="snote-profile-dialog-title">프로필 설정</h2><p id="snote-profile-role-label">내 계정</p></div><button type="submit" form="snote-profile-form" id="snote-profile-save" class="snote-profile-save-icon" aria-label="프로필 저장" data-tooltip="프로필 저장"></button></header>
+        <div class="snote-profile-body">
+          <form id="snote-profile-form" class="snote-profile-section" autocomplete="on"><h3>기본 정보</h3><label>이름<input id="snote-profile-name" name="name" autocomplete="name" maxlength="40" required></label><label>상사명<input id="snote-profile-company" name="organization" autocomplete="organization" maxlength="100" required><small id="snote-profile-company-note">상사명은 관리자만 변경할 수 있습니다.</small></label><label>개인 연락처<input id="snote-profile-phone" name="tel" type="tel" inputmode="tel" autocomplete="tel-national" maxlength="20" placeholder="010-0000-0000" required></label><label>주소<textarea id="snote-profile-address" name="street-address" autocomplete="street-address" rows="2" maxlength="300" placeholder="주소를 입력해 주세요"></textarea></label><p class="snote-profile-help">여기에 저장한 연락처와 주소는 본인만 확인할 수 있습니다. 등록된 문자 발신번호는 변경되지 않습니다.</p><p id="snote-profile-message" class="snote-profile-message" role="status" aria-live="polite"></p><button type="button" id="snote-profile-reload" class="snote-profile-text-button" hidden>다시 불러오기</button></form>
+          <form id="snote-profile-email-form" class="snote-profile-section"><h3>이메일</h3><div class="snote-profile-current-email"><span>현재 이메일</span><strong id="snote-profile-current-email"></strong></div><p id="snote-profile-email-pending" class="snote-profile-help" hidden></p><label>새 이메일<input id="snote-profile-email" type="email" name="email" autocomplete="email" maxlength="254" placeholder="새 이메일 주소" required></label><p class="snote-profile-help">확인 메일의 링크를 누르면 변경됩니다. 기존 이메일에도 확인이 필요할 수 있습니다.</p><button type="submit" id="snote-profile-email-save" class="snote-profile-section-save"><span class="snote-profile-disk"></span>변경 메일 보내기</button><p id="snote-profile-email-message" class="snote-profile-message" role="status" aria-live="polite"></p></form>
+          <details class="snote-profile-section snote-profile-password-section"><summary>비밀번호 변경<span aria-hidden="true">⌄</span></summary><form id="snote-profile-password-form" autocomplete="off"><label>현재 비밀번호<input id="snote-profile-password-current" type="password" autocomplete="current-password" maxlength="128" required></label><label>새 비밀번호<input id="snote-profile-password-new" type="password" autocomplete="new-password" minlength="8" maxlength="128" placeholder="8자 이상" required></label><label>새 비밀번호 확인<input id="snote-profile-password-confirm" type="password" autocomplete="new-password" minlength="8" maxlength="128" required></label><button type="submit" id="snote-profile-password-save" class="snote-profile-section-save"><span class="snote-profile-disk"></span>비밀번호 변경</button><p id="snote-profile-password-message" class="snote-profile-message" role="status" aria-live="polite"></p></form></details>
+        </div>
+      </section>
+    </div>
     <main class="content"><div id="zc-cloud-banner" hidden role="status"></div>
       <button class="btn-primary" onclick="openAdd()" id="main-add" hidden aria-hidden="true" tabindex="-1"><span id="addicon"></span>차량 등록</button>
       <section id="accountant-bar" class="accountant-bar" hidden>
@@ -3535,6 +3546,7 @@ const paths={home:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y
  wallet:'<path d="M3 7h18v14H3zM3 7V5a2 2 0 0 1 2-2h13"/><path d="M16 12h5v5h-5a2.5 2.5 0 0 1 0-5z"/>',
  accounting:'<rect x="5" y="2" width="14" height="20" rx="2"/><path d="M9 7h6M9 11h2M14 11h1M9 15h2M14 15h1M9 19h6"/>',
  customers:'<circle cx="9" cy="7" r="3"/><path d="M3 21v-3a6 6 0 0 1 12 0v3M17 12h4M19 10v4"/>',
+ recycle:'<path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7M14 10v7"/>',
  checkList:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="m7 10 2 2 3-4M13 10h4M8 16h9"/>',
  calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 2v6M17 2v6M3 10h18M7 14h4M7 18h4"/>',
  lock:'<rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',
@@ -3558,10 +3570,16 @@ let dealerAccounts=[];
 function isAccountant(){return currentUser?.role==='accountant'}
 function isSnoteAdmin(){return currentUser?.role==='admin'}
 function isFinanceManager(){return isAccountant()||isSnoteAdmin()}
+function isPurchaseListRoute(page=route){return page==='buy'||page==='companyBuy';}
+function snotePurchaseContext(){try{return window.snoteCompanyPurchaseBridge?.context?.()||null;}catch{return null;}}
+function snoteCanCompanyPurchase(){return snotePurchaseContext()?.canCompany===true;}
+function snotePurchaseCarVisible(car){const context=snotePurchaseContext();if(!context?.ready)return false;return route==='companyBuy'?context.canCompany&&window.snoteCompanyPurchaseBridge?.carAllowed?.(car)===true:car.ownerId===context.ownerAlias;}
+let snotePurchaseNavigationScope=null;
+window.snoteResetPurchaseScope=()=>{snotePurchaseNavigationScope=null;window.snoteResetCompanyPurchase?.();if(isPurchaseListRoute()){for(const id of ['list-table','list-mobile','list-pagination'])$(id)?.replaceChildren();}};
 function canManageCar(c){return !!currentUser&&!!c&&(isSnoteAdmin()?true:isAccountant()?c.ownerId!==currentUser.username:c.ownerId===currentUser.username)}
 function carsStoreKey(username=currentUser?.username||'unauthenticated'){return ZC_CARS_PREFIX+username}
 function normalizedCars(records,owner){return records.map(c=>SnoteMoney.car(c)).map(c=>({...c,ownerId:c.ownerId||owner,status:(c.status==='매입진행'||c.status==='수리중')?'판매중':c.status,repairItems:normalizeRepairItems(c),inventoryLoan:Number.isFinite(Number(c.inventoryLoan))&&Number(c.inventoryLoan)>=0?Number(c.inventoryLoan):0,inventoryLender:typeof c.inventoryLender==='string'&&c.inventoryLender.length<=45?c.inventoryLender:''}))}
-function dealerCars(username){try{const raw=localStorage.getItem(carsStoreKey(username));const parsed=raw===null?null:JSON.parse(raw);return normalizedCars(Array.isArray(parsed)?parsed:(username==='demo'?seedCars.map(x=>({...x})):[]),username)}catch(_){return username==='demo'?normalizedCars(seedCars.map(x=>({...x})),'demo'):[]}}
+function dealerCars(username){try{if(window.zc86Cloud?.ready&&window.zc86Cloud?.readOwnerCars)return window.zc86Cloud.readOwnerCars(username);const raw=localStorage.getItem(carsStoreKey(username));const parsed=raw===null?null:JSON.parse(raw);return normalizedCars((Array.isArray(parsed)?parsed:(username==='demo'?seedCars.map(x=>({...x})):[])).map(c=>c&&typeof c==='object'?{...c,ownerId:username}:c),username)}catch(_){return username==='demo'?normalizedCars(seedCars.map(x=>({...x})),'demo'):[]}}
 function loadCarsForUser(){
  if(!currentUser){cars=[];return}
  if(!isFinanceManager()){cars=dealerCars(currentUser.username);zc182OverlayFinance();return}
@@ -3570,7 +3588,6 @@ function loadCarsForUser(){
  const owners=new Set(cloudMembers||dealerAccounts.filter(a=>a.role!=='accountant').map(a=>a.username));
  if(!cloudMembers){for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i)||'';if(key.startsWith(ZC_CARS_PREFIX))owners.add(key.slice(ZC_CARS_PREFIX.length))}owners.add('demo');}
  if(isSnoteAdmin())owners.add(currentUser.username);
- if(isAccountant())owners.delete(currentUser.username);
  cars=[...owners].flatMap(owner=>dealerCars(owner));zc182OverlayFinance();
 }
 function persistCars(ownerId=null){
@@ -3584,18 +3601,19 @@ function persistCars(ownerId=null){
  }catch(_){return false}
 }
 function dealerLabel(c){
+ const verified=window.zc86Cloud?.ownerLabel?.(c.ownerId);if(verified)return verified;
  const account=dealerAccounts.find(a=>a.username===c.ownerId);
  return account?.name||((c.ownerId&&typeof window.zc86Cloud!=='undefined'&&window.zc86Cloud)?'담당 딜러':'담당자 미지정');
 }
 function accountantFilter(){return isFinanceManager()?($('accountant-dealer-filter')?.value||'all'):'all'}
 function handleAccountantDealerFilter(){renderCars();if(['finance','inventoryFinance'].includes(route))buildAlt();}
-function renderAccountantBar(){const bar=$('accountant-bar');if(!bar)return;bar.hidden=!isFinanceManager()||route==='settings';if(!isFinanceManager())return;
+function renderAccountantBar(){const bar=$('accountant-bar');if(!bar)return;bar.hidden=!isFinanceManager()||['settings','recycle','buy'].includes(route);if(!isFinanceManager())return;
  const select=$('accountant-dealer-filter'),prior=select.value||'all';
- const owners=[...new Set(cars.map(c=>c.ownerId))].filter(Boolean);
+ const scopedCars=route==='companyBuy'?cars.filter(snotePurchaseCarVisible):cars,owners=[...new Set(scopedCars.map(c=>c.ownerId))].filter(Boolean);
  select.innerHTML='<option value="all">전체 딜러</option>'+owners.map(id=>`<option value="${esc(id)}">${esc(dealerLabel({ownerId:id}))}</option>`).join('');
  select.value=owners.includes(prior)?prior:'all';
- const inv=cars.filter(c=>c.status!=='판매완료').length,sold=cars.length-inv;
- $('accountant-overview').innerHTML=`<div class="acct-mini">전체 차량<strong>${cars.length}대</strong></div><div class="acct-mini">매입보유차량<strong>${inv}대</strong></div><div class="acct-mini">판매완료<strong>${sold}대</strong></div>`;
+ const inv=scopedCars.filter(c=>c.status!=='판매완료').length,sold=scopedCars.length-inv;
+ $('accountant-overview').innerHTML=`<div class="acct-mini">전체 차량<strong>${scopedCars.length}대</strong></div><div class="acct-mini">매입보유차량<strong>${inv}대</strong></div><div class="acct-mini">판매완료<strong>${sold}대</strong></div>`;
 }
 async function refreshAccountantWorkspace(){if(!isAccountant())return;dealerAccounts=await getAllAccounts();loadCarsForUser();loadCovers();if(fileDB)await refreshMedia();renderAccountantBar();buildStats();navigate(route);toast('모든 딜러 차량 정보를 다시 불러왔습니다.')}
 
@@ -3718,7 +3736,7 @@ function formatMileageInput(input){
 function todayLocal(){let d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')}
 function salePrice(c){return c.status==='판매완료'&&Number.isFinite(Number(c.soldPrice))&&c.soldPrice!==undefined&&c.soldPrice!==null&&c.soldPrice!==''?Number(c.soldPrice):Number(c.sell||0)}
 function formatKm(value){return num(Number(String(value??0).replaceAll(',',''))||0)}
-const pages={buy:{title:'매입 관리',head:'차량 매입 관리',sub:'',eyebrow:'PURCHASE',icon:'purchase'},sell:{title:'판매 완료',head:'판매 완료 차량',sub:'판매가 완료된 차량을 별도로 관리합니다.',eyebrow:'SOLD VEHICLES',icon:'sold'},prestock:{title:'선재고 관리',head:'선재고 관리',sub:'선재고 지급·상환 내역과 잔액을 관리합니다.',eyebrow:'PRESTOCK LEDGER',icon:'wallet'},inventoryFinance:{title:'재고금융 관리',head:'재고금융 관리',sub:'보유 차량의 재고대출금과 금융사를 통합 조회합니다.',eyebrow:'INVENTORY FINANCE',icon:'loan'},monthly:{title:'월정산',head:'월별 결산표',sub:'딜러별 수수료와 운영비, 통장 잔액·재고금융·미수금을 월별로 정리합니다.',eyebrow:'MONTHLY ACCOUNTING',icon:'calendar'},finance:{title:'수익 · 정산',head:'수익 및 정산',sub:'재고 및 판매 실적, 이번달 마진 리포트와 차량별 손익을 확인합니다.',eyebrow:'FINANCE',icon:'profit'},users:{title:'고객 관리',head:'고객 관리',sub:'매입·판매 고객 이력을 관리합니다.',eyebrow:'CUSTOMERS',icon:'customers'},settings:{title:'설정',head:'설정',sub:'직원 계정, 차량 모델 데이터, 업무 접근 권한을 관리합니다.',eyebrow:'SETTINGS',icon:'settings'}};
+const pages={buy:{title:'매입 관리',head:'차량 매입 관리',sub:'',eyebrow:'PURCHASE',icon:'purchase'},sell:{title:'판매 완료',head:'판매 완료 차량',sub:'판매가 완료된 차량을 별도로 관리합니다.',eyebrow:'SOLD VEHICLES',icon:'sold'},companyBuy:{title:'상사 매입',head:'상사 매입 관리',sub:'',eyebrow:'COMPANY PURCHASE',icon:'purchase'},prestock:{title:'선재고 관리',head:'선재고 관리',sub:'선재고 지급·상환 내역과 잔액을 관리합니다.',eyebrow:'PRESTOCK LEDGER',icon:'wallet'},inventoryFinance:{title:'재고금융 관리',head:'재고금융 관리',sub:'보유 차량의 재고대출금과 금융사를 통합 조회합니다.',eyebrow:'INVENTORY FINANCE',icon:'loan'},monthly:{title:'월정산',head:'월별 결산표',sub:'딜러별 수수료와 운영비, 통장 잔액·재고금융·미수금을 월별로 정리합니다.',eyebrow:'MONTHLY ACCOUNTING',icon:'calendar'},finance:{title:'수익 · 정산',head:'수익 및 정산',sub:'재고 및 판매 실적, 이번달 마진 리포트와 차량별 손익을 확인합니다.',eyebrow:'FINANCE',icon:'profit'},users:{title:'고객 관리',head:'고객 관리',sub:'매입·판매 고객 이력을 관리합니다.',eyebrow:'CUSTOMERS',icon:'customers'},recycle:{title:'휴지통',head:'휴지통',sub:'',eyebrow:'RECYCLE BIN',icon:'recycle'},settings:{title:'설정',head:'설정',sub:'직원 계정, 차량 모델 데이터, 업무 접근 권한을 관리합니다.',eyebrow:'SETTINGS',icon:'settings'}};
 pages.acctFinance={title:'매입금액 현황',head:'매입금액 현황',sub:'상사 전체 차량의 매입·대출 현황을 조회합니다.',eyebrow:'ACCOUNTING',icon:'loan'};
 let route='buy';
 
@@ -3740,7 +3758,7 @@ let snotePendingPage=snotePageFromLocation();
 function snotePageAllowed(page){
  return !!currentUser&&Object.prototype.hasOwnProperty.call(pages,page)&&
   (!['inventoryFinance','prestock','monthly','acctFinance'].includes(page)||isFinanceManager())&&
-  (page!=='settings'||isSnoteAdmin())&&(page!=='users'||!isAccountant());
+  (page!=='settings'||isSnoteAdmin())&&(page!=='users'||!isAccountant())&&(page!=='recycle'||!isAccountant())&&(page!=='companyBuy'||snoteCanCompanyPurchase());
 }
 function snoteDefaultPage(){return 'buy';}
 function snoteWorkspaceVisible(){return !!currentUser&&snoteWorkspaceActive&&document.getElementById('zc-cloud-gate')?.hidden;}
@@ -3858,15 +3876,7 @@ function snoteToggleProfileMenu(){
 }
 function snoteOpenProfileSettings(){
  snoteCloseProfileMenu(true);if(!currentUser)return;
- if(isSnoteAdmin()){
-  navigate('settings');const input=$('snote90-company-admin-name');
-  if(input){input.scrollIntoView({block:'center',behavior:'instant'});input.focus({preventScroll:true});}
-  return;
- }
- $('snote-profile-dialog-name').textContent=currentUser.name||'직원';
- $('snote-profile-dialog-role').textContent=isAccountant()?'경리':'딜러';
- $('snote-profile-dialog-company').textContent=currentUser.company||'';
- $('snote-profile-dialog').showModal();
+ window.snoteProfileEditor?.open();
 }
 document.addEventListener('click',event=>{if(!event.target.closest('#snote-profile-dropdown'))snoteCloseProfileMenu();});
 document.addEventListener('focusin',event=>{if(!event.target.closest('#snote-profile-dropdown'))snoteCloseProfileMenu();});
@@ -4328,11 +4338,11 @@ function zc81DashboardLockMark(id){
 }
 function buildMenus(){
  const adm=isSnoteAdmin(),acct=isAccountant();
- const allowed=adm?['buy','sell','finance','users','prestock','inventoryFinance','monthly','settings']:
+ const allowed=adm?['buy','sell','finance','users','companyBuy','prestock','inventoryFinance','monthly','recycle','settings']:
  acct?['buy','sell','prestock','inventoryFinance','monthly']:
- ['buy','sell','finance','users'];
+ ['buy','sell','finance','users','recycle'];
  const nav=$('desktop-nav');
- nav.innerHTML=Object.entries(pages).filter(([id])=>allowed.includes(id)).map(([id,p])=>
+ nav.innerHTML=Object.entries(pages).filter(([id])=>allowed.includes(id)&&(id!=='companyBuy'||snoteCanCompanyPurchase())).map(([id,p])=>
  `<button class="${route===id?'active':''}" onclick="navigate('${id}')">${ico(p.icon)}<span>${acct&&id==='finance'?'매입금액 현황':p.title}</span>${zc81DashboardLockMark(id)}</button>`).join('');
  const items=acct?[['buy','매입','buy'],['sell','판매','sold'],['prestock','선재고','wallet'],['inventoryFinance','재고금융','loan']]:
  [['buy','매입','buy'],['sell','판매','sold'],['finance','정산','profit'],['add','등록','plus']];
@@ -4428,7 +4438,8 @@ function snote226RenderSalesMonth(count){
 function getFiltered(prefix){const query=($(prefix+'-query')?.value||'').trim().toLowerCase(),filter=$(prefix+'-filter')?.value||'all',salesMonth=prefix==='list'&&route==='sell'?snote226ActiveSalesMonth():null;
 return cars.filter(c=>{
  const scoped=route!=='sell'?c.status!=='판매완료':c.status==='판매완료';
- return scoped&&(salesMonth===null||snote226SalesMonthMatches(c,salesMonth))&&(accountantFilter()==='all'||c.ownerId===accountantFilter())&&(c.model+' '+c.plate+' '+dealerLabel(c)).toLowerCase().includes(query)&&(filter==='all'||c.status===filter);
+ const ownerScoped=!isPurchaseListRoute()||snotePurchaseCarVisible(c),dealer=route==='buy'?'all':accountantFilter();
+ return ownerScoped&&scoped&&(salesMonth===null||snote226SalesMonthMatches(c,salesMonth))&&(dealer==='all'||c.ownerId===dealer)&&(c.model+' '+c.plate+' '+dealerLabel(c)).toLowerCase().includes(query)&&(filter==='all'||c.status===filter);
 })
 }
 /* v1.39 reference image hierarchy: real car photo > user-provided licensed model photo > illustrative placeholder.
@@ -4513,7 +4524,7 @@ function statusClass(s){return s==='판매완료'?'done':s==='수리중'?'pendin
 function statusSelect(c){
  if(isAccountant())return `<span class="status ${statusClass(c.status)}" title="경리 계정은 판매·삭제 권한이 없습니다">${esc(c.status)}</span>`;
  // 매입관리와 판매완료 목록에서만 취소 메뉴를 보여줍니다.
- const values=route==='buy'&&c.status!=='판매완료'?['판매중','판매완료','매입취소']:
+ const values=isPurchaseListRoute()&&c.status!=='판매완료'?['판매중','판매완료','매입취소']:
   route==='sell'&&c.status==='판매완료'?['판매중','판매완료','판매취소']:['판매중','판매완료'];
  return `<select class="status-select ${statusClass(c.status)}" aria-label="${esc(c.plate)} 차량 상태 변경" onclick="event.stopPropagation()" onkeydown="event.stopPropagation()" onchange="changeVehicleStatus(event,'${c.id}')">${values.map(s=>`<option value="${s}" ${c.status===s?'selected':''}>${s==='매입취소'?'매입 취소':s==='판매취소'?'판매 취소':s}</option>`).join('')}</select>`;
 }
@@ -4529,7 +4540,7 @@ function changeVehicleStatus(event,id,options={}){event?.stopPropagation();if(!c
  const next=event.target.value,old=c.status;event.target.value=old;
  if(!['판매중','판매완료','매입취소','판매취소'].includes(next)||next===old)return;
  // 화면별 허용 작업을 재검증해, 임의 이벤트로 다른 메뉴에서 삭제하지 못하도록 합니다.
- if(next==='매입취소'&&!(options.fromDetail&&activeCarId===id&&$('vehicle-overlay').classList.contains('open'))&&(route!=='buy'||old==='판매완료'))return;
+ if(next==='매입취소'&&!(options.fromDetail&&activeCarId===id&&$('vehicle-overlay').classList.contains('open'))&&(!isPurchaseListRoute()||old==='판매완료'))return;
  if(next==='판매취소'&&(route!=='sell'||old!=='판매완료'))return;
  pendingStatusChange={id,old,next,ownerId:c.ownerId,actor:currentUser,fromDetail:options.fromDetail===true};
  const cancel=next==='매입취소'||next==='판매취소';
@@ -4540,10 +4551,10 @@ function changeVehicleStatus(event,id,options={}){event?.stopPropagation();if(!c
  $('status-target').innerHTML=cancel?`<span class="status cancel-pill">${next==='매입취소'?'차량 삭제':'매입 관리 복귀'}</span>`:`<span class="status ${statusClass(next)}">${esc(next)}</span>`;
  const sale=next==='판매완료';$('confirm-sale-fields').style.display=sale?'grid':'none';
  $('confirm-sold-date').value=c.soldAt||todayLocal();$('confirm-sold-price').value=detailMoneyValue(c.soldPrice??c.sell);
- $('status-confirm-copy').textContent=next==='매입취소'?'선택한 차량의 매입을 취소하고 삭제합니다. 계속하시겠습니까?':next==='판매취소'?'판매완료 처리를 취소하고 이 차량을 매입 관리로 되돌리시겠습니까?':sale?'판매를 완료하려면 판매 날짜와 실제 판매 금액을 입력한 뒤 확인해주세요.':'차량 상태를 변경하시겠습니까?';
- $('status-confirm-warning').textContent=next==='매입취소'?'주의: 차량 정보, 비용 내역, 차량 사진, 자동차등록증 및 성능점검기록부가 모두 삭제되며 복구할 수 없습니다.':next==='판매취소'?'차량과 첨부 사진·서류는 유지됩니다. 판매완료 날짜와 실제 판매가 기록은 삭제되고, 재고 및 매입관리 목록으로 이동합니다.':sale?'확인하면 차량이 판매 완료 페이지로 이동하고, 재고 및 매입관리 목록에서는 제외됩니다.':old==='판매완료'?'확인하면 차량이 재고 관리와 매입관리 목록으로 돌아갑니다. 기존 판매 날짜·금액은 기록으로 남지만 활성 재고의 마진 계산에는 사용되지 않습니다.':'상태 변경 후에도 차량정보와 등록한 사진·비용 내역은 유지됩니다.';
+ $('status-confirm-copy').textContent=next==='매입취소'?'선택한 차량을 휴지통으로 이동합니다. 계속하시겠습니까?':next==='판매취소'?'판매완료 처리를 취소하고 이 차량을 매입 관리로 되돌리시겠습니까?':sale?'판매를 완료하려면 판매 날짜와 실제 판매 금액을 입력한 뒤 확인해주세요.':'차량 상태를 변경하시겠습니까?';
+ $('status-confirm-warning').textContent=next==='매입취소'?'차량 정보, 비용, 사진·서류와 연결된 고객정보를 휴지통에 보관합니다. 휴지통에서 복원할 수 있습니다.':next==='판매취소'?'차량과 첨부 사진·서류는 유지됩니다. 판매완료 날짜와 실제 판매가 기록은 삭제되고, 재고 및 매입관리 목록으로 이동합니다.':sale?'확인하면 차량이 판매 완료 페이지로 이동하고, 재고 및 매입관리 목록에서는 제외됩니다.':old==='판매완료'?'확인하면 차량이 재고 관리와 매입관리 목록으로 돌아갑니다. 기존 판매 날짜·금액은 기록으로 남지만 활성 재고의 마진 계산에는 사용되지 않습니다.':'상태 변경 후에도 차량정보와 등록한 사진·비용 내역은 유지됩니다.';
  if(isAccountant()){
-   if(next==='매입취소')$('status-confirm-warning').textContent='주의: 이 차량을 삭제하면 복구할 수 없습니다.';
+   if(next==='매입취소')$('status-confirm-warning').textContent='차량과 연결된 자료를 휴지통에 보관하며, 휴지통에서 복원할 수 있습니다.';
    else if(next==='판매취소')$('status-confirm-warning').textContent='차량 기본정보는 유지되고 판매완료 날짜와 금액 기록만 초기화됩니다.';
    else $('status-confirm-warning').textContent='상태 변경 후에도 차량의 기존 정보가 보존됩니다.';
  }
@@ -4566,41 +4577,22 @@ async function confirmStatusChange(){
  const c=cars.find(x=>x.id===req.id&&canManageCar(x)&&x.ownerId===req.ownerId&&(x.status===req.old||(req.attempt&&x.status===req.next)));
  if(!c){closeStatusModal();toast('차량 상태가 변경되었습니다. 다시 확인해주세요.');return}
  if(req.next==='매입취소'){
-  // IndexedDB 사진·서류 삭제 실패 시 차량 목록을 복원하여 재시도할 수 있게 합니다.
   $('status-confirm-submit').disabled=true;
-  const previousCars=cars;
-  cars=cars.filter(x=>x.id!==req.id);
-  if(!persistCars(c.ownerId)){
-   cars=previousCars;$('status-confirm-submit').disabled=false;
-   toast('차량 삭제 정보를 저장하지 못했습니다. 다시 시도해주세요.');return;
-  }
+  const destination=['buy','companyBuy'].includes(route)?route:'buy';
   try{
-   if(isSnoteAdmin()&&window.zc86Cloud?.ready){
-    await window.zc86Cloud.flush();
-    if(window.zc86Cloud.conflict)throw Error('서버 저장 충돌이 발생해 사진 삭제를 중단했습니다.');
-    await window.zc86Cloud.removeCarMedia(c.id);
-   }else if(fileDB){
-    // 메모리 목록뿐 아니라 DB의 해당 차량 파일을 직접 검색해 모두 삭제합니다.
-    const ids=await new Promise((resolve,reject)=>{
-     const tx=fileDB.transaction('media','readonly');
-     const store=tx.objectStore('media');
-     const index=store.index('carId');
-     const req=index.getAllKeys(c.id);
-     req.onsuccess=()=>resolve(req.result||[]);
-     req.onerror=()=>reject(req.error);
-    });
-    if(ids.length)await updateDB([],ids);
-   }
+   if(!window.snoteRecycleBinBridge)throw Error('휴지통 연결을 확인해 주세요.');
+   await window.snoteRecycleBinBridge.trashVehicle(c);
+   if(currentUser!==req.actor||pendingStatusChange!==req)return;
+   $('status-confirm-submit').disabled=false;closeStatusModal();
+   if(zc72SaleCarId===c.id)closeSaleProgress();
+   if(activeCarId===c.id)await closeVehicle({discard:true});
+   buildStats();buildMenus();navigate(destination);toast('차량과 연결된 자료를 휴지통으로 이동했습니다.');
   }catch(err){
-   cars=previousCars;persistCars(c.ownerId);$('status-confirm-submit').disabled=false;
-   console.warn('매입 취소 사진 삭제 실패',err);
-   toast('첨부 사진·서류 삭제에 실패하여 매입 취소를 중단했습니다.');return;
+   if(currentUser===req.actor&&pendingStatusChange===req)toast(err?.userMessage||'차량을 휴지통으로 이동하지 못했습니다. 연결 상태를 확인해 주세요.');
+  }finally{
+   if(currentUser===req.actor&&pendingStatusChange===req)$('status-confirm-submit').disabled=false;
   }
-  if(covers[c.id]){delete covers[c.id];saveCover()}
-  $('status-confirm-submit').disabled=false;closeStatusModal();
-  if(activeCarId===c.id)closeVehicle({discard:true});
-  if(fileDB){try{await refreshMedia()}catch(e){console.warn('삭제 후 이미지 목록 새로고침 실패',e)}}
-  buildStats();buildMenus();navigate('buy');toast('매입 취소 완료 · 차량과 첨부 자료를 삭제했습니다.');return;
+  return;
  }
  if(req.next==='판매취소'){
   const backup={...c};c.status='판매중';delete c.soldAt;delete c.soldPrice;
@@ -4686,23 +4678,23 @@ function snote221IncomeButton(c){return '<button type="button" class="snote221-i
 async function snote221OpenIncomeSettlement(event,carId){event?.stopPropagation();const context=window.snoteIncomeSettlementBridge?.context(carId);if(!context)return;try{await import('./assets/income-settlement-parent.js?v=2.76');if(route!=='sell'||!window.snoteIncomeSettlementBridge.current(context))return;await window.snoteIncomeOpenForCar(carId);}catch(error){toast(error?.message||'소득정산 화면을 열지 못했습니다.');}}
 function accountantCarTable(rows){
  if(!rows.length)return '<div class="empty">표시할 차량이 없습니다.</div>';
- return `<table class="inventory-table acct-buy-table"><thead><tr><th>차량 정보</th><th class="snote222-color-column">색상</th><th>차량번호</th><th>연식</th><th>주행거리</th><th>매입일자</th><th class="snote-money-column">매입가격</th><th class="snote-money-column">재고대출금</th><th class="snote-finance-column">재고금융</th><th class="snote-finance-column">재고금융사</th><th>상태</th>${route==='buy'?'<th>경과일자</th><th class="snote-encar-column">광고</th>':''}${route==='sell'?'<th>소득정산</th>':''}</tr></thead><tbody>${rows.map(c=>`<tr class="vehicle-clickable" tabindex="0" role="button" onclick="openVehicle('${c.id}')" onkeydown="if(event.key==='Enter'){openVehicle('${c.id}')}" aria-label="${esc(c.model)} 차량 상세"><td><div class="acct-car-cell"><strong>${esc(c.model)}</strong><small>${esc(c.make||'')}</small></div></td><td class="snote222-color-column">${snote222VehicleColor(c)}</td><td>${esc(c.plate)}</td><td>${esc(c.year?c.year+'년':'-')}</td><td>${esc(c.km!==undefined&&c.km!==null?formatKm(c.km)+' km':'-')}</td><td>${esc(c.purchaseAt||'-')}</td><td class="acct-price acct-buy-price snote-money-column">${num(c.buy)}원</td><td class="acct-price acct-loan-price snote-money-column">${num(inventoryLoanOf(c))}원</td><td class="snote-finance-column">${snote202FinanceState(c)}</td><td class="snote-finance-column">${lenderBadge(c)}</td><td>${statusSelect(c)}</td>${route==='buy'?`<td class="snote202-age">${snote202InventoryAge(c.purchaseAt)}</td><td class="snote-encar-column">${snote239EncarIcon(c)}</td>`:''}${route==='sell'?`<td>${snote221IncomeButton(c)}</td>`:''}</tr>`).join('')}</tbody></table>`;
+ return `<table class="inventory-table acct-buy-table"><thead><tr><th>차량 정보</th><th class="snote222-color-column">색상</th><th>차량번호</th><th>연식</th><th>주행거리</th><th>매입일자</th><th class="snote-money-column">매입가격</th><th class="snote-money-column">재고대출금</th><th class="snote-finance-column">재고금융</th><th class="snote-finance-column">재고금융사</th><th>상태</th>${isPurchaseListRoute()?'<th>경과일자</th><th class="snote-encar-column">광고</th>':''}${route==='sell'?'<th>소득정산</th>':''}</tr></thead><tbody>${rows.map(c=>`<tr class="vehicle-clickable" tabindex="0" role="button" onclick="openVehicle('${c.id}')" onkeydown="if(event.key==='Enter'){openVehicle('${c.id}')}" aria-label="${esc(c.model)} 차량 상세"><td><div class="acct-car-cell"><strong>${esc(c.model)}</strong><small>${esc(c.make||'')}</small></div></td><td class="snote222-color-column">${snote222VehicleColor(c)}</td><td>${esc(c.plate)}</td><td>${esc(c.year?c.year+'년':'-')}</td><td>${esc(c.km!==undefined&&c.km!==null?formatKm(c.km)+' km':'-')}</td><td>${esc(c.purchaseAt||'-')}</td><td class="acct-price acct-buy-price snote-money-column">${num(c.buy)}원</td><td class="acct-price acct-loan-price snote-money-column">${num(inventoryLoanOf(c))}원</td><td class="snote-finance-column">${snote202FinanceState(c)}</td><td class="snote-finance-column">${lenderBadge(c)}</td><td>${statusSelect(c)}</td>${isPurchaseListRoute()?`<td class="snote202-age">${snote202InventoryAge(c.purchaseAt)}</td><td class="snote-encar-column">${snote239EncarIcon(c)}</td>`:''}${route==='sell'?`<td>${snote221IncomeButton(c)}</td>`:''}</tr>`).join('')}</tbody></table>`;
 }
 function accountantCarMobile(rows){
  if(!rows.length)return '<div class="empty">표시할 차량이 없습니다.</div>';
- return rows.map(c=>`<div class="acct-mobile-card" role="button" tabindex="0" onclick="openVehicle('${c.id}')" onkeydown="if(event.key==='Enter')openVehicle('${c.id}')"><div class="acct-mobile-heading"><div class="snote222-model-line"><strong>${esc(c.model)}</strong>${snote222VehicleColor(c)}</div>${statusSelect(c)}</div><p class="acct-mobile-sub">${esc(c.plate)}</p><div class="acct-mobile-fields"><div><label>연식</label><strong>${esc(c.year?c.year+'년':'-')}</strong></div><div><label>주행거리</label><strong>${esc(c.km!==undefined&&c.km!==null?formatKm(c.km)+' km':'-')}</strong></div><div><label>매입일자</label><strong>${esc(c.purchaseAt||'-')}</strong></div><div class="snote-money-column"><label>매입가격</label><strong>${num(c.buy)}원</strong></div><div class="snote-money-column"><label>재고대출금</label><strong>${num(inventoryLoanOf(c))}원</strong></div><div><label>재고금융</label>${snote202FinanceState(c)}</div><div><label>재고금융사</label><strong>${lenderBadge(c)}</strong></div>${route==='buy'?`<div><label>경과일자</label><strong class="snote202-age">${snote202InventoryAge(c.purchaseAt)}</strong></div><div class="snote-encar-mobile">${snote239EncarIcon(c)}</div>`:''}</div>${route==='sell'?snote221IncomeButton(c):''}</div>`).join('');
+ return rows.map(c=>`<div class="acct-mobile-card" role="button" tabindex="0" onclick="openVehicle('${c.id}')" onkeydown="if(event.key==='Enter')openVehicle('${c.id}')"><div class="acct-mobile-heading"><div class="snote222-model-line"><strong>${esc(c.model)}</strong>${snote222VehicleColor(c)}</div>${statusSelect(c)}</div><p class="acct-mobile-sub">${esc(c.plate)}</p><div class="acct-mobile-fields"><div><label>연식</label><strong>${esc(c.year?c.year+'년':'-')}</strong></div><div><label>주행거리</label><strong>${esc(c.km!==undefined&&c.km!==null?formatKm(c.km)+' km':'-')}</strong></div><div><label>매입일자</label><strong>${esc(c.purchaseAt||'-')}</strong></div><div class="snote-money-column"><label>매입가격</label><strong>${num(c.buy)}원</strong></div><div class="snote-money-column"><label>재고대출금</label><strong>${num(inventoryLoanOf(c))}원</strong></div><div><label>재고금융</label>${snote202FinanceState(c)}</div><div><label>재고금융사</label><strong>${lenderBadge(c)}</strong></div>${isPurchaseListRoute()?`<div><label>경과일자</label><strong class="snote202-age">${snote202InventoryAge(c.purchaseAt)}</strong></div><div class="snote-encar-mobile">${snote239EncarIcon(c)}</div>`:''}</div>${route==='sell'?snote221IncomeButton(c):''}</div>`).join('');
 }
 function carTable(rows, inventoryDetails=false){
  if(isAccountant())return accountantCarTable(rows);
  if(!rows.length)return '<div class="empty">표시할 차량이 없습니다.</div>';
  const sold=route==='sell',extra=inventoryDetails&&!sold;
- return `<table class="${extra?'inventory-table':''}"><thead><tr><th>차량 정보</th><th class="snote222-color-column">색상</th><th>차량번호</th>${extra?'<th>연식</th><th>주행거리</th><th>매입일자</th>':''}<th class="snote-money-column">매입가</th><th class="snote-money-column">${sold?'판매가':'판매예정가'}</th>${extra?'<th class="snote-finance-column">재고금융</th>':''}${sold?'<th>판매 완료일</th>':''}${route==='buy'?'':'<th>사진 / 서류</th>'}<th>상태 변경</th>${extra&&route==='buy'?'<th>경과일자</th><th class="snote-encar-column">광고</th>':''}${sold?'<th>소득정산</th>':''}</tr></thead><tbody>${rows.map(c=>`<tr class="vehicle-clickable" tabindex="0" role="button" aria-label="${esc(c.model)} 차량 상세 열기" onclick="openVehicle('${c.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openVehicle('${c.id}')}"><td><div class="car-cell"><div class="car-thumb">${thumbHtml(c)}</div><div><div class="car-name">${esc(c.model)}</div><div class="car-sub">${extra?esc(c.make||'차량 상세 보기'):`${esc(c.year)}년 · ${esc(c.km)}km`}</div></div></div></td><td class="snote222-color-column">${snote222VehicleColor(c)}</td><td>${esc(c.plate)}</td>${extra?`<td class="inventory-year">${c.year?esc(c.year)+'년':'-'}</td><td class="inventory-km">${c.km!==undefined&&c.km!==null&&String(c.km).trim()!==''?esc(formatKm(c.km))+' km':'-'}</td><td class="inventory-purchase-date">${esc(c.purchaseAt||'-')}</td>`:''}<td class="price snote-money-column">${num(c.buy)}원</td><td class="price snote-money-column">${num(sold?salePrice(c):c.sell)}원</td>${extra?`<td class="snote-finance-column">${snote202FinanceState(c)}</td>`:''}${sold?`<td>${esc(c.soldAt||'미입력')}</td>`:''}${route==='buy'?'':`<td>${mediaCountHtml(c)}</td>`}<td>${statusSelect(c)}</td>${extra&&route==='buy'?`<td class="snote202-age">${snote202InventoryAge(c.purchaseAt)}</td><td class="snote-encar-column">${snote239EncarIcon(c)}</td>`:''}${sold?`<td>${snote221IncomeButton(c)}</td>`:''}</tr>`).join('')}</tbody></table>`
+ return `<table class="${extra?'inventory-table':''}"><thead><tr><th>차량 정보</th>${route==='companyBuy'?'<th>담당 딜러</th>':''}<th class="snote222-color-column">색상</th><th>차량번호</th>${extra?'<th>연식</th><th>주행거리</th><th>매입일자</th>':''}<th class="snote-money-column">매입가</th><th class="snote-money-column">${sold?'판매가':'판매예정가'}</th>${extra?'<th class="snote-finance-column">재고금융</th>':''}${sold?'<th>판매 완료일</th>':''}${isPurchaseListRoute()?'':'<th>사진 / 서류</th>'}<th>상태 변경</th>${extra&&isPurchaseListRoute()?'<th>경과일자</th><th class="snote-encar-column">광고</th>':''}${sold?'<th>소득정산</th>':''}</tr></thead><tbody>${rows.map(c=>`<tr class="vehicle-clickable" tabindex="0" role="button" aria-label="${esc(c.model)} 차량 상세 열기" onclick="openVehicle('${c.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openVehicle('${c.id}')}"><td><div class="car-cell"><div class="car-thumb">${thumbHtml(c)}</div><div><div class="car-name">${esc(c.model)}</div><div class="car-sub">${extra?esc(c.make||'차량 상세 보기'):`${esc(c.year)}년 · ${esc(c.km)}km`}</div></div></div></td>${route==='companyBuy'?`<td class="snote-company-dealer">${esc(dealerLabel(c))}</td>`:''}<td class="snote222-color-column">${snote222VehicleColor(c)}</td><td>${esc(c.plate)}</td>${extra?`<td class="inventory-year">${c.year?esc(c.year)+'년':'-'}</td><td class="inventory-km">${c.km!==undefined&&c.km!==null&&String(c.km).trim()!==''?esc(formatKm(c.km))+' km':'-'}</td><td class="inventory-purchase-date">${esc(c.purchaseAt||'-')}</td>`:''}<td class="price snote-money-column">${num(c.buy)}원</td><td class="price snote-money-column">${num(sold?salePrice(c):c.sell)}원</td>${extra?`<td class="snote-finance-column">${snote202FinanceState(c)}</td>`:''}${sold?`<td>${esc(c.soldAt||'미입력')}</td>`:''}${isPurchaseListRoute()?'':`<td>${mediaCountHtml(c)}</td>`}<td>${statusSelect(c)}</td>${extra&&isPurchaseListRoute()?`<td class="snote202-age">${snote202InventoryAge(c.purchaseAt)}</td><td class="snote-encar-column">${snote239EncarIcon(c)}</td>`:''}${sold?`<td>${snote221IncomeButton(c)}</td>`:''}</tr>`).join('')}</tbody></table>`
 }
 function carMobile(rows, inventoryDetails=false){
  if(isAccountant())return accountantCarMobile(rows);
  if(!rows.length)return '<div class="empty">표시할 차량이 없습니다.</div>';
  const sold=route==='sell',extra=inventoryDetails&&!sold;
- return rows.map(c=>`<div class="vehicle-card" role="button" tabindex="0" onclick="openVehicle('${c.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openVehicle('${c.id}')}"><div class="car-thumb">${thumbHtml(c)}</div><div class="vehicle-info"><div class="vehicle-title snote222-model-line"><span>${esc(c.model)}</span>${snote222VehicleColor(c)}</div><div class="vehicle-meta">${esc(c.plate)}${!extra?` · ${esc(c.year)}년 · ${esc(c.km)}km`:''}</div>${extra?`<div class="vehicle-inventory-meta"><span><b>연식</b>${c.year?esc(c.year)+'년':'-'}</span><span><b>주행거리</b>${c.km!==undefined&&c.km!==null&&String(c.km).trim()!==''?esc(formatKm(c.km))+' km':'-'}</span><span><b>매입일자</b>${esc(c.purchaseAt||'-')}</span></div>`:''}<div class="vehicle-price">${sold?'판매가':'판매예정가'} ${num(sold?salePrice(c):c.sell)}원</div>${extra?`<span class="prestock-mobile-line snote202-mobile-finance">재고금융 · ${snote202FinanceState(c)}</span>`:''}${sold?`<div class="sale-date-chip">판매 완료일 ${esc(c.soldAt||'미입력')}</div>`:''}${route==='buy'?'':`<span class="mobile-media">${mediaCountHtml(c)}</span>`}</div><div class="vehicle-right">${statusSelect(c)}${extra&&route==='buy'?`<small class="snote202-mobile-age">경과 ${snote202InventoryAge(c.purchaseAt)}</small>${snote239EncarIcon(c)}`:''}${sold?snote221IncomeButton(c):''}</div></div>`).join('')}
+ return rows.map(c=>`<div class="vehicle-card" role="button" tabindex="0" onclick="openVehicle('${c.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openVehicle('${c.id}')}"><div class="car-thumb">${thumbHtml(c)}</div><div class="vehicle-info"><div class="vehicle-title snote222-model-line"><span>${esc(c.model)}</span>${snote222VehicleColor(c)}</div><div class="vehicle-meta">${esc(c.plate)}${!extra?` · ${esc(c.year)}년 · ${esc(c.km)}km`:''}</div>${route==='companyBuy'?`<div class="car-sub snote-company-dealer">${esc(dealerLabel(c))}</div>`:''}${extra?`<div class="vehicle-inventory-meta"><span><b>연식</b>${c.year?esc(c.year)+'년':'-'}</span><span><b>주행거리</b>${c.km!==undefined&&c.km!==null&&String(c.km).trim()!==''?esc(formatKm(c.km))+' km':'-'}</span><span><b>매입일자</b>${esc(c.purchaseAt||'-')}</span></div>`:''}<div class="vehicle-price">${sold?'판매가':'판매예정가'} ${num(sold?salePrice(c):c.sell)}원</div>${extra?`<span class="prestock-mobile-line snote202-mobile-finance">재고금융 · ${snote202FinanceState(c)}</span>`:''}${sold?`<div class="sale-date-chip">판매 완료일 ${esc(c.soldAt||'미입력')}</div>`:''}${isPurchaseListRoute()?'':`<span class="mobile-media">${mediaCountHtml(c)}</span>`}</div><div class="vehicle-right">${statusSelect(c)}${extra&&isPurchaseListRoute()?`<small class="snote202-mobile-age">경과 ${snote202InventoryAge(c.purchaseAt)}</small>${snote239EncarIcon(c)}`:''}${sold?snote221IncomeButton(c):''}</div></div>`).join('')}
 function snotePurchaseDateSortKey(value){
  const match=/^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})$/.exec(String(value||'').trim());
  if(!match)return '';
@@ -4711,9 +4703,12 @@ function snotePurchaseDateSortKey(value){
  return Number.isFinite(time)&&new Date(time).toISOString().slice(0,10)===key?key:'';
 }
 function renderCars(){
- const all=getFiltered('list'),inventory=route==='buy';
+ const scope=snotePurchaseContext(),navigation=scope?.key||'';if(navigation!==snotePurchaseNavigationScope){snotePurchaseNavigationScope=navigation;buildMenus();}
+ if(route==='companyBuy'&&window.snoteEnsureCompanyPurchase?.()!==true){const status=window.snoteCompanyPurchaseMessage?.()||'상사 매물을 불러오는 중…',copy=`<div class="empty"><p>${esc(status)}</p><button class="snote-list-action" type="button" aria-label="상사 매입 새로고침" data-tooltip="새로고침" onclick="window.snoteRefreshCompanyPurchase?.()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 5v6h-6M4 19v-6h6M5.5 8a7 7 0 0 1 11.6-2L20 9M4 15l2.9 3A7 7 0 0 0 18.5 16"/></svg></button></div>`;$('list-table').innerHTML=copy;$('list-mobile').innerHTML=copy;$('list-pagination').replaceChildren();$('list-pagination').hidden=true;snote226RenderSalesMonth(0);return;}
+ if(route==='companyBuy')renderAccountantBar();
+ const all=getFiltered('list'),inventory=isPurchaseListRoute();
  if(inventory)all.sort((a,b)=>snotePurchaseDateSortKey(b.purchaseAt).localeCompare(snotePurchaseDateSortKey(a.purchaseAt)));
- const l=snote236Paginate(all,'vehicles',JSON.stringify([currentUser?.username,route,$('list-query')?.value,$('list-filter')?.value,accountantFilter(),snote226ActiveSalesMonth()]),'list-pagination',()=>renderCars());
+ const l=snote236Paginate(all,'vehicles',JSON.stringify([currentUser?.username,route,isPurchaseListRoute()?scope?.key:'',$('list-query')?.value,$('list-filter')?.value,route==='buy'?'all':accountantFilter(),snote226ActiveSalesMonth()]),'list-pagination',()=>renderCars());
  if(route==='sell'&&!l.length){
   const period=snote226ActiveSalesMonth(),label=snote226SalesMonthLabel(period),empty=`<div class="empty snote-sales-empty"><strong>${esc(label)}에 조건에 맞는 판매 완료 차량이 없습니다.</strong><p>${period==='all'?'검색어나 담당자 조건을 확인해 주세요.':'다른 월을 선택하거나 전체 기간에서 확인해 주세요.'}</p>${period!=='all'?'<button type="button" onclick="snote226SetSalesMonth(\'all\')">전체 기간 보기</button>':''}</div>`;
   $('list-table').innerHTML=empty;$('list-mobile').innerHTML=empty;
@@ -5357,7 +5352,7 @@ function buildAccountantPurchaseSummary(){
  const visible=snote236Paginate(holding,'accountant-summary',JSON.stringify([currentUser?.username,accountantFilter()]),'acct-finance-pagination',()=>buildAccountantPurchaseSummary());
  $('acct-finance-table').innerHTML=accountantCarTable(visible);$('acct-finance-mobile').innerHTML=accountantCarMobile(visible);
 }
-function buildAlt(){if(route==='users'&&!isAccountant()){buildCustomerManagement();return;}if(route==='settings'&&isSnoteAdmin()){snoteRenderAdminSettings();return;}if((isAccountant()&&route==='finance')||(isSnoteAdmin()&&route==='acctFinance')){buildAccountantPurchaseSummary();return;}let title='',copy='',content='';if(route==='prestock'&&isFinanceManager()){buildPrestockManagement();return}if(route==='inventoryFinance'&&isFinanceManager()){buildInventoryFinance();return}if(route==='finance'){title='차량별 수익 · 정산';copy='매입원가, 부대비용, 예상 마진을 자동으로 계산합니다. 차량을 클릭하면 비용을 수정할 수 있습니다.';content=`<div class="panel" style="margin-top:21px;box-shadow:none"><div class="panel-head"><div><h2>차량별 예상 매출이익</h2><p>모든 비용 반영 · 수리비 내역 합산</p></div></div><div class="tablewrap snote222-profit-scroll"><table class="snote-profit-table"><thead><tr><th>차량</th><th class="snote222-color-column">색상</th>${isAccountant()?'<th>담당 딜러</th>':''}<th>매입가</th><th>부대비용</th><th>총 투입원가</th><th>판매예정가 / 판매가</th><th>예상 마진</th></tr></thead><tbody>${cars.filter(c=>accountantFilter()==='all'||c.ownerId===accountantFilter()).map(c=>{const t=totals(c.buy,salePrice(c),normalizeCosts(c));return `<tr class="vehicle-clickable" tabindex="0" role="button" onclick="openVehicle('${c.id}')" onkeydown="if(event.key==='Enter')openVehicle('${c.id}')"><td class="price">${esc(c.model)}</td><td class="snote222-color-column">${snote222VehicleColor(c)}</td>${isAccountant()?`<td>${esc(dealerLabel(c))}</td>`:''}<td>${num(c.buy)}원</td><td>${num(t.direct)}원</td><td>${num(t.landed)}원</td><td>${num(salePrice(c))}원${c.status==='판매완료'?' (판매)':''}</td><td class="price" style="color:${t.margin<0?'#c34859':'#16936f'}">${num(t.margin)}원</td></tr>`}).join('')}</tbody></table></div></div>`}else if(route==='users'){title='고객관리 메뉴';copy='고객명, 연락처, 매입·판매 이력, 담당 직원 등은 권한에 따라 열람할 수 있도록 설계합니다.';content='<p class="note">고객 개인정보는 실제 개발 시 암호화, 접근 권한, 처리 목적에 맞춘 보관 정책을 적용합니다.</p>'}else{title='직원 및 차량 모델 데이터 관리';copy='직원 계정과 모델 분류의 관리 기능을 확장할 예정입니다. 등록된 차량 모델 분류를 확인할 수 있습니다.';content=`<div class="catalog-manage"><strong>차량 모델 목록 (로컬 DB)</strong><p id="catalog-counter"></p><p>기존 차량 모델 DB를 확인하고 내보낼 수 있습니다.</p><div class="buttons"><button class="btn-ghost" type="button" onclick="exportVehicleCatalog()">모델 목록 CSV 다운로드</button></div></div><p class="note">※ 이 데이터는 제조사 공식 가격표 확인 등급(연식별 표시), 이전 참고 등급, 세부등급 검증 대기 모델을 구분합니다. 엔카 공식 원본 DB나 국내 전체 출시 트림 확정 목록이 아닙니다. 검증된 자료는 CSV로 추가할 수 있습니다.</p><div class="world-panel"><div class="world-head"><div><strong>🌍 해외 공식 트림 검색 · 국내 등록과 분리</strong><p>미국·캐나다·영국·호주·일본의 공식 판매 트림만 표시합니다. 동일 차명이라도 국내 등급으로 자동 적용되지 않습니다.</p></div></div><div class="world-filters"><select id="world-market" aria-label="국가 선택" onchange="renderWorldTrims()"><option value="all">전체 국가</option><option value="US">미국 (US)</option><option value="CA">캐나다 (CA)</option><option value="GB">영국 (GB)</option><option value="AU">호주 (AU)</option><option value="JP">일본 (JP)</option></select><input id="world-search" type="search" placeholder="제조사, 차명, 등급 검색 (영어·일본어 가능)" oninput="renderWorldTrims()" /></div><div id="world-count" style="font-size:11px;color:#8191a5;margin-bottom:9px"></div><div class="world-results" id="world-results"></div><div class="world-credit">공식 트림명 출처: 각 국가 제조사 사이트 · 시장 구분 필수 · 전체 세계 차량의 전수조사 결과가 아닙니다.<br>일반 모델명 오픈데이터 참고: <a href="https://vehiclesdb.com" target="_blank" rel="noopener">Vehicle data by VehiclesDB</a> (CC BY 4.0, 데이터 자체는 별도 수입 필요)</div></div>`}if(route==='settings'){
+function buildAlt(){if(route==='recycle'){$('alt-title').style.display='none';$('alt-copy').style.display='none';if(window.snoteRenderRecycleBin)window.snoteRenderRecycleBin();else $('alt-content').textContent='휴지통을 준비하고 있습니다.';return;}if(route==='users'&&!isAccountant()){buildCustomerManagement();return;}if(route==='settings'&&isSnoteAdmin()){snoteRenderAdminSettings();return;}if((isAccountant()&&route==='finance')||(isSnoteAdmin()&&route==='acctFinance')){buildAccountantPurchaseSummary();return;}let title='',copy='',content='';if(route==='prestock'&&isFinanceManager()){buildPrestockManagement();return}if(route==='inventoryFinance'&&isFinanceManager()){buildInventoryFinance();return}if(route==='finance'){title='차량별 수익 · 정산';copy='매입원가, 부대비용, 예상 마진을 자동으로 계산합니다. 차량을 클릭하면 비용을 수정할 수 있습니다.';content=`<div class="panel" style="margin-top:21px;box-shadow:none"><div class="panel-head"><div><h2>차량별 예상 매출이익</h2><p>모든 비용 반영 · 수리비 내역 합산</p></div></div><div class="tablewrap snote222-profit-scroll"><table class="snote-profit-table"><thead><tr><th>차량</th><th class="snote222-color-column">색상</th>${isAccountant()?'<th>담당 딜러</th>':''}<th>매입가</th><th>부대비용</th><th>총 투입원가</th><th>판매예정가 / 판매가</th><th>예상 마진</th></tr></thead><tbody>${cars.filter(c=>accountantFilter()==='all'||c.ownerId===accountantFilter()).map(c=>{const t=totals(c.buy,salePrice(c),normalizeCosts(c));return `<tr class="vehicle-clickable" tabindex="0" role="button" onclick="openVehicle('${c.id}')" onkeydown="if(event.key==='Enter')openVehicle('${c.id}')"><td class="price">${esc(c.model)}</td><td class="snote222-color-column">${snote222VehicleColor(c)}</td>${isAccountant()?`<td>${esc(dealerLabel(c))}</td>`:''}<td>${num(c.buy)}원</td><td>${num(t.direct)}원</td><td>${num(t.landed)}원</td><td>${num(salePrice(c))}원${c.status==='판매완료'?' (판매)':''}</td><td class="price" style="color:${t.margin<0?'#c34859':'#16936f'}">${num(t.margin)}원</td></tr>`}).join('')}</tbody></table></div></div>`}else if(route==='users'){title='고객관리 메뉴';copy='고객명, 연락처, 매입·판매 이력, 담당 직원 등은 권한에 따라 열람할 수 있도록 설계합니다.';content='<p class="note">고객 개인정보는 실제 개발 시 암호화, 접근 권한, 처리 목적에 맞춘 보관 정책을 적용합니다.</p>'}else{title='직원 및 차량 모델 데이터 관리';copy='직원 계정과 모델 분류의 관리 기능을 확장할 예정입니다. 등록된 차량 모델 분류를 확인할 수 있습니다.';content=`<div class="catalog-manage"><strong>차량 모델 목록 (로컬 DB)</strong><p id="catalog-counter"></p><p>기존 차량 모델 DB를 확인하고 내보낼 수 있습니다.</p><div class="buttons"><button class="btn-ghost" type="button" onclick="exportVehicleCatalog()">모델 목록 CSV 다운로드</button></div></div><p class="note">※ 이 데이터는 제조사 공식 가격표 확인 등급(연식별 표시), 이전 참고 등급, 세부등급 검증 대기 모델을 구분합니다. 엔카 공식 원본 DB나 국내 전체 출시 트림 확정 목록이 아닙니다. 검증된 자료는 CSV로 추가할 수 있습니다.</p><div class="world-panel"><div class="world-head"><div><strong>🌍 해외 공식 트림 검색 · 국내 등록과 분리</strong><p>미국·캐나다·영국·호주·일본의 공식 판매 트림만 표시합니다. 동일 차명이라도 국내 등급으로 자동 적용되지 않습니다.</p></div></div><div class="world-filters"><select id="world-market" aria-label="국가 선택" onchange="renderWorldTrims()"><option value="all">전체 국가</option><option value="US">미국 (US)</option><option value="CA">캐나다 (CA)</option><option value="GB">영국 (GB)</option><option value="AU">호주 (AU)</option><option value="JP">일본 (JP)</option></select><input id="world-search" type="search" placeholder="제조사, 차명, 등급 검색 (영어·일본어 가능)" oninput="renderWorldTrims()" /></div><div id="world-count" style="font-size:11px;color:#8191a5;margin-bottom:9px"></div><div class="world-results" id="world-results"></div><div class="world-credit">공식 트림명 출처: 각 국가 제조사 사이트 · 시장 구분 필수 · 전체 세계 차량의 전수조사 결과가 아닙니다.<br>일반 모델명 오픈데이터 참고: <a href="https://vehiclesdb.com" target="_blank" rel="noopener">Vehicle data by VehiclesDB</a> (CC BY 4.0, 데이터 자체는 별도 수입 필요)</div></div>`}if(route==='settings'){
 content+=`<div class="catalog-source-panel"><strong>4단계 차량분류 · 기존 5단계 CSV 호환</strong><p>차량 등록은 제조사 → 모델명 → 세부모델 → 트림 4단계입니다. 이전 5단계 CSV의 세부등급은 트림과 합쳐 선택합니다. 한국(KR) 자료만 국내 등록 드롭다운에 적용하며 해외 트림은 별도 조회합니다. 업로드한 자료는 <b>출처 확인 대기</b>로 표시하며, 국내 제조사 공식 확인 등급을 임의로 덮어쓰지 않습니다.</p><div class="catalog-manage"><b>필수 열:</b> make,group,model,grade　<b>선택 열:</b> subgrade,model_year,source,source_url,market<br/><small>엔카·다나와·KB차차차·당근의 실제 수집 자료는 이용/재사용 허가를 확보한 뒤 CSV로 가져오세요.</small></div><div class="buttons"><button type="button" class="btn-ghost" onclick="exportVehicleCatalog()">전체 DB 내보내기</button></div></div>`;
 }
 $('alt-title').style.display='';$('alt-copy').style.display='';$('alt-title').textContent=title;$('alt-copy').textContent=copy;$('alt-content').innerHTML=content;if(route==='finance'){const tbody=$('alt-content').querySelector('.snote-profit-table tbody');if(tbody){const pager=document.createElement('nav');pager.id='profit-pagination';pager.className='snote-pagination';pager.setAttribute('aria-label','수익 정산 차량 목록 페이지');tbody.closest('.panel').append(pager);const visible=snote236Paginate([...tbody.children],'profit',JSON.stringify([currentUser?.username,accountantFilter()]),pager.id,()=>buildAlt());tbody.replaceChildren(...visible);}}if(route==='settings'&&!isAccountant()){refreshTaxonomyWidget();renderWorldTrims()}}
@@ -5998,7 +5993,7 @@ document.addEventListener('keydown',event=>{
  else if(!$('zc-auto-reg-overlay').hidden){event.preventDefault();closeAutoRegistration({animate:true})}
 });
 
-function navigate(next,options={}){window.snoteCloseCalculator?.();if(!snotePageAllowed(next)){if(currentUser)toast('해당 메뉴에 접근할 권한이 없습니다.');return false;}if(next!==route&&!snotePrepareRouteChange())return false;const invitePane=$('zc86-invite-area'),inviteHome=$('zc86-admin-tools');if(invitePane&&inviteHome&&invitePane.parentElement!==inviteHome){inviteHome.appendChild(invitePane);invitePane.hidden=true;}if(next==='finance'&&currentUser&&!isAccountant()&&!isSnoteAdmin()&&!zcDashboardGateGranted){openDashboardGate();return;}if(document.body.classList.contains('mobile-drawer-visible'))closeMobileDrawer();document.body.classList.toggle('accountant-mode',isAccountant());if((['inventoryFinance','prestock','monthly','acctFinance'].includes(next)&&!isFinanceManager())||(next==='settings'&&!isSnoteAdmin())||(next==='users'&&isAccountant())){toast('해당 메뉴에 접근할 권한이 없습니다.');return}zcDashboardUnlocked=!isFinanceManager()&&next==='finance'&&zcDashboardGateGranted;if(next==='sell'&&route!=='sell')snote226ResetSalesMonth();route=next;let p=pages[next];$('breadcrumb').textContent=isAccountant()&&next==='finance'?'매입금액 현황':p.title;$('eyebrow').textContent=p.eyebrow;$('screen-title').textContent=isSnoteAdmin()&&next==='settings'?'설정':isAccountant()?({buy:'전체 딜러 매입 관리',sell:'전체 딜러 판매 완료',finance:'매입금액 현황',inventoryFinance:'재고금융 관리',prestock:'선재고 관리',settings:'설정',monthly:'월별 결산표'}[next]||p.head):p.head;$('screen-sub').textContent=isSnoteAdmin()&&next==='settings'?'직원 이름·상사명과 재고금융 설정을 관리합니다.':isAccountant()?(next==='monthly'?'딜러별 수수료·운영비·이월·잔액을 실시간으로 정리하고 결산표를 출력합니다.':next==='prestock'?'선재고 지급·상환 거래 내역과 현재 잔액을 확인합니다.':next==='inventoryFinance'?'모든 딜러의 재고대출금과 금융사별 현황을 한곳에서 관리합니다.':'모든 딜러의 차량과 매입·판매 정보를 한곳에서 관리합니다.'):p.sub;if(next==='buy')$('screen-sub').textContent='';$('screen-sub').hidden=!$('screen-sub').textContent;$('monthly-screen').style.display=next==='monthly'?'block':'none';$('list-screen').style.display=['buy','sell'].includes(next)?'block':'none';$('alt-screen').style.display=['finance','inventoryFinance','prestock','users','settings','acctFinance'].includes(next)?'block':'none';$('dealer-finance-overview').style.display=next==='finance'&&!isAccountant()?'block':'none';$('stats').style.display=next==='finance'&&!isAccountant()?'grid':'none';$('dashboard-analytics').style.display=next==='finance'&&!isAccountant()?'block':'none';$('main-add').style.display='none';$('zc80-buy-scan').hidden=next!=='buy'||isAccountant();$('snote92-buy-manual').hidden=next!=='buy'||isAccountant();renderAccountantBar();if(['buy','sell'].includes(next)){$('list-title').textContent=next==='sell'?'판매 완료 차량 목록':next==='buy'?'매입 관리 차량 목록':'재고 차량 목록';$('list-desc').textContent=next==='sell'?'판매가 완료된 차량만 표시합니다. 상태를 변경하면 다시 재고로 돌아갑니다.':next==='buy'?'':'판매중 차량만 표시합니다. 상태를 판매완료로 변경하면 판매 완료 페이지로 이동합니다.';$('list-desc').hidden=!$('list-desc').textContent;$('list-filter').value=next==='sell'?'판매완료':'all';$('list-filter').style.display=['sell','buy'].includes(next)?'none':'';$('list-query').value=''}if(['finance','inventoryFinance','prestock','users','settings','acctFinance'].includes(next))buildAlt();buildMenus();renderCars();const accBar=$('accountant-bar');if(accBar)accBar.hidden=!isFinanceManager()||['inventoryFinance','prestock'].includes(next);if(options.history!=='none')snoteWriteWorkspaceHistory(next,options.history||'push');window.snoteMonthlyWorkbookRefresh?.();window.scrollTo({top:0,behavior:'instant'});return true}
+function navigate(next,options={}){window.snoteCloseCalculator?.();if(!snotePageAllowed(next)){if(currentUser)toast('해당 메뉴에 접근할 권한이 없습니다.');return false;}if(next!==route&&!snotePrepareRouteChange())return false;const invitePane=$('zc86-invite-area'),inviteHome=$('zc86-admin-tools');if(invitePane&&inviteHome&&invitePane.parentElement!==inviteHome){inviteHome.appendChild(invitePane);invitePane.hidden=true;}if(next==='finance'&&currentUser&&!isAccountant()&&!isSnoteAdmin()&&!zcDashboardGateGranted){openDashboardGate();return;}if(document.body.classList.contains('mobile-drawer-visible'))closeMobileDrawer();document.body.classList.toggle('accountant-mode',isAccountant());if((['inventoryFinance','prestock','monthly','acctFinance'].includes(next)&&!isFinanceManager())||(next==='settings'&&!isSnoteAdmin())||(next==='users'&&isAccountant())){toast('해당 메뉴에 접근할 권한이 없습니다.');return}zcDashboardUnlocked=!isFinanceManager()&&next==='finance'&&zcDashboardGateGranted;if(next==='companyBuy'&&route!=='companyBuy'){$('accountant-dealer-filter').value='all';window.snoteResetCompanyPurchase?.();}if(next==='sell'&&route!=='sell')snote226ResetSalesMonth();route=next;let p=pages[next];$('breadcrumb').textContent=isAccountant()&&next==='finance'?'매입금액 현황':p.title;$('eyebrow').textContent=p.eyebrow;$('screen-title').textContent=isSnoteAdmin()&&next==='settings'?'설정':isAccountant()?({buy:'차량 매입 관리',sell:'전체 딜러 판매 완료',finance:'매입금액 현황',inventoryFinance:'재고금융 관리',prestock:'선재고 관리',settings:'설정',monthly:'월별 결산표'}[next]||p.head):p.head;$('screen-sub').textContent=isSnoteAdmin()&&next==='settings'?'직원 이름·상사명과 재고금융 설정을 관리합니다.':isAccountant()?(next==='monthly'?'딜러별 수수료·운영비·이월·잔액을 실시간으로 정리하고 결산표를 출력합니다.':next==='prestock'?'선재고 지급·상환 거래 내역과 현재 잔액을 확인합니다.':next==='inventoryFinance'?'모든 딜러의 재고대출금과 금융사별 현황을 한곳에서 관리합니다.':'모든 딜러의 차량과 매입·판매 정보를 한곳에서 관리합니다.'):p.sub;if(['buy','companyBuy','recycle'].includes(next))$('screen-sub').textContent='';$('screen-sub').hidden=!$('screen-sub').textContent;$('monthly-screen').style.display=next==='monthly'?'block':'none';$('list-screen').style.display=['buy','companyBuy','sell'].includes(next)?'block':'none';$('alt-screen').style.display=['finance','inventoryFinance','prestock','users','settings','acctFinance','recycle'].includes(next)?'block':'none';$('dealer-finance-overview').style.display=next==='finance'&&!isAccountant()?'block':'none';$('stats').style.display=next==='finance'&&!isAccountant()?'grid':'none';$('dashboard-analytics').style.display=next==='finance'&&!isAccountant()?'block':'none';$('main-add').style.display='none';$('zc80-buy-scan').hidden=next!=='buy'||isAccountant();$('snote92-buy-manual').hidden=next!=='buy'||isAccountant();renderAccountantBar();if(['buy','companyBuy','sell'].includes(next)){$('list-title').textContent=next==='sell'?'판매 완료 차량 목록':next==='buy'?'매입 관리 차량 목록':next==='companyBuy'?'상사 매입 차량 목록':'재고 차량 목록';$('list-desc').textContent=next==='sell'?'판매가 완료된 차량만 표시합니다. 상태를 변경하면 다시 재고로 돌아갑니다.':isPurchaseListRoute(next)?'':'판매중 차량만 표시합니다. 상태를 판매완료로 변경하면 판매 완료 페이지로 이동합니다.';$('list-desc').hidden=!$('list-desc').textContent;$('list-filter').value=next==='sell'?'판매완료':'all';$('list-filter').style.display=['sell','buy','companyBuy'].includes(next)?'none':'';$('list-query').value=''}if(['finance','inventoryFinance','prestock','users','settings','acctFinance','recycle'].includes(next))buildAlt();buildMenus();renderCars();const accBar=$('accountant-bar');if(accBar)accBar.hidden=!isFinanceManager()||['inventoryFinance','prestock','recycle','buy'].includes(next);if(options.history!=='none')snoteWriteWorkspaceHistory(next,options.history||'push');window.snoteMonthlyWorkbookRefresh?.();window.scrollTo({top:0,behavior:'instant'});return true}
 function openAdd(){window.snoteDrawerMotion?.cancel($('overlay'));snote220RegistrationSession++;const saveButton=$('overlay').querySelector('[type="submit"]');if(saveButton)saveButton.disabled=false;void snote220RefreshTaxonomy().catch(()=>{});delete $('overlay').dataset.snoteHistoryDirty;const previousHint=$('snote201-model-match-hint');previousHint?.remove();if(isAccountant()){toast('경리 화면에서는 각 딜러가 등록한 차량을 관리합니다.');return}$('overlay').classList.add('open');newYearTouched=false;delete $('new-model').dataset.snote98OcrFallback;SNOTE98_FIELDS.forEach(f=>{$('snote98-'+f+'-input').value='';});fillVehicleSelect('make');setupColorSelect('new');const hint=document.createElement('div');hint.id='snote201-model-match-hint';$('new-visual-preview')?.before(hint);$('new-year').value=String(new Date().getFullYear());$('new-purchase-date').value=todayLocal();$('new-km').value='';renderRepairRows('new',[]);$('overlay').scrollLeft=0;$('new-make').focus({preventScroll:true});updateNewCarPreview();updateAddSummary()}
 function closeAdd({animate=false}={}){const root=$('overlay'),pending=window.snoteDrawerMotion?.pending(root);if(animate&&pending)return pending;const actor=currentUser,session=++snote220RegistrationSession;const finish=()=>{root.classList.remove('open');zcAutoRegPendingFile=null;return true;};if(animate&&root.classList.contains('open')&&window.snoteDrawerMotion)return window.snoteDrawerMotion.close(root,finish,()=>currentUser===actor&&session===snote220RegistrationSession&&root.classList.contains('open'));window.snoteDrawerMotion?.cancel(root);return finish();}
 async function saveCar(e){
@@ -6334,7 +6329,7 @@ async function snote251LoadContractCustomer(){
   const record=await zc72ReadCar(ownerId,carId);if(!current())return false;
   if(!record||contractMode!=='sale')return true;
   if(before!==JSON.stringify(zc75ReadContractFields())){await window.snote222ContractSignature?.setSaved(record,snote222ContractSignatureContext());buildContractPrintPages();return true;}
-  zc75TrackContract(ownerId,carId);
+  zc75TrackContract(ownerId,carId,record);
   zc75RestoreContract(record.contractData);
   $('ct-buyer-name').value=record.name||'';$('ct-buyer-phone').value=record.phone||'';$('ct-buyer-address').value=record.address||'';
   contractOwner={name:record.name||'',id:'',phone:record.phone||'',address:record.address||''};
@@ -6732,7 +6727,7 @@ function snoteVehicleSaveFinished(context,submitted,{closeAfterSave=true}={}){
 }
 function openVehicle(id){
  const overlay=$('vehicle-overlay');delete overlay.dataset.snoteHistoryDirty;hideVehicleSaveSuccess();snoteVehicleDraftBase=null;
- if(!currentUser)return;const car=cars.find(x=>x.id===id);if(!car)return;window.snoteDrawerMotion?.cancel(overlay);
+ if(!currentUser)return;const car=cars.find(x=>x.id===id);if(!car||(isPurchaseListRoute()&&(route==='companyBuy'?!snotePurchaseCarVisible(car):car.ownerId!==snotePurchaseContext()?.ownerAlias)))return;window.snoteDrawerMotion?.cancel(overlay);
  const actor=currentUser,opening=++snote224VehicleOpen;
  activeCarId=id;activeDocTab='registration';vinOcrReset();overlay.classList.add('open');overlay.setAttribute('aria-hidden','false');renderVehicle();snoteVehicleRememberDraft();snoteVehicleSaveBusy(false);
  const resetScroll=()=>{
@@ -6886,7 +6881,7 @@ async function handleAccountantRegistration(event){
   await updateDB([record],old?[old.id]:[]);
   if(activeCarId===carId&&isAccountant())await loadAccountingRegistrationPreview(car);
   toast('자동차등록증 사진을 담당 딜러의 차량 서류에 저장했습니다.');
- }catch(err){toast('등록증 저장에 실패했습니다. 브라우저 저장공간을 확인해주세요.');console.warn('Accounting registration upload failed',err)}
+ }catch(err){toast(err?.userMessage||'등록증을 저장하지 못했습니다. 연결 상태를 확인해 주세요.');console.warn('Accounting registration upload failed',err?.code||'NETWORK')}
 }
 function persistAccountantFinancing(c,loan,lender){
  // 계정 전체 차량 배열을 덮어쓰지 않고, 원래 딜러 저장소의 허용된 두 필드만 갱신한다.
@@ -6972,9 +6967,9 @@ async function handleMediaFiles(event,group){if(isAccountant()){toast('경리 �
    if(draftVIN!==null)$('detail-vin').value=draftVIN;
    runRegistrationVinOCR(chosen[0],carId);
  }
- toast(group==='photos'?`실차 사진 ${chosen.length}장을 저장했습니다.`:'차량 서류를 저장했습니다.')}catch(err){toast('이미지 저장 실패: 브라우저 저장 용량 또는 설정을 확인하세요.');console.error(err)}}
+ toast(group==='photos'?`실차 사진 ${chosen.length}장을 저장했습니다.`:'차량 서류를 저장했습니다.')}catch(err){toast(err?.userMessage||'이미지를 저장하지 못했습니다. 연결 상태와 저장공간을 확인해 주세요.');console.warn('차량 첨부 저장 실패',err?.code||'NETWORK')}}
 function setCoverPhoto(id){const item=carFiles(activeCarId).find(f=>f.id===id&&f.group==='photos');if(!item)return;covers[activeCarId]=id;saveCover();renderVehicle();renderCars();toast('대표 사진을 변경했습니다.')}
-async function removeMedia(id){const item=carFiles(activeCarId).find(f=>f.id===id);if(!item)return;if(!confirm(`${item.group==='photos'?'실차 사진':'차량 서류'}를 삭제할까요?`))return;try{await updateDB([],[id]);if(covers[activeCarId]===id){delete covers[activeCarId];saveCover()}if(zoomRecordId===id)closeZoom();await refreshMedia();if(item.group==='registration')showVinOcrState('info','등록증이 삭제되었습니다. 차대번호는 자동으로 삭제되지 않습니다.');toast('이미지를 삭제했습니다.')}catch(err){toast('삭제하지 못했습니다.')}}
+async function removeMedia(id){const item=carFiles(activeCarId).find(f=>f.id===id);if(!item)return;if(!confirm(`${item.group==='photos'?'실차 사진':'차량 서류'}를 휴지통으로 이동할까요?`))return;try{await updateDB([],[id]);if(covers[activeCarId]===id){delete covers[activeCarId];saveCover()}if(zoomRecordId===id)closeZoom();await refreshMedia();if(item.group==='registration')showVinOcrState('info','등록증이 삭제되었습니다. 차대번호는 자동으로 삭제되지 않습니다.');toast('사진·서류를 휴지통으로 이동했습니다.')}catch(err){toast('삭제하지 못했습니다.')}}
 function openZoom(id){if(!activeCarId)return;const item=carFiles(activeCarId).find(f=>f.id===id);if(!item)return;zoomRecordId=id;$('zoom-image').src=item.url;$('zoom-caption').textContent=item.filename;$('zoom-overlay').classList.add('open');$('zoom-overlay').setAttribute('aria-hidden','false')}
 function closeZoom(){zoomRecordId=null;$('zoom-overlay').classList.remove('open');$('zoom-overlay').setAttribute('aria-hidden','true');$('zoom-image').removeAttribute('src')}
 function downloadZoom(){if(!zoomRecordId||!activeCarId)return;const item=carFiles(activeCarId).find(f=>f.id===zoomRecordId);if(!item)return;const a=document.createElement('a');a.href=item.url;a.download=item.filename||'image';document.body.appendChild(a);a.click();a.remove()}
@@ -7210,6 +7205,7 @@ function renderWorldTrims(){const table=document.getElementById('world-results')
 const ZC72_DB='zerocar-office-v172-customers';
 let zc72DbPromise=null,zc72SaleCarId=null,zc72SaleLoading=false;
 let snote214SaleView=0,snote214CustomerView=0,snote214ContractView=0,snote214ReceiptView=0;
+let snote214SaleRestoreGeneration=null,snote214ReceiptRestoreGeneration=null;
 let snote214ContractIdentityBaseline='',snote214ReceiptIdentityBaseline='',snote214ContractClosing=false,snote214ReceiptClosing=false,snote214ContractIdentityTask=null,snote214ReceiptIdentityTask=null;
 function snote214SaleSignature(){return JSON.stringify(Array.from($('zc72-sale-form').elements).filter(el=>/^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName)).map(el=>el.type==='checkbox'?el.checked:el.value));}
 function zc72OpenDb(){
@@ -7353,6 +7349,7 @@ function zc74LoadCustomer(p){
 
 async function openSaleProgress(){
  snote235SaleReturn=null;
+ snote214SaleRestoreGeneration=null;
  if(!currentUser||isAccountant()||!activeCarId){toast('딜러 차량 상세에서만 이용할 수 있습니다.');return;}
  const c=cars.find(x=>x.id===activeCarId&&canManageCar(x));if(!c)return;
  const view=++snote214SaleView,actor=currentUser;
@@ -7363,13 +7360,14 @@ async function openSaleProgress(){
  try{
   const previous=await zc72ReadCar(thisUser,thisCar);
   if(view!==snote214SaleView||currentUser!==actor||zc72SaleCarId!==thisCar||$('zc72-sale-modal').hidden)return;
-  loadedCustomer=previous;
+  loadedCustomer=previous;snote214SaleRestoreGeneration=window.snoteCustomerRestoreGeneration?.(previous)||'00000000-0000-0000-0000-000000000000';
   if(previous&&!$('zc72-sale-form').dataset.snote196ManualReset&&initialSignature===snote214SaleSignature()){zc74LoadCustomer(previous);if(previous.rrnCipher){const before=snote214SaleSignature();try{const restored=await zc80DecryptRrn(previous);if(view!==snote214SaleView||currentUser!==actor||zc72SaleCarId!==thisCar||$('zc72-sale-modal').hidden)return;if(before===snote214SaleSignature()){$('zc72-rrn').value=restored;zc74RenderValidity('zc72-rrn');}}catch(e){if(view===snote214SaleView&&currentUser===actor&&!$('zc72-sale-modal').hidden)$('zc72-error').textContent=e.message;}}}
  }catch(e){if(view===snote214SaleView&&currentUser===actor&&!$('zc72-sale-modal').hidden)$('zc72-error').textContent='기존 고객 정보를 불러오지 못했습니다. 연결 상태를 확인해 주세요.'}
  if(view===snote214SaleView&&currentUser===actor&&zc72SaleCarId===thisCar&&!$('zc72-sale-modal').hidden)window.snoteIntakeOpen?.(loadedCustomer);
 }
 function closeSaleProgress(){
  snote235SaleReturn=null;
+ snote214SaleRestoreGeneration=null;
  ++snote214SaleView;
  window.snoteIntakeClose?.();
  if(typeof zc85ClosePostcode==='function')zc85ClosePostcode();
@@ -7399,14 +7397,15 @@ async function saleProgressContract(event,documentType='contract'){
   const rrnCipher=rrn?await zc80EncryptRrn(rrn):null;
   if(currentUser!==actor||view!==snote214SaleView||zc72SaleCarId!==carId)return;
   const record={id:ownerId+':'+carId,ownerId,carId,name,phone,address,mailing,refund,refundBank:refundData.bank,refundAccount:refundData.account,refundHolder:refundData.holder,...details,carModel:car.model||'',plate:car.plate||'',contractData:prev?.contractData||null,contractSavedAt:prev?.contractSavedAt||null,customerSignature:prev?.customerSignature,customerSignatureSignedAt:prev?.customerSignatureSignedAt,intakeSource:prev?.intakeSource,rrnCipher,residentConfirmed:!!rrnCipher,createdAt:prev?.createdAt||Date.now(),updatedAt:Date.now()};
-  await zc72Write(record,{requireExisting:Boolean(prev)});
+  await zc72Write(record,{requireExisting:Boolean(prev),expectedRestoreGeneration:snote214SaleRestoreGeneration,expectedUpdatedAt:window.snoteCustomerUpdatedAt?.(prev)??null});
   if(currentUser!==actor||view!==snote214SaleView||zc72SaleCarId!==carId||activeCarId!==carId||$('zc72-sale-modal').hidden)return;
+  snote214SaleRestoreGeneration=window.snoteCustomerRestoreGeneration?.(record)||snote214SaleRestoreGeneration;
   if(signature!==snote214SaleSignature()){error.textContent='저장 중 추가로 수정한 내용이 있습니다. 현재 입력을 다시 저장해 주세요.';return;}
   delete $('zc72-sale-modal').dataset.snoteHistoryDirty;
   window.snoteIntakeCustomerSaved?.();
   if(documentType==='save'){toast('고객정보와 입력한 식별번호를 저장했습니다.');return true;}
   if(documentType==='receipt'){
-   const draft={...record,rrn:zc72RrnDisplay(rrn)}; // 출력용 메모리 값; 암호문만 DB 저장
+   const draft={...record,rrn:zc72RrnDisplay(rrn)};window.snoteCopyCustomerVersion?.(record,draft); // 출력용 메모리 값; 암호문만 DB 저장
    closeSaleProgress();
    const receiptRoute=route,receiptView=snote214ReceiptView+1;
    await zc76OpenReceipt(draft,car);
@@ -7424,7 +7423,7 @@ async function saleProgressContract(event,documentType='contract'){
   $('ct-buyer-address').value=address;
   contractOwner={name,id:zc72RrnDisplay(rrn),phone,address};
   snote214ContractIdentityBaseline=rrn;
-  zc75TrackContract(ownerId,carId);
+  zc75TrackContract(ownerId,carId,record);
   if(prev?.contractData)zc75RestoreContract(prev.contractData);
   // 신규 입력한 고객 정보가 이전 계약서 스냅샷보다 우선합니다.
   $('ct-buyer-name').value=name;$('ct-buyer-id').value=zc72RrnDisplay(rrn);
@@ -7468,7 +7467,7 @@ async function buildCustomerManagement(){
    carFor:r=>{const linked=cars.filter(c=>String(c.id)===String(r.carId)&&c.ownerId===ownerId);return linked.length===1?linked[0]:null;},
    renderRow:(r,identity,car)=>{
     const status=car?.status==='판매완료'?'판매완료':'판매중';
-    const action=(kind,attr,label)=>`<button class="snote-list-action ${kind==='delete'?'is-danger':''}" type="button" ${attr}="${esc(r.carId)}" aria-label="${label}" data-tooltip="${label}">${snote237CustomerIcon(kind)}</button>`;
+    const action=(kind,attr,label)=>`<button class="snote-list-action ${kind==='delete'?'is-danger':''}" type="button" ${attr}="${esc(r.carId)}" ${kind==='delete'?'data-customer-generation="'+esc(window.snoteCustomerRestoreGeneration?.(r)||'')+'" data-customer-updated-at="'+esc(window.snoteCustomerUpdatedAt?.(r)||'')+'"':''} aria-label="${label}" data-tooltip="${label}">${snote237CustomerIcon(kind)}</button>`;
     return `<tr><td data-label="차량"><button type="button" class="snote202-car-open" data-customer-car="${esc(r.carId)}" aria-label="${esc(car?.model||r.carModel||r.plate||'차량')} 차량 상세 보기">${esc(car?.model||r.carModel||'')}</button><small>${esc(car?.plate||r.plate||'')}</small></td><td data-label="고객"><b>${esc(r.name||'')}</b><small>${esc(r.phone||'')}</small></td><td data-label="식별번호" data-customer-identity="${esc(r.carId)}">${esc(identity)}</td><td data-label="상태"><span class="zc75-status ${status==='판매완료'?'done':'selling'}">${status}</span></td><td data-label="주소">${esc(r.address||'미입력')}</td><td data-label="관리"><div class="zc75-actions">${action('sale','data-customer-open','판매 진행')}${action('contract','data-customer-contract','계약서 확인')}${action('receipt','data-customer-receipt','인수증 확인')}${action('delete','data-customer-delete','고객 삭제')}</div></td></tr>`;
    }});
  }catch(e){if(current())host.innerHTML='<div class="empty">고객정보를 불러오지 못했습니다. 연결 상태를 확인해 주세요.</div>';}
@@ -7479,9 +7478,14 @@ document.addEventListener('click',async event=>{
  const carId=(open||del||carButton).getAttribute(open?'data-customer-open':del?'data-customer-delete':'data-customer-car');
   if(carButton){const car=cars.find(c=>c.id===carId&&canManageCar(c));if(!car){toast('연결된 차량 정보가 없습니다.');return;}openVehicle(carId);return;}
  if(open){const car=cars.find(c=>c.id===carId&&canManageCar(c));if(!car)return toast('연결된 차량을 찾을 수 없습니다.');openVehicle(carId);await openSaleProgress();}
- if(del){if(!confirm('이 고객의 저장된 이름·연락처·주소·환급계좌를 삭제하시겠습니까? 삭제한 기록은 복구할 수 없습니다.'))return;
-  try{await zc72Delete(currentUser.username,carId);if(route==='users')buildCustomerManagement();}
-  catch(e){toast('고객정보 삭제에 실패했습니다.');}}
+ if(del){if(!confirm('이 고객의 저장된 정보를 휴지통으로 이동하시겠습니까? 휴지통에서 복원할 수 있습니다.'))return;
+  const actor=currentUser,owner=actor.username,options={};
+  if(del.dataset.customerGeneration)options.expectedRestoreGeneration=del.dataset.customerGeneration;
+  if(del.dataset.customerUpdatedAt)options.expectedUpdatedAt=del.dataset.customerUpdatedAt;
+  del.disabled=true;
+  try{await zc72Delete(owner,carId,options);if(currentUser===actor){toast('고객정보를 휴지통으로 이동했습니다.');if(route==='users')buildCustomerManagement();}}
+  catch(e){if(currentUser===actor)toast(e?.userMessage||'고객정보를 휴지통으로 이동하지 못했습니다.');}
+  finally{if(currentUser===actor&&del.isConnected)del.disabled=false;}}
 });
 document.addEventListener('keydown',e=>{
  if(e.key==='Escape'&&!$('zc72-sale-modal').hidden){e.stopImmediatePropagation();closeSaleProgress();}
@@ -7643,9 +7647,9 @@ const ZC75_CONTRACT_FIELDS=[
 ];
 let zc75TrackedContract=null,zc75ContractDebounce=null;
 let zc75WriteQueue=Promise.resolve();
-function zc75TrackContract(ownerId,carId){
+function zc75TrackContract(ownerId,carId,record=null){
  if(zc75ContractDebounce){clearTimeout(zc75ContractDebounce);zc75ContractDebounce=null}
- zc75TrackedContract={ownerId,carId};
+ zc75TrackedContract={ownerId,carId,restoreGeneration:window.snoteCustomerRestoreGeneration?.(record)||'00000000-0000-0000-0000-000000000000'};
 }
 function zc75ResetContractTracking(){
  if(zc75ContractDebounce){clearTimeout(zc75ContractDebounce);zc75ContractDebounce=null}
@@ -7689,7 +7693,7 @@ function zc75ScheduleContractSave(immediate=false){
    const record=await zc72ReadCar(who.ownerId,who.carId);
    if(!record)return;
    record.contractData=snapshot;record.contractSavedAt=Date.now();
-   await zc72Write(record,{requireExisting:true});
+   await zc72Write(record,{requireExisting:true,expectedRestoreGeneration:who.restoreGeneration});
   }).catch(e=>{console.warn('계약서 내용 저장 실패',e?.name||'error');toast('계약서 내용 저장에 실패했습니다. 브라우저 저장소를 확인하세요.');});
  };
  if(immediate)save();else zc75ContractDebounce=setTimeout(save,450);
@@ -7715,7 +7719,7 @@ async function zc75OpenSavedContract(carId){
  zc80ContractFromCustomer=true;
  openContractPreview({loadCustomer:false});
  const view=snote214ContractView;
- zc75TrackContract(ownerId,carId);
+ zc75TrackContract(ownerId,carId,r);
  const hasSnapshot=zc75RestoreContract(r.contractData);
  // 이전 버전 고객정보도 자동 반영. 주민번호는 매번 직접 입력합니다.
  if(!hasSnapshot){
@@ -7818,6 +7822,7 @@ async function zc76OpenReceipt(person,car){
  snote235SaleReturn=null;
  if(!currentUser||isAccountant()||!car||car.ownerId!==currentUser.username)return;
  const actor=currentUser,view=++snote214ReceiptView,routeAtStart=route,activeAtStart=activeCarId;
+ snote214ReceiptRestoreGeneration=window.snoteCustomerRestoreGeneration?.(person)||'00000000-0000-0000-0000-000000000000';
  snote215ReceiptSignature(null);
  const account=await getAccount(currentUser.username).catch(()=>null);
  if(currentUser!==actor||view!==snote214ReceiptView||route!==routeAtStart||activeCarId!==activeAtStart)return;
@@ -8039,7 +8044,7 @@ document.addEventListener('click',async event=>{
 (function(){
 'use strict';
 const S={client:null,user:null,company:null,members:[],alias:null,ready:false,busy:false,loading:false,
- revisions:new Map(),queue:new Set(),timer:null,saving:false,conflict:false,authPassword:null};
+ revisions:new Map(),companyOwners:new Map(),carScopes:new WeakMap(),queue:new Set(),timer:null,saving:false,conflict:false,authPassword:null};
 const NIL='00000000-0000-0000-0000-000000000000';
 const BUCKET='zc-vehicle-private';
 const byId=id=>document.getElementById(id);
@@ -8061,7 +8066,52 @@ const SNOTE_PUBLIC_CONFIG={url:'https://rmlycycleuscfqywbihj.supabase.co',key:'s
 const publicDefault=validConfig(SNOTE_PUBLIC_CONFIG);
 const LEGACY={finance:'zerocar-office-v182-inventory-finance-ledger',finance_limits:'zerocar-office-v157-finance-companies',prestock:'zerocar-office-v148-prestock-ledger',monthly:'zerocar-office-v165-monthly-ledger',categories:'zerocar-office-v170-monthly-category-settings'};
 const ownerAlias=uid=>'cld_'+uid.replace(/-/g,'').slice(0,18);
-const getOwnUuid=owner=>S.members.find(m=>ownerAlias(m.user_id)===owner)?.user_id||null;
+function snoteCompanyActor(){return S.user&&S.company?S.members.find(m=>m.user_id===S.user.id&&m.company_id===S.company.id&&m.active===true&&['admin','dealer','accountant'].includes(m.role))||null:null;}
+function snoteCompanyOwnerRows(){
+ const company=S.company?.id,rows=new Map(S.members.filter(m=>m.company_id===company).map(m=>[m.user_id,m]));
+ if(snoteCompanyActor()?.role==='admin')for(const [uid,member]of S.companyOwners)if(member.company_id===company&&!rows.has(uid))rows.set(uid,member);
+ return [...rows.values()];
+}
+function snoteCompanyOwnerLabel(alias){const member=snoteCompanyOwnerRows().find(m=>ownerAlias(m.user_id)===alias);if(!member)return null;const name=String(member.display_name||'').trim();return member.former?'이전 직원':member.active===false?(name?name+' · 비활성':'비활성 직원'):(name||'담당 딜러');}
+function snoteReadCompanyOwnerCars(alias){
+ const actor=snoteCompanyActor(),uid=getOwnUuid(alias);if(!S.ready||!actor||!currentUser||currentUser.username!==ownerAlias(S.user.id)||currentUser.role!==actor.role||!uid||(actor.role==='dealer'&&uid!==S.user.id))return [];
+ const raw=parsePayload(localStorage.getItem(storageKey('cars',alias))||'[]');if(!Array.isArray(raw))return [];
+ const records=normalizedCars(raw.map(car=>car&&typeof car==='object'?{...car,ownerId:alias}:car),alias);
+ if(S.revisions.has(cloudKey('cars',uid)))for(const car of records)S.carScopes.set(car,{companyId:S.company.id,ownerId:uid,carId:String(car.id),epoch:snote220CatalogEpoch});
+ return records;
+}
+function snoteCompanyCarAllowed(car){const context=snoteCompanyPurchaseContext(),source=car&&S.carScopes.get(car);return !!context?.ready&&context.canCompany&&!!source&&source.companyId===context.companyId&&source.ownerId===getOwnUuid(car.ownerId)&&source.carId===String(car.id)&&source.epoch===snote220CatalogEpoch;}
+function snoteCompanyPurchaseContext(){
+ const member=snoteCompanyActor();if(!member||!S.client||!currentUser||currentUser.username!==ownerAlias(S.user.id)||currentUser.role!==member.role)return null;
+ return {key:JSON.stringify([S.company.id,S.user.id,snote220CatalogEpoch,member.role]),companyId:S.company.id,userId:S.user.id,ownerAlias:ownerAlias(S.user.id),role:member.role,canCompany:member.role==='admin',ready:S.ready&&!S.loading};
+}
+function snoteCompanyPurchaseCurrent(context){const now=snoteCompanyPurchaseContext();return !!context&&!!now&&context.key===now.key;}
+function snoteCompanyPurchaseError(code){return Object.assign(Error(code),{code});}
+async function snoteCompanyPurchaseLoad(context){
+ if(!snoteCompanyPurchaseCurrent(context)||!context.canCompany||!snoteCompanyPurchaseContext()?.ready)throw snoteCompanyPurchaseError('FORBIDDEN');
+ if(typeof snoteVehicleHasChanges==='function'&&snoteVehicleHasChanges())throw snoteCompanyPurchaseError('DIRTY_VEHICLE');
+ const acknowledged=await flush();if(!snoteCompanyPurchaseCurrent(context)||acknowledged?.ok!==true||S.conflict)throw snoteCompanyPurchaseError('CONFLICT');
+ const client=S.client,raw=new Map(),revisions=new Map(S.revisions),ownersBefore=new Map(S.companyOwners);
+ for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i);if(key&&(key.startsWith('zerocar-office-v12-cars-')||key.startsWith('zerocar-office-v12-covers-')))raw.set(key,localStorage.getItem(key));}
+ const result=await client.rpc('snote_company_purchase_rows',{p_company:context.companyId});
+ if(!snoteCompanyPurchaseCurrent(context)||client!==S.client||!snoteCompanyPurchaseContext()?.ready)throw snoteCompanyPurchaseError('CONTEXT_CHANGED');
+ if(result.error)throw snoteCompanyPurchaseError(result.error.code==='42501'?'FORBIDDEN':['PGRST202','42883'].includes(result.error.code)?'SETUP_REQUIRED':'NETWORK');
+ const data=result.data;if(!data||data.companyId!==context.companyId||!Array.isArray(data.datasets)||!Array.isArray(data.owners))throw snoteCompanyPurchaseError('INVALID_RESPONSE');
+ const uuid=value=>typeof value==='string'&&/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value)&&value!==NIL,rows=new Map(),ids=new Set();
+ for(const row of data.datasets){if(!row||!['cars','covers'].includes(row.dataset)||!uuid(row.ownerId)||!Number.isSafeInteger(row.revision)||row.revision<0||(row.dataset==='cars'?!Array.isArray(row.payload):!row.payload||typeof row.payload!=='object'||Array.isArray(row.payload)))throw snoteCompanyPurchaseError('INVALID_RESPONSE');const key=cloudKey(row.dataset,row.ownerId);if(rows.has(key))throw snoteCompanyPurchaseError('INVALID_RESPONSE');rows.set(key,row);ids.add(row.ownerId);}
+ const ownerRows=new Map();for(const owner of data.owners){if(!owner||!uuid(owner.id)||!ids.has(owner.id)||ownerRows.has(owner.id))throw snoteCompanyPurchaseError('INVALID_RESPONSE');ownerRows.set(owner.id,{user_id:owner.id,company_id:context.companyId,display_name:String(owner.name||'').slice(0,120),active:owner.active===true,former:owner.memberExists===false});}
+ for(const uid of ids)if(!ownerRows.has(uid))ownerRows.set(uid,{user_id:uid,company_id:context.companyId,display_name:'',active:false,former:true});
+ const affected=new Set([...snoteCompanyOwnerRows().map(m=>m.user_id),...ids]);
+ if(S.queue.size||S.saving||S.conflict||(typeof snoteVehicleHasChanges==='function'&&snoteVehicleHasChanges()))throw snoteCompanyPurchaseError('CONFLICT');
+ for(const uid of affected)for(const ds of ['cars','covers']){const key=cloudKey(ds,uid),storage=storageKey(ds,ownerAlias(uid));if(localStorage.getItem(storage)!==(raw.get(storage)??null)||Number(S.revisions.get(key)||0)!==Number(revisions.get(key)||0))throw snoteCompanyPurchaseError('CONFLICT');}
+ try{
+  S.companyOwners.clear();for(const[uid,member]of ownerRows)S.companyOwners.set(uid,member);
+  for(const uid of affected)for(const ds of ['cars','covers']){const row=rows.get(cloudKey(ds,uid));originalSet.call(localStorage,storageKey(ds,ownerAlias(uid)),row?JSON.stringify(row.payload):defaultBody(ds));if(row)S.revisions.set(cloudKey(ds,uid),row.revision);else S.revisions.delete(cloudKey(ds,uid));}
+ }catch(error){S.companyOwners.clear();for(const[uid,member]of ownersBefore)S.companyOwners.set(uid,member);S.revisions.clear();for(const[key,revision]of revisions)S.revisions.set(key,revision);for(const uid of affected)for(const ds of ['cars','covers']){const storage=storageKey(ds,ownerAlias(uid)),before=raw.get(storage);if(before==null)localStorage.removeItem(storage);else originalSet.call(localStorage,storage,before);}throw snoteCompanyPurchaseError('LOCAL_CACHE_ERROR');}
+ loadCarsForUser();loadCovers();buildStats();renderCars();return {count:[...rows.values()].filter(row=>row.dataset==='cars').reduce((sum,row)=>sum+row.payload.length,0)};
+}
+window.snoteCompanyPurchaseBridge=Object.freeze({context:snoteCompanyPurchaseContext,current:snoteCompanyPurchaseCurrent,load:snoteCompanyPurchaseLoad,carAllowed:snoteCompanyCarAllowed,ownerAllowed(alias){const c=snoteCompanyPurchaseContext();return !!c?.canCompany&&snoteCompanyOwnerRows().some(m=>ownerAlias(m.user_id)===alias);}});
+const getOwnUuid=owner=>snoteCompanyOwnerRows().find(m=>ownerAlias(m.user_id)===owner)?.user_id||null;
 const isShared=dataset=>!['cars','covers'].includes(dataset);
 const storageKey=(dataset,owner)=>dataset==='cars'?'zerocar-office-v12-cars-'+owner:dataset==='covers'?'zerocar-office-v12-covers-'+owner:LEGACY[dataset];
 const defaultBody=dataset=>dataset==='covers'?'{}':dataset==='categories'?'null':'[]';
@@ -8131,7 +8181,7 @@ async function ensureConnection(conf){
  const client=lib.createClient(conf.url,conf.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false,storage:snote95AuthStore}});
  const {error}=await client.auth.getSession();if(error)throw error;
  // Keep client unset on a failed connection; do not leave a half-initialized client.
- S.client=client;
+ S.client=client;S.rpcConfig={client,url:conf.url,key:conf.key};
 }
 // A saved URL/key only restores the form on page reload, not the JS Auth client.
 // Recreate the client on demand for BOTH registration and sign-in. Reuse concurrent requests.
@@ -8146,6 +8196,7 @@ async function requireAuthClient(){
  return authInitPromise;
 }
 async function readCompany(){
+ S.companyOwners.clear();
  let {data,error}=await S.client.from('zc_members').select('user_id,company_id,role,display_name,active').eq('user_id',S.user.id).maybeSingle();if(error)throw error;
  if(!data)return false;
  if(!data.active)throw Error('관리자가 비활성화한 계정입니다.');
@@ -8164,21 +8215,24 @@ async function readCompany(){
 }
 async function restoreDatasets(){
  snote221ResetIncome();snote220InvalidateCatalog();snote216ResetMonthly();
+ const scope={client:S.client,user:S.user,company:S.company?.id,epoch:snote220CatalogEpoch},current=()=>S.client===scope.client&&S.user===scope.user&&S.company?.id===scope.company&&snote220CatalogEpoch===scope.epoch;
  S.loading=true;
  try{
- const {data,error}=await S.client.from('zc_datasets').select('dataset,owner_id,payload,revision').eq('company_id',S.company.id).limit(2000);if(error)throw error;
- const map=new Map((data||[]).map(d=>[cloudKey(d.dataset,d.owner_id),d]));S.revisions.clear();
- for(const m of S.members){for(const ds of ['cars','covers']){
-  let key=cloudKey(ds,m.user_id),row=map.get(key);
+ const {data,error}=await scope.client.from('zc_datasets').select('company_id,dataset,owner_id,payload,revision').eq('company_id',scope.company).limit(2000);if(error)throw error;
+ if(!current())throw Error('CONTEXT_CHANGED');
+ const rows=(data||[]).filter(d=>d.company_id==null||d.company_id===scope.company),map=new Map(rows.map(d=>[cloudKey(d.dataset,d.owner_id),d]));S.revisions.clear();S.companyOwners.clear();
+ if(snoteCompanyActor()?.role==='admin')for(const row of rows)if(['cars','covers'].includes(row.dataset)&&/^[0-9a-f-]{36}$/i.test(row.owner_id)&&row.owner_id!==NIL&&!S.members.some(m=>m.user_id===row.owner_id&&m.company_id===scope.company))S.companyOwners.set(row.owner_id,{user_id:row.owner_id,company_id:scope.company,display_name:'',active:false,former:true});
+ for(const m of snoteCompanyOwnerRows()){for(const ds of ['cars','covers']){
+  const key=cloudKey(ds,m.user_id),row=map.get(key);
   if(row)S.revisions.set(key,row.revision);
   originalSet.call(localStorage,storageKey(ds,ownerAlias(m.user_id)),row?JSON.stringify(row.payload):defaultBody(ds));
  }}
  for(const ds of Object.keys(LEGACY)){
-  let key=cloudKey(ds,NIL),row=map.get(key);
+  const key=cloudKey(ds,NIL),row=map.get(key);
   if(row)S.revisions.set(key,row.revision);
   originalSet.call(localStorage,LEGACY[ds],row?JSON.stringify(row.payload):defaultBody(ds));
  }
- }finally{S.loading=false;if(S.ready)snote216InitMonthly();}
+ }finally{if(current()){S.loading=false;if(S.ready)snote216InitMonthly();}}
 }
 async function prepareLegacyAccount(pass){
  for(let tries=0;!accountDB&&tries<30;tries++)await new Promise(r=>setTimeout(r,100));
@@ -8341,47 +8395,33 @@ async function registerAccount(kind){
 }
 const prevUpdate=updateDB;
 const prevRefresh=refreshMedia;
+let snoteServerMediaEpoch=0,snoteServerModelEpoch=0;
+function snoteMediaScope(){return {client:S.client,user:S.user,actor:currentUser,companyId:S.company?.id,epoch:snote220CatalogEpoch};}
+function snoteMediaCurrent(base){return !!base.client&&!!base.user&&!!base.actor&&base.actor.username===ownerAlias(base.user.id)&&!!base.companyId&&S.client===base.client&&S.user===base.user&&currentUser===base.actor&&S.company?.id===base.companyId&&snote220CatalogEpoch===base.epoch;}
+function snoteMediaScopeError(){const error=new Error('로그인 또는 상사가 변경되었습니다.');error.code='CONTEXT_CHANGED';return error;}
 async function serverMediaRefresh(){
- const r=await S.client.from('zc_media').select('*').eq('company_id',S.company.id).limit(3000);if(r.error)throw r.error;
- for(const u of mediaObjectUrls)try{URL.revokeObjectURL(u)}catch{};
- mediaObjectUrls=[];mediaByCar={};
- // Downloads are authenticated private Storage calls; keep one entry per media record.
- const all=(r.data||[]).filter(m=>!['modelPhoto','companyStamp','companyLogo'].includes(m.group_name));let cursor=0;
- async function worker(){while(cursor<all.length){const m=all[cursor++];try{
-  const download=await S.client.storage.from(BUCKET).download(m.file_path);if(download.error)throw download.error;
-  let row={id:m.id,carId:m.car_id,ownerId:ownerAlias(m.owner_id),group:m.group_name,blob:download.data,filename:m.original_name,createdAt:new Date(m.created_at).getTime()};
-  row.url=URL.createObjectURL(row.blob);mediaObjectUrls.push(row.url);(mediaByCar[row.carId]||(mediaByCar[row.carId]=[])).push(row);
- }catch(e){console.warn('파일 조회 실패',m.id,errMsg(e))}}}
- await Promise.all(Array.from({length:Math.min(5,all.length)},()=>worker()));
- if(typeof refreshModelPhotos==='function')await refreshModelPhotos();
- renderCars();if(activeCarId)renderVehicle();
+ const base=snoteMediaScope(),request=++snoteServerMediaEpoch,urls=[],next=Object.create(null);let committed=false;
+ const current=()=>snoteMediaCurrent(base)&&request===snoteServerMediaEpoch;
+ try{
+  if(!current())throw snoteMediaScopeError();
+  const r=await base.client.from('zc_media').select('*').eq('company_id',base.companyId).limit(3000);if(!current())throw snoteMediaScopeError();if(r.error)throw r.error;
+  const all=(r.data||[]).filter(m=>!['modelPhoto','companyStamp','companyLogo'].includes(m.group_name));let cursor=0;
+  async function worker(){while(cursor<all.length&&current()){const m=all[cursor++];try{
+   const download=await base.client.storage.from(BUCKET).download(m.file_path);if(!current())return;if(download.error)throw download.error;
+   const row={id:m.id,carId:m.car_id,ownerId:ownerAlias(m.owner_id),cloudOwnerId:m.owner_id,filePath:m.file_path,group:m.group_name,blob:download.data,filename:m.original_name,createdAt:new Date(m.created_at).getTime()};
+   row.url=URL.createObjectURL(row.blob);urls.push(row.url);(next[row.carId]||(next[row.carId]=[])).push(row);
+  }catch(_){if(current())console.warn('파일 조회 실패',m.id);}}}
+  await Promise.all(Array.from({length:Math.min(5,all.length)},()=>worker()));if(!current())throw snoteMediaScopeError();
+  if(typeof refreshModelPhotos==='function')await refreshModelPhotos();if(!current())throw snoteMediaScopeError();
+  for(const url of mediaObjectUrls)try{URL.revokeObjectURL(url)}catch{};
+  mediaObjectUrls=urls;mediaByCar=next;committed=true;renderCars();if(activeCarId)renderVehicle();
+ }finally{if(!committed)for(const url of urls)try{URL.revokeObjectURL(url)}catch{}}
 }
-refreshMedia=async function(){if(!S.ready)return prevRefresh();try{await serverMediaRefresh()}catch(e){fail(e,'사진 조회')}};
+refreshMedia=async function(){if(!S.ready&&!S.user)return prevRefresh();try{await serverMediaRefresh()}catch(e){if(e?.code!=='CONTEXT_CHANGED')fail(e,'사진 조회')}};
 updateDB=async function(records,removeIds=[]){
- if(!S.ready)return prevUpdate(records,removeIds);
- const owner=S.user.id,company=S.company.id,uploaded=[];
- // Require server upload success BEFORE declaring local success.
- for(const r of records){
-  if(!r.blob||!['image/jpeg','image/png','image/webp'].includes(r.blob.type)||r.blob.size>10485760)throw Error('사진은 JPG/PNG/WEBP, 한 장 최대 10MB');
-  const fileid=String(r.id),carid=String(r.carId),ext=r.blob.type==='image/png'?'png':r.blob.type==='image/webp'?'webp':'jpg';
-  const path=[company,owner,encodeURIComponent(carid),encodeURIComponent(fileid)+'.'+ext].join('/');
-  let {error}=await S.client.storage.from(BUCKET).upload(path,r.blob,{contentType:r.blob.type,upsert:false});
-  if(error)throw Error('사진 업로드: '+error.message);
-  uploaded.push(path);
-  const meta={company_id:company,owner_id:owner,id:fileid,car_id:carid,file_path:path,original_name:String(r.filename||'이미지').slice(0,180),mime_type:r.blob.type,file_size:r.blob.size,group_name:r.group,meta:{}};
-  let save=await S.client.from('zc_media').upsert(meta,{onConflict:'company_id,owner_id,id'});
-  if(save.error){await S.client.storage.from(BUCKET).remove([path]);throw new Error('사진 기록: '+save.error.message)}
- }
- if(removeIds.length){const base=S.client.from('zc_media').select('id,file_path,owner_id').eq('company_id',company).in('id',removeIds);
-  const rs=await (isSnoteAdmin()?base:base.eq('owner_id',owner));
-  if(rs.error)throw rs.error;
-  const paths=(rs.data||[]).map(x=>x.file_path);
-  if(paths.length){const rm=await S.client.storage.from(BUCKET).remove(paths);if(rm.error)throw rm.error;}
-  const baseDel=S.client.from('zc_media').delete().eq('company_id',company).in('id',removeIds);
-  const del=await(isSnoteAdmin()?baseDel:baseDel.eq('owner_id',owner));if(del.error)throw del.error;
- }
- await serverMediaRefresh();
- return undefined;
+ if(!S.ready){if(removeIds.length||S.user||String(currentUser?.username||'').startsWith('cld_'))throw snoteRecycleError('RECYCLE_ONLINE_REQUIRED','사진·서류 삭제와 교체는 온라인 로그인 후 이용해 주세요.');return prevUpdate(records,removeIds);}
+ if(!records.length&&!removeIds.length)return;
+ await snoteRecycleWriteMedia(records,removeIds);
 };
 
 
@@ -8390,16 +8430,18 @@ const prevModelPhotos=refreshModelPhotos;
 const prevSaveModel=saveReferencePhoto;
 const prevImportModels=importModelPhotoBundle;
 const prevRemoveModel=removeReferencePhoto;
-async function modelPhotoRows(){let {data,error}=await S.client.from('zc_media').select('*').eq('company_id',S.company.id).eq('owner_id',S.user.id).eq('group_name','modelPhoto').limit(400);if(error)throw error;return data||[]}
-refreshModelPhotos=async function(){if(!S.ready)return prevModelPhotos();
- for(const u of modelPhotoUrls)try{URL.revokeObjectURL(u)}catch{};
- modelPhotoUrls=[];modelPhotos=[];
- for(const m of await modelPhotoRows()){
-  try{let {data,error}=await S.client.storage.from(BUCKET).download(m.file_path);if(error)throw error;
-   let url=URL.createObjectURL(data);modelPhotoUrls.push(url);
-   modelPhotos.push({key:currentUser.username+'|'+m.meta.keySuffix,keySuffix:m.meta.keySuffix,ownerId:currentUser.username,filename:m.original_name,blob:data,url,createdAt:new Date(m.created_at).getTime()});
-  }catch(e){console.warn('모델 참고사진 다운로드',errMsg(e))}
- }
+async function modelPhotoRows(base=snoteMediaScope()){const {data,error}=await base.client.from('zc_media').select('*').eq('company_id',base.companyId).eq('owner_id',base.user.id).eq('group_name','modelPhoto').limit(400);if(!snoteMediaCurrent(base))throw snoteMediaScopeError();if(error)throw error;return data||[];}
+refreshModelPhotos=async function(){if(!S.ready&&!S.user)return prevModelPhotos();
+ const base=snoteMediaScope(),request=++snoteServerModelEpoch,urls=[],next=[];let committed=false;
+ const current=()=>snoteMediaCurrent(base)&&request===snoteServerModelEpoch;
+ try{
+  if(!current())return false;const rows=await modelPhotoRows(base);if(!current())return false;
+  for(const m of rows){try{const {data,error}=await base.client.storage.from(BUCKET).download(m.file_path);if(!current())return false;if(error)throw error;
+   const url=URL.createObjectURL(data);urls.push(url);next.push({key:base.actor.username+'|'+m.meta.keySuffix,keySuffix:m.meta.keySuffix,ownerId:base.actor.username,filename:m.original_name,blob:data,url,createdAt:new Date(m.created_at).getTime()});
+  }catch(_){if(current())console.warn('모델 참고사진 다운로드 실패');}}
+  if(!current())return false;for(const url of modelPhotoUrls)try{URL.revokeObjectURL(url)}catch{};
+  modelPhotoUrls=urls;modelPhotos=next;committed=true;return true;
+ }finally{if(!committed)for(const url of urls)try{URL.revokeObjectURL(url)}catch{}}
 };
 async function storeModelPhoto(file,suffix){
  if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>10485760)throw Error('JPG/PNG/WEBP 최대 10MB 사진만 등록할 수 있습니다.');
@@ -8446,6 +8488,11 @@ removeReferencePhoto=async function(){if(!S.ready)return prevRemoveModel();
 const originalReadCar=zc72ReadCar,originalReadOwner=zc72ReadOwner,originalWriteCustomer=zc72Write,originalDeleteCustomer=zc72Delete;
 const snote214CustomerQueues=new Map();
 const snote214LoadedCustomers=new WeakSet();
+const snote214CustomerVersions=new WeakMap();
+const SNOTE_RECYCLE_ZERO='00000000-0000-0000-0000-000000000000';
+window.snoteCustomerRestoreGeneration=record=>record&&snote214CustomerVersions.get(record)?.generation||SNOTE_RECYCLE_ZERO;
+window.snoteCustomerUpdatedAt=record=>record&&snote214CustomerVersions.get(record)?.updatedAt||null;
+window.snoteCopyCustomerVersion=(from,to)=>{const version=from&&snote214CustomerVersions.get(from);if(version&&to&&typeof to==='object')snote214CustomerVersions.set(to,version);return to;};
 function snote214CustomerContext(owner){
  const uid=getOwnUuid(owner);
  if(!S.ready||!S.user||!S.client||!S.company||!currentUser||uid!==S.user.id||currentUser.username!==owner)throw Error('본인 담당 고객정보는 온라인 로그인 후 이용해 주세요.');
@@ -8483,7 +8530,7 @@ async function snote214IdentityRequest(ctx,action,fields){
 }
 async function snote214ReadCustomerRow(ctx,car){
  snote214CheckCustomerContext(ctx);
- const result=await ctx.client.from('zc_customers').select('payload,has_rrn,updated_at').eq('company_id',ctx.companyId).eq('owner_id',ctx.uid).eq('car_id',String(car)).maybeSingle();
+ const result=await ctx.client.from('zc_customers').select('payload,has_rrn,updated_at,restore_generation').eq('company_id',ctx.companyId).eq('owner_id',ctx.uid).eq('car_id',String(car)).maybeSingle();
  snote214CheckCustomerContext(ctx);if(result.error)throw Error('고객정보를 확인하지 못했습니다. 연결 상태를 확인해 주세요.');return result.data;
 }
 async function snote214EncryptIdentity(ctx,car,value){
@@ -8493,59 +8540,51 @@ async function snote214EncryptIdentity(ctx,car,value){
  if(typeof result.identityCipher!=='string'||!/^smi1\.[a-f0-9]{24}\.(?:[a-f0-9]{52}|[a-f0-9]{58})$/.test(result.identityCipher))throw Error('식별번호 암호화 응답을 확인하지 못했습니다. 다시 시도해 주세요.');
  return result.identityCipher;
 }
-async function snote214SaveCustomer(ctx,car,incoming,pending,identityOnly=false,requireExisting=false){
- let latest=await snote214ReadCustomerRow(ctx,car);snote214CheckCustomerContext(ctx);
+async function snote214SaveCustomer(ctx,car,incoming,pending,identityOnly=false,requireExisting=false,expectation={}){
+ const latest=await snote214ReadCustomerRow(ctx,car);snote214CheckCustomerContext(ctx);
  if(!latest&&(identityOnly||requireExisting))throw Error('고객정보가 삭제되었거나 아직 저장되지 않았습니다. 고객정보를 먼저 저장해 주세요.');
- let sawExisting=Boolean(latest);
+ const generation=expectation.generation===undefined?(latest?.restore_generation||SNOTE_RECYCLE_ZERO):expectation.generation;
+ if(typeof generation!=='string'||generation!==(latest?.restore_generation||SNOTE_RECYCLE_ZERO))throw snoteRecycleError('RECYCLE_CONFLICT','고객정보가 복원되거나 변경되었습니다. 현재 입력은 유지한 채 고객 화면을 다시 열어 주세요.');
+ const updatedAt=expectation.updatedAt===undefined?(latest?.updated_at??null):expectation.updatedAt;
+ if(!latest&&updatedAt!==null)throw snoteRecycleError('RECYCLE_CONFLICT','고객정보가 삭제되었거나 변경되었습니다. 최신 정보를 다시 확인해 주세요.');
  const encrypted=pending?await snote214EncryptIdentity(ctx,car,pending):null;snote214CheckCustomerContext(ctx);
- for(let attempt=0;attempt<3;attempt++){
-  if(attempt)latest=await snote214ReadCustomerRow(ctx,car);snote214CheckCustomerContext(ctx);
-  if(!latest&&(identityOnly||sawExisting))throw Error('고객정보가 삭제되었거나 아직 저장되지 않았습니다. 고객정보를 먼저 저장해 주세요.');
-  if(latest)sawExisting=true;
-  const payload=cleanCustomer(identityOnly?latest.payload:incoming);
-  delete payload.identityCipher;
-  if(Object.hasOwn(latest?.payload||{},'identityCipher'))payload.identityCipher=latest.payload.identityCipher;
-  for(const key of ['customerSignature','customerSignatureSignedAt','intakeSource'])if(latest){if(Object.hasOwn(latest.payload||{},key))payload[key]=latest.payload[key];else delete payload[key];}
-  if(encrypted)payload.identityCipher=encrypted;
-  if(identityOnly)payload.updatedAt=Date.now();
-  const oldTime=Date.parse(latest?.updated_at),updatedAt=new Date(Math.max(Date.now(),Number.isFinite(oldTime)?oldTime+1:0)).toISOString();
-  const body={payload,updated_by:ctx.uid,updated_at:updatedAt};let result;
-  if(latest){
-   let query=ctx.client.from('zc_customers').update(body).eq('company_id',ctx.companyId).eq('owner_id',ctx.uid).eq('car_id',String(car));
-   query=latest.updated_at==null?query.is('updated_at',null):query.eq('updated_at',latest.updated_at);
-   result=await query.select('car_id');
-  }else result=await ctx.client.from('zc_customers').insert({...body,company_id:ctx.companyId,owner_id:ctx.uid,car_id:String(car)}).select('car_id');
-  snote214CheckCustomerContext(ctx);
-  if(result.error){if(!latest&&result.error.code==='23505')continue;throw Error('고객정보 저장에 실패했습니다. 입력한 내용은 유지됩니다. 연결 상태를 확인해 주세요.');}
-  if(Array.isArray(result.data)&&result.data.length){showStatus('● 고객정보 서버 저장 완료');return;}
-  if(!latest)throw Error('고객정보 저장 결과를 확인하지 못했습니다. 다시 시도해 주세요.');
- }
- throw Error('다른 화면에서 고객정보가 변경되었습니다. 새로고침한 뒤 다시 저장해 주세요.');
+ const payload=cleanCustomer(identityOnly?latest.payload:incoming);
+ delete payload.identityCipher;
+ if(Object.hasOwn(latest?.payload||{},'identityCipher'))payload.identityCipher=latest.payload.identityCipher;
+ for(const key of ['customerSignature','customerSignatureSignedAt','intakeSource'])if(latest){if(Object.hasOwn(latest.payload||{},key))payload[key]=latest.payload[key];else delete payload[key];}
+ if(encrypted)payload.identityCipher=encrypted;
+ if(identityOnly)payload.updatedAt=Date.now();
+ const base=snoteRecycleContext();if(!base||base.userId!==ctx.uid||base.companyId!==ctx.companyId)throw snoteRecycleError('RECYCLE_CONTEXT_CHANGED','로그인 또는 상사가 변경되었습니다. 현재 화면을 다시 열어 주세요.');
+ const bound=await snoteRecyclePinnedSession(base);snote214CheckCustomerContext(ctx);
+ const result=await snoteRecyclePinnedPost(bound,'snote_customer_save',{p_company:ctx.companyId,p_owner:ctx.uid,p_car_id:String(car),p_expected_updated_at:updatedAt,p_expected_generation:generation,p_payload:payload,p_has_rrn:Boolean(payload.identityCipher||latest?.has_rrn)});snoteRecycleCheck(base);
+ snote214CheckCustomerContext(ctx);if(result.error)throw snoteRecycleMapError(result.error);
+ if(result.data?.ok!==true||typeof result.data.updatedAt!=='string'||!Number.isFinite(Date.parse(result.data.updatedAt))||result.data.restoreGeneration!==generation)throw Error('고객정보 저장 결과를 확인하지 못했습니다. 현재 입력을 유지한 채 다시 확인해 주세요.');
+ showStatus('● 고객정보 서버 저장 완료');return {updatedAt:result.data.updatedAt,generation:result.data.restoreGeneration};
 }
-function snote214CustomerMarker(payload,hasRrn){
+function snote214CustomerMarker(payload,hasRrn,updatedAt=null,generation=SNOTE_RECYCLE_ZERO){
  const record={...payload};
  if(Object.hasOwn(payload||{},'identityCipher'))record.rrnCipher={serverIdentity:true};else if(hasRrn)record.rrnCipher={server:true};
  snote214LoadedCustomers.add(record);
+ snote214CustomerVersions.set(record,{updatedAt,generation:generation||SNOTE_RECYCLE_ZERO});
  return record;
 }
 zc72ReadCar=async function(owner,car){if(!S.ready){if(S.user||String(owner).startsWith('cld_'))throw Error('온라인 고객정보 연결을 확인한 뒤 다시 시도해 주세요.');return originalReadCar(owner,car);}
  const ctx=snote214CustomerContext(owner),data=await snote214ReadCustomerRow(ctx,car);
- return data?snote214CustomerMarker(data.payload,data.has_rrn):null;
+ return data?snote214CustomerMarker(data.payload,data.has_rrn,data.updated_at,data.restore_generation):null;
 };
 zc72ReadOwner=async function(owner){if(!S.ready){if(S.user||String(owner).startsWith('cld_'))throw Error('온라인 고객정보 연결을 확인한 뒤 다시 시도해 주세요.');return originalReadOwner(owner);}
  const ctx=snote214CustomerContext(owner);
- const {data,error}=await ctx.client.from('zc_customers').select('payload,has_rrn').eq('company_id',ctx.companyId).eq('owner_id',ctx.uid).limit(2000);
- snote214CheckCustomerContext(ctx);if(error)throw Error('고객 목록을 불러오지 못했습니다.');return (data||[]).map(r=>snote214CustomerMarker(r.payload,r.has_rrn));
+ const {data,error}=await ctx.client.from('zc_customers').select('payload,has_rrn,updated_at,restore_generation').eq('company_id',ctx.companyId).eq('owner_id',ctx.uid).limit(2000);
+ snote214CheckCustomerContext(ctx);if(error)throw Error('고객 목록을 불러오지 못했습니다.');return (data||[]).map(r=>snote214CustomerMarker(r.payload,r.has_rrn,r.updated_at,r.restore_generation));
 };
 zc72Write=async function(record,options={}){if(!S.ready){if(S.user||String(record?.ownerId).startsWith('cld_')||record?.rrnCipher?.serverPending||record?.rrnCipher?.serverIdentity||Object.hasOwn(record||{},'identityCipher'))throw Error('온라인 고객정보 연결을 확인한 뒤 다시 저장해 주세요.');return originalWriteCustomer(record);}
  if(!record?.carId)throw Error('차량 연결 정보가 없습니다');
  const ctx=snote214CustomerContext(record.ownerId),incoming=structuredClone(record),pending=record?.rrnCipher?.serverPending||'',requireExisting=options.requireExisting===true||snote214LoadedCustomers.has(record);
- return snote214QueueCustomer(ctx,record.carId,()=>snote214SaveCustomer(ctx,record.carId,incoming,pending,false,requireExisting));
+ const version=snote214CustomerVersions.get(record),expectation={generation:Object.hasOwn(options,'expectedRestoreGeneration')?options.expectedRestoreGeneration:version?.generation||SNOTE_RECYCLE_ZERO};
+ if(Object.hasOwn(options,'expectedUpdatedAt'))expectation.updatedAt=options.expectedUpdatedAt;else if(version)expectation.updatedAt=version.updatedAt;
+ return snote214QueueCustomer(ctx,record.carId,async()=>{const saved=await snote214SaveCustomer(ctx,record.carId,incoming,pending,false,requireExisting,expectation);snote214CustomerVersions.set(record,saved);return saved;});
 };
-zc72Delete=async function(owner,car){if(!S.ready){if(S.user||String(owner).startsWith('cld_'))throw Error('온라인 고객정보 연결을 확인한 뒤 다시 시도해 주세요.');return originalDeleteCustomer(owner,car);}
- const ctx=snote214CustomerContext(owner);
- return snote214QueueCustomer(ctx,car,async()=>{const {error}=await ctx.client.from('zc_customers').delete().eq('company_id',ctx.companyId).eq('owner_id',ctx.uid).eq('car_id',String(car));snote214CheckCustomerContext(ctx);if(error)throw Error('고객정보 삭제에 실패했습니다. 연결 상태를 확인해 주세요.');});
-};
+zc72Delete=async function(owner,car,options={}){if(!S.ready)throw snoteRecycleError('RECYCLE_ONLINE_REQUIRED','고객 삭제는 온라인 로그인 후 휴지통에서 복원할 수 있도록 처리합니다.');return snoteRecycleTrashCustomer(owner,car,options);};
 const prevEncryptRrn=zc80EncryptRrn;
 zc80EncryptRrn=async function(raw){if(!S.user)return prevEncryptRrn(raw);
  if(!S.ready)throw Error('온라인 고객정보 연결을 확인한 뒤 다시 저장해 주세요.');
@@ -8568,7 +8607,11 @@ zc80SaveRrnField=async function(owner,car,raw){
  if(!S.ready)return false;
  const digits=String(raw||'').replace(/\D/g,'');if(!/^(?:\d{10}|\d{13})$/.test(digits))return false;
  const ctx=snote214CustomerContext(owner);
- await snote214QueueCustomer(ctx,car,()=>snote214SaveCustomer(ctx,car,null,digits,true));return true;
+ const expectation={};
+ if(contractCarId!=null&&String(contractCarId)===String(car)&&$('contract-overlay').classList.contains('open'))expectation.generation=zc75TrackedContract?.restoreGeneration;
+ else if(zc80ReceiptCarId!=null&&String(zc80ReceiptCarId)===String(car)&&!$('zc76-receipt-overlay').hidden)expectation.generation=snote214ReceiptRestoreGeneration;
+ else if(zc72SaleCarId!=null&&String(zc72SaleCarId)===String(car)&&!$('zc72-sale-modal').hidden)expectation.generation=snote214SaleRestoreGeneration;
+ await snote214QueueCustomer(ctx,car,()=>snote214SaveCustomer(ctx,car,null,digits,true,false,expectation));return true;
 };
 window.snote214ReadCustomerIdentities=async function(records){
  const actor=currentUser,values=new Map(),failed=new Set(),fresh=records.filter(record=>record.rrnCipher?.serverIdentity||Object.hasOwn(record,'identityCipher'));
@@ -8594,7 +8637,7 @@ function snote220CatalogContext(){
  return member?{key:S.company.id+':'+S.user.id+':'+snote220CatalogEpoch,company_id:S.company.id,user_id:S.user.id,canWrite:member.role!=='accountant'}:null;
 }
 function snote220CheckCatalog(context){if(!context||snote220CatalogContext()?.key!==context.key)throw snote220CatalogError('CONTEXT_CHANGED','로그인 또는 상사가 변경되었습니다.');}
-function snote220InvalidateCatalog(){snote220CatalogEpoch++;window.snoteResetVehicleTaxonomy?.();if(byId('overlay')?.classList.contains('open'))closeAdd();}
+function snote220InvalidateCatalog(){snote220CatalogEpoch++;S.companyOwners.clear();window.snoteResetPurchaseScope?.();window.snoteResetVehicleTaxonomy?.();if(byId('overlay')?.classList.contains('open'))closeAdd();}
 function snote220MapCatalogError(error){
  const code=error?.code;
  if(['PGRST202','PGRST205','42P01','42883'].includes(code))return snote220CatalogError('SETUP_REQUIRED','상사 공용 차종 DB 설정이 필요합니다.');
@@ -8648,7 +8691,7 @@ function snoteEncarLinksContext(carId){
  const matches=cars.filter(car=>String(car?.id)===carId);if(matches.length!==1)return null;
  const car=matches[0],plate=snoteEncarLinksPlate(car.plate);if(!plate)return null;
  const actor=S.members.find(member=>member.user_id===S.user.id&&member.company_id===S.company.id&&member.active===true&&['dealer','admin','accountant'].includes(member.role));
- const owner=S.members.find(member=>member.company_id===S.company.id&&member.active===true&&typeof member.user_id==='string'&&ownerAlias(member.user_id)===car.ownerId);
+ const owner=snoteCompanyOwnerRows().find(member=>member.company_id===S.company.id&&typeof member.user_id==='string'&&ownerAlias(member.user_id)===car.ownerId);
  if(!actor||!owner||currentUser.role!==actor.role||(actor.role==='dealer'&&owner.user_id!==S.user.id))return null;
  return {key:JSON.stringify([S.company.id,S.user.id,owner.user_id,carId,plate,snoteEncarLinksEpoch,snote224VehicleOpen]),carId,plate,
   canWrite:actor.role==='admin'||actor.role==='dealer',actor:currentUser,client:S.client,user:S.user,company:S.company,
@@ -9434,18 +9477,252 @@ if(location.protocol!=='https:'&&location.hostname!=='localhost'){
  byId('snote-admin-submit').disabled=true;byId('snote-staff-submit').disabled=true;
 }
 async function snote90RemoveCarMedia(carId){
- const isAdmin=S.members.some(m=>m.user_id===S.user?.id&&m.role==='admin'&&m.active);
- if(!S.ready||!S.company||!isAdmin)throw Error('관리자만 차량의 전체 첨부파일을 삭제할 수 있습니다.');
- const {data,error}=await S.client.from('zc_media').select('id,file_path').eq('company_id',S.company.id).eq('car_id',String(carId));
- if(error)throw error;
- if(!data?.length)return;
- const removed=await S.client.storage.from(BUCKET).remove(data.map(row=>row.file_path));
- if(removed.error)throw removed.error;
- const result=await S.client.from('zc_media').delete().eq('company_id',S.company.id).eq('car_id',String(carId));
- if(result.error)throw result.error;
- await serverMediaRefresh();
+ const base=snoteRecycleContext();if(!base||base.role!=='admin')throw snoteRecycleError('RECYCLE_FORBIDDEN','관리자만 차량의 전체 첨부파일을 휴지통으로 이동할 수 있습니다.');
+ await serverMediaRefresh();snoteRecycleCheck(base);
+ const ids=(mediaByCar[String(carId)]||[]).map(row=>String(row.id));if(!ids.length)return;
+ return snoteRecycleWriteMedia([],ids);
 }
+// Personal profile boundary: trusted active membership, exact client/account context,
+// and server-verified Auth identity are checked around every asynchronous request.
+function snoteProfileContext(){
+ const member=S.members.find(m=>m.user_id===S.user?.id&&m.active);
+ if(!S.ready||!S.client||!S.company?.id||!S.user?.id||!member||member.company_id!==S.company.id)return null;
+ return {key:S.company.id+':'+S.user.id,userId:S.user.id,companyId:S.company.id,client:S.client};
+}
+function snoteProfileCurrent(context){const now=snoteProfileContext();return !!context&&now?.key===context.key&&now.client===context.client;}
+function snoteProfileAssert(context){if(!snoteProfileCurrent(context))throw Object.assign(Error('로그인 정보가 변경되었습니다.'),{code:'SNOTE_PROFILE_CONTEXT'});}
+async function snoteProfileAuth(context){
+ snoteProfileAssert(context);const {data,error}=await context.client.auth.getUser();snoteProfileAssert(context);
+ if(error)throw error;if(data?.user?.id!==context.userId)throw Object.assign(Error('본인 계정 인증을 확인해 주세요.'),{code:'42501'});return data.user;
+}
+async function snoteProfileBoundAuth(context){
+ snoteProfileAssert(context);
+ const {data,error}=await context.client.auth.getSession();snoteProfileAssert(context);if(error)throw error;
+ const session=data?.session;
+ if(session?.user?.id!==context.userId||!session.access_token||!session.refresh_token)throw Object.assign(Error('본인 계정 인증을 확인해 주세요.'),{code:'42501'});
+ // The captured JWT is verified by Auth. Its session is then confined to this
+ // private in-memory client, so SDK waits cannot pick up a different login.
+ const verified=await context.client.auth.getUser(session.access_token);snoteProfileAssert(context);if(verified.error)throw verified.error;
+ if(verified.data?.user?.id!==context.userId)throw Object.assign(Error('본인 계정 인증을 확인해 주세요.'),{code:'42501'});
+ const conf=publicDefault||validConfig(parsePayload(localStorage.getItem(keyConfig))||{});if(!conf)throw Error('인증 연결을 확인해 주세요.');
+ const lib=await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/+esm');snoteProfileAssert(context);
+ const client=lib.createClient(conf.url,conf.key,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false,storageKey:'snote-profile-action'}});
+ const bound=await client.auth.setSession({access_token:session.access_token,refresh_token:session.refresh_token});snoteProfileAssert(context);if(bound.error)throw bound.error;
+ if(bound.data?.user?.id!==context.userId)throw Object.assign(Error('본인 계정 인증을 확인해 주세요.'),{code:'42501'});
+ const authenticated=await client.auth.getUser();snoteProfileAssert(context);if(authenticated.error)throw authenticated.error;
+ if(authenticated.data?.user?.id!==context.userId)throw Object.assign(Error('본인 계정 인증을 확인해 주세요.'),{code:'42501'});
+ return {client,user:authenticated.data.user,config:conf,createClient:lib.createClient};
+}
+function snoteProfileCheck(context,profile){
+ if(profile?.user_id!==context.userId||profile?.company_id!==context.companyId||!['admin','dealer','accountant'].includes(profile?.role)||!Number.isSafeInteger(profile.revision)||profile.revision<0)throw Error('프로필 저장 결과를 확인하지 못했습니다.');
+ return profile;
+}
+function snoteProfileApply(context,profile){
+ snoteProfileAssert(context);snoteProfileCheck(context,profile);
+ const member=S.members.find(m=>m.user_id===context.userId);if(member)member.display_name=profile.display_name;
+ S.company.name=profile.company_name;
+ if(currentUser){currentUser.name=profile.display_name;currentUser.company=profile.company_name;}
+ for(const account of dealerAccounts){account.company=profile.company_name;if(account.username===ownerAlias(context.userId))account.name=profile.display_name;}
+ const suffix=profile.role==='admin'?'관리자':profile.role==='accountant'?'경리':'딜러';
+ byId('profile-name').textContent=profile.display_name+' · '+suffix;byId('profile-avatar').textContent=profile.display_name.slice(0,1);
+ byId('profile-role').textContent=profile.role==='admin'?'상사 관리자 · 전체 업무':profile.role==='accountant'?'재고금융 및 월정산 관리':profile.company_name;
+ byId('zc86-company-name').textContent=profile.company_name;byId('zc86-account').textContent=profile.display_name;
+ if(typeof snote95UpdateDocumentCompany==='function')snote95UpdateDocumentCompany();
+}
+window.snoteProfileBridge=Object.freeze({
+ context:snoteProfileContext,current:snoteProfileCurrent,
+ async read(context){
+  const user=await snoteProfileAuth(context);const {data,error}=await context.client.rpc('snote_profile_read');snoteProfileAssert(context);if(error)throw error;
+  const profile=snoteProfileCheck(context,data);snoteProfileApply(context,profile);return {profile,user};
+ },
+ async save(context,expected,profile){
+  const user=await snoteProfileAuth(context);
+  const {data,error}=await context.client.rpc('snote_profile_save',{p_expected:expected,p_profile:profile});snoteProfileAssert(context);if(error)throw error;
+  snoteProfileApply(context,data);return {profile:data,user};
+ },
+ async changeEmail(context,email){
+  const bound=await snoteProfileBoundAuth(context);snoteProfileAssert(context);
+  const {data,error}=await bound.client.auth.updateUser({email},{emailRedirectTo:location.origin+location.pathname});snoteProfileAssert(context);if(error)throw error;
+  if(data?.user?.id!==context.userId)throw Error('이메일 변경 결과를 확인하지 못했습니다.');S.user=data.user;return data.user;
+ },
+ async changePassword(context,currentPassword,newPassword){
+  const bound=await snoteProfileBoundAuth(context),user=bound.user;snoteProfileAssert(context);
+  // A transient client prevents reauthentication from replacing the active app
+  // session if this request finishes after the user switches accounts.
+  const transient=bound.createClient(bound.config.url,bound.config.key,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false,storageKey:'snote-profile-reauth'}});
+  try{
+   const verified=await transient.auth.signInWithPassword({email:user.email,password:currentPassword});snoteProfileAssert(context);if(verified.error)throw verified.error;
+   if(verified.data?.user?.id!==context.userId)throw Object.assign(Error('본인 계정 인증을 확인해 주세요.'),{code:'42501'});
+   const {data,error}=await bound.client.auth.updateUser({password:newPassword,current_password:currentPassword});snoteProfileAssert(context);if(error)throw error;
+   if(data?.user?.id!==context.userId)throw Error('비밀번호 변경 결과를 확인하지 못했습니다.');S.user=data.user;
+  }finally{try{await transient.auth.signOut({scope:'local'});}catch(_){/* No persistent storage belongs to this transient client. */}currentPassword=null;newPassword=null;}
+ }
+});
 window.snoteRenderAdminSettings=snoteRenderAdminSettings;
+// Recycle-bin operations use server acknowledgements and never enqueue an old snapshot.
+const snoteRecycleRequests=new Map();
+let snoteRecycleSession=null,snoteRecycleSessionEpoch=0;
+function snoteRecycleError(code,message){const error=new Error(message);error.code=code;error.userMessage=message;return error;}
+function snoteRecycleContext(allowAccountant=false){
+ const catalog=snote220CatalogContext();if(!catalog||!S.user||!S.company||!currentUser)return null;
+ const member=S.members.find(row=>row.user_id===S.user.id&&row.company_id===S.company.id&&row.active===true);
+ if(!member||member.role!==currentUser.role||!['admin','dealer',...(allowAccountant?['accountant']:[])].includes(member.role))return null;
+ if(!snoteRecycleSession||snoteRecycleSession.user!==S.user||snoteRecycleSession.actor!==currentUser||snoteRecycleSession.client!==S.client||snoteRecycleSession.companyId!==S.company.id){snoteRecycleSession={user:S.user,actor:currentUser,client:S.client,companyId:S.company.id};snoteRecycleSessionEpoch++;snoteRecycleRequests.clear();}
+ return {key:catalog.key+':'+member.role+':'+snoteRecycleSessionEpoch,companyId:S.company.id,userId:S.user.id,role:member.role,kinds:['vehicle','customer','media']};
+}
+function snoteRecycleCurrent(base,allowAccountant=false){const now=snoteRecycleContext(allowAccountant);return !!base&&!!now&&now.key===base.key&&now.companyId===base.companyId&&now.userId===base.userId&&now.role===base.role;}
+function snoteRecycleCheck(base,allowAccountant=false){if(!snoteRecycleCurrent(base,allowAccountant))throw snoteRecycleError('RECYCLE_CONTEXT_CHANGED','로그인 또는 상사가 변경되었습니다. 현재 화면을 다시 열어 주세요.');}
+function snoteRecycleMapError(error){
+ if(error?.code?.startsWith('RECYCLE_')&&typeof error.userMessage==='string')return error;
+ const code=String(error?.code||''),message=String(error?.message||'');
+ if(code==='42501'||/FORBIDDEN|UNAUTHORIZED/.test(message))return snoteRecycleError('RECYCLE_FORBIDDEN','이 항목을 휴지통에서 관리할 권한이 없습니다.');
+ if(/CUSTOMER_IN_TRASH/.test(message))return snoteRecycleError('RECYCLE_CUSTOMER_IN_TRASH','휴지통에 보관된 고객정보를 먼저 복원한 뒤 다시 저장해 주세요.');
+ if(/MEDIA_FILE_MISSING/.test(message))return snoteRecycleError('RECYCLE_FILE_MISSING','원본 사진·서류 파일이 없어 복원할 수 없습니다.');
+ if(/RESTORE_PARENT_FIRST|CAR_TRASHED|CAR_IN_TRASH|CAR_NOT_FOUND|PARENT_NOT_FOUND/.test(message))return snoteRecycleError('RECYCLE_PARENT_FIRST','연결된 차량을 먼저 복원한 뒤 다시 시도해 주세요.');
+ if(/RESTORE_CONFLICT|RESTORE_SLOT_CONFLICT|SLOT_OCCUPIED|PHOTO_LIMIT|MAX_PHOTOS|ALREADY_EXISTS|DOCUMENT_EXISTS/.test(message)||code==='23505')return snoteRecycleError('RECYCLE_RESTORE_CONFLICT','복원할 위치에 이미 정보가 있거나 사진 수가 한도에 도달했습니다. 현재 자료를 확인해 주세요.');
+ if(code==='40001'||/CONFLICT|STALE_REQUEST|AMBIGUOUS_CAR/.test(message))return snoteRecycleError('RECYCLE_CONFLICT','다른 화면에서 정보가 변경되었습니다. 최신 자료를 불러온 뒤 다시 시도해 주세요.');
+ if(/NOT_FOUND/.test(message))return snoteRecycleError('RECYCLE_NOT_FOUND','항목이 이미 변경되었거나 휴지통에서 복원되었습니다. 목록을 다시 확인해 주세요.');
+ if(['PGRST202','PGRST205','42P01','42883'].includes(code))return snoteRecycleError('RECYCLE_SETUP_REQUIRED','휴지통 데이터베이스 연결을 확인한 뒤 다시 시도해 주세요.');
+ if(code==='22023'||/INVALID_/.test(message))return snoteRecycleError('RECYCLE_INVALID','항목의 저장 정보를 확인한 뒤 다시 시도해 주세요.');
+ return snoteRecycleError('RECYCLE_NETWORK','서버 응답을 확인하지 못했습니다. 연결 상태를 확인한 뒤 다시 시도해 주세요.');
+}
+function snoteRecycleUncertain(error){const code=String(error?.code||'');return !code||code.startsWith('08')||!(/^[A-Z0-9]{5}$/.test(code)||/^PGRST\d+$/.test(code));}
+async function snoteRecyclePinnedSession(base,allowAccountant=false){
+ snoteRecycleCheck(base,allowAccountant);const client=S.client;let result;
+ try{result=await client.auth.getSession();}catch(error){snoteRecycleCheck(base,allowAccountant);throw snoteRecycleMapError(error);}
+ snoteRecycleCheck(base,allowAccountant);
+ const session=result?.data?.session;if(result?.error||typeof session?.access_token!=='string'||!session.access_token||session.access_token.length>32768||session.user?.id!==base.userId)throw snoteRecycleError('RECYCLE_FORBIDDEN','온라인 로그인 정보를 다시 확인해 주세요.');
+ const parts=session.access_token.split('.');if(parts.length===3){try{const value=parts[1].replace(/-/g,'+').replace(/_/g,'/'),claims=JSON.parse(atob(value.padEnd(Math.ceil(value.length/4)*4,'=')));if(claims.sub!==base.userId)throw Error('ACTOR_MISMATCH');}catch(_){throw snoteRecycleError('RECYCLE_FORBIDDEN','온라인 로그인 정보를 다시 확인해 주세요.');}}
+ let config=S.rpcConfig?.client===client?S.rpcConfig:null;
+ if(!config&&typeof client.supabaseUrl==='string'&&typeof client.supabaseKey==='string'){
+  try{const url=new URL(client.supabaseUrl);if(url.protocol==='https:'&&url.hostname.endsWith('.supabase.co')&&client.supabaseKey)config={url:url.origin,key:client.supabaseKey};}catch(_){}
+ }
+ config=config||publicDefault;if(!config)throw snoteRecycleError('RECYCLE_SETUP_REQUIRED','휴지통 서버 연결 설정을 확인해 주세요.');
+ return {url:new URL(config.url).origin,key:config.key,token:session.access_token};
+}
+async function snoteRecyclePinnedPost(bound,name,args){
+ try{
+  const response=await fetch(bound.url+'/rest/v1/rpc/'+encodeURIComponent(name),{method:'POST',credentials:'omit',cache:'no-store',redirect:'error',referrerPolicy:'no-referrer',headers:{apikey:bound.key,Authorization:'Bearer '+bound.token,'Content-Type':'application/json'},body:JSON.stringify(args)});
+  let body;try{body=await response.json();}catch(_){body=null;}
+  if(!response.ok)return {data:null,error:{code:[401,403].includes(response.status)?'42501':typeof body?.code==='string'?body.code:'',message:typeof body?.message==='string'?body.message:'서버 응답을 확인하지 못했습니다.'}};
+  return {data:body,error:null};
+ }catch(error){return {data:null,error};}
+}
+async function snoteRecycleRpc(base,name,args,allowAccountant=false,mutating=false){
+ snoteRecycleCheck(base,allowAccountant);
+ const bound=await snoteRecyclePinnedSession(base,allowAccountant);
+ const requestKey=base.key+':'+name+':'+JSON.stringify(args);
+ const params={...args};if(mutating===true){if(!snoteRecycleRequests.has(requestKey))snoteRecycleRequests.set(requestKey,crypto.randomUUID());params.p_request_id=snoteRecycleRequests.get(requestKey);}
+ let error;
+ for(let attempt=0;attempt<(mutating?2:1);attempt++){
+  snoteRecycleCheck(base,allowAccountant);const result=await snoteRecyclePinnedPost(bound,name,params);
+  snoteRecycleCheck(base,allowAccountant);
+  if(!result.error){snoteRecycleRequests.delete(requestKey);return result.data;}
+  error=result.error;if(!mutating||!snoteRecycleUncertain(error)||navigator.onLine===false)break;
+ }
+ if(mutating&&snoteRecycleUncertain(error)){
+  S.conflict=true;showStatus('● 휴지통 처리 결과 확인 필요 · 서버 자료를 다시 불러와 주세요','bad');
+  const failure=snoteRecycleError('RECYCLE_UNCERTAIN_REQUEST','서버 처리 결과를 확인하지 못했습니다. 최신 정보를 불러온 뒤 다시 확인해 주세요.');failure.uncertain=true;throw failure;
+ }
+ snoteRecycleRequests.delete(requestKey);throw snoteRecycleMapError(error);
+}
+function snoteRecycleOwnerRows(){return typeof snoteCompanyOwnerRows==='function'?snoteCompanyOwnerRows():S.members;}
+async function snoteRecyclePrepare(base,allowAccountant=false){
+ snoteRecycleCheck(base,allowAccountant);
+ if(navigator.onLine===false)throw snoteRecycleError('RECYCLE_ONLINE_REQUIRED','휴지통은 인터넷에 연결된 온라인 계정에서 이용해 주세요.');
+ await zc75WriteQueue.catch(()=>{});snoteRecycleCheck(base,allowAccountant);
+ await Promise.all([...snote214CustomerQueues.values()]);snoteRecycleCheck(base,allowAccountant);
+ const saved=await flush();snoteRecycleCheck(base,allowAccountant);
+ if(saved?.ok!==true||S.conflict||S.saving||S.queue.size)throw snoteRecycleError('RECYCLE_CONFLICT','기존 변경사항의 서버 저장을 먼저 확인해 주세요.');
+ const snapshots=new Map();for(const owner of new Set([base.userId,...snoteRecycleOwnerRows().filter(row=>row.company_id===base.companyId).map(row=>row.user_id)])){
+  const alias=ownerAlias(owner);snapshots.set(owner,{carsRaw:localStorage.getItem(storageKey('cars',alias)),coversRaw:localStorage.getItem(storageKey('covers',alias)),carsRevision:Number(S.revisions.get(cloudKey('cars',owner))||0),coversRevision:Number(S.revisions.get(cloudKey('covers',owner))||0)});
+ }
+ return snapshots;
+}
+function snoteRecycleCanonicalConflict(){S.conflict=true;showStatus('● 서버 휴지통 처리 완료 · 최신 자료 다시 불러오기 필요','bad');return snoteRecycleError('RECYCLE_RELOAD_REQUIRED','서버에서 처리했습니다. 최신 정보를 불러온 뒤 다시 확인해 주세요.');}
+async function snoteRecycleApply(base,data,snapshots,allowAccountant=false){
+ snoteRecycleCheck(base,allowAccountant);
+ const owner=data?.ownerId,carId=data?.carId,carsState=data?.cars,coversState=data?.covers;
+ if(data?.companyId!=null&&data.companyId!==base.companyId)throw snoteRecycleCanonicalConflict();
+ if(data?.ok===true&&data.kind==='customer'){
+  if((owner!==base.userId&&base.role!=='admin')||typeof owner!=='string'||!/^[a-f0-9-]{36}$/i.test(owner)||typeof carId!=='string'||carsState!==null||coversState!==null)throw snoteRecycleCanonicalConflict();
+  ++snote214CustomerView;window.snote222ContractSignature?.invalidate?.();return data;
+ }
+ if(data?.ok!==true||typeof owner!=='string'||!/^[a-f0-9-]{36}$/i.test(owner)||typeof carId!=='string'||!Array.isArray(carsState?.payload)||!Number.isSafeInteger(carsState?.revision)||!coversState?.payload||Array.isArray(coversState.payload)||typeof coversState.payload!=='object'||!Number.isSafeInteger(coversState?.revision))throw snoteRecycleCanonicalConflict();
+ const alias=ownerAlias(owner),carsKey=cloudKey('cars',owner),coversKey=cloudKey('covers',owner),carsStorage=storageKey('cars',alias),coversStorage=storageKey('covers',alias);
+ let previous=snapshots.get(owner);
+ if(!previous&&base.role==='admin'&&localStorage.getItem(carsStorage)===null&&localStorage.getItem(coversStorage)===null&&!S.revisions.has(carsKey)&&!S.revisions.has(coversKey))previous={carsRaw:null,coversRaw:null,carsRevision:0,coversRevision:0};
+ if(!previous||S.queue.has(carsKey)||S.queue.has(coversKey)||Number(S.revisions.get(carsKey)||0)!==previous.carsRevision||Number(S.revisions.get(coversKey)||0)!==previous.coversRevision||localStorage.getItem(carsStorage)!==previous.carsRaw||localStorage.getItem(coversStorage)!==previous.coversRaw||carsState.revision<previous.carsRevision||coversState.revision<previous.coversRevision)throw snoteRecycleCanonicalConflict();
+ if(base.role!=='admin'&&owner!==base.userId&&!(allowAccountant&&base.role==='accountant'))throw snoteRecycleCanonicalConflict();
+ try{
+  originalSet.call(localStorage,carsStorage,JSON.stringify(carsState.payload));originalSet.call(localStorage,coversStorage,JSON.stringify(coversState.payload));
+  S.revisions.set(carsKey,carsState.revision);S.revisions.set(coversKey,coversState.revision);
+  if(base.role==='admin'&&S.companyOwners instanceof Map&&!S.companyOwners.has(owner)&&!S.members.some(row=>row.user_id===owner&&row.company_id===base.companyId))S.companyOwners.set(owner,{user_id:owner,company_id:base.companyId,display_name:'',active:false,former:true});
+ }catch(_){throw snoteRecycleCanonicalConflict();}
+ loadCarsForUser();loadCovers();if(isSnoteAdmin())for(const row of cars){const value=parsePayload(localStorage.getItem(storageKey('covers',row.ownerId)));if(value&&typeof value==='object'&&!Array.isArray(value)&&Object.hasOwn(value,row.id))covers[row.id]=value[row.id];}
+ buildStats();renderCars();if(activeCarId&&cars.some(car=>car.id===activeCarId))renderVehicle();
+ if(data.customerChanged){++snote214CustomerView;window.snote222ContractSignature?.invalidate?.();}
+ if(data.mediaChanged)try{await serverMediaRefresh();}catch(_){if(snoteRecycleCurrent(base,allowAccountant))showStatus('● 휴지통 처리 완료 · 첨부파일 새로고침 필요','bad');}
+ snoteRecycleCheck(base,allowAccountant);return data;
+}
+function snoteRecycleCar(base,id){
+ const selected=cars.filter(car=>String(car.id)===String(id));if(selected.length!==1)throw snoteRecycleError('RECYCLE_CONFLICT','차량 정보를 다시 확인한 뒤 시도해 주세요.');
+ const car=selected[0],owner=getOwnUuid(car.ownerId);if(!owner||(base.role==='dealer'&&owner!==base.userId))throw snoteRecycleError('RECYCLE_FORBIDDEN','본인 차량만 휴지통으로 이동할 수 있습니다.');return {car,owner};
+}
+async function snoteRecycleTrashVehicle(car){
+ const base=snoteRecycleContext();if(!base)throw snoteRecycleError('RECYCLE_ONLINE_REQUIRED','차량 삭제는 온라인 로그인 후 휴지통에서 복원할 수 있도록 처리합니다.');
+ const target=snoteRecycleCar(base,car.id),snapshots=await snoteRecyclePrepare(base),before=snapshots.get(target.owner);if(!before)throw snoteRecycleError('RECYCLE_CONFLICT','차량 담당자의 서버 자료를 다시 불러와 주세요.');
+ const data=await snoteRecycleRpc(base,'snote_recycle_trash_vehicle',{p_company:base.companyId,p_owner:target.owner,p_car_id:String(car.id),p_expected:before.carsRevision,p_expected_covers:before.coversRevision},false,true);
+ return snoteRecycleApply(base,data,snapshots);
+}
+async function snoteRecycleTrashCustomer(owner,car,options={}){
+ const base=snoteRecycleContext();if(!base)throw snoteRecycleError('RECYCLE_ONLINE_REQUIRED','고객 삭제는 온라인 로그인 후 이용해 주세요.');
+ const ctx=snote214CustomerContext(owner),snapshots=await snoteRecyclePrepare(base);
+ return snote214QueueCustomer(ctx,car,async()=>{
+  const latest=await snote214ReadCustomerRow(ctx,car);snoteRecycleCheck(base);if(!latest)throw snoteRecycleError('RECYCLE_NOT_FOUND','고객정보가 이미 변경되었거나 휴지통으로 이동했습니다.');
+  const generation=Object.hasOwn(options,'expectedRestoreGeneration')?options.expectedRestoreGeneration:latest.restore_generation||SNOTE_RECYCLE_ZERO;
+  const expectedAt=Object.hasOwn(options,'expectedUpdatedAt')?options.expectedUpdatedAt:latest.updated_at;
+  const data=await snoteRecycleRpc(base,'snote_recycle_trash_customer',{p_company:base.companyId,p_owner:ctx.uid,p_car_id:String(car),p_expected_updated_at:expectedAt,p_expected_generation:generation},false,true);
+  await snoteRecycleApply(base,data,snapshots);return {ok:true};
+ });
+}
+async function snoteRecycleWriteMedia(records,removeIds){
+ const base=snoteRecycleContext(true);if(!base)throw snoteRecycleError('RECYCLE_ONLINE_REQUIRED','차량 사진·서류는 온라인 로그인 후 이용해 주세요.');
+ const ids=[...new Set(removeIds.map(String))],oldRows=[];
+ for(const id of ids){const matches=Object.values(mediaByCar).flat().filter(row=>String(row.id)===id);if(matches.length!==1)throw snoteRecycleError('RECYCLE_CONFLICT','첨부파일 정보가 변경되었습니다. 새로고침한 뒤 다시 시도해 주세요.');oldRows.push(matches[0]);}
+ const carIds=[...new Set([...records.map(row=>String(row.carId)),...oldRows.map(row=>String(row.carId))])];
+ if(carIds.length!==1)throw snoteRecycleError('RECYCLE_INVALID','한 차량의 첨부파일만 함께 변경할 수 있습니다.');
+ const target=snoteRecycleCar(base,carIds[0]);
+ if(base.role==='accountant'&&(!records.length||records.some(row=>row.group!=='registration')||oldRows.some(row=>row.group!=='registration')))throw snoteRecycleError('RECYCLE_FORBIDDEN','경리 계정은 자동차등록증 교체만 할 수 있습니다.');
+ const remove=oldRows.map(row=>{if(typeof row.filePath!=='string'||typeof row.cloudOwnerId!=='string')throw snoteRecycleError('RECYCLE_CONFLICT','첨부파일의 서버 정보를 다시 불러온 뒤 시도해 주세요.');return {id:String(row.id),ownerId:row.cloudOwnerId,filePath:row.filePath};});
+ for(const row of records)if(!row.blob||!['image/jpeg','image/png','image/webp'].includes(row.blob.type)||row.blob.size>10485760||!['photos','registration','inspection1','inspection2'].includes(row.group))throw snoteRecycleError('RECYCLE_INVALID','사진은 JPG·PNG·WEBP 파일로 한 장 최대 10MB까지 등록할 수 있습니다.');
+ const snapshots=await snoteRecyclePrepare(base,true),before=snapshots.get(target.owner);if(!before)throw snoteRecycleError('RECYCLE_CONFLICT','차량 담당자의 서버 자료를 다시 불러와 주세요.');
+ const uploaded=[],metadata=[];let committed=false,uncertain=false;
+ try{
+  for(const row of records){
+   snoteRecycleCheck(base,true);
+   const id=String(row.id),ext=row.blob.type==='image/png'?'png':row.blob.type==='image/webp'?'webp':'jpg',path=[base.companyId,base.userId,encodeURIComponent(carIds[0]),encodeURIComponent(id)+'.'+ext].join('/');
+   const result=await S.client.storage.from(BUCKET).upload(path,row.blob,{contentType:row.blob.type,upsert:false});snoteRecycleCheck(base,true);if(result.error)throw snoteRecycleMapError(result.error);
+   uploaded.push(path);metadata.push({company_id:base.companyId,owner_id:base.userId,id,car_id:carIds[0],file_path:path,original_name:String(row.filename||'이미지').slice(0,180),mime_type:row.blob.type,file_size:row.blob.size,group_name:row.group,meta:{}});
+  }
+  let data;try{data=await snoteRecycleRpc(base,'snote_recycle_media',{p_company:base.companyId,p_owner:target.owner,p_car_id:carIds[0],p_remove:remove,p_records:metadata,p_expected:before.carsRevision,p_expected_covers:before.coversRevision},true,true);}catch(error){uncertain=error?.uncertain===true||error?.code==='RECYCLE_CONTEXT_CHANGED';throw error;}
+  committed=true;await snoteRecycleApply(base,data,snapshots,true);
+ }catch(error){
+  // Never remove an upload after an acknowledged/uncertain transaction: it may be active.
+  if(uploaded.length&&!committed&&!uncertain&&snoteRecycleCurrent(base,true))try{const cleanup=await S.client.storage.from(BUCKET).remove(uploaded);if(cleanup.error)showStatus('● 첨부파일 저장 실패 · 연결 복구 후 다시 확인해 주세요','bad');}catch(_){showStatus('● 첨부파일 저장 실패 · 연결 복구 후 다시 확인해 주세요','bad');}
+  throw snoteRecycleMapError(error);
+ }
+}
+window.snoteRecycleBinBridge={
+ context:()=>snoteRecycleContext(),current:base=>snoteRecycleCurrent(base),
+ async list(base,query={}){
+  const data=await snoteRecycleRpc(base,'snote_recycle_list',{p_company:base.companyId,p_kind:query.kind||'all',p_query:String(query.query||'').slice(0,120),p_page:Math.max(1,Number(query.page)||1),p_page_size:20,p_sort:query.sort||'deletedAt',p_direction:query.direction==='asc'?'asc':'desc'});
+  if(!Array.isArray(data?.items)||!Number.isSafeInteger(data?.total)||data.total<0)throw snoteRecycleError('RECYCLE_NETWORK','휴지통 목록의 서버 응답을 확인하지 못했습니다.');
+  return {items:data.items.map(row=>Object.fromEntries(['id','kind','label','description','model','plate','group','filename','ownerName','deletedAt'].filter(key=>Object.hasOwn(row,key)).map(key=>[key,row[key]]))),total:data.total};
+ },
+ async restore(base,{id}){if(typeof id!=='string'||!/^[a-f0-9-]{36}$/i.test(id))throw snoteRecycleError('RECYCLE_INVALID','복원할 항목을 다시 선택해 주세요.');const snapshots=await snoteRecyclePrepare(base);const data=await snoteRecycleRpc(base,'snote_recycle_restore',{p_company:base.companyId,p_entry:id},false,'entry');await snoteRecycleApply(base,data,snapshots);return {ok:true};},
+ trashVehicle:snoteRecycleTrashVehicle
+};
 window.snoteVehicleShareBridge={
  badgeContext(){const c=snote220CatalogContext();return c?{key:c.key,companyId:c.company_id,userId:c.user_id}:null;},
  badgeCurrent(c){return !!c&&this.badgeContext()?.key===c.key;},
@@ -9458,7 +9735,7 @@ window.snoteVehicleShareBridge={
  async notification(c,args){if(!this.current(c))throw Error('CONTEXT_CHANGED');const r=await S.client.rpc('snote_vehicle_notifications',args);if(!this.current(c))throw Error('CONTEXT_CHANGED');if(r.error)throw r.error;return r.data;},
  async file(c,path){if(!this.current(c))throw Error('로그인 정보가 변경되었습니다.');const r=await S.client.storage.from('zc-vehicle-private').download(path);if(!this.current(c))throw Error('로그인 정보가 변경되었습니다.');if(r.error)throw r.error;return r.data;}
 };
-window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;const {data,error}=await S.client.auth.getSession();return error?null:data?.session?.access_token||null;},verifyPassword:async pass=>{if(!S.client||!S.user?.email)return false;const {data,error}=await S.client.auth.signInWithPassword({email:S.user.email,password:pass});return !error&&data?.user?.id===S.user.id;},get conflict(){return S.conflict},removeCarMedia:snote90RemoveCarMedia,membersAliases(){return S.members.map(m=>ownerAlias(m.user_id));},get isAdmin(){return S.members.some(m=>m.user_id===S.user?.id&&m.active&&m.role==='admin')},get ready(){return S.ready},get rrnEnabled(){return !!S.company?.rrn_enabled},get company(){return S.company?.name||''},get companyProfile(){if(!S.ready||!S.company)return null;return Object.fromEntries(['name','business_number','business_phone','representative_name','business_postcode','business_address','business_address_detail'].map(key=>[key,S.company[key]||'']));},flush,reload,signOut};
+window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;const {data,error}=await S.client.auth.getSession();return error?null:data?.session?.access_token||null;},verifyPassword:async pass=>{if(!S.client||!S.user?.email)return false;const {data,error}=await S.client.auth.signInWithPassword({email:S.user.email,password:pass});return !error&&data?.user?.id===S.user.id;},get conflict(){return S.conflict},removeCarMedia:snote90RemoveCarMedia,membersAliases(){return snoteCompanyOwnerRows().map(m=>ownerAlias(m.user_id));},ownerLabel:snoteCompanyOwnerLabel,readOwnerCars:snoteReadCompanyOwnerCars,get isAdmin(){return S.members.some(m=>m.user_id===S.user?.id&&m.active&&m.role==='admin')},get ready(){return S.ready},get rrnEnabled(){return !!S.company?.rrn_enabled},get company(){return S.company?.name||''},get companyProfile(){if(!S.ready||!S.company)return null;return Object.fromEntries(['name','business_number','business_phone','representative_name','business_postcode','business_address','business_address_detail'].map(key=>[key,S.company[key]||'']));},flush,reload,signOut};
  setTimeout(snote95AutoRestore,0);
 })();
 
@@ -9469,10 +9746,13 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 <script type="module" src="assets/income-settlement-parent.js?v=2.76"></script>
 <script src="assets/vehicle-sharing.js?v=2.71" defer></script>
 <script src="assets/shared-vehicle-markers.js?v=2.71" defer></script>
-<script src="assets/release-info.js?v=2.76" defer></script>
+<script src="assets/release-info.js?v=2.77" defer></script>
+<script src="assets/company-purchase.js?v=2.77" defer></script>
+<script src="assets/recycle-bin.js?v=2.77" defer></script>
+<script src="assets/profile-editor.js?v=2.77" defer></script>
 <script src="assets/snote-encar-link.js?v=2.74" defer></script>
 <script src="assets/document-mms.js?v=2.44" defer></script>
-<script src="assets/workspace-polish.js?v=2.64" defer></script>
+<script src="assets/workspace-polish.js?v=2.77" defer></script>
 <script src="assets/list-sort.js?v=2.57" defer></script>
 <script src="assets/workspace-refine.js?v=2.54" defer></script>
 <script src="assets/drawer-motion.js?v=2.48" defer></script>
