@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.82">
+<html lang="ko" data-snote-release="2.83">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -608,12 +608,6 @@ tr.vehicle-clickable{cursor:pointer;transition:background .15s}tr.vehicle-clicka
 .inventory-loan-preview .equity-negative{color:#c94b61}
 @media(max-width:980px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:760px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.stat .label{font-size:10.5px}.stat .value{font-size:20px}.inventory-loan-preview{padding:10px}}
-/* v1.18 · verified model-grade selector and provenance */
-.catalog-grade-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:6px 0 0;font-size:10px;color:#7b8c9f;line-height:1.5}
-.catalog-grade-meta strong{display:inline-block;font-size:9px;padding:2px 6px;border-radius:6px;background:#e9f7f0;color:#14845a;font-weight:800}
-.catalog-grade-meta .needs-review{background:#fff5e5;color:#a77220}
-.catalog-grade-meta a{color:#315efb;font-weight:750;text-decoration:none}
-.catalog-grade-meta a:hover{text-decoration:underline}
 /* v1.17 · catalogue selection helper */
 #new-grade-custom-wrapper,#detail-grade-custom-wrapper{padding:0;border:0;background:transparent}
 #new-grade-custom-wrapper input,#detail-grade-custom-wrapper input{border:1px solid #c6d9ec;background:#f4f8fe;color:#183e61;font-weight:650}
@@ -3301,7 +3295,7 @@ button, input, select, textarea { font-family: inherit; }
 <div class="zc-register-visual" id="new-visual-preview" aria-live="polite"></div>
 <div id="new-grade-custom-wrapper" hidden><input id="new-grade-custom" type="hidden"></div>
 <div class="formitem wide" id="manual-model-wrapper" style="display:none"><label for="new-model">등록증에 표시된 차량명 *</label><input id="new-model" oninput="updateNewCarPreview()" placeholder="예: 제조사 모델명 세대 등급" maxlength="100" /></div>
-<div class="formitem"><label for="new-plate">차량번호 *</label><input id="new-plate" placeholder="예: 123가4567" required maxlength="15" /></div><div class="formitem"><label for="new-vin">차대번호 (선택)</label><input id="new-vin" type="text" maxlength="25" autocomplete="off" autocapitalize="characters" placeholder="자동등록 기능 확장 예정" /></div><div class="formitem"><label for="new-year">연식 *</label><input id="new-year" type="number" placeholder="2026" min="1970" max="2035" required oninput="newYearTouched=true;showGradeProvenance('new')" /></div><div class="formitem"><label for="new-color-trigger">차량 색상</label><div class="color-picker" id="new-color-picker"><button id="new-color-trigger" class="color-trigger" type="button" aria-haspopup="listbox" aria-expanded="false" onclick="toggleColorPicker('new')"><span class="color-bar" id="new-color-swatch"></span><span id="new-color-caption" class="color-caption">색상 선택</span><span class="color-caret">⌄</span></button><div id="new-color-menu" class="color-menu" role="listbox" aria-label="차량 색상 목록"></div><select id="new-color" aria-hidden="true" tabindex="-1" hidden></select></div></div><div class="formitem"><label for="new-km">주행거리 (km)</label><input id="new-km" type="text" inputmode="numeric" maxlength="9" pattern="[0-9,]*" placeholder="예: 43,200" value="" oninput="formatMileageInput(this)" /></div><div class="formitem"><label for="new-purchase-date">매입 날짜</label><input id="new-purchase-date" type="date" onclick="openDateInputCalendar(this)" /></div><div class="formitem"><label for="new-buy">매입가 (원) *</label><input id="new-buy" type="text" class="detail-money-input" inputmode="numeric" placeholder="25,000,000" min="0" step="1" required oninput="updateAddSummary()" /></div><div class="formitem"><label for="new-sell">판매예정가 (원) *</label><input id="new-sell" type="text" class="detail-money-input" inputmode="numeric" placeholder="28,000,000" min="0" step="1" required oninput="updateAddSummary()" /></div><div class="add-subtitle">차량 매입 부대비용 </div><div class="cost-fieldgrid"><div class="formitem"><label for="new-bodywork">차량판금비용 (원)</label><input id="new-bodywork" type="text" class="detail-money-input" min="0" max="1000000000000" step="1" value="0" inputmode="numeric" oninput="updateAddSummary()" /></div><div class="formitem"><label for="new-polish">차량광택비용 (원)</label><input id="new-polish" type="text" class="detail-money-input" min="0" max="1000000000000" step="1" value="0" inputmode="numeric" oninput="updateAddSummary()" /></div><div class="formitem"><label for="new-performanceInspection">성능점검비</label><input id="new-performanceInspection" type="text" class="detail-money-input" min="0" max="1000000000000" step="1" value="0" inputmode="numeric" oninput="updateAddSummary()" /></div><div class="formitem"><label for="new-advertising">광고비용 (원)</label><input id="new-advertising" type="text" class="detail-money-input" min="0" max="1000000000000" step="1" value="0" inputmode="numeric" oninput="updateAddSummary()" /></div><div class="formitem"><label for="new-purchaseFee">매입수수료 (원)</label><input id="new-purchaseFee" type="text" class="detail-money-input" min="0" max="1000000000000" step="1" value="0" inputmode="numeric" oninput="updateAddSummary()" /></div><div class="formitem"><label for="new-purchaseOther">매입비 (원)</label><input id="new-purchaseOther" type="text" class="detail-money-input" min="0" max="1000000000000" step="1" value="0" inputmode="numeric" oninput="updateAddSummary()" /></div><div class="formitem"><label for="new-acquisitionTax">취득세 (원)</label><input id="new-acquisitionTax" type="text" class="detail-money-input" min="0" max="1000000000000" step="1" value="0" inputmode="numeric" oninput="updateAddSummary()" /></div><div class="formitem"><label for="new-incomeTax">소득세 (원)</label><input id="new-incomeTax" type="text" class="detail-money-input" min="0" max="1000000000000" step="1" value="0" inputmode="numeric" oninput="updateAddSummary()" /></div></div><div class="repair-group"><div class="repair-top"><div><strong>수리비용 상세 내역</strong><span>수리 항목별 메모와 금액을 입력하세요.</span></div><button class="section-button" type="button" onclick="addRepairRow('new')">＋ 수리 항목 추가</button></div><div class="repair-rows" id="new-repair-items"></div><div class="repair-total">수리비 합계 <strong id="new-repair-total">0원</strong></div></div>
+<div class="formitem"><label for="new-plate">차량번호 *</label><input id="new-plate" placeholder="예: 123가4567" required maxlength="15" /></div><div class="formitem"><label for="new-vin">차대번호 (선택)</label><input id="new-vin" type="text" maxlength="25" autocomplete="off" autocapitalize="characters" placeholder="자동등록 기능 확장 예정" /></div><div class="formitem"><label for="new-year">연식 *</label><input id="new-year" type="number" placeholder="2026" min="1970" max="2035" required oninput="newYearTouched=true" /></div><div class="formitem"><label for="new-color-trigger">차량 색상</label><div class="color-picker" id="new-color-picker"><button id="new-color-trigger" class="color-trigger" type="button" aria-haspopup="listbox" aria-expanded="false" onclick="toggleColorPicker('new')"><span class="color-bar" id="new-color-swatch"></span><span id="new-color-caption" class="color-caption">색상 선택</span><span class="color-caret">⌄</span></button><div id="new-color-menu" class="color-menu" role="listbox" aria-label="차량 색상 목록"></div><select id="new-color" aria-hidden="true" tabindex="-1" hidden></select></div></div><div class="formitem"><label for="new-km">주행거리 (km)</label><input id="new-km" type="text" inputmode="numeric" maxlength="9" pattern="[0-9,]*" placeholder="예: 43,200" value="" oninput="formatMileageInput(this)" /></div><div class="formitem"><label for="new-purchase-date">매입 날짜</label><input id="new-purchase-date" type="date" onclick="openDateInputCalendar(this)" /></div><div class="formitem"><label for="new-buy">매입가 (원) *</label><input id="new-buy" type="text" class="detail-money-input" inputmode="numeric" placeholder="25,000,000" min="0" step="1" required oninput="updateAddSummary()" /></div><div class="formitem"><label for="new-sell">판매예정가 (원) *</label><input id="new-sell" type="text" class="detail-money-input" inputmode="numeric" placeholder="28,000,000" min="0" step="1" required oninput="updateAddSummary()" /></div><div class="add-subtitle">차량 매입 부대비용 </div><div class="cost-fieldgrid"><div class="formitem"><label for="new-bodywork">차량판금비용 (원)</label><input id="new-bodywork" type="text" class="detail-money-input" min="0" max="1000000000000" step="1" value="0" inputmode="numeric" oninput="updateAddSummary()" /></div><div class="formitem"><label for="new-polish">차량광택비용 (원)</label><input id="new-polish" type="text" class="detail-money-input" min="0" max="1000000000000" step="1" value="0" inputmode="numeric" oninput="updateAddSummary()" /></div><div class="formitem"><label for="new-performanceInspection">성능점검비</label><input id="new-performanceInspection" type="text" class="detail-money-input" min="0" max="1000000000000" step="1" value="0" inputmode="numeric" oninput="updateAddSummary()" /></div><div class="formitem"><label for="new-advertising">광고비용 (원)</label><input id="new-advertising" type="text" class="detail-money-input" min="0" max="1000000000000" step="1" value="0" inputmode="numeric" oninput="updateAddSummary()" /></div><div class="formitem"><label for="new-purchaseFee">매입수수료 (원)</label><input id="new-purchaseFee" type="text" class="detail-money-input" min="0" max="1000000000000" step="1" value="0" inputmode="numeric" oninput="updateAddSummary()" /></div><div class="formitem"><label for="new-purchaseOther">매입비 (원)</label><input id="new-purchaseOther" type="text" class="detail-money-input" min="0" max="1000000000000" step="1" value="0" inputmode="numeric" oninput="updateAddSummary()" /></div><div class="formitem"><label for="new-acquisitionTax">취득세 (원)</label><input id="new-acquisitionTax" type="text" class="detail-money-input" min="0" max="1000000000000" step="1" value="0" inputmode="numeric" oninput="updateAddSummary()" /></div><div class="formitem"><label for="new-incomeTax">소득세 (원)</label><input id="new-incomeTax" type="text" class="detail-money-input" min="0" max="1000000000000" step="1" value="0" inputmode="numeric" oninput="updateAddSummary()" /></div></div><div class="repair-group"><div class="repair-top"><div><strong>수리비용 상세 내역</strong><span>수리 항목별 메모와 금액을 입력하세요.</span></div><button class="section-button" type="button" onclick="addRepairRow('new')">＋ 수리 항목 추가</button></div><div class="repair-rows" id="new-repair-items"></div><div class="repair-total">수리비 합계 <strong id="new-repair-total">0원</strong></div></div>
 <div class="cost-summary" id="add-cost-summary"></div><p class="cost-policy">※ 예상 마진은 매입가와 입력한 모든 부대비용(소득세 포함)을 차감한 단순 추정치입니다. 실제 세무상 이익과는 다를 수 있습니다.</p></div><p class="formtip">* 체험용 시안: 차량 정보·비용·사진은 현재 브라우저에만 저장됩니다. 다른 기기와 공유되지 않습니다.</p><div class="modal-actions"><button class="btn-ghost" type="button" onclick="closeAdd({animate:true})">취소</button><button type="submit" class="btn-primary">차량 등록하기</button></div></form></div>
 
 <!-- 차량별 사진과 서류 관리: 모든 이미지가 차량 고유 ID에 연결됩니다. -->
@@ -3939,23 +3933,11 @@ function snote282GradeRecord(prefix){
 }
 function fillVerifiedGrades(el,make,group,model,previous=''){
  const rows=domesticTaxonomy().filter(r=>r.make===make&&r.group===group&&r.model===model);
- const label=r=>r.researchId?window.SnoteVehicleCatalog.choiceLabel(r):(catalogTrim(r)||'트림명 미기재')+' · 직접 입력';
+ const label=r=>catalogTrim(r)||'트림명 미기재';
  rows.sort((a,b)=>label(a).localeCompare(label(b),'ko'));
- el.innerHTML='<option value="">트림 선택 안 함 (선택 사항)</option>'+rows.map(r=>`<option value="${esc(r.id||r.key)}">${esc(label(r))}</option>`).join('')+'<option value="__manual__">＋ 트림 직접 입력 (선택)</option>';
+ el.innerHTML='<option value="">트림 선택 안 함</option>'+rows.map(r=>`<option value="${esc(r.id||r.key)}">${esc(label(r))}</option>`).join('')+'<option value="__manual__">＋ 트림 직접 입력</option>';
  if(previous&&rows.some(r=>(r.id||r.key)===previous))el.value=previous;
  if(!rows.length&&model&&model!=='__manual__')el.value='__manual__';
-}
-function showGradeProvenance(prefix){
- const el=$(prefix+'-grade');if(!el)return;
- let info=$(prefix+'-grade-provenance');if(!info){info=document.createElement('div');info.id=prefix+'-grade-provenance';info.className='catalog-grade-meta';el.closest('.formitem,label')?.append(info);}
- const record=snote282GradeRecord(prefix);info.replaceChildren();
- if(!record){info.textContent=el.value==='__existing__'?'기존 차량의 분류를 유지합니다.':el.value==='__manual__'?'직접 입력 · 실차 정보 확인 필요':'트림을 선택하면 연식·동력 방식과 출처를 확인할 수 있습니다.';return;}
- const official=['official_direct','official_search_excerpt'].includes(record.verification),flag=document.createElement('strong');
- flag.textContent=record.market==='GLOBAL'?'해외 참고':official?'제조사 자료':record.verification==='user_import'?'직접 입력':record.verification==='candidate'?'검토 후보':'참고 자료';if(!official)flag.className='needs-review';info.append(flag);
- const conditions=[record.model_year&&record.model_year+'년형',record.fuel,record.engine,record.drivetrain,record.transmission].filter(Boolean);
- if(conditions.length){const span=document.createElement('span');span.textContent=conditions.join(' · ');info.append(span);}
- if(prefix==='new'&&/^\d{4}$/.test(record.model_year||'')&&$('new-year')?.value!==record.model_year){const note=document.createElement('span');note.textContent='입력 연식과 다름 · 실차 확인 필요';info.append(note);}
- if(/^https:\/\//i.test(record.source_url||'')){const link=document.createElement('a');link.href=record.source_url;link.target='_blank';link.rel='noopener noreferrer';link.textContent='출처 ↗';info.append(link);}
 }
 let snote220TaxonomyUI=null,snote220RegistrationSession=0;
 function domesticTaxonomy(){
@@ -4052,7 +4034,7 @@ function fillVehicleSelect(level){
  syncVehicleCatalog();
 }
 function syncVehicleCatalog(){
- snote98SyncInline();showGradeProvenance('new');updateNewCarPreview();
+ snote98SyncInline();updateNewCarPreview();
 }
 function refreshTaxonomyWidget(){const el=$('catalog-counter');if(!el)return;const catalog=domesticTaxonomy();const models=new Set(catalog.map(x=>x.make+'|'+x.group));const generations=new Set(catalog.map(x=>x.make+'|'+x.group+'|'+x.model));const verified=catalog.filter(x=>x.grade).length;const official=catalog.filter(x=>x.grade&&['official_direct','official_search_excerpt'].includes(x.verification)).length; const reference=catalog.filter(x=>x.grade&&!['official_direct','official_search_excerpt'].includes(x.verification)).length;el.textContent='제조사 '+num(uniqueSorted(catalog.map(x=>x.make)).length)+'곳 · 모델 '+num(models.size)+'종 · 세대/세부모델 '+num(generations.size)+'종 · 공식 확인 등급 '+num(official)+'건 · 참고/직접 추가 '+num(reference)+'건 · 등급 미확인 '+num(catalog.filter(x=>!x.grade).length)+'건 · 세부등급 '+num(catalog.filter(x=>x.subgrade).length)+'건';}
 function escapeCsv(value){let s=String(value??'');return '"'+s.replaceAll('"','""')+'"'}
@@ -4142,7 +4124,7 @@ function fillDetailCatalog(level){let make=$('detail-make').value,group=$('detai
 function syncDetailCatalog(){const mainManual=['detail-make','detail-group','detail-generation'].some(id=>$(id).value==='__manual__');const gradeManual=$('detail-grade').value==='__manual__'&&!mainManual;
  $('detail-model-wrapper').style.display=mainManual?'flex':'none';$('detail-model').required=mainManual;
  $('detail-grade-custom-wrapper').style.display=gradeManual?'flex':'none';$('detail-grade-custom').required=false;
- showGradeProvenance('detail');}
+}
 let snote282DetailOriginal=null,snote282DetailInitial='';
 function snote282DetailState(){return JSON.stringify(['detail-make','detail-group','detail-generation','detail-grade','detail-model','detail-grade-custom'].map(id=>$(id).value));}
 function initDetailCatalog(c){
@@ -4152,7 +4134,7 @@ function initDetailCatalog(c){
   $('detail-make').value=c.make;fillDetailCatalog('group');$('detail-group').value=c.group;fillDetailCatalog('model');$('detail-generation').value=c.generation;fillDetailCatalog('grade');
   const savedId=c.taxonomyCatalogRef?.researchId,record=savedId&&rows.find(x=>x.id===savedId&&x.make===c.make&&x.group===c.group&&x.model===c.generation&&x.grade===(c.grade||'')&&x.subgrade===(c.subgrade||''));
   if(record)$('detail-grade').value=record.id;
-  else{const option=document.createElement('option');option.value='__existing__';option.textContent='기존 정보 · '+(catalogTrim(c)||'트림 미기재');$('detail-grade').append(option);$('detail-grade').value=option.value;}
+  else{const option=document.createElement('option');option.value='__existing__';option.textContent=catalogTrim(c)||'트림명 미기재';$('detail-grade').append(option);$('detail-grade').value=option.value;}
   $('detail-grade-custom').value='';
  }else{
   $('detail-make').value='__manual__';fillDetailCatalog('group');$('detail-model').value=c.model||'';
@@ -9909,7 +9891,7 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 <script type="module" src="assets/income-settlement-parent.js?v=2.76"></script>
 <script src="assets/vehicle-sharing.js?v=2.71" defer></script>
 <script src="assets/shared-vehicle-markers.js?v=2.71" defer></script>
-<script src="assets/release-info.js?v=2.82" defer></script>
+<script src="assets/release-info.js?v=2.83" defer></script>
 <script src="assets/company-purchase.js?v=2.77" defer></script>
 <script src="assets/recycle-bin.js?v=2.77" defer></script>
 <script src="assets/profile-editor.js?v=2.79" defer></script>
