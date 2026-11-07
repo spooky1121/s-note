@@ -1,16 +1,20 @@
-/* The existing menu's aria-expanded state reveals the account name beside its photo. */
+/* Hover reveals the account name; focus and the open menu retain an accessible fallback. */
 @media screen{
  #snote-app #snote-profile-dropdown{--profile-collapsed-width:48px;--profile-expanded-width:208px;flex:0 0 auto;width:var(--profile-collapsed-width);min-width:0;transition:width .26s cubic-bezier(.2,.72,.22,1)}
- #snote-app #snote-profile-dropdown:has(>#snote-profile-trigger[aria-expanded=true]){width:var(--profile-expanded-width)}
+ #snote-app #snote-profile-dropdown:has(>#snote-profile-trigger:is([aria-expanded=true],:focus-visible)){width:var(--profile-expanded-width)}
  #snote-app #snote-profile-trigger{position:relative;z-index:31;display:flex;align-items:center;justify-content:flex-start;gap:0;width:100%;min-width:0;max-width:none;min-height:48px;height:48px;margin:0;padding:4px;border:0;border-radius:12px;background:transparent;box-shadow:none;text-align:left;overflow:visible;transition:background-color .18s ease}
  #snote-app #snote-profile-trigger:is(:hover,[aria-expanded=true]){background:#f4f7fb}
  #snote-app #snote-profile-trigger #profile-avatar{flex:0 0 40px;width:40px;height:40px;margin:0}
  #snote-app #snote-profile-trigger .profile-detail{display:block;flex:1 1 auto;min-width:0;max-width:0;margin:0;overflow:hidden;opacity:0;clip-path:inset(0 100% 0 0);transform:translateX(7px);text-align:left;transition:max-width .26s cubic-bezier(.2,.72,.22,1),margin-left .26s cubic-bezier(.2,.72,.22,1),opacity .16s ease,clip-path .26s ease,transform .26s ease}
- #snote-app #snote-profile-trigger[aria-expanded=true] .profile-detail{max-width:calc(var(--profile-expanded-width) - var(--profile-collapsed-width) - 8px);margin-left:8px;opacity:1;clip-path:inset(0);transform:translateX(0);transition-delay:0s,0s,.05s,0s,0s}
+ #snote-app #snote-profile-trigger:is([aria-expanded=true],:focus-visible) .profile-detail{max-width:calc(var(--profile-expanded-width) - var(--profile-collapsed-width) - 8px);margin-left:8px;opacity:1;clip-path:inset(0);transform:translateX(0);transition-delay:0s,0s,.05s,0s,0s}
  #snote-app #snote-profile-trigger #profile-name{display:block;min-width:0;max-width:100%;margin:0;padding:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:20px}
  #snote-app #snote-profile-trigger .snote-profile-chevron{display:none!important}
  #snote-app #snote-profile-trigger.snote-has-notifications::after{left:calc(var(--profile-collapsed-width) - 12px);right:auto;top:2px;z-index:2}
  #snote-app #snote-profile-menu{right:0;left:auto;transform-origin:top right}
+}
+@media screen and (hover:hover) and (pointer:fine){
+ #snote-app #snote-profile-dropdown:hover{width:var(--profile-expanded-width)}
+ #snote-app #snote-profile-dropdown:hover #snote-profile-trigger .profile-detail{max-width:calc(var(--profile-expanded-width) - var(--profile-collapsed-width) - 8px);margin-left:8px;opacity:1;clip-path:inset(0);transform:translateX(0);transition-delay:0s,0s,.05s,0s,0s}
 }
 @media screen and (max-width:760px){
  #snote-app #snote-profile-dropdown{--profile-collapsed-width:44px;--profile-expanded-width:min(180px,calc(100vw - 166px))}

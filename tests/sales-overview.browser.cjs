@@ -1,0 +1,49 @@
+'use strict';
+// Actual S-NOTE index/bridge + Chromium. The existing fixture intercepts every request.
+const assert=require('node:assert/strict');
+const{chromium}=require('./encar/node_modules/playwright');
+const{fixture,setBrowser,finish}=require('./encar/browser-smoke.cjs');
+const HOST='#snote-sales-overview',CLOCK='2026-12-31T15:30:00.000Z';
+function rows(owner){
+ const groups=[['2027-01-01',3],['2027-01-31',2],['2026-12-31',2],['2026-11-01',4],['2026-08-01',1],['2026-07-31',20],['2026-01-31',4],['2027-02-01',6],['2027-01',1],['2026-02-29',1],['',1]];
+ return groups.flatMap(([soldAt,count])=>Array.from({length:count},(_,index)=>({id:'sale-'+soldAt+'-'+index,ownerId:owner,status:'판매완료',soldAt,model:'가상 판매 차량 '+soldAt,plate:'000가'+String(1000+index),year:2026,purchaseAt:'2026-01-01',buy:1000,sell:1200,costs:{}}))).concat({id:'inventory',ownerId:owner,status:'판매중',soldAt:'2027-01-01',model:'가상 재고 차량',plate:'000나0000',year:2026,buy:1000,sell:1200,costs:{}});
+}
+async function values(page){return page.locator(HOST+' .sales-overview-metric dd').allTextContents();}
+async function settle(page){await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));}
+async function check(width){
+ const f=await fixture(width),p=f.page;
+ try{
+  await p.clock.install({time:new Date(CLOCK)});
+  await p.evaluate(()=>{closeVehicle({discard:true});window.__salesOverviewActor=__encarFixtureState.user.id;window.__salesOverviewOwner=currentUser.username;});
+  const owner=await p.evaluate(()=>currentUser.username),source=rows(owner),other='cld_222222222222422282';
+  source.push(...Array.from({length:9},(_,index)=>({...source[0],id:'other-'+index,ownerId:other})));
+  await p.evaluate(source=>{cars=structuredClone(source);window.__salesOverviewBefore=JSON.stringify(cars);window.__salesOverviewStorage=Object.fromEntries(Object.entries(localStorage));navigate('sell');},source);
+  await p.locator(HOST+'[data-state="ready"]').waitFor();
+  assert.deepEqual(await values(p),['5대','+3대','+1대','12대'],'Dealer overview must exclude another owner and future/prior-outside-range sales');
+  assert.match(await p.locator(HOST).textContent(),/전월 2대 · \+150%/);assert.match(await p.locator(HOST).textContent(),/전년 동월 4대 · \+25%/);assert.match(await p.locator(HOST).textContent(),/2026\.08 — 2027\.01/);
+  assert.deepEqual(await p.locator(HOST+' .sales-overview-month').evaluateAll(items=>items.map(item=>[item.dataset.month,item.dataset.count])),[['2026-08','1'],['2026-09','0'],['2026-10','0'],['2026-11','4'],['2026-12','2'],['2027-01','5']]);
+  assert.equal(await p.locator(HOST+' .sales-overview-undated').textContent(),'판매일 확인 3대');
+  const november=p.locator(HOST+' [data-month="2026-11"]');await november.focus();await p.keyboard.press('Enter');assert.equal(await p.locator('#snote-sales-month').inputValue(),'2026-11');assert.deepEqual(await values(p),['5대','+3대','+1대','12대'],'Selecting a graph month must not move the six-month reporting period');
+  await p.locator('#list-query').fill('일치하지않는가상검색');await p.locator('#list-query').dispatchEvent('input');await settle(p);assert.deepEqual(await values(p),['5대','+3대','+1대','12대'],'List searches must not change reporting totals');
+  await p.locator('#list-query').fill('');await p.locator('#list-query').dispatchEvent('input');
+  await november.hover();await p.locator('#snote-icon-tooltip:not([hidden])').waitFor();assert.match(await p.locator('#snote-icon-tooltip').textContent(),/2026년 11월 · 4대/);await p.mouse.move(0,0);
+  await p.locator(HOST+' .sales-overview-undated').click();assert.equal(await p.locator('#snote-sales-month').inputValue(),'undated');assert.equal(await p.locator('#snote-sales-month-count').textContent(),'3대');
+  assert.equal(await p.evaluate(()=>JSON.stringify(cars)===__salesOverviewBefore),true,'Graph month/search selection must not mutate cars');assert.equal(await p.evaluate(()=>Object.entries(__salesOverviewStorage).every(([key,value])=>localStorage.getItem(key)===value)),true,'Graph must not persist changes to source datasets');
+  const geometry=await p.locator(HOST).evaluate(host=>{const boxes=[...host.querySelectorAll('.sales-overview-month')].map(item=>item.getBoundingClientRect()),metrics=[...host.querySelectorAll('.sales-overview-metric')].map(item=>item.getBoundingClientRect());return{overflow:host.scrollWidth>host.clientWidth,pageOverflow:document.documentElement.scrollWidth>innerWidth,chartRows:new Set(boxes.map(box=>Math.round(box.top))).size,metricRows:new Set(metrics.map(box=>Math.round(box.top))).size,height:host.getBoundingClientRect().height};});
+  await p.locator(HOST).scrollIntoViewIfNeeded();await p.screenshot({path:'/tmp/snote-v288-sales-overview-'+width+'.png'});
+  assert.equal(geometry.overflow,false);assert.equal(geometry.pageOverflow,false);assert.equal(geometry.chartRows,1,'All six months must fit on one row');assert.equal(geometry.metricRows,width<=760?2:1,'Compact metric cards must use 2×2 on phones');assert(geometry.height<400,'Overview must remain compact '+JSON.stringify(geometry));
+  // Manager totals follow the existing dealer selector, independently from the search/month selector.
+  await p.evaluate(other=>{currentUser.role='admin';__encarFixtureState.members[0].role='admin';renderAccountantBar();const select=document.getElementById('accountant-dealer-filter');for(const[value,label]of[['all','전체 담당자'],[currentUser.username,'본인'],[other,'다른 딜러']]){if(![...select.options].some(option=>option.value===value))select.add(new Option(label,value));}select.value='all';renderCars();},other);
+  await p.waitForFunction(()=>document.querySelector('#snote-sales-overview .sales-overview-metric dd')?.textContent==='14대');assert.deepEqual(await values(p),['14대','+12대','+10대','21대']);
+  await p.evaluate(other=>{document.getElementById('accountant-dealer-filter').value=other;renderCars();},other);await p.waitForFunction(()=>document.querySelector('#snote-sales-overview .sales-overview-metric dd')?.textContent==='9대');assert.deepEqual(await values(p),['9대','+9대','+9대','9대']);assert.match(await p.locator(HOST).textContent(),/기준 0대/);assert.doesNotMatch(await p.locator(HOST).textContent(),/Infinity|NaN|100%/);
+  // Reset to the dealer context, then exercise hydration and an invalidated account scope.
+  await p.evaluate(()=>{document.getElementById('accountant-dealer-filter').value='all';currentUser.role='dealer';__encarFixtureState.members[0].role='dealer';__encarFixtureState.loading=true;window.dispatchEvent(new Event('snote:sales-data-changed'));});await p.locator(HOST+'[data-state="loading"]').waitFor();assert.equal(await p.locator(HOST+' .sales-overview-metric').count(),0,'Hydrating account must not expose prior counts');
+  await p.evaluate(()=>{__encarFixtureState.loading=false;window.dispatchEvent(new Event('snote:sales-data-changed'));});await p.locator(HOST+'[data-state="ready"]').waitFor();assert.equal((await values(p))[0],'5대');
+  await p.evaluate(()=>{__encarFixtureState.user.id='99999999-9999-4999-8999-999999999999';window.dispatchEvent(new Event('snote:sales-data-changed'));});await p.locator(HOST+'[data-state="loading"]').waitFor();assert.equal(await p.locator(HOST+' .sales-overview-month').count(),0,'Changed account cannot keep another dealer chart or active selection');
+  await p.evaluate(()=>{__encarFixtureState.user.id=__salesOverviewActor;cars=[];renderCars();});await p.locator(HOST+'[data-state="ready"]').waitFor();assert.deepEqual(await values(p),['0대','0대','0대','0대']);assert.equal(await p.locator(HOST+' .sales-overview-month[data-count="0"]').count(),6);assert.equal(await p.locator(HOST+' .sales-overview-undated').count(),0);
+  await p.evaluate(()=>{window.__salesOverviewCurrent=snoteSalesOverviewBridge.current;snoteSalesOverviewBridge.current=()=>undefined;window.dispatchEvent(new Event('snote:sales-data-changed'));});await p.locator(HOST+'[data-state="loading"]').waitFor();assert.equal(await p.locator(HOST+' .sales-overview-metric').count(),0,'An unconfirmed bridge context must fail closed');await p.evaluate(()=>{snoteSalesOverviewBridge.current=__salesOverviewCurrent;window.dispatchEvent(new Event('snote:sales-data-changed'));});await p.locator(HOST+'[data-state="ready"]').waitFor();
+  await p.evaluate(()=>navigate('buy'));assert.equal(await p.locator(HOST).isVisible(),false);assert.equal(await p.locator(HOST).textContent(),'');
+  console.log('PASS '+width+' actual sales overview: KST/year boundary, six exact counts, month/year comparisons, accepted scope/filter, zero/invalid dates, keyboard/month selection, tooltip, immutable data, hydration/account clearing and compact layout');
+ }finally{await finish(f);}
+}
+(async()=>{const browser=await chromium.launch({headless:true,executablePath:'/usr/bin/chromium'});setBrowser(browser);try{for(const width of [1440,1024,390,320])await check(width);}finally{await browser.close();}})().catch(error=>{console.error(error.stack);process.exitCode=1;});

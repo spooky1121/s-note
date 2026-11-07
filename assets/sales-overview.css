@@ -1,0 +1,38 @@
+/* Compact sold-vehicle overview; six months always fit on one line. */
+#snote-sales-overview{min-width:0;margin:0 0 18px;padding:18px 22px 13px;border:1px solid #e8ebf1;border-radius:14px;background:#fff;color:#28354b;box-shadow:0 2px 8px #1b365303;font-family:inherit}
+#snote-sales-overview[hidden]{display:none!important}
+#snote-sales-overview .sales-overview-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+#snote-sales-overview h2{margin:0;color:#25354b;font-size:15px;font-weight:650;line-height:1.4;letter-spacing:-.35px}
+#snote-sales-overview .sales-overview-head p{margin:4px 0 0;color:#929cab;font-size:11px;line-height:1.5}
+#snote-sales-overview .sales-overview-period{flex:none;color:#8b96a6;font-size:11px;font-variant-numeric:tabular-nums}
+#snote-sales-overview .sales-overview-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;margin:0 0 9px}
+#snote-sales-overview .sales-overview-metric{min-width:0;padding:0 18px;border-left:1px solid #edf0f4}
+#snote-sales-overview .sales-overview-metric:first-child{padding-left:0;border-left:0}
+#snote-sales-overview .sales-overview-metric dt{color:#8792a4;font-size:11px;line-height:1.4;letter-spacing:-.2px}
+#snote-sales-overview .sales-overview-metric dd{margin:5px 0 0;font-size:24px;font-weight:650;line-height:1.25;letter-spacing:-.8px;font-variant-numeric:tabular-nums}
+#snote-sales-overview .sales-overview-metric:first-child dd,#snote-sales-overview .sales-overview-metric .is-up{color:#3168e9}
+#snote-sales-overview .sales-overview-metric .is-down{color:#d15f69}
+#snote-sales-overview .sales-overview-metric .is-same{color:#58677b}
+#snote-sales-overview .sales-overview-metric p{margin:5px 0 0;color:#98a1af;font-size:10px;line-height:1.5;overflow-wrap:anywhere}
+#snote-sales-overview .sales-overview-chart{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;min-width:0;padding:0 3px;background:repeating-linear-gradient(to top,transparent 0,transparent 31px,#f1f4f8 31px,#f1f4f8 32px);background-size:100% 96px;background-position:0 0;background-repeat:no-repeat}
+#snote-sales-overview .sales-overview-month{display:flex;flex-direction:column;align-items:stretch;min-width:0;margin:0;padding:0 5px 3px;border:0;border-radius:6px;background:transparent;box-shadow:none;color:#909aaa;font:inherit;cursor:pointer;transform:none;transition:background .15s}
+#snote-sales-overview .sales-overview-month:hover{background:#f5f8fe;transform:none}
+#snote-sales-overview .sales-overview-month:focus-visible{outline:2px solid #8ab0f6;outline-offset:1px}
+#snote-sales-overview .sales-overview-plot{display:flex;position:relative;align-items:flex-end;justify-content:center;height:102px;border-bottom:1px solid #e9eef5}
+#snote-sales-overview .sales-overview-bar{position:relative;display:block;width:46%;height:calc(var(--sales-bar-ratio)*78px);max-width:42px;min-width:12px;border-radius:4px 4px 0 0;background:#b9cdf7;transition:background .15s}
+#snote-sales-overview .is-current .sales-overview-bar{background:#3972ec}
+#snote-sales-overview .sales-overview-month:hover .sales-overview-bar{background:#6a97f3}
+#snote-sales-overview .sales-overview-bar[data-zero=true]{border-top:2px solid #dbe5f8}
+#snote-sales-overview .sales-overview-bar strong{position:absolute;bottom:100%;left:50%;padding-bottom:6px;transform:translateX(-50%);color:#7486a1;font-size:11px;font-weight:550;line-height:1;font-variant-numeric:tabular-nums;white-space:nowrap}
+#snote-sales-overview .is-current .sales-overview-bar strong{color:#3168e9;font-weight:650}
+#snote-sales-overview .sales-overview-month-label{margin-top:8px;font-size:11px;font-weight:500;line-height:1.4}
+#snote-sales-overview .is-current .sales-overview-month-label{color:#3168e9;font-weight:650}
+#snote-sales-overview .sales-overview-foot{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px 12px;margin-top:9px;color:#9ba4b1;font-size:10px;line-height:1.5}
+#snote-sales-overview .sales-overview-undated{display:inline-flex;align-items:center;min-height:25px;padding:3px 8px;border:0;border-radius:6px;background:#fff6e6;box-shadow:none;color:#ac7b35;font:inherit;white-space:nowrap;cursor:pointer}
+#snote-sales-overview .sales-overview-undated:hover{background:#ffeed1}
+#snote-sales-overview .sales-overview-state{min-height:74px;display:flex;flex-direction:column;justify-content:center}
+#snote-sales-overview .sales-overview-state p{margin:8px 0 0;color:#9aa4b3;font-size:12px;line-height:1.5}
+@media(max-width:760px){#snote-sales-overview{padding:16px 15px 12px;margin-bottom:14px;border-radius:12px}#snote-sales-overview .sales-overview-head{gap:8px;margin-bottom:14px}#snote-sales-overview .sales-overview-head p{display:none}#snote-sales-overview .sales-overview-period{font-size:10px}#snote-sales-overview .sales-overview-metrics{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 0;margin-bottom:6px}#snote-sales-overview .sales-overview-metric{padding:0 0 0 16px}#snote-sales-overview .sales-overview-metric:nth-child(odd){padding-left:0;border-left:0}#snote-sales-overview .sales-overview-metric dd{font-size:22px;margin-top:3px}#snote-sales-overview .sales-overview-metric p{font-size:10px;margin-top:3px}#snote-sales-overview .sales-overview-chart{gap:2px;padding:0;background-size:100% 78px}#snote-sales-overview .sales-overview-month{padding:0 2px 3px}#snote-sales-overview .sales-overview-plot{height:84px}#snote-sales-overview .sales-overview-bar{width:53%;height:calc(var(--sales-bar-ratio)*60px);max-width:28px}#snote-sales-overview .sales-overview-foot{font-size:10px}}
+@media(max-width:360px){#snote-sales-overview{padding:14px 12px 10px}#snote-sales-overview .sales-overview-period{font-size:9px}#snote-sales-overview .sales-overview-metric p{font-size:9px}#snote-sales-overview .sales-overview-metric dd{font-size:21px}#snote-sales-overview .sales-overview-foot>span{max-width:190px}}
+@media(prefers-reduced-motion:reduce){#snote-sales-overview *{transition:none!important}}
+@media print{#snote-sales-overview{display:none!important}}
