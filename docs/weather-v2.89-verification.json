@@ -1,0 +1,76 @@
+{
+  "release": "2.89",
+  "runtimeCommit": "1d113922b1e014fc1e89da1bfed3772c7c984767",
+  "evidenceMethod": "User browser production API response, independently compared with official KMA HTML table; local replay uses actual frontend assets.",
+  "productionResponse": {
+    "ok": true,
+    "station": 99,
+    "region": "파주",
+    "temperature": 9.5,
+    "summary": "맑음",
+    "code": 0,
+    "source": "기상청",
+    "sourceUrl": "https://www.kma.go.kr/XML/weather/sfc_web_map.xml",
+    "observedAt": "2026-11-07T07:00:00.000Z",
+    "timezone": "Asia/Seoul",
+    "locationBasis": "접속 지역 인근 관측소",
+    "fetchedAt": "2026-11-07T07:34:44.156Z",
+    "checkedAt": "2026-11-07T07:34:44.156Z",
+    "stale": false
+  },
+  "officialReference": {
+    "url": "https://www.weather.go.kr/w/weather/land/city-obs.do",
+    "observedAt": "2026-11-07T07:00:00.000Z",
+    "region": "파주",
+    "temperature": 9.5,
+    "summary": null,
+    "matched": [
+      "observedAt",
+      "region",
+      "temperature"
+    ],
+    "note": "Official HTML table leaves current weather blank for Paju; sky condition is from the production XML API response and is not independently confirmed from XML."
+  },
+  "productionUiUserConfirmed": {
+    "confirmed": true,
+    "evidence": "User reported the production page icon, temperature and tooltip display normally after reload.",
+    "expectedTemperature": "10°",
+    "expectedIcon": "yellow sun",
+    "expectedTooltip": {
+      "region": "파주",
+      "temperature": 9.5,
+      "observedAtKst": "2026-11-07 16:00"
+    }
+  },
+  "environmentDirectAccess": "blocked: same instance spec1 with HTTPS proxy CONNECT 403; no raw XML or production-page fetch claimed",
+  "renderReplay": {
+    "status": "passed",
+    "viewports": [
+      1440,
+      1024,
+      390,
+      320
+    ],
+    "scope": "Actual current index/assets in Chromium, replaying the user-provided captured Production JSON. No direct Production HTTP or Production login was performed. Auth, account, profile photo, vehicle records and other responses are synthetic fixtures.",
+    "capturedResponseSha256": "9a60457928035d99218fdc62bcb60cfdeea5a233367944d8bd0d52ceae126e01",
+    "sources": {
+      "index.html": "6f24b3bc7210021514beb216aa930725d042c8dc6a7c7955688ac5bf68d3893d",
+      "assets/workspace-refine.js": "bc121a841f0ebbd0011a0beda2fe4e37310549d69e0a310b9009f14fc25c7644",
+      "assets/workspace-refine.css": "9af3365906b42216acedfb8adf6566855cf178347c7f8d46fc3e0aec368a46cd",
+      "assets/profile-compact.css": "625878a5ce502aa0e02e374c7661978d4d9ee3d3f4711157777f2a87ce33d691"
+    },
+    "checks": [
+      "ready state",
+      "9.5 Celsius rounded to 10 degrees in header",
+      "yellow sun icon",
+      "Paju and 9.5 Celsius and 16:00 KST observation in tooltip content",
+      "manual forced refresh",
+      "five-minute automatic request",
+      "no navigation",
+      "no header overlap or horizontal overflow"
+    ],
+    "receiptSha256": "cc87111565eb902d1ca9d2ed7cb7dcf61c5fe5062f55691c65013fd258081812",
+    "browserTimeBasis": "Captured checkedAt, advanced one minute before manual refresh and five minutes for scheduled refresh."
+  },
+  "verifiedAt": "2026-11-07T07:38:45.141728+00:00"
+}
