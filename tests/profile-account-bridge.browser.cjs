@@ -112,6 +112,15 @@ async function profileAndPhoto(width){
  const saved=await p.evaluate(async({profile,expected})=>{return await snoteProfileBridge.save(snoteProfileBridge.context(),expected,{display_name:'새 프로필 이름',company_name:profile.company_name,phone:profile.phone,address:profile.address});},{profile:f.profile.profile,expected:expected(f.profile.profile)});
  await assertCompanyCache(p);assert.equal(saved.profile.display_name,'새 프로필 이름');assert.equal(f.profile.profile.phone,'01012345678');assert.equal(await p.locator('#profile-name').textContent(),'새 프로필 이름 · 딜러');
  const photo=await upload(f);assert.match(photo.avatarURL,/^blob:/);assert.equal(photo.avatar.avatar_revision,1);assert.equal(f.profile.uploads.length,1);assert.equal(f.profile.deletes.length,0);assert.equal(await p.locator('#profile-avatar img').count(),1);assert.equal(await p.locator('#profile-avatar img').getAttribute('src'),photo.avatarURL);
+ await p.locator('#profile-avatar img').waitFor({state:'visible'});
+ const avatarLayout=await p.locator('#profile-avatar').evaluate(host=>{
+  const rect=host.getBoundingClientRect(),css=getComputedStyle(host),image=host.querySelector('img'),calculator=document.getElementById('snote-calculator-trigger').getBoundingClientRect(),name=document.getElementById('profile-name').getBoundingClientRect();
+  const radius=parseFloat(css.borderTopLeftRadius)*(css.borderTopLeftRadius.endsWith('%')?rect.width/100:1);
+  return{width:rect.width,height:rect.height,radius,clipped:css.overflow==='hidden',imageFit:getComputedStyle(image).objectFit,afterCalculator:rect.left>=calculator.right,beforeName:rect.right<=name.left,centerDifference:Math.abs(rect.top+rect.height/2-calculator.top-calculator.height/2),overflow:document.documentElement.scrollWidth>innerWidth};
+ });
+ assert(avatarLayout.width>=28&&avatarLayout.width<=32,JSON.stringify(avatarLayout));assert.equal(avatarLayout.width,avatarLayout.height);assert(avatarLayout.radius>=avatarLayout.width/2);assert.equal(avatarLayout.clipped,true);assert.equal(avatarLayout.imageFit,'cover');assert.equal(avatarLayout.afterCalculator,true);assert.equal(avatarLayout.beforeName,true);assert(avatarLayout.centerDifference<1);assert.equal(avatarLayout.overflow,false);
+ await p.locator('.topbar').screenshot({path:'/tmp/snote-v281-topbar-avatar-'+width+'.png'});
+ await p.locator('#profile-avatar').click();await p.locator('#snote-profile-menu').waitFor({state:'visible'});await p.keyboard.press('Escape');
  const reopened=await read(f);assert.equal(reopened.avatar.avatar_path,photo.avatar.avatar_path);assert.match(reopened.avatarURL,/^blob:/);assert.equal(await p.evaluate(()=>__profileBridgeTest.mutableRpcCalls),0);assert.equal(await p.evaluate(()=>__profileBridgeTest.mutableAuthReads),0);assert((await p.evaluate(()=>__profileBridgeTest.verifiedTokens)).every(token=>token===TOKENS[ACTOR]));
  await finish(f);console.log('PASS',width,'actual pinned profile read/save, foreign-company cache isolation, readonly company address, email mutation removed and private avatar upload/read/topbar persistence');
 }

@@ -1,3 +1,12 @@
+/* Account photo shares the existing authenticated avatar lifecycle. */
+@media screen{
+ #snote-app #profile-avatar{display:grid;place-items:center;flex:0 0 32px;width:32px;height:32px;overflow:hidden;border-radius:50%;background:#edf2f8;color:#6a7d96;font-size:14px;font-weight:600;line-height:1}
+ #snote-app #profile-avatar>img{display:block;width:100%;height:100%;object-fit:cover;border-radius:inherit}
+}
+@media screen and (max-width:760px){
+ #snote-app #profile-avatar{flex-basis:28px;width:28px;height:28px;font-size:12px}
+ #snote-app #snote-profile-trigger{max-width:156px;gap:6px;padding-inline:4px}
+}
 /* Personal account drawer. Kept outside the native centered-dialog upgrader. */
 @media screen{
  #snote-profile-dialog{position:fixed!important;inset:0!important;z-index:4200;display:flex;justify-content:flex-end;width:100vw!important;height:100dvh!important;max-width:none!important;max-height:none!important;padding:0!important;margin:0!important;border:0!important;border-radius:0!important;background:rgba(24,33,48,.26);color:#263244;opacity:0;transition:opacity .24s ease;overscroll-behavior:contain;isolation:isolate}
