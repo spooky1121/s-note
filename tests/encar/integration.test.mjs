@@ -13,7 +13,7 @@ const backend = (await readFile(new URL('../../functions/api/encar.js', import.m
 const { onRequest } = await import('data:text/javascript;base64,' + Buffer.from(backend).toString('base64'));
 const PLATE = '12가3456', ORIGINAL = '43000001', TRUSTED = '43000002';
 const BASE = 'https://fem.encar.com/cars/detail/';
-const LOOKUP_LOGO_SRC = 'assets/encar-logo.png?v=2.33';
+const LOOKUP_LOGO_SRC = 'assets/encar-wordmark.png?v=2.73';
 const TOKEN = 'synthetic_integration_token_longer_than_thirty_characters';
 const USER = '10000000-0000-4000-8000-000000000001';
 const tick = () => new Promise(resolve => setImmediate(resolve));

@@ -1,0 +1,121 @@
+{
+  "schemaVersion": 1,
+  "catalogVersion": "research-20261107-v1",
+  "datasetManifest": {
+    "dataset_version": "research-20261107-v1",
+    "source_sha256": "8bd4bd4a44125693064e78f691bd0cf26d2b68e6b3421672c38bb38b4109a570",
+    "entry_count": 3128,
+    "record_ids_sha256": "52c2a2bf9d26591012a01b22abfb82ef38616a8dc2f8440e46d7f4f1f155bd2a",
+    "records_sha256": "cc54e8fa73d73e4ce534cb191f22d0151b7751684ee93ca88b9347fba34b612f"
+  },
+  "manifestSha256": "3d7f84f304c3464f780485d5f1a005270ebfa2341d5d79663aea93f04ff34c3a",
+  "source": {
+    "path": "research/vehicle-taxonomy/exports/official-research.json",
+    "bytes": 10226822,
+    "sha256": "8bd4bd4a44125693064e78f691bd0cf26d2b68e6b3421672c38bb38b4109a570"
+  },
+  "legacyBackup": {
+    "path": "research/vehicle-taxonomy/runtime-integration/legacy-bundled-backup.json",
+    "bytes": 1349517,
+    "sha256": "95336224a3cd0d1953b726268f371dfccfdc6390c735d1472c83f06a538f3422",
+    "sourceCommit": "42768526991496f7ef049d5ba73bbb28b902ed1e",
+    "bundledRows": 1615,
+    "domesticRows": 1383,
+    "operationalCompanyOrUserDataIncluded": false
+  },
+  "counts": {
+    "records": 3128,
+    "byMarket": {
+      "GLOBAL": 154,
+      "KR": 2974
+    },
+    "byEvidenceStatus": {
+      "candidate": 6,
+      "official_direct": 1895,
+      "official_search_excerpt": 10,
+      "provider_catalog_direct": 826,
+      "reference_direct": 391
+    },
+    "sourceIds": 470,
+    "distinctSourceUrls": 469
+  },
+  "fieldStats": {
+    "maximumStringLengths": {
+      "make": 10,
+      "group": 25,
+      "model": 29,
+      "grade": 33,
+      "subgrade": 16
+    },
+    "emptyFieldRows": {
+      "make": 0,
+      "group": 0,
+      "model": 0,
+      "grade": 180,
+      "subgrade": 2720
+    },
+    "modelYearRawValues": {
+      "": 2376,
+      "2004": 21,
+      "2005": 18,
+      "2006": 14,
+      "2007": 17,
+      "2008": 8,
+      "2009": 36,
+      "2010": 31,
+      "2011": 34,
+      "2012": 19,
+      "2013": 78,
+      "2014": 22,
+      "2015": 19,
+      "2016": 8,
+      "2017": 5,
+      "2018": 25,
+      "2019": 22,
+      "2020": 9,
+      "2021": 22,
+      "2022": 2,
+      "2023": 32,
+      "2024": 19,
+      "2025": 67,
+      "2025.5": 13,
+      "2026": 128,
+      "2027": 83
+    },
+    "uniqueFiveFieldLabels": 2924,
+    "sameFiveFieldLabelExcessObservationsRetained": 204
+  },
+  "verification": {
+    "sourceObservations": 3128,
+    "runtimeObservations": 3128,
+    "allNormalizedFieldsExactlyPreserved": true,
+    "savedSourceRecordsLosslesslyReconstructed": 3128,
+    "evidenceSourceReferencesVerified": 3128,
+    "uniqueObservationIds": 3128,
+    "fiveFieldDeduplicationApplied": false,
+    "recordFilteringApplied": false
+  },
+  "runtimeCatalog": {
+    "path": "assets/vehicle-catalog.json",
+    "bytes": 7515869,
+    "sha256": "3d7f84f304c3464f780485d5f1a005270ebfa2341d5d79663aea93f04ff34c3a"
+  },
+  "files": [
+    {
+      "path": "assets/vehicle-catalog.json",
+      "bytes": 7515869,
+      "sha256": "3d7f84f304c3464f780485d5f1a005270ebfa2341d5d79663aea93f04ff34c3a"
+    },
+    {
+      "path": "research/vehicle-taxonomy/runtime-integration/legacy-bundled-backup.json",
+      "bytes": 1349517,
+      "sha256": "95336224a3cd0d1953b726268f371dfccfdc6390c735d1472c83f06a538f3422"
+    },
+    {
+      "path": "scripts/build-runtime-vehicle-catalog.py",
+      "bytes": 18721,
+      "sha256": "5032e43c95cf3349e2b2776732551d9ef387817882f751a7b4220c17d2b24376"
+    }
+  ],
+  "productionCompanyBackupScope": "Operational company taxonomy is backed up privately by the deployment migration, never copied into this public artifact."
+}

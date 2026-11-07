@@ -10,6 +10,9 @@ const persist=between('function persistCars(ownerId=null){','function dealerLabe
 const reset=between('let snote221IncomeEpoch=0;','function snote221IncomeContext(');
 const reload=between('async function reload(){if(!S.ready)return;','status.addEventListener(\'click\',reload);');
 const scrub=between('function scrub(o){','function cleanCustomer(');
+// Owner authorization is shared with company-purchase views. Execute the real
+// helpers too, so this isolated bridge does not replace that policy with a stub.
+const companyOwners=between('function snoteCompanyActor(){','function snoteCompanyOwnerLabel(');
 const COMPANY='10000000-0000-4000-8000-000000000001',USER='20000000-0000-4000-8000-000000000001',OTHER='30000000-0000-4000-8000-000000000001';
 const alias=id=>'cld_'+id.replaceAll('-','').slice(0,18),key=owner=>'cars:'+owner,store=owner=>'zerocar-office-v12-cars-'+alias(owner);
 const clone=value=>JSON.parse(JSON.stringify(value));
@@ -24,7 +27,7 @@ function fixture({role='dealer',owner=USER,server:initial}={}){
  ]);
  const members=[{user_id:USER,company_id:COMPANY,role,active:true},{user_id:OTHER,company_id:COMPANY,role:'dealer',active:true}];
  let gate=null,failNext=false,ackOverride=false,restores=0;
- const S={ready:true,loading:false,busy:false,user:{id:USER},company:{id:COMPANY},members,client:null,revisions:new Map(),queue:new Set(),timer:null,saving:false,conflict:false};
+ const S={ready:true,loading:false,busy:false,user:{id:USER},company:{id:COMPANY},members,companyOwners:new Map(),client:null,revisions:new Map(),queue:new Set(),timer:null,saving:false,conflict:false};
  const overlay={open:true,classList:{contains(name){return name==='open'&&overlay.open;}}};
  const storageOwner=k=>members.find(member=>store(member.user_id)===k)?.user_id;
  const context={S,Storage:MemoryStorage,localStorage,snote224VehicleOpen:1,console:{error(){},warn(){}},setTimeout(){return 1;},clearTimeout(){},
@@ -53,7 +56,7 @@ function fixture({role='dealer',owner=USER,server:initial}={}){
   const revision=row.revision+1;server.set(key(args.p_owner),{revision,payload:clone(args.p_payload)});events.push('rpc-ack');
   return{data:ackOverride?'invalid-ack':revision,error:null};
  }};
- vm.createContext(context);vm.runInContext(fs.readFileSync(path.resolve(__dirname,'../../assets/money.js'),'utf8'),context);vm.runInContext(scrub+persist+storage+bridge+reset+reload+'\nwindow.flushActual=flush;window.persistActual=persistCars;window.reloadActual=reload;',context);
+ vm.createContext(context);vm.runInContext(fs.readFileSync(path.resolve(__dirname,'../../assets/money.js'),'utf8'),context);vm.runInContext(companyOwners+scrub+persist+storage+bridge+reset+reload+'\nwindow.flushActual=flush;window.persistActual=persistCars;window.reloadActual=reload;',context);
  return{context,S,server,calls,events,localStorage,bridge:context.snoteEncarLinksBridge,
   get restores(){return restores;},hold(){const entry={entered:deferred(),release:deferred()};gate=entry;return entry;},
   failNext(){failNext=true;},invalidAck(){ackOverride=true;},

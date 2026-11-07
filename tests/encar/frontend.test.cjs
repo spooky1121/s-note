@@ -10,7 +10,7 @@ const { JSDOM, VirtualConsole } = require('jsdom');
 
 const SOURCE = fs.readFileSync(path.resolve(__dirname, '../../assets/snote-encar-link.js'), 'utf8');
 const PREFIX = 'snote.encar.candidate.v1:';
-const LOOKUP_LOGO_SRC = 'assets/encar-logo.png?v=2.33';
+const LOOKUP_LOGO_SRC = 'assets/encar-wordmark.png?v=2.73';
 const PLATE = '12가3456';
 const SECOND_PLATE = '34나5678';
 const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -57,7 +57,7 @@ function assertLookupIcon(button, busy = false) {
   assert.equal(icons.length, 1, 'Lookup state changes must preserve exactly one logo image');
   assert.equal(icons[0].namespaceURI, 'http://www.w3.org/1999/xhtml');
   assert.equal(icons[0].getAttribute('src'), LOOKUP_LOGO_SRC, 'Every lookup state must keep the supplied PNG logo');
-  assert.equal(icons[0].classList.contains('snote-encar-logo'), true);
+  assert.equal(icons[0].classList.contains('snote-encar-wordmark'), true);
   assert.equal(icons[0].getAttribute('alt'), '', 'The button names the action; the image is decorative');
   assert.equal(icons[0].getAttribute('aria-hidden'), 'true');
   assert.equal(icons[0].tabIndex, -1, 'Keyboard focus belongs to the button');

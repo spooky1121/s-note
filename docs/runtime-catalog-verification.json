@@ -1,0 +1,49 @@
+{
+  "release": "2.82",
+  "verifiedAt": "2026-11-07T00:40:00Z",
+  "catalog": {
+    "dataset_version": "research-20261107-v1",
+    "expected_count": 3128,
+    "manifest_sha256": "3d7f84f304c3464f780485d5f1a005270ebfa2341d5d79663aea93f04ff34c3a",
+    "activated_at": "2026-11-07 00:38:57.28311+00",
+    "actual_count": 3128,
+    "global_count": 154,
+    "fresh_custom_count": 0,
+    "backup_count": 6
+  },
+  "operationalDataCheck": {
+    "previousSelectionRows": 6,
+    "privateBackupRows": 6,
+    "previousSelectionHashUnchanged": true,
+    "vehicleDatasets": 2,
+    "vehicleDatasetHashUnchanged": true,
+    "customerDataWrites": 0,
+    "vehicleDataWrites": 0
+  },
+  "runtimeCatalog": {
+    "path": "assets/vehicle-catalog.json",
+    "bytes": 7515869,
+    "sha256": "3d7f84f304c3464f780485d5f1a005270ebfa2341d5d79663aea93f04ff34c3a"
+  },
+  "permissions": {
+    "authenticatedRpcReturnedAll3128": true,
+    "newCompanyManualEntries": 0,
+    "tablePrivilegesRevoked": true,
+    "rlsEnabled": true,
+    "advisorRlsWithoutPolicy": "Intentional deny-all for private storage; checked RPCs provide access."
+  },
+  "checks": {
+    "sourceRecordReconstruction": 3128,
+    "selectionBranches": 670,
+    "browserLeafSelections": 3128,
+    "emptyGradeObservations": 180,
+    "subgradeObservations": 408,
+    "globalObservations": 154,
+    "additionalSameFiveLabelsObservations": 204
+  },
+  "migration": {
+    "repositoryVersion": "20261107002437",
+    "supabaseAppliedVersion": "20261107003314",
+    "name": "researched_vehicle_catalog_replacement"
+  }
+}

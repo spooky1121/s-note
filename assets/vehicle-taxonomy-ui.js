@@ -6,7 +6,7 @@ const notices=[];
 function error(code,message){return Object.assign(new Error(message),{code});}
 function current(captured=scope){return !!captured&&captured.uiEpoch===epoch&&scope?.key===captured.key&&bridge()?.context()?.key===captured.key;}
 function check(captured){if(!current(captured))throw error('CONTEXT_CHANGED','로그인 또는 상사가 변경되었습니다.');}
-function key(context){return 'snote-company-taxonomy-pending:v1:'+context.company_id+':'+context.user_id;}
+function key(context){return 'snote-company-taxonomy-pending:research-20261107-v1:'+context.company_id+':'+context.user_id;}
 function persist(){
   if(!current())return;
   try{if(pending.length)localStorage.setItem(key(scope),JSON.stringify(pending));else localStorage.removeItem(key(scope));}
@@ -30,7 +30,7 @@ function addNotice(host,inline=false){
   const retry=document.createElement('button');retry.type='button';retry.textContent='목록 저장 다시 확인';retry.dataset.vehicleTaxonomyRetry='';
   if(!inline)retry.id='snote220-taxonomy-retry';
   retry.addEventListener('click',()=>retryPending());
-  const sql=document.createElement('a');sql.href='supabase/migrations/202611010005_vehicle_taxonomy.sql';sql.download='202611010005_vehicle_taxonomy.sql';sql.textContent='설정 SQL 받기';
+  const sql=document.createElement('a');sql.href='supabase/migrations/20261107002437_researched_vehicle_catalog_replacement.sql';sql.download='20261107002437_researched_vehicle_catalog_replacement.sql';sql.textContent='설정 SQL 받기';
   actions.append(retry,sql);box.append(text,actions);host.append(box);notices.push({box,text,retry,sql});
 }
 const content=document.querySelector('#snote-app .content');
