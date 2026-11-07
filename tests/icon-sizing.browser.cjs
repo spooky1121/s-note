@@ -24,7 +24,7 @@ async function frameless(button){
   const{kind,highlighted,backgroundImage,...paint}=style;const minus=kind==='minus';
   const tint=minus?(highlighted?'rgb(255, 224, 227)':'rgb(255, 240, 241)'):(highlighted?'rgb(220, 233, 255)':'rgb(237, 244, 255)');
   assert.match(backgroundImage,/^radial-gradient\(7px(?: at |,)/,'Only the painted circle shrinks to 14px');assert(backgroundImage.includes(tint),'The small circle retains its hover tint');
-  assert.deepEqual(paint,{step:true,background:'rgba(0, 0, 0, 0)',color:minus?'rgb(188, 36, 48)':'rgb(23, 70, 212)',radius:'50%',border:'0px',shadow:'none',width:28,height:28});
+  assert.deepEqual(paint,{step:true,background:'rgba(0, 0, 0, 0)',color:minus?'rgb(159, 7, 22)':'rgb(0, 51, 168)',radius:'50%',border:'0px',shadow:'none',width:28,height:28});
  }else if(style)assert.deepEqual(style,['rgba(0, 0, 0, 0)','0px','none']);
 }
 async function closeInk(button){

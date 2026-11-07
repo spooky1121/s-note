@@ -5,6 +5,7 @@ import { TEMPLATE, TEMPLATE_ID, createSource, sourceFingerprint, createDocument,
 const car = (extra = {}) => ({ id: 'synthetic-car', ownerId: 'synthetic-owner', status: '판매완료', model: '검증용 차량', plate: '000가0000', year: 2026, purchaseAt: '2026-01-02', soldAt: '2026-02-03', buy: 100, soldPrice: 200, costs: {}, ...extra });
 const document = cells => { const doc = createDocument(createSource(car())); Object.assign(doc.cells, cells); return doc; };
 const formulaValues = result => Object.fromEntries(Object.keys(TEMPLATE.formulas).map(cell => [cell, result.cells[cell]]));
+const CUSTOM='custom-11111111-1111-4111-8111-111111111111',ORPHAN='custom-22222222-2222-4222-8222-222222222222';
 
 test('template exposes exactly 51 original formulas and 35 inputs plus company name', () => {
   assert.equal(Object.keys(TEMPLATE.formulas).length, 51); assert.equal(Object.keys(TEMPLATE.inputs).length, 36);
@@ -154,4 +155,63 @@ test('bounded extreme input stays exact and all formula results remain safe inte
 test('formula text is never accepted as an input expression or executed from text fields', () => {
   const doc=document({J4:'globalThis.__incomeFormulaExecuted=true',B15:'=SUM(1,2)'});calculate(doc);assert.equal(globalThis.__incomeFormulaExecuted,undefined);
   assert.throws(()=>parseMoney('=SUM(1,2)'),{code:'VALIDATION_ERROR'});doc.cells.F8='globalThis.__incomeFormulaExecuted=true';assert.throws(()=>calculate(doc),{code:'VALIDATION_ERROR'});
+});
+
+test('absent and zero custom costs keep the exact old source, fingerprint and all formula results', async () => {
+  const original=createSource(car()),doc=createDocument(original),result=calculate(doc,original);
+  assert.equal(Object.hasOwn(original,'customCostsWon'),false);
+  for(const customCosts of [null,{}, {[CUSTOM]:0}]){
+    const source=createSource(car({customCosts,customCostLabels:{[CUSTOM]:'탁송비'}}));
+    assert.deepEqual(source,original);assert.equal(await sourceFingerprint(source),await sourceFingerprint(original));
+    assert.deepEqual(calculate(doc,source),result);
+  }
+});
+
+test('custom amounts stay integer won in legacy and KRW cars, including stored orphan or hidden fields', async () => {
+  const stored=car({customCosts:{[CUSTOM]:12345,[ORPHAN]:655},customCostLabels:{[CUSTOM]:'탁송비'},costs:{bodywork:1}}),before=structuredClone(stored);
+  const legacy=createSource(stored),current=createSource(globalThis.SnoteMoney.car(stored));
+  assert.equal(legacy.customCostsWon,13000);assert.deepEqual(legacy,current);assert.deepEqual(stored,before);
+  assert.deepEqual(legacy.costSuggestions,[{key:'bodywork',label:'차량판금비용',amountWon:10000}]);
+  assert.deepEqual(invoiceCostSuggestions(legacy),legacy.costSuggestions,'Automatic custom costs never enter optional invoice suggestions');
+  const noVisibleLabels=createSource({...stored,customCostLabels:{}});assert.equal(noVisibleLabels.customCostsWon,13000);assert.deepEqual(noVisibleLabels,legacy,'Visibility or removal of a configured label does not forgive a stored amount');
+  const changed=createSource({...stored,customCosts:{...stored.customCosts,[ORPHAN]:656}});assert.notEqual(await sourceFingerprint(legacy),await sourceFingerprint(changed));
+});
+
+test('custom costs and interest enter D28 once and reduce actual income and tax without inventing VAT evidence', () => {
+  const original=car({purchaseAt:'2026-01-01',soldAt:'2026-02-01',buy:1000,soldPrice:2000,inventoryLoan:1000,inventoryLender:'검증금융'}),lenders=[['검증금융',100000,6]];
+  const base=createSource(original,{lenders}),source=createSource({...original,customCosts:{[CUSTOM]:40000,[ORPHAN]:60000}},{lenders}),doc=createDocument(source);doc.cells.D15=11000;
+  const before=structuredClone(doc),plain=calculate(doc,base),actual=calculate(doc,source);
+  assert.equal(source.inventoryInterestWon,50959);assert.equal(source.customCostsWon,100000);assert.deepEqual(source.costSuggestions,[]);
+  assert.equal(actual.cells.D28,161959);assert.equal(actual.cells.E36,plain.cells.E36-100000);assert.equal(actual.cells.D39,plain.cells.D39-100000);
+  assert.equal(actual.totals.purchaseIncome,plain.totals.purchaseIncome-100000);assert.equal(actual.totals.purchaseIncomeTax,plain.totals.purchaseIncomeTax-3000);assert.equal(actual.totals.purchaseLocalTax,plain.totals.purchaseLocalTax-300);assert.equal(actual.totals.purchaseNet,plain.totals.purchaseNet-96700);
+  assert.equal(actual.cells.F28,plain.cells.F28);assert.equal(actual.cells.H28,plain.cells.H28);assert.equal(actual.totals.vat,plain.totals.vat);assert.equal(actual.totals.brokerNet,plain.totals.brokerNet);
+  assert.deepEqual(calculate(doc,source),actual);assert.deepEqual(doc,before);
+});
+
+test('automatic custom totals can exceed manual input limits while retaining safe integer arithmetic', () => {
+  const entries=Object.fromEntries(Array.from({length:128},(_,i)=>['custom-'+String(i).padStart(8,'0')+'-0000-4000-8000-000000000000',1000000000000]));
+  const source=createSource(car({customCosts:entries})),result=calculate(createDocument(source),source);
+  assert.equal(source.customCostsWon,128000000000000);assert.equal(result.cells.D28,128000000000000);assert(Object.values(formulaValues(result)).every(Number.isSafeInteger));
+  assert.throws(()=>parseMoney(10000000000000),{code:'VALIDATION_ERROR'},'Manual money inputs retain their original limit');
+  const zero=document({D8:0,D10:0,D11:0,D31:0});assert.equal(calculate(zero,{customCostsWon:Number.MAX_SAFE_INTEGER}).cells.D28,Number.MAX_SAFE_INTEGER);
+  assert.throws(()=>calculate(zero,{customCostsWon:Number.MAX_SAFE_INTEGER,inventoryInterestWon:1}),{code:'VALIDATION_ERROR'},'Combining automatic totals cannot silently overflow');
+});
+
+test('invalid custom amounts and oversized stored maps fail validation rather than partially reducing cost', () => {
+  for(const customCosts of [[],true,'1000',{bad:1},{[CUSTOM]:-1},{[CUSTOM]:1.5},{[CUSTOM]:'1000'},{[CUSTOM]:1000000000001},{[CUSTOM]:NaN},{[CUSTOM]:Infinity}])assert.throws(()=>createSource(car({customCosts})),{code:'VALIDATION_ERROR'});
+  const tooMany=Object.fromEntries(Array.from({length:129},(_,i)=>['custom-'+String(i).padStart(8,'0')+'-0000-4000-8000-000000000000',0]));assert.throws(()=>createSource(car({customCosts:tooMany})),{code:'VALIDATION_ERROR'});
+  for(const value of [-1,1.5,'1000',NaN,Infinity,Number.MAX_SAFE_INTEGER+1])assert.throws(()=>calculate(document({}),{customCostsWon:value}),{code:'VALIDATION_ERROR'});
+});
+
+test('live income notes and print snapshots show automatic custom costs and the same adjusted D28', async () => {
+  const {createRequire}=await import('node:module'),require=createRequire(import.meta.url),{JSDOM}=require('./encar/node_modules/jsdom');
+  const {buildForm}=await import('../assets/income-settlement-view.js'),{buildPrintSnapshot}=await import('../assets/income-settlement-print.js');
+  const source=createSource(car({customCosts:{[CUSTOM]:100000},inventoryLoan:1000,inventoryLender:'검증금융',purchaseAt:'2026-01-01',soldAt:'2026-02-01'}),{lenders:[['검증금융',100000,6]]}),doc=createDocument(source),result=calculate(doc,source);
+  const dom=new JSDOM('<!doctype html><html><body><div id="income-sheet"></div><div id="income-live-summary"></div></body></html>'),previous=globalThis.document;globalThis.document=dom.window.document;
+  try{
+    const form=buildForm();form.updateCalculation(result,doc,source);const note=dom.window.document.querySelector('.income-interest-note');assert.equal(note.hidden,false);assert.match(note.textContent,/재고금융 이자 50,959원/);assert.match(note.textContent,/추가 비용 100,000원/);
+    const snapshot=dom.window.document.createElement('section');snapshot.append(buildPrintSnapshot(doc,{source,domDocument:dom.window.document}));
+    assert.match(snapshot.querySelector('.print-footer').textContent,/재고금융 이자 50,959원 · 추가 비용 100,000원 포함/);assert.equal(Number(snapshot.querySelector('[data-cell-address="D28"]').textContent.replaceAll(',','')),150959);
+    const customOnly={...source,inventoryInterestWon:0};form.updateCalculation(calculate(doc,customOnly),doc,customOnly);assert.equal(note.hidden,false);assert.equal(note.textContent,'추가 비용 100,000원 자동 반영 (차량 부대비용 포함)');form.reset();assert.equal(note.hidden,true);
+  }finally{if(previous===undefined)delete globalThis.document;else globalThis.document=previous;dom.window.close();}
 });

@@ -58,7 +58,7 @@
    return;
   }
   host.classList.add('snote-step-circle');host.classList.remove('snote-flat-icon-control');
-  const values=[['display','inline-grid'],['place-items','center'],['box-sizing','border-box'],['width','28px'],['height','28px'],['min-width','28px'],['min-height','28px'],['flex','0 0 28px'],['align-self','center'],['padding','0px'],['border','0px solid transparent'],['border-radius','50%'],['background','radial-gradient(circle 7px at center, var(--snote-step-background, #edf4ff) 98%, transparent 100%)'],['color','var(--snote-step-color, #1746d4)'],['box-shadow','none']];
+  const values=[['display','inline-grid'],['place-items','center'],['box-sizing','border-box'],['width','28px'],['height','28px'],['min-width','28px'],['min-height','28px'],['flex','0 0 28px'],['align-self','center'],['padding','0px'],['border','0px solid transparent'],['border-radius','50%'],['background','radial-gradient(circle 7px at center, var(--snote-step-background, #edf4ff) 98%, transparent 100%)'],['color','var(--snote-step-color, #0033a8)'],['box-shadow','none']];
   if(!state.styles.length)state.styles=values.map(([key])=>[key,host.style.getPropertyValue(key),host.style.getPropertyPriority(key)]);
   for(const[key,value]of values)if(host.style.getPropertyValue(key)!==value||host.style.getPropertyPriority(key)!=='important')host.style.setProperty(key,value,'important');
  }

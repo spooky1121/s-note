@@ -1,5 +1,6 @@
 import './money.js?v=2.76';
 import './inventory-interest.js?v=2.41';
+import './custom-cost-model.js?v=2.85';
 import { TEMPLATE, TEMPLATE_ID } from './income-settlement-template.js?v=2.41';
 export { TEMPLATE, TEMPLATE_ID };
 
@@ -139,13 +140,16 @@ export function createSource(car, { dealerName = '', companyName = '', ownerId, 
   }
   const interest = globalThis.SnoteInventoryInterest.calculate(car, lenders);
   const inventoryInterestWon = interest.ready ? interest.amountWon : (convert(costs.inventoryInterest, '재고금융 이자') || 0);
+  let customCostsWon;
+  try { customCostsWon = globalThis.SnoteCustomCosts.sum(globalThis.SnoteCustomCosts.normalize(car.customCosts, { strict: true })); }
+  catch { invalid('추가 비용의 항목과 원 단위 금액을 확인해 주세요.'); }
   if (!interest.ready && Number(car.inventoryLoan || 0) > 0) warnings.push(interest.reason + ' 기존 재고 이자를 반영합니다.');
   const unmapped = [];
   for (const [key, label] of [['incomeTax', '기존 소득세 (참고)']]) {
     const amountWon = convert(costs[key], label); if (amountWon !== null && amountWon !== 0) unmapped.push({ key, label, amountWon });
   }
   const year = car.year == null ? '' : String(car.year).trim();
-  return { carId: sourceId(car.id), ownerId: sourceId(ownerId ?? car.ownerId, true), status: sourceText(car.status, 40), model: sourceText(car.model, 200), plate: sourceText(car.plate, 30), year: /^\d{4}$/.test(year) ? year : '', purchaseAt: sourceDate(car.purchaseAt), soldAt: sourceDate(car.soldAt), buyWon, soldWon, acquisitionTaxWon, dealerName: sourceText(dealerName, 100), companyName: sourceText(companyName, 100), costSuggestions, inventoryInterestWon, unmapped, warnings };
+  return { carId: sourceId(car.id), ownerId: sourceId(ownerId ?? car.ownerId, true), status: sourceText(car.status, 40), model: sourceText(car.model, 200), plate: sourceText(car.plate, 30), year: /^\d{4}$/.test(year) ? year : '', purchaseAt: sourceDate(car.purchaseAt), soldAt: sourceDate(car.soldAt), buyWon, soldWon, acquisitionTaxWon, dealerName: sourceText(dealerName, 100), companyName: sourceText(companyName, 100), costSuggestions, inventoryInterestWon, ...(customCostsWon > 0 ? { customCostsWon } : {}), unmapped, warnings };
 }
 
 export function createDocument(source) {
@@ -201,13 +205,15 @@ function range(start, end) {
 export function calculate(raw, source = {}) {
   const interest = source?.inventoryInterestWon ?? 0;
   if (!Number.isSafeInteger(interest) || interest < 0 || interest > MAX_MONEY) invalid('재고 이자를 확인해 주세요.');
+  const customCosts = source?.customCostsWon ?? 0;
+  if (!Number.isSafeInteger(customCosts) || customCosts < 0) invalid('추가 비용의 원 단위 합계를 확인해 주세요.');
   const doc = normalizeDocument(raw), cache = new Map(), active = new Set();
   function cell(id) {
     if (cache.has(id)) return cache.get(id);
     if (active.has(id)) invalid('순환 수식은 계산할 수 없습니다.');
     active.add(id);
     let value = FORMULAS[id] ? evaluate(FORMULAS[id]) : typeof doc.cells[id] === 'number' ? rational(BigInt(doc.cells[id])) : ZERO;
-    if (id === 'D28') value = add(value, rational(BigInt(interest)));
+    if (id === 'D28') value = add(add(value, rational(BigInt(interest))), rational(BigInt(customCosts)));
     active.delete(id); cache.set(id, value); return value;
   }
   function evaluate(node) {

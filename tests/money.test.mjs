@@ -1,5 +1,11 @@
-import test from 'node:test';import assert from 'node:assert/strict';import '../assets/money.js';import '../assets/inventory-interest.js';
+import test from 'node:test';import assert from 'node:assert/strict';import '../assets/money.js';import '../assets/inventory-interest.js';import '../assets/custom-cost-model.js';
 const M=globalThis.SnoteMoney;
+test('custom costs remain integer won through repeated legacy-wire saves and retain hidden or transferred labels',()=>{
+ const id='custom-11111111-1111-4111-8111-111111111111',other='custom-22222222-2222-4222-8222-222222222222';
+ const raw={buy:1000,costs:{bodywork:1},customCosts:{[id]:1,[other]:123456789012},customCostLabels:{[id]:'탁송비',[other]:'추가 비용'}};
+ let car=M.car(raw);for(let i=0;i<20;i++){assert.equal(SnoteCustomCosts.sum(car.customCosts),123456789013);assert.equal(car.buy,10000000);assert.deepEqual(car.customCostLabels,raw.customCostLabels);const wire=M.storeCar(car);assert.deepEqual(wire,raw);car=M.car(JSON.parse(JSON.stringify(wire)));}
+ assert.throws(()=>SnoteCustomCosts.normalize({[id]:1.2},{strict:true}));assert.throws(()=>SnoteCustomCosts.normalize({[id]:-1},{strict:true}));assert.throws(()=>SnoteCustomCosts.normalize({bodywork:100},{strict:true}));assert.deepEqual(SnoteCustomCosts.normalize(null),{});
+});
 test('legacy vehicle fields become integer won once; repeated read/save never multiplies balances',()=>{
  const legacy={id:'money-test',buy:1000,sell:1200.5,soldPrice:null,inventoryLoan:500,costs:{bodywork:1.2,inventoryInterest:5.0959,repair:99},repairItems:[{memo:'수리',amount:2.3}],year:2026,km:10000,plate:'12가3456',contractData:{'ct-total-price':'12,005,000'},unknown:{amount:7}};
  let current=M.car(legacy);assert.equal(current.buy,10000000);assert.equal(current.sell,12005000);assert.equal(current.costs.inventoryInterest,50959);assert.equal(current.repairItems[0].amount,23000);assert.equal(M.car(current),current);

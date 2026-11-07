@@ -1,4 +1,4 @@
-import {TEMPLATE,normalizeDocument,calculate} from './income-settlement-model.js?v=2.76';
+import {TEMPLATE,normalizeDocument,calculate} from './income-settlement-model.js?v=2.85';
 
 const money=value=>value==null?'':new Intl.NumberFormat('ko-KR').format(value);
 
@@ -90,7 +90,8 @@ export function buildPrintSnapshot(value,{
   table.append(body);fragment.append(table);
   const footer=domDocument.createElement('p');footer.className='print-footer';
   footer.textContent=`첨부 원본 수식 기준 · ${stored===true&&dirty===false&&mode==='cloud'?'서버 저장 자료':'서버 미저장 작성본'} · ${date.toLocaleString('ko-KR')}`;
-  if(source.inventoryInterestWon)footer.textContent+=` · 차량 부대비용에 재고금융 이자 ${source.inventoryInterestWon.toLocaleString('ko-KR')}원 포함`;
+  const automatic=[];if(source.inventoryInterestWon)automatic.push(`재고금융 이자 ${source.inventoryInterestWon.toLocaleString('ko-KR')}원`);if(source.customCostsWon)automatic.push(`추가 비용 ${source.customCostsWon.toLocaleString('ko-KR')}원`);
+  if(automatic.length)footer.textContent+=` · 차량 부대비용에 ${automatic.join(' · ')} 포함`;
   fragment.append(footer);
   return fragment;
 }

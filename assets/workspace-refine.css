@@ -11,8 +11,17 @@
  .snote-profile-chevron{display:block;margin:0;align-self:center;flex:none}
  .snote-sidebar-version{display:block;margin:12px 0 0;padding:8px 10px 0;text-align:center;color:#a0a5b5;font-size:10px;font-weight:400;line-height:1.4}
  .mobile-drawer>.snote-sidebar-version{margin:0;padding:8px 12px 14px}
- .snote-weather{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-width:46px;font-size:12px;font-weight:500;color:#7e879a;white-space:nowrap;line-height:24px}
- .snote-weather [data-weather-icon]{font-size:18px;line-height:1;color:#8c99b4}
+ .snote-weather{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-width:46px;min-height:28px;margin:0;padding:2px 3px;border:0;border-radius:6px;background:transparent;font-family:inherit;font-size:12px;font-weight:500;color:#7e879a;white-space:nowrap;line-height:24px;cursor:pointer}
+ .snote-weather [data-weather-icon]{display:grid;place-items:center;flex:none;width:20px;height:20px;line-height:1;color:#96a3b4}
+ .snote-weather [data-weather-icon] svg{display:block;width:20px;height:20px}
+ .snote-weather[data-condition=sun] [data-weather-icon]{color:#e9b329}
+ .snote-weather[data-condition=cloud] [data-weather-icon]{color:#79b9e3}
+ .snote-weather:is([data-condition=rain],[data-condition=storm]) [data-weather-icon]{color:#242b35}
+ .snote-weather[data-condition=snow] [data-weather-icon]{color:#8bb9ce}
+ .snote-weather:focus-visible{outline:2px solid #91b8e2;outline-offset:3px}
+ .snote-weather:hover{background:#f3f6fa}
+ .snote-weather[aria-busy=true] [data-weather-icon]{opacity:.55}
+ .snote-weather-live{position:absolute;width:1px;height:1px;margin:-1px;padding:0;border:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
  .snote-weather[data-state=unavailable]{color:#aeb3c0}
  #zc-cloud-banner:empty{display:none!important}
  #snote-app .sidebar .snote-spaced-logo,.mobile-drawer .snote-spaced-logo{width:126px;height:34px}
@@ -83,5 +92,5 @@
  .snote-mobile-sort button{width:32px;height:32px;border:1px solid #e7e9f1;border-radius:6px;background:#fff;color:#4455ed;padding:3px;font-size:16px}
 }
 @media print{.snote-mobile-sort,.snote-weather,.snote-sidebar-version,.snote-sort-arrow{display:none!important}}
-@media screen{a.snote-weather{text-decoration:none}a.snote-weather:hover{color:#4455ed}}
+@media screen{a.snote-weather{text-decoration:none}}
 @media screen{#snote-app .snote-company-actions{max-width:850px;justify-content:flex-end;gap:8px}#snote-app #snote90-company-admin-email{max-width:300px}}

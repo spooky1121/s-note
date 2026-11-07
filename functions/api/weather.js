@@ -48,10 +48,10 @@ export function decodeKmaFeed(data,contentType=''){
  if(!encoding)throw Error('INVALID_KMA_ENCODING');
  try{return new TextDecoder(encoding,{fatal:true}).decode(data);}catch{throw Error('INVALID_KMA_ENCODING');}
 }
-async function readFeed(signal){
+async function readFeed(signal,fresh=false){
  let target=new URL(FEED),response;
  for(let redirects=0;redirects<=2;redirects++){
-  response=await fetch(target.href,{signal,redirect:'manual',headers:{Accept:'application/xml,text/xml','User-Agent':'S-NOTE/2.78 (+https://s-note.pages.dev)'}});
+  response=await fetch(target.href,{signal,redirect:'manual',...(fresh?{cache:'no-store',cf:{cacheTtl:0}}:{}),headers:{Accept:'application/xml,text/xml','User-Agent':'S-NOTE/2.85 (+https://s-note.pages.dev)',...(fresh?{'Cache-Control':'no-cache'}:{})}});
   if(![301,302,303,307,308].includes(response.status))break;
   const location=response.headers.get('location');
   if(!location||redirects===2)throw Error('KMA_REDIRECT_UNAVAILABLE');
@@ -67,7 +67,7 @@ async function readFeed(signal){
 export async function onRequest({request,env={}}){
  const reply=(data,status=200)=>new Response(JSON.stringify(data),{status,headers:{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff',...(status===503?{'Retry-After':'30'}:{})}});
  if(request.method!=='GET')return reply({ok:false},405);
- const stationParam=new URL(request.url).searchParams.get('station'),requested=stationParam&&STATIONS.find(([id])=>String(id)===stationParam);
+ const params=new URL(request.url).searchParams,fresh=params.get('refresh')==='1',stationParam=params.get('station'),requested=stationParam&&STATIONS.find(([id])=>String(id)===stationParam);
  if(stationParam&&!requested)return reply({ok:false,reason:'INVALID_STATION'},400);
  const configured=coordinates({},env),connected=coordinates(request.cf||{},{}),located=configured||connected;
  const fallback=!requested&&!located,selected=requested||(fallback?STATIONS.find(([id])=>id===108):null);
@@ -75,10 +75,10 @@ export async function onRequest({request,env={}}){
  const locationBasis=requested?'선택한 관측소':fallback?'서울 기준 (접속 위치 확인 불가)':configured?'설정한 상사 위치 인근 관측소':'접속 지역 인근 관측소';
  const cache=globalThis.caches?.default,key=new Request(new URL('/api/weather-cache/kma-observations-v2',request.url));
  let feed=null;
- try{const saved=await cache?.match(key);if(saved){const cached=await saved.json();const age=Date.now()-Date.parse(cached.observedAt);if(age>=-1200000&&age<=10800000&&Array.isArray(cached.rows)&&cached.rows.length&&cached.rows.every(row=>Number.isInteger(row.station)&&typeof row.region==='string'&&row.region.trim()!==''&&row.region.length<=40&&Number.isFinite(row.temperature)&&row.temperature>=-80&&row.temperature<=60&&Number.isInteger(row.code)&&row.code>=0&&row.code<=100))feed=cached;}}catch{}
+ try{const saved=fresh?null:await cache?.match(key);if(saved){const cached=await saved.json();const age=Date.now()-Date.parse(cached.observedAt);if(age>=-1200000&&age<=10800000&&Array.isArray(cached.rows)&&cached.rows.length&&cached.rows.every(row=>Number.isInteger(row.station)&&typeof row.region==='string'&&row.region.trim()!==''&&row.region.length<=40&&Number.isFinite(row.temperature)&&row.temperature>=-80&&row.temperature<=60&&Number.isInteger(row.code)&&row.code>=0&&row.code<=100))feed=cached;}}catch{}
  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),6000);
  try{
-  if(!feed){feed=await readFeed(controller.signal);if(cache)try{await cache.put(key,new Response(JSON.stringify(feed),{headers:{'Content-Type':'application/json','Cache-Control':'public, max-age=600'}}));}catch{}}
+  if(!feed){feed=await readFeed(controller.signal,fresh);if(cache)try{await cache.put(key,new Response(JSON.stringify(feed),{headers:{'Content-Type':'application/json','Cache-Control':'public, max-age=600'}}));}catch{}}
   const stations=STATIONS.map(([id,lat,lon])=>{const item=feed.rows.find(row=>row.station===id);return item?{item,distance:Math.hypot((lat-point.lat)*111,(lon-point.lon)*111*Math.cos(point.lat*Math.PI/180))}:null;}).filter(Boolean).sort((a,b)=>a.distance-b.distance);
   const nearest=stations[0];if(!nearest||nearest.distance>120||(requested&&nearest.item.station!==requested[0]))throw Error('NO_NEARBY_STATION');
   return reply({ok:true,...nearest.item,source:'기상청',sourceUrl:FEED,observedAt:feed.observedAt,timezone:'Asia/Seoul',locationBasis,fetchedAt:new Date().toISOString()});

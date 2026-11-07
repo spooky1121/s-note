@@ -45,6 +45,7 @@
 #snote-calculator-panel .snote-calculator-equals:hover,#snote-calculator-panel .snote-calculator-equals.is-pressed{background:#bc8242;border-color:#bc8242}
 .snote-calculator-backspace svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 #snote-calculator-help{min-height:15px;margin:12px 2px 0;color:#99a2b1;font-size:9px;text-align:center;line-height:1.6}
+#snote-calculator-help[hidden]{display:none!important}
 #snote-calculator-help[data-error="true"]{color:#a2635c}
 @media(max-width:440px){#snote-calculator-trigger{width:36px;height:38px;border-radius:10px}.topbar .topright{gap:6px}#snote-calculator-panel{padding:15px;border-radius:21px}}
 @media(prefers-reduced-motion:reduce){#snote-calculator-panel,#snote-calculator-trigger,#snote-calculator-panel [data-calculator-key]{transition:none!important}}

@@ -34,22 +34,36 @@
  #vehicle-overlay .vehicle-modal > .vehicle-header{min-height:0;padding:12px 22px 10px 52px!important;border-bottom:0!important;box-shadow:none!important}
  #vehicle-overlay .vehicle-header .vehicle-meta-line{margin:4px 0 0;line-height:1.5}
  #vehicle-overlay .vehicle-heading-row{gap:6px 16px}
- #vehicle-overlay .vehicle-body #car-cost-section{grid-template-columns:repeat(5,minmax(0,160px));justify-content:space-between;gap:10px 12px}
+ #vehicle-overlay .vehicle-body #car-cost-section{grid-template-columns:repeat(3,minmax(0,160px));justify-content:space-between;gap:10px 12px}
  #vehicle-overlay #car-cost-section :is(.cost-edit,.detail-lender-row)>label{gap:4px;font-size:11px;line-height:1.4}
  #vehicle-overlay #car-cost-section .detail-money-input{font-variant-numeric:tabular-nums;letter-spacing:0}
+ #vehicle-overlay #car-cost-section label:has(#detail-inventory-interest){display:grid;grid-template-columns:max-content minmax(0,1fr);gap:4px 5px}
+ #vehicle-overlay #detail-inventory-interest{grid-column:1/-1;grid-row:2}
+ #vehicle-overlay #detail-interest-basis{grid-column:2;grid-row:1;align-self:center;justify-self:start;margin:0;font-size:9px;line-height:1.4;white-space:nowrap;overflow-wrap:normal}
+ #vehicle-overlay #car-cost-section .detail-repair .repair-top{display:grid;grid-template-columns:minmax(0,1fr) max-content;align-items:center;gap:8px}
+ #vehicle-overlay #car-cost-section .detail-repair .repair-top>.section-button{justify-self:end;margin:0}
+ #vehicle-overlay #car-cost-section .detail-repair .repair-row{grid-template-columns:minmax(0,1fr) minmax(130px,150px) max-content;align-items:center;gap:8px}
+ #vehicle-overlay #car-cost-section .detail-repair .repair-remove{justify-self:end;align-self:center;margin:0}
 }
-@media screen and (min-width:1100px) {
- #vehicle-overlay .vehicle-modal > .vehicle-body{grid-template-areas:'overview overview' 'identity identity' 'sold sold' 'costs costs' 'media media';gap:16px}
- #vehicle-overlay .vehicle-body .car-identity-section .vehicle-identity-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media screen and (min-width:1000px) {
+ #vehicle-overlay .vehicle-modal > .vehicle-body{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-areas:'overview overview' 'identity costs' 'sold costs' 'media media';gap:16px;align-items:start}
+ #vehicle-overlay #vehicle-overview{grid-area:overview;margin:0}
+ #vehicle-overlay .car-identity-section{grid-area:identity;margin:0}
+ #vehicle-overlay #sold-info-section{grid-area:sold;margin:0}
+ #vehicle-overlay #car-cost-section{grid-area:costs;margin:0}
+ #vehicle-overlay .vehicle-media-grid{grid-area:media;margin:0}
+ #vehicle-overlay .vehicle-body .car-identity-section .vehicle-identity-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
  #vehicle-overlay .car-identity-section .vehicle-identity-grid>label:has(:is(#detail-purchase-date,#detail-vin)){grid-column:auto}
+ body.accountant-mode #vehicle-overlay .vehicle-modal>.vehicle-body{display:block}
 }
-@media screen and (min-width:761px) and (max-width:999px) {
- #vehicle-overlay .vehicle-body #car-cost-section{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media screen and (min-width:1000px) and (max-width:1199px) {
+ #vehicle-overlay #car-cost-section .detail-money-input{padding-inline:5px;font-size:11px}
 }
 @media screen and (max-width:760px) {
  #vehicle-overlay .vehicle-modal > .vehicle-header{padding:calc(12px + env(safe-area-inset-top,0px)) 16px 10px!important}
  #vehicle-overlay .vehicle-body #car-cost-section{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 8px}
  #vehicle-overlay #car-cost-section .detail-money-input{padding:6px;font-size:14px}
+ #vehicle-overlay #car-cost-section .detail-repair .repair-row{grid-template-columns:minmax(0,1fr) max-content}
 }
 @media screen and (max-width:360px) {
  #vehicle-overlay #car-cost-section .detail-money-input{padding-inline:4px;font-size:11px}

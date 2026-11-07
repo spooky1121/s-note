@@ -1,0 +1,103 @@
+{
+  "release": "2.85",
+  "verifiedAt": "2026-11-07T02:18:17Z",
+  "migrations": [
+    {
+      "name": "platform_operator_console",
+      "version": "20261107021524"
+    },
+    {
+      "name": "platform_operator_access",
+      "version": "20261107021536"
+    },
+    {
+      "name": "vehicle_cost_preferences",
+      "version": "20261107021545"
+    },
+    {
+      "name": "operator_cost_foreign_key_indexes",
+      "version": "20261107021729"
+    }
+  ],
+  "preferences": 0,
+  "tablesWithRls": 11,
+  "activeOperators": 1,
+  "auditOperations": 0,
+  "directTableGrants": 0,
+  "contextWithoutSession": {
+    "allowed": false
+  },
+  "businessDataPreserved": [
+    {
+      "scope": "datasets",
+      "row_count": 5,
+      "digest": "08260cccc4fb8724cd2e6c3fa6f6f790bfad65ee790fd4b1e7727407374a0a8f"
+    },
+    {
+      "scope": "members",
+      "row_count": 4,
+      "digest": "65be6e26f59e67d55be09c50af3a80e6876e7e5cdeb3f737d7ababb72fccc52f"
+    },
+    {
+      "scope": "customers",
+      "row_count": 15,
+      "digest": "77ee70c6c94cf9c51b93b302ef727f76e7200b96427ee782d9db32ff0cd6b511"
+    }
+  ],
+  "tests": {
+    "unitAndModel": 91,
+    "operatorCoreSqlGroups": 16,
+    "accessSqlGroups": 7,
+    "costPreferencesSqlGroups": 7,
+    "actualApiWithSql": 1,
+    "browserWidths": [
+      1440,
+      1024,
+      390,
+      320
+    ],
+    "workerBuild": "wrangler pages functions build: success"
+  },
+  "security": {
+    "newPublicDefinerWarnings": 0,
+    "privateRlsWithoutPolicies": "Intentional deny-all; all direct table grants revoked, checked RPC only",
+    "newUnindexedForeignKeys": 0
+  },
+  "liveLoginVerification": "No operator Auth session was active during deployment. Positive login and authorized writes tested only with synthetic accounts; production allowlist and missing-session denial verified.",
+  "appliedMigrations": [
+    {
+      "path": "supabase/migrations/20261107013019_platform_operator_console.sql",
+      "characters": 96675,
+      "sha256": "51d563d44e9da87945978271afe20fb641884471a9fdfaf4483d5830a2e0acea"
+    },
+    {
+      "path": "supabase/migrations/20261107013521_platform_operator_access.sql",
+      "characters": 11149,
+      "sha256": "e864b02b0913d0c959514c2310767d7d1fed1d6a000bb2f4b405dd5968f7a4e6"
+    },
+    {
+      "path": "supabase/migrations/20261107014146_vehicle_cost_preferences.sql",
+      "characters": 7284,
+      "sha256": "bbddf793525bf19b167ce95c8fb85166cef35dce11262b206e44f1a304595be8"
+    }
+  ],
+  "repositoryMigrations": [
+    {
+      "path": "supabase/migrations/20261107013019_platform_operator_console.sql",
+      "sha256": "2d934bf12896f333a4b656c86100bfd5205de59771cd5713fefe33bff1657965"
+    },
+    {
+      "path": "supabase/migrations/20261107013521_platform_operator_access.sql",
+      "sha256": "e864b02b0913d0c959514c2310767d7d1fed1d6a000bb2f4b405dd5968f7a4e6"
+    },
+    {
+      "path": "supabase/migrations/20261107014146_vehicle_cost_preferences.sql",
+      "sha256": "bbddf793525bf19b167ce95c8fb85166cef35dce11262b206e44f1a304595be8"
+    },
+    {
+      "path": "supabase/migrations/20261107021713_operator_cost_foreign_key_indexes.sql",
+      "sha256": "b936e58b4fd7f7c1b99c6d57fafb456e35c974bcb36593b46e55feb27eac07e6"
+    }
+  ],
+  "migrationNotes": "Applied operator SQL and repository SQL differ only by removal of trailing spaces on two blank lines. The final index migration adds covering foreign-key indexes only."
+}

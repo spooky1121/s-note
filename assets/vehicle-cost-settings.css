@@ -1,0 +1,46 @@
+/* Cost visibility is personal; hidden fields keep their values and calculation inputs. */
+@media screen{
+ #car-cost-section [data-cost-setting][hidden],#detail-custom-cost-fields>label[hidden]{display:none!important}
+ #vehicle-overlay #car-cost-section .car-cost-head>div{display:flex;align-items:center;gap:6px;min-width:0}
+ #vehicle-overlay #snote-cost-settings-trigger{display:inline-grid;place-items:center;flex:none;width:26px;height:26px;min-width:26px;min-height:26px;margin:0;padding:4px;border:0;border-radius:6px;background:transparent;color:#8a96a8;box-shadow:none;cursor:pointer}
+ #vehicle-overlay #snote-cost-settings-trigger:hover{background:#f0f3f7;color:#426897}
+ #vehicle-overlay #snote-cost-settings-trigger[hidden]{display:none!important}
+ #vehicle-overlay #snote-cost-settings-trigger svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.6}
+ #snote-vehicle-cost-settings{box-sizing:border-box;width:min(410px,calc(100vw - 32px));max-width:calc(100vw - 32px)!important;max-height:calc(100dvh - 40px)!important;margin:auto;padding:19px 20px 20px;border:1px solid #e8ebf0;border-radius:17px;overflow:auto!important;background:#fff;color:#344055;box-shadow:0 24px 70px #14243c24;font-family:var(--snote-font-family,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif);font-size:12px;line-height:1.5;scrollbar-width:thin;scrollbar-color:#cbd0d7 transparent;animation:snote-cost-settings-in .18s ease-out}
+ #snote-vehicle-cost-settings::backdrop{background:#18213045;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+ #snote-vehicle-cost-settings *{box-sizing:border-box}
+ #snote-vehicle-cost-settings [hidden]{display:none!important}
+ #snote-vehicle-cost-settings .snote-cost-settings-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 16px;padding:0}
+ #snote-vehicle-cost-settings h2{margin:0;font-size:15px;font-weight:650;letter-spacing:-.35px;color:#303c4d}
+ #snote-vehicle-cost-settings .snote-cost-settings-actions{display:flex;align-items:center;gap:7px}
+ #snote-vehicle-cost-settings button{font:inherit;cursor:pointer;box-shadow:none}
+ #snote-vehicle-cost-settings #snote-cost-settings-save{display:grid;place-items:center;width:28px;height:28px;min-width:28px;min-height:28px;padding:4px;border:0;border-radius:6px;background:transparent;color:#1671ed}
+ #snote-vehicle-cost-settings #snote-cost-settings-save:hover{background:#edf4ff}
+ #snote-vehicle-cost-settings #snote-cost-settings-save svg{display:block;width:20px;height:20px;transform:none;scale:1}
+ #snote-vehicle-cost-settings #snote-cost-settings-close{position:relative!important;inset:auto!important;width:28px!important;height:28px!important;min-width:28px!important;min-height:28px!important;font-size:24px!important}
+ #snote-vehicle-cost-settings #snote-cost-settings-close svg{display:block!important;width:16px!important;height:16px!important}
+ #snote-vehicle-cost-settings .snote-cost-settings-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px 12px;max-height:360px;max-height:min(360px,calc(100dvh - 210px));overflow:auto;scrollbar-width:thin;scrollbar-color:#cbd0d7 transparent}
+ #snote-vehicle-cost-settings .snote-cost-settings-list>label{display:flex;align-items:center;gap:8px;min-width:0;min-height:32px;margin:0;padding:5px 2px;font-size:11px;color:#566274;cursor:pointer}
+ #snote-vehicle-cost-settings input[type=checkbox]{appearance:auto;flex:none;width:15px;height:15px;min-width:15px;min-height:15px;margin:0;padding:0;accent-color:#1671ed}
+ #snote-vehicle-cost-settings .snote-cost-settings-list span{min-width:0;overflow-wrap:anywhere;line-height:1.45}
+ #snote-vehicle-cost-settings #snote-cost-settings-add{display:flex;align-items:flex-end;gap:9px;margin:16px 0 0;padding-top:14px;border-top:1px solid #edf0f4}
+ #snote-vehicle-cost-settings .snote-cost-settings-new{display:block;flex:1;min-width:0;margin:0;color:#919baa;font-size:10px}
+ #snote-vehicle-cost-settings .snote-cost-settings-new>span{display:block;margin-bottom:5px}
+ #snote-vehicle-cost-settings #snote-cost-settings-name{width:100%;min-width:0;height:33px;min-height:33px;margin:0;padding:7px 9px;border:1px solid #e7ebf1;border-radius:7px;outline:0;background:#f8fafc;color:#465469;font:inherit;font-size:12px}
+ #snote-vehicle-cost-settings #snote-cost-settings-name::placeholder{color:#bbc2cc}
+ #snote-vehicle-cost-settings #snote-cost-settings-add>button{flex:none;min-height:33px;padding:6px 3px;border:0;border-radius:5px;background:transparent;color:#1671ed;font-size:11px;white-space:nowrap}
+ #snote-vehicle-cost-settings :is(button,input):focus-visible{outline:2px solid #91b8e2;outline-offset:2px}
+ #snote-vehicle-cost-settings :is(button,input):disabled{opacity:.5;cursor:default}
+ #snote-vehicle-cost-settings #snote-cost-settings-message{margin:12px 0 0;color:#8994a4;font-size:11px;overflow-wrap:anywhere}
+ #snote-vehicle-cost-settings #snote-cost-settings-message[data-error=true]{color:#b84d59}
+ #snote-vehicle-cost-settings #snote-cost-settings-retry{margin-top:9px;padding:4px 0;border:0;background:transparent;color:#1671ed;font-size:11px}
+ #snote-vehicle-cost-settings #snote-cost-settings-confirm{padding:14px 0 3px}
+ #snote-vehicle-cost-settings #snote-cost-settings-confirm>p{margin:0 0 22px;color:#435167;font-size:13px;text-align:center}
+ #snote-vehicle-cost-settings .snote-cost-settings-confirm-actions{display:flex;justify-content:flex-end;gap:8px}
+ #snote-vehicle-cost-settings .snote-cost-settings-confirm-actions button{min-width:66px;min-height:32px;padding:6px 14px;border:1px solid #e5e9f0;border-radius:7px;background:#fff;color:#7c8798;font-size:11px}
+ #snote-vehicle-cost-settings #snote-cost-settings-confirm-save{border-color:#1671ed;background:#1671ed;color:#fff}
+ @keyframes snote-cost-settings-in{from{opacity:0;transform:translateY(6px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+}
+@media screen and (max-width:380px){#snote-vehicle-cost-settings{padding:17px 15px}.snote-cost-settings-list{column-gap:8px}}
+@media(prefers-reduced-motion:reduce){#snote-vehicle-cost-settings{animation:none!important}}
+@media print{#snote-cost-settings-trigger,#snote-vehicle-cost-settings{display:none!important}}

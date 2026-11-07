@@ -11,10 +11,9 @@ if(trigger){
   panel.setAttribute('role','dialog');
   panel.setAttribute('aria-modal','false');
   panel.setAttribute('aria-labelledby','snote-calculator-title');
-  panel.setAttribute('aria-describedby','snote-calculator-help');
   panel.innerHTML=`<div class="snote-calculator-heading"><h2 id="snote-calculator-title">계산기</h2><button id="snote-calculator-close" type="button" aria-label="계산기 닫기"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="m4 4 8 8m0-8-8 8"/></svg></button></div>
     <div class="snote-calculator-screen"><p id="snote-calculator-expression"></p><output id="snote-calculator-display" aria-label="계산 결과" aria-live="polite">0</output><p id="snote-calculator-preview" aria-label="계산 미리보기"></p></div>
-    <div class="snote-calculator-keys" aria-label="계산기 키패드"></div><p id="snote-calculator-help">숫자 키로 입력 · Enter로 계산 · Esc로 닫기</p>`;
+    <div class="snote-calculator-keys" aria-label="계산기 키패드"></div><p id="snote-calculator-help" role="status" aria-live="polite" aria-atomic="true" hidden></p>`;
   const keys=[
     ['AC','AC','모두 지우기','utility'],['SIGN','+/−','양수·음수 전환','utility'],['PERCENT','%','백분율','utility'],['/','÷','나누기','operator'],
     ['7','7','7'],['8','8','8'],['9','9','9'],['*','×','곱하기','operator'],
@@ -55,8 +54,11 @@ if(trigger){
     display.dataset.error=String(!!state.error);
     expression.textContent=state.expression||'';
     preview.textContent=state.preview!==null&&state.preview!==undefined?'= '+formatted(state.preview):'';
-    help.textContent=state.error||'숫자 키로 입력 · Enter로 계산 · Esc로 닫기';
+    help.textContent=state.error||'';
+    help.hidden=!state.error;
     help.dataset.error=String(!!state.error);
+    if(state.error)panel.setAttribute('aria-describedby','snote-calculator-help');
+    else panel.removeAttribute('aria-describedby');
     // Keep operation feedback in sync with the expression, without storing UI state.
     const symbol=state.expression?.trim().slice(-1);
     for(const [key,button]of buttons)if(button.hasAttribute('aria-pressed'))button.setAttribute('aria-pressed',String(!state.error&&({'+':'+','-':'−','*':'×','/':'÷'}[key]===symbol)));

@@ -1,0 +1,40 @@
+/* A local help widget, isolated from document dialogs and application forms. */
+#snote-chatbot{--snote-chatbot-bottom:20px;--snote-chatbot-right:18px;--snote-chatbot-room:580px;position:fixed;inset:auto var(--snote-chatbot-right) var(--snote-chatbot-bottom) auto;z-index:9100;color:#25344c;font-family:var(--snote-font-family,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif);font-size:13px;line-height:1.55}
+#snote-chatbot[hidden],#snote-chatbot [hidden]{display:none!important}
+#snote-chatbot *{box-sizing:border-box}
+#snote-chatbot button,#snote-chatbot input{font-family:inherit;touch-action:manipulation}
+#snote-chatbot-launcher{display:grid;place-items:center;width:68px;height:68px;min-width:68px;min-height:68px;margin:0;padding:2px;border:0!important;border-radius:50%;background:transparent!important;box-shadow:none!important;cursor:pointer;transition:translate .18s ease}
+#snote-chatbot-launcher>svg{display:block;width:64px!important;height:64px!important;scale:1!important;filter:drop-shadow(0 4px 7px #152c5026)}
+#snote-chatbot-launcher:hover{translate:0 -3px}
+#snote-chatbot-launcher:focus-visible{outline:2px solid #6d93d5;outline-offset:3px}
+#snote-chatbot-panel{position:absolute;right:0;bottom:80px;display:flex;flex-direction:column;width:min(368px,calc(100vw - 32px));height:min(530px,var(--snote-chatbot-room));max-height:var(--snote-chatbot-room);min-height:0;overflow:hidden;border:1px solid #e1e6ee;border-radius:20px;background:#fff;box-shadow:0 18px 64px #14284626;animation:snote-help-in .2s ease both}
+#snote-chatbot-panel:focus{outline:0}
+#snote-chatbot .snote-chat-header{display:flex;align-items:center;justify-content:space-between;flex:none;gap:12px;padding:17px 17px 14px;border-bottom:1px solid #edf0f4;background:#fff}
+#snote-chatbot h2{margin:0;font-size:16px;line-height:1.4;letter-spacing:-.35px;font-weight:700;color:#1d2b43}
+#snote-chatbot .snote-chat-header p{margin:3px 0 0;color:#8b95a5;font-size:11px;line-height:1.5}
+#snote-chatbot .snote-chat-close{position:relative;display:grid;place-items:center;flex:none;width:30px;height:30px;min-width:30px;margin:0;padding:5px;border:0;border-radius:5px;background:transparent;color:#525967;cursor:pointer}
+#snote-chatbot .snote-chat-close::before{content:'';position:absolute;inset:0;border-radius:5px;background:#eceef2;opacity:0;transition:opacity .15s ease}
+#snote-chatbot .snote-chat-close:is(:hover,:focus-visible)::before{opacity:1}
+#snote-chatbot .snote-chat-close svg{position:relative;display:block;width:20px;height:20px;scale:1!important}
+#snote-chatbot .snote-chat-content{display:flex;flex:1;flex-direction:column;min-height:0;overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#d9dee6 transparent;padding:15px}
+#snote-chatbot .snote-chat-chips{display:flex;flex:none;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+#snote-chatbot .snote-chat-chip{min-height:32px;margin:0;padding:6px 10px;border:1px solid #e6ebf2;border-radius:999px;background:#f7f9fc;color:#526b91;font-size:11px;font-weight:500;line-height:1.5;cursor:pointer}
+#snote-chatbot .snote-chat-chip:hover{background:#edf3fd;border-color:#cbdaf1}
+#snote-chatbot .snote-chat-log{display:flex;flex:1;flex-direction:column;gap:10px;min-width:0}
+#snote-chatbot .snote-chat-message{flex:none;align-self:flex-start;max-width:94%;padding:10px 12px;border-radius:13px 13px 13px 4px;background:#f3f5f8;color:#43526a;overflow-wrap:anywhere;white-space:pre-wrap}
+#snote-chatbot .snote-chat-message p{margin:0;font-size:12px;line-height:1.75}
+#snote-chatbot .snote-chat-message.is-user{align-self:flex-end;border-radius:13px 13px 4px 13px;background:#eaf1fc;color:#28518c}
+#snote-chatbot .snote-chat-action{display:block;margin:9px 0 0;padding:0;border:0;background:transparent;color:#2765b7;text-decoration:underline;text-underline-offset:3px;font-size:12px;line-height:1.6;cursor:pointer}
+#snote-chatbot .snote-chat-form{display:flex;flex:none;gap:7px;padding:12px 14px 5px;border-top:1px solid #edf0f4;background:#fff}
+#snote-chatbot-input{display:block;flex:1;width:0;min-width:0;height:39px;margin:0;padding:9px 10px;border:1px solid #e1e6ed;border-radius:10px;background:#fafbfd;color:#293c57;font-size:13px;line-height:20px;outline:0;box-shadow:none}
+#snote-chatbot-input::placeholder{color:#aab3c0;opacity:1}
+#snote-chatbot-input:focus{border-color:#8baad7;box-shadow:0 0 0 2px #7c9ed51a}
+#snote-chatbot .snote-chat-send{flex:none;min-width:55px;height:39px;margin:0;padding:8px 10px;border:0;border-radius:10px;background:#18345c;color:#fff;font-size:12px;font-weight:600;cursor:pointer}
+#snote-chatbot .snote-chat-send:hover{background:#244b7d}
+#snote-chatbot .snote-chat-foot{flex:none;margin:0;padding:3px 16px 10px;color:#a0a8b4;font-size:10px;line-height:1.5}
+#snote-chatbot button:focus-visible{outline:2px solid #83a6da;outline-offset:2px}
+#snote-chatbot .snote-chat-sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@keyframes snote-help-in{from{opacity:0;transform:translateY(9px) scale(.98)}to{opacity:1;transform:none}}
+@media(max-width:760px){#snote-chatbot-panel{width:min(368px,calc(100vw - 32px));height:min(500px,var(--snote-chatbot-room));border-radius:18px}#snote-chatbot-input{font-size:16px}#snote-chatbot .snote-chat-form{padding-inline:12px}#snote-chatbot .snote-chat-content{padding:12px}#snote-chatbot .snote-chat-header{padding:14px 15px 12px}}
+@media(prefers-reduced-motion:reduce){#snote-chatbot-panel{animation:none}#snote-chatbot-launcher,#snote-chatbot .snote-chat-close::before{transition:none}#snote-chatbot-launcher:hover{translate:none}}
+@media print{#snote-chatbot{display:none!important}}

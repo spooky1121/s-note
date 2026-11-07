@@ -1,0 +1,8 @@
+@media screen {
+ #zc-cloud-gate .snote-login-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:7px 12px}
+ #zc-cloud-gate .snote-login-footer .snote-login-footer-tools{display:inline-flex;align-items:center;gap:8px;float:none;margin:0 80px 0 auto;white-space:nowrap}
+ #zc-cloud-gate .snote-login-footer-tools>[data-snote-version]{float:none;margin:0}
+ #zc-cloud-gate .snote-operator-login{display:inline-block;padding:2px 0 2px 8px;border-left:1px solid #dfe4ec;color:#7e8795;text-decoration:none;font-size:10px;font-weight:500;line-height:1.4}
+ #zc-cloud-gate .snote-operator-login:hover{color:#315cf5}
+ #zc-cloud-gate .snote-operator-login:focus-visible{outline:2px solid #9bb8ff;outline-offset:3px;border-radius:3px}
+}
