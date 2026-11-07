@@ -1,0 +1,13 @@
+/* Navigation hit areas stay still at their edges; icon actions elsewhere keep their hover lift. */
+@media screen {
+ #desktop-nav > button,
+ #mobile-drawer-nav > button {
+  translate:none!important;
+  transform:none!important;
+  transition:background-color .18s ease,color .18s ease,box-shadow .18s ease;
+ }
+}
+@media screen and (prefers-reduced-motion:reduce) {
+ #desktop-nav > button,
+ #mobile-drawer-nav > button {transition:none}
+}

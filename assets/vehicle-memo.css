@@ -1,0 +1,33 @@
+/* Vehicle work notes follow the existing detail save and scoped sharing flow. */
+#vehicle-overlay .vehicle-memo-section {
+ display:flex;flex-direction:column;gap:10px;min-width:0;min-height:180px;margin:0 0 14px;padding:16px;
+ border:1px solid #e6eaf0;border-radius:14px;background:#fff;box-sizing:border-box;
+}
+#vehicle-overlay .vehicle-memo-section h3 {margin:0;color:#344357;font-size:13px;font-weight:650;line-height:1.5}
+#vehicle-overlay #detail-memo,
+#vehicle-overlay #acct-vehicle-memo,
+#snote-vehicle-sharing .vehicle-sharing-memo-input {
+ display:block;width:100%;min-width:0;min-height:130px;box-sizing:border-box;margin:0;padding:11px 12px;
+ border:1px solid #e5e9ef;border-radius:9px;background:#fafbfc;color:#344357;font:inherit;font-size:13px;
+ line-height:1.65;resize:vertical;overflow-wrap:anywhere;
+}
+#vehicle-overlay #detail-memo {flex:1}
+#vehicle-overlay #detail-memo:focus,
+#snote-vehicle-sharing .vehicle-sharing-memo-input:focus {outline:2px solid #c6d9fc;outline-offset:1px;border-color:#9bbaf0;background:#fff}
+#vehicle-overlay .acct-vehicle-memo {margin-top:16px}
+#vehicle-overlay .acct-vehicle-memo > label {display:block;margin:0 0 8px;color:#6c7a8d;font-size:12px;font-weight:600}
+#vehicle-overlay #acct-vehicle-memo {color:#657286}
+body.accountant-mode #vehicle-overlay .vehicle-memo-section {display:none}
+#snote-vehicle-sharing .vehicle-sharing-memo-field {grid-column:1/-1;min-width:0}
+@media screen and (min-width:1000px) {
+ #vehicle-overlay .vehicle-modal > .vehicle-body {
+  grid-template-areas:'overview overview' 'identity costs' 'memo costs' 'sold costs' 'media media';
+  grid-template-rows:auto max-content minmax(180px,1fr) max-content auto;
+ }
+ #vehicle-overlay .vehicle-memo-section {grid-area:memo;align-self:stretch;margin:0}
+}
+@media screen and (max-width:760px) {
+ #vehicle-overlay .vehicle-memo-section {padding:14px 12px;min-height:170px}
+ #vehicle-overlay #detail-memo,#vehicle-overlay #acct-vehicle-memo,
+ #snote-vehicle-sharing .vehicle-sharing-memo-input {font-size:16px;min-height:140px}
+}

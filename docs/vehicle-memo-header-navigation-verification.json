@@ -1,0 +1,181 @@
+{
+  "release": "2.92",
+  "baseCommit": "0810c3132d32005854de23281914fae8f97ac63f",
+  "scope": [
+    "Vehicle detail memo saved through the existing scoped cars dataset and save icon",
+    "Accepted shared vehicle memo read/edit and change notification",
+    "Header weather/calculator drawings match the profile photo",
+    "Stable desktop/mobile sidebar hit areas at hover boundaries"
+  ],
+  "memo": {
+    "property": "vehicleMemo",
+    "storage": "Existing cars JSON; no new table/column or vehicle data rewrite",
+    "limit": "2000 UTF-16 units",
+    "normalization": "CRLF/CR to LF; leading/trailing spaces and tabs preserved",
+    "clear": "Empty string",
+    "excludedFrom": "Customer-facing estimate/contract/receipt note fields",
+    "accountant": "Read-only"
+  },
+  "checks": {
+    "ownerMemo": {
+      "test": "tests/vehicle-memo.browser.cjs",
+      "widths": [
+        1440,
+        390,
+        320
+      ],
+      "passed": true,
+      "cases": [
+        "Existing save icon and scoped canonical cars ACK",
+        "Reload and fresh browser context",
+        "Whitespace/newline/HTML literal and 2000/2001 boundaries",
+        "Browser quota rollback, cloud failure/retry",
+        "Dirty close save/discard and typing during ACK",
+        "Vehicle switch/late ACK draft isolation",
+        "Accountant read-only, separate estimate note and money unchanged",
+        "Desktop columns and phone overflow"
+      ]
+    },
+    "sharedMemoSql": {
+      "test": "tests/vehicle-memo-sharing.sql.cjs",
+      "groups": 12,
+      "passed": true,
+      "engine": "Isolated PGlite using actual migration functions/RLS",
+      "cases": [
+        "Accepted-only read/edit; inactive, moved-company, banned, anonymous and accountant rejection",
+        "UTF-16/controls/line endings and previous 200-character field cap",
+        "Revision CAS and atomic validation",
+        "Actor exclusion, accepted-only notifications and inspection-cost notifications",
+        "Reapplying migration preserves dataset, notices, ACL",
+        "Recycle restore preserves memo without resurrecting sharing"
+      ]
+    },
+    "sharedMemoBrowser": {
+      "test": "tests/vehicle-memo-sharing.browser.cjs",
+      "widths": [
+        1440,
+        1024,
+        390,
+        320
+      ],
+      "passed": true,
+      "scope": "Actual shared editor and notification assets connected to the isolated real SQL fixture"
+    },
+    "existingSharingAndNotifications": {
+      "tests": [
+        "tests/vehicle-sharing.browser.cjs",
+        "tests/vehicle-notifications.browser.cjs"
+      ],
+      "widths": [
+        1440,
+        390,
+        320
+      ],
+      "passed": true
+    },
+    "header": {
+      "widths": [
+        1440,
+        1024,
+        390,
+        320
+      ],
+      "pointerModes": [
+        "fine",
+        "coarse touch"
+      ],
+      "combinations": 8,
+      "passed": true,
+      "drawings": {
+        "desktopPx": 40,
+        "mobilePx": 36
+      },
+      "minimumTouchPx": 44,
+      "cases": [
+        "Cold-load linked CSS",
+        "Temperature visible, no header overlap or page overflow",
+        "Profile expand and dropdown, tooltip and manual weather refresh",
+        "Calculator keyboard/Escape and 8+2=10"
+      ]
+    },
+    "sidebar": {
+      "widths": [
+        1440,
+        1024,
+        390,
+        320
+      ],
+      "passed": true,
+      "baseline": {
+        "verticalRangePx": 2,
+        "hoverTransitions": 29
+      },
+      "fixed": {
+        "verticalRangePx": 0,
+        "hoverTransitions": 0
+      },
+      "scope": "Actual index/scripts with isolated fixture; target CSS injected to compare baseline and fix",
+      "cases": [
+        "Desktop/mobile boundary pointer",
+        "Background emphasis and keyboard activation",
+        "Mobile navigation closes correctly",
+        "Reduced motion and other action icon lift preserved"
+      ]
+    },
+    "unitRegression": {
+      "command": "node --test tests/list-sort.test.cjs tests/list-pagination.test.cjs tests/money.test.mjs tests/number-format.test.cjs tests/inventory-interest.test.mjs tests/quick-calculator-model.test.mjs tests/weather.test.mjs",
+      "passedFiles": 7,
+      "failedFiles": 0
+    },
+    "static": [
+      "Changed JS and new browser/SQL test syntax",
+      "Inline application script syntax",
+      "git diff --check"
+    ]
+  },
+  "database": {
+    "project": "rmlycycleuscfqywbihj",
+    "migration": {
+      "file": "supabase/migrations/20261107111123_shared_vehicle_work_memo.sql",
+      "sha256": "1e6a33c193378e655b1d2aee2089f9d581d4d8aaf07f26e2fdc090ecb18dfb32",
+      "remoteVersion": "20261107112039"
+    },
+    "functions": [
+      "snote_private.vehicle_share",
+      "snote_private.record_shared_vehicle_change"
+    ],
+    "remoteBodiesMatchLocal": true,
+    "ownerAclSearchPathUnchanged": true,
+    "acceptedChecksPreserved": true,
+    "readOnlyBoundaryQuery": [
+      {
+        "label": "boundary2000",
+        "utf16_units": 2000,
+        "controls": false
+      },
+      {
+        "label": "controls",
+        "utf16_units": 3,
+        "controls": true
+      },
+      {
+        "label": "empty",
+        "utf16_units": 0,
+        "controls": false
+      },
+      {
+        "label": "over2001",
+        "utf16_units": 2001,
+        "controls": false
+      }
+    ],
+    "newSecurityAdvisorGroups": 0,
+    "previousSecurityAdvisorGroups": 4
+  },
+  "limitations": [
+    "Browser checks use synthetic accounts/data; no production customer, car or SMS writes.",
+    "Production database validation reads function bodies, metadata and boundary expressions; remote DDL replaces two existing functions only.",
+    "This session cannot directly reach the production Pages URL through its HTTP network policy. GitHub exact-commit Cloudflare s-note check is used for deployment confirmation.",
+    "No claim that the legacy full smoke suite passes; its pre-existing fixture mismatches are recorded in the v2.91 verification."
+  ]
+}
