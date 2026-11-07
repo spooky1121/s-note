@@ -1,0 +1,125 @@
+/* Vehicle view controls reuse the existing list, sorting and scoped card records. */
+@media screen {
+ #snote-app #list-screen[data-vehicle-view] > .panel {
+  display:flex;flex-wrap:wrap;align-items:center;column-gap:12px;row-gap:0;
+ }
+ #snote-app #list-screen[data-vehicle-view] > .panel > :is(.panel-head,.searchrow,#snote-sales-month-filter,#list-table,#list-mobile,#list-pagination) {
+  flex:0 0 100%;min-width:0;max-width:100%;box-sizing:border-box;
+ }
+ #snote-app #list-screen[data-vehicle-view] > .panel > :is(.panel-head,.searchrow,#snote-sales-month-filter) {order:0}
+ #snote-app #list-screen[data-vehicle-view] > .panel > :is(#list-table,#list-mobile) {order:3}
+ #snote-app #list-screen[data-vehicle-view] > .panel > #list-pagination {order:4}
+ #snote-app #list-screen .snote-card-buy-price {display:none}
+ #snote-app #list-screen #snote-vehicle-view-toolbar {
+  display:flex;align-items:center;justify-content:flex-end;order:2;flex:0 0 auto;min-width:0;margin:0 20px 12px auto;
+ }
+ #snote-app #list-screen #snote-vehicle-view-toolbar[hidden] {display:none!important}
+ #snote-app #list-screen .snote-vehicle-view-toggle {
+  display:inline-flex;align-items:center;gap:2px;padding:3px;border:0;border-radius:10px;background:#f3f5f8;
+ }
+ #snote-app #list-screen .snote-vehicle-view-toggle > button.snote-list-action {
+  display:inline-grid;place-items:center;flex:none;width:32px;min-width:32px;height:32px;min-height:32px;padding:6px;margin:0;border:0;border-radius:7px;background:transparent;box-shadow:none;color:#9098a7;line-height:1;cursor:pointer;transition:color .16s,background .16s,transform .16s;
+ }
+ #snote-app #list-screen .snote-vehicle-view-toggle > button.snote-list-action > svg {display:block;width:19px;height:19px;max-width:100%;pointer-events:none}
+ #snote-app #list-screen .snote-vehicle-view-toggle > button.snote-list-action:hover {color:#416fe1;background:#e9eef8;transform:translateY(-1px)}
+ #snote-app #list-screen .snote-vehicle-view-toggle > button.snote-list-action[aria-pressed=true] {color:#3168e9;background:#fff;box-shadow:0 1px 4px #273b5d0d}
+ #snote-app #list-screen .snote-vehicle-view-toggle > button.snote-list-action:focus-visible {outline:2px solid #9bbcf4;outline-offset:2px}
+ #snote-app #list-screen .snote-vehicle-view-button[data-snote-icon-help]::after {display:none}
+ #snote-app #list-screen[data-vehicle-view] > .panel > .snote-mobile-sort {
+  order:1;flex:1 1 0;min-width:0;max-width:340px;justify-content:flex-start;flex-wrap:nowrap;gap:6px;margin:0 0 12px 20px;
+ }
+ #snote-app #list-screen[data-vehicle-view=cards] > .panel > .snote-mobile-sort {display:flex}
+ #snote-app #list-screen[data-vehicle-view] > .panel > .snote-mobile-sort label {display:flex;align-items:center;gap:7px;flex:1 1 auto;min-width:0;white-space:nowrap;color:#929aa8;font-size:11px}
+ #snote-app #list-screen[data-vehicle-view] > .panel > .snote-mobile-sort select {
+  flex:1 1 auto;width:100%;min-width:0;max-width:210px;height:34px;min-height:34px;padding:5px 8px;border:1px solid #e7ebf1;border-radius:8px;background:#fff;box-shadow:none;color:#637086;font-size:12px;
+ }
+ #snote-app #list-screen[data-vehicle-view] > .panel > .snote-mobile-sort > button {
+  flex:none;display:inline-grid;place-items:center;width:32px;min-width:32px;height:34px;min-height:34px;margin:0;padding:3px;border:0;border-radius:8px;background:#f4f6fa;box-shadow:none;color:#5474ba;font-size:17px;
+ }
+ #snote-app #list-screen[data-vehicle-view=cards] #list-table {display:none!important}
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile {
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch;gap:18px;width:100%;padding:0 20px 18px;margin:0;
+ }
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile > :is(.vehicle-card,.acct-mobile-card) {
+  display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto 1fr auto;align-items:stretch;gap:0;min-width:0;max-width:100%;width:100%;height:100%;margin:0;padding:0;border:1px solid #e6eaf0;border-radius:14px;background:#fff;box-shadow:0 2px 9px #20314804;overflow:hidden;box-sizing:border-box;transition:border-color .18s,box-shadow .18s;
+ }
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile > :is(.vehicle-card,.acct-mobile-card):hover {border-color:#cbd9f0;box-shadow:0 5px 16px #2741640a}
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile > :is(.vehicle-card,.acct-mobile-card):focus-visible {outline:2px solid #88afe9;outline-offset:3px}
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .vehicle-card > .car-thumb {
+  display:block;position:relative;grid-column:1;grid-row:1;width:100%;height:auto;min-width:0;min-height:0;aspect-ratio:16/9;margin:0;border:0;border-radius:0;background:#f1f4f8;overflow:hidden;box-sizing:border-box;
+ }
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .car-thumb > img {display:block;width:100%;height:100%;max-width:100%;object-fit:cover}
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .car-thumb > .zc-ref-label {right:8px;bottom:8px;padding:3px 6px;border-radius:5px;background:#ffffffd9;color:#788395;font-size:9px;font-weight:500;line-height:1.4}
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .car-thumb > .snote-shared-vehicle-marker--photo {top:9px;left:9px;width:clamp(24px,2.2vw,28px);height:auto;aspect-ratio:1}
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .vehicle-card > .vehicle-info {
+  grid-column:1;grid-row:2;min-width:0;width:auto;padding:14px 15px 12px;margin:0;box-sizing:border-box;
+ }
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .vehicle-title {
+  display:flex;align-items:center;gap:7px;flex-wrap:wrap;max-width:100%;margin:0;color:#29374a;font-size:15px;font-weight:650;line-height:1.5;white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere;
+ }
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .vehicle-title > span:first-child {min-width:0;overflow-wrap:anywhere}
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .vehicle-meta {margin:4px 0 0;color:#8a94a3;font-size:12px;line-height:1.5;white-space:normal;overflow-wrap:anywhere}
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .snote-company-dealer {margin-top:5px;color:#8190a3;font-size:11px}
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .vehicle-inventory-meta {
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px 10px;margin:11px 0 9px;padding:0 0 10px;border-bottom:1px solid #edf0f4;color:#617084;font-size:11px;line-height:1.5;
+ }
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .vehicle-inventory-meta > span {display:flex;align-items:baseline;gap:5px;min-width:0;white-space:normal;overflow-wrap:anywhere}
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .vehicle-inventory-meta > span:last-child {grid-column:1/-1}
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .vehicle-inventory-meta b {flex:none;color:#9aa3b0;font-weight:500}
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .snote-card-buy-price {display:flex;align-items:baseline;justify-content:space-between;gap:10px;min-width:0;margin-top:6px;color:#8c96a5;font-size:11px;line-height:1.5;text-align:left;font-variant-numeric:tabular-nums}
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .snote-card-buy-price > strong {min-width:0;color:#536176;font-size:13px;font-weight:550;text-align:right;overflow-wrap:anywhere}
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .vehicle-price {display:block;margin:5px 0 0;padding:0;border:0;color:#3168d9;font-size:14px;font-weight:650;line-height:1.6;text-align:right;overflow-wrap:anywhere}
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .snote202-mobile-finance {gap:5px;margin:8px 0 0;color:#8c96a5;font-size:11px;line-height:1.5;white-space:normal}
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile :is(.sale-date-chip,.mobile-media) {display:block;margin:7px 0 0;font-size:11px;line-height:1.5;overflow-wrap:anywhere}
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .vehicle-card > .vehicle-right {
+  display:flex;grid-column:1;grid-row:3;align-items:center;align-self:stretch;justify-content:space-between;flex-wrap:wrap;gap:8px;width:auto;min-width:0;margin:0;padding:10px 14px;border-top:1px solid #edf0f4;
+ }
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .vehicle-right .status-select {width:80px;min-width:76px;max-width:86px;height:28px;min-height:28px;margin:0;padding:4px 5px;font-size:11px;border-radius:6px;background:#fff}
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .vehicle-right .snote202-mobile-age {flex:1;margin:0;color:#98a1af;font-size:11px;line-height:1.4;text-align:center}
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .vehicle-right .snote-list-encar {width:40px;min-width:40px;height:28px;min-height:28px;margin:0;padding:0}
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .vehicle-right .snote-list-encar img {width:34px;height:17px;object-fit:contain}
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .acct-mobile-card {display:flex;flex-direction:column;padding:16px}
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .acct-mobile-heading {display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:nowrap;gap:10px;min-width:0}
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .acct-mobile-heading .snote222-model-line {flex:1 1 auto;min-width:0;gap:6px}
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .acct-mobile-heading strong {font-size:14px;font-weight:650;line-height:1.5;overflow-wrap:anywhere}
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .acct-mobile-heading .status-select {flex:none;width:80px;min-width:76px;height:28px;min-height:28px;font-size:11px}
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .acct-mobile-sub {margin:5px 0 12px;color:#8a94a3;font-size:12px}
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .acct-mobile-fields {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 14px;margin:0}
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .acct-mobile-fields > div {min-width:0;padding-top:8px;border-top:1px solid #edf0f4}
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .acct-mobile-fields label {margin-bottom:4px;color:#98a1af;font-size:11px;line-height:1.4}
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .acct-mobile-fields strong {color:#536176;font-size:13px;font-weight:550;line-height:1.5;overflow-wrap:anywhere}
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile > .empty {grid-column:1/-1;min-width:0;width:100%;box-sizing:border-box}
+}
+@media screen and (min-width:1640px) {
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile {grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+@media screen and (min-width:761px) and (max-width:1180px) {
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile {grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media screen and (min-width:761px) {
+ #snote-app #list-screen[data-vehicle-view=list] > .panel > .snote-mobile-sort {display:none}
+}
+@media screen and (max-width:760px) {
+ #snote-app #list-screen[data-vehicle-view] > .panel {column-gap:8px}
+ #snote-app #list-screen #snote-vehicle-view-toolbar {margin:0 14px 12px auto}
+ #snote-app #list-screen .snote-vehicle-view-toggle > button.snote-list-action {width:44px;min-width:44px;height:44px;min-height:44px;padding:12px}
+ #snote-app #list-screen[data-vehicle-view] > .panel > .snote-mobile-sort {display:flex;flex:1 1 0;max-width:none;margin:0 0 12px 14px;gap:6px}
+ #snote-app #list-screen[data-vehicle-view] > .panel > .snote-mobile-sort label {font-size:0!important;gap:0}
+ #snote-app #list-screen[data-vehicle-view] > .panel > .snote-mobile-sort select {max-width:none;height:44px;min-height:44px;font-size:16px;padding:7px 6px}
+ #snote-app #list-screen[data-vehicle-view] > .panel > .snote-mobile-sort > button {width:44px;min-width:44px;height:44px;min-height:44px}
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile {grid-template-columns:minmax(0,1fr);gap:14px;padding:0 14px 14px}
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .vehicle-title {font-size:16px}
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile :is(.vehicle-right,.acct-mobile-heading) .status-select {width:110px;min-width:110px;max-width:110px;height:44px;min-height:44px;font-size:16px}
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .vehicle-right .snote-list-encar {width:44px;min-width:44px;height:44px;min-height:44px}
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .vehicle-inventory-meta {grid-template-columns:minmax(0,.8fr) minmax(0,1.4fr);font-size:12px}
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .snote-card-buy-price {font-size:12px}
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .snote-card-buy-price > strong {font-size:14px}
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .vehicle-price {font-size:15px}
+}
+@media(prefers-reduced-motion:reduce) {
+ #snote-app #list-screen .snote-vehicle-view-toggle > button.snote-list-action,
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile > :is(.vehicle-card,.acct-mobile-card) {transition:none;transform:none}
+}
+@media print {
+ #snote-vehicle-view-toolbar {display:none!important}
+}

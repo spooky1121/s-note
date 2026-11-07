@@ -1,0 +1,58 @@
+{
+  "release": "2.91",
+  "verifiedAt": "2026-11-07T10:42:35.571871+00:00",
+  "baselineCommit": "884effdf88eca63e8421cdb860f026012b70a296",
+  "sourceSha256": {
+    "index.html": "a01f622450e5792378c9e01e2d46bd219df9dc208cf4920a0ff7244f67a5cd5f",
+    "assets/vehicle-list-view.js": "930f85182fce754a169296153fde499c4603303f66a0b25810dfac00c4e539c0",
+    "assets/vehicle-list-view.css": "21edcbcd076ad24b3a453b5bcf566c0283a00491b0fd5a51873e8e2cb4ae50b1",
+    "tests/vehicle-list-view.browser.cjs": "4b308a16fef2433f7616cd854cc355c53aad060d33f009dd4ecfd56d5b88799e"
+  },
+  "browser": {
+    "viewports": [
+      1440,
+      1024,
+      390,
+      320
+    ],
+    "status": "passed",
+    "data": "Synthetic accounts, vehicle records, photos and routed HTTP only. No production Auth, DB, SMS or advertising calls.",
+    "cases": [
+      "45 and 21 records with 20-per-page navigation",
+      "View switching preserves page, search, sort and record DOM",
+      "Whole-result sorting before pagination",
+      "Large photos and responsive grid without overflow",
+      "Card keyboard detail opening and isolated status selection",
+      "Empty search results",
+      "Sales-month filter, income action and advertisement suppression",
+      "Accountant read-only state",
+      "Own-purchase scope",
+      "Accepted-only sharing with shared markers and pale green cards",
+      "Company purchase loading clears stale records",
+      "Saved, reloaded, invalid and blocked-storage display preference"
+    ]
+  },
+  "existingSortPaginationUnitTests": {
+    "passed": 7
+  },
+  "visual": {
+    "desktopColumns": 3,
+    "tabletColumns": 2,
+    "phoneColumns": 1,
+    "mobileTouchTargetPx": 44,
+    "finalCssRecheckedOn": [
+      390,
+      320
+    ]
+  },
+  "existingFullBrowserSmoke": {
+    "completedGroups": 16,
+    "completeSuitePassed": false,
+    "baselineReproducedIssues": [
+      "Original fixture expects an old circular/red close button; current baseline uses the intended gray X.",
+      "Original accountant save fixture attempts another dealer vehicle in own-purchase scope, so the baseline owner guard blocks the missing edit field."
+    ],
+    "temporaryCheckOnly": "The old close assertions were aligned with current HEAD only in a work copy; no permanent smoke test or product behavior was changed to pass it.",
+    "newRegressionFound": false
+  }
+}

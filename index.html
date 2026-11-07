@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.90">
+<html lang="ko" data-snote-release="2.91">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -3208,6 +3208,7 @@ button, input, select, textarea { font-family: inherit; }
 <link rel="stylesheet" href="assets/operator-entry.css?v=2.85">
 <link rel="stylesheet" href="assets/snote-chatbot.css?v=2.88">
 <link rel="stylesheet" href="assets/vehicle-cost-settings.css?v=2.85">
+<link rel="stylesheet" href="assets/vehicle-list-view.css?v=2.91">
 </head>
 <body class="snote-typography">
 
@@ -4706,7 +4707,7 @@ function carMobile(rows, inventoryDetails=false){
  if(isAccountant())return accountantCarMobile(rows);
  if(!rows.length)return '<div class="empty">표시할 차량이 없습니다.</div>';
  const sold=route==='sell',extra=inventoryDetails&&!sold;
- return rows.map(c=>`<div class="vehicle-card" role="button" tabindex="0" onclick="openVehicle('${c.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openVehicle('${c.id}')}"><div class="car-thumb">${thumbHtml(c)}</div><div class="vehicle-info"><div class="vehicle-title snote222-model-line"><span>${esc(c.model)}</span>${snote222VehicleColor(c)}</div><div class="vehicle-meta">${esc(c.plate)}${!extra?` · ${esc(c.year)}년 · ${esc(c.km)}km`:''}</div>${route==='companyBuy'?`<div class="car-sub snote-company-dealer">${esc(dealerLabel(c))}</div>`:''}${extra?`<div class="vehicle-inventory-meta"><span><b>연식</b>${c.year?esc(c.year)+'년':'-'}</span><span><b>주행거리</b>${c.km!==undefined&&c.km!==null&&String(c.km).trim()!==''?esc(formatKm(c.km))+' km':'-'}</span><span><b>매입일자</b>${esc(c.purchaseAt||'-')}</span></div>`:''}<div class="vehicle-price">${sold?'판매가':'판매예정가'} ${num(sold?salePrice(c):c.sell)}원</div>${extra?`<span class="prestock-mobile-line snote202-mobile-finance">재고금융 · ${snote202FinanceState(c)}</span>`:''}${sold?`<div class="sale-date-chip">판매 완료일 ${esc(c.soldAt||'미입력')}</div>`:''}${isPurchaseListRoute()?'':`<span class="mobile-media">${mediaCountHtml(c)}</span>`}</div><div class="vehicle-right">${statusSelect(c)}${extra&&isPurchaseListRoute()?`<small class="snote202-mobile-age">경과 ${snote202InventoryAge(c.purchaseAt)}</small>${snote239EncarIcon(c)}`:''}${sold?snote221IncomeButton(c):''}</div></div>`).join('')}
+ return rows.map(c=>`<div class="vehicle-card" role="button" tabindex="0" onclick="openVehicle('${c.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openVehicle('${c.id}')}"><div class="car-thumb">${thumbHtml(c)}</div><div class="vehicle-info"><div class="vehicle-title snote222-model-line"><span>${esc(c.model)}</span>${snote222VehicleColor(c)}</div><div class="vehicle-meta">${esc(c.plate)}${!extra?` · ${esc(c.year)}년 · ${esc(c.km)}km`:''}</div>${route==='companyBuy'?`<div class="car-sub snote-company-dealer">${esc(dealerLabel(c))}</div>`:''}${extra?`<div class="vehicle-inventory-meta"><span><b>연식</b>${c.year?esc(c.year)+'년':'-'}</span><span><b>주행거리</b>${c.km!==undefined&&c.km!==null&&String(c.km).trim()!==''?esc(formatKm(c.km))+' km':'-'}</span><span><b>매입일자</b>${esc(c.purchaseAt||'-')}</span></div>`:''}<div class="snote-card-buy-price snote-money-column"><span>매입가</span><strong>${num(c.buy)}원</strong></div><div class="vehicle-price">${sold?'판매가':'판매예정가'} ${num(sold?salePrice(c):c.sell)}원</div>${extra?`<span class="prestock-mobile-line snote202-mobile-finance">재고금융 · ${snote202FinanceState(c)}</span>`:''}${sold?`<div class="sale-date-chip">판매 완료일 ${esc(c.soldAt||'미입력')}</div>`:''}${isPurchaseListRoute()?'':`<span class="mobile-media">${mediaCountHtml(c)}</span>`}</div><div class="vehicle-right">${statusSelect(c)}${extra&&isPurchaseListRoute()?`<small class="snote202-mobile-age">경과 ${snote202InventoryAge(c.purchaseAt)}</small>${snote239EncarIcon(c)}`:''}${sold?snote221IncomeButton(c):''}</div></div>`).join('')}
 function snotePurchaseDateSortKey(value){
  const match=/^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})$/.exec(String(value||'').trim());
  if(!match)return '';
@@ -10020,7 +10021,7 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 <script type="module" src="assets/income-settlement-parent.js?v=2.85"></script>
 <script src="assets/vehicle-sharing.js?v=2.87" defer></script>
 <script src="assets/shared-vehicle-markers.js?v=2.87" defer></script>
-<script src="assets/release-info.js?v=2.90" defer></script>
+<script src="assets/release-info.js?v=2.91" defer></script>
 <script src="assets/company-purchase.js?v=2.77" defer></script>
 <script src="assets/recycle-bin.js?v=2.77" defer></script>
 <script src="assets/profile-editor.js?v=2.79" defer></script>
@@ -10028,6 +10029,7 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 <script src="assets/document-mms.js?v=2.44" defer></script>
 <script src="assets/workspace-polish.js?v=2.77" defer></script>
 <script src="assets/list-sort.js?v=2.57" defer></script>
+<script src="assets/vehicle-list-view.js?v=2.91" defer></script>
 <script src="assets/workspace-refine.js?v=2.89" defer></script>
 <script src="assets/snote-chatbot.js?v=2.88" defer></script>
 <script src="assets/vehicle-cost-settings.js?v=2.85" defer></script>
