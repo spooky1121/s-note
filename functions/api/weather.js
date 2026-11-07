@@ -51,7 +51,8 @@ export function decodeKmaFeed(data,contentType=''){
 async function readFeed(signal,fresh=false){
  let target=new URL(FEED),response;
  for(let redirects=0;redirects<=2;redirects++){
-  response=await fetch(target.href,{signal,redirect:'manual',...(fresh?{cache:'no-store',cf:{cacheTtl:0}}:{}),headers:{Accept:'application/xml,text/xml','User-Agent':'S-NOTE/2.85 (+https://s-note.pages.dev)',...(fresh?{'Cache-Control':'no-cache'}:{})}});
+  // Workers rejects cache:'no-store' combined with cf.cacheTtl:0; use its native cache override.
+  response=await fetch(target.href,{signal,redirect:'manual',...(fresh?{cf:{cacheTtl:0}}:{}),headers:{Accept:'application/xml,text/xml','User-Agent':'S-NOTE/2.89 (+https://s-note.pages.dev)',...(fresh?{'Cache-Control':'no-cache'}:{})}});
   if(![301,302,303,307,308].includes(response.status))break;
   const location=response.headers.get('location');
   if(!location||redirects===2)throw Error('KMA_REDIRECT_UNAVAILABLE');
@@ -64,6 +65,22 @@ async function readFeed(signal,fresh=false){
  const data=new Uint8Array(length);let offset=0;for(const chunk of chunks){data.set(chunk,offset);offset+=chunk.length;}
  return parseKmaObservations(decodeKmaFeed(data,response.headers.get('content-type')));
 }
+const OBSERVATION_MAX_AGE=10800000,CACHE_FRESH_AGE=600000;
+const FAILURE_CODES=new Set(['INVALID_KMA_DATA','INVALID_KMA_TIME','STALE_KMA_DATA','NO_KMA_OBSERVATIONS','INVALID_KMA_ENCODING','KMA_REDIRECT_UNAVAILABLE','KMA_HTTP_UNAVAILABLE','KMA_TOO_LARGE','NO_NEARBY_STATION','KMA_TIMEOUT','KMA_NETWORK_UNAVAILABLE']);
+function reasonFor(error){return FAILURE_CODES.has(error?.message)?error.message:'KMA_NETWORK_UNAVAILABLE';}
+function usableCache(feed){
+ const observed=Date.parse(feed?.observedAt),fetched=Date.parse(feed?.fetchedAt),now=Date.now();
+ return Number.isFinite(observed)&&now-observed>=-1200000&&now-observed<=OBSERVATION_MAX_AGE&&Number.isFinite(fetched)&&now-fetched>=-60000&&now-fetched<=OBSERVATION_MAX_AGE&&Array.isArray(feed.rows)&&feed.rows.length>0&&feed.rows.length<=1000&&feed.rows.every(row=>Number.isInteger(row.station)&&typeof row.region==='string'&&row.region.trim()!==''&&row.region.length<=40&&Number.isFinite(row.temperature)&&row.temperature>=-80&&row.temperature<=60&&typeof row.summary==='string'&&row.summary.length<=80&&Number.isInteger(row.code)&&row.code>=0&&row.code<=100);
+}
+async function fetchObservations(fresh){
+ // Retry transient network/HTTP failures once, with a bounded deadline per attempt.
+ for(let attempt=0;attempt<2;attempt++){
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),4000);
+  try{return {...await readFeed(controller.signal,fresh||attempt>0),fetchedAt:new Date().toISOString()};}
+  catch(error){const reason=controller.signal.aborted?'KMA_TIMEOUT':reasonFor(error);if(attempt===1||!['KMA_TIMEOUT','KMA_NETWORK_UNAVAILABLE','KMA_HTTP_UNAVAILABLE','STALE_KMA_DATA'].includes(reason))throw Error(reason);}
+  finally{clearTimeout(timer);}
+ }
+}
 export async function onRequest({request,env={}}){
  const reply=(data,status=200)=>new Response(JSON.stringify(data),{status,headers:{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff',...(status===503?{'Retry-After':'30'}:{})}});
  if(request.method!=='GET')return reply({ok:false},405);
@@ -73,14 +90,28 @@ export async function onRequest({request,env={}}){
  const fallback=!requested&&!located,selected=requested||(fallback?STATIONS.find(([id])=>id===108):null);
  const point=selected?{lat:selected[1],lon:selected[2]}:located;
  const locationBasis=requested?'선택한 관측소':fallback?'서울 기준 (접속 위치 확인 불가)':configured?'설정한 상사 위치 인근 관측소':'접속 지역 인근 관측소';
- const cache=globalThis.caches?.default,key=new Request(new URL('/api/weather-cache/kma-observations-v2',request.url));
- let feed=null;
- try{const saved=fresh?null:await cache?.match(key);if(saved){const cached=await saved.json();const age=Date.now()-Date.parse(cached.observedAt);if(age>=-1200000&&age<=10800000&&Array.isArray(cached.rows)&&cached.rows.length&&cached.rows.every(row=>Number.isInteger(row.station)&&typeof row.region==='string'&&row.region.trim()!==''&&row.region.length<=40&&Number.isFinite(row.temperature)&&row.temperature>=-80&&row.temperature<=60&&Number.isInteger(row.code)&&row.code>=0&&row.code<=100))feed=cached;}}catch{}
- const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),6000);
- try{
-  if(!feed){feed=await readFeed(controller.signal,fresh);if(cache)try{await cache.put(key,new Response(JSON.stringify(feed),{headers:{'Content-Type':'application/json','Cache-Control':'public, max-age=600'}}));}catch{}}
+ const cache=globalThis.caches?.default,key=new Request(new URL('/api/weather-cache/kma-observations-v3',request.url));
+ let savedFeed=null;
+ // Keep the last valid observation for a clearly labelled outage fallback, even on a manual refresh.
+ try{const saved=await cache?.match(key);if(saved){const data=await saved.json();if(usableCache(data))savedFeed=data;}}catch{}
+ function payload(feed,stale=false,reason){
   const stations=STATIONS.map(([id,lat,lon])=>{const item=feed.rows.find(row=>row.station===id);return item?{item,distance:Math.hypot((lat-point.lat)*111,(lon-point.lon)*111*Math.cos(point.lat*Math.PI/180))}:null;}).filter(Boolean).sort((a,b)=>a.distance-b.distance);
   const nearest=stations[0];if(!nearest||nearest.distance>120||(requested&&nearest.item.station!==requested[0]))throw Error('NO_NEARBY_STATION');
-  return reply({ok:true,...nearest.item,source:'기상청',sourceUrl:FEED,observedAt:feed.observedAt,timezone:'Asia/Seoul',locationBasis,fetchedAt:new Date().toISOString()});
- }catch(error){const allowed=['INVALID_KMA_DATA','INVALID_KMA_TIME','STALE_KMA_DATA','NO_KMA_OBSERVATIONS','INVALID_KMA_ENCODING','KMA_REDIRECT_UNAVAILABLE','KMA_HTTP_UNAVAILABLE','KMA_TOO_LARGE','NO_NEARBY_STATION'];const reason=controller.signal.aborted?'KMA_TIMEOUT':allowed.includes(error?.message)?error.message:'WEATHER_UNAVAILABLE';return reply({ok:false,reason},503);}finally{clearTimeout(timer);}
+  return {ok:true,...nearest.item,source:'기상청',sourceUrl:FEED,observedAt:feed.observedAt,timezone:'Asia/Seoul',locationBasis,fetchedAt:feed.fetchedAt,checkedAt:new Date().toISOString(),stale,...(reason?{reason}:{})};
+ }
+ try{
+  if(!fresh&&savedFeed&&!savedFeed.revalidationFailed&&Date.now()-Date.parse(savedFeed.fetchedAt)<CACHE_FRESH_AGE)return reply(payload(savedFeed));
+  const feed=await fetchObservations(fresh),data=payload(feed);
+  if(cache)try{await cache.put(key,new Response(JSON.stringify(feed),{headers:{'Content-Type':'application/json','Cache-Control':'public, max-age=10800'}}));}catch{}
+  return reply(data);
+ }catch(error){
+  const reason=reasonFor(error);
+  if(savedFeed&&usableCache(savedFeed))try{
+   const data=payload(savedFeed,true,reason);
+   // A failed manual refresh must not make the next automatic retry look successful from cache.
+   if(cache)try{await cache.put(key,new Response(JSON.stringify({...savedFeed,revalidationFailed:true}),{headers:{'Content-Type':'application/json','Cache-Control':'public, max-age=10800'}}));}catch{}
+   return reply(data);
+  }catch{}
+  return reply({ok:false,reason},503);
+ }
 }

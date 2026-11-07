@@ -9,6 +9,7 @@
  let active=false,paintedKey=null,signature='',lastMonth='',scheduled=false;
  const number=value=>Number(value).toLocaleString('ko-KR');
  const node=(tag,text,cls)=>{const item=document.createElement(tag);if(text!=null)item.textContent=text;if(cls)item.className=cls;return item;};
+ const svgNode=(tag,attributes)=>{const item=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const[key,value]of Object.entries(attributes))item.setAttribute(key,String(value));return item;};
  function valid(snapshot){try{return !!snapshot&&typeof snapshot.key==='string'&&snapshot.key.length>0&&model.isMonth(snapshot.month)&&Array.isArray(snapshot.cars)&&typeof snapshot.loading==='boolean'&&bridge()?.current?.(snapshot.key)===true;}catch{return false;}}
  function state(text,loading=false){host.replaceChildren();host.dataset.state=loading?'loading':'unavailable';host.setAttribute('aria-busy',String(loading));const box=node('div',null,'sales-overview-state');box.append(node('h2','판매 현황'),node('p',text));host.append(box);signature='';}
  function select(month,key){if(!active||paintedKey!==key)return;try{const snapshot=bridge()?.snapshot();if(!valid(snapshot)||snapshot.loading||snapshot.key!==key)return;bridge().selectMonth(month);}catch{refresh();}}
@@ -17,17 +18,23 @@
  function detail(delta,label,count){return label+' '+number(count)+'대 · '+(delta.percent==null?'기준 0대':(delta.change>0?'+':delta.change<0?'−':'')+number(Math.abs(delta.percent))+'%');}
  function render(data,key){
   host.replaceChildren();host.dataset.state='ready';host.setAttribute('aria-busy','false');
-  const heading=node('div',null,'sales-overview-head'),titles=node('div');titles.append(node('h2','판매 현황'),node('p','최근 6개월 · 판매 완료일 기준'));heading.append(titles,node('span',data.series[0].month.replace('-','.')+' — '+data.month.replace('-','.'),'sales-overview-period'));
-  const metrics=node('dl',null,'sales-overview-metrics');metrics.append(metric('이번 달',number(data.current)+'대',Number(data.month.slice(5))+'월 판매 완료'),metric('전월 대비',comparison(data.previousDelta),detail(data.previousDelta,'전월',data.previous),data.previousDelta.tone),metric('전년 동월 대비',comparison(data.yearDelta),detail(data.yearDelta,'전년 동월',data.lastYear),data.yearDelta.tone),metric('최근 6개월',number(data.total)+'대','월평균 '+number(Math.round(data.total/6*10)/10)+'대'));
-  const chart=node('div',null,'sales-overview-chart');chart.setAttribute('role','group');chart.setAttribute('aria-label','최근 6개월 월별 판매 대수. 월을 선택하면 차량 목록을 볼 수 있습니다.');
+  const heading=node('div',null,'sales-overview-head');heading.append(node('h2','판매 현황'),node('span',data.series[0].month.replace('-','.')+' — '+data.month.replace('-','.'),'sales-overview-period'));
+  const metrics=node('dl',null,'sales-overview-metrics');metrics.append(metric('이번 달',number(data.current)+'대',Number(data.month.slice(5))+'월 판매 완료'),metric('전월 대비',comparison(data.previousDelta),detail(data.previousDelta,'전월',data.previous),data.previousDelta.tone),metric('전년 대비',comparison(data.yearDelta),detail(data.yearDelta,'전년 동월',data.lastYear),data.yearDelta.tone),metric('최근 6개월',number(data.total)+'대','월평균 '+number(Math.round(data.total/6*10)/10)+'대'));
+  const body=node('div',null,'sales-overview-body'),chart=node('div',null,'sales-overview-chart');chart.setAttribute('role','group');chart.setAttribute('aria-label','최근 6개월 월별 판매 대수 선 그래프. 월을 선택하면 차량 목록을 볼 수 있습니다.');
   const max=Math.max(1,...data.series.map(item=>item.count));
-  for(const item of data.series){
+  const points=data.series.map((item,index)=>({x:600*(index+.5)/data.series.length,y:84-item.count/max*64}));
+  const svg=svgNode('svg',{viewBox:'0 0 600 100',preserveAspectRatio:'none',class:'sales-overview-line','aria-hidden':'true',focusable:'false'});
+  for(const y of [20,52,84])svg.append(svgNode('line',{x1:0,y1:y,x2:600,y2:y,class:'sales-overview-grid-line'}));
+  const coordinates=points.map(point=>point.x+','+point.y).join(' ');
+  svg.append(svgNode('polygon',{points:points[0].x+',84 '+coordinates+' '+points.at(-1).x+',84',class:'sales-overview-line-area'}),svgNode('polyline',{points:coordinates,class:'sales-overview-line-path'}));
+  chart.append(svg);
+  for(const[index,item]of data.series.entries()){
    const button=node('button',null,'sales-overview-month');button.type='button';button.dataset.month=item.month;button.dataset.count=String(item.count);button.classList.toggle('is-current',item.month===data.month);button.setAttribute('aria-label',item.month.replace('-','년 ')+'월 · '+number(item.count)+'대 판매 · 차량 목록 보기');button.dataset.tooltip=item.month.replace('-','년 ')+'월 · '+number(item.count)+'대';
-   const plot=node('span',null,'sales-overview-plot'),bar=node('span',null,'sales-overview-bar');bar.style.setProperty('--sales-bar-ratio',String(item.count/max));bar.dataset.zero=String(item.count===0);bar.append(node('strong',number(item.count)));plot.append(bar);button.append(plot,node('span',Number(item.month.slice(5))+'월','sales-overview-month-label'));button.onclick=()=>select(item.month,key);chart.append(button);
+   const plot=node('span',null,'sales-overview-plot'),dot=node('span',null,'sales-overview-line-dot');dot.setAttribute('aria-hidden','true');plot.style.setProperty('--sales-point-y',String(points[index].y));plot.append(dot,node('strong',number(item.count)));button.append(plot,node('span',Number(item.month.slice(5))+'월','sales-overview-month-label'));button.onclick=()=>select(item.month,key);chart.append(button);
   }
   const footer=node('div',null,'sales-overview-foot');footer.append(node('span','월 선택 → 차량 목록 보기'));
   if(data.undated){const warning=node('button','판매일 확인 '+number(data.undated)+'대','sales-overview-undated');warning.type='button';warning.dataset.tooltip='판매일이 없거나 올바르지 않은 차량은 월별 집계에서 제외됩니다.';warning.setAttribute('aria-label','판매일 확인이 필요한 차량 '+number(data.undated)+'대 보기');warning.onclick=()=>select('undated',key);footer.append(warning);}
-  host.append(heading,metrics,chart,footer);
+  body.append(metrics,chart);host.append(heading,body,footer);
  }
  function refresh(){
   scheduled=false;if(!active){host.hidden=true;host.replaceChildren();paintedKey=null;signature='';return;}host.hidden=false;
