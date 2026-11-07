@@ -23,6 +23,14 @@
 #snote-chatbot .snote-chat-chips{display:flex;flex:none;flex-wrap:wrap;gap:6px;margin-bottom:14px}
 #snote-chatbot .snote-chat-chip{min-height:32px;margin:0;padding:6px 10px;border:1px solid #e6ebf2;border-radius:999px;background:#f7f9fc;color:#526b91;font-size:11px;font-weight:500;line-height:1.5;cursor:pointer}
 #snote-chatbot .snote-chat-chip:hover{background:#edf3fd;border-color:#cbdaf1}
+#snote-chatbot .snote-chat-chip.is-tutorial{display:flex;align-items:center;gap:12px;flex-basis:100%;width:100%;min-width:0;padding:12px;translate:none!important;border:1px solid #e0e9f8;border-radius:13px;background:#f2f6ff;text-align:left;color:#305c9b}
+#snote-chatbot .snote-chat-chip.is-tutorial:hover{background:#eaf1ff;border-color:#c9d8f1}
+#snote-chatbot .snote-chat-tutorial-icon{display:grid;place-items:center;flex:none;width:32px;height:32px;color:#356ac2}
+#snote-chatbot .snote-chat-tutorial-icon svg{display:block;width:28px!important;height:28px!important;scale:1!important}
+#snote-chatbot .snote-chat-tutorial-copy{display:flex;flex-direction:column;min-width:0;gap:3px}
+#snote-chatbot .snote-chat-tutorial-copy strong{font-size:13px;line-height:1.45;font-weight:650}
+#snote-chatbot .snote-chat-tutorial-copy small{font-size:11px;line-height:1.5;color:#7a8fae;white-space:normal}
+#snote-chatbot .snote-chat-tutorial-arrow{flex:none;margin-left:auto;font-size:23px;font-weight:400;color:#7c9ac3}
 #snote-chatbot .snote-chat-log{display:flex;flex:1;flex-direction:column;gap:10px;min-width:0}
 #snote-chatbot .snote-chat-message{flex:none;align-self:flex-start;max-width:94%;padding:10px 12px;border-radius:13px 13px 13px 4px;background:#f3f5f8;color:#43526a;overflow-wrap:anywhere;white-space:pre-wrap}
 #snote-chatbot .snote-chat-message p{margin:0;font-size:12px;line-height:1.75}

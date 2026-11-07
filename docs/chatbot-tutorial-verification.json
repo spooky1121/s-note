@@ -1,0 +1,226 @@
+{
+  "release": "2.94",
+  "baseCommit": "18772886de05bfc5a61ed0f9b3a0d96197526c6b",
+  "entry": "오른쪽 아래 챗봇 → 사용 튜토리얼; 튜토리얼/처음 사용/사용법/따라하기 질문으로도 열기",
+  "topics": [
+    "화면 익히기",
+    "첫 차량 등록",
+    "차량 정보 관리",
+    "판매와 문서 출력",
+    "공유와 고객 관리",
+    "설정과 복원"
+  ],
+  "steps": 18,
+  "images": {
+    "count": 18,
+    "totalBytes": 1046673,
+    "source": "Actual current application UI rendered in Chromium with synthetic examples and local intercepted reads",
+    "containsProductionData": false,
+    "businessWritesOrSmsDuringCapture": 0,
+    "files": [
+      {
+        "path": "assets/tutorial/detail-documents.jpg",
+        "bytes": 70061,
+        "sha256": "dbf3dd7f37c5d338193fcf05c968cd2e11cb3bc241c3a2f3bba811a126188bea"
+      },
+      {
+        "path": "assets/tutorial/detail-estimate.jpg",
+        "bytes": 65012,
+        "sha256": "960ddaab2c3b5bfff8f5373c33a61f778adf331ab1717bcdb6c6a1079588c487"
+      },
+      {
+        "path": "assets/tutorial/detail-memo.jpg",
+        "bytes": 92137,
+        "sha256": "b692fffcd3924544935cd3e1c93364c84556e6b554e8d66610954a4a363f963b"
+      },
+      {
+        "path": "assets/tutorial/register-catalog.jpg",
+        "bytes": 67197,
+        "sha256": "7adf760104878007e13390c041f9a804df3d5e1dc57fbf3945cd1d163a4c479b"
+      },
+      {
+        "path": "assets/tutorial/register-costs.jpg",
+        "bytes": 69532,
+        "sha256": "95ec38af5d5dd3ef5d45868fcd60a1b975097abc32c0ac54b208bad5ec9acfa8"
+      },
+      {
+        "path": "assets/tutorial/register-manual.jpg",
+        "bytes": 65654,
+        "sha256": "151617d8daa3ee3c0aab8468602c32ceae6be06c228910432421071c344a68a4"
+      },
+      {
+        "path": "assets/tutorial/sale-customer.jpg",
+        "bytes": 78855,
+        "sha256": "c2b582378506de283e416a0b54cc2fe8d07111997870887e826e82442df8f7e4"
+      },
+      {
+        "path": "assets/tutorial/sale-form.jpg",
+        "bytes": 71773,
+        "sha256": "3a60b9357b88e9ceaf41a5b09b984eb389d6e4bc328fb0ee73957d26bd09a6d0"
+      },
+      {
+        "path": "assets/tutorial/sale-print.jpg",
+        "bytes": 117093,
+        "sha256": "e25df32e73cffd25fd5500e21e41952ce4cc0bbb43c3fed6a4a895b9b4d4286e"
+      },
+      {
+        "path": "assets/tutorial/settings-company.jpg",
+        "bytes": 48611,
+        "sha256": "87dfebc9202de5b7cc14330012ac43152dab0c2c044c6d0388ccee0e6d6f0320"
+      },
+      {
+        "path": "assets/tutorial/settings-profile.jpg",
+        "bytes": 33682,
+        "sha256": "dfdcc69efec71e84d3e258cb3013eb66a08e9e343c0e1c301a3645fa9968a31d"
+      },
+      {
+        "path": "assets/tutorial/settings-recycle.jpg",
+        "bytes": 33995,
+        "sha256": "b295360b339cb6ee9cf39056d8ddf9b83216c5332e11c6a0809bdd51cc9b9c63"
+      },
+      {
+        "path": "assets/tutorial/sharing-customers.jpg",
+        "bytes": 46285,
+        "sha256": "091af9f4dae162a2b49032efd6e9a06ffdd65a409a3b2760fc5832b88c2385fe"
+      },
+      {
+        "path": "assets/tutorial/sharing-invite.jpg",
+        "bytes": 26892,
+        "sha256": "ec93c0a31697d74b304736394ab22c3445d189592b02d6436bcf9421a418ed99"
+      },
+      {
+        "path": "assets/tutorial/sharing-notifications.jpg",
+        "bytes": 27366,
+        "sha256": "fcb82d0c7ac35d46690c1c3f841c70c2e5441da99b495da515986628f9e0ac77"
+      },
+      {
+        "path": "assets/tutorial/start-cards.jpg",
+        "bytes": 51391,
+        "sha256": "7020c91dfbef64262d58658a252c5eb1f03bc47cdeb4a406c0f60d78b7c43a0e"
+      },
+      {
+        "path": "assets/tutorial/start-list.jpg",
+        "bytes": 53214,
+        "sha256": "7cfdd4f5dc8b2ed493f543979e7c72967ddb399b286afe8f2aaa0aff5209d6db"
+      },
+      {
+        "path": "assets/tutorial/start-search.jpg",
+        "bytes": 27923,
+        "sha256": "ebec5c33eb6205665d307933c413c86f5b59ea8dbb167ca8689ec50f54d76416"
+      }
+    ]
+  },
+  "behavior": [
+    "Chapter navigation, sequential steps, progress and restart",
+    "Full-size image zoom with accessible left edge and Escape return",
+    "Actual guarded page navigation with precise page labels",
+    "Public read-only guide; administrator-only action restrictions",
+    "Existing editing popups reject guide open without losing drafts",
+    "Account/company/role/workspace changes close the guide",
+    "Static tutorial chapter labels excluded from automatic printer decoration",
+    "Guide close skips unnecessary chatbot refresh and class mutations",
+    "Chatbot suspends unread polling from pagehide until pageshow, including mutation-triggered refresh"
+  ],
+  "validation": {
+    "tutorial": {
+      "test": "tests/snote-tutorial.browser.cjs",
+      "widths": [
+        1440,
+        1024,
+        390,
+        320
+      ],
+      "all18ImagesDecoded": true,
+      "passed": true,
+      "cases": [
+        "Menu and text entry",
+        "18 steps and 6 chapters; previous/next/restart",
+        "Zoom, native modal focus, Escape and close",
+        "320x480 reduced motion, no page/dialog overflow",
+        "Unsaved vehicle memo protection",
+        "Route-time permission denial and allowed actual navigation",
+        "Account reference, same-object role change and signout",
+        "Public guide cannot open private pages",
+        "Consultation draft kept unsent",
+        "Fresh-context JPEG failure preserves instructions and next step recovers",
+        "No accidental printer decorations in chapter menu; existing estimate icon preserved"
+      ]
+    },
+    "finalCompanyCrop": {
+      "widths": [
+        1440,
+        320
+      ],
+      "naturalSize": [
+        950,
+        475
+      ],
+      "passed": true
+    },
+    "lifecycleBoundaries": {
+      "mode": "SNOTE_TUTORIAL_BOUNDARIES_ONLY=1 node tests/snote-tutorial.browser.cjs",
+      "widths": [
+        1440,
+        1024,
+        390,
+        320
+      ],
+      "passed": true,
+      "scope": "Post-fix close/Escape/CTA/scope and opened/closed pagehide boundaries; original image coverage remains separate",
+      "cases": [
+        "Mounted closed guide close is a no-op",
+        "Close/X/Escape, actual CTA and account scope guards",
+        "Opened and closed guide pagehide with external DOM mutation and explicit chatbot refresh does not read for 31 seconds",
+        "Pageshow resumes actual support bridge reads and restores unread count 2 badge and label"
+      ]
+    },
+    "existingFaq": {
+      "test": "tests/snote-chatbot.browser.cjs",
+      "widths": [
+        1440,
+        1024,
+        390,
+        320
+      ],
+      "passed": true
+    },
+    "existingSupport": {
+      "test": "tests/support-chat.browser.cjs",
+      "originalTestUnmodified": true,
+      "passed": true,
+      "groups": 9,
+      "cases": [
+        "Unread notification at four widths",
+        "User/operator conversations at four widths",
+        "Cursor gaps and overlapping sent/replied history"
+      ]
+    },
+    "unit": {
+      "command": "node --test tests/popup-controls.test.cjs tests/sales-popup-return.test.cjs",
+      "passedFiles": 2,
+      "failedFiles": 0
+    },
+    "static": {
+      "inlineScriptsChecked": 7,
+      "changedJavaScriptSyntax": true,
+      "tutorialLoadedBeforeChatbot": true,
+      "gitDiffCheck": true
+    }
+  },
+  "regressionInvestigation": "Initial support unread runs timed out at simulated 30-second polling and paired runs differed. The evidence did not establish tutorial.close as the direct cause; its handler is registered only after mounting. Separate lifecycle review identified refresh/mutation risks after an opened guide and pagehide. The guide close and chatbot suspended-page guards were hardened. The final unmodified complete support browser test passed. Observations and code-review risks are kept distinct.",
+  "runtimeScope": {
+    "browserData": "Isolated synthetic accounts and intercepted HTTP",
+    "productionCustomerCarOrSupportWrites": false,
+    "newDatabaseOrApiSchema": false,
+    "directProductionBrowserCheck": false,
+    "deploymentVerification": "Exact GitHub commit Cloudflare Pages: s-note success; this environment's direct Pages HTTP remains policy-restricted"
+  },
+  "finalSourceSha256": {
+    "assets/snote-tutorial.js": "0b76c6eb12436b56c09b6bcf18a3eea5bbe1d5baaba18bbd7467b951f3b7d469",
+    "assets/snote-tutorial.css": "6aae6e4ae96f719a04f7b5b735ca7269ef9ba5bb34f66087e61c35f11ef790a2",
+    "assets/snote-chatbot.js": "44a85e0149097e5221e005a2ae36b0a9ab827025242a5c066c129cfccf259f9f",
+    "assets/snote-chatbot.css": "260655d2b5d4cf17f96226c2f101cfd3e11dae59a09de51249f6ae6a92008366",
+    "assets/action-controls.js": "76bafa0e3a78f1658f9bd14f18681dda0800a810409987c3c58f6078b0be9b7a",
+    "tests/snote-tutorial.browser.cjs": "ceacea87df41e42d8597091adb2f6e6e9c05d1bfca85553e359da951fcc22cc5"
+  }
+}
