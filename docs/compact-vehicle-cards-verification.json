@@ -1,0 +1,122 @@
+{
+  "release": "2.95",
+  "baseCommit": "afd2852ac6a547d0846cec470858180633e8f4fa",
+  "scope": "Compact existing vehicle card view only; retain native list view and all record/data logic",
+  "layout": {
+    "desktop1440Columns": 4,
+    "tablet1024Columns": 3,
+    "smallTabletColumns": 2,
+    "wide1800Columns": 5,
+    "phonePhotoPx": [
+      100,
+      82
+    ],
+    "phoneStatusAndAdTargetPx": 44
+  },
+  "sameEightLongNamedCars": [
+    {
+      "width": 1440,
+      "columnsBefore": 3,
+      "columnsAfter": 4,
+      "heightBefore": 547.578125,
+      "heightAfter": 372.3125,
+      "reductionPercent": 32.0
+    },
+    {
+      "width": 1024,
+      "columnsBefore": 2,
+      "columnsAfter": 3,
+      "heightBefore": 541.21875,
+      "heightAfter": 381.8125,
+      "reductionPercent": 29.5
+    },
+    {
+      "width": 390,
+      "columnsBefore": 1,
+      "columnsAfter": 1,
+      "heightBefore": 546.0625,
+      "heightAfter": 297.875,
+      "reductionPercent": 45.5
+    },
+    {
+      "width": 320,
+      "columnsBefore": 1,
+      "columnsAfter": 1,
+      "heightBefore": 511.1875,
+      "heightAfter": 327.28125,
+      "reductionPercent": 36.0
+    }
+  ],
+  "functional45CarFixture": {
+    "widths": [
+      1440,
+      1024,
+      390,
+      320
+    ],
+    "heightsBefore": [
+      474.9,
+      468.5,
+      477.9,
+      443.0
+    ],
+    "heightsAfter": [
+      349.9,
+      359.4,
+      297.9,
+      297.9
+    ],
+    "reductionPercent": [
+      26.3,
+      23.3,
+      37.7,
+      32.8
+    ]
+  },
+  "validation": {
+    "test": "tests/vehicle-list-view.browser.cjs",
+    "passed": true,
+    "groups": 9,
+    "preserved": [
+      "Search and sorting across 45 records before pagination",
+      "20 per page, page position and rendered node identity",
+      "Enter/Space detail open and isolated status controls",
+      "Sold date/month, income settlement entry and accountant read access",
+      "Own-account scope, accepted-only shared vehicles and company readiness",
+      "View preference reload, invalid and blocked storage",
+      "All existing vehicle data, prices and finance fields"
+    ],
+    "additionalGeometry": [
+      "Long model names and 1,000,000,000,000 won values remain readable",
+      "Shared marker inside top-left photo bounds",
+      "Phone status, Encar and inventory age simultaneous without overlap",
+      "Desktop hidden/native table positions match baseline at all four widths",
+      "Actual mobile list cards match baseline at 390/320",
+      "Eight extra breakpoints from 761 through 1920 have no page/card overflow"
+    ]
+  },
+  "tutorialImage": {
+    "file": "assets/tutorial/start-cards.jpg",
+    "size": [
+      990,
+      510
+    ],
+    "bytes": 58690,
+    "guideUrl": "assets/tutorial/start-cards.jpg?v=2.95",
+    "actualGuideStepDecoded": true,
+    "allOther17ImagesUnchanged": true,
+    "scope": "Actual local application with the same three synthetic vehicles; screenshot only"
+  },
+  "finalSourceSha256": {
+    "assets/vehicle-list-view.css": "18934f50659113e775c84e8f4d2c4aebf4241e34214f21ad4c2d0341da9a14af",
+    "assets/snote-tutorial.js": "3ebe36c21273e58044940722ea6e2d5a74cc083fecdc9e8c904cc9a82d0a9070",
+    "assets/tutorial/start-cards.jpg": "19289b29b82e8d73a9883c61e9d13abf10052c56bc9fc23c90b40523940d1828",
+    "tests/vehicle-list-view.browser.cjs": "662c67ad281d5dc1a8396e01ed84f85bdb26375a6b6bbdadcf3ceadc6b849b20"
+  },
+  "limits": [
+    "Only relevant browser regression and syntax/whitespace checks were run; no full application smoke claim.",
+    "Browser screenshots and checks use synthetic accounts and intercepted responses, no production customer/vehicle writes.",
+    "No schema, calculation, record or API changes.",
+    "Direct production Pages HTTP is still restricted in this environment; deployment uses exact-commit Cloudflare s-note status."
+  ]
+}
