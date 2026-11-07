@@ -32,9 +32,9 @@
    const button=node('button',null,'sales-overview-month');button.type='button';button.dataset.month=item.month;button.dataset.count=String(item.count);button.classList.toggle('is-current',item.month===data.month);button.setAttribute('aria-label',item.month.replace('-','년 ')+'월 · '+number(item.count)+'대 판매 · 차량 목록 보기');button.dataset.tooltip=item.month.replace('-','년 ')+'월 · '+number(item.count)+'대';
    const plot=node('span',null,'sales-overview-plot'),dot=node('span',null,'sales-overview-line-dot');dot.setAttribute('aria-hidden','true');plot.style.setProperty('--sales-point-y',String(points[index].y));plot.append(dot,node('strong',number(item.count)));button.append(plot,node('span',Number(item.month.slice(5))+'월','sales-overview-month-label'));button.onclick=()=>select(item.month,key);chart.append(button);
   }
-  const footer=node('div',null,'sales-overview-foot');footer.append(node('span','월 선택 → 차량 목록 보기'));
+  const footer=node('div',null,'sales-overview-foot');
   if(data.undated){const warning=node('button','판매일 확인 '+number(data.undated)+'대','sales-overview-undated');warning.type='button';warning.dataset.tooltip='판매일이 없거나 올바르지 않은 차량은 월별 집계에서 제외됩니다.';warning.setAttribute('aria-label','판매일 확인이 필요한 차량 '+number(data.undated)+'대 보기');warning.onclick=()=>select('undated',key);footer.append(warning);}
-  body.append(metrics,chart);host.append(heading,body,footer);
+  body.append(metrics,chart);host.append(heading,body);if(data.undated)host.append(footer);
  }
  function refresh(){
   scheduled=false;if(!active){host.hidden=true;host.replaceChildren();paintedKey=null;signature='';return;}host.hidden=false;
