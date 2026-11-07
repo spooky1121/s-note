@@ -250,3 +250,37 @@ test('internal SQL failures never become user validation claims or expose query 
  fixture(t,{override(entry){if(entry.url.pathname.endsWith('/snote_operator_vehicles_list'))return json({code:'42702',message:'sensitive internal SQL column details'},400);}});
  const r=await call({action:'vehicles'});assert.equal(r.status,502);assert.equal(r.body.code,'NETWORK');assert(!JSON.stringify(r.body).includes('42702'));assert(!JSON.stringify(r.body).includes('sensitive'));
 });
+
+test('support inbox, message history, read receipts and replies retain the operator JWT and exact text without service traffic',async t=>{
+ const seen=[],text='첫 줄\n다음 줄 <script>문자 그대로</script>';
+ const s=fixture(t,{override(entry){if(entry.url.pathname.includes('/snote_operator_support_')){seen.push(entry);return json({unreadTotal:3,items:[],messages:[],message:{text}});}}});
+ const cases=[
+  [{action:'support-unread'},'support_unread',{}],
+  [{action:'support-threads',query:{page:2,status:'unread',query:'합성'}},'support_threads',{p_query:{page:2,status:'unread',query:'합성'}}],
+  [{action:'support-thread',conversationId:REQUEST,limit:50,before:17},'support_messages',{p_conversation_id:REQUEST,p_limit:50,p_before:17}],
+  [{action:'support-read',conversationId:REQUEST,messageIds:[NEWCAR]},'support_read',{p_conversation_id:REQUEST,p_message_ids:[NEWCAR]}],
+  [{action:'support-reply',conversationId:REQUEST,requestId:NEWCAR,text:' '+text+' '},'support_reply',{p_conversation_id:REQUEST,p_text:text,p_request_id:NEWCAR}]
+ ];
+ for(const [body,name,args]of cases){const r=await call(body);assert.equal(r.status,200);assert.equal(r.body.message.text,text);const entry=seen.at(-1);assert.equal(entry.url.pathname,'/rest/v1/rpc/snote_operator_'+name);assert.deepEqual(entry.body,args);assert.equal(entry.service,false);}
+ assert.equal(s.serviceCalls.length,0);
+});
+test('support requests reject malformed read sets, unbounded paging and injected identities before any support RPC',async t=>{
+ const s=fixture(t),invalid=[
+  {action:'support-unread',userId:OWNER},
+  {action:'support-threads',query:{page:0}},
+  {action:'support-threads',query:{status:'other'}},
+  {action:'support-thread',conversationId:REQUEST,limit:101},
+  {action:'support-thread',conversationId:REQUEST,before:-1},
+  {action:'support-read',conversationId:REQUEST,messageIds:[NEWCAR,NEWCAR]},
+  {action:'support-read',conversationId:REQUEST,messageIds:['not-a-uuid']},
+  {action:'support-reply',conversationId:REQUEST,requestId:NEWCAR,text:'\u0000'},
+  {action:'support-reply',conversationId:REQUEST,requestId:NEWCAR,text:'x'.repeat(2001)},
+  {action:'support-reply',conversationId:REQUEST,requestId:NEWCAR,text:'valid',actorId:OWNER}
+ ];
+ for(const body of invalid){const r=await call(body);assert.equal(r.status,400);assert.equal(r.body.code,'INVALID_REQUEST');}
+ assert.equal(s.calls.filter(c=>c.url.pathname.includes('/snote_operator_support_')).length,0);assert.equal(s.serviceCalls.length,0);
+});
+test('a tenant administrator cannot read support messages or unread counts without platform authority',async t=>{
+ const s=fixture(t,{allowed:false});for(const action of['support-unread','support-thread','support-reply']){const r=await call({action,conversationId:REQUEST,requestId:NEWCAR,text:'합성'});assert.equal(r.status,403);}
+ assert.equal(s.calls.filter(c=>c.url.pathname.includes('/snote_operator_support_')).length,0);assert.equal(s.serviceCalls.length,0);
+});

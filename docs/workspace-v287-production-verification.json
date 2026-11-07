@@ -1,0 +1,87 @@
+{
+  "release": "2.87",
+  "verifiedAt": "2026-11-07T04:37:00Z",
+  "migrations": [
+    {
+      "name": "workspace_finance_lock_preferences",
+      "version": "20261107042449"
+    },
+    {
+      "name": "vehicle_share_acceptance",
+      "version": "20261107043345"
+    },
+    {
+      "name": "scoped_support_conversations",
+      "version": "20261107043431"
+    },
+    {
+      "name": "vehicle_share_recipient_company_index",
+      "version": "20261107043631"
+    }
+  ],
+  "privateTables": [
+    {
+      "rls": true,
+      "table": "finance_lock_preferences",
+      "schema": "snote_workspace_private",
+      "anonAcl": false,
+      "authenticatedAcl": false
+    },
+    {
+      "rls": true,
+      "table": "conversations",
+      "schema": "snote_support_private",
+      "anonAcl": false,
+      "authenticatedAcl": false
+    },
+    {
+      "rls": true,
+      "table": "messages",
+      "schema": "snote_support_private",
+      "anonAcl": false,
+      "authenticatedAcl": false
+    }
+  ],
+  "publicDefiners": 0,
+  "operatorWithoutSession": {
+    "allowed": false
+  },
+  "businessDataUnchanged": true,
+  "business": {
+    "media": {
+      "count": 24,
+      "sha256": "23b9c8219aabddc9cc53d24eea82fa74517f1c85c61e9a01033aba7e6a64f8fe"
+    },
+    "shares": 1,
+    "members": {
+      "count": 4,
+      "sha256": "e290c24e6368a6963eb24d1510070cc604904fc29588c55da286a3aa6345b8f6"
+    },
+    "datasets": {
+      "count": 5,
+      "sha256": "d9079e4f8e1e607abbc64c642188f92a16b6cf54f9f217b7fbda7e8983972159"
+    },
+    "customers": {
+      "count": 15,
+      "sha256": "dea6e735b3c55b8401afc6d7a5744649e9385a21bb27def57b3a9769e6f35cbe"
+    }
+  },
+  "legacyShares": {
+    "accepted": 1
+  },
+  "emptyNewState": {
+    "preferences": 0,
+    "conversations": 0,
+    "messages": 0
+  },
+  "newUnindexedForeignKeys": 0,
+  "privateRlsNoPolicies": "Intentional deny-all; authenticated and anonymous direct table grants are revoked. Checked public invoker RPCs only.",
+  "tests": {
+    "financePreferenceSqlGroups": 11,
+    "shareAcceptanceSqlGroups": 11,
+    "supportSqlGroups": 14,
+    "unitAndApi": 52,
+    "actualSupportWorkerAndSql": 1
+  },
+  "productionWrites": "Schema and legacy share-consent metadata only. No test conversations, replies, user preferences, vehicles, customers, accounts or files were created or modified in production."
+}

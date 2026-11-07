@@ -162,6 +162,30 @@ function accountPatch(patch, company) {
   }
   return result;
 }
+function supportText(value) {
+  if (typeof value !== 'string' || !value.trim() || value.length > 2000 || /[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/u.test(value)) fail('INVALID_REQUEST');
+  return value.trim();
+}
+function supportPage(value) {
+  if (value === undefined) return 50;
+  if (!Number.isSafeInteger(value) || value < 1 || value > 100) fail('INVALID_REQUEST');
+  return value;
+}
+function supportBefore(value) {
+  if (value === undefined || value === null) return null;
+  if (!Number.isSafeInteger(value) || value < 1) fail('INVALID_REQUEST');
+  return value;
+}
+function supportIds(value) {
+  if (!Array.isArray(value) || value.length > 100) fail('INVALID_REQUEST');
+  const ids=value.map(uuid);if(new Set(ids).size!==ids.length)fail('INVALID_REQUEST');return ids;
+}
+function supportResult(value) {
+  // Support RPCs project only conversation/message fields. Keep the original
+  // message text, including line breaks, within this verified operator scope.
+  if (!object(value)) fail('NETWORK');
+  return value;
+}
 async function readVehicle(c, jwt, actor, b) { return rpc(c, jwt, actor, 'vehicle_read', { p_company: uuid(b.companyId), p_owner: uuid(b.ownerId), p_car_id: label(b.carId) }, true); }
 function safePath(path, expected) {
   if (typeof path !== 'string' || path.length > 1800) fail('NETWORK');
@@ -294,6 +318,29 @@ async function authUpdate(c, jwt, actor, b) {
 async function perform(c, jwt, actor, b, env) {
   const action = b.action;
   if (action === 'context') { fields(b, ['action']); return actor; }
+  if (action === 'support-unread') {
+    fields(b, ['action']);return supportResult(await rpc(c,jwt,actor,'support_unread'));
+  }
+  if (action === 'support-threads') {
+    fields(b,['action','query']);const query=b.query||{};fields(query,['query','page','status','companyId']);
+    if(query.page!==undefined&&(!Number.isSafeInteger(query.page)||query.page<1||query.page>1000000))fail('INVALID_REQUEST');
+    if(query.query!==undefined)label(query.query,200,true);
+    if(query.status!==undefined&&!['all','unread'].includes(query.status))fail('INVALID_REQUEST');
+    if(query.companyId)uuid(query.companyId);
+    return supportResult(await rpc(c,jwt,actor,'support_threads',{p_query:query}));
+  }
+  if (action === 'support-thread') {
+    fields(b,['action','conversationId','limit','before']);
+    return supportResult(await rpc(c,jwt,actor,'support_messages',{p_conversation_id:uuid(b.conversationId),p_limit:supportPage(b.limit),p_before:supportBefore(b.before)}));
+  }
+  if (action === 'support-read') {
+    fields(b,['action','conversationId','messageIds']);
+    return supportResult(await rpc(c,jwt,actor,'support_read',{p_conversation_id:uuid(b.conversationId),p_message_ids:supportIds(b.messageIds)}));
+  }
+  if (action === 'support-reply') {
+    fields(b,['action','conversationId','text','requestId']);
+    return supportResult(await rpc(c,jwt,actor,'support_reply',{p_conversation_id:uuid(b.conversationId),p_text:supportText(b.text),p_request_id:uuid(b.requestId)}));
+  }
   if (['vehicles', 'accounts', 'companies', 'access'].includes(action)) {
     fields(b, ['action', 'query']); const query = b.query || {}; fields(query, ['query', 'page', 'sort', 'direction', 'status', 'companyId', 'ownerId']);
     if (query.page !== undefined && (!Number.isSafeInteger(query.page) || query.page < 1 || query.page > 1000000)) fail('INVALID_REQUEST');

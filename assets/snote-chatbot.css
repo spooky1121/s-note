@@ -38,3 +38,25 @@
 @media(max-width:760px){#snote-chatbot-panel{width:min(368px,calc(100vw - 32px));height:min(500px,var(--snote-chatbot-room));border-radius:18px}#snote-chatbot-input{font-size:16px}#snote-chatbot .snote-chat-form{padding-inline:12px}#snote-chatbot .snote-chat-content{padding:12px}#snote-chatbot .snote-chat-header{padding:14px 15px 12px}}
 @media(prefers-reduced-motion:reduce){#snote-chatbot-panel{animation:none}#snote-chatbot-launcher,#snote-chatbot .snote-chat-close::before{transition:none}#snote-chatbot-launcher:hover{translate:none}}
 @media print{#snote-chatbot{display:none!important}}
+/* Private, authenticated support is a separate mode from the local FAQs. */
+#snote-chatbot .snote-chat-chip.is-support{border-color:#cbdcf8;background:#eef4ff;color:#255db3}
+#snote-chatbot .snote-support-back{display:block;margin:0 0 5px;padding:0;border:0;background:transparent;color:#788ba9;font-size:10px;line-height:1.5;cursor:pointer}
+#snote-chatbot .snote-support-content{display:flex;flex:1;flex-direction:column;gap:12px;overflow:auto;min-height:0;padding:12px 15px;scrollbar-width:thin;scrollbar-color:#d9dee6 transparent;overscroll-behavior:contain}
+#snote-chatbot .snote-support-tools{display:flex;justify-content:space-between;gap:8px;flex:none}
+#snote-chatbot .snote-support-tools button{padding:0;border:0;background:transparent;color:#91a0b6;font-size:10px;cursor:pointer}
+#snote-chatbot .snote-support-tools button:last-child{margin-left:auto}
+#snote-chatbot .snote-support-log{display:flex;flex-direction:column;gap:11px;min-width:0}
+#snote-chatbot .snote-support-message{align-self:flex-start;max-width:94%;padding:10px 12px;border-radius:13px 13px 13px 4px;background:#f3f5f8;overflow-wrap:anywhere;white-space:pre-wrap}
+#snote-chatbot .snote-support-message.is-user{align-self:flex-end;border-radius:13px 13px 4px 13px;background:#eaf1fc;color:#28518c}
+#snote-chatbot .snote-support-message p{margin:0;font-size:12px;line-height:1.75}
+#snote-chatbot .snote-support-message small{display:block;margin-top:6px;color:#9aa7ba;font-size:9px;line-height:1.5;white-space:normal}
+#snote-chatbot .snote-support-empty{margin:20px 0;color:#98a7bb;font-size:12px;line-height:1.8;text-align:center}
+#snote-chatbot .snote-support-status{margin:0;color:#8c9db4;font-size:10px;line-height:1.7;white-space:pre-wrap}
+#snote-chatbot .snote-support-status:empty{display:none}
+#snote-chatbot .snote-support-status[data-tone=error]{color:#c34352}
+#snote-chatbot .snote-support-form{display:flex;flex:none;align-items:flex-end;gap:7px;padding:11px 14px 6px;border-top:1px solid #edf0f4;background:#fff}
+#snote-support-input{display:block;flex:1;min-width:0;width:0;min-height:58px;max-height:110px;resize:vertical;border:1px solid #e1e6ed;border-radius:10px;padding:9px 10px;background:#fafbfd;color:#293c57;font:inherit;font-size:13px;line-height:1.5;box-shadow:none}
+#snote-support-input::placeholder{color:#aab3c0;opacity:1}
+#snote-support-input:focus{outline:0;border-color:#8baad7;box-shadow:0 0 0 2px #7c9ed51a}
+#snote-chatbot button:disabled{cursor:default;opacity:.45}
+@media(max-width:760px){#snote-support-input{font-size:16px}#snote-chatbot .snote-support-content{padding-inline:12px}#snote-chatbot .snote-support-form{padding-inline:12px}}
