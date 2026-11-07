@@ -7,3 +7,33 @@
 #snote-app .snote-list-encar:focus-visible{outline:3px solid #b8d3f6;outline-offset:2px}
 #snote-app :is(#list-screen,#alt-content) .snote-encar-column{width:58px;text-align:center;padding-left:9px;padding-right:9px}
 .snote-encar-mobile:empty{display:none}
+/* Dealer profit summary stays one compact row on desktop. */
+@media screen{
+ #snote-app #dealer-finance-overview #stats{grid-template-columns:repeat(6,minmax(0,1fr));gap:0;margin:0 0 16px;border:1px solid #e9edf2;border-radius:12px;background:#fff;box-shadow:none}
+ #snote-app #dealer-finance-overview #stats>.stat{position:relative;display:grid;grid-template-rows:auto auto;align-content:start;gap:6px;min-width:0;min-height:0;margin:0;padding:12px!important;border:0!important;border-radius:0;background:transparent;box-shadow:none}
+ #snote-app #dealer-finance-overview #stats>.stat+.stat{border-inline-start:1px solid #edf0f4!important}
+ #snote-app #dealer-finance-overview #stats .stat-top{min-width:0;min-height:34px;gap:6px;margin:0;align-items:flex-start}
+ #snote-app #dealer-finance-overview #stats .label{min-width:0;display:block;font-size:10px;font-weight:500;line-height:1.4;color:#8590a0;word-break:keep-all;overflow-wrap:anywhere}
+ #snote-app #dealer-finance-overview #stats .stat-icon{flex:0 0 18px;width:18px;height:18px;margin-top:1px;border-radius:0;background:transparent;color:#8d9aab}
+ #snote-app #dealer-finance-overview #stats .stat-icon svg{width:14px;height:14px}
+ /* readable-type adds 2px; keep the final compact amount size at 13–20px. */
+ #snote-app #dealer-finance-overview #stats .value{min-width:0;min-height:26px;max-width:100%;font-size:calc(clamp(13px,1.2vw,20px) - 2px);font-weight:600;line-height:1.3;letter-spacing:-.35px;font-variant-numeric:tabular-nums;white-space:normal;overflow-wrap:anywhere;word-break:normal;align-self:start;color:#39475c}
+ #snote-app #dealer-finance-overview #stats .value .unit{display:inline-block;margin-inline-start:1px;font-size:10px;font-weight:500;white-space:nowrap;letter-spacing:0;color:#8a94a3}
+ #snote-app #dealer-finance-overview #stats .stat-note{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+}
+@media screen and (min-width:1024px) and (max-width:1199px){
+ #snote-app #dealer-finance-overview #stats>.stat{padding-inline:6px!important}
+}
+@media screen and (max-width:1023px){
+ #snote-app #dealer-finance-overview #stats{grid-template-columns:repeat(3,minmax(0,1fr))}
+ #snote-app #dealer-finance-overview #stats>.stat:nth-child(3n+1){border-inline-start:0!important}
+ #snote-app #dealer-finance-overview #stats>.stat:nth-child(n+4){border-top:1px solid #edf0f4!important}
+}
+@media screen and (max-width:760px){
+ #snote-app #dealer-finance-overview #stats{grid-template-columns:repeat(2,minmax(0,1fr));margin-bottom:14px}
+ #snote-app #dealer-finance-overview #stats>.stat{padding:10px 12px!important}
+ #snote-app #dealer-finance-overview #stats>.stat:nth-child(n){border:0!important}
+ #snote-app #dealer-finance-overview #stats>.stat:nth-child(2n){border-inline-start:1px solid #edf0f4!important}
+ #snote-app #dealer-finance-overview #stats>.stat:nth-child(n+3){border-top:1px solid #edf0f4!important}
+ #snote-app #dealer-finance-overview #stats .value{font-size:17px}
+}

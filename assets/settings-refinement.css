@@ -122,3 +122,24 @@
  #snote-app :is(#list-screen,#alt-content) :is(.zc-finance-label,.zc-cash-badge),
  #snote-app :is(#list-screen,#alt-content) :is(.zc-finance-label,.zc-cash-badge):hover{background:transparent!important;border:0!important;border-radius:0;box-shadow:none!important;padding:0!important}
 }
+/* Settings owns the recycle view; its operational permissions stay in the bridge. */
+@media screen{
+ #snote-app .snote-settings-sections[hidden]{display:none!important}
+ #snote-app .snote-settings-sections{display:flex;align-items:center;gap:4px;width:max-content;max-width:100%;margin:0 0 22px;padding:4px;border-radius:10px;background:#f2f4f7}
+ #snote-app .snote-settings-sections button{min-height:34px;padding:7px 18px;border:0;border-radius:7px;background:transparent;color:#8791a0;font:inherit;font-size:13px;font-weight:550;line-height:1.5;white-space:nowrap;box-shadow:none;cursor:pointer}
+ #snote-app .snote-settings-sections button[aria-current=page]{background:#fff;color:#315cf5;box-shadow:0 1px 4px #19283e0c}
+ #snote-app .snote-settings-sections button:hover{color:#315cf5}
+ #snote-app .snote-settings-home{max-width:660px}
+ #snote-app .snote-settings-recycle-link{display:flex;align-items:center;gap:16px;width:100%;min-height:92px;padding:20px;text-align:left;border:1px solid #e8ecf2;border-radius:12px;background:#fff;color:#344154;cursor:pointer;transition:background .15s ease,border-color .15s ease}
+ #snote-app .snote-settings-recycle-link:hover{background:#f9fbff;border-color:#d9e2f2}
+ #snote-app .snote-settings-recycle-symbol{display:grid;place-items:center;flex:none;color:#315cf5}
+ #snote-app .snote-settings-recycle-symbol svg{display:block;width:23px;height:23px}
+ #snote-app .snote-settings-recycle-link strong{display:block;font-size:15px;font-weight:600;line-height:1.5}
+ #snote-app .snote-settings-recycle-link small{display:block;margin-top:5px;color:#929aa7;font-size:12px;font-weight:400;line-height:1.7;word-break:keep-all}
+ #snote-app .snote-settings-link-arrow{margin-left:auto;color:#a3aab5;font-size:25px;font-weight:400;line-height:1}
+}
+@media screen and (max-width:760px){
+ #snote-app .snote-settings-sections{width:100%;margin-bottom:18px}
+ #snote-app .snote-settings-sections button{flex:1;min-height:40px;padding:8px 12px}
+ #snote-app .snote-settings-recycle-link{gap:12px;padding:18px 15px}
+}

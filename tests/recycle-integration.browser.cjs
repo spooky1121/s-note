@@ -80,6 +80,24 @@ async function setup(width=1440){
  return f;
 }
 
+async function settingsAccess(){
+ const f=await setup(),p=f.page;
+ await p.evaluate(()=>closeVehicle({discard:true}));
+ const before=await p.evaluate(()=>snoteRecycleBinBridge.context());assert.equal(before.role,'dealer');
+ await p.evaluate(()=>navigate('settings'));await p.locator('.snote-settings-home').waitFor();
+ assert.equal(await p.locator('.snote90-settings,#snote90-company-form,#snote90-members,#snote90-lenders').count(),0);
+ await p.evaluate(()=>snoteRenderAdminSettings());assert.equal(await p.locator('#snote90-company-form').count(),0,'Opening dealer settings must never expose the administrator renderer');
+ assert.equal(await p.locator('.snote-profile-identity small').count(),0);assert.equal(await p.locator('#snote-profile-avatar-file').getAttribute('accept'),'image/jpeg,image/png,image/webp');
+ await p.getByRole('button',{name:'휴지통 열기',exact:true}).click();await p.locator('#snote-recycle-bin[aria-busy=false] .recycle-row').waitFor();
+ const after=await p.evaluate(()=>snoteRecycleBinBridge.context());assert.deepEqual(after,before,'The settings wrapper must not widen the real scoped recycle capability');
+ assert.equal(f.rpcRequests.at(-1).name,'snote_recycle_list');assert.equal(f.rpcRequests.at(-1).args.p_company,before.companyId);
+ await p.locator('#snote-settings-sections [data-settings-page=settings]').click();await p.locator('.snote-settings-home').waitFor();
+ assert.equal(new URL(p.url()).hash,'#page=settings');
+ const accountant=await p.evaluate(()=>{navigate('buy');currentUser.role='accountant';const S=__encarFixtureState;S.members.find(m=>m.user_id===S.user.id).role='accountant';buildMenus();return{settings:snotePageAllowed('settings'),recycle:snotePageAllowed('recycle'),context:snoteRecycleBinBridge.context(),attempt:navigate('settings')};});
+ assert.deepEqual(accountant,{settings:false,recycle:false,context:null,attempt:false});assert.equal(await p.locator('#desktop-nav').getByRole('button',{name:'설정',exact:true}).count(),0);assert.equal(await p.locator('#mobile-drawer-nav').getByRole('button',{name:'설정',exact:true}).count(),0);
+ await finish(f);console.log('PASS settings wrapper preserves dealer scoped recycle access, hides every admin control, keeps avatar validation types, and denies accountant access');
+}
+
 async function happy(width){
  const f=await setup(width),p=f.page;
  const safe=await p.evaluate(async()=>snoteRecycleBinBridge.list(snoteRecycleBinBridge.context(),{}));assert.equal(safe.items[0].snapshot,undefined);
@@ -184,4 +202,4 @@ async function roundTrips(){
  }
 }
 
-(async()=>{browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium'});setBrowser(browser);try{for(const width of[1440,390])await happy(width);await media();await customers();await views();await lateMedia();await pendingChanges();await pinnedActor();await roundTrips();}finally{await browser.close();}})().catch(error=>{console.error(error.stack);process.exitCode=1;});
+(async()=>{browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium'});setBrowser(browser);try{await settingsAccess();for(const width of[1440,390])await happy(width);await media();await customers();await views();await lateMedia();await pendingChanges();await pinnedActor();await roundTrips();}finally{await browser.close();}})().catch(error=>{console.error(error.stack);process.exitCode=1;});

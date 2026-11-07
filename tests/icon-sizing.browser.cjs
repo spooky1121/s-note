@@ -5,7 +5,7 @@ const{chromium}=require('./encar/node_modules/playwright');
 const{fixture,setBrowser,finish}=require('./encar/browser-smoke.cjs');
 async function settle(p){await p.evaluate(async()=>{await document.fonts.ready;window.SnoteIconSizing.refresh();await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(()=>requestAnimationFrame(r))))})}
 async function ink(button){return button.evaluate(e=>{const svg=e.querySelector('svg'),r=e.getBoundingClientRect(),b=svg.getBBox(),v=svg.viewBox.baseVal,q=svg.getBoundingClientRect();let stroke=0;for(const child of svg.querySelectorAll('path,line,polyline,polygon,rect,circle,ellipse')){const s=getComputedStyle(child);if(s.stroke!=='none')stroke=Math.max(stroke,parseFloat(s.strokeWidth)||0)}return{paintMax:Math.max(b.width+stroke,b.height+stroke)*Math.min(q.width/v.width,q.height/v.height),width:r.width,height:r.height,svgWidth:q.width,svgHeight:q.height,viewBox:svg.getAttribute('viewBox'),fitted:svg.classList.contains('snote-sized-action-glyph')}})}
-async function checkInk(button,label){const m=await ink(button),target=await button.evaluate(e=>e.matches('button.snote-popup-close,button.close-button,#close-search'))?16:await button.evaluate(e=>e.matches('.snote-step-circle,.snote-step-glyph'))?13:20;assert(m.fitted,label+' must be sized');assert(Math.abs(m.paintMax-target)<.3,label+' visible ink must be'+target+'px '+JSON.stringify(m));await frameless(button);return m}
+async function checkInk(button,label){const m=await ink(button),target=await button.evaluate(e=>e.matches('button.snote-popup-close,button.close-button,#close-search'))?16:await button.evaluate(e=>e.matches('.snote-step-circle,.snote-step-glyph'))?6.5:20;assert(m.fitted,label+' must be sized');assert(Math.abs(m.paintMax-target)<.3,label+' visible ink must be'+target+'px '+JSON.stringify(m));await frameless(button);return m}
 async function frameless(button){
  await button.evaluate(async e=>{await Promise.all(e.getAnimations().map(a=>a.finished.catch(()=>{})))});
  const style=await button.evaluate(e=>{
@@ -13,7 +13,7 @@ async function frameless(button){
   if(!close&&e.closest('nav,.sidebar,.bottom-nav,#bottom-nav,.mobile-drawer,#mobile-drawer'))return null;
   const s=getComputedStyle(e);
   if(close)return{closeControl:true,highlighted:e.matches(':hover,:focus-visible'),background:s.backgroundColor,border:s.borderTopWidth,shadow:s.boxShadow,color:s.color,radius:s.borderRadius,flat:e.classList.contains('snote-flat-icon-control')};
-  if(e.matches('.snote-step-circle,.snote-step-glyph')){const circle=e.matches('.snote-step-circle'),ring=circle?e:e.querySelector('.snote-step-glyph-ring'),r=ring.getBoundingClientRect(),paint=getComputedStyle(ring);return{step:true,kind:e.classList.contains('snote-step-minus')?'minus':'plus',highlighted:e.matches(':hover,:focus-visible'),background:paint.backgroundColor,color:paint.color,radius:paint.borderRadius,border:paint.borderTopWidth,shadow:paint.boxShadow,width:r.width,height:r.height};}
+  if(e.matches('.snote-step-circle,.snote-step-glyph')){const circle=e.matches('.snote-step-circle'),ring=circle?e:e.querySelector('.snote-step-glyph-ring'),r=ring.getBoundingClientRect(),paint=getComputedStyle(ring);return{step:true,kind:e.classList.contains('snote-step-minus')?'minus':'plus',highlighted:e.matches(':hover,:focus-visible'),background:paint.backgroundColor,backgroundImage:paint.backgroundImage,color:paint.color,radius:paint.borderRadius,border:paint.borderTopWidth,shadow:paint.boxShadow,width:r.width,height:r.height};}
 
   return[s.backgroundColor,s.borderTopWidth,s.boxShadow];
  });
@@ -21,8 +21,10 @@ async function frameless(button){
   const{highlighted,...common}=style;
   assert.deepEqual(common,{closeControl:true,background:highlighted?'rgb(229, 229, 232)':'rgba(0, 0, 0, 0)',border:'0px',shadow:'none',color:'rgb(75, 75, 80)',radius:'4px',flat:false});
  }else if(style?.step){
-  const{kind,highlighted,...paint}=style;const minus=kind==='minus';
-  assert.deepEqual(paint,{step:true,background:minus?(highlighted?'rgb(255, 224, 227)':'rgb(255, 240, 241)'):(highlighted?'rgb(220, 233, 255)':'rgb(237, 244, 255)'),color:minus?'rgb(220, 57, 69)':'rgb(49, 92, 245)',radius:'50%',border:'0px',shadow:'none',width:28,height:28});
+  const{kind,highlighted,backgroundImage,...paint}=style;const minus=kind==='minus';
+  const tint=minus?(highlighted?'rgb(255, 224, 227)':'rgb(255, 240, 241)'):(highlighted?'rgb(220, 233, 255)':'rgb(237, 244, 255)');
+  assert.match(backgroundImage,/^radial-gradient\(7px(?: at |,)/,'Only the painted circle shrinks to 14px');assert(backgroundImage.includes(tint),'The small circle retains its hover tint');
+  assert.deepEqual(paint,{step:true,background:'rgba(0, 0, 0, 0)',color:minus?'rgb(188, 36, 48)':'rgb(23, 70, 212)',radius:'50%',border:'0px',shadow:'none',width:28,height:28});
  }else if(style)assert.deepEqual(style,['rgba(0, 0, 0, 0)','0px','none']);
 }
 async function closeInk(button){

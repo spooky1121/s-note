@@ -1,4 +1,4 @@
-/* Shared action sizing: 20px drawings, 16px close X and small add/remove circles. */
+/* Shared action sizing: 20px drawings, 16px close X, 6.5px add/remove ink. */
 (()=>{'use strict';
  if(window.SnoteIconSizing)return;
  const glyphSize=20,hosts='button,a,label,[role="button"]';
@@ -58,7 +58,7 @@
    return;
   }
   host.classList.add('snote-step-circle');host.classList.remove('snote-flat-icon-control');
-  const values=[['display','inline-grid'],['place-items','center'],['box-sizing','border-box'],['width','28px'],['height','28px'],['min-width','28px'],['min-height','28px'],['flex','0 0 28px'],['align-self','center'],['padding','0px'],['border','0px solid transparent'],['border-radius','50%'],['background','var(--snote-step-background, #edf4ff)'],['color','var(--snote-step-color, #315cf5)'],['box-shadow','none']];
+  const values=[['display','inline-grid'],['place-items','center'],['box-sizing','border-box'],['width','28px'],['height','28px'],['min-width','28px'],['min-height','28px'],['flex','0 0 28px'],['align-self','center'],['padding','0px'],['border','0px solid transparent'],['border-radius','50%'],['background','radial-gradient(circle 7px at center, var(--snote-step-background, #edf4ff) 98%, transparent 100%)'],['color','var(--snote-step-color, #1746d4)'],['box-shadow','none']];
   if(!state.styles.length)state.styles=values.map(([key])=>[key,host.style.getPropertyValue(key),host.style.getPropertyPriority(key)]);
   for(const[key,value]of values)if(host.style.getPropertyValue(key)!==value||host.style.getPropertyPriority(key)!=='important')host.style.setProperty(key,value,'important');
  }
@@ -83,13 +83,13 @@
   const css=getComputedStyle(svg),cw=parseFloat(css.width),ch=parseFloat(css.height);if(!(cw>0&&ch>0)||css.display==='none')return;
   let box;try{box=svg.getBBox();}catch{return;}
   const sw=stroke(svg),w=box.width+sw,h=box.height+sw;if(!(w>0&&h>0))return;
-  const target=host.matches(closeControls)?16:stepKind(host)?13:glyphSize;
+  const step=stepKind(host),target=host.matches(closeControls)?16:step?6.5:glyphSize;
   // Fit the viewBox to the ink first, so short '+' paths and full-size disks get the same visual weight.
   const pad=Math.max(w,h)*.01,x=box.x-sw/2-pad,y=box.y-sw/2-pad,vw=w+pad*2,vh=h+pad*2;
   const fitted=[x,y,vw,vh].map(n=>Number(n.toFixed(4))).join(' ');
   let scale=target/(Math.max(w,h)*Math.min(cw/vw,ch/vh));
   if(mixed){const outer=getComputedStyle(host),gap=(parseFloat(outer.columnGap)||0)+(parseFloat(css.marginRight)||0)+(parseFloat(css.marginLeft)||0);const allowance=Math.max(0,gap-2);scale=Math.min(scale,(cw+allowance*2)/(w*Math.min(cw/vw,ch/vh)));}
-  scale=Math.min(3,Math.max(.5,scale));
+  scale=Math.min(3,Math.max(step ? .1 : .5,scale));
   state.applied=fitted;if(svg.getAttribute('viewBox')!==fitted)svg.setAttribute('viewBox',fitted);
   if(!svg.classList.contains('snote-sized-action-glyph'))svg.classList.add('snote-sized-action-glyph');
   property(svg,'--snote-action-glyph-scale',String(Number(scale.toFixed(5))));

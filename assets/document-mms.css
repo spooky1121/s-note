@@ -24,3 +24,8 @@
 #snote-document-mms button:focus-visible,#snote-document-mms input:focus-visible{outline:3px solid #b6cffd;outline-offset:2px}
 @media(max-width:650px){#snote-document-mms .mms-body{padding:20px 14px}#snote-document-mms .mms-fields{grid-template-columns:1fr}#snote-document-mms input[type=tel]{font-size:16px}#snote-document-mms .mms-preview{grid-template-columns:1fr}#snote-document-mms .mms-file img{height:200px}}
 @media print{#snote-document-mms,#vehicle-document-share{display:none!important}}
+
+/* Keep the existing share action alongside the document title. */
+#vehicle-overlay .vehicle-document-panel > .media-section-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+#vehicle-overlay .vehicle-document-panel > .media-section-head > #vehicle-document-share{flex:none;margin:0 0 0 auto}
+#vehicle-overlay .vehicle-document-panel > .media-section-head h3{margin:0;line-height:1.4}

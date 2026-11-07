@@ -28,5 +28,31 @@
 #vehicle-overlay #vehicle-overview .acct-prestock-inline>small{display:none}
 @media(max-width:650px){#vehicle-overlay #vehicle-overview>.vehicle-metric{padding:8px 11px}#vehicle-overlay #vehicle-overview .acct-prestock-inline input{font-size:16px;width:136px;min-width:136px}}
 @media print{#vehicle-overlay .snote-detail-icon{display:none!important}}
+
+/* Compact title and money fields in the full-height detail drawer. */
+@media screen {
+ #vehicle-overlay .vehicle-modal > .vehicle-header{min-height:0;padding:12px 22px 10px 52px!important;border-bottom:0!important;box-shadow:none!important}
+ #vehicle-overlay .vehicle-header .vehicle-meta-line{margin:4px 0 0;line-height:1.5}
+ #vehicle-overlay .vehicle-heading-row{gap:6px 16px}
+ #vehicle-overlay .vehicle-body #car-cost-section{grid-template-columns:repeat(5,minmax(0,160px));justify-content:space-between;gap:10px 12px}
+ #vehicle-overlay #car-cost-section :is(.cost-edit,.detail-lender-row)>label{gap:4px;font-size:11px;line-height:1.4}
+ #vehicle-overlay #car-cost-section .detail-money-input{font-variant-numeric:tabular-nums;letter-spacing:0}
+}
+@media screen and (min-width:1100px) {
+ #vehicle-overlay .vehicle-modal > .vehicle-body{grid-template-areas:'overview overview' 'identity identity' 'sold sold' 'costs costs' 'media media';gap:16px}
+ #vehicle-overlay .vehicle-body .car-identity-section .vehicle-identity-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+ #vehicle-overlay .car-identity-section .vehicle-identity-grid>label:has(:is(#detail-purchase-date,#detail-vin)){grid-column:auto}
+}
+@media screen and (min-width:761px) and (max-width:999px) {
+ #vehicle-overlay .vehicle-body #car-cost-section{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+@media screen and (max-width:760px) {
+ #vehicle-overlay .vehicle-modal > .vehicle-header{padding:calc(12px + env(safe-area-inset-top,0px)) 16px 10px!important}
+ #vehicle-overlay .vehicle-body #car-cost-section{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 8px}
+ #vehicle-overlay #car-cost-section .detail-money-input{padding:6px;font-size:14px}
+}
+@media screen and (max-width:360px) {
+ #vehicle-overlay #car-cost-section .detail-money-input{padding-inline:4px;font-size:11px}
+}
 #vehicle-overlay #vehicle-overview .vehicle-metric>strong{display:flex;align-items:center;height:26px}
 #vehicle-overlay #vehicle-overview .vehicle-metric :is(.zc-cash-badge,.zc-finance-label){height:24px;line-height:16px;padding:3px 7px;box-sizing:border-box;margin:0;font-size:10.5px}

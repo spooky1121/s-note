@@ -157,12 +157,12 @@
   }
 
   #vehicle-overlay .snote-encar-tools {
-    margin-top: 12px;
-    padding-top: 10px;
-    border-top: 1px solid #eef0f3;
+    margin-top: 4px;
+    padding-top: 0;
+    border-top: 0;
   }
 
-  #vehicle-overlay .snote-encar-tools:has(> .snote-encar-note:empty):has(> .snote-encar-results:empty):has(> .snote-encar-save-status:empty):has(> .snote-encar-manual[hidden]):has(> .snote-encar-copy[hidden]) {
+  #vehicle-overlay .snote-encar-tools:not(:has(> :not([hidden]):not(:empty))) {
     display: none;
   }
 
