@@ -103,8 +103,12 @@ async function fixture(width=1440,savedCars=null,{primaryColor=null,weather=null
   window.__encarFixtureWrites=[];window.__encarFixtureRevision=0;window.__encarFixtureWriteMode='ok';window.__encarFixtureWriteWaiting=false;window.__encarFixtureReleaseWrite=null;window.__encarFixtureWriteFailures=0;
   const S=window.__encarFixtureState;S.user={id:actor,email:'synthetic@example.invalid'};S.company={id:company,name:'가상 검증 상사'};S.members=[{user_id:actor,company_id:company,role:'dealer',display_name:'가상 검증 딜러',active:true}];
   S.client={auth:{getSession:async()=>({data:{session:{access_token:token,user:{id:actor}}},error:null}),signOut:async()=>({error:null})},from(table){
-   const chain={select(){return chain},eq(){return chain},in(){return chain},order(){return chain},limit(){return chain},maybeSingle(){return chain},single(){return chain},then(resolve,reject){
-    if(table==='zc_datasets')return Promise.resolve({data:[{dataset:'cars',owner_id:actor,payload:structuredClone(window.__encarFixtureCars),revision:window.__encarFixtureRevision},{dataset:'covers',owner_id:actor,payload:{},revision:1}],error:null}).then(resolve,reject);
+   const filters={};let single=false;
+   const chain={select(){return chain},eq(key,value){filters[key]=value;return chain},in(){return chain},order(){return chain},limit(){return chain},maybeSingle(){single=true;return chain},single(){single=true;return chain},then(resolve,reject){
+    if(table==='zc_datasets'){
+     const rows=[{company_id:company,dataset:'cars',owner_id:actor,payload:structuredClone(window.__encarFixtureCars),revision:window.__encarFixtureRevision},{company_id:company,dataset:'covers',owner_id:actor,payload:{},revision:1}].filter(row=>Object.entries(filters).every(([key,value])=>row[key]===value));
+     return Promise.resolve({data:single?(rows[0]??null):rows,error:null}).then(resolve,reject);
+    }
     if(table==='zc_media')return Promise.resolve({data:[],error:null}).then(resolve,reject);
     if(table==='zc_customers')return Promise.resolve({data:null,error:null}).then(resolve,reject);
     return Promise.reject(Error('Unexpected browser fixture table '+table)).then(resolve,reject);
@@ -117,7 +121,9 @@ async function fixture(width=1440,savedCars=null,{primaryColor=null,weather=null
    }
    if(window.__encarFixtureWriteMode==='fail'){window.__encarFixtureWriteFailures++;return{data:null,error:{message:'SYNTHETIC_DB_WRITE_FAILED'}};}
    window.__encarFixtureCars=structuredClone(args.p_payload);window.__encarFixtureWrites.push(structuredClone(args));
-   return{data:++window.__encarFixtureRevision,error:null};
+   const revision=++window.__encarFixtureRevision;
+   if(window.__encarFixtureWriteMode==='lost-response'){window.__encarFixtureWriteFailures++;return{data:null,error:{message:'SYNTHETIC_RESPONSE_LOST_AFTER_COMMIT'}};}
+   return{data:revision,error:null};
   }};
   document.getElementById('zc-cloud-gate').hidden=true;
  },{actor:ACTOR,company:COMPANY,alias:ALIAS,token:TOKEN,plate:PLATE,secondPlate:SECOND_PLATE,savedCars,primaryColor});

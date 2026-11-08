@@ -4636,7 +4636,7 @@ async function confirmStatusChange(){
  if(isAccountant()){toast('경리 계정에는 차량 상태 변경 권한이 없습니다.');return;}
  const req=pendingStatusChange;if(!req||!currentUser||$('status-confirm-submit').disabled)return;
  if(req.actor&&req.actor!==currentUser){closeStatusModal();return;}
- const c=cars.find(x=>x.id===req.id&&canManageCar(x)&&x.ownerId===req.ownerId&&(x.status===req.old||(req.attempt&&x.status===req.next)));
+ const c=cars.find(x=>x.id===req.id&&canManageCar(x)&&x.ownerId===req.ownerId&&(x.status===req.old||(req.attempt&&x.status===(req.next==='판매취소'?'판매중':req.next))));
  if(!c){closeStatusModal();toast('차량 상태가 변경되었습니다. 다시 확인해주세요.');return}
  if(req.next==='매입취소'){
   $('status-confirm-submit').disabled=true;
@@ -4657,12 +4657,23 @@ async function confirmStatusChange(){
   return;
  }
  if(req.next==='판매취소'){
-  const backup={...c};c.status='판매중';delete c.soldAt;delete c.soldPrice;
-  if(!persistCars(c.ownerId)){
-   Object.assign(c,backup);toast('판매 취소를 저장하지 못했습니다.');return;
-  }
-  closeStatusModal();if(activeCarId===c.id)closeVehicle();
-  buildStats();buildMenus();navigate('buy');toast('판매 취소 완료 · 매입 관리로 복귀했습니다.');return;
+  const button=$('status-confirm-submit'),actor=currentUser,initialRoute=route,opening=snote224VehicleOpen,initialCar=activeCarId;
+  const frame=$('vehicle-overlay')?.querySelector('.vehicle-detail-frame'),wasInert=frame?.inert;
+  const current=()=>pendingStatusChange===req&&currentUser===actor&&route===initialRoute&&activeCarId===initialCar&&snote224VehicleOpen===opening&&cars.includes(c)&&canManageCar(c);
+  button.disabled=true;button.setAttribute('aria-busy','true');if(frame)frame.inert=true;
+  try{
+   if(!window.zc86Cloud?.ready)throw Error('온라인 로그인과 서버 연결을 확인해 주세요.');
+   const backup={...c};c.status='판매중';delete c.soldAt;delete c.soldPrice;
+   if(!persistCars(c.ownerId)){Object.assign(c,backup);throw Error('판매 취소를 저장하지 못했습니다.');}
+   req.attempt=true;
+   const saved=await window.zc86Cloud.flush();
+   if(saved?.ok!==true||window.zc86Cloud.conflict)throw Error('판매 취소의 서버 저장을 확인하지 못했습니다. 연결 상태를 확인하고 다시 시도해 주세요.');
+   if(!current())return;
+   button.disabled=false;button.removeAttribute('aria-busy');closeStatusModal();if(activeCarId===c.id)closeVehicle();
+   buildStats();buildMenus();navigate('buy');toast('판매 취소 완료 · 매입 관리로 복귀했습니다.');
+  }catch(error){if(current())toast(error.message||'판매 취소를 저장하지 못했습니다.');}
+  finally{if(frame)frame.inert=wasInert;if(pendingStatusChange===req){button.disabled=false;button.removeAttribute('aria-busy');if(!current())closeStatusModal();}}
+  return;
  }
  let soldAt=c.soldAt,soldPrice=c.soldPrice;
  if(req.next==='판매완료'){
@@ -8228,26 +8239,76 @@ function toEntry(k){
 const originalSet=Storage.prototype.setItem;
 Storage.prototype.setItem=function(k,v){originalSet.call(this,k,v);if(this===localStorage&&S.ready&&!S.loading){const entry=toEntry(k);if(entry)enqueue(entry.ds,entry.owner)}};
 function enqueue(ds,owner){if(S.conflict)return;S.queue.add(cloudKey(ds,owner));showStatus('● 서버 저장 대기 중','busy');clearTimeout(S.timer);S.timer=setTimeout(flush,600)}
-let cloudFlushTask=null;
+let cloudFlushTask=null,cloudWriteEpoch=0;
+// Keep the exact in-flight payload until its revision is acknowledged. A lost
+// response must be checked against the server before another CAS write is sent.
+const cloudPendingWrites=new Map();
+function cloudSamePayload(left,right){
+ if(left===right)return true;
+ if(left===null||right===null||typeof left!=='object'||typeof right!=='object'||Array.isArray(left)!==Array.isArray(right))return false;
+ if(Array.isArray(left))return left.length===right.length&&left.every((value,index)=>cloudSamePayload(value,right[index]));
+ const keys=Object.keys(left);return keys.length===Object.keys(right).length&&keys.every(key=>Object.hasOwn(right,key)&&cloudSamePayload(left[key],right[key]));
+}
 async function flush(){
  if(cloudFlushTask)return cloudFlushTask;
  if(!S.ready)return {ok:false,error:'온라인 로그인 상태를 확인해 주세요.'};
  if(S.conflict)return {ok:false,error:'다른 기기와의 수정 충돌을 먼저 해결해 주세요.'};
  if(!S.queue.size)return {ok:true};
+ const scope={client:S.client,user:S.user,company:S.company?.id,epoch:cloudWriteEpoch};
+ const current=()=>S.ready&&S.client===scope.client&&S.user===scope.user&&S.company?.id===scope.company&&cloudWriteEpoch===scope.epoch;
+ const checkCurrent=()=>{if(!current())throw Error('CONTEXT_CHANGED');};
  const task=(async()=>{S.saving=true;clearTimeout(S.timer);
- try{while(S.queue.size){let [key]=S.queue;S.queue.delete(key);let i=key.indexOf(':'),dataset=key.slice(0,i),owner=key.slice(i+1);let raw=localStorage.getItem(storageKey(dataset,ownerAlias(owner)));
-  // shared datasets never use ownerAlias to resolve key
-  if(isShared(dataset))raw=localStorage.getItem(LEGACY[dataset]);
-  const parsed=parsePayload(raw??defaultBody(dataset));
-  if(dataset==='monthly'&&!Array.isArray(parsed)){S.queue.add(key);throw Error('월정산 자료 형식이 올바르지 않아 저장하지 않았습니다. 기존 자료를 확인해 주세요.');}
-  let payload=dataset==='monthly'?parsed:scrub(parsed);
-  let {data,error}=await S.client.rpc('zc_write_dataset',{p_company:S.company.id,p_dataset:dataset,p_owner:owner,p_expected:S.revisions.get(key)||0,p_payload:payload});
-  if(error){S.queue.add(key);throw error}
-  S.revisions.set(key,Number(data));
+ try{while(S.queue.size){
+  checkCurrent();
+  const [key]=S.queue;S.queue.delete(key);
+  try{
+   const i=key.indexOf(':'),dataset=key.slice(0,i),owner=key.slice(i+1);
+   let pending=cloudPendingWrites.get(key),recovered=null;
+   const reconcile=async attempt=>{
+    if(attempt.client!==scope.client||attempt.user!==scope.user||attempt.company!==scope.company||attempt.epoch!==scope.epoch)throw Error('CONTEXT_CHANGED');
+    const {data:row,error}=await scope.client.from('zc_datasets').select('company_id,dataset,owner_id,payload,revision').eq('company_id',scope.company).eq('dataset',dataset).eq('owner_id',owner).maybeSingle();
+    checkCurrent();if(error)throw error;
+    if(row&&(row.company_id!==scope.company||row.dataset!==dataset||row.owner_id!==owner||!Number.isSafeInteger(row.revision)||row.revision<0))throw Error('서버 저장 확인 응답이 올바르지 않습니다.');
+    if(row?.revision===attempt.expected+1&&attempt.payloads.some(payload=>cloudSamePayload(row.payload,payload))){
+     S.revisions.set(key,row.revision);cloudPendingWrites.delete(key);return row;
+    }
+    if((row?.revision??0)!==attempt.expected)throw Error('CONFLICT: 서버 자료가 변경되었습니다.');
+    // An unchanged read does not prove that a timed-out request has stopped.
+    return null;
+   };
+   if(pending){recovered=await reconcile(pending);if(recovered)pending=null;}
+   // Read after reconciliation so edits made while the read was pending survive.
+   const raw=localStorage.getItem(isShared(dataset)?LEGACY[dataset]:storageKey(dataset,ownerAlias(owner)));
+   S.queue.delete(key); // This snapshot includes any edit queued during reconciliation.
+   const parsed=parsePayload(raw??defaultBody(dataset));
+   if(dataset==='monthly'&&!Array.isArray(parsed))throw Error('월정산 자료 형식이 올바르지 않아 저장하지 않았습니다. 기존 자료를 확인해 주세요.');
+   const payload=dataset==='monthly'?parsed:scrub(parsed);
+   if(recovered&&cloudSamePayload(payload,recovered.payload))continue;
+   const expected=S.revisions.get(key)||0;
+   if(!pending)pending={...scope,expected,payloads:[]};
+   if(!pending.payloads.some(previous=>cloudSamePayload(previous,payload)))pending.payloads.push(payload);
+   cloudPendingWrites.set(key,pending);
+   const {data,error}=await scope.client.rpc('zc_write_dataset',{p_company:scope.company,p_dataset:dataset,p_owner:owner,p_expected:expected,p_payload:payload});
+   checkCurrent();
+   if(error){
+    if(!/CONFLICT/i.test(errMsg(error)))throw error;
+    // The previous request may commit between our read and this CAS attempt.
+    // Recover only one of this session's exact sent snapshots, never a merge.
+    const confirmed=await reconcile(pending);
+    if(!confirmed)throw Error('서버 저장 결과를 아직 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.');
+    const latestRaw=localStorage.getItem(isShared(dataset)?LEGACY[dataset]:storageKey(dataset,ownerAlias(owner)));
+    const latestParsed=parsePayload(latestRaw??defaultBody(dataset));
+    const latest=dataset==='monthly'?latestParsed:scrub(latestParsed);
+    S.queue.delete(key);if(!cloudSamePayload(latest,confirmed.payload))S.queue.add(key);
+    continue;
+   }
+   if(!Number.isSafeInteger(data)||data!==expected+1)throw Error('서버 저장 확인 응답이 올바르지 않습니다.');
+   S.revisions.set(key,data);cloudPendingWrites.delete(key);
+  }catch(error){if(current())S.queue.add(key);throw error;}
  }
  showStatus('● 모든 변경사항 서버 저장 완료');
  return {ok:true};
- }catch(e){S.conflict=/CONFLICT/i.test(errMsg(e));fail(e,S.conflict?'동시수정 충돌':'DB 저장');if(S.conflict)alert('다른 기기에서 먼저 변경한 장부가 있습니다. 저장을 중단했습니다. 화면 우측 하단의 상태 버튼을 눌러 서버 데이터를 다시 불러온 뒤 수정하세요.');return {ok:false,error:errMsg(e)};}
+ }catch(e){if(current()){S.conflict=/CONFLICT/i.test(errMsg(e));fail(e,S.conflict?'동시수정 충돌':'DB 저장');if(S.conflict)alert('다른 기기에서 먼저 변경한 장부가 있습니다. 저장을 중단했습니다. 화면 우측 하단의 상태 버튼을 눌러 서버 데이터를 다시 불러온 뒤 수정하세요.');}return {ok:false,error:errMsg(e)};}
  finally{S.saving=false;}
  })();
  cloudFlushTask=task;
@@ -8298,7 +8359,7 @@ async function restoreDatasets(){
  try{
  const {data,error}=await scope.client.from('zc_datasets').select('company_id,dataset,owner_id,payload,revision').eq('company_id',scope.company).limit(2000);if(error)throw error;
  if(!current())throw Error('CONTEXT_CHANGED');
- const rows=(data||[]).filter(d=>d.company_id==null||d.company_id===scope.company),map=new Map(rows.map(d=>[cloudKey(d.dataset,d.owner_id),d]));S.revisions.clear();S.companyOwners.clear();
+ const rows=(data||[]).filter(d=>d.company_id==null||d.company_id===scope.company),map=new Map(rows.map(d=>[cloudKey(d.dataset,d.owner_id),d]));cloudWriteEpoch++;cloudPendingWrites.clear();S.revisions.clear();S.companyOwners.clear();
  if(snoteCompanyActor()?.role==='admin')for(const row of rows)if(['cars','covers'].includes(row.dataset)&&/^[0-9a-f-]{36}$/i.test(row.owner_id)&&row.owner_id!==NIL&&!S.members.some(m=>m.user_id===row.owner_id&&m.company_id===scope.company))S.companyOwners.set(row.owner_id,{user_id:row.owner_id,company_id:scope.company,display_name:'',active:false,former:true});
  for(const m of snoteCompanyOwnerRows()){for(const ds of ['cars','covers']){
   const key=cloudKey(ds,m.user_id),row=map.get(key);
@@ -9151,9 +9212,20 @@ snote216InitMonthly();
 
 async function reload(){if(!S.ready)return;
  if(!confirm('서버에 저장된 데이터로 다시 불러올까요? 현재 브라우저에서 서버에 반영되지 않은 변경사항은 사라집니다.'))return;
+ const before={client:S.client,user:S.user,company:S.company?.id,epoch:cloudWriteEpoch,queue:[...S.queue],conflict:S.conflict};
+ const current=()=>S.client===before.client&&S.user===before.user&&S.company?.id===before.company;
  snote216ResetMonthly();snoteEncarLinksReset();S.ready=false;snoteRefreshSalesOverview();clearTimeout(S.timer);S.queue.clear();
  try{if(cloudFlushTask)await cloudFlushTask;S.queue.clear();S.conflict=false;await restoreDatasets();loadCarsForUser();loadCovers();await refreshMedia();await window.SnoteFinanceLock?.load(currentUser);buildStats();navigate(route);S.ready=true;snoteRefreshSalesOverview();snoteStartAccessTracking();showStatus('● 서버 자료 다시 불러옴');void snote220RefreshTaxonomy().catch(()=>{});snote216InitMonthly();}
- catch(e){S.ready=true;snoteRefreshSalesOverview();snoteStartAccessTracking();fail(e,'새로고침');snote216InitMonthly();}
+ catch(e){if(current()){
+  // A failed read did not replace the local data. Keep both queued edits and
+  // uncertain requests recoverable instead of reporting an empty save queue.
+  if(cloudWriteEpoch===before.epoch){
+   for(const key of before.queue)S.queue.add(key);
+   for(const[key,pending]of cloudPendingWrites)if(pending.client===before.client&&pending.user===before.user&&pending.company===before.company&&pending.epoch===before.epoch)S.queue.add(key);
+   S.conflict=before.conflict;
+  }
+  S.ready=true;snoteRefreshSalesOverview();snoteStartAccessTracking();fail(e,'새로고침');snote216InitMonthly();
+ }}
 }
 status.addEventListener('click',reload);
 window.addEventListener('beforeunload',e=>{if(!S.ready)return;if(S.queue.size||S.saving||S.conflict){e.preventDefault();e.returnValue='서버에 반영되지 않은 변경사항이 있습니다.';}});

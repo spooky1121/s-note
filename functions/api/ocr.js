@@ -1,3 +1,4 @@
+import { readBoundedBytes, sameOriginRequest, RequestSecurityError, securityResponse } from '../_shared/api-security.js';
 
 /**
  * S-NOTE / Cloudflare Pages Function
@@ -11,6 +12,9 @@
  */
 
 const MAX_IMAGE_BYTES = 6 * 1024 * 1024;
+// The existing browser budget is 60s. Keep bounded mobile uploads viable.
+export const OCR_UPLOAD_TIMEOUT_MS = 55000;
+export const OCR_REQUEST_TIMEOUT_MS = 58000;
 const ALLOWED = new Set([
   'image/jpeg',
   'image/png',
@@ -31,6 +35,11 @@ function reply(status, body) {
     status,
     headers: NO_STORE
   });
+}
+
+async function upstreamJSON(response, maximum) {
+  try { return JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(await readBoundedBytes(response, maximum))); }
+  catch { throw new Error('OCR_UPSTREAM_INVALID'); }
 }
 
 function clean(s) {
@@ -611,6 +620,7 @@ export function onRequestGet({ env } = {}) {
 }
 
 export async function onRequestPost({ request, env }) {
+  if (!sameOriginRequest(request)) return securityResponse('FORBIDDEN');
   const googleKey = String(
     env.GOOGLE_VISION_API_KEY || ''
   ).trim();
@@ -645,9 +655,8 @@ export async function onRequestPost({ request, env }) {
     request.headers.get('content-type') || ''
   ).split(';')[0].trim().toLowerCase();
 
-  const length = Number(
-    request.headers.get('content-length') || 0
-  );
+  const declaredLength = request.headers.get('content-length');
+  const length = Number(declaredLength || 0);
 
   if (!ALLOWED.has(contentType)) {
     return reply(415, {
@@ -655,12 +664,17 @@ export async function onRequestPost({ request, env }) {
     });
   }
 
-  if (length > MAX_IMAGE_BYTES) {
+  if ((declaredLength !== null && !/^\d+$/.test(declaredLength)) || length > MAX_IMAGE_BYTES) {
     return reply(413, {
       error: 'Google OCR 등록증 파일은 6MB 이하로 선택해 주세요.'
     });
   }
 
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), OCR_REQUEST_TIMEOUT_MS);
+  const abort = () => controller.abort();
+  request.signal?.addEventListener('abort', abort, { once: true });
+  if (request.signal?.aborted) abort();
   try {
     const h = {
       apikey: supaKey,
@@ -671,7 +685,7 @@ export async function onRequestPost({ request, env }) {
       supaUrl + '/auth/v1/user',
       {
         method: 'GET',
-        headers: h
+        headers: h, redirect: 'manual', signal: controller.signal
       }
     );
 
@@ -681,7 +695,7 @@ export async function onRequestPost({ request, env }) {
       });
     }
 
-    const user = await auth.json();
+    const user = await upstreamJSON(auth, 64 * 1024);
 
     if (!/^[0-9a-f-]{36}$/i.test(user?.id || '')) {
       return reply(401, {
@@ -702,7 +716,7 @@ export async function onRequestPost({ request, env }) {
       memberURL.toString(),
       {
         method: 'GET',
-        headers: h
+        headers: h, redirect: 'manual', signal: controller.signal
       }
     );
 
@@ -712,7 +726,7 @@ export async function onRequestPost({ request, env }) {
       });
     }
 
-    const members = await membership.json();
+    const members = await upstreamJSON(membership, 64 * 1024);
 
     if (!Array.isArray(members) || members.length < 1) {
       return reply(403, {
@@ -720,7 +734,7 @@ export async function onRequestPost({ request, env }) {
       });
     }
 
-    const buffer = await request.arrayBuffer();
+    const buffer = await readBoundedBytes(request, MAX_IMAGE_BYTES, { timeoutMs: OCR_UPLOAD_TIMEOUT_MS });
 
     if (
       buffer.byteLength > MAX_IMAGE_BYTES ||
@@ -757,7 +771,7 @@ export async function onRequestPost({ request, env }) {
       'https://vision.googleapis.com/v1/images:annotate?key=' +
       encodeURIComponent(googleKey),
       {
-        method: 'POST',
+        method: 'POST', redirect: 'manual', signal: controller.signal,
         headers: {
           'Content-Type': 'application/json'
         },
@@ -801,7 +815,7 @@ export async function onRequestPost({ request, env }) {
       });
     }
 
-    const data = await google.json();
+    const data = await upstreamJSON(google, 4 * 1024 * 1024);
     const result = data?.responses?.[0];
 
     if (result?.error) {
@@ -822,9 +836,13 @@ export async function onRequestPost({ request, env }) {
       engine: 'google-vision'
     });
 
-  } catch (_) {
+  } catch (error) {
+    if (error instanceof RequestSecurityError) return securityResponse(error.code);
     return reply(502, {
       error: 'OCR 연결 중 오류가 발생했습니다.'
     });
+  } finally {
+    clearTimeout(timer);
+    request.signal?.removeEventListener('abort', abort);
   }
 }

@@ -1,0 +1,31 @@
+{
+  "scope": "encrypted backup tooling and isolated synthetic recovery",
+  "baseCommit": "18772886de05bfc5a61ed0f9b3a0d96197526c6b",
+  "reviewedDate": "2026-11-07",
+  "checks": {
+    "unitAndMockedPipelineTests": {
+      "passed": 13,
+      "failed": 0
+    },
+    "syntheticPostgresqlRecovery": {
+      "engine": "PGlite",
+      "dataDirectoryExportImport": true,
+      "tablesCompared": 21,
+      "policiesPreserved": 20,
+      "attachmentBytesCompared": true,
+      "crossTenantAccessBlocked": true
+    },
+    "syntaxChecks": "passed",
+    "gitDiffCheck": "passed",
+    "independentCodeReview": "no remaining blocking defect identified"
+  },
+  "productionChangesPerformed": false,
+  "productionBackupCreated": false,
+  "realPgDumpPgRestorePipelineTested": false,
+  "managedSupabaseRecoveryTested": false,
+  "offsiteCopyVerified": false,
+  "externalDecryptionKeyRecoveryTested": false,
+  "recoveredApplicationUiTested": false,
+  "scheduleOrRetentionActivated": false,
+  "paidPlanOrPitrChanged": false
+}

@@ -1,4 +1,5 @@
 import '../../assets/money.js';
+import { readBoundedBytes } from '../_shared/api-security.js';
 import { createTransferRewrapper } from '../_shared/operator-transfer.js';
 
 // Platform operations are authorized twice: verified Auth user + a live-session
@@ -59,7 +60,7 @@ async function bytes(response, maximum) {
 }
 async function requestJson(request) {
   if (!/^application\/json(?:;|$)/i.test(request.headers.get('Content-Type') || '')) fail('INVALID_REQUEST');
-  try { return JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(await bytes(request, 1024 * 1024))); }
+  try { return JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(await readBoundedBytes(request, 1024 * 1024))); }
   catch { fail('INVALID_REQUEST'); }
 }
 function databaseError(status, data, adminAuth = false) {

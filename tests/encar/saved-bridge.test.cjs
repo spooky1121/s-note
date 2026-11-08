@@ -41,13 +41,18 @@ function fixture({role='dealer',owner=USER,server:initial}={}){
   fail(error){events.push('failure');},alert(){},confirm:()=>true,
   snote216ResetMonthly(){},snote216InitMonthly(){},snote222ResetContractSession(){},
   loadCarsForUser(){context.cars=[...server.values()].flatMap(row=>clone(row.payload));},loadCovers(){},refreshMedia:async()=>{},buildStats(){},navigate(){},route:'buy',
-  snote220RefreshTaxonomy:async()=>{},
+  snote220RefreshTaxonomy:async()=>{},snoteRefreshSalesOverview(){},snoteStartAccessTracking(){},
   async restoreDatasets(){events.push('restore');restores++;context.snote221ResetIncome();for(const [rowKey,row]of server){const ownerId=rowKey.slice(5);localStorage.data.set(store(ownerId),JSON.stringify(row.payload));S.revisions.set(rowKey,row.revision);}},
   window:null};
  context.window=context;
  for(const[rowKey,row]of server){localStorage.data.set(store(rowKey.slice(5)),JSON.stringify(row.payload));S.revisions.set(rowKey,row.revision);}
  context.cars=role==='dealer'?clone(server.get(key(USER)).payload):[...server.values()].flatMap(row=>clone(row.payload));
- S.client={async rpc(name,args){
+ S.client={from(table){
+  assert.equal(table,'zc_datasets');const filters={};return {select(){return this;},eq(name,value){filters[name]=value;return this;},async maybeSingle(){
+   assert.equal(filters.company_id,COMPANY);assert.equal(filters.dataset,'cars');
+   const row=server.get(key(filters.owner_id));return {data:row?{...clone(row),company_id:COMPANY,dataset:'cars',owner_id:filters.owner_id}:null,error:null};
+  }};
+ },async rpc(name,args){
   assert.equal(name,'zc_write_dataset');assert.equal(args.p_dataset,'cars');assert.equal(args.p_company,COMPANY);
   const call={...args,p_payload:clone(args.p_payload)};calls.push(call);events.push('rpc-start');
   const waiting=gate;gate=null;if(waiting){waiting.entered.resolve();await waiting.release.promise;}

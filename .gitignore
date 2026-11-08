@@ -1,2 +1,10 @@
 __pycache__/
 *.py[cod]
+
+# Operational backups and local recovery plaintext must never enter source control.
+*.snbak
+*.snbak.*.partial
+*.dump
+/backups/
+/recovery/
+.env.backup

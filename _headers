@@ -1,7 +1,27 @@
+# Shared browser baseline. Page-specific CSPs below further restrict this policy.
+# No script-src is imposed on the legacy main page until its inline handlers move.
+/*
+  X-Content-Type-Options: nosniff
+  Content-Security-Policy: object-src 'none'; base-uri 'self'; frame-ancestors 'self'
+
+/
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: SAMEORIGIN
+
+/index*
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: SAMEORIGIN
+
+/operator*
+  Cache-Control: no-store
+  Referrer-Policy: no-referrer
+  X-Frame-Options: DENY
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data:; connect-src 'self' https://rmlycycleuscfqywbihj.supabase.co wss://rmlycycleuscfqywbihj.supabase.co; frame-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+
 /customer*
   Cache-Control: no-store
   Referrer-Policy: no-referrer
-  X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
   Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; frame-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'
   Permissions-Policy: camera=(), microphone=(), geolocation=()
@@ -9,7 +29,6 @@
 /monthly*
   Cache-Control: no-store
   Referrer-Policy: same-origin
-  X-Content-Type-Options: nosniff
   X-Frame-Options: SAMEORIGIN
   Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'self'
   Permissions-Policy: camera=(), microphone=(), geolocation=()
@@ -17,7 +36,6 @@
 /income-settlement*
   Cache-Control: no-store
   Referrer-Policy: same-origin
-  X-Content-Type-Options: nosniff
   X-Frame-Options: SAMEORIGIN
   Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'self'
   Permissions-Policy: camera=(), microphone=(), geolocation=()
@@ -25,7 +43,6 @@
 /address-search*
   Cache-Control: no-store
   Referrer-Policy: no-referrer
-  X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
   Content-Security-Policy: default-src 'none'; font-src 'self'; script-src 'self' https://t1.kakaocdn.net https://t1.daumcdn.net https://stat.tiara.kakao.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://stat.tiara.kakao.com https://t1.kakaocdn.net https://t1.daumcdn.net https://postcode.map.daum.net https://postcode.map.kakao.com; connect-src https://stat.tiara.kakao.com https://postcode.map.daum.net https://postcode.map.kakao.com https://t1.kakaocdn.net https://t1.daumcdn.net; frame-src 'self' https://postcode.map.daum.net https://postcode.map.kakao.com; base-uri 'none'; form-action https://postcode.map.daum.net https://postcode.map.kakao.com; frame-ancestors 'none'
   Permissions-Policy: camera=(), microphone=(), geolocation=()
