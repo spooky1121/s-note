@@ -1,0 +1,71 @@
+{
+  "release": "2.102",
+  "baseCommit": "d6a49eaaea8bce348d349d703c470fef7bed391f",
+  "dashboardMargin": {
+    "label": "대시보드 마진 숨기기",
+    "defaultAfterConfirmedRead": false,
+    "unconfirmedOrInvalidContext": "Hidden",
+    "maskedFields": ["이번 달 마진", "올해 마진"],
+    "locations": ["top summary", "settlement summary"],
+    "replacement": "-",
+    "unitNegativeColorAndAriaAmountsRemoved": true,
+    "sourceAmountsAndGraphsUnchanged": true,
+    "persistence": "Authenticated user metadata, snote_dashboard_margin_hidden",
+    "write": "Single metadata key using the verified actor's pinned JWT; account and strict bool ACK plus getUser(token) readback",
+    "registrationMetadataPreserved": true,
+    "mainUserObjectIdentityPreserved": true,
+    "usedForAuthorization": false,
+    "existingFinanceLockUnchanged": true,
+    "newSchemaOrMigration": false
+  },
+  "profile": {
+    "position": "First card in dealer and administrator settings",
+    "presentation": "Collapsible inline editor using the same form and handlers as the existing drawer",
+    "preserved": ["avatar", "verified phone changes", "password changes", "read-only email", "company address", "dirty/busy guards", "scope and late-response checks"],
+    "sameScopeRebuild": "Retains the active form and draft in the replacement settings host",
+    "accountOrRouteExit": "Clears previous personal fields and restores drawer presentation"
+  },
+  "listCounts": {
+    "position": "Immediately beside 매입 차량, 판매 차량 and 고객 관리 headings",
+    "semantics": "Existing filtered totals before 20-row pagination",
+    "customerPendingStatus": "Preserved for assistive technology without widening the heading",
+    "dispose": "Original title node restored and count removed on customer view exit"
+  },
+  "financeLayout": {
+    "removed": ["차량별 수익 · 정산", "매입원가, 부대비용, 예상 마진을 자동으로 계산합니다. 차량을 클릭하면 비용을 수정할 수 있습니다."],
+    "alignment": "Summary, nested panels, list subheading and table wrapper share left and right boundaries",
+    "otherAltScreensChanged": false,
+    "mobile": "Table scrolls internally; page has no horizontal overflow"
+  },
+  "validation": {
+    "unitTests": {"displayPreference": 9, "homeDashboard": 8, "customerList": 14},
+    "browserWidths": {
+      "metadataAndMasking": [1440, 320],
+      "freshDocumentPersistence": [1024],
+      "profileAccordion": [1440, 320],
+      "listTitleCounts": [1440, 1024, 390, 320],
+      "financeLayout": [1440, 1024, 390, 320],
+      "existingHomeDashboard": [1440, 1024, 390, 320]
+    },
+    "existingProfileBrowserGroups": 11,
+    "checks": [
+      "Confirmed account-scoped storage and fresh-document persistence",
+      "Pinned token, strict ACK and readback; other account, registration and finance data preserved",
+      "Failure and delayed responses cannot reveal unconfirmed margins",
+      "Inline and drawer form reuse, verified phone and avatar save, password flow, dirty and scope cleanup",
+      "Title/count adjacency, search, zero results, page and view preservation without duplicate headings",
+      "Finance widths aligned at 1202, 786, 358 and 296 pixels",
+      "Existing home-dashboard amounts, charts, navigation, privacy gates and day/month rollover",
+      "No external fixture writes, unexpected browser errors or page overflow"
+    ],
+    "commands": [
+      "node tests/dashboard-display-settings.test.mjs",
+      "node tests/dashboard-display-settings.browser.cjs",
+      "node tests/home-dashboard.test.cjs",
+      "node tests/home-dashboard.browser.cjs",
+      "node tests/customer-list.test.cjs",
+      "node tests/profile-editor.browser.cjs"
+    ],
+    "notes": "Browser accounts and provider responses are synthetic; no real user's preference or profile was changed during tests."
+  }
+}

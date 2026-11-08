@@ -25,13 +25,13 @@
   const panel=node('section',null,'snote-home-state');panel.append(node('h2','대시보드'),node('p',text));
   if(locked){const button=node('button','잠금 해제','snote-home-unlock');button.type='button';button.prepend(icon('lock'));button.onclick=()=>action('unlock',null,key);panel.append(button);}host.append(panel);
  }
- function kpi(label,value,{unit='원',kind='',detail='',empty=''}={}){
-  const card=node('article',null,'snote-home-kpi');card.dataset.kpi=kind;card.setAttribute('role','img');card.tabIndex=0;
+ function kpi(label,value,{unit='원',kind='',detail='',empty='',masked=false}={}){
+  const card=node('article',null,'snote-home-kpi');card.dataset.kpi=kind;card.dataset.marginHidden=String(masked);card.setAttribute('role','img');card.tabIndex=0;
   const labelLine=node('div',null,'snote-home-kpi-label');labelLine.append(node('span',label),icon(kind));
-  const amount=node('strong',null,'snote-home-kpi-value');amount.append(node('span',value==null?'—':number(value),'snote-home-number'));if(value!=null)amount.append(node('small',unit));
-  if(value!=null&&value<0)amount.classList.add('is-negative');
-  const caption=value==null?empty:detail;
-  card.setAttribute('aria-label',label+' · '+(value==null?'아직 연결되지 않음':number(value)+unit)+(caption?' · '+caption:''));card.dataset.tooltip=caption||label;card.append(labelLine,amount,node('p',caption,'snote-home-kpi-caption'));return card;
+  const amount=node('strong',null,'snote-home-kpi-value');amount.append(node('span',masked?'-':value==null?'—':number(value),'snote-home-number'));if(!masked&&value!=null)amount.append(node('small',unit));
+  if(!masked&&value!=null&&value<0)amount.classList.add('is-negative');
+  const caption=masked?'마진 숨김':value==null?empty:detail;
+  card.setAttribute('aria-label',label+' · '+(masked?'숨김':value==null?'아직 연결되지 않음':number(value)+unit)+(caption?' · '+caption:''));card.dataset.tooltip=caption||label;card.append(labelLine,amount,node('p',caption,'snote-home-kpi-caption'));return card;
  }
  function chart(data,{field,title,color,money=false}){
   const card=node('section',null,'snote-home-chart-card');card.dataset.chart=field;card.style.setProperty('--snote-home-chart-color',color);
@@ -69,20 +69,20 @@
   }
   card.append(list);return card;
  }
- function settlement(data,key){
+ function settlement(data,key,hideMargin){
   const card=node('section',null,'snote-home-settlement-card');card.append(header('수익 정산',null,'finance',key));
   const list=node('dl',null,'snote-home-settlement');
-  for(const[label,value,caption]of [['이번 달 마진',data.monthMargin,'이번 달 판매 완료 기준'],['올해 마진',data.yearMargin,'올해 판매 완료 기준'],['재고 예상마진',data.inventoryMargin,'현재 보유 차량 기준']]){
-   const row=node('div');row.append(node('dt',label));const amount=node('dd',won(value));amount.classList.toggle('is-negative',value<0);row.append(amount,node('small',caption));list.append(row);
+  for(const[label,value,caption,masked]of [['이번 달 마진',data.monthMargin,'이번 달 판매 완료 기준',hideMargin],['올해 마진',data.yearMargin,'올해 판매 완료 기준',hideMargin],['재고 예상마진',data.inventoryMargin,'현재 보유 차량 기준',false]]){
+   const row=node('div');row.dataset.marginHidden=String(masked);row.append(node('dt',label));const amount=node('dd',masked?'-':won(value));amount.classList.toggle('is-negative',!masked&&value<0);row.append(amount,node('small',caption));list.append(row);
   }
   card.append(list);return card;
  }
- function render(data,key){
+ function render(data,key,hideMargin){
   host.replaceChildren();host.dataset.state='ready';host.setAttribute('aria-busy','false');
   const kpis=node('div',null,'snote-home-kpis');kpis.setAttribute('role','group');kpis.setAttribute('aria-label','대시보드 요약');
-  kpis.append(kpi('총투자금',data.totalInvestment,{kind:'capital',detail:'재고금 + 현금 잔액',empty:'현금 잔액 연결 전'}),kpi('재고금',data.inventoryCapital,{kind:'inventory',detail:'재고이자 포함 · 소득세 제외'}),kpi('현금',data.cash,{kind:'cash',detail:'연결된 현금 잔액',empty:'계좌 잔액 연결 전'}),kpi('이번 달 매입 대수',data.monthPurchaseCount,{kind:'purchase',unit:'대',detail:Number(data.month.slice(5))+'월 매입 기준'}),kpi('이번 달 판매 대수',data.monthSaleCount,{kind:'sale',unit:'대',detail:Number(data.month.slice(5))+'월 판매 완료 기준'}),kpi('이번 달 마진',data.monthMargin,{kind:'profit',detail:'판매가 − 매입 원가·부대비용'}),kpi('올해 마진',data.yearMargin,{kind:'year',detail:data.month.slice(0,4)+'년 판매 완료 기준'}));
+  kpis.append(kpi('총투자금',data.totalInvestment,{kind:'capital',detail:'재고금 + 현금 잔액',empty:'현금 잔액 연결 전'}),kpi('재고금',data.inventoryCapital,{kind:'inventory',detail:'재고이자 포함 · 소득세 제외'}),kpi('현금',data.cash,{kind:'cash',detail:'연결된 현금 잔액',empty:'계좌 잔액 연결 전'}),kpi('이번 달 매입 대수',data.monthPurchaseCount,{kind:'purchase',unit:'대',detail:Number(data.month.slice(5))+'월 매입 기준'}),kpi('이번 달 판매 대수',data.monthSaleCount,{kind:'sale',unit:'대',detail:Number(data.month.slice(5))+'월 판매 완료 기준'}),kpi('이번 달 마진',data.monthMargin,{kind:'profit',detail:'판매가 − 매입 원가·부대비용',masked:hideMargin}),kpi('올해 마진',data.yearMargin,{kind:'year',detail:data.month.slice(0,4)+'년 판매 완료 기준',masked:hideMargin}));
   const graphs=node('div',null,'snote-home-graphs');graphs.append(chart(data,{field:'purchases',title:'매입',color:'#4b80eb'}),chart(data,{field:'sales',title:'매도',color:'#4aa6b0'}),chart(data,{field:'margin',title:'판매수익',color:'#8a78cf',money:true}));
-  const cards=node('div',null,'snote-home-details');cards.append(listCard('매입 차량',data.inventoryRecent,data.inventoryCount,'buy',key),listCard('판매 완료',data.soldRecent,data.soldCount,'sell',key,true),settlement(data,key));host.append(kpis,graphs,cards);
+  const cards=node('div',null,'snote-home-details');cards.append(listCard('매입 차량',data.inventoryRecent,data.inventoryCount,'buy',key),listCard('판매 완료',data.soldRecent,data.soldCount,'sell',key,true),settlement(data,key,hideMargin));host.append(kpis,graphs,cards);
  }
  function refresh(){
   scheduled=false;if(!active){clear();return;}host.hidden=false;
@@ -92,12 +92,13 @@
   if(snapshot.loading){state('대시보드를 불러오는 중…',{loading:true});return;}
   if(snapshot.locked){state('금액 요약과 수익 정보를 보려면 잠금을 해제해 주세요.',{locked:true,key:snapshot.key});return;}
   let data;try{data=model.summarize(snapshot.rows,snapshot.month,snapshot.cash);}catch{state('대시보드 금액을 확인할 수 없습니다.');return;}
-  const next=JSON.stringify([snapshot.key,data]);if(signature===next)return;signature=next;render(data,snapshot.key);
+  const hideMargin=snapshot.hideMargin!==false,next=JSON.stringify([snapshot.key,hideMargin,data]);if(signature===next)return;signature=next;render(data,snapshot.key,hideMargin);
  }
  function schedule(){if(!scheduled){scheduled=true;queueMicrotask(refresh);}}
  root.addEventListener('snote:route-changed',event=>{active=event.detail?.page==='dashboard';refresh();});
  root.addEventListener('snote:sales-data-changed',schedule);
  document.addEventListener('snote:finance-lock-changed',schedule);
+ document.addEventListener('snote:dashboard-display-changed',schedule);
  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&active)schedule();});
  // Identity, gate and day rollover checks are cheap; amounts are recalculated only when their scope changes.
  setInterval(()=>{if(!active)return;try{if(!paintedKey||bridge()?.current?.(paintedKey)!==true)refresh();}catch{refresh();}},1000);

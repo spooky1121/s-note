@@ -84,21 +84,22 @@
 @media screen {
  #snote-app #alt-screen .snote-alt-heading {display:contents}
  #snote-app #alt-screen #snote-customer-heading-tools:empty {display:none}
- #snote-app #alt-screen.snote-customer-heading-active .snote-alt-heading {display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;align-items:center;gap:12px;margin-bottom:14px}
+ #snote-app #alt-screen.snote-customer-heading-active .snote-alt-heading {display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:12px;margin-bottom:14px}
+ #snote-app #alt-screen .snote-customer-title-with-count {display:inline-flex;align-items:center;gap:8px;grid-column:1;grid-row:1;min-width:0}
  #snote-app #alt-screen.snote-customer-heading-active #alt-title {grid-column:1;grid-row:1;min-width:0;margin:0;white-space:nowrap}
  #snote-app #alt-screen.snote-customer-heading-active #alt-copy {display:none}
  #snote-app #alt-screen.snote-customer-heading-active #snote-customer-heading-tools {display:contents}
  #snote-app #alt-screen #snote-customer-heading-tools .snote-customer-search {display:flex;grid-column:2;grid-row:1;min-width:0;width:100%;max-width:680px;margin:0;gap:0}
  #snote-app #alt-screen #snote-customer-heading-tools .snote-customer-search .search {display:flex;align-items:center;gap:7px;flex:1 1 0;min-width:0;width:100%;max-width:none;min-height:36px;margin:0;padding:5px 10px}
  #snote-app #alt-screen #snote-customer-heading-tools .snote-customer-search input {display:block;width:100%;min-width:0;height:24px;min-height:24px;margin:0;padding:0;border:0;background:transparent;font-size:14px;line-height:1.5}
- #snote-app #alt-screen #snote-customer-heading-tools #snote-customer-count {grid-column:3;grid-row:1;min-width:0;margin:0;color:#8c98aa;font-size:11px;line-height:1.5;white-space:nowrap}
- #snote-app #alt-screen #snote-customer-heading-tools #snote-customer-view-toolbar {grid-column:4;grid-row:1;justify-self:end;min-width:0;margin:0}
+ #snote-app #alt-screen :is(.snote-customer-title-with-count,#snote-customer-heading-tools) #snote-customer-count {position:relative;flex:none;min-width:0;margin:0;color:#8c98aa;font-size:11px;line-height:1.5;white-space:nowrap;font-variant-numeric:tabular-nums}
+ #snote-app #alt-screen .snote-customer-title-with-count .snote-customer-count-pending {position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+ #snote-app #alt-screen #snote-customer-heading-tools #snote-customer-view-toolbar {grid-column:3;grid-row:1;justify-self:end;min-width:0;margin:0}
 }
 @media screen and (max-width:760px) {
  #snote-app #alt-screen.snote-customer-heading-active .snote-alt-heading {grid-template-columns:auto minmax(0,1fr);gap:8px 10px;margin-bottom:10px}
  #snote-app #alt-screen #snote-customer-heading-tools .snote-customer-search {grid-column:2;grid-row:1;max-width:none}
  #snote-app #alt-screen #snote-customer-heading-tools .snote-customer-search .search {min-height:44px;padding:7px 9px;border-radius:11px}
  #snote-app #alt-screen #snote-customer-heading-tools .snote-customer-search input {height:26px;min-height:26px;font-size:16px}
- #snote-app #alt-screen #snote-customer-heading-tools #snote-customer-count {grid-column:1/-1;grid-row:2;justify-self:start;max-width:calc(100% - 104px);white-space:normal;overflow-wrap:anywhere}
  #snote-app #alt-screen #snote-customer-heading-tools #snote-customer-view-toolbar {grid-column:2;grid-row:2;justify-self:end}
 }

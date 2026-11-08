@@ -3,13 +3,14 @@
  'use strict';
  const root=document.getElementById('snote-profile-dialog');if(!root)return;
  document.body.append(root);
- const byId=id=>document.getElementById('snote-profile-'+id),panel=root.querySelector('.snote-profile-panel');
+ const byId=id=>root.querySelector('#snote-profile-'+id),panel=root.querySelector('.snote-profile-panel'),drawerHead=root.querySelector('.snote-profile-head');
  const disk='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 3h12l4 4v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2ZM7 3v6h9V3M7 21v-7h10v7M13 5v2"/></svg>';
  byId('save').innerHTML=disk;for(const symbol of root.querySelectorAll('.snote-profile-disk'))symbol.innerHTML=disk;
  let context=null,baseline=null,request=0,closing=false,saveBusy=false,passwordBusy=false,phoneBusy=false,avatarBusy=false,returnFocus=null,previousOverflow='',closeTimer=null,sessionTimer=null;
  let challenge=null,resendAt=0,sendRequestId=null,avatar=null,avatarURL='',previewURL=null,committedPreviewURL=null;
+ let presentation='drawer',bodyLocked=false,settingsHost=null,settingsDetails=null,settingsSummary=null,settingsClick=null,settingsToggle=null;
  const bridge=()=>window.snoteProfileBridge,phoneValue=()=>byId('phone').value.replace(/\D/g,''),busy=()=>saveBusy||passwordBusy||phoneBusy||avatarBusy;
- const current=(version=request)=>!root.hidden&&!closing&&version===request&&context&&bridge()?.current(context);
+ const current=(version=request)=>root.isConnected&&!root.hidden&&!closing&&version===request&&context&&bridge()?.current(context)&&(presentation!=='settings'||settingsHost?.isConnected&&root.parentElement===settingsHost);
  function status(id,text,tone='info'){const el=byId(id);el.textContent=text;el.dataset.tone=tone;}
  function values(){return {display_name:byId('name').value.trim(),company_name:byId('company').value.trim(),phone:String(baseline?.phone||''),address:String(baseline?.address||'')};}
  function personalDirty(){return !!baseline&&(byId('name').value.trim()!==String(baseline.display_name||'')||byId('company').value.trim()!==String(baseline.company_name||''));}
@@ -128,29 +129,75 @@
   catch(error){if(current(version))status('password-message',message(error,'비밀번호를 변경하지 못했습니다. 현재 비밀번호를 확인해 주세요.'),'error');}
   finally{if(request===version){clearPasswords();passwordBusy=false;if(current())controls();}}
  }
+ function settingsOpen(value){
+  if(!settingsDetails)return;settingsDetails.open=value;settingsSummary?.setAttribute('aria-expanded',String(value));
+  const label=settingsSummary?.querySelector('[data-profile-settings-action]');if(label)label.textContent=value?'숨기기':'펼치기';
+ }
+ function drawerPresentation(){
+  presentation='drawer';root.classList.remove('is-inline');root.setAttribute('role','dialog');root.setAttribute('aria-modal','true');
+  if(byId('save').parentElement!==drawerHead)drawerHead.append(byId('save'));
+  if(root.parentElement!==document.body)document.body.append(root);
+ }
+ function releaseBody(){if(bodyLocked){document.body.style.overflow=previousOverflow;bodyLocked=false;}}
  function finishClose(){
   root.hidden=true;root.classList.remove('is-open');closing=false;baseline=null;context=null;clearPasswords();resetChallenge();clearPreview();clearCommittedPreview();avatar=null;avatarURL='';resendAt=0;sendRequestId=null;
   for(const id of ['name','company','phone','address'])byId(id).value='';byId('current-email').textContent='';byId('current-phone').textContent='';image(byId('company-logo'),'');showAvatar('');
-  document.body.style.overflow=previousOverflow;clearTimeout(closeTimer);clearInterval(sessionTimer);sessionTimer=null;if(returnFocus?.isConnected&&bridge()?.context())returnFocus.focus({preventScroll:true});returnFocus=null;
+  for(const id of ['message','password-message','phone-message','avatar-message'])status(id,'');
+  releaseBody();clearTimeout(closeTimer);clearInterval(sessionTimer);sessionTimer=null;
+  if(presentation==='settings')settingsOpen(false);drawerPresentation();
+  if(returnFocus?.isConnected&&bridge()?.context())returnFocus.focus({preventScroll:true});returnFocus=null;
  }
- function close({force=false}={}){
+ function close({force=false,immediate=false}={}){
   if(root.hidden||closing)return true;if(!force&&busy()){status('message','진행 중인 저장이 끝난 후 닫아 주세요.');return false;}
   if(!force&&dirty()&&!window.confirm('저장하지 않은 변경사항을 버리고 닫을까요?'))return false;
-  ++request;closing=true;clearPasswords();root.classList.remove('is-open');const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;closeTimer=setTimeout(finishClose,reduced?0:290);return true;
+  ++request;closing=true;clearPasswords();root.classList.remove('is-open');if(force)returnFocus=null;
+  if(immediate||presentation==='settings'){finishClose();return true;}
+  const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;closeTimer=setTimeout(finishClose,reduced?0:290);return true;
  }
- async function open(){
-  if(!root.hidden||closing)return;context=bridge()?.context();if(!context){window.alert('온라인 계정에 로그인한 뒤 프로필을 설정해 주세요.');return;}
-  returnFocus=document.activeElement;previousOverflow=document.body.style.overflow;document.body.style.overflow='hidden';baseline=null;saveBusy=false;passwordBusy=false;phoneBusy=false;avatarBusy=false;root.hidden=false;clearPasswords();
-  for(const id of ['message','password-message','phone-message','avatar-message'])status(id,'');root.querySelector('details').open=false;requestAnimationFrame(()=>{if(!root.hidden&&!closing){root.classList.add('is-open');panel.focus({preventScroll:true});}});
-  sessionTimer=setInterval(()=>{if(!closing&&!root.hidden&&!bridge()?.current(context))close({force:true});else if(current())controls();},200);await load();
+ function showPresentation(mode,host){
+  if(mode==='settings'){
+   releaseBody();presentation='settings';root.classList.add('is-inline','is-open');root.setAttribute('role','region');root.removeAttribute('aria-modal');const heading=root.querySelector('.snote-profile-section-heading');if(byId('save').parentElement!==heading)heading.append(byId('save'));host.append(root);settingsOpen(true);returnFocus=settingsSummary;
+  }else{
+   const wasInline=presentation==='settings';root.classList.remove('is-open');drawerPresentation();if(wasInline)settingsOpen(false);
+   returnFocus=document.activeElement;previousOverflow=document.body.style.overflow;bodyLocked=true;document.body.style.overflow='hidden';
+  }
  }
+ async function begin(mode,host=null){
+  if(closing)return false;
+  if(!root.hidden){
+   if(mode!==presentation||mode==='settings'&&root.parentElement!==host){showPresentation(mode,host);if(mode==='drawer'){void panel.offsetWidth;requestAnimationFrame(()=>{if(!root.hidden&&!closing){root.classList.add('is-open');panel.focus({preventScroll:true});}});}}
+   return true;
+  }
+  context=bridge()?.context();if(!context){window.alert('온라인 계정에 로그인한 뒤 프로필을 설정해 주세요.');if(mode==='settings')settingsOpen(false);return false;}
+  baseline=null;saveBusy=false;passwordBusy=false;phoneBusy=false;avatarBusy=false;showPresentation(mode,host);root.hidden=false;clearPasswords();
+  for(const id of ['message','password-message','phone-message','avatar-message'])status(id,'');root.querySelector('details').open=false;
+  if(mode==='drawer')requestAnimationFrame(()=>{if(!root.hidden&&!closing){root.classList.add('is-open');panel.focus({preventScroll:true});}});
+  sessionTimer=setInterval(()=>{if(!closing&&!root.hidden&&!bridge()?.current(context))close({force:true});else if(current())controls();},200);await load();return true;
+ }
+ async function open(){return begin('drawer');}
+ function prepareRouteChange(){return root.hidden||close({immediate:true});}
+ function mountSettings(host){
+  if(!(host instanceof Element)||!host.isConnected)return false;const details=host.closest('details'),summary=details?.querySelector(':scope > summary');if(!details||!summary)return false;
+  if(settingsHost===host){if(details.open&&root.hidden)void begin('settings',host);return true;}
+  const authorized=!!context&&bridge()?.current(context)===true,carryInline=presentation==='settings'&&!root.hidden&&!closing&&!settingsHost?.isConnected&&authorized;
+  if(presentation==='settings'&&!root.hidden&&!carryInline&&!close({force:!authorized,immediate:true}))return false;
+  if(settingsSummary&&settingsClick)settingsSummary.removeEventListener('click',settingsClick);if(settingsDetails&&settingsToggle)settingsDetails.removeEventListener('toggle',settingsToggle);
+  settingsHost=host;settingsDetails=details;settingsSummary=summary;details.classList.add('snote-profile-settings-disclosure');
+  if(!summary.querySelector('[data-profile-settings-action]')){const action=document.createElement('span');action.dataset.profileSettingsAction='';action.textContent=details.open?'숨기기':'펼치기';summary.append(action);}
+  settingsClick=event=>{event.preventDefault();if(details.open){if(presentation!=='settings'||root.hidden||close({immediate:true}))settingsOpen(false);}else void begin('settings',host);};
+  settingsToggle=()=>{summary.setAttribute('aria-expanded',String(details.open));const action=summary.querySelector('[data-profile-settings-action]');if(action)action.textContent=details.open?'숨기기':'펼치기';if(details.open){if(presentation!=='settings'||root.parentElement!==host||root.hidden)void begin('settings',host);}else if(presentation==='settings'&&!root.hidden&&root.parentElement===host&&!close({immediate:true}))settingsOpen(true);};
+  summary.addEventListener('click',settingsClick);details.addEventListener('toggle',settingsToggle);summary.setAttribute('aria-expanded',String(details.open));if(carryInline)showPresentation('settings',host);else if(details.open)void begin('settings',host);return true;
+ }
+ window.addEventListener('snote:route-changed',event=>{if(event.detail?.page!=='settings'&&presentation==='settings'&&!root.hidden)close({force:true,immediate:true});});
+ new MutationObserver(()=>{let settings=false;try{settings=typeof route==='string'&&route==='settings';}catch{}const host=settings?document.getElementById('snote-settings-profile-body'):null;if(host&&host!==settingsHost)mountSettings(host);if(presentation==='settings'&&!root.hidden&&(!settingsHost?.isConnected||!settingsDetails?.isConnected||root.parentElement!==settingsHost))close({force:true,immediate:true});}).observe(document.body,{childList:true,subtree:true});
+ const initialHost=document.getElementById('snote-settings-profile-body');if(initialHost)mountSettings(initialHost);
  root.addEventListener('input',event=>{if(event.target===byId('phone')){if(challenge&&phoneValue()!==challenge.phone)resetChallenge();sendRequestId=null;}if(event.target===byId('phone-code'))byId('phone-code').value=byId('phone-code').value.replace(/\D/g,'').slice(0,6);controls();});
  byId('form').addEventListener('submit',save);byId('phone-form').addEventListener('submit',phoneConfirm);byId('phone-send').addEventListener('click',phoneSend);byId('password-form').addEventListener('submit',passwordSave);
  byId('avatar-pick').addEventListener('click',()=>byId('avatar-file').click());byId('avatar-file').addEventListener('change',avatarChange);byId('avatar').addEventListener('error',()=>{byId('avatar').hidden=true;byId('avatar-placeholder').hidden=false;});byId('company-logo').addEventListener('error',()=>{byId('company-logo').hidden=true;});
  byId('close').addEventListener('click',()=>close());byId('reload').addEventListener('click',load);
  document.addEventListener('keydown',event=>{
-  if(root.hidden||closing)return;if(event.key==='Escape'){event.preventDefault();event.stopImmediatePropagation();return;}
+  if(root.hidden||closing||presentation==='settings')return;if(event.key==='Escape'){event.preventDefault();event.stopImmediatePropagation();return;}
   if(event.key==='Tab'){const elements=[...root.querySelectorAll('button,input,textarea,summary,[tabindex="0"]')].filter(el=>!el.disabled&&el.getClientRects().length),first=elements[0],last=elements[elements.length-1];if(!first)return;if(event.shiftKey&&(document.activeElement===first||!root.contains(document.activeElement))){event.preventDefault();last.focus();}else if(!event.shiftKey&&(document.activeElement===last||!root.contains(document.activeElement))){event.preventDefault();first.focus();}}
  },true);
- window.addEventListener('beforeunload',event=>{if(!root.hidden&&dirty()){event.preventDefault();event.returnValue='';}});window.snoteProfileEditor=Object.freeze({open,close});
+ window.addEventListener('beforeunload',event=>{if(!root.hidden&&dirty()){event.preventDefault();event.returnValue='';}});window.snoteProfileEditor=Object.freeze({open,close,mountSettings,prepareRouteChange});
 })();

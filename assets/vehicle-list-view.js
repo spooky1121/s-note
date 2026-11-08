@@ -17,7 +17,9 @@
  const actions=screen.querySelector('.zc-list-actions');
  if(actions){
   const headingActions=document.createElement('div');headingActions.className='snote-vehicle-heading-actions';
-  actions.before(headingActions);const count=document.getElementById('snote-vehicle-count');if(count)headingActions.append(count);headingActions.append(actions,toolbar);actions.classList.add('snote-vehicle-actions');
+  actions.before(headingActions);headingActions.append(actions,toolbar);actions.classList.add('snote-vehicle-actions');
+  const title=document.getElementById('list-title'),count=document.getElementById('snote-vehicle-count');
+  if(title&&count){const titleLine=document.createElement('div');titleLine.className='snote-vehicle-title-with-count';title.before(titleLine);titleLine.append(title,count);}
   const add=actions.querySelector('#snote92-buy-manual');
   if(add){const slot=document.createElement('span');slot.className='snote-vehicle-add-slot';add.before(slot);slot.append(add);}
  }else table.before(toolbar);

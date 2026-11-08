@@ -13,7 +13,8 @@
   const input=host.querySelector('#snote-customer-search'),body=host.querySelector('tbody'),count=host.querySelector('#snote-customer-count'),empty=host.querySelector('#snote-customer-empty');
   const view=host.querySelector('#snote-customer-view'),group=host.querySelector('.snote-customer-view-toggle');
   const headerTools=host.id==='alt-content'?document.getElementById('snote-customer-heading-tools'):null,headerScreen=headerTools?.closest('#alt-screen'),search=view.querySelector('.snote-customer-search'),toolbar=view.querySelector('#snote-customer-view-toolbar');
-  if(headerTools&&headerScreen){headerTools.append(search,count,toolbar);headerScreen.classList.add('snote-customer-heading-active');}
+  let titleLine=null;const title=headerScreen?.querySelector('#alt-title');
+  if(headerTools&&headerScreen){headerTools.append(search,toolbar);if(title){titleLine=document.createElement('div');titleLine.className='snote-customer-title-with-count';title.before(titleLine);titleLine.append(title,count);}else headerTools.prepend(count);headerScreen.classList.add('snote-customer-heading-active');}
   const icons={list:'<path d="M8 6h12M8 12h12M8 18h12"/><path d="M4 6h.01M4 12h.01M4 18h.01"/>',cards:'<rect x="3.5" y="3.5" width="6.5" height="6.5" rx="1.2"/><rect x="14" y="3.5" width="6.5" height="6.5" rx="1.2"/><rect x="3.5" y="14" width="6.5" height="6.5" rx="1.2"/><rect x="14" y="14" width="6.5" height="6.5" rx="1.2"/>'};
   function applyView(mode,persist=false){if(disposed||!isCurrent())return;if(!viewModes.includes(mode))mode='list';view.dataset.customerView=mode;if(headerTools&&headerScreen)headerTools.dataset.customerView=mode;for(const button of group.children)button.setAttribute('aria-pressed',String(button.dataset.customerViewChoice===mode));if(persist)try{localStorage.setItem(viewKey,mode);}catch{}}
   function chooseView(event){const button=event.target.closest('[data-customer-view-choice]');if(button&&group.contains(button))applyView(button.dataset.customerViewChoice,true);}
@@ -26,7 +27,7 @@
    if(input.value!==lastQuery){lastQuery=input.value;queryVersion++;}
    const terms=input.value.trim().split(/\s+/).map(normalize).filter(Boolean);
    const filtered=rows.filter(record=>{const car=carFor(record),haystack=normalize(searchable(record)+' '+searchable(car)+' '+(values.get(String(record.carId))||''));return terms.every(term=>haystack.includes(term));});
-   count.textContent=`${filtered.length}명`+(pending?' · 식별번호 확인 중':'');
+   count.textContent=`${filtered.length}명`;if(pending){const hint=document.createElement('span');hint.className='snote-customer-count-pending';hint.textContent=' · 식별번호 확인 중';count.append(hint);}
    const visible=window.snote236Paginate(filtered,'customers',viewId+':'+queryVersion,'customer-pagination',render);
    const pageCount=view.querySelector('#customer-pagination .snote-page-count');if(pageCount)pageCount.textContent=pageCount.textContent.replace(/^총 (\d+)대/,'총 $1명');
    body.innerHTML=visible.map(record=>{const id=String(record.carId),identity=values.has(id)?maskIdentity(values.get(id)):failed.has(id)?'조회 실패':record.rrnCipher&&pending?'확인 중…':'미등록';return renderRow(record,identity,carFor(record));}).join('');
@@ -34,7 +35,7 @@
   }
   window.SnoteListSort?.values('customers',(record,label)=>{const car=carFor(record);if(label==='차량')return car?.model||record.carModel||'';if(label==='고객')return record.name||'';if(label.includes('주민'))return (values.get(String(record.carId))||'').slice(0,6);if(label==='상태')return car?.status==='판매완료'?'판매완료':'판매중';if(label==='주소')return record.address||record.addressBase||'';return record.updatedAt||0;});
   input.addEventListener('input',render);
-  dispose=()=>{window.SnoteListSort?.unbind('customers');disposed=true;rows=[];values.clear();failed.clear();lastQuery=null;input.value='';input.removeEventListener('input',render);group.removeEventListener('click',chooseView);group.removeEventListener('keydown',viewKeydown);body.replaceChildren();count.textContent='';empty.textContent='';empty.hidden=true;const pages=view.querySelector('#customer-pagination');pages.replaceChildren();pages.hidden=true;if(headerTools&&headerScreen){search.remove();count.remove();toolbar.remove();delete headerTools.dataset.customerView;headerScreen.classList.remove('snote-customer-heading-active');}};
+  dispose=()=>{window.SnoteListSort?.unbind('customers');disposed=true;rows=[];values.clear();failed.clear();lastQuery=null;input.value='';input.removeEventListener('input',render);group.removeEventListener('click',chooseView);group.removeEventListener('keydown',viewKeydown);body.replaceChildren();count.textContent='';empty.textContent='';empty.hidden=true;const pages=view.querySelector('#customer-pagination');pages.replaceChildren();pages.hidden=true;if(headerTools&&headerScreen){search.remove();count.remove();toolbar.remove();if(titleLine){if(titleLine.contains(title))titleLine.before(title);titleLine.remove();titleLine=null;}delete headerTools.dataset.customerView;headerScreen.classList.remove('snote-customer-heading-active');}};
   render();
   try{const result=await readIdentities(records);if(disposed||!isCurrent())return;values=result.values;failed=result.failed;}catch(_){if(disposed||!isCurrent())return;failed=new Set(rows.filter(record=>record.rrnCipher).map(record=>String(record.carId)));}
   pending=false;render();

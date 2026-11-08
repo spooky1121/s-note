@@ -1,0 +1,64 @@
+/* The existing account form also fits the first, collapsible settings card. */
+@media screen{
+ #snote-app #snote-settings-profile{grid-column:1/-1;min-width:0;margin:0;padding:0;border:1px solid #e8ebf0;border-radius:11px;background:#fff;box-shadow:none}
+ #snote-settings-profile .snote-profile-settings-disclosure{min-width:0;margin:0;padding:0}
+ #snote-settings-profile .snote-profile-settings-disclosure>summary{display:flex;align-items:center;justify-content:space-between;gap:14px;min-height:49px;margin:0;padding:12px 16px;list-style:none;color:#435268;font:inherit;cursor:pointer}
+ #snote-settings-profile .snote-profile-settings-disclosure>summary::-webkit-details-marker{display:none}
+ #snote-settings-profile .snote-profile-settings-disclosure>summary>strong{font-size:12px;font-weight:600;line-height:1.5;letter-spacing:-.2px}
+ #snote-settings-profile [data-profile-settings-action]{display:flex;align-items:center;gap:9px;flex:none;color:#98a3b2;font-size:10px;line-height:1.5;white-space:nowrap}
+ #snote-settings-profile [data-profile-settings-action]::after{content:'';display:block;width:7px;height:7px;border-right:1.3px solid currentColor;border-bottom:1.3px solid currentColor;transform:rotate(45deg);transition:transform .16s}
+ #snote-settings-profile .snote-profile-settings-disclosure[open]>summary{border-bottom:1px solid #edf0f5}
+ #snote-settings-profile .snote-profile-settings-disclosure[open]>summary [data-profile-settings-action]::after{transform:rotate(225deg)}
+ #snote-settings-profile .snote-profile-settings-disclosure>summary:focus-visible{outline:2px solid #89b4ef;outline-offset:-3px;border-radius:10px}
+ #snote-settings-profile-body{min-width:0;padding:12px 14px 14px}
+ #snote-profile-dialog.is-inline{position:relative!important;inset:auto!important;z-index:auto;display:block;width:100%!important;height:auto!important;min-height:0;max-width:none!important;max-height:none!important;padding:0!important;margin:0!important;border:0!important;border-radius:0!important;background:transparent;opacity:1!important;overflow:visible;overscroll-behavior:auto;isolation:auto;transition:none!important}
+ #snote-profile-dialog.is-inline .snote-profile-panel{display:block;width:100%;height:auto;max-height:none;overflow:visible;transform:none!important;transition:none!important;box-shadow:none;background:transparent}
+ #snote-profile-dialog.is-inline .snote-profile-head{display:none}
+ #snote-profile-dialog.is-inline .snote-profile-head>div,#snote-profile-dialog.is-inline #snote-profile-close{display:none!important}
+ #snote-profile-dialog.is-inline .snote-profile-body{display:block;max-height:none;min-height:0;padding:0;overflow:visible;overscroll-behavior:auto}
+ #snote-profile-dialog.is-inline .snote-profile-save-icon{width:36px;height:36px;min-height:36px;border:0;border-radius:0;background:transparent!important;box-shadow:none!important}
+ #snote-profile-dialog.is-inline .snote-profile-section{min-width:0;margin:0 0 12px;padding:16px;border:1px solid #e8ecf2;border-radius:11px;background:#fff}
+ #snote-profile-dialog.is-inline .snote-profile-section:last-child{margin-bottom:0}
+ #snote-profile-dialog.is-inline .snote-profile-body>.snote-profile-section:first-child{display:grid;grid-template-columns:minmax(180px,.8fr) minmax(230px,1fr);align-items:start;column-gap:24px}
+ #snote-profile-dialog.is-inline .snote-profile-section-heading{grid-column:1/-1;min-height:36px;gap:12px;margin-bottom:15px}
+ #snote-profile-dialog.is-inline .snote-profile-section-heading h3{margin-right:auto}
+ #snote-profile-dialog.is-inline h3{font-size:12px;margin-bottom:12px}
+ #snote-profile-dialog.is-inline .snote-profile-identity{grid-column:1;grid-row:2;align-self:start;gap:12px;margin:3px 0 10px}
+ #snote-profile-dialog.is-inline .snote-profile-avatar-pick{width:58px;height:58px;min-width:58px;border-radius:50%!important}
+ #snote-profile-dialog.is-inline .snote-profile-identity strong{font-size:12px}
+ #snote-profile-dialog.is-inline #snote-profile-avatar-message{grid-column:1;grid-row:3;min-width:0;margin-top:0}
+ #snote-profile-dialog.is-inline #snote-profile-form{grid-column:2;grid-row:2/4;min-width:0}
+ #snote-profile-dialog.is-inline #snote-profile-message,#snote-profile-dialog.is-inline #snote-profile-reload{grid-column:2;min-width:0}
+ #snote-profile-dialog.is-inline label{margin-bottom:11px;font-size:11px}
+ #snote-profile-dialog.is-inline input,#snote-profile-dialog.is-inline textarea{min-height:36px;margin-top:5px;padding:8px 10px;background:#f6f8fb;font-size:13px;font-weight:400;line-height:1.45}
+ #snote-profile-dialog.is-inline #snote-profile-address{min-height:58px}
+ #snote-profile-dialog.is-inline .snote-profile-company-logo{width:88px;height:30px}
+ #snote-profile-dialog.is-inline .snote-profile-phone-form{grid-column:1/-1;min-width:0;margin-top:13px;padding-top:13px}
+ #snote-profile-dialog.is-inline .snote-profile-phone-row{max-width:440px;align-items:center}
+ #snote-profile-dialog.is-inline .snote-profile-phone-row input{margin:0}
+ #snote-profile-dialog.is-inline .snote-profile-code-button{min-height:36px;padding:8px 10px}
+ #snote-profile-dialog.is-inline .snote-profile-help,#snote-profile-dialog.is-inline small{font-size:10px}
+ #snote-profile-dialog.is-inline .snote-profile-password-section>summary{font-size:12px}
+ #snote-profile-dialog.is-inline .snote-profile-password-section[open]>summary{margin-bottom:14px}
+ #snote-profile-dialog.is-inline #snote-profile-password-form{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 12px;align-items:start}
+ #snote-profile-dialog.is-inline #snote-profile-password-save{grid-column:3;justify-self:end;width:auto;min-height:36px;margin-top:0;padding:8px 12px;font-size:11px}
+ #snote-profile-dialog.is-inline #snote-profile-password-message{grid-column:1/-1;margin-top:4px}
+}
+@media screen and (max-width:760px){
+ #snote-settings-profile-body{padding:10px}
+ #snote-settings-profile .snote-profile-settings-disclosure>summary{padding:11px 13px}
+ #snote-profile-dialog.is-inline .snote-profile-section{padding:14px}
+ #snote-profile-dialog.is-inline .snote-profile-body>.snote-profile-section:first-child{display:block}
+ #snote-profile-dialog.is-inline .snote-profile-section-heading{margin-bottom:14px}
+ #snote-profile-dialog.is-inline .snote-profile-identity{margin-bottom:17px}
+ #snote-profile-dialog.is-inline input,#snote-profile-dialog.is-inline textarea{min-height:42px;font-size:16px}
+ #snote-profile-dialog.is-inline .snote-profile-code-button{min-height:42px;max-width:110px;padding:10px 8px}
+ #snote-profile-dialog.is-inline #snote-profile-password-form{display:block}
+ #snote-profile-dialog.is-inline #snote-profile-password-save{width:100%;min-height:40px}
+}
+@media screen and (max-width:360px){
+ #snote-profile-dialog.is-inline .snote-profile-phone-row{grid-template-columns:minmax(0,1fr)}
+ #snote-profile-dialog.is-inline .snote-profile-code-button{justify-self:end;max-width:none}
+}
+@media(prefers-reduced-motion:reduce){#snote-settings-profile [data-profile-settings-action]::after{transition:none}}
+@media print{#snote-settings-profile{display:none!important}}

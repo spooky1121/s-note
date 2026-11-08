@@ -1,0 +1,24 @@
+/* Display-only account preference, independent of the finance-entry lock. */
+@media screen{
+ #snote-app .snote-settings-home:has(#snote-dashboard-margin-setting){display:grid;gap:12px}
+ #snote-app #snote-dashboard-margin-setting{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;column-gap:14px;grid-column:1/-1;min-width:0;margin:0;padding:12px 16px;border:1px solid #e8ebf0;border-radius:11px;background:#fff;box-shadow:none}
+ #snote-dashboard-margin-setting[hidden],#snote-dashboard-margin-setting [hidden]{display:none!important}
+ #snote-dashboard-margin-setting .snote-dashboard-margin-copy{display:flex;align-items:center;flex-wrap:wrap;gap:3px 12px;min-width:0}
+ #snote-dashboard-margin-setting .snote-dashboard-margin-copy strong{font-size:12px;font-weight:600;line-height:1.5;color:#435268;letter-spacing:-.2px;white-space:nowrap}
+ #snote-dashboard-margin-setting .snote-dashboard-margin-copy>span{font-size:10px;line-height:1.5;color:#99a2b0;word-break:keep-all}
+ #snote-dashboard-margin-setting .snote-dashboard-margin-switch{display:grid;place-items:center;flex:none;min-width:42px;min-height:32px;margin:0;padding:4px;cursor:pointer}
+ #snote-app #alt-content #snote-dashboard-margin-toggle{appearance:none;-webkit-appearance:none;display:block;position:relative;flex:none;width:34px;height:20px;min-width:34px;min-height:20px;margin:0;padding:0;border:0;border-radius:999px;background:#d7dde6;box-shadow:none;cursor:pointer;transition:background-color .16s ease;outline-offset:4px}
+ #snote-app #alt-content #snote-dashboard-margin-toggle::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 3px #1a2c4826;transition:transform .16s ease}
+ #snote-app #alt-content #snote-dashboard-margin-toggle:checked{background:#1671ed}
+ #snote-app #alt-content #snote-dashboard-margin-toggle:checked::after{transform:translateX(14px)}
+ #snote-app #alt-content #snote-dashboard-margin-toggle:disabled{opacity:.5;cursor:default}
+ #snote-app #alt-content #snote-dashboard-margin-toggle:focus-visible{outline:2px solid #89b4ef}
+ #snote-dashboard-margin-setting .snote-dashboard-margin-feedback{grid-column:1/-1;display:flex;align-items:center;gap:10px;min-width:0;margin-top:4px}
+ #snote-dashboard-margin-setting #snote-dashboard-margin-status{min-width:0;margin:0;color:#8291a5;font-size:10px;line-height:1.6;overflow-wrap:anywhere}
+ #snote-dashboard-margin-setting #snote-dashboard-margin-status[data-error=true]{color:#b16d64}
+ #snote-dashboard-margin-setting #snote-dashboard-margin-retry{flex:none;min-height:26px;margin:0;padding:2px 0;border:0;border-radius:4px;background:transparent;box-shadow:none;color:#1671ed;font-family:inherit;font-size:10px;font-weight:500;white-space:nowrap;cursor:pointer}
+ #snote-dashboard-margin-setting #snote-dashboard-margin-retry:disabled{opacity:.45;cursor:default}
+}
+@media screen and (max-width:360px){#snote-app #snote-dashboard-margin-setting{padding:10px 12px;column-gap:9px}#snote-dashboard-margin-setting .snote-dashboard-margin-copy{display:grid;gap:2px}}
+@media(prefers-reduced-motion:reduce){#snote-app #alt-content #snote-dashboard-margin-toggle,#snote-app #alt-content #snote-dashboard-margin-toggle::after{transition:none!important}}
+@media print{#snote-dashboard-margin-setting{display:none!important}}
