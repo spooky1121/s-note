@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.99">
+<html lang="ko" data-snote-release="2.100">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -3160,8 +3160,9 @@ button, input, select, textarea { font-family: inherit; }
 <link rel="stylesheet" href="assets/vehicle-detail.css?v=2.84">
 <link rel="stylesheet" href="assets/vehicle-detail-colors.css?v=2.33.1">
 <link rel="stylesheet" href="assets/sales-month-filter.css?v=2.26">
-<link rel="stylesheet" href="assets/sales-overview.css?v=2.90">
+<link rel="stylesheet" href="assets/sales-overview.css?v=2.100">
 <script src="assets/sales-overview.js?v=2.90" defer></script>
+<script src="assets/purchase-overview.js?v=2.100" defer></script>
 <script src="assets/access-tracker.js?v=2.85"></script>
 <link rel="stylesheet" href="assets/finance-lock-settings.css?v=2.87">
 <script src="assets/finance-lock-settings.js?v=2.87"></script>
@@ -3283,6 +3284,7 @@ button, input, select, textarea { font-family: inherit; }
  <div id="accountant-overview" class="acct-overview"></div>
  </section>
       <section id="monthly-screen" style="display:none;width:100%;min-width:0" aria-label="월정산 결산표"><iframe id="monthly-ledger-frame" title="S-NOTE 월정산 결산표" src="monthly.html?v=2.36" scrolling="no" style="width:100%;height:1280px;border:0;display:block;background:transparent"></iframe></section>
+<section id="snote-purchase-overview" aria-label="매입 현황" hidden></section>
 <section id="snote-sales-overview" aria-label="판매 현황" hidden></section>
 <div class="list-screen" id="list-screen"><section class="panel"><div class="panel-head"><div class="list-heading"><div class="list-title-line"><h2 id="list-title">전체 차량 목록</h2><span id="buy-search-host" hidden></span></div><p id="list-desc">차량별 상태와 금액을 확인할 수 있습니다.</p></div><span id="snote-vehicle-count" role="status" aria-live="polite" aria-label="차량 대수" hidden></span><div class="zc-list-actions"><button id="zc80-buy-scan" type="button" class="zc80-buy-scan" aria-label="등록증으로 자동 등록" title="등록증으로 자동 등록" onclick="openAutoRegistration()" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3H5v18h14V9l-6-6ZM13 3v6h6M8 15h8M12 11v8"/></svg></button><button id="snote92-buy-manual" type="button" onclick="openAdd()" aria-label="신규 등록" title="신규 등록" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M12 5v14"/></svg></button><input id="zc-import-model-photos" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden onchange="importModelPhotoBundle(event)" /></div></div><div id="snote-sales-month-filter" class="snote-sales-month-filter" hidden>
  <div class="snote-sales-month-control"><label for="snote-sales-month">판매 월</label><div class="snote-sales-month-picker"><button id="snote-sales-month-prev" type="button" aria-label="이전 달" onclick="snote226MoveSalesMonth(-1)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 6-6 6 6 6"/></svg></button><select id="snote-sales-month" aria-label="판매 완료 월" onchange="snote226SetSalesMonth(this.value)"></select><button id="snote-sales-month-next" type="button" aria-label="다음 달" onclick="snote226MoveSalesMonth(1)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m10 6 6 6-6 6"/></svg></button></div><button id="snote-sales-current-month" type="button" onclick="snote226SetSalesMonth('current')">이번 달</button></div>
@@ -3760,6 +3762,18 @@ pages.acctFinance={title:'매입금액 현황',head:'매입금액 현황',sub:'�
 let route='buy';
 let snoteWorkspaceSalesReady=false;
 function snoteRefreshSalesOverview(){window.dispatchEvent(new Event('snote:sales-data-changed'));}
+
+/* Purchase history uses the same verified owner scope as the inventory list. */
+function snotePurchaseOverviewContext(){
+ if(!currentUser||route!=='buy')return null;
+ const scope=snotePurchaseContext();
+ if(!scope||typeof scope.key!=='string'||!scope.key||scope.ownerAlias!==currentUser.username)return null;
+ return {key:JSON.stringify([scope.key,currentUser.username,snoteNavigationSession]),month:snote226CurrentSalesMonth(),loading:!snoteWorkspaceSalesReady||scope.ready!==true};
+}
+window.snotePurchaseOverviewBridge={
+ snapshot(){const context=snotePurchaseOverviewContext();if(!context)return null;return {...context,cars:context.loading?[]:cars.filter(car=>car?.ownerId===currentUser.username).map(car=>({purchaseAt:car.purchaseAt}))};},
+ current(key){const context=snotePurchaseOverviewContext();return !!context&&!context.loading&&context.key===key;}
+};
 
 /* App-screen history is separate from authentication and never grants page access. */
 const SNOTE_NAV_SESSION_KEY='snote-navigation-session';
@@ -10031,7 +10045,7 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 <script type="module" src="assets/income-settlement-parent.js?v=2.85"></script>
 <script src="assets/vehicle-sharing.js?v=2.92" defer></script>
 <script src="assets/shared-vehicle-markers.js?v=2.87" defer></script>
-<script src="assets/release-info.js?v=2.99" defer></script>
+<script src="assets/release-info.js?v=2.100" defer></script>
 <script src="assets/company-purchase.js?v=2.77" defer></script>
 <script src="assets/recycle-bin.js?v=2.77" defer></script>
 <script src="assets/profile-editor.js?v=2.79" defer></script>

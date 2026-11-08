@@ -1,0 +1,57 @@
+{
+  "release": "2.100",
+  "baseCommit": "13850b75837aa24452fee8e18d08f852117eda62",
+  "scope": "Purchase overview above the existing own-inventory list, using the sales overview layout",
+  "data": {
+    "dateField": "purchaseAt",
+    "timezone": "Asia/Seoul",
+    "ownerScope": "Verified current owner's records, including completed sales; identical for dealer, admin and accountant",
+    "sharedIncomingAndOtherOwners": "Excluded",
+    "period": "Current calendar month and the last six months, plus previous-month and prior-year comparisons",
+    "missingOrInvalidDates": "Excluded from monthly counts and shown as a separate date-check count",
+    "zeroBaseline": "No percentage is invented when the comparison count is zero",
+    "snapshotFields": ["purchaseAt"]
+  },
+  "behavior": {
+    "visibleRoute": "buy",
+    "listScopeChanged": false,
+    "searchSortPageIndependent": true,
+    "graph": "Read-only six-month line with pointer and keyboard tooltips",
+    "previousCountsCleared": "On route, account, company, role, verified-scope or loading changes",
+    "serverReadsAdded": false,
+    "storageWritesAdded": false,
+    "databaseChanges": false
+  },
+  "validation": {
+    "purchaseModelTests": 5,
+    "existingSalesModelTests": 5,
+    "purchaseBrowserWidths": [1440, 1024, 390, 320],
+    "existingSalesBrowserWidths": [1440, 1024, 390, 320],
+    "knownCountExample": {
+      "month": "2027-01",
+      "current": 5,
+      "previous": 2,
+      "priorYear": 4,
+      "sixMonthTotal": 12,
+      "undated": 3
+    },
+    "checks": [
+      "Korean month boundary, real dates and immutable source records",
+      "Completed purchases retained after sale; foreign and shared incoming records excluded",
+      "Admin and accountant remain in the same own-only scope despite a stale dealer filter",
+      "Search, status and pagination do not change overview totals",
+      "Account invalidation and loading remove old counts",
+      "Existing sales month selection and overview behavior remain unchanged",
+      "Compact side-by-side metrics and graph without overflow or hovering point displacement",
+      "No external API requests, source storage writes or unexpected browser errors in synthetic fixtures"
+    ],
+    "commands": [
+      "node tests/purchase-overview.test.cjs",
+      "node tests/sales-overview.test.cjs",
+      "node tests/purchase-overview.browser.cjs",
+      "node tests/sales-overview.browser.cjs"
+    ],
+    "inlineScriptsSyntaxChecked": 7,
+    "scriptSyntaxAndDiffCheck": "passed"
+  }
+}
