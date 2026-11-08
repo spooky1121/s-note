@@ -1,0 +1,173 @@
+{
+  "release": "2.96",
+  "baseCommit": "8542cfd3e52ee028b564ad4f9d5595efb796d16a",
+  "scope": "Customer management list/cards matching the compact vehicle view",
+  "views": {
+    "wrapper": "#snote-customer-view",
+    "attribute": "data-customer-view",
+    "modes": [
+      "list",
+      "cards"
+    ],
+    "preferenceKey": "snote:customer-list-view:v1",
+    "preferenceContents": "Only list or cards; no query or customer data",
+    "sameTableAndRowDom": true,
+    "columns": {
+      "1440": 4,
+      "1024": 3,
+      "phone": 1
+    },
+    "phonePhotoPx": [
+      100,
+      82
+    ],
+    "phoneActionsPx": 44
+  },
+  "preserved": [
+    "Owner-scoped canonical customer read and authorized linked vehicle lookup",
+    "Masked identity display with complete identity search in private view memory",
+    "Search query, sort order and current 20-row page during view changes",
+    "Single identity read per mount; no additional read or render on view toggle",
+    "Existing vehicle/sale/contract/receipt action attributes and delegated handlers",
+    "Delete restore-generation and updated-at concurrency fields",
+    "Vehicle/customer information, status, address and four action icons"
+  ],
+  "lifecycle": [
+    "Dispose clears private identity Map, typed query, customer row DOM, count and pagination",
+    "Disposed or invalid-context controls cannot mutate/persist mode",
+    "Late identity responses cannot update a newer view or account",
+    "Persisted pageshow rebuilds only a visible authenticated users workspace through the existing guarded builder",
+    "Initial pageshow, other routes, public workspace and accountant state do not read customer data"
+  ],
+  "validation": {
+    "browser": {
+      "test": "tests/customer-list-view.browser.cjs",
+      "widths": [
+        1440,
+        1024,
+        390,
+        320
+      ],
+      "passed": true,
+      "groups": 9,
+      "scenarios": [
+        "Same-DOM list/card transitions, full identity/phone/vehicle/make/address/multiple-token search",
+        "Sort across 45 records before pagination; switch on the second 20-row page",
+        "Masked row text/attributes/HTML and enum-only storage, no new API read on toggle",
+        "Existing delegated action and delete CAS wiring, final operation spied to avoid business writes",
+        "Clear, late-result and role restrictions",
+        "Saved, invalid and blocked view preferences",
+        "Identity read failure, long escaped content and unlinked vehicle fallback",
+        "BFCache fresh current-owner read, mode restore, private query cleared and stale result discarded",
+        "Heading/search same row and center, transparent frameless view controls without overlap",
+        "Header slot dispose and remount preserve original title node and other account-finance heading"
+      ]
+    },
+    "unit": {
+      "test": "tests/customer-list.test.cjs",
+      "passed": 14,
+      "failed": 0,
+      "existingAssertionsPreserved": true
+    },
+    "focus": {
+      "widths": [
+        1440,
+        320
+      ],
+      "outlinePx": 2,
+      "outlineOffsetPx": -3,
+      "overflow": false
+    },
+    "static": {
+      "inlineSyntaxScripts": 7,
+      "changedJavaScriptSyntax": true,
+      "gitDiffCheck": true
+    },
+    "vehicleRegression": {
+      "test": "tests/vehicle-list-view.browser.cjs",
+      "widths": [
+        1440,
+        1024,
+        390,
+        320
+      ],
+      "passed": true,
+      "groups": 9,
+      "scope": "Original vehicle functions plus top action row, exact normal glyph/targets, small plus exception and accountant action suppression"
+    },
+    "sidebar": {
+      "widths": [
+        1440,
+        1024,
+        390,
+        320
+      ],
+      "passed": true,
+      "scope": "700ms hover, native/dynamic title, cached help and tooltip aria link removal only on left navigation; keyboard/background and other save tooltip preserved"
+    },
+    "photoBounds": {
+      "widths": [
+        1440,
+        320
+      ],
+      "passed": true,
+      "scope": "Customer image and thumbnail boxes match within 0.5px; decoded image and cover fit, no page overflow",
+      "description": "Image elements use absolute inset inside the grid thumbnail to preserve the fixed box; full vehicle visible"
+    }
+  },
+  "sourceSha256": {
+    "assets/customer-list.js": "e7a0e057af87fc716d926a8189b8511d9ca00294986166c28ea1e097612b8dcb",
+    "assets/customer-list-view.css": "65de4b61416a44d7bfb42179a9d0c839a9db2e3fbe6c443b34ea494a1f23f53e",
+    "assets/vehicle-list-view.js": "ac1e1b65f323bd7ac91801d472c764c73c3ff35abe6dcbc8a93005813e91f5aa",
+    "assets/vehicle-list-view.css": "aa5e2b5e09d751e86c15cc3c2102b94be9f9b6277032122e8b804179174491e7",
+    "assets/icon-feedback.js": "6bde563572fb6f29abb02ca878dac48fff6c96ed99ad3bfd786e16d9658176df",
+    "assets/snote-tutorial.js": "ba1ffeb9fdd57e0b1b7afd012bf47ae62eeedff5be29f6cb973695f00db72b0b",
+    "index.html": "4db03444688f9f8ed5611b40e026fde9e30db65eda7befccd81d3396cfc29a48",
+    "assets/tutorial/start-cards.jpg": "d719f9ecbe3056ad1d1c28a5af8eae21131f6c01a49e79548da6908f6154e6f1",
+    "assets/tutorial/sharing-customers.jpg": "a7e58688b72079e9d3c29f2a22ab8e481f95cd0d592b20da737f76c085015fa8",
+    "tests/customer-list.test.cjs": "b9547952048416d97c8cd68654382f0f38b23df544d5fb1f4c2e4d500a599f3d",
+    "tests/customer-list-view.browser.cjs": "b08a736c22a01cfee281a0e0e9bf3591939119899fc3d6ae63ee56283c1dc08c",
+    "tests/vehicle-list-view.browser.cjs": "dcfd7188b7afc604b3b77fc0ce8da5bbbd989f097fbecb712670d33ad70805f6"
+  },
+  "verificationScope": [
+    "Actual local index and browser with synthetic customer/identity API adapters using existing client paths",
+    "No production accounts, customer data, record writes, printing or SMS sends",
+    "No database schema or calculation changes",
+    "Direct production Pages HTTP is restricted in this environment; deployment is checked by exact-commit Cloudflare Pages: s-note status"
+  ],
+  "headerLayout": {
+    "customerSearch": "Existing search moved beside the static customer heading; no duplicated field",
+    "customerHeaderNodePreserved": true,
+    "viewControls": "Frameless list/card glyphs in top action row, selected by blue color only",
+    "iconSizePx": 20,
+    "buttonTargets": {
+      "desktop": 36,
+      "phone": 44
+    },
+    "vehicleHeader": "Existing registration/share group and view toolbar are siblings in a heading wrapper",
+    "accountantRegistrationAndShareRemainHidden": true,
+    "smallPlusRetainsExistingSize": true,
+    "leftMenuTooltips": "Disabled only for desktop-nav and mobile-drawer-nav; other icon help preserved"
+  },
+  "tutorialImages": {
+    "files": [
+      "assets/tutorial/start-cards.jpg",
+      "assets/tutorial/sharing-customers.jpg"
+    ],
+    "urlVersion": "2.96",
+    "actualGuideStepsDecoded": true,
+    "other16ImagesUnchanged": true,
+    "details": [
+      {
+        "file": "assets/tutorial/start-cards.jpg",
+        "bytes": 56711,
+        "sha256": "d719f9ecbe3056ad1d1c28a5af8eae21131f6c01a49e79548da6908f6154e6f1"
+      },
+      {
+        "file": "assets/tutorial/sharing-customers.jpg",
+        "bytes": 38736,
+        "sha256": "a7e58688b72079e9d3c29f2a22ab8e481f95cd0d592b20da737f76c085015fa8"
+      }
+    ]
+  }
+}

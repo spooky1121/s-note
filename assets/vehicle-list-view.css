@@ -10,19 +10,25 @@
  #snote-app #list-screen[data-vehicle-view] > .panel > :is(#list-table,#list-mobile) {order:3}
  #snote-app #list-screen[data-vehicle-view] > .panel > #list-pagination {order:4}
  #snote-app #list-screen .snote-card-buy-price {display:none}
+ #snote-app #list-screen[data-vehicle-view] > .panel > .panel-head {display:flex;flex-direction:row;flex-wrap:wrap;align-items:center;gap:10px 12px}
+ #snote-app #list-screen[data-vehicle-view] > .panel > .panel-head > .list-heading {flex:1 1 370px;min-width:0}
+ #snote-app #list-screen[data-vehicle-view] .snote-vehicle-heading-actions {display:flex;align-items:center;justify-content:flex-end;flex:none;flex-wrap:nowrap;gap:4px;min-width:0;width:auto;margin:0 0 0 auto}
+ #snote-app #list-screen[data-vehicle-view] .zc-list-actions.snote-vehicle-actions {position:static;display:flex;align-items:center;justify-content:flex-end;flex:0 0 auto;flex-wrap:nowrap;gap:4px;min-width:0;width:auto;margin:0}
+ #snote-app #list-screen[data-vehicle-view] .snote-vehicle-add-slot {display:inline-flex;align-items:center;flex:none}
+ #snote-app #list-screen[data-vehicle-view] .snote-vehicle-add-slot:has(> [hidden]) {display:none}
  #snote-app #list-screen #snote-vehicle-view-toolbar {
-  display:flex;align-items:center;justify-content:flex-end;order:2;flex:0 0 auto;min-width:0;margin:0 20px 12px auto;
+  display:flex;align-items:center;justify-content:flex-end;flex:none;min-width:0;margin:0;
  }
  #snote-app #list-screen #snote-vehicle-view-toolbar[hidden] {display:none!important}
  #snote-app #list-screen .snote-vehicle-view-toggle {
-  display:inline-flex;align-items:center;gap:2px;padding:3px;border:0;border-radius:10px;background:#f3f5f8;
+  display:inline-flex;align-items:center;gap:4px;padding:0;border:0;border-radius:0;background:transparent;
  }
  #snote-app #list-screen .snote-vehicle-view-toggle > button.snote-list-action {
-  display:inline-grid;place-items:center;flex:none;width:32px;min-width:32px;height:32px;min-height:32px;padding:6px;margin:0;border:0;border-radius:7px;background:transparent;box-shadow:none;color:#9098a7;line-height:1;cursor:pointer;transition:color .16s,background .16s,transform .16s;
+  display:inline-grid;place-items:center;flex:none;width:36px;min-width:36px;height:36px;min-height:36px;padding:8px;margin:0;border:0;border-radius:0;background:transparent!important;box-shadow:none!important;color:#9098a7;line-height:1;cursor:pointer;translate:none!important;transform:none!important;transition:color .16s;
  }
- #snote-app #list-screen .snote-vehicle-view-toggle > button.snote-list-action > svg {display:block;width:19px;height:19px;max-width:100%;pointer-events:none}
- #snote-app #list-screen .snote-vehicle-view-toggle > button.snote-list-action:hover {color:#416fe1;background:#e9eef8;transform:translateY(-1px)}
- #snote-app #list-screen .snote-vehicle-view-toggle > button.snote-list-action[aria-pressed=true] {color:#3168e9;background:#fff;box-shadow:0 1px 4px #273b5d0d}
+ #snote-app #list-screen .snote-vehicle-view-toggle > button.snote-list-action > svg {display:block;width:20px;height:20px;max-width:100%;pointer-events:none}
+ #snote-app #list-screen .snote-vehicle-view-toggle > button.snote-list-action:hover {color:#416fe1}
+ #snote-app #list-screen .snote-vehicle-view-toggle > button.snote-list-action[aria-pressed=true] {color:#3168e9}
  #snote-app #list-screen .snote-vehicle-view-toggle > button.snote-list-action:focus-visible {outline:2px solid #9bbcf4;outline-offset:2px}
  #snote-app #list-screen .snote-vehicle-view-button[data-snote-icon-help]::after {display:none}
  #snote-app #list-screen[data-vehicle-view] > .panel > .snote-mobile-sort {
@@ -105,7 +111,9 @@
 }
 @media screen and (max-width:760px) {
  #snote-app #list-screen[data-vehicle-view] > .panel {column-gap:8px}
- #snote-app #list-screen #snote-vehicle-view-toolbar {margin:0 14px 12px auto}
+ #snote-app #list-screen[data-vehicle-view] > .panel > .panel-head > .list-heading {flex:1 1 100%}
+ #snote-app #list-screen[data-vehicle-view] .list-title-line h2 {padding-right:0;min-height:0}
+ #snote-app #list-screen #snote-vehicle-view-toolbar {margin:0}
  #snote-app #list-screen .snote-vehicle-view-toggle > button.snote-list-action {width:44px;min-width:44px;height:44px;min-height:44px;padding:12px}
  #snote-app #list-screen[data-vehicle-view] > .panel > .snote-mobile-sort {display:flex;flex:1 1 0;max-width:none;margin:0 0 12px 14px;gap:6px}
  #snote-app #list-screen[data-vehicle-view] > .panel > .snote-mobile-sort label {font-size:0!important;gap:0}

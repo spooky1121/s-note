@@ -13,7 +13,14 @@
   button.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+icons[mode]+'</svg>';
   button.addEventListener('click',()=>apply(mode,true));group.append(button);return button;
  });
- toolbar.append(group);table.before(toolbar);
+ toolbar.append(group);
+ const actions=screen.querySelector('.zc-list-actions');
+ if(actions){
+  const headingActions=document.createElement('div');headingActions.className='snote-vehicle-heading-actions';
+  actions.before(headingActions);headingActions.append(actions,toolbar);actions.classList.add('snote-vehicle-actions');
+  const add=actions.querySelector('#snote92-buy-manual');
+  if(add){const slot=document.createElement('span');slot.className='snote-vehicle-add-slot';add.before(slot);slot.append(add);}
+ }else table.before(toolbar);
  function apply(mode,persist=false){
   if(!choices.includes(mode))mode='list';
   screen.dataset.vehicleView=mode;

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.95">
+<html lang="ko" data-snote-release="2.96">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -3177,7 +3177,7 @@ button, input, select, textarea { font-family: inherit; }
 <script src="assets/list-pagination.js?v=2.47"></script>
 <script src="assets/popup-controls.js?v=2.59" defer></script>
 <link rel="stylesheet" href="assets/list-style.css?v=2.37">
-<script src="assets/customer-list.js?v=2.47" defer></script>
+<script src="assets/customer-list.js?v=2.96" defer></script>
 <link rel="stylesheet" href="assets/vehicle-detail-compact.css?v=2.85">
 <link rel="stylesheet" href="assets/vehicle-finance.css?v=2.84">
 <link rel="stylesheet" href="assets/vehicle-detail-layout.css?v=2.40">
@@ -3187,7 +3187,7 @@ button, input, select, textarea { font-family: inherit; }
 <link rel="stylesheet" href="assets/document-actions.css?v=2.78">
 <link rel="stylesheet" href="assets/vehicle-drawer.css?v=2.78">
 <link rel="stylesheet" href="assets/workspace-refine.css?v=2.85">
-<script src="assets/icon-feedback.js?v=2.54" defer></script>
+<script src="assets/icon-feedback.js?v=2.96" defer></script>
 <link rel="stylesheet" href="assets/icon-sizing.css?v=2.86">
 <script src="assets/icon-sizing.js?v=2.86" defer></script>
 <script src="assets/action-controls.js?v=2.94" defer></script>
@@ -3209,7 +3209,8 @@ button, input, select, textarea { font-family: inherit; }
 <link rel="stylesheet" href="assets/snote-chatbot.css?v=2.94">
 <link rel="stylesheet" href="assets/snote-tutorial.css?v=2.94">
 <link rel="stylesheet" href="assets/vehicle-cost-settings.css?v=2.85">
-<link rel="stylesheet" href="assets/vehicle-list-view.css?v=2.95">
+<link rel="stylesheet" href="assets/vehicle-list-view.css?v=2.96">
+<link rel="stylesheet" href="assets/customer-list-view.css?v=2.96">
 <link rel="stylesheet" href="assets/vehicle-memo.css?v=2.92">
 <link rel="stylesheet" href="assets/sidebar-hover.css?v=2.92">
 </head>
@@ -3292,7 +3293,7 @@ button, input, select, textarea { font-family: inherit; }
            <div class="stats" id="stats"></div>
            <section class="dashboard-analytics" id="dashboard-analytics"></section>
          </section>
-         <section class="panel"><h2 id="alt-title"></h2><p id="alt-copy"></p><nav id="snote-settings-sections" class="snote-settings-sections" aria-label="설정 하위 메뉴" hidden></nav><div id="alt-content"></div></section></div>
+         <section class="panel"><div class="snote-alt-heading"><h2 id="alt-title"></h2><div id="snote-customer-heading-tools"></div></div><p id="alt-copy"></p><nav id="snote-settings-sections" class="snote-settings-sections" aria-label="설정 하위 메뉴" hidden></nav><div id="alt-content"></div></section></div>
     </main>
   </div>
 </div>
@@ -7496,7 +7497,8 @@ async function buildCustomerManagement(){
    renderRow:(r,identity,car)=>{
     const status=car?.status==='판매완료'?'판매완료':'판매중';
     const action=(kind,attr,label)=>`<button class="snote-list-action ${kind==='delete'?'is-danger':''}" type="button" ${attr}="${esc(r.carId)}" ${kind==='delete'?'data-customer-generation="'+esc(window.snoteCustomerRestoreGeneration?.(r)||'')+'" data-customer-updated-at="'+esc(window.snoteCustomerUpdatedAt?.(r)||'')+'"':''} aria-label="${label}" data-tooltip="${label}">${snote237CustomerIcon(kind)}</button>`;
-    return `<tr><td data-label="차량"><button type="button" class="snote202-car-open" data-customer-car="${esc(r.carId)}" aria-label="${esc(car?.model||r.carModel||r.plate||'차량')} 차량 상세 보기">${esc(car?.model||r.carModel||'')}</button><small>${esc(car?.plate||r.plate||'')}</small></td><td data-label="고객"><b>${esc(r.name||'')}</b><small>${esc(r.phone||'')}</small></td><td data-label="식별번호" data-customer-identity="${esc(r.carId)}">${esc(identity)}</td><td data-label="상태"><span class="zc75-status ${status==='판매완료'?'done':'selling'}">${status}</span></td><td data-label="주소">${esc(r.address||'미입력')}</td><td data-label="관리"><div class="zc75-actions">${action('sale','data-customer-open','판매 진행')}${action('contract','data-customer-contract','계약서 확인')}${action('receipt','data-customer-receipt','인수증 확인')}${action('delete','data-customer-delete','고객 삭제')}</div></td></tr>`;
+    const visual=car?thumbHtml(car):'<svg viewBox="0 0 64 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m13 21 6-12h26l6 12M11 22h42v15H11zM15 37v4m34-4v4M17 27h6m18 0h6"/></svg>';
+    return `<tr><td data-label="차량"><button type="button" class="snote202-car-open snote-customer-car" data-customer-car="${esc(r.carId)}" aria-label="${esc(car?.model||r.carModel||r.plate||'차량')} 차량 상세 보기"><span class="snote-customer-thumb" aria-hidden="true">${visual}</span><span class="snote-customer-car-copy"><strong>${esc(car?.model||r.carModel||'연결 차량 없음')}</strong><small>${esc(car?.plate||r.plate||'')}</small></span></button></td><td data-label="고객"><b>${esc(r.name||'')}</b><small>${esc(r.phone||'')}</small></td><td data-label="식별번호" data-customer-identity="${esc(r.carId)}">${esc(identity)}</td><td data-label="상태"><span class="zc75-status ${status==='판매완료'?'done':'selling'}">${status}</span></td><td data-label="주소">${esc(r.address||'미입력')}</td><td data-label="관리"><div class="zc75-actions">${action('sale','data-customer-open','판매 진행')}${action('contract','data-customer-contract','계약서 확인')}${action('receipt','data-customer-receipt','인수증 확인')}${action('delete','data-customer-delete','고객 삭제')}</div></td></tr>`;
    }});
  }catch(e){if(current())host.innerHTML='<div class="empty">고객정보를 불러오지 못했습니다. 연결 상태를 확인해 주세요.</div>';}
 }
@@ -10028,7 +10030,7 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 <script type="module" src="assets/income-settlement-parent.js?v=2.85"></script>
 <script src="assets/vehicle-sharing.js?v=2.92" defer></script>
 <script src="assets/shared-vehicle-markers.js?v=2.87" defer></script>
-<script src="assets/release-info.js?v=2.95" defer></script>
+<script src="assets/release-info.js?v=2.96" defer></script>
 <script src="assets/company-purchase.js?v=2.77" defer></script>
 <script src="assets/recycle-bin.js?v=2.77" defer></script>
 <script src="assets/profile-editor.js?v=2.79" defer></script>
@@ -10036,9 +10038,9 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 <script src="assets/document-mms.js?v=2.44" defer></script>
 <script src="assets/workspace-polish.js?v=2.77" defer></script>
 <script src="assets/list-sort.js?v=2.57" defer></script>
-<script src="assets/vehicle-list-view.js?v=2.91" defer></script>
+<script src="assets/vehicle-list-view.js?v=2.96" defer></script>
 <script src="assets/workspace-refine.js?v=2.89" defer></script>
-<script src="assets/snote-tutorial.js?v=2.95" defer></script>
+<script src="assets/snote-tutorial.js?v=2.96" defer></script>
 <script src="assets/snote-chatbot.js?v=2.94" defer></script>
 <script src="assets/vehicle-cost-settings.js?v=2.85" defer></script>
 <script src="assets/drawer-motion.js?v=2.48" defer></script>
