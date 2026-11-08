@@ -13,6 +13,8 @@
  #snote-app #list-screen[data-vehicle-view] > .panel > .panel-head {display:flex;flex-direction:row;flex-wrap:wrap;align-items:center;gap:10px 12px}
  #snote-app #list-screen[data-vehicle-view] > .panel > .panel-head > .list-heading {flex:1 1 370px;min-width:0}
  #snote-app #list-screen[data-vehicle-view] .snote-vehicle-heading-actions {display:flex;align-items:center;justify-content:flex-end;flex:none;flex-wrap:nowrap;gap:4px;min-width:0;width:auto;margin:0 0 0 auto}
+ #snote-app #list-screen #snote-vehicle-count {flex:none;margin:0 8px 0 0;color:#8c98aa;font-size:11px;line-height:1.5;white-space:nowrap;font-variant-numeric:tabular-nums}
+ #snote-app #list-screen #snote-vehicle-count[hidden] {display:none!important}
  #snote-app #list-screen[data-vehicle-view] .zc-list-actions.snote-vehicle-actions {position:static;display:flex;align-items:center;justify-content:flex-end;flex:0 0 auto;flex-wrap:nowrap;gap:4px;min-width:0;width:auto;margin:0}
  #snote-app #list-screen[data-vehicle-view] .snote-vehicle-add-slot {display:inline-flex;align-items:center;flex:none}
  #snote-app #list-screen[data-vehicle-view] .snote-vehicle-add-slot:has(> [hidden]) {display:none}
