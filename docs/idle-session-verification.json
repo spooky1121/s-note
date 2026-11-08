@@ -1,0 +1,145 @@
+{
+  "release": "2.104",
+  "baseCommit": "3b8f77e35adb05bd309d3729704ddae7155704f3",
+  "defaultMinutes": 30,
+  "choices": [
+    5,
+    10,
+    15,
+    30,
+    60
+  ],
+  "settings": "계정별 자동 로그아웃 시간",
+  "warningSeconds": 60,
+  "activity": [
+    "trusted pointerdown",
+    "trusted keydown",
+    "trusted wheel",
+    "trusted touchstart",
+    "trusted touchmove",
+    "same-origin iframe input"
+  ],
+  "notActivity": [
+    "scripted events",
+    "programmatic scroll",
+    "focus",
+    "visibilitychange",
+    "pageshow",
+    "afterprint",
+    "token refresh"
+  ],
+  "multiTab": {
+    "activityScope": "project+user",
+    "expiryScope": "project+user+Auth session_id",
+    "sleepingTab": "Check the previous wall-clock deadline before accepting input"
+  },
+  "preference": {
+    "storage": "Authenticated Auth user_metadata.snote_idle_timeout_minutes",
+    "write": "Verified pinned JWT; strict account/integer ACK and separate getUser(token) readback",
+    "authorization": false,
+    "schemaMigration": false
+  },
+  "expiry": {
+    "immediateOpaqueVeil": true,
+    "finalFlushLimitSeconds": 5,
+    "revocation": "Pinned POST /auth/v1/logout?scope=local",
+    "offline": "Local current session is blocked and cleared without waiting for network success",
+    "lateSdkRefresh": "Expired session persistence guard and revoked per-client adapter",
+    "otherDeviceAndFreshSession": "No global sign-out; foreign/fresh SDK credentials preserved",
+    "privateUi": "Private forms, documents, media references and lists reset; workspace inert and hidden from accessibility until next workspace entry"
+  },
+  "recovery": {
+    "payload": "Existing dataset caches retained; marker stores only scope, exact storage key, base revision and SHA256",
+    "relogin": "Recognize confirmed ACK or requeue same-base CAS; preserve conflicting cache",
+    "oldRequests": "Detached old flush cannot clear a new session saving state"
+  },
+  "validation": {
+    "unitTotal": 135,
+    "unitSuites": [
+      {
+        "file": "tests/idle-session.test.mjs",
+        "tests": 12,
+        "exit": 0
+      },
+      {
+        "file": "tests/idle-auth-storage.test.cjs",
+        "tests": 7,
+        "exit": 0
+      },
+      {
+        "file": "tests/idle-recovery.test.cjs",
+        "tests": 8,
+        "exit": 0
+      },
+      {
+        "file": "tests/idle-recovery-integration.test.cjs",
+        "tests": 17,
+        "exit": 0
+      },
+      {
+        "file": "tests/cloud-save-recovery.test.cjs",
+        "tests": 35,
+        "exit": 0
+      },
+      {
+        "file": "tests/encar/saved-bridge.test.cjs",
+        "tests": 16,
+        "exit": 0
+      },
+      {
+        "file": "tests/dashboard-display-settings.test.mjs",
+        "tests": 9,
+        "exit": 0
+      },
+      {
+        "file": "tests/finance-lock-settings.test.mjs",
+        "tests": 23,
+        "exit": 0
+      },
+      {
+        "file": "tests/home-dashboard.test.cjs",
+        "tests": 8,
+        "exit": 0
+      }
+    ],
+    "inlineScripts": 7,
+    "idleBrowser": {
+      "ok": true,
+      "at": "2026-11-08T12:31:35.365Z",
+      "browser": "154.0.8037.57",
+      "sourceHashes": {
+        "index.html": "6d38e62853453accdc7fa244b7cb128b7d70892e21754cba46883c83970aea05",
+        "assets/idle-session.js": "4a9f2d98bae8978e6d079820ae2176cfd0641a68a66f2fbcf2dad610e6cf72b6",
+        "assets/idle-session.css": "c0fd02a9566108d0b4615fe368959db07ce44c1563963aec1b5e59713c3759f3",
+        "assets/idle-auth-storage.js": "98717b43e8892c65e08c9d258b25647d4462ac17abbde77762b3e533eae1c747",
+        "assets/idle-recovery.js": "2756f2a55c0335fe82dd97785dbaabed6c1f717afb886a45997e9b533e167590",
+        "tests/idle-session.browser.cjs": "8b0ef955bb617643ff465128442d2509a6a7b78d0a07e0f630ef2366b8adc7fd"
+      },
+      "checks": [
+        "desktop and mobile settings",
+        "default 30 and five timeout choices",
+        "verified pinned metadata writes and failed readback",
+        "one-minute warning, trusted continuation and synthetic-event rejection",
+        "sleeping-tab expiry before trusted activity",
+        "private UI and exact scoped Auth storage cleanup, including offline",
+        "pending failed writes and lost-response ACK recovery",
+        "late account preference race",
+        "fresh session preserved on old exit",
+        "delayed old-account flush cannot clear a new account"
+      ]
+    },
+    "existingDisplayBrowserWidths": [
+      1440,
+      320
+    ],
+    "existingDashboardBrowserWidths": [
+      1440,
+      1024,
+      390,
+      320
+    ],
+    "syntheticAccountsOnly": true,
+    "productionDataOrAuthMutatedForTests": false
+  },
+  "boundary": "Browser inactivity logout; it does not change Supabase server JWT expiration or replace existing RLS and membership checks."
+}
