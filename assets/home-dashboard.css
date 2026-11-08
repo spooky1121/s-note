@@ -1,0 +1,68 @@
+/* Calm, compact dashboard cards share S-NOTE's existing type and blue accent. */
+#snote-dashboard-home{display:flex;flex-direction:column;gap:16px;min-width:0;max-width:100%;margin:0 0 20px;color:#28354b;font-family:inherit}
+#snote-dashboard-home[hidden]{display:none!important}
+#snote-dashboard-home *{box-sizing:border-box}
+#snote-dashboard-home :is(h2,p,dl,dd){margin:0}
+#snote-dashboard-home :is(button,[role=img]):focus-visible{outline:2px solid #a1bef4;outline-offset:3px}
+#snote-dashboard-home .snote-home-kpis{display:grid;grid-template-columns:repeat(7,minmax(150px,1fr));gap:10px;min-width:0;max-width:100%;padding:2px 1px 7px;overflow-x:auto;scroll-snap-type:x proximity;scrollbar-width:thin;scrollbar-color:#dce2ec transparent}
+#snote-dashboard-home .snote-home-kpi{display:flex;flex-direction:column;gap:12px;min-width:0;min-height:108px;padding:13px 13px 11px;border:1px solid #e8ebf1;border-radius:13px;background:#fff;box-shadow:none;scroll-snap-align:start;translate:none!important}
+#snote-dashboard-home .snote-home-kpi-label{display:flex;align-items:center;justify-content:space-between;gap:4px;color:#8994a5;min-height:18px}
+#snote-dashboard-home .snote-home-kpi-label>span{font-size:10px;line-height:1.4;letter-spacing:-.25px;white-space:nowrap}
+#snote-dashboard-home .snote-home-kpi-label>svg{flex:none;width:15px;height:15px;color:#8b9cc0}
+#snote-dashboard-home .snote-home-kpi-value{display:flex;align-items:baseline;flex-wrap:wrap;gap:2px;min-width:0;color:#29394e;font-size:clamp(13px,.95vw,18px);font-weight:650;letter-spacing:-.55px;line-height:1.25;font-variant-numeric:tabular-nums}
+#snote-dashboard-home .snote-home-number{min-width:0;overflow-wrap:anywhere}
+#snote-dashboard-home .snote-home-kpi-value small{font-size:10px;color:#8b96a6;font-weight:500;letter-spacing:0}
+#snote-dashboard-home .snote-home-kpi[data-kpi=profit] .snote-home-kpi-value,#snote-dashboard-home .snote-home-kpi[data-kpi=year] .snote-home-kpi-value{color:#3168e9}
+#snote-dashboard-home .snote-home-kpi-caption{margin-top:auto;color:#a0a9b6;font-size:8px;line-height:1.4;letter-spacing:-.15px}
+#snote-dashboard-home :is(.snote-home-graphs,.snote-home-details){display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;min-width:0}
+#snote-dashboard-home :is(.snote-home-chart-card,.snote-home-list-card,.snote-home-settlement-card,.snote-home-state){min-width:0;border:1px solid #e8ebf1;border-radius:14px;background:#fff;box-shadow:none;padding:16px}
+#snote-dashboard-home .snote-home-card-head{display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:0;margin-bottom:14px}
+#snote-dashboard-home .snote-home-card-head h2,#snote-dashboard-home .snote-home-state h2{color:#2c3a4d;font-size:13px;font-weight:650;line-height:1.4;letter-spacing:-.3px}
+#snote-dashboard-home .snote-home-period{display:block;margin-top:4px;color:#a0a9b7;font-size:9px;line-height:1.4}
+#snote-dashboard-home .snote-home-chart-total{min-width:0;color:var(--snote-home-chart-color,#3168e9);font-size:15px;font-weight:650;letter-spacing:-.35px;line-height:1.35;text-align:right;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+#snote-dashboard-home .snote-home-chart{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));min-width:0;padding:0}
+#snote-dashboard-home .snote-home-chart-line{position:absolute;top:0;left:0;width:100%;height:104px;overflow:visible;pointer-events:none}
+#snote-dashboard-home .snote-home-grid-line{stroke:#f0f3f7;stroke-width:1;vector-effect:non-scaling-stroke}
+#snote-dashboard-home .snote-home-zero-line{stroke:#e1e7f0;stroke-width:1;stroke-dasharray:3 4;vector-effect:non-scaling-stroke}
+#snote-dashboard-home .snote-home-line-path{fill:none;stroke:var(--snote-home-chart-color,#4b80eb);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+#snote-dashboard-home .snote-home-line-area{fill:var(--snote-home-chart-color,#4b80eb);fill-opacity:.055}
+#snote-dashboard-home .snote-home-chart-month{display:flex;flex-direction:column;min-width:0;position:relative;outline-offset:1px;cursor:default;translate:none!important;transform:none!important}
+#snote-dashboard-home .snote-home-chart-marker{display:block;position:relative;height:104px}
+#snote-dashboard-home .snote-home-chart-dot{position:absolute;left:50%;top:calc(var(--snote-home-point-y)*1px);width:6px;height:6px;border:1.5px solid var(--snote-home-chart-color,#4b80eb);border-radius:50%;background:#fff;transform:translate(-50%,-50%);box-sizing:border-box}
+#snote-dashboard-home .snote-home-chart-month.is-current .snote-home-chart-dot{width:7px;height:7px;background:var(--snote-home-chart-color,#4b80eb)}
+#snote-dashboard-home .snote-home-chart-label{display:block;text-align:center;color:#9aa5b4;font-size:9px;line-height:1.4}
+#snote-dashboard-home .snote-home-chart-month.is-current .snote-home-chart-label{color:var(--snote-home-chart-color,#3168e9);font-weight:600}
+#snote-dashboard-home .snote-home-details>.snote-home-list-card,#snote-dashboard-home .snote-home-settlement-card{display:flex;flex-direction:column;padding-bottom:8px}
+#snote-dashboard-home .snote-home-details .snote-home-card-head{margin-bottom:7px;min-height:26px}
+#snote-dashboard-home .snote-home-card-title{display:flex;align-items:center;gap:8px;min-width:0}
+#snote-dashboard-home .snote-home-count{color:#a0a9b7;font-size:9px;white-space:nowrap}
+#snote-dashboard-home button.snote-home-card-link{display:grid;place-items:center;flex:none;width:36px;height:36px;min-width:36px;margin:0;padding:8px;border:0;border-radius:5px;background:transparent!important;box-shadow:none!important;color:#93a3bb;cursor:pointer}
+#snote-dashboard-home .snote-home-card-link svg{display:block;width:18px;height:18px}
+#snote-dashboard-home .snote-home-vehicle-list{display:flex;flex-direction:column;min-width:0}
+#snote-dashboard-home button.snote-home-vehicle-row{display:grid;grid-template-columns:36px minmax(0,1fr) auto;align-items:center;gap:9px;width:100%;min-width:0;margin:0;padding:12px 0;border:0;border-top:1px solid #f0f2f6;border-radius:0;background:transparent!important;box-shadow:none!important;text-align:left;cursor:pointer;translate:none!important;transform:none!important}
+#snote-dashboard-home button.snote-home-vehicle-row:hover{background:#fafbfe!important}
+#snote-dashboard-home .snote-home-thumb{display:block;position:relative;width:36px;height:34px;overflow:hidden;border-radius:7px;background:#f2f5fa}
+#snote-dashboard-home .snote-home-thumb>img{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:cover}
+#snote-dashboard-home .snote-home-thumb-fallback{display:grid;place-items:center;width:100%;height:100%;color:#b7c7df;font-size:13px;font-weight:650}
+#snote-dashboard-home .snote-home-vehicle-info{display:flex;flex-direction:column;gap:4px;min-width:0}
+#snote-dashboard-home .snote-home-vehicle-info>strong{display:block;color:#4d5a6c;font-size:10px;font-weight:550;line-height:1.35;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}
+#snote-dashboard-home .snote-home-vehicle-info>small{display:block;color:#a0a9b7;font-size:8px;font-weight:400;line-height:1.4;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}
+#snote-dashboard-home .snote-home-vehicle-price{display:flex;flex-direction:column;align-items:flex-end;gap:4px;min-width:0;max-width:120px}
+#snote-dashboard-home .snote-home-vehicle-price>strong{color:#66778e;font-size:9px;font-weight:550;line-height:1.35;font-variant-numeric:tabular-nums;white-space:nowrap}
+#snote-dashboard-home .snote-home-vehicle-price>small{color:#a7afbd;font-size:8px;line-height:1.4}
+#snote-dashboard-home .snote-home-empty{display:grid;place-items:center;min-height:190px;color:#a3acb8;font-size:11px;line-height:1.6;text-align:center}
+#snote-dashboard-home .snote-home-settlement{display:flex;flex:1;flex-direction:column;justify-content:center;min-width:0;padding-bottom:3px}
+#snote-dashboard-home .snote-home-settlement>div{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:4px 6px;min-width:0;padding:15px 0;border-top:1px solid #f0f2f6}
+#snote-dashboard-home .snote-home-settlement dt{color:#798698;font-size:10px;line-height:1.4}
+#snote-dashboard-home .snote-home-settlement dd{color:#3168e9;font-size:14px;font-weight:650;line-height:1.3;letter-spacing:-.35px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere;text-align:right}
+#snote-dashboard-home .snote-home-settlement small{grid-column:1/-1;color:#a7afbd;font-size:8px;line-height:1.4}
+#snote-dashboard-home .is-negative{color:#ce6571!important}
+#snote-dashboard-home .snote-home-state{min-height:160px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:12px}
+#snote-dashboard-home .snote-home-state p{color:#95a0b0;font-size:12px;line-height:1.6}
+#snote-dashboard-home button.snote-home-unlock{display:inline-flex;align-items:center;gap:7px;padding:8px 12px;border:1px solid #d9e4f8;border-radius:8px;background:#f6f9ff;color:#3168e9;font:inherit;font-size:12px;cursor:pointer}
+#snote-dashboard-home .snote-home-unlock svg{width:16px;height:16px}
+@media(min-width:1500px){#snote-dashboard-home .snote-home-kpis{grid-template-columns:repeat(7,minmax(0,1fr))}#snote-dashboard-home .snote-home-kpi{padding:15px 16px 12px}}
+@media(max-width:1090px) and (min-width:761px){#snote-dashboard-home :is(.snote-home-graphs,.snote-home-details){gap:10px}#snote-dashboard-home :is(.snote-home-chart-card,.snote-home-list-card,.snote-home-settlement-card){padding:12px}#snote-dashboard-home button.snote-home-vehicle-row{grid-template-columns:30px minmax(0,1fr);gap:7px}#snote-dashboard-home .snote-home-thumb{width:30px;height:30px}#snote-dashboard-home .snote-home-vehicle-price{grid-column:2;align-items:flex-start;flex-direction:row;gap:5px;max-width:none}#snote-dashboard-home .snote-home-vehicle-price>small{align-self:center}#snote-dashboard-home .snote-home-settlement>div{grid-template-columns:minmax(0,1fr)}#snote-dashboard-home .snote-home-settlement dd{text-align:left}}
+@media(max-width:760px){#snote-dashboard-home{gap:13px;margin-top:1px}#snote-dashboard-home .snote-home-kpis{gap:9px;grid-template-columns:repeat(7,155px);margin:0;padding-bottom:8px}#snote-dashboard-home .snote-home-kpi{min-height:108px;padding:13px}#snote-dashboard-home .snote-home-kpi-value{font-size:17px}#snote-dashboard-home :is(.snote-home-graphs,.snote-home-details){grid-template-columns:minmax(0,1fr);gap:12px}#snote-dashboard-home :is(.snote-home-chart-card,.snote-home-list-card,.snote-home-settlement-card){padding:15px}#snote-dashboard-home .snote-home-chart-card{min-height:183px}#snote-dashboard-home .snote-home-card-head h2{font-size:13px}#snote-dashboard-home button.snote-home-card-link{width:44px;height:44px;min-width:44px;padding:12px}#snote-dashboard-home button.snote-home-vehicle-row{grid-template-columns:40px minmax(0,1fr) auto;gap:9px;padding:13px 0}#snote-dashboard-home .snote-home-thumb{width:40px;height:36px}#snote-dashboard-home .snote-home-vehicle-info>strong{font-size:11px}#snote-dashboard-home .snote-home-vehicle-price>strong{font-size:10px}#snote-dashboard-home .snote-home-empty{min-height:125px}#snote-dashboard-home .snote-home-settlement>div{padding:16px 0}}
+@media(prefers-reduced-motion:reduce){#snote-dashboard-home *{transition:none!important}}
+@media print{#snote-dashboard-home{display:none!important}}

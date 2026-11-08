@@ -1,0 +1,72 @@
+{
+  "release": "2.101",
+  "baseCommit": "d3bd67e36cdc394340072ae749a73f668b765f81",
+  "route": "dashboard",
+  "layout": {
+    "summaryOrder": ["총투자금", "재고금", "현금", "이번 달 매입 대수", "이번 달 판매 대수", "이번 달 마진", "올해 마진"],
+    "summaryRow": "One row; narrow screens scroll only the summary area",
+    "graphs": ["매입", "매도", "판매수익"],
+    "graphPeriod": "Current Korean calendar month and the previous two months",
+    "lowerCards": ["매입 차량", "판매 완료", "수익 정산"],
+    "recentVehicleLimit": 4,
+    "desktopColumns": 3,
+    "phoneColumns": 1
+  },
+  "data": {
+    "scope": "Verified current owner's records only, including for administrators",
+    "inventoryCapital": "Unsold rows summed with the existing inventoryInvestmentOf: purchase price plus costs and daily interest, excluding income tax",
+    "realizedMargin": "Completed rows use totals(buy, salePrice(car), normalizeCosts(car)).margin",
+    "purchaseCounts": "All own rows with a real purchaseAt date, including vehicles already sold",
+    "saleCountsAndMargin": "Completed own rows with a real soldAt date",
+    "yearMargin": "Current year through the reporting month; future reporting months excluded",
+    "cash": null,
+    "totalInvestment": "Inventory capital plus cash; unavailable until an actual personal cash balance is connected",
+    "currency": "KRW integer amounts, displayed in won with thousands separators",
+    "sourceMutations": false,
+    "newDatabaseQueriesOrSchema": false
+  },
+  "privacy": {
+    "roles": ["dealer", "admin"],
+    "accountantDashboardAllowed": false,
+    "financeGate": "Existing personal finance-lock policy and password verification protect dashboard entry",
+    "grantScope": "Current company, user and role scope key",
+    "lockedOrLoadingRows": [],
+    "staleCallbacks": "Rejected by current scope and key checks",
+    "refresh": "Data events plus a metadata-only scope/day check; recalculations include Korean midnight and month rollover",
+    "customerPersonalFieldsIncluded": false
+  },
+  "validation": {
+    "newModelTests": 8,
+    "existingFinanceLockModelTests": 23,
+    "dashboardBrowserWidths": [1440, 1024, 390, 320],
+    "existingFinanceLockBrowserWidths": [1440, 390, 320],
+    "knownMarch2027Example": {
+      "inventoryCapital": 18234000,
+      "monthPurchases": 3,
+      "monthSales": 2,
+      "monthMargin": -760000,
+      "yearMargin": -110000,
+      "threeMonthMargin": [400000, 250000, -760000]
+    },
+    "checks": [
+      "Read-only own scope, administrator own-only data and accountant denial",
+      "Daily interest, costs and income-tax rules agree with the existing calculations",
+      "Negative-profit chart uses a correct zero baseline",
+      "All seven summary cards stay in one row without page overflow",
+      "Compact graph and workflow cards, pointer and keyboard help, stable hovering points",
+      "Existing vehicle details and buy, sell and finance navigation",
+      "Dashboard wrong/right password, per-entry relock and original finance destination",
+      "Company-bound grants, loading/auth invalidation and stale callbacks",
+      "Korean day and month rollover refresh amounts and reporting periods",
+      "Existing transient-auth isolation, preference failures, late acknowledgements and history protection",
+      "No source dataset writes, external fixture requests or unexpected browser errors"
+    ],
+    "inlineScriptsSyntaxChecked": 7,
+    "commands": [
+      "node tests/home-dashboard.test.cjs",
+      "node tests/home-dashboard.browser.cjs",
+      "node tests/finance-lock-settings.test.mjs",
+      "node tests/finance-lock-settings.browser.cjs"
+    ]
+  }
+}
