@@ -1,0 +1,124 @@
+{
+  "release": "2.106",
+  "baseCommit": "f045dfe80257c90e18020e0baca996977a03cabf",
+  "formula": {
+    "totalInvestment": "Sum inventoryCost only for verified own vehicles not marked 판매완료",
+    "inventoryCapital": "Sum registered inventoryLoan only for those same currently held vehicles",
+    "cash": "totalInvestment - inventoryCapital",
+    "soldVehicles": "Exclude purchase price, all expenses, inventory interest and loan principal from these three capital cards",
+    "currency": "KRW safe integers with thousands separators; negative cash is preserved",
+    "reportingMonth": "Only counts/margins/charts use their existing date filters; current capital uses all own unsold vehicles"
+  },
+  "costAndFinanceSources": {
+    "cost": "Existing inventoryInvestmentOf: purchase price, normalized direct costs, repairs, custom costs and daily inventory interest, with existing income-tax exclusion",
+    "financing": "Existing inventoryLoanOf(car), same effective per-vehicle principal used by inventory finance; matching ledger registrations overlay/sync through existing handlers",
+    "noDoubleCounting": "A linked finance ledger entry and its vehicle loan are counted once through the effective vehicle amount",
+    "notIncluded": [
+      "sold vehicles and their financing",
+      "other dealers or shared-in vehicles",
+      "company-wide finance totals",
+      "standalone finance entries without a currently held owner vehicle",
+      "finance limits",
+      "prestock balances",
+      "sale proceeds and profit"
+    ],
+    "noNewDatabaseQueriesOrSchema": true
+  },
+  "presentation": {
+    "totalCaption": "현재 보유 차량 원가",
+    "financeCaption": "재고금융 등록금액",
+    "cashCaption": "총투자금 − 재고금융",
+    "sevenCardsRetained": true,
+    "emptyOwnDataset": "0원 total/finance/cash after confirmed ready scope",
+    "externalBankConnectionRequired": false
+  },
+  "preserved": [
+    "owner-only data including administrators",
+    "finance entry lock and stale/loading guards",
+    "margin hiding",
+    "monthly/yearly margins and three-month graphs",
+    "recent vehicle cards and navigation",
+    "original rows, caches and dataset write count"
+  ],
+  "validation": {
+    "unitTotal": 43,
+    "unitSuites": [
+      {
+        "file": "tests/home-dashboard.test.cjs",
+        "tests": 11,
+        "exit": 0
+      },
+      {
+        "file": "tests/finance-lock-settings.test.mjs",
+        "tests": 23,
+        "exit": 0
+      },
+      {
+        "file": "tests/dashboard-display-settings.test.mjs",
+        "tests": 9,
+        "exit": 0
+      }
+    ],
+    "inlineScripts": 7,
+    "dashboardBrowserWidths": [
+      1440,
+      1024,
+      390,
+      320
+    ],
+    "displayPreferenceBrowserWidths": [
+      1440,
+      320
+    ],
+    "syntheticBase": {
+      "totalInvestment": 18234000,
+      "inventoryCapital": 3650000,
+      "cash": 14584000
+    },
+    "loanChangesWithFixedCost": {
+      "loan5000000Additional": {
+        "inventoryCapital": 8650000,
+        "cash": 9584000
+      },
+      "loan2000000Additional": {
+        "inventoryCapital": 5650000,
+        "cash": 12584000
+      },
+      "zeroAdditional": {
+        "inventoryCapital": 3650000,
+        "cash": 14584000
+      },
+      "loan20000000Additional": {
+        "inventoryCapital": 23650000,
+        "cash": -5416000
+      }
+    },
+    "completedSecondVehicle": {
+      "totalInvestment": 10184000,
+      "inventoryCapital": 3650000,
+      "cash": 6534000
+    },
+    "checks": [
+      "current-cost versus financing distinction",
+      "sold-only and empty datasets zero capital",
+      "sold cost/loan fields excluded, including malformed legacy fields",
+      "sale state removes cost and principal together",
+      "partial/zero/overfinancing and negative cash",
+      "safe integer totals and subtraction overflow",
+      "daily interest and Korean day/month rollover",
+      "unchanged monthly/annual sales margins",
+      "admin own-only and accountant denial",
+      "wrong/right password, stale callbacks and scope locks",
+      "responsive cards, number formatting and tooltip",
+      "no real data/auth changes, SMS or dataset writes"
+    ],
+    "browserSourceHashes": {
+      "index.html": "b00d4f1b2d9e779c75a4f1f6620aeb7c18e4f4e01d852a165b39cfc035aa3e18",
+      "assets/home-dashboard.js": "214bea5aad5444a7e635105ac0477d14df67656d6a22ae3b65efca208a114fbe",
+      "assets/home-dashboard.css": "283cf28771600123d290d4047e7a74f0e9c02270b3af71ce2e8ea40dfe7cef94",
+      "tests/home-dashboard.browser.cjs": "645f2ef4ef601362a55004bb04a612b184457bc9ce7012a16ef6f9f71a36a513"
+    },
+    "syntheticAccountsOnly": true
+  },
+  "at": "2026-11-08T15:18:39.436170+00:00"
+}

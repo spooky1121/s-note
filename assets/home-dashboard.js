@@ -80,7 +80,7 @@
  function render(data,key,hideMargin){
   host.replaceChildren();host.dataset.state='ready';host.setAttribute('aria-busy','false');
   const kpis=node('div',null,'snote-home-kpis');kpis.setAttribute('role','group');kpis.setAttribute('aria-label','대시보드 요약');
-  kpis.append(kpi('총투자금',data.totalInvestment,{kind:'capital',detail:'재고금 + 현금 잔액',empty:'현금 잔액 연결 전'}),kpi('재고금',data.inventoryCapital,{kind:'inventory',detail:'재고이자 포함 · 소득세 제외'}),kpi('현금',data.cash,{kind:'cash',detail:'연결된 현금 잔액',empty:'계좌 잔액 연결 전'}),kpi('이번 달 매입 대수',data.monthPurchaseCount,{kind:'purchase',unit:'대',detail:Number(data.month.slice(5))+'월 매입 기준'}),kpi('이번 달 판매 대수',data.monthSaleCount,{kind:'sale',unit:'대',detail:Number(data.month.slice(5))+'월 판매 완료 기준'}),kpi('이번 달 마진',data.monthMargin,{kind:'profit',detail:'판매가 − 매입 원가·부대비용',masked:hideMargin}),kpi('올해 마진',data.yearMargin,{kind:'year',detail:data.month.slice(0,4)+'년 판매 완료 기준',masked:hideMargin}));
+  kpis.append(kpi('총투자금',data.totalInvestment,{kind:'capital',detail:'현재 보유 차량 원가'}),kpi('재고금',data.inventoryCapital,{kind:'inventory',detail:'재고금융 등록금액'}),kpi('현금',data.cash,{kind:'cash',detail:'총투자금 − 재고금융'}),kpi('이번 달 매입 대수',data.monthPurchaseCount,{kind:'purchase',unit:'대',detail:Number(data.month.slice(5))+'월 매입 기준'}),kpi('이번 달 판매 대수',data.monthSaleCount,{kind:'sale',unit:'대',detail:Number(data.month.slice(5))+'월 판매 완료 기준'}),kpi('이번 달 마진',data.monthMargin,{kind:'profit',detail:'판매가 − 매입 원가·부대비용',masked:hideMargin}),kpi('올해 마진',data.yearMargin,{kind:'year',detail:data.month.slice(0,4)+'년 판매 완료 기준',masked:hideMargin}));
   const graphs=node('div',null,'snote-home-graphs');graphs.append(chart(data,{field:'purchases',title:'매입',color:'#4b80eb'}),chart(data,{field:'sales',title:'매도',color:'#4aa6b0'}),chart(data,{field:'margin',title:'판매수익',color:'#8a78cf',money:true}));
   const cards=node('div',null,'snote-home-details');cards.append(listCard('매입 차량',data.inventoryRecent,data.inventoryCount,'buy',key),listCard('판매 완료',data.soldRecent,data.soldCount,'sell',key,true),settlement(data,key,hideMargin));host.append(kpis,graphs,cards);
  }
@@ -91,7 +91,7 @@
   if(snapshot.key!==paintedKey){host.replaceChildren();signature='';paintedKey=snapshot.key;}
   if(snapshot.loading){state('대시보드를 불러오는 중…',{loading:true});return;}
   if(snapshot.locked){state('금액 요약과 수익 정보를 보려면 잠금을 해제해 주세요.',{locked:true,key:snapshot.key});return;}
-  let data;try{data=model.summarize(snapshot.rows,snapshot.month,snapshot.cash);}catch{state('대시보드 금액을 확인할 수 없습니다.');return;}
+  let data;try{data=model.summarize(snapshot.rows,snapshot.month);}catch{state('대시보드 금액을 확인할 수 없습니다.');return;}
   const hideMargin=snapshot.hideMargin!==false,next=JSON.stringify([snapshot.key,hideMargin,data]);if(signature===next)return;signature=next;render(data,snapshot.key,hideMargin);
  }
  function schedule(){if(!scheduled){scheduled=true;queueMicrotask(refresh);}}
@@ -107,15 +107,15 @@
  'use strict';
  const {isMonth,currentMonth,shiftMonth}=calendar,monthOf=calendar.soldMonth;
  function money(value){if(value==null)return 0;if(typeof value!=='number'||!Number.isSafeInteger(value))throw Error('INVALID_DASHBOARD_AMOUNT');return value;}
+ function financing(value){const amount=money(value);if(amount<0)throw Error('INVALID_DASHBOARD_FINANCING');return amount;}
  function sum(rows,pick){let total=0;for(const row of rows){total+=money(pick(row));if(!Number.isSafeInteger(total))throw Error('INVALID_DASHBOARD_AMOUNT');}return total;}
  function dateKey(value){if(!monthOf(value))return '';const match=/^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})$/.exec(value.trim());return match[1]+'-'+match[2].padStart(2,'0')+'-'+match[3].padStart(2,'0');}
  const recent=(rows,field)=>rows.slice().sort((a,b)=>dateKey(b[field]).localeCompare(dateKey(a[field]))||String(a.id||'').localeCompare(String(b.id||''))).slice(0,4);
- function summarize(rows,month=currentMonth(),cash=null){
+ function summarize(rows,month=currentMonth()){
   if(!Array.isArray(rows)||!isMonth(month)||rows.some(row=>!row||typeof row!=='object'||Array.isArray(row)))throw Error('INVALID_DASHBOARD_DATA');
-  if(cash!==null&&(typeof cash!=='number'||!Number.isSafeInteger(cash)||cash<0))throw Error('INVALID_DASHBOARD_CASH');
   const inventory=rows.filter(row=>row.status!=='판매완료'),sold=rows.filter(row=>row.status==='판매완료'),inMonth=(row,field,key)=>monthOf(row[field])===key;
-  const inventoryCapital=sum(inventory,row=>row.inventoryCost),inventoryMargin=sum(inventory,row=>row.margin),monthPurchases=rows.filter(row=>inMonth(row,'purchaseAt',month)),monthSales=sold.filter(row=>inMonth(row,'soldAt',month)),yearSales=sold.filter(row=>{const key=monthOf(row.soldAt);return key&&key.slice(0,4)===month.slice(0,4)&&key<=month;});
-  const totalInvestment=cash===null?null:money(inventoryCapital+cash),series=Array.from({length:3},(_,i)=>shiftMonth(month,i-2)).filter(Boolean).map(key=>{const purchases=rows.filter(row=>inMonth(row,'purchaseAt',key)),sales=sold.filter(row=>inMonth(row,'soldAt',key));return{month:key,purchases:purchases.length,sales:sales.length,margin:sum(sales,row=>row.margin)};});
+  const inventoryCapital=sum(inventory,row=>financing(row.inventoryLoan)),inventoryMargin=sum(inventory,row=>row.margin),monthPurchases=rows.filter(row=>inMonth(row,'purchaseAt',month)),monthSales=sold.filter(row=>inMonth(row,'soldAt',month)),yearSales=sold.filter(row=>{const key=monthOf(row.soldAt);return key&&key.slice(0,4)===month.slice(0,4)&&key<=month;});
+  const totalInvestment=sum(inventory,row=>row.inventoryCost),cash=money(totalInvestment-inventoryCapital),series=Array.from({length:3},(_,i)=>shiftMonth(month,i-2)).filter(Boolean).map(key=>{const purchases=rows.filter(row=>inMonth(row,'purchaseAt',key)),sales=sold.filter(row=>inMonth(row,'soldAt',key));return{month:key,purchases:purchases.length,sales:sales.length,margin:sum(sales,row=>row.margin)};});
   return{month,inventoryCapital,cash,totalInvestment,monthPurchaseCount:monthPurchases.length,monthSaleCount:monthSales.length,monthMargin:sum(monthSales,row=>row.margin),yearMargin:sum(yearSales,row=>row.margin),inventoryMargin,inventoryCount:inventory.length,soldCount:sold.length,series,inventoryRecent:recent(inventory,'purchaseAt'),soldRecent:recent(sold,'soldAt')};
  }
  return Object.freeze({isMonth,currentMonth,monthOf,dateKey,summarize});

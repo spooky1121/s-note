@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.105">
+<html lang="ko" data-snote-release="2.106">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -3164,7 +3164,7 @@ button, input, select, textarea { font-family: inherit; }
 <script src="assets/sales-overview.js?v=2.90" defer></script>
 <script src="assets/purchase-overview.js?v=2.100" defer></script>
 <link rel="stylesheet" href="assets/home-dashboard.css?v=2.101">
-<script src="assets/home-dashboard.js?v=2.102" defer></script>
+<script src="assets/home-dashboard.js?v=2.106" defer></script>
 <script src="assets/access-tracker.js?v=2.85"></script>
 <link rel="stylesheet" href="assets/finance-lock-settings.css?v=2.87">
 <script src="assets/finance-lock-settings.js?v=2.87"></script>
@@ -3802,8 +3802,8 @@ function snoteHomeDashboardPhoto(car){
 window.snoteHomeDashboardBridge={
  snapshot(){
   const context=snoteHomeDashboardContext();if(!context)return null;
-  const rows=context.loading||context.locked?[]:cars.filter(car=>car?.ownerId===currentUser.username).map(car=>({id:String(car.id),model:String(car.model||''),plate:String(car.plate||''),photo:snoteHomeDashboardPhoto(car),purchaseAt:car.purchaseAt,soldAt:car.soldAt,status:car.status,inventoryCost:inventoryInvestmentOf(car),margin:totals(car.buy,salePrice(car),normalizeCosts(car)).margin,soldPrice:salePrice(car)}));
-  return {...context,rows,cash:null,hideMargin:window.SnoteDashboardDisplay?.hidden()!==false};
+  const rows=context.loading||context.locked?[]:cars.filter(car=>car?.ownerId===currentUser.username).map(car=>({id:String(car.id),model:String(car.model||''),plate:String(car.plate||''),photo:snoteHomeDashboardPhoto(car),purchaseAt:car.purchaseAt,soldAt:car.soldAt,status:car.status,inventoryCost:inventoryInvestmentOf(car),inventoryLoan:inventoryLoanOf(car),margin:totals(car.buy,salePrice(car),normalizeCosts(car)).margin,soldPrice:salePrice(car)}));
+  return {...context,rows,hideMargin:window.SnoteDashboardDisplay?.hidden()!==false};
  },
  current(key){const context=snoteHomeDashboardContext();return !!context&&!context.loading&&context.key===key;},
  navigate(page,key){const context=snoteHomeDashboardContext();if(!context||context.loading||context.locked||context.key!==key||!['buy','sell','finance'].includes(page))return false;return navigate(page)===true;},
@@ -10370,7 +10370,7 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 <script type="module" src="assets/income-settlement-parent.js?v=2.85"></script>
 <script src="assets/vehicle-sharing.js?v=2.92" defer></script>
 <script src="assets/shared-vehicle-markers.js?v=2.87" defer></script>
-<script src="assets/release-info.js?v=2.105" defer></script>
+<script src="assets/release-info.js?v=2.106" defer></script>
 <script src="assets/company-purchase.js?v=2.77" defer></script>
 <script src="assets/recycle-bin.js?v=2.77" defer></script>
 <script src="assets/profile-editor.js?v=2.102" defer></script>
