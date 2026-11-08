@@ -8,3 +8,48 @@ test('encrypted payload text is excluded from the search index',async()=>{const 
 test('an identity failure leaves other customer searches usable',async()=>{const f=fixture();await f.mount(async()=>({values:new Map(),failed:new Set(['1'])}));assert.match(f.host.textContent,/조회 실패/);assert.equal(f.query('홍길동'),1);assert.equal(f.query('9001011234567'),0);f.dom.window.close()});
 test('leaving a view clears a typed identity and ignores late identity results',async()=>{const f=fixture();let finish;const task=f.mount(()=>new Promise(r=>finish=r));const input=f.w.document.getElementById('snote-customer-search');f.query('9001011234567');f.w.SnoteCustomerList.clear();f.invalidate();assert.equal(input.value,'');finish({values:new Map([['1','900101-1234567']]),failed:new Set()});await task;assert(!/900101-1234567|9001011234567/.test(f.host.innerHTML));f.dom.window.close()});
 test('masked display cannot contain partial malformed identity fragments',()=>{const f=fixture();const mask=f.w.SnoteCustomerList.maskIdentity;assert.equal(mask('900101-1234567'),'900101-*******');assert.equal(mask('9876543210'),'987-**-*****');assert.equal(mask('1234'),'확인 필요');assert.equal(mask(''),'미등록');f.dom.window.close()});
+
+const VIEW_KEY='snote:customer-list-view:v1';
+function viewButton(f,mode){return f.w.document.querySelector('[data-customer-view-choice="'+mode+'"]');}
+function activeView(f){return f.w.document.getElementById('snote-customer-view').dataset.customerView;}
+function press(f,button,key){const event=new f.w.KeyboardEvent('keydown',{key,bubbles:true,cancelable:true});button.dispatchEvent(event);assert.equal(event.defaultPrevented,true);}
+test('switching customer view retains the current 20-row page, query, DOM and identity read',async()=>{
+ const f=fixture();f.w.HTMLElement.prototype.scrollIntoView=function(){};f.records.splice(0,f.records.length,...Array.from({length:45},(_,i)=>({carId:String(i+1),name:'고객 '+String(i).padStart(2,'0'),phone:'010-5555-'+String(i).padStart(4,'0'),address:'예시 주소 '+i,rrnCipher:{serverIdentity:true}})));
+ let reads=0,renders=0;const paginate=f.w.snote236Paginate;f.w.snote236Paginate=(...args)=>{renders++;return paginate(...args)};
+ await f.mount(async records=>{reads++;return {values:new Map(records.map((r,i)=>[r.carId,'900101'+String(1000000+i)])),failed:new Set()}});
+ assert.equal(f.query('고객'),20);f.w.document.querySelector('#customer-pagination [aria-label="2페이지"]').click();
+ const input=f.w.document.getElementById('snote-customer-search'),body=f.host.querySelector('tbody'),first=body.firstElementChild,html=body.innerHTML,counter=f.w.document.getElementById('snote-customer-count').textContent,before=renders;
+ assert.match(first.textContent,/고객 20/);assert.equal(body.rows.length,20);assert.equal(f.w.document.querySelector('#customer-pagination [aria-current="page"]').textContent,'2');
+ viewButton(f,'cards').click();assert.equal(activeView(f),'cards');assert.equal(body.firstElementChild,first);assert.equal(body.innerHTML,html);assert.equal(input.value,'고객');assert.equal(f.w.document.getElementById('snote-customer-count').textContent,counter);assert.equal(f.w.document.querySelector('#customer-pagination [aria-current="page"]').textContent,'2');
+ viewButton(f,'list').click();assert.equal(activeView(f),'list');assert.equal(body.firstElementChild,first);assert.equal(renders,before);assert.equal(reads,1);assert.equal(f.w.localStorage.length,1);assert.equal(f.w.localStorage.key(0),VIEW_KEY);assert.equal(f.w.localStorage.getItem(VIEW_KEY),'list');assert.equal(f.w.sessionStorage.length,0);assert(!/90010110000\d\d/.test(f.host.innerHTML));f.dom.window.close();
+});
+test('customer view keyboard controls update pressed state and focus without rerendering',async()=>{
+ const f=fixture();await f.mount();const list=viewButton(f,'list'),cards=viewButton(f,'cards'),row=f.host.querySelector('tbody tr');
+ assert.equal(activeView(f),'list');assert.equal(list.getAttribute('aria-pressed'),'true');assert.equal(cards.getAttribute('aria-pressed'),'false');
+ list.focus();press(f,list,'End');assert.equal(activeView(f),'cards');assert.equal(f.w.document.activeElement,cards);assert.equal(cards.getAttribute('aria-pressed'),'true');assert.equal(list.getAttribute('aria-pressed'),'false');
+ press(f,cards,'ArrowRight');assert.equal(activeView(f),'list');assert.equal(f.w.document.activeElement,list);press(f,list,'ArrowLeft');assert.equal(activeView(f),'cards');press(f,cards,'Home');assert.equal(activeView(f),'list');assert.equal(f.w.document.activeElement,list);assert.equal(f.host.querySelector('tbody tr'),row);assert.equal(f.w.localStorage.getItem(VIEW_KEY),'list');f.dom.window.close();
+});
+test('saved customer view is an independent enum and invalid preferences fall back without a write',async()=>{
+ for(const [saved,expected] of [['cards','cards'],['list','list'],['unexpected-customer-data','list']]){
+  const f=fixture();f.w.localStorage.setItem(VIEW_KEY,saved);f.w.localStorage.setItem('snote:vehicle-list-view:v1','cards');await f.mount();assert.equal(activeView(f),expected);assert.equal(f.w.localStorage.getItem(VIEW_KEY),saved);assert.equal(f.w.localStorage.getItem('snote:vehicle-list-view:v1'),'cards');viewButton(f,expected==='cards'?'list':'cards').click();assert(['list','cards'].includes(f.w.localStorage.getItem(VIEW_KEY)));assert.equal(f.w.localStorage.getItem('snote:vehicle-list-view:v1'),'cards');assert.equal(f.w.localStorage.length,2);f.dom.window.close();
+ }
+});
+test('blocked preference storage leaves view controls usable and identity data unpersisted',async()=>{
+ const f=fixture(),proto=Object.getPrototypeOf(f.w.localStorage),get=proto.getItem,set=proto.setItem;let attempts=0;
+ proto.getItem=function(key){if(key===VIEW_KEY)throw new f.w.DOMException('Synthetic blocked storage','SecurityError');return get.call(this,key)};
+ proto.setItem=function(key,value){if(key===VIEW_KEY){attempts++;assert(['list','cards'].includes(value));throw new f.w.DOMException('Synthetic blocked storage','SecurityError')}return set.call(this,key,value)};
+ await f.mount();assert.equal(activeView(f),'list');viewButton(f,'cards').click();assert.equal(activeView(f),'cards');viewButton(f,'list').click();assert.equal(activeView(f),'list');assert.equal(attempts,2);assert.equal(f.query('9001011234567'),1);assert.equal(f.w.localStorage.length,0);assert.equal(f.w.sessionStorage.length,0);assert(!/9001011234567|900101-1234567/.test(f.host.innerHTML));f.dom.window.close();
+});
+test('disposed and invalid-context view controls cannot change mode or persist a choice',async()=>{
+ for(const end of ['clear','invalidate']){
+  const f=fixture();await f.mount();const view=f.w.document.getElementById('snote-customer-view'),list=viewButton(f,'list'),cards=viewButton(f,'cards');f.query('9001011234567');
+  if(end==='clear')f.w.SnoteCustomerList.clear();else f.invalidate();
+  cards.click();list.dispatchEvent(new f.w.KeyboardEvent('keydown',{key:'End',bubbles:true,cancelable:true}));assert.equal(view.dataset.customerView,'list');assert.equal(f.w.localStorage.length,0);if(end==='clear'){assert.equal(f.w.document.getElementById('snote-customer-search').value,'');assert.equal(f.host.querySelector('tbody').children.length,0);assert.equal(f.w.document.getElementById('snote-customer-count').textContent,'');assert.equal(f.w.document.getElementById('customer-pagination').children.length,0);assert.equal(f.w.document.getElementById('snote-customer-empty').hidden,true);assert(!/홍길동|김가상|010-1234-5678|서울시 강남구/.test(f.host.textContent));}assert(!/9001011234567|900101-1234567/.test(f.host.innerHTML));f.dom.window.close();
+ }
+});
+test('an old pending identity response cannot replace a newly mounted customer view',async()=>{
+ const f=fixture();let finish;const old=f.mount(()=>new Promise(resolve=>finish=resolve));f.query('9001011234567');viewButton(f,'cards').click();f.w.SnoteCustomerList.clear();
+ f.records.splice(0,f.records.length,{carId:'new',name:'새 계정 예시 고객',phone:'010-0000-9999',address:'새 예시 주소',rrnCipher:{serverIdentity:true}});
+ await f.mount(async()=>({values:new Map([['new','910202-2345678']]),failed:new Set()}));const currentRow=f.host.querySelector('tbody tr');assert.equal(activeView(f),'cards');finish({values:new Map([['1','900101-1234567']]),failed:new Set()});await old;
+ assert.equal(f.host.querySelector('tbody tr'),currentRow);assert.match(f.host.textContent,/새 계정 예시 고객/);assert.match(f.host.textContent,/910202-\*{7}/);assert(!/홍길동|900101|1234567|910202-2345678/.test(f.host.innerHTML));assert.equal(f.w.document.getElementById('snote-customer-search').value,'');assert.equal(f.w.localStorage.getItem(VIEW_KEY),'cards');assert.equal(f.w.localStorage.length,1);f.dom.window.close();
+});

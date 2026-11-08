@@ -1,0 +1,93 @@
+{
+  "release": "2.96",
+  "state": "Recovery artifact; main remains v2.95 until the complete validated tree is published",
+  "baseCommit": "8542cfd3e52ee028b564ad4f9d5595efb796d16a",
+  "baseTree": "b0d85a2e5fe2cd7d00f675ec329e18d24fe7885a",
+  "path": "index.html",
+  "baseBlob": "b2ba542c8860830e2c811e232348f8badeacaeec",
+  "targetBlob": "0d96cd9918da5e911fe7e06e57785ad727b4009a",
+  "targetTree": "f32c84f92636e642dd953aebb5dde999ec428e11",
+  "targetUnicodeCodepoints": 1654975,
+  "targetUtf8Bytes": 1721582,
+  "algorithm": "Apply replacements in order to the base file, require each before exactly once, preserve LF and all other bytes, and verify the Git blob SHA before any write. If the local file differs from both base and target, preserve it and stop.",
+  "replacements": [
+    {
+      "before": "data-snote-release=\"2.95\"",
+      "after": "data-snote-release=\"2.96\""
+    },
+    {
+      "before": "assets/customer-list.js?v=2.47",
+      "after": "assets/customer-list.js?v=2.96"
+    },
+    {
+      "before": "<link rel=\"stylesheet\" href=\"assets/vehicle-list-view.css?v=2.95\">\n",
+      "after": "<link rel=\"stylesheet\" href=\"assets/vehicle-list-view.css?v=2.95\">\n<link rel=\"stylesheet\" href=\"assets/customer-list-view.css?v=2.96\">\n"
+    },
+    {
+      "before": "assets/release-info.js?v=2.95",
+      "after": "assets/release-info.js?v=2.96"
+    },
+    {
+      "before": "assets/snote-tutorial.js?v=2.95",
+      "after": "assets/snote-tutorial.js?v=2.96"
+    },
+    {
+      "before": "<td data-label=\"차량\"><button type=\"button\" class=\"snote202-car-open\" data-customer-car=\"${esc(r.carId)}\" aria-label=\"${esc(car?.model||r.carModel||r.plate||'차량')} 차량 상세 보기\">${esc(car?.model||r.carModel||'')}</button><small>${esc(car?.plate||r.plate||'')}</small></td>",
+      "after": "<td data-label=\"차량\"><button type=\"button\" class=\"snote202-car-open snote-customer-car\" data-customer-car=\"${esc(r.carId)}\" aria-label=\"${esc(car?.model||r.carModel||r.plate||'차량')} 차량 상세 보기\"><span class=\"snote-customer-thumb\" aria-hidden=\"true\">${visual}</span><span class=\"snote-customer-car-copy\"><strong>${esc(car?.model||r.carModel||'연결 차량 없음')}</strong><small>${esc(car?.plate||r.plate||'')}</small></span></button></td>"
+    },
+    {
+      "before": "    return `<tr><td data-label=\"차량\"><button type=\"button\" class=\"snote202-car-open snote-customer-car\" data-customer-car=\"${esc(r.carId)}\" aria-label=\"${esc(car?.model||r.carModel||r.plate||'차량')} 차량 상세 보기\"><span class=\"snote-customer-thumb\" aria-hidden=\"true\">${visual}</span><span class=\"snote-customer-car-copy\"><strong>${esc(car?.model||r.carModel||'연결 차량 없음')}</strong><small>${esc(car?.plate||r.plate||'')}</small></span></button></td>",
+      "after": "    const visual=car?thumbHtml(car):'<svg viewBox=\"0 0 64 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m13 21 6-12h26l6 12M11 22h42v15H11zM15 37v4m34-4v4M17 27h6m18 0h6\"/></svg>';\n    return `<tr><td data-label=\"차량\"><button type=\"button\" class=\"snote202-car-open snote-customer-car\" data-customer-car=\"${esc(r.carId)}\" aria-label=\"${esc(car?.model||r.carModel||r.plate||'차량')} 차량 상세 보기\"><span class=\"snote-customer-thumb\" aria-hidden=\"true\">${visual}</span><span class=\"snote-customer-car-copy\"><strong>${esc(car?.model||r.carModel||'연결 차량 없음')}</strong><small>${esc(car?.plate||r.plate||'')}</small></span></button></td>"
+    }
+  ],
+  "validatedFiles": [
+    {
+      "path": "PROJECT_HISTORY.md",
+      "sha": "c961cdd0b91c82ba8bbd43ff02917c67f04837cc"
+    },
+    {
+      "path": "assets/customer-list-view.css",
+      "sha": "362b4ac4c764d9c5e7db266eca5dc3db2cea8427"
+    },
+    {
+      "path": "assets/customer-list.js",
+      "sha": "504125ce53b4de09bfefcac53df256d6f32736c3"
+    },
+    {
+      "path": "assets/snote-tutorial.js",
+      "sha": "962d87765dd8f0ed4bf336b73fb29c892c76aff7"
+    },
+    {
+      "path": "assets/tutorial/sharing-customers.jpg",
+      "sha": "3d7be941543bb3a755556b090ac0244855658766"
+    },
+    {
+      "path": "docs/customer-list-view-verification.json",
+      "sha": "eea24f551413360026c080c6b50d8b61c4b0aa71"
+    },
+    {
+      "path": "index.html",
+      "sha": "0d96cd9918da5e911fe7e06e57785ad727b4009a"
+    },
+    {
+      "path": "tests/customer-list-view.browser.cjs",
+      "sha": "bdb77d9c40065d08756e6dde26405dfbf73bd50c"
+    },
+    {
+      "path": "tests/customer-list.test.cjs",
+      "sha": "63b50b39b21d955ed2c3ced15196c01667f9e56d"
+    }
+  ],
+  "verification": {
+    "browserWidths": [
+      1440,
+      1024,
+      390,
+      320
+    ],
+    "browserGroups": 8,
+    "unitTestsPassed": 12,
+    "sourceChangesAfterTesting": false,
+    "sourceHashVerificationRequired": true
+  }
+}

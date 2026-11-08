@@ -1,0 +1,82 @@
+/* The authorized customer rows share one DOM between native lists and compact cards. */
+@media screen {
+ #snote-app #alt-content #snote-customer-view {min-width:0;width:100%}
+ #snote-app #alt-content #snote-customer-view > .snote-customer-search {margin:8px 0 12px;gap:12px}
+ #snote-app #alt-content #snote-customer-view .zc72-customers {display:flex;flex-wrap:wrap;align-items:center;gap:0 12px;margin:0;border:0;overflow:visible}
+ #snote-app #alt-content #snote-customer-view .zc72-customers > .tablewrap {order:3;flex:0 0 100%;min-width:0;max-width:100%;box-sizing:border-box}
+ #snote-app #alt-content #snote-customer-view #snote-customer-view-toolbar {display:flex;align-items:center;justify-content:flex-end;order:2;flex:0 0 auto;min-width:0;margin:0 0 12px auto}
+ #snote-app #alt-content #snote-customer-view .snote-customer-view-toggle {display:inline-flex;align-items:center;gap:2px;padding:3px;border:0;border-radius:10px;background:#f3f5f8}
+ #snote-app #alt-content #snote-customer-view .snote-customer-view-toggle > button {display:inline-grid;place-items:center;flex:none;width:32px;min-width:32px;height:32px;min-height:32px;padding:6px;margin:0;border:0;border-radius:7px;background:transparent;box-shadow:none;color:#9098a7;line-height:1;cursor:pointer;translate:none!important;transform:none!important;transition:color .16s,background .16s}
+ #snote-app #alt-content #snote-customer-view .snote-customer-view-toggle > button > svg {display:block;width:19px;height:19px;max-width:100%;pointer-events:none}
+ #snote-app #alt-content #snote-customer-view .snote-customer-view-toggle > button:hover {color:#416fe1;background:#e9eef8}
+ #snote-app #alt-content #snote-customer-view .snote-customer-view-toggle > button[aria-pressed=true] {color:#3168e9;background:#fff;box-shadow:0 1px 4px #273b5d0d}
+ #snote-app #alt-content #snote-customer-view .snote-customer-view-toggle > button:focus-visible {outline:2px solid #9bbcf4;outline-offset:2px}
+ #snote-app #alt-content #snote-customer-view .snote-mobile-sort {order:1;flex:1 1 0;min-width:0;max-width:340px;justify-content:flex-start;flex-wrap:nowrap;gap:6px;margin:0 0 12px}
+ #snote-app #alt-content #snote-customer-view[data-customer-view=cards] .snote-mobile-sort {display:flex}
+ #snote-app #alt-content #snote-customer-view .snote-mobile-sort label {display:flex;align-items:center;gap:7px;flex:1 1 auto;min-width:0;white-space:nowrap;color:#929aa8;font-size:11px}
+ #snote-app #alt-content #snote-customer-view .snote-mobile-sort select {flex:1 1 auto;width:100%;min-width:0;max-width:210px;height:34px;min-height:34px;padding:5px 8px;border:1px solid #e7ebf1;border-radius:8px;background:#fff;box-shadow:none;color:#637086;font-size:12px}
+ #snote-app #alt-content #snote-customer-view .snote-mobile-sort > button {flex:none;display:inline-grid;place-items:center;width:32px;min-width:32px;height:34px;min-height:34px;margin:0;padding:3px;border:0;border-radius:8px;background:#f4f6fa;box-shadow:none;color:#5474ba;font-size:17px}
+ #snote-app #alt-content #snote-customer-view .snote-customer-car {display:grid;grid-template-columns:48px minmax(0,1fr);align-items:center;gap:9px;width:100%;min-width:0;margin:0;padding:0;border:0;background:transparent;box-shadow:none;text-align:left;white-space:normal;translate:none!important;transform:none!important;cursor:pointer}
+ #snote-app #alt-content #snote-customer-view .snote-customer-thumb {display:grid;place-items:center;position:relative;width:48px;height:36px;min-width:0;overflow:hidden;border-radius:6px;background:#f1f4f8;color:#a2b0c0}
+ #snote-app #alt-content #snote-customer-view .snote-customer-thumb > img {display:block;width:100%;height:100%;max-width:100%;object-fit:cover}
+ #snote-app #alt-content #snote-customer-view .snote-customer-thumb > svg {display:block;width:36px;height:27px}
+ #snote-app #alt-content #snote-customer-view .snote-customer-thumb > .zc-ref-label {display:none}
+ #snote-app #alt-content #snote-customer-view .snote-customer-car-copy {display:block;min-width:0;overflow-wrap:anywhere}
+ #snote-app #alt-content #snote-customer-view .snote-customer-car-copy strong {display:block;color:#34495e;font-size:12px;font-weight:650;line-height:1.45;white-space:normal;overflow-wrap:anywhere}
+ #snote-app #alt-content #snote-customer-view .snote-customer-car-copy small {display:block;margin:3px 0 0;color:#8b94a0;font-size:11px;line-height:1.45;white-space:normal;overflow-wrap:anywhere}
+ #snote-app #alt-content #snote-customer-view .snote-customer-car:focus-visible {outline:2px solid #9bbcf4;outline-offset:3px;border-radius:5px}
+ #snote-app #alt-content #snote-customer-view[data-customer-view=cards] :is(.tablewrap,table) {display:block;min-width:0;width:100%;max-width:100%;overflow:visible}
+ #snote-app #alt-content #snote-customer-view[data-customer-view=cards] thead {display:none}
+ #snote-app #alt-content #snote-customer-view[data-customer-view=cards] tbody {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));align-items:stretch;gap:12px;min-width:0;width:100%;max-width:100%;overflow:visible}
+ #snote-app #alt-content #snote-customer-view[data-customer-view=cards] tr {display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto auto 1fr auto;align-items:start;gap:0;min-width:0;width:100%;height:100%;margin:0;padding:0;border:1px solid #e6eaf0;border-radius:11px;background:#fff;box-shadow:0 2px 9px #20314804;overflow:hidden;box-sizing:border-box;transition:border-color .18s,box-shadow .18s}
+ #snote-app #alt-content #snote-customer-view[data-customer-view=cards] tr:hover {border-color:#cbd9f0;box-shadow:0 5px 16px #2741640a}
+ #snote-app #alt-content #snote-customer-view[data-customer-view=cards] td {display:block;min-width:0;max-width:none;margin:0;padding:0;border:0;font-size:12px;line-height:1.5;white-space:normal;overflow-wrap:anywhere}
+ #snote-app #alt-content #snote-customer-view[data-customer-view=cards] td::before {display:none}
+ #snote-app #alt-content #snote-customer-view[data-customer-view=cards] td[data-label="차량"] {grid-column:1/-1;grid-row:1;padding:0}
+ #snote-app #alt-content #snote-customer-view[data-customer-view=cards] .snote-customer-car {display:block;gap:0}
+ #snote-app #alt-content #snote-customer-view[data-customer-view=cards] .snote-customer-car:focus-visible {outline-offset:-3px}
+ #snote-app #alt-content #snote-customer-view[data-customer-view=cards] .snote-customer-thumb {display:grid;width:100%;height:clamp(98px,7.5vw,118px);border-radius:0}
+ #snote-app #alt-content #snote-customer-view[data-customer-view=cards] .snote-customer-thumb > svg {width:76px;height:57px}
+ #snote-app #alt-content #snote-customer-view[data-customer-view=cards] .snote-customer-thumb > .zc-ref-label {display:block;position:absolute;right:5px;bottom:5px;margin:0;padding:2px 4px;border-radius:4px;background:#ffffffd9;color:#788395;font-size:8px;line-height:1.4}
+ #snote-app #alt-content #snote-customer-view[data-customer-view=cards] .snote-customer-car-copy {padding:9px 11px 8px}
+ #snote-app #alt-content #snote-customer-view[data-customer-view=cards] .snote-customer-car-copy strong {color:#29374a;font-size:14px;line-height:1.4}
+ #snote-app #alt-content #snote-customer-view[data-customer-view=cards] td[data-label="고객"] {grid-column:1;grid-row:2;padding:0 11px}
+ #snote-app #alt-content #snote-customer-view[data-customer-view=cards] td[data-label="고객"] b {display:block;color:#34495e;font-size:13px;font-weight:650;line-height:1.5;overflow-wrap:anywhere}
+ #snote-app #alt-content #snote-customer-view[data-customer-view=cards] td[data-label="고객"] small {margin:2px 0 0;color:#8b94a0;font-size:11px;line-height:1.5}
+ #snote-app #alt-content #snote-customer-view[data-customer-view=cards] td[data-label="상태"] {grid-column:2;grid-row:2;align-self:start;padding:1px 11px 0 4px}
+ #snote-app #alt-content #snote-customer-view[data-customer-view=cards] td[data-label="상태"] .zc75-status {font-size:10px;line-height:1.5;white-space:nowrap}
+ #snote-app #alt-content #snote-customer-view[data-customer-view=cards] td[data-label="식별번호"] {grid-column:1/-1;grid-row:3;display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 8px;margin:6px 11px 0;padding:6px 0 0;border-top:1px solid #edf0f4;color:#67768c;font-size:11px;font-variant-numeric:tabular-nums}
+ #snote-app #alt-content #snote-customer-view[data-customer-view=cards] td[data-label="식별번호"]::before {display:block;flex:none;content:attr(data-label);margin:0;color:#98a3b3;font-size:10px;line-height:1.5}
+ #snote-app #alt-content #snote-customer-view[data-customer-view=cards] td[data-label="주소"] {grid-column:1/-1;grid-row:4;min-height:42px;padding:7px 11px 0;color:#6c7a8e;font-size:11px;line-height:1.6}
+ #snote-app #alt-content #snote-customer-view[data-customer-view=cards] td[data-label="주소"]::before {display:block;content:attr(data-label);margin:0 0 2px;color:#98a3b3;font-size:10px;line-height:1.4}
+ #snote-app #alt-content #snote-customer-view[data-customer-view=cards] td[data-label="관리"] {grid-column:1/-1;grid-row:5;align-self:end;margin-top:8px;padding:5px 8px;border-top:1px solid #edf0f4}
+ #snote-app #alt-content #snote-customer-view[data-customer-view=cards] .zc75-actions {display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:3px;min-width:0}
+ #snote-app #alt-content #snote-customer-view[data-customer-view=cards] .zc75-actions .snote-list-action {flex:none;width:36px;height:36px;min-width:36px;min-height:36px;padding:7px}
+ #snote-app #alt-content #snote-customer-view > .empty {width:100%;box-sizing:border-box}
+}
+@media screen and (min-width:1800px) {#snote-app #alt-content #snote-customer-view[data-customer-view=cards] tbody {grid-template-columns:repeat(5,minmax(0,1fr))}}
+@media screen and (min-width:1000px) and (max-width:1279px) {#snote-app #alt-content #snote-customer-view[data-customer-view=cards] tbody {grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media screen and (min-width:761px) and (max-width:999px) {#snote-app #alt-content #snote-customer-view[data-customer-view=cards] tbody {grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media screen and (min-width:761px) {#snote-app #alt-content #snote-customer-view[data-customer-view=list] .snote-mobile-sort {display:none}}
+@media screen and (max-width:760px) {
+ #snote-app #alt-content #snote-customer-view > .snote-customer-search {margin:6px 0 12px;gap:7px}
+ #snote-app #alt-content #snote-customer-view > .snote-customer-search .search {flex-basis:100%;min-width:0;min-height:44px;padding:7px 11px}
+ #snote-app #alt-content #snote-customer-view #snote-customer-count {font-size:11px}
+ #snote-app #alt-content #snote-customer-view .snote-customer-view-toggle > button {width:44px;height:44px;min-width:44px;min-height:44px;padding:12px}
+ #snote-app #alt-content #snote-customer-view .snote-mobile-sort {display:flex;max-width:none;margin:0 0 12px;gap:6px}
+ #snote-app #alt-content #snote-customer-view .snote-mobile-sort label {font-size:0!important;gap:0}
+ #snote-app #alt-content #snote-customer-view .snote-mobile-sort select {max-width:none;height:44px;min-height:44px;font-size:16px;padding:7px 6px}
+ #snote-app #alt-content #snote-customer-view .snote-mobile-sort > button {width:44px;min-width:44px;height:44px;min-height:44px}
+ #snote-app #alt-content #snote-customer-view[data-customer-view=list] .snote-customer-car {grid-template-columns:64px minmax(0,1fr)}
+ #snote-app #alt-content #snote-customer-view[data-customer-view=list] .snote-customer-thumb {width:64px;height:50px}
+ #snote-app #alt-content #snote-customer-view[data-customer-view=list] .snote-customer-car-copy strong {font-size:14px}
+ #snote-app #alt-content #snote-customer-view[data-customer-view=cards] tbody {grid-template-columns:minmax(0,1fr);gap:10px}
+ #snote-app #alt-content #snote-customer-view[data-customer-view=cards] .snote-customer-car {display:grid;grid-template-columns:120px minmax(0,1fr);align-items:center}
+ #snote-app #alt-content #snote-customer-view[data-customer-view=cards] .snote-customer-thumb {width:100px;height:82px;margin:10px;border-radius:8px}
+ #snote-app #alt-content #snote-customer-view[data-customer-view=cards] .snote-customer-thumb > svg {width:56px;height:42px}
+ #snote-app #alt-content #snote-customer-view[data-customer-view=cards] .snote-customer-car-copy {padding:10px 10px 10px 0}
+ #snote-app #alt-content #snote-customer-view[data-customer-view=cards] .zc75-actions {gap:4px}
+ #snote-app #alt-content #snote-customer-view[data-customer-view=cards] .zc75-actions .snote-list-action {width:44px;height:44px;min-width:44px;min-height:44px;padding:10px}
+}
+@media(prefers-reduced-motion:reduce) {#snote-app #alt-content #snote-customer-view * {transition:none!important}}
+@media print {#snote-customer-view-toolbar {display:none!important}}
