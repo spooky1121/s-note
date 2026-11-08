@@ -27,11 +27,11 @@ function mock(t, handler) {
   t.after(() => { globalThis.fetch = original; });
   return calls;
 }
-async function call(body, { env = ENV, authorization, origin = 'https://s-note.example', headers = {}, method = 'POST', raw, requestBody } = {}) {
+async function call(body, { env = ENV, authorization, origin = 'https://s-note.example', requestOrigin = 'https://s-note.example', headers = {}, method = 'POST', raw, requestBody } = {}) {
   const reqHeaders = { 'Content-Type': 'application/json', ...headers };
   if (origin !== null) reqHeaders.Origin = origin;
   if (authorization) reqHeaders.Authorization = authorization;
-  const request = new Request('https://s-note.example/api/customer-intake', {
+  const request = new Request(requestOrigin + '/api/customer-intake', {
     method, headers: reqHeaders, ...(method === 'GET' ? {} : { body: requestBody ?? raw ?? JSON.stringify(body), ...(requestBody ? { duplex: 'half' } : {}) })
   });
   const result = await onRequest({ request, env });
@@ -97,6 +97,98 @@ test('address-bar diagnostics identify canonical origin mismatch without relaxin
   assert.deepEqual(get.body.configurationIssues, [{ name: 'CUSTOMER_INTAKE_PUBLIC_ORIGIN', reason: '실제 접속 주소와 운영 주소 설정이 일치하지 않습니다.' }]);
   assert.equal(JSON.stringify(get.body).includes(env.CUSTOMER_INTAKE_PUBLIC_ORIGIN), false);
   assert.equal((await call(undefined, { method: 'GET', env })).result.status, 403);
+});
+
+const PRODUCTION_ORIGINS = ['https://s-note.pages.dev', 'https://s-note.kr', 'https://www.s-note.kr'];
+
+test('the exact production domain family shares healthy diagnostics under either old or new canonical configuration', async t => {
+  const calls = mock(t, () => { throw new Error('unexpected network'); });
+  for (const canonical of PRODUCTION_ORIGINS) for (const requestOrigin of PRODUCTION_ORIGINS) {
+    const env = { ...ENV, CUSTOMER_INTAKE_PUBLIC_ORIGIN: canonical };
+    for (const origin of [requestOrigin, null]) {
+      const { result, body } = await call(undefined, { env, method: 'GET', requestOrigin, origin });
+      assert.equal(result.status, 200, canonical + ' / ' + requestOrigin);
+      assert.equal(body.configured, true); assert.equal(body.originMatches, true); assert.deepEqual(body.configurationIssues, []);
+      assert.equal(result.headers.has('Access-Control-Allow-Origin'), false);
+      for (const value of Object.values(env)) assert.equal(JSON.stringify(body).includes(value), false);
+    }
+  }
+  assert.equal(calls.length, 0);
+});
+
+test('invitations created on each trusted production alias return and send that exact origin while preserving token hashing', async t => {
+  const calls = mock(t, call => {
+    if (call.url.endsWith('/snote_intake_create')) return response({ ok: true, id: ID, car: CAR });
+    if (call.url.startsWith('https://api.solapi.com/')) return response({ statusCode: '2000', messageId: 'M4V_domain_fixture' });
+    if (call.url.endsWith('/snote_intake_delivery')) return response({ ok: true });
+    throw new Error('unexpected request');
+  });
+  for (const canonical of PRODUCTION_ORIGINS) for (const requestOrigin of PRODUCTION_ORIGINS) {
+    const offset = calls.length, env = { ...ENV, CUSTOMER_INTAKE_PUBLIC_ORIGIN: canonical };
+    const { result, body } = await call({ action: 'create', carId: 'domain-fixture-car', phone: '01012345678' }, { env, requestOrigin, origin: requestOrigin, authorization: `Bearer ${JWT}` });
+    assert.equal(result.status, 200); assert.equal(body.request.deliveryStatus, 'sent');
+    const link = new URL(body.link), rawToken = link.hash.slice(1);
+    assert.equal(link.origin, requestOrigin); assert.equal(link.pathname, '/customer.html'); assert.equal(link.search, ''); assert.match(rawToken, /^[a-f0-9]{64}$/);
+    assert.equal(calls[offset].body.p_token_hash, hash(rawToken)); assert.equal(calls[offset].options.headers.Authorization, `Bearer ${JWT}`);
+    assert.equal(JSON.stringify(calls[offset].body).includes(rawToken), false);
+    assert.ok(calls[offset + 1].body.message.text.includes(body.link));
+    assert.equal(calls[offset + 1].body.message.type, 'LMS'); assert.equal(calls.length, offset + 3);
+    assert.equal(result.headers.has('Access-Control-Allow-Origin'), false);
+  }
+});
+
+test('public intake viewing continues on every exact production alias without dealer credentials', async t => {
+  const calls = mock(t, call => {
+    assert.ok(call.url.endsWith('/snote_intake_view_v2'));
+    assert.deepEqual(call.body, { p_token_hash: hash(TOKEN) });
+    return response({ ok: true, status: 'pending', car: CAR, rrnEnabled: true });
+  });
+  for (const canonical of PRODUCTION_ORIGINS) for (const requestOrigin of PRODUCTION_ORIGINS) {
+    const env = { ...ENV, CUSTOMER_INTAKE_PUBLIC_ORIGIN: canonical };
+    const { result, body } = await call({ action: 'info', token: TOKEN }, { env, requestOrigin, origin: requestOrigin });
+    assert.equal(result.status, 200); assert.equal(body.ok, true); assert.equal(body.car.model, CAR.model); assert.equal(body.rrnEnabled, true);
+    assert.equal(calls.at(-1).options.headers.Authorization, `Bearer ${ENV.SUPABASE_SERVICE_ROLE_KEY}`);
+  }
+  assert.equal(calls.length, PRODUCTION_ORIGINS.length ** 2);
+});
+
+test('production aliases do not permit cross-origin requests, lookalikes, HTTP, ports or cross-site fetches', async t => {
+  const calls = mock(t, () => { throw new Error('unexpected network'); });
+  const foreign = ['https://snote.kr', 'https://s-note.kr.evil.example', 'https://evil.s-note.kr', 'https://s-note.kr.', 'https://s-note.pages.dev.evil.example', 'https://preview.s-note.pages.dev', 'http://s-note.kr', 'https://s-note.kr:8443'];
+  for (const canonical of PRODUCTION_ORIGINS) {
+    const env = { ...ENV, CUSTOMER_INTAKE_PUBLIC_ORIGIN: canonical };
+    for (const requestOrigin of foreign) for (const method of ['GET', 'POST']) {
+      const { result, body } = await call({ action: 'info', token: TOKEN }, { env, method, requestOrigin, origin: requestOrigin });
+      assert.equal(result.status, 403, canonical + ' / ' + requestOrigin); assert.equal(body.code, 'FORBIDDEN');
+    }
+    for (const requestOrigin of PRODUCTION_ORIGINS) {
+      for (const origin of PRODUCTION_ORIGINS.filter(value => value !== requestOrigin)) {
+        const { result } = await call({ action: 'info', token: TOKEN }, { env, requestOrigin, origin }); assert.equal(result.status, 403);
+      }
+      assert.equal((await call({ action: 'info', token: TOKEN }, { env, requestOrigin, origin: requestOrigin, headers: { 'Sec-Fetch-Site': 'cross-site' } })).result.status, 403);
+    }
+  }
+  assert.equal(calls.length, 0);
+});
+
+test('missing or invalid setup cannot enable production aliases and custom deployments retain their single-origin policy', async t => {
+  const calls = mock(t, () => { throw new Error('unexpected network'); });
+  for (const requestOrigin of PRODUCTION_ORIGINS) {
+    for (const configured of ['', 'http://s-note.kr', 'https://s-note.kr/customer.html', 'https://s-note.kr/?alias=1']) {
+      const env = { ...ENV, CUSTOMER_INTAKE_PUBLIC_ORIGIN: configured };
+      const get = await call(undefined, { env, method: 'GET', requestOrigin, origin: requestOrigin });
+      assert.equal(get.body.configured, false); assert.equal(get.body.originMatches, null);
+      const post = await call({ action: 'info', token: TOKEN }, { env, requestOrigin, origin: requestOrigin });
+      assert.equal(post.result.status, 503); assert.equal(post.body.code, 'SERVICE_UNAVAILABLE');
+    }
+    const result = await call({ action: 'info', token: TOKEN }, { requestOrigin, origin: requestOrigin });
+    assert.equal(result.result.status, 403, 'A custom canonical cannot opt into the production family');
+    const diagnostic = await call(undefined, { method: 'GET', requestOrigin, origin: null });
+    assert.equal(diagnostic.body.configured, true); assert.equal(diagnostic.body.originMatches, false);
+    const reverse = await call({ action: 'info', token: TOKEN }, { env: { ...ENV, CUSTOMER_INTAKE_PUBLIC_ORIGIN: requestOrigin } });
+    assert.equal(reverse.result.status, 403, 'A production canonical cannot opt into a custom alias');
+  }
+  assert.equal(calls.length, 0);
 });
 
 test('RPC setup errors are classified without leaking upstream bodies or sending SMS', async t => {

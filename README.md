@@ -37,10 +37,13 @@ S-NOTE는 중고차 매매상사를 위한 온라인 업무 관리 서비스입�
 ## 서비스 운영
 
 - **서비스명:** S-NOTE
-- **공식 홈페이지:** www.s-note.co.kr (준비 중)
+- **새 도메인:** https://s-note.kr (구매 완료, 연결 준비 중)
+- **현재 접속:** https://s-note.pages.dev
 - **웹 호스팅:** Cloudflare Pages
 - **데이터베이스:** Supabase PostgreSQL
 - **파일 저장:** Supabase Storage
+
+새 주소의 DNS·Pages·이메일 인증 설정과 기존 주소 보존 절차는 [도메인 연결 안내](docs/custom-domain-setup.md)를 확인하세요.
 
 현재 온라인 테스트 및 정식 서비스 구축을 진행하고 있습니다.
 

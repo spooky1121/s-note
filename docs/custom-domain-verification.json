@@ -1,0 +1,62 @@
+{
+  "release": "2.105",
+  "baseCommit": "d8c934af205c82f9e8ef73b51da2e7ea217d49e3",
+  "targetDomain": "s-note.kr",
+  "wwwAlias": "www.s-note.kr",
+  "legacyDomain": "s-note.pages.dev",
+  "change": "Exact known production aliases only when canonical config already belongs to that family; generate customer invitation on trusted current request origin.",
+  "preserved": [
+    "same-Origin header and request URL match",
+    "cross-site rejection",
+    "arbitrary custom deployment strict canonical origin",
+    "configuration validation",
+    "JWT checks and row authorization",
+    "token hash and encryption",
+    "frontend same-origin link validation",
+    "legacy Pages access"
+  ],
+  "validation": {
+    "unitChecks": [
+      {
+        "file": "tests/customer-intake.test.mjs",
+        "tests": 41,
+        "exit": 0
+      },
+      {
+        "file": "tests/api-security.test.mjs",
+        "tests": 9,
+        "exit": 0
+      }
+    ],
+    "unitTotal": 50,
+    "actualWorkerdScenarios": {
+      "count": 6,
+      "passed": true,
+      "runBy": "domain_code_audit",
+      "upstream": "Synthetic mocked services only"
+    },
+    "inlineScripts": 7,
+    "productionDataOrRealMessagesUsed": false,
+    "sourceHashes": {
+      "functions/api/customer-intake.js": "93e61782643a8ef471cc9b745360a4f1dfa28dd3e053cabbcc9d783474801e62",
+      "tests/customer-intake.test.mjs": "014f86927d9da600f9eb79a175c825a9df4037d394fd7aaef7689caa22adc749",
+      "index.html": "054b0db05178151ee042d601a973de7f0b2e39dcdf9fd83385b0fb28d5478284"
+    }
+  },
+  "manualConnection": {
+    "domainPurchase": "Confirmed by user",
+    "cloudflareOnboarding": "User screenshot confirms nameserver assignment, activation pending",
+    "assignedNameservers": [
+      "brady.ns.cloudflare.com",
+      "izabella.ns.cloudflare.com"
+    ],
+    "gabiaNameserverUpdate": "Awaiting user application",
+    "pagesCustomDomains": "Not yet verified",
+    "https": "Not yet verified",
+    "supabaseRedirectUrls": "Not yet verified or modified; Management API GET returned HTTP 401",
+    "liveNewDomainAuthAndSms": "Not yet verified"
+  },
+  "noDatabaseMigration": true,
+  "noForcedLegacyRedirect": true,
+  "at": "2026-11-08T14:49:34.500208+00:00"
+}

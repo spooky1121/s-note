@@ -41,6 +41,9 @@ const MESSAGES = {
   SMS_SEND_FAILED: [502, '문자가 접수되지 않았습니다. 잠시 후 새 인증번호를 요청하세요.'],
   SMS_SEND_UNKNOWN: [503, '문자 접수 여부를 확인하지 못했습니다. 자동 재전송하지 않습니다. 잠시 후 다시 요청하세요.']
 };
+// These exact production aliases serve the same Pages project during the domain transition.
+// Only a configuration already belonging to this family may use another member.
+const PRODUCTION_ORIGINS = new Set(['https://s-note.pages.dev', 'https://s-note.kr', 'https://www.s-note.kr']);
 const RPC_CODES = new Set(['INVALID_LINK', 'EXPIRED', 'REVOKED', 'ALREADY_SUBMITTED', 'RATE_LIMITED', 'INVALID_CODE', 'LOCKED', 'SESSION_EXPIRED', 'VALIDATION_ERROR', 'FORBIDDEN', 'RRN_NOT_AVAILABLE']);
 const DB_SETUP_CODES = new Set(['PGRST202', 'PGRST204', '42P01', '42703', '42883']);
 
@@ -124,9 +127,18 @@ async function inspectRrnConfiguration(env = {}) {
   return { key, keys: [dedicated, derived].filter(Boolean), mode: dedicated ? 'dedicated' : derived ? 'derived' : null, issues };
 }
 export { inspectRrnConfiguration as getResidentEncryptionKeys };
+function publicOriginMatches(config, origin) {
+  return origin === config.publicOrigin || (PRODUCTION_ORIGINS.has(config.publicOrigin) && PRODUCTION_ORIGINS.has(origin));
+}
+function invitationOrigin(request, config) {
+  const origin = new URL(request.url).origin;
+  // Keep issued links on the verified request's production alias, so the existing
+  // client's exact-origin link validation and previously sent links keep working.
+  return PRODUCTION_ORIGINS.has(config.publicOrigin) && PRODUCTION_ORIGINS.has(origin) ? origin : config.publicOrigin;
+}
 function sameOrigin(request, config) {
   const origin = request.headers.get('Origin');
-  if (origin !== null && (origin !== new URL(request.url).origin || (config && origin !== config.publicOrigin))) fail('FORBIDDEN');
+  if (origin !== null && (origin !== new URL(request.url).origin || (config && !publicOriginMatches(config, origin)))) fail('FORBIDDEN');
   if (request.headers.get('Sec-Fetch-Site') === 'cross-site') fail('FORBIDDEN');
 }
 function object(value) { return value !== null && typeof value === 'object' && !Array.isArray(value); }
@@ -341,7 +353,7 @@ async function perform(request, config, body, rrnEncryption) {
     const carId = text(body.carId, 200); const recipient = phone(body.phone); const rawToken = randomToken();
     const data = await rpc(config, 'snote_intake_create', { p_car_id: carId, p_phone: recipient, p_token_hash: await sha(rawToken) }, jwt);
     if (data.ok !== true || !UUID.test(data.id || '')) fail('UPSTREAM_ERROR');
-    const link = `${config.publicOrigin}/customer.html#${rawToken}`;
+    const link = `${invitationOrigin(request, config)}/customer.html#${rawToken}`;
     let status = await sendMessage(config, recipient, `[S-NOTE] 고객정보 입력 안내\n담당자가 요청한 차량과 안내 내용을 확인하고 입력해 주세요.\n${link}\n24시간 이내 사용 가능합니다.`, true);
     try { await delivery(config, data.id, 'invitation', null, status); } catch { status = 'unknown'; }
     return { ok: true, request: { id: data.id, car: car(data.car), companyName: data.companyName, expiresAt: data.expiresAt, deliveryStatus: status }, link,
@@ -470,7 +482,7 @@ export async function onRequestGet({ request, env }) {
     const { config, issues } = inspectConfiguration(env);
     const rrn = await inspectRrnConfiguration(env);
     sameOrigin(request, config);
-    const originMatches = config ? new URL(request.url).origin === config.publicOrigin : null;
+    const originMatches = config ? publicOriginMatches(config, new URL(request.url).origin) : null;
     if (originMatches === false) issues.push({ name: 'CUSTOMER_INTAKE_PUBLIC_ORIGIN', reason: '실제 접속 주소와 운영 주소 설정이 일치하지 않습니다.' });
     return json({ service: 'snote-customer-intake', configured: !!config, configurationIssues: issues, originMatches, rrnConfigured: !!rrn.key, rrnConfigurationIssues: rrn.issues, rrnKeyMode: rrn.mode, flowVersion: FLOW_VERSION });
   } catch (error) { return errorResponse(error); }

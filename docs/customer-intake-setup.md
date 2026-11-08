@@ -65,7 +65,7 @@ Supabase 서버 키는 **Settings → API Keys**에서 해당 프로젝트의 `s
 1. 위 DB SQL과 Cloudflare 설정을 완료합니다.
 2. GitHub의 기능 커밋을 포함한 최신 버전으로 Pages를 배포합니다. `index.html`뿐 아니라 `customer.html`, 새 `assets`·`functions` 파일과 `_headers`도 함께 배포되어야 합니다. GitHub 체크만으로 확정하기 어려우면 Cloudflare 프로젝트의 배포 화면에서 사용 중인 커밋을 확인합니다.
 3. 운영 주소의 `/api/customer-intake`에 접속해 `service`가 `snote-customer-intake`, `configured`가 `true`인지 확인합니다. 이 표시는 필요한 서버 설정 유무이며 실제 문자 수신이나 DB 함수 적용까지 보증하지 않습니다.
-   `configurationIssues`에는 문제가 있는 설정 이름과 사유만 표시되며 키 값은 표시되지 않습니다. `originMatches`가 `false`이면 현재 접속 주소와 `CUSTOMER_INTAKE_PUBLIC_ORIGIN`을 일치시킵니다. 설정을 확인한 주소와 판매 화면의 주소도 같아야 합니다.
+   `configurationIssues`에는 문제가 있는 설정 이름과 사유만 표시되며 키 값은 표시되지 않습니다. `originMatches`가 `false`이면 현재 접속 주소와 `CUSTOMER_INTAKE_PUBLIC_ORIGIN`을 확인합니다. 운영 주소가 정확히 `https://s-note.pages.dev`, `https://s-note.kr`, `https://www.s-note.kr` 중 하나로 설정된 경우에만 이 세 주소를 함께 지원하며, 고객 문자·복사 링크는 검증된 현재 접속 주소로 생성합니다. 그 외 주소는 기존처럼 단일 운영 주소와 일치해야 합니다. [새 도메인 연결 안내](custom-domain-setup.md)를 참고하세요.
 4. 로그인한 담당자 본인의 저장된 차량에서 판매 진행을 엽니다. 관리자도 다른 담당자 차량에 대신 요청하지 않고 해당 담당자 계정으로 진행합니다.
 5. **운영자가 직접 관리하는 테스트 휴대폰**으로 입력 요청을 한 번 보냅니다. 이 단계부터 실제 문자 비용이 발생합니다.
 6. 휴대폰에서 링크를 열고 인증번호를 받아 정보를 제출합니다. 이 과정에서 휴대폰 사용 확인과 개인정보 처리 동의를 직접 확인합니다.
