@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.109">
+<html lang="ko" data-snote-release="2.110">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -3336,6 +3336,7 @@ button, input, select, textarea { font-family: inherit; }
       <p class="vehicle-eyebrow" hidden></p>
       <div class="vehicle-heading-row"><div class="vehicle-name-links"><h2 id="vehicle-title">차량 상세</h2></div><div class="vehicle-header-actions" id="vehicle-header-actions" role="group" aria-label="차량 작업">
         <button type="button" class="snote-encar-button vehicle-header-action" id="vehicle-encar-check" aria-label="엔카광고보기" data-tooltip="엔카광고보기" disabled><img class="snote-encar-wordmark" src="assets/encar-wordmark.png?v=2.73" width="34" height="17" alt="" aria-hidden="true" draggable="false"></button>
+        <button type="button" class="vehicle-header-action" id="vehicle-encar-price-ocr" aria-label="광고 가격 캡처 인식" data-tooltip="광고 가격 캡처 인식" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8" cy="9" r="1.5"/><path d="m3 17 5-5 4 4 3-3 6 6M15 7h3"/></svg></button>
         <button type="button" class="vehicle-header-action quote-launch" onclick="openQuotePreview()" aria-label="견적서" data-tooltip="견적서"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8zM14 3v5h5M9 12h6M9 16h6"/></svg></button>
         <button type="button" class="vehicle-header-action contract-launch" onclick="openSaleProgress()" aria-label="판매진행" data-tooltip="판매진행"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M13 19H6v.7a1.3 1.3 0 0 1-2.6 0V18A3 3 0 0 1 2 15.5v-3a4.3 4.3 0 0 1 1.1-2.9l-.5-.1a1.1 1.1 0 0 1 .3-2.2h1L5.5 4a2.8 2.8 0 0 1 2.6-1.7h5A2.8 2.8 0 0 1 15.7 4l1.6 3.3h1a1.1 1.1 0 0 1 .3 2.2l-.5.1a4.3 4.3 0 0 1 1.1 2.9V14"/><path d="m5 10 1.9-4.2a1.1 1.1 0 0 1 1-.6h5.4a1.1 1.1 0 0 1 1 .6l1.9 4.2ZM5.2 14h2.3m4 0h2.3"/><circle cx="18.1" cy="17.7" r="4.9" fill="#fff8e7" stroke="#b49968" stroke-width="1.5"/><path d="m15.8 15.8 1.1 3.6 1.2-3.6 1.2 3.6 1.1-3.6m-5 1.7h5.4" stroke="#b49968" stroke-width="1.15"/></svg></button>
         <button type="button" class="vehicle-header-action vehicle-header-save" id="vehicle-header-save" onclick="saveVehicleCosts()" aria-label="저장" data-tooltip="변경사항저장"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 3h12l4 4v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2ZM7 3v6h9V3M7 21v-7h10v7M13 5v2"/></svg></button>
@@ -9239,6 +9240,73 @@ window.snoteEncarLinksBridge={
   return task;
  }
 };
+// User-uploaded price screenshots are OCR candidates, never provider-verified ads.
+const snoteEncarOcrReceipts=new WeakMap();
+function snoteEncarOcrError(code,message){return Object.assign(new Error(message),{code,userMessage:message});}
+function snoteEncarOcrCurrent(base){
+ const now=base&&snoteEncarLinksContext(base.carId);
+ return !!now&&now.key===base.key&&now.actor===base.actor&&now.client===base.client&&now.user===base.user&&now.company===base.company&&now.car===base.car;
+}
+function snoteEncarOcrCheck(base){if(!snoteEncarOcrCurrent(base))throw snoteEncarOcrError('CONTEXT_CHANGED','차량이나 로그인 정보가 변경되었습니다. 캡처 인식을 다시 열어 주세요.');}
+function snoteEncarOcrCandidates(data){
+ const invalid=()=>{throw snoteEncarOcrError('INVALID_DATA','OCR 금액 후보를 확인하지 못했습니다. 가격 부분을 다시 선택해 주세요.');};
+ if(data?.ok!==true||data.purpose!=='encar-price'||data.engine!=='google-vision'||data.requiresConfirmation!==true||!Array.isArray(data.candidates)||data.candidates.length>20)invalid();
+ const ids=new Set();return data.candidates.map(item=>{
+  if(!item||typeof item!=='object'||typeof item.id!=='string'||!/^price-(?:[1-9]|1[0-9]|20)$/.test(item.id)||ids.has(item.id)||typeof item.display!=='string'||item.display.length>40||
+   !/^(?:\d{1,3}(?:,\d{3})*|\d{1,9})(?:\.\d{1,4})?만원$/.test(item.display)||!Number.isSafeInteger(item.priceWon)||item.priceWon<=0||item.priceWon>1000000000000)invalid();
+  const [whole,fraction='']=item.display.slice(0,-2).replaceAll(',','').split('.');
+  if(BigInt(whole)*10000n+BigInt(fraction.padEnd(4,'0'))!==BigInt(item.priceWon))invalid();
+  ids.add(item.id);return {id:item.id,display:item.display,priceWon:item.priceWon};
+ });
+}
+function snoteEncarOcrClear(base){if(!base||typeof base!=='object')return;const ticket=snoteEncarOcrReceipts.get(base);snoteEncarOcrReceipts.delete(base);ticket?.controller.abort();}
+function snoteEncarOcrWait(promise,signal){return new Promise((resolve,reject)=>{
+ const abort=()=>reject(snoteEncarOcrError('OCR_CANCELLED','캡처 인식을 취소했습니다.'));
+ if(signal.aborted){Promise.resolve(promise).catch(()=>{});abort();return;}
+ signal.addEventListener('abort',abort,{once:true});Promise.resolve(promise).then(value=>{signal.removeEventListener('abort',abort);resolve(value);},error=>{signal.removeEventListener('abort',abort);reject(error);});
+});}
+async function snoteEncarOcrJson(response,signal){
+ const length=response.headers.get('Content-Length');
+ if(length!==null&&(!/^\d+$/.test(length)||Number(length)>65536)){try{void response.body?.cancel().catch(()=>{});}catch(_){}throw snoteEncarOcrError('OCR_FAILED','OCR 응답을 확인하지 못했습니다. 다시 시도해 주세요.');}
+ const reader=response.body?.getReader();if(!reader)throw snoteEncarOcrError('OCR_FAILED','OCR 응답을 확인하지 못했습니다.');
+ let total=0;const chunks=[];
+ try{for(;;){const next=await snoteEncarOcrWait(reader.read(),signal);if(next.done)break;total+=next.value.byteLength;if(total>65536)throw Error('OCR_RESPONSE_SIZE');chunks.push(next.value);}
+  const bytes=new Uint8Array(total);let offset=0;for(const chunk of chunks){bytes.set(chunk,offset);offset+=chunk.byteLength;}return JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes));
+ }catch(error){try{void reader.cancel().catch(()=>{});}catch(_){}throw error;}
+}
+window.snoteEncarPriceOcrBridge={
+ context(){return snoteEncarLinksContext(String(activeCarId??''));},current:snoteEncarOcrCurrent,clear:snoteEncarOcrClear,
+ async read(base,file,{signal}={}){
+  snoteEncarOcrCheck(base);snoteEncarOcrClear(base);
+  if(!(file instanceof Blob)||!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size<=0||file.size>6*1024*1024)
+   throw snoteEncarOcrError('INVALID_IMAGE','6MB 이하의 JPG·PNG·WEBP 캡처를 선택해 주세요.');
+  const controller=new AbortController(),ticket={controller,candidates:null};snoteEncarOcrReceipts.set(base,ticket);
+  const abort=()=>controller.abort();signal?.addEventListener('abort',abort,{once:true});if(signal?.aborted)abort();
+  let timedOut=false;const timer=setTimeout(()=>{timedOut=true;controller.abort();},65000);
+  const current=()=>{snoteEncarOcrCheck(base);if(controller.signal.aborted||snoteEncarOcrReceipts.get(base)!==ticket)throw snoteEncarOcrError('OCR_CANCELLED','캡처 인식을 취소했습니다.');};
+  try{
+   const session=await snoteEncarOcrWait(base.client.auth.getSession(),controller.signal);current();const value=session?.data?.session;
+   if(session?.error||value?.user?.id!==base.user.id||typeof value?.access_token!=='string'||!/^[-A-Za-z0-9._]{30,5000}$/.test(value.access_token))
+    throw snoteEncarOcrError('AUTH_REQUIRED','다시 로그인한 뒤 캡처를 인식해 주세요.');
+   const response=await snoteEncarOcrWait(fetch('/api/ocr?purpose=encar-price',{method:'POST',credentials:'same-origin',cache:'no-store',redirect:'error',referrerPolicy:'no-referrer',headers:{Authorization:'Bearer '+value.access_token,'Content-Type':file.type},body:file,signal:controller.signal}),controller.signal);current();
+   const data=await snoteEncarOcrJson(response,controller.signal);current();
+   if(!response.ok){const code=response.status===401?'AUTH_REQUIRED':response.status===403?'FORBIDDEN':response.status===429?'OCR_RATE_LIMITED':response.status===503||/Google HTTP (?:400|401|403)/.test(typeof data?.error==='string'?data.error:'')?'SETUP_REQUIRED':'OCR_FAILED';
+    const messages={AUTH_REQUIRED:'다시 로그인한 뒤 캡처를 인식해 주세요.',FORBIDDEN:'캡처 인식 권한을 확인해 주세요.',OCR_RATE_LIMITED:'OCR 사용 한도를 초과했습니다. 잠시 후 다시 시도해 주세요.',SETUP_REQUIRED:'Google Vision OCR 설정과 결제·API 제한을 확인해 주세요.',OCR_FAILED:'캡처를 인식하지 못했습니다. 가격 부분을 선명하게 선택해 주세요.'};throw snoteEncarOcrError(code,messages[code]);}
+   const candidates=snoteEncarOcrCandidates(data);current();ticket.candidates=candidates.map(item=>Object.freeze({...item}));
+   return {ok:true,purpose:'encar-price',engine:'google-vision',requiresConfirmation:true,candidates};
+  }catch(error){if(snoteEncarOcrReceipts.get(base)===ticket)snoteEncarOcrReceipts.delete(base);if(timedOut)throw snoteEncarOcrError('OCR_TIMEOUT','캡처 인식 응답이 지연됐습니다. 다시 시도해 주세요.');if(error?.code)throw error;throw snoteEncarOcrError('OCR_FAILED','캡처 인식 연결을 확인하지 못했습니다. 다시 시도해 주세요.');}
+  finally{clearTimeout(timer);signal?.removeEventListener('abort',abort);controller.abort();}
+ },
+ apply(base,candidate){
+  const now=snoteEncarLinksCheck(base);
+  if(now.car.status==='판매완료')throw snoteEncarOcrError('FORBIDDEN','판매 완료 차량에는 OCR 금액을 입력할 수 없습니다.');
+  if(S.saving||S.conflict||S.queue.size||snoteVehicleSaveTask||snoteVehicleCloseTask||snoteVehicleUnconfirmedWrite)throw snoteEncarOcrError('PENDING','진행 중인 차량 저장을 확인한 뒤 입력해 주세요.');
+  const candidates=snoteEncarOcrReceipts.get(base)?.candidates;
+  if(!candidate||!candidates?.some(item=>item.id===candidate.id&&item.display===candidate.display&&item.priceWon===candidate.priceWon))throw snoteEncarOcrError('INVALID_DATA','현재 캡처에서 인식한 금액을 다시 선택해 주세요.');
+  const input=byId('detail-sell');if(!input||input.disabled||input.readOnly)throw snoteEncarOcrError('FORBIDDEN','현재 차량의 판매예정가를 수정할 수 없습니다.');
+  input.value=detailMoneyValue(candidate.priceWon);input.dispatchEvent(new Event('input',{bubbles:true}));return {ok:true,priceWon:candidate.priceWon,saved:false};
+ }
+};
 // Private document sharing uses the authenticated vehicle owner scope.
 function snoteDocumentContext(){
  if(!S.ready||S.loading||S.busy||!S.user||!S.company||!S.client||!currentUser||currentUser.username!==ownerAlias(S.user.id)||!byId('vehicle-overlay')?.classList.contains('open'))return null;
@@ -10407,11 +10475,13 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 <script type="module" src="assets/income-settlement-parent.js?v=2.85"></script>
 <script src="assets/vehicle-sharing.js?v=2.107" defer></script>
 <script src="assets/shared-vehicle-markers.js?v=2.87" defer></script>
-<script src="assets/release-info.js?v=2.109" defer></script>
+<script src="assets/release-info.js?v=2.110" defer></script>
 <script src="assets/company-purchase.js?v=2.77" defer></script>
 <script src="assets/recycle-bin.js?v=2.77" defer></script>
 <script src="assets/profile-editor.js?v=2.102" defer></script>
 <script src="assets/snote-encar-link.js?v=2.109" defer></script>
+<link rel="stylesheet" href="assets/encar-price-ocr.css?v=2.110">
+<script src="assets/encar-price-ocr.js?v=2.110" defer></script>
 <script src="assets/document-mms.js?v=2.44" defer></script>
 <script src="assets/workspace-polish.js?v=2.77" defer></script>
 <script src="assets/list-sort.js?v=2.57" defer></script>

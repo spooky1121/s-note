@@ -1,4 +1,5 @@
 import { readBoundedBytes, sameOriginRequest, RequestSecurityError, securityResponse } from '../_shared/api-security.js';
+import { parseEncarPrice } from '../_shared/encar-price-ocr.mjs';
 
 /**
  * S-NOTE / Cloudflare Pages Function
@@ -621,6 +622,11 @@ export function onRequestGet({ env } = {}) {
 
 export async function onRequestPost({ request, env }) {
   if (!sameOriginRequest(request)) return securityResponse('FORBIDDEN');
+  const purposes = new URL(request.url).searchParams.getAll('purpose');
+  const purpose = purposes.length === 0 ? 'registration' : purposes[0];
+  if (purposes.length > 1 || !['registration', 'encar-price'].includes(purpose)) {
+    return reply(400, { error: '지원하지 않는 이미지 인식 요청입니다.' });
+  }
   const googleKey = String(
     env.GOOGLE_VISION_API_KEY || ''
   ).trim();
@@ -660,13 +666,13 @@ export async function onRequestPost({ request, env }) {
 
   if (!ALLOWED.has(contentType)) {
     return reply(415, {
-      error: 'JPG, PNG 또는 WEBP 등록증 이미지만 전송할 수 있습니다.'
+      error: purpose === 'encar-price' ? 'JPG, PNG 또는 WEBP 캡처 이미지만 전송할 수 있습니다.' : 'JPG, PNG 또는 WEBP 등록증 이미지만 전송할 수 있습니다.'
     });
   }
 
   if ((declaredLength !== null && !/^\d+$/.test(declaredLength)) || length > MAX_IMAGE_BYTES) {
     return reply(413, {
-      error: 'Google OCR 등록증 파일은 6MB 이하로 선택해 주세요.'
+      error: purpose === 'encar-price' ? 'Google OCR 캡처 파일은 6MB 이하로 선택해 주세요.' : 'Google OCR 등록증 파일은 6MB 이하로 선택해 주세요.'
     });
   }
 
@@ -824,11 +830,19 @@ export async function onRequestPost({ request, env }) {
       });
     }
 
-    const fields = parseDocument(
-      result?.fullTextAnnotation || {
-        text: result?.textAnnotations?.[0]?.description || ''
-      }
-    );
+    const annotation = result?.fullTextAnnotation || {
+      text: result?.textAnnotations?.[0]?.description || ''
+    };
+    if (purpose === 'encar-price') {
+      return reply(200, {
+        ok: true,
+        purpose: 'encar-price',
+        engine: 'google-vision',
+        candidates: parseEncarPrice(annotation),
+        requiresConfirmation: true
+      });
+    }
+    const fields = parseDocument(annotation);
 
     return reply(200, {
       ok: true,

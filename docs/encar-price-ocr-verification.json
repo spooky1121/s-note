@@ -1,0 +1,157 @@
+{
+  "release": "2.110",
+  "baseCommit": "0190eb080ef97ebe34a87c89aec0780f4a4fa0c5",
+  "feature": {
+    "mode": "User-uploaded screenshot OCR test with explicit price review",
+    "endpoint": "POST /api/ocr?purpose=encar-price",
+    "existingRegistrationEndpointPreserved": true,
+    "fileTypes": [
+      "image/png",
+      "image/jpeg",
+      "image/webp"
+    ],
+    "maxImageBytes": 6291456,
+    "maxCandidates": 20,
+    "conversion": "Read numeric amount before 만원; multiply by exactly 10000 using BigInt",
+    "priceRangeWon": {
+      "min": 1,
+      "max": 1000000000000
+    },
+    "sourceTrust": "OCR candidates are never represented as API-verified advertisements",
+    "apply": "Fill only the current detail-sell draft after explicit selection; original save icon persists through existing validation and owner CAS",
+    "databaseSchemaOrRlsChanged": false,
+    "imagesOrRawOcrPersisted": false
+  },
+  "security": {
+    "checks": [
+      "same-origin authenticated active-member OCR",
+      "default registration and explicit-purpose separation; wrong/duplicate purpose rejects before billed provider call",
+      "image signature, MIME, upload and response size bounds",
+      "bounded body reads, fixed same-origin fetch, token pinned to current user",
+      "only bounded id/display/priceWon candidates returned",
+      "exact displayed-amount versus KRW conversion match",
+      "latest read-ticket, file generation, close and account/car scope binding",
+      "explicit review with no default selection",
+      "read-only, sold, pending-save and conflict write denial",
+      "raw image preview URLs revoked; original-image link isolated with noopener/noreferrer",
+      "existing metadata and other dirty drafts preserved"
+    ]
+  },
+  "validation": {
+    "unitCommand": "npm test --prefix tests/encar",
+    "unitTests": 467,
+    "passed": 467,
+    "failed": 0,
+    "inlineScripts": 7,
+    "syntax": "pass",
+    "diffCheck": "pass",
+    "browser": {
+      "ok": true,
+      "at": "2026-11-09T13:50:41.048Z",
+      "sourceHashes": {
+        "index.html": "6e03a1632f36c1d61b455591cd495853774f669df9a3a2f6818e779b2be69e35",
+        "assets/encar-price-ocr.js": "91dead9a28fddd6758e372412d2469966883f0fcfbcbe3413bb18a76b092c0c5",
+        "assets/encar-price-ocr.css": "0d39334a82459a39911312bd606ac2501ef6ad86a43f027c32a1df68dc095aae",
+        "tests/encar/ocr-price.browser.cjs": "ddefa7ad872f29785daa775867be082f3f2fac4ab43b12e98321e5a98bef6d1a"
+      },
+      "results": [
+        {
+          "width": 1440,
+          "explicitReview": true,
+          "wonConversion": true,
+          "draftOnly": true,
+          "normalSave": true,
+          "otherDraftsAndPeerPreserved": true,
+          "previewReleased": true,
+          "geometry": {
+            "overflow": false,
+            "dialogOverflow": false
+          }
+        },
+        {
+          "width": 390,
+          "explicitReview": true,
+          "wonConversion": true,
+          "draftOnly": true,
+          "normalSave": true,
+          "otherDraftsAndPeerPreserved": true,
+          "previewReleased": true,
+          "geometry": {
+            "overflow": false,
+            "dialogOverflow": false
+          }
+        },
+        {
+          "width": 320,
+          "explicitReview": true,
+          "wonConversion": true,
+          "draftOnly": true,
+          "normalSave": true,
+          "otherDraftsAndPeerPreserved": true,
+          "previewReleased": true,
+          "geometry": {
+            "overflow": false,
+            "dialogOverflow": false
+          }
+        },
+        {
+          "width": 390,
+          "soldApplyDisabled": true,
+          "readOnlyUiDisabled": true
+        },
+        {
+          "width": 390,
+          "lateApplyCannotAffectNextVehicle": true,
+          "actorResetLateReadIgnored": true
+        },
+        {
+          "width": 390,
+          "multipleReview": true,
+          "fileChangeResets": true,
+          "invalidFilesNoRequest": true,
+          "noCandidateAndMalformedFailClosed": true
+        },
+        {
+          "width": 390,
+          "closeAborts": true,
+          "fileChangeAborts": true,
+          "vehicleSwitchLateReadIgnored": true
+        }
+      ],
+      "syntheticOnly": true,
+      "liveGoogleOrUserInlineImageTested": false
+    },
+    "independentReview": "No blocking findings; split-number/mixed-unit/blank-line ambiguity and original-preview readability were corrected",
+    "liveVisionProbe": {
+      "sourceType": "synthetic-rendered-text",
+      "notOriginalScreenshot": true,
+      "expectedPriceWon": 54900000,
+      "imageSha256": "1bc1d5291bd1929bcf27f714972e393279bce1e39e42127211ff4d11b6d39e06",
+      "providerRequestAttempted": true,
+      "providerHttpResponses": 1,
+      "apiKeyPrintedOrSaved": false,
+      "at": "2026-11-09T13:46:42.496358+00:00",
+      "httpStatus": 200,
+      "ok": true,
+      "stage": "parsed",
+      "candidates": [
+        {
+          "id": "price-1",
+          "display": "5,490만원",
+          "priceWon": 54900000
+        }
+      ],
+      "monthlyPaymentExcluded": true,
+      "parserSha256": "1f558eaf789874f107ad1f6de6d65966316e15af8aee83f0ce22fcf035306dc2",
+      "networkAttempts": 2,
+      "upstreamVisionHttpResponses": 1,
+      "initialSandboxConnectBlockedBeforeUpstream": true
+    },
+    "finalParserSha256": "a281f94e01ea22c64ee4af899baa0ef752579b07734bd7bb291eed5f6c03e022",
+    "liveProbeParserDiff": "Subsequent final parser changes only strengthened exclusion of ambiguous split-number and mixed-unit contexts; the valid test sample passed final unit regressions without another billed call",
+    "userOriginalScreenshotVisionTested": false,
+    "originalNotAvailableAsFileInExecutor": true,
+    "productionUserOrVehicleMutationsForTests": false
+  },
+  "at": "2026-11-09T13:52:13.917Z"
+}

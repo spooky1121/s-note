@@ -1,0 +1,42 @@
+@media screen{
+ #vehicle-encar-price-ocr{color:#176ce8}
+ #vehicle-encar-price-ocr svg{display:block;width:20px;height:20px;pointer-events:none}
+ #snote-encar-price-ocr{box-sizing:border-box;width:min(580px,calc(100vw - 28px));max-height:calc(100dvh - 32px);margin:auto;padding:0;overflow:auto;border:1px solid #e6e8ed;border-radius:16px;background:#fff;color:#26344a;box-shadow:0 24px 80px #18243d26;scrollbar-width:thin;scrollbar-color:#d5d7dc transparent}
+ #snote-encar-price-ocr::backdrop{background:#15213d42;backdrop-filter:blur(4px)}
+ #snote-encar-price-ocr[open]{animation:snote-price-ocr-in .2s ease-out}
+ #snote-encar-price-ocr [hidden]{display:none!important}
+ .encar-price-ocr-frame{position:relative;padding:24px}
+ #snote-encar-price-ocr .snote-popup-close{position:absolute!important;top:12px!important;right:12px!important;left:auto!important;width:30px!important;height:30px!important;min-width:30px;display:grid;place-items:center;border:0!important;border-radius:6px!important;background:transparent!important;color:#4d5159!important;padding:0!important;font:400 26px/1 sans-serif;cursor:pointer;box-shadow:none!important}
+ #snote-encar-price-ocr .snote-popup-close:hover{background:#e5e5e8!important}
+ #snote-encar-price-ocr h2{margin:0 30px 6px 0;font-size:18px;font-weight:650;letter-spacing:-.45px}
+ .encar-price-ocr-subtitle,.encar-price-ocr-help,.encar-price-ocr-status{margin:8px 0 14px;font-size:12px;line-height:1.65;color:#7a8699;overflow-wrap:anywhere}
+ .encar-price-ocr-subtitle:empty{display:none}
+ .encar-price-ocr-upload{display:grid;gap:8px;font-size:13px;font-weight:550;color:#536079}
+ #encar-price-ocr-file{box-sizing:border-box;max-width:100%;width:100%;padding:9px;border:1px solid #e0e5ee;border-radius:8px;background:#fafbfd;font:inherit;font-weight:400;font-size:12px;color:#5f6c80}
+ #encar-price-ocr-file::file-selector-button{margin-right:9px;padding:6px 10px;border:1px solid #dbe3f0;border-radius:6px;background:#fff;color:#3264b4;font:inherit;cursor:pointer}
+ .encar-price-ocr-upload small{font-size:11px;font-weight:400;color:#98a1af}
+ .encar-price-ocr-preview{margin:16px 0 12px}
+ .encar-price-ocr-preview img{display:block;max-width:100%;max-height:250px;object-fit:contain;margin:auto;border:1px solid #e8ebf1;border-radius:8px}
+ .encar-price-ocr-original{display:block;margin-top:7px;text-align:right;font-size:12px;color:#176ce8;text-underline-offset:3px}
+ .encar-price-ocr-preview figcaption{margin-top:7px;font-size:11px;color:#8d97a7;line-height:1.5}
+ .encar-price-ocr-read-actions{display:flex;justify-content:flex-end;margin-top:12px}
+ #snote-encar-price-ocr :is(.encar-price-ocr-read,.encar-price-ocr-apply){min-height:36px;padding:8px 13px;border:1px solid #d8e3f6;border-radius:7px;background:#f5f8ff;color:#285bb4;font:inherit;font-size:12px;cursor:pointer}
+ #snote-encar-price-ocr button:disabled{opacity:.45;cursor:default}
+ #snote-encar-price-ocr button:focus-visible,#encar-price-ocr-file:focus-visible{outline:2px solid #85a7e5;outline-offset:3px}
+ .encar-price-ocr-status{min-height:20px;margin:12px 0}.encar-price-ocr-status.is-error{color:#b94b4b}
+ .encar-price-ocr-candidates{min-width:0;margin:0;padding:12px;border:1px solid #e3e8ef;border-radius:9px}
+ .encar-price-ocr-candidates legend{padding:0 5px;font-size:12px;font-weight:600;color:#54627a}
+ .encar-price-ocr-options{display:grid;gap:8px}
+ .encar-price-ocr-option{display:flex;align-items:center;gap:10px;padding:9px;border-radius:7px;background:#f8faff;cursor:pointer;min-width:0}
+ .encar-price-ocr-option input{width:16px;height:16px;flex:none;accent-color:#176ce8}
+ .encar-price-ocr-option span{display:grid;gap:3px;min-width:0;overflow-wrap:anywhere}
+ .encar-price-ocr-option strong{font-size:14px;font-weight:600;font-variant-numeric:tabular-nums}.encar-price-ocr-option small{font-size:12px;color:#2b62b5;font-variant-numeric:tabular-nums}
+ .encar-price-ocr-candidates p,.encar-price-ocr-save-help{font-size:11px;line-height:1.6;color:#8c97a8;margin:11px 0 0}
+ #snote-encar-price-ocr footer{display:flex;flex-direction:column;align-items:flex-end;gap:8px;margin-top:16px}
+ #snote-encar-price-ocr .encar-price-ocr-apply{background:#176ce8;border-color:#176ce8;color:#fff}
+ .encar-price-ocr-save-help{align-self:stretch;margin:0}
+ @keyframes snote-price-ocr-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+}
+@media screen and (max-width:600px){.encar-price-ocr-frame{padding:22px 16px}#encar-price-ocr-file{font-size:14px}.encar-price-ocr-preview img{max-height:200px}}
+@media(prefers-reduced-motion:reduce){#snote-encar-price-ocr[open]{animation:none}}
+@media print{#snote-encar-price-ocr,#vehicle-encar-price-ocr{display:none!important}}

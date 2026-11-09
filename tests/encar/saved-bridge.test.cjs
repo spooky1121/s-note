@@ -233,3 +233,65 @@ test('price draft scope does not survive dealer, company, plate or drawer-sessio
   const f=fixture(),base=f.bridge.context('car-a'),data=pricedRecord();await f.bridge.save(base,data);change(f);assert.throws(()=>f.bridge.applyPrice(base,data,'43000001'),error=>error.code==='CONTEXT_CHANGED');assert.equal(f.sellInput.events.length,0);
  }
 });
+
+const ocrCandidate=()=>({id:'price-1',display:'5,490만원',priceWon:54900000});
+const ocrResponse=(candidates=[ocrCandidate()])=>({ok:true,purpose:'encar-price',engine:'google-vision',requiresConfirmation:true,candidates});
+function ocrFixture(options={}){
+ const f=fixture(options);Object.assign(f.context,{Blob,AbortController,TextDecoder,Uint8Array});
+ const token='synthetic-local-ocr-session-token-12345';f.S.client.auth={getSession:async()=>({data:{session:{access_token:token,user:{id:USER}}},error:null})};
+ const calls=[];f.context.fetch=async(url,init)=>{calls.push({url,init});return Response.json(ocrResponse());};
+ return {...f,ocr:f.context.snoteEncarPriceOcrBridge,ocrCalls:calls,token,file:()=>new Blob([new Uint8Array([137,80,78,71,13,10,26,10])],{type:'image/png'})};
+}
+test('OCR uses the authenticated fixed endpoint and exposes candidates without changing any stored price or image',async()=>{
+ const f=ocrFixture(),base=f.ocr.context(),before=clone([...f.server]),data=await f.ocr.read(base,f.file());
+ assert.deepEqual(clone(data),ocrResponse());assert.equal(f.ocrCalls.length,1);const request=f.ocrCalls[0];
+ assert.equal(request.url,'/api/ocr?purpose=encar-price');assert.equal(request.init.method,'POST');assert.equal(request.init.redirect,'error');assert.equal(request.init.cache,'no-store');
+ assert.equal(request.init.headers.Authorization,'Bearer '+f.token);assert.equal(request.init.headers['Content-Type'],'image/png');assert(request.init.body instanceof Blob);assert.equal(request.init.referrerPolicy,'no-referrer');
+ assert.equal(f.calls.length,0);assert.deepEqual([...f.server],before);assert.equal(f.sellInput.events.length,0);
+});
+test('OCR confirmed candidate fills only the sale draft and a modified or cleared candidate cannot be applied',async()=>{
+ const f=ocrFixture(),base=f.ocr.context(),data=await f.ocr.read(base,f.file()),before=clone([...f.server]);
+ const wrong={...data.candidates[0],priceWon:5490000};assert.throws(()=>f.ocr.apply(base,wrong),error=>error.code==='INVALID_DATA');
+ const result=f.ocr.apply(base,data.candidates[0]);assert.equal(result.saved,false);assert.equal(f.sellInput.value,'54,900,000');assert.equal(f.sellInput.events.length,1);
+ assert.deepEqual([...f.server],before);assert.equal(f.calls.length,0);f.ocr.clear(base);assert.throws(()=>f.ocr.apply(base,data.candidates[0]),error=>error.code==='INVALID_DATA');
+});
+test('OCR rejects a bad purpose, confirmation marker, price factor, ID or display before a draft can change',async()=>{
+ const changes=[d=>{d.purpose='registration';},d=>{d.requiresConfirmation=false;},d=>{d.engine='unknown';},d=>{d.candidates[0].priceWon=5490000;},d=>{d.candidates[0].display='5,490';},d=>{d.candidates[0].id='price-0';},d=>{d.candidates.push({...d.candidates[0]});},d=>{d.candidates[0].priceWon=1000000000001;}];
+ for(const change of changes){const f=ocrFixture(),data=ocrResponse();change(data);f.context.fetch=async()=>Response.json(data);const base=f.ocr.context();await assert.rejects(f.ocr.read(base,f.file()),error=>error.code==='INVALID_DATA');assert.throws(()=>f.ocr.apply(base,ocrCandidate()),error=>error.code==='INVALID_DATA');assert.equal(f.sellInput.events.length,0);}
+});
+test('OCR validates image type and length before any authenticated or billed request',async()=>{
+ const f=ocrFixture(),base=f.ocr.context();let sessions=0;f.S.client.auth.getSession=async()=>{sessions++;};
+ for(const file of[new Blob([],{type:'image/png'}),new Blob(['not an image'],{type:'text/plain'}),new Blob([new Uint8Array(6*1024*1024+1)],{type:'image/png'})])await assert.rejects(f.ocr.read(base,file),error=>error.code==='INVALID_IMAGE');
+ assert.equal(sessions,0);assert.equal(f.ocrCalls.length,0);
+});
+test('OCR pins the session user and does not send another account token with an image',async()=>{
+ const f=ocrFixture(),base=f.ocr.context();f.S.client.auth.getSession=async()=>({data:{session:{access_token:f.token,user:{id:OTHER}}},error:null});
+ await assert.rejects(f.ocr.read(base,f.file()),error=>error.code==='AUTH_REQUIRED');assert.equal(f.ocrCalls.length,0);
+});
+test('OCR fixed errors do not return provider bodies or leak a candidate from a failed response',async()=>{
+ for(const [status,code] of[[401,'AUTH_REQUIRED'],[403,'FORBIDDEN'],[429,'OCR_RATE_LIMITED'],[503,'SETUP_REQUIRED'],[502,'OCR_FAILED']]){
+  const f=ocrFixture(),base=f.ocr.context();f.context.fetch=async()=>Response.json({error:'PRIVATE_PROVIDER_BODY'}, {status});
+  await assert.rejects(f.ocr.read(base,f.file()),error=>error.code===code&&!error.message.includes('PRIVATE_PROVIDER_BODY'));assert.throws(()=>f.ocr.apply(base,ocrCandidate()));
+ }
+});
+test('OCR rejects oversized responses and inconsistent or empty candidates without changing a draft',async()=>{
+ const f=ocrFixture(),base=f.ocr.context();f.context.fetch=async()=>new Response('x'.repeat(65537));await assert.rejects(f.ocr.read(base,f.file()));assert.equal(f.sellInput.events.length,0);
+ f.context.fetch=async()=>Response.json(ocrResponse([]));assert.equal((await f.ocr.read(base,f.file())).candidates.length,0);assert.throws(()=>f.ocr.apply(base,ocrCandidate()),error=>error.code==='INVALID_DATA');
+});
+test('clearing or replacing an in-flight OCR read prevents stale candidate acceptance',async()=>{
+ const f=ocrFixture(),base=f.ocr.context(),entered=deferred(),release=deferred();f.context.fetch=async()=>{entered.resolve();return release.promise;};
+ const pending=f.ocr.read(base,f.file()).catch(error=>error);await entered.promise;f.ocr.clear(base);release.resolve(Response.json(ocrResponse()));assert.equal((await pending).code,'OCR_CANCELLED');
+ assert.throws(()=>f.ocr.apply(base,ocrCandidate()),error=>error.code==='INVALID_DATA');
+ f.context.fetch=async()=>Response.json(ocrResponse());assert.equal((await f.ocr.read(base,f.file())).candidates[0].priceWon,54900000);
+});
+test('OCR scope changes during session lookup never start an image upload',async()=>{
+ const f=ocrFixture(),base=f.ocr.context(),gate=deferred();f.S.client.auth.getSession=()=>gate.promise;const pending=f.ocr.read(base,f.file()).catch(error=>error);
+ f.context.currentUser={...f.context.currentUser};gate.resolve({data:{session:{access_token:f.token,user:{id:USER}}},error:null});assert.equal((await pending).code,'CONTEXT_CHANGED');assert.equal(f.ocrCalls.length,0);
+});
+test('OCR draft application preserves dealer and admin authority while denying accountant, sold and pending writes',async()=>{
+ const admin=ocrFixture({role:'admin',owner:OTHER}),adminBase=admin.ocr.context(),adminData=await admin.ocr.read(adminBase,admin.file());assert.equal(admin.ocr.apply(adminBase,adminData.candidates[0]).ok,true);assert.equal(admin.calls.length,0);
+ const accountant=ocrFixture({role:'accountant',owner:OTHER}),readBase=accountant.ocr.context(),readData=await accountant.ocr.read(readBase,accountant.file());assert.throws(()=>accountant.ocr.apply(readBase,readData.candidates[0]),error=>error.code==='FORBIDDEN');
+ for(const change of[f=>{f.context.cars[0].status='판매완료';},f=>{f.S.saving=true;},f=>{f.S.queue.add(key(USER));},f=>{f.S.conflict=true;},f=>{f.context.snoteVehicleSaveTask={};}]){
+  const f=ocrFixture(),base=f.ocr.context(),data=await f.ocr.read(base,f.file());change(f);assert.throws(()=>f.ocr.apply(base,data.candidates[0]));assert.equal(f.sellInput.events.length,0);
+ }
+});
