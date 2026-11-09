@@ -508,7 +508,10 @@
     document.head.append(style);
     bar = document.createElement('div');
     bar.className = 'snote-encar-tools';
-    button = document.createElement('button');
+    // Keep the header control in the page itself, so slow asset loading never
+    // removes the action. Reuse it here; older pages still get the same fallback.
+    button = document.getElementById('vehicle-encar-check') || document.createElement('button');
+    button.id = 'vehicle-encar-check';
     button.type = 'button';
     button.className = 'snote-encar-button vehicle-header-action';
     renderLookupButton();

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.107">
+<html lang="ko" data-snote-release="2.108">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -3335,6 +3335,7 @@ button, input, select, textarea { font-family: inherit; }
     <div class="vehicle-header"><div class="vehicle-heading">
       <p class="vehicle-eyebrow" hidden></p>
       <div class="vehicle-heading-row"><div class="vehicle-name-links"><h2 id="vehicle-title">차량 상세</h2></div><div class="vehicle-header-actions" id="vehicle-header-actions" role="group" aria-label="차량 작업">
+        <button type="button" class="snote-encar-button vehicle-header-action" id="vehicle-encar-check" aria-label="엔카광고보기" data-tooltip="엔카광고보기" disabled><img class="snote-encar-wordmark" src="assets/encar-wordmark.png?v=2.73" width="34" height="17" alt="" aria-hidden="true" draggable="false"></button>
         <button type="button" class="vehicle-header-action quote-launch" onclick="openQuotePreview()" aria-label="견적서" data-tooltip="견적서"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8zM14 3v5h5M9 12h6M9 16h6"/></svg></button>
         <button type="button" class="vehicle-header-action contract-launch" onclick="openSaleProgress()" aria-label="판매진행" data-tooltip="판매진행"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M13 19H6v.7a1.3 1.3 0 0 1-2.6 0V18A3 3 0 0 1 2 15.5v-3a4.3 4.3 0 0 1 1.1-2.9l-.5-.1a1.1 1.1 0 0 1 .3-2.2h1L5.5 4a2.8 2.8 0 0 1 2.6-1.7h5A2.8 2.8 0 0 1 15.7 4l1.6 3.3h1a1.1 1.1 0 0 1 .3 2.2l-.5.1a4.3 4.3 0 0 1 1.1 2.9V14"/><path d="m5 10 1.9-4.2a1.1 1.1 0 0 1 1-.6h5.4a1.1 1.1 0 0 1 1 .6l1.9 4.2ZM5.2 14h2.3m4 0h2.3"/><circle cx="18.1" cy="17.7" r="4.9" fill="#fff8e7" stroke="#b49968" stroke-width="1.5"/><path d="m15.8 15.8 1.1 3.6 1.2-3.6 1.2 3.6 1.1-3.6m-5 1.7h5.4" stroke="#b49968" stroke-width="1.15"/></svg></button>
         <button type="button" class="vehicle-header-action vehicle-header-save" id="vehicle-header-save" onclick="saveVehicleCosts()" aria-label="저장" data-tooltip="변경사항저장"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 3h12l4 4v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2ZM7 3v6h9V3M7 21v-7h10v7M13 5v2"/></svg></button>
@@ -6454,7 +6455,7 @@ async function closeContractPreview(options={}){
 }
 function resizeContractPreview(){const paper=$('contract-paper');if(!$('contract-overlay').classList.contains('open')||!paper)return;const width=paper.closest('.snote-popup-card')?.clientWidth||window.innerWidth-68;paper.style.setProperty('--contract-scale',Math.max(.1,Math.min(1,width/794)));}
 window.addEventListener('resize',resizeContractPreview);
-async function printContract(){if(!$('contract-overlay').classList.contains('open'))return;const loadingActor=currentUser,loadingCar=contractCarId,loadingView=snote214ContractView;if(!await snote251ContractCustomerTask)return;if(currentUser!==loadingActor||contractCarId!==loadingCar||snote214ContractView!==loadingView||!$('contract-overlay').classList.contains('open'))return;if(!ctCompanyFieldsFit())return;if(ctReadMoney('ct-deposit')+ctReadMoney('ct-interim')>ctReadMoney('ct-total-price')){toast('계약금과 중도금의 합계가 매매금액을 초과합니다.');return}if(!$('ct-contract-date').value||!$('ct-plate').value.trim()||!$('ct-seller-name').value.trim()||!$('ct-buyer-name').value.trim()){toast('계약일·차량번호·매도인·매수인을 입력해주세요.');return}if(!fitContractSpecial()){toast('특약사항이 A4 출력 공간을 초과합니다. 내용을 조금 줄여주세요.');$('ct-special').focus();return}const actor=currentUser,car=contractCarId,view=snote214ContractView;await snote95DocumentLogoReady;if(currentUser!==actor||contractCarId!==car||snote214ContractView!==view||!$('contract-overlay').classList.contains('open'))return;if(window.snote222ContractSignature&&!await window.snote222ContractSignature.ready()){toast('고객 서명 표시를 확인한 뒤 다시 인쇄해 주세요.');return}if(currentUser!==actor||contractCarId!==car||snote214ContractView!==view||!$('contract-overlay').classList.contains('open'))return;buildContractPrintPages();if(typeof zc75ScheduleContractSave==='function')zc75ScheduleContractSave(true);window.print()}
+async function printContract(){if(!$('contract-overlay').classList.contains('open'))return;const loadingActor=currentUser,loadingCar=contractCarId,loadingView=snote214ContractView;if(!await snote251ContractCustomerTask)return;if(currentUser!==loadingActor||contractCarId!==loadingCar||snote214ContractView!==loadingView||!$('contract-overlay').classList.contains('open'))return;if(!ctCompanyFieldsFit())return;if(ctReadMoney('ct-deposit')+ctReadMoney('ct-interim')>ctReadMoney('ct-total-price')){toast('계약금과 중도금의 합계가 매매금액을 초과합니다.');return}if(!$('ct-contract-date').value||!$('ct-plate').value.trim()||!$('ct-seller-name').value.trim()){toast('계약일·차량번호·매도인을 입력해주세요.');return}if(!fitContractSpecial()){toast('특약사항이 A4 출력 공간을 초과합니다. 내용을 조금 줄여주세요.');$('ct-special').focus();return}const actor=currentUser,car=contractCarId,view=snote214ContractView;await snote95DocumentLogoReady;if(currentUser!==actor||contractCarId!==car||snote214ContractView!==view||!$('contract-overlay').classList.contains('open'))return;if(window.snote222ContractSignature&&!await window.snote222ContractSignature.ready()){toast('고객 서명 표시를 확인한 뒤 다시 인쇄해 주세요.');return}if(currentUser!==actor||contractCarId!==car||snote214ContractView!==view||!$('contract-overlay').classList.contains('open'))return;buildContractPrintPages();if(typeof zc75ScheduleContractSave==='function')zc75ScheduleContractSave(true);window.print()}
 
 
 /* v1.27: label-oriented VIN OCR, runs entirely in the browser. No full OCR text is retained. */
@@ -7976,11 +7977,9 @@ async function zc76CloseReceipt(options={}){
 }
 async function zc76PrintReceipt(){
  if(!zc76ReceiptOpen)return;
- const required=['zc76-car','zc76-name','zc76-address'];
+ const required=['zc76-car'];
  const missing=required.find(id=>!document.getElementById(id).value.trim());
- if(missing){toast('차량·고객 성명·등본상 주소를 먼저 확인하세요.');document.getElementById(missing).focus();return}
- const id=document.getElementById('zc76-rrn').value.trim();
- if(!id && !confirm('주민번호가 비어 있습니다. 암호화된 주민번호를 불러오지 못했습니다. 빈칸으로 출력할까요?')){document.getElementById('zc76-rrn').focus();return}
+ if(missing){toast('차량 정보를 먼저 확인하세요.');document.getElementById(missing).focus();return}
  const actor=currentUser,carId=zc80ReceiptCarId,view=snote214ReceiptView;
  if(!await snote252ReceiptSignatureTask)return;
  if(window.snote250ReceiptSignature&&!await window.snote250ReceiptSignature.ready()){toast('고객 서명 표시를 확인한 뒤 다시 인쇄해 주세요.');return;}
@@ -10370,11 +10369,11 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 <script type="module" src="assets/income-settlement-parent.js?v=2.85"></script>
 <script src="assets/vehicle-sharing.js?v=2.107" defer></script>
 <script src="assets/shared-vehicle-markers.js?v=2.87" defer></script>
-<script src="assets/release-info.js?v=2.107" defer></script>
+<script src="assets/release-info.js?v=2.108" defer></script>
 <script src="assets/company-purchase.js?v=2.77" defer></script>
 <script src="assets/recycle-bin.js?v=2.77" defer></script>
 <script src="assets/profile-editor.js?v=2.102" defer></script>
-<script src="assets/snote-encar-link.js?v=2.74" defer></script>
+<script src="assets/snote-encar-link.js?v=2.108" defer></script>
 <script src="assets/document-mms.js?v=2.44" defer></script>
 <script src="assets/workspace-polish.js?v=2.77" defer></script>
 <script src="assets/list-sort.js?v=2.57" defer></script>

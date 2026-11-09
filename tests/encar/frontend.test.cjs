@@ -74,7 +74,7 @@ function fixture(t, options = {}) {
     <div id="zc-cloud-gate" hidden></div><div id="zc86-topbar"></div>
     <button id="zc-cloud-status" hidden>클라우드 연결됨</button>
     <section id="vehicle-overlay" class="overlay open">
-      <header><p id="vehicle-meta">원래 차량 정보</p>${options.headerActions ? '<div id="vehicle-header-actions" role="group" aria-label="차량 작업"><button id="original-action" type="button">견적서</button></div>' : ''}<button id="original-close">닫기</button></header>
+      <header><p id="vehicle-meta">원래 차량 정보</p>${options.headerActions ? '<div id="vehicle-header-actions" role="group" aria-label="차량 작업">'+(options.staticButton?'<button id="vehicle-encar-check" data-existing-header-control="true" type="button" disabled>광고 확인</button>':'')+'<button id="original-action" type="button">견적서</button></div>' : ''}<button id="original-close">닫기</button></header>
       <div id="original-detail">원래 상세 본문</div>
     </section></body></html>`, {
     url: 'https://snote.test/',
@@ -830,4 +830,18 @@ test('46 isolated waiting tab contains the requested styled message and reduced-
 });
 test('47 failed recheck retains only previously saved verified URLs and its failure message', async t => {
  const f=fixture(t,{bridge:true,savedRecord:storedRecord()});f.click();await settle();f.reply(0,{status:'error',diagnostics:{code:'DETAIL_BLOCKED'}},{status:502});await settle();assert.deepEqual(f.links.map(a=>a.href),[listing().sellerUrl,listing().trustedUrl]);assert.equal(f.note.dataset.error,'true');assert.match(f.note.textContent,/제한/);assert.equal(f.tabs[0].closed,true);
+});
+test('48 reuses the permanent header action without duplicate controls and restores it after viewing a sold vehicle', async t => {
+ const f=fixture(t,{headerActions:true,staticButton:true,ready:false});
+ assert.equal(f.button.id,'vehicle-encar-check');
+ assert.equal(f.button.dataset.existingHeaderControl,'true','Mount must preserve the page control rather than replacing it');
+ assert.equal(f.w.document.querySelectorAll('#vehicle-encar-check,.snote-encar-button').length,1);
+ assert.equal(f.button.parentElement.id,'vehicle-header-actions');assertLookupIcon(f.button);
+ assert.equal(f.button.disabled,true,'The permanent action cannot bypass online authentication');
+ f.state.ready=true;f.w.SnoteEncarLink.refresh();assert.equal(f.button.disabled,false);
+ f.w.cars[0].status='판매완료';f.w.SnoteEncarLink.refresh();assert.equal(f.button.hidden,true);
+ f.w.cars[0].status='판매중';f.w.SnoteEncarLink.refresh();assert.equal(f.button.hidden,false);
+ f.w.eval(SOURCE);assert.equal(f.w.document.querySelectorAll('.snote-encar-button').length,1);
+ f.click();await settle();f.reply(0,found());await settle();
+ assert.deepEqual(f.tabs[0].navigations,[listing().sellerUrl]);
 });

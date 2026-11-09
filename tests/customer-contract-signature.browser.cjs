@@ -16,8 +16,8 @@ let browser;
 fs.mkdirSync(ARTIFACTS,{recursive:true});
 
 async function fixture(width=1440){
- const context=await browser.newContext({viewport:{width,height:1000}}),page=await context.newPage(),external=[],blocked=[],errors=[];
- page.setDefaultTimeout(15000);page.on('pageerror',error=>errors.push(error.message));page.on('dialog',dialog=>dialog.accept());
+ const context=await browser.newContext({viewport:{width,height:1000}}),page=await context.newPage(),external=[],blocked=[],errors=[],dialogs=[];
+ page.setDefaultTimeout(15000);page.on('pageerror',error=>errors.push(error.message));page.on('dialog',dialog=>{dialogs.push(dialog.message());return dialog.accept();});
  await context.route('**/*',async route=>{
   const url=new URL(route.request().url());
   if(url.origin!==ORIGIN){external.push(url.href);return route.abort();}
@@ -38,6 +38,8 @@ async function fixture(width=1440){
  await page.waitForFunction(()=>!!window.snote222ContractSignature&&typeof window.snoteCustomerSignatureImage==='function');
  await page.evaluate(async signatures=>{
   const sample=await getAccount('dealer2');if(!sample)throw Error('Existing local sample account is required');await enterWorkspace(sample);
+  // Local records use customer navigation; purchase navigation requires a real cloud scope.
+  navigate('users');
   document.getElementById('zc-cloud-gate').hidden=true;
   cars=[1,2,3].map(number=>({id:'signature-car-'+number,ownerId:currentUser.username,model:'서명 검증 차량 '+number,plate:'000가'+String(number).padStart(4,'0'),year:2026,km:'10,000',color:'흰색',buy:1000,sell:1200,status:'판매중'}));
   localStorage.setItem(carsStoreKey(currentUser.username),JSON.stringify(cars));
@@ -48,7 +50,7 @@ async function fixture(width=1440){
   }
   window.print=()=>{window.__signatureFixturePrints=(window.__signatureFixturePrints||0)+1;};
  },[SIGNATURE,SECOND_SIGNATURE]);
- return {context,page,external,blocked,errors};
+ return {context,page,external,blocked,errors,dialogs};
 }
 async function saleContract(page,id='signature-car-1'){
  await page.evaluate(async id=>{openVehicle(id);await openSaleProgress();},id);
@@ -156,6 +158,36 @@ async function finish(f){assert.deepEqual(f.external,[],'No external network may
    await p.evaluate(async()=>{window.__signatureDirectRelease();await window.__signatureDirectPrint;zc72ReadCar=window.__signatureDirectRead;});assert.equal(await p.evaluate(()=>window.__signatureFixturePrints),printBefore+1);await assertShown(p);
    await p.evaluate(async()=>{await closeContractPreview({discard:true});zc72ReadCar=async(...args)=>{const record=await window.__signatureDirectRead(...args);if(args[1]==='signature-car-1')await new Promise(resolve=>window.__signatureDirectRelease=resolve);return record;};window.__signatureDirectRelease=null;openVehicle('signature-car-1');openContractPreview();});await p.waitForFunction(()=>typeof window.__signatureDirectRelease==='function');
    await p.evaluate(async()=>{openVehicle('signature-car-2');openContractPreview();await snote251ContractCustomerTask;window.__signatureDirectRelease();zc72ReadCar=window.__signatureDirectRead;});await p.waitForTimeout(100);await assertHidden(p,{erased:true});assert.equal(await p.locator('#ct-buyer-name').inputValue(),'서명 없는 고객');await finish(f);console.log('PASS direct contract hydrates its saved customer signature exactly over (인), preserves edits during lookup and ignores an old vehicle response');
+  }
+  for(const width of[1440,390,320]){
+   const f=await fixture(width),p=f.page;
+   await p.evaluate(async()=>{cars.push({id:'blank-buyer-car',ownerId:currentUser.username,model:'공란 출력 검증 차량',plate:'12가3456',year:2026,buy:1000,sell:1200,status:'판매중'});openVehicle('blank-buyer-car');await openSaleProgress();});
+   assert.equal(await p.locator('#zc72-name').inputValue(),'');
+   for(const partial of[false,true]){
+    if(partial)await p.locator('#zc72-phone').fill('01012345678');
+    await p.locator('#zc72-print-button').click();await p.locator('#contract-overlay.open').waitFor();
+    for(const id of['ct-buyer-name','ct-buyer-id','ct-buyer-address'])assert.equal(await p.locator('#'+id).inputValue(),'');
+    assert.equal((await p.locator('#ct-buyer-phone').inputValue()).replace(/\D/g,''),partial?'01012345678':'');await assertHidden(p,{erased:true});
+    const before=await p.evaluate(()=>window.__signatureFixturePrints||0),dialogs=f.dialogs.length;
+    await p.locator('#contract-overlay [data-document-print]').click();await p.waitForFunction(n=>window.__signatureFixturePrints===n+1,before);
+    assert.equal(f.dialogs.length,dialogs,'Blank customer fields must print without a confirmation');
+    assert.equal(await p.locator('#contract-print-pages .ct-party input').evaluateAll(es=>es.filter(e=>e.id).length),0);
+    if(width===1440&&!partial){const pdf=await p.pdf({format:'A4',printBackground:true,preferCSSPageSize:true,path:path.join(ARTIFACTS,'blank-buyer-contract.pdf')});assert.equal((pdf.toString('latin1').match(/\/Type\s*\/Page\b/g)||[]).length,2);}
+    await p.evaluate(()=>closeContractPreview());await p.locator('#zc72-sale-modal').waitFor({state:'visible'});
+    assert.equal(await p.locator('#zc72-name').inputValue(),'');
+    await p.getByRole('button',{name:'인수증 출력',exact:true}).click();await p.locator('#zc76-receipt-overlay').waitFor({state:'visible'});
+    for(const id of['zc76-name','zc76-rrn','zc76-address','zc76-sign-name'])assert.equal(await p.locator('#'+id).inputValue(),'');
+    assert.equal((await p.locator('#zc76-phone').inputValue()).replace(/\D/g,''),partial?'01012345678':'');assert.equal(await p.locator('#snote215-receipt-signature-image').getAttribute('src'),null);
+    const receiptBefore=await p.evaluate(()=>window.__signatureFixturePrints),receiptDialogs=f.dialogs.length;
+    await p.locator('#zc76-receipt-overlay [data-document-print]').click();await p.waitForFunction(n=>window.__signatureFixturePrints===n+1,receiptBefore);
+    assert.equal(f.dialogs.length,receiptDialogs,'A missing buyer identity must not show a confirmation');
+    if(width===1440&&!partial){const pdf=await p.pdf({format:'A4',printBackground:true,preferCSSPageSize:true,path:path.join(ARTIFACTS,'blank-buyer-receipt.pdf')});assert.equal((pdf.toString('latin1').match(/\/Type\s*\/Page\b/g)||[]).length,1);}
+    await p.evaluate(()=>zc76CloseReceipt());await p.locator('#zc72-sale-modal').waitFor({state:'visible'});
+    assert.equal(await p.locator('#zc72-name').inputValue(),'');assert.equal((await p.locator('#zc72-phone').inputValue()).replace(/\D/g,''),partial?'01012345678':'');
+   }
+   assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+   await p.screenshot({path:path.join(ARTIFACTS,'blank-buyer-return-'+width+'.png')});await finish(f);
+   console.log('PASS '+width+' empty/partial buyer via actual sale buttons prints blank contract/receipt without confirmation or stale signature; A4 copies and sale return preserved');
   }
   for(const width of[1440,390,320]){
    const f=await fixture(width),p=f.page;

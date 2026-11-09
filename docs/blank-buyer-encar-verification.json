@@ -1,0 +1,85 @@
+{
+  "release": "2.108",
+  "baseCommit": "be410380ae117e7af7d345f4258f70159b8a5923",
+  "documents": {
+    "blankBuyerFieldsAllowed": true,
+    "partialBuyerFieldsPreserved": true,
+    "noEmptyIdentityConfirmation": true,
+    "remainingValidation": [
+      "contract date, vehicle plate and seller name",
+      "receipt vehicle",
+      "existing amounts, special terms, company text and A4 bounds",
+      "current actor/car/document session and signature readiness"
+    ],
+    "unchanged": [
+      "customer save and identity encryption",
+      "signature source, name binding and transparent image",
+      "contract print copies and receipt document",
+      "sale dialog return and stale context guards"
+    ]
+  },
+  "encar": {
+    "permanentControl": "vehicle-encar-check",
+    "headerControlReused": true,
+    "legacyDynamicFallback": true,
+    "scriptCacheVersion": "2.108",
+    "priorDisappearanceReproduced": false,
+    "preserved": [
+      "authenticated lookup and loading tab",
+      "server-verified URLs and scoped database save",
+      "saved links on reopening without an extra query",
+      "failure does not erase saved links",
+      "lookup button hidden for sold vehicles and restored for inventory"
+    ]
+  },
+  "validation": {
+    "unitTests": {
+      "customerSignature": 15,
+      "salePopupReturn": 7,
+      "encarFrontend": 99,
+      "total": 121
+    },
+    "inlineScripts": 7,
+    "diffCheck": "pass",
+    "browser": {
+      "blankAndPartialBuyerWidths": [
+        1440,
+        390,
+        320
+      ],
+      "actualPrintButtons": true,
+      "noEmptyBuyerDialog": true,
+      "contractPdfPages": 2,
+      "receiptPdfPages": 1,
+      "existingSignatureRegression": true,
+      "transparentSignaturePdf": true,
+      "documentControlsViewports": [
+        [
+          1440,
+          950
+        ],
+        [
+          390,
+          950
+        ],
+        [
+          320,
+          950
+        ],
+        [
+          320,
+          640
+        ]
+      ],
+      "encarWidths": [
+        1440,
+        390,
+        320
+      ]
+    },
+    "syntheticAccountsAndRequestsOnly": true,
+    "noProductionCustomerOrVehicleMutation": true,
+    "noSchemaOrPolicyChange": true
+  },
+  "at": "2026-11-09T05:01:08.700Z"
+}
