@@ -83,7 +83,7 @@ function fixture(t, options = {}) {
   });
   const w = dom.window;
   const state = { ready: options.ready ?? true, canWrite: options.canWrite ?? true, storageScope: 'fixture-company' };
-  const events = [], openCalls = [], tabs = [], requests = [], saveCalls = [];
+  const events = [], openCalls = [], tabs = [], requests = [], saveCalls = [], applyCalls = [];
   w.cars = plain(options.cars || [{ id: 'car-1', plate: PLATE }, { id: 'car-2', plate: SECOND_PLATE }]);
   if (options.savedRecord !== undefined) w.cars[0].encarLinks = plain(options.savedRecord);
   w.activeCarId = 'car-1';
@@ -107,6 +107,10 @@ function fixture(t, options = {}) {
         const plate = String(car.plate || '').normalize('NFKC').replace(/[\s-]/g, '');
         return { key: [state.storageScope, w.currentUser.username, carId, plate, car.ownerId || 'fixture-owner'].join(':'),
           carId, plate, canWrite: state.canWrite, companyId: state.storageScope, userId: w.currentUser.username };
+      },
+      applyPrice(base, record, listingId) {
+        const call = {base: plain(base), record: plain(record), listingId}; applyCalls.push(call);
+        return options.applyPrice ? options.applyPrice(call.base, call.record, listingId) : {ok:true, priceWon:record.listings.find(item=>item.id===listingId)?.priceWon, saved:false};
       },
       save(base, record) {
         const target = w.cars.find(item => String(item.id) === base.carId);
@@ -163,7 +167,7 @@ function fixture(t, options = {}) {
   t.after(() => { w.close(); assert.equal(errors.length, 0, 'No unhandled DOM errors'); });
 
   return {
-    w, state, events, openCalls, tabs, requests, saveCalls, button,
+    w, state, events, openCalls, tabs, requests, saveCalls, applyCalls, button,
     originalOpenVehicle, originalCloseVehicle,
     get note() { return w.document.querySelector('.snote-encar-note'); },
     get links() { return [...w.document.querySelectorAll('.snote-encar-results a')]; },
@@ -174,6 +178,9 @@ function fixture(t, options = {}) {
     get copyStatus() { return w.document.querySelector('.snote-encar-copy-status'); },
     get saveStatus() { return w.document.querySelector('.snote-encar-save-status'); },
     get saveRetry() { return w.document.querySelector('.snote-encar-save-retry'); },
+    get priceControls() { return [...w.document.querySelectorAll('.snote-encar-price-apply')]; },
+    get prices() { return [...w.document.querySelectorAll('.snote-encar-price-value')]; },
+    get priceFeedback() { return w.document.querySelector('.snote-encar-price-feedback'); },
     closeDetail() { w.document.getElementById('vehicle-overlay').classList.remove('open'); },
     reopenDetail() { w.document.getElementById('vehicle-overlay').classList.add('open'); },
     click() { button.click(); },
@@ -844,4 +851,72 @@ test('48 reuses the permanent header action without duplicate controls and resto
  f.w.eval(SOURCE);assert.equal(f.w.document.querySelectorAll('.snote-encar-button').length,1);
  f.click();await settle();f.reply(0,found());await settle();
  assert.deepEqual(f.tabs[0].navigations,[listing().sellerUrl]);
+});
+
+function pricedListing(priceWon=37770000,checkedAt=new Date(Date.now()-3600000).toISOString(),id='43000001') {
+ return {...listing(id,null),priceWon,priceCheckedAt:checkedAt,priceSource:'encar-api.com',priceStatus:'verified'};
+}
+
+test('49 exact KRW advertisement prices and Korean observation time persist before an explicit draft-only price action', async t => {
+ const saved=deferred(),f=fixture(t,{bridge:true,save:()=>saved.promise}),item=pricedListing();
+ f.w.cars[0].sell=12000000;const before=JSON.stringify(f.w.cars[0]);f.click();await settle();f.reply(0,found(PLATE,[item]));await settle();
+ assert.equal(f.prices[0].textContent,'엔카 광고가 37,770,000원');assert.equal(f.priceControls.length,1);assert.equal(f.priceControls[0].disabled,true);
+ assert.equal(JSON.stringify(f.w.cars[0]),before,'An advertisement price never automatically replaces the vehicle selling price');
+ f.priceControls[0].dispatchEvent(new f.w.MouseEvent('click'));await settle();assert.equal(f.applyCalls.length,0,'Programmatic clicks cannot bypass a pending storage ACK');
+ assert.equal(f.saveCalls[0].record.listings[0].priceWon,37770000);assert.equal(f.saveCalls[0].record.listings[0].priceSource,'encar-api.com');
+ const checked=f.w.document.querySelector('.snote-encar-price-checked');assert.equal(checked.getAttribute('datetime'),item.priceCheckedAt);
+ assert.equal(checked.textContent,new Intl.DateTimeFormat('ko-KR',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date(item.priceCheckedAt))+' 확인');
+ saved.resolve({ok:true});await settle();assert.equal(f.priceControls[0].disabled,false);assert.equal(f.w.cars[0].sell,12000000);
+ f.priceControls[0].click();await settle();assert.equal(f.applyCalls.length,1);assert.equal(f.applyCalls[0].listingId,item.id);assert.equal(f.applyCalls[0].record.listings[0].priceWon,37770000);
+ assert.match(f.priceFeedback.textContent,/판매예정가에 입력했습니다/);assert.match(f.priceFeedback.textContent,/저장 아이콘/);assert.equal(f.w.cars[0].sell,12000000,'Only the real bridge may edit the explicit input draft');
+});
+
+test('50 missing, malformed or untrusted price metadata never displays or applies a misleading amount while links survive',async t=>{
+ const older=new Date(Date.now()-3600000).toISOString();
+ const mutations=[{priceWon:0},{priceWon:-1},{priceWon:1.5},{priceWon:1000000000001},{priceWon:'37770000'},
+  {priceWon:null},{priceSource:'evil.test'},{priceSource:null},{priceCheckedAt:'invalid'},
+  {priceCheckedAt:'2026-02-30'},{priceCheckedAt:'2026-01-01T09:00:00+09:00'},{priceCheckedAt:'2026-01-01T00:00:00Z'},
+  {priceCheckedAt:new Date(Date.now()+120000).toISOString()},{priceCheckedAt:new Date(Date.parse(older)+120000).toISOString(),older},
+  {priceStatus:'estimated'},{priceStatus:'unavailable'},{priceStatus:null}];
+ for(const [index,patch]of mutations.entries())await t.test(String(index),async sub=>{
+  const record=storedRecord([{...pricedListing(),...patch}]);if(patch.older)record.verifiedAt=patch.older;
+  const f=fixture(sub,{bridge:true,savedRecord:record});assert.equal(f.links.length,1);assert.equal(f.prices[0].textContent,'광고 가격 확인 불가');assert.equal(f.priceControls.length,0);assert.equal(f.applyCalls.length,0);
+ });
+ const legacy=fixture(t,{bridge:true,savedRecord:storedRecord()});assert.equal(legacy.links.length,2);assert.equal(legacy.prices.length,0);assert.equal(legacy.priceControls.length,0);
+});
+
+test('51 the same advertisement URLs re-render changed price and checked time from the saved record',async t=>{
+ const first=pricedListing(),f=fixture(t,{bridge:true,savedRecord:storedRecord([first])});assert.equal(f.priceControls[0].disabled,false);
+ const updated=pricedListing(41234567,new Date(Date.now()-1800000).toISOString());f.w.cars[0].encarLinks=storedRecord([updated]);f.w.SnoteEncarLink.refresh();
+ assert.equal(f.prices[0].textContent,'엔카 광고가 41,234,567원');assert.equal(f.w.document.querySelector('.snote-encar-price-checked').getAttribute('datetime'),updated.priceCheckedAt);assert.equal(f.priceControls.length,1);
+ f.priceControls[0].click();await settle();assert.equal(f.applyCalls[0].record.listings[0].priceWon,41234567);assert.equal(f.requests.length,0);
+});
+
+test('52 failed price metadata storage keeps the amount visible but disables applying until a confirmed retry',async t=>{
+ const f=fixture(t,{bridge:true,save:(_b,_r,index)=>({ok:index>0})});f.click();await settle();f.reply(0,found(PLATE,[pricedListing()]));await settle();
+ assert.equal(f.priceControls[0].disabled,true);assert.equal(f.saveRetry.hidden,false);f.priceControls[0].dispatchEvent(new f.w.MouseEvent('click'));await settle();assert.equal(f.applyCalls.length,0);
+ f.saveRetry.click();await settle();assert.equal(f.priceControls[0].disabled,false);assert.equal(f.requests.length,1);assert.equal(f.saveCalls.length,2);
+});
+
+test('53 read-only staff and sold vehicles can see stored prices but cannot apply them',async t=>{
+ const readonly=fixture(t,{bridge:true,canWrite:false,savedRecord:storedRecord([pricedListing()])});assert.equal(readonly.prices[0].textContent,'엔카 광고가 37,770,000원');assert.equal(readonly.priceControls[0].hidden,true);
+ readonly.priceControls[0].dispatchEvent(new readonly.w.MouseEvent('click'));await settle();assert.equal(readonly.applyCalls.length,0);
+ const sold=fixture(t,{bridge:true,savedRecord:storedRecord([pricedListing()])});sold.w.cars[0].status='판매완료';sold.w.SnoteEncarLink.refresh();assert.equal(sold.priceControls[0].hidden,true);sold.priceControls[0].dispatchEvent(new sold.w.MouseEvent('click'));await settle();assert.equal(sold.applyCalls.length,0);
+ sold.w.cars[0].status='판매중';sold.w.SnoteEncarLink.refresh();assert.equal(sold.priceControls[0].hidden,false);assert.equal(sold.priceControls[0].disabled,false);
+});
+
+test('54 applying is single flight and a stale account or changed price ignores late acknowledgements',async t=>{
+ for(const change of['account','company','price','closed'])await t.test(change,async sub=>{
+  const held=deferred(),f=fixture(sub,{bridge:true,savedRecord:storedRecord([pricedListing()]),applyPrice:()=>held.promise});
+  f.priceControls[0].click();await settle();assert.equal(f.applyCalls.length,1);assert.equal(f.priceControls[0].disabled,true);f.priceControls[0].dispatchEvent(new f.w.MouseEvent('click'));assert.equal(f.applyCalls.length,1);
+  if(change==='account')f.w.currentUser={username:'other'};if(change==='company')f.state.storageScope='other-company';if(change==='price')f.w.cars[0].encarLinks=storedRecord([pricedListing(42000000)]);if(change==='closed')f.closeDetail();
+  f.w.SnoteEncarLink.refresh();held.resolve({ok:true,priceWon:37770000,saved:false});await settle();
+  assert.equal([...f.w.document.querySelectorAll('.snote-encar-price-feedback')].some(e=>/입력했습니다/.test(e.textContent)),false);
+ });
+});
+
+test('55 a failed or malformed draft response keeps the verified price and never promises that it was saved',async t=>{
+ for(const response of[{ok:false},{ok:true,priceWon:37770001,saved:false},{ok:true,priceWon:37770000,saved:true}])await t.test(JSON.stringify(response),async sub=>{
+  const f=fixture(sub,{bridge:true,savedRecord:storedRecord([pricedListing()]),applyPrice:()=>response});f.priceControls[0].click();await settle();assert.match(f.priceFeedback.textContent,/입력하지 못/);assert.equal(f.priceFeedback.dataset.error,'true');assert.equal(f.prices[0].textContent,'엔카 광고가 37,770,000원');assert.equal(f.priceControls[0].disabled,false);
+ });
 });

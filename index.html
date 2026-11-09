@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.108">
+<html lang="ko" data-snote-release="2.109">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -9154,6 +9154,21 @@ function snoteEncarLinksCheck(base,sequence){
  if(!now.canWrite)throw snoteEncarLinksError('FORBIDDEN','담당 딜러 또는 관리자만 엔카 광고를 저장할 수 있습니다.');
  return now;
 }
+function snoteEncarLinksPrice(item,verifiedAt){
+ const fields=['priceWon','priceCheckedAt','priceSource','priceStatus'];
+ if(!fields.some(key=>Object.hasOwn(item,key)))return {};
+ const invalid=()=>{throw snoteEncarLinksError('INVALID_DATA','엔카 광고가격과 확인 시각을 다시 확인해 주세요.');};
+ if(!fields.every(key=>Object.hasOwn(item,key)))invalid();
+ if(item.priceStatus==='unavailable'){
+  if(item.priceWon!==null||item.priceCheckedAt!==null||item.priceSource!==null)invalid();
+  return {priceWon:null,priceCheckedAt:null,priceSource:null,priceStatus:'unavailable'};
+ }
+ if(item.priceStatus!=='verified'||!Number.isSafeInteger(item.priceWon)||item.priceWon<=0||item.priceWon>1000000000000||
+  !['encar.com','encar-api.com'].includes(item.priceSource)||typeof item.priceCheckedAt!=='string')invalid();
+ const date=new Date(item.priceCheckedAt);
+ if(!Number.isFinite(date.getTime())||date.toISOString()!==item.priceCheckedAt||date.getTime()>Date.now()+60000||date.getTime()>Date.parse(verifiedAt)+60000)invalid();
+ return {priceWon:item.priceWon,priceCheckedAt:date.toISOString(),priceSource:item.priceSource,priceStatus:'verified'};
+}
 function snoteEncarLinksRecord(base,value){
  const plain=item=>!!item&&typeof item==='object'&&!Array.isArray(item);
  const id=item=>typeof item==='string'&&/^[1-9][0-9]{0,11}$/.test(item);
@@ -9164,16 +9179,39 @@ function snoteEncarLinksRecord(base,value){
  if(!Number.isFinite(date.getTime())||date.toISOString()!==value.verifiedAt||date.getTime()>Date.now()+60000)invalid();
  const ids=new Set(),listings=[];
  for(const item of value.listings){
-  if(!plain(item)||Object.keys(item).some(key=>!['id','model','sellerUrl','trustedId','trustedUrl'].includes(key))||!id(item.id)||ids.has(item.id)||
+  if(!plain(item)||Object.keys(item).some(key=>!['id','model','sellerUrl','trustedId','trustedUrl','priceWon','priceCheckedAt','priceSource','priceStatus'].includes(key))||!id(item.id)||ids.has(item.id)||
    typeof item.model!=='string'||item.model.length>300||/[\u0000-\u001f\u007f-\u009f]/.test(item.model)||item.sellerUrl!=='https://fem.encar.com/cars/detail/'+item.id)invalid();
   const trustedId=item.trustedId??null,trustedUrl=item.trustedUrl??null;
   if(trustedId===null?trustedUrl!==null:!id(trustedId)||trustedId===item.id||trustedUrl!=='https://fem.encar.com/cars/detail/'+trustedId)invalid();
-  ids.add(item.id);listings.push({id:item.id,model:item.model,sellerUrl:item.sellerUrl,trustedId,trustedUrl});
+  ids.add(item.id);listings.push({id:item.id,model:item.model,sellerUrl:item.sellerUrl,trustedId,trustedUrl,...snoteEncarLinksPrice(item,date.toISOString())});
  }
  return scrub({version:1,plate:base.plate,verifiedAt:date.toISOString(),listings});
 }
 window.snoteEncarLinksBridge={
  context:snoteEncarLinksContext,
+ applyPrice(base,record,listingId){
+  const now=snoteEncarLinksCheck(base);
+  if(now.car.status==='판매완료')throw snoteEncarLinksError('FORBIDDEN','판매 완료 차량에는 광고가를 반영할 수 없습니다.');
+  if(S.saving||S.conflict||S.queue.size||snoteVehicleSaveTask||snoteVehicleCloseTask||snoteVehicleUnconfirmedWrite)
+   throw snoteEncarLinksError('PENDING','진행 중인 차량 저장을 먼저 확인한 뒤 광고가를 반영해 주세요.');
+  const safe=snoteEncarLinksRecord(now,record),stored=snoteEncarLinksRecord(now,now.car.encarLinks);
+  const key=cloudKey('cars',now.ownerId),revision=Number(S.revisions.get(key));
+  if(!Number.isSafeInteger(revision)||revision<1||JSON.stringify(safe)!==JSON.stringify(stored))
+   throw snoteEncarLinksError('CONTEXT_CHANGED','저장된 엔카 광고가격이 변경되었습니다. 다시 확인해 주세요.');
+  let payload;try{payload=JSON.parse(localStorage.getItem(storageKey('cars',now.ownerAlias))||'null');}catch(_){}
+  const matches=Array.isArray(payload)?payload.filter(car=>String(car?.id)===now.carId&&car.ownerId===now.ownerAlias):[];
+  if(matches.length!==1||JSON.stringify(snoteEncarLinksRecord(now,matches[0].encarLinks))!==JSON.stringify(stored))
+   throw snoteEncarLinksError('CONTEXT_CHANGED','엔카 광고의 서버 저장을 먼저 확인해 주세요.');
+  const listing=stored.listings.find(item=>item.id===listingId);
+  if(!listing||listing.priceStatus!=='verified')throw snoteEncarLinksError('INVALID_DATA','확인된 엔카 광고가격이 없습니다.');
+  const input=byId('detail-sell');
+  if(!input||input.disabled||input.readOnly)throw snoteEncarLinksError('FORBIDDEN','현재 차량의 판매예정가를 수정할 수 없습니다.');
+  // Fill only the current price draft. The existing save action retains its
+  // validation, owner CAS, legacy money encoding and other unsaved field edits.
+  input.value=detailMoneyValue(listing.priceWon);
+  input.dispatchEvent(new Event('input',{bubbles:true}));
+  return {ok:true,priceWon:listing.priceWon,saved:false};
+ },
  async save(base,record){
   snoteEncarLinksCheck(base);
   const safe=snoteEncarLinksRecord(base,record),sequence=++snoteEncarLinksSequence;
@@ -10369,11 +10407,11 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 <script type="module" src="assets/income-settlement-parent.js?v=2.85"></script>
 <script src="assets/vehicle-sharing.js?v=2.107" defer></script>
 <script src="assets/shared-vehicle-markers.js?v=2.87" defer></script>
-<script src="assets/release-info.js?v=2.108" defer></script>
+<script src="assets/release-info.js?v=2.109" defer></script>
 <script src="assets/company-purchase.js?v=2.77" defer></script>
 <script src="assets/recycle-bin.js?v=2.77" defer></script>
 <script src="assets/profile-editor.js?v=2.102" defer></script>
-<script src="assets/snote-encar-link.js?v=2.108" defer></script>
+<script src="assets/snote-encar-link.js?v=2.109" defer></script>
 <script src="assets/document-mms.js?v=2.44" defer></script>
 <script src="assets/workspace-polish.js?v=2.77" defer></script>
 <script src="assets/list-sort.js?v=2.57" defer></script>

@@ -10,6 +10,7 @@ const persist=between('function persistCars(ownerId=null){','function dealerLabe
 const reset=between('let snote221IncomeEpoch=0;','function snote221IncomeContext(');
 const reload=between('async function reload(){if(!S.ready)return;','status.addEventListener(\'click\',reload);');
 const scrub=between('function scrub(o){','function cleanCustomer(');
+const detailMoney=between('function readDetailMoney(value){','function detailMoneyField(');
 // Owner authorization is shared with company-purchase views. Execute the real
 // helpers too, so this isolated bridge does not replace that policy with a stub.
 const companyOwners=between('function snoteCompanyActor(){','function snoteCompanyOwnerLabel(');
@@ -29,10 +30,12 @@ function fixture({role='dealer',owner=USER,server:initial}={}){
  let gate=null,failNext=false,ackOverride=false,restores=0;
  const S={ready:true,loading:false,busy:false,user:{id:USER},company:{id:COMPANY},members,companyOwners:new Map(),client:null,revisions:new Map(),queue:new Set(),timer:null,saving:false,conflict:false};
  const overlay={open:true,classList:{contains(name){return name==='open'&&overlay.open;}}};
+ const sellInput={value:'기존 입력',disabled:false,readOnly:false,events:[],dispatchEvent(event){this.events.push({type:event.type,bubbles:event.bubbles});return true;}};
  const storageOwner=k=>members.find(member=>store(member.user_id)===k)?.user_id;
  const context={S,Storage:MemoryStorage,localStorage,snote224VehicleOpen:1,console:{error(){},warn(){}},setTimeout(){return 1;},clearTimeout(){},
   currentUser:{username:alias(USER),role},activeCarId:owner===USER?'car-a':'car-other',cars:[],ownerAlias:alias,
-  byId:id=>id==='vehicle-overlay'?overlay:null,
+  byId:id=>id==='vehicle-overlay'?overlay:id==='detail-sell'?sellInput:null,Event,
+  snoteVehicleSaveTask:null,snoteVehicleCloseTask:null,snoteVehicleUnconfirmedWrite:null,
   isAccountant(){return context.currentUser?.role==='accountant';},isSnoteAdmin(){return context.currentUser?.role==='admin';},
   cloudKey:(dataset,ownerId)=>dataset+':'+ownerId,storageKey:(dataset,ownerId)=>'zerocar-office-v12-cars-'+ownerId,
   carsStoreKey:ownerId=>'zerocar-office-v12-cars-'+(ownerId||context.currentUser?.username),
@@ -61,8 +64,8 @@ function fixture({role='dealer',owner=USER,server:initial}={}){
   const revision=row.revision+1;server.set(key(args.p_owner),{revision,payload:clone(args.p_payload)});events.push('rpc-ack');
   return{data:ackOverride?'invalid-ack':revision,error:null};
  }};
- vm.createContext(context);vm.runInContext(fs.readFileSync(path.resolve(__dirname,'../../assets/money.js'),'utf8'),context);vm.runInContext(companyOwners+scrub+persist+storage+bridge+reset+reload+'\nwindow.flushActual=flush;window.persistActual=persistCars;window.reloadActual=reload;',context);
- return{context,S,server,calls,events,localStorage,bridge:context.snoteEncarLinksBridge,
+ vm.createContext(context);vm.runInContext(fs.readFileSync(path.resolve(__dirname,'../../assets/money.js'),'utf8'),context);vm.runInContext(companyOwners+detailMoney+scrub+persist+storage+bridge+reset+reload+'\nwindow.flushActual=flush;window.persistActual=persistCars;window.reloadActual=reload;',context);
+ return{context,S,server,calls,events,localStorage,sellInput,bridge:context.snoteEncarLinksBridge,
   get restores(){return restores;},hold(){const entry={entered:deferred(),release:deferred()};gate=entry;return entry;},
   failNext(){failNext=true;},invalidAck(){ackOverride=true;},
   view(open){overlay.open=open;if(open)context.snote224VehicleOpen++;},reset(){context.snote221ResetIncome();},
@@ -184,4 +187,49 @@ test('navigation checks real vehicle changes even when OCR has not emitted an in
  vm.runInContext(between('function snotePrepareRouteChange(){',"addEventListener('popstate',snoteRestoreNavigation);"),context);
  assert.equal(context.snotePrepareRouteChange(),false);
  assert.equal(questions.length,1);assert.match(questions[0],/저장하지 않고 화면을 이동/);
+});
+
+const pricedRecord=()=>{const data=record();Object.assign(data.listings[0],{priceWon:28200000,priceCheckedAt:data.verifiedAt,priceSource:'encar-api.com',priceStatus:'verified'});return data;};
+test('price metadata remains integer KRW through actual persistence and reload without changing the planned sale price',async()=>{
+ const f=fixture(),data=pricedRecord(),before=clone(f.server.get(key(USER)).payload);
+ assert.equal((await f.bridge.save(f.bridge.context('car-a'),data)).ok,true);
+ assert.deepEqual(f.serverRecord().encarLinks,data);assert.equal(f.serverRecord().encarLinks.listings[0].priceWon,28200000);
+ assert.deepEqual(f.server.get(key(USER)).payload[1],before[1]);assert.equal(f.serverRecord().sell,undefined);
+ const other=fixture({server:[...f.server]});assert.deepEqual(other.context.cars[0].encarLinks,data);
+});
+test('unavailable price metadata and old link-only records remain valid and cannot populate a price',async()=>{
+ for(const unavailable of[false,true]){const f=fixture(),data=record();if(unavailable)Object.assign(data.listings[0],{priceWon:null,priceCheckedAt:null,priceSource:null,priceStatus:'unavailable'});
+  const base=f.bridge.context('car-a');await f.bridge.save(base,data);assert.deepEqual(f.serverRecord().encarLinks,data);
+  assert.throws(()=>f.bridge.applyPrice(base,data,'43000001'),error=>error.code==='INVALID_DATA');assert.equal(f.sellInput.events.length,0);
+ }
+});
+test('invalid or inconsistent price metadata never reaches the database',async()=>{
+ const changes=[...([0,-1,2.5,Infinity,Number.MAX_SAFE_INTEGER,1000000000001,'28200000'].map(value=>data=>{data.listings[0].priceWon=value;})),
+  data=>{data.listings[0].priceSource='EUR';},data=>{data.listings[0].priceCheckedAt='2026-02-30';},data=>{data.listings[0].priceCheckedAt=new Date(Date.now()+120000).toISOString();},
+  data=>{data.listings[0].priceStatus='unavailable';},data=>{delete data.listings[0].priceStatus;},data=>{data.listings[0].priceStatus='unknown';}];
+ for(const change of changes){const f=fixture(),data=pricedRecord();change(data);await assert.rejects(f.bridge.save(f.bridge.context('car-a'),data),error=>error.code==='INVALID_DATA');assert.equal(f.calls.length,0);}
+});
+test('applying a confirmed price fills only the current price draft and preserves all stored vehicles',async()=>{
+ const f=fixture(),base=f.bridge.context('car-a'),data=pricedRecord();await f.bridge.save(base,data);const snapshot=clone([...f.server]),cars=clone(f.context.cars),writes=f.calls.length;
+ f.context.otherUnsavedDraft='보존할 다른 입력';
+ const result=f.bridge.applyPrice(base,data,'43000001');assert.equal(result.ok,true);assert.equal(result.priceWon,28200000);assert.equal(result.saved,false);
+ assert.equal(f.sellInput.value,'28,200,000');assert.deepEqual(f.sellInput.events,[{type:'input',bubbles:true}]);assert.equal(f.context.otherUnsavedDraft,'보존할 다른 입력');
+ assert.equal(f.calls.length,writes);assert.deepEqual([...f.server],snapshot);assert.deepEqual(clone(f.context.cars),cars);
+});
+test('only the exact saved price and listing can be applied, including same-URL price changes',async()=>{
+ const f=fixture(),base=f.bridge.context('car-a'),data=pricedRecord();await f.bridge.save(base,data);
+ const changed=clone(data);changed.listings[0].priceWon++;
+ assert.throws(()=>f.bridge.applyPrice(base,changed,'43000001'),error=>error.code==='CONTEXT_CHANGED');
+ assert.throws(()=>f.bridge.applyPrice(base,data,'43000003'),error=>error.code==='INVALID_DATA');
+ const payload=JSON.parse(f.localStorage.getItem(store(USER)));payload[0].encarLinks.listings[0].priceWon++;f.localStorage.data.set(store(USER),JSON.stringify(payload));
+ assert.throws(()=>f.bridge.applyPrice(base,data,'43000001'),error=>error.code==='CONTEXT_CHANGED');assert.equal(f.sellInput.events.length,0);
+});
+test('price draft application refuses pending saves, conflicts, unavailable inputs and sold vehicles',async()=>{
+ const changes=[f=>{f.S.saving=true;},f=>{f.S.conflict=true;},f=>{f.S.queue.add(key(USER));},f=>{f.context.snoteVehicleSaveTask={};},f=>{f.context.snoteVehicleCloseTask={};},f=>{f.context.snoteVehicleUnconfirmedWrite={};},f=>{f.sellInput.disabled=true;},f=>{f.sellInput.readOnly=true;},f=>{f.context.cars[0].status='판매완료';}];
+ for(const change of changes){const f=fixture(),base=f.bridge.context('car-a'),data=pricedRecord();await f.bridge.save(base,data);change(f);assert.throws(()=>f.bridge.applyPrice(base,data,'43000001'));assert.equal(f.sellInput.events.length,0);}
+});
+test('price draft scope does not survive dealer, company, plate or drawer-session changes',async()=>{
+ for(const change of[f=>{f.context.currentUser={...f.context.currentUser};},f=>{f.S.company={...f.S.company};},f=>{f.context.cars[0].plate='34나7890';},f=>{f.view(false);f.view(true);},f=>{f.reset();}]){
+  const f=fixture(),base=f.bridge.context('car-a'),data=pricedRecord();await f.bridge.save(base,data);change(f);assert.throws(()=>f.bridge.applyPrice(base,data,'43000001'),error=>error.code==='CONTEXT_CHANGED');assert.equal(f.sellInput.events.length,0);
+ }
 });

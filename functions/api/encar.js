@@ -16,6 +16,10 @@ const TIMEOUT_MS = 10000;
 const DEADLINE_MS = 35000;
 const MAX_TOTAL_CANDIDATES = 12;
 const ENCAR_DETAIL = 'https://fem.encar.com/cars/detail/';
+const PRICE_PROVIDER = 'https://api.encar-api.com/api/car';
+const MAX_PRICE_WON = 1_000_000_000_000;
+const MAX_PRICE_LISTINGS = 3;
+const PRICE_TIMEOUT_MS = 6000;
 const AUTO_EXPORT_HOSTS = ['encar.spb.ru', 'trust-encar.ru', 'encar.msk.ru', 'encar.cbg.ru'];
 // Keep fallback search domains aligned with the URL/lot parsers below.
 // Tavily's encar.com domain filter includes its official subdomains.
@@ -468,6 +472,93 @@ async function verifyCandidates(ids, getDetail) {
   return { listings, errored: !!errorCode, errorCode };
 }
 
+function unavailablePrice() {
+  return { priceWon: null, priceCheckedAt: null, priceSource: null, priceStatus: 'unavailable' };
+}
+
+// The provider documents uppercase Price in units of 10,000 KRW. Do not use
+// translated/EUR fields, priceDrop.previousPrice, or guesses from arbitrary HTML.
+function priceInWon(value) {
+  if (typeof value !== 'string' && typeof value !== 'number' || typeof value === 'number' && !Number.isFinite(value)) return null;
+  const text = String(value);
+  if (!/^\d{1,12}(?:\.\d{1,4})?$/.test(text)) return null;
+  const [whole, fraction = ''] = text.split('.');
+  const won = BigInt(whole) * 10000n + BigInt(fraction.padEnd(4, '0'));
+  return won > 0n && won <= BigInt(MAX_PRICE_WON) ? Number(won) : null;
+}
+
+function providerPrice(data, id, plate) {
+  const object = value => value !== null && typeof value === 'object' && !Array.isArray(value);
+  const matches = [];
+  function inspect(value, depth = 0) {
+    if (!object(value) || depth > 3 || matches.length > 1) return;
+    // Binding to the canonical seller ID is mandatory. The same ID's plate and
+    // live ADVERTISE state were already verified on Encar immediately above.
+    if (Object.hasOwn(value, 'Id') && Object.hasOwn(value, 'Price')) matches.push(value);
+    for (const key of ['data', 'result', 'car', 'vehicle', 'listing', 'item', 'payload']) {
+      if (Object.hasOwn(value, key)) inspect(value[key], depth + 1);
+    }
+  }
+  inspect(data);
+  if (matches.length !== 1) return null;
+  const row = matches[0];
+  if (idOf(row.Id) !== id) return null;
+  for (const value of [row, row.details].filter(object)) {
+    for (const key of ['VehicleNo', 'vehicleNo', 'CarNo', 'carNo', 'VehicleNumber', 'vehicleNumber']) {
+      if (Object.hasOwn(value, key) && normalizePlate(value[key]) !== plate) return null;
+    }
+    for (const key of ['Status', 'status', 'AdvertisementStatus', 'advertisementStatus']) {
+      if (Object.hasOwn(value, key) && !['ADVERTISE', 'ACTIVE', 'AVAILABLE', 'ON_SALE', 'FOR_SALE'].includes(value[key])) return null;
+    }
+    for (const key of ['Sold', 'sold', 'IsSold', 'isSold']) if (Object.hasOwn(value, key) && value[key] !== false) return null;
+    for (const key of ['Available', 'available', 'IsAvailable', 'isAvailable']) if (Object.hasOwn(value, key) && value[key] !== true) return null;
+    for (const key of ['Currency', 'currency']) if (Object.hasOwn(value, key) && value[key] !== 'KRW') return null;
+    for (const key of ['PriceType', 'priceType', 'SaleType', 'saleType', 'SellType', 'sellType']) {
+      if (Object.hasOwn(value, key) && !['CASH', 'SALE', 'NORMAL', '매매', '일반'].includes(value[key])) return null;
+    }
+    for (const key of ['Lease', 'lease', 'IsLease', 'isLease', 'Rental', 'rental', 'IsRental', 'isRental']) {
+      if (Object.hasOwn(value, key) && value[key] !== false) return null;
+    }
+  }
+  return priceInWon(row.Price);
+}
+
+async function addPrices(op, env, listings, plate) {
+  const result = listings.map(item => ({ ...item, ...unavailablePrice() }));
+  const key = typeof env.ENCAR_API_KEY === 'string' ? env.ENCAR_API_KEY.trim() : '';
+  const budget = Math.min(PRICE_TIMEOUT_MS, op.deadline - Date.now() - 250);
+  if (key.length < 8 || key.length > 1024 || !/^[\x21-\x7e]+$/.test(key) || budget < 250 || op.controller.signal.aborted) return result;
+  const controller = new AbortController();
+  const abort = () => controller.abort(new EncarError('PRICE_UNAVAILABLE'));
+  op.controller.signal.addEventListener('abort', abort, { once: true });
+  const timer = setTimeout(abort, budget);
+  try {
+    await Promise.all(result.slice(0, MAX_PRICE_LISTINGS).map(async item => {
+      try {
+        const url = new URL(PRICE_PROVIDER); url.searchParams.set('id', item.id);
+        const fetched = await waitFor(fetch(url.href, {
+          method: 'GET', headers: { 'x-api-key': key, Accept: 'application/json' },
+          cache: 'no-store', credentials: 'omit', referrerPolicy: 'no-referrer',
+          redirect: 'manual', signal: controller.signal
+        }), controller.signal);
+        if (fetched.status !== 200 || (fetched.headers.get('content-type') || '').split(';')[0].trim().toLowerCase() !== 'application/json') {
+          try { void fetched.body?.cancel().catch(() => {}); } catch (_) {}
+          return;
+        }
+        const raw = await readLimited(fetched, 1024 * 1024, controller.signal);
+        const priceWon = providerPrice(JSON.parse(raw), item.id, plate);
+        if (priceWon === null || controller.signal.aborted) return;
+        Object.assign(item, { priceWon, priceCheckedAt: new Date().toISOString(), priceSource: 'encar-api.com', priceStatus: 'verified' });
+      } catch (_) { /* Optional price failure never invalidates a verified link. */ }
+    }));
+  } finally {
+    clearTimeout(timer);
+    op.controller.signal.removeEventListener('abort', abort);
+    controller.abort();
+  }
+  return result;
+}
+
 function catalogError(error, fallback = 'CATALOG_PARSE_FAILED') {
   if (error instanceof EncarError) return error;
   return new EncarError(CATALOG_ERRORS.has(error?.code) ? error.code : fallback);
@@ -565,6 +656,11 @@ export async function onRequest(context) {
   const op = operation(request);
   let plate = '';
   const finish = (httpStatus, listings = [], status = 'error', code = 'INVALID_REQUEST') => response(op, httpStatus, plate, listings, status, code);
+  const found = async listings => {
+    remaining(op);
+    const priced = await addPrices(op, env, listings, plate);
+    return finish(200, priced, listings.length > 1 ? 'multiple' : 'found');
+  };
   const unverifiedCode = fallback => {
     const rejected = Object.entries(op.rejected).filter(([, count]) => count > 0);
     if (rejected.length === 1) return { plateMismatch: 'PLATE_MISMATCH', notAdvertising: 'AD_INACTIVE', notFound: 'DETAIL_NOT_FOUND' }[rejected[0][0]];
@@ -604,7 +700,7 @@ export async function onRequest(context) {
     if (hinted.listings.length) {
       saveCandidates(context, plate, hinted.listings.map(item => item.id));
       remaining(op);
-      return finish(200, hinted.listings, hinted.listings.length > 1 ? 'multiple' : 'found');
+      return await found(hinted.listings);
     }
     let catalogFailure = null;
     try {
@@ -616,7 +712,7 @@ export async function onRequest(context) {
       if (verified.listings.length) {
         remaining(op);
         saveCandidates(context, plate, verified.listings.map(item => item.id));
-        return finish(200, verified.listings, verified.listings.length > 1 ? 'multiple' : 'found');
+        return await found(verified.listings);
       }
     } catch (error) {
       catalogFailure = catalogError(error);
@@ -631,7 +727,7 @@ export async function onRequest(context) {
         if (verified.listings.length) {
           remaining(op);
           saveCandidates(context, plate, verified.listings.map(item => item.id));
-          return finish(200, verified.listings, verified.listings.length > 1 ? 'multiple' : 'found');
+          return await found(verified.listings);
         }
       }
     } catch (error) {

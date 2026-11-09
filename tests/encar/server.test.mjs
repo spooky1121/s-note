@@ -189,7 +189,8 @@ test('POST uses the exact search payload and returns only verified allowlisted f
   assert.deepEqual(result.body.listings, [{
     id: ORIGINAL, trustedId: null, sellerUrl: BASE + ORIGINAL, trustedUrl: null,
     model: '현대 더 뉴 아이오닉5 롱레인지 프레스티지',
-    yearMonth: '202409', formYear: '2025', mileage: 24668
+    yearMonth: '202409', formYear: '2025', mileage: 24668,
+    priceWon: null, priceCheckedAt: null, priceSource: null, priceStatus: 'unavailable'
   }]);
   assert.doesNotMatch(JSON.stringify(result.body), /PRIVATE_|fixture_private|test_access/);
   assert.equal(result.reply.headers.get('cache-control'), 'no-store, private');

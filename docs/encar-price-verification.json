@@ -1,0 +1,145 @@
+{
+  "release": "2.109",
+  "baseCommit": "1053906a15de3eeeba6d741cf4ed4731ca4fd290",
+  "feature": {
+    "lookup": "On explicit Encar button/link recheck, only after exact plate, canonical ID and active advertisement verification",
+    "provider": "https://api.encar-api.com/api/car",
+    "secret": "Existing Production ENCAR_API_KEY, server-side only",
+    "priceMethod": "Documented uppercase provider Price in 10000-KRW units, exact BigInt conversion; no speculative HTML/EUR/previous-price parsing",
+    "priceRangeWon": {
+      "min": 1,
+      "max": 1000000000000
+    },
+    "limits": {
+      "advertisements": 3,
+      "sharedTimeoutMs": 6000,
+      "maxResponseBytes": 1048576,
+      "redirects": false
+    },
+    "metadata": [
+      "priceWon",
+      "priceCheckedAt",
+      "priceSource",
+      "priceStatus"
+    ],
+    "storage": "Existing owner-scoped cars.encarLinks.listings JSON and dataset revision CAS; nested priceWon stays integer KRW",
+    "apply": "Fill detail-sell draft only; explicit existing vehicle save icon confirms with existing validation and wire-money conversion",
+    "timeZone": "Asia/Seoul"
+  },
+  "preserved": [
+    "previous version 1 link-only records",
+    "verified seller and trusted links on price failures",
+    "owner-only dataset writes and sibling/other-owner data",
+    "existing sale price until explicit apply and save",
+    "other unsaved memo and extra fields",
+    "sold/accountant/scope/queue/conflict restrictions",
+    "late response and lost-save retries",
+    "domain compatibility and existing authentication/storage policies"
+  ],
+  "databaseSchemaChanges": false,
+  "validation": {
+    "unit": {
+      "command": "npm test --prefix tests/encar",
+      "total": 425,
+      "passed": 425,
+      "failed": 0,
+      "coverage": [
+        "legacy server/frontend/integration/catalogue",
+        "83 new provider price cases",
+        "strict price metadata and unchanged legacy records",
+        "owner-scoped CAS price storage and draft-only application",
+        "price display, exact timestamps, stale/current record and late acknowledgement guards"
+      ]
+    },
+    "inlineScripts": 7,
+    "changedJsSyntax": "pass",
+    "diffCheck": "pass",
+    "browser": {
+      "widths": [
+        1440,
+        390,
+        320
+      ],
+      "groups": 4,
+      "results": [
+        {
+          "width": 1440,
+          "sourcePriceStored": true,
+          "ackRequired": true,
+          "wonAndKoreaTime": true,
+          "draftOnlyApply": true,
+          "otherDraftsPreserved": true,
+          "normalVehicleSave": true,
+          "peerUnchanged": true,
+          "reopenWithoutProvider": true,
+          "sameUrlRefresh": true,
+          "soldDenied": true,
+          "invalidPriceLinksPreserved": true,
+          "geometry": {
+            "width": 32,
+            "height": 32,
+            "hit": true,
+            "overflow": false
+          }
+        },
+        {
+          "width": 390,
+          "sourcePriceStored": true,
+          "ackRequired": true,
+          "wonAndKoreaTime": true,
+          "draftOnlyApply": true,
+          "otherDraftsPreserved": true,
+          "normalVehicleSave": true,
+          "peerUnchanged": true,
+          "reopenWithoutProvider": true,
+          "sameUrlRefresh": true,
+          "soldDenied": true,
+          "invalidPriceLinksPreserved": true,
+          "geometry": {
+            "width": 32,
+            "height": 32,
+            "hit": true,
+            "overflow": false
+          }
+        },
+        {
+          "width": 320,
+          "sourcePriceStored": true,
+          "ackRequired": true,
+          "wonAndKoreaTime": true,
+          "draftOnlyApply": true,
+          "otherDraftsPreserved": true,
+          "normalVehicleSave": true,
+          "peerUnchanged": true,
+          "reopenWithoutProvider": true,
+          "sameUrlRefresh": true,
+          "soldDenied": true,
+          "invalidPriceLinksPreserved": true,
+          "geometry": {
+            "width": 32,
+            "height": 32,
+            "hit": true,
+            "overflow": false
+          }
+        },
+        {
+          "width": 390,
+          "failedSaveCannotApply": true,
+          "saveRetryWithoutProvider": true,
+          "vehicleSwitchLateApplyDenied": true,
+          "unavailableDoesNotMasqueradeAsCurrentPrice": true
+        }
+      ],
+      "sourceHashes": {
+        "index.html": "b9e8b84b340367fe92609e3c90e94f1276f20858cff501a51275fa2e35ae33f5",
+        "assets/snote-encar-link.js": "0a06493dde48f77cea39d913db3c3df77ab71c1c1e75183a15053a372ec75243",
+        "tests/encar/price-action.browser.cjs": "d19a363ca60f725b5dd029626a25d6108ddea83bc3a8b43cad99338759900946"
+      }
+    },
+    "independentSecurityReview": "No blocking findings; strict UI ISO normalization issue corrected",
+    "syntheticOnly": true,
+    "realProviderKeyOrPricesTested": false,
+    "noProductionVehicleCustomerWritesOrSms": true
+  },
+  "at": "2026-11-09T13:16:39.587Z"
+}
