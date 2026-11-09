@@ -20,6 +20,24 @@ test('reject cross-origin and same-site subdomains before dispatch', async () =>
   assert.equal(inspectAPIRequest(post({ Origin: ORIGIN, 'Sec-Fetch-Site': 'same-origin' })).response, undefined);
   assert.equal(inspectAPIRequest(post()).response, undefined); // Non-browser clients still undergo Auth checks downstream.
 });
+test('only the configuration-only status policy permits external top-level document GET navigation', async () => {
+  assert.deepEqual(Object.entries(API_POLICIES).filter(([,p])=>p.publicNavigationGet).map(([path])=>path),['/api/encar-auto-price']);
+  for(const site of ['cross-site','same-site']) {
+    const headers={'Sec-Fetch-Site':site,'Sec-Fetch-Mode':'navigate','Sec-Fetch-Dest':'document'};
+    let called=false;const res=await onRequest({request:request('/api/encar-auto-price',{headers}),next:()=>{called=true;return Response.json({ok:true,configured:true});}});
+    assert.equal(called,true);assert.equal(res.status,200);assert.equal(res.headers.get('Access-Control-Allow-Origin'),null);
+    assert.match(res.headers.get('Cache-Control'),/no-store/);assert.equal(res.headers.get('X-Frame-Options'),'DENY');
+    assert.equal(inspectAPIRequest(request('/api/ocr',{headers})).response.status,403);
+    assert.equal(inspectAPIRequest(request('/api/vehicle-taxonomy-probe',{headers})).response.status,403);
+  }
+});
+test('configuration navigation never grants cross-origin script, iframe, explicit Origin or POST access', async () => {
+  const base={'Sec-Fetch-Site':'cross-site','Sec-Fetch-Mode':'navigate','Sec-Fetch-Dest':'document'};
+  const cases=[{headers:{...base,'Sec-Fetch-Mode':'cors','Sec-Fetch-Dest':'empty'}},{headers:{...base,'Sec-Fetch-Dest':'iframe'}},{headers:{...base,Origin:'https://attacker.example'}},{headers:{...base,Origin:'null'}},{headers:{'Sec-Fetch-Site':'cross-site'}},
+    {method:'POST',headers:{...base,'Content-Type':'application/json',Authorization:'Bearer '+JWT},body:'{}'},
+    {method:'OPTIONS',headers:base},{method:'HEAD',headers:base}];
+  for(const options of cases){let called=false;const res=await onRequest({request:request('/api/encar-auto-price',options),next:()=>{called=true;return Response.json({ok:true});}});assert.equal(res.status,403);assert.equal(called,false);}
+});
 test('method, auth, length, encoding and media type are checked before providers', () => {
   assert.equal(inspectAPIRequest(request('/api/missing')).response.status, 404);
   assert.equal(inspectAPIRequest(request('/api/ocr', { method: 'DELETE' })).response.status, 405);

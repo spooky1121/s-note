@@ -41,6 +41,35 @@ test('GET returns only a boolean setup status and never calls external services'
  const r=await run(t,{request:new Request(ORIGIN+'/api/encar-auto-price')});assert.deepEqual(r.body,{ok:true,configured:true});assert.equal(r.calls.length,0);
  const missing=await run(t,{request:new Request(ORIGIN+'/api/encar-auto-price'),env:{CLOUDFLARE_BROWSER_TOKEN:''}});assert.deepEqual(missing.body,{ok:true,configured:false});assert.equal(missing.calls.length,0);
 });
+test('cross-site top-level document navigation can read only the public configuration boolean',async t=>{
+ for(const site of['cross-site','same-site']){
+  const req=new Request(ORIGIN+'/api/encar-auto-price',{headers:{'Sec-Fetch-Site':site,'Sec-Fetch-Mode':'navigate','Sec-Fetch-Dest':'document',Referer:'https://chat.example/'}});
+  const r=await run(t,{request:req});assert.equal(r.status,200);assert.deepEqual(r.body,{ok:true,configured:true});assert.equal(r.calls.length,0);
+ }
+});
+test('cross-origin frames, programmatic GET and explicit foreign origins cannot use the navigation exception',async t=>{
+ const headers=[
+  {'Sec-Fetch-Site':'cross-site','Sec-Fetch-Mode':'navigate','Sec-Fetch-Dest':'iframe'},
+  {'Sec-Fetch-Site':'same-site','Sec-Fetch-Mode':'navigate','Sec-Fetch-Dest':'iframe'},
+  {'Sec-Fetch-Site':'cross-site','Sec-Fetch-Mode':'cors','Sec-Fetch-Dest':'empty'},
+  {'Sec-Fetch-Site':'cross-site','Sec-Fetch-Mode':'no-cors','Sec-Fetch-Dest':'empty'},
+  {'Sec-Fetch-Site':'cross-site','Sec-Fetch-Mode':'navigate'},
+  {'Sec-Fetch-Site':'cross-site','Sec-Fetch-Dest':'document'},
+  {'Sec-Fetch-Site':'cross-site','Sec-Fetch-Mode':'cors','Sec-Fetch-Dest':'document'},
+  {'Sec-Fetch-Site':'cross-site','Sec-Fetch-Mode':'navigate','Sec-Fetch-Dest':'document',Origin:'https://foreign.example'},
+  {'Sec-Fetch-Site':'cross-site','Sec-Fetch-Mode':'navigate','Sec-Fetch-Dest':'document',Origin:'null'},
+  {Origin:'https://foreign.example'},
+ ];
+ for(const value of headers){const r=await run(t,{request:new Request(ORIGIN+'/api/encar-auto-price',{headers:value})});assert.equal(r.status,403);assert.equal(r.body.code,'FORBIDDEN');assert.equal(r.calls.length,0);}
+});
+test('every cross-origin POST remains forbidden before authentication, capture or OCR despite navigation headers',async t=>{
+ for(const site of['cross-site','same-site'])for(const mode of['navigate','cors','no-cors'])for(const origin of[null,'https://foreign.example']){
+  const headers={'Content-Type':'application/json',Authorization:'Bearer '+TOKEN,'Sec-Fetch-Site':site,'Sec-Fetch-Mode':mode,'Sec-Fetch-Dest':'document'};
+  if(origin!==null)headers.Origin=origin;
+  const req=new Request(ORIGIN+'/api/encar-auto-price',{method:'POST',headers,body:JSON.stringify({plate:PLATE,id:ID})});
+  const r=await run(t,{request:req});assert.equal(r.status,403);assert.equal(r.body.code,'FORBIDDEN');assert.equal(r.calls.length,0);noPaid(r);
+ }
+});
 test('verified current canonical vehicle is rendered once and OCR produces a reviewed KRW proposal only',async t=>{
  const start=Date.now(),r=await run(t);assert.equal(r.status,200);assert.equal(r.body.plate,PLATE);assert(Number.isFinite(Date.parse(r.body.verifiedAt)));
  assert.deepEqual({...r.body.listing,priceCheckedAt:'time'},{id:ID,priceWon:54900000,priceCheckedAt:'time',priceSource:'encar.com-ocr',priceStatus:'review'});

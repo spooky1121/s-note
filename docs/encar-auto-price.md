@@ -30,6 +30,8 @@
 4. 저장 후 새 Production 배포를 실행한다. 환경변수 변경은 이미 실행 중인 배포에 자동 적용되지 않는다.
 5. `https://s-note.pages.dev/api/encar-auto-price`를 열어 `configured:true`를 확인한다. 이는 설정값 존재 여부이며 실제 촬영·인증 성공을 보장하지 않는다. 로그인한 뒤 유효한 본인 차량의 Encar 버튼으로 실제 금액 확인까지 시험한다.
 
+설정 확인 GET은 외부 링크에서 최상위 문서로 여는 탐색도 허용한다. 반환값은 `ok`·`configured`뿐이며 외부 서비스 호출이나 장부 변경을 하지 않는다. 교차 출처 스크립트 요청·iframe·POST 및 다른 API의 출처 제한은 유지한다. 설정 등록 뒤의 배포·확인 범위는 [운영 설정 확인 기록](encar-auto-price-activation.json)에 남긴다.
+
 공식 안내: [스크린샷 API](https://developers.cloudflare.com/browser-run/quick-actions/screenshot-endpoint/). 사용 중인 계정의 Browser Run 제공 범위와 이용 한도가 적용된다.
 
 ## 저장·보호 범위

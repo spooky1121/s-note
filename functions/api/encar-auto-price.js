@@ -1,6 +1,6 @@
 import { onRequest as resolveAdvertisement } from './encar.js';
 import { parseEncarPrice } from '../_shared/encar-price-ocr.mjs';
-import { sameOriginRequest, securityResponse, hardenAPIResponse } from '../_shared/api-security.js';
+import { permittedAPIOrigin, securityResponse, hardenAPIResponse } from '../_shared/api-security.js';
 
 // The browser receives a reviewed amount only. Images, OCR text and service
 // credentials are intentionally kept out of responses and persistent storage.
@@ -166,7 +166,7 @@ async function recognize(op, settings, image, plate) {
 }
 
 export async function onRequest({ request, env = {} }) {
-  if (!sameOriginRequest(request)) return securityResponse('FORBIDDEN');
+  if (!permittedAPIOrigin(request)) return securityResponse('FORBIDDEN');
   if (request.method === 'GET') return json({ ok: true, configured: config(env).configured });
   if (request.method !== 'POST') return securityResponse('METHOD_NOT_ALLOWED', { Allow: 'GET, POST' });
   const op = operation(request);

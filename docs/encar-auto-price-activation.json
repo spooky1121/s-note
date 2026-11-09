@@ -1,0 +1,68 @@
+{
+  "release": "2.111",
+  "baseCommit": "5c0d08c4930e7d586135b655da78b16c574034ee",
+  "recordedAt": "2026-11-09T14:45:24.612Z",
+  "productionVariables": {
+    "registration": "Reported complete by user",
+    "valuesReadByAgent": false,
+    "names": [
+      "CLOUDFLARE_ACCOUNT_ID",
+      "CLOUDFLARE_BROWSER_TOKEN"
+    ]
+  },
+  "priorActivationDeployment": {
+    "commit": "5c0d08c4930e7d586135b655da78b16c574034ee",
+    "checkId": 129227435845,
+    "conclusion": "success"
+  },
+  "reportedConfigurationResponse": {
+    "ok": false,
+    "code": "FORBIDDEN",
+    "stage": "Origin check, before capture configuration verification",
+    "exactUserRequestHeadersObserved": false
+  },
+  "fix": {
+    "path": "/api/encar-auto-price",
+    "allowedExternalNavigation": {
+      "method": "GET",
+      "originHeader": "absent",
+      "fetchMode": "navigate",
+      "fetchDestination": "document"
+    },
+    "responseFields": [
+      "ok",
+      "configured"
+    ],
+    "externalCalls": 0,
+    "databaseWrites": 0,
+    "preserved": [
+      "cross-origin script GET denied",
+      "iframe GET denied",
+      "explicit cross-origin Origin denied",
+      "cross-site and same-site POST denied",
+      "other API origin restrictions",
+      "no CORS grant",
+      "security headers and rate limits"
+    ]
+  },
+  "validation": {
+    "command": "npm test --prefix tests/encar",
+    "passed": 587,
+    "failed": 0,
+    "independentSecurityCasesPassed": 32,
+    "syntax": "pass",
+    "diffCheck": "pass"
+  },
+  "sourceHashes": {
+    "functions/_shared/api-security.js": "74b496358cbd8f1e60136ee020ecd71fbe4168a445920d5b82c623c60d2b4bf2",
+    "functions/api/encar-auto-price.js": "f111dc3059605676d7801681d915b76cc741ce00ae319b9c2197eb27ea561f35",
+    "tests/api-security.test.mjs": "eb1042bc106ebeed76f6f7727c0be42fdfeb4d847284ed79409827685047452b",
+    "tests/encar-auto-price.test.mjs": "c7e3272870c58fd3826a7510a8fc64c634fb7c7b56f4f70d37543d30d224a032"
+  },
+  "live": {
+    "configurationRecognized": null,
+    "browserRunAuthentication": "not_verified",
+    "actualAdvertisementOCR": "not_verified",
+    "reason": "Runtime proxy denies origin connection; public configuration JSON and authenticated page verification pending from user."
+  }
+}
