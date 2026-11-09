@@ -4,7 +4,9 @@
  let scope=null,unread=0,working=false,pollAgain=false,opened=null,badgeEpoch=0,viewVersion=0,listVersion=0,readVersion=0;
  const dialog=document.createElement('dialog');dialog.id='snote-notifications-dialog';dialog.setAttribute('aria-labelledby','snote-notifications-title');dialog.innerHTML='<button type="button" aria-label="알림 닫기">×</button><h2 id="snote-notifications-title">알림</h2><p class="notification-status" role="status"></p><div class="notification-list"></div>';document.body.append(dialog);
  const status=dialog.querySelector('[role=status]'),list=dialog.querySelector('.notification-list');
- const field={model:'차명',plate:'차량번호',make:'제조사',year:'연식',vin:'차대번호',mileage:'주행거리',color:'색상',purchaseAt:'매입일',buy:'매입가',sell:'판매예정가',status:'차량 상태',inventoryLoan:'재고대출금',inventoryLender:'재고금융사',vehicleMemo:'차량 메모','costs.performanceInspection':'성능점검비'};
+ const field={model:'차명',plate:'차량번호',make:'제조사',year:'연식',vin:'차대번호',mileage:'주행거리',color:'색상',purchaseAt:'매입일',buy:'매입가',sell:'판매예정가',status:'차량 상태',inventoryLoan:'재고대출금',inventoryLender:'재고금융사',vehicleMemo:'차량 메모',sharePermission:'공유 권한','costs.performanceInspection':'성능점검비'};
+ const permissions=Object.freeze({read:{label:'읽기',description:'수락하면 차량 정보와 사진·서류를 조회할 수 있습니다.'},edit:{label:'수정',description:'수락하면 차량 정보를 조회·수정하고 사진·서류를 볼 수 있습니다.'},delete:{label:'삭제',description:'수락하면 차량 정보를 조회하고 차량을 휴지통으로 이동할 수 있습니다.'},all:{label:'모든 권한',description:'수락하면 차량 정보를 조회·수정하고 차량을 휴지통으로 이동할 수 있습니다.'}});
+ const permission=value=>typeof value==='string'&&Object.hasOwn(permissions,value)?permissions[value]:null;
  const node=(tag,text,cls)=>{const e=document.createElement(tag);e.textContent=text??'';if(cls)e.className=cls;return e;};
  const current=c=>!!c&&bridge()?.current(c);
  const visible=(c,version)=>opened===c&&dialog.open&&viewVersion===version&&current(c);
@@ -29,7 +31,7 @@
   try{const data=await rpc(c,'summary');if(current(c)&&epoch===badgeEpoch)badge(data.unread);}catch{}
   finally{working=false;if(pollAgain){pollAgain=false;void poll();}}
  }
- function value(v,key,unit){if(v==null||v==='')return '미입력';if(['buy','sell','inventoryLoan','costs.performanceInspection'].includes(key)){const won=unit==='KRW'?Number(v):window.SnoteMoney.toWon(v);return Number(won).toLocaleString('ko-KR')+'원';}if(key==='mileage')return Number(v).toLocaleString('ko-KR')+'km';return String(v);}
+ function value(v,key,unit){if(key==='sharePermission')return permission(v)?.label||'권한 확인 필요';if(v==null||v==='')return '미입력';if(['buy','sell','inventoryLoan','costs.performanceInspection'].includes(key)){const won=unit==='KRW'?Number(v):window.SnoteMoney.toWon(v);return Number(won).toLocaleString('ko-KR')+'원';}if(key==='mileage')return Number(v).toLocaleString('ko-KR')+'km';return String(v);}
  function invitation(value){
   return value&&UUID.test(value.id||'')&&Number.isSafeInteger(value.version)&&value.version>0&&['pending','accepted','rejected'].includes(value.state)?value:null;
  }
@@ -38,15 +40,16 @@
  function renderInvitation(row,item,c,version){
   const invite=invitation(item.invitation),message=node('p',null,'notification-invitation-status');
   if(!invite){message.textContent='초대 상태를 확인하지 못했습니다. 알림을 다시 열어주세요.';row.append(message);return;}
-  row.dataset.invitationId=invite.id;row.dataset.invitationState=invite.state;
-  message.textContent=invite.state==='accepted'?'초대를 수락했습니다. 공유받은 차량 목록에서 확인할 수 있습니다.':invite.state==='rejected'?'이 공유 초대를 거부했습니다.':'수락하면 차량 정보·매입가·판매예정가를 함께 수정하고 사진·서류를 볼 수 있습니다.';
+  const access=permission(invite.permission);row.dataset.invitationId=invite.id;row.dataset.invitationState=invite.state;row.dataset.sharePermission=access?invite.permission:'unknown';
+  row.append(node('p',access?'공유 권한: '+access.label:'공유 권한 확인 필요','notification-sharing-permission'));
+  message.textContent=invite.state==='accepted'?'초대를 수락했습니다. 공유받은 차량 목록에서 권한을 확인할 수 있습니다.':invite.state==='rejected'?'이 공유 초대를 거부했습니다.':access?access.description:'공유 권한을 확인하지 못했습니다. 알림을 다시 열어 확인해 주세요.';
   row.append(message);if(invite.state!=='pending')return;
   const actions=node('div',null,'notification-invitation-actions'),accept=node('button','수락'),reject=node('button','거부');
   for(const[button,choice]of [[accept,true],[reject,false]]){
-   button.type='button';button.dataset.reply=choice?'accept':'reject';
+   button.type='button';button.dataset.reply=choice?'accept':'reject';if(choice&&!access)button.disabled=true;
    button.setAttribute('aria-label','차량 공유 초대 '+(choice?'수락':'거부'));
    button.onclick=async()=>{
-    if(!visible(c,version)||row.dataset.replyPending==='true')return;
+    if(!visible(c,version)||row.dataset.replyPending==='true'||choice&&!access)return;
     row.dataset.replyPending='true';accept.disabled=true;reject.disabled=true;message.classList.remove('is-error');message.textContent='응답을 저장하고 있습니다…';
     try{
      if(typeof bridge()?.reply!=='function')throw Error('SETUP_REQUIRED');
@@ -64,7 +67,7 @@
       try{
        const data=await load(c,version);
        if(data&&visible(c,version)){status.textContent=text;const latest=data.items?.find(entry=>entry.invitation?.id===invite.id)?.invitation;if(invitation(latest)&&latest.state!=='pending')sharingChanged(c);}
-      }catch{if(visible(c,version)){message.textContent=text;message.classList.add('is-error');accept.disabled=false;reject.disabled=false;}}
+      }catch{if(visible(c,version)){message.textContent=text;message.classList.add('is-error');accept.disabled=!access;reject.disabled=false;}}
      }
     }finally{row.dataset.replyPending='false';}
    };

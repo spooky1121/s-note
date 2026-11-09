@@ -43,3 +43,24 @@
 @media screen and (max-width:600px){.vehicle-sharing-frame{padding:20px 16px}#snote-vehicle-sharing input{font-size:16px}.vehicle-sharing-invite{gap:6px}}
 @media (prefers-reduced-motion:reduce){#snote-vehicle-sharing[open]{animation:none}}
 @media print{#snote-vehicle-sharing,#vehicle-header-share,#vehicle-shared-inbox{display:none!important}}
+/* Per-recipient access presets; permissions remain server enforced. */
+@media screen{
+ #snote-vehicle-sharing select{box-sizing:border-box;width:100%;min-width:0;height:38px;border:1px solid #e2e6ee;border-radius:7px;padding:7px 9px;background:#fff;color:#28364c;font:inherit;font-size:13px}
+ #snote-vehicle-sharing select:focus-visible{outline:2px solid #7e9ce6;outline-offset:2px}
+ #snote-vehicle-sharing .vehicle-sharing-invite-permission{flex:0 0 116px}
+ #snote-vehicle-sharing .vehicle-sharing-recipient-actions{display:flex;align-items:center;justify-content:flex-end;gap:7px;flex:0 0 auto}
+ #snote-vehicle-sharing .vehicle-sharing-recipient-actions select{width:105px}
+ #snote-vehicle-sharing button.vehicle-sharing-permission-save{display:grid;place-items:center;width:36px;min-width:36px;padding:7px;background:transparent;border:0;color:#1670e9}
+ #snote-vehicle-sharing button.vehicle-sharing-delete{display:grid;place-items:center;min-width:40px;padding:8px;border:0;background:transparent;color:#d73142}
+ #snote-vehicle-sharing .vehicle-sharing-save[hidden],#snote-vehicle-sharing .vehicle-sharing-delete[hidden]{display:none!important}
+ #snote-vehicle-sharing .vehicle-sharing-permission-label,.notification-sharing-permission{font-size:12px;line-height:1.6;color:#64738a;margin:8px 0 14px}
+ #snote-vehicle-sharing .vehicle-sharing-editor :is(input,textarea)[readonly]{background:#f8f9fb;color:#58667a;cursor:default}
+}
+@media screen and (max-width:600px){
+ #snote-vehicle-sharing .vehicle-sharing-invite{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px 8px}
+ #snote-vehicle-sharing .vehicle-sharing-invite>label:first-child{grid-column:1/-1}
+ #snote-vehicle-sharing .vehicle-sharing-invite-permission{min-width:0}
+ #snote-vehicle-sharing .vehicle-sharing-recipient{display:grid;gap:10px}
+ #snote-vehicle-sharing .vehicle-sharing-recipient-actions{justify-content:flex-start;flex-wrap:wrap}
+ #snote-vehicle-sharing select{font-size:16px}
+}

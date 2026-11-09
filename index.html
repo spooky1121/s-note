@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.106">
+<html lang="ko" data-snote-release="2.107">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -3206,12 +3206,12 @@ button, input, select, textarea { font-family: inherit; }
 <link rel="stylesheet" href="assets/mobile-shell.css?v=2.59">
 <link rel="stylesheet" href="assets/mobile-workspace.css?v=2.67">
 <link rel="stylesheet" href="assets/screen-refinement.css?v=2.59">
-<link rel="stylesheet" href="assets/vehicle-sharing.css?v=2.87">
+<link rel="stylesheet" href="assets/vehicle-sharing.css?v=2.107">
 <link rel="stylesheet" href="assets/shared-vehicle-markers.css?v=2.72">
 <link rel="stylesheet" href="assets/encar-wordmark.css?v=2.74">
 <link rel="stylesheet" href="assets/settings-refinement.css?v=2.84">
 <script src="assets/settings-refinement.js?v=2.61" defer></script>
-<script src="assets/vehicle-notifications.js?v=2.92" defer></script>
+<script src="assets/vehicle-notifications.js?v=2.107" defer></script>
 <link rel="stylesheet" href="assets/close-controls.css?v=2.78">
 <link rel="stylesheet" href="assets/recycle-bin.css?v=2.77">
 <link rel="stylesheet" href="assets/profile-editor.css?v=2.82">
@@ -10352,7 +10352,7 @@ window.snoteVehicleShareBridge={
  context(){const c=snote220CatalogContext();return c?.canWrite?{key:c.key,companyId:c.company_id,userId:c.user_id}:null;},
  current(c){return !!c&&this.context()?.key===c.key;},
  owner(car){return S.members.find(m=>ownerAlias(m.user_id)===car?.ownerId)?.user_id||null;},
- async rpc(c,args){if(!this.current(c))throw Error('로그인 정보가 변경되었습니다.');const result=await S.client.rpc('snote_vehicle_share',args);if(!this.current(c))throw Error('로그인 정보가 변경되었습니다.');if(result.error)throw result.error;return result.data;},
+ async rpc(c,args){if(!this.current(c))throw Error('로그인 정보가 변경되었습니다.');const result=await S.client.rpc('snote_vehicle_share_v2',args);if(!this.current(c))throw Error('로그인 정보가 변경되었습니다.');if(result.error)throw result.error;return result.data;},
  async flush(c){if(!this.current(c))throw Error('로그인 정보가 변경되었습니다.');const r=await flush();if(!this.current(c)||r?.ok!==true||S.conflict)throw Error('차량의 서버 저장 상태를 먼저 확인해 주세요.');},
  async notification(c,args){if(!this.current(c))throw Error('CONTEXT_CHANGED');const r=await S.client.rpc('snote_vehicle_notifications',args);if(!this.current(c))throw Error('CONTEXT_CHANGED');if(r.error)throw r.error;return r.data;},
  async reply(c,args){if(!this.current(c))throw Error('CONTEXT_CHANGED');const r=await S.client.rpc('snote_vehicle_share_reply',args);if(!this.current(c))throw Error('CONTEXT_CHANGED');if(r.error)throw r.error;return r.data;},
@@ -10368,9 +10368,9 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 <script type="module" src="assets/vehicle-taxonomy-ui.js?v=2.82"></script>
 <script src="assets/vehicle-taxonomy-probe.js?v=2.80" defer></script>
 <script type="module" src="assets/income-settlement-parent.js?v=2.85"></script>
-<script src="assets/vehicle-sharing.js?v=2.92" defer></script>
+<script src="assets/vehicle-sharing.js?v=2.107" defer></script>
 <script src="assets/shared-vehicle-markers.js?v=2.87" defer></script>
-<script src="assets/release-info.js?v=2.106" defer></script>
+<script src="assets/release-info.js?v=2.107" defer></script>
 <script src="assets/company-purchase.js?v=2.77" defer></script>
 <script src="assets/recycle-bin.js?v=2.77" defer></script>
 <script src="assets/profile-editor.js?v=2.102" defer></script>

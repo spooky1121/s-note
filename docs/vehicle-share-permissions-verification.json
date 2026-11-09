@@ -1,0 +1,167 @@
+{
+  "release": "2.107",
+  "baseCommit": "ba87255615d607f1fff6259f7ef8ec59396c70a8",
+  "presets": {
+    "read": [
+      "read"
+    ],
+    "edit": [
+      "read",
+      "edit"
+    ],
+    "delete": [
+      "read",
+      "delete"
+    ],
+    "all": [
+      "read",
+      "edit",
+      "delete"
+    ]
+  },
+  "migration": {
+    "local": "supabase/migrations/20261109020649_vehicle_share_permissions.sql",
+    "sha256": "6fd18308ed719cba2119a36b9bfc6e65bc20016e9ee5d08b21328cb170bae6d2",
+    "productionProject": "rmlycycleuscfqywbihj",
+    "productionHistoryVersion": "20261109022518",
+    "productionName": "vehicle_share_permissions",
+    "applied": true,
+    "newDefault": "read",
+    "existingBackfill": "edit",
+    "existingSharesBefore": {
+      "total": 1,
+      "accepted": 1,
+      "pending": 0,
+      "rejected": 0
+    },
+    "existingSharesAfter": {
+      "total": 1,
+      "accepted": 1,
+      "permission": "edit"
+    }
+  },
+  "security": {
+    "publicV2Invoker": true,
+    "privateV2Definer": true,
+    "emptySearchPath": true,
+    "anonymousExecution": false,
+    "directDeleteHelperExecution": false,
+    "unmodifiedExistingPolicies": 29,
+    "newAdvisorFindings": 0,
+    "advisorExistingCounts": {
+      "rls_enabled_no_policy": 34,
+      "anon_security_definer_function_executable": 2,
+      "authenticated_security_definer_function_executable": 15,
+      "auth_leaked_password_protection": 1
+    },
+    "checks": [
+      "accepted exact vehicle share only",
+      "native owner/company-admin authority remains independent",
+      "strict permission and action enums",
+      "invitation ID/version plus owner dataset revision CAS",
+      "post-company-lock and post-row-lock authority revalidation",
+      "stale permission, revoke/reinvite and pending accept rejection",
+      "legacy recipient write fails closed; no frontend fallback",
+      "no broad dataset/customer/media/Storage RLS grants",
+      "shared trash uses a redacted operation ACK and actor/target/grant-bound idempotency",
+      "owner-only recycle snapshots and restore; shares not revived"
+    ]
+  },
+  "boundaries": {
+    "editableFields": [
+      "model",
+      "plate",
+      "make",
+      "year",
+      "vin",
+      "mileage",
+      "color",
+      "purchaseAt",
+      "buy",
+      "sell",
+      "vehicleMemo"
+    ],
+    "photosAndDocuments": "read/download only",
+    "excluded": [
+      "customer identity, SSN, signature, settlement data",
+      "sale processing",
+      "recipient re-sharing/grant management",
+      "media writes",
+      "foreign owner dataset caching"
+    ],
+    "deletion": "soft delete to owner's existing recycle bin with linked records stored privately"
+  },
+  "validation": {
+    "sqlTests": [
+      {
+        "file": "tests/vehicle-share-permissions-db.cjs",
+        "passed": 15,
+        "failed": 0
+      },
+      {
+        "file": "tests/shared-vehicle-delete.sql.cjs",
+        "passed": 10,
+        "failed": 0
+      }
+    ],
+    "inlineScripts": 7,
+    "changedJsSyntax": "pass",
+    "diffCheck": "pass",
+    "sharingBrowser": {
+      "widths": [
+        1440,
+        390,
+        320
+      ],
+      "receipt": "v2107-share-permissions-browser/receipt.json",
+      "checks": [
+        "default read and four presets",
+        "owner permission CAS/ACK/rollback",
+        "server capability metadata fail-closed including canRead false",
+        "legacy currency and memo/CAS preservation",
+        "downgrade/revoke with pending ACK",
+        "native capabilities",
+        "red borderless trash icon",
+        "lost deletion ACK retry uses stable UUID",
+        "foreign caches unchanged"
+      ]
+    },
+    "actualSqlMemoBrowser": {
+      "widths": [
+        1440,
+        1024,
+        390,
+        320
+      ],
+      "fixture": "createPermissionFixture",
+      "file": "tests/vehicle-memo-sharing.browser.cjs"
+    },
+    "notificationBrowser": {
+      "widths": [
+        1440,
+        390,
+        320
+      ],
+      "raceWidths": [
+        1440,
+        390
+      ],
+      "checks": [
+        "permission-specific invitation descriptions",
+        "unknown permission acceptance disabled",
+        "localized permission-change differences",
+        "fresh version required for acceptance",
+        "badge/read ordering and scope races"
+      ]
+    },
+    "syntheticBrowserAccountsOnly": true,
+    "noRealCustomerSmsOrTestDeletion": true,
+    "browserSourceHashes": {
+      "index.html": "e9618592212702f5d315bc7e5b96d58d4a2dcc3943beda55f67136d48e921b53",
+      "assets/vehicle-sharing.js": "f9281bce3ff2a29bd9ab2147aae6c7880637a8ad0c09a8f3b242848c3ffd6aab",
+      "assets/vehicle-sharing.css": "c3b00175a38c924afa891e05e330f02a608eb933582b1fda0bc9003165f9904c",
+      "assets/vehicle-notifications.js": "882edd9799a391b749d3cd843f7efb19ae790f5d47c842ed10b6913ee2021a88"
+    }
+  },
+  "at": "2026-11-09T02:27:34.372Z"
+}

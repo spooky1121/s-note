@@ -3,7 +3,7 @@
 // companies and all HTTP are synthetic; no Production data or messages are used.
 const assert=require('node:assert/strict'),fs=require('node:fs');
 const {chromium}=require('./encar/node_modules/playwright'),{fixture,setBrowser,finish}=require('./encar/browser-smoke.cjs');
-const {createMemoFixture,COMPANY,FOREIGN,OWNER,RECIPIENT,ID,originalMemo}=require('./vehicle-memo-sharing.sql.cjs');
+const {createPermissionFixture:createMemoFixture,COMPANY,FOREIGN,OWNER,RECIPIENT,ID,originalMemo}=require('./vehicle-share-permissions-db.cjs');
 const ART=process.env.VEHICLE_MEMO_SHARED_ARTIFACT_DIR||'/tmp/snote-vehicle-memo-shared';fs.mkdirSync(ART,{recursive:true});
 (async()=>{const browser=await chromium.launch({headless:true,executablePath:'/usr/bin/chromium'});setBrowser(browser);
  try{for(const width of[1440,1024,390,320]){
@@ -11,9 +11,9 @@ const ART=process.env.VEHICLE_MEMO_SHARED_ARTIFACT_DIR||'/tmp/snote-vehicle-memo
   const serial=(actor,fn)=>{const task=queue.then(async()=>{await sql.actor(actor);return fn();});queue=task.catch(()=>{});return task;};
   const calls=[];
   try{
-   const invitation=await serial(OWNER,()=>sql.call('grant',{email:RECIPIENT+'@example.invalid'}));await serial(RECIPIENT,()=>sql.reply(invitation.invitationId,invitation.version));
+   const invitation=await serial(OWNER,()=>sql.call('grant',{email:RECIPIENT+'@example.invalid',permission:'edit'}));await serial(RECIPIENT,()=>sql.reply(invitation.invitationId,invitation.version));
    f=await fixture(width);const p=f.page;
-   await p.exposeFunction('__memoActualRpc',(context,args)=>serial(context.userId,()=>{calls.push(structuredClone(args));return sql.call(args.p_action,{company:args.p_company,owner:args.p_owner,car:args.p_car,email:args.p_email,target:args.p_target,expected:args.p_expected,...(Object.hasOwn(args,'p_patch')?{patch:args.p_patch}:{})});}));
+   await p.exposeFunction('__memoActualRpc',(context,args)=>serial(context.userId,()=>{calls.push(structuredClone(args));return sql.call(args.p_action,{company:args.p_company,owner:args.p_owner,car:args.p_car,email:args.p_email,target:args.p_target,expected:args.p_expected,...(Object.hasOwn(args,'p_permission')?{permission:args.p_permission}:{}),...(Object.hasOwn(args,'p_access')?{access:args.p_access}:{}),...(Object.hasOwn(args,'p_patch')?{patch:args.p_patch}:{})});}));
    await p.exposeFunction('__memoActualNotifications',(context,args)=>serial(context.userId,()=>sql.notes(args.p_action,args.p_ids)));
    await p.evaluate(async({company,recipient,owner})=>{
     await closeVehicle({discard:true});const original=window.snoteVehicleShareBridge;

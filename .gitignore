@@ -8,3 +8,6 @@ __pycache__/
 /backups/
 /recovery/
 .env.backup
+
+# Supabase CLI local cache and connection metadata.
+/supabase/.temp/
