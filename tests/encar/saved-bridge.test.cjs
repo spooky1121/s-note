@@ -11,6 +11,8 @@ const reset=between('let snote221IncomeEpoch=0;','function snote221IncomeContext
 const reload=between('async function reload(){if(!S.ready)return;','status.addEventListener(\'click\',reload);');
 const scrub=between('function scrub(o){','function cleanCustomer(');
 const detailMoney=between('function readDetailMoney(value){','function detailMoneyField(');
+const priceAcknowledge=between('function snoteVehicleAcknowledgePrice(','function snoteVehicleDiscardPending(');
+const priceDiscard=between('function snoteVehicleDiscardPending(){','function snoteVehicleHasChanges(');
 // Owner authorization is shared with company-purchase views. Execute the real
 // helpers too, so this isolated bridge does not replace that policy with a stub.
 const companyOwners=between('function snoteCompanyActor(){','function snoteCompanyOwnerLabel(');
@@ -162,7 +164,7 @@ test('vehicle save cancellation checks every pending dataset before accepting a 
   const f=fixture(),scope=f.bridge.context('car-a');let undos=0,acknowledged=0;
   f.S.revisions.set(key(USER),8);if(queued)f.S.queue.add(queued);
   f.context.snoteVehicleSameView=()=>true;
-  f.context.snoteVehicleAcknowledgePending=()=>{acknowledged++;};
+  f.context.snoteVehicleAcknowledgePending=()=>{acknowledged++;vm.runInContext('snoteVehicleUnconfirmedWrite=null',f.context);};
   f.context.toast=()=>assert.fail('The fixture rollback must succeed');
   f.context.undoFixture=()=>{undos++;return true;};
   f.context.pendingFixture={context:{id:'car-a',cloud:true,scopeKey:scope.key},revision:7};
@@ -294,4 +296,80 @@ test('OCR draft application preserves dealer and admin authority while denying a
  for(const change of[f=>{f.context.cars[0].status='판매완료';},f=>{f.S.saving=true;},f=>{f.S.queue.add(key(USER));},f=>{f.S.conflict=true;},f=>{f.context.snoteVehicleSaveTask={};}]){
   const f=ocrFixture(),base=f.ocr.context(),data=await f.ocr.read(base,f.file());change(f);assert.throws(()=>f.ocr.apply(base,data.candidates[0]));assert.equal(f.sellInput.events.length,0);
  }
+});
+
+async function priceCommitFixture(options={}){
+ const f=ocrFixture(options),owner=options.owner||USER,row=f.server.get(key(owner));row.payload.find(car=>car.id===f.context.activeCarId).sell=1200;
+ for(const[entryKey,entry]of f.server)f.localStorage.data.set(store(entryKey.slice(5)),JSON.stringify(entry.payload));
+ f.context.cars=f.context.cars.map(car=>{const source=[...f.server.values()].flatMap(r=>r.payload).find(item=>item.id===car.id);return f.context.SnoteMoney.car(clone(source));});
+ const base=f.bridge.context(f.context.activeCarId),car=base.car;f.sellInput.value='12,000,000';const drafts={memo:'서버 메모',repairs:[]};
+ const vehicleContext=()=>({actor:f.context.currentUser,car:base.car,id:base.carId,opening:f.context.snote224VehicleOpen,cloud:true,scopeKey:f.bridge.context(base.carId)?.key||''});
+ f.context.$=f.context.byId;f.context.snoteVehicleContext=vehicleContext;
+ f.context.snoteVehicleSameView=context=>!!context&&context.actor===f.context.currentUser&&context.car===base.car&&String(f.context.activeCarId)===context.id&&context.opening===f.context.snote224VehicleOpen;
+ f.context.snoteVehicleCurrent=context=>f.context.snoteVehicleSameView(context)&&f.bridge.context(context.id)?.key===context.scopeKey;
+ f.context.snoteVehicleDraftBase={context:vehicleContext(),signature:JSON.stringify([[['detail-sell',f.sellInput.value,false],['detail-memo',drafts.memo,false]],drafts.repairs])};
+ f.context.snoteVehicleDraftSignature=()=>JSON.stringify([[['detail-sell',f.sellInput.value,false],['detail-memo',drafts.memo,false]],drafts.repairs]);
+ f.context.snoteVehicleHasChanges=()=>f.context.snoteVehicleDraftSignature()!==f.context.snoteVehicleDraftBase.signature;
+ f.context.updateDetailSummary=()=>{};f.context.snoteVehicleSaveBusy=busy=>{f.context.priceBusy=busy;};f.context.byId('vehicle-overlay').dataset={};f.context.toast=()=>{};
+ vm.runInContext(priceAcknowledge+priceDiscard,f.context);
+ const data=pricedRecord();data.plate=base.plate;await f.bridge.save(base,data);
+ return {...f,base,data,drafts,car,change:()=>f.bridge.changePrice(base,data,data.listings[0].id,{expectedSellWon:12000000})};
+}
+test('confirmed price change stores only sell with legacy wire conversion and acknowledges only its baseline',async()=>{
+ const f=await priceCommitFixture();f.drafts.memo='미저장 메모';f.drafts.repairs.push({memo:'미저장 수리',amount:'500,000'});const before=clone(f.serverRecord()),baseline=JSON.parse(f.context.snoteVehicleDraftBase.signature),writes=f.calls.length;
+ const value=await f.change();assert.deepEqual(clone(value),{ok:true,priceWon:28200000,saved:true});assert.equal(f.calls.length,writes+1);
+ const after=f.serverRecord();assert.equal(after.sell,2820);assert.equal(f.car.sell,28200000);assert.equal(f.sellInput.value,'28,200,000');delete before.sell;delete after.sell;assert.deepEqual(after,before);
+ const next=JSON.parse(f.context.snoteVehicleDraftBase.signature);assert.equal(next[0][0][1],'28,200,000');assert.deepEqual(next[0][1],baseline[0][1]);assert.deepEqual(next[1],baseline[1]);assert.equal(f.context.snoteVehicleHasChanges(),true);assert.equal(f.context.snoteVehicleUnconfirmedWrite,null);assert.equal(f.context.priceBusy,false);
+ const calls=f.calls.length;assert.equal((await f.change()).saved,true);assert.equal(f.calls.length,calls,'An exact completed confirmation is idempotent');
+});
+test('price confirmation rejects dirty sell, changed old price or changed record before writing',async()=>{
+ for(const change of[f=>{f.sellInput.value='13,000,000';},f=>{f.car.sell=13000000;},f=>{f.data.listings[0].priceWon++;}]){
+  const f=await priceCommitFixture(),writes=f.calls.length;change(f);await assert.rejects(f.change(),error=>error.code==='CONTEXT_CHANGED');assert.equal(f.calls.length,writes);
+ }
+});
+test('price-only save preserves edits made during the RPC and exposes a boolean generic save promise',async()=>{
+ const f=await priceCommitFixture(),gate=f.hold(),pending=f.change();await gate.entered.promise;const general=f.context.snoteVehicleSaveTask.promise;
+ f.sellInput.value='31,000,000';f.drafts.memo='저장 대기 중 추가 메모';gate.release.resolve();assert.equal((await pending).saved,true);assert.equal(await general,true);
+ assert.equal(f.sellInput.value,'31,000,000');assert.equal(f.drafts.memo,'저장 대기 중 추가 메모');assert.equal(f.serverRecord().sell,2820);assert.equal(JSON.parse(f.context.snoteVehicleDraftBase.signature)[0][0][1],'28,200,000');assert.equal(f.context.snoteVehicleHasChanges(),true);
+});
+test('lost price ACK is reconciled without a second write and exact retry acknowledges the pending price',async()=>{
+ const f=await priceCommitFixture(),writes=f.calls.length;f.invalidAck();await assert.rejects(f.change(),error=>error.code==='NETWORK');assert.equal(f.serverRecord().sell,2820);assert(f.context.snoteVehicleUnconfirmedWrite);assert.equal(f.S.queue.size,1);
+ assert.equal((await f.change()).saved,true);assert.equal(f.calls.length,writes+1);assert.equal(f.context.snoteVehicleUnconfirmedWrite,null);assert.equal(f.S.queue.size,0);assert.equal(f.context.snoteVehicleHasChanges(),false);
+});
+test('failed price write remains retryable, and explicit discard rolls back only that price',async()=>{
+ const f=await priceCommitFixture();f.drafts.memo='보존할 메모';f.failNext();await assert.rejects(f.change(),error=>error.code==='NETWORK');assert.equal(f.serverRecord().sell,1200);assert.equal(f.car.sell,28200000);assert.equal(f.context.snoteVehicleHasChanges(),true);
+ assert.equal(f.context.snoteVehicleDiscardPending(),true);assert.equal(f.car.sell,12000000);assert.equal(f.sellInput.value,'12,000,000');assert.equal(f.drafts.memo,'보존할 메모');assert.equal((await f.context.flushActual()).ok,true);assert.equal(f.serverRecord().sell,1200);
+ const retry=await priceCommitFixture();retry.failNext();await assert.rejects(retry.change());assert.equal((await retry.change()).saved,true);assert.equal(retry.serverRecord().sell,2820);
+});
+test('price change local storage failure restores its own optimistic price and leaves other inputs alone',async()=>{
+ const f=await priceCommitFixture(),writes=f.calls.length;f.drafts.memo='남길 입력';f.localStorage.fail=true;await assert.rejects(f.change(),error=>error.code==='NETWORK');assert.equal(f.car.sell,12000000);assert.equal(f.sellInput.value,'12,000,000');assert.equal(f.drafts.memo,'남길 입력');assert.equal(f.calls.length,writes);assert.equal(f.context.snoteVehicleUnconfirmedWrite,null);
+});
+test('price confirmation denies readonly, sold, other pending saves and unmarked currency',async()=>{
+ const accountant=await priceCommitFixture({role:'accountant',owner:OTHER}).catch(error=>error);assert.equal(accountant.code,'FORBIDDEN');
+ for(const change of[f=>{f.car.status='판매완료';},f=>{f.S.saving=true;},f=>{f.S.conflict=true;},f=>{f.S.queue.add('finance:shared');},f=>{f.context.snoteVehicleUnconfirmedWrite={kind:'unrelated'};},f=>{delete f.car.moneyUnit;}]){
+  const f=await priceCommitFixture(),writes=f.calls.length;change(f);await assert.rejects(f.change());assert.equal(f.calls.length,writes);
+ }
+ const admin=await priceCommitFixture({role:'admin',owner:OTHER});assert.equal((await admin.change()).saved,true);assert.equal(admin.calls.at(-1).p_owner,OTHER);
+});
+test('price RPC completion cannot update a newly opened vehicle input',async()=>{
+ const f=await priceCommitFixture(),gate=f.hold(),pending=f.change().catch(error=>error);await gate.entered.promise;f.context.activeCarId='car-sibling';f.context.snote224VehicleOpen++;f.sellInput.value='다른 차량 입력';gate.release.resolve();assert.equal((await pending).code,'CONTEXT_CHANGED');assert.equal(f.sellInput.value,'다른 차량 입력');assert.equal(f.context.snoteVehicleUnconfirmedWrite,null);assert.equal(f.server.get(key(USER)).payload.find(car=>car.id==='car-sibling').sell,undefined);
+});
+test('retrying an uncertain price write preserves a subsequently typed price as an unsaved draft',async()=>{
+ const f=await priceCommitFixture();f.invalidAck();await assert.rejects(f.change());f.sellInput.value='33,000,000';f.drafts.memo='실패 후 메모';assert.equal((await f.change()).saved,true);
+ assert.equal(f.sellInput.value,'33,000,000');assert.equal(f.serverRecord().sell,2820);assert.equal(JSON.parse(f.context.snoteVehicleDraftBase.signature)[0][0][1],'28,200,000');assert.equal(f.context.snoteVehicleHasChanges(),true);assert.equal(f.drafts.memo,'실패 후 메모');
+});
+const noPriceRecord=()=>{const data=record();Object.assign(data.listings[0],{priceWon:null,priceCheckedAt:null,priceSource:null,priceStatus:'unavailable'});return data;};
+const autoPriceResponse=(plate='12가3456')=>{const at=new Date().toISOString();return {ok:true,plate,verifiedAt:at,requiresConfirmation:true,listing:{id:'43000001',priceWon:54900000,priceCheckedAt:at,priceSource:'encar.com-ocr',priceStatus:'review'}};};
+test('automatic price transport pins authentication to the fixed route and preserves the selected advertisement',async()=>{
+ const f=ocrFixture(),base=f.bridge.context('car-a'),requests=[];f.context.fetch=async(url,init)=>{requests.push({url,init});return Response.json(autoPriceResponse());};
+ const before=clone([...f.server]),data=await f.bridge.autoPrice(base,noPriceRecord());assert.equal(requests.length,1);assert.equal(requests[0].url,'/api/encar-auto-price');assert.equal(requests[0].init.headers.Authorization,'Bearer '+f.token);assert.equal(requests[0].init.redirect,'error');assert.equal(requests[0].init.cache,'no-store');assert.deepEqual(JSON.parse(requests[0].init.body),{plate:'12가3456',id:'43000001'});
+ assert.equal(data.listings[0].priceWon,54900000);assert.equal(data.listings[0].priceStatus,'review');assert.equal(data.listings[0].sellerUrl,record().listings[0].sellerUrl);assert.deepEqual([...f.server],before);assert.equal(f.sellInput.events.length,0);
+});
+test('automatic price never uploads with another account token and uses a fixed setup error',async()=>{
+ const f=ocrFixture(),base=f.bridge.context('car-a');f.S.client.auth.getSession=async()=>({data:{session:{access_token:f.token,user:{id:OTHER}}},error:null});await assert.rejects(f.bridge.autoPrice(base,noPriceRecord()),error=>error.code==='AUTH_REQUIRED');assert.equal(f.ocrCalls.length,0);
+ f.S.client.auth.getSession=async()=>({data:{session:{access_token:f.token,user:{id:USER}}},error:null});f.context.fetch=async()=>Response.json({ok:false,code:'SETUP_REQUIRED',error:'PRIVATE_PROVIDER_MESSAGE'},{status:503});await assert.rejects(f.bridge.autoPrice(base,noPriceRecord()),error=>error.code==='AUTO_PRICE_SETUP_REQUIRED'&&!error.message.includes('PRIVATE_PROVIDER_MESSAGE'));
+});
+test('automatic price rejects a different plate or canonical ID and never chooses the first of multiple ads',async()=>{
+ for(const change of[d=>{d.plate='34나7890';},d=>{d.listing.id='43000003';},d=>{d.listing.priceStatus='verified';}]){const f=ocrFixture(),base=f.bridge.context('car-a'),data=autoPriceResponse();change(data);f.context.fetch=async()=>Response.json(data);await assert.rejects(f.bridge.autoPrice(base,noPriceRecord()),error=>error.code==='INVALID_DATA');}
+ const f=ocrFixture(),base=f.bridge.context('car-a'),data=noPriceRecord();data.listings.push({...data.listings[0],id:'43000003',sellerUrl:'https://fem.encar.com/cars/detail/43000003',trustedId:null,trustedUrl:null});await assert.rejects(f.bridge.autoPrice(base,data),error=>error.code==='AUTO_PRICE_AMBIGUOUS');assert.equal(f.ocrCalls.length,0);
 });

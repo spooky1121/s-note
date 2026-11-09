@@ -4,6 +4,7 @@ export const API_POLICIES = Object.freeze({
   '/api/weather': { methods: ['GET'], limit: 60, maximum: 0 },
   '/api/ocr': { methods: ['GET', 'POST'], limit: 30, maximum: 6 * 1024 * 1024, image: true },
   '/api/encar': { methods: ['POST'], limit: 60, maximum: 4096 },
+  '/api/encar-auto-price': { methods: ['GET', 'POST'], limit: 30, maximum: 2048 },
   '/api/customer-intake': { methods: ['GET', 'POST'], limit: 120, maximum: 64 * 1024, publicPost: true },
   '/api/customer-identity': { methods: ['GET', 'POST'], limit: 240, maximum: 32 * 1024 },
   '/api/income-settlement': { methods: ['GET', 'POST'], limit: 240, maximum: 64 * 1024 },

@@ -9,7 +9,8 @@ import './html-rewriter-setup.mjs';
 const frontend = await readFile(new URL('../../assets/snote-encar-link.js', import.meta.url), 'utf8');
 const backend = (await readFile(new URL('../../functions/api/encar.js', import.meta.url), 'utf8'))
   .replace(/(['"])\.\.\/_shared\/encar-catalog\.mjs\1/g,
-    JSON.stringify(new URL('../../functions/_shared/encar-catalog.mjs', import.meta.url).href));
+    JSON.stringify(new URL('../../functions/_shared/encar-catalog.mjs', import.meta.url).href))
+  .replace("'../_shared/encar-page-price.mjs'", JSON.stringify(new URL('../../functions/_shared/encar-page-price.mjs', import.meta.url).href));
 const { onRequest } = await import('data:text/javascript;base64,' + Buffer.from(backend).toString('base64'));
 const PLATE = '12가3456', ORIGINAL = '43000001', TRUSTED = '43000002';
 const BASE = 'https://fem.encar.com/cars/detail/';

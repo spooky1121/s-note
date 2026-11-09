@@ -6,15 +6,16 @@ import { readFile } from 'node:fs/promises';
 import './html-rewriter-setup.mjs';
 
 const source = (await readFile(new URL('../../functions/api/encar.js', import.meta.url), 'utf8'))
-  .replace("'../_shared/encar-catalog.mjs'", JSON.stringify(new URL('../../functions/_shared/encar-catalog.mjs', import.meta.url).href));
+  .replace("'../_shared/encar-catalog.mjs'", JSON.stringify(new URL('../../functions/_shared/encar-catalog.mjs', import.meta.url).href))
+  .replace("'../_shared/encar-page-price.mjs'", JSON.stringify(new URL('../../functions/_shared/encar-page-price.mjs', import.meta.url).href));
 const { onRequest } = await import('data:text/javascript;base64,' + Buffer.from(source).toString('base64'));
 const PLATE='12가3456', ID='43000001', ALIAS='43000002';
 const ACTOR='10000000-0000-4000-8000-000000000001', TOKEN='synthetic_access_token_longer_than_thirty_characters';
 const KEY='synthetic_private_price_key', PROVIDER='https://api.encar-api.com/api/car';
 const json=(value,status=200)=>new Response(JSON.stringify(value),{status,headers:{'Content-Type':'application/json'}});
-function page(id=ID, options={}) {
+function page(id=ID, options={}, visible='') {
  const base={vehicleNo:PLATE,vehicleId:Number(id),queryCarId:Number(id),advertisement:{status:'ADVERTISE'},manage:{dummy:false,dummyVehicleId:null},category:{modelName:'합성 가격 차량'},spec:{mileage:10},...options};
- return '<script>window.__PRELOADED_STATE__='+JSON.stringify({cars:{base}})+';</script>';
+ return '<script>window.__PRELOADED_STATE__='+JSON.stringify({cars:{base}})+';</script><main>'+visible+'</main>';
 }
 async function run(config={}) {
  const calls=[],logs=[],previous=globalThis.fetch,info=console.info;
@@ -126,4 +127,39 @@ test('request cancellation aborts outstanding optional price work without waitin
  const controller=new AbortController();let entered;const ready=new Promise(resolve=>entered=resolve);
  const pending=run({signal:controller.signal,provider:()=>{entered();return new Promise(()=>{});}});await ready;controller.abort();const r=await pending;
  assert.equal(r.status,200);unavailable(r.body.listings[0]);assert.equal(providerCalls(r)[0].options.signal.aborted,true);
+});
+
+test('one same-vehicle seller-page amount becomes a review candidate when the price API is unavailable',async()=>{
+ const r=await run({key:'',pages:{[ID]:page(ID,{},'<section>판매가격 <strong>5,490</strong><span>만원</span></section>')}}),item=r.body.listings[0];
+ assert.equal(item.id,ID);assert.equal(item.priceWon,54900000);assert.equal(item.priceSource,'encar.com');assert.equal(item.priceStatus,'review');assert(Number.isFinite(Date.parse(item.priceCheckedAt)));
+ assert.equal(r.body.priceDiagnostics.providerRequests,0);assert.equal(r.body.priceDiagnostics.pageReviewCount,1);assert.deepEqual(r.body.priceDiagnostics.codes,[{code:'KEY_MISSING',httpStatus:null,count:1}]);
+ assert.equal(providerCalls(r).length,0);assert.equal(item.sellerUrl,'https://fem.encar.com/cars/detail/'+ID);
+});
+test('the exact provider price remains preferred over a different page-text review candidate',async()=>{
+ const r=await run({row:{Id:ID,Price:2820},pages:{[ID]:page(ID,{},'<div>5,490만원</div>')}});
+ assert.equal(r.body.listings[0].priceWon,28200000);assert.equal(r.body.listings[0].priceStatus,'verified');assert.equal(r.body.priceDiagnostics.pageReviewCount,0);assert.deepEqual(r.body.priceDiagnostics.codes,[]);
+});
+test('seller-page review never comes from a trusted alias, inactive advertisement or another plate',async()=>{
+ const r=await run({key:'',payload:{plate:PLATE,candidateIds:[ALIAS]},pages:{[ALIAS]:page(ID,{queryCarId:Number(ALIAS),manage:{dummy:true,dummyVehicleId:Number(ALIAS)}},'<p>4,990만원</p>'),[ID]:page(ID,{manage:{dummy:false,dummyVehicleId:Number(ALIAS)}},'<p>5,490만원</p>')}});
+ assert.equal(r.body.listings[0].trustedId,ALIAS);assert.equal(r.body.listings[0].priceWon,54900000);
+ for(const options of[{vehicleNo:'34나5678'},{advertisement:{status:'SOLD'}},{manage:{dummy:true,dummyVehicleId:Number(ID)}}]){
+  const value=await run({key:'',pages:{[ID]:page(ID,options,'<p>5,490만원</p>')}});assert.equal(value.body.listings.length,0);
+ }
+});
+test('multiple, hidden, script-only, split, monthly and mixed-unit page amounts do not populate an automatic review candidate',async t=>{
+ for(const visible of['<p>5,490만원</p><p>4,990만원</p>','<div hidden>5,490만원</div>','<script>window.other="5,490만원"</script>','<p>5 490만원</p>','<p>월 납입금 49만원</p>','<p>1억 5,490만원</p>'])await t.test(visible,async()=>{
+  const r=await run({key:'',pages:{[ID]:page(ID,{},visible)}});unavailable(r.body.listings[0]);assert.equal(r.body.priceDiagnostics.pageReviewCount,0);
+ });
+ const structured=await run({key:'',pages:{[ID]:page(ID,{advertisement:{status:'ADVERTISE',price:5490}})}});unavailable(structured.body.listings[0]);
+});
+test('price diagnostics use fixed codes and status counts without returning body fields or credentials',async t=>{
+ for(const [config,code,status]of[[{key:''},'KEY_MISSING',null],[{key:'short'},'KEY_INVALID',null],[{providerReply:json({private:KEY},401)},'AUTH_FAILED',401],[{providerReply:json({private:KEY},429)},'RATE_LIMITED',429],[{providerReply:json({private:KEY},503)},'UNAVAILABLE',503],[{providerReply:new Response('private '+KEY,{status:302,headers:{Location:'https://evil.example/'}})},'REDIRECT',302],[{row:{id:ID,price:5}},'SCHEMA_INVALID',200],[{row:{Id:ALIAS,Price:2820}},'ID_MISMATCH',200],[{row:{Id:ID,Price:0}},'PRICE_INVALID',200],[{row:{Id:ID,Price:2820,Currency:'EUR'}},'CURRENCY_UNSUPPORTED',200]])await t.test(code+':'+status,async()=>{
+  const r=await run(config);assert(r.body.priceDiagnostics.codes.some(row=>row.code===code&&row.httpStatus===status&&row.count===1));assert.deepEqual(Object.keys(r.body.priceDiagnostics).sort(),['codes','pageReviewCount','providerRequests']);
+  assert.doesNotMatch(JSON.stringify(r.body)+r.logs.join(''),/synthetic_private|private message|evil\.example|"private"|synthetic_access/);
+ });
+});
+test('a provider timeout retains the earlier page observation time instead of making an old price look freshly fetched',async t=>{
+ t.mock.timers.enable({apis:['setTimeout','Date'],now:100000});let entered;const ready=new Promise(resolve=>entered=resolve);
+ const pending=run({pages:{[ID]:page(ID,{},'<p>5,490만원</p>')},provider:()=>{entered();return new Promise(()=>{});}});await ready;t.mock.timers.tick(6001);const r=await pending,item=r.body.listings[0];
+ assert.equal(item.priceStatus,'review');assert.equal(item.priceWon,54900000);assert(Date.parse(item.priceCheckedAt)<Date.parse(r.body.verifiedAt));assert(r.body.priceDiagnostics.codes.some(row=>row.code==='TIMEOUT'));
 });

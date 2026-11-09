@@ -4,7 +4,8 @@ import { readFile } from 'node:fs/promises';
 import './html-rewriter-setup.mjs';
 
 const source = (await readFile(new URL('../../functions/api/encar.js', import.meta.url), 'utf8')).replace(
-  "'../_shared/encar-catalog.mjs'", JSON.stringify(new URL('../../functions/_shared/encar-catalog.mjs', import.meta.url).href));
+  "'../_shared/encar-catalog.mjs'", JSON.stringify(new URL('../../functions/_shared/encar-catalog.mjs', import.meta.url).href))
+  .replace("'../_shared/encar-page-price.mjs'", JSON.stringify(new URL('../../functions/_shared/encar-page-price.mjs', import.meta.url).href));
 const { onRequest } = await import('data:text/javascript;base64,' + Buffer.from(source).toString('base64'));
 const USER_ID = '10000000-0000-4000-8000-000000000001';
 const TOKEN = 'test_access_token_with_more_than_thirty_characters';
@@ -185,7 +186,7 @@ test('POST uses the exact search payload and returns only verified allowlisted f
   assert.equal(result.body.status, 'found');
   assert.equal(result.body.plate, PLATE);
   assert.ok(Number.isFinite(Date.parse(result.body.verifiedAt)));
-  assert.deepEqual(Object.keys(result.body).sort(), ['listings', 'plate', 'status', 'verifiedAt']);
+  assert.deepEqual(Object.keys(result.body).sort(), ['listings', 'plate', 'priceDiagnostics', 'status', 'verifiedAt']);
   assert.deepEqual(result.body.listings, [{
     id: ORIGINAL, trustedId: null, sellerUrl: BASE + ORIGINAL, trustedUrl: null,
     model: '현대 더 뉴 아이오닉5 롱레인지 프레스티지',
@@ -497,7 +498,7 @@ test('empty exact search gets one unquoted plate-only basic search and stops whe
   assert.equal(first.include_raw_content, false); assert.equal(Object.hasOwn(first, 'include_domains'), false);
   assert.equal(second.include_raw_content, true);
   assert.deepEqual(second.include_domains, ['encar.com', 'encar.spb.ru', 'trust-encar.ru', 'encar.msk.ru', 'encar.cbg.ru', 'carsbat.com', 'deffcars.ru']);
-  assert.deepEqual(Object.keys(result.body).sort(), ['listings', 'plate', 'status', 'verifiedAt']);
+  assert.deepEqual(Object.keys(result.body).sort(), ['listings', 'plate', 'priceDiagnostics', 'status', 'verifiedAt']);
 });
 
 test('a normal no-match first search can resolve on fallback, with repeated details memoized', async () => {
@@ -716,7 +717,7 @@ test('an inactive trusted alias can locate an independently active original but 
   assert.equal(result.body.listings[0].sellerUrl, BASE + ORIGINAL);
   assert.equal(result.body.listings[0].trustedId, null); assert.equal(result.body.listings[0].trustedUrl, null);
   assert.equal(detailCalls(result).length, 2); assert.equal(searchCalls(result).length, 1);
-  assert.deepEqual(Object.keys(result.body).sort(), ['listings', 'plate', 'status', 'verifiedAt']);
+  assert.deepEqual(Object.keys(result.body).sort(), ['listings', 'plate', 'priceDiagnostics', 'status', 'verifiedAt']);
 });
 
 test('inactive alias does not open an inactive canonical original or revisit either page', async () => {
@@ -841,7 +842,7 @@ test('public catalogue succeeds without Tavily and sends only the suffix to a di
     assert.equal(call.url.includes(PLATE), false); assert.equal(call.url.includes(encodeURIComponent(PLATE)), false);
     assert.deepEqual(call.options.headers, { Accept: 'text/html' }); assert.equal(call.options.redirect, 'manual');
   }
-  assert.deepEqual(Object.keys(result.body).sort(), ['listings', 'plate', 'status', 'verifiedAt']);
+  assert.deepEqual(Object.keys(result.body).sort(), ['listings', 'plate', 'priceDiagnostics', 'status', 'verifiedAt']);
 });
 
 test('suffix keeps leading zeroes and is never converted to a number', async () => {

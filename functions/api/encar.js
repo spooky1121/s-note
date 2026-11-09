@@ -1,4 +1,5 @@
 import { CATALOG_ORIGIN, catalogURL, configuredCatalogSearch, discoverCatalogSearch, parseCatalogPage } from '../_shared/encar-catalog.mjs';
+import { parseEncarPagePrice } from '../_shared/encar-page-price.mjs';
 
 /**
  * S-NOTE / Cloudflare Pages Function: POST /api/encar
@@ -42,7 +43,7 @@ function operation(request) {
     controller, searchCount: 0, resultCount: 0, checkedCount: 0, plateMatchedCount: 0,
     resultPlateMatchCount: 0, rawResultCount: 0, recognizedSourceCount: 0, candidates: new Set(),
     catalogRequestCount: 0, catalogPageCount: 0, catalogRecordCount: 0, catalogExactMatchCount: 0,
-    catalogFormCount: 0, catalogPlateFieldCount: 0, catalogLinkCount: 0,
+    catalogFormCount: 0, catalogPlateFieldCount: 0, catalogLinkCount: 0, pagePrices: new Map(), priceDiagnostics: null,
     rejected: { plateMismatch: 0, notAdvertising: 0, notFound: 0 } };
   op.timer = setTimeout(() => controller.abort(new EncarError('DEADLINE_EXCEEDED')), DEADLINE_MS);
   op.abort = () => controller.abort(new EncarError('UPSTREAM_TIMEOUT'));
@@ -74,6 +75,11 @@ function response(op, httpStatus, plate = '', listings = [], status = 'error', c
     verifiedAt: listings.length ? new Date().toISOString() : null,
     listings,
     status
+  };
+  if (op.priceDiagnostics) body.priceDiagnostics = {
+    providerRequests: op.priceDiagnostics.providerRequests,
+    pageReviewCount: op.priceDiagnostics.pageReviewCount,
+    codes: [...op.priceDiagnostics.codes].sort((a, b) => a.code.localeCompare(b.code) || (a.httpStatus || 0) - (b.httpStatus || 0))
   };
   if (status === 'error' || status === 'unverified') {
     body.diagnostics = { code, requestId: op.requestId, ...counters(op) };
@@ -416,6 +422,17 @@ async function detail(op, id, plate) {
       return { kind: 'inactive', ...identity };
     }
     if (base.advertisement?.status !== 'ADVERTISE') return { kind: 'error', code: 'AD_STATUS_UNKNOWN' };
+    if (originalId === id && !identity.dummy) {
+      const budget = Math.min(1000, op.deadline - Date.now() - 250);
+      if (budget >= 50 && !op.controller.signal.aborted) {
+        const controller = new AbortController(), abort = () => controller.abort(new EncarError('PRICE_UNAVAILABLE'));
+        op.controller.signal.addEventListener('abort', abort, { once: true });
+        const timer = setTimeout(abort, budget);
+        try { const page = await waitFor(parseEncarPagePrice(fetched.text), controller.signal);op.pagePrices.set(originalId, { ...page, checkedAt: page.candidate ? new Date().toISOString() : null }); }
+        catch (_) { op.pagePrices.set(originalId, { candidate: null, code: 'PAGE_TIMEOUT' }); }
+        finally { clearTimeout(timer); op.controller.signal.removeEventListener('abort', abort); controller.abort(); }
+      } else op.pagePrices.set(originalId, { candidate: null, code: 'PAGE_TIMEOUT' });
+    }
     return { kind: 'match', ...identity, ...listingData(base) };
   } catch (error) {
     return { kind: 'error', code: error instanceof EncarError ? error.code : 'DETAIL_PARSE_FAILED' };
@@ -488,6 +505,7 @@ function priceInWon(value) {
 }
 
 function providerPrice(data, id, plate) {
+  const invalid = code => ({ priceWon: null, code });
   const object = value => value !== null && typeof value === 'object' && !Array.isArray(value);
   const matches = [];
   function inspect(value, depth = 0) {
@@ -500,63 +518,92 @@ function providerPrice(data, id, plate) {
     }
   }
   inspect(data);
-  if (matches.length !== 1) return null;
+  if (matches.length !== 1) return invalid('SCHEMA_INVALID');
   const row = matches[0];
-  if (idOf(row.Id) !== id) return null;
+  if (idOf(row.Id) !== id) return invalid('ID_MISMATCH');
   for (const value of [row, row.details].filter(object)) {
     for (const key of ['VehicleNo', 'vehicleNo', 'CarNo', 'carNo', 'VehicleNumber', 'vehicleNumber']) {
-      if (Object.hasOwn(value, key) && normalizePlate(value[key]) !== plate) return null;
+      if (Object.hasOwn(value, key) && normalizePlate(value[key]) !== plate) return invalid('CONTEXT_MISMATCH');
     }
     for (const key of ['Status', 'status', 'AdvertisementStatus', 'advertisementStatus']) {
-      if (Object.hasOwn(value, key) && !['ADVERTISE', 'ACTIVE', 'AVAILABLE', 'ON_SALE', 'FOR_SALE'].includes(value[key])) return null;
+      if (Object.hasOwn(value, key) && !['ADVERTISE', 'ACTIVE', 'AVAILABLE', 'ON_SALE', 'FOR_SALE'].includes(value[key])) return invalid('CONTEXT_MISMATCH');
     }
-    for (const key of ['Sold', 'sold', 'IsSold', 'isSold']) if (Object.hasOwn(value, key) && value[key] !== false) return null;
-    for (const key of ['Available', 'available', 'IsAvailable', 'isAvailable']) if (Object.hasOwn(value, key) && value[key] !== true) return null;
-    for (const key of ['Currency', 'currency']) if (Object.hasOwn(value, key) && value[key] !== 'KRW') return null;
+    for (const key of ['Sold', 'sold', 'IsSold', 'isSold']) if (Object.hasOwn(value, key) && value[key] !== false) return invalid('CONTEXT_MISMATCH');
+    for (const key of ['Available', 'available', 'IsAvailable', 'isAvailable']) if (Object.hasOwn(value, key) && value[key] !== true) return invalid('CONTEXT_MISMATCH');
+    for (const key of ['Currency', 'currency']) if (Object.hasOwn(value, key) && value[key] !== 'KRW') return invalid('CURRENCY_UNSUPPORTED');
     for (const key of ['PriceType', 'priceType', 'SaleType', 'saleType', 'SellType', 'sellType']) {
-      if (Object.hasOwn(value, key) && !['CASH', 'SALE', 'NORMAL', '매매', '일반'].includes(value[key])) return null;
+      if (Object.hasOwn(value, key) && !['CASH', 'SALE', 'NORMAL', '매매', '일반'].includes(value[key])) return invalid('NON_CASH_PRICE');
     }
     for (const key of ['Lease', 'lease', 'IsLease', 'isLease', 'Rental', 'rental', 'IsRental', 'isRental']) {
-      if (Object.hasOwn(value, key) && value[key] !== false) return null;
+      if (Object.hasOwn(value, key) && value[key] !== false) return invalid('NON_CASH_PRICE');
     }
   }
-  return priceInWon(row.Price);
+  const priceWon = priceInWon(row.Price);
+  return { priceWon, code: priceWon === null ? 'PRICE_INVALID' : null };
+}
+
+function priceDiagnostic(op, code, httpStatus = null, count = 1) {
+  if (!Number.isInteger(httpStatus) || httpStatus < 100 || httpStatus > 599) httpStatus = null;
+  const row = op.priceDiagnostics.codes.find(item => item.code === code && item.httpStatus === httpStatus);
+  if (row) row.count += count;
+  else op.priceDiagnostics.codes.push({ code, httpStatus, count });
 }
 
 async function addPrices(op, env, listings, plate) {
   const result = listings.map(item => ({ ...item, ...unavailablePrice() }));
+  op.priceDiagnostics = { providerRequests: 0, pageReviewCount: 0, codes: [] };
+  const fallback = () => {
+    for (const item of result) if (item.priceStatus !== 'verified') {
+      const page = op.pagePrices.get(item.id);
+      if (page?.candidate) {
+        Object.assign(item, { priceWon: page.candidate.priceWon, priceCheckedAt: page.checkedAt, priceSource: 'encar.com', priceStatus: 'review' });
+        op.priceDiagnostics.pageReviewCount++;
+      } else priceDiagnostic(op, page?.code || 'PAGE_EMPTY');
+    }
+    return result;
+  };
   const key = typeof env.ENCAR_API_KEY === 'string' ? env.ENCAR_API_KEY.trim() : '';
   const budget = Math.min(PRICE_TIMEOUT_MS, op.deadline - Date.now() - 250);
-  if (key.length < 8 || key.length > 1024 || !/^[\x21-\x7e]+$/.test(key) || budget < 250 || op.controller.signal.aborted) return result;
+  if (!key) { priceDiagnostic(op, 'KEY_MISSING', null, result.length); return fallback(); }
+  if (key.length < 8 || key.length > 1024 || !/^[\x21-\x7e]+$/.test(key)) { priceDiagnostic(op, 'KEY_INVALID', null, result.length); return fallback(); }
+  if (budget < 250 || op.controller.signal.aborted) { priceDiagnostic(op, 'TIMEOUT', null, result.length); return fallback(); }
+  if (result.length > MAX_PRICE_LISTINGS) priceDiagnostic(op, 'LIMIT_SKIPPED', null, result.length - MAX_PRICE_LISTINGS);
   const controller = new AbortController();
   const abort = () => controller.abort(new EncarError('PRICE_UNAVAILABLE'));
   op.controller.signal.addEventListener('abort', abort, { once: true });
   const timer = setTimeout(abort, budget);
   try {
     await Promise.all(result.slice(0, MAX_PRICE_LISTINGS).map(async item => {
+      let httpStatus = null;
       try {
         const url = new URL(PRICE_PROVIDER); url.searchParams.set('id', item.id);
+        op.priceDiagnostics.providerRequests++;
         const fetched = await waitFor(fetch(url.href, {
           method: 'GET', headers: { 'x-api-key': key, Accept: 'application/json' },
           cache: 'no-store', credentials: 'omit', referrerPolicy: 'no-referrer',
           redirect: 'manual', signal: controller.signal
         }), controller.signal);
+        httpStatus = fetched.status;
         if (fetched.status !== 200 || (fetched.headers.get('content-type') || '').split(';')[0].trim().toLowerCase() !== 'application/json') {
           try { void fetched.body?.cancel().catch(() => {}); } catch (_) {}
+          const code = [401, 403].includes(fetched.status) ? 'AUTH_FAILED' : fetched.status === 429 ? 'RATE_LIMITED' : fetched.status >= 300 && fetched.status < 400 ? 'REDIRECT' : fetched.status === 200 ? 'SCHEMA_INVALID' : 'UNAVAILABLE';
+          priceDiagnostic(op, code, httpStatus);
           return;
         }
         const raw = await readLimited(fetched, 1024 * 1024, controller.signal);
-        const priceWon = providerPrice(JSON.parse(raw), item.id, plate);
-        if (priceWon === null || controller.signal.aborted) return;
+        let data;try { data = JSON.parse(raw); } catch (_) { priceDiagnostic(op, 'SCHEMA_INVALID', httpStatus); return; }
+        const { priceWon, code } = providerPrice(data, item.id, plate);
+        if (priceWon === null) { priceDiagnostic(op, code, httpStatus); return; }
+        if (controller.signal.aborted) { priceDiagnostic(op, 'TIMEOUT', httpStatus); return; }
         Object.assign(item, { priceWon, priceCheckedAt: new Date().toISOString(), priceSource: 'encar-api.com', priceStatus: 'verified' });
-      } catch (_) { /* Optional price failure never invalidates a verified link. */ }
+      } catch (error) { priceDiagnostic(op, controller.signal.aborted ? 'TIMEOUT' : error?.message === 'body-limit' ? 'RESPONSE_LIMIT' : 'UNAVAILABLE', httpStatus); }
     }));
   } finally {
     clearTimeout(timer);
     op.controller.signal.removeEventListener('abort', abort);
     controller.abort();
   }
-  return result;
+  return fallback();
 }
 
 function catalogError(error, fallback = 'CATALOG_PARSE_FAILED') {

@@ -1,0 +1,131 @@
+{
+  "release": "2.111",
+  "baseCommit": "e843c3f6cde265420c6bcb6b417ce9a185b64b67",
+  "reviewedAt": "2026-11-09T14:31:44.170Z",
+  "sourceHashes": {
+    "index.html": "d8e506fba0dc0f1d8de2fc408b2a218ee6d20c21ef06ebff149e6374edbb9186",
+    "assets/snote-encar-link.js": "4ea9a68fa6ecfd9dcc7305cc6ee91981288c976f3b28077ce958e942598f8488",
+    "functions/api/encar.js": "fe0a47eeafa06b16f9a211d5572c89d6a211689fad1b1bbb62a59ce28090138b",
+    "functions/api/encar-auto-price.js": "566792b804f887dd8ac1998a54e2810a05b76f80e1cda2ddaefe5a52f7d0b3a0",
+    "functions/_shared/encar-page-price.mjs": "c49777441e0e4f53989637c73f18743fc53d42f303f37b6bd211c101f8e4d4cf",
+    "functions/_shared/api-security.js": "924d5c738db91169d82a9d9a3d9eea542dfd3fc64930b9213650c50c0a378860"
+  },
+  "behavior": {
+    "automaticLookup": "Explicit Encar lookup or selected saved-link recheck; no manual screenshot upload required for the automatic path",
+    "priceSources": [
+      "verified/encar-api.com",
+      "review/encar.com",
+      "review/encar.com-ocr"
+    ],
+    "confirmation": "Show current and proposed planned sale price; explicit change confirms sell-only owner-scoped CAS persistence; cancel does not write sell",
+    "otherDrafts": "Memo, extra costs, other fields and later edits remain unsaved and preserved",
+    "conversion": "5,490만원 = 54,900,000원; integer KRW metadata; existing legacy wire conversion retained",
+    "storage": "Existing cars.encarLinks JSON; no screenshot/raw OCR/API key persistence",
+    "schemaChanges": false
+  },
+  "limits": {
+    "automaticRequestBytes": 2048,
+    "totalMs": 60000,
+    "captureCalls": 1,
+    "visionCalls": 1,
+    "captureBytes": 6291456,
+    "ocrJsonBytes": 4194304,
+    "normalizedTextCharacters": 200000,
+    "amountMarkers": 1000,
+    "redirects": false
+  },
+  "validation": {
+    "unit": {
+      "command": "npm test --prefix tests/encar",
+      "total": 582,
+      "passed": 582,
+      "failed": 0,
+      "log": "/workspace/work/v2111-all-tests-final.log"
+    },
+    "inlineScripts": 7,
+    "changedJavaScriptSyntax": "pass",
+    "diffCheck": "pass",
+    "independentSecurityReview": "No blocking findings after normalized-text and pending-save retry hardening",
+    "browser": {
+      "ok": true,
+      "at": "2026-11-09T14:27:05.203Z",
+      "sourceHashes": {
+        "index.html": "d8e506fba0dc0f1d8de2fc408b2a218ee6d20c21ef06ebff149e6374edbb9186",
+        "assets/snote-encar-link.js": "4ea9a68fa6ecfd9dcc7305cc6ee91981288c976f3b28077ce958e942598f8488",
+        "tests/encar/auto-price-confirm.browser.cjs": "1799e94dad293fbdb3f261903a99b15b5e6d262a68126a96845f960047b261df"
+      },
+      "results": [
+        {
+          "width": 1440,
+          "metadataAckRequired": true,
+          "automaticConfirmation": true,
+          "cancelUnchanged": true,
+          "priceOnlyDatabaseSave": true,
+          "otherDraftsAndPeerPreserved": true,
+          "equalPriceNoPrompt": true,
+          "restoredQuoteNoPrompt": true,
+          "overflow": false
+        },
+        {
+          "width": 390,
+          "metadataAckRequired": true,
+          "automaticConfirmation": true,
+          "cancelUnchanged": true,
+          "priceOnlyDatabaseSave": true,
+          "otherDraftsAndPeerPreserved": true,
+          "equalPriceNoPrompt": true,
+          "restoredQuoteNoPrompt": true,
+          "overflow": false
+        },
+        {
+          "width": 320,
+          "metadataAckRequired": true,
+          "automaticConfirmation": true,
+          "cancelUnchanged": true,
+          "priceOnlyDatabaseSave": true,
+          "otherDraftsAndPeerPreserved": true,
+          "equalPriceNoPrompt": true,
+          "restoredQuoteNoPrompt": true,
+          "overflow": false
+        },
+        {
+          "width": 390,
+          "multipleAdsRequireSelection": true,
+          "automaticCaptureMockNoUpload": true,
+          "reviewPriceExplicitConfirmation": true
+        },
+        {
+          "width": 390,
+          "unavailableNoPrompt": true,
+          "dirtyPriceNoPrompt": true,
+          "readOnlyNoPrompt": true
+        },
+        {
+          "width": 390,
+          "failedAckKeepsExactStagedRetry": true,
+          "retryCommitsExactlyOnce": true
+        },
+        {
+          "width": 390,
+          "changedPriceClosesPrompt": true,
+          "lateSaveCannotAffectNextVehicle": true
+        }
+      ],
+      "syntheticOnly": true,
+      "automaticCaptureResponseMocked": true
+    }
+  },
+  "liveValidation": {
+    "cloudflareBrowserRun": "not_verified",
+    "actualUserAdvertisementOCR": "not_verified",
+    "reason": "User reported on 2026-11-09 that CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_BROWSER_TOKEN were not registered; setup instructions supplied. Automatic capture responses in browser tests and capture/Vision HTTP in unit tests were mocked.",
+    "googleVisionThisRelease": "No new live OCR request; prior v2.110 synthetic-image service test is documented separately",
+    "productionConfiguredEndpoint": "GET /api/encar-auto-price reports configuration presence only; a true value does not prove authentication or live capture success",
+    "requiredProductionVariables": [
+      "CLOUDFLARE_ACCOUNT_ID",
+      "CLOUDFLARE_BROWSER_TOKEN",
+      "GOOGLE_VISION_API_KEY"
+    ]
+  },
+  "guide": "docs/encar-auto-price.md"
+}
