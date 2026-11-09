@@ -4,7 +4,7 @@
   "private": true,
   "description": "Offline regression tests for the S-NOTE Encar lookup integration",
   "scripts": {
-    "test": "node --test --test-isolation=none server.test.mjs server-price.test.mjs page-price.test.mjs frontend.test.cjs integration.test.mjs catalog.test.mjs saved-bridge.test.cjs ../encar-price-ocr.test.mjs ../ocr-security.test.mjs ../ocr-registration-parser.test.mjs ../encar-auto-price.test.mjs ../api-security.test.mjs",
+    "test": "node --test --test-isolation=none server.test.mjs server-price.test.mjs page-price.test.mjs frontend.test.cjs integration.test.mjs catalog.test.mjs saved-bridge.test.cjs list-price-entry.test.cjs ../encar-price-ocr.test.mjs ../ocr-security.test.mjs ../ocr-registration-parser.test.mjs ../encar-auto-price.test.mjs ../api-security.test.mjs ../inventory-interest.test.mjs ../inventory-interest-integration.test.mjs ../money.test.mjs ../home-dashboard.test.cjs",
     "test:browser": "node browser-smoke.cjs",
     "test:mobile": "node mobile-workspace-browser.cjs"
   },

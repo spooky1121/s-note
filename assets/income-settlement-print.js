@@ -1,4 +1,4 @@
-import {TEMPLATE,normalizeDocument,calculate} from './income-settlement-model.js?v=2.85';
+import {TEMPLATE,normalizeDocument,calculate} from './income-settlement-model.js?v=2.112';
 
 const money=value=>value==null?'':new Intl.NumberFormat('ko-KR').format(value);
 

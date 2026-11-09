@@ -44,13 +44,28 @@ async function snapshot(p){return p.evaluate(()=>({cars:structuredClone(window._
    }catch(error){await f.context.close();throw error;}
   }
   {
+   const f=await fixture(1440),p=f.page;
+   try{
+    await lookup(f,quoted());await shown(p);await p.locator(CANCEL).click();await hidden(p);
+    assert.equal(await p.evaluate(()=>window.SnoteEncarLink.lookupCurrent('encar-car-2','43000001')),false,'The public list entry point must reject a vehicle outside its current drawer');
+    await p.evaluate(async()=>{await closeVehicle({discard:true,animate:false});if(navigate('buy')!==true)throw Error('The list entry fixture must be on the actual purchase list');});
+    const icon=p.locator('.snote-list-encar[data-encar-car-id="encar-car-1"]').first();await icon.waitFor({state:'visible'});const requestCount=f.requests.length,before=await snapshot(p);
+    f.reply(quoted());let opened=f.context.waitForEvent('page');await icon.click();let popup=await opened;if(!popup.isClosed())await popup.waitForEvent('close');await shown(p);
+    assert.equal(f.requests.length,requestCount+1);assert.deepEqual(f.requests.at(-1).candidateIds,[ID]);assert.equal(await p.evaluate(()=>activeCarId),'encar-car-1');assert.equal(await p.locator('#detail-sell').inputValue(),'12,000,000');assert.equal(SnoteMoneyValue((await snapshot(p)).cars[0].sell),12000000);
+    await p.screenshot({path:path.join(ART,'auto-price-list-entry-1440.png')});await p.locator(CANCEL).click();await hidden(p);assert.equal(SnoteMoneyValue((await snapshot(p)).cars[0].sell),SnoteMoneyValue(before.cars[0].sell));
+    await p.evaluate(async()=>{await closeVehicle({discard:true,animate:false});});f.reply(quoted([item(ID,12000000)]));opened=f.context.waitForEvent('page');await icon.click();popup=await opened;await popup.waitForURL(SELLER);await popup.close();await stored(p);
+    assert.equal(await p.locator(DIALOG).isVisible(),false);assert.equal(await p.locator('#detail-sell').inputValue(),'12,000,000');assert.equal(f.requests.length,requestCount+2);
+    await finish(f);results.push({width:1440,realListIconOpensTargetAndAutomaticConfirmation:true,listEntryRejectsWrongVehicle:true,listEqualPriceOpensAdvertisementWithoutMutation:true});console.log('PASS the actual vehicle-list Encar icon queries its own vehicle and uses automatic confirmation only for a changed price');
+   }catch(error){await f.context.close();throw error;}
+  }
+  {
    const f=await fixture(390),p=f.page;
    try{
     await lookup(f,quoted([item(ID,PRICE),item('43000003',39999000)]));await shown(p);
     const radios=p.locator(DIALOG+' input[type=radio]');assert.equal(await radios.count(),2);assert.equal(await p.locator(DIALOG+' input[type=radio]:checked').count(),0);assert.equal(await p.locator(SAVE).isDisabled(),true,'Conflicting advertisements require an explicit selection');
     assert.equal(await p.locator(DIALOG).evaluate(el=>el.scrollWidth>el.clientWidth),false);await p.screenshot({path:path.join(ART,'auto-price-multiple-390.png')});await radios.nth(1).check();await p.locator(SAVE).click();await hidden(p);await p.waitForFunction(()=>SnoteMoney.car(window.__encarFixtureCars[0]).sell===39999000);
     await p.evaluate(()=>{window.__autoOriginalBridge=window.snoteEncarLinksBridge;window.__autoCaptureCalls=0;window.snoteEncarLinksBridge={...window.__autoOriginalBridge,async autoPrice(base,record){window.__autoCaptureCalls++;return{...record,verifiedAt:new Date().toISOString(),listings:record.listings.map(entry=>({...entry,priceWon:54900000,priceCheckedAt:new Date().toISOString(),priceSource:'encar.com-ocr',priceStatus:'review'}))};}};});
-    await lookup(f,absent());await shown(p);assert.equal(await p.evaluate(()=>window.__autoCaptureCalls),1);assert.match(await p.locator(DIALOG+' .snote-encar-price-confirm-amount').textContent(),/화면에서 찾은 광고가 54,900,000원/);assert.equal(await p.locator('#snote-encar-price-ocr').isVisible(),false,'Automatic capture does not require the manual image upload dialog');
+    await lookup(f,absent());await shown(p);assert.equal(await p.evaluate(()=>window.__autoCaptureCalls),1);assert.equal(await p.locator(DIALOG+' .snote-encar-price-confirm-amount').textContent(),'엔카 광고가 54,900,000원');assert.equal(await p.locator('#snote-encar-price-ocr').isVisible(),false,'Automatic capture does not require the manual image upload dialog');
     await p.locator(SAVE).click();await hidden(p);await p.waitForFunction(()=>SnoteMoney.car(window.__encarFixtureCars[0]).sell===54900000);assert.equal(await p.locator('#detail-sell').inputValue(),'54,900,000');
     await finish(f);results.push({width:390,multipleAdsRequireSelection:true,automaticCaptureMockNoUpload:true,reviewPriceExplicitConfirmation:true});console.log('PASS conflicting advertisements need selection and automatic capture result uses the same explicit confirmation');
    }catch(error){await f.context.close();throw error;}
@@ -89,7 +104,7 @@ async function snapshot(p){return p.evaluate(()=>({cars:structuredClone(window._
    }catch(error){await f.context.close();throw error;}
   }
  }finally{await browser.close();}
- const files=['index.html','assets/snote-encar-link.js','tests/encar/auto-price-confirm.browser.cjs'];fs.writeFileSync(path.join(ART,'receipt.json'),JSON.stringify({ok:true,at:new Date().toISOString(),sourceHashes:Object.fromEntries(files.map(file=>[file,crypto.createHash('sha256').update(fs.readFileSync(path.join(ROOT,file))).digest('hex')])),results,syntheticOnly:true,automaticCaptureResponseMocked:true},null,2)+'\n');
+ const files=['index.html','assets/snote-encar-link.js','tests/encar/browser-smoke.cjs','tests/encar/auto-price-confirm.browser.cjs'];fs.writeFileSync(path.join(ART,'receipt.json'),JSON.stringify({ok:true,at:new Date().toISOString(),sourceHashes:Object.fromEntries(files.map(file=>[file,crypto.createHash('sha256').update(fs.readFileSync(path.join(ROOT,file))).digest('hex')])),results,syntheticOnly:true,automaticCaptureResponseMocked:true},null,2)+'\n');
 })().catch(error=>{console.error(error.stack);process.exitCode=1;});
 
 // The fixture keeps legacy monetary fields on the wire.

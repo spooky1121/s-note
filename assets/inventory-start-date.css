@@ -1,0 +1,20 @@
+#vehicle-overlay .snote-interest-heading{display:flex;align-items:center;gap:6px;min-height:19px;flex-wrap:wrap}
+#vehicle-overlay #detail-inventory-start-trigger{appearance:none;display:inline;padding:0;margin:0;min-width:0;min-height:0;border:0;border-radius:3px;background:transparent;box-shadow:none;color:inherit;font:inherit;line-height:inherit;text-align:left;cursor:pointer}
+#vehicle-overlay #detail-inventory-start-trigger:hover{color:#176ce8}
+#vehicle-overlay #detail-inventory-start-trigger:focus-visible{outline:2px solid #99c1ff;outline-offset:3px}
+#vehicle-overlay #detail-inventory-start-trigger:disabled{cursor:default;opacity:1;color:inherit}
+#vehicle-overlay .snote-interest-heading .snote-interest-basis{position:static;display:inline;font-size:10px;line-height:1.5;margin:0;color:#8e9aab;font-weight:400}
+#snote-inventory-start-dialog{box-sizing:border-box;width:min(360px,calc(100vw - 32px));max-height:calc(100dvh - 48px);padding:27px 22px 20px;margin:auto;border:1px solid #e5e9ef;border-radius:17px;background:#fff;color:#263348;box-shadow:0 20px 70px #172b4d24;overflow:auto;font-family:inherit}
+#snote-inventory-start-dialog::backdrop{background:#23334842;backdrop-filter:blur(4px)}
+#snote-inventory-start-dialog>.snote-popup-close{position:absolute;right:9px;top:9px}
+#snote-inventory-start-dialog h2{font-size:18px;line-height:1.4;margin:0 28px 9px 0;font-weight:650}
+#snote-inventory-start-dialog .snote-inventory-start-car{font-size:12px;color:#8792a2;line-height:1.5;margin:0 0 18px}
+#snote-inventory-start-dialog .snote-inventory-start-label{display:flex;align-items:center;justify-content:space-between;gap:14px;font-size:13px;color:#536174}
+#snote-inventory-start-dialog input{box-sizing:border-box;min-width:0;width:172px;max-width:100%;padding:9px 10px;border:1px solid #e3e8ef;border-radius:8px;background:#f8f9fc;color:#263348;font:inherit;font-size:14px;font-variant-numeric:tabular-nums}
+#snote-inventory-start-dialog input:focus{outline:2px solid #b4d1ff;outline-offset:1px}
+#snote-inventory-start-dialog .snote-inventory-start-status{min-height:18px;margin:12px 0 0;color:#64748b;font-size:12px;line-height:1.5}
+#snote-inventory-start-dialog footer{display:flex;justify-content:flex-end;gap:8px;margin-top:15px}
+#snote-inventory-start-dialog footer button{min-height:35px;padding:8px 14px;border:0;border-radius:8px;background:#f1f4f8;color:#526075;font:inherit;font-size:13px;cursor:pointer}
+#snote-inventory-start-dialog .snote-inventory-start-save{background:#176ce8;color:white}
+#snote-inventory-start-dialog button:disabled{opacity:.45;cursor:wait}
+@media(prefers-reduced-motion:no-preference){#snote-inventory-start-dialog[open]{animation:snote-inventory-start-in .18s ease-out}@keyframes snote-inventory-start-in{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}}

@@ -1,5 +1,5 @@
 import './money.js?v=2.76';
-import './inventory-interest.js?v=2.41';
+import './inventory-interest.js?v=2.112';
 import './custom-cost-model.js?v=2.85';
 import { TEMPLATE, TEMPLATE_ID } from './income-settlement-template.js?v=2.41';
 export { TEMPLATE, TEMPLATE_ID };

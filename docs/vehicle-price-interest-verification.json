@@ -1,0 +1,489 @@
+{
+  "release": "2.112",
+  "baseCommit": "b707a5235100898cf6d7a5d4a87d1fd440eca46a",
+  "verifiedAt": "2026-11-09T15:27:45.523Z",
+  "clientDate": "2026-11-10",
+  "sourceHashes": {
+    "index.html": "e2493dbec904615d3d0fa88c031995882cd9a2b3e31a3ec03f317130582499b4",
+    "assets/snote-encar-link.js": "600f1cbecd4e59a30e96ffd0fee1349475047ebd42547f322070710f36e20dbd",
+    "assets/inventory-interest.js": "2518b98f08cf287dd6d422140f86a9660798db98d0c30b6d8ac18f993beb7e29",
+    "assets/inventory-start-date.js": "80cc3afab770afa77e81cfbb7daf36aa453dce7f4c45d5cb4bb60d0348764670",
+    "assets/inventory-start-date.css": "b14c687b16f66bfacf5d8568c96ea9354ba85bd2e03d7aab7bb9ff7269acdc5f",
+    "assets/income-settlement-model.js": "d0a66869524c5a9a3cece27a2ba8ad84f21776ebe4f8994d4d303169e570eeb5",
+    "assets/income-settlement-parent.js": "5d979d607ce5a9a549360893af5d0949a1af1bd491b7f9b30648928c18c17dd8",
+    "assets/income-settlement.js": "d063515f3766a1e11fc54760deaa1132e929234c137070ed14e8e82d28615a7b",
+    "assets/income-settlement-print.js": "2da6a5c92a841324d9f1b6e2bce4584d96155ff71aca75129c307856f9730c2f",
+    "income-settlement.html": "0d58564e55acf30637fc92d247d9e6a5fff6da12425295a3789df4f7cc6727e4",
+    "assets/login-garage-clear.png": "a2d01e72c4a2a9330c8df5a153bccf60c144c81c72f8b6e03b9380a8e89cbcf0"
+  },
+  "features": {
+    "encar": {
+      "priceLabel": "엔카 광고가 N원",
+      "directButton": "판매가 변경",
+      "directSave": "Existing exact quote/vehicle/sell-only owner CAS; no second confirmation",
+      "listClick": "Open safe exact vehicle context then fresh selected-ad lookup; compare and prompt only on mismatch",
+      "preserved": [
+        "review/source metadata",
+        "dirty other fields",
+        "original expected price on lost ACK retry",
+        "read-only/sold restrictions",
+        "native modified-link clicks"
+      ],
+      "listRefresh": "After confirmed persistence"
+    },
+    "inventory": {
+      "field": "inventoryStartedAt",
+      "format": "YYYY-MM-DD",
+      "fallback": "purchaseAt only when field absent",
+      "rate": "Configured matching lender APR; completed-sale snapshots preserve historical rate",
+      "calculation": "Actual elapsed days / 365; integer-won result rounded once",
+      "interaction": "Rate beside label; shared hover tooltip; click date popup; save date and derived interest cost/snapshot only",
+      "storage": "Existing zc_datasets.payload JSONB via zc_write_dataset owner-scoped revision CAS",
+      "noNewSchema": true,
+      "preserved": [
+        "other dirty loan/lender/purchase/memo/repair fields",
+        "old no-rate manual interest",
+        "completed-sale snapshot",
+        "accountant/read-only restrictions"
+      ],
+      "snapshotFinalization": "Active snapshots finalized:false do not freeze the sale rate; completed snapshots finalized:true and legacy historical snapshots preserve final rates."
+    },
+    "login": {
+      "removed": "WORK, WELL ORGANIZED.",
+      "moved": "좋은 거래의 시작, 정돈된 업무에서. to top of image panel",
+      "enhancement": "Image generation tool edited a faithful clarity variant; original file retained",
+      "dimensions": [
+        1086,
+        1448
+      ],
+      "upscaleClaim": false,
+      "originalHash": "8abb3fdda6e02855b99bdb4640dfd63cbba3256e5598d34d4462aab777e80d0d",
+      "newImageHash": "a2d01e72c4a2a9330c8df5a153bccf60c144c81c72f8b6e03b9380a8e89cbcf0",
+      "css": "Removed desaturation and reduced dark overlay"
+    }
+  },
+  "validation": {
+    "unit": {
+      "combined": 660,
+      "income": 44,
+      "total": 704,
+      "failed": 0,
+      "commands": [
+        "npm test --prefix tests/encar",
+        "node --test --test-isolation=none tests/income-settlement-model.test.mjs tests/income-settlement-api.test.mjs"
+      ]
+    },
+    "inlineScriptSyntax": {
+      "count": 7,
+      "result": "pass"
+    },
+    "diffCheck": "pass",
+    "independentReview": "No blocking findings for direct sell change, list entry, partial inventory-start ACK and retry",
+    "browserGroups": 26,
+    "browser": {
+      "encarAutomatic": {
+        "ok": true,
+        "at": "2026-11-09T15:24:54.661Z",
+        "sourceHashes": {
+          "index.html": "e2493dbec904615d3d0fa88c031995882cd9a2b3e31a3ec03f317130582499b4",
+          "assets/snote-encar-link.js": "600f1cbecd4e59a30e96ffd0fee1349475047ebd42547f322070710f36e20dbd",
+          "tests/encar/browser-smoke.cjs": "e8936aa4b90af4449241a9a1028c5361a44c9cf5ad39fc097ff1d1d82c3aac4d",
+          "tests/encar/auto-price-confirm.browser.cjs": "dbd1e1f86d8ad4801d20f63035a37a5ba7d69271b135f0c36684ae03c93725ae"
+        },
+        "results": [
+          {
+            "width": 1440,
+            "metadataAckRequired": true,
+            "automaticConfirmation": true,
+            "cancelUnchanged": true,
+            "priceOnlyDatabaseSave": true,
+            "otherDraftsAndPeerPreserved": true,
+            "equalPriceNoPrompt": true,
+            "restoredQuoteNoPrompt": true,
+            "overflow": false
+          },
+          {
+            "width": 390,
+            "metadataAckRequired": true,
+            "automaticConfirmation": true,
+            "cancelUnchanged": true,
+            "priceOnlyDatabaseSave": true,
+            "otherDraftsAndPeerPreserved": true,
+            "equalPriceNoPrompt": true,
+            "restoredQuoteNoPrompt": true,
+            "overflow": false
+          },
+          {
+            "width": 320,
+            "metadataAckRequired": true,
+            "automaticConfirmation": true,
+            "cancelUnchanged": true,
+            "priceOnlyDatabaseSave": true,
+            "otherDraftsAndPeerPreserved": true,
+            "equalPriceNoPrompt": true,
+            "restoredQuoteNoPrompt": true,
+            "overflow": false
+          },
+          {
+            "width": 1440,
+            "realListIconOpensTargetAndAutomaticConfirmation": true,
+            "listEntryRejectsWrongVehicle": true,
+            "listEqualPriceOpensAdvertisementWithoutMutation": true
+          },
+          {
+            "width": 390,
+            "multipleAdsRequireSelection": true,
+            "automaticCaptureMockNoUpload": true,
+            "reviewPriceExplicitConfirmation": true
+          },
+          {
+            "width": 390,
+            "unavailableNoPrompt": true,
+            "dirtyPriceNoPrompt": true,
+            "readOnlyNoPrompt": true
+          },
+          {
+            "width": 390,
+            "failedAckKeepsExactStagedRetry": true,
+            "retryCommitsExactlyOnce": true
+          },
+          {
+            "width": 390,
+            "changedPriceClosesPrompt": true,
+            "lateSaveCannotAffectNextVehicle": true
+          }
+        ],
+        "syntheticOnly": true,
+        "automaticCaptureResponseMocked": true,
+        "artifact": "/workspace/work/v2112-encar-auto-confirm-browser/receipt.json"
+      },
+      "encarDirect": {
+        "ok": true,
+        "at": "2026-11-09T15:24:43.443Z",
+        "sourceHashes": {
+          "index.html": "e2493dbec904615d3d0fa88c031995882cd9a2b3e31a3ec03f317130582499b4",
+          "assets/snote-encar-link.js": "600f1cbecd4e59a30e96ffd0fee1349475047ebd42547f322070710f36e20dbd",
+          "tests/encar/browser-smoke.cjs": "e8936aa4b90af4449241a9a1028c5361a44c9cf5ad39fc097ff1d1d82c3aac4d",
+          "tests/encar/direct-price-change.browser.cjs": "0ac390bff8851dc1c8bbba9383b55cd4150f4c583de9d47c75089358a0a2c02e"
+        },
+        "results": [
+          {
+            "width": 1440,
+            "neutralLabel": true,
+            "inlineChangeButton": true,
+            "noSecondConfirmation": true,
+            "priceOnlyDatabaseSave": true,
+            "otherDraftsAndPeerPreserved": true,
+            "underlyingTableAndCardUpdated": true,
+            "geometry": {
+              "width": 78.40625,
+              "height": 28.796875,
+              "withTrusted": true,
+              "withPrice": true,
+              "hit": true,
+              "overflow": false
+            }
+          },
+          {
+            "width": 390,
+            "neutralLabel": true,
+            "inlineChangeButton": true,
+            "noSecondConfirmation": true,
+            "priceOnlyDatabaseSave": true,
+            "otherDraftsAndPeerPreserved": true,
+            "underlyingTableAndCardUpdated": true,
+            "geometry": {
+              "width": 89.203125,
+              "height": 32,
+              "withTrusted": false,
+              "withPrice": true,
+              "hit": true,
+              "overflow": false
+            }
+          },
+          {
+            "width": 320,
+            "neutralLabel": true,
+            "inlineChangeButton": true,
+            "noSecondConfirmation": true,
+            "priceOnlyDatabaseSave": true,
+            "otherDraftsAndPeerPreserved": true,
+            "underlyingTableAndCardUpdated": true,
+            "geometry": {
+              "width": 89.203125,
+              "height": 32,
+              "withTrusted": false,
+              "withPrice": true,
+              "hit": true,
+              "overflow": false
+            }
+          },
+          {
+            "width": 390,
+            "lostResponsePreservesOriginalExpectedPrice": true,
+            "lostResponseRecoveredAfterServerRecheck": true,
+            "commitsOnceWithoutFalseSuccess": true
+          },
+          {
+            "width": 390,
+            "failedAckRetryKeepsOriginalExpectedPrice": true,
+            "retryCommitsOnce": true,
+            "pendingPriceBlocksLookupAndOtherInput": true
+          },
+          {
+            "width": 390,
+            "dirtySalePriceProtected": true,
+            "readOnlyAndSoldHidden": true
+          },
+          {
+            "width": 390,
+            "lateDirectPriceCannotAffectNextVehicle": true
+          }
+        ],
+        "syntheticOnly": true,
+        "artifact": "/workspace/work/v2112-encar-direct-price-browser/receipt.json"
+      },
+      "encarPriceRegression": {
+        "ok": true,
+        "at": "2026-11-09T15:24:30.970Z",
+        "sourceHashes": {
+          "index.html": "e2493dbec904615d3d0fa88c031995882cd9a2b3e31a3ec03f317130582499b4",
+          "assets/snote-encar-link.js": "600f1cbecd4e59a30e96ffd0fee1349475047ebd42547f322070710f36e20dbd",
+          "tests/encar/browser-smoke.cjs": "e8936aa4b90af4449241a9a1028c5361a44c9cf5ad39fc097ff1d1d82c3aac4d",
+          "tests/encar/price-action.browser.cjs": "5ae1a72ad183fea61f89cf31d315fefdba25c4e9f2435976beda4f26dafa06e7"
+        },
+        "results": [
+          {
+            "width": 1440,
+            "sourcePriceStored": true,
+            "ackRequired": true,
+            "wonAndKoreaTime": true,
+            "immediatePriceOnlySave": true,
+            "otherDraftsPreserved": true,
+            "normalVehicleSave": true,
+            "peerUnchanged": true,
+            "reopenWithoutProvider": true,
+            "sameUrlRefresh": true,
+            "soldDenied": true,
+            "invalidPriceLinksPreserved": true,
+            "geometry": {
+              "width": 78.40625,
+              "height": 28.796875,
+              "hit": true,
+              "overflow": false
+            }
+          },
+          {
+            "width": 390,
+            "sourcePriceStored": true,
+            "ackRequired": true,
+            "wonAndKoreaTime": true,
+            "immediatePriceOnlySave": true,
+            "otherDraftsPreserved": true,
+            "normalVehicleSave": true,
+            "peerUnchanged": true,
+            "reopenWithoutProvider": true,
+            "sameUrlRefresh": true,
+            "soldDenied": true,
+            "invalidPriceLinksPreserved": true,
+            "geometry": {
+              "width": 89.203125,
+              "height": 32,
+              "hit": true,
+              "overflow": false
+            }
+          },
+          {
+            "width": 320,
+            "sourcePriceStored": true,
+            "ackRequired": true,
+            "wonAndKoreaTime": true,
+            "immediatePriceOnlySave": true,
+            "otherDraftsPreserved": true,
+            "normalVehicleSave": true,
+            "peerUnchanged": true,
+            "reopenWithoutProvider": true,
+            "sameUrlRefresh": true,
+            "soldDenied": true,
+            "invalidPriceLinksPreserved": true,
+            "geometry": {
+              "width": 89.203125,
+              "height": 32,
+              "hit": true,
+              "overflow": false
+            }
+          },
+          {
+            "width": 390,
+            "failedSaveCannotApply": true,
+            "saveRetryWithoutProvider": true,
+            "vehicleSwitchLateApplyDenied": true,
+            "unavailableDoesNotMasqueradeAsCurrentPrice": true
+          }
+        ],
+        "syntheticOnly": true,
+        "artifact": "/workspace/work/v2112-encar-price-action-browser/receipt.json"
+      },
+      "inventoryStart": {
+        "ok": true,
+        "at": "2026-11-09T15:26:43.901Z",
+        "sourceHashes": {
+          "index.html": "e2493dbec904615d3d0fa88c031995882cd9a2b3e31a3ec03f317130582499b4",
+          "assets/inventory-interest.js": "2518b98f08cf287dd6d422140f86a9660798db98d0c30b6d8ac18f993beb7e29",
+          "assets/inventory-start-date.js": "80cc3afab770afa77e81cfbb7daf36aa453dce7f4c45d5cb4bb60d0348764670",
+          "assets/inventory-start-date.css": "b14c687b16f66bfacf5d8568c96ea9354ba85bd2e03d7aab7bb9ff7269acdc5f"
+        },
+        "results": [
+          {
+            "width": 1440,
+            "rateAndStartTooltip": true,
+            "actualHoverBubble": true,
+            "dialogFits": true,
+            "dateOnlyDatabaseSave": true,
+            "dirtyMemoAndExtraPreserved": true,
+            "cancelNoWrite": true,
+            "loanAndLenderRecalculation": true,
+            "soldDateEditDisabled": true,
+            "soldSnapshotFrozen": true,
+            "readOnlyDateEditDenied": true,
+            "overflow": false
+          },
+          {
+            "width": 390,
+            "rateAndStartTooltip": true,
+            "actualHoverBubble": true,
+            "dialogFits": true,
+            "dateOnlyDatabaseSave": true,
+            "dirtyMemoAndExtraPreserved": true,
+            "cancelNoWrite": true,
+            "loanAndLenderRecalculation": true,
+            "soldDateEditDisabled": true,
+            "soldSnapshotFrozen": true,
+            "readOnlyDateEditDenied": true,
+            "overflow": false
+          },
+          {
+            "width": 320,
+            "rateAndStartTooltip": true,
+            "actualHoverBubble": true,
+            "dialogFits": true,
+            "dateOnlyDatabaseSave": true,
+            "dirtyMemoAndExtraPreserved": true,
+            "cancelNoWrite": true,
+            "loanAndLenderRecalculation": true,
+            "soldDateEditDisabled": true,
+            "soldSnapshotFrozen": true,
+            "readOnlyDateEditDenied": true,
+            "overflow": false
+          }
+        ],
+        "syntheticAccountAndDatabase": true,
+        "liveBillingCalls": 0,
+        "testHash": "cf4b29eae30170565be94f64bfa23af648752ff2c393f52b324eab9ea5e4cc1b",
+        "artifact": "/workspace/work/v2112-inventory-start-browser/receipt.json"
+      },
+      "login": {
+        "ok": true,
+        "at": "2026-11-09T15:17:38.921Z",
+        "initialIndexHash": "e2493dbec904615d3d0fa88c031995882cd9a2b3e31a3ec03f317130582499b4",
+        "sourceHashes": {
+          "index.html": "e2493dbec904615d3d0fa88c031995882cd9a2b3e31a3ec03f317130582499b4",
+          "assets/login-garage-clear.png": "a2d01e72c4a2a9330c8df5a153bccf60c144c81c72f8b6e03b9380a8e89cbcf0"
+        },
+        "results": [
+          {
+            "width": 1440,
+            "height": 1050,
+            "visualDisplay": "flex",
+            "heroPadding": "0px",
+            "title": "좋은 거래의 시작,\n정돈된 업무에서.",
+            "heroY": 86.59375,
+            "visualY": 29,
+            "visualPadding": 57.6,
+            "filter": "none",
+            "objectPosition": "54% 50%",
+            "src": "assets/login-garage-clear.png?v=2.112",
+            "complete": true,
+            "naturalWidth": 1086,
+            "overflow": false
+          },
+          {
+            "width": 1024,
+            "height": 1000,
+            "visualDisplay": "flex",
+            "heroPadding": "0px",
+            "title": "좋은 거래의 시작,\n정돈된 업무에서.",
+            "heroY": 53,
+            "visualY": 21,
+            "visualPadding": 32,
+            "filter": "none",
+            "objectPosition": "54% 50%",
+            "src": "assets/login-garage-clear.png?v=2.112",
+            "complete": true,
+            "naturalWidth": 1086,
+            "overflow": false
+          },
+          {
+            "width": 390,
+            "height": 844,
+            "visualDisplay": "none",
+            "heroPadding": "0px",
+            "title": "좋은 거래의 시작,정돈된 업무에서.",
+            "heroY": 0,
+            "visualY": 0,
+            "visualPadding": 32,
+            "filter": "none",
+            "objectPosition": "54% 50%",
+            "src": "assets/login-garage-clear.png?v=2.112",
+            "complete": true,
+            "naturalWidth": 1086,
+            "overflow": false
+          },
+          {
+            "width": 320,
+            "height": 740,
+            "visualDisplay": "none",
+            "heroPadding": "0px",
+            "title": "좋은 거래의 시작,정돈된 업무에서.",
+            "heroY": 0,
+            "visualY": 0,
+            "visualPadding": 32,
+            "filter": "none",
+            "objectPosition": "54% 50%",
+            "src": "assets/login-garage-clear.png?v=2.112",
+            "complete": true,
+            "naturalWidth": 1086,
+            "overflow": false
+          }
+        ],
+        "syntheticAuth": true,
+        "artifact": "/workspace/work/v2112-login-visual/receipt.json"
+      }
+    },
+    "optionalLegacySmoke": {
+      "status": "incomplete_fixture_context",
+      "groupsPassed": 22,
+      "blockedAt": "Existing media/recycle fixture lacks authorized online updateDB context",
+      "productRegressionConfirmed": false,
+      "includedInCore26Groups": false,
+      "artifact": "/workspace/work/v2112-encar-browser-final-summary.json"
+    }
+  },
+  "database": {
+    "projectRef": "rmlycycleuscfqywbihj",
+    "liveMetadataReviewed": true,
+    "metadataScope": "zc_datasets payload JSONB/revision and zc_write_dataset owner authorization, payload persistence and table scope constraints; no user rows read",
+    "schemaOrRlsChanges": false,
+    "productionFinancialDataModified": false,
+    "saveTests": "Synthetic authenticated accounts and dataset CAS using real application bridge"
+  },
+  "production": {
+    "previousVersion": "2.111",
+    "previousConfigurationRecognized": true,
+    "previousAutomaticPriceDialogCorrect": "Confirmed by user in prior turn",
+    "currentReleaseUi": "Browser tests use synthetic account/API/DB; exact Cloudflare deployment recorded separately after commit",
+    "liveEncarPaidCallsThisRelease": 0,
+    "actualOcrSourceIndependentlyObserved": false
+  },
+  "guide": "docs/vehicle-price-and-interest.md"
+}

@@ -13,6 +13,8 @@ const scrub=between('function scrub(o){','function cleanCustomer(');
 const detailMoney=between('function readDetailMoney(value){','function detailMoneyField(');
 const priceAcknowledge=between('function snoteVehicleAcknowledgePrice(','function snoteVehicleDiscardPending(');
 const priceDiscard=between('function snoteVehicleDiscardPending(){','function snoteVehicleHasChanges(');
+const inventoryStartBridge=between('// Per-vehicle inventory finance start:','// A settlement can update only its financial document;');
+const inventoryStartMath=between('function snote239Interest(car){','function inventoryLoanOf(');
 // Owner authorization is shared with company-purchase views. Execute the real
 // helpers too, so this isolated bridge does not replace that policy with a stub.
 const companyOwners=between('function snoteCompanyActor(){','function snoteCompanyOwnerLabel(');
@@ -372,4 +374,79 @@ test('automatic price never uploads with another account token and uses a fixed 
 test('automatic price rejects a different plate or canonical ID and never chooses the first of multiple ads',async()=>{
  for(const change of[d=>{d.plate='34나7890';},d=>{d.listing.id='43000003';},d=>{d.listing.priceStatus='verified';}]){const f=ocrFixture(),base=f.bridge.context('car-a'),data=autoPriceResponse();change(data);f.context.fetch=async()=>Response.json(data);await assert.rejects(f.bridge.autoPrice(base,noPriceRecord()),error=>error.code==='INVALID_DATA');}
  const f=ocrFixture(),base=f.bridge.context('car-a'),data=noPriceRecord();data.listings.push({...data.listings[0],id:'43000003',sellerUrl:'https://fem.encar.com/cars/detail/43000003',trustedId:null,trustedUrl:null});await assert.rejects(f.bridge.autoPrice(base,data),error=>error.code==='AUTO_PRICE_AMBIGUOUS');assert.equal(f.ocrCalls.length,0);
+});
+
+function inventoryStartFixture(options={}){
+ const f=fixture(options),owner=options.owner||USER,row=f.server.get(key(owner));
+ Object.assign(row.payload.find(car=>car.id===f.context.activeCarId),{status:'판매중',purchaseAt:'2026-10-09',inventoryLoan:1000,inventoryLender:'검증금융',costs:{inventoryInterest:5.0959,advertising:7.89},vehicleMemo:'서버 메모',repairItems:[{memo:'서버 추가비용',amount:2}]});
+ for(const[k,r]of f.server)f.localStorage.data.set(store(k.slice(5)),JSON.stringify(r.payload));
+ f.context.cars=f.context.cars.map(c=>f.context.SnoteMoney.car(clone([...f.server.values()].flatMap(r=>r.payload).find(item=>item.id===c.id))));
+ const car=f.context.cars.find(c=>c.id===f.context.activeCarId),drafts={memo:'서버 메모',repairs:[]},controls={
+  'detail-inventory-interest':{value:'50,959',readOnly:true},'detail-inventory-loan':{value:'10,000,000'},'detail-inventory-lender':{value:'검증금융'},'detail-purchase-date':{value:'2026-10-09'},'detail-sold-date':{value:''}};
+ for(const field of Object.values(controls))field.dataset={};
+ const originalById=f.context.byId;f.context.byId=f.context.$=id=>controls[id]||originalById(id);
+ f.context.Date=class extends Date{constructor(...args){super(...(args.length?args:['2026-11-09T03:00:00Z']));}static now(){return Date.parse('2026-11-09T03:00:00Z');}};
+ f.context.ACC44_LENDER_LIMITS=[['검증금융',100000,6],['다른금융',100000,12]];
+ f.context.COST_FIELDS=[];f.context.normalizeRepairItems=c=>c.repairItems||[];f.context.SnoteCustomCosts={normalize:value=>value||{},sum:()=>0};
+ const vehicleContext=()=>({actor:f.context.currentUser,car,id:car.id,opening:f.context.snote224VehicleOpen,cloud:true,scopeKey:f.bridge.context(car.id)?.key||''});
+ f.context.snoteVehicleContext=vehicleContext;
+ f.context.snoteVehicleSameView=context=>!!context&&context.actor===f.context.currentUser&&context.car===car&&String(f.context.activeCarId)===context.id&&context.opening===f.context.snote224VehicleOpen;
+ f.context.snoteVehicleCurrent=context=>f.context.snoteVehicleSameView(context)&&f.bridge.context(context.id)?.key===context.scopeKey;
+ f.context.snoteVehicleDraftSignature=()=>JSON.stringify([[...Object.entries(controls).map(([id,field])=>[id,field.value,false]),['detail-memo',drafts.memo,false]],drafts.repairs]);
+ f.context.snoteVehicleDraftBase={context:vehicleContext(),signature:f.context.snoteVehicleDraftSignature()};
+ f.context.snoteVehicleHasChanges=()=>f.context.snoteVehicleDraftSignature()!==f.context.snoteVehicleDraftBase.signature;
+ f.context.updateDetailSummary=()=>vm.runInContext('snote239DetailInterest()',f.context);f.context.readDetailMoney=v=>Number(String(v).replaceAll(',',''));
+ f.context.snoteVehicleSaveBusy=busy=>{f.context.inventoryBusy=busy;};f.context.byId('vehicle-overlay').dataset={};f.context.toast=()=>{};f.context.renderCars=()=>{};
+ vm.runInContext(fs.readFileSync(path.resolve(__dirname,'../../assets/inventory-interest.js'),'utf8')+inventoryStartMath+priceAcknowledge+priceDiscard+inventoryStartBridge,f.context);
+ const bridge=f.context.snoteInventoryStartBridge,base=bridge.context();
+ return {...f,car,drafts,controls,start:bridge,base,save:date=>bridge.save(base,date||'2026-11-01')};
+}
+
+test('inventory start saves the date and derived won interest only, preserving drafts, peer rows and legacy wire money',async()=>{
+ const f=inventoryStartFixture(),before=clone(f.serverRecord()),peer=clone(f.server.get(key(USER)).payload[1]),oldBaseline=JSON.parse(f.context.snoteVehicleDraftBase.signature);
+ f.drafts.memo='미저장 메모';f.drafts.repairs.push({memo:'미저장 비용',amount:'123,000'});
+ const value=await f.save();assert.deepEqual(clone(value),{ok:true,saved:true,startDate:'2026-11-01'});assert.equal(f.calls.length,1);
+ const after=f.serverRecord();assert.equal(after.inventoryStartedAt,'2026-11-01');assert.equal(after.costs.inventoryInterest,1.3151);assert.equal(after.inventoryInterestSnapshot.amountWon,13151);assert.equal(after.inventoryInterestSnapshot.principalManwon,1000);
+ assert.equal(f.car.costs.inventoryInterest,13151);assert.equal(f.controls['detail-inventory-interest'].value,'13,151');assert.equal(after.vehicleMemo,'서버 메모');assert.deepEqual(after.repairItems,before.repairItems);assert.deepEqual(f.server.get(key(USER)).payload[1],peer);
+ delete after.inventoryStartedAt;delete after.inventoryInterestSnapshot;delete before.inventoryInterestSnapshot;after.costs.inventoryInterest=before.costs.inventoryInterest;assert.deepEqual(after,before);
+ const baseline=JSON.parse(f.context.snoteVehicleDraftBase.signature);assert.equal(baseline[0][0][1],'13,151');assert.deepEqual(baseline[0].slice(1),oldBaseline[0].slice(1));assert.deepEqual(baseline[1],oldBaseline[1]);assert.equal(f.context.snoteVehicleHasChanges(),true);assert.equal(f.context.snoteVehicleUnconfirmedWrite,null);
+ assert.equal((await f.save()).saved,true);assert.equal(f.calls.length,1,'An acknowledged date proposal is idempotent');
+});
+test('inventory start date validation rejects malformed calendar dates and future starts before persistence',async()=>{
+ for(const date of['2026-02-30','2026/11/01','2026-1-01','2099-01-01','']){const f=inventoryStartFixture();await assert.rejects(f.start.save(f.base,date),e=>e.code==='INVALID_DATE');assert.equal(f.calls.length,0);assert.equal(Object.hasOwn(f.car,'inventoryStartedAt'),false);}
+});
+test('inventory start admin save targets the actual owner and preserves the actor dataset',async()=>{
+ const f=inventoryStartFixture({role:'admin',owner:OTHER}),own=clone(f.server.get(key(USER)));await f.save();assert.equal(f.calls[0].p_owner,OTHER);assert.deepEqual(f.server.get(key(USER)),own);assert.equal(f.serverRecord().inventoryStartedAt,'2026-11-01');
+});
+test('inventory start is denied for sold, read-only, pending, changed financial basis and switched actors',async()=>{
+ for(const change of[f=>{f.car.status='판매완료';},f=>{f.context.currentUser={...f.context.currentUser,role:'accountant'};},f=>{f.context.snoteVehicleSaveTask={};},f=>{f.context.snoteVehicleUnconfirmedWrite={kind:'other'};},f=>{f.car.inventoryLoan=20000000;},f=>{f.context.currentUser={username:'other',role:'dealer'};}]){
+  const f=inventoryStartFixture();change(f);await assert.rejects(f.save());assert.equal(f.calls.length,0);
+ }
+});
+test('inventory partial acknowledgement keeps dirty loan, lender, purchase date and later memo outside the date write',async()=>{
+ const f=inventoryStartFixture(),gate=f.hold(),pending=f.save();await gate.entered.promise;
+ f.controls['detail-inventory-loan'].value='20,000,000';f.controls['detail-inventory-lender'].value='다른금융';f.controls['detail-purchase-date'].value='2026-10-01';f.drafts.memo='RPC 중 메모';f.context.updateDetailSummary();gate.release.resolve();await pending;
+ const row=f.serverRecord();assert.equal(row.inventoryLoan,1000);assert.equal(row.inventoryLender,'검증금융');assert.equal(row.purchaseAt,'2026-10-09');assert.equal(row.vehicleMemo,'서버 메모');assert.equal(row.costs.inventoryInterest,1.3151);
+ const baseline=JSON.parse(f.context.snoteVehicleDraftBase.signature)[0];assert.equal(baseline.find(f=>f[0]==='detail-inventory-interest')[1],'13,151');assert.equal(f.controls['detail-inventory-interest'].value,'52,603');assert.equal(f.context.snoteVehicleHasChanges(),true);
+});
+test('inventory start missing APR preserves a manually edited interest field and its dirty baseline',async()=>{
+ const f=inventoryStartFixture();f.context.ACC44_LENDER_LIMITS=[];f.controls['detail-inventory-interest'].value='7,777';await f.save();
+ assert.equal(f.serverRecord().costs.inventoryInterest,5.0959);assert.equal(f.controls['detail-inventory-interest'].value,'7,777');assert.equal(JSON.parse(f.context.snoteVehicleDraftBase.signature)[0][0][1],'50,959');assert.equal(f.context.snoteVehicleHasChanges(),true);
+});
+test('inventory uncertain ACK can reopen with its original proposal and reconcile without a duplicate write',async()=>{
+ const f=inventoryStartFixture();f.invalidAck();await assert.rejects(f.save());assert.equal(f.calls.length,1);assert.equal(f.serverRecord().inventoryStartedAt,'2026-11-01');
+ const reopened=f.start.context();assert.equal(reopened,f.base);assert.equal(f.start.read(reopened).pendingDate,'2026-11-01');const result=await f.start.save(reopened,'2026-11-01');assert.equal(result.saved,true);assert.equal(f.calls.length,1);assert.equal(f.context.snoteVehicleUnconfirmedWrite,null);
+});
+test('inventory failed write retry and discard preserve only the staged date and derived interest',async()=>{
+ const f=inventoryStartFixture();f.failNext();await assert.rejects(f.save());assert.equal(f.start.context(),f.base);await f.save();assert.equal(f.calls.length,2);assert.equal(f.serverRecord().inventoryStartedAt,'2026-11-01');
+ const g=inventoryStartFixture();g.failNext();await assert.rejects(g.save());g.car.costs.advertising=12345;assert.equal(g.context.snoteVehicleDiscardPending(),true);assert.equal(Object.hasOwn(g.car,'inventoryStartedAt'),false);assert.equal(g.car.costs.inventoryInterest,50959);assert.equal(g.car.costs.advertising,12345);assert.equal(g.context.snoteVehicleUnconfirmedWrite,null);
+});
+test('inventory quota rollback and late vehicle transitions cannot acknowledge or overwrite the next view',async()=>{
+ const f=inventoryStartFixture(),before=clone(f.car);f.localStorage.fail=true;await assert.rejects(f.save());assert.deepEqual(clone(f.car),before);assert.equal(f.calls.length,0);
+ const g=inventoryStartFixture(),gate=g.hold(),operation=g.save();await gate.entered.promise;g.context.activeCarId='car-sibling';g.context.snote224VehicleOpen++;gate.release.resolve();await assert.rejects(operation);assert.equal(g.server.get(key(USER)).payload[1].inventoryStartedAt,undefined);assert.equal(g.context.snoteVehicleUnconfirmedWrite,null);
+});
+test('inventory confirmed marker requires an integer revision and later successful background ACK clears it before a fresh proposal',async()=>{
+ const f=inventoryStartFixture();f.invalidAck();await assert.rejects(f.save());const pending=f.context.snoteVehicleUnconfirmedWrite;
+ for(const revision of[NaN,Infinity,8.5]){f.S.revisions.set(key(USER),revision);assert.equal(pending.confirmed(),false);}
+ f.S.revisions.set(key(USER),7);await f.context.flushActual();const base=f.start.context();assert.equal(f.context.snoteVehicleUnconfirmedWrite,null);assert.notEqual(base,f.base);assert.equal(base.car.inventoryStartedAt,'2026-11-01');assert.equal(f.calls.length,1);
 });

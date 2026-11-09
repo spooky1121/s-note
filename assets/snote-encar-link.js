@@ -66,7 +66,7 @@
   let copyButton, copyStatus, copyFallback, saveStatus, saveRetry;
   let retryRecord = null, saveVersion = 0;
   let diagnosticSnapshot = null, feedbackVersion = 0;
-  let displayedRecord = null, displayedSaved = false, applyJob = null, applyVersion = 0;
+  let displayedRecord = null, displayedSaved = false, applyJob = null, applyVersion = 0, directPriceRetry = null;
   let priceDialog, priceDialogBody, priceDialogStatus, priceDialogConfirm, priceDialogCancel;
   let pendingPriceOffer = null, priceOffer = null, priceOfferEpoch = 0;
 
@@ -216,7 +216,7 @@
     ++feedbackVersion;
     ++saveVersion;
     retryRecord = null;
-    ++applyVersion; applyJob = null; displayedRecord = null; displayedSaved = false;
+    ++applyVersion; applyJob = null; directPriceRetry = null; displayedRecord = null; displayedSaved = false;
     saveStatus.textContent = ''; saveRetry.hidden = true; saveRetry.disabled = false;
     diagnosticSnapshot = null;
     results.replaceChildren();
@@ -352,6 +352,7 @@
     }
     if(!active&&savedKey!==contextSavedKey){contextSavedKey=savedKey;if(savedKey!=='null')restoreSaved(context);else {results.replaceChildren();displayedRecord=null;displayedSaved=false;}}
     refreshPriceControls();
+    if (directPriceRetry && !directPriceCurrent(directPriceRetry)) directPriceRetry = null;
     if (priceOffer && !priceOfferCurrent(priceOffer)) closePriceConfirmation(true);
     maybeOpenPriceConfirmation();
   }
@@ -392,7 +393,10 @@
 
   function priceApplyAllowed(context, record, item) {
     return !!context?.ready && !!context.storage?.canWrite && context.car.status !== '판매완료' && displayedSaved &&
-      !active && !retryRecord && !applyJob && !priceOffer && ['verified','review'].includes(item?.priceStatus) && typeof window.snoteEncarLinksBridge?.applyPrice === 'function' &&
+      !active && !retryRecord && !applyJob && !priceOffer && ['verified','review'].includes(item?.priceStatus) &&
+      document.getElementById('vehicle-overlay')?.getAttribute('aria-busy') !== 'true' &&
+      (!priceWritePending() || directPriceRetry.listingId === item.id) &&
+      (typeof window.snoteEncarLinksBridge?.changePrice === 'function' || typeof window.snoteEncarLinksBridge?.applyPrice === 'function') &&
       JSON.stringify(record) === JSON.stringify(savedRecord(context.car.encarLinks, context.plate));
   }
 
@@ -405,6 +409,23 @@
       if (input.disabled || input.readOnly || !/^\d*$/.test(raw) || Number(raw || 0) !== value) return null;
     }
     return value;
+  }
+
+  function directPriceCurrent(job) {
+    const context = currentContext();
+    return !!job && !!context?.ready && context.storage?.canWrite && context.car.status !== '판매완료' &&
+      context.actor === job.context.actor && context.car === job.context.car && context.key === job.context.key &&
+      (context.storage?.key || '') === (job.context.storage?.key || '') &&
+      JSON.stringify(job.record) === JSON.stringify(displayedRecord) &&
+      JSON.stringify(job.record) === JSON.stringify(savedRecord(context.car.encarLinks, context.plate));
+  }
+
+  function refreshSavedPriceList(context) {
+    try { window.snoteEncarLinksBridge?.refreshList?.(context.storage); } catch (_) { /* A list repaint cannot undo an acknowledged price save. */ }
+  }
+
+  function priceWritePending() {
+    return directPriceRetry && directPriceCurrent(directPriceRetry) && Number(currentContext()?.car.sell) === directPriceRetry.priceWon;
   }
 
   function priceOfferCurrent(offer) {
@@ -460,7 +481,7 @@
     priceDialogBody.append(car, current);
     if (single) {
       offer.selected = single;
-      const amount = document.createElement('strong');amount.className = 'snote-encar-price-confirm-amount';amount.textContent = (single.priceStatus==='review'?'화면에서 찾은 광고가 ':'엔카 광고가 ') + single.priceWon.toLocaleString('ko-KR') + '원';priceDialogBody.append(amount);selectOriginal(single);
+      const amount = document.createElement('strong');amount.className = 'snote-encar-price-confirm-amount';amount.textContent = '엔카 광고가 ' + single.priceWon.toLocaleString('ko-KR') + '원';priceDialogBody.append(amount);selectOriginal(single);
     } else {
       const help = document.createElement('p');help.textContent = '확인된 광고가 여러 개입니다. 반영할 광고 가격을 선택하세요.';priceDialogBody.append(help);
       for (const choice of offer.choices) {
@@ -481,7 +502,7 @@
       const result = await window.snoteEncarLinksBridge.changePrice(offer.context.storage, offer.record, offer.selected.id, {expectedSellWon:offer.expectedSellWon});
       if (priceOffer !== offer || !priceOfferCurrent(offer)) return;
       if (result?.ok !== true || result.priceWon !== offer.selected.priceWon || result.saved !== true) throw Error('PRICE_SAVE_NOT_CONFIRMED');
-      closePriceConfirmation(true);saveStatus.textContent = '판매예정가를 ' + result.priceWon.toLocaleString('ko-KR') + '원으로 변경했습니다.';
+      closePriceConfirmation(true);saveStatus.textContent = '판매예정가를 ' + result.priceWon.toLocaleString('ko-KR') + '원으로 변경했습니다.';refreshSavedPriceList(offer.context);
     } catch (_) {
       if (priceOffer === offer && priceOfferCurrent(offer)) {
         // A failed server acknowledgement may leave only this price staged by
@@ -498,7 +519,8 @@
     const context = currentContext();
     for (const control of results.querySelectorAll('.snote-encar-price-apply')) {
       const item = displayedRecord?.listings.find(entry => entry.id === control.dataset.listingId);
-      control.hidden = !context?.storage?.canWrite || context.car.status === '판매완료' || !['verified','review'].includes(item?.priceStatus) || typeof window.snoteEncarLinksBridge?.applyPrice !== 'function';
+      control.hidden = !context?.storage?.canWrite || context.car.status === '판매완료' || !['verified','review'].includes(item?.priceStatus) ||
+        !(typeof window.snoteEncarLinksBridge?.changePrice === 'function' || typeof window.snoteEncarLinksBridge?.applyPrice === 'function');
       control.disabled = !priceApplyAllowed(context, displayedRecord, item);
     }
   }
@@ -507,8 +529,28 @@
     const context = currentContext();
     if (!priceApplyAllowed(context, record, item) || JSON.stringify(displayedRecord) !== JSON.stringify(record)) return;
     if (typeof window.snoteEncarLinksBridge?.changePrice === 'function') {
-      if (queuePriceConfirmation(context, record, item.id)) maybeOpenPriceConfirmation();
-      else {feedback.textContent = currentSalePrice(context)===item.priceWon?'현재 판매예정가와 같은 금액입니다.':'입력 중인 판매예정가를 먼저 확인해 주세요.';feedback.dataset.error = 'true';}
+      const price = currentSalePrice(context), retry = directPriceRetry && directPriceCurrent(directPriceRetry) &&
+        directPriceRetry.listingId === item.id && directPriceRetry.priceWon === item.priceWon ? directPriceRetry : null;
+      if (price === null || retry && price !== retry.expectedSellWon && price !== retry.priceWon) {
+        feedback.textContent = '입력 중인 판매예정가를 먼저 확인해 주세요.';feedback.dataset.error = 'true';return;
+      }
+      if (!retry && price === item.priceWon) {feedback.textContent = '현재 판매예정가와 같은 금액입니다.';feedback.dataset.error = 'false';return;}
+      const job = {version: ++applyVersion, context, record, listingId:item.id, priceWon:item.priceWon,
+        expectedSellWon: retry ? retry.expectedSellWon : price};applyJob = job;pendingPriceOffer = null;
+      feedback.textContent = '판매가를 저장하고 있습니다…';feedback.dataset.error = 'false';button.disabled = true;refreshPriceControls();
+      try {
+        const result = await window.snoteEncarLinksBridge.changePrice(context.storage,record,item.id,{expectedSellWon:job.expectedSellWon});
+        if (applyJob !== job || job.version !== applyVersion || !directPriceCurrent(job)) return;
+        if (result?.ok !== true || result.priceWon !== item.priceWon || result.saved !== true) throw Error('PRICE_SAVE_NOT_CONFIRMED');
+        directPriceRetry = null;feedback.textContent = '판매가를 ' + result.priceWon.toLocaleString('ko-KR') + '원으로 저장했습니다.';
+        refreshSavedPriceList(context);
+      } catch (_) {
+        if (applyJob === job && job.version === applyVersion && directPriceCurrent(job)) {
+          directPriceRetry = job;feedback.textContent = '저장을 확인하지 못했습니다. 판매가 변경을 다시 눌러 확인해 주세요.';feedback.dataset.error = 'true';
+        }
+      } finally {
+        if (applyJob === job) {applyJob = null;button.disabled = !currentContext()?.plate || !currentContext()?.ready;refreshPriceControls();}
+      }
       return;
     }
     const job = {version: ++applyVersion, context, record}; applyJob = job;
@@ -566,14 +608,14 @@
       if (Object.hasOwn(item, 'priceStatus')) {
         const info = document.createElement('div'); info.className = 'snote-encar-price-info';
         const price = document.createElement('strong'); price.className = 'snote-encar-price-value';
-        price.textContent = ['verified','review'].includes(item.priceStatus) ? (item.priceStatus==='review'?'화면에서 찾은 광고가 ':'엔카 광고가 ') + item.priceWon.toLocaleString('ko-KR') + '원' : '광고 가격 확인 불가';
+        price.textContent = ['verified','review'].includes(item.priceStatus) ? '엔카 광고가 ' + item.priceWon.toLocaleString('ko-KR') + '원' : '광고 가격 확인 불가';
         info.append(price);
         if (['verified','review'].includes(item.priceStatus)) {
-          const checked = document.createElement('time'); checked.className = 'snote-encar-price-checked'; checked.dateTime = item.priceCheckedAt;
+          const checked = document.createElement('time'); checked.className = 'snote-encar-price-checked'; checked.dateTime = item.priceCheckedAt;checked.hidden = true;
           checked.textContent = new Intl.DateTimeFormat('ko-KR', {timeZone:'Asia/Seoul', year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', hourCycle:'h23'}).format(new Date(item.priceCheckedAt)) + ' 확인';
+          price.dataset.tooltip = checked.textContent;
           const apply = document.createElement('button'); apply.type = 'button'; apply.className = 'snote-encar-price-apply'; apply.dataset.listingId = item.id;
-          apply.setAttribute('aria-label', '판매예정가에 반영'); apply.dataset.tooltip = '판매예정가에 반영';
-          apply.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5v6a3 3 0 0 0 3 3h13m-5-5 5 5-5 5"/></svg>';
+          apply.setAttribute('aria-label', '판매가 변경');apply.textContent = '판매가 변경';
           const feedback = document.createElement('span'); feedback.className = 'snote-encar-price-feedback'; feedback.setAttribute('role', 'status');
           apply.onclick = () => applyPrice(record, item, feedback);
           info.append(checked, apply, feedback);
@@ -587,7 +629,7 @@
 
   async function lookup(manualIds = null, selectedLink = null) {
     syncContext();
-    if (applyJob || priceOffer?.saving) return;
+    if (applyJob || priceOffer?.saving || priceWritePending() || document.getElementById('vehicle-overlay')?.getAttribute('aria-busy') === 'true') return;
     const context = currentContext();
     if (!context || !/^(?:[가-힣]{2})?\d{2,3}[가-힣]\d{4}$/.test(context.plate)) {
       setNote('차량번호를 확인해 주세요.', true);
@@ -743,6 +785,19 @@
     lookup([id]);
   }
 
+  function lookupCurrent(carId, listingId) {
+    syncContext();
+    const context = currentContext(), id = String(listingId ?? '');
+    if (!context?.ready || !context.storage || String(context.car.id) !== String(carId ?? '') || !validId(id) ||
+        active || applyJob || retryRecord || priceOffer?.saving || priceWritePending() ||
+        document.getElementById('vehicle-overlay')?.getAttribute('aria-busy') === 'true') return false;
+    const record = savedRecord(context.car.encarLinks, context.plate), listing = record?.listings.find(item => item.id === id);
+    if (!listing) return false;
+    // Keep the user's window-opening gesture synchronous with the list click.
+    void lookup([id], {sellerId:id, id, trusted:false});
+    return true;
+  }
+
   function mount() {
     const overlay = document.getElementById('vehicle-overlay');
     const meta = document.getElementById('vehicle-meta');
@@ -750,7 +805,7 @@
     const style = document.createElement('style');
     style.textContent = '.snote-encar-tools{margin-top:12px;display:flex;flex-wrap:wrap;align-items:center;gap:8px;min-width:0;font-size:12px;line-height:1.6}.snote-encar-button,.snote-encar-manual button{border:1px solid #bae1f5;background:#eef9ff;color:#187bac;padding:7px 12px;border-radius:9px;font:inherit;font-weight:700;cursor:pointer}.snote-encar-button:disabled{opacity:.6;cursor:wait}.snote-encar-note,.snote-encar-copy-status{color:#63758a}.snote-encar-note[data-error=true],.snote-encar-manual-error{color:#b54747}.snote-encar-results{flex-basis:100%;display:grid;gap:6px}.snote-encar-result{display:flex;flex-wrap:wrap;gap:10px;align-items:center}.snote-encar-result span{color:#64748b}.snote-encar-result a{color:#187bac;font-weight:700;text-decoration:underline;text-underline-offset:3px}.snote-encar-manual{flex-basis:100%;min-width:0;max-width:100%}.snote-encar-manual summary{cursor:pointer;color:#187bac;font-weight:700}.snote-encar-manual form{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;min-width:0}.snote-encar-manual label,.snote-encar-manual-error{flex-basis:100%}.snote-encar-manual input{flex:1 1 180px;min-width:0;max-width:100%;border:1px solid #d6e2ee;border-radius:8px;padding:8px;font:inherit;background:white;color:#334155}.snote-encar-save-status{flex-basis:100%;color:#64748b;font-size:11px}.snote-encar-save-status:empty{display:none}.snote-encar-save-retry{border:1px solid #d6e2ee;border-radius:8px;background:#fff;color:#187bac;padding:5px 10px;font:inherit;cursor:pointer}.snote-encar-save-retry:disabled{opacity:.6;cursor:wait}.snote-encar-copy{padding:2px 0;border:0;background:transparent;color:#63758a;font:inherit;text-decoration:underline;text-underline-offset:3px;cursor:pointer}.snote-encar-copy-fallback{flex-basis:100%;min-width:0;max-width:100%;box-sizing:border-box;height:120px;padding:8px;border:1px solid #d6e2ee;border-radius:8px;font:11px/1.5 monospace;overflow-wrap:anywhere;white-space:pre-wrap}.snote-encar-tools [hidden]{display:none!important}.snote-encar-tools :is(button,a,input,summary,textarea):focus-visible{outline:2px solid #38bdf8;outline-offset:3px}';
     style.textContent += '.snote-encar-button{display:inline-grid;place-items:center;width:44px;height:44px;padding:0;border-radius:12px;color:#d52c3b}.snote-encar-button svg{display:block;width:22px;height:22px}.snote-encar-button.is-loading{cursor:wait;opacity:.6}';
-    style.textContent += '.snote-encar-result .snote-encar-price-info{display:flex;flex-wrap:wrap;align-items:center;gap:4px 9px;flex-basis:100%;min-width:0}.snote-encar-result .snote-encar-price-value{font-size:12px;font-weight:650;color:#334155;font-variant-numeric:tabular-nums}.snote-encar-price-checked{font-size:10px;color:#8792a2;font-variant-numeric:tabular-nums}.snote-encar-result .snote-encar-price-apply{display:inline-grid;place-items:center;width:32px;height:32px;min-width:32px;margin:0;padding:6px;border:0;background:transparent;color:#176ce8;cursor:pointer}.snote-encar-price-apply svg{display:block;width:20px;height:20px}.snote-encar-price-apply:disabled{opacity:.35;cursor:default}.snote-encar-result .snote-encar-price-feedback{flex-basis:100%;font-size:11px;color:#64748b}.snote-encar-price-feedback:empty{display:none}.snote-encar-result .snote-encar-price-feedback[data-error=true]{color:#b54747}.snote-encar-results [hidden]{display:none!important}';
+    style.textContent += '.snote-encar-result .snote-encar-price-info{display:inline-flex;flex-wrap:wrap;align-items:center;gap:4px 8px;min-width:0;max-width:100%}.snote-encar-result .snote-encar-price-value{font-size:12px;font-weight:650;color:#334155;font-variant-numeric:tabular-nums}.snote-encar-price-checked{font-size:10px;color:#8792a2;font-variant-numeric:tabular-nums}.snote-encar-result .snote-encar-price-apply{display:inline-flex;align-items:center;justify-content:center;min-height:28px;margin:0;padding:4px 8px;border:0;border-radius:6px;background:#edf5ff;color:#176ce8;font:inherit;font-size:11px;font-weight:600;white-space:nowrap;cursor:pointer}.snote-encar-price-apply:disabled{opacity:.35;cursor:default}.snote-encar-result .snote-encar-price-feedback{flex-basis:100%;font-size:11px;color:#64748b}.snote-encar-price-feedback:empty{display:none}.snote-encar-result .snote-encar-price-feedback[data-error=true]{color:#b54747}.snote-encar-results [hidden]{display:none!important}';
     document.head.append(style);
     priceDialog = document.createElement('dialog');priceDialog.id = 'snote-encar-price-confirm';priceDialog.setAttribute('aria-labelledby','snote-encar-price-confirm-title');
     priceDialog.innerHTML = '<button type="button" class="snote-popup-close" aria-label="판매예정가 변경 닫기">×</button><h2 id="snote-encar-price-confirm-title">판매예정가 변경</h2><p class="snote-encar-price-confirm-question">이 금액으로 변경하시겠습니까?</p><div class="snote-encar-price-confirm-body"></div><p class="snote-encar-price-confirm-status" role="status" aria-live="polite"></p><footer><button type="button" class="snote-encar-price-confirm-cancel">취소</button><button type="button" class="snote-encar-price-confirm-save">변경</button></footer>';
@@ -805,7 +860,7 @@
     const headerActions = document.getElementById('vehicle-header-actions');
     if (headerActions) headerActions.prepend(button);
     else bar.prepend(button);
-    new MutationObserver(syncContext).observe(overlay, {attributes:true,attributeFilter:['class']});
+    new MutationObserver(syncContext).observe(overlay, {attributes:true,attributeFilter:['class','aria-busy']});
     new MutationObserver(syncContext).observe(meta, {childList:true,subtree:true,characterData:true});
     for (const id of ['zc-cloud-gate', 'zc86-topbar']) {
       const element = document.getElementById(id);
@@ -817,7 +872,7 @@
     });
     window.addEventListener('pagehide', resetContext);
     window.addEventListener('pageshow', syncContext);
-    window.SnoteEncarLink = Object.freeze({refresh: syncContext});
+    window.SnoteEncarLink = Object.freeze({refresh: syncContext, lookupCurrent});
     syncContext();
   }
 
