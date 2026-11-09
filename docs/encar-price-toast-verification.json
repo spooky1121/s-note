@@ -1,0 +1,308 @@
+{
+  "release": "2.113",
+  "baseCommit": "9ab60d9ccfe73bdf33295184217b897249fa9e12",
+  "verifiedAt": "2026-11-09T15:45:12.432Z",
+  "clientDate": "2026-11-10",
+  "scope": "Encar sale-price save notification only",
+  "sourceHashes": {
+    "index.html": "3b1313f7b6179444e549e81e61c5beb3a73bd8fecfa9efade8414c2fb974b0d8",
+    "assets/snote-encar-link.js": "6d8c24960d8cbb06fb0dbba33eb28cb3c4afb61b0edbce22905ec2c0e32a9100"
+  },
+  "behavior": {
+    "removed": "Inline price feedback node, messages and styling that wrapped the header after price changes",
+    "successText": "저장 되었습니다.",
+    "durationMs": 3000,
+    "renderer": "Existing global application toast; out of document flow",
+    "timing": "Only exact ok:true, saved:true and expected price ACK in the still-current vehicle scope",
+    "errors": "No success notice on failed, malformed, lost or stale ACK; short truthful failure toast retains original retry",
+    "notificationFailure": "A toast renderer exception cannot undo acknowledged state or skip list refresh",
+    "preserved": [
+      "price-only owner-scoped CAS",
+      "other unsaved fields",
+      "original expected price retries",
+      "stored advertisement metadata",
+      "existing confirmation and read-only protections"
+    ]
+  },
+  "validation": {
+    "command": "npm test --prefix tests/encar",
+    "passed": 663,
+    "failed": 0,
+    "frontendSubsetPassed": 172,
+    "coreBrowserGroups": 19,
+    "widths": [
+      1440,
+      390,
+      320
+    ],
+    "browser": {
+      "direct": {
+        "artifact": "/workspace/work/v2113-encar-direct-price-browser/receipt.json",
+        "sourceHashes": {
+          "index.html": "3b1313f7b6179444e549e81e61c5beb3a73bd8fecfa9efade8414c2fb974b0d8",
+          "assets/snote-encar-link.js": "6d8c24960d8cbb06fb0dbba33eb28cb3c4afb61b0edbce22905ec2c0e32a9100",
+          "tests/encar/browser-smoke.cjs": "e8936aa4b90af4449241a9a1028c5361a44c9cf5ad39fc097ff1d1d82c3aac4d",
+          "tests/encar/direct-price-change.browser.cjs": "9ec9b187b066904998fa385ad0867e749b2c71a0260662f489040519823497f7"
+        },
+        "groups": 7,
+        "results": [
+          {
+            "width": 1440,
+            "neutralLabel": true,
+            "inlineChangeButton": true,
+            "noSecondConfirmation": true,
+            "priceOnlyDatabaseSave": true,
+            "otherDraftsAndPeerPreserved": true,
+            "underlyingTableAndCardUpdated": true,
+            "noInlineFeedback": true,
+            "pendingAndSuccessLayoutStable": true,
+            "globalSuccessToastAboveDrawer": true,
+            "toastExpires": true,
+            "equalPriceTruthfulToast": true,
+            "geometry": {
+              "width": 78.40625,
+              "height": 28.796875,
+              "withTrusted": true,
+              "withPrice": true,
+              "hit": true,
+              "overflow": false
+            }
+          },
+          {
+            "width": 390,
+            "neutralLabel": true,
+            "inlineChangeButton": true,
+            "noSecondConfirmation": true,
+            "priceOnlyDatabaseSave": true,
+            "otherDraftsAndPeerPreserved": true,
+            "underlyingTableAndCardUpdated": true,
+            "noInlineFeedback": true,
+            "pendingAndSuccessLayoutStable": true,
+            "globalSuccessToastAboveDrawer": true,
+            "toastExpires": true,
+            "equalPriceTruthfulToast": true,
+            "geometry": {
+              "width": 89.203125,
+              "height": 32,
+              "withTrusted": false,
+              "withPrice": true,
+              "hit": true,
+              "overflow": false
+            }
+          },
+          {
+            "width": 320,
+            "neutralLabel": true,
+            "inlineChangeButton": true,
+            "noSecondConfirmation": true,
+            "priceOnlyDatabaseSave": true,
+            "otherDraftsAndPeerPreserved": true,
+            "underlyingTableAndCardUpdated": true,
+            "noInlineFeedback": true,
+            "pendingAndSuccessLayoutStable": true,
+            "globalSuccessToastAboveDrawer": true,
+            "toastExpires": true,
+            "equalPriceTruthfulToast": true,
+            "geometry": {
+              "width": 89.203125,
+              "height": 32,
+              "withTrusted": false,
+              "withPrice": true,
+              "hit": true,
+              "overflow": false
+            }
+          },
+          {
+            "width": 390,
+            "lostResponsePreservesOriginalExpectedPrice": true,
+            "lostResponseRecoveredAfterServerRecheck": true,
+            "commitsOnceWithoutFalseSuccess": true
+          },
+          {
+            "width": 390,
+            "failedAckRetryKeepsOriginalExpectedPrice": true,
+            "retryCommitsOnce": true,
+            "pendingPriceBlocksLookupAndOtherInput": true
+          },
+          {
+            "width": 390,
+            "dirtySalePriceProtected": true,
+            "malformedAckCannotReportSuccess": true,
+            "readOnlyAndSoldHidden": true
+          },
+          {
+            "width": 390,
+            "lateDirectPriceCannotAffectNextVehicle": true
+          }
+        ]
+      },
+      "automatic": {
+        "artifact": "/workspace/work/v2113-encar-auto-confirm-browser/receipt.json",
+        "sourceHashes": {
+          "index.html": "3b1313f7b6179444e549e81e61c5beb3a73bd8fecfa9efade8414c2fb974b0d8",
+          "assets/snote-encar-link.js": "6d8c24960d8cbb06fb0dbba33eb28cb3c4afb61b0edbce22905ec2c0e32a9100",
+          "tests/encar/browser-smoke.cjs": "e8936aa4b90af4449241a9a1028c5361a44c9cf5ad39fc097ff1d1d82c3aac4d",
+          "tests/encar/auto-price-confirm.browser.cjs": "22f5af6eebf84062ac00180c692f6132d43376609e17706505f8760fb1f10057"
+        },
+        "groups": 8,
+        "results": [
+          {
+            "width": 1440,
+            "metadataAckRequired": true,
+            "automaticConfirmation": true,
+            "cancelUnchanged": true,
+            "priceOnlyDatabaseSave": true,
+            "otherDraftsAndPeerPreserved": true,
+            "equalPriceNoPrompt": true,
+            "restoredQuoteNoPrompt": true,
+            "noInlineFeedback": true,
+            "confirmedOnlyGlobalToast": true,
+            "overflow": false
+          },
+          {
+            "width": 390,
+            "metadataAckRequired": true,
+            "automaticConfirmation": true,
+            "cancelUnchanged": true,
+            "priceOnlyDatabaseSave": true,
+            "otherDraftsAndPeerPreserved": true,
+            "equalPriceNoPrompt": true,
+            "restoredQuoteNoPrompt": true,
+            "noInlineFeedback": true,
+            "confirmedOnlyGlobalToast": true,
+            "overflow": false
+          },
+          {
+            "width": 320,
+            "metadataAckRequired": true,
+            "automaticConfirmation": true,
+            "cancelUnchanged": true,
+            "priceOnlyDatabaseSave": true,
+            "otherDraftsAndPeerPreserved": true,
+            "equalPriceNoPrompt": true,
+            "restoredQuoteNoPrompt": true,
+            "noInlineFeedback": true,
+            "confirmedOnlyGlobalToast": true,
+            "overflow": false
+          },
+          {
+            "width": 1440,
+            "realListIconOpensTargetAndAutomaticConfirmation": true,
+            "listEntryRejectsWrongVehicle": true,
+            "listEqualPriceOpensAdvertisementWithoutMutation": true
+          },
+          {
+            "width": 390,
+            "multipleAdsRequireSelection": true,
+            "automaticCaptureMockNoUpload": true,
+            "reviewPriceExplicitConfirmation": true
+          },
+          {
+            "width": 390,
+            "unavailableNoPrompt": true,
+            "dirtyPriceNoPrompt": true,
+            "readOnlyNoPrompt": true
+          },
+          {
+            "width": 390,
+            "failedAckKeepsExactStagedRetry": true,
+            "retryCommitsExactlyOnce": true
+          },
+          {
+            "width": 390,
+            "changedPriceClosesPrompt": true,
+            "lateSaveCannotAffectNextVehicle": true,
+            "lateSaveCannotShowSuccessToast": true
+          }
+        ]
+      },
+      "priceRegression": {
+        "artifact": "/workspace/work/v2113-encar-price-action-browser/receipt.json",
+        "sourceHashes": {
+          "index.html": "3b1313f7b6179444e549e81e61c5beb3a73bd8fecfa9efade8414c2fb974b0d8",
+          "assets/snote-encar-link.js": "6d8c24960d8cbb06fb0dbba33eb28cb3c4afb61b0edbce22905ec2c0e32a9100",
+          "tests/encar/browser-smoke.cjs": "e8936aa4b90af4449241a9a1028c5361a44c9cf5ad39fc097ff1d1d82c3aac4d",
+          "tests/encar/price-action.browser.cjs": "85d37159c781f75261704dcd3bff2e9511b4e198c212c568becdba563c7e39fb"
+        },
+        "groups": 4,
+        "results": [
+          {
+            "width": 1440,
+            "sourcePriceStored": true,
+            "ackRequired": true,
+            "wonAndKoreaTime": true,
+            "immediatePriceOnlySave": true,
+            "otherDraftsPreserved": true,
+            "normalVehicleSave": true,
+            "peerUnchanged": true,
+            "reopenWithoutProvider": true,
+            "sameUrlRefresh": true,
+            "soldDenied": true,
+            "invalidPriceLinksPreserved": true,
+            "geometry": {
+              "width": 78.40625,
+              "height": 28.796875,
+              "hit": true,
+              "overflow": false
+            }
+          },
+          {
+            "width": 390,
+            "sourcePriceStored": true,
+            "ackRequired": true,
+            "wonAndKoreaTime": true,
+            "immediatePriceOnlySave": true,
+            "otherDraftsPreserved": true,
+            "normalVehicleSave": true,
+            "peerUnchanged": true,
+            "reopenWithoutProvider": true,
+            "sameUrlRefresh": true,
+            "soldDenied": true,
+            "invalidPriceLinksPreserved": true,
+            "geometry": {
+              "width": 89.203125,
+              "height": 32,
+              "hit": true,
+              "overflow": false
+            }
+          },
+          {
+            "width": 320,
+            "sourcePriceStored": true,
+            "ackRequired": true,
+            "wonAndKoreaTime": true,
+            "immediatePriceOnlySave": true,
+            "otherDraftsPreserved": true,
+            "normalVehicleSave": true,
+            "peerUnchanged": true,
+            "reopenWithoutProvider": true,
+            "sameUrlRefresh": true,
+            "soldDenied": true,
+            "invalidPriceLinksPreserved": true,
+            "geometry": {
+              "width": 89.203125,
+              "height": 32,
+              "hit": true,
+              "overflow": false
+            }
+          },
+          {
+            "width": 390,
+            "failedSaveCannotApply": true,
+            "saveRetryWithoutProvider": true,
+            "vehicleSwitchLateApplyDenied": true,
+            "unavailableDoesNotMasqueradeAsCurrentPrice": true
+          }
+        ]
+      }
+    },
+    "inlineScripts": 7,
+    "syntax": "pass",
+    "diffCheck": "pass",
+    "manualVisualCheck": "/workspace/work/v2113-encar-direct-price-browser/direct-price-saved-390.png"
+  },
+  "inventoryStartFilesChanged": false,
+  "databaseOrRlsChanges": false,
+  "productionPriceWrites": false,
+  "livePaidApiCalls": 0
+}

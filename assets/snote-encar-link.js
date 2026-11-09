@@ -424,6 +424,10 @@
     try { window.snoteEncarLinksBridge?.refreshList?.(context.storage); } catch (_) { /* A list repaint cannot undo an acknowledged price save. */ }
   }
 
+  function priceToast(message) {
+    try { if (typeof window.toast === 'function') window.toast(message); } catch (_) { /* A notice cannot undo an acknowledged save. */ }
+  }
+
   function priceWritePending() {
     return directPriceRetry && directPriceCurrent(directPriceRetry) && Number(currentContext()?.car.sell) === directPriceRetry.priceWon;
   }
@@ -502,7 +506,7 @@
       const result = await window.snoteEncarLinksBridge.changePrice(offer.context.storage, offer.record, offer.selected.id, {expectedSellWon:offer.expectedSellWon});
       if (priceOffer !== offer || !priceOfferCurrent(offer)) return;
       if (result?.ok !== true || result.priceWon !== offer.selected.priceWon || result.saved !== true) throw Error('PRICE_SAVE_NOT_CONFIRMED');
-      closePriceConfirmation(true);saveStatus.textContent = '판매예정가를 ' + result.priceWon.toLocaleString('ko-KR') + '원으로 변경했습니다.';refreshSavedPriceList(offer.context);
+      closePriceConfirmation(true);priceToast('저장 되었습니다.');refreshSavedPriceList(offer.context);
     } catch (_) {
       if (priceOffer === offer && priceOfferCurrent(offer)) {
         // A failed server acknowledgement may leave only this price staged by
@@ -525,28 +529,28 @@
     }
   }
 
-  async function applyPrice(record, item, feedback) {
+  async function applyPrice(record, item) {
     const context = currentContext();
     if (!priceApplyAllowed(context, record, item) || JSON.stringify(displayedRecord) !== JSON.stringify(record)) return;
     if (typeof window.snoteEncarLinksBridge?.changePrice === 'function') {
       const price = currentSalePrice(context), retry = directPriceRetry && directPriceCurrent(directPriceRetry) &&
         directPriceRetry.listingId === item.id && directPriceRetry.priceWon === item.priceWon ? directPriceRetry : null;
       if (price === null || retry && price !== retry.expectedSellWon && price !== retry.priceWon) {
-        feedback.textContent = '입력 중인 판매예정가를 먼저 확인해 주세요.';feedback.dataset.error = 'true';return;
+        priceToast('입력 중인 판매가를 확인해 주세요.');return;
       }
-      if (!retry && price === item.priceWon) {feedback.textContent = '현재 판매예정가와 같은 금액입니다.';feedback.dataset.error = 'false';return;}
+      if (!retry && price === item.priceWon) {priceToast('현재 판매가와 같은 금액입니다.');return;}
       const job = {version: ++applyVersion, context, record, listingId:item.id, priceWon:item.priceWon,
         expectedSellWon: retry ? retry.expectedSellWon : price};applyJob = job;pendingPriceOffer = null;
-      feedback.textContent = '판매가를 저장하고 있습니다…';feedback.dataset.error = 'false';button.disabled = true;refreshPriceControls();
+      button.disabled = true;refreshPriceControls();
       try {
         const result = await window.snoteEncarLinksBridge.changePrice(context.storage,record,item.id,{expectedSellWon:job.expectedSellWon});
         if (applyJob !== job || job.version !== applyVersion || !directPriceCurrent(job)) return;
         if (result?.ok !== true || result.priceWon !== item.priceWon || result.saved !== true) throw Error('PRICE_SAVE_NOT_CONFIRMED');
-        directPriceRetry = null;feedback.textContent = '판매가를 ' + result.priceWon.toLocaleString('ko-KR') + '원으로 저장했습니다.';
+        directPriceRetry = null;priceToast('저장 되었습니다.');
         refreshSavedPriceList(context);
       } catch (_) {
         if (applyJob === job && job.version === applyVersion && directPriceCurrent(job)) {
-          directPriceRetry = job;feedback.textContent = '저장을 확인하지 못했습니다. 판매가 변경을 다시 눌러 확인해 주세요.';feedback.dataset.error = 'true';
+          directPriceRetry = job;priceToast('저장 확인이 필요합니다.');
         }
       } finally {
         if (applyJob === job) {applyJob = null;button.disabled = !currentContext()?.plate || !currentContext()?.ready;refreshPriceControls();}
@@ -557,15 +561,14 @@
     const current = () => applyJob === job && job.version === applyVersion && currentContext()?.actor === context.actor &&
       currentContext()?.car === context.car && currentContext()?.key === context.key && currentContext()?.ready &&
       (currentContext()?.storage?.key || '') === (context.storage?.key || '') && JSON.stringify(displayedRecord) === JSON.stringify(record);
-    feedback.textContent = '판매예정가에 입력 중…'; feedback.dataset.error = 'false';
     button.disabled = true; refreshPriceControls();
     try {
       const result = await window.snoteEncarLinksBridge.applyPrice(context.storage, record, item.id);
       if (!current()) return;
       if (result?.ok !== true || result.priceWon !== item.priceWon || result.saved !== false) throw Error('UNCONFIRMED_PRICE_DRAFT');
-      feedback.textContent = '판매예정가에 입력했습니다. 저장 아이콘을 눌러 저장해 주세요.';
+      priceToast('입력했습니다. 저장을 눌러 주세요.');
     } catch (_) {
-      if (current()) { feedback.textContent = '가격을 입력하지 못했습니다. 저장 상태와 최신 광고 가격을 확인한 뒤 다시 시도해 주세요.'; feedback.dataset.error = 'true'; }
+      if (current()) priceToast('가격을 입력하지 못했습니다.');
     } finally {
       if (applyJob === job) {
         applyJob = null;
@@ -616,9 +619,8 @@
           price.dataset.tooltip = checked.textContent;
           const apply = document.createElement('button'); apply.type = 'button'; apply.className = 'snote-encar-price-apply'; apply.dataset.listingId = item.id;
           apply.setAttribute('aria-label', '판매가 변경');apply.textContent = '판매가 변경';
-          const feedback = document.createElement('span'); feedback.className = 'snote-encar-price-feedback'; feedback.setAttribute('role', 'status');
-          apply.onclick = () => applyPrice(record, item, feedback);
-          info.append(checked, apply, feedback);
+          apply.onclick = () => applyPrice(record, item);
+          info.append(checked, apply);
         }
         row.append(info);
       }
@@ -805,7 +807,7 @@
     const style = document.createElement('style');
     style.textContent = '.snote-encar-tools{margin-top:12px;display:flex;flex-wrap:wrap;align-items:center;gap:8px;min-width:0;font-size:12px;line-height:1.6}.snote-encar-button,.snote-encar-manual button{border:1px solid #bae1f5;background:#eef9ff;color:#187bac;padding:7px 12px;border-radius:9px;font:inherit;font-weight:700;cursor:pointer}.snote-encar-button:disabled{opacity:.6;cursor:wait}.snote-encar-note,.snote-encar-copy-status{color:#63758a}.snote-encar-note[data-error=true],.snote-encar-manual-error{color:#b54747}.snote-encar-results{flex-basis:100%;display:grid;gap:6px}.snote-encar-result{display:flex;flex-wrap:wrap;gap:10px;align-items:center}.snote-encar-result span{color:#64748b}.snote-encar-result a{color:#187bac;font-weight:700;text-decoration:underline;text-underline-offset:3px}.snote-encar-manual{flex-basis:100%;min-width:0;max-width:100%}.snote-encar-manual summary{cursor:pointer;color:#187bac;font-weight:700}.snote-encar-manual form{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;min-width:0}.snote-encar-manual label,.snote-encar-manual-error{flex-basis:100%}.snote-encar-manual input{flex:1 1 180px;min-width:0;max-width:100%;border:1px solid #d6e2ee;border-radius:8px;padding:8px;font:inherit;background:white;color:#334155}.snote-encar-save-status{flex-basis:100%;color:#64748b;font-size:11px}.snote-encar-save-status:empty{display:none}.snote-encar-save-retry{border:1px solid #d6e2ee;border-radius:8px;background:#fff;color:#187bac;padding:5px 10px;font:inherit;cursor:pointer}.snote-encar-save-retry:disabled{opacity:.6;cursor:wait}.snote-encar-copy{padding:2px 0;border:0;background:transparent;color:#63758a;font:inherit;text-decoration:underline;text-underline-offset:3px;cursor:pointer}.snote-encar-copy-fallback{flex-basis:100%;min-width:0;max-width:100%;box-sizing:border-box;height:120px;padding:8px;border:1px solid #d6e2ee;border-radius:8px;font:11px/1.5 monospace;overflow-wrap:anywhere;white-space:pre-wrap}.snote-encar-tools [hidden]{display:none!important}.snote-encar-tools :is(button,a,input,summary,textarea):focus-visible{outline:2px solid #38bdf8;outline-offset:3px}';
     style.textContent += '.snote-encar-button{display:inline-grid;place-items:center;width:44px;height:44px;padding:0;border-radius:12px;color:#d52c3b}.snote-encar-button svg{display:block;width:22px;height:22px}.snote-encar-button.is-loading{cursor:wait;opacity:.6}';
-    style.textContent += '.snote-encar-result .snote-encar-price-info{display:inline-flex;flex-wrap:wrap;align-items:center;gap:4px 8px;min-width:0;max-width:100%}.snote-encar-result .snote-encar-price-value{font-size:12px;font-weight:650;color:#334155;font-variant-numeric:tabular-nums}.snote-encar-price-checked{font-size:10px;color:#8792a2;font-variant-numeric:tabular-nums}.snote-encar-result .snote-encar-price-apply{display:inline-flex;align-items:center;justify-content:center;min-height:28px;margin:0;padding:4px 8px;border:0;border-radius:6px;background:#edf5ff;color:#176ce8;font:inherit;font-size:11px;font-weight:600;white-space:nowrap;cursor:pointer}.snote-encar-price-apply:disabled{opacity:.35;cursor:default}.snote-encar-result .snote-encar-price-feedback{flex-basis:100%;font-size:11px;color:#64748b}.snote-encar-price-feedback:empty{display:none}.snote-encar-result .snote-encar-price-feedback[data-error=true]{color:#b54747}.snote-encar-results [hidden]{display:none!important}';
+    style.textContent += '.snote-encar-result .snote-encar-price-info{display:inline-flex;flex-wrap:wrap;align-items:center;gap:4px 8px;min-width:0;max-width:100%}.snote-encar-result .snote-encar-price-value{font-size:12px;font-weight:650;color:#334155;font-variant-numeric:tabular-nums}.snote-encar-price-checked{font-size:10px;color:#8792a2;font-variant-numeric:tabular-nums}.snote-encar-result .snote-encar-price-apply{display:inline-flex;align-items:center;justify-content:center;min-height:28px;margin:0;padding:4px 8px;border:0;border-radius:6px;background:#edf5ff;color:#176ce8;font:inherit;font-size:11px;font-weight:600;white-space:nowrap;cursor:pointer}.snote-encar-price-apply:disabled{opacity:.35;cursor:default}.snote-encar-results [hidden]{display:none!important}';
     document.head.append(style);
     priceDialog = document.createElement('dialog');priceDialog.id = 'snote-encar-price-confirm';priceDialog.setAttribute('aria-labelledby','snote-encar-price-confirm-title');
     priceDialog.innerHTML = '<button type="button" class="snote-popup-close" aria-label="판매예정가 변경 닫기">×</button><h2 id="snote-encar-price-confirm-title">판매예정가 변경</h2><p class="snote-encar-price-confirm-question">이 금액으로 변경하시겠습니까?</p><div class="snote-encar-price-confirm-body"></div><p class="snote-encar-price-confirm-status" role="status" aria-live="polite"></p><footer><button type="button" class="snote-encar-price-confirm-cancel">취소</button><button type="button" class="snote-encar-price-confirm-save">변경</button></footer>';

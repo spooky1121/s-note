@@ -83,7 +83,8 @@ function fixture(t, options = {}) {
   });
   const w = dom.window;
   const state = { ready: options.ready ?? true, canWrite: options.canWrite ?? true, storageScope: 'fixture-company' };
-  const events = [], openCalls = [], tabs = [], requests = [], saveCalls = [], applyCalls = [], changeCalls = [], autoCalls = [], refreshListCalls = [];
+  const events = [], openCalls = [], tabs = [], requests = [], saveCalls = [], applyCalls = [], changeCalls = [], autoCalls = [], refreshListCalls = [], toasts = [];
+  w.toast = message => toasts.push(message);
   w.cars = plain(options.cars || [{ id: 'car-1', plate: PLATE }, { id: 'car-2', plate: SECOND_PLATE }]);
   if (options.savedRecord !== undefined) w.cars[0].encarLinks = plain(options.savedRecord);
   w.activeCarId = 'car-1';
@@ -180,7 +181,7 @@ function fixture(t, options = {}) {
   t.after(() => { w.close(); assert.equal(errors.length, 0, 'No unhandled DOM errors'); });
 
   return {
-    w, state, events, openCalls, tabs, requests, saveCalls, applyCalls, changeCalls, autoCalls, refreshListCalls, button,
+    w, state, events, openCalls, tabs, requests, saveCalls, applyCalls, changeCalls, autoCalls, refreshListCalls, toasts, button,
     originalOpenVehicle, originalCloseVehicle,
     get note() { return w.document.querySelector('.snote-encar-note'); },
     get links() { return [...w.document.querySelectorAll('.snote-encar-results a')]; },
@@ -194,6 +195,7 @@ function fixture(t, options = {}) {
     get priceControls() { return [...w.document.querySelectorAll('.snote-encar-price-apply')]; },
     get prices() { return [...w.document.querySelectorAll('.snote-encar-price-value')]; },
     get priceFeedback() { return w.document.querySelector('.snote-encar-price-feedback'); },
+    get lastToast() { return toasts.at(-1) || ''; },
     get priceConfirmation(){return w.document.getElementById('snote-encar-price-confirm');},
     get priceChangeButton(){return w.document.querySelector('.snote-encar-price-confirm-save');},
     get priceCancelButton(){return w.document.querySelector('.snote-encar-price-confirm-cancel');},
@@ -884,7 +886,7 @@ test('49 exact KRW advertisement prices and Korean observation time persist befo
  assert.equal(checked.textContent,new Intl.DateTimeFormat('ko-KR',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date(item.priceCheckedAt))+' 확인');
  saved.resolve({ok:true});await settle();assert.equal(f.priceControls[0].disabled,false);assert.equal(f.w.cars[0].sell,12000000);
  f.priceControls[0].click();await settle();assert.equal(f.applyCalls.length,1);assert.equal(f.applyCalls[0].listingId,item.id);assert.equal(f.applyCalls[0].record.listings[0].priceWon,37770000);
- assert.match(f.priceFeedback.textContent,/판매예정가에 입력했습니다/);assert.match(f.priceFeedback.textContent,/저장 아이콘/);assert.equal(f.w.cars[0].sell,12000000,'Only the real bridge may edit the explicit input draft');
+ assert.match(f.lastToast,/입력했습니다/);assert.match(f.lastToast,/저장을 눌러/);assert.equal(f.toasts.includes('저장 되었습니다.'),false);assert.equal(f.w.cars[0].sell,12000000,'Only the real bridge may edit the explicit input draft');
 });
 
 test('50 missing, malformed or untrusted price metadata never displays or applies a misleading amount while links survive',async t=>{
@@ -927,13 +929,13 @@ test('54 applying is single flight and a stale account or changed price ignores 
   f.priceControls[0].click();await settle();assert.equal(f.applyCalls.length,1);assert.equal(f.priceControls[0].disabled,true);f.priceControls[0].dispatchEvent(new f.w.MouseEvent('click'));assert.equal(f.applyCalls.length,1);
   if(change==='account')f.w.currentUser={username:'other'};if(change==='company')f.state.storageScope='other-company';if(change==='price')f.w.cars[0].encarLinks=storedRecord([pricedListing(42000000)]);if(change==='closed')f.closeDetail();
   f.w.SnoteEncarLink.refresh();held.resolve({ok:true,priceWon:37770000,saved:false});await settle();
-  assert.equal([...f.w.document.querySelectorAll('.snote-encar-price-feedback')].some(e=>/입력했습니다/.test(e.textContent)),false);
+  assert.equal(f.toasts.some(message=>/입력했습니다/.test(message)),false);assert.equal(f.priceFeedback,null);
  });
 });
 
 test('55 a failed or malformed draft response keeps the verified price and never promises that it was saved',async t=>{
  for(const response of[{ok:false},{ok:true,priceWon:37770001,saved:false},{ok:true,priceWon:37770000,saved:true}])await t.test(JSON.stringify(response),async sub=>{
-  const f=fixture(sub,{bridge:true,savedRecord:storedRecord([pricedListing()]),applyPrice:()=>response});f.priceControls[0].click();await settle();assert.match(f.priceFeedback.textContent,/입력하지 못/);assert.equal(f.priceFeedback.dataset.error,'true');assert.equal(f.prices[0].textContent,'엔카 광고가 37,770,000원');assert.equal(f.priceControls[0].disabled,false);
+  const f=fixture(sub,{bridge:true,savedRecord:storedRecord([pricedListing()]),applyPrice:()=>response});f.priceControls[0].click();await settle();assert.match(f.lastToast,/입력하지 못/);assert.equal(f.toasts.includes('저장 되었습니다.'),false);assert.equal(f.prices[0].textContent,'엔카 광고가 37,770,000원');assert.equal(f.priceControls[0].disabled,false);
  });
 });
 
@@ -943,7 +945,7 @@ test('56 automatic price confirmation waits for metadata ACK, keeps the user in 
  assert.equal(f.changeCalls.length,0);gate.resolve({ok:true});await settle();assert.equal(f.priceConfirmation.open,true);assert.match(f.priceConfirmation.textContent,/이 금액으로 변경하시겠습니까/);assert.match(f.priceConfirmation.textContent,/12,000,000원/);assert.match(f.priceConfirmation.textContent,/37,770,000원/);
  assert.equal(f.w.cars[0].sell,12000000);f.priceCancelButton.click();assert.equal(f.priceConfirmation.open,false);assert.equal(f.changeCalls.length,0);
  f.priceControls[0].click();assert.equal(f.priceConfirmation.open,false);await settle();assert.equal(f.changeCalls.length,1);assert.equal(f.changeCalls[0].expectation.expectedSellWon,12000000);assert.equal(f.changeCalls[0].listingId,item.id);
- assert.equal(f.w.cars[0].sell,item.priceWon);assert.equal(f.priceConfirmation.open,false);assert.match(f.priceFeedback.textContent,/판매가를 37,770,000원으로 저장/);
+ assert.equal(f.w.cars[0].sell,item.priceWon);assert.equal(f.priceConfirmation.open,false);assert.equal(f.lastToast,'저장 되었습니다.');assert.equal(f.priceFeedback,null);
 });
 
 test('57 saved restore, equal price, readonly, sold and edited sale-price drafts do not create an automatic change prompt',async t=>{
@@ -1037,7 +1039,7 @@ test('69 a staged price with a lost server acknowledgement keeps only the same c
  }});
  f.click();await settle();f.reply(0,found(PLATE,[pricedListing()]));await settle();f.priceChangeButton.click();await settle();await pause(300);
  assert.equal(f.priceConfirmation.open,true);assert.equal(f.priceChangeButton.disabled,false);assert.match(f.priceConfirmation.querySelector('[role=status]').textContent,/변경을 확인하지 못/);
- f.priceChangeButton.click();await settle();assert.equal(f.changeCalls.length,2);assert.equal(f.changeCalls[1].expectation.expectedSellWon,12000000);assert.equal(f.priceConfirmation.open,false);assert.match(f.saveStatus.textContent,/변경했습니다/);
+ f.priceChangeButton.click();await settle();assert.equal(f.changeCalls.length,2);assert.equal(f.changeCalls[1].expectation.expectedSellWon,12000000);assert.equal(f.priceConfirmation.open,false);assert.equal(f.lastToast,'저장 되었습니다.');assert.doesNotMatch(f.saveStatus.textContent,/변경했습니다/);
 });
 
 test('70 stored reviewed quotes show a compact inline sale button and preserve review metadata',t=>{
@@ -1048,13 +1050,13 @@ test('70 stored reviewed quotes show a compact inline sale button and preserve r
 
 test('71 an explicit sale button saves immediately without another confirmation and refreshes the list only after ACK',async t=>{
  const held=deferred(),f=fixture(t,{bridge:true,autoConfirm:true,savedRecord:storedRecord([pricedListing()]),cars:[{id:'car-1',plate:PLATE,sell:12000000}],changePrice:()=>held.promise});
- f.priceControls[0].click();assert.equal(f.changeCalls.length,1);assert.equal(f.applyCalls.length,0);assert.equal(f.priceConfirmation.open,false);assert.equal(f.priceControls[0].disabled,true);assert.equal(f.refreshListCalls.length,0);f.priceControls[0].dispatchEvent(new f.w.MouseEvent('click'));assert.equal(f.changeCalls.length,1);
- held.resolve({ok:true,priceWon:37770000,saved:true});await settle();assert.equal(f.w.cars[0].sell,37770000);assert.equal(f.priceConfirmation.open,false);assert.equal(f.refreshListCalls.length,1);assert.match(f.priceFeedback.textContent,/판매가를 37,770,000원으로 저장/);
+ f.priceControls[0].click();assert.equal(f.changeCalls.length,1);assert.equal(f.applyCalls.length,0);assert.equal(f.priceConfirmation.open,false);assert.equal(f.priceControls[0].disabled,true);assert.equal(f.refreshListCalls.length,0);assert.deepEqual(f.toasts,[]);assert.equal(f.priceFeedback,null);f.priceControls[0].dispatchEvent(new f.w.MouseEvent('click'));assert.equal(f.changeCalls.length,1);
+ held.resolve({ok:true,priceWon:37770000,saved:true});await settle();assert.equal(f.w.cars[0].sell,37770000);assert.equal(f.priceConfirmation.open,false);assert.equal(f.refreshListCalls.length,1);assert.equal(f.lastToast,'저장 되었습니다.');assert.equal(f.priceFeedback,null);
 });
 
 test('72 direct sale changes protect an edited price while allowing unrelated drafts',async t=>{
  const f=fixture(t,{bridge:true,autoConfirm:true,savedRecord:storedRecord([pricedListing()]),cars:[{id:'car-1',plate:PLATE,sell:12000000}]});
- f.w.document.getElementById('detail-sell').value='13,000,000';f.priceControls[0].click();await settle();assert.equal(f.changeCalls.length,0);assert.match(f.priceFeedback.textContent,/입력 중인 판매예정가/);assert.equal(f.w.document.getElementById('detail-sell').value,'13,000,000');
+ f.w.document.getElementById('detail-sell').value='13,000,000';f.priceControls[0].click();await settle();assert.equal(f.changeCalls.length,0);assert.match(f.lastToast,/입력 중인 판매가/);assert.equal(f.priceFeedback,null);assert.equal(f.w.document.getElementById('detail-sell').value,'13,000,000');
  const memo=f.w.document.createElement('input');memo.id='detail-memo';memo.value='unsaved memo';f.w.document.getElementById('original-detail').append(memo);f.w.document.getElementById('detail-sell').value='12,000,000';f.priceControls[0].click();await settle();assert.equal(f.changeCalls.length,1);assert.equal(memo.value,'unsaved memo');assert.equal(f.changeCalls[0].expectation.expectedSellWon,12000000);
 });
 
@@ -1062,21 +1064,21 @@ test('73 failed direct saves retain the original expected price and exact listin
  let attempts=0;const items=[pricedListing(),pricedListing(39999000,new Date().toISOString(),'43000003')],f=fixture(t,{bridge:true,autoConfirm:true,savedRecord:storedRecord(items),cars:[{id:'car-1',plate:PLATE,sell:12000000}],changePrice:()=>{
   f.w.cars[0].sell=37770000;f.w.document.getElementById('detail-sell').value='37,770,000';if(attempts++===0)throw Error('LOST_ACK');return{ok:true,priceWon:37770000,saved:true};
  }});
- f.priceControls[0].click();await settle();await pause(300);assert.equal(f.priceConfirmation.open,false);assert.match(f.priceFeedback.textContent,/저장을 확인하지 못/);assert.equal(f.refreshListCalls.length,0);assert.equal(f.priceControls[0].disabled,false);assert.equal(f.priceControls[1].disabled,true);assert.equal(f.w.SnoteEncarLink.lookupCurrent('car-1',items[0].id),false);f.click();assert.equal(f.openCalls.length,0);
- f.w.document.getElementById('detail-sell').value='38,000,000';assert.equal(f.w.SnoteEncarLink.lookupCurrent('car-1',items[0].id),false);f.priceControls[0].click();await settle();assert.equal(f.changeCalls.length,1);assert.match(f.priceFeedback.textContent,/입력 중인/);f.w.document.getElementById('detail-sell').value='37,770,000';
- f.priceControls[0].click();await settle();assert.equal(f.changeCalls.length,2);assert(f.changeCalls.every(call=>call.expectation.expectedSellWon===12000000));assert(f.changeCalls.every(call=>call.listingId===items[0].id));assert.equal(f.refreshListCalls.length,1);assert.match(f.priceFeedback.textContent,/저장했습니다/);
+ f.priceControls[0].click();await settle();await pause(300);assert.equal(f.priceConfirmation.open,false);assert.equal(f.lastToast,'저장 확인이 필요합니다.');assert.equal(f.priceFeedback,null);assert.equal(f.refreshListCalls.length,0);assert.equal(f.priceControls[0].disabled,false);assert.equal(f.priceControls[1].disabled,true);assert.equal(f.w.SnoteEncarLink.lookupCurrent('car-1',items[0].id),false);f.click();assert.equal(f.openCalls.length,0);
+ f.w.document.getElementById('detail-sell').value='38,000,000';assert.equal(f.w.SnoteEncarLink.lookupCurrent('car-1',items[0].id),false);f.priceControls[0].click();await settle();assert.equal(f.changeCalls.length,1);assert.match(f.lastToast,/입력 중인/);f.w.document.getElementById('detail-sell').value='37,770,000';
+ f.priceControls[0].click();await settle();assert.equal(f.changeCalls.length,2);assert(f.changeCalls.every(call=>call.expectation.expectedSellWon===12000000));assert(f.changeCalls.every(call=>call.listingId===items[0].id));assert.equal(f.refreshListCalls.length,1);assert.equal(f.lastToast,'저장 되었습니다.');assert.equal(f.priceFeedback,null);
 });
 
 test('74 malformed direct save acknowledgements never claim success and keep the same expected price retryable',async t=>{
  for(const response of[{ok:false},{ok:true,priceWon:37770001,saved:true},{ok:true,priceWon:37770000,saved:false}])await t.test(JSON.stringify(response),async sub=>{
-  const f=fixture(sub,{bridge:true,autoConfirm:true,applyChanged:false,savedRecord:storedRecord([pricedListing()]),cars:[{id:'car-1',plate:PLATE,sell:12000000}],changePrice:()=>response});f.priceControls[0].click();await settle();assert.match(f.priceFeedback.textContent,/저장을 확인하지 못/);assert.equal(f.refreshListCalls.length,0);assert.equal(f.w.cars[0].sell,12000000);f.priceControls[0].click();await settle();assert.equal(f.changeCalls[1].expectation.expectedSellWon,12000000);
+  const f=fixture(sub,{bridge:true,autoConfirm:true,applyChanged:false,savedRecord:storedRecord([pricedListing()]),cars:[{id:'car-1',plate:PLATE,sell:12000000}],changePrice:()=>response});f.priceControls[0].click();await settle();assert.equal(f.lastToast,'저장 확인이 필요합니다.');assert.equal(f.priceFeedback,null);assert.equal(f.toasts.includes('저장 되었습니다.'),false);assert.equal(f.refreshListCalls.length,0);assert.equal(f.w.cars[0].sell,12000000);f.priceControls[0].click();await settle();assert.equal(f.changeCalls[1].expectation.expectedSellWon,12000000);
  });
 });
 
 test('75 stale direct save acknowledgements cannot refresh another vehicle, account or quote',async t=>{
  for(const kind of['account','company','vehicle','record','closed'])await t.test(kind,async sub=>{
   const held=deferred(),f=fixture(sub,{bridge:true,autoConfirm:true,savedRecord:storedRecord([pricedListing()]),cars:[{id:'car-1',plate:PLATE,sell:12000000},{id:'car-2',plate:SECOND_PLATE,sell:20000000}],changePrice:()=>held.promise});f.priceControls[0].click();await settle();
-  if(kind==='account')f.w.currentUser={username:'other'};if(kind==='company')f.state.storageScope='other';if(kind==='vehicle')f.w.activeCarId='car-2';if(kind==='record')f.w.cars[0].encarLinks=storedRecord([pricedListing(40000000)]);if(kind==='closed')f.closeDetail();f.w.SnoteEncarLink.refresh();held.resolve({ok:true,priceWon:37770000,saved:true});await settle();assert.equal(f.refreshListCalls.length,0);assert.equal(f.w.cars[1].sell,20000000);assert.equal(f.priceConfirmation.open,false);
+  if(kind==='account')f.w.currentUser={username:'other'};if(kind==='company')f.state.storageScope='other';if(kind==='vehicle')f.w.activeCarId='car-2';if(kind==='record')f.w.cars[0].encarLinks=storedRecord([pricedListing(40000000)]);if(kind==='closed')f.closeDetail();f.w.SnoteEncarLink.refresh();held.resolve({ok:true,priceWon:37770000,saved:true});await settle();assert.equal(f.refreshListCalls.length,0);assert.equal(f.w.cars[1].sell,20000000);assert.equal(f.priceConfirmation.open,false);assert.deepEqual(f.toasts,[]);assert.equal(f.priceFeedback,null);
  });
 });
 
@@ -1090,4 +1092,14 @@ test('76 public list lookup validates the open saved advertisement and opens its
 test('77 saving and unavailable scopes cannot start a public list lookup or direct price save',async t=>{
  const f=fixture(t,{bridge:true,autoConfirm:true,savedRecord:storedRecord([pricedListing()]),cars:[{id:'car-1',plate:PLATE,sell:12000000}]});f.w.document.getElementById('vehicle-overlay').setAttribute('aria-busy','true');f.w.SnoteEncarLink.refresh();assert.equal(f.priceControls[0].disabled,true);f.priceControls[0].dispatchEvent(new f.w.MouseEvent('click'));assert.equal(f.changeCalls.length,0);assert.equal(f.w.SnoteEncarLink.lookupCurrent('car-1','43000001'),false);f.closeDetail();assert.equal(f.w.SnoteEncarLink.lookupCurrent('car-1','43000001'),false);assert.equal(f.openCalls.length,0);
  const noSaved=fixture(t,{bridge:true,autoConfirm:true,cars:[{id:'car-1',plate:PLATE,sell:12000000}]});assert.equal(noSaved.w.SnoteEncarLink.lookupCurrent('car-1','43000001'),false);
+});
+
+test('78 a failed toast renderer cannot turn a confirmed price save into a failed write or skip the list refresh',async t=>{
+ for(const kind of['direct','confirmation'])await t.test(kind,async sub=>{
+  const f=fixture(sub,{bridge:true,autoConfirm:true,...(kind==='direct'?{savedRecord:storedRecord([pricedListing()])}:{}),cars:[{id:'car-1',plate:PLATE,sell:12000000}]});
+  f.w.toast=()=>{throw Error('SYNTHETIC_NOTICE_FAILURE');};
+  if(kind==='confirmation'){f.click();await settle();f.reply(0,found(PLATE,[pricedListing()]));await settle();f.priceChangeButton.click();}else f.priceControls[0].click();
+  await settle();assert.equal(f.w.cars[0].sell,37770000);assert.equal(f.changeCalls.length,1);assert.equal(f.refreshListCalls.length,1);assert.equal(f.priceConfirmation.open,false);assert.equal(f.priceFeedback,null);assert.equal(f.priceControls[0].disabled,false);
+  f.priceControls[0].click();await settle();assert.equal(f.changeCalls.length,1,'An acknowledged save cannot become an uncertain retry when its notification fails');
+ });
 });

@@ -5,16 +5,18 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('n
 const {chromium}=require('playwright'),{fixture,setBrowser,finish}=require('./browser-smoke.cjs');
 const ROOT=path.resolve(__dirname,'../..'),ART=process.env.ENCAR_AUTO_CONFIRM_ARTIFACT_DIR||'/tmp/snote-encar-auto-confirm';
 const ID='43000001',SELLER='https://fem.encar.com/cars/detail/'+ID,PRICE=37770000;
-const DIALOG='#snote-encar-price-confirm',SAVE=DIALOG+' .snote-encar-price-confirm-save',CANCEL=DIALOG+' .snote-encar-price-confirm-cancel';
+const DIALOG='#snote-encar-price-confirm',SAVE=DIALOG+' .snote-encar-price-confirm-save',CANCEL=DIALOG+' .snote-encar-price-confirm-cancel',SUCCESS='저장 되었습니다.';
 fs.mkdirSync(ART,{recursive:true});
 function item(id=ID,price=PRICE){return{id,model:'합성 자동 가격 차량',sellerUrl:'https://fem.encar.com/cars/detail/'+id,trustedId:null,trustedUrl:null,priceWon:price,priceCheckedAt:new Date(Date.now()-1000).toISOString(),priceSource:'encar.com',priceStatus:'verified'};}
 function quoted(listings=[item()]){return{status:listings.length===1?'found':'multiple',plate:'12가3456',verifiedAt:new Date().toISOString(),listings};}
 function absent(){const data=quoted();Object.assign(data.listings[0],{priceWon:null,priceCheckedAt:null,priceSource:null,priceStatus:'unavailable'});return data;}
-async function lookup(f,data,{offer=true}={}){f.reply(data);const opening=f.context.waitForEvent('page');await f.page.locator('#vehicle-encar-check').click();const popup=await opening;if(offer){if(!popup.isClosed())await popup.waitForEvent('close');}else{await popup.waitForURL(SELLER);await popup.close();}return popup;}
+async function lookup(f,data,{offer=true}={}){await f.page.evaluate(()=>{if(window.__priceToastCalls)return;const original=window.toast;window.__priceToastCalls=[];window.toast=message=>{window.__priceToastCalls.push(String(message));return original(message);};});f.reply(data);const opening=f.context.waitForEvent('page');await f.page.locator('#vehicle-encar-check').click();const popup=await opening;if(offer){if(!popup.isClosed())await popup.waitForEvent('close');}else{await popup.waitForURL(SELLER);await popup.close();}return popup;}
 async function shown(p){await p.locator(DIALOG).waitFor({state:'visible'});await p.locator(DIALOG).evaluate(el=>Promise.all(el.getAnimations().map(animation=>animation.finished.catch(()=>{}))));}
 async function hidden(p){await p.locator(DIALOG).waitFor({state:'hidden'});}
 async function stored(p){await p.locator('.snote-encar-save-status').getByText('광고 링크를 서버에 저장했습니다.',{exact:true}).waitFor();}
 async function snapshot(p){return p.evaluate(()=>({cars:structuredClone(window.__encarFixtureCars),writes:window.__encarFixtureWrites.length,sell:cars[0].sell}));}
+async function noSuccess(p){assert.equal(await p.evaluate(message=>window.__priceToastCalls.includes(message),SUCCESS),false,'An unconfirmed, cancelled or stale price save must not report success');assert.equal(await p.locator('.snote-encar-price-feedback').count(),0);}
+async function savedToast(p){await p.waitForFunction(message=>{const el=document.getElementById('toast');return el?.textContent===message&&getComputedStyle(el).display!=='none';},SUCCESS);assert.equal(await p.locator('.snote-encar-price-feedback').count(),0);assert.equal(await p.locator(DIALOG).isVisible(),false,'Confirmation must close before the global success toast');}
 
 (async()=>{const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium'});setBrowser(browser);const results=[];
  try{
@@ -25,22 +27,22 @@ async function snapshot(p){return p.evaluate(()=>({cars:structuredClone(window._
     const before=await snapshot(p),peer=await p.evaluate(()=>normalizedCars([window.__encarFixtureCars[1]],currentUser.username)[0]);
     await p.locator('#detail-memo').fill('아직 저장하지 않은 메모');await p.locator('#detail-extra').fill('아직 저장하지 않은 기타 비고');
     await p.evaluate(()=>window.__encarFixtureWriteMode='hold');await lookup(f,quoted());await p.waitForFunction(()=>window.__encarFixtureWriteWaiting);
-    assert.equal(await p.locator(DIALOG).isVisible(),false,'An unconfirmed metadata write must not open a price dialog');assert.equal((await snapshot(p)).writes,before.writes);
+    assert.equal(await p.locator(DIALOG).isVisible(),false,'An unconfirmed metadata write must not open a price dialog');assert.equal((await snapshot(p)).writes,before.writes);await noSuccess(p);
     await p.evaluate(()=>{window.__encarFixtureWriteMode='ok';window.__encarFixtureReleaseWrite();});await shown(p);
     assert.match(await p.locator(DIALOG+' .snote-encar-price-confirm-current').textContent(),/12,000,000원/);assert.match(await p.locator(DIALOG+' .snote-encar-price-confirm-amount').textContent(),/37,770,000원/);
     assert.equal(await p.locator(DIALOG).getByText('이 금액으로 변경하시겠습니까?',{exact:true}).isVisible(),true);assert.equal(await p.locator(SAVE).isEnabled(),true);
     const afterLookup=await snapshot(p);assert.equal(SnoteMoneyValue(afterLookup.cars[0].sell),before.sell);assert.equal(afterLookup.cars[0].vehicleMemo,undefined);assert.equal(afterLookup.cars[0].extra,undefined);
     const box=await p.locator(DIALOG).boundingBox();assert(box&&box.x>=0&&box.x+box.width<=width+.5);assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);assert.equal(await p.locator(DIALOG).evaluate(el=>el.scrollWidth>el.clientWidth),false);
     await p.screenshot({path:path.join(ART,'auto-price-confirm-'+width+'.png')});await p.locator(CANCEL).click();await hidden(p);
-    assert.equal((await snapshot(p)).writes,afterLookup.writes,'Cancel changes no stored price');assert.equal(await p.locator('#detail-sell').inputValue(),'12,000,000');
-    await lookup(f,quoted());await shown(p);const writesBefore=(await snapshot(p)).writes;await p.locator(SAVE).click();await hidden(p);
+    assert.equal((await snapshot(p)).writes,afterLookup.writes,'Cancel changes no stored price');assert.equal(await p.locator('#detail-sell').inputValue(),'12,000,000');await noSuccess(p);
+    await lookup(f,quoted());await shown(p);const writesBefore=(await snapshot(p)).writes;await p.evaluate(()=>window.__encarFixtureWriteMode='hold');await p.locator(SAVE).click();await p.waitForFunction(()=>window.__encarFixtureWriteWaiting);await noSuccess(p);assert.equal(await p.locator(SAVE).isDisabled(),true);await p.evaluate(()=>{window.__encarFixtureWriteMode='ok';window.__encarFixtureReleaseWrite();});await hidden(p);await savedToast(p);
     await p.waitForFunction(value=>SnoteMoney.car(window.__encarFixtureCars[0]).sell===value,PRICE);
     const confirmed=await p.evaluate(()=>SnoteMoney.car(window.__encarFixtureCars[0]));assert.equal(confirmed.sell,PRICE);assert.equal(confirmed.vehicleMemo,undefined,'A price-only confirmation cannot save another draft');assert.equal(confirmed.extra,undefined);
     assert.equal((await snapshot(p)).writes,writesBefore+1);assert.equal(await p.locator('#detail-sell').inputValue(),'37,770,000');assert.equal(await p.locator('#detail-memo').inputValue(),'아직 저장하지 않은 메모');assert.equal(await p.locator('#detail-extra').inputValue(),'아직 저장하지 않은 기타 비고');
     assert.deepEqual(await p.evaluate(()=>normalizedCars([window.__encarFixtureCars[1]],currentUser.username)[0]),peer);assert.equal(await p.evaluate(()=>snoteVehicleHasChanges()),true,'Only the pre-existing memo/extra drafts remain dirty');
     await p.evaluate(async()=>{await closeVehicle({discard:true,animate:false});openVehicle('encar-car-1');});await p.locator('.snote-encar-price-value').waitFor();assert.equal(await p.locator('#detail-sell').inputValue(),'37,770,000');assert.equal(await p.locator(DIALOG).isVisible(),false,'Restoring a saved quote never opens an unsolicited confirmation');
     const requestCount=f.requests.length;await lookup(f,quoted([item(ID,PRICE)]),{offer:false});await stored(p);assert.equal(await p.locator(DIALOG).isVisible(),false,'A quote equal to the current sale price needs no change confirmation');assert.equal(f.requests.length,requestCount+1);
-    await finish(f);results.push({width,metadataAckRequired:true,automaticConfirmation:true,cancelUnchanged:true,priceOnlyDatabaseSave:true,otherDraftsAndPeerPreserved:true,equalPriceNoPrompt:true,restoredQuoteNoPrompt:true,overflow:false});console.log('PASS '+width+'px automatic confirmation, cancel, exact price-only save, dirty drafts and peer preservation');
+    await finish(f);results.push({width,metadataAckRequired:true,automaticConfirmation:true,cancelUnchanged:true,priceOnlyDatabaseSave:true,otherDraftsAndPeerPreserved:true,equalPriceNoPrompt:true,restoredQuoteNoPrompt:true,noInlineFeedback:true,confirmedOnlyGlobalToast:true,overflow:false});console.log('PASS '+width+'px automatic confirmation, ACK-only global toast, exact price-only save and preserved drafts');
    }catch(error){await f.context.close();throw error;}
   }
   {
@@ -86,10 +88,10 @@ async function snapshot(p){return p.evaluate(()=>({cars:structuredClone(window._
    try{
     await lookup(f,quoted());await shown(p);const before=await snapshot(p);await p.evaluate(()=>window.__encarFixtureWriteMode='fail');await p.locator(SAVE).click();
     await p.locator(DIALOG+' .snote-encar-price-confirm-status').getByText('변경을 확인하지 못했습니다. 현재 가격과 저장 상태를 확인한 뒤 다시 시도해 주세요.',{exact:true}).waitFor();
-    await p.waitForTimeout(350);assert.equal(await p.locator(DIALOG).isVisible(),true,'A failed ACK keeps this exact staged-price retry available');assert.equal(await p.locator(SAVE).isEnabled(),true);
+    await p.waitForTimeout(350);assert.equal(await p.locator(DIALOG).isVisible(),true,'A failed ACK keeps this exact staged-price retry available');assert.equal(await p.locator(SAVE).isEnabled(),true);await noSuccess(p);
     assert.equal((await snapshot(p)).writes,before.writes);assert.equal(await p.evaluate(()=>SnoteMoney.car(window.__encarFixtureCars[0]).sell),12000000);assert.equal(await p.locator('#detail-sell').inputValue(),'37,770,000');
     await p.screenshot({path:path.join(ART,'auto-price-retry-390.png')});await p.evaluate(()=>window.__encarFixtureWriteMode='ok');await p.locator(SAVE).click();await hidden(p);
-    await p.waitForFunction(()=>SnoteMoney.car(window.__encarFixtureCars[0]).sell===37770000);assert.equal((await snapshot(p)).writes,before.writes+1);assert.equal(await p.evaluate(()=>window.__encarFixtureWriteFailures),1);
+    await p.waitForFunction(()=>SnoteMoney.car(window.__encarFixtureCars[0]).sell===37770000);assert.equal((await snapshot(p)).writes,before.writes+1);assert.equal(await p.evaluate(()=>window.__encarFixtureWriteFailures),1);await savedToast(p);
     await finish(f);results.push({width:390,failedAckKeepsExactStagedRetry:true,retryCommitsExactlyOnce:true});console.log('PASS failed price ACK keeps the exact staged offer and one successful retry confirms its price-only write');
    }catch(error){await f.context.close();throw error;}
   }
@@ -100,7 +102,7 @@ async function snapshot(p){return p.evaluate(()=>({cars:structuredClone(window._
     await p.locator('#detail-sell').fill('12,000,000');await lookup(f,quoted());await shown(p);await p.evaluate(()=>{window.__encarFixtureWriteMode='hold';});await p.locator(SAVE).click();await p.waitForFunction(()=>window.__encarFixtureWriteWaiting);
     await p.evaluate(async()=>{await closeVehicle({discard:true,animate:false});openVehicle('encar-car-2');window.__autoOtherDraft=document.getElementById('detail-sell').value;window.__encarFixtureWriteMode='ok';window.__encarFixtureReleaseWrite();});await hidden(p);
     await p.waitForFunction(()=>document.getElementById('vehicle-title').textContent.includes('가상 검증 차량 2'));assert.equal(await p.locator('#detail-sell').inputValue(),await p.evaluate(()=>window.__autoOtherDraft));assert.equal(await p.locator('.snote-encar-price-confirm-status').textContent(),'');
-    assert.equal(await p.evaluate(()=>SnoteMoney.car(window.__encarFixtureCars[1]).sell),17000000);await finish(f);results.push({width:390,changedPriceClosesPrompt:true,lateSaveCannotAffectNextVehicle:true});console.log('PASS an edited price dismisses an old offer and a pending old-vehicle confirmation cannot affect the next vehicle');
+    assert.equal(await p.evaluate(()=>SnoteMoney.car(window.__encarFixtureCars[1]).sell),17000000);await noSuccess(p);await finish(f);results.push({width:390,changedPriceClosesPrompt:true,lateSaveCannotAffectNextVehicle:true,lateSaveCannotShowSuccessToast:true});console.log('PASS an edited price dismisses an old offer and a pending old-vehicle confirmation cannot affect the next vehicle or show success');
    }catch(error){await f.context.close();throw error;}
   }
  }finally{await browser.close();}
