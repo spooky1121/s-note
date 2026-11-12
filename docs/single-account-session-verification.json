@@ -6,7 +6,7 @@
     "implementation": "complete",
     "productionDatabase": "not-applied",
     "productionFrontend": "not-deployed",
-    "github": "prepared-for-review"
+    "github": "draft-pr"
   },
   "sourceHashes": {
     "index.html": "3914381a86f7331ec35abb84b1c0bc42dc7c0cd6aab885d6cb53feb28fbd17e3",
@@ -95,5 +95,10 @@
     "cloudflareDeploymentStarted": false
   },
   "businessProductionRowsChanged": false,
-  "livePaidApiCalls": 0
+  "livePaidApiCalls": 0,
+  "github": {
+    "pullRequest": "https://github.com/spooky1121/s-note/pull/2",
+    "branch": "codex/single-login-v2.114",
+    "implementationCommit": "34dcd52d5aec99c3e8660f657c1f89828fc5d451"
+  }
 }
