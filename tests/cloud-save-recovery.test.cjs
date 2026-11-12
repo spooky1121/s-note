@@ -36,7 +36,9 @@ function fixture({dataset='cars',initial=[{id:'car-a',status:'판매완료',sold
   if(mode==='throw-after')throw Error('connection lost after commit');
   return {data:mode==='invalid'?'bad-revision':row.revision,error:null};
  }};S.client=client;
- const context={S,Storage,localStorage:storage,LEGACY:{monthly:STORAGE},ownerAlias:value=>value,cloudKey:(ds,owner)=>ds+':'+owner,
+ // These CAS-domain cases start in an already verified workspace. Ownership
+ // suspension and replacement are exercised by the dedicated auth suites.
+ const context={S,snoteOwnershipAllowed:()=>true,Storage,localStorage:storage,LEGACY:{monthly:STORAGE},ownerAlias:value=>value,cloudKey:(ds,owner)=>ds+':'+owner,
   storageKey:()=>STORAGE,toEntry:()=>({ds:dataset,owner:OWNER}),isShared:()=>dataset==='monthly',defaultBody:()=> '[]',parsePayload:JSON.parse,
   showStatus:value=>statuses.push(value),errMsg:error=>error.message,fail:error=>failures.push(error.message),alert:value=>alerts.push(value),
   setTimeout:()=>1,clearTimeout(){}};

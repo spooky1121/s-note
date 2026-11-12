@@ -19,7 +19,7 @@ function fixture({dataset='cars',owner=USER,revision=7,cached=[{id:'a',memo:'unf
  const client={from(name){assert.equal(name,'zc_datasets');return {select(){return this;},eq(){return this;},async limit(){if(readHook)await readHook();return {data:clone(rows),error:readError};}};}};
  const S={client,user:{id:USER},company:{id:COMPANY},rpcConfig:{url:PROJECT},members:[{user_id:USER,company_id:COMPANY}],revisions:new Map([[key,revision]]),companyOwners:new Map(),queue:new Set([key]),ready:false,loading:false,conflict:false};
  const bound={...recovery,read:s=>recovery.read(s,storage),write:(s,e)=>recovery.write(s,e,storage),remove:s=>recovery.remove(s,storage)};
- const context={window:{SnoteIdleRecovery:bound},S,NIL,LEGACY,localStorage:storage,Storage,originalSet:Storage.prototype.setItem,cloudWriteEpoch:1,cloudPendingWrites:new Map(),snote220CatalogEpoch:1,
+ const context={window:{SnoteIdleRecovery:bound},S,NIL,LEGACY,localStorage:storage,Storage,originalSet:Storage.prototype.setItem,cloudWriteEpoch:1,cloudPendingWrites:new Map(),snote220CatalogEpoch:1,snoteOwnershipAllowed:()=>true,
   ownerAlias:alias,isShared:ds=>!['cars','covers'].includes(ds),cloudKey:(ds,owner)=>ds+':'+(!['cars','covers'].includes(ds)?NIL:owner),
   storageKey:(ds,owner)=>['cars','covers'].includes(ds)?'zerocar-office-v12-'+ds+'-'+owner:LEGACY[ds],defaultBody:ds=>ds==='covers'?'{}':ds==='categories'?'null':'[]',
   snote221ResetIncome(){},snote220InvalidateCatalog(){context.snote220CatalogEpoch++;},snote216ResetMonthly(){},snote216InitMonthly(){},snoteCompanyActor:()=>({role,user_id:USER}),snoteCompanyOwnerRows:()=>[{user_id:USER},{user_id:OTHER}]

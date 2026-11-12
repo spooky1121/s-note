@@ -16,6 +16,8 @@ export const API_POLICIES = Object.freeze({
 const MESSAGES = {
   FORBIDDEN: [403, '허용되지 않은 요청입니다. S-NOTE에서 다시 시도해 주세요.'],
   UNAUTHORIZED: [401, '로그인이 필요합니다. 다시 로그인해 주세요.'],
+  SESSION_REPLACED: [401, '다른 기기에서 로그인하여 로그아웃되었습니다.'],
+  SESSION_UNAVAILABLE: [503, '로그인 상태를 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.'],
   NOT_FOUND: [404, '요청한 API를 찾을 수 없습니다.'],
   METHOD_NOT_ALLOWED: [405, '지원하지 않는 요청 방식입니다.'],
   INVALID_REQUEST: [400, '요청 형식을 확인해 주세요.'],
