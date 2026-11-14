@@ -82,7 +82,7 @@ async function fixture(width=1440,savedCars=null,{primaryColor=null,weather=null
   if(url.pathname==='/api/encar'){
    const body=JSON.parse(request.postData());assert.equal(request.method(),'POST');assert.equal(request.headers().authorization,'Bearer '+sessionToken);assert.deepEqual(Object.keys(body).sort(),['candidateIds','plate']);assert(Array.isArray(body.candidateIds));
    f.requests.push(body);const response=f.responses.shift();assert(response,'Every lookup must have an explicit synthetic response');
-   return route.fulfill({status:response.status||200,contentType:response.contentType||'application/json',body:JSON.stringify(response.body)});
+   return route.fulfill({status:response.status||200,contentType:response.contentType||'application/json',body:typeof response.rawBody==='string'?response.rawBody:JSON.stringify(response.body)});
   }
   if(url.pathname==='/api/encar-auto-price'){
    const body=JSON.parse(request.postData());assert.equal(request.method(),'POST');assert.equal(request.headers().authorization,'Bearer '+sessionToken);assert.deepEqual(Object.keys(body).sort(),['id','plate']);assert.equal(typeof body.plate,'string');assert.match(body.id,/^[1-9][0-9]{0,11}$/);f.autoPriceRequests.push(body);
@@ -112,7 +112,7 @@ async function fixture(width=1440,savedCars=null,{primaryColor=null,weather=null
   const wire=cars.map(SnoteMoney.storeCar);cars=normalizedCars(wire,alias);localStorage.setItem(carsStoreKey(alias),JSON.stringify(wire));window.__encarFixtureCars=structuredClone(wire);
   window.__encarFixtureWrites=[];window.__encarFixtureRevision=0;window.__encarFixtureWriteMode='ok';window.__encarFixtureWriteWaiting=false;window.__encarFixtureReleaseWrite=null;window.__encarFixtureWriteFailures=0;
   const S=window.__encarFixtureState;S.user={id:actor,email:'synthetic@example.invalid'};S.company={id:company,name:'가상 검증 상사'};S.members=[{user_id:actor,company_id:company,role:'dealer',display_name:'가상 검증 딜러',active:true}];
-  window.__encarFixtureSession={access_token:token,refresh_token:'synthetic-refresh',user:{id:actor,email:'synthetic@example.invalid'}};window.__encarFixtureOwnerCalls=[];window.__encarFixtureOwnerActive=true;
+  window.__encarFixtureSession={access_token:token,refresh_token:'synthetic-refresh',user:{id:actor,email:'synthetic@example.invalid'}};window.__encarFixtureOwnerCalls=[];window.__encarFixtureOwnerActive=true;window.__encarFixtureOwnerUnavailable=false;
   S.client={auth:{getSession:async()=>({data:{session:window.__encarFixtureSession},error:null}),getUser:async()=>({data:{user:window.__encarFixtureSession.user},error:null}),stopAutoRefresh(){},signOut:async()=>({error:null})},realtime:{setAuth:async()=>{}},channel(){const channel={on(){return channel;},subscribe(){return channel;},unsubscribe:async()=>{}};return channel;},removeChannel:async()=>{},from(table){
    const filters={};let single=false;
    const chain={select(){return chain},eq(key,value){filters[key]=value;return chain},in(){return chain},order(){return chain},limit(){return chain},maybeSingle(){single=true;return chain},single(){single=true;return chain},then(resolve,reject){
@@ -125,7 +125,7 @@ async function fixture(width=1440,savedCars=null,{primaryColor=null,weather=null
     return Promise.reject(Error('Unexpected browser fixture table '+table)).then(resolve,reject);
    }};return chain;
   },rpc:async(name,args)=>{
-   if(['snote_session_claim','snote_session_status'].includes(name)){if(args!==undefined)throw Error('Ownership RPC must have no caller arguments');window.__encarFixtureOwnerCalls.push(name);const session=window.__encarFixtureSession,claims=JSON.parse(atob(session.access_token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));return{data:{ok:true,active:window.__encarFixtureOwnerActive,userId:session.user.id,sessionId:claims.session_id,generation:1,reason:window.__encarFixtureOwnerActive?'ACTIVE':'REPLACED'},error:null};}
+   if(['snote_session_claim','snote_session_status'].includes(name)){if(args!==undefined)throw Error('Ownership RPC must have no caller arguments');window.__encarFixtureOwnerCalls.push(name);if(window.__encarFixtureOwnerUnavailable)return{data:null,error:{code:'SYNTHETIC_OWNERSHIP_UNAVAILABLE'}};const session=window.__encarFixtureSession,claims=JSON.parse(atob(session.access_token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));return{data:{ok:true,active:window.__encarFixtureOwnerActive,userId:session.user.id,sessionId:claims.session_id,generation:1,reason:window.__encarFixtureOwnerActive?'ACTIVE':'REPLACED'},error:null};}
    if(name!=='zc_write_dataset'||args.p_dataset!=='cars'||args.p_company!==company||args.p_owner!==actor)throw Error('Unexpected browser fixture RPC');
    if(args.p_expected!==window.__encarFixtureRevision)return{data:null,error:{code:'CONFLICT',message:'CONFLICT'}};
    if(window.__encarFixtureWriteMode==='hold'){

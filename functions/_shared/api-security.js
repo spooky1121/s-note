@@ -30,9 +30,19 @@ const MESSAGES = {
 export class RequestSecurityError extends Error {
   constructor(code) { super(code); this.code = code; }
 }
-export function securityResponse(code, extraHeaders = {}) {
+export const SESSION_DIAGNOSTIC_STAGES = Object.freeze(['CONFIG_INVALID', 'RPC_TIMEOUT', 'RPC_HTTP_ERROR', 'RPC_RESPONSE_INVALID', 'RPC_NETWORK_ERROR', 'REQUEST_ABORTED']);
+function sessionDiagnostics(code, diagnostics) {
+  if (code !== 'SESSION_UNAVAILABLE' || !diagnostics || diagnostics.code !== code ||
+      !SESSION_DIAGNOSTIC_STAGES.includes(diagnostics.stage) ||
+      typeof diagnostics.requestId !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(diagnostics.requestId)) return null;
+  const safe = { code, stage: diagnostics.stage, requestId: diagnostics.requestId };
+  if (Number.isInteger(diagnostics.upstreamHttpStatus) && diagnostics.upstreamHttpStatus >= 100 && diagnostics.upstreamHttpStatus <= 599) safe.upstreamHttpStatus = diagnostics.upstreamHttpStatus;
+  return safe;
+}
+export function securityResponse(code, extraHeaders = {}, diagnostics = null) {
   const [status, error] = MESSAGES[code] || MESSAGES.UPSTREAM_ERROR;
-  return hardenAPIResponse(new Response(JSON.stringify({ ok: false, code, error }), {
+  const safe = sessionDiagnostics(code, diagnostics);
+  return hardenAPIResponse(new Response(JSON.stringify({ ok: false, code, error, ...(safe ? { diagnostics: safe } : {}) }), {
     status, headers: { 'Content-Type': 'application/json; charset=utf-8', ...extraHeaders }
   }));
 }

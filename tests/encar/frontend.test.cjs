@@ -540,7 +540,7 @@ test('20 unverified diagnostic reasons have distinct honest notes without raw se
 
 test('21 service diagnostic error codes distinguish setup, search, detail and timeout while unknown/old replies keep HTTP fallbacks', async t => {
   const messages = [];
-  for (const code of ['SEARCH_NOT_CONFIGURED', 'SUPABASE_NOT_CONFIGURED', 'SEARCH_AUTH_FAILED', 'SEARCH_RATE_LIMITED', 'SEARCH_QUOTA_EXCEEDED', 'SEARCH_UNAVAILABLE', 'DETAIL_BLOCKED', 'DETAIL_PARSE_FAILED', 'DETAIL_UNAVAILABLE', 'AD_STATUS_UNKNOWN', 'CATALOG_BLOCKED', 'CATALOG_UNAVAILABLE', 'CATALOG_FORM_UNSUPPORTED', 'CATALOG_PARSE_FAILED', 'CATALOG_INCOMPLETE', 'CATALOG_CONFIG_INVALID', 'CATALOG_PARSER_UNAVAILABLE', 'CATALOG_LIMIT_EXCEEDED', 'UPSTREAM_TIMEOUT', 'DEADLINE_EXCEEDED']) {
+  for (const code of ['SEARCH_NOT_CONFIGURED', 'SUPABASE_NOT_CONFIGURED', 'SEARCH_AUTH_FAILED', 'SEARCH_RATE_LIMITED', 'SEARCH_QUOTA_EXCEEDED', 'SEARCH_UNAVAILABLE', 'DETAIL_BLOCKED', 'DETAIL_PARSE_FAILED', 'DETAIL_UNAVAILABLE', 'AD_STATUS_UNKNOWN', 'CATALOG_BLOCKED', 'CATALOG_UNAVAILABLE', 'CATALOG_FORM_UNSUPPORTED', 'CATALOG_PARSE_FAILED', 'CATALOG_INCOMPLETE', 'CATALOG_TIMEOUT', 'CATALOG_CONFIG_INVALID', 'CATALOG_PARSER_UNAVAILABLE', 'CATALOG_LIMIT_EXCEEDED', 'UPSTREAM_TIMEOUT', 'DEADLINE_EXCEEDED']) {
     await t.test(code, async sub => {
       const f = fixture(sub); f.click(); await settle(); f.reply(0, { status: 'error', diagnostics: { code, requestId: REQUEST_ID, message: 'UNTRUSTED_PRIVATE_MESSAGE' } }, { status: 502 }); await settle();
       messages.push(f.note.textContent); assert.doesNotMatch(f.note.textContent, /UNTRUSTED/); assert.equal(f.note.dataset.error, 'true');
@@ -548,9 +548,39 @@ test('21 service diagnostic error codes distinguish setup, search, detail and ti
       assert.equal(f.links.length, 0); assert.deepEqual(f.tabs[0].navigations, []);
     });
   }
-  assert.equal(new Set(messages).size, 20);
+  assert.equal(new Set(messages).size, 21);
   const f = fixture(t); f.click(); await settle(); f.reply(0, { status: 'error', diagnostics: { code: 'UNKNOWN_PRIVATE_CODE' } }, { status: 503 }); await settle();
-  assert.equal(f.note.textContent, '엔카 조회 기능의 서버 설정이 필요합니다. 관리자에게 문의해 주세요.');
+  assert.equal(f.note.textContent, '광고 확인 서버가 일시적으로 응답하지 않습니다. 잠시 후 다시 시도해 주세요.');
+});
+
+test('non-JSON server failures retain HTTP status and a temporary availability reason without navigation or writes', async t => {
+  for (const status of [500, 502, 503, 504]) {
+    await t.test(String(status), async sub => {
+      const f = fixture(sub, {bridge:true, savedRecord:storedRecord()}); f.click(); await settle();
+      f.reply(0, '<!doctype html><title>PRIVATE_EDGE_ERROR</title>', {status, contentType:'text/html; charset=utf-8'}); await settle();
+      assert.equal(f.note.textContent, '광고 확인 서버가 일시적으로 응답하지 않습니다. 잠시 후 다시 시도해 주세요.');
+      assert.doesNotMatch(f.note.textContent, /PRIVATE|설정|연결되지/); assert.equal(f.note.dataset.error, 'true');
+      assert.equal(f.tabs[0].closed, true); assert.deepEqual(f.tabs[0].navigations, []); assert.equal(f.saveCalls.length, 0);
+      assert.equal(f.links.length, 2, 'Saved links remain available after an unsuccessful recheck'); assert.equal(f.button.disabled, false);
+      f.copyButton.click(); await settle();
+      assert.deepEqual(JSON.parse(f.copyFallback.value), {service:'snote-encar',code:'SERVER_UNAVAILABLE',httpStatus:status});
+      assert.doesNotMatch(f.copyFallback.value, /PRIVATE|12가3456|43000001|https:|token/);
+    });
+  }
+});
+
+test('unreadable JSON server failures retain availability diagnostics without replacing ownership errors', async t => {
+  for (const failure of [new SyntaxError('PRIVATE_JSON_BODY'), new TypeError('PRIVATE_TRUNCATED_BODY')]) {
+    const f = fixture(t, {bridge:true}); f.click(); await settle();
+    f.reply(0, null, {status:503, jsonPromise:Promise.reject(failure)}); await settle(); f.copyButton.click(); await settle();
+    assert.equal(f.note.textContent, '광고 확인 서버가 일시적으로 응답하지 않습니다. 잠시 후 다시 시도해 주세요.');
+    assert.deepEqual(JSON.parse(f.copyFallback.value), {service:'snote-encar',code:'SERVER_UNAVAILABLE',httpStatus:503});
+    assert.equal(f.tabs[0].closed, true); assert.deepEqual(f.tabs[0].navigations, []); assert.equal(f.saveCalls.length, 0);
+    assert.doesNotMatch(f.copyFallback.value, /PRIVATE/);
+  }
+  const f = fixture(t); f.click(); await settle();
+  f.reply(0, null, {status:503,jsonPromise:Promise.reject(Error('SESSION_CONTEXT_CHANGED'))}); await settle(); f.copyButton.click(); await settle();
+  assert.equal(JSON.parse(f.copyFallback.value).code, 'SESSION_CONTEXT_CHANGED');
 });
 
 test('22 a manual URL supplies only its explicit ID and cannot navigate until the server verifies the original seller', async t => {
@@ -574,6 +604,17 @@ test('catalogue discovery failure leaves the independent manual verifier availab
   assert.deepEqual(f.tabs[1].navigations, []);
   f.reply(1, found()); await settle();
   assert.deepEqual(f.tabs[1].navigations, [listing().sellerUrl]);
+});
+
+test('catalogue timeout preserves its safe diagnostic and offers manual verification without admitting partial listings', async t => {
+  const f = fixture(t, {bridge:true}); f.click(); await settle();
+  f.reply(0, {...found(), status:'error', diagnostics:{code:'CATALOG_TIMEOUT', requestId:REQUEST_ID, catalogRequestCount:2, body:'PRIVATE_BODY', token:'PRIVATE_TOKEN'}}, {status:502}); await settle();
+  assert.equal(f.note.textContent, '공개 차량 목록 확인이 지연됐습니다. 광고 주소로 다시 확인할 수 있습니다.');
+  assert.equal(f.manual.hidden, false); assert.equal(f.manual.open, false); assert.equal(f.tabs[0].closed, true);
+  assert.deepEqual(f.tabs[0].navigations, []); assert.equal(f.links.length, 0); assert.equal(f.saveCalls.length, 0);
+  f.copyButton.click(); await settle();
+  assert.deepEqual(JSON.parse(f.copyFallback.value), {service:'snote-encar', code:'CATALOG_TIMEOUT', httpStatus:502, requestId:REQUEST_ID, catalogRequestCount:2});
+  assert.doesNotMatch(f.copyFallback.value, /PRIVATE|12가3456|43000001|https:|token/);
 });
 
 test('23 supported HTTPS desktop/mobile addresses are ID hints only', async t => {
@@ -636,6 +677,73 @@ test('28 unavailable popups and native token errors never expose raw exceptions'
   assert.equal(JSON.parse(failed.copyFallback.value).code, 'NETWORK_ERROR');
   const expired = fixture(t, { token: () => Promise.resolve(null) }); expired.click(); await settle(); expired.copyButton.click(); await settle();
   assert.equal(expired.requests.length, 0); assert.equal(JSON.parse(expired.copyFallback.value).code, 'AUTH_REQUIRED');
+});
+
+test('middleware failures keep allowlisted request reasons without exposing response fields or opening advertisements', async t => {
+  for (const [code, status, message] of [
+    ['SESSION_UNAVAILABLE', 503, '로그인 상태를 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.'],
+    ['SESSION_REPLACED', 401, '다른 기기에서 로그인하여 로그아웃되었습니다.'],
+    ['UNAUTHORIZED', 401, '로그인이 필요합니다. 다시 로그인해 주세요.'],
+    ['FORBIDDEN', 403, '허용되지 않은 요청입니다. S-NOTE에서 다시 시도해 주세요.'],
+    ['RATE_LIMITED', 429, '요청이 많습니다. 잠시 후 다시 시도해 주세요.']
+  ]) {
+    await t.test(code, async sub => {
+      const f = fixture(sub, {bridge:true, savedRecord:storedRecord()});
+      f.click(); await settle();
+      f.reply(0, {ok:false, code, error:'PRIVATE_RESPONSE', plate:PLATE, listings:[listing()], token:'PRIVATE_TOKEN'}, {status}); await settle();
+      assert.equal(f.note.textContent, message); assert.equal(f.note.dataset.error, 'true');
+      assert.equal(f.tabs[0].closed, true); assert.deepEqual(f.tabs[0].navigations, []); assert.equal(f.saveCalls.length, 0);
+      assert.equal(f.links.length, 2, 'Previously saved links survive a current failed recheck');
+      f.copyButton.click(); await settle();
+      assert.deepEqual(JSON.parse(f.copyFallback.value), {service:'snote-encar', code, httpStatus:status});
+      assert.doesNotMatch(f.copyFallback.value, /PRIVATE|12가3456|43000001|https:|token/);
+    });
+  }
+  const unknown = fixture(t); unknown.click(); await settle();
+  unknown.reply(0, {ok:false, code:'PRIVATE_UNKNOWN', error:'PRIVATE_RESPONSE'}, {status:503}); await settle(); unknown.copyButton.click(); await settle();
+  assert.equal(JSON.parse(unknown.copyFallback.value).code, 'HTTP_ERROR'); assert.doesNotMatch(unknown.note.textContent, /PRIVATE/);
+});
+
+test('current ownership exceptions preserve their reason while late exceptions remain silent', async t => {
+  for (const code of ['SESSION_UNAVAILABLE', 'SESSION_CONTEXT_CHANGED']) {
+    for (const typed of [false, true]) {
+      const f = fixture(t, {bridge:true}); f.click(); await settle();
+      const error = typed ? Object.assign(Error('PRIVATE_AUTH_ERROR'), {code, httpStatus:503}) : Error(code);
+      f.requests[0].pending.reject(error); await settle(); f.copyButton.click(); await settle();
+      assert.equal(JSON.parse(f.copyFallback.value).code, code);
+      assert.equal(JSON.parse(f.copyFallback.value).httpStatus, typed ? 503 : null);
+      assert.match(f.note.textContent, /로그인/); assert.doesNotMatch(f.note.textContent, /PRIVATE/);
+      assert.equal(f.tabs[0].closed, true); assert.equal(f.saveCalls.length, 0); assert.deepEqual(f.tabs[0].navigations, []);
+    }
+  }
+  for (const change of [f=>{f.w.currentUser={username:'another-user'};}, f=>{f.state.ready=false;}]) {
+    const f = fixture(t, {bridge:true}); f.click(); await settle(); change(f); f.w.SnoteEncarLink.refresh();
+    f.requests[0].pending.reject(Object.assign(Error('PRIVATE_AUTH_ERROR'), {code:'SESSION_UNAVAILABLE',httpStatus:503})); await settle();
+    assert.equal(f.note.textContent, ''); assert.equal(f.copyButton.hidden, true); assert.equal(f.tabs[0].closed, true); assert.equal(f.saveCalls.length, 0);
+  }
+});
+
+test('session-unavailable diagnostics retain only fixed stages, bounded upstream status and UUID through JSON or typed failures', async t => {
+  for (const typed of [false, true]) {
+    for (const stage of ['CONFIG_INVALID','RPC_TIMEOUT','RPC_HTTP_ERROR','RPC_RESPONSE_INVALID','RPC_NETWORK_ERROR','REQUEST_ABORTED']) {
+      await t.test((typed ? 'typed ' : 'JSON ') + stage, async sub => {
+        const f = fixture(sub, {bridge:true}); f.click(); await settle();
+        const diagnostics = {code:'SESSION_UNAVAILABLE',stage,upstreamHttpStatus:503,requestId:REQUEST_ID,token:'PRIVATE_TOKEN',body:'PRIVATE_BODY',url:'https://private.invalid/'};
+        if (typed) f.requests[0].pending.reject(Object.assign(Error('PRIVATE_WRAPPER_ERROR'), {code:'SESSION_UNAVAILABLE',httpStatus:503,diagnostics}));
+        else f.reply(0, {ok:false,code:'SESSION_UNAVAILABLE',diagnostics,error:'PRIVATE_RESPONSE'}, {status:503});
+        await settle(); f.copyButton.click(); await settle();
+        assert.deepEqual(JSON.parse(f.copyFallback.value), {service:'snote-encar',code:'SESSION_UNAVAILABLE',httpStatus:503,requestId:REQUEST_ID,stage,upstreamHttpStatus:503});
+        assert.doesNotMatch(f.copyFallback.value, /PRIVATE|12가3456|43000001|https:|token/); assert.equal(f.saveCalls.length, 0);
+        assert.equal(f.tabs[0].closed, true); assert.deepEqual(f.tabs[0].navigations, []);
+      });
+    }
+    const f = fixture(t); f.click(); await settle();
+    const diagnostics = {code:'SESSION_UNAVAILABLE',stage:'PRIVATE_STAGE',upstreamHttpStatus:600,requestId:'PRIVATE_ID',token:'PRIVATE_TOKEN'};
+    if (typed) f.requests[0].pending.reject(Object.assign(Error('PRIVATE_WRAPPER_ERROR'), {code:'SESSION_UNAVAILABLE',httpStatus:503,diagnostics}));
+    else f.reply(0, {ok:false,code:'SESSION_UNAVAILABLE',diagnostics}, {status:503});
+    await settle(); f.copyButton.click(); await settle();
+    assert.deepEqual(JSON.parse(f.copyFallback.value), {service:'snote-encar',code:'SESSION_UNAVAILABLE',httpStatus:503});
+  }
 });
 
 test('29 an unknown advertisement state is an error, never a sold/inactive claim or direct navigation', async t => {

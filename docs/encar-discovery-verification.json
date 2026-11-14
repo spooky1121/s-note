@@ -1,0 +1,111 @@
+{
+  "schemaVersion": 1,
+  "release": "2.115",
+  "baseCommit": "41cc34d773f251c74fd77edb3d4d4c0ae17725c6",
+  "verifiedAt": "2026-11-14T05:29:46.914911+00:00",
+  "scope": "Encar candidate discovery, lookup failure diagnostics and preservation of existing official verification and price-save safeguards",
+  "sourceHashes": {
+    "index.html": "66d403245a6fbce8b8474b4aca941a0c378bd0dd523d00d9a76e7c80b08dfbec",
+    "assets/snote-encar-link.js": "c06d2300de7eb84e8b29092af1da5f86394d24f8856d232eed15448e243c1dda",
+    "functions/api/encar.js": "31e00b0232a76a078fc4688c81f7f70931bae1249f77433bb2a00d3ce9e75afd",
+    "functions/_shared/encar-catalog.mjs": "628a7663553139dfaca8a8f4a4bb3ec2fb4f50bde8759f22197766837a46da5c",
+    "functions/_shared/session-ownership.js": "f804f6badcab4c5fea3cab38cdc4de0bef6659f4a61c8e9c6dc8c2a200d69534",
+    "functions/_shared/api-security.js": "427e422dce8fa431f111c037cddb2a013166cb9f6e98a982b34bdfcfdd508662",
+    "functions/api/_middleware.js": "6505cc99edd979a6dd82d99c37525c60b120696c9f252145ca3e8151e2c70a6c"
+  },
+  "fixes": [
+    "Discover the native GET plate form through one observed same-origin catalog anchor when the homepage has no supported plate form; no guessed search URL or query key.",
+    "Accept strictly validated regional trust-encar subdomains as candidate hints only; fetch and return official verified listing URLs.",
+    "Prioritize exact full-plate search evidence before the six-candidate search limit.",
+    "Merge up to six client and six cache hints, with six additional discovery slots and an eighteen-primary-candidate total cap.",
+    "Cache verified candidates only; do not cache rejected IDs.",
+    "When search fallback is configured, bound catalog discovery and pagination to a shared eight seconds within the existing whole-operation deadline.",
+    "Preserve search authentication, quota, rate and transport errors instead of masking them with an earlier catalog failure.",
+    "Preserve allowlisted middleware and ownership failure reasons in the UI; retain ownership rechecks, stale-context guards and manual lookup on catalog timeout.",
+    "Classify non-JSON and unreadable JSON 5xx responses as temporary server availability failures; include only fixed session-check stages, generated request UUID and bounded HTTP status in copied diagnostics."
+  ],
+  "preserved": {
+    "exactOfficialPlateAndActiveAdvertisementRequired": true,
+    "wholeOperationDeadlineMs": 35000,
+    "detailConcurrency": 3,
+    "priceListingLimit": 3,
+    "ownerScopedWritesAndPriceCompareAndSwap": true,
+    "failedOrStaleLookupCannotNavigateOrWrite": true
+  },
+  "validation": {
+    "fullSuite": {
+      "command": "npm test --prefix tests/encar",
+      "passed": 793,
+      "failed": 0
+    },
+    "browser": {
+      "detailLookupGroupsPassed": 5,
+      "directPriceGroupsPassed": 7,
+      "failed": 0,
+      "syntheticOnly": true,
+      "receiptHashesMatchFrozenSources": true,
+      "singleSessionGroupsPassed": 21
+    },
+    "independentDiscoverySuite": {
+      "passed": 25,
+      "failed": 0
+    },
+    "independentReview": "No remaining blockers after catalog-timeout UI and stale-hint saturation fixes.",
+    "pagesFunctionsBuild": {
+      "status": "pass",
+      "wranglerVersion": "4.152.0"
+    },
+    "inlineScriptSyntax": {
+      "checked": 7,
+      "failed": 0
+    },
+    "diffCheck": "pass"
+  },
+  "stockEvidence": {
+    "scope": "Aggregate, read-only review of seventeen private stock vehicles; identifiers and private source artifacts excluded from this receipt.",
+    "vehiclesReviewed": 17,
+    "vehiclesWithPublicExactPlateEvidence": 14,
+    "vehiclesWithPublicPlateAndLotEvidence": 13,
+    "plateAndLotEvidenceBreakdown": {
+      "primaryListingPages": 6,
+      "catalogEntries": 3,
+      "cachedSearchSnippets": 4
+    },
+    "vehiclesWithUnverifiedPublicEvidence": 3,
+    "officialCurrentAdvertisementsVerified": 0,
+    "interpretation": "Public page and cached-snippet evidence may be stale. The three unverified vehicles are not findings that advertisements are absent."
+  },
+  "parserOnlyComparison": {
+    "scope": "Captured public observations processed locally; no official detail verification or live full-pipeline result.",
+    "observedPrimaryListingUrlCases": 6,
+    "recognizedBefore": 5,
+    "recognizedAfter": 6,
+    "regionalSubdomainCase": {
+      "candidateRecognizedBefore": false,
+      "candidateRecognizedAfter": true
+    },
+    "rankingWithSyntheticNoise": {
+      "precedingSyntheticResults": 6,
+      "matchingResultPosition": 7,
+      "candidateSelectedBefore": false,
+      "candidateSelectedAfter": true
+    }
+  },
+  "limitations": [
+    "Live full-pipeline lookup was not validated because the runtime network restriction prevented official current-page verification.",
+    "Parser recognition and public evidence counts do not establish a currently active official advertisement.",
+    "Automated success results use synthetic upstream responses and browser fixtures.",
+    "The reported production503 was not proven resolved; new stage diagnostics are needed to distinguish configuration, RPC HTTP failure, timeout, transport or malformed response."
+  ],
+  "privacy": {
+    "actualStockIdentifiersIncluded": false,
+    "actualStockPlatesOrSavedIdsInAddedPublicContent": 0,
+    "privateArtifactsPublished": false
+  },
+  "reportedProductionFailure": {
+    "code": "NETWORK_ERROR",
+    "httpStatus": 503,
+    "underlyingServerCause": "unconfirmed; requires new production stage diagnostic",
+    "runtimeDomainUpdate": "User reports added domains; current runtime still enforces the prior domain list and direct official request remains CONNECT403."
+  }
+}

@@ -42,47 +42,57 @@ export function needsSessionOwnership(request, policy) {
 export async function requireSessionOwnership(request, env, { fetcher = fetch, timeoutMs = SESSION_CHECK_TIMEOUT_MS } = {}) {
   const expected = identity(request.headers.get('Authorization'));
   if (!expected) throw new RequestSecurityError('UNAUTHORIZED');
+  const requestId = crypto.randomUUID();
+  const unavailable = (stage, upstreamHttpStatus) => {
+    const error = new RequestSecurityError('SESSION_UNAVAILABLE');
+    error.diagnostics = { code: error.code, stage, requestId };
+    if (Number.isInteger(upstreamHttpStatus) && upstreamHttpStatus >= 100 && upstreamHttpStatus <= 599) error.diagnostics.upstreamHttpStatus = upstreamHttpStatus;
+    return error;
+  };
   const config = endpoint(env);
-  if (!config) throw new RequestSecurityError('SESSION_UNAVAILABLE');
+  if (!config) throw unavailable('CONFIG_INVALID');
   const controller = new AbortController();
-  let reader, response, timer;
-  const cancel = () => {
-    controller.abort();
+  let reader, response, timer, failureStage = 'RPC_NETWORK_ERROR';
+  const cancel = error => {
+    controller.abort(error);
     try { const pending = reader ? reader.cancel() : response?.body?.cancel(); pending?.catch(() => {}); } catch { /* Already closed. */ }
   };
   let rejectDeadline;
   const deadline = new Promise((_, reject) => { rejectDeadline = reject; });
-  const abort = () => { rejectDeadline(new RequestSecurityError('SESSION_UNAVAILABLE')); cancel(); };
+  const stop = stage => { const error = unavailable(stage, response?.status); rejectDeadline(error); cancel(error); };
+  const abort = () => stop('REQUEST_ABORTED');
   request.signal.addEventListener('abort', abort, { once: true });
-  timer = setTimeout(abort, Math.max(1, timeoutMs));
+  timer = setTimeout(() => stop('RPC_TIMEOUT'), Math.max(1, timeoutMs));
   try {
     if (request.signal.aborted) abort();
     const fetched = Promise.resolve().then(() => {
-      if (controller.signal.aborted) throw new RequestSecurityError('SESSION_UNAVAILABLE');
+      if (controller.signal.aborted) throw controller.signal.reason;
       return fetcher(config.url, {
         method: 'POST', headers: { apikey: config.key, Authorization: 'Bearer ' + expected.token, 'Content-Type': 'application/json', Accept: 'application/json' },
         body: '{}', signal: controller.signal, redirect: 'error', credentials: 'omit', referrerPolicy: 'no-referrer', cache: 'no-store'
       });
     }).then(value => {
       // Also discard a late response from an upstream that ignored cancellation.
-      if (controller.signal.aborted) { try { value?.body?.cancel()?.catch(() => {}); } catch { /* Closed. */ } throw new RequestSecurityError('SESSION_UNAVAILABLE'); }
+      if (controller.signal.aborted) { try { value?.body?.cancel()?.catch(() => {}); } catch { /* Closed. */ } throw controller.signal.reason; }
       return value;
     });
     response = await Promise.race([fetched, deadline]);
     if (response.status === 401 || response.status === 403) throw new RequestSecurityError('UNAUTHORIZED');
-    if (!response.ok || (response.headers.get('Content-Type') || '').split(';')[0].trim().toLowerCase() !== 'application/json') throw new RequestSecurityError('SESSION_UNAVAILABLE');
+    if (!response.ok) throw unavailable('RPC_HTTP_ERROR', response.status);
+    if ((response.headers.get('Content-Type') || '').split(';')[0].trim().toLowerCase() !== 'application/json') throw unavailable('RPC_RESPONSE_INVALID', response.status);
     const length = response.headers.get('Content-Length');
-    if (length !== null && (!/^\d+$/.test(length) || Number(length) > MAXIMUM)) throw new RequestSecurityError('SESSION_UNAVAILABLE');
-    if (!response.body) throw new RequestSecurityError('SESSION_UNAVAILABLE');
+    if (length !== null && (!/^\d+$/.test(length) || Number(length) > MAXIMUM)) throw unavailable('RPC_RESPONSE_INVALID', response.status);
+    if (!response.body) throw unavailable('RPC_RESPONSE_INVALID', response.status);
     reader = response.body.getReader();
     const chunks = []; let size = 0;
     while (true) {
       const { done, value } = await Promise.race([reader.read(), deadline]);
       if (done) break;
       size += value.byteLength;
-      if (size > MAXIMUM) throw new RequestSecurityError('SESSION_UNAVAILABLE');
+      if (size > MAXIMUM) throw unavailable('RPC_RESPONSE_INVALID', response.status);
       chunks.push(value);
     }
+    failureStage = 'RPC_RESPONSE_INVALID';
     const bytes = new Uint8Array(size); let offset = 0;
     for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.byteLength; }
     const status = JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(bytes));
@@ -90,17 +100,17 @@ export async function requireSessionOwnership(request, env, { fetcher = fetch, t
         typeof status.userId !== 'string' || status.userId.toLowerCase() !== expected.userId ||
         typeof status.sessionId !== 'string' || status.sessionId.toLowerCase() !== expected.sessionId ||
         !Number.isSafeInteger(status.generation) || status.generation < 0 ||
-        !['ACTIVE', 'LEGACY', 'REPLACED', 'SESSION_MISSING'].includes(status.reason)) throw new RequestSecurityError('SESSION_UNAVAILABLE');
+        !['ACTIVE', 'LEGACY', 'REPLACED', 'SESSION_MISSING'].includes(status.reason)) throw unavailable('RPC_RESPONSE_INVALID', response.status);
     if (!status.active) {
-      if (!['REPLACED', 'SESSION_MISSING'].includes(status.reason) || (status.reason === 'REPLACED' && status.generation === 0)) throw new RequestSecurityError('SESSION_UNAVAILABLE');
+      if (!['REPLACED', 'SESSION_MISSING'].includes(status.reason) || (status.reason === 'REPLACED' && status.generation === 0)) throw unavailable('RPC_RESPONSE_INVALID', response.status);
       throw new RequestSecurityError('SESSION_REPLACED');
     }
-    if (!['ACTIVE', 'LEGACY'].includes(status.reason) || (status.reason === 'LEGACY') !== (status.generation === 0)) throw new RequestSecurityError('SESSION_UNAVAILABLE');
+    if (!['ACTIVE', 'LEGACY'].includes(status.reason) || (status.reason === 'LEGACY') !== (status.generation === 0)) throw unavailable('RPC_RESPONSE_INVALID', response.status);
     return { userId: expected.userId, sessionId: expected.sessionId, generation: status.generation };
   } catch (error) {
-    cancel();
+    cancel(error);
     if (error instanceof RequestSecurityError) throw error;
-    throw new RequestSecurityError('SESSION_UNAVAILABLE');
+    throw unavailable(failureStage, response?.status);
   } finally {
     clearTimeout(timer);
     request.signal.removeEventListener('abort', abort);
