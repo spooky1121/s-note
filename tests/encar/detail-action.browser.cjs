@@ -13,7 +13,7 @@ fs.mkdirSync(ART,{recursive:true});
   try{
    assert.match(fs.readFileSync(path.join(ROOT,'index.html'),'utf8'),/id="vehicle-encar-check"[^>]*disabled>/,'The header action exists before any script initializes');
    assert.equal(await p.locator('.snote-encar-button').count(),1);assert.equal(await button.isVisible(),true);assert.equal(await button.isEnabled(),true);
-   const geometry=await button.evaluate(el=>{const r=el.getBoundingClientRect(),img=el.querySelector('img');return{width:r.width,height:r.height,hit:document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)?.closest('button')===el,logo:img.complete&&img.naturalWidth>0,inHeader:el.parentElement.id==='vehicle-header-actions',overflow:document.documentElement.scrollWidth>innerWidth};});
+   const geometry=await button.evaluate(el=>{const r=el.getBoundingClientRect(),mark=el.querySelector('span.snote-encar-wordmark');return{width:r.width,height:r.height,hit:document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)?.closest('button')===el,logo:mark?.textContent==='Encar'&&!el.querySelector('img')&&mark.getBoundingClientRect().height>0,inHeader:el.parentElement.id==='vehicle-header-actions',overflow:document.documentElement.scrollWidth>innerWidth};});
    assert(geometry.width>=40&&geometry.height>=40&&geometry.hit&&geometry.logo&&geometry.inHeader);assert.equal(geometry.overflow,false);
    f.reply(response);const opening=f.context.waitForEvent('page');await button.click();const popup=await opening;await popup.waitForURL(sellerUrl);await popup.close();
    await p.locator('.snote-encar-save-status').getByText('광고 링크를 서버에 저장했습니다.',{exact:true}).waitFor();
@@ -54,12 +54,13 @@ fs.mkdirSync(ART,{recursive:true});
   }catch(error){await f.context.close();throw error;}
  }
  for(const lookupUnavailable of[false,true]){
-  const f=await fixture(390,null,{encarLogoUnavailable:true,lookupUnavailable}),p=f.page,button=p.locator('#vehicle-encar-check'),fallback=button.locator('.snote-encar-fallback');
+  const f=await fixture(390,null,{encarLogoUnavailable:true,lookupUnavailable}),p=f.page,button=p.locator('#vehicle-encar-check'),fallback=button.locator('span.snote-encar-wordmark');
   try{
+   await p.addStyleTag({content:'#vehicle-encar-check img{display:block!important}'});
    const sell=await p.evaluate(()=>cars[0].sell);
    assert.equal(await button.isVisible(),true);assert.equal(await fallback.isVisible(),true);assert.equal(await fallback.textContent(),'Encar');
    const geometry=await fallback.evaluate(el=>{const r=el.getBoundingClientRect();return{width:r.width,height:r.height,color:getComputedStyle(el).color};});assert(geometry.width>20&&geometry.height>=13);
-   assert.equal(await button.locator('img').isHidden(),true);assert.equal(await p.locator('#vehicle-encar-check').count(),1);
+   assert.equal(await button.locator('img').count(),0);assert.equal(await p.locator('#vehicle-encar-check').count(),1);
    if(lookupUnavailable){
     assert.equal(await p.evaluate(()=>typeof window.SnoteEncarLink),'undefined');assert.equal(await button.isDisabled(),true);
     await button.evaluate(el=>el.click());assert.equal(f.requests.length,0);

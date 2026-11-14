@@ -10,7 +10,6 @@ const { JSDOM, VirtualConsole } = require('jsdom');
 
 const SOURCE = fs.readFileSync(path.resolve(__dirname, '../../assets/snote-encar-link.js'), 'utf8');
 const PREFIX = 'snote.encar.candidate.v1:';
-const LOOKUP_LOGO_SRC = 'assets/encar-wordmark.png?v=2.73';
 const PLATE = '12가3456';
 const SECOND_PLATE = '34나5678';
 const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -53,12 +52,12 @@ function assertLookupIcon(button, busy = false) {
   assert.equal(button.hasAttribute('title'), false, 'The custom tooltip must not compete with a native tooltip');
   if (busy) assert.equal(button.getAttribute('aria-busy'), 'true');
   else assert.ok([null, 'false'].includes(button.getAttribute('aria-busy')), 'A settled icon must no longer announce busy work');
-  const icons = button.querySelectorAll('img');
-  assert.equal(icons.length, 1, 'Lookup state changes must preserve exactly one logo image');
+  const icons = button.querySelectorAll('span.snote-encar-wordmark');
+  assert.equal(icons.length, 1, 'Lookup state changes must preserve exactly one visible wordmark');
   assert.equal(icons[0].namespaceURI, 'http://www.w3.org/1999/xhtml');
-  assert.equal(icons[0].getAttribute('src'), LOOKUP_LOGO_SRC, 'Every lookup state must keep the supplied PNG logo');
+  assert.equal(icons[0].textContent, 'Encar');
   assert.equal(icons[0].classList.contains('snote-encar-wordmark'), true);
-  assert.equal(icons[0].getAttribute('alt'), '', 'The button names the action; the image is decorative');
+  assert.equal(button.querySelectorAll('img').length, 0, 'The header must not depend on image loading or expose a broken image');
   assert.equal(icons[0].getAttribute('aria-hidden'), 'true');
   assert.equal(icons[0].tabIndex, -1, 'Keyboard focus belongs to the button');
   assert.equal(button.querySelectorAll('svg').length, 0, 'The logo replaces the previous drawn icon');
@@ -979,17 +978,13 @@ test('48 reuses the permanent header action without duplicate controls and resto
  assert.deepEqual(f.tabs[0].navigations,[listing().sellerUrl]);
 });
 
-test('the permanent Encar wordmark has a visible fallback while the image loads or fails without enabling unavailable authentication', async t => {
- const f=fixture(t,{headerActions:true,staticButton:true,ready:false}),logo=f.button.querySelector('img.snote-encar-wordmark'),fallback=f.button.querySelector('.snote-encar-fallback');
- assert.equal(fallback.textContent,'Encar');assert.equal(fallback.hidden,false);assert.equal(fallback.getAttribute('aria-hidden'),'true');assert.equal(logo.style.display,'none');assert.equal(f.button.hidden,false);assert.equal(f.button.disabled,true);
- logo.dispatchEvent(new f.w.Event('error'));assert.equal(fallback.hidden,false);assert.equal(logo.style.display,'none');
- Object.defineProperty(logo,'naturalWidth',{configurable:true,value:2129});logo.dispatchEvent(new f.w.Event('load'));
- assert.equal(fallback.hidden,true);assert.equal(logo.style.display,'');
- logo.dispatchEvent(new f.w.Event('error'));assert.equal(fallback.hidden,false);assert.equal(logo.style.display,'none');
- f.state.ready=true;f.w.SnoteEncarLink.refresh();assert.equal(f.button.disabled,false);assert.equal(fallback.hidden,false);
+test('the permanent Encar wordmark needs no image and does not enable unavailable authentication', async t => {
+ const f=fixture(t,{headerActions:true,staticButton:true,ready:false}),wordmark=assertLookupIcon(f.button);
+ assert.equal(wordmark.hidden,false);assert.equal(f.button.hidden,false);assert.equal(f.button.disabled,true);
+ f.state.ready=true;f.w.SnoteEncarLink.refresh();assert.equal(f.button.disabled,false);assert.equal(assertLookupIcon(f.button),wordmark);
  f.click();await settle();f.reply(0,{ok:false,code:'SESSION_UNAVAILABLE'},{status:503});await settle();
- assert.equal(f.button.hidden,false);assert.equal(fallback.hidden,false);assert.equal(f.button.disabled,false);assert.equal(f.tabs[0].closed,true);assert.deepEqual(f.tabs[0].navigations,[]);
- assert.equal(f.w.document.querySelectorAll('.snote-encar-fallback').length,1);assert.equal(f.requests.length,1);
+ assert.equal(f.button.hidden,false);assert.equal(wordmark.hidden,false);assert.equal(f.button.disabled,false);assert.equal(f.tabs[0].closed,true);assert.deepEqual(f.tabs[0].navigations,[]);
+ assert.equal(assertLookupIcon(f.button),wordmark);assert.equal(f.requests.length,1);
 });
 
 function pricedListing(priceWon=37770000,checkedAt=new Date(Date.now()-3600000).toISOString(),id='43000001') {

@@ -300,32 +300,13 @@
     button.setAttribute('data-tooltip', '엔카광고보기');
     button.setAttribute('aria-busy', String(busy));
     button.classList.toggle('is-loading', busy);
-    let logo = button.querySelector('img.snote-encar-wordmark');
-    let fallback = button.querySelector('.snote-encar-fallback');
-    if (!fallback) {
-      fallback = document.createElement('span');
-      fallback.className = 'snote-encar-fallback';
-      fallback.setAttribute('aria-hidden', 'true');
-      fallback.style.cssText = 'font:italic 800 13px/17px Arial,sans-serif;letter-spacing:-.7px;color:#d52c3b';
-      fallback.textContent = 'Encar';
-      if (logo) logo.before(fallback);
-    }
-    if (!logo) {
-      logo = document.createElement('img');
-      logo.className = 'snote-encar-wordmark';
-      logo.src = 'assets/encar-wordmark.png?v=2.73';
-      logo.width = 34; logo.height = 17;
-      logo.alt = ''; logo.setAttribute('aria-hidden', 'true');
-      logo.draggable = false;
-      button.replaceChildren(fallback, logo);
-    }
-    if (!logo.dataset.snoteFallbackReady) {
-      const showLogo = loaded => { fallback.hidden = loaded; logo.style.display = loaded ? '' : 'none'; };
-      logo.addEventListener('load', () => showLogo(logo.naturalWidth > 0));
-      logo.addEventListener('error', () => showLogo(false));
-      logo.dataset.snoteFallbackReady = 'true';
-      showLogo(logo.complete && logo.naturalWidth > 0);
-    }
+    if (button.childElementCount === 1 && button.querySelector('span.snote-encar-wordmark')) return;
+    const wordmark = document.createElement('span');
+    wordmark.className = 'snote-encar-wordmark';
+    wordmark.setAttribute('aria-hidden', 'true');
+    wordmark.style.cssText = 'font:normal 800 14px/17px Arial,sans-serif;letter-spacing:-.6px;color:#e52534;white-space:nowrap;pointer-events:none';
+    wordmark.textContent = 'Encar';
+    button.replaceChildren(wordmark);
   }
 
   function closeWaitingTab(job) {
