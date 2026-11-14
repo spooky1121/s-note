@@ -585,12 +585,14 @@ test('two searches never exceed twelve primary candidates and fetch each ID once
   assert.equal(new Set(detailCalls(result).map(call => call.url)).size, 12);
 });
 
-test('hints share the twelve-candidate budget and do not spend a fallback search after it is exhausted', async () => {
+test('six hints leave room for both bounded search attempts within eighteen candidates', async () => {
   const hints = Array.from({ length: 6 }, (_, index) => String(46000001 + index));
-  const found = Array.from({ length: 6 }, (_, index) => String(47000001 + index));
-  const result = await run({ searches: [{ results: found.map(id => ({ url: BASE + id })) }] }, request({ plate: PLATE, candidateIds: hints }));
-  assert.equal(result.body.status, 'unverified'); assert.equal(result.body.diagnostics.candidateCount, 12);
-  assert.equal(detailCalls(result).length, 12); assert.equal(searchCalls(result).length, 1);
+  const first = Array.from({ length: 6 }, (_, index) => String(47000001 + index));
+  const second = Array.from({ length: 6 }, (_, index) => String(48000001 + index));
+  const result = await run({ searches: [{ results: first.map(id => ({ url: BASE + id })) }, { results: second.map(id => ({ url: BASE + id })) }] }, request({ plate: PLATE, candidateIds: hints }));
+  assert.equal(result.body.status, 'unverified'); assert.equal(result.body.diagnostics.candidateCount, 18);
+  assert.equal(detailCalls(result).length, 18); assert.equal(searchCalls(result).length, 2);
+  assert.equal(new Set(detailCalls(result).map(call => call.url)).size, 18);
 });
 
 test('configuration diagnostics reveal only fixed reason names', async () => {
@@ -845,6 +847,19 @@ test('public catalogue succeeds without Tavily and sends only the suffix to a di
   assert.deepEqual(Object.keys(result.body).sort(), ['listings', 'plate', 'priceDiagnostics', 'status', 'verifiedAt']);
 });
 
+test('homepage brand picker follows one observed catalog entry before discovering its plate form', async () => {
+  const result = await run({ catalogPages: {
+    '/': '<nav><a href="/catalog/">Каталог</a></nav><form><select name="brand"><option>Brand</option></select></form>',
+    '/catalog/': '<form action="/catalog" method="get"><label for="number">Номер автомобиля</label><input id="number" name="actual_plate_filter"></form>',
+    '/catalog': catalogCard()
+  }, pages: { [ORIGINAL]: html() } }, request(), { TAVILY_API_KEY: '' });
+  assert.equal(result.body.status, 'found'); assert.equal(searchCalls(result).length, 0);
+  assert.equal(catalogCalls(result).length, 3);
+  assert.equal(new URL(catalogCalls(result)[1].url).pathname, '/catalog/');
+  assert.equal(new URL(catalogCalls(result)[2].url).searchParams.get('actual_plate_filter'), '3456');
+  assert.equal(new URL(catalogCalls(result)[2].url).searchParams.has('car_number'), false);
+});
+
 test('suffix keeps leading zeroes and is never converted to a number', async () => {
   const plate = '12가0012';
   const result = await run({ catalogPages: { '/catalog': catalogCard(plate) }, pages: { [ORIGINAL]: html(base({ vehicleNo: plate })) } }, request({ plate }), { TAVILY_API_KEY: '' });
@@ -925,15 +940,51 @@ test('too many exact catalogue IDs cannot be silently reduced to a unique result
   assert.equal(result.body.status, 'error'); assert.equal(result.body.diagnostics.code, 'CATALOG_INCOMPLETE'); assert.equal(detailCalls(result).length, 0);
 });
 
+test('twelve stale hints leave six catalogue candidates under the shared eighteen-candidate cap', async () => {
+  const hints = Array.from({ length: 6 }, (_, index) => String(46000001 + index));
+  const cached = Array.from({ length: 6 }, (_, index) => String(47000001 + index));
+  const fresh = Array.from({ length: 6 }, (_, index) => String(48000001 + index));
+  const pages = Object.fromEntries(fresh.map(id => [id, html(base({ vehicleId: Number(id), queryCarId: Number(id) }))]));
+  const result = await run({ catalogPages: { '/catalog': fresh.map(id => catalogCard(PLATE, id)).join('') }, pages }, request({ plate: PLATE, candidateIds: hints }), {
+    TAVILY_API_KEY: '', ENCAR_CACHE: { async get() { return JSON.stringify(cached); }, async put() {} }
+  });
+  assert.equal(result.body.status, 'multiple'); assert.equal(result.body.listings.length, 6);
+  assert.equal(detailCalls(result).length, 18); assert.equal(searchCalls(result).length, 0);
+});
+
+test('catalogue candidates beyond the shared eighteen-candidate cap fail as incomplete', async () => {
+  const hints = Array.from({ length: 6 }, (_, index) => String(46000001 + index));
+  const cached = Array.from({ length: 6 }, (_, index) => String(47000001 + index));
+  const fresh = Array.from({ length: 7 }, (_, index) => String(48000001 + index));
+  const result = await run({ catalogPages: { '/catalog': fresh.map(id => catalogCard(PLATE, id)).join('') } }, request({ plate: PLATE, candidateIds: hints }), {
+    TAVILY_API_KEY: '', ENCAR_CACHE: { async get() { return JSON.stringify(cached); }, async put() {} }
+  });
+  assert.equal(result.body.status, 'error'); assert.equal(result.body.diagnostics.code, 'CATALOG_INCOMPLETE');
+  assert.equal(result.body.diagnostics.candidateCount, 12); assert.equal(detailCalls(result).length, 12);
+});
+
 test('catalogue discovery failure can be rescued only by independently verified fallback listings', async () => {
   const result = await run({ catalogPages: { '/': new Response('blocked', { status: 403 }) }, results: [{ url: BASE + ORIGINAL }], pages: { [ORIGINAL]: html() } });
   assert.equal(result.body.status, 'found'); assert.equal(searchCalls(result).length, 1); assert.equal(catalogCalls(result).length, 1);
 });
 
-test('unverified or failed fallback never hides the original catalogue failure', async t => {
-  for (const extra of [{ results: [] }, { searchStatus: 401 }]) await t.test(Object.keys(extra)[0], async () => {
+test('an unverified fallback preserves the original catalogue failure', async () => {
+  const result = await run({ catalogPages: { '/': new Response('blocked', { status: 403 }) }, results: [] });
+  assert.equal(result.body.status, 'error'); assert.equal(result.body.diagnostics.code, 'CATALOG_BLOCKED');
+});
+
+test('a failed fallback reports its authentication, quota, rate, or transport cause', async t => {
+  for (const [extra, code] of [
+    [{ searchStatus: 401 }, 'SEARCH_AUTH_FAILED'],
+    [{ searchStatus: 429 }, 'SEARCH_RATE_LIMITED'],
+    [{ searchStatus: 432 }, 'SEARCH_QUOTA_EXCEEDED'],
+    [{ searchThrows: new Error('PRIVATE_UPSTREAM') }, 'SEARCH_UNAVAILABLE'],
+    [{ searchThrows: new DOMException('PRIVATE_UPSTREAM', 'AbortError') }, 'UPSTREAM_TIMEOUT']
+  ]) await t.test(code, async () => {
     const result = await run({ catalogPages: { '/': new Response('blocked', { status: 403 }) }, ...extra });
-    assert.equal(result.body.status, 'error'); assert.equal(result.body.diagnostics.code, 'CATALOG_BLOCKED');
+    assert.equal(result.body.status, 'error'); assert.equal(result.body.diagnostics.code, code);
+    assert.equal(searchCalls(result).length, 1);
+    assert.equal(JSON.stringify(result.body.diagnostics).includes('PRIVATE_UPSTREAM'), false);
   });
 });
 
@@ -1002,6 +1053,54 @@ test('a hanging public catalogue body is bounded by the existing per-request tim
   await ready; t.mock.timers.tick(10001);
   const result = await pending;
   assert.equal(result.body.diagnostics.code, 'UPSTREAM_TIMEOUT'); assert.equal(catalogCalls(result).length, 1);
+});
+
+test('catalogue discovery reserves time for an independently verified search fallback', async t => {
+  t.mock.timers.enable({ apis: ['setTimeout', 'Date'], now: 100000 });
+  let entered; const ready = new Promise(resolve => { entered = resolve; });
+  let cancelled = false;
+  const body = new ReadableStream({ pull() { entered(); }, cancel() { cancelled = true; } }, { highWaterMark: 0 });
+  const pending = run({ catalogPages: { '/': () => new Response(body) }, results: [{ url: BASE + ORIGINAL }], pages: { [ORIGINAL]: html() } });
+  await ready; t.mock.timers.tick(8001);
+  const result = await pending;
+  assert.equal(result.body.status, 'found'); assert.equal(result.reply.status, 200);
+  assert.equal(catalogCalls(result).length, 1); assert.equal(searchCalls(result).length, 1);
+  assert.equal(detailCalls(result).length, 1); assert.equal(cancelled, true);
+  assert.equal(Date.now(), 108001);
+});
+
+test('a timed-out catalogue with empty searches remains a catalogue error', async t => {
+  t.mock.timers.enable({ apis: ['setTimeout', 'Date'], now: 100000 });
+  let entered; const ready = new Promise(resolve => { entered = resolve; });
+  const body = new ReadableStream({ pull() { entered(); } }, { highWaterMark: 0 });
+  const pending = run({ catalogPages: { '/': () => new Response(body) }, results: [] });
+  await ready; t.mock.timers.tick(8001);
+  const result = await pending;
+  assert.equal(result.body.status, 'error'); assert.equal(result.reply.status, 502);
+  assert.equal(result.body.diagnostics.code, 'CATALOG_TIMEOUT');
+  assert.equal(searchCalls(result).length, 2);
+});
+
+test('catalogue discovery and pagination share the same fallback time budget', async t => {
+  t.mock.timers.enable({ apis: ['setTimeout', 'Date'], now: 100000 });
+  let entered; const ready = new Promise(resolve => { entered = resolve; });
+  const body = new ReadableStream({ pull() { entered(); } }, { highWaterMark: 0 });
+  const pending = run({ observeCatalog: true, onCall(call) {
+    if (call.url === CATALOG + '/') t.mock.timers.tick(5000);
+  }, catalogPages: { '/catalog': () => new Response(body) }, results: [{ url: BASE + ORIGINAL }], pages: { [ORIGINAL]: html() } });
+  await ready; t.mock.timers.tick(3001);
+  const result = await pending;
+  assert.equal(result.body.status, 'found'); assert.equal(catalogCalls(result).length, 2);
+  assert.equal(searchCalls(result).length, 1); assert.equal(Date.now(), 108001);
+});
+
+test('rejected candidates are not written back to KV as future discovery hints', async () => {
+  const writes = [];
+  const result = await run({ results: [{ url: BASE + ORIGINAL }], pages: { [ORIGINAL]: html(base({ vehicleNo: '34나5678' })) } }, request(), {
+    ENCAR_CACHE: { async get() { return null; }, async put(...args) { writes.push(args); } }
+  });
+  assert.equal(result.body.status, 'unverified'); assert.equal(result.body.diagnostics.code, 'PLATE_MISMATCH');
+  assert.deepEqual(writes, []);
 });
 
 test('public pagination shares the original 35-second deadline rather than resetting it per page', async t => {

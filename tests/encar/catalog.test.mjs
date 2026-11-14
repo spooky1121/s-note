@@ -3,7 +3,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import './html-rewriter-setup.mjs';
-import { CATALOG_ORIGIN, CatalogError, catalogURL, configuredCatalogSearch, discoverCatalogSearch, parseCatalogPage } from '../../functions/_shared/encar-catalog.mjs';
+import { CATALOG_ORIGIN, CatalogError, catalogURL, configuredCatalogSearch, discoverCatalogSearch, discoverCatalogEntry, parseCatalogPage } from '../../functions/_shared/encar-catalog.mjs';
 
 const PLATE = '999허0000', OTHER = '888호0000', ID = '81000001';
 const PAGE = CATALOG_ORIGIN + '/catalog?car_number=0000';
@@ -45,6 +45,19 @@ test('GET form discovery uses an actual associated Russian label and hidden defa
   assert.equal(value.url.pathname, '/catalog'); assert.equal(value.url.searchParams.get('car_number'), '0000');
   assert.equal(value.url.searchParams.get('sort'), 'new'); assert.deepEqual(value.url.searchParams.getAll('type'), ['one', 'two']);
   assert.equal(value.formCount, 1); assert.equal(value.plateFieldCount, 1);
+});
+
+test('homepage without a plate form follows its observed public catalog link only', async () => {
+  const html = '<nav><a href="/catalog/">Каталог</a></nav><form action="/catalog/"><select name="brand"><option>Brand</option></select></form>';
+  await rejects(() => discoverCatalogSearch(html, CATALOG_ORIGIN + '/', '0000'), 'CATALOG_FORM_UNSUPPORTED');
+  assert.equal((await discoverCatalogEntry(html, CATALOG_ORIGIN + '/')).href, CATALOG_ORIGIN + '/catalog/');
+});
+
+test('catalog entry discovery does not guess private, foreign, query or hidden links', async () => {
+  for (const html of ['<a href="https://evil.example/catalog/">Каталог</a>', '<a href="/catalog/?action=delete">Каталог</a>', '<a href="/catalog/?brand=other">Каталог</a>', '<a href="/account/catalog/">Каталог</a>', '<a href="/catalog/" hidden>Каталог</a>', '<script>const route="/catalog/"</script>', '<form action="/catalog/"><button>Каталог</button></form>']) {
+    await rejects(() => discoverCatalogEntry(html, CATALOG_ORIGIN + '/'), 'CATALOG_FORM_UNSUPPORTED');
+  }
+  assert.equal((await discoverCatalogEntry('<base href="https://evil.example/"><a href="/catalog/">Каталог</a><a href="/catalog">Каталог</a>', CATALOG_ORIGIN + '/')).origin, CATALOG_ORIGIN);
 });
 
 test('GET form discovery replaces action and current-page queries with successful controls', async () => {

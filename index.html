@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.114">
+<html lang="ko" data-snote-release="2.115">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -8304,7 +8304,7 @@ if(snoteNativeFetch)window.fetch=async(input,init={})=>{
  if(guarded&&owner){if(!await owner.require('action')||owner!==snoteOwnership||attempt!==snoteAuthAttempt)throw Error('SESSION_UNAVAILABLE');const headers=new Headers(init.headers||input?.headers),token=headers.get('Authorization')?.replace(/^Bearer /,'');const identity=window.SnoteIdleAuthStorage.identity(JSON.stringify({access_token:token})),expected=owner.inspect();if(!identity||identity.userId!==expected.userId||identity.sessionId!==expected.sessionId)throw Error('SESSION_CONTEXT_CHANGED');}
  if(!guarded)return snoteNativeFetch(input,init);
  const controller=new AbortController(),abort=()=>controller.abort(),signal=init.signal||input?.signal;signal?.addEventListener('abort',abort,{once:true});if(signal?.aborted)abort();snoteOwnershipRequests.add(controller);
- try{const response=await snoteNativeFetch(input,{...init,signal:controller.signal});if(owner&&(owner!==snoteOwnership||attempt!==snoteAuthAttempt||!owner.authorized()))throw Error('SESSION_CONTEXT_CHANGED');if(owner&&[401,403,503].includes(response.status)){let failure;try{failure=await response.clone().json();}catch(_){}if(['SESSION_REPLACED','SESSION_UNAVAILABLE'].some(code=>failure?.code===code||failure?.message===code))await owner.check(undefined,'server');}return snoteOwnershipFenceResponse(response,owner,attempt);}catch(error){if(owner===snoteOwnership&&attempt===snoteAuthAttempt&&!controller.signal.aborted)void owner?.check(undefined,'network');throw error;}finally{signal?.removeEventListener('abort',abort);snoteOwnershipRequests.delete(controller);}
+ try{const response=await snoteNativeFetch(input,{...init,signal:controller.signal});if(owner&&(owner!==snoteOwnership||attempt!==snoteAuthAttempt||!owner.authorized()))throw Error('SESSION_CONTEXT_CHANGED');if(owner&&[401,403,503].includes(response.status)){let failure;try{failure=await response.clone().json();}catch(_){}const code=['SESSION_REPLACED','SESSION_UNAVAILABLE'].find(code=>failure?.code===code||failure?.message===code);if(code){await owner.check(undefined,'server');throw Object.assign(Error(code),{code,httpStatus:response.status});}}return snoteOwnershipFenceResponse(response,owner,attempt);}catch(error){if(owner===snoteOwnership&&attempt===snoteAuthAttempt&&!controller.signal.aborted)void owner?.check(undefined,'network');throw error;}finally{signal?.removeEventListener('abort',abort);snoteOwnershipRequests.delete(controller);}
 };
 const NIL='00000000-0000-0000-0000-000000000000';
 const BUCKET='zc-vehicle-private';
@@ -10903,11 +10903,11 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client||!await snoteO
 <script type="module" src="assets/income-settlement-parent.js?v=2.112"></script>
 <script src="assets/vehicle-sharing.js?v=2.107" defer></script>
 <script src="assets/shared-vehicle-markers.js?v=2.87" defer></script>
-<script src="assets/release-info.js?v=2.114" defer></script>
+<script src="assets/release-info.js?v=2.115" defer></script>
 <script src="assets/company-purchase.js?v=2.77" defer></script>
 <script src="assets/recycle-bin.js?v=2.77" defer></script>
 <script src="assets/profile-editor.js?v=2.102" defer></script>
-<script src="assets/snote-encar-link.js?v=2.113" defer></script>
+<script src="assets/snote-encar-link.js?v=2.115" defer></script>
 <link rel="stylesheet" href="assets/encar-price-ocr.css?v=2.110">
 <script src="assets/encar-price-ocr.js?v=2.110" defer></script>
 <script src="assets/document-mms.js?v=2.44" defer></script>

@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 1,
+  "release": "2.115",
+  "baseCommit": "41cc34d773f251c74fd77edb3d4d4c0ae17725c6",
+  "verifiedAt": "2026-11-14T05:18:33Z",
+  "scope": "Encar candidate discovery, lookup failure diagnostics and preservation of existing official verification and price-save safeguards",
+  "sourceHashes": {
+    "index.html": "6472bedf4cbcdf755cc6ac32d3ecac71836a8ee4b60844ee05bdd10292d97878",
+    "assets/snote-encar-link.js": "eadd25882d58c9c92ae418d0c15aff1e9784f801f91d85200daaf6e26cd9d2be",
+    "functions/api/encar.js": "31e00b0232a76a078fc4688c81f7f70931bae1249f77433bb2a00d3ce9e75afd",
+    "functions/_shared/encar-catalog.mjs": "628a7663553139dfaca8a8f4a4bb3ec2fb4f50bde8759f22197766837a46da5c"
+  },
+  "fixes": [
+    "Discover the native GET plate form through one observed same-origin catalog anchor when the homepage has no supported plate form; no guessed search URL or query key.",
+    "Accept strictly validated regional trust-encar subdomains as candidate hints only; fetch and return official verified listing URLs.",
+    "Prioritize exact full-plate search evidence before the six-candidate search limit.",
+    "Merge up to six client and six cache hints, with six additional discovery slots and an eighteen-primary-candidate total cap.",
+    "Cache verified candidates only; do not cache rejected IDs.",
+    "When search fallback is configured, bound catalog discovery and pagination to a shared eight seconds within the existing whole-operation deadline.",
+    "Preserve search authentication, quota, rate and transport errors instead of masking them with an earlier catalog failure.",
+    "Preserve allowlisted middleware and ownership failure reasons in the UI; retain ownership rechecks, stale-context guards and manual lookup on catalog timeout."
+  ],
+  "preserved": {
+    "exactOfficialPlateAndActiveAdvertisementRequired": true,
+    "wholeOperationDeadlineMs": 35000,
+    "detailConcurrency": 3,
+    "priceListingLimit": 3,
+    "ownerScopedWritesAndPriceCompareAndSwap": true,
+    "failedOrStaleLookupCannotNavigateOrWrite": true
+  },
+  "validation": {
+    "fullSuite": {
+      "command": "npm test --prefix tests/encar",
+      "passed": 763,
+      "failed": 0
+    },
+    "browser": {
+      "detailLookupGroupsPassed": 5,
+      "directPriceGroupsPassed": 7,
+      "failed": 0,
+      "syntheticOnly": true,
+      "receiptHashesMatchFrozenSources": true
+    },
+    "independentDiscoverySuite": {
+      "passed": 25,
+      "failed": 0
+    },
+    "independentReview": "No remaining blockers after catalog-timeout UI and stale-hint saturation fixes."
+  },
+  "stockEvidence": {
+    "scope": "Aggregate, read-only review of seventeen private stock vehicles; identifiers and private source artifacts excluded from this receipt.",
+    "vehiclesReviewed": 17,
+    "vehiclesWithPublicExactPlateEvidence": 14,
+    "vehiclesWithPublicPlateAndLotEvidence": 13,
+    "plateAndLotEvidenceBreakdown": {
+      "primaryListingPages": 6,
+      "catalogEntries": 3,
+      "cachedSearchSnippets": 4
+    },
+    "vehiclesWithUnverifiedPublicEvidence": 3,
+    "officialCurrentAdvertisementsVerified": 0,
+    "interpretation": "Public page and cached-snippet evidence may be stale. The three unverified vehicles are not findings that advertisements are absent."
+  },
+  "parserOnlyComparison": {
+    "scope": "Captured public observations processed locally; no official detail verification or live full-pipeline result.",
+    "observedPrimaryListingUrlCases": 6,
+    "recognizedBefore": 5,
+    "recognizedAfter": 6,
+    "regionalSubdomainCase": {
+      "candidateRecognizedBefore": false,
+      "candidateRecognizedAfter": true
+    },
+    "rankingWithSyntheticNoise": {
+      "precedingSyntheticResults": 6,
+      "matchingResultPosition": 7,
+      "candidateSelectedBefore": false,
+      "candidateSelectedAfter": true
+    }
+  },
+  "limitations": [
+    "Live full-pipeline lookup was not validated because the runtime network restriction prevented official current-page verification.",
+    "Parser recognition and public evidence counts do not establish a currently active official advertisement.",
+    "Automated success results use synthetic upstream responses and browser fixtures."
+  ],
+  "privacy": {
+    "actualStockIdentifiersIncluded": false,
+    "actualStockPlatesOrSavedIdsInAddedPublicContent": 0,
+    "privateArtifactsPublished": false
+  }
+}

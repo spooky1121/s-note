@@ -10,6 +10,14 @@
   const AUTO_PRICE_TIMEOUT = 65000;
   const MAX_PRICE_WON = 1000000000000;
   const PRICE_SOURCES = new Set(['encar.com', 'encar-api.com', 'encar.com-ocr']);
+  const REQUEST_MESSAGES = Object.freeze({
+    SESSION_UNAVAILABLE: '로그인 상태를 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.',
+    SESSION_REPLACED: '다른 기기에서 로그인하여 로그아웃되었습니다.',
+    SESSION_CONTEXT_CHANGED: '로그인 정보가 변경되었습니다. 다시 로그인한 뒤 광고를 확인해 주세요.',
+    UNAUTHORIZED: '로그인이 필요합니다. 다시 로그인해 주세요.',
+    FORBIDDEN: '허용되지 않은 요청입니다. S-NOTE에서 다시 시도해 주세요.',
+    RATE_LIMITED: '요청이 많습니다. 잠시 후 다시 시도해 주세요.'
+  });
   const PRICE_MESSAGES = Object.freeze({
     PRICE_API_KEY_MISSING:'가격 API 키 설정을 확인해 주세요.',PRICE_API_AUTH_FAILED:'가격 API 인증 설정을 확인해 주세요.',PRICE_API_RATE_LIMITED:'가격 API 요청 한도를 확인해 주세요.',
     PRICE_API_TIMEOUT:'가격 API 응답이 지연됐습니다.',PRICE_API_INVALID:'가격 API 응답에서 일치하는 가격을 확인하지 못했습니다.',
@@ -45,6 +53,7 @@
     CATALOG_FORM_UNSUPPORTED: '공개 차량 목록의 검색 방식을 지원하지 못했습니다. 관리자에게 문의해 주세요.',
     CATALOG_PARSE_FAILED: '공개 차량 목록의 정보를 읽지 못했습니다. 관리자에게 문의해 주세요.',
     CATALOG_INCOMPLETE: '공개 차량 목록의 일부 조회를 마치지 못했습니다. 잠시 후 다시 확인해 주세요.',
+    CATALOG_TIMEOUT: '공개 차량 목록 확인이 지연됐습니다. 광고 주소로 다시 확인할 수 있습니다.',
     CATALOG_CONFIG_INVALID: '공개 차량 목록의 서버 설정을 확인해 주세요. 관리자에게 문의해 주세요.',
     CATALOG_PARSER_UNAVAILABLE: '공개 차량 목록의 처리 기능을 사용할 수 없습니다. 관리자에게 문의해 주세요.',
     CATALOG_LIMIT_EXCEEDED: '공개 차량 목록의 확인 범위를 초과했습니다. 관리자에게 문의해 주세요.',
@@ -54,7 +63,7 @@
   const SAFE_CODES = new Set([...Object.keys(UNVERIFIED_MESSAGES), ...Object.keys(ERROR_MESSAGES),
     'METHOD_NOT_ALLOWED', 'AUTH_REQUIRED', 'AUTH_FAILED', 'STAFF_REQUIRED', 'AUTH_UNAVAILABLE',
     'INVALID_REQUEST', 'UNSUPPORTED_MEDIA_TYPE', 'REQUEST_TOO_LARGE',
-    'HTTP_ERROR', 'UNVERIFIED', 'CLIENT_TIMEOUT', 'NETWORK_ERROR', 'INVALID_RESPONSE', ...Object.keys(PRICE_MESSAGES)]);
+    'HTTP_ERROR', 'UNVERIFIED', 'CLIENT_TIMEOUT', 'NETWORK_ERROR', 'INVALID_RESPONSE', ...Object.keys(PRICE_MESSAGES), ...Object.keys(REQUEST_MESSAGES)]);
   const CATALOG_FAILURES = new Set(Object.keys(ERROR_MESSAGES).filter(code => code.startsWith('CATALOG_')));
   let active = null;
   let contextKey = '';
@@ -676,9 +685,10 @@
           403: '이 기능을 사용할 수 있는 직원 권한을 확인해 주세요.',
           503: '엔카 조회 기능의 서버 설정이 필요합니다. 관리자에게 문의해 주세요.'
         };
-        const code = setDiagnostics(data?.diagnostics, response.status, 'HTTP_ERROR');
+        const diagnostics = typeof data?.code === 'string' && Object.hasOwn(REQUEST_MESSAGES, data.code) ? {code:data.code} : data?.diagnostics;
+        const code = setDiagnostics(diagnostics, response.status, 'HTTP_ERROR');
         if (response.status >= 500 && CATALOG_FAILURES.has(code)) manual.hidden = false;
-        throw lookupError(ERROR_MESSAGES[code] || messages[response.status] || '지금은 광고를 확인할 수 없습니다. 잠시 후 다시 시도해 주세요.');
+        throw lookupError(REQUEST_MESSAGES[code] || ERROR_MESSAGES[code] || messages[response.status] || '지금은 광고를 확인할 수 없습니다. 잠시 후 다시 시도해 주세요.');
       }
       if (!data || typeof data !== 'object' || Array.isArray(data) || data.plate !== context.plate || !Array.isArray(data.listings) || !['found','multiple','unverified'].includes(data.status)) {
         throw lookupError('광고 확인 응답이 올바르지 않습니다. 다시 시도해 주세요.');
@@ -759,8 +769,10 @@
     } catch (error) {
       closeWaitingTab(job);
       if (!stillCurrent(job)) return;
-      if (!diagnosticSnapshot) setDiagnostics(null, job.httpStatus, job.timedOut ? 'CLIENT_TIMEOUT' : error?.diagnosticCode || 'NETWORK_ERROR');
-      setNote(job.timedOut ? '확인이 지연되고 있습니다. 잠시 후 다시 시도해 주세요.' : error?.userMessage || '광고 확인에 실패했습니다. 연결 상태를 확인하고 다시 시도해 주세요.', true);
+      const requestCode = typeof error?.code === 'string' && Object.hasOwn(REQUEST_MESSAGES, error.code) ? error.code :
+        ['SESSION_UNAVAILABLE','SESSION_CONTEXT_CHANGED'].includes(error?.message) ? error.message : null;
+      if (!diagnosticSnapshot) setDiagnostics(null, job.httpStatus ?? error?.httpStatus, job.timedOut ? 'CLIENT_TIMEOUT' : requestCode || error?.diagnosticCode || 'NETWORK_ERROR');
+      setNote(job.timedOut ? '확인이 지연되고 있습니다. 잠시 후 다시 시도해 주세요.' : REQUEST_MESSAGES[requestCode] || error?.userMessage || '광고 확인에 실패했습니다. 연결 상태를 확인하고 다시 시도해 주세요.', true);
     } finally {
       clearTimeout(timeout);
       if (active === job) {

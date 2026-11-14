@@ -1,4 +1,4 @@
-import { CATALOG_ORIGIN, catalogURL, configuredCatalogSearch, discoverCatalogSearch, parseCatalogPage } from '../_shared/encar-catalog.mjs';
+import { CATALOG_ORIGIN, catalogURL, configuredCatalogSearch, discoverCatalogSearch, discoverCatalogEntry, parseCatalogPage } from '../_shared/encar-catalog.mjs';
 import { parseEncarPagePrice } from '../_shared/encar-page-price.mjs';
 
 /**
@@ -15,7 +15,10 @@ const MAX_SEARCH_BYTES = 512 * 1024;
 const MAX_RAW_SEARCH_BYTES = 2 * 1024 * 1024;
 const TIMEOUT_MS = 10000;
 const DEADLINE_MS = 35000;
-const MAX_TOTAL_CANDIDATES = 12;
+const CATALOG_FALLBACK_BUDGET_MS = 8000;
+const MAX_HINT_CANDIDATES = MAX_CANDIDATES * 2;
+const MAX_DISCOVERY_RESERVE = MAX_CANDIDATES;
+const MAX_TOTAL_CANDIDATES = MAX_HINT_CANDIDATES + MAX_DISCOVERY_RESERVE;
 const ENCAR_DETAIL = 'https://fem.encar.com/cars/detail/';
 const PRICE_PROVIDER = 'https://api.encar-api.com/api/car';
 const MAX_PRICE_WON = 1_000_000_000_000;
@@ -28,7 +31,7 @@ const SEARCH_SOURCE_DOMAINS = ['encar.com', ...AUTO_EXPORT_HOSTS, 'carsbat.com',
 const RECOGNIZED_SOURCE_HOSTS = new Set([...SEARCH_SOURCE_DOMAINS, 'fem.encar.com', 'm.encar.com']);
 const RESULT_TEXT_FIELDS = ['title', 'content', 'raw_content'];
 const CATALOG_ERRORS = new Set(['CATALOG_BLOCKED', 'CATALOG_UNAVAILABLE', 'CATALOG_FORM_UNSUPPORTED',
-  'CATALOG_PARSE_FAILED', 'CATALOG_INCOMPLETE', 'CATALOG_CONFIG_INVALID', 'CATALOG_PARSER_UNAVAILABLE', 'CATALOG_LIMIT_EXCEEDED']);
+  'CATALOG_PARSE_FAILED', 'CATALOG_INCOMPLETE', 'CATALOG_CONFIG_INVALID', 'CATALOG_PARSER_UNAVAILABLE', 'CATALOG_LIMIT_EXCEEDED', 'CATALOG_TIMEOUT']);
 const REGIONS = '(?:서울|부산|대구|인천|광주|대전|울산|세종|경기|강원|충북|충남|전북|전남|경북|경남|제주)';
 const PLATE = new RegExp('^(?:' + REGIONS + ')?[0-9]{2,3}[가-힣][0-9]{4}$');
 const BLOCKED = /has_been_cr_blocked|서비스\s*이용\s*제한됨|비정상적인\s*트래픽|<title>\s*(?:Access Denied|Request blocked)/i;
@@ -155,11 +158,14 @@ async function readLimited(source, maxBytes, signal) {
   }
 }
 
-async function fetchLimited(op, url, options = {}, maxBytes = MAX_SEARCH_BYTES, unavailable = 'SEARCH_UNAVAILABLE') {
+async function fetchLimited(op, url, options = {}, maxBytes = MAX_SEARCH_BYTES, unavailable = 'SEARCH_UNAVAILABLE', stageSignal = null) {
   const budget = remaining(op);
+  if (stageSignal?.aborted) throw stageSignal.reason;
   const controller = new AbortController();
   const abort = () => controller.abort(op.controller.signal.reason);
+  const stopStage = () => controller.abort(stageSignal.reason);
   op.controller.signal.addEventListener('abort', abort, { once: true });
+  stageSignal?.addEventListener('abort', stopStage, { once: true });
   const timer = setTimeout(() => controller.abort(new EncarError(budget <= TIMEOUT_MS ? 'DEADLINE_EXCEEDED' : 'UPSTREAM_TIMEOUT')), Math.min(TIMEOUT_MS, budget));
   try {
     const fetched = await waitFor(fetch(url, {
@@ -177,6 +183,7 @@ async function fetchLimited(op, url, options = {}, maxBytes = MAX_SEARCH_BYTES, 
   } finally {
     clearTimeout(timer);
     op.controller.signal.removeEventListener('abort', abort);
+    stageSignal?.removeEventListener('abort', stopStage);
     controller.abort();
   }
 }
@@ -205,11 +212,24 @@ async function authorize(op, request, supaUrl, supaKey) {
 function parsedURL(value) {
   if (typeof value !== 'string' || value.length > 4096) return null;
   try {
-    const url = new URL(value.replace(/&amp;/g, '&'));
+    const source = value.replace(/&amp;/g, '&');
+    const authority = /^https?:\/\/([^/?#]+)/i.exec(source)?.[1];
+    if (!authority || !/^[a-z0-9.-]+$/i.test(authority)) return null;
+    const url = new URL(source);
     return ['https:', 'http:'].includes(url.protocol) ? url : null;
   } catch {
     return null;
   }
+}
+
+function autoExportHost(host) {
+  if (AUTO_EXPORT_HOSTS.includes(host)) return true;
+  if (!host.endsWith('.trust-encar.ru') || host.length > 253) return false;
+  return host.split('.').every(label => /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/.test(label));
+}
+
+function recognizedSourceHost(host) {
+  return RECOGNIZED_SOURCE_HOSTS.has(host) || (typeof host === 'string' && autoExportHost(host));
 }
 
 function idFromURL(value) {
@@ -224,7 +244,7 @@ function idFromURL(value) {
       if (key.toLowerCase() === 'carid') return idOf(value);
     }
   }
-  if (AUTO_EXPORT_HOSTS.includes(host)) {
+  if (autoExportHost(host)) {
     return idOf(/^\/auto\/([0-9]+)(?:\/|$)/.exec(url.pathname)?.[1]);
   }
   if (host === 'deffcars.ru') {
@@ -250,24 +270,29 @@ function candidatesFromResults(results, plate) {
     const id = idOf(value);
     if (id && ids.size < MAX_CANDIDATES) ids.add(id);
   };
-  const limited = results.slice(0, 8);
-  // Indexed result URLs precede incidental links in any one snippet.
-  for (const result of limited) add(idFromURL(result?.url));
-  for (const result of limited) {
-    const content = RESULT_TEXT_FIELDS.map(key => typeof result?.[key] === 'string' ? result[key] : '').join('\n');
-    for (const match of content.matchAll(/https?:\/\/[^\s<>"'\\]+/gi)) {
-      add(idFromURL(match[0].replace(/[),.;\]}]+$/, '')));
-    }
-    const sourceHost = parsedURL(result?.url)?.hostname.toLowerCase().replace(/^www\./, '');
-    if (sourceHost === 'carsbat.com') {
-      for (const match of content.matchAll(/(?:\bLot\s+(?:number|no\.?)|Номер\s+лота)\s*[:#–-]?\s*([0-9]+)(?![0-9])/giu)) {
-        add(match[1]);
+  const limited = results.slice(0, 8).map(result => ({ result, matches: resultMentionsPlate(result, plate) }));
+  // Exact-plate evidence gets the bounded candidate slots first. Within each
+  // relevance group, indexed URLs precede incidental links in snippets.
+  for (const matches of [true, false]) {
+    const group = limited.filter(item => item.matches === matches).map(item => item.result);
+    for (const result of group) add(idFromURL(result?.url));
+    for (const result of group) {
+      const content = RESULT_TEXT_FIELDS.map(key => typeof result?.[key] === 'string' ? result[key] : '').join('\n');
+      for (const match of content.matchAll(/https?:\/\/[^\s<>"'\\]+/gi)) {
+        add(idFromURL(match[0].replace(/[),.;\]}]+$/, '')));
       }
-    }
-    // A branded listing label is a hint only when the same indexed result
-    // explicitly mentions the requested plate. Bare numbers never qualify.
-    if (resultMentionsPlate(result, plate)) {
-      for (const match of content.normalize('NFKC').matchAll(/(?:\bEncar\s*ID|엔카\s*매물\s*번호)\s*[:：#]\s*([0-9]+)(?![0-9])/giu)) add(match[1]);
+      const sourceHost = parsedURL(result?.url)?.hostname.toLowerCase().replace(/^www\./, '');
+      if (sourceHost === 'carsbat.com') {
+        for (const match of content.matchAll(/(?:\bLot\s+(?:number|no\.?)|Номер\s+лота)\s*[:#–-]?\s*([0-9]+)(?![0-9])/giu)) {
+          add(match[1]);
+        }
+      }
+      // A branded listing label is a hint only when this indexed result
+      // explicitly mentions the requested plate. Bare numbers never qualify.
+      if (matches) {
+        for (const match of content.normalize('NFKC').matchAll(/(?:\bEncar\s*ID|엔카\s*매물\s*번호)\s*[:：#]\s*([0-9]+)(?![0-9])/giu)) add(match[1]);
+      }
+      if (ids.size >= MAX_CANDIDATES) break;
     }
     if (ids.size >= MAX_CANDIDATES) break;
   }
@@ -310,7 +335,7 @@ async function searchCandidates(op, plate, apiKey, fallback = false) {
     if (resultMentionsPlate(item, plate)) ++op.resultPlateMatchCount;
     if (typeof item?.raw_content === 'string' && item.raw_content.trim()) ++op.rawResultCount;
     const host = parsedURL(item?.url)?.hostname.toLowerCase().replace(/^www\./, '');
-    if (RECOGNIZED_SOURCE_HOSTS.has(host)) ++op.recognizedSourceCount;
+    if (recognizedSourceHost(host)) ++op.recognizedSourceCount;
   }
   return candidatesFromResults(results, plate);
 }
@@ -611,26 +636,41 @@ function catalogError(error, fallback = 'CATALOG_PARSE_FAILED') {
   return new EncarError(CATALOG_ERRORS.has(error?.code) ? error.code : fallback);
 }
 
-async function catalogHTML(op, url) {
+async function catalogHTML(op, url, stageSignal = null) {
   const safeURL = catalogURL(url);
   remaining(op);
   ++op.catalogRequestCount;
-  const result = await fetchLimited(op, safeURL.href, { method: 'GET', headers: { Accept: 'text/html' } }, MAX_HTML_BYTES, 'CATALOG_UNAVAILABLE');
+  const result = await fetchLimited(op, safeURL.href, { method: 'GET', headers: { Accept: 'text/html' } }, MAX_HTML_BYTES, 'CATALOG_UNAVAILABLE', stageSignal);
   if (BLOCKED.test(result.text) || [403, 429].includes(result.status) || /<title>\s*(?:Just a moment|Attention Required)/i.test(result.text)) throw new EncarError('CATALOG_BLOCKED');
   if (!result.ok) throw new EncarError('CATALOG_UNAVAILABLE');
   return result.text;
 }
 
-async function catalogCandidates(op, env, plate) {
+async function catalogCandidates(op, env, plate, reserveFallback = false) {
   const suffix = plate.slice(-4);
+  const controller = reserveFallback ? new AbortController() : null;
+  const abort = () => controller?.abort(op.controller.signal.reason);
+  const signal = controller?.signal || op.controller.signal;
+  if (controller) {
+    op.controller.signal.addEventListener('abort', abort, { once: true });
+    if (op.controller.signal.aborted) abort();
+  }
+  const timer = controller ? setTimeout(() => controller.abort(new EncarError('CATALOG_TIMEOUT')), CATALOG_FALLBACK_BUDGET_MS) : null;
   let searchURL;
   try {
     const template = env.ENCAR_CATALOG_SEARCH_URL;
     searchURL = template === undefined || (typeof template === 'string' && !template.trim()) ? null : configuredCatalogSearch(template, suffix);
     if (!searchURL) {
       const home = catalogURL(CATALOG_ORIGIN + '/');
-      const html = await catalogHTML(op, home);
-      const form = await waitFor(discoverCatalogSearch(html, home.href, suffix), op.controller.signal);
+      const html = await catalogHTML(op, home, signal);
+      let form;
+      try { form = await waitFor(discoverCatalogSearch(html, home.href, suffix), signal); }
+      catch (error) {
+        if (error?.code !== 'CATALOG_FORM_UNSUPPORTED') throw error;
+        const entry = await waitFor(discoverCatalogEntry(html, home.href), signal);
+        const entryHTML = await catalogHTML(op, entry, signal);
+        form = await waitFor(discoverCatalogSearch(entryHTML, entry.href, suffix), signal);
+      }
       op.catalogFormCount += form.formCount;
       op.catalogPlateFieldCount += form.plateFieldCount;
       searchURL = catalogURL(form.url);
@@ -642,8 +682,8 @@ async function catalogCandidates(op, env, plate) {
     for (let pageNumber = 0; pageNumber < 3; pageNumber++) {
       if (visited.has(current.href)) throw new EncarError('CATALOG_INCOMPLETE');
       visited.add(current.href);
-      const html = await catalogHTML(op, current);
-      const parsed = await waitFor(parseCatalogPage(html, current.href, plate), op.controller.signal);
+      const html = await catalogHTML(op, current, signal);
+      const parsed = await waitFor(parseCatalogPage(html, current.href, plate), signal);
       ++op.catalogPageCount;
       op.catalogRecordCount += parsed.recordCount;
       op.catalogExactMatchCount += parsed.exactMatchCount;
@@ -673,6 +713,10 @@ async function catalogCandidates(op, env, plate) {
     throw new EncarError('CATALOG_INCOMPLETE');
   } catch (error) {
     throw catalogError(error);
+  } finally {
+    clearTimeout(timer);
+    op.controller.signal.removeEventListener('abort', abort);
+    controller?.abort();
   }
 }
 
@@ -741,7 +785,7 @@ export async function onRequest(context) {
       if (!memo.has(id)) memo.set(id, detail(op, id, plate));
       return memo.get(id);
     };
-    const hints = select(idsOf([...idsOf(payload.candidateIds), ...await cachedCandidates(op, env, plate)]));
+    const hints = select([...new Set([...idsOf(payload.candidateIds), ...await cachedCandidates(op, env, plate)])].slice(0, MAX_HINT_CANDIDATES));
     const hinted = await verifyCandidates(hints, getDetail);
     if (hinted.errored) return finish(502, hinted.listings, 'error', hinted.errorCode);
     if (hinted.listings.length) {
@@ -751,7 +795,7 @@ export async function onRequest(context) {
     }
     let catalogFailure = null;
     try {
-      const candidates = select(await catalogCandidates(op, env, plate));
+      const candidates = select(await catalogCandidates(op, env, plate, !!apiKey));
       const verified = await verifyCandidates(candidates, getDetail);
       // A failed detail is not a failed discovery provider: never bypass its
       // partial-error policy with an independent search result.
@@ -765,25 +809,19 @@ export async function onRequest(context) {
       catalogFailure = catalogError(error);
     }
     if (!apiKey) return catalogFailure ? finish(502, [], 'error', catalogFailure.code) : finish(200, [], 'unverified', unverifiedCode('CATALOG_NO_MATCH'));
-    try {
-      for (let attempt = 0; attempt < 2; attempt++) {
-        if (attempt && op.candidates.size >= MAX_TOTAL_CANDIDATES) break;
-        const candidates = select(await searchCandidates(op, plate, apiKey, attempt === 1));
-        const verified = await verifyCandidates(candidates, getDetail);
-        if (verified.errored) return finish(502, verified.listings, 'error', verified.errorCode);
-        if (verified.listings.length) {
-          remaining(op);
-          saveCandidates(context, plate, verified.listings.map(item => item.id));
-          return await found(verified.listings);
-        }
+    for (let attempt = 0; attempt < 2; attempt++) {
+      if (attempt && op.candidates.size >= MAX_TOTAL_CANDIDATES) break;
+      const candidates = select(await searchCandidates(op, plate, apiKey, attempt === 1));
+      const verified = await verifyCandidates(candidates, getDetail);
+      if (verified.errored) return finish(502, verified.listings, 'error', verified.errorCode);
+      if (verified.listings.length) {
+        remaining(op);
+        saveCandidates(context, plate, verified.listings.map(item => item.id));
+        return await found(verified.listings);
       }
-    } catch (error) {
-      if (catalogFailure) return finish(502, [], 'error', catalogFailure.code);
-      throw error;
     }
     remaining(op);
     if (catalogFailure) return finish(502, [], 'error', catalogFailure.code);
-    saveCandidates(context, plate, [...op.candidates]);
     const code = unverifiedCode(op.resultCount ? 'SEARCH_NO_CANDIDATES' : 'SEARCH_NO_RESULTS');
     return finish(200, [], 'unverified', code);
   } catch (error) {

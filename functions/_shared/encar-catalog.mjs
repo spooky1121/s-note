@@ -164,6 +164,22 @@ export async function discoverCatalogSearch(html, baseUrl, suffix) {
   return { url: [...unique.values()][0], formCount: forms.length, plateFieldCount };
 }
 
+// The observed public homepage links to /catalog/ but its quick brand/model
+// form has no plate field. Follow only that actual same-origin directory link;
+// do not invent a search URL, query name or script-driven request.
+export async function discoverCatalogEntry(html, baseUrl) {
+  const base = catalogURL(baseUrl), root = await tree(html, false, 'CATALOG_FORM_UNSUPPORTED');
+  const entries = new Map();
+  for (const node of descendants(root, item => item.tag === 'a' && !item.ignored && item.attrs.href)) {
+    let url;
+    try { url = catalogURL(node.attrs.href, base.href); } catch { continue; }
+    if (!/^\/catalog\/?$/.test(url.pathname) || url.search || url.href === base.href) continue;
+    entries.set(url.origin + '/catalog', url);
+  }
+  if (entries.size !== 1) fail('CATALOG_FORM_UNSUPPORTED');
+  return [...entries.values()][0];
+}
+
 function plateTokens(value) {
   value = value.normalize('NFKC');
   const separator = '[\\p{Zs}\\t-]*', pattern = new RegExp('(?:' + REGIONS + separator + ')?[0-9]{2,3}' + separator + '[가-힣]' + separator + '[0-9](?:' + separator + '[0-9]){3}', 'gu'), found = new Set();
