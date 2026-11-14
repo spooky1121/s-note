@@ -1,0 +1,126 @@
+{
+  "release": "2.114",
+  "baseCommit": "b4a4fc135809f2dcee772ee4526da86aa2455d9a",
+  "verifiedAt": "2026-11-12T20:11:53.248896+00:00",
+  "status": {
+    "implementation": "complete",
+    "productionDatabase": "applied-and-catalog-verified",
+    "productionFrontend": "pending-deployment-verification",
+    "github": "ready-for-merge"
+  },
+  "sourceHashes": {
+    "index.html": "3914381a86f7331ec35abb84b1c0bc42dc7c0cd6aab885d6cb53feb28fbd17e3",
+    "operator.html": "ffbdd664a764cf1b0f5156c655c42f8727ad7ef53d893b6d8a907ef221142e23",
+    "assets/idle-auth-storage.js": "95e3a9097128ff2d520622aeecec66bc1a83a99fd16f34ff3dab73470becb754",
+    "assets/session-ownership.js": "e42daff1984543be2b390b060c03b90452f364f4062504a7f15eb5e16fe814fd",
+    "assets/operator-console.js": "f2f7808bd8c5d1913a19ce538c699b6ff63876e2b8b22c13fac9ada6fe9d9313",
+    "functions/_shared/api-security.js": "0a6c01538b6c42755921b53b9ecc5919d0a407445db37b525bf7af179eb42093",
+    "functions/_shared/session-ownership.js": "8a20d49f9fbca117ca835ce17205cb0c15827623376c45af542a34c213d405e0",
+    "functions/api/_middleware.js": "300cba9c73a8147baf1b5e12e6567156732f1a2473d793694765bc758347e9f9",
+    "supabase/migrations/20261109161432_single_active_account_session.sql": "003767344bb3a6e06245e02d38e4886c20f1abb3c1a46f8348c8e2b091be89de"
+  },
+  "behavior": {
+    "requiresConfirmationBeforeReplacing": true,
+    "confirmationText": "다른 곳에서 로그인 중입니다. 기존 접속을 해제하고 로그인하시겠습니까?",
+    "cancelPreservesExistingSession": true,
+    "newWorkspaceHiddenBeforeConsent": true,
+    "sameBrowserTabsIsolatedBeforeConsent": true,
+    "changedGenerationReprompts": true,
+    "oldSessionNotice": "다른 기기에서 로그인하여 로그아웃되었습니다.",
+    "refreshAndRestoreNeverClaim": true,
+    "uncertainClaimDoesNotRevokeUnknownWinner": true,
+    "noForcedFlushOnReplacement": true,
+    "oldSidOnlyCleanup": true,
+    "lateAuthStorageAndResponseBodiesFenced": true
+  },
+  "validation": {
+    "coreUnit": {
+      "passed": 716,
+      "failed": 0,
+      "log": "/workspace/work/v2114-current-unit.log"
+    },
+    "authAndSaveUnit": {
+      "passed": 144,
+      "failed": 0,
+      "log": "/workspace/work/v2114-current-auth-unit.log"
+    },
+    "focusedOwnershipAndStorage": {
+      "passed": 60,
+      "log": "/workspace/work/v2114-auth-storage-final.log"
+    },
+    "browser": [
+      {
+        "name": "singleSession",
+        "passed": 21,
+        "receipt": "/workspace/work/v2114-single-session-final/receipt.json"
+      },
+      {
+        "name": "operator",
+        "passed": 6,
+        "receipt": "/workspace/work/v2114-operator-final/receipt.json"
+      },
+      {
+        "name": "support",
+        "passed": 9,
+        "receipt": "/workspace/work/v2114-support-final/receipt.json"
+      }
+    ],
+    "browserSourceHashesMatch": true,
+    "existingPriceSaveBrowser": {
+      "groups": 7,
+      "receipt": "/workspace/work/v2114-current-encar-direct/receipt.json"
+    },
+    "database": {
+      "pgliteGroups": 23,
+      "actualPostgres1711ConcurrentGroups": 4,
+      "rollbackPassed": true,
+      "receipt": "/workspace/work/single-session-rollout/consent-db-verification.json"
+    },
+    "native": {
+      "contractCases": 445,
+      "apkBuilt": true,
+      "androidUnitTestsCompiled": true,
+      "androidUnitTestsExecuted": false,
+      "androidUnitBlock": "Maven runtime artifact redirects to gcp.mirrors.maven.org; network policy HTTP 403",
+      "installedSignerKnown": false,
+      "canAssumeInPlaceUpdate": false,
+      "receipt": "/workspace/work/native-single-session/DELIVERY_RECEIPT.json"
+    }
+  },
+  "productionBlock": {
+    "databaseWriteRequests": "Did not complete; no schema or migration present in verified production metadata",
+    "managementApiCredential": "HTTP 401",
+    "automaticApprovalRejectionReceived": false,
+    "preparedAtomicSqlEditorFile": "/workspace/work/single-session-rollout/APPLY_v2_114_SINGLE_LOGIN.sql",
+    "cloudflareDeploymentStarted": false,
+    "latestPermissionTrial": {
+      "at": "2026-11-14T04:37:44.646307+00:00",
+      "userApprovedTemporaryFullAccess": true,
+      "temporaryAppPermissionVerified": "full_access",
+      "atomicSqlWrite": "no response within 45 seconds",
+      "dedicatedMigrationWrite": "no response within 45 seconds",
+      "productionSchemaPresentAfterAttempts": false,
+      "productionMigrationPresentAfterAttempts": false,
+      "independentMatchingInFlightBackends": 0,
+      "managementApiHttpStatus": 401,
+      "appPermissionRestoredAndVerified": "inherit"
+    },
+    "resolvedBy": "User SQL Editor application and production catalog verification"
+  },
+  "businessProductionRowsChanged": false,
+  "livePaidApiCalls": 0,
+  "github": {
+    "pullRequest": "https://github.com/spooky1121/s-note/pull/2",
+    "branch": "codex/single-login-v2.114",
+    "implementationCommit": "34dcd52d5aec99c3e8660f657c1f89828fc5d451"
+  },
+  "productionDatabase": {
+    "version": "20261109161432",
+    "name": "single_active_account_session",
+    "appliedBy": "User SQL Editor execution confirmed by production read-only catalog verification",
+    "sourceSha256LfNormalized": "003767344bb3a6e06245e02d38e4886c20f1abb3c1a46f8348c8e2b091be89de",
+    "historyNewlines": "CRLF; LF-normalized source is byte-identical",
+    "catalogReceipt": "/workspace/work/single-session-rollout/production-applied-verification.json",
+    "businessRowsChangedByVerification": false
+  }
+}

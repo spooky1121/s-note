@@ -36,7 +36,7 @@ function fixture({role='dealer',owner=USER,server:initial}={}){
  const overlay={open:true,classList:{contains(name){return name==='open'&&overlay.open;}}};
  const sellInput={value:'기존 입력',disabled:false,readOnly:false,events:[],dispatchEvent(event){this.events.push({type:event.type,bubbles:event.bubbles});return true;}};
  const storageOwner=k=>members.find(member=>store(member.user_id)===k)?.user_id;
- const context={S,Storage:MemoryStorage,localStorage,snote224VehicleOpen:1,console:{error(){},warn(){}},setTimeout(){return 1;},clearTimeout(){},
+ const context={S,Storage:MemoryStorage,localStorage,snote224VehicleOpen:1,console:{error(){},warn(){}},setTimeout(){return 1;},clearTimeout(){},snoteOwnershipAllowed:()=>true,
   currentUser:{username:alias(USER),role},activeCarId:owner===USER?'car-a':'car-other',cars:[],ownerAlias:alias,
   byId:id=>id==='vehicle-overlay'?overlay:id==='detail-sell'?sellInput:null,Event,
   snoteVehicleSaveTask:null,snoteVehicleCloseTask:null,snoteVehicleUnconfirmedWrite:null,

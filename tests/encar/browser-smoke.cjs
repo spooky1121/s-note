@@ -8,7 +8,8 @@ const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),asse
 const {chromium}=require('playwright');
 const ROOT=path.resolve(__dirname,'../..'),ORIGIN='https://encar-smoke.example';
 const ACTOR='11111111-1111-4111-8111-111111111111',COMPANY='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
-const ALIAS='cld_'+ACTOR.replaceAll('-','').slice(0,18),TOKEN='synthetic-local-encar-session';
+const ALIAS='cld_'+ACTOR.replaceAll('-','').slice(0,18),SESSION='33333333-3333-4333-8333-333333333333';
+const TOKEN=Buffer.from('{"alg":"none"}').toString('base64url')+'.'+Buffer.from(JSON.stringify({sub:ACTOR,session_id:SESSION,role:'authenticated',exp:4102444800})).toString('base64url')+'.synthetic';
 const PLATE='12가3456',SECOND_PLATE='34나5678';
 const ARTIFACTS=process.env.ENCAR_TEST_ARTIFACT_DIR||path.join(os.tmpdir(),'snote-encar-browser');
 const executablePath=process.env.CHROMIUM_PATH||(fs.existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined);
@@ -55,7 +56,7 @@ async function releaseLifecycle(page,version){
 
 async function fixture(width=1440,savedCars=null,{primaryColor=null,weather=null,sessionToken=TOKEN}={}){
  const context=await browser.newContext({viewport:{width,height:950}}),page=await context.newPage();
- const f={context,page,requests:[],autoPriceRequests:[],navigations:[],external:[],unexpected:[],errors:[],responses:[],dialogs:[],dialogAnswers:[],unexpectedDialogs:[]};
+ const f={context,page,requests:[],autoPriceRequests:[],logouts:[],navigations:[],external:[],unexpected:[],errors:[],responses:[],dialogs:[],dialogAnswers:[],unexpectedDialogs:[]};
  const answerDialog=async dialog=>{
   const type=dialog.type(),message=dialog.message(),expected=f.dialogAnswers.shift();
   const answer=expected?.answer??(type!=='confirm');
@@ -73,6 +74,9 @@ async function fixture(width=1440,savedCars=null,{primaryColor=null,weather=null
   if(url.origin==='https://fem.encar.com'&&/^\/cars\/detail\/4300000[1-6]$/.test(url.pathname)){
    f.navigations.push(url.href);return route.fulfill({contentType:'text/html;charset=utf-8',body:'<!doctype html><title>가상 엔카 광고</title><p>로컬 검증용 광고 응답</p>'});
   }
+  if(url.origin==='https://synthetic.supabase.co'&&url.pathname==='/auth/v1/logout'){
+   const headers={'access-control-allow-origin':'*','access-control-allow-methods':'POST, OPTIONS','access-control-allow-headers':'authorization, apikey, content-type, cache-control, pragma'};if(request.method()==='OPTIONS')return route.fulfill({status:204,headers});assert.equal(request.method(),'POST');assert.equal(url.searchParams.get('scope'),'local');assert.equal(request.headers().authorization,'Bearer '+sessionToken);f.logouts.push({sessionToken,scope:'local'});return route.fulfill({status:204,headers});
+  }
   if(url.origin!==ORIGIN){f.external.push(url.href);return route.abort();}
   if(url.pathname==='/api/weather')return route.fulfill({status:weather?.ok===false?503:200,contentType:'application/json',body:JSON.stringify(weather||{ok:true,temperature:18.4,code:0,region:'합성 지역',source:'MET Norway'})});
   if(url.pathname==='/api/encar'){
@@ -89,7 +93,7 @@ async function fixture(width=1440,savedCars=null,{primaryColor=null,weather=null
   if(url.pathname==='/'){
    let source=fs.readFileSync(path.join(ROOT,'index.html'),'utf8');
    assert(source.includes('\ninitializeAuth();'));assert(source.includes("const NIL='00000000-0000-0000-0000-000000000000';"));
-   source=source.replace('\ninitializeAuth();','\nwindow.__encarFixtureAuth=initializeAuth();').replace("const NIL='00000000-0000-0000-0000-000000000000';","window.__encarFixtureState=S;\nconst NIL='00000000-0000-0000-0000-000000000000';");
+   source=source.replace('\ninitializeAuth();','\nwindow.__encarFixtureAuth=initializeAuth();').replace("const NIL='00000000-0000-0000-0000-000000000000';","window.__encarFixtureState=S;window.__encarFixtureOwnership=async()=>{snoteOwnershipBindClient(S.client);const result=await S.client.auth.getSession();snoteOwnershipSession=result.data.session;return snoteOwnership.check(result.data.session,'restore');};window.__encarFixtureOwnerInspect=()=>snoteOwnership?.inspect();\nconst NIL='00000000-0000-0000-0000-000000000000';");
    return route.fulfill({contentType:'text/html;charset=utf-8',body:source});
   }
   const relative=url.pathname.slice(1),file=path.resolve(ROOT,relative);
@@ -108,7 +112,8 @@ async function fixture(width=1440,savedCars=null,{primaryColor=null,weather=null
   const wire=cars.map(SnoteMoney.storeCar);cars=normalizedCars(wire,alias);localStorage.setItem(carsStoreKey(alias),JSON.stringify(wire));window.__encarFixtureCars=structuredClone(wire);
   window.__encarFixtureWrites=[];window.__encarFixtureRevision=0;window.__encarFixtureWriteMode='ok';window.__encarFixtureWriteWaiting=false;window.__encarFixtureReleaseWrite=null;window.__encarFixtureWriteFailures=0;
   const S=window.__encarFixtureState;S.user={id:actor,email:'synthetic@example.invalid'};S.company={id:company,name:'가상 검증 상사'};S.members=[{user_id:actor,company_id:company,role:'dealer',display_name:'가상 검증 딜러',active:true}];
-  S.client={auth:{getSession:async()=>({data:{session:{access_token:token,user:{id:actor}}},error:null}),signOut:async()=>({error:null})},from(table){
+  window.__encarFixtureSession={access_token:token,refresh_token:'synthetic-refresh',user:{id:actor,email:'synthetic@example.invalid'}};window.__encarFixtureOwnerCalls=[];window.__encarFixtureOwnerActive=true;
+  S.client={auth:{getSession:async()=>({data:{session:window.__encarFixtureSession},error:null}),getUser:async()=>({data:{user:window.__encarFixtureSession.user},error:null}),stopAutoRefresh(){},signOut:async()=>({error:null})},realtime:{setAuth:async()=>{}},channel(){const channel={on(){return channel;},subscribe(){return channel;},unsubscribe:async()=>{}};return channel;},removeChannel:async()=>{},from(table){
    const filters={};let single=false;
    const chain={select(){return chain},eq(key,value){filters[key]=value;return chain},in(){return chain},order(){return chain},limit(){return chain},maybeSingle(){single=true;return chain},single(){single=true;return chain},then(resolve,reject){
     if(table==='zc_datasets'){
@@ -120,6 +125,7 @@ async function fixture(width=1440,savedCars=null,{primaryColor=null,weather=null
     return Promise.reject(Error('Unexpected browser fixture table '+table)).then(resolve,reject);
    }};return chain;
   },rpc:async(name,args)=>{
+   if(['snote_session_claim','snote_session_status'].includes(name)){if(args!==undefined)throw Error('Ownership RPC must have no caller arguments');window.__encarFixtureOwnerCalls.push(name);const session=window.__encarFixtureSession,claims=JSON.parse(atob(session.access_token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));return{data:{ok:true,active:window.__encarFixtureOwnerActive,userId:session.user.id,sessionId:claims.session_id,generation:1,reason:window.__encarFixtureOwnerActive?'ACTIVE':'REPLACED'},error:null};}
    if(name!=='zc_write_dataset'||args.p_dataset!=='cars'||args.p_company!==company||args.p_owner!==actor)throw Error('Unexpected browser fixture RPC');
    if(args.p_expected!==window.__encarFixtureRevision)return{data:null,error:{code:'CONFLICT',message:'CONFLICT'}};
    if(window.__encarFixtureWriteMode==='hold'){
@@ -131,6 +137,8 @@ async function fixture(width=1440,savedCars=null,{primaryColor=null,weather=null
    if(window.__encarFixtureWriteMode==='lost-response'){window.__encarFixtureWriteFailures++;return{data:null,error:{message:'SYNTHETIC_RESPONSE_LOST_AFTER_COMMIT'}};}
    return{data:revision,error:null};
   }};
+  S.rpcConfig={client:S.client,url:'https://synthetic.supabase.co',key:'synthetic_public_key'};
+  if(await window.__encarFixtureOwnership()!==true)throw Error('Synthetic ownership status was not confirmed');
   document.getElementById('zc-cloud-gate').hidden=true;
  },{actor:ACTOR,company:COMPANY,alias:ALIAS,token:sessionToken,plate:PLATE,secondPlate:SECOND_PLATE,savedCars,primaryColor});
  await releaseLabels(page,{loggedIn:true,width});
@@ -322,7 +330,7 @@ if(require.main===module)(async()=>{
  browser=await chromium.launch({headless:true,...(executablePath?{executablePath}:{})});
  try{
   {
-   const f=await fixture(1440,null,{sessionToken:'synthetic-local-encar-session-token'}),p=f.page;await releaseLifecycle(p,f.release);await position(f);assert.equal(await p.locator('.snote-encar-tools').count(),1);await p.screenshot({path:path.join(ARTIFACTS,'encar-detail-1440.png')});
+   const f=await fixture(),p=f.page;await releaseLifecycle(p,f.release);await position(f);assert.equal(await p.locator('.snote-encar-tools').count(),1);await p.screenshot({path:path.join(ARTIFACTS,'encar-detail-1440.png')});
    let popup=await lookup(f,found());await popup.waitForURL(listing().sellerUrl);assert.equal(await popup.evaluate(()=>opener===null),true);assert.deepEqual(f.requests[0],{plate:PLATE,candidateIds:[]});await assertLinks(f,[listing().sellerUrl,listing().trustedUrl]);await popup.close();
    assert.deepEqual(await p.evaluate(plate=>Object.keys(JSON.parse(localStorage.getItem('snote.encar.candidate.v1:'+plate))).sort(),PLATE),['at','ids','plate']);
    console.log('PASS real index desktop/header placement, local login disabled, online ready enabled, verified single seller popup and trusted fallback links');
