@@ -43,3 +43,5 @@ Data API의 pre-request 검사, authenticated 테이블의 추가 RLS 조건, St
 DB 변경은 `supabase/migrations/20261109161432_single_active_account_session.sql`이다. 현재 운영에 해당 스키마와 이력이 없는 상태를 확인했다. 연결 도구의 반영 요청이 완료되지 않았고 실행환경의 대체 Management API 인증은 HTTP 401을 반환해 운영 반영을 보류했다. 운영 DB를 먼저 적용·확인한 다음 웹 수정본을 배포한다.
 
 `/workspace/work/single-session-rollout/APPLY_v2_114_SINGLE_LOGIN.sql`은 같은 소스와 migration 이력 등록을 한 트랜잭션에 담은 SQL Editor용 파일이다. 운영 세션을 임의로 일괄 종료하지 않으며, 첫 확인 로그인부터 기존 접속을 전환한다. 실행 직전 스키마·migration 이력을 다시 확인해 중복 적용을 피한다.
+
+2026-11-14에 사용자 승인으로 Supabase 앱만 임시 `모든 작업 허용`으로 변경해 재시도했다. SQL 실행·마이그레이션 전용 경로가 각각 45초 내 완료되지 않았고, 운영 스키마·이력이 여전히 없는 것을 확인했다. 별도 읽기 검증에서도 실행·대기 중인 해당 SQL은 없었다. 대체 Management API는 계속 401을 반환했다. 앱 권한은 기존 `Use my default`로 복구하고 확인했다. 같은 권한 변경을 반복하지 말고, 등록된 Management API 토큰 갱신 또는 SQL Editor 직접 적용이 필요하다.

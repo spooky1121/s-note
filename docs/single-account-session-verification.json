@@ -92,7 +92,19 @@
     "managementApiCredential": "HTTP 401",
     "automaticApprovalRejectionReceived": false,
     "preparedAtomicSqlEditorFile": "/workspace/work/single-session-rollout/APPLY_v2_114_SINGLE_LOGIN.sql",
-    "cloudflareDeploymentStarted": false
+    "cloudflareDeploymentStarted": false,
+    "latestPermissionTrial": {
+      "at": "2026-11-14T04:37:44.646307+00:00",
+      "userApprovedTemporaryFullAccess": true,
+      "temporaryAppPermissionVerified": "full_access",
+      "atomicSqlWrite": "no response within 45 seconds",
+      "dedicatedMigrationWrite": "no response within 45 seconds",
+      "productionSchemaPresentAfterAttempts": false,
+      "productionMigrationPresentAfterAttempts": false,
+      "independentMatchingInFlightBackends": 0,
+      "managementApiHttpStatus": 401,
+      "appPermissionRestoredAndVerified": "inherit"
+    }
   },
   "businessProductionRowsChanged": false,
   "livePaidApiCalls": 0,
