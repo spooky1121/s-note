@@ -1,11 +1,11 @@
 {
   "release": "2.118",
   "baseCommit": "6f90da0c116672c7e816fabf0c891a23255682dd",
-  "verifiedAt": "2026-11-14T06:13:30.057102+00:00",
+  "verifiedAt": "2026-11-14T07:43:17.914638+00:00",
   "status": {
     "implementation": "verified",
-    "productionDatabase": "pending",
-    "productionFrontend": "pending"
+    "productionDatabase": "removed-and-catalog-verified",
+    "productionFrontend": "deployed"
   },
   "sourceHashes": {
     "index.html": "2c20ba50d1e0a847521dc2728bc8af3c6920dcbde48236ea1ab39349637b698b",
@@ -15,7 +15,7 @@
     "assets/snote-encar-link.js": "a28e27ee3e2ec3b7dddf9765ce6e54779b67d1083103d69a6969d0a856d01815",
     "functions/_shared/api-security.js": "74b496358cbd8f1e60136ee020ecd71fbe4168a445920d5b82c623c60d2b4bf2",
     "functions/api/_middleware.js": "272c5e69ec657369504edbb28f5631aed91e61dd8ad973e54710c5866d19e0fa",
-    "supabase/migrations/20261114060423_remove_single_active_account_session.sql": "87b741a04f26ae79bedf8b4a233d4b29cc7c5565584098694601a0cd13680c63"
+    "supabase/migrations/20261114073939_remove_single_active_account_session.sql": "87b741a04f26ae79bedf8b4a233d4b29cc7c5565584098694601a0cd13680c63"
   },
   "removed": [
     "single-session claim/status RPC requests",
@@ -47,15 +47,32 @@
     "actualBusinessWrites": 0
   },
   "databaseRemoval": {
-    "migration": "20261114060423_remove_single_active_account_session.sql",
+    "migration": "20261114073939_remove_single_active_account_session.sql",
     "migrationSha256": "87b741a04f26ae79bedf8b4a233d4b29cc7c5565584098694601a0cd13680c63",
     "preservesAuthAndBusinessRows": true,
     "noCascade": true,
     "replayable": true,
-    "rejectsChangedIndependentHook": true
+    "rejectsChangedIndependentHook": true,
+    "productionVersion": "20261114073939",
+    "featureHookRemoved": true,
+    "featurePoliciesRemaining": 0,
+    "featureRpcsRemaining": 0,
+    "featureSchemaPresent": false,
+    "signalsPublished": false,
+    "originalPoliciesUnchanged": 40,
+    "originalTableRlsUnchanged": 22,
+    "operatorAclUnchanged": true,
+    "operatorFunctionRestoredExact": true
   },
   "deploymentLimitations": [
-    "Production DB cleanup and exact production deployment must be verified separately.",
-    "Existing cached single-session pages require refresh."
-  ]
+    "Existing cached single-session pages require refresh.",
+    "Browser authentication scenarios use synthetic sessions; production schema and exact Pages deployment were verified separately."
+  ],
+  "production": {
+    "applicationCommit": "499d865750a3dddfa4f2e7d593b7e8bb24be94f5",
+    "deploymentId": "179ffab7-1c02-4581-b4f0-4de36a199b0b",
+    "checkId": 132379049326,
+    "conclusion": "success",
+    "url": "https://s-note.pages.dev/?release=2.118"
+  }
 }
