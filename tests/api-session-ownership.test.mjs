@@ -35,7 +35,8 @@ test('current and legacy sessions are verified by exactly one uncached no-argume
     assert.equal(options.method, 'POST'); assert.equal(options.body, '{}');
     assert.equal(options.headers.Authorization, 'Bearer ' + jwt());
     assert.equal(options.headers.apikey, env.SUPABASE_PUBLISHABLE_KEY);
-    assert.equal(options.cache, 'no-store'); assert.equal(options.redirect, 'error');
+    assert.equal(options.headers['Cache-Control'], 'no-store');
+    assert.equal(Object.hasOwn(options, 'cache'), false); assert.equal(options.redirect, 'manual');
     assert.equal(options.credentials, 'omit'); assert.equal(options.referrerPolicy, 'no-referrer');
   }
 });
@@ -130,6 +131,28 @@ test('invalid upstream status, JSON, content type and excessive body fail closed
     new Response(' '.repeat(9000), { headers: { 'Content-Type': 'application/json', 'Content-Length': '1' } })];
   for (const response of responses) await throwsCode(requireSessionOwnership(req(), env, { fetcher: async () => response }), 'SESSION_UNAVAILABLE');
   for (const status of [401, 403]) await throwsCode(requireSessionOwnership(req(), env, { fetcher: async () => new Response('secret', { status }) }), 'UNAUTHORIZED');
+});
+
+test('session RPC redirects never forward authorization or dispatch the protected handler', async () => {
+  const original = globalThis.fetch;
+  try {
+    for (const status of [301, 302, 303, 307, 308]) {
+      let calls = 0, dispatched = false;
+      globalThis.fetch = async (url, options) => {
+        calls++;
+        assert.equal(url, env.SUPABASE_URL + '/rest/v1/rpc/snote_session_status');
+        assert.equal(options.redirect, 'manual');
+        return new Response(null, { status, headers: { Location: 'https://untrusted.example/collect' } });
+      };
+      const response = await onRequest({ request: req(), env, next: () => { dispatched = true; return Response.json({ ok: true }); } });
+      const data = await response.json();
+      assert.equal(response.status, 503);
+      assert.equal(data.code, 'SESSION_UNAVAILABLE');
+      checkDiagnostics(data.diagnostics, 'RPC_HTTP_ERROR', status);
+      assert.equal(calls, 1);
+      assert.equal(dispatched, false);
+    }
+  } finally { globalThis.fetch = original; }
 });
 
 test('one overall deadline cancels a hanging fetch even if the mock ignores AbortSignal', async () => {

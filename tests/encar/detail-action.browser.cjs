@@ -53,6 +53,36 @@ fs.mkdirSync(ART,{recursive:true});
    await finish(f);console.log('PASS '+width+'px permanent Encar action, lookup, database save, reopen, sold/inventory transition and failed recheck');
   }catch(error){await f.context.close();throw error;}
  }
+ for(const lookupUnavailable of[false,true]){
+  const f=await fixture(390,null,{encarLogoUnavailable:true,lookupUnavailable}),p=f.page,button=p.locator('#vehicle-encar-check'),fallback=button.locator('.snote-encar-fallback');
+  try{
+   const sell=await p.evaluate(()=>cars[0].sell);
+   assert.equal(await button.isVisible(),true);assert.equal(await fallback.isVisible(),true);assert.equal(await fallback.textContent(),'Encar');
+   const geometry=await fallback.evaluate(el=>{const r=el.getBoundingClientRect();return{width:r.width,height:r.height,color:getComputedStyle(el).color};});assert(geometry.width>20&&geometry.height>=13);
+   assert.equal(await button.locator('img').isHidden(),true);assert.equal(await p.locator('#vehicle-encar-check').count(),1);
+   if(lookupUnavailable){
+    assert.equal(await p.evaluate(()=>typeof window.SnoteEncarLink),'undefined');assert.equal(await button.isDisabled(),true);
+    await button.evaluate(el=>el.click());assert.equal(f.requests.length,0);
+   }else{
+    assert.equal(await button.isEnabled(),true);
+    f.reply({ok:false,code:'SESSION_UNAVAILABLE',diagnostics:{code:'SESSION_UNAVAILABLE',stage:'RPC_NETWORK_ERROR'}},503);
+    const opening=f.context.waitForEvent('page');await button.click();const popup=await opening;
+    if(!popup.isClosed())await popup.waitForEvent('close');await p.locator('#vehicle-encar-check:not([disabled])').waitFor();
+    assert.equal(await button.isVisible(),true);assert.equal(await fallback.isVisible(),true);assert.equal(f.requests.length,1);
+    assert.match(await p.locator('.snote-encar-note').textContent(),/로그인 상태/);
+    await p.evaluate(()=>{window.__encarFixtureState.ready=false;window.SnoteEncarLink.refresh();});
+    assert.equal(await button.isVisible(),true);assert.equal(await fallback.isVisible(),true);assert.equal(await button.isDisabled(),true);
+    await button.evaluate(el=>el.click());assert.equal(f.requests.length,1);
+    await p.evaluate(()=>{window.__encarFixtureState.ready=true;window.SnoteEncarLink.refresh();});
+   }
+   await p.evaluate(()=>{cars[0].status='판매완료';renderVehicle();});assert.equal(await button.isHidden(),true);
+   await p.evaluate(()=>{cars[0].status='판매중';renderVehicle();});assert.equal(await button.isVisible(),true);assert.equal(await fallback.isVisible(),true);
+   assert.equal(await p.evaluate(()=>window.__encarFixtureWrites.length),0);assert.equal(await p.evaluate(()=>cars[0].sell),sell);assert.equal(f.navigations.length,0);
+   await p.screenshot({path:path.join(ART,'encar-fallback-'+(lookupUnavailable?'controller-unavailable':'session503')+'.png')});
+   results.push({width:390,missingLogoFallback:true,lookupControllerUnavailable:lookupUnavailable,sessionNetwork503:!lookupUnavailable,soldHiddenAndUnsoldRestored:true,noNavigationOrWrites:true});
+   await finish(f);console.log('PASS visible Encar fallback with missing logo and '+(lookupUnavailable?'unavailable lookup controller':'session network503')+' preserves authentication and sold-car policy');
+  }catch(error){await f.context.close();throw error;}
+ }
  for(const statusUnavailable of[false,true]){
   const f=await fixture(390),p=f.page,button=p.locator('#vehicle-encar-check');
   try{
@@ -65,6 +95,7 @@ fs.mkdirSync(ART,{recursive:true});
    if(!popup.isClosed())await popup.waitForEvent('close');
    await p.waitForFunction(()=>document.getElementById('vehicle-encar-check').getAttribute('aria-busy')==='false'&&!window.__encarFixtureOwnerInspect().pending);
    const owner=await p.evaluate(()=>window.__encarFixtureOwnerInspect());
+   assert.equal(await button.isVisible(),true,'A session-check failure may disable or shield the action but must not hide an unsold vehicle action');
    assert.equal(f.requests.length,1);assert.equal(f.autoPriceRequests.length,0);assert.equal(f.navigations.length,0);
    assert.equal(await p.evaluate(()=>window.__encarFixtureWrites.length),0);assert.equal(await p.evaluate(()=>cars[0].sell),baseline.sell);
    assert.equal(await p.locator('.snote-encar-results a').count(),0);assert(await p.evaluate(count=>window.__encarFixtureOwnerCalls.length>count,baseline.ownerCalls));

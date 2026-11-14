@@ -1,0 +1,60 @@
+{
+  "release": "2.116",
+  "baseCommit": "b25f768684d9480324b3411898ec31b147dbdf1e",
+  "verifiedAt": "2026-11-14T05:46:42.890193+00:00",
+  "sourceHashes": {
+    "index.html": "e0e0a7d8ceb0f314d53d4515e5c9a4b73215c9d60671e3f9f7bcf40dcbb2216e",
+    "assets/snote-encar-link.js": "088cb0ec322cf49b1f3923e6881647579072cc46ee607d2dd5e94efff5e4cf20",
+    "functions/_shared/session-ownership.js": "c9dc87b33057a78d21e549eb9b81347f48efae524ccd6192ef24cae0010028fe",
+    "functions/_shared/api-security.js": "427e422dce8fa431f111c037cddb2a013166cb9f6e98a982b34bdfcfdd508662",
+    "functions/api/_middleware.js": "6505cc99edd979a6dd82d99c37525c60b120696c9f252145ca3e8151e2c70a6c"
+  },
+  "reportedFailure": {
+    "code": "SESSION_UNAVAILABLE",
+    "httpStatus": 503,
+    "stage": "RPC_NETWORK_ERROR"
+  },
+  "rootCause": "The session ownership gate used redirect:error, which workerd rejects before any outbound request; Request.cache also fails on older compatibility dates.",
+  "fix": {
+    "redirect": "manual with non-2xx rejection before session admission",
+    "freshness": "authenticated fixed-origin POST with request Cache-Control:no-store; response private/no-store retained",
+    "icon": "visible red Encar fallback while PNG is unavailable; sold visibility applied independently of lookup module initialization",
+    "authorizationChecksPreserved": true
+  },
+  "validation": {
+    "unit": {
+      "passed": 795,
+      "failed": 0
+    },
+    "detailBrowserGroups": 7,
+    "priceBrowserGroups": 7,
+    "inlineScripts": 7,
+    "pagesFunctionsBuild": "passed; Wrangler4.152.0",
+    "workerd": {
+      "version": "1.20261019.1",
+      "miniflareVersion": "5.20261019.2-beta",
+      "compatibilityDates": [
+        "2026-10-01",
+        "2024-11-01"
+      ],
+      "cases": 10,
+      "before": "503/RPC_NETWORK_ERROR with zero outbound RPC calls on both dates",
+      "after": "ACTIVE/LEGACY: one RPC then handler; REPLACED:401; redirect:503, no follow or handler",
+      "syntheticOnly": true,
+      "realExternalRequests": 0
+    }
+  },
+  "privacy": {
+    "databaseChanges": false,
+    "businessDataWrites": 0,
+    "actualStockIdentifiersPublished": false
+  },
+  "limitations": [
+    "Actual production confirmation after deploying this fix is pending the user retry.",
+    "Local runtime and browser fixtures do not verify current official Encar advertisements."
+  ],
+  "references": [
+    "https://developers.cloudflare.com/workers/runtime-apis/request/",
+    "https://developers.cloudflare.com/workers/configuration/compatibility-flags/"
+  ]
+}
