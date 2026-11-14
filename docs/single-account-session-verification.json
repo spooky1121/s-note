@@ -4,9 +4,9 @@
   "verifiedAt": "2026-11-12T20:11:53.248896+00:00",
   "status": {
     "implementation": "complete",
-    "productionDatabase": "not-applied",
-    "productionFrontend": "not-deployed",
-    "github": "draft-pr"
+    "productionDatabase": "applied-and-catalog-verified",
+    "productionFrontend": "pending-deployment-verification",
+    "github": "ready-for-merge"
   },
   "sourceHashes": {
     "index.html": "3914381a86f7331ec35abb84b1c0bc42dc7c0cd6aab885d6cb53feb28fbd17e3",
@@ -104,7 +104,8 @@
       "independentMatchingInFlightBackends": 0,
       "managementApiHttpStatus": 401,
       "appPermissionRestoredAndVerified": "inherit"
-    }
+    },
+    "resolvedBy": "User SQL Editor application and production catalog verification"
   },
   "businessProductionRowsChanged": false,
   "livePaidApiCalls": 0,
@@ -112,5 +113,14 @@
     "pullRequest": "https://github.com/spooky1121/s-note/pull/2",
     "branch": "codex/single-login-v2.114",
     "implementationCommit": "34dcd52d5aec99c3e8660f657c1f89828fc5d451"
+  },
+  "productionDatabase": {
+    "version": "20261109161432",
+    "name": "single_active_account_session",
+    "appliedBy": "User SQL Editor execution confirmed by production read-only catalog verification",
+    "sourceSha256LfNormalized": "003767344bb3a6e06245e02d38e4886c20f1abb3c1a46f8348c8e2b091be89de",
+    "historyNewlines": "CRLF; LF-normalized source is byte-identical",
+    "catalogReceipt": "/workspace/work/single-session-rollout/production-applied-verification.json",
+    "businessRowsChangedByVerification": false
   }
 }

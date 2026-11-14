@@ -1,6 +1,6 @@
 # 계정 동시 로그인 제한
 
-v2.114 수정본의 검증을 완료했다. 운영 DB 적용과 운영 배포는 아직 진행되지 않았다.
+v2.114 수정본의 검증과 운영 DB 적용 확인을 완료했다. 웹 반영은 이 변경을 포함하는 GitHub 커밋의 Cloudflare Pages 배포 결과로 확인한다.
 
 일반 로그인·운영자 로그인에서 다른 접속이 확인되면 `다른 곳에서 로그인 중입니다. 기존 접속을 해제하고 로그인하시겠습니까?`를 표시한다. **로그인**을 선택하면 기존 접속을 해제하고 새 로그인을 활성화하며 이전 화면에는 `다른 기기에서 로그인하여 로그아웃되었습니다.`를 표시한다. **취소**하면 기존 접속은 유지되고 새 로그인은 종료한다. 별도 설정은 없다.
 
@@ -40,8 +40,8 @@ Data API의 pre-request 검사, authenticated 테이블의 추가 RLS 조건, St
 
 ## 운영 반영
 
-DB 변경은 `supabase/migrations/20261109161432_single_active_account_session.sql`이다. 현재 운영에 해당 스키마와 이력이 없는 상태를 확인했다. 연결 도구의 반영 요청이 완료되지 않았고 실행환경의 대체 Management API 인증은 HTTP 401을 반환해 운영 반영을 보류했다. 운영 DB를 먼저 적용·확인한 다음 웹 수정본을 배포한다.
+2026-11-14에 사용자가 SQL Editor에서 단일 트랜잭션 파일을 실행했고, 운영 migration `20261109161432 / single_active_account_session`과 스키마의 적용을 읽기 전용으로 확인했다. 공개 RPC의 정확한 인자·기본값·권한, private 표 RLS·권한, 요청 훅, restrictive 정책, Realtime 등록 및 설치된 함수 본문이 검증 소스와 일치한다. SQL Editor가 이력의 개행을 CRLF로 바꿨지만 LF로 정규화하면 원본 SHA256 `003767344bb3a6e06245e02d38e4886c20f1abb3c1a46f8348c8e2b091be89de`와 정확히 일치한다.
 
-`/workspace/work/single-session-rollout/APPLY_v2_114_SINGLE_LOGIN.sql`은 같은 소스와 migration 이력 등록을 한 트랜잭션에 담은 SQL Editor용 파일이다. 운영 세션을 임의로 일괄 종료하지 않으며, 첫 확인 로그인부터 기존 접속을 전환한다. 실행 직전 스키마·migration 이력을 다시 확인해 중복 적용을 피한다.
+DB 적용 파일은 `supabase/migrations/20261109161432_single_active_account_session.sql`이다. SQL Editor용 `/workspace/work/single-session-rollout/APPLY_v2_114_SINGLE_LOGIN.sql`은 같은 소스와 migration 이력 등록을 한 트랜잭션에 담았다. 이미 적용됐으므로 다시 실행하지 않는다. 운영 세션을 일괄 종료하지 않으며, 확인한 새 로그인부터 이전 접속을 전환한다.
 
-2026-11-14에 사용자 승인으로 Supabase 앱만 임시 `모든 작업 허용`으로 변경해 재시도했다. SQL 실행·마이그레이션 전용 경로가 각각 45초 내 완료되지 않았고, 운영 스키마·이력이 여전히 없는 것을 확인했다. 별도 읽기 검증에서도 실행·대기 중인 해당 SQL은 없었다. 대체 Management API는 계속 401을 반환했다. 앱 권한은 기존 `Use my default`로 복구하고 확인했다. 같은 권한 변경을 반복하지 말고, 등록된 Management API 토큰 갱신 또는 SQL Editor 직접 적용이 필요하다.
+연결 도구의 DB 쓰기 요청은 완료되지 않았고 대체 Management API 인증은 401이었다. 사용자가 승인한 임시 `모든 작업 허용` 재시도로도 해결되지 않아 기존 `Use my default`로 복구했고, 이후 사용자의 SQL Editor 실행으로 DB 적용을 마쳤다. 앱 권한이나 등록된 인증 키는 추가로 변경하지 않았다.
