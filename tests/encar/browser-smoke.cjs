@@ -95,7 +95,7 @@ async function fixture(width=1440,savedCars=null,{primaryColor=null,weather=null
   if(url.pathname==='/'){
    let source=fs.readFileSync(path.join(ROOT,'index.html'),'utf8');
    assert(source.includes('\ninitializeAuth();'));assert(source.includes("const NIL='00000000-0000-0000-0000-000000000000';"));
-   source=source.replace('\ninitializeAuth();','\nwindow.__encarFixtureAuth=initializeAuth();').replace("const NIL='00000000-0000-0000-0000-000000000000';","window.__encarFixtureState=S;window.__encarFixtureOwnership=async()=>{snoteOwnershipBindClient(S.client);const result=await S.client.auth.getSession();snoteOwnershipSession=result.data.session;return snoteOwnership.check(result.data.session,'restore');};window.__encarFixtureOwnerInspect=()=>snoteOwnership?.inspect();\nconst NIL='00000000-0000-0000-0000-000000000000';");
+   source=source.replace('\ninitializeAuth();','\nwindow.__encarFixtureAuth=initializeAuth();').replace("const NIL='00000000-0000-0000-0000-000000000000';","window.__encarFixtureState=S;\nconst NIL='00000000-0000-0000-0000-000000000000';");
    return route.fulfill({contentType:'text/html;charset=utf-8',body:source});
   }
   const relative=url.pathname.slice(1),file=path.resolve(ROOT,relative);
@@ -114,7 +114,7 @@ async function fixture(width=1440,savedCars=null,{primaryColor=null,weather=null
   const wire=cars.map(SnoteMoney.storeCar);cars=normalizedCars(wire,alias);localStorage.setItem(carsStoreKey(alias),JSON.stringify(wire));window.__encarFixtureCars=structuredClone(wire);
   window.__encarFixtureWrites=[];window.__encarFixtureRevision=0;window.__encarFixtureWriteMode='ok';window.__encarFixtureWriteWaiting=false;window.__encarFixtureReleaseWrite=null;window.__encarFixtureWriteFailures=0;
   const S=window.__encarFixtureState;S.user={id:actor,email:'synthetic@example.invalid'};S.company={id:company,name:'가상 검증 상사'};S.members=[{user_id:actor,company_id:company,role:'dealer',display_name:'가상 검증 딜러',active:true}];
-  window.__encarFixtureSession={access_token:token,refresh_token:'synthetic-refresh',user:{id:actor,email:'synthetic@example.invalid'}};window.__encarFixtureOwnerCalls=[];window.__encarFixtureOwnerActive=true;window.__encarFixtureOwnerUnavailable=false;
+  window.__encarFixtureSession={access_token:token,refresh_token:'synthetic-refresh',user:{id:actor,email:'synthetic@example.invalid'}};
   S.client={auth:{getSession:async()=>({data:{session:window.__encarFixtureSession},error:null}),getUser:async()=>({data:{user:window.__encarFixtureSession.user},error:null}),stopAutoRefresh(){},signOut:async()=>({error:null})},realtime:{setAuth:async()=>{}},channel(){const channel={on(){return channel;},subscribe(){return channel;},unsubscribe:async()=>{}};return channel;},removeChannel:async()=>{},from(table){
    const filters={};let single=false;
    const chain={select(){return chain},eq(key,value){filters[key]=value;return chain},in(){return chain},order(){return chain},limit(){return chain},maybeSingle(){single=true;return chain},single(){single=true;return chain},then(resolve,reject){
@@ -127,7 +127,6 @@ async function fixture(width=1440,savedCars=null,{primaryColor=null,weather=null
     return Promise.reject(Error('Unexpected browser fixture table '+table)).then(resolve,reject);
    }};return chain;
   },rpc:async(name,args)=>{
-   if(['snote_session_claim','snote_session_status'].includes(name)){if(args!==undefined)throw Error('Ownership RPC must have no caller arguments');window.__encarFixtureOwnerCalls.push(name);if(window.__encarFixtureOwnerUnavailable)return{data:null,error:{code:'SYNTHETIC_OWNERSHIP_UNAVAILABLE'}};const session=window.__encarFixtureSession,claims=JSON.parse(atob(session.access_token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));return{data:{ok:true,active:window.__encarFixtureOwnerActive,userId:session.user.id,sessionId:claims.session_id,generation:1,reason:window.__encarFixtureOwnerActive?'ACTIVE':'REPLACED'},error:null};}
    if(name!=='zc_write_dataset'||args.p_dataset!=='cars'||args.p_company!==company||args.p_owner!==actor)throw Error('Unexpected browser fixture RPC');
    if(args.p_expected!==window.__encarFixtureRevision)return{data:null,error:{code:'CONFLICT',message:'CONFLICT'}};
    if(window.__encarFixtureWriteMode==='hold'){
@@ -140,21 +139,19 @@ async function fixture(width=1440,savedCars=null,{primaryColor=null,weather=null
    return{data:revision,error:null};
   }};
   S.rpcConfig={client:S.client,url:'https://synthetic.supabase.co',key:'synthetic_public_key'};
-  if(await window.__encarFixtureOwnership()!==true)throw Error('Synthetic ownership status was not confirmed');
   document.getElementById('zc-cloud-gate').hidden=true;
  },{actor:ACTOR,company:COMPANY,alias:ALIAS,token:sessionToken,plate:PLATE,secondPlate:SECOND_PLATE,savedCars,primaryColor});
  await releaseLabels(page,{loggedIn:true,width});
  if(width===1440)await page.screenshot({path:path.join(ARTIFACTS,'release-header-1440.png')});
  await page.evaluate(()=>openVehicle('encar-car-1'));
  await page.locator(BUTTON).waitFor({state:'visible'});assert.equal(await page.locator(BUTTON).isDisabled(),true,'Local/demo login must not enable an online lookup');
- if(encarLogoUnavailable)assert.equal(await page.locator(BUTTON+' .snote-encar-fallback').isVisible(),true);else await assertEncarLogo(page);
+ await assertEncarLogo(page);
  await page.evaluate(()=>{window.__encarFixtureState.ready=true;document.getElementById('zc86-topbar').hidden=false;});if(!lookupUnavailable)await page.locator(BUTTON+':not([disabled])').waitFor();
  await page.locator('#vehicle-overlay .vehicle-detail-frame').evaluate(async e=>{await Promise.all(e.getAnimations().map(a=>a.finished.catch(()=>{})))});f.reply=(body,status=200)=>f.responses.push({body,status});return f;
 }
 async function assertEncarLogo(page){
- const logo=page.locator(BUTTON+' img.snote-encar-wordmark');assert.equal(await logo.count(),1);assert.equal(await page.locator(BUTTON+' svg').count(),0);assert.equal(await logo.getAttribute('aria-hidden'),'true');assert.equal(await logo.getAttribute('alt'),'');assert.equal(await page.locator(BUTTON).getAttribute('title'),null,'The native tooltip must not duplicate the custom tooltip');
- const image=await logo.evaluate(async element=>{await element.decode();const box=element.getBoundingClientRect();return{path:new URL(element.src).pathname,naturalWidth:element.naturalWidth,naturalHeight:element.naturalHeight,width:box.width,height:box.height,fit:getComputedStyle(element).objectFit};});assert.equal(image.path,ENCAR_WORDMARK_PATH);assert(image.naturalWidth/image.naturalHeight>2,'The Encar wordmark must keep its wide proportions');assert(Math.abs(image.width-34)<.01);assert(Math.abs(image.height-17)<.01);assert.equal(image.fit,'contain');
- assert.equal(await page.locator(BUTTON+' .snote-encar-fallback').isHidden(),true,'A decoded wordmark replaces its visible loading/error fallback');
+ const logo=page.locator(BUTTON+' span.snote-encar-wordmark');assert.equal(await logo.count(),1);assert.equal(await page.locator(BUTTON+' img,'+BUTTON+' svg').count(),0);assert.equal(await logo.getAttribute('aria-hidden'),'true');assert.equal(await logo.textContent(),'Encar');assert.equal(await page.locator(BUTTON).getAttribute('title'),null,'The native tooltip must not duplicate the custom tooltip');
+ const mark=await logo.evaluate(element=>{const box=element.getBoundingClientRect(),button=element.parentElement.getBoundingClientRect();return{width:box.width,height:box.height,color:getComputedStyle(element).color,inside:box.left>=button.left&&box.right<=button.right&&box.top>=button.top&&box.bottom<=button.bottom,centered:Math.abs((box.top+box.bottom)-(button.top+button.bottom))<1};});assert(mark.width>20&&mark.width<=40);assert.equal(mark.height,17);assert.equal(mark.color,'rgb(229, 37, 52)');assert(mark.inside&&mark.centered,'The complete wordmark must fit in and center on its icon target');
 }
 async function lookup(f,body,status=200){f.reply(body,status);const popupPromise=f.context.waitForEvent('page');await f.page.locator(BUTTON).click();const popup=await popupPromise;await f.page.locator(BUTTON+':not([disabled])').waitFor();await assertEncarLogo(f.page);return popup;}
 async function verifyAddress(f,body,address){f.reply(body);const popupPromise=f.context.waitForEvent('page');await f.page.locator(ADDRESS).fill(address);await f.page.locator(MANUAL+' button').click();const popup=await popupPromise;await f.page.locator(BUTTON+':not([disabled])').waitFor();return popup;}

@@ -11,8 +11,6 @@
   const MAX_PRICE_WON = 1000000000000;
   const PRICE_SOURCES = new Set(['encar.com', 'encar-api.com', 'encar.com-ocr']);
   const REQUEST_MESSAGES = Object.freeze({
-    SESSION_UNAVAILABLE: '로그인 상태를 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.',
-    SESSION_REPLACED: '다른 기기에서 로그인하여 로그아웃되었습니다.',
     SESSION_CONTEXT_CHANGED: '로그인 정보가 변경되었습니다. 다시 로그인한 뒤 광고를 확인해 주세요.',
     UNAUTHORIZED: '로그인이 필요합니다. 다시 로그인해 주세요.',
     FORBIDDEN: '허용되지 않은 요청입니다. S-NOTE에서 다시 시도해 주세요.',
@@ -65,7 +63,6 @@
     'METHOD_NOT_ALLOWED', 'AUTH_REQUIRED', 'AUTH_FAILED', 'STAFF_REQUIRED', 'AUTH_UNAVAILABLE',
     'INVALID_REQUEST', 'UNSUPPORTED_MEDIA_TYPE', 'REQUEST_TOO_LARGE',
     'HTTP_ERROR', 'UNVERIFIED', 'CLIENT_TIMEOUT', 'NETWORK_ERROR', 'INVALID_RESPONSE', ...Object.keys(PRICE_MESSAGES), ...Object.keys(REQUEST_MESSAGES)]);
-  const SESSION_STAGES = new Set(['CONFIG_INVALID','RPC_TIMEOUT','RPC_HTTP_ERROR','RPC_RESPONSE_INVALID','RPC_NETWORK_ERROR','REQUEST_ABORTED']);
   const CATALOG_FAILURES = new Set(Object.keys(ERROR_MESSAGES).filter(code => code.startsWith('CATALOG_')));
   let active = null;
   let contextKey = '';
@@ -242,10 +239,6 @@
     const code = typeof data.code === 'string' && SAFE_CODES.has(data.code) ? data.code : fallbackCode;
     const safe = { service: 'snote-encar', code, httpStatus: Number.isInteger(httpStatus) && httpStatus >= 100 && httpStatus <= 599 ? httpStatus : null };
     if (typeof data.requestId === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(data.requestId)) safe.requestId = data.requestId;
-    if (code === 'SESSION_UNAVAILABLE') {
-      if (SESSION_STAGES.has(data.stage)) safe.stage = data.stage;
-      if (Number.isInteger(data.upstreamHttpStatus) && data.upstreamHttpStatus >= 100 && data.upstreamHttpStatus <= 599) safe.upstreamHttpStatus = data.upstreamHttpStatus;
-    }
     for (const key of ['searchCount', 'resultCount', 'candidateCount', 'checkedCount', 'plateMatchedCount', 'resultPlateMatchCount', 'rawResultCount', 'recognizedSourceCount', 'catalogRequestCount', 'catalogPageCount', 'catalogRecordCount', 'catalogExactMatchCount', 'catalogFormCount', 'catalogPlateFieldCount', 'catalogLinkCount']) {
       if (Number.isInteger(data[key]) && data[key] >= 0 && data[key] <= 1000) safe[key] = data[key];
     }
@@ -300,32 +293,13 @@
     button.setAttribute('data-tooltip', '엔카광고보기');
     button.setAttribute('aria-busy', String(busy));
     button.classList.toggle('is-loading', busy);
-    let logo = button.querySelector('img.snote-encar-wordmark');
-    let fallback = button.querySelector('.snote-encar-fallback');
-    if (!fallback) {
-      fallback = document.createElement('span');
-      fallback.className = 'snote-encar-fallback';
-      fallback.setAttribute('aria-hidden', 'true');
-      fallback.style.cssText = 'font:italic 800 13px/17px Arial,sans-serif;letter-spacing:-.7px;color:#d52c3b';
-      fallback.textContent = 'Encar';
-      if (logo) logo.before(fallback);
-    }
-    if (!logo) {
-      logo = document.createElement('img');
-      logo.className = 'snote-encar-wordmark';
-      logo.src = 'assets/encar-wordmark.png?v=2.73';
-      logo.width = 34; logo.height = 17;
-      logo.alt = ''; logo.setAttribute('aria-hidden', 'true');
-      logo.draggable = false;
-      button.replaceChildren(fallback, logo);
-    }
-    if (!logo.dataset.snoteFallbackReady) {
-      const showLogo = loaded => { fallback.hidden = loaded; logo.style.display = loaded ? '' : 'none'; };
-      logo.addEventListener('load', () => showLogo(logo.naturalWidth > 0));
-      logo.addEventListener('error', () => showLogo(false));
-      logo.dataset.snoteFallbackReady = 'true';
-      showLogo(logo.complete && logo.naturalWidth > 0);
-    }
+    if (button.childElementCount === 1 && button.querySelector('span.snote-encar-wordmark')) return;
+    const wordmark = document.createElement('span');
+    wordmark.className = 'snote-encar-wordmark';
+    wordmark.setAttribute('aria-hidden', 'true');
+    wordmark.style.cssText = 'font:normal 800 14px/17px Arial,sans-serif;letter-spacing:-.6px;color:#e52534;white-space:nowrap;pointer-events:none';
+    wordmark.textContent = 'Encar';
+    button.replaceChildren(wordmark);
   }
 
   function closeWaitingTab(job) {
@@ -705,9 +679,9 @@
       let data;
       try { data = await abortable(response.json(), job.controller.signal); }
       catch (error) {
-        const ownershipError = typeof error?.code === 'string' && Object.hasOwn(REQUEST_MESSAGES, error.code) ||
-          ['SESSION_UNAVAILABLE','SESSION_CONTEXT_CHANGED'].includes(error?.message);
-        if (response.status >= 500 && !job.controller.signal.aborted && stillCurrent(job) && !ownershipError) {
+        const requestError = typeof error?.code === 'string' && Object.hasOwn(REQUEST_MESSAGES, error.code) ||
+          error?.message === 'SESSION_CONTEXT_CHANGED';
+        if (response.status >= 500 && !job.controller.signal.aborted && stillCurrent(job) && !requestError) {
           throw lookupError(ERROR_MESSAGES.SERVER_UNAVAILABLE, 'SERVER_UNAVAILABLE');
         }
         throw error;
@@ -719,8 +693,7 @@
           403: '이 기능을 사용할 수 있는 직원 권한을 확인해 주세요.',
           503: ERROR_MESSAGES.SERVER_UNAVAILABLE
         };
-        const diagnostics = data?.code === 'SESSION_UNAVAILABLE' && data?.diagnostics?.code === data.code ? data.diagnostics :
-          typeof data?.code === 'string' && Object.hasOwn(REQUEST_MESSAGES, data.code) ? {code:data.code} : data?.diagnostics;
+        const diagnostics = typeof data?.code === 'string' && Object.hasOwn(REQUEST_MESSAGES, data.code) ? {code:data.code} : data?.diagnostics;
         const code = setDiagnostics(diagnostics, response.status, 'HTTP_ERROR');
         if (response.status >= 500 && CATALOG_FAILURES.has(code)) manual.hidden = false;
         throw lookupError(REQUEST_MESSAGES[code] || ERROR_MESSAGES[code] || messages[response.status] || '지금은 광고를 확인할 수 없습니다. 잠시 후 다시 시도해 주세요.');
@@ -805,9 +778,8 @@
       closeWaitingTab(job);
       if (!stillCurrent(job)) return;
       const requestCode = typeof error?.code === 'string' && Object.hasOwn(REQUEST_MESSAGES, error.code) ? error.code :
-        ['SESSION_UNAVAILABLE','SESSION_CONTEXT_CHANGED'].includes(error?.message) ? error.message : null;
-      const diagnostics = !job.timedOut && requestCode === 'SESSION_UNAVAILABLE' && error?.diagnostics?.code === requestCode ? error.diagnostics : null;
-      if (!diagnosticSnapshot) setDiagnostics(diagnostics, job.httpStatus ?? error?.httpStatus, job.timedOut ? 'CLIENT_TIMEOUT' : requestCode || error?.diagnosticCode || 'NETWORK_ERROR');
+        error?.message === 'SESSION_CONTEXT_CHANGED' ? error.message : null;
+      if (!diagnosticSnapshot) setDiagnostics(null, job.httpStatus ?? error?.httpStatus, job.timedOut ? 'CLIENT_TIMEOUT' : requestCode || error?.diagnosticCode || 'NETWORK_ERROR');
       setNote(job.timedOut ? '확인이 지연되고 있습니다. 잠시 후 다시 시도해 주세요.' : REQUEST_MESSAGES[requestCode] || error?.userMessage || '광고 확인에 실패했습니다. 연결 상태를 확인하고 다시 시도해 주세요.', true);
     } finally {
       clearTimeout(timeout);

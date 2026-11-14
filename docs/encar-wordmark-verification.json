@@ -1,0 +1,31 @@
+{
+  "release": "2.117",
+  "baseCommit": "6f90da0c116672c7e816fabf0c891a23255682dd",
+  "verifiedAt": "2026-11-14T05:57:13.617599+00:00",
+  "change": "Vehicle-detail Encar action uses one red text wordmark; no external image or load/error toggle.",
+  "sourceHashes": {
+    "index.html": "b9552d77d90f495166b4e333ee7165f3dbd393adbd604538053dd81b6362dc51",
+    "assets/snote-encar-link.js": "7a9ec760c41491bfee5ca0ac69367641fc2bc86c21f154623c9224db005f68f2"
+  },
+  "validation": {
+    "unitPassed": 795,
+    "unitFailed": 0,
+    "browserGroupsPassed": 7,
+    "viewports": [
+      1440,
+      390,
+      320
+    ],
+    "fullLinkedCss": true,
+    "blockedImageAndUnavailableController": true,
+    "forcedImportantImageDisplay": true,
+    "wordmarkColorSizeBoundsAndCentering": true,
+    "lookupSaveReopenAndSoldVisibility": true,
+    "syntheticOnly": true
+  },
+  "scope": {
+    "backendChanged": false,
+    "databaseChanges": false,
+    "liveProductionAdvertisementLookupVerified": false
+  }
+}

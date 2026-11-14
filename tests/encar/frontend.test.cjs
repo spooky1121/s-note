@@ -10,7 +10,6 @@ const { JSDOM, VirtualConsole } = require('jsdom');
 
 const SOURCE = fs.readFileSync(path.resolve(__dirname, '../../assets/snote-encar-link.js'), 'utf8');
 const PREFIX = 'snote.encar.candidate.v1:';
-const LOOKUP_LOGO_SRC = 'assets/encar-wordmark.png?v=2.73';
 const PLATE = '12가3456';
 const SECOND_PLATE = '34나5678';
 const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -53,12 +52,12 @@ function assertLookupIcon(button, busy = false) {
   assert.equal(button.hasAttribute('title'), false, 'The custom tooltip must not compete with a native tooltip');
   if (busy) assert.equal(button.getAttribute('aria-busy'), 'true');
   else assert.ok([null, 'false'].includes(button.getAttribute('aria-busy')), 'A settled icon must no longer announce busy work');
-  const icons = button.querySelectorAll('img');
-  assert.equal(icons.length, 1, 'Lookup state changes must preserve exactly one logo image');
+  const icons = button.querySelectorAll('span.snote-encar-wordmark');
+  assert.equal(icons.length, 1, 'Lookup state changes must preserve exactly one visible wordmark');
   assert.equal(icons[0].namespaceURI, 'http://www.w3.org/1999/xhtml');
-  assert.equal(icons[0].getAttribute('src'), LOOKUP_LOGO_SRC, 'Every lookup state must keep the supplied PNG logo');
+  assert.equal(icons[0].textContent, 'Encar');
   assert.equal(icons[0].classList.contains('snote-encar-wordmark'), true);
-  assert.equal(icons[0].getAttribute('alt'), '', 'The button names the action; the image is decorative');
+  assert.equal(button.querySelectorAll('img').length, 0, 'The header must not depend on image loading or expose a broken image');
   assert.equal(icons[0].getAttribute('aria-hidden'), 'true');
   assert.equal(icons[0].tabIndex, -1, 'Keyboard focus belongs to the button');
   assert.equal(button.querySelectorAll('svg').length, 0, 'The logo replaces the previous drawn icon');
@@ -681,8 +680,6 @@ test('28 unavailable popups and native token errors never expose raw exceptions'
 
 test('middleware failures keep allowlisted request reasons without exposing response fields or opening advertisements', async t => {
   for (const [code, status, message] of [
-    ['SESSION_UNAVAILABLE', 503, '로그인 상태를 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.'],
-    ['SESSION_REPLACED', 401, '다른 기기에서 로그인하여 로그아웃되었습니다.'],
     ['UNAUTHORIZED', 401, '로그인이 필요합니다. 다시 로그인해 주세요.'],
     ['FORBIDDEN', 403, '허용되지 않은 요청입니다. S-NOTE에서 다시 시도해 주세요.'],
     ['RATE_LIMITED', 429, '요청이 많습니다. 잠시 후 다시 시도해 주세요.']
@@ -704,8 +701,8 @@ test('middleware failures keep allowlisted request reasons without exposing resp
   assert.equal(JSON.parse(unknown.copyFallback.value).code, 'HTTP_ERROR'); assert.doesNotMatch(unknown.note.textContent, /PRIVATE/);
 });
 
-test('current ownership exceptions preserve their reason while late exceptions remain silent', async t => {
-  for (const code of ['SESSION_UNAVAILABLE', 'SESSION_CONTEXT_CHANGED']) {
+test('current account-context exceptions preserve their reason while late exceptions remain silent', async t => {
+  for (const code of ['SESSION_CONTEXT_CHANGED']) {
     for (const typed of [false, true]) {
       const f = fixture(t, {bridge:true}); f.click(); await settle();
       const error = typed ? Object.assign(Error('PRIVATE_AUTH_ERROR'), {code, httpStatus:503}) : Error(code);
@@ -718,31 +715,8 @@ test('current ownership exceptions preserve their reason while late exceptions r
   }
   for (const change of [f=>{f.w.currentUser={username:'another-user'};}, f=>{f.state.ready=false;}]) {
     const f = fixture(t, {bridge:true}); f.click(); await settle(); change(f); f.w.SnoteEncarLink.refresh();
-    f.requests[0].pending.reject(Object.assign(Error('PRIVATE_AUTH_ERROR'), {code:'SESSION_UNAVAILABLE',httpStatus:503})); await settle();
+    f.requests[0].pending.reject(Object.assign(Error('PRIVATE_AUTH_ERROR'), {code:'SESSION_CONTEXT_CHANGED',httpStatus:503})); await settle();
     assert.equal(f.note.textContent, ''); assert.equal(f.copyButton.hidden, true); assert.equal(f.tabs[0].closed, true); assert.equal(f.saveCalls.length, 0);
-  }
-});
-
-test('session-unavailable diagnostics retain only fixed stages, bounded upstream status and UUID through JSON or typed failures', async t => {
-  for (const typed of [false, true]) {
-    for (const stage of ['CONFIG_INVALID','RPC_TIMEOUT','RPC_HTTP_ERROR','RPC_RESPONSE_INVALID','RPC_NETWORK_ERROR','REQUEST_ABORTED']) {
-      await t.test((typed ? 'typed ' : 'JSON ') + stage, async sub => {
-        const f = fixture(sub, {bridge:true}); f.click(); await settle();
-        const diagnostics = {code:'SESSION_UNAVAILABLE',stage,upstreamHttpStatus:503,requestId:REQUEST_ID,token:'PRIVATE_TOKEN',body:'PRIVATE_BODY',url:'https://private.invalid/'};
-        if (typed) f.requests[0].pending.reject(Object.assign(Error('PRIVATE_WRAPPER_ERROR'), {code:'SESSION_UNAVAILABLE',httpStatus:503,diagnostics}));
-        else f.reply(0, {ok:false,code:'SESSION_UNAVAILABLE',diagnostics,error:'PRIVATE_RESPONSE'}, {status:503});
-        await settle(); f.copyButton.click(); await settle();
-        assert.deepEqual(JSON.parse(f.copyFallback.value), {service:'snote-encar',code:'SESSION_UNAVAILABLE',httpStatus:503,requestId:REQUEST_ID,stage,upstreamHttpStatus:503});
-        assert.doesNotMatch(f.copyFallback.value, /PRIVATE|12가3456|43000001|https:|token/); assert.equal(f.saveCalls.length, 0);
-        assert.equal(f.tabs[0].closed, true); assert.deepEqual(f.tabs[0].navigations, []);
-      });
-    }
-    const f = fixture(t); f.click(); await settle();
-    const diagnostics = {code:'SESSION_UNAVAILABLE',stage:'PRIVATE_STAGE',upstreamHttpStatus:600,requestId:'PRIVATE_ID',token:'PRIVATE_TOKEN'};
-    if (typed) f.requests[0].pending.reject(Object.assign(Error('PRIVATE_WRAPPER_ERROR'), {code:'SESSION_UNAVAILABLE',httpStatus:503,diagnostics}));
-    else f.reply(0, {ok:false,code:'SESSION_UNAVAILABLE',diagnostics}, {status:503});
-    await settle(); f.copyButton.click(); await settle();
-    assert.deepEqual(JSON.parse(f.copyFallback.value), {service:'snote-encar',code:'SESSION_UNAVAILABLE',httpStatus:503});
   }
 });
 
@@ -979,17 +953,13 @@ test('48 reuses the permanent header action without duplicate controls and resto
  assert.deepEqual(f.tabs[0].navigations,[listing().sellerUrl]);
 });
 
-test('the permanent Encar wordmark has a visible fallback while the image loads or fails without enabling unavailable authentication', async t => {
- const f=fixture(t,{headerActions:true,staticButton:true,ready:false}),logo=f.button.querySelector('img.snote-encar-wordmark'),fallback=f.button.querySelector('.snote-encar-fallback');
- assert.equal(fallback.textContent,'Encar');assert.equal(fallback.hidden,false);assert.equal(fallback.getAttribute('aria-hidden'),'true');assert.equal(logo.style.display,'none');assert.equal(f.button.hidden,false);assert.equal(f.button.disabled,true);
- logo.dispatchEvent(new f.w.Event('error'));assert.equal(fallback.hidden,false);assert.equal(logo.style.display,'none');
- Object.defineProperty(logo,'naturalWidth',{configurable:true,value:2129});logo.dispatchEvent(new f.w.Event('load'));
- assert.equal(fallback.hidden,true);assert.equal(logo.style.display,'');
- logo.dispatchEvent(new f.w.Event('error'));assert.equal(fallback.hidden,false);assert.equal(logo.style.display,'none');
- f.state.ready=true;f.w.SnoteEncarLink.refresh();assert.equal(f.button.disabled,false);assert.equal(fallback.hidden,false);
- f.click();await settle();f.reply(0,{ok:false,code:'SESSION_UNAVAILABLE'},{status:503});await settle();
- assert.equal(f.button.hidden,false);assert.equal(fallback.hidden,false);assert.equal(f.button.disabled,false);assert.equal(f.tabs[0].closed,true);assert.deepEqual(f.tabs[0].navigations,[]);
- assert.equal(f.w.document.querySelectorAll('.snote-encar-fallback').length,1);assert.equal(f.requests.length,1);
+test('the permanent Encar wordmark needs no image and does not enable unavailable authentication', async t => {
+ const f=fixture(t,{headerActions:true,staticButton:true,ready:false}),wordmark=assertLookupIcon(f.button);
+ assert.equal(wordmark.hidden,false);assert.equal(f.button.hidden,false);assert.equal(f.button.disabled,true);
+ f.state.ready=true;f.w.SnoteEncarLink.refresh();assert.equal(f.button.disabled,false);assert.equal(assertLookupIcon(f.button),wordmark);
+ f.click();await settle();f.reply(0,{ok:false,code:'UNAUTHORIZED'},{status:401});await settle();
+ assert.equal(f.button.hidden,false);assert.equal(wordmark.hidden,false);assert.equal(f.button.disabled,false);assert.equal(f.tabs[0].closed,true);assert.deepEqual(f.tabs[0].navigations,[]);
+ assert.equal(assertLookupIcon(f.button),wordmark);assert.equal(f.requests.length,1);
 });
 
 function pricedListing(priceWon=37770000,checkedAt=new Date(Date.now()-3600000).toISOString(),id='43000001') {

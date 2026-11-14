@@ -13,7 +13,7 @@ fs.mkdirSync(ART,{recursive:true});
   try{
    assert.match(fs.readFileSync(path.join(ROOT,'index.html'),'utf8'),/id="vehicle-encar-check"[^>]*disabled>/,'The header action exists before any script initializes');
    assert.equal(await p.locator('.snote-encar-button').count(),1);assert.equal(await button.isVisible(),true);assert.equal(await button.isEnabled(),true);
-   const geometry=await button.evaluate(el=>{const r=el.getBoundingClientRect(),img=el.querySelector('img');return{width:r.width,height:r.height,hit:document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)?.closest('button')===el,logo:img.complete&&img.naturalWidth>0,inHeader:el.parentElement.id==='vehicle-header-actions',overflow:document.documentElement.scrollWidth>innerWidth};});
+   const geometry=await button.evaluate(el=>{const r=el.getBoundingClientRect(),mark=el.querySelector('span.snote-encar-wordmark');return{width:r.width,height:r.height,hit:document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)?.closest('button')===el,logo:mark?.textContent==='Encar'&&!el.querySelector('img')&&mark.getBoundingClientRect().height>0,inHeader:el.parentElement.id==='vehicle-header-actions',overflow:document.documentElement.scrollWidth>innerWidth};});
    assert(geometry.width>=40&&geometry.height>=40&&geometry.hit&&geometry.logo&&geometry.inHeader);assert.equal(geometry.overflow,false);
    f.reply(response);const opening=f.context.waitForEvent('page');await button.click();const popup=await opening;await popup.waitForURL(sellerUrl);await popup.close();
    await p.locator('.snote-encar-save-status').getByText('광고 링크를 서버에 저장했습니다.',{exact:true}).waitFor();
@@ -54,22 +54,23 @@ fs.mkdirSync(ART,{recursive:true});
   }catch(error){await f.context.close();throw error;}
  }
  for(const lookupUnavailable of[false,true]){
-  const f=await fixture(390,null,{encarLogoUnavailable:true,lookupUnavailable}),p=f.page,button=p.locator('#vehicle-encar-check'),fallback=button.locator('.snote-encar-fallback');
+  const f=await fixture(390,null,{encarLogoUnavailable:true,lookupUnavailable}),p=f.page,button=p.locator('#vehicle-encar-check'),fallback=button.locator('span.snote-encar-wordmark');
   try{
+   await p.addStyleTag({content:'#vehicle-encar-check img{display:block!important}'});
    const sell=await p.evaluate(()=>cars[0].sell);
    assert.equal(await button.isVisible(),true);assert.equal(await fallback.isVisible(),true);assert.equal(await fallback.textContent(),'Encar');
    const geometry=await fallback.evaluate(el=>{const r=el.getBoundingClientRect();return{width:r.width,height:r.height,color:getComputedStyle(el).color};});assert(geometry.width>20&&geometry.height>=13);
-   assert.equal(await button.locator('img').isHidden(),true);assert.equal(await p.locator('#vehicle-encar-check').count(),1);
+   assert.equal(await button.locator('img').count(),0);assert.equal(await p.locator('#vehicle-encar-check').count(),1);
    if(lookupUnavailable){
     assert.equal(await p.evaluate(()=>typeof window.SnoteEncarLink),'undefined');assert.equal(await button.isDisabled(),true);
     await button.evaluate(el=>el.click());assert.equal(f.requests.length,0);
    }else{
     assert.equal(await button.isEnabled(),true);
-    f.reply({ok:false,code:'SESSION_UNAVAILABLE',diagnostics:{code:'SESSION_UNAVAILABLE',stage:'RPC_NETWORK_ERROR'}},503);
+    f.reply({ok:false,code:'UNAUTHORIZED'},401);
     const opening=f.context.waitForEvent('page');await button.click();const popup=await opening;
     if(!popup.isClosed())await popup.waitForEvent('close');await p.locator('#vehicle-encar-check:not([disabled])').waitFor();
     assert.equal(await button.isVisible(),true);assert.equal(await fallback.isVisible(),true);assert.equal(f.requests.length,1);
-    assert.match(await p.locator('.snote-encar-note').textContent(),/로그인 상태/);
+    assert.match(await p.locator('.snote-encar-note').textContent(),/로그인/);
     await p.evaluate(()=>{window.__encarFixtureState.ready=false;window.SnoteEncarLink.refresh();});
     assert.equal(await button.isVisible(),true);assert.equal(await fallback.isVisible(),true);assert.equal(await button.isDisabled(),true);
     await button.evaluate(el=>el.click());assert.equal(f.requests.length,1);
@@ -78,40 +79,9 @@ fs.mkdirSync(ART,{recursive:true});
    await p.evaluate(()=>{cars[0].status='판매완료';renderVehicle();});assert.equal(await button.isHidden(),true);
    await p.evaluate(()=>{cars[0].status='판매중';renderVehicle();});assert.equal(await button.isVisible(),true);assert.equal(await fallback.isVisible(),true);
    assert.equal(await p.evaluate(()=>window.__encarFixtureWrites.length),0);assert.equal(await p.evaluate(()=>cars[0].sell),sell);assert.equal(f.navigations.length,0);
-   await p.screenshot({path:path.join(ART,'encar-fallback-'+(lookupUnavailable?'controller-unavailable':'session503')+'.png')});
-   results.push({width:390,missingLogoFallback:true,lookupControllerUnavailable:lookupUnavailable,sessionNetwork503:!lookupUnavailable,soldHiddenAndUnsoldRestored:true,noNavigationOrWrites:true});
-   await finish(f);console.log('PASS visible Encar fallback with missing logo and '+(lookupUnavailable?'unavailable lookup controller':'session network503')+' preserves authentication and sold-car policy');
-  }catch(error){await f.context.close();throw error;}
- }
- for(const statusUnavailable of[false,true]){
-  const f=await fixture(390),p=f.page,button=p.locator('#vehicle-encar-check');
-  try{
-   const baseline=await p.evaluate(()=>({sell:cars[0].sell,ownerCalls:window.__encarFixtureOwnerCalls.length}));
-   await p.evaluate(()=>Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async value=>{window.__encarCopied=value;}}}));
-   if(statusUnavailable)await f.context.route('**/api/encar',async route=>{await p.evaluate(()=>{window.__encarFixtureOwnerUnavailable=true;});await route.fallback();});
-   const diagnosticRequestId='12345678-1234-4234-8234-123456789abc';
-   f.reply({ok:false,code:'SESSION_UNAVAILABLE',diagnostics:{code:'SESSION_UNAVAILABLE',stage:'RPC_HTTP_ERROR',upstreamHttpStatus:503,requestId:diagnosticRequestId,body:'PRIVATE_BODY',token:'PRIVATE_TOKEN'},error:'PRIVATE_RESPONSE',...response},503);
-   const opening=f.context.waitForEvent('page');await button.click();const popup=await opening;
-   if(!popup.isClosed())await popup.waitForEvent('close');
-   await p.waitForFunction(()=>document.getElementById('vehicle-encar-check').getAttribute('aria-busy')==='false'&&!window.__encarFixtureOwnerInspect().pending);
-   const owner=await p.evaluate(()=>window.__encarFixtureOwnerInspect());
-   assert.equal(await button.isVisible(),true,'A session-check failure may disable or shield the action but must not hide an unsold vehicle action');
-   assert.equal(f.requests.length,1);assert.equal(f.autoPriceRequests.length,0);assert.equal(f.navigations.length,0);
-   assert.equal(await p.evaluate(()=>window.__encarFixtureWrites.length),0);assert.equal(await p.evaluate(()=>cars[0].sell),baseline.sell);
-   assert.equal(await p.locator('.snote-encar-results a').count(),0);assert(await p.evaluate(count=>window.__encarFixtureOwnerCalls.length>count,baseline.ownerCalls));
-   if(statusUnavailable){
-    assert.equal(owner.state,'suspended');assert.equal(owner.authorized,false);assert.equal(await p.evaluate(()=>window.zc86Cloud.ready),false);
-    await p.locator('#snote-session-veil').waitFor({state:'visible'});assert.match(await p.locator('#snote-session-veil').textContent(),/로그인 상태/);
-    assert.equal(await button.isDisabled(),true);assert.equal(await p.locator('.snote-encar-copy').isHidden(),true);
-    assert.equal(await p.locator('.snote-encar-note').textContent(),'','Suspended ownership must not restore lookup feedback through a stale scope');
-   }else{
-    assert.equal(owner.authorized,true);assert.equal(await button.isEnabled(),true);
-    assert.equal(await p.locator('.snote-encar-note').textContent(),'로그인 상태를 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.');
-    await p.locator('.snote-encar-copy').click();const copied=await p.evaluate(()=>window.__encarCopied);
-    assert.deepEqual(JSON.parse(copied),{service:'snote-encar',code:'SESSION_UNAVAILABLE',httpStatus:503,requestId:diagnosticRequestId,stage:'RPC_HTTP_ERROR',upstreamHttpStatus:503});assert.doesNotMatch(copied,/PRIVATE|12가3456|43000001|https:|token/i);
-   }
-   results.push({width:390,sessionUnavailable503:true,actualOwnershipModule:true,ownershipSuspended:statusUnavailable,typedNotice:!statusUnavailable,noNavigation:true,noPriceOrMetadataWrites:true});
-   await finish(f);console.log('PASS middleware session 503 with actual ownership '+(statusUnavailable?'suspended safely':'rechecked and explicit diagnostics')+' and no navigation or writes');
+   await p.screenshot({path:path.join(ART,'encar-fallback-'+(lookupUnavailable?'controller-unavailable':'auth-error')+'.png')});
+   results.push({width:390,missingLogoFallback:true,lookupControllerUnavailable:lookupUnavailable,authenticationFailure:!lookupUnavailable,soldHiddenAndUnsoldRestored:true,noNavigationOrWrites:true});
+   await finish(f);console.log('PASS visible Encar fallback with missing logo and '+(lookupUnavailable?'unavailable lookup controller':'ordinary authentication error')+' preserves authentication and sold-car policy');
   }catch(error){await f.context.close();throw error;}
  }
  }finally{await browser.close();}

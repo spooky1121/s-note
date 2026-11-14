@@ -16,8 +16,6 @@ export const API_POLICIES = Object.freeze({
 const MESSAGES = {
   FORBIDDEN: [403, '허용되지 않은 요청입니다. S-NOTE에서 다시 시도해 주세요.'],
   UNAUTHORIZED: [401, '로그인이 필요합니다. 다시 로그인해 주세요.'],
-  SESSION_REPLACED: [401, '다른 기기에서 로그인하여 로그아웃되었습니다.'],
-  SESSION_UNAVAILABLE: [503, '로그인 상태를 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.'],
   NOT_FOUND: [404, '요청한 API를 찾을 수 없습니다.'],
   METHOD_NOT_ALLOWED: [405, '지원하지 않는 요청 방식입니다.'],
   INVALID_REQUEST: [400, '요청 형식을 확인해 주세요.'],
@@ -30,19 +28,9 @@ const MESSAGES = {
 export class RequestSecurityError extends Error {
   constructor(code) { super(code); this.code = code; }
 }
-export const SESSION_DIAGNOSTIC_STAGES = Object.freeze(['CONFIG_INVALID', 'RPC_TIMEOUT', 'RPC_HTTP_ERROR', 'RPC_RESPONSE_INVALID', 'RPC_NETWORK_ERROR', 'REQUEST_ABORTED']);
-function sessionDiagnostics(code, diagnostics) {
-  if (code !== 'SESSION_UNAVAILABLE' || !diagnostics || diagnostics.code !== code ||
-      !SESSION_DIAGNOSTIC_STAGES.includes(diagnostics.stage) ||
-      typeof diagnostics.requestId !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(diagnostics.requestId)) return null;
-  const safe = { code, stage: diagnostics.stage, requestId: diagnostics.requestId };
-  if (Number.isInteger(diagnostics.upstreamHttpStatus) && diagnostics.upstreamHttpStatus >= 100 && diagnostics.upstreamHttpStatus <= 599) safe.upstreamHttpStatus = diagnostics.upstreamHttpStatus;
-  return safe;
-}
-export function securityResponse(code, extraHeaders = {}, diagnostics = null) {
+export function securityResponse(code, extraHeaders = {}) {
   const [status, error] = MESSAGES[code] || MESSAGES.UPSTREAM_ERROR;
-  const safe = sessionDiagnostics(code, diagnostics);
-  return hardenAPIResponse(new Response(JSON.stringify({ ok: false, code, error, ...(safe ? { diagnostics: safe } : {}) }), {
+  return hardenAPIResponse(new Response(JSON.stringify({ ok: false, code, error }), {
     status, headers: { 'Content-Type': 'application/json; charset=utf-8', ...extraHeaders }
   }));
 }

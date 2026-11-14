@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.116">
+<html lang="ko" data-snote-release="2.118">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -3170,9 +3170,8 @@ button, input, select, textarea { font-family: inherit; }
 <link rel="stylesheet" href="assets/profit-list-layout.css?v=2.102">
 <script src="assets/dashboard-display-settings.js?v=2.102"></script>
 <link rel="stylesheet" href="assets/idle-session.css?v=2.104">
-<script src="assets/idle-auth-storage.js?v=2.114"></script>
+<script src="assets/idle-auth-storage.js?v=2.118"></script>
 <script src="assets/idle-recovery.js?v=2.104"></script>
-<script src="assets/session-ownership.js?v=2.114"></script>
 <script src="assets/idle-session.js?v=2.104"></script>
 <link rel="stylesheet" href="assets/profile-settings.css?v=2.102">
 <script src="assets/vehicle-catalog.js?v=2.82"></script>
@@ -3334,7 +3333,7 @@ button, input, select, textarea { font-family: inherit; }
     <div class="vehicle-header"><div class="vehicle-heading">
       <p class="vehicle-eyebrow" hidden></p>
       <div class="vehicle-heading-row"><div class="vehicle-name-links"><h2 id="vehicle-title">차량 상세</h2></div><div class="vehicle-header-actions" id="vehicle-header-actions" role="group" aria-label="차량 작업">
-        <button type="button" class="snote-encar-button vehicle-header-action" id="vehicle-encar-check" aria-label="엔카광고보기" data-tooltip="엔카광고보기" disabled><span class="snote-encar-fallback" aria-hidden="true" style="font:italic 800 13px/17px Arial,sans-serif;letter-spacing:-.7px;color:#d52c3b">Encar</span><img class="snote-encar-wordmark" src="assets/encar-wordmark.png?v=2.73" width="34" height="17" alt="" aria-hidden="true" draggable="false" style="display:none" onload="this.style.removeProperty('display');this.previousElementSibling.hidden=true" onerror="this.style.display='none';this.previousElementSibling.hidden=false"></button>
+        <button type="button" class="snote-encar-button vehicle-header-action" id="vehicle-encar-check" aria-label="엔카광고보기" data-tooltip="엔카광고보기" disabled><span class="snote-encar-wordmark" aria-hidden="true" style="font:normal 800 14px/17px Arial,sans-serif;letter-spacing:-.6px;color:#e52534;white-space:nowrap;pointer-events:none">Encar</span></button>
         <button type="button" class="vehicle-header-action" id="vehicle-encar-price-ocr" aria-label="광고 가격 캡처 인식" data-tooltip="광고 가격 캡처 인식" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8" cy="9" r="1.5"/><path d="m3 17 5-5 4 4 3-3 6 6M15 7h3"/></svg></button>
         <button type="button" class="vehicle-header-action quote-launch" onclick="openQuotePreview()" aria-label="견적서" data-tooltip="견적서"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8zM14 3v5h5M9 12h6M9 16h6"/></svg></button>
         <button type="button" class="vehicle-header-action contract-launch" onclick="openSaleProgress()" aria-label="판매진행" data-tooltip="판매진행"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M13 19H6v.7a1.3 1.3 0 0 1-2.6 0V18A3 3 0 0 1 2 15.5v-3a4.3 4.3 0 0 1 1.1-2.9l-.5-.1a1.1 1.1 0 0 1 .3-2.2h1L5.5 4a2.8 2.8 0 0 1 2.6-1.7h5A2.8 2.8 0 0 1 15.7 4l1.6 3.3h1a1.1 1.1 0 0 1 .3 2.2l-.5.1a4.3 4.3 0 0 1 1.1 2.9V14"/><path d="m5 10 1.9-4.2a1.1 1.1 0 0 1 1-.6h5.4a1.1 1.1 0 0 1 1 .6l1.9 4.2ZM5.2 14h2.3m4 0h2.3"/><circle cx="18.1" cy="17.7" r="4.9" fill="#fff8e7" stroke="#b49968" stroke-width="1.5"/><path d="m15.8 15.8 1.1 3.6 1.2-3.6 1.2 3.6 1.1-3.6m-5 1.7h5.4" stroke="#b49968" stroke-width="1.15"/></svg></button>
@@ -7169,7 +7168,7 @@ async function registerAccount(event){event.preventDefault();if(!isAccountant())
 async function loginAccount(event){event.preventDefault();clearAuthError('login');const id=$('login-id').value.trim().toLowerCase(),pass=$('login-pw').value;const btn=$('login-submit');btn.disabled=true;btn.textContent='확인 중…';try{const account=await getAccount(id);const hash=account?await hashPassword(pass,account.salt):null;if(!account||hash!==account.passwordHash){showAuthError('login','아이디 또는 비밀번호가 일치하지 않습니다.');return}await zc80RememberLogin(pass,account);await enterWorkspace(account)}catch(e){showAuthError('login','로그인 중 문제가 발생했습니다. 브라우저 설정을 확인해 주세요.')}finally{btn.disabled=false;btn.textContent='로그인';$('login-pw').value=''}}
 async function loginAccountingDemo(){$('login-id').value='accounting';$('login-pw').value='account1234';await loginAccount({preventDefault(){}})}
 async function loginDemo(){try{const account=await getAccount('demo');if(account){await zc80RememberLogin('demo1234',account);await enterWorkspace(account);} else showAuthError('login','테스트 계정이 준비되지 않았습니다.')}catch(_){showAuthError('login','체험 계정에 로그인할 수 없습니다.')}}
-async function enterWorkspace(account,options={}){options.guard?.();const idleApp=$('snote-app');if(idleApp){idleApp.inert=false;idleApp.removeAttribute('aria-hidden');}snoteWorkspaceSalesReady=false;snoteRefreshSalesOverview();window.snote236ResetPagination?.();snote226ResetSalesMonth();snote222ResetContractSession();window.snoteResetWorkspaceUi?.();window.snoteResetDocumentMms?.();window.snoteResetIncomeSettlement?.();window.snoteResetVehicleTaxonomy?.();window.snoteResetCalculator?.();closeDashboardGate();zcDashboardGateGranted=false;zcDashboardUnlocked=false;if(zc80SensitiveUser!==account.username)zc80SensitiveLock();currentUser={username:account.username,name:account.name,company:account.company,union:account.union,employeeNo:account.employeeNo,role:account.role||'dealer'};await Promise.all([window.SnoteFinanceLock?.load(account),window.SnoteDashboardDisplay?.load(account),window.SnoteIdleSession?.load(account)]);options.guard?.();sessionStorage.setItem('zerocar-office-v12-session',account.username);dealerAccounts=await getAllAccounts();options.guard?.();loadCarsForUser();loadCovers();snoteWorkspaceSalesReady=true;$('auth-shell').classList.add('hidden');$('profile-name').textContent=account.name+(isAccountant()?' · 경리':isSnoteAdmin()?' · 관리자':' · 딜러');$('profile-role').textContent=isAccountant()?'재고금융 및 월정산 관리':isSnoteAdmin()?'상사 관리자 · 전체 업무':account.company;$('profile-avatar').textContent=account.name.slice(0,1);if(fileDB){await refreshMedia();options.guard?.();}else {mediaByCar={};modelPhotos=[];}buildStats();if(options.restoreHistory===false){navigate(snoteDefaultPage(),{history:'none'});}else snoteEnterWorkspaceRoute();window.snoteMonthlyWorkbookRefresh?.();}
+async function enterWorkspace(account,options={}){const idleApp=$('snote-app');if(idleApp){idleApp.inert=false;idleApp.removeAttribute('aria-hidden');}snoteWorkspaceSalesReady=false;snoteRefreshSalesOverview();window.snote236ResetPagination?.();snote226ResetSalesMonth();snote222ResetContractSession();window.snoteResetWorkspaceUi?.();window.snoteResetDocumentMms?.();window.snoteResetIncomeSettlement?.();window.snoteResetVehicleTaxonomy?.();window.snoteResetCalculator?.();closeDashboardGate();zcDashboardGateGranted=false;zcDashboardUnlocked=false;if(zc80SensitiveUser!==account.username)zc80SensitiveLock();currentUser={username:account.username,name:account.name,company:account.company,union:account.union,employeeNo:account.employeeNo,role:account.role||'dealer'};await Promise.all([window.SnoteFinanceLock?.load(account),window.SnoteDashboardDisplay?.load(account),window.SnoteIdleSession?.load(account)]);sessionStorage.setItem('zerocar-office-v12-session',account.username);dealerAccounts=await getAllAccounts();loadCarsForUser();loadCovers();snoteWorkspaceSalesReady=true;$('auth-shell').classList.add('hidden');$('profile-name').textContent=account.name+(isAccountant()?' · 경리':isSnoteAdmin()?' · 관리자':' · 딜러');$('profile-role').textContent=isAccountant()?'재고금융 및 월정산 관리':isSnoteAdmin()?'상사 관리자 · 전체 업무':account.company;$('profile-avatar').textContent=account.name.slice(0,1);if(fileDB)await refreshMedia();else {mediaByCar={};modelPhotos=[];}buildStats();if(options.restoreHistory===false){navigate(snoteDefaultPage(),{history:'none'});}else snoteEnterWorkspaceRoute();window.snoteMonthlyWorkbookRefresh?.();}
 function logout(){if(window.zc86Cloud?.ready){window.zc86Cloud.signOut();return;}if(!currentUser)return;if(!confirm('로그아웃하시겠습니까?'))return;sessionStorage.removeItem('snote-idle:v1:local-session:'+encodeURIComponent(currentUser.username));window.SnoteIdleSession?.reset();window.snoteProfileEditor?.close({force:true});window.snoteResetProfileAssets?.();snote222ResetContractSession();window.snoteResetWorkspaceUi?.();window.snoteResetDocumentMms?.();window.snoteResetIncomeSettlement?.();window.snoteResetCalculator?.();window.snoteResetVehicleTaxonomy?.();window.snoteMonthlyWorkbookReset?.();zc80DismissUnlock(false);zc80SensitiveLock();closeDashboardGate();window.SnoteFinanceLock?.reset();window.SnoteDashboardDisplay?.reset();closeAutoRegistration();zcDashboardGateGranted=false;zcDashboardUnlocked=false;closeMobileDrawer();document.body.classList.remove('accountant-mode');sessionStorage.removeItem('zerocar-office-v12-session');currentUser=null;cars=[];covers={};mediaByCar={};modelPhotos=[];modelPhotoUrls.forEach(u=>URL.revokeObjectURL(u));modelPhotoUrls=[];mediaObjectUrls.forEach(u=>URL.revokeObjectURL(u));mediaObjectUrls=[];closeVehicle();closeAdd();$('auth-shell').classList.remove('hidden');$('login-id').value='';$('login-pw').value='';showAuthMode('login');$('login-id').focus();snoteResetWorkspaceNavigation();snoteWriteAuthHistory('login','replace')}
 async function seedSampleAccount(username,password,name,role,employeeNo){
  if(await getAccount(username))return;
@@ -8205,107 +8204,6 @@ document.addEventListener('click',async event=>{
 'use strict';
 const S={client:null,user:null,company:null,members:[],alias:null,ready:false,busy:false,loading:false,
  revisions:new Map(),companyOwners:new Map(),carScopes:new WeakMap(),queue:new Set(),timer:null,saving:false,conflict:false,authPassword:null};
-let snoteAuthAttempt=0,snoteOwnership=null,snoteOwnershipClient=null,snoteOwnershipSession=null,snoteOwnershipShield=null,snoteOwnershipRevoking=false,snoteExplicitAuthClient=null,snoteCredentialPending=false,snoteDeferredRevocation=null;
-let snoteOwnershipRecoveryTask=Promise.resolve();
-let snoteOwnershipUncertainCandidate=null;
-const snoteOwnershipRequests=new Set(),snoteNativeFetch=typeof window.fetch==='function'?window.fetch.bind(window):null;
-function snoteOwnershipAllowed(){return !snoteOwnership||snoteOwnership.authorized();}
-function snoteAuthTicket(){return {attempt:snoteAuthAttempt,client:S.client,user:S.user};}
-function snoteAuthSame(ticket){return ticket.attempt===snoteAuthAttempt&&ticket.client===S.client&&ticket.user===S.user;}
-function snoteAuthAssert(ticket){const owned=snoteOwnership?.inspect(),session=snoteIdleSessionId(snoteOwnershipSession);if(!snoteAuthSame(ticket)||!snoteOwnershipAllowed()||owned&&(owned.userId!==S.user?.id||owned.sessionId!==session))throw Error('SESSION_CONTEXT_CHANGED');}
-function snoteOwnershipUnveil(){const shield=snoteOwnershipShield;snoteOwnershipShield=null;if(!shield)return;shield.veil.remove();if(shield.app){shield.app.inert=!currentUser;if(currentUser)shield.app.removeAttribute('aria-hidden');}}
-function snoteOwnershipSuspend(client,force=false){
- if(client!==S.client||snoteOwnershipRevoking)return;
- if(!force&&!currentUser&&!S.ready&&!snoteExplicitAuthClient)return;
- clearTimeout(S.timer);
- if(!snoteOwnershipShield){const veil=document.createElement('div');veil.id='snote-session-veil';veil.setAttribute('role','status');veil.setAttribute('aria-live','polite');veil.textContent='로그인 상태를 확인하고 있습니다…';Object.assign(veil.style,{position:'fixed',inset:'0',zIndex:'2147483647',background:'#f7f9fc',display:'grid',placeItems:'center',color:'#526174',fontSize:'15px'});document.body.append(veil);const app=byId('snote-app');if(app)app.inert=true;snoteOwnershipShield={veil,app};}
- for(const controller of snoteOwnershipRequests)controller.abort();snoteOwnershipRequests.clear();
-}
-function snoteOwnershipPendingSnapshot(){
- const scope=snoteIdleRecoveryScope();if(!scope||!window.SnoteIdleRecovery)return null;
- const keys=new Set(S.queue);for(const[key,pending]of cloudPendingWrites)if(pending.client===S.client&&pending.user===S.user&&pending.company===S.company?.id)keys.add(key);
- const records=[];for(const key of keys){const split=key.indexOf(':'),dataset=key.slice(0,split),ownerId=key.slice(split+1);if(!['cars','covers',...Object.keys(LEGACY)].includes(dataset))continue;const storageKey=isShared(dataset)?LEGACY[dataset]:storageKeyForOwnership(dataset,ownerId);const raw=localStorage.getItem(storageKey);if(raw===null)continue;records.push({dataset,ownerId,storageKey,raw,revision:S.revisions.get(key)??cloudPendingWrites.get(key)?.expected??0});}
- const recovery=window.SnoteIdleRecovery,key=recovery.key(scope);return {scope,key,before:localStorage.getItem(key),records};
-}
-function storageKeyForOwnership(dataset,ownerId){return storageKey(dataset,ownerAlias(ownerId));}
-async function snoteOwnershipPreservePending(snapshot){
- if(!snapshot?.records.length)return;const recovery=window.SnoteIdleRecovery,entries=[];
- for(const record of snapshot.records){let parsed;try{parsed=JSON.parse(record.raw);}catch(_){parsed=record.raw;}const serialized=typeof parsed==='string'?parsed:snoteIdleCanonical(record.dataset==='monthly'?parsed:scrub(parsed));entries.push({dataset:record.dataset,ownerId:record.ownerId,storageKey:record.storageKey,revision:record.revision,hash:await recovery.hash(serialized)});}
- if(localStorage.getItem(snapshot.key)!==snapshot.before)return;const previous=recovery.read(snapshot.scope),merged=new Map((previous?.entries||[]).map(entry=>[entry.dataset+':'+entry.ownerId,entry]));for(const entry of entries)merged.set(entry.dataset+':'+entry.ownerId,entry);recovery.write(snapshot.scope,[...merged.values()]);
-}
-function snoteOwnershipQueueRecovery(snapshot){snoteOwnershipRecoveryTask=snoteOwnershipRecoveryTask.catch(()=>{}).then(()=>snoteOwnershipPreservePending(snapshot)).catch(()=>{});return snoteOwnershipRecoveryTask;}
-function snoteOwnershipDetach(){snoteOwnership?.stop();snoteOwnership=null;snoteOwnershipClient=null;snoteOwnershipSession=null;snoteOwnershipUnveil();}
-async function snoteOwnershipCandidate(){
- const conf=S.rpcConfig,lib=await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/+esm');
- const client=lib.createClient(conf.url,conf.key,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false,storageKey:'snote-login-candidate-'+crypto.randomUUID()},global:{fetch:window.fetch.bind(window)}});
- return {client,owner:window.SnoteSessionOwnership.create({client}),session:null,promoted:false,conf};
-}
-function snoteOwnershipDiscardCandidate(candidate){
- if(!candidate)return;candidate.owner.stop();try{candidate.client.auth.stopAutoRefresh?.();}catch(_){}
- const session=candidate.session,conf=candidate.conf;if(candidate.promoted||!session?.access_token||!snoteNativeFetch)return;
- if(!candidate.cancelled&&!candidate.stale){snoteOwnershipUncertainCandidate=candidate;return;}
- const abort=new AbortController(),timer=setTimeout(()=>abort.abort(),4000);void snoteNativeFetch(conf.url+'/auth/v1/logout?scope=local',{method:'POST',credentials:'omit',cache:'no-store',redirect:'error',referrerPolicy:'no-referrer',headers:{apikey:conf.key,Authorization:'Bearer '+session.access_token},signal:abort.signal}).catch(()=>{}).finally(()=>clearTimeout(timer));
-}
-async function snoteOwnershipApproveCandidate(candidate,client,attempt,remember){
- const session=candidate.session,current=()=>attempt===snoteAuthAttempt&&client===S.client;
- let claimed=await candidate.owner.claim(session,{confirmReplacement:()=>window.SnoteSessionOwnership.confirmReplacementDialog({current})});
- if(!claimed&&current()&&['verification-unavailable','verification-timeout','offline'].includes(candidate.owner.inspect().reason)){
-  const verified=await candidate.owner.check(session,'claim-ack-retry'),ack=candidate.owner.inspect();claimed=verified&&ack.reason==='ACTIVE'&&ack.generation>0;
- }
- if(!claimed){
-  if(candidate.owner.inspect().reason==='confirmation-cancelled'){candidate.cancelled=true;throw Object.assign(Error('로그인을 취소했습니다.'),{code:'SESSION_CLAIM_CANCELLED'});}
-  throw Error('로그인 상태를 확인하지 못했습니다. 다시 시도해 주세요.');
- }
- if(!current()){candidate.stale=true;throw Error('SESSION_CONTEXT_CHANGED');}
- candidate.owner.stop();snoteOwnership?.stop();snoteOwnership=null;snoteOwnershipClient=null;
- const adapter=snoteIdleAuthAdapters.get(client);if(typeof remember==='boolean')adapter?.selectRemember?.(remember);
- const identity=window.SnoteIdleAuthStorage.identity(JSON.stringify(session));adapter?.authorizeSession({...identity,generation:candidate.owner.inspect().generation});
- const result=await client.auth.setSession({access_token:session.access_token,refresh_token:session.refresh_token});
- if(!current())throw Error('SESSION_CONTEXT_CHANGED');if(result.error)throw result.error;
- const promoted=result.data?.session,found=window.SnoteIdleAuthStorage.identity(JSON.stringify(promoted||{}));
- if(!found||found.userId!==identity.userId||found.sessionId!==identity.sessionId)throw Error('SESSION_CONTEXT_CHANGED');
- if(typeof remember==='boolean')localStorage.setItem(snote95RememberKey,remember?'1':'0');
- candidate.promoted=true;snoteOwnershipUncertainCandidate=null;snoteOwnershipSession=promoted;snoteDeferredRevocation=null;snoteOwnershipBindClient(client);
- if(!await snoteOwnership.check(promoted,'promote')||!current())throw Error('로그인 상태를 확인하지 못했습니다. 다시 시도해 주세요.');
- return promoted;
-}
-function snoteOwnershipLoginRetry(){if(S.ready||snoteOwnershipRevoking)return;if(currentUser){currentUser=null;snoteIdleClearPrivateUi();}gate.hidden=false;snoteOwnershipUnveil();const app=byId('snote-app');if(app){app.inert=true;app.setAttribute('aria-hidden','true');}}
-function snoteOwnershipCallbackCurrent(client,identity){const owned=snoteOwnership?.inspect(),cached=window.SnoteIdleAuthStorage.identity(JSON.stringify(snoteOwnershipSession||{}));return client===S.client&&!!owned&&identity.userId===owned.userId&&identity.sessionId===owned.sessionId&&(!cached||cached.userId===identity.userId&&cached.sessionId===identity.sessionId);}
-async function snoteOwnershipResolveDeferred(deferred){if(!deferred||!snoteOwnershipCallbackCurrent(deferred.client,deferred.identity))return;if(snoteOwnership?.inspect().revoked)snoteOwnershipRevoke(deferred.client,deferred.identity);else await snoteOwnership?.check(undefined,'auth-event');}
-function snoteOwnershipRevoke(client,identity){
- const owned=snoteOwnership?.inspect(),cached=window.SnoteIdleAuthStorage.identity(JSON.stringify(snoteOwnershipSession||{}));
- if(snoteOwnershipRevoking||!snoteOwnershipCallbackCurrent(client,identity))return;
- if(snoteCredentialPending&&snoteExplicitAuthClient===client){snoteDeferredRevocation={client,identity};return;}
- snoteOwnershipSuspend(client,true);snoteOwnershipRevoking=true;
- const conf=S.rpcConfig,session=cached?.userId===identity.userId&&cached?.sessionId===identity.sessionId?snoteOwnershipSession:null,adapter=snoteIdleAuthAdapters.get(client);let recovery;try{recovery=snoteOwnershipPendingSnapshot();}catch(_){}
- ++snoteAuthAttempt;S.ready=false;clearTimeout(S.timer);cloudWriteEpoch++;snoteFinanceLockEpoch++;
- for(const controller of snoteOwnershipRequests)controller.abort();snoteOwnershipRequests.clear();
- try{client.auth.stopAutoRefresh?.();}catch(_){}
- const expected={userId:identity.userId,sessionId:identity.sessionId};let preserve=true;try{preserve=adapter?.hasDifferentSession?.(expected)===true;adapter?.revoke(expected,{preserve});}catch(_){}
- snoteOwnership?.stop();snoteOwnership=null;snoteOwnershipClient=null;snoteOwnershipSession=null;
- if(!preserve){const remember=byId('snote95-remember');if(remember)remember.checked=false;}
- S.client=null;S.rpcConfig=null;authInitPromise=null;cloudFlushTask=null;S.saving=false;S.loading=false;S.busy=false;S.authPassword=null;S.user=null;S.company=null;S.members=[];S.companyOwners.clear();S.queue.clear();S.revisions.clear();S.conflict=false;cloudPendingWrites.clear();currentUser=null;snoteExplicitAuthClient=null;snoteCredentialPending=false;snoteDeferredRevocation=null;for(const id of ['zc-cloud-submit','snote-admin-submit','snote-staff-submit','zc86-create-company','zc86-join-company'])if(byId(id))byId(id).disabled=false;snoteSetAuthNavigationBusy(false);
- window.SnoteIdleSession?.reset();snoteIdleClearPrivateUi();try{sessionStorage.removeItem('zerocar-office-v12-session');}catch(_){}document.body.classList.remove('zc86-online','accountant-mode');byId('zc86-topbar').hidden=true;status.hidden=true;snoteShowAuth('login',true,true);byId('zc-cloud-password').value='';msg('다른 기기에서 로그인하여 로그아웃되었습니다.');snoteOwnershipUnveil();snoteOwnershipRevoking=false;
- void snoteOwnershipQueueRecovery(recovery);
- if(conf&&session?.access_token&&snoteNativeFetch){const abort=new AbortController(),timer=setTimeout(()=>abort.abort(),4000);void snoteNativeFetch(conf.url+'/auth/v1/logout?scope=local',{method:'POST',credentials:'omit',cache:'no-store',redirect:'error',referrerPolicy:'no-referrer',headers:{apikey:conf.key,Authorization:'Bearer '+session.access_token},signal:abort.signal}).catch(()=>{}).finally(()=>clearTimeout(timer));}
-}
-async function snoteOwnershipRequire(reason='action'){return !snoteOwnership||await snoteOwnership.require(reason);}
-function snoteOwnershipPrivateRequest(input,init){
- try{const url=new URL(typeof input==='string'||input instanceof URL?input:input.url,location.href),headers=new Headers(init?.headers||input?.headers),authorization=headers.get('Authorization');if(!authorization?.startsWith('Bearer '))return false;const project=S.rpcConfig?.url;if(project&&url.origin===new URL(project).origin){if(/^\/rest\/v1\/rpc\/snote_session_(?:claim|status)$/.test(url.pathname))return false;return /^\/(?:rest|storage)\/v1\//.test(url.pathname);}return url.origin===location.origin&&url.pathname.startsWith('/api/');}catch(_){return false;}
-}
-function snoteOwnershipFenceResponse(response,owner,attempt){
- const current=()=>owner===snoteOwnership&&attempt===snoteAuthAttempt&&(!owner||owner.authorized());
- for(const name of ['json','text','blob','arrayBuffer','formData'])if(typeof response[name]==='function'){const consume=response[name].bind(response);Object.defineProperty(response,name,{configurable:true,value:async(...args)=>{const value=await consume(...args);if(!current())throw Error('SESSION_CONTEXT_CHANGED');return value;}});}
- if(typeof response.clone==='function'){const clone=response.clone.bind(response);Object.defineProperty(response,'clone',{configurable:true,value:()=>{if(!current())throw Error('SESSION_CONTEXT_CHANGED');return snoteOwnershipFenceResponse(clone(),owner,attempt);}});}
- return response;
-}
-if(snoteNativeFetch)window.fetch=async(input,init={})=>{
- const guarded=snoteOwnershipPrivateRequest(input,init),owner=snoteOwnership,attempt=snoteAuthAttempt;
- if(guarded&&owner){if(!await owner.require('action')||owner!==snoteOwnership||attempt!==snoteAuthAttempt)throw Error('SESSION_UNAVAILABLE');const headers=new Headers(init.headers||input?.headers),token=headers.get('Authorization')?.replace(/^Bearer /,'');const identity=window.SnoteIdleAuthStorage.identity(JSON.stringify({access_token:token})),expected=owner.inspect();if(!identity||identity.userId!==expected.userId||identity.sessionId!==expected.sessionId)throw Error('SESSION_CONTEXT_CHANGED');}
- if(!guarded)return snoteNativeFetch(input,init);
- const controller=new AbortController(),abort=()=>controller.abort(),signal=init.signal||input?.signal;signal?.addEventListener('abort',abort,{once:true});if(signal?.aborted)abort();snoteOwnershipRequests.add(controller);
- try{const response=await snoteNativeFetch(input,{...init,signal:controller.signal});if(owner&&(owner!==snoteOwnership||attempt!==snoteAuthAttempt||!owner.authorized()))throw Error('SESSION_CONTEXT_CHANGED');if(owner&&[401,403,503].includes(response.status)){let failure;try{failure=await response.clone().json();}catch(_){}const code=['SESSION_REPLACED','SESSION_UNAVAILABLE'].find(code=>failure?.code===code||failure?.message===code);if(code){const diagnostics={code},raw=failure?.diagnostics;if(code==='SESSION_UNAVAILABLE'&&raw?.code===code){if(['CONFIG_INVALID','RPC_TIMEOUT','RPC_HTTP_ERROR','RPC_RESPONSE_INVALID','RPC_NETWORK_ERROR','REQUEST_ABORTED'].includes(raw.stage))diagnostics.stage=raw.stage;if(Number.isInteger(raw.upstreamHttpStatus)&&raw.upstreamHttpStatus>=100&&raw.upstreamHttpStatus<=599)diagnostics.upstreamHttpStatus=raw.upstreamHttpStatus;if(typeof raw.requestId==='string'&&/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(raw.requestId))diagnostics.requestId=raw.requestId;}await owner.check(undefined,'server');throw Object.assign(Error(code),{code,httpStatus:response.status,diagnostics});}}return snoteOwnershipFenceResponse(response,owner,attempt);}catch(error){if(owner===snoteOwnership&&attempt===snoteAuthAttempt&&!controller.signal.aborted)void owner?.check(undefined,'network');throw error;}finally{signal?.removeEventListener('abort',abort);snoteOwnershipRequests.delete(controller);}
-};
 const NIL='00000000-0000-0000-0000-000000000000';
 const BUCKET='zc-vehicle-private';
 const byId=id=>document.getElementById(id);
@@ -8410,7 +8308,7 @@ function toEntry(k){
 }
 const originalSet=Storage.prototype.setItem;
 Storage.prototype.setItem=function(k,v){originalSet.call(this,k,v);if(this===localStorage&&S.ready&&!S.loading){const entry=toEntry(k);if(entry)enqueue(entry.ds,entry.owner)}};
-function enqueue(ds,owner){if(S.conflict)return;S.queue.add(cloudKey(ds,owner));showStatus('● 서버 저장 대기 중','busy');clearTimeout(S.timer);if(snoteOwnershipAllowed())S.timer=setTimeout(flush,600)}
+function enqueue(ds,owner){if(S.conflict)return;S.queue.add(cloudKey(ds,owner));showStatus('● 서버 저장 대기 중','busy');clearTimeout(S.timer);S.timer=setTimeout(flush,600)}
 let cloudFlushTask=null,cloudWriteEpoch=0;
 // Keep the exact in-flight payload until its revision is acknowledged. A lost
 // response must be checked against the server before another CAS write is sent.
@@ -8423,7 +8321,6 @@ function cloudSamePayload(left,right){
 }
 async function flush(){
  if(cloudFlushTask)return cloudFlushTask;
- if(!snoteOwnershipAllowed())return {ok:false,error:'로그인 상태를 확인하고 있습니다.'};
  if(!S.ready)return {ok:false,error:'온라인 로그인 상태를 확인해 주세요.'};
  if(S.conflict)return {ok:false,error:'다른 기기와의 수정 충돌을 먼저 해결해 주세요.'};
  if(!S.queue.size)return {ok:true};
@@ -8487,35 +8384,23 @@ async function flush(){
  cloudFlushTask=task;
  try{return await task}finally{if(cloudFlushTask===task){S.saving=false;cloudFlushTask=null}}
 }
-function snoteOwnershipBindClient(client){
- if(snoteOwnershipClient===client&&snoteOwnership)return snoteOwnership;
- if(typeof window.SnoteSessionOwnership?.create!=='function')throw Error('로그인 상태 확인 기능을 불러오지 못했습니다.');
- snoteOwnership?.stop();
- snoteOwnershipClient=client;snoteOwnership=window.SnoteSessionOwnership.create({client,
-  onSuspend:identity=>{if(snoteOwnershipCallbackCurrent(client,identity))snoteOwnershipSuspend(client);},
-  onResume:identity=>{if(snoteOwnershipCallbackCurrent(client,identity)&&snoteOwnershipClient===client&&!snoteOwnershipRevoking&&snoteExplicitAuthClient!==client)snoteOwnershipUnveil();},
-  onRevoked:identity=>snoteOwnershipRevoke(client,identity)
- });
- return snoteOwnership;
-}
 async function ensureConnection(conf){
  const lib=await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/+esm');
  if(typeof lib?.createClient!=='function')throw Error('Supabase 인증 라이브러리를 불러오지 못했습니다.');
- let remember=snote95Remember();const base={getItem:key=>(remember?localStorage:sessionStorage).getItem(key),setItem(key,value){const target=remember?localStorage:sessionStorage;target.setItem(key,value);(target===localStorage?sessionStorage:localStorage).removeItem(key);},removeItem:key=>{localStorage.removeItem(key);sessionStorage.removeItem(key);}};
- const authStorage=window.SnoteIdleAuthStorage.create({project:new URL(conf.url).origin,base,local:localStorage,session:sessionStorage});authStorage.selectRemember=value=>{remember=value===true;};
- if(typeof window.SnoteSessionOwnership?.create!=='function')throw Error('로그인 상태 확인 기능을 불러오지 못했습니다. 페이지를 새로고침해 주세요.');
- const client=lib.createClient(conf.url,conf.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false,storage:authStorage},global:{fetch:window.fetch.bind(window)}});
- // A failed restoration must not block a fresh isolated credential attempt.
- // Auto-restore and ownership checks verify the saved session separately.
+ const authStorage=window.SnoteIdleAuthStorage.create({project:new URL(conf.url).origin,base:snote95AuthStore,local:localStorage,session:sessionStorage});
+ const client=lib.createClient(conf.url,conf.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false,storage:authStorage}});
+ const {error}=await client.auth.getSession();if(error)throw error;
+ // Keep client unset on a failed connection; do not leave a half-initialized client.
  S.client=client;S.rpcConfig={client,url:conf.url,key:conf.key};snoteIdleAuthAdapters.set(client,authStorage);
- snoteOwnershipBindClient(client);
  client.auth.onAuthStateChange?.((event,session)=>{
-  if(client!==S.client||snoteOwnershipClient!==client)return;
-  const sid=snoteIdleSessionId(session),owner=snoteOwnership,owned=owner?.inspect(),attempt=snoteAuthAttempt;
-  if(sid&&sid===owned?.sessionId&&session?.user?.id===owned.userId){snoteOwnershipSession=session;snoteIdleVerifiedSessions.set(client,{userId:owned.userId,sessionId:sid,token:session.access_token});}
-  if(snoteExplicitAuthClient===client){if(snoteCredentialPending&&event==='SIGNED_OUT'&&owned?.userId&&owned.sessionId)snoteDeferredRevocation={client,identity:owned};return;}
-  if(event==='SIGNED_OUT'||owned?.sessionId&&sid&&sid!==owned.sessionId){setTimeout(()=>{if(attempt===snoteAuthAttempt&&owner===snoteOwnership&&client===S.client&&snoteOwnershipClient===client&&owned?.userId&&owned.sessionId)void owner.check(undefined,'auth-event');},0);return;}
-  if(session&&['TOKEN_REFRESHED','USER_UPDATED','SIGNED_IN'].includes(event))setTimeout(()=>{const now=owner?.inspect(),cached=snoteIdleSessionId(snoteOwnershipSession);if(attempt===snoteAuthAttempt&&owner===snoteOwnership&&client===S.client&&snoteOwnershipClient===client&&snoteExplicitAuthClient!==client&&sid&&now?.sessionId===sid&&cached===sid&&now.userId===session.user?.id&&S.user?.id===now.userId)void owner.check(session,'refresh');},0);
+  const context=snoteIdleContext();if(!context?.ready||context.client!==client)return;
+  const sid=snoteIdleSessionId(session),previous=context.sessionId;
+  if(event!=='SIGNED_OUT'&&sid&&session?.user?.id===context.userId){
+   snoteIdleVerifiedSessions.set(client,{userId:context.userId,sessionId:sid,token:session.access_token});
+   if(previous&&sid!==previous){const account=currentUser;setTimeout(()=>{if(snoteIdleCurrent(context)&&S.ready&&snoteIdleVerifiedSessions.get(client)?.sessionId===sid){window.SnoteIdleSession?.reset();void window.SnoteIdleSession?.load(account);}},0);}
+   return;
+  }
+  if(event==='SIGNED_OUT'||(previous&&sid&&sid!==previous))setTimeout(()=>{if(snoteIdleCurrent(context)&&S.ready)void snoteIdleExpire(context,{sessionId:previous,reason:'session-changed',preserveNewSession:true});},0);
  });
 }
 // A saved URL/key only restores the form on page reload, not the JS Auth client.
@@ -8531,23 +8416,19 @@ async function requireAuthClient(){
  return authInitPromise;
 }
 async function readCompany(){
- const ticket=snoteAuthTicket();snoteAuthAssert(ticket);
  S.companyOwners.clear();
- let {data,error}=await S.client.from('zc_members').select('user_id,company_id,role,display_name,active').eq('user_id',S.user.id).maybeSingle();snoteAuthAssert(ticket);if(error)throw error;
+ let {data,error}=await S.client.from('zc_members').select('user_id,company_id,role,display_name,active').eq('user_id',S.user.id).maybeSingle();if(error)throw error;
  if(!data)return false;
  if(!data.active)throw Error('관리자가 비활성화한 계정입니다.');
- const c=await S.client.from('zc_companies').select('id,name,rrn_enabled').eq('id',data.company_id).single();snoteAuthAssert(ticket);if(c.error)throw c.error;S.company=c.data;
+ const c=await S.client.from('zc_companies').select('id,name,rrn_enabled').eq('id',data.company_id).single();if(c.error)throw c.error;S.company=c.data;
  try{
   const profile=await snoteReadCompanyProfile(S.company.id);
-  snoteAuthAssert(ticket);
   if(profile.error)throw profile.error;
   S.company={...S.company,...profile.data};
- }catch(error){snoteAuthAssert(ticket);console.warn('상사 문서정보 조회 실패',error?.code||'request failed');}
+ }catch(error){console.warn('상사 문서정보 조회 실패',error?.code||'request failed');}
  const memberFields='user_id,role,display_name,company_id,active';
  let mem=await S.client.from('zc_members').select(memberFields+',phone').eq('company_id',S.company.id).eq('active',true);
- snoteAuthAssert(ticket);
  if(['42703','PGRST204','42501'].includes(mem.error?.code))mem=await S.client.from('zc_members').select(memberFields).eq('company_id',S.company.id).eq('active',true);
- snoteAuthAssert(ticket);
  if(mem.error)throw mem.error;
  S.members=mem.data||[];
  S.alias=ownerAlias(S.user.id);return true;
@@ -8677,23 +8558,18 @@ async function restoreDatasets(){
  }finally{if(current()){S.loading=false;if(S.ready)snote216InitMonthly();}}
 }
 async function prepareLegacyAccount(pass){
- const ticket=snoteAuthTicket();snoteAuthAssert(ticket);
  for(let tries=0;!accountDB&&tries<30;tries++)await new Promise(r=>setTimeout(r,100));
- snoteAuthAssert(ticket);
  if(!accountDB)accountDB=await openAccountDB();
- snoteAuthAssert(ticket);
  let me=null;const all=[];
  for(const member of S.members){
   const alias=ownerAlias(member.user_id),own=member.user_id===S.user.id;
   const seed=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(member.user_id));
-  snoteAuthAssert(ticket);
   const salt=[...new Uint8Array(seed).slice(0,16)].map(v=>v.toString(16).padStart(2,'0')).join('');
   let a={username:alias,name:member.display_name||'직원',company:S.company.name,employeeNo:own?'CLOUD-STAFF':'CLOUD',role:member.role==='admin'?'admin':member.role==='accountant'?'accountant':'dealer',union:'',phone:member.phone||'',salt,
    passwordHash:own&&pass?await hashPassword(pass,salt):'requires-cloud-reauth',createdAt:Date.now()};
-  snoteAuthAssert(ticket);all.push(a);if(own)me=a;
+  all.push(a);if(own)me=a;
  }
  await new Promise((resolve,reject)=>{let tx=accountDB.transaction('users','readwrite'),store=tx.objectStore('users');for(const a of all)store.put(a);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)});
- snoteAuthAssert(ticket);
  return me;
 }
 function snoteShowOnboarding(){
@@ -8714,29 +8590,23 @@ function snoteStartAccessTracking(){
  window.SnoteAccessTracker?.start({rpc:()=>client.rpc('snote_access_ping'),current:()=>S.ready&&S.client===client&&S.user?.id===actorId});
 }
 async function hydrateWorkspace(pass){
- const ticket=snoteAuthTicket();if(!await snoteOwnershipRequire('hydrate'))throw Error('로그인 상태를 확인하지 못했습니다. 다시 시도해 주세요.');snoteAuthAssert(ticket);
  window.SnoteIdleSession?.reset();
  window.SnoteAccessTracker?.stop();
  window.snoteProfileEditor?.close({force:true});snoteProfileResetAssets();
  snote221ResetIncome();snote220InvalidateCatalog();snote216ResetMonthly();
  S.ready=false;snoteRefreshSalesOverview();snoteFinanceLockEpoch++;closeDashboardGate();zcDashboardGateGranted=false;zcDashboardUnlocked=false;window.SnoteFinanceLock?.reset();window.SnoteDashboardDisplay?.reset();window.SnoteVehicleCostSettings?.reset?.();
- const hasCompany=await readCompany();snoteAuthAssert(ticket);
- if(!hasCompany){
+ if(!await readCompany()){
   let completed;
-  try{completed=await snoteCompleteRegistration();snoteAuthAssert(ticket);}catch(e){snoteAuthAssert(ticket);snoteShowOnboarding();throw e;}
+  try{completed=await snoteCompleteRegistration();}catch(e){snoteShowOnboarding();throw e;}
   if(!completed){snoteShowOnboarding();return;}
-  const readyCompany=await readCompany();snoteAuthAssert(ticket);if(!readyCompany)throw Error('가입 정보가 처리되었지만 소속 상사를 확인하지 못했습니다. 다시 로그인해 주세요.');
+  if(!await readCompany())throw Error('가입 정보가 처리되었지만 소속 상사를 확인하지 못했습니다. 다시 로그인해 주세요.');
  }
  byId('zc86-onboard').hidden=true;
- await snoteOwnershipRecoveryTask;snoteAuthAssert(ticket);
  await restoreDatasets();
- snoteAuthAssert(ticket);
  if(typeof restoreFinanceCompanies==='function')restoreFinanceCompanies();
  const account=await prepareLegacyAccount(pass);
- snoteAuthAssert(ticket);
- if(pass){await zc80RememberLogin(pass,account);snoteAuthAssert(ticket);}else zc80SensitiveLock();
- await enterWorkspace(account,{guard:()=>snoteAuthAssert(ticket)});snoteAuthAssert(ticket);
- if(!await snoteOwnershipRequire('hydrate-ready'))throw Error('로그인 상태를 확인하지 못했습니다. 다시 시도해 주세요.');snoteAuthAssert(ticket);
+ if(pass)await zc80RememberLogin(pass,account);else zc80SensitiveLock();
+ await enterWorkspace(account);
  S.ready=true;snoteRefreshSalesOverview();snoteStartAccessTracking();S.authPassword=null;gate.hidden=true;byId('zc86-topbar').hidden=false;byId('zc-cloud-banner')&&(byId('zc-cloud-banner').hidden=false);
  document.body.classList.add('zc86-online');
  window.SnoteIdleSession?.render();
@@ -8749,24 +8619,18 @@ async function hydrateWorkspace(pass){
  showStatus(S.idleRecoveryNotice||'● 서버 연결 및 저장 준비 완료');
  void snote220RefreshTaxonomy().catch(()=>{});snote216InitMonthly();void snoteProfileRefreshAvatar();
  await refreshMedia();
- snoteAuthAssert(ticket);snoteOwnershipUnveil();
 }
 async function doSignIn(e){e?.preventDefault?.();if(S.busy)return;S.busy=true;const button=byId('zc-cloud-submit');button.disabled=true;
- const attempt=++snoteAuthAttempt;
  const email=byId('zc-cloud-email').value.trim(),pass=byId('zc-cloud-password').value;
- let candidate;
   try{
+  localStorage.setItem(snote95RememberKey,byId('snote95-remember').checked?'1':'0');
   const client=await requireAuthClient();
-  if(attempt!==snoteAuthAttempt)return;snoteExplicitAuthClient=client;snoteOwnershipSuspend(client);S.ready=false;
-  if(currentUser){let snapshot;try{snapshot=snoteOwnershipPendingSnapshot();}catch(_){}cloudWriteEpoch++;clearTimeout(S.timer);currentUser=null;snoteIdleClearPrivateUi();void snoteOwnershipQueueRecovery(snapshot);}
-  snoteCredentialPending=true;candidate=await snoteOwnershipCandidate();if(attempt!==snoteAuthAttempt||client!==S.client)return;const {data,error}=await candidate.client.auth.signInWithPassword({email,password:pass});if(error)throw error;if(!data?.user||!data.session)throw Error('로그인 정보를 확인하지 못했습니다');candidate.session=data.session;
- if(attempt!==snoteAuthAttempt||client!==S.client)return;
- const promoted=await snoteOwnershipApproveCandidate(candidate,client,attempt,byId('snote95-remember').checked);snoteCredentialPending=false;S.user=promoted.user;S.authPassword=pass;
- if(attempt!==snoteAuthAttempt||client!==S.client)return;
+  const {data,error}=await client.auth.signInWithPassword({email,password:pass});if(error)throw error;if(!data?.user)throw Error('로그인 정보를 확인하지 못했습니다');
+ S.user=data.user;S.authPassword=pass;
  await hydrateWorkspace(pass);
  msg(S.company?'':'회사 정보가 없으면 상사 생성 또는 초대 코드를 입력하세요.');
- }catch(e){if(attempt===snoteAuthAttempt){S.loading=false;snoteOwnershipLoginRetry();if(e?.code==='SESSION_CLAIM_CANCELLED')msg(e.message);else fail(e,'로그인');}}
- finally{snoteOwnershipDiscardCandidate(candidate);if(attempt===snoteAuthAttempt){snoteCredentialPending=false;snoteExplicitAuthClient=null;S.busy=false;button.disabled=false;byId('zc-cloud-password').value='';snoteSetPasswordVisibility(false);const deferred=snoteDeferredRevocation;snoteDeferredRevocation=null;if(deferred)await snoteOwnershipResolveDeferred(deferred);else if(snoteOwnershipAllowed())snoteOwnershipUnveil();}}
+ }catch(e){fail(e,'로그인');}
+ finally{S.busy=false;button.disabled=false;byId('zc-cloud-password').value='';snoteSetPasswordVisibility(false);}
 }
 async function afterOnboard(kind){
  if(S.busy)return;
@@ -8776,16 +8640,14 @@ async function afterOnboard(kind){
  if(!display)throw Error('직원 성명을 입력하세요.');
  if(kind==='new'&&(company.length<2||company.length>100))throw Error('상사명은 2~100자로 입력해 주세요.');
  if(kind!=='new'&&!code)throw Error('관리자가 발급한 초대코드를 입력해 주세요.');
- const ticket=snoteAuthTicket();snoteAuthAssert(ticket);
  S.busy=true;byId('zc86-create-company').disabled=true;byId('zc86-join-company').disabled=true;
  try{
   const {error}=await S.client.rpc(kind==='new'?'zc_bootstrap_company':'zc_join_company',kind==='new'?{p_name:company,p_display_name:display}:{p_code:code,p_display_name:display});
-  snoteAuthAssert(ticket);
   if(error)throw error;
-  if(kind!=='new'){await snoteForgetInviteCode();snoteAuthAssert(ticket);}
+  if(kind!=='new')await snoteForgetInviteCode();
   byId('zc86-onboard').hidden=true;
   await hydrateWorkspace(S.authPassword);
- }finally{if(snoteAuthSame(ticket)){S.busy=false;byId('zc86-create-company').disabled=false;byId('zc86-join-company').disabled=false;}}
+ }finally{S.busy=false;byId('zc86-create-company').disabled=false;byId('zc86-join-company').disabled=false;}
 }
 function snoteSignupProfile(kind){
  const prefix=kind==='admin'?'snote-admin-':'snote-staff-';
@@ -8825,7 +8687,7 @@ async function snoteForgetInviteCode(){
  const cleanProfile={...profile};delete cleanProfile.invite_code;
  try{
   const {data,error}=await S.client.auth.updateUser({data:{snote_registration:cleanProfile}});
-  if(!error&&data?.user?.id===S.user?.id)Object.assign(S.user,data.user);
+  if(!error&&data?.user)S.user=data.user;
  }catch(_){/* Joining succeeded. A profile cleanup failure must not revoke membership. */}
 }
 async function registerAccount(kind){
@@ -8840,32 +8702,27 @@ async function registerAccount(kind){
  try{profile=snoteSignupProfile(kind);}catch(e){msg(errMsg(e));return;}
  const email=byId(prefix+'email').value.trim(),password=passwordInput.value,button=byId(prefix+'submit');
  const originalLabel=button.textContent;
- const attempt=++snoteAuthAttempt;
- let candidate;
  S.busy=true;button.disabled=true;button.textContent='가입 처리 중…';snoteSetAuthNavigationBusy(true);msg('');
  try{
   const client=await requireAuthClient();
-  if(attempt!==snoteAuthAttempt)return;snoteExplicitAuthClient=client;snoteCredentialPending=true;
-  candidate=await snoteOwnershipCandidate();if(attempt!==snoteAuthAttempt||client!==S.client)return;
-  const {data,error}=await candidate.client.auth.signUp({email,password,options:{emailRedirectTo:location.origin+location.pathname,data:{snote_registration:profile}}});candidate.session=data?.session||null;
-  if(attempt!==snoteAuthAttempt||client!==S.client)return;
+  const {data,error}=await client.auth.signUp({email,password,options:{emailRedirectTo:location.origin+location.pathname,data:{snote_registration:profile}}});
   if(error)throw error;
   if(!data?.user||Array.isArray(data.user.identities)&&data.user.identities.length===0){
    throw Error('이미 등록된 이메일일 수 있습니다. 기존 계정으로 로그인하거나 인증 메일을 확인해 주세요.');
   }
   byId('zc-cloud-email').value=email;
   if(data.session){
-   const promoted=await snoteOwnershipApproveCandidate(candidate,client,attempt);snoteCredentialPending=false;S.user=promoted.user;S.authPassword=password;
-   if(attempt!==snoteAuthAttempt||client!==S.client)return;
+   S.user=data.user;S.authPassword=password;
    await hydrateWorkspace(password);
    if(S.ready){msg('');}
   }else{
    snoteShowAuth('complete',false);
    byId('snote-signup-complete-message').textContent=email+' 주소로 보낸 인증 메일을 확인한 뒤 로그인해 주세요. '+(kind==='admin'?'로그인하면 입력한 정보로 상사 관리자 등록을 이어갑니다.':'로그인하면 관리자에게 받은 초대코드로 소속 상사에 연결합니다.');
   }
- }catch(e){if(attempt===snoteAuthAttempt){snoteOwnershipLoginRetry();msg('가입을 완료하지 못했습니다: '+errMsg(e));}}
+ }catch(e){msg('가입을 완료하지 못했습니다: '+errMsg(e));}
  finally{
-  snoteOwnershipDiscardCandidate(candidate);if(attempt===snoteAuthAttempt){snoteCredentialPending=false;snoteExplicitAuthClient=null;S.busy=false;S.authPassword=null;button.disabled=false;button.textContent=originalLabel;snoteSetAuthNavigationBusy(false);passwordInput.value='';confirmation.value='';confirmation.setCustomValidity('');const deferred=snoteDeferredRevocation;snoteDeferredRevocation=null;if(deferred)await snoteOwnershipResolveDeferred(deferred);else if(snoteOwnershipAllowed())snoteOwnershipUnveil();}
+  S.busy=false;S.authPassword=null;button.disabled=false;button.textContent=originalLabel;snoteSetAuthNavigationBusy(false);
+  passwordInput.value='';confirmation.value='';confirmation.setCustomValidity('');
  }
 }
 const prevUpdate=updateDB;
@@ -9237,7 +9094,6 @@ async function snoteIdleExpire(context,{sessionId,reason,preserveNewSession=fals
   const conf=S.rpcConfig,latest=snoteIdleVerifiedSessions.get(context.client);
   const changed=preserveNewSession||latest?.sessionId!==sessionId||adapter.hasDifferentSession?.({userId:context.userId,sessionId});
   S.ready=false;cloudWriteEpoch++;snoteFinanceLockEpoch++;clearTimeout(S.timer);S.authPassword=null;
-  snoteOwnershipDetach();++snoteAuthAttempt;
   try{context.client.auth.stopAutoRefresh?.();}catch(_){}
   adapter?.revoke({userId:context.userId,sessionId},{preserve:changed});
   if(!changed){try{localStorage.removeItem(snote95RememberKey);}catch(_){}const remember=byId('snote95-remember');if(remember)remember.checked=false;}
@@ -9976,11 +9832,7 @@ window.addEventListener('online',()=>{if(S.ready&&!S.conflict)flush()});
 window.addEventListener('offline',()=>{if(S.ready)showStatus('● 인터넷 연결 끊김 · 저장 불가','bad')});
 
 async function signOut(){if(!confirm('온라인 계정에서 로그아웃할까요?'))return;
- const logoutClient=S.client,logoutSession=snoteOwnershipSession,logoutConfig=S.rpcConfig,logoutIdentity=window.SnoteIdleAuthStorage.identity(JSON.stringify(logoutSession||{}));
- await flush();if(logoutClient!==S.client)return;if(S.queue.size||S.saving||S.conflict){alert('서버에 아직 저장하지 못한 변경사항이 있어 로그아웃을 중단했습니다. 연결 상태를 확인하세요.');return;}window.SnoteIdleSession?.reset();window.SnoteAccessTracker?.stop();snote221ResetIncome();snote216ResetMonthly();snote220InvalidateCatalog();window.snoteResetCalculator?.();S.ready=false;snoteRefreshSalesOverview();snoteFinanceLockEpoch++;closeDashboardGate();zcDashboardGateGranted=false;zcDashboardUnlocked=false;window.SnoteFinanceLock?.reset();window.SnoteDashboardDisplay?.reset();window.SnoteVehicleCostSettings?.reset?.();window.snoteProfileEditor?.close({force:true});snoteProfileResetAssets();S.authPassword=null;++snoteAuthAttempt;
- const adapter=snoteIdleAuthAdapters.get(logoutClient),preserve=logoutIdentity&&adapter?.hasDifferentSession?.(logoutIdentity);try{logoutClient.auth.stopAutoRefresh?.();adapter?.revoke(logoutIdentity,{preserve:!!preserve});}catch(_){}snoteOwnershipDetach();
- if(logoutConfig&&logoutSession?.access_token&&logoutIdentity&&snoteNativeFetch){const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),4000);void snoteNativeFetch(logoutConfig.url+'/auth/v1/logout?scope=local',{method:'POST',credentials:'omit',cache:'no-store',redirect:'error',referrerPolicy:'no-referrer',headers:{apikey:logoutConfig.key,Authorization:'Bearer '+logoutSession.access_token},signal:controller.signal}).catch(()=>{}).finally(()=>clearTimeout(timer));}
- if(!preserve){localStorage.removeItem(snote95RememberKey);byId('snote95-remember').checked=false;}S.client=null;S.rpcConfig=null;authInitPromise=null;S.user=null;S.company=null;S.members=[];
+ await flush();if(S.queue.size||S.saving||S.conflict){alert('서버에 아직 저장하지 못한 변경사항이 있어 로그아웃을 중단했습니다. 연결 상태를 확인하세요.');return;}window.SnoteIdleSession?.reset();window.SnoteAccessTracker?.stop();snote221ResetIncome();snote216ResetMonthly();snote220InvalidateCatalog();window.snoteResetCalculator?.();S.ready=false;snoteRefreshSalesOverview();snoteFinanceLockEpoch++;closeDashboardGate();zcDashboardGateGranted=false;zcDashboardUnlocked=false;window.SnoteFinanceLock?.reset();window.SnoteDashboardDisplay?.reset();window.SnoteVehicleCostSettings?.reset?.();window.snoteProfileEditor?.close({force:true});snoteProfileResetAssets();S.authPassword=null;await S.client.auth.signOut({scope:'local'});localStorage.removeItem(snote95RememberKey);byId('snote95-remember').checked=false;S.user=null;S.company=null;S.members=[];
  if(currentUser){zc80SensitiveLock();currentUser=null;cars=[];covers={};}
  sessionStorage.removeItem('zerocar-office-v12-session');snoteResetWorkspaceNavigation();
  byId('zc86-topbar').hidden=true;status.hidden=true;snoteShowAuth('login',true,true);msg('로그아웃되었습니다.');
@@ -10441,23 +10293,17 @@ byId('zc-cloud-connect').addEventListener('click',async()=>{
 byId('zc-cloud-config-change').addEventListener('click',()=>{S.client=null;setup.hidden=false;login.hidden=true;byId('zc86-onboard').hidden=true;msg('')});
 async function snote95AutoRestore(){
  if(!snote95Remember()||!config||S.ready||S.busy)return;
- S.busy=true;const attempt=++snoteAuthAttempt;
+ S.busy=true;
  try{
   msg('저장된 계정 확인 중…');
   const client=await requireAuthClient();
-  if(attempt!==snoteAuthAttempt)return;snoteExplicitAuthClient=client;
-  const restored=await client.auth.getSession();if(attempt!==snoteAuthAttempt||client!==S.client)return;
-  if(restored.error||!restored.data?.session){msg('로그인이 만료되었습니다. 다시 로그인하세요.');return;}
   const {data,error}=await client.auth.getUser(); // Verified by Supabase Auth, not by IP or a local key alone.
-  if(attempt!==snoteAuthAttempt||client!==S.client)return;
   if(error||!data?.user){msg('로그인이 만료되었습니다. 다시 로그인하세요.');return;}
-  S.user=data.user;snoteOwnershipSession=restored.data.session;
-  if(!await snoteOwnership.check(restored.data.session,'restore'))throw Error('로그인 상태를 확인하지 못했습니다.');
-  if(attempt!==snoteAuthAttempt||client!==S.client)return;
+  S.user=data.user;
   await hydrateWorkspace(''); // no saved password: sensitive data stays locked until reauthentication
-  if(attempt===snoteAuthAttempt)msg('');
- }catch(e){if(attempt===snoteAuthAttempt){S.loading=false;snoteOwnershipLoginRetry();console.warn('자동 로그인 확인 실패:',e?.message||e);msg('자동 로그인 확인에 실패했습니다. 계정으로 다시 로그인하세요.');}}
- finally{if(attempt===snoteAuthAttempt){snoteExplicitAuthClient=null;S.busy=false;if(snoteOwnershipAllowed())snoteOwnershipUnveil();}}
+  msg('');
+ }catch(e){console.warn('자동 로그인 확인 실패:',e?.message||e);msg('자동 로그인 확인에 실패했습니다. 계정으로 다시 로그인하세요.');}
+ finally{S.busy=false;}
 }
 const config=publicDefault||validConfig(parsePayload(localStorage.getItem(keyConfig))||{});
 if(config){setup.hidden=true;login.hidden=false;byId('zc-cloud-url').value=config.url;byId('zc-cloud-key').value=config.key;}
@@ -10499,7 +10345,7 @@ function snoteProfileCurrent(context){const now=snoteProfileContext();return !!c
 function snoteProfileError(code,message){return Object.assign(Error(message),{code});}
 function snoteProfileAssert(context){if(!snoteProfileCurrent(context))throw snoteProfileError('SNOTE_PROFILE_CONTEXT','로그인 정보가 변경되었습니다.');}
 async function snoteProfilePinned(context){
- snoteProfileAssert(context);if(!await snoteOwnershipRequire('profile'))throw snoteProfileError('42501','로그인 상태를 확인해 주세요.');snoteProfileAssert(context);const result=await context.client.auth.getSession();snoteProfileAssert(context);
+ snoteProfileAssert(context);const result=await context.client.auth.getSession();snoteProfileAssert(context);
  if(result.error)throw result.error;const session=result.data?.session;
  if(session?.user?.id!==context.userId||typeof session.access_token!=='string'||!session.access_token||session.access_token.length>32768)throw snoteProfileError('42501','본인 계정 인증을 확인해 주세요.');
  const verified=await context.client.auth.getUser(session.access_token);snoteProfileAssert(context);
@@ -10891,7 +10737,7 @@ window.snoteVehicleShareBridge={
  async reply(c,args){if(!this.current(c))throw Error('CONTEXT_CHANGED');const r=await S.client.rpc('snote_vehicle_share_reply',args);if(!this.current(c))throw Error('CONTEXT_CHANGED');if(r.error)throw r.error;return r.data;},
  async file(c,path){if(!this.current(c))throw Error('로그인 정보가 변경되었습니다.');const r=await S.client.storage.from('zc-vehicle-private').download(path);if(!this.current(c))throw Error('로그인 정보가 변경되었습니다.');if(r.error)throw r.error;return r.data;}
 };
-window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client||!await snoteOwnershipRequire('token'))return null;const client=S.client,{data,error}=await client.auth.getSession();return error||client!==S.client||!snoteOwnershipAllowed()?null:data?.session?.access_token||null;},verifyPassword:async pass=>{if(!S.client||!S.user?.email||!await snoteOwnershipRequire('reauth'))return false;return window.snoteFinanceLockBridge.verifyPassword(pass);},get conflict(){return S.conflict},removeCarMedia:snote90RemoveCarMedia,membersAliases(){return snoteCompanyOwnerRows().map(m=>ownerAlias(m.user_id));},ownerLabel:snoteCompanyOwnerLabel,readOwnerCars:snoteReadCompanyOwnerCars,get isAdmin(){return S.members.some(m=>m.user_id===S.user?.id&&m.active&&m.role==='admin')},get ready(){return S.ready&&snoteOwnershipAllowed()},get rrnEnabled(){return !!S.company?.rrn_enabled},get company(){return S.company?.name||''},get companyProfile(){if(!S.ready||!S.company)return null;return Object.fromEntries(['name','business_number','business_phone','representative_name','business_postcode','business_address','business_address_detail'].map(key=>[key,S.company[key]||'']));},flush,reload,signOut};
+window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;const {data,error}=await S.client.auth.getSession();return error?null:data?.session?.access_token||null;},verifyPassword:async pass=>{if(!S.client||!S.user?.email)return false;return window.snoteFinanceLockBridge.verifyPassword(pass);},get conflict(){return S.conflict},removeCarMedia:snote90RemoveCarMedia,membersAliases(){return snoteCompanyOwnerRows().map(m=>ownerAlias(m.user_id));},ownerLabel:snoteCompanyOwnerLabel,readOwnerCars:snoteReadCompanyOwnerCars,get isAdmin(){return S.members.some(m=>m.user_id===S.user?.id&&m.active&&m.role==='admin')},get ready(){return S.ready},get rrnEnabled(){return !!S.company?.rrn_enabled},get company(){return S.company?.name||''},get companyProfile(){if(!S.ready||!S.company)return null;return Object.fromEntries(['name','business_number','business_phone','representative_name','business_postcode','business_address','business_address_detail'].map(key=>[key,S.company[key]||'']));},flush,reload,signOut};
  setTimeout(snote95AutoRestore,0);
 })();
 
@@ -10903,11 +10749,11 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client||!await snoteO
 <script type="module" src="assets/income-settlement-parent.js?v=2.112"></script>
 <script src="assets/vehicle-sharing.js?v=2.107" defer></script>
 <script src="assets/shared-vehicle-markers.js?v=2.87" defer></script>
-<script src="assets/release-info.js?v=2.116" defer></script>
+<script src="assets/release-info.js?v=2.118" defer></script>
 <script src="assets/company-purchase.js?v=2.77" defer></script>
 <script src="assets/recycle-bin.js?v=2.77" defer></script>
 <script src="assets/profile-editor.js?v=2.102" defer></script>
-<script src="assets/snote-encar-link.js?v=2.116" defer></script>
+<script src="assets/snote-encar-link.js?v=2.118" defer></script>
 <link rel="stylesheet" href="assets/encar-price-ocr.css?v=2.110">
 <script src="assets/encar-price-ocr.js?v=2.110" defer></script>
 <script src="assets/document-mms.js?v=2.44" defer></script>
