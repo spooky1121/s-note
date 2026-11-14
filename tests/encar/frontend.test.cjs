@@ -550,7 +550,37 @@ test('21 service diagnostic error codes distinguish setup, search, detail and ti
   }
   assert.equal(new Set(messages).size, 21);
   const f = fixture(t); f.click(); await settle(); f.reply(0, { status: 'error', diagnostics: { code: 'UNKNOWN_PRIVATE_CODE' } }, { status: 503 }); await settle();
-  assert.equal(f.note.textContent, '엔카 조회 기능의 서버 설정이 필요합니다. 관리자에게 문의해 주세요.');
+  assert.equal(f.note.textContent, '광고 확인 서버가 일시적으로 응답하지 않습니다. 잠시 후 다시 시도해 주세요.');
+});
+
+test('non-JSON server failures retain HTTP status and a temporary availability reason without navigation or writes', async t => {
+  for (const status of [500, 502, 503, 504]) {
+    await t.test(String(status), async sub => {
+      const f = fixture(sub, {bridge:true, savedRecord:storedRecord()}); f.click(); await settle();
+      f.reply(0, '<!doctype html><title>PRIVATE_EDGE_ERROR</title>', {status, contentType:'text/html; charset=utf-8'}); await settle();
+      assert.equal(f.note.textContent, '광고 확인 서버가 일시적으로 응답하지 않습니다. 잠시 후 다시 시도해 주세요.');
+      assert.doesNotMatch(f.note.textContent, /PRIVATE|설정|연결되지/); assert.equal(f.note.dataset.error, 'true');
+      assert.equal(f.tabs[0].closed, true); assert.deepEqual(f.tabs[0].navigations, []); assert.equal(f.saveCalls.length, 0);
+      assert.equal(f.links.length, 2, 'Saved links remain available after an unsuccessful recheck'); assert.equal(f.button.disabled, false);
+      f.copyButton.click(); await settle();
+      assert.deepEqual(JSON.parse(f.copyFallback.value), {service:'snote-encar',code:'SERVER_UNAVAILABLE',httpStatus:status});
+      assert.doesNotMatch(f.copyFallback.value, /PRIVATE|12가3456|43000001|https:|token/);
+    });
+  }
+});
+
+test('unreadable JSON server failures retain availability diagnostics without replacing ownership errors', async t => {
+  for (const failure of [new SyntaxError('PRIVATE_JSON_BODY'), new TypeError('PRIVATE_TRUNCATED_BODY')]) {
+    const f = fixture(t, {bridge:true}); f.click(); await settle();
+    f.reply(0, null, {status:503, jsonPromise:Promise.reject(failure)}); await settle(); f.copyButton.click(); await settle();
+    assert.equal(f.note.textContent, '광고 확인 서버가 일시적으로 응답하지 않습니다. 잠시 후 다시 시도해 주세요.');
+    assert.deepEqual(JSON.parse(f.copyFallback.value), {service:'snote-encar',code:'SERVER_UNAVAILABLE',httpStatus:503});
+    assert.equal(f.tabs[0].closed, true); assert.deepEqual(f.tabs[0].navigations, []); assert.equal(f.saveCalls.length, 0);
+    assert.doesNotMatch(f.copyFallback.value, /PRIVATE/);
+  }
+  const f = fixture(t); f.click(); await settle();
+  f.reply(0, null, {status:503,jsonPromise:Promise.reject(Error('SESSION_CONTEXT_CHANGED'))}); await settle(); f.copyButton.click(); await settle();
+  assert.equal(JSON.parse(f.copyFallback.value).code, 'SESSION_CONTEXT_CHANGED');
 });
 
 test('22 a manual URL supplies only its explicit ID and cannot navigate until the server verifies the original seller', async t => {
@@ -690,6 +720,29 @@ test('current ownership exceptions preserve their reason while late exceptions r
     const f = fixture(t, {bridge:true}); f.click(); await settle(); change(f); f.w.SnoteEncarLink.refresh();
     f.requests[0].pending.reject(Object.assign(Error('PRIVATE_AUTH_ERROR'), {code:'SESSION_UNAVAILABLE',httpStatus:503})); await settle();
     assert.equal(f.note.textContent, ''); assert.equal(f.copyButton.hidden, true); assert.equal(f.tabs[0].closed, true); assert.equal(f.saveCalls.length, 0);
+  }
+});
+
+test('session-unavailable diagnostics retain only fixed stages, bounded upstream status and UUID through JSON or typed failures', async t => {
+  for (const typed of [false, true]) {
+    for (const stage of ['CONFIG_INVALID','RPC_TIMEOUT','RPC_HTTP_ERROR','RPC_RESPONSE_INVALID','RPC_NETWORK_ERROR','REQUEST_ABORTED']) {
+      await t.test((typed ? 'typed ' : 'JSON ') + stage, async sub => {
+        const f = fixture(sub, {bridge:true}); f.click(); await settle();
+        const diagnostics = {code:'SESSION_UNAVAILABLE',stage,upstreamHttpStatus:503,requestId:REQUEST_ID,token:'PRIVATE_TOKEN',body:'PRIVATE_BODY',url:'https://private.invalid/'};
+        if (typed) f.requests[0].pending.reject(Object.assign(Error('PRIVATE_WRAPPER_ERROR'), {code:'SESSION_UNAVAILABLE',httpStatus:503,diagnostics}));
+        else f.reply(0, {ok:false,code:'SESSION_UNAVAILABLE',diagnostics,error:'PRIVATE_RESPONSE'}, {status:503});
+        await settle(); f.copyButton.click(); await settle();
+        assert.deepEqual(JSON.parse(f.copyFallback.value), {service:'snote-encar',code:'SESSION_UNAVAILABLE',httpStatus:503,requestId:REQUEST_ID,stage,upstreamHttpStatus:503});
+        assert.doesNotMatch(f.copyFallback.value, /PRIVATE|12가3456|43000001|https:|token/); assert.equal(f.saveCalls.length, 0);
+        assert.equal(f.tabs[0].closed, true); assert.deepEqual(f.tabs[0].navigations, []);
+      });
+    }
+    const f = fixture(t); f.click(); await settle();
+    const diagnostics = {code:'SESSION_UNAVAILABLE',stage:'PRIVATE_STAGE',upstreamHttpStatus:600,requestId:'PRIVATE_ID',token:'PRIVATE_TOKEN'};
+    if (typed) f.requests[0].pending.reject(Object.assign(Error('PRIVATE_WRAPPER_ERROR'), {code:'SESSION_UNAVAILABLE',httpStatus:503,diagnostics}));
+    else f.reply(0, {ok:false,code:'SESSION_UNAVAILABLE',diagnostics}, {status:503});
+    await settle(); f.copyButton.click(); await settle();
+    assert.deepEqual(JSON.parse(f.copyFallback.value), {service:'snote-encar',code:'SESSION_UNAVAILABLE',httpStatus:503});
   }
 });
 

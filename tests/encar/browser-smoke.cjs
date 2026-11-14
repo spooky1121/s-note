@@ -82,7 +82,7 @@ async function fixture(width=1440,savedCars=null,{primaryColor=null,weather=null
   if(url.pathname==='/api/encar'){
    const body=JSON.parse(request.postData());assert.equal(request.method(),'POST');assert.equal(request.headers().authorization,'Bearer '+sessionToken);assert.deepEqual(Object.keys(body).sort(),['candidateIds','plate']);assert(Array.isArray(body.candidateIds));
    f.requests.push(body);const response=f.responses.shift();assert(response,'Every lookup must have an explicit synthetic response');
-   return route.fulfill({status:response.status||200,contentType:response.contentType||'application/json',body:JSON.stringify(response.body)});
+   return route.fulfill({status:response.status||200,contentType:response.contentType||'application/json',body:typeof response.rawBody==='string'?response.rawBody:JSON.stringify(response.body)});
   }
   if(url.pathname==='/api/encar-auto-price'){
    const body=JSON.parse(request.postData());assert.equal(request.method(),'POST');assert.equal(request.headers().authorization,'Bearer '+sessionToken);assert.deepEqual(Object.keys(body).sort(),['id','plate']);assert.equal(typeof body.plate,'string');assert.match(body.id,/^[1-9][0-9]{0,11}$/);f.autoPriceRequests.push(body);

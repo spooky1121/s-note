@@ -38,9 +38,18 @@ fs.mkdirSync(ART,{recursive:true});
     await p.locator('.snote-encar-copy').click();const copied=await p.evaluate(()=>window.__encarCopied);
     assert.deepEqual(JSON.parse(copied),{service:'snote-encar',code:'CATALOG_TIMEOUT',httpStatus:502,catalogRequestCount:2});assert.doesNotMatch(copied,/PRIVATE|12가3456|43000001|https:|token/i);
     assert.equal(await p.locator('.snote-encar-results a').count(),2);assert.equal(await p.evaluate(()=>window.__encarFixtureWrites.length),1);
+    for(const contentType of['text/html; charset=utf-8','application/json']){
+     f.responses.push({status:503,contentType,rawBody:'<!doctype html><title>PRIVATE_EDGE_ERROR</title><p>PRIVATE_PROVIDER_BODY</p>'});
+     const unavailable=f.context.waitForEvent('page');await button.click();const unavailablePopup=await unavailable;
+     if(!unavailablePopup.isClosed())await unavailablePopup.waitForEvent('close');await p.locator('#vehicle-encar-check:not([disabled])').waitFor();
+     assert.equal(await p.locator('.snote-encar-note').textContent(),'광고 확인 서버가 일시적으로 응답하지 않습니다. 잠시 후 다시 시도해 주세요.');
+     await p.locator('.snote-encar-copy').click();const unavailableCopy=await p.evaluate(()=>window.__encarCopied);
+     assert.deepEqual(JSON.parse(unavailableCopy),{service:'snote-encar',code:'SERVER_UNAVAILABLE',httpStatus:503});assert.doesNotMatch(unavailableCopy,/PRIVATE|12가3456|43000001|https:|token/i);
+     assert.equal(await p.locator('.snote-encar-results a').count(),2);assert.equal(await p.evaluate(()=>window.__encarFixtureWrites.length),1);
+    }
    }
    assert.equal(await p.locator('.snote-encar-button').count(),1);await p.screenshot({path:path.join(ART,'encar-restored-'+width+'.png')});
-   results.push({width,permanentButton:true,geometry,lookup:true,scopedDatabaseSave:true,savedLinksReopen:true,soldHiddenAndInventoryRestored:true,failedRecheckPreservesLinks:true,...(width===390?{catalogTimeoutDiagnosticAndManualFallback:true}:{})});
+   results.push({width,permanentButton:true,geometry,lookup:true,scopedDatabaseSave:true,savedLinksReopen:true,soldHiddenAndInventoryRestored:true,failedRecheckPreservesLinks:true,...(width===390?{catalogTimeoutDiagnosticAndManualFallback:true,nonJsonAndMalformedJson503AvailabilityDiagnostic:true}:{})});
    await finish(f);console.log('PASS '+width+'px permanent Encar action, lookup, database save, reopen, sold/inventory transition and failed recheck');
   }catch(error){await f.context.close();throw error;}
  }
@@ -50,7 +59,8 @@ fs.mkdirSync(ART,{recursive:true});
    const baseline=await p.evaluate(()=>({sell:cars[0].sell,ownerCalls:window.__encarFixtureOwnerCalls.length}));
    await p.evaluate(()=>Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async value=>{window.__encarCopied=value;}}}));
    if(statusUnavailable)await f.context.route('**/api/encar',async route=>{await p.evaluate(()=>{window.__encarFixtureOwnerUnavailable=true;});await route.fallback();});
-   f.reply({ok:false,code:'SESSION_UNAVAILABLE',error:'PRIVATE_RESPONSE',...response},503);
+   const diagnosticRequestId='12345678-1234-4234-8234-123456789abc';
+   f.reply({ok:false,code:'SESSION_UNAVAILABLE',diagnostics:{code:'SESSION_UNAVAILABLE',stage:'RPC_HTTP_ERROR',upstreamHttpStatus:503,requestId:diagnosticRequestId,body:'PRIVATE_BODY',token:'PRIVATE_TOKEN'},error:'PRIVATE_RESPONSE',...response},503);
    const opening=f.context.waitForEvent('page');await button.click();const popup=await opening;
    if(!popup.isClosed())await popup.waitForEvent('close');
    await p.waitForFunction(()=>document.getElementById('vehicle-encar-check').getAttribute('aria-busy')==='false'&&!window.__encarFixtureOwnerInspect().pending);
@@ -67,7 +77,7 @@ fs.mkdirSync(ART,{recursive:true});
     assert.equal(owner.authorized,true);assert.equal(await button.isEnabled(),true);
     assert.equal(await p.locator('.snote-encar-note').textContent(),'로그인 상태를 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.');
     await p.locator('.snote-encar-copy').click();const copied=await p.evaluate(()=>window.__encarCopied);
-    assert.deepEqual(JSON.parse(copied),{service:'snote-encar',code:'SESSION_UNAVAILABLE',httpStatus:503});assert.doesNotMatch(copied,/PRIVATE|12가3456|43000001|https:|token/i);
+    assert.deepEqual(JSON.parse(copied),{service:'snote-encar',code:'SESSION_UNAVAILABLE',httpStatus:503,requestId:diagnosticRequestId,stage:'RPC_HTTP_ERROR',upstreamHttpStatus:503});assert.doesNotMatch(copied,/PRIVATE|12가3456|43000001|https:|token/i);
    }
    results.push({width:390,sessionUnavailable503:true,actualOwnershipModule:true,ownershipSuspended:statusUnavailable,typedNotice:!statusUnavailable,noNavigation:true,noPriceOrMetadataWrites:true});
    await finish(f);console.log('PASS middleware session 503 with actual ownership '+(statusUnavailable?'suspended safely':'rechecked and explicit diagnostics')+' and no navigation or writes');

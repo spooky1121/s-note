@@ -12,6 +12,6 @@ export async function onRequest(context) {
     if (needsSessionOwnership(context.request, checked.policy)) await requireSessionOwnership(context.request, context.env);
     return hardenAPIResponse(await context.next());
   } catch (error) {
-    return securityResponse(error instanceof RequestSecurityError ? error.code : 'UPSTREAM_ERROR');
+    return securityResponse(error instanceof RequestSecurityError ? error.code : 'UPSTREAM_ERROR', {}, error?.diagnostics);
   } // Never expose a stack, token or provider credential.
 }

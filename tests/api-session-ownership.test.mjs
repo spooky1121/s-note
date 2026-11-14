@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { API_POLICIES } from '../functions/_shared/api-security.js';
+import { API_POLICIES, securityResponse } from '../functions/_shared/api-security.js';
 import { needsSessionOwnership, requireSessionOwnership } from '../functions/_shared/session-ownership.js';
 import { onRequest } from '../functions/api/_middleware.js';
 
@@ -14,6 +14,13 @@ const req = (path = '/api/encar', options = {}) => new Request('https://s-note.e
 });
 const ack = (changes = {}) => ({ ok: true, active: true, userId, sessionId, generation: 2, reason: 'ACTIVE', ...changes });
 const throwsCode = (promise, code) => assert.rejects(promise, error => error.code === code);
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+function checkDiagnostics(diagnostics, stage, upstreamHttpStatus) {
+  assert.deepEqual(Object.keys(diagnostics).sort(), ['code', 'stage', 'requestId', ...(upstreamHttpStatus === undefined ? [] : ['upstreamHttpStatus'])].sort());
+  assert.equal(diagnostics.code, 'SESSION_UNAVAILABLE'); assert.equal(diagnostics.stage, stage);
+  assert.match(diagnostics.requestId, UUID); assert.equal(diagnostics.upstreamHttpStatus, upstreamHttpStatus);
+  for (const secret of [userId, sessionId, jwt(), env.SUPABASE_URL, env.SUPABASE_PUBLISHABLE_KEY, 'PRIVATE_UPSTREAM']) assert.equal(JSON.stringify(diagnostics).includes(secret), false);
+}
 
 test('current and legacy sessions are verified by exactly one uncached no-argument RPC', async () => {
   for (const status of [ack(), ack({ generation: 0, reason: 'LEGACY' })]) {
@@ -153,6 +160,61 @@ test('fixed session failures expose neither tokens nor upstream errors', async (
     let called = false;
     const response = await onRequest({ request: req(), env, next: () => { called = true; return Response.json({ ok: true }); } });
     assert.equal(called, false); assert.equal(response.status, 503);
-    assert.deepEqual(await response.json(), { ok: false, code: 'SESSION_UNAVAILABLE', error: '로그인 상태를 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.' });
+    const body = await response.json();
+    assert.deepEqual({ ...body, diagnostics: undefined }, { ok: false, code: 'SESSION_UNAVAILABLE', error: '로그인 상태를 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.', diagnostics: undefined });
+    checkDiagnostics(body.diagnostics, 'RPC_NETWORK_ERROR');
   } finally { globalThis.fetch = original; }
+});
+
+test('session-unavailable diagnostics distinguish configuration, HTTP, response and network failures', async t => {
+  for (const [name, extraEnv, fetcher, stage, upstreamHttpStatus] of [
+    ['configuration', { SUPABASE_URL: 'https://PRIVATE_UPSTREAM.invalid' }, () => assert.fail('invalid config must not fetch'), 'CONFIG_INVALID', undefined],
+    ['missing RPC', {}, async () => new Response('PRIVATE_UPSTREAM', { status: 404 }), 'RPC_HTTP_ERROR', 404],
+    ['server failure', {}, async () => new Response('PRIVATE_UPSTREAM', { status: 500 }), 'RPC_HTTP_ERROR', 500],
+    ['content type', {}, async () => new Response('PRIVATE_UPSTREAM'), 'RPC_RESPONSE_INVALID', 200],
+    ['invalid JSON', {}, async () => new Response('PRIVATE_UPSTREAM', { headers: { 'Content-Type': 'application/json' } }), 'RPC_RESPONSE_INVALID', 200],
+    ['invalid identity', {}, async () => Response.json(ack({ userId: 'PRIVATE_UPSTREAM' })), 'RPC_RESPONSE_INVALID', 200],
+    ['fetch failure', {}, async () => { throw Error('PRIVATE_UPSTREAM ' + jwt()); }, 'RPC_NETWORK_ERROR', undefined],
+    ['stream failure', {}, async () => new Response(new ReadableStream({ start(controller) { controller.error(Error('PRIVATE_UPSTREAM')); } }), { headers: { 'Content-Type': 'application/json' } }), 'RPC_NETWORK_ERROR', 200]
+  ]) await t.test(name, async () => {
+    await assert.rejects(requireSessionOwnership(req(), { ...env, ...extraEnv }, { fetcher }), error => {
+      assert.equal(error.code, 'SESSION_UNAVAILABLE'); checkDiagnostics(error.diagnostics, stage, upstreamHttpStatus); return true;
+    });
+  });
+});
+
+test('deadline and caller cancellation have separate bounded diagnostics and cancel response bodies', async () => {
+  for (const streamed of [false, true]) {
+    let cancelled = false, reached;
+    const ready = new Promise(resolve => { reached = resolve; });
+    const response = new Response(new ReadableStream({ pull() { reached(); }, cancel() { cancelled = true; } }, { highWaterMark: 0 }), { headers: { 'Content-Type': 'application/json' } });
+    const fetcher = streamed ? async () => response : () => { reached(); return new Promise(() => {}); };
+    await assert.rejects(requireSessionOwnership(req(), env, { timeoutMs: 10, fetcher }), error => {
+      assert.equal(error.code, 'SESSION_UNAVAILABLE'); checkDiagnostics(error.diagnostics, 'RPC_TIMEOUT', streamed ? 200 : undefined); return true;
+    });
+    assert.equal(cancelled, streamed);
+    const controller = new AbortController();
+    const checked = requireSessionOwnership(req('/api/encar', { signal: controller.signal }), env, { fetcher: () => { reached(); return new Promise(() => {}); } });
+    await ready; controller.abort();
+    await assert.rejects(checked, error => {
+      assert.equal(error.code, 'SESSION_UNAVAILABLE'); checkDiagnostics(error.diagnostics, 'REQUEST_ABORTED'); return true;
+    });
+  }
+});
+
+test('middleware keeps session diagnostics sanitized and limits them to unavailable failures', async () => {
+  const requestId = '33333333-3333-4333-8333-333333333333';
+  const diagnostics = { code: 'SESSION_UNAVAILABLE', stage: 'RPC_HTTP_ERROR', requestId, upstreamHttpStatus: 502,
+    token: jwt(), userId, sessionId, url: env.SUPABASE_URL, raw: 'PRIVATE_UPSTREAM' };
+  const response = securityResponse('SESSION_UNAVAILABLE', {}, diagnostics), body = await response.json();
+  assert.equal(response.status, 503); checkDiagnostics(body.diagnostics, 'RPC_HTTP_ERROR', 502);
+  assert.equal(body.diagnostics.requestId, requestId);
+  for (const code of ['UNAUTHORIZED', 'SESSION_REPLACED', 'UPSTREAM_ERROR']) assert.equal((await securityResponse(code, {}, diagnostics).json()).diagnostics, undefined);
+  for (const invalid of [{ ...diagnostics, stage: 'PRIVATE_UPSTREAM' }, { ...diagnostics, code: 'PRIVATE_UPSTREAM' }, { ...diagnostics, requestId: jwt() }]) {
+    assert.equal((await securityResponse('SESSION_UNAVAILABLE', {}, invalid).json()).diagnostics, undefined);
+  }
+  for (const upstreamHttpStatus of [99, 600, 502.1, '502', null, NaN]) {
+    const sanitized = (await securityResponse('SESSION_UNAVAILABLE', {}, { ...diagnostics, upstreamHttpStatus }).json()).diagnostics;
+    checkDiagnostics(sanitized, 'RPC_HTTP_ERROR');
+  }
 });
