@@ -979,6 +979,19 @@ test('48 reuses the permanent header action without duplicate controls and resto
  assert.deepEqual(f.tabs[0].navigations,[listing().sellerUrl]);
 });
 
+test('the permanent Encar wordmark has a visible fallback while the image loads or fails without enabling unavailable authentication', async t => {
+ const f=fixture(t,{headerActions:true,staticButton:true,ready:false}),logo=f.button.querySelector('img.snote-encar-wordmark'),fallback=f.button.querySelector('.snote-encar-fallback');
+ assert.equal(fallback.textContent,'Encar');assert.equal(fallback.hidden,false);assert.equal(fallback.getAttribute('aria-hidden'),'true');assert.equal(logo.style.display,'none');assert.equal(f.button.hidden,false);assert.equal(f.button.disabled,true);
+ logo.dispatchEvent(new f.w.Event('error'));assert.equal(fallback.hidden,false);assert.equal(logo.style.display,'none');
+ Object.defineProperty(logo,'naturalWidth',{configurable:true,value:2129});logo.dispatchEvent(new f.w.Event('load'));
+ assert.equal(fallback.hidden,true);assert.equal(logo.style.display,'');
+ logo.dispatchEvent(new f.w.Event('error'));assert.equal(fallback.hidden,false);assert.equal(logo.style.display,'none');
+ f.state.ready=true;f.w.SnoteEncarLink.refresh();assert.equal(f.button.disabled,false);assert.equal(fallback.hidden,false);
+ f.click();await settle();f.reply(0,{ok:false,code:'SESSION_UNAVAILABLE'},{status:503});await settle();
+ assert.equal(f.button.hidden,false);assert.equal(fallback.hidden,false);assert.equal(f.button.disabled,false);assert.equal(f.tabs[0].closed,true);assert.deepEqual(f.tabs[0].navigations,[]);
+ assert.equal(f.w.document.querySelectorAll('.snote-encar-fallback').length,1);assert.equal(f.requests.length,1);
+});
+
 function pricedListing(priceWon=37770000,checkedAt=new Date(Date.now()-3600000).toISOString(),id='43000001') {
  return {...listing(id,null),priceWon,priceCheckedAt:checkedAt,priceSource:'encar-api.com',priceStatus:'verified'};
 }

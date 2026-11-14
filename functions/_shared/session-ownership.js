@@ -68,8 +68,13 @@ export async function requireSessionOwnership(request, env, { fetcher = fetch, t
     const fetched = Promise.resolve().then(() => {
       if (controller.signal.aborted) throw controller.signal.reason;
       return fetcher(config.url, {
-        method: 'POST', headers: { apikey: config.key, Authorization: 'Bearer ' + expected.token, 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: '{}', signal: controller.signal, redirect: 'error', credentials: 'omit', referrerPolicy: 'no-referrer', cache: 'no-store'
+        method: 'POST', headers: { apikey: config.key, Authorization: 'Bearer ' + expected.token, 'Content-Type': 'application/json', Accept: 'application/json', 'Cache-Control': 'no-store' },
+        // Workers supports manual/follow, and rejects redirect:'error' before
+        // sending the request. Manual plus the non-2xx check below rejects
+        // redirects without forwarding the bearer token to another endpoint.
+        // This no-store POST also avoids Request.cache, which older Workers
+        // compatibility dates reject before opening a network request.
+        body: '{}', signal: controller.signal, redirect: 'manual', credentials: 'omit', referrerPolicy: 'no-referrer'
       });
     }).then(value => {
       // Also discard a late response from an upstream that ignored cancellation.

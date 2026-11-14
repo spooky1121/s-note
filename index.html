@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.115">
+<html lang="ko" data-snote-release="2.116">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -3334,7 +3334,7 @@ button, input, select, textarea { font-family: inherit; }
     <div class="vehicle-header"><div class="vehicle-heading">
       <p class="vehicle-eyebrow" hidden></p>
       <div class="vehicle-heading-row"><div class="vehicle-name-links"><h2 id="vehicle-title">차량 상세</h2></div><div class="vehicle-header-actions" id="vehicle-header-actions" role="group" aria-label="차량 작업">
-        <button type="button" class="snote-encar-button vehicle-header-action" id="vehicle-encar-check" aria-label="엔카광고보기" data-tooltip="엔카광고보기" disabled><img class="snote-encar-wordmark" src="assets/encar-wordmark.png?v=2.73" width="34" height="17" alt="" aria-hidden="true" draggable="false"></button>
+        <button type="button" class="snote-encar-button vehicle-header-action" id="vehicle-encar-check" aria-label="엔카광고보기" data-tooltip="엔카광고보기" disabled><span class="snote-encar-fallback" aria-hidden="true" style="font:italic 800 13px/17px Arial,sans-serif;letter-spacing:-.7px;color:#d52c3b">Encar</span><img class="snote-encar-wordmark" src="assets/encar-wordmark.png?v=2.73" width="34" height="17" alt="" aria-hidden="true" draggable="false" style="display:none" onload="this.style.removeProperty('display');this.previousElementSibling.hidden=true" onerror="this.style.display='none';this.previousElementSibling.hidden=false"></button>
         <button type="button" class="vehicle-header-action" id="vehicle-encar-price-ocr" aria-label="광고 가격 캡처 인식" data-tooltip="광고 가격 캡처 인식" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8" cy="9" r="1.5"/><path d="m3 17 5-5 4 4 3-3 6 6M15 7h3"/></svg></button>
         <button type="button" class="vehicle-header-action quote-launch" onclick="openQuotePreview()" aria-label="견적서" data-tooltip="견적서"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8zM14 3v5h5M9 12h6M9 16h6"/></svg></button>
         <button type="button" class="vehicle-header-action contract-launch" onclick="openSaleProgress()" aria-label="판매진행" data-tooltip="판매진행"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M13 19H6v.7a1.3 1.3 0 0 1-2.6 0V18A3 3 0 0 1 2 15.5v-3a4.3 4.3 0 0 1 1.1-2.9l-.5-.1a1.1 1.1 0 0 1 .3-2.2h1L5.5 4a2.8 2.8 0 0 1 2.6-1.7h5A2.8 2.8 0 0 1 15.7 4l1.6 3.3h1a1.1 1.1 0 0 1 .3 2.2l-.5.1a4.3 4.3 0 0 1 1.1 2.9V14"/><path d="m5 10 1.9-4.2a1.1 1.1 0 0 1 1-.6h5.4a1.1 1.1 0 0 1 1 .6l1.9 4.2ZM5.2 14h2.3m4 0h2.3"/><circle cx="18.1" cy="17.7" r="4.9" fill="#fff8e7" stroke="#b49968" stroke-width="1.5"/><path d="m15.8 15.8 1.1 3.6 1.2-3.6 1.2 3.6 1.1-3.6m-5 1.7h5.4" stroke="#b49968" stroke-width="1.15"/></svg></button>
@@ -7117,7 +7117,7 @@ function saveAccountantVehicle({closeAfterSave=true}={}){
  })();return job.promise;
 }
 
-function renderVehicle(){const deleteCar=cars.find(item=>item.id===activeCarId);if($('vehicle-header-delete'))$('vehicle-header-delete').hidden=!deleteCar||isAccountant()||!canManageCar(deleteCar);const draft=snoteVehicleDraftForRender();if(isAccountant()){const c=cars.find(x=>x.id===activeCarId&&canManageCar(x));if(c){renderAccountantVehicle(c);snoteVehicleRestoreDraft(draft);}return;}placeFinanceLenderAtTop(false);if(!currentUser||!activeCarId)return;const c=cars.find(x=>x.id===activeCarId&&canManageCar(x));if(!c)return;const photos=carPhotos(c.id),all=carFiles(c.id);const featured=coverPhoto(c);$('vehicle-title').textContent=c.model;$('vehicle-meta').textContent=`${isAccountant()?'담당 '+dealerLabel(c)+' · ':''}${c.plate}  ·  ${c.year}년식  ·  ${c.km}km${c.color?' · '+c.color:''}${c.purchaseAt?' · 매입일 '+c.purchaseAt:''}`;
+function renderVehicle(){const deleteCar=cars.find(item=>item.id===activeCarId);const encarButton=$('vehicle-encar-check');if(encarButton)encarButton.hidden=deleteCar?.status==='판매완료';if($('vehicle-header-delete'))$('vehicle-header-delete').hidden=!deleteCar||isAccountant()||!canManageCar(deleteCar);const draft=snoteVehicleDraftForRender();if(isAccountant()){const c=cars.find(x=>x.id===activeCarId&&canManageCar(x));if(c){renderAccountantVehicle(c);snoteVehicleRestoreDraft(draft);}return;}placeFinanceLenderAtTop(false);if(!currentUser||!activeCarId)return;const c=cars.find(x=>x.id===activeCarId&&canManageCar(x));if(!c)return;const photos=carPhotos(c.id),all=carFiles(c.id);const featured=coverPhoto(c);$('vehicle-title').textContent=c.model;$('vehicle-meta').textContent=`${isAccountant()?'담당 '+dealerLabel(c)+' · ':''}${c.plate}  ·  ${c.year}년식  ·  ${c.km}km${c.color?' · '+c.color:''}${c.purchaseAt?' · 매입일 '+c.purchaseAt:''}`;
   $('vehicle-overview').innerHTML=[['상태',statusSelect(c)],['매입가',`${num(c.buy)}원`],[c.status==='판매완료'?'판매가':'판매예정가',`${num(salePrice(c))}원`],['재고금융 분류',lenderBadge(c)],['현금 투자금',`<span id="vehicle-cash-investment" class="${inventoryInvestmentOf(c)-inventoryLoanOf(c)<0?'equity-negative':''}">${num(inventoryInvestmentOf(c)-inventoryLoanOf(c))}원</span>`]].map(([label,val])=>`<div class="vehicle-metric${label==='현금 투자금'?' vehicle-cash':''}"><label>${label}</label><strong>${val}</strong></div>`).join('');
   renderDetailIdentity(c);renderDetailCosts(c);
   renderVehiclePhotos(c);
@@ -10903,11 +10903,11 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client||!await snoteO
 <script type="module" src="assets/income-settlement-parent.js?v=2.112"></script>
 <script src="assets/vehicle-sharing.js?v=2.107" defer></script>
 <script src="assets/shared-vehicle-markers.js?v=2.87" defer></script>
-<script src="assets/release-info.js?v=2.115" defer></script>
+<script src="assets/release-info.js?v=2.116" defer></script>
 <script src="assets/company-purchase.js?v=2.77" defer></script>
 <script src="assets/recycle-bin.js?v=2.77" defer></script>
 <script src="assets/profile-editor.js?v=2.102" defer></script>
-<script src="assets/snote-encar-link.js?v=2.115" defer></script>
+<script src="assets/snote-encar-link.js?v=2.116" defer></script>
 <link rel="stylesheet" href="assets/encar-price-ocr.css?v=2.110">
 <script src="assets/encar-price-ocr.js?v=2.110" defer></script>
 <script src="assets/document-mms.js?v=2.44" defer></script>
