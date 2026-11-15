@@ -1,0 +1,18 @@
+@media screen {
+ .snote-registration-success {position:fixed;inset:0;z-index:100000;display:grid;place-items:center;padding:20px;background:#26344b20;backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);pointer-events:none;animation:snote-registration-notice-in .18s ease both}
+ .snote-registration-success-card {display:flex;flex-direction:column;align-items:center;gap:14px;padding:28px 42px;border:1px solid #edf0f5;border-radius:20px;background:#fff;box-shadow:0 16px 70px #23365122;color:#26344b}
+ .snote-registration-success-card svg {width:58px;height:58px;stroke:#2aaf85;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+ .snote-registration-success-card circle {fill:#effbf6;stroke:#c7ebdc;stroke-width:1.5}
+ .snote-registration-success-card path {stroke-dasharray:42;stroke-dashoffset:42;animation:snote-registration-check .38s .08s ease forwards}
+ .snote-registration-success-card strong {font-size:17px;font-weight:600;letter-spacing:-.4px;white-space:nowrap}
+ #list-table .snote-registration-created {animation:snote-registration-row-in .65s cubic-bezier(.2,.7,.2,1) both}
+ #list-mobile .snote-registration-created {animation:snote-registration-card-in .65s cubic-bezier(.2,.7,.2,1) both}
+ @keyframes snote-registration-notice-in {from{opacity:0;transform:scale(.97)}to{opacity:1;transform:none}}
+ @keyframes snote-registration-check {to{stroke-dashoffset:0}}
+ @keyframes snote-registration-row-in {from{opacity:0;transform:translateY(-10px);background-color:#eaf3ff}to{opacity:1;transform:none;background-color:transparent}}
+ @keyframes snote-registration-card-in {from{opacity:0;transform:translateY(-12px) scale(.985);box-shadow:0 0 0 3px #c9dfff}to{opacity:1;transform:none;box-shadow:none}}
+}
+@media (prefers-reduced-motion:reduce) {
+ .snote-registration-success,.snote-registration-success-card path,#list-table .snote-registration-created,#list-mobile .snote-registration-created {animation:none!important;transform:none!important;stroke-dashoffset:0}
+ #list-table .snote-registration-created,#list-mobile .snote-registration-created {outline:2px solid #bbd7fa;outline-offset:-2px}
+}

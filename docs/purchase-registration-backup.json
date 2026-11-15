@@ -1,0 +1,17 @@
+{
+  "feature": "purchase vehicle registration before three-step wizard",
+  "release": "2.119",
+  "createdFor": "2026-11-15 registration redesign",
+  "backupCommit": "7e37dbc89475e6fb0bb24f7b4545de6afc47c149",
+  "githubBranch": "backup/purchase-registration-v2.119",
+  "githubUrl": "https://github.com/spooky1121/s-note/tree/backup/purchase-registration-v2.119",
+  "localArchive": "/workspace/backups/s-note/purchase-registration-v2.119/registration-before-wizard.tar.gz",
+  "archiveBytes": 12526499,
+  "archiveSha256": "f673e2a4643af3e38d28dd347f7b8afb25ffabaed19b0a146f28a6903f296bd9",
+  "archivePaths": [
+    "index.html",
+    "assets",
+    "functions"
+  ],
+  "restoration": "Inspect the backup in a separate worktree and restore registration-related changes selectively; preserve later unrelated changes."
+}
