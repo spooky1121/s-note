@@ -1,0 +1,44 @@
+{
+  "release": "2.119",
+  "baseCommit": "1f8d6b8616dc244a634d535eb7e6acc620c5c25b",
+  "verifiedAt": "2026-11-15T03:43:36.477954+00:00",
+  "sourceHashes": {
+    "index.html": "3d8360aec3006c627cd92c9c55f5d1fe84ae4a33690de07c18dc0b8c2e3ff5ef",
+    "tests/normal-login.browser.cjs": "0227e859ff3a82b6e831cb5c097a9e8b5f68a076a29b4e6a90e087ceedfb2757",
+    "tests/dashboard-navigation.browser.cjs": "b094f1d8214b6906d1be2cb30dee57ee1a1b21d7a44c4f703d87517a29cad977",
+    "tests/login-company-bootstrap.test.mjs": "9af1d1206c166ec6c07d6d5bc250ab0fec2ca1e0e8f598f254e68f32f4f10483",
+    "tests/encar/direct-price-change.browser.cjs": "0080f32db09e0a42cee1dfecdcb3126044ab587ba42f83ce6c31539a4fa9c131",
+    "tests/encar/package.json": "056eaaea94f226dfc6b01429c1d41b0f4c258240f6d0b7dac37ca71636ff01a7"
+  },
+  "changes": {
+    "login": "required authentication, account data, privacy settings and idle setup finish before showing dashboard; one background media refresh does not delay login",
+    "companyReads": "parallel after active membership; captured account/client required before committing results",
+    "media": "old URLs cleared, late context checked, late database startup does not repeat cloud media",
+    "landing": "dashboard for authorized roles; accountant keeps existing permitted landing; financial lock remains active",
+    "addressBar": "main pathname only after workspace admission; back/forward uses permission-checked history state; invite/callback data preserved until consumed"
+  },
+  "validation": {
+    "coreUnitPassed": 725,
+    "coreUnitFailed": 0,
+    "browserGroups": {
+      "main": 10,
+      "navigation": 5,
+      "detail": 5,
+      "price": 7
+    },
+    "companyBootstrapDeferredCases": 6,
+    "inlineScriptSyntaxPassed": 7,
+    "pagesFunctionsBuild": "passed; Wrangler4.152.0",
+    "syntheticOnly": true,
+    "databaseWrites": 0
+  },
+  "performanceEvidence": [
+    "Workspace ready and sign-in complete while media listing and photo download are deliberately held.",
+    "Only one primary media batch, including after a late IndexedDB-ready callback.",
+    "Required authentication and active membership still block admission until confirmed."
+  ],
+  "limitations": [
+    "No live production user credentials were used; actual production login duration was not measured.",
+    "A browser still shows the site origin and can inspect network requests; URL simplification is not an authorization boundary."
+  ]
+}

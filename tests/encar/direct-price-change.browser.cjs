@@ -20,7 +20,7 @@ function sameLayout(actual,expected){for(const key of Object.keys(expected))for(
   for(const width of[1440,390,320]){
    const f=await fixture(width),p=f.page;
    try{
-    await p.evaluate(()=>{if(navigate('buy')!==true)throw Error('The direct-price fixture must be on the actual purchase list');});await seed(f);const before=await snap(p),peer=await p.evaluate(()=>normalizedCars([window.__encarFixtureCars[1]],currentUser.username)[0]);
+    await p.evaluate(()=>{if(navigate('buy')!==true)throw Error('The direct-price fixture must be on the actual purchase list');openVehicle('encar-car-1');});await seed(f);const before=await snap(p),peer=await p.evaluate(()=>normalizedCars([window.__encarFixtureCars[1]],currentUser.username)[0]);
     const tablePrice=p.locator('#list-table tr.vehicle-clickable').filter({has:p.locator('.car-name',{hasText:'가상 검증 차량 1'})}).locator('td.price').last(),cardPrice=p.locator('#list-mobile .vehicle-card').filter({has:p.locator('.vehicle-title',{hasText:'가상 검증 차량 1'})}).locator('.vehicle-price');assert.equal(await tablePrice.textContent(),'12,000,000원');assert.equal(await cardPrice.textContent(),'판매예정가 12,000,000원');
     assert.equal(f.requests.length,0,'Restoring an already stored quote must not request another advertisement');assert.equal(await p.locator(DIALOG).isVisible(),false);
     assert.equal(await p.locator('.snote-encar-price-value').textContent(),'엔카 광고가 54,900,000원');assert.doesNotMatch(await p.locator('.snote-encar-results').textContent(),/OCR|화면에서 찾은/);
