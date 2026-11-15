@@ -1,0 +1,70 @@
+{
+  "release": "2.121",
+  "baseCommit": "c860149fb7250fff274ca95f8a9432d4f1a2abd2",
+  "verifiedAt": "2026-11-15T06:35:09.535Z",
+  "sourceHashes": {
+    "index.html": "d132dfb4d8086bc4e1451df39cd72d253dee487d55382271535d39ae5dcce0a6",
+    "assets/inventory-start-date.js": "d98602906ad273a9f3c083e14fe6be3c15b234814f72cb7253e83940eeaed03a",
+    "assets/vehicle-cost-settings.js": "9329d62d2c76d1e89109b6865748d799912c60be488ce5f8d3b663e78a328b14",
+    "assets/vehicle-cost-settings.css": "deb3a47503407ce3354b035b0a64465e12f73efb7a34d0f1342f02a296b7332f",
+    "assets/purchase-registration.js": "d4c7342e2b4ff6e405feaf6835a19e7149c6ff09ae1a09291c16eb102b4210f3",
+    "assets/purchase-registration.css": "3914285687c24bb13e26669d07b4c2629c97963a7a429dc66b41ec1a30de5521",
+    "tests/inventory-interest-live.browser.cjs": "58d32abb8a1496f47dfc57ce30bb55f7f7dae1e9a881fddea1557c56053ffcfd",
+    "tests/registration-cost-settings.browser.cjs": "0630d97419a1083f3d29fd6a5ad6391ec5f285010191c2fe8c75cc05a65b6442"
+  },
+  "changes": {
+    "interest": "Current loan, lender and date input/change recompute detail interest and totals immediately; an open start-date editor previews its selected date with current unsaved financing. Closing restores the existing date with current financing.",
+    "fallback": "Unavailable calculation clears previous automatic values; saved manual fallback on another vehicle and sold snapshots remain intact.",
+    "dateOnlySave": "The date and derived stored interest use persisted financing; unsaved loan, price and memo drafts are preserved. Generic authorized vehicle scope allows a missing plate without weakening owner/account/company/context/CAS guards.",
+    "personalSettings": "One existing server preference per company_id,user_id is reused in detail and registration. New settings gear supports visibility, custom field creation and definition removal.",
+    "amounts": "Hidden/removed registration definitions keep typed values, DOM nodes and labels; strict integer-KRW amounts and normalized labels persist as top-level customCosts/customCostLabels and enter existing totals.",
+    "controls": "Registration additional-cost controls are compact blue plus and red minus icons.",
+    "lateResponses": "Stable dealer cache is separated from captured view/session/actor/client/permission. Stale successful or uncertain saves invalidate same-account cache and fetch the current authorized server state. Late-created inputs join the existing save/retry lock."
+  },
+  "validation": {
+    "coreUnitPassed": 725,
+    "costModelAndSharedListUnitPassed": 18,
+    "totalDistinctUnitPassed": 743,
+    "newRegistrationCostBrowserGroups": 8,
+    "liveInterestBrowserGroups": 6,
+    "existingRegistrationWizardGroups": 16,
+    "existingDetailCostSettingsWidths": [
+      1440,
+      1024,
+      390,
+      320
+    ],
+    "existingDetailCostNote": "Passed on immediately preceding source; the final added guard is registration-only and received independent review plus held-ACK browser coverage.",
+    "localPreferenceSqlGroups": 7,
+    "actualSourcePreferenceScopeCases": 22,
+    "inlineScriptSyntaxPassed": 7,
+    "changedExternalScriptSyntax": "passed",
+    "pagesFunctionsBuild": "passed; Wrangler4.152.0",
+    "productionSchemaChanges": 0,
+    "productionDatabaseWrites": 0,
+    "syntheticBrowserServices": true
+  },
+  "productionMetadata": {
+    "scope": "read-only function and primary-key metadata, no preference or business payloads",
+    "rpcFunctions": [
+      "snote_vehicle_cost_config_get",
+      "snote_vehicle_cost_config_save"
+    ],
+    "publicWrappers": "security invoker",
+    "preferencePrimaryKey": [
+      "company_id",
+      "user_id"
+    ],
+    "newMigrationRequired": false
+  },
+  "receipts": {
+    "cost": "/workspace/work/registration-cost-v2121/final/receipt.json",
+    "interest": "/workspace/work/v2121-inventory-live/final/receipt.json",
+    "wizard": "/workspace/work/cost-interest-v2121/wizard-regression/receipt.json",
+    "review": "/workspace/work/cost-interest-v2121/review-final.json",
+    "scope": "/workspace/work/cost-interest-v2121/preference-scope-review.json"
+  },
+  "limitations": [
+    "Browser checks use actual application sources with synthetic authentication, RPC and owner-CAS responses; no production vehicle or dealer preference was changed for testing."
+  ]
+}
