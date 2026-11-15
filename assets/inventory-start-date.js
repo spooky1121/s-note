@@ -7,9 +7,15 @@
  function current(job){return state===job&&job.epoch===epoch&&bridge()?.current(job.base)===true;}
  function close(force=false){
   if(state?.saving&&!force)return;
-  if(state?.timer)clearInterval(state.timer);
+  const previous=state;if(previous?.timer)clearInterval(previous.timer);
   state=null;epoch++;if(dialog?.open)dialog.close();
+  if(previous)bridge()?.clearPreview?.(previous.base);
   if(status)status.textContent='';
+ }
+ function preview(){
+  const job=state;if(!job||job.saving||job.retryDate||!current(job))return;
+  try{const result=bridge()?.preview?.(job.base,dateInput.value);status.textContent=result?.ready?`재고이자 ${result.amountWon.toLocaleString('ko-KR')}원`:result?.reason||'';}
+  catch{status.textContent='현재 차량의 재고 시작일을 다시 확인해 주세요.';}
  }
  async function save(){
   const job=state;if(!job||job.saving||!current(job))return;
@@ -39,7 +45,7 @@
   saveButton.onclick=save;cancelButton.onclick=()=>close();closeButton.onclick=()=>close();
   dialog.addEventListener('cancel',event=>{event.preventDefault();close();});
   document.addEventListener('keydown',event=>{if(event.key==='Escape'&&dialog.open){event.preventDefault();event.stopImmediatePropagation();close();}},true);
-  dateInput.addEventListener('input',()=>{if(state&&!state.saving&&!state.retryDate)status.textContent='';});
+  dateInput.addEventListener('input',preview);dateInput.addEventListener('change',preview);
  }
  function open(){
   if(state?.saving)return;

@@ -129,6 +129,7 @@
  }
  function reset(){
   if(!mount())return;cancelClose();setSaving(false);clearMessage();
+  window.SnoteVehicleCostSettings?.resetRegistration();
   by('new-prestock').checked=false;
   for(const id of ['new-inventory-loan','new-inventory-started-at','new-inventory-interest'])by(id).value='';
   populateLenders();by('new-inventory-lender').value='';by('new-interest-basis').textContent='';showStep(1,{focus:false});
@@ -137,6 +138,8 @@
   if(!mount())return;cancelClose();
   ensureDialog();
   if(!keepPending)reset();else{setPending(true);showStep(3,{focus:false});}
+  window.SnoteVehicleCostSettings?.renderRegistrationFields({resume:keepPending});
+  if(!keepPending)void window.SnoteVehicleCostSettings?.refresh({view:'new',force:true});
   applyRequired();synchronizeSummary();showStep(keepPending?3:1);root.scrollLeft=0;
  }
  function mount(){
@@ -155,9 +158,9 @@
   const hidden=by('new-grade-custom-wrapper');if(hidden)panels[0].append(hidden);
   const preview=by('new-visual-preview');if(preview)panels[0].append(preview);
   const prices=node('div',null,'purchase-registration-prices');for(const id of ['new-buy','new-sell']){const item=by(id)?.closest('.formitem');if(item)prices.append(item);}panels[1].append(prices);
-  const subtitle=body.querySelector('.add-subtitle');if(subtitle){subtitle.textContent='매입 부대비용';panels[1].append(subtitle);}
+  const subtitle=body.querySelector('.add-subtitle');if(subtitle){subtitle.textContent='';subtitle.append(node('span','매입 부대비용'));const settings=node('button');settings.type='button';settings.id='snote-new-cost-settings-trigger';settings.hidden=true;settings.setAttribute('aria-label','비용 항목 설정');settings.dataset.tooltip='비용 항목 설정';settings.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9.5 3-.6 2.4-2 .9-2.2-.6L2.9 9l1.7 1.7v2.6L2.9 15l1.8 3.3 2.2-.6 2 .9.6 2.4h5l.6-2.4 2-.9 2.2.6 1.8-3.3-1.7-1.7v-2.6L21.1 9l-1.8-3.3-2.2.6-2-.9-.6-2.4z"/><circle cx="12" cy="12" r="3"/></svg>';subtitle.append(settings);panels[1].append(subtitle);}
   const costs=body.querySelector('.cost-fieldgrid');if(costs)panels[1].append(costs);
-  const repair=body.querySelector('.repair-group');if(repair)panels[1].append(repair);
+  const repair=body.querySelector('.repair-group');if(repair){const add=repair.querySelector('.repair-top .section-button');if(add){add.id='new-repair-add';add.classList.add('snote-registration-cost-icon','is-add');add.setAttribute('aria-label','추가비용 추가');add.dataset.tooltip='추가비용 추가';add.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>';}panels[1].append(repair);}
   const finance=node('div',null,'purchase-registration-finance-grid');
   const prestock=node('label',null,'purchase-registration-prestock');prestock.htmlFor='new-prestock';const toggle=node('input');toggle.type='checkbox';toggle.id='new-prestock';toggle.setAttribute('role','switch');prestock.append(node('span','선재고 차량'),toggle);finance.append(prestock);
   finance.append(financeField('재고금융사','new-inventory-lender','select'),financeField('재고금액','new-inventory-loan'),financeField('재고 시작일','new-inventory-started-at','date'));
