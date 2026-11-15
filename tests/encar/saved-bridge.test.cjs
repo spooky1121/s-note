@@ -14,7 +14,7 @@ const detailMoney=between('function readDetailMoney(value){','function detailMon
 const priceAcknowledge=between('function snoteVehicleAcknowledgePrice(','function snoteVehicleDiscardPending(');
 const priceDiscard=between('function snoteVehicleDiscardPending(){','function snoteVehicleHasChanges(');
 const inventoryStartBridge=between('// Per-vehicle inventory finance start:','// A settlement can update only its financial document;');
-const inventoryStartMath=between('function snote239Interest(car){','function inventoryLoanOf(');
+const inventoryStartMath=between('function snoteInventoryLendersFor(car){','function inventoryLoanOf(');
 // Owner authorization is shared with company-purchase views. Execute the real
 // helpers too, so this isolated bridge does not replace that policy with a stub.
 const companyOwners=between('function snoteCompanyActor(){','function snoteCompanyOwnerLabel(');
@@ -48,7 +48,7 @@ function fixture({role='dealer',owner=USER,server:initial}={}){
   fail(error){events.push('failure');},alert(){},confirm:()=>true,
   snote216ResetMonthly(){},snote216InitMonthly(){},snote222ResetContractSession(){},
   loadCarsForUser(){context.cars=[...server.values()].flatMap(row=>clone(row.payload));},loadCovers(){},refreshMedia:async()=>{},buildStats(){},navigate(){},route:'buy',
-  snote220RefreshTaxonomy:async()=>{},snoteRefreshSalesOverview(){},snoteStartAccessTracking(){},
+  snote220RefreshTaxonomy:async()=>{},snoteLoadDealerRates:async()=>true,snoteRefreshSalesOverview(){},snoteStartAccessTracking(){},
   async restoreDatasets(){events.push('restore');restores++;context.snote221ResetIncome();for(const [rowKey,row]of server){const ownerId=rowKey.slice(5);localStorage.data.set(store(ownerId),JSON.stringify(row.payload));S.revisions.set(rowKey,row.revision);}},
   window:null};
  context.window=context;

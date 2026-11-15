@@ -124,6 +124,38 @@ async function authenticate(config, jwt, scope) {
   if (!object(member) || member.user_id !== user.id || member.active !== true || member.company_id !== scope.company || !['dealer', 'admin', 'accountant'].includes(member.role) || (member.role === 'dealer' && scope.owner !== user.id)) fail('FORBIDDEN');
   return { actor: user.id, role: member.role, ownName: typeof member.display_name === 'string' ? member.display_name : '' };
 }
+function financeRates(value) {
+  if (!object(value)) fail('NETWORK');
+  if (Object.keys(value).length > 100) fail('NETWORK');
+  const result = new Map();
+  for (const [name, rate] of Object.entries(value)) {
+    if (!name || name.trim() !== name || [...name].length > 45 || /[\u0000-\u001f\u007f-\u009f]/.test(name) || typeof rate !== 'number' || !Number.isFinite(rate) || rate < 0 || rate > 100 || Math.abs(rate * 10000 - Math.round(rate * 10000)) > 0.0000001) fail('NETWORK');
+    result.set(name, rate);
+  }
+  return result;
+}
+function ownerLenders(data, scope, actor, lenders, car) {
+  if (!object(data) || data.companyId !== scope.company || data.userId !== actor.actor || !Array.isArray(data.profiles) || data.profiles.length > 2000) fail('NETWORK');
+  const profiles = new Map();
+  for (const profile of data.profiles) {
+    if (!object(profile) || !UUID.test(profile.companyId || '') || !UUID.test(profile.ownerId || '') || !Number.isSafeInteger(profile.revision) || profile.revision < 0) fail('NETWORK');
+    const key = `${profile.companyId}:${profile.ownerId}`;
+    if (profiles.has(key)) fail('NETWORK');
+    const rates = financeRates(profile.rates), fallbackRates = financeRates(profile.fallbackRates);
+    profiles.set(key, { rates, fallbackRates });
+  }
+  if (!profiles.has(`${scope.company}:${actor.actor}`)) fail('NETWORK');
+  // The endpoint already authenticated a same-company source. Only its owner's
+  // override is applied; the viewer's preferences never price a peer's vehicle.
+  const profile = profiles.get(`${scope.company}:${scope.owner}`);
+  if (!profile) fail('NETWORK');
+  const { rates, fallbackRates } = profile;
+  const effective = name => rates.has(name) ? rates.get(name) : fallbackRates.has(name) ? fallbackRates.get(name) : null;
+  const result = lenders.map(row => Array.isArray(row) ? [row[0], row[1], effective(row[0])] : row);
+  const lender = String(car.inventoryLender || '').trim();
+  if ((rates.has(lender) || fallbackRates.has(lender)) && !result.some(row => Array.isArray(row) && row[0] === lender)) result.push([lender, 0, effective(lender)]);
+  return result;
+}
 async function fresh(config, jwt, scope) {
   const actor = await authenticate(config, jwt, scope);
   const companies = await fetchJson(config, jwt, '/rest/v1/zc_companies', { query: { select: 'id,name', id: `eq.${scope.company}`, limit: '1' } });
@@ -148,10 +180,14 @@ async function fresh(config, jwt, scope) {
   const { car, index } = matching[0];
   if (car.status !== '판매완료') fail('NOT_SOLD');
   let lenders = [];
-  if (Number(car.inventoryLoan || 0) > 0) {
-    const finance = await fetchJson(config, jwt, '/rest/v1/zc_datasets', { query: { select: 'payload', company_id: `eq.${scope.company}`, owner_id: 'eq.00000000-0000-0000-0000-000000000000', dataset: 'eq.finance_limits', limit: '2' } });
+  if (Number(car.inventoryLoan || 0) > 0 && !globalThis.SnoteInventoryInterest.calculate(car, []).ready) {
+    const [finance, rates] = await Promise.all([
+      fetchJson(config, jwt, '/rest/v1/zc_datasets', { query: { select: 'payload', company_id: `eq.${scope.company}`, owner_id: 'eq.00000000-0000-0000-0000-000000000000', dataset: 'eq.finance_limits', limit: '2' } }),
+      fetchJson(config, jwt, '/rest/v1/rpc/snote_dealer_finance_rates_list', { body: { p_expected_company_id: scope.company } })
+    ]);
     if (!Array.isArray(finance) || finance.length > 1) fail('VALIDATION_ERROR');
     if (finance.length) { if (!Array.isArray(finance[0].payload)) fail('VALIDATION_ERROR'); lenders = finance[0].payload; }
+    lenders = ownerLenders(rates, scope, actor, lenders, car);
   }
   let source;
   try { source = createSource(car, { ownerId: scope.owner, dealerName, companyName: companies[0].name, lenders }); } catch { fail('VALIDATION_ERROR'); }

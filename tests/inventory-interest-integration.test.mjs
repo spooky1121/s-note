@@ -14,7 +14,7 @@ function between(start,end){const a=html.indexOf(start),b=html.indexOf(end,a+sta
 function fixture(rows){
  const context=vm.createContext({cars:rows,ACC44_LENDER_LIMITS:rates,SnoteCustomCosts:globalThis.SnoteCustomCosts,SnoteInventoryInterest:{calculate:(car,lenders)=>I.calculate(car,lenders,{today:'2026-02-01'})}});
  const constants=html.split('\n').filter(line=>line.startsWith('const COST_FIELDS=')||line.startsWith('const DIRECT_COST_KEYS=')).join('\n');
- vm.runInContext(constants+'\n'+between('function normalizeRepairItems(c){','function snote238VehicleIcon(')+'\n'+between('function snote239Interest(car){','function snote239DetailInterest(')+'\n'+between('function normalizeCosts(c){','function inventoryLoanOf(')+'\n'+between('function inventoryLoanOf(c){','function inventoryInvestmentOf(')+'\n'+between('function inventoryInvestmentOf(c){','function inventoryFinanceTotals(')+'\n'+between('function inventoryFinanceTotals(){','function '),context);
+ vm.runInContext(constants+'\n'+between('function normalizeRepairItems(c){','function snote238VehicleIcon(')+'\n'+between('function snoteInventoryLendersFor(car){','function snote239DetailInterest(')+'\n'+between('function normalizeCosts(c){','function inventoryLoanOf(')+'\n'+between('function inventoryLoanOf(c){','function inventoryInvestmentOf(')+'\n'+between('function inventoryInvestmentOf(c){','function inventoryFinanceTotals(')+'\n'+between('function inventoryFinanceTotals(){','function '),context);
  return context;
 }
 const wire=()=>({id:'stock',ownerId:'owner',status:'판매중',purchaseAt:'2026-01-01',inventoryStartedAt:'2026-01-15',inventoryLoan:1000,inventoryLender:'검증금융',buy:1000,sell:1500,costs:{bodywork:2,inventoryInterest:99,repair:1},repairItems:[{memo:'기존 정비',amount:1}]});

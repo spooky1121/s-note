@@ -7,7 +7,7 @@ const files=['index.html','assets/inventory-interest.js','assets/inventory-start
 const hashes=()=>Object.fromEntries(files.map(file=>[file,crypto.createHash('sha256').update(fs.readFileSync(path.join(ROOT,file))).digest('hex')]));
 fs.mkdirSync(OUT,{recursive:true});
 async function setup(p,{blankPlate=false,explicit=true}={}){return p.evaluate(async({blankPlate,explicit})=>{
- ACC44_LENDER_LIMITS=[['KB캐피탈',150000,6],['JB우리금융',150000,12]];INVENTORY_LENDERS=ACC44_LENDER_LIMITS.map(row=>row[0]);
+ ACC44_LENDER_LIMITS=[['KB캐피탈',150000,6],['JB우리금융',150000,12]];INVENTORY_LENDERS=ACC44_LENDER_LIMITS.map(row=>row[0]);if(!await SnoteDealerFinanceRates.refresh({force:true}))throw Error('Synthetic seeded lender rates did not load');
  const ago=days=>{const d=new Date(SnoteInventoryInterest.today()+'T00:00:00Z');d.setUTCDate(d.getUTCDate()-days);return d.toISOString().slice(0,10);},c=cars[0];
  Object.assign(c,{moneyUnit:'KRW',purchaseAt:ago(31),inventoryLoan:10000000,inventoryLender:'KB캐피탈'});delete c.inventoryInterestSnapshot;
  if(explicit)c.inventoryStartedAt=ago(10);else delete c.inventoryStartedAt;if(blankPlate)c.plate='';

@@ -112,7 +112,7 @@ async function fixture(width=1440,savedCars=null,{primaryColor=null,weather=null
   if(savedCars)cars=structuredClone(savedCars);
   if(typeof primaryColor==='string')cars[0].color=primaryColor;
   const wire=cars.map(SnoteMoney.storeCar);cars=normalizedCars(wire,alias);localStorage.setItem(carsStoreKey(alias),JSON.stringify(wire));window.__encarFixtureCars=structuredClone(wire);
-  window.__encarFixtureWrites=[];window.__encarFixtureRevision=0;window.__encarFixtureWriteMode='ok';window.__encarFixtureWriteWaiting=false;window.__encarFixtureReleaseWrite=null;window.__encarFixtureWriteFailures=0;
+  window.__encarFixtureWrites=[];window.__encarFixtureRevision=0;window.__encarFixtureWriteMode='ok';window.__encarFixtureWriteWaiting=false;window.__encarFixtureReleaseWrite=null;window.__encarFixtureWriteFailures=0;window.__encarFixtureRateReads=[];
   const S=window.__encarFixtureState;S.user={id:actor,email:'synthetic@example.invalid'};S.company={id:company,name:'가상 검증 상사'};S.members=[{user_id:actor,company_id:company,role:'dealer',display_name:'가상 검증 딜러',active:true}];
   window.__encarFixtureSession={access_token:token,refresh_token:'synthetic-refresh',user:{id:actor,email:'synthetic@example.invalid'}};
   S.client={auth:{getSession:async()=>({data:{session:window.__encarFixtureSession},error:null}),getUser:async()=>({data:{user:window.__encarFixtureSession.user},error:null}),stopAutoRefresh(){},signOut:async()=>({error:null})},realtime:{setAuth:async()=>{}},channel(){const channel={on(){return channel;},subscribe(){return channel;},unsubscribe:async()=>{}};return channel;},removeChannel:async()=>{},from(table){
@@ -127,6 +127,13 @@ async function fixture(width=1440,savedCars=null,{primaryColor=null,weather=null
     return Promise.reject(Error('Unexpected browser fixture table '+table)).then(resolve,reject);
    }};return chain;
   },rpc:async(name,args)=>{
+   if(name==='snote_dealer_finance_rates_list'){
+    const user=S.user?.id,companyId=S.company?.id;if(JSON.stringify(Object.keys(args||{}).sort())!==JSON.stringify(['p_expected_company_id']))throw Error('Unexpected synthetic rate arguments');
+    if(args.p_expected_company_id!==companyId||!S.members.some(member=>member.user_id===user&&member.company_id===companyId&&member.active===true&&['admin','dealer','accountant'].includes(member.role)))return{data:null,error:{code:'42501',message:'Synthetic rate scope denied'}};
+    const lenders=ACC44_LENDER_LIMITS.map(row=>row[0]),fallbackRates=Object.fromEntries(ACC44_LENDER_LIMITS.filter(row=>typeof row[2]==='number'&&Number.isFinite(row[2])&&row[2]>=0&&row[2]<=100).map(row=>[row[0],row[2]]));
+    window.__encarFixtureRateReads.push({companyId,userId:user});const owners=[...new Set(S.members.filter(member=>member.company_id===companyId&&member.active===true&&['admin','dealer','accountant'].includes(member.role)).map(member=>member.user_id))];
+    return{data:{companyId,userId:user,profiles:owners.map(ownerId=>({companyId,ownerId,rates:{},fallbackRates:structuredClone(fallbackRates),lenderNames:[...lenders],revision:0}))},error:null};
+   }
    if(name!=='zc_write_dataset'||args.p_dataset!=='cars'||args.p_company!==company||args.p_owner!==actor)throw Error('Unexpected browser fixture RPC');
    if(args.p_expected!==window.__encarFixtureRevision)return{data:null,error:{code:'CONFLICT',message:'CONFLICT'}};
    if(window.__encarFixtureWriteMode==='hold'){
@@ -146,7 +153,7 @@ async function fixture(width=1440,savedCars=null,{primaryColor=null,weather=null
  await page.evaluate(()=>openVehicle('encar-car-1'));
  await page.locator(BUTTON).waitFor({state:'visible'});assert.equal(await page.locator(BUTTON).isDisabled(),true,'Local/demo login must not enable an online lookup');
  await assertEncarLogo(page);
- await page.evaluate(()=>{window.__encarFixtureState.ready=true;document.getElementById('zc86-topbar').hidden=false;});if(!lookupUnavailable)await page.locator(BUTTON+':not([disabled])').waitFor();
+ await page.evaluate(async()=>{window.__encarFixtureState.ready=true;document.getElementById('zc86-topbar').hidden=false;if(window.SnoteDealerFinanceRates&&!await SnoteDealerFinanceRates.refresh({force:true}))throw Error('Synthetic rate profile did not load');});if(!lookupUnavailable)await page.locator(BUTTON+':not([disabled])').waitFor();
  await page.locator('#vehicle-overlay .vehicle-detail-frame').evaluate(async e=>{await Promise.all(e.getAnimations().map(a=>a.finished.catch(()=>{})))});f.reply=(body,status=200)=>f.responses.push({body,status});return f;
 }
 async function assertEncarLogo(page){
