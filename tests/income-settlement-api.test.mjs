@@ -28,7 +28,7 @@ function fixture(t) {
       { user_id: OTHER, company_id: OTHER_COMPANY, role: 'dealer', active: true, display_name: '다른 상사 딜러' }
     ],
     datasets: new Map([[`${COMPANY}:${OWNER}`, { payload: [car(), { ...car('other-car'), status: '판매중', custom: { untouched: 'exact' } }], revision: 0 }], [`${COMPANY}:${PEER}`, { payload: [car()], revision: 0 }], [`${OTHER_COMPANY}:${OTHER}`, { payload: [car()], revision: 0 }]]),
-    lenders: [], calls: [], writes: [], writeHook: null, fetchHook: null, denyReadback: false
+    lenders: [], rateProfiles: new Map(), calls: [], writes: [], writeHook: null, fetchHook: null, denyReadback: false
   };
   const original = globalThis.fetch;
   const commit = body => {
@@ -50,6 +50,14 @@ function fixture(t) {
     if (parsed.pathname === '/rest/v1/zc_companies') {
       const company = parsed.searchParams.get('id')?.slice(3);
       return answer([{ id: company, name: company === COMPANY ? '검증용 상사' : '다른 검증용 상사' }]);
+    }
+    if (parsed.pathname === '/rest/v1/rpc/snote_dealer_finance_rates_list') {
+      assert.equal(options.method, 'POST');
+      const company = state.members.find(member => member.user_id === state.actor && member.active)?.company_id;
+      assert.deepEqual(body, { p_expected_company_id: company });
+      const owners = new Set([state.actor, ...[...state.datasets.keys()].filter(key => key.startsWith(company + ':')).map(key => key.slice(company.length + 1))]);
+      const fallbackRates = Object.fromEntries(state.lenders.filter(row => Array.isArray(row) && Number.isFinite(row[2])).map(row => [row[0], row[2]]));
+      return answer({ companyId: company, userId: state.actor, profiles: [...owners].map(ownerId => ({ companyId: company, ownerId, rates: copy(state.rateProfiles.get(`${company}:${ownerId}`) || {}), fallbackRates, revision: 0 })) });
     }
     if (parsed.pathname === '/rest/v1/zc_datasets') {
       if (state.denyReadback) throw new Error('test-only readback network failure');
@@ -303,6 +311,50 @@ test('financed settlement reads company shared rates using caller JWT and reject
  assert(!loaded.source.unmapped.some(x=>x.key==='inventoryInterest'));
  state.lenders=[['검증금융',100000,12]];
  const result=await call(saveBody(loaded));assert.equal(result.result.status,409);assert.equal(state.writes.length,0);
+});
+
+test('financed settlement applies the vehicle owner rate rather than the admin viewer rate, including explicit zero', async t => {
+ const {state,dataset}=fixture(t),current=dataset().payload[0];
+ Object.assign(current,{inventoryLoan:1000,inventoryLender:'검증금융',purchaseAt:'2026-09-21'});state.lenders=[['검증금융',100000,6]];
+ state.actor=ADMIN;state.rateProfiles.set(`${COMPANY}:${ADMIN}`,{'검증금융':36});state.rateProfiles.set(`${COMPANY}:${OWNER}`,{'검증금융':12});
+ const before=copy(current),loaded=await load();assert.equal(loaded.source.inventoryInterestWon,32877);assert.deepEqual(current,before);
+ state.rateProfiles.set(`${COMPANY}:${OWNER}`,{'검증금융':0});assert.equal((await load()).source.inventoryInterestWon,0);
+ state.rateProfiles.set(`${COMPANY}:${OWNER}`,{});assert.equal((await load()).source.inventoryInterestWon,16438);
+ assert.equal(state.writes.length,0);assert(state.calls.some(call=>call.url.pathname.endsWith('/snote_dealer_finance_rates_list')));
+});
+
+test('source-owner RPC fallback works when company finance rows are hidden, and retained lender overrides still apply', async t => {
+ const {state,dataset}=fixture(t),current=dataset().payload[0];Object.assign(current,{inventoryLoan:1000,inventoryLender:'이전금융',purchaseAt:'2026-09-21'});
+ state.fetchHook=call=>call.url.pathname.endsWith('/snote_dealer_finance_rates_list')?answer({companyId:COMPANY,userId:OWNER,profiles:[{companyId:COMPANY,ownerId:OWNER,rates:{},fallbackRates:{'이전금융':6},lenderNames:[],revision:0}]}):undefined;
+ assert.equal((await load()).source.inventoryInterestWon,16438);
+ state.fetchHook=call=>call.url.pathname.endsWith('/snote_dealer_finance_rates_list')?answer({companyId:COMPANY,userId:OWNER,profiles:[{companyId:COMPANY,ownerId:OWNER,rates:{'이전금융':12},fallbackRates:{},lenderNames:[],revision:1}]}):undefined;
+ assert.equal((await load()).source.inventoryInterestWon,32877);assert.equal(state.writes.length,0);
+});
+
+test('changing a personal rate invalidates a previously loaded settlement source before any write', async t => {
+ const {state,dataset}=fixture(t),current=dataset().payload[0];Object.assign(current,{inventoryLoan:1000,inventoryLender:'검증금융',purchaseAt:'2026-09-21'});state.lenders=[['검증금융',100000,6]];
+ state.rateProfiles.set(`${COMPANY}:${OWNER}`,{'검증금융':12});const loaded=await load();state.rateProfiles.set(`${COMPANY}:${OWNER}`,{'검증금융':18});
+ const stale=await call(saveBody(loaded));assert.equal(stale.result.status,409);assert.equal(stale.body.code,'SOURCE_CHANGED');assert.equal(stale.body.source.inventoryInterestWon,49315);assert.equal(state.writes.length,0);
+});
+
+test('frozen sold snapshots retain their historical interest without the rate service, while unfinalized snapshots refresh', async t => {
+ const {state,dataset}=fixture(t),current=dataset().payload[0];Object.assign(current,{inventoryLoan:1000,inventoryLender:'검증금융',purchaseAt:'2026-09-21',inventoryInterestSnapshot:{version:1,finalized:true,lender:'검증금융',annualRate:5,principalWon:10000000,start:'2026-09-21',end:'2026-10-01',days:10,amountWon:13699}});
+ state.fetchHook=call=>call.url.pathname.endsWith('/snote_dealer_finance_rates_list')?answer({code:'PRIVATE_FAILURE'},503):undefined;
+ const before=copy(current);assert.equal((await load()).source.inventoryInterestWon,13699);assert.deepEqual(current,before);assert(!state.calls.some(call=>call.url.pathname.endsWith('/snote_dealer_finance_rates_list')));
+ current.inventoryInterestSnapshot.finalized=false;state.fetchHook=null;state.rateProfiles.set(`${COMPANY}:${OWNER}`,{'검증금융':12});assert.equal((await load()).source.inventoryInterestWon,32877);assert.equal(state.writes.length,0);
+});
+
+test('malformed or unavailable rate responses fail closed without applying viewer defaults or leaking upstream details', async t => {
+ const {state,dataset}=fixture(t),current=dataset().payload[0];Object.assign(current,{inventoryLoan:1000,inventoryLender:'검증금융',purchaseAt:'2026-09-21'});state.lenders=[['검증금융',100000,6]];
+ const own={companyId:COMPANY,ownerId:OWNER,rates:{'검증금융':12},fallbackRates:{'검증금융':6},revision:1},valid={companyId:COMPANY,userId:OWNER,profiles:[own]};
+ for(const data of [null,{}, {...valid,companyId:OTHER_COMPANY},{...valid,userId:OTHER},{...valid,profiles:[]},{...valid,profiles:[own,own]},{...valid,profiles:[{...own,rates:{'검증금융':'12'}}]},{...valid,profiles:[{...own,rates:{'검증금융':-1}}]},{...valid,profiles:[{...own,rates:{'검증금융':100.1}}]},{...valid,profiles:[{...own,rates:{'검증금융':1.23456}}]},{...valid,profiles:[{...own,fallbackRates:[]}]},{...valid,profiles:[{...own,revision:-1}]}]){
+  state.fetchHook=call=>call.url.pathname.endsWith('/snote_dealer_finance_rates_list')?answer(data):undefined;
+  const result=await call({action:'load',...scope()});assert.equal(result.body.code,'NETWORK');assert.equal(Object.hasOwn(result.body,'source'),false);
+ }
+ for(const [status,body,expected]of [[403,{message:'PRIVATE_RATE_DETAILS'},'FORBIDDEN'],[404,{code:'PGRST202',message:'PRIVATE_RATE_DETAILS'},'SETUP_REQUIRED'],[503,{message:'PRIVATE_RATE_DETAILS'},'NETWORK']]){
+  state.fetchHook=call=>call.url.pathname.endsWith('/snote_dealer_finance_rates_list')?answer(body,status):undefined;const result=await call({action:'load',...scope()});assert.equal(result.body.code,expected);assert(!JSON.stringify(result.body).includes('PRIVATE_RATE_DETAILS'));
+ }
+ assert.equal(state.writes.length,0);
 });
 
 test('inspection expense is returned with won precision, retained on save and invalidates stale settlement source', async t => {

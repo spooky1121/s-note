@@ -1,0 +1,91 @@
+{
+  "release": "2.122",
+  "baseCommit": "74c37fb0bcf745a53005f461ecae36d4a469a038",
+  "verifiedAt": "2026-11-15T09:32:40.055Z",
+  "sourceHashes": {
+    "index.html": "70b92441320ed08deff877cca0d90656faf767503f2901e9dd6091658ef40955",
+    "assets/dealer-finance-rates.js": "ef4bcd2ac67ffd492452cd90cb292228dcc775fe4c1ca66a60215d6e7c7328e8",
+    "assets/dealer-finance-rates.css": "6643e3e9fe2de2d3118c53eaa11da1d9cce6f2003991ff0b1a867f3b558bd5b0",
+    "assets/vehicle-list-view.js": "9ce5f6aa6ff19d6e1ca3d575aae6fad14e01802493368cb300f2cf8e511c0399",
+    "assets/vehicle-list-view.css": "07419e308e9cdf465cfcf9be5dc4cfc4842539ee81db1ad3204f49d82180dbf0",
+    "functions/api/income-settlement.js": "47d38f04ec69a83b37325bd6540fb1ac91c6c0fa3ed926ce388ace65404974ca",
+    "supabase/migrations/20261115092145_dealer_inventory_finance_rates.sql": "0b0827c9d84344da2c06df4088a4f845235a073aba8eae85b37f0ec026a53896",
+    "tests/dealer-finance-rates.test.mjs": "6cad217c7167d9af46cc0f891f18de7027f58454b24739431ee78c187fff71e6",
+    "tests/dealer-finance-rates.sql.cjs": "dbc93e88f242796728d93ed748cb94601d4e6bcabfabbdd94b27f56f99fd428b",
+    "tests/dealer-finance-rates.browser.cjs": "0f668edc2d08f3f7b7e0f7b7b230c75a40a4cf5537c0466fb0246b0bba67a13c",
+    "tests/encar/browser-smoke.cjs": "ebaaef4946be6913ba3f3e5a0873e7bc0d6c47da887a9731b0f4f766624fdb4f",
+    "tests/encar/saved-bridge.test.cjs": "60a3b6322e40e233f210df1ce9c7a3fc558c971a2e636dccac970a89d2f31ff8",
+    "tests/inventory-interest-integration.test.mjs": "9829f9838ea8f6f1c0b34020b306fc661bbbd8d844ff9434ab16fdf08a4d37d3",
+    "tests/inventory-interest-live.browser.cjs": "b7a52e198139acb84f3c919303e284273a641a623df7cc6350de50252cf05886",
+    "tests/normal-login.browser.cjs": "92eee548f78e8f36f0f10117a693e19f29d1b1e2df2c9e0a4eb34f9135e96bbb",
+    "tests/registration-wizard.browser.cjs": "7bf2dff7f5b84a1fc8a186182e975525630c68bc0e61e07a033f515956c2e9df",
+    "tests/vehicle-list-view.browser.cjs": "fa4a59503ffeff32d4c77d2f09d6e7d5802ba234761da590b175666e9d802187",
+    "tests/income-settlement-api.test.mjs": "c6acd670d1c22365091d63a2845754249392a13f6cc5ef9b516e9b47155facc4",
+    "tests/income-settlement.browser.cjs": "5682498b2c837607688f2c32b168ebdd7f741bc197f855b178bdd8757faa3b50"
+  },
+  "behavior": {
+    "settings": "Admin/dealer Settings adds 내 재고금융 이율. Rates are personal per(company,user); company lender names, borrowing limits and legacy default rates remain separate.",
+    "fallback": "Blank removes personal override and uses source-company server-confirmed default; explicit0 is a real override. Rates support0..100% with at most4 fractional decimal places.",
+    "ownership": "Use vehicle-owner profile across details, registration, totals, sale/date snapshots and server income settlement. Known foreign/missing/ambiguous profiles never use viewer personal terms.",
+    "sharing": "Only accepted uniquely-owned shared vehicles authorize source-owner terms, filtered to actual shared lender names. Admin/accountant same-company reads retain former-owner terms while vehicles remain.",
+    "history": "Finalized sold snapshots remain authoritative. No vehicle or shared finance payload was bulk-rewritten.",
+    "lifecycle": "Captured auth/company/client/role/epoch and own-only revisionCAS; profile read runs alongside dataset restore before initial financialrender, with late-response and retry handling.",
+    "catalog": "Confirmed own source lender names populate vehicle inputs; lender-save ACK and company-purchase load refresh rates without changing active money drafts.",
+    "viewToggle": "One borderless vehicle button shows currentmode icon and switches between list/cards. Existing storage key, table/card layouts, sorting, search and pagination remain; customer toggle unchanged."
+  },
+  "validation": {
+    "allDistinctUnitPassed": 815,
+    "allDistinctUnitFailed": 0,
+    "personalRatesBrowserGroups": 12,
+    "loginBrowserGroups": 10,
+    "liveInterestBrowserGroups": 6,
+    "registrationWizardGroups": 16,
+    "vehicleViewBrowserConsoleGroups": 9,
+    "vehicleViewWidths": [
+      1440,
+      1024,
+      390,
+      320
+    ],
+    "incomeBrowserStages": 11,
+    "localPostgresAuthorizationCasGroups": 11,
+    "catalogAdoptionSourceCases": 6,
+    "inlineScripts": 7,
+    "pagesFunctionsBuild": "passed; Wrangler4.152.0",
+    "browserServices": "Actual application/index/API code, synthetic upstream auth/RPC and scoped CAS; no live credentials."
+  },
+  "database": {
+    "actualMigrationVersion": "20261115092145",
+    "generatedMigrationVersionBeforeMcpAlignment": "20261115090840",
+    "migrationName": "dealer_inventory_finance_rates",
+    "sqlSha256": "0b0827c9d84344da2c06df4088a4f845235a073aba8eae85b37f0ec026a53896",
+    "existingBusinessDataWrites": 0,
+    "profileRowsAtApplyVerification": 0,
+    "privateTable": "snote_dealer_rate_private.profiles",
+    "primaryKey": [
+      "company_id",
+      "user_id"
+    ],
+    "privateTableRls": true,
+    "publicRpcSecurity": "Security invoker wrappers, authenticated execute only; anon and service_role execute denied. Private definer functions derive verified active unique membership.",
+    "advisors": {
+      "security": "New INFO rls_enabled_no_policy is intentional deny-all on private table, with no direct table grants and guarded RPC-only access.",
+      "remediationReference": "https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy",
+      "performance": "No new-table findings."
+    }
+  },
+  "receipts": {
+    "personal": "/workspace/work/dealer-rates-v2122/browser-final/receipt.json",
+    "income": "/workspace/work/income-rates-v2122/final-browser/receipt.json",
+    "compatibility": "/workspace/work/v2122-compat/compatibility-receipt.json"
+  },
+  "additionalReceipts": {
+    "sql": "/tmp/snote-dealer-finance-rates-sql/receipt.json",
+    "review": "/workspace/work/dealer-rates-v2122/independent-review.json",
+    "catalogReview": "/workspace/work/dealer-rates-v2122/catalog-adoption-review.json",
+    "allUnitLog": "/workspace/work/dealer-rates-v2122/all-unit-final.log"
+  },
+  "limitations": [
+    "Hosted authenticated preference writes were not exercised with real accounts; database authorization/CAS was tested using the actual migration in isolated Postgres and production schema/ACL metadata was verified."
+  ]
+}

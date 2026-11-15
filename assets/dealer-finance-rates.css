@@ -1,0 +1,26 @@
+/* Compact personal rate editor; company finance limits remain separate. */
+@media screen{
+ #snote-app #alt-content #snote-dealer-finance-rates{min-width:0;padding:17px 18px;border:1px solid #e8ebf0;border-radius:12px;background:#fff;box-shadow:none}
+ #snote-dealer-finance-rates[hidden],#snote-dealer-finance-rates [hidden]{display:none!important}
+ #snote-dealer-finance-rates>header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 12px}
+ #snote-app #alt-content #snote-dealer-finance-rates h3{margin:0;font-size:14px;font-weight:650;color:#354259;letter-spacing:-.3px}
+ #snote-dealer-finance-rates header p{margin:5px 0 0;font-size:11px;line-height:1.5;color:#929baa}
+ #snote-app #alt-content #snote-dealer-rates-save{display:grid;place-items:center;flex:none;width:28px;height:28px;min-width:28px;min-height:28px;margin:0;padding:4px;border:0;border-radius:6px;background:transparent;color:#1668e8;box-shadow:none;cursor:pointer}
+ #snote-dealer-rates-save svg{display:block;width:20px;height:20px;transform:none;scale:1}
+ #snote-dealer-rates-save:hover{background:#edf4ff!important}
+ #snote-dealer-rates-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 20px;min-width:0}
+ #snote-app #alt-content #snote-dealer-finance-rates .snote-dealer-rate-row{display:flex;align-items:center;justify-content:space-between;gap:10px;width:auto;min-width:0;margin:0;padding:9px 0;border-bottom:1px solid #f0f2f6;font-size:12px;font-weight:500;color:#5a6679}
+ #snote-dealer-finance-rates .snote-dealer-rate-row>span:first-child{min-width:0;overflow-wrap:anywhere;line-height:1.5}
+ #snote-dealer-finance-rates .snote-dealer-rate-control{display:flex;align-items:center;gap:5px;flex:none;color:#98a1af;font-size:11px}
+ #snote-app #alt-content #snote-dealer-finance-rates input[data-dealer-rate]{box-sizing:border-box;flex:none;width:79px;min-width:0;max-width:79px;height:32px;min-height:32px;margin:0;padding:6px 8px;border:1px solid #e5eaf2;border-radius:7px;background:#fafbfe;outline:0;color:#45546a;font-size:12px;font-variant-numeric:tabular-nums;text-align:right}
+ #snote-dealer-finance-rates input[data-dealer-rate]::placeholder{color:#b6becc;opacity:1}
+ #snote-dealer-finance-rates input[data-dealer-rate]:focus{border-color:#8caef9!important;box-shadow:0 0 0 2px #e9f0ff}
+ #snote-dealer-finance-rates :is(button,input):disabled{opacity:.55;cursor:default}
+ #snote-dealer-finance-rates .snote-dealer-rates-feedback{display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:0;margin-top:9px}
+ #snote-dealer-rates-status{margin:0;color:#8792a4;font-size:11px;line-height:1.5;overflow-wrap:anywhere}
+ #snote-dealer-rates-status[data-error=true]{color:#b75661}
+ #snote-app #alt-content #snote-dealer-rates-retry{flex:none;min-height:26px;padding:3px 0;border:0;background:transparent;color:#226be1;font-size:11px;box-shadow:none;cursor:pointer}
+ #snote-dealer-finance-rates :is(button,input):focus-visible{outline:2px solid #a3bdf0;outline-offset:2px}
+ @media(max-width:600px){#snote-app #alt-content #snote-dealer-finance-rates{padding:15px}#snote-dealer-rates-list{grid-template-columns:1fr;gap:0}}
+}
+@media print{#snote-dealer-finance-rates{display:none!important}}

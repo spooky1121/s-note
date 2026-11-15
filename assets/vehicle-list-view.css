@@ -25,14 +25,13 @@
  }
  #snote-app #list-screen #snote-vehicle-view-toolbar[hidden] {display:none!important}
  #snote-app #list-screen .snote-vehicle-view-toggle {
-  display:inline-flex;align-items:center;gap:4px;padding:0;border:0;border-radius:0;background:transparent;
+  display:inline-flex;align-items:center;padding:0;border:0;border-radius:0;background:transparent;
  }
  #snote-app #list-screen .snote-vehicle-view-toggle > button.snote-list-action {
-  display:inline-grid;place-items:center;flex:none;width:36px;min-width:36px;height:36px;min-height:36px;padding:8px;margin:0;border:0;border-radius:0;background:transparent!important;box-shadow:none!important;color:#9098a7;line-height:1;cursor:pointer;translate:none!important;transform:none!important;transition:color .16s;
+  display:inline-grid;place-items:center;flex:none;width:36px;min-width:36px;height:36px;min-height:36px;padding:8px;margin:0;border:0;border-radius:0;background:transparent!important;box-shadow:none!important;color:#3168e9;line-height:1;cursor:pointer;translate:none!important;transform:none!important;transition:color .16s;
  }
  #snote-app #list-screen .snote-vehicle-view-toggle > button.snote-list-action > svg {display:block;width:20px;height:20px;max-width:100%;pointer-events:none}
  #snote-app #list-screen .snote-vehicle-view-toggle > button.snote-list-action:hover {color:#416fe1}
- #snote-app #list-screen .snote-vehicle-view-toggle > button.snote-list-action[aria-pressed=true] {color:#3168e9}
  #snote-app #list-screen .snote-vehicle-view-toggle > button.snote-list-action:focus-visible {outline:2px solid #9bbcf4;outline-offset:2px}
  #snote-app #list-screen .snote-vehicle-view-button[data-snote-icon-help]::after {display:none}
  #snote-app #list-screen[data-vehicle-view] > .panel > .snote-mobile-sort {
