@@ -1,0 +1,124 @@
+{
+  "release": "2.120",
+  "baseCommit": "7e37dbc89475e6fb0bb24f7b4545de6afc47c149",
+  "verifiedAt": "2026-11-15T04:33:57.586Z",
+  "sourceHashes": {
+    "index.html": "394fcaad490c730689836ff69f195dc2ca9391be1905fa9e3c3a2594c75857ae",
+    "assets/purchase-registration.js": "a5920d46f47fcb387d8bdbea85a81c1f57cc3744a820921392f29cdc969e2eb2",
+    "assets/purchase-registration.css": "1ba5ba532e02143cbb95dda0109db7400273f2cafd18d217e99eaa54e50a14a6",
+    "assets/purchase-registration-success.js": "6ac409551305bdd46e6bd7f1ff0ea6195a279314671589c0d884c413b52b465f",
+    "assets/purchase-registration-success.css": "8b69616f11ed57856d7f5ebba04e05f7e14c0d50e04135d67230e922f78b4b15",
+    "assets/list-sort.js": "0152a2f788433df015b0f2baca93a136b8abca4b01a6bfde8682f1cb00b05b6b",
+    "assets/list-pagination.js": "ce78eb874f227c63b0bc1445f3d99ea5554b1a9dba6bfb1ae0bd1d4154fa6627",
+    "tests/registration-wizard.browser.cjs": "1af0e3001dec6bdc4b31362e432f135fd62aa0716f9ddeee1917084cbe6c972f",
+    "tests/drawer-close.browser.cjs": "b93ad38db475f742ae03966f1183d3b8b0ca325c89445f18b84a02a9abd1bd83"
+  },
+  "backup": {
+    "branch": "backup/purchase-registration-v2.119",
+    "manifest": "docs/purchase-registration-backup.json",
+    "restoration": "Use a separate worktree and restore registration changes selectively."
+  },
+  "behavior": {
+    "popup": "Centered three-step registration; vehicle detail and registration-document upload retain their existing drawer behavior.",
+    "steps": [
+      {
+        "step": 1,
+        "name": "차량 정보",
+        "required": [
+          "make",
+          "group or OCR vehicle name"
+        ],
+        "optional": "generation, trim, plate, VIN, year, color, mileage, purchase date"
+      },
+      {
+        "step": 2,
+        "name": "금액·비용",
+        "required": [
+          "nonblank buy in integer KRW"
+        ],
+        "optional": "planned sale price, existing acquisition costs and additional costs"
+      },
+      {
+        "step": 3,
+        "name": "재고 설정",
+        "fields": [
+          "isPrestock",
+          "inventoryLender",
+          "inventoryLoan",
+          "inventoryStartedAt"
+        ],
+        "summary": [
+          "acquisition costs including daily inventory interest",
+          "total landed cost",
+          "expected margin when planned sale price is supplied"
+        ]
+      }
+    ],
+    "prestock": "Boolean vehicle metadata only; registering a vehicle does not create a payment or change the shared prestock ledger.",
+    "money": "Existing KRW fields and daily interest model are reused. Loan principal is not added to acquisition costs; omitted inventoryStartedAt retains purchase-date fallback.",
+    "success": "Only after server-confirmed vehicle persistence, show 저장 되었습니다. and reveal the new vehicle first on purchase page1, in list or card mode. Reduced motion retains static feedback.",
+    "retry": "A staged failed or lost acknowledgement resumes the same vehicle ID; stale account/modal responses cannot show completion.",
+    "optionalIdentityCompatibility": "Ordinary detail edits allow a missing plate with the existing account/company/owner/role/car checks; Encar still requires a normalized plate. Missing mileage stays blank and clearing a known mileage remains rejected."
+  },
+  "validation": {
+    "coreUnit": {
+      "passed": 725,
+      "failed": 0
+    },
+    "sharedListUnit": {
+      "passed": 7,
+      "failed": 0
+    },
+    "browserGroups": {
+      "registrationWizard": 16,
+      "successListCardAndReducedMotion": 4,
+      "registrationOcr": 5,
+      "encarDetail": 5,
+      "encarPrice": 7
+    },
+    "targetedLegacyBrowser": {
+      "centeredRegistrationAndDrawerCloseWidths": [
+        1440,
+        390,
+        320
+      ],
+      "vehicleDrawerGeometryWidths": [
+        1440,
+        1024,
+        768,
+        390,
+        320
+      ]
+    },
+    "inlineScriptSyntaxPassed": 7,
+    "newAndSharedScriptSyntax": "passed",
+    "pagesFunctionsBuild": "passed; Wrangler4.152.0",
+    "independentReview": "No blocking findings; generic edit authorization retains prior guards and strict Encar plate validation.",
+    "browserMethod": "Actual index and assets in Chromium with synthetic auth, HTTP and owner-CAS persistence; no live credentials or business records.",
+    "productionDatabaseWrites": 0,
+    "schemaChanges": 0,
+    "receipts": {
+      "registration": "/workspace/work/registration-wizard-v2120/final/receipt.json",
+      "success": "/workspace/work/registration-success-v2120/receipt.json",
+      "detail": "/workspace/work/registration-wizard-v2120/encar-detail/receipt.json",
+      "price": "/workspace/work/registration-wizard-v2120/encar-price/receipt.json",
+      "legacy": "/tmp/snote-v2120-legacy-browser-receipt.json"
+    }
+  },
+  "knownBaselineTestFailures": [
+    {
+      "test": "tests/vehicle-drawer.browser.cjs",
+      "assertion": "At1024px the existing body uses grid but this legacy assertion expects block.",
+      "baselineReproduced": "7e37dbc89475e6fb0bb24f7b4545de6afc47c149"
+    },
+    {
+      "test": "tests/drawer-close.browser.cjs",
+      "assertion": "Existing document share button is in the header while the legacy assertion expects it below.",
+      "baselineReproduced": "7e37dbc89475e6fb0bb24f7b4545de6afc47c149"
+    }
+  ],
+  "baselineFailureHandling": "Unrelated committed assertions remain intact. Temporary targeted copies omit only those proven baseline assertions; changed registration checks and unchanged drawer geometry/close behavior pass.",
+  "limitations": [
+    "No production vehicle was registered or edited during testing. Actual production Auth/database responses are not represented by the synthetic browser fixtures."
+  ]
+}
