@@ -119,6 +119,14 @@ async function run(config = {}, req = request(), extraEnv = {}) {
       if (page === undefined) return new Response('Not found', { status: 404 });
       return typeof page === 'string' ? new Response(page, { headers: { 'Content-Type': 'text/html' } }) : page.clone();
     }
+    if (Object.hasOwn(config.externalPages || {}, url.href)) {
+      assert.equal(options.method, 'GET'); assert.equal(options.redirect, 'manual');
+      assert.deepEqual(options.headers, { Accept: 'text/html' });
+      assert.equal(options.credentials, 'omit'); assert.equal(options.referrerPolicy, 'no-referrer');
+      const page = config.externalPages[url.href];
+      if (typeof page === 'function') return page(call);
+      return page instanceof Response ? page.clone() : new Response(page, { headers: { 'Content-Type': 'text/html' } });
+    }
     throw new Error('Unexpected external request: ' + url.origin);
   };
   try {
@@ -354,13 +362,14 @@ test('mismatched browser candidate hint falls back to search and is never truste
   assert.equal(searchCalls(result).length, 1);
 });
 
-test('partial upstream failure stays visible even when another candidate verifies', async () => {
+test('a blocked candidate cannot hide an independently verified advertisement', async () => {
   const result = await run({ results: [{ url: BASE + ORIGINAL }, { url: BASE + SECOND }], pages: {
     [ORIGINAL]: new Response('blocked', { status: 403 }),
     [SECOND]: html(base({ vehicleId: Number(SECOND), queryCarId: Number(SECOND) }))
   } });
-  assert.equal(result.reply.status, 502);
-  assert.equal(result.body.status, 'error');
+  assert.equal(result.reply.status, 200);
+  assert.equal(result.body.status, 'found');
+  assert.equal(result.body.listings.length, 1);
   assert.equal(result.body.listings[0].id, SECOND);
 });
 
@@ -558,7 +567,7 @@ test('provider authentication, rate, quota and unavailable errors never trigger 
   }
 });
 
-test('detail block, malformed state, redirects, and timeout never trigger another search', async t => {
+test('detail block, malformed state, redirects, and timeout permit one bounded search fallback without rechecking a failed ID', async t => {
   for (const [page, code] of [
     [new Response('blocked', { status: 403 }), 'DETAIL_BLOCKED'],
     ['<script>window.__PRELOADED_STATE__={broken}</script>', 'DETAIL_PARSE_FAILED'],
@@ -567,13 +576,15 @@ test('detail block, malformed state, redirects, and timeout never trigger anothe
   ]) await t.test(code, async () => {
     const result = await run({ results: [{ url: BASE + ORIGINAL }], pages: { [ORIGINAL]: page } });
     assert.equal(result.body.status, 'error'); assert.equal(result.body.diagnostics.code, code);
-    assert.equal(searchCalls(result).length, 1);
+    assert.equal(searchCalls(result).length, 2);
+    assert.equal(detailCalls(result).length, 1);
   });
 });
 
-test('a failed cached detail does not spend a search request', async () => {
+test('a failed cached detail no longer prevents fresh discovery', async () => {
   const result = await run({ pages: { [ORIGINAL]: new Response('blocked', { status: 403 }) } }, request({ plate: PLATE, candidateIds: [ORIGINAL] }));
-  assert.equal(result.body.diagnostics.code, 'DETAIL_BLOCKED'); assert.equal(searchCalls(result).length, 0);
+  assert.equal(result.body.diagnostics.code, 'DETAIL_BLOCKED'); assert.equal(searchCalls(result).length, 2);
+  assert.equal(detailCalls(result).length, 1);
 });
 
 test('two searches never exceed twelve primary candidates and fetch each ID once', async () => {
@@ -694,7 +705,7 @@ test('unknown or malformed advertising states are never guessed active or report
       const result = await run({ results: [{ url: BASE + ORIGINAL }], pages: { [ORIGINAL]: html(base({ advertisement: { status } })) } });
       assert.equal(result.reply.status, 502); assert.equal(result.body.diagnostics.code, 'AD_STATUS_UNKNOWN');
       assert.equal(result.body.listings.length, 0); assert.equal(result.body.diagnostics.plateMatchedCount, 1);
-      assert.equal(result.body.diagnostics.rejected.notAdvertising, 0); assert.equal(searchCalls(result).length, 1);
+      assert.equal(result.body.diagnostics.rejected.notAdvertising, 0); assert.equal(searchCalls(result).length, 2);
       assert.equal(Object.hasOwn(result.body.diagnostics, 'advertisementStates'), false);
       for (const privateValue of [TOKEN, env.TAVILY_API_KEY, PLATE, ORIGINAL, 'PRIVATE_PERSON']) {
         assert.equal(JSON.stringify(result.body.diagnostics).includes(privateValue), false);
@@ -741,14 +752,19 @@ test('inactive trusted page from another plate never supplies a canonical lookup
   assert.equal(result.body.diagnostics.plateMatchedCount, 0);
 });
 
-test('unknown canonical and trusted states preserve conservative partial-error handling', async t => {
+test('an unknown canonical state cannot be promoted while an independently active original may omit an unknown trusted alias', async t => {
   for (const unknown of ['original', 'trusted']) await t.test(unknown, async () => {
     const result = await run({ results: [{ url: BASE + (unknown === 'original' ? TRUSTED : ORIGINAL) }], pages: {
       [TRUSTED]: html(base({ queryCarId: Number(TRUSTED), advertisement: { status: unknown === 'trusted' ? 'UNSUPPORTED_FIXTURE_STATUS' : 'SOLD' }, manage: { dummy: true, dummyVehicleId: Number(TRUSTED) } })),
       [ORIGINAL]: html(base({ advertisement: { status: unknown === 'original' ? 'UNSUPPORTED_FIXTURE_STATUS' : 'ADVERTISE' }, manage: { dummy: false, dummyVehicleId: Number(TRUSTED) } }))
     } });
-    assert.equal(result.reply.status, 502); assert.equal(result.body.diagnostics.code, 'AD_STATUS_UNKNOWN');
-    assert.equal(result.body.status, 'error'); assert.equal(searchCalls(result).length, 1);
+    if (unknown === 'original') {
+      assert.equal(result.reply.status, 502); assert.equal(result.body.diagnostics.code, 'AD_STATUS_UNKNOWN');
+      assert.equal(result.body.status, 'error'); assert.equal(searchCalls(result).length, 2);
+    } else {
+      assert.equal(result.reply.status, 200); assert.equal(result.body.status, 'found');
+      assert.equal(searchCalls(result).length, 1); assert.equal(result.body.listings[0].id, ORIGINAL);
+    }
     assert.ok(result.body.listings.every(item => item.trustedUrl === null));
   });
 });
@@ -988,9 +1004,15 @@ test('a failed fallback reports its authentication, quota, rate, or transport ca
   });
 });
 
-test('catalogue-discovered detail errors cannot be bypassed with a different provider', async () => {
-  const result = await run({ catalogPages: { '/catalog': catalogCard() }, pages: { [ORIGINAL]: new Response('blocked', { status: 403 }) }, results: [{ url: BASE + SECOND }] });
-  assert.equal(result.body.diagnostics.code, 'DETAIL_BLOCKED'); assert.equal(searchCalls(result).length, 0);
+test('a complete exact-card catalogue response is reused as external evidence when official access is blocked', async () => {
+  const result = await run({ catalogPages: { '/catalog': catalogCard() }, pages: {
+    [ORIGINAL]: new Response('blocked', { status: 403 })
+  } }, request(), { TAVILY_API_KEY: '' });
+  assert.equal(result.body.status, 'found'); assert.equal(result.body.listings[0].id, ORIGINAL);
+  assert.equal(result.body.listings[0].externalVerification.sourceUrl, CATALOG + '/catalog?car_number=3456');
+  assert.equal(result.body.listings[0].externalVerification.advertisedAt, null);
+  assert.equal(result.body.listings[0].priceStatus, 'unavailable');
+  assert.equal(searchCalls(result).length, 0); assert.equal(catalogCalls(result).length, 2);
 });
 
 test('blocked, absent, unknown and unsupported public pages are errors, not no-match', async t => {
@@ -1117,4 +1139,37 @@ test('public pagination shares the original 35-second deadline rather than reset
   const result = await pending;
   assert.equal(result.body.diagnostics.code, 'DEADLINE_EXCEEDED'); assert.equal(catalogCalls(result).length, 2);
   assert.equal(searchCalls(result).length, 0);
+});
+
+test('a hanging external source body is aborted after its bounded optional budget without retrying the source', async t => {
+  t.mock.timers.enable({ apis: ['setTimeout', 'Date'], now: 100000 });
+  let entered; const ready = new Promise(resolve => entered = resolve);
+  const url = 'https://nnov.trust-encar.ru/auto/' + ORIGINAL + '/';
+  const body = new ReadableStream({ pull() { entered(); } }, { highWaterMark: 0 });
+  const pending = run({ results: [{ url, content: PLATE }], pages: { [ORIGINAL]: new Response('blocked', { status: 403 }) },
+    externalPages: { [url]: () => new Response(body, { headers: { 'Content-Type': 'text/html' } }) } });
+  await ready; t.mock.timers.tick(8001); const result = await pending;
+  assert.equal(result.reply.status, 502); assert.equal(result.body.diagnostics.code, 'DETAIL_BLOCKED');
+  const publicCalls = result.calls.filter(call => call.url === url);
+  assert.equal(publicCalls.length, 1); assert.equal(publicCalls[0].options.signal.aborted, true);
+  assert.equal(detailCalls(result).length, 1); assert.equal(searchCalls(result).length, 2);
+});
+
+test('both search attempts share one eight-second external-source budget', async t => {
+  t.mock.timers.enable({ apis: ['setTimeout', 'Date'], now: 100000 });
+  let entered; const ready = new Promise(resolve => entered = resolve);
+  const first = 'https://nnov.trust-encar.ru/auto/' + ORIGINAL + '/';
+  const second = 'https://nnov.trust-encar.ru/auto/' + SECOND + '/';
+  const body = new ReadableStream({ pull() { entered(); } }, { highWaterMark: 0 });
+  const pending = run({ onCall(call) { if (call.url === first) t.mock.timers.tick(3000); },
+    searches: [{ results: [{ url: first, content: PLATE }] }, { results: [{ url: second, content: PLATE }] }],
+    pages: { [ORIGINAL]: new Response('blocked', { status: 403 }), [SECOND]: new Response('blocked', { status: 403 }) },
+    externalPages: { [first]: '<main>Unrecognized source</main>', [second]: () => new Response(body) }
+  });
+  await ready; assert.equal(Date.now(), 103000);
+  t.mock.timers.tick(5001); const result = await pending;
+  assert.equal(result.reply.status, 502); assert.equal(result.body.diagnostics.code, 'DETAIL_BLOCKED');
+  assert.equal(Date.now(), 108001); assert.equal(searchCalls(result).length, 2);
+  assert.equal(result.calls.filter(call => call.url === second).length, 1);
+  assert.equal(result.calls.find(call => call.url === second).options.signal.aborted, true);
 });

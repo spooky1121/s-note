@@ -36,7 +36,7 @@ function fixture({role='dealer',owner=USER,server:initial}={}){
  const overlay={open:true,classList:{contains(name){return name==='open'&&overlay.open;}}};
  const sellInput={value:'기존 입력',disabled:false,readOnly:false,events:[],dispatchEvent(event){this.events.push({type:event.type,bubbles:event.bubbles});return true;}};
  const storageOwner=k=>members.find(member=>store(member.user_id)===k)?.user_id;
- const context={S,Storage:MemoryStorage,localStorage,snote224VehicleOpen:1,console:{error(){},warn(){}},setTimeout(){return 1;},clearTimeout(){},snoteOwnershipAllowed:()=>true,
+ const context={S,Storage:MemoryStorage,localStorage,URL,snote224VehicleOpen:1,console:{error(){},warn(){}},setTimeout(){return 1;},clearTimeout(){},snoteOwnershipAllowed:()=>true,
   currentUser:{username:alias(USER),role},activeCarId:owner===USER?'car-a':'car-other',cars:[],ownerAlias:alias,
   byId:id=>id==='vehicle-overlay'?overlay:id==='detail-sell'?sellInput:null,Event,
   snoteVehicleSaveTask:null,snoteVehicleCloseTask:null,snoteVehicleUnconfirmedWrite:null,
@@ -449,4 +449,50 @@ test('inventory confirmed marker requires an integer revision and later successf
  const f=inventoryStartFixture();f.invalidAck();await assert.rejects(f.save());const pending=f.context.snoteVehicleUnconfirmedWrite;
  for(const revision of[NaN,Infinity,8.5]){f.S.revisions.set(key(USER),revision);assert.equal(pending.confirmed(),false);}
  f.S.revisions.set(key(USER),7);await f.context.flushActual();const base=f.start.context();assert.equal(f.context.snoteVehicleUnconfirmedWrite,null);assert.notEqual(base,f.base);assert.equal(base.car.inventoryStartedAt,'2026-11-01');assert.equal(f.calls.length,1);
+});
+
+const externalRecord=()=>{
+ const value=noPriceRecord(),item=value.listings[0];item.trustedId=null;item.trustedUrl=null;
+ item.externalVerification={source:'trust-encar',sourceUrl:'https://nnov.trust-encar.ru/auto/'+item.id+'/',checkedAt:value.verifiedAt,advertisedAt:'2026-10-21',modifiedAt:null};
+ return value;
+};
+test('external advertisement provenance survives actual CAS storage and a fresh account reload without touching sibling records',async()=>{
+ const f=fixture(),before=clone([...f.server]),value=externalRecord();
+ assert.equal((await f.bridge.save(f.bridge.context('car-a'),value)).ok,true);
+ assert.deepEqual(f.serverRecord().encarLinks,value);
+ assert.deepEqual(f.server.get(key(USER)).payload[1],before[0][1].payload[1]);
+ assert.deepEqual(f.server.get(key(OTHER)),before[1][1]);
+ const restored=fixture({server:[...f.server]});assert.deepEqual(restored.context.cars[0].encarLinks,value);
+ assert.equal((await restored.bridge.save(restored.bridge.context('car-a'),value)).ok,true);
+ assert.deepEqual(restored.serverRecord().encarLinks.listings[0].externalVerification,value.listings[0].externalVerification);
+});
+test('external metadata schema rejects malformed sources, dates, aliases and price claims before any database write',async()=>{
+ const changes=[
+  data=>{data.listings[0].externalVerification=null;},
+  data=>{data.listings[0].externalVerification.source='encar.com';},
+  data=>{data.listings[0].externalVerification.sourceUrl='https://nnov.trust-encar.ru.evil.example/auto/43000001/';},
+  data=>{data.listings[0].externalVerification.sourceUrl='https://nnov.trust-encar.ru/auto/43000003/';},
+  data=>{data.listings[0].externalVerification.sourceUrl='https://nnov.trust-encar.ru:443/auto/43000001/';},
+  data=>{data.listings[0].externalVerification.sourceUrl='https://user:pass@nnov.trust-encar.ru/auto/43000001/';},
+  data=>{data.listings[0].externalVerification.sourceUrl='https://nnov.trust-encar.ru/catalog/?action=delete';},
+  data=>{data.listings[0].externalVerification.advertisedAt='2026-02-30';},
+  data=>{data.listings[0].externalVerification.modifiedAt='2026-13-01';},
+  data=>{data.listings[0].externalVerification.checkedAt=new Date(Date.now()+120000).toISOString();},
+  data=>{data.listings[0].externalVerification.phone='PRIVATE';},
+  data=>{data.listings[0].trustedId='43000002';data.listings[0].trustedUrl=record().listings[0].trustedUrl;},
+  data=>{Object.assign(data.listings[0],{priceWon:37770000,priceCheckedAt:data.verifiedAt,priceSource:'encar-api.com',priceStatus:'verified'});}
+ ];
+ for(const mutate of changes){const f=fixture(),value=externalRecord(),before=clone([...f.server]);mutate(value);
+  await assert.rejects(f.bridge.save(f.bridge.context('car-a'),value),error=>error.code==='INVALID_DATA');
+  assert.equal(f.calls.length,0);assert.deepEqual([...f.server],before);
+ }
+});
+test('external-only saved links cannot enter automatic price transport, reviewed quote application or server price changes',async()=>{
+ const f=ocrFixture(),base=f.bridge.context('car-a'),value=externalRecord();
+ await f.bridge.save(base,value);const before=clone([...f.server]),writes=f.calls.length;
+ await assert.rejects(f.bridge.autoPrice(base,value),error=>error.code==='EXTERNAL_ONLY');
+ assert.equal(f.ocrCalls.length,0);
+ assert.throws(()=>f.bridge.applyPrice(base,value,'43000001'),error=>error.code==='INVALID_DATA');
+ await assert.rejects(f.bridge.changePrice(base,value,'43000001',{expectedSellWon:12000000}),error=>error.code==='INVALID_DATA');
+ assert.equal(f.calls.length,writes);assert.deepEqual([...f.server],before);assert.equal(f.sellInput.events.length,0);
 });

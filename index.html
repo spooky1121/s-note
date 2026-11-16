@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.122">
+<html lang="ko" data-snote-release="2.123">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -9425,6 +9425,25 @@ function snoteEncarLinksPrice(item,verifiedAt){
  if(!Number.isFinite(date.getTime())||date.toISOString()!==item.priceCheckedAt||date.getTime()>Date.now()+60000||date.getTime()>Date.parse(verifiedAt)+60000)invalid();
  return {priceWon:item.priceWon,priceCheckedAt:date.toISOString(),priceSource:item.priceSource,priceStatus:item.priceStatus};
 }
+function snoteEncarLinksExternal(item,verifiedAt){
+ if(!Object.hasOwn(item,'externalVerification'))return {};
+ const value=item.externalVerification,keys=['source','sourceUrl','checkedAt','advertisedAt','modifiedAt'];
+ const invalid=()=>{throw snoteEncarLinksError('INVALID_DATA','외부 광고의 출처와 확인 시각을 다시 확인해 주세요.');};
+ if(!value||typeof value!=='object'||Array.isArray(value)||Object.keys(value).length!==keys.length||!keys.every(key=>Object.hasOwn(value,key))||value.source!=='trust-encar')invalid();
+ if(typeof value.sourceUrl!=='string'||value.sourceUrl.length>2048||/[\u0000-\u0020\u007f-\u009f\\]/.test(value.sourceUrl))invalid();
+ let url;try{url=new URL(value.sourceUrl);}catch(_){invalid();}
+ const host=url.hostname.toLowerCase(),regional=/^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+trust-encar\.ru$/.test(host)&&!host.split('.').some(label=>label.startsWith('xn--'));
+ const allowed=['encar.spb.ru','encar.msk.ru','encar.cbg.ru','trust-encar.ru'].includes(host)||regional;
+ const detail=/^\/auto\/([1-9][0-9]{0,11})\/?$/.exec(url.pathname),catalog=/^\/catalog(?:\/[a-z0-9-]+)*\/?$/.test(url.pathname);
+ if(!allowed||url.protocol!=='https:'||url.username||url.password||url.port||url.hash||url.href!==value.sourceUrl||/:/.test(value.sourceUrl.split('/')[2])||(!detail&&!catalog)||detail&&(detail[1]!==item.id||url.search))invalid();
+ if(/(?:^|\/)(?:admin|account|auth|login|logout|sign[-_]?in|sign[-_]?out|signup|register|delete|remove|destroy|create|save|update|edit|submit|checkout|payment|purchase|booking|subscribe|contact|message|send|inquiry|enquiry)(?:[./_-]|$)/i.test(url.pathname))invalid();
+ if([...url.searchParams].some(([key,entry])=>/[\u0000-\u001f\u007f-\u009f]/.test(key+entry)||/^(?:_?method|action|cmd|command|operation|task|do)$/i.test(key)&&/^(?:post|put|patch|delete|remove|destroy|create|save|update|edit|submit|logout|login|checkout|pay)$/i.test(entry)))invalid();
+ const time=typeof value.checkedAt==='string'?new Date(value.checkedAt):new Date(NaN);
+ if(!Number.isFinite(time.getTime())||time.toISOString()!==value.checkedAt||time.getTime()>Date.now()+60000||time.getTime()>Date.parse(verifiedAt)+60000)invalid();
+ const dayValid=day=>day===null||typeof day==='string'&&/^\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])$/.test(day)&&new Date(day+'T00:00:00Z').toISOString().slice(0,10)===day;
+ if(!dayValid(value.advertisedAt)||!dayValid(value.modifiedAt))invalid();
+ return {externalVerification:{source:'trust-encar',sourceUrl:url.href,checkedAt:time.toISOString(),advertisedAt:value.advertisedAt,modifiedAt:value.modifiedAt}};
+}
 function snoteEncarLinksRecord(base,value){
  const plain=item=>!!item&&typeof item==='object'&&!Array.isArray(item);
  const id=item=>typeof item==='string'&&/^[1-9][0-9]{0,11}$/.test(item);
@@ -9435,11 +9454,13 @@ function snoteEncarLinksRecord(base,value){
  if(!Number.isFinite(date.getTime())||date.toISOString()!==value.verifiedAt||date.getTime()>Date.now()+60000)invalid();
  const ids=new Set(),listings=[];
  for(const item of value.listings){
-  if(!plain(item)||Object.keys(item).some(key=>!['id','model','sellerUrl','trustedId','trustedUrl','priceWon','priceCheckedAt','priceSource','priceStatus'].includes(key))||!id(item.id)||ids.has(item.id)||
+  if(!plain(item)||Object.keys(item).some(key=>!['id','model','sellerUrl','trustedId','trustedUrl','priceWon','priceCheckedAt','priceSource','priceStatus','externalVerification'].includes(key))||!id(item.id)||ids.has(item.id)||
    typeof item.model!=='string'||item.model.length>300||/[\u0000-\u001f\u007f-\u009f]/.test(item.model)||item.sellerUrl!=='https://fem.encar.com/cars/detail/'+item.id)invalid();
   const trustedId=item.trustedId??null,trustedUrl=item.trustedUrl??null;
   if(trustedId===null?trustedUrl!==null:!id(trustedId)||trustedId===item.id||trustedUrl!=='https://fem.encar.com/cars/detail/'+trustedId)invalid();
-  ids.add(item.id);listings.push({id:item.id,model:item.model,sellerUrl:item.sellerUrl,trustedId,trustedUrl,...snoteEncarLinksPrice(item,date.toISOString())});
+  const external=snoteEncarLinksExternal(item,date.toISOString()),price=snoteEncarLinksPrice(item,date.toISOString());
+  if(external.externalVerification&&(trustedId!==null||trustedUrl!==null||price.priceStatus&&price.priceStatus!=='unavailable'))invalid();
+  ids.add(item.id);listings.push({id:item.id,model:item.model,sellerUrl:item.sellerUrl,trustedId,trustedUrl,...price,...external});
  }
  return scrub({version:1,plate:base.plate,verifiedAt:date.toISOString(),listings});
 }
@@ -9448,7 +9469,7 @@ function snoteEncarPriceStored(base,record,listingId){
  const now=snoteEncarLinksCheck(base),safe=snoteEncarLinksRecord(now,record),stored=snoteEncarLinksRecord(now,now.car.encarLinks);
  if(JSON.stringify(safe)!==JSON.stringify(stored))throw snoteEncarLinksError('CONTEXT_CHANGED','광고가격이 변경되었습니다. 최신 가격을 다시 확인해 주세요.');
  const listing=stored.listings.find(item=>item.id===listingId);
- if(!listing||!['verified','review'].includes(listing.priceStatus))throw snoteEncarLinksError('INVALID_DATA','확인할 수 있는 광고가격이 없습니다.');
+ if(!listing||listing.externalVerification||!['verified','review'].includes(listing.priceStatus))throw snoteEncarLinksError('INVALID_DATA','확인할 수 있는 광고가격이 없습니다.');
  const key=cloudKey('cars',now.ownerId),storage=storageKey('cars',now.ownerAlias),revision=Number(S.revisions.get(key));
  let payload;try{payload=JSON.parse(localStorage.getItem(storage)||'null');}catch(_){}
  const matches=Array.isArray(payload)?payload.filter(car=>String(car?.id)===now.carId&&car.ownerId===now.ownerAlias):[];
@@ -9479,6 +9500,7 @@ window.snoteEncarLinksBridge={
   const safe=snoteEncarLinksRecord(base,record);
   const selected=listingId?safe.listings.find(item=>item.id===listingId):safe.listings.length===1?safe.listings[0]:null;
   if(!selected)throw Object.assign(snoteEncarLinksError('AUTO_PRICE_AMBIGUOUS','광고가 여러 개여서 자동으로 가격을 선택하지 않았습니다.'),{userMessage:'광고가 여러 개여서 자동으로 가격을 선택하지 않았습니다.'});
+  if(selected.externalVerification)throw snoteEncarLinksError('EXTERNAL_ONLY','외부 광고에서 확인한 링크입니다. 한국 엔카의 현재 광고가격을 확인한 뒤 변경해 주세요.');
   if(['verified','review'].includes(selected.priceStatus))return safe;
   const controller=new AbortController(),abort=()=>controller.abort();signal?.addEventListener('abort',abort,{once:true});if(signal?.aborted)abort();
   let timedOut=false;const timer=setTimeout(()=>{timedOut=true;controller.abort();},65000);
@@ -10939,11 +10961,11 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 <script type="module" src="assets/income-settlement-parent.js?v=2.112"></script>
 <script src="assets/vehicle-sharing.js?v=2.107" defer></script>
 <script src="assets/shared-vehicle-markers.js?v=2.87" defer></script>
-<script src="assets/release-info.js?v=2.122" defer></script>
+<script src="assets/release-info.js?v=2.123" defer></script>
 <script src="assets/company-purchase.js?v=2.77" defer></script>
 <script src="assets/recycle-bin.js?v=2.77" defer></script>
 <script src="assets/profile-editor.js?v=2.102" defer></script>
-<script src="assets/snote-encar-link.js?v=2.118" defer></script>
+<script src="assets/snote-encar-link.js?v=2.123" defer></script>
 <link rel="stylesheet" href="assets/encar-price-ocr.css?v=2.110">
 <script src="assets/encar-price-ocr.js?v=2.110" defer></script>
 <script src="assets/document-mms.js?v=2.44" defer></script>

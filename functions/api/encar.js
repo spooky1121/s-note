@@ -1,4 +1,4 @@
-import { CATALOG_ORIGIN, catalogURL, configuredCatalogSearch, discoverCatalogSearch, discoverCatalogEntry, parseCatalogPage } from '../_shared/encar-catalog.mjs';
+import { CATALOG_ORIGIN, catalogURL, configuredCatalogSearch, discoverCatalogSearch, discoverCatalogEntry, parseCatalogPage, externalSourceURL, parseExternalAdvertisement } from '../_shared/encar-catalog.mjs';
 import { parseEncarPagePrice } from '../_shared/encar-page-price.mjs';
 
 /**
@@ -16,10 +16,16 @@ const MAX_RAW_SEARCH_BYTES = 2 * 1024 * 1024;
 const TIMEOUT_MS = 10000;
 const DEADLINE_MS = 35000;
 const CATALOG_FALLBACK_BUDGET_MS = 8000;
+const EXTERNAL_BUDGET_MS = 8000;
+const MAX_EXTERNAL_PAGES = 6;
+const EXTERNAL_DETAIL_ERRORS = new Set(['DETAIL_BLOCKED', 'DETAIL_UNAVAILABLE', 'DETAIL_PARSE_FAILED', 'UPSTREAM_TIMEOUT']);
 const MAX_HINT_CANDIDATES = MAX_CANDIDATES * 2;
 const MAX_DISCOVERY_RESERVE = MAX_CANDIDATES;
 const MAX_TOTAL_CANDIDATES = MAX_HINT_CANDIDATES + MAX_DISCOVERY_RESERVE;
 const ENCAR_DETAIL = 'https://fem.encar.com/cars/detail/';
+// This is an observed public mirror route for rechecking already known IDs,
+// never a formula for guessing an advertisement ID from a vehicle number.
+const KNOWN_HINT_SOURCE = 'https://nnov.trust-encar.ru/auto/';
 const PRICE_PROVIDER = 'https://api.encar-api.com/api/car';
 const MAX_PRICE_WON = 1_000_000_000_000;
 const MAX_PRICE_LISTINGS = 3;
@@ -47,6 +53,7 @@ function operation(request) {
     resultPlateMatchCount: 0, rawResultCount: 0, recognizedSourceCount: 0, candidates: new Set(),
     catalogRequestCount: 0, catalogPageCount: 0, catalogRecordCount: 0, catalogExactMatchCount: 0,
     catalogFormCount: 0, catalogPlateFieldCount: 0, catalogLinkCount: 0, pagePrices: new Map(), priceDiagnostics: null,
+    externalSources: new Set(), externalPages: new Map(), externalChecked: new Set(), externalEvidence: new Map(), externalSpentMs: 0, detailErrors: new Set(),
     rejected: { plateMismatch: 0, notAdvertising: 0, notFound: 0 } };
   op.timer = setTimeout(() => controller.abort(new EncarError('DEADLINE_EXCEEDED')), DEADLINE_MS);
   op.abort = () => controller.abort(new EncarError('UPSTREAM_TIMEOUT'));
@@ -264,6 +271,23 @@ function resultMentionsPlate(result, plate) {
   });
 }
 
+function rememberExternalSource(op, value) {
+  if (op.externalSources.size >= MAX_TOTAL_CANDIDATES) return;
+  try { op.externalSources.add(externalSourceURL(value).href); } catch (_) { /* Only public allowlisted advertisements/catalogues qualify. */ }
+}
+
+function rememberExternalResults(op, results, plate) {
+  const ranked = results.slice(0, 8).map(result => ({ result, matches: resultMentionsPlate(result, plate) }));
+  for (const matches of [true, false]) for (const { result } of ranked.filter(item => item.matches === matches)) {
+    rememberExternalSource(op, result?.url);
+    for (const key of RESULT_TEXT_FIELDS) if (typeof result?.[key] === 'string') {
+      for (const match of result[key].matchAll(/https?:\/\/[^\s<>"'\\]+/gi)) {
+        rememberExternalSource(op, match[0].replace(/[),.;\]}]+$/, ''));
+      }
+    }
+  }
+}
+
 function candidatesFromResults(results, plate) {
   const ids = new Set();
   const add = value => {
@@ -291,6 +315,11 @@ function candidatesFromResults(results, plate) {
       // explicitly mentions the requested plate. Bare numbers never qualify.
       if (matches) {
         for (const match of content.normalize('NFKC').matchAll(/(?:\bEncar\s*ID|엔카\s*매물\s*번호)\s*[:：#]\s*([0-9]+)(?![0-9])/giu)) add(match[1]);
+        if (autoExportHost(sourceHost || '')) {
+          // A catalogue lot label is only a discovery hint. A snippet cannot
+          // bind its plate to this ID; the original HTML must do that below.
+          for (const match of content.normalize('NFKC').matchAll(/(?:^|[^\p{L}\p{N}])(?:Лот(?:\s+объявления)?|Lot(?:\s+(?:number|no\.?))?)\s*[:：#№]\s*([0-9]+)(?![0-9])/giu)) add(match[1]);
+        }
       }
       if (ids.size >= MAX_CANDIDATES) break;
     }
@@ -337,6 +366,7 @@ async function searchCandidates(op, plate, apiKey, fallback = false) {
     const host = parsedURL(item?.url)?.hostname.toLowerCase().replace(/^www\./, '');
     if (recognizedSourceHost(host)) ++op.recognizedSourceCount;
   }
+  rememberExternalResults(op, results, plate);
   return candidatesFromResults(results, plate);
 }
 
@@ -514,6 +544,72 @@ async function verifyCandidates(ids, getDetail) {
   return { listings, errored: !!errorCode, errorCode };
 }
 
+async function externalListings(op, plate, getDetail, select) {
+  const urls = [...op.externalSources].filter(url => !op.externalChecked.has(url))
+    .slice(0, Math.max(0, MAX_EXTERNAL_PAGES - op.externalChecked.size));
+  const budget = Math.min(EXTERNAL_BUDGET_MS - op.externalSpentMs, remaining(op) - 250);
+  if (urls.length && budget >= 50) {
+    const startedAt = Date.now();
+    const controller = new AbortController(), signal = controller.signal;
+    const abort = () => controller.abort(op.controller.signal.reason);
+    op.controller.signal.addEventListener('abort', abort, { once: true });
+    const timer = setTimeout(() => controller.abort(new EncarError('UPSTREAM_TIMEOUT')), budget);
+    try {
+      await mapConcurrent(urls, async value => {
+        op.externalChecked.add(value);
+        try {
+          const url = externalSourceURL(value);
+          const sourceId = idFromURL(url.href);
+          if (sourceId && op.candidates.has(sourceId)) {
+            const official = await getDetail(sourceId);
+            if (official.kind !== 'error' || !EXTERNAL_DETAIL_ERRORS.has(official.code)) return;
+          }
+          let page = op.externalPages.get(url.href);
+          if (!page) {
+            const fetched = await fetchLimited(op, url.href, {
+              method: 'GET', headers: { Accept: 'text/html' },
+              credentials: 'omit', referrerPolicy: 'no-referrer'
+            }, MAX_HTML_BYTES, 'DETAIL_UNAVAILABLE', signal);
+            if (!fetched.ok || BLOCKED.test(fetched.text)) return;
+            page = { html: fetched.text, checkedAt: new Date().toISOString() };
+          }
+          const parsed = await waitFor(parseExternalAdvertisement(page.html, url.href, plate), signal);
+          for (const item of (Array.isArray(parsed?.matches) ? parsed.matches : []).slice(0, 12)) {
+            const id = idOf(item?.id);
+            if (!id || externalSourceURL(item.sourceUrl).href !== url.href || op.externalEvidence.has(id)) continue;
+            op.externalEvidence.set(id, {
+              source: 'trust-encar', sourceUrl: url.href, checkedAt: page.checkedAt,
+              advertisedAt: item.advertisedAt ?? null, modifiedAt: item.modifiedAt ?? null
+            });
+          }
+        } catch (_) { /* A blocked or ambiguous public page is never evidence. */ }
+      });
+    } finally {
+      op.externalSpentMs += Math.max(0, Date.now() - startedAt);
+      clearTimeout(timer);
+      op.controller.signal.removeEventListener('abort', abort);
+      controller.abort();
+    }
+  }
+  remaining(op);
+  const ids = select([...op.externalEvidence.keys()]);
+  if (!ids.length) return [];
+  // Source pages can discover an ID omitted from a search snippet. It still
+  // receives the same official check; explicit rejections must win over a mirror.
+  const verified = await verifyCandidates(ids, getDetail);
+  const listings = new Map(verified.listings.map(item => [item.id, item]));
+  for (const id of ids) {
+    if (listings.has(id)) continue;
+    const official = await getDetail(id);
+    if (official.kind !== 'error' || !EXTERNAL_DETAIL_ERRORS.has(official.code)) continue;
+    listings.set(id, {
+      id, sellerUrl: ENCAR_DETAIL + id, trustedId: null, trustedUrl: null, model: '',
+      externalVerification: op.externalEvidence.get(id), ...unavailablePrice()
+    });
+  }
+  return [...listings.values()].sort((a, b) => a.id.localeCompare(b.id));
+}
+
 function unavailablePrice() {
   return { priceWon: null, priceCheckedAt: null, priceSource: null, priceStatus: 'unavailable' };
 }
@@ -675,7 +771,7 @@ async function catalogCandidates(op, env, plate, reserveFallback = false) {
       op.catalogPlateFieldCount += form.plateFieldCount;
       searchURL = catalogURL(form.url);
     }
-    const original = catalogURL(searchURL), visited = new Set(), ids = new Set();
+    const original = catalogURL(searchURL), visited = new Set(), ids = new Set(), pages = new Map();
     const filterKeys = [...new Set(original.searchParams.keys())].filter(key => original.searchParams.getAll(key).some(value => value.includes(suffix)));
     if (!filterKeys.length) throw new EncarError('CATALOG_FORM_UNSUPPORTED');
     let current = original;
@@ -683,6 +779,7 @@ async function catalogCandidates(op, env, plate, reserveFallback = false) {
       if (visited.has(current.href)) throw new EncarError('CATALOG_INCOMPLETE');
       visited.add(current.href);
       const html = await catalogHTML(op, current, signal);
+      const checkedAt = new Date().toISOString();
       const parsed = await waitFor(parseCatalogPage(html, current.href, plate), signal);
       ++op.catalogPageCount;
       op.catalogRecordCount += parsed.recordCount;
@@ -695,7 +792,16 @@ async function catalogCandidates(op, env, plate, reserveFallback = false) {
       }
       const newCount = [...ids].filter(id => !op.candidates.has(id)).length;
       if (parsed.truncated || newCount + op.candidates.size > MAX_TOTAL_CANDIDATES) throw new EncarError('CATALOG_INCOMPLETE');
-      if (!parsed.nextUrl) return [...ids];
+      if (parsed.exactMatchCount) pages.set(current.href, { html, checkedAt });
+      if (!parsed.nextUrl) {
+        // Reuse only complete catalogue runs. A truncated run must not later
+        // masquerade as a complete external match through an early page.
+        for (const [url, page] of pages) {
+          rememberExternalSource(op, url);
+          op.externalPages.set(url, page);
+        }
+        return [...ids];
+      }
       if (pageNumber === 2) throw new EncarError('CATALOG_INCOMPLETE');
       const next = catalogURL(parsed.nextUrl, current.href);
       // Preserve actual form filters, including repeated values, while retaining
@@ -749,9 +855,14 @@ export async function onRequest(context) {
   const finish = (httpStatus, listings = [], status = 'error', code = 'INVALID_REQUEST') => response(op, httpStatus, plate, listings, status, code);
   const found = async listings => {
     remaining(op);
-    const priced = await addPrices(op, env, listings, plate);
-    return finish(200, priced, listings.length > 1 ? 'multiple' : 'found');
+    const official = listings.filter(item => !item.externalVerification);
+    const priced = official.length ? await addPrices(op, env, official, plate) : [];
+    const byId = new Map(priced.map(item => [item.id, item]));
+    const result = listings.map(item => item.externalVerification ? { ...item, ...unavailablePrice() } : byId.get(item.id));
+    return finish(200, result, listings.length > 1 ? 'multiple' : 'found');
   };
+  const detailFailure = () => ['DEADLINE_EXCEEDED', 'UPSTREAM_TIMEOUT', 'DETAIL_BLOCKED', 'DETAIL_PARSE_FAILED', 'AD_STATUS_UNKNOWN', 'DETAIL_UNAVAILABLE']
+    .find(code => op.detailErrors.has(code)) || [...op.detailErrors][0];
   const unverifiedCode = fallback => {
     const rejected = Object.entries(op.rejected).filter(([, count]) => count > 0);
     if (rejected.length === 1) return { plateMismatch: 'PLATE_MISMATCH', notAdvertising: 'AD_INACTIVE', notFound: 'DETAIL_NOT_FOUND' }[rejected[0][0]];
@@ -782,12 +893,25 @@ export async function onRequest(context) {
     if (!plate || (payload?.candidateIds !== undefined && !Array.isArray(payload.candidateIds))) return finish(400);
     const memo = new Map();
     const getDetail = id => {
-      if (!memo.has(id)) memo.set(id, detail(op, id, plate));
+      if (!memo.has(id)) memo.set(id, detail(op, id, plate).then(result => {
+        if (result.kind === 'error') op.detailErrors.add(result.code);
+        return result;
+      }));
       return memo.get(id);
     };
     const hints = select([...new Set([...idsOf(payload.candidateIds), ...await cachedCandidates(op, env, plate)])].slice(0, MAX_HINT_CANDIDATES));
+    const knownHintFallback = async () => {
+      if (!hints.length) return [];
+      let count = 0;
+      for (const id of hints) {
+        const official = await getDetail(id);
+        if (official.kind !== 'error' || !EXTERNAL_DETAIL_ERRORS.has(official.code)) continue;
+        rememberExternalSource(op, KNOWN_HINT_SOURCE + id + '/');
+        if (++count === 3) break;
+      }
+      return count ? externalListings(op, plate, getDetail, select) : [];
+    };
     const hinted = await verifyCandidates(hints, getDetail);
-    if (hinted.errored) return finish(502, hinted.listings, 'error', hinted.errorCode);
     if (hinted.listings.length) {
       saveCandidates(context, plate, hinted.listings.map(item => item.id));
       remaining(op);
@@ -797,30 +921,49 @@ export async function onRequest(context) {
     try {
       const candidates = select(await catalogCandidates(op, env, plate, !!apiKey));
       const verified = await verifyCandidates(candidates, getDetail);
-      // A failed detail is not a failed discovery provider: never bypass its
-      // partial-error policy with an independent search result.
-      if (verified.errored) return finish(502, verified.listings, 'error', verified.errorCode);
       if (verified.listings.length) {
         remaining(op);
         saveCandidates(context, plate, verified.listings.map(item => item.id));
         return await found(verified.listings);
+      }
+      const external = await externalListings(op, plate, getDetail, select);
+      if (external.length) {
+        saveCandidates(context, plate, external.map(item => item.id));
+        return await found(external);
       }
     } catch (error) {
       catalogFailure = catalogError(error);
     }
-    if (!apiKey) return catalogFailure ? finish(502, [], 'error', catalogFailure.code) : finish(200, [], 'unverified', unverifiedCode('CATALOG_NO_MATCH'));
+    if (!apiKey) {
+      const external = await knownHintFallback();
+      if (external.length) {
+        saveCandidates(context, plate, external.map(item => item.id));
+        return await found(external);
+      }
+      return op.detailErrors.size ? finish(502, [], 'error', detailFailure()) : catalogFailure ? finish(502, [], 'error', catalogFailure.code) : finish(200, [], 'unverified', unverifiedCode('CATALOG_NO_MATCH'));
+    }
     for (let attempt = 0; attempt < 2; attempt++) {
       if (attempt && op.candidates.size >= MAX_TOTAL_CANDIDATES) break;
       const candidates = select(await searchCandidates(op, plate, apiKey, attempt === 1));
       const verified = await verifyCandidates(candidates, getDetail);
-      if (verified.errored) return finish(502, verified.listings, 'error', verified.errorCode);
       if (verified.listings.length) {
         remaining(op);
         saveCandidates(context, plate, verified.listings.map(item => item.id));
         return await found(verified.listings);
       }
+      const external = await externalListings(op, plate, getDetail, select);
+      if (external.length) {
+        saveCandidates(context, plate, external.map(item => item.id));
+        return await found(external);
+      }
     }
     remaining(op);
+    const external = await knownHintFallback();
+    if (external.length) {
+      saveCandidates(context, plate, external.map(item => item.id));
+      return await found(external);
+    }
+    if (op.detailErrors.size) return finish(502, [], 'error', detailFailure());
     if (catalogFailure) return finish(502, [], 'error', catalogFailure.code);
     const code = unverifiedCode(op.resultCount ? 'SEARCH_NO_CANDIDATES' : 'SEARCH_NO_RESULTS');
     return finish(200, [], 'unverified', code);

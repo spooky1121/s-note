@@ -28,7 +28,7 @@ function page(id = ID, overrides = {}) {
   } } }) + ';</script>';
 }
 
-async function run({ results = [], searches, pages = {}, candidateIds, cacheIds } = {}) {
+async function run({ results = [], searches, pages = {}, candidateIds, cacheIds, externalPages = {}, searchKey = ENV.TAVILY_API_KEY } = {}) {
   const calls = [], pending = [], logs = [];
   const previousFetch = globalThis.fetch, previousInfo = console.info;
   let searchIndex = 0;
@@ -54,9 +54,17 @@ async function run({ results = [], searches, pages = {}, candidateIds, cacheIds 
       assert.equal(options.method, 'GET');
       assert.equal(options.redirect, 'manual');
       const id = url.pathname.split('/').at(-1);
+      if (pages[id] instanceof Error) throw pages[id];
       return Object.hasOwn(pages, id)
-        ? new Response(pages[id], { headers: { 'Content-Type': 'text/html' } })
+        ? pages[id] instanceof Response ? pages[id].clone() : new Response(pages[id], { headers: { 'Content-Type': 'text/html' } })
         : new Response('Not found', { status: 404 });
+    }
+    if (Object.hasOwn(externalPages, url.href)) {
+      assert.equal(options.method, 'GET'); assert.equal(options.redirect, 'manual');
+      assert.deepEqual(options.headers, { Accept: 'text/html' });
+      assert.equal(options.credentials, 'omit'); assert.equal(options.referrerPolicy, 'no-referrer');
+      const body = externalPages[url.href];
+      return body instanceof Response ? body.clone() : new Response(body, { headers: { 'Content-Type': 'text/html' } });
     }
     throw new Error('Unexpected upstream: ' + url.origin);
   };
@@ -68,6 +76,7 @@ async function run({ results = [], searches, pages = {}, candidateIds, cacheIds 
       }),
       env: {
         ...ENV,
+        TAVILY_API_KEY: searchKey,
         ...(cacheIds ? { ENCAR_CACHE: {
           async get(key) { assert.equal(key, 'encar:candidates:v1:' + PLATE); return JSON.stringify(cacheIds); },
           async put() {}
@@ -211,4 +220,150 @@ test('regional mirror hints cannot override official plate or advertising-state 
     assert.equal(result.body.listings.length, 0);
     assert.deepEqual(details(result).map(call => call.url), [BASE + ID]);
   });
+});
+
+const EXTERNAL = 'https://nnov.trust-encar.ru/auto/' + ID + '/';
+const BLOCK = () => new Response('서비스 이용 제한됨', { status: 403 });
+function externalPage(id = ID, plate = PLATE, related = '') {
+  return '<main><h1>Synthetic electric vehicle</h1>' +
+    '<p>Дата добавления объявления 21.10.2026</p><p>Дата модификации объявления 22.10.2026</p>' +
+    '<ul class="vehicle-specs"><li><span>Лот</span><strong>' + id + '</strong></li>' +
+    '<li><span>Номер автомобиля</span><strong>' + plate + '</strong></li></ul>' +
+    '<a href="https://www.encar.com/dc/dc_cardetailview.do?carid=' + id + '">Авто на Encar</a>' + related + '</main>';
+}
+
+test('a freshly fetched exact main-vehicle match retains an official link with separate external evidence when Encar blocks', async () => {
+  const start = Date.now();
+  const result = await run({
+    results: [{ url: EXTERNAL, content: PLATE + ' PRIVATE_INDEX_CONTENT' }],
+    pages: { [ID]: BLOCK() }, externalPages: { [EXTERNAL]: externalPage() }
+  });
+  assert.equal(result.reply.status, 200); assert.equal(result.body.status, 'found');
+  const item = result.body.listings[0];
+  assert.equal(item.id, ID); assert.equal(item.sellerUrl, BASE + ID);
+  assert.equal(item.trustedId, null); assert.equal(item.trustedUrl, null);
+  assert.deepEqual([item.priceWon, item.priceSource, item.priceCheckedAt, item.priceStatus], [null, null, null, 'unavailable']);
+  assert.deepEqual({ ...item.externalVerification, checkedAt: null }, {
+    source: 'trust-encar', sourceUrl: EXTERNAL, checkedAt: null, advertisedAt: '2026-10-21', modifiedAt: '2026-10-22'
+  });
+  assert(Date.parse(item.externalVerification.checkedAt) >= start && Date.parse(item.externalVerification.checkedAt) <= Date.now());
+  assert.equal(result.calls.filter(call => call.url === EXTERNAL).length, 1);
+  assert.equal(details(result).length, 1);
+  assert.equal(result.calls.some(call => new URL(call.url).hostname === 'api.encar-api.com'), false);
+  assert.doesNotMatch(result.logs.join(''), /12가3456|43000001|nnov|PRIVATE_INDEX|synthetic_access|synthetic_tavily/);
+});
+
+test('a snippet matching only a recommended vehicle never promotes the current external page ID', async () => {
+  const related = '<section><h2>Похожие автомобили</h2><article class="car-card">' + PLATE +
+    '<a href="/auto/43000003/">Related vehicle</a></article></section>';
+  const result = await run({
+    results: [{ url: EXTERNAL, raw_content: PLATE }], pages: { [ID]: BLOCK() },
+    externalPages: { [EXTERNAL]: externalPage(ID, '34나5678', related) }
+  });
+  assert.equal(result.reply.status, 502); assert.equal(result.body.diagnostics.code, 'DETAIL_BLOCKED');
+  assert.deepEqual(result.body.listings, []); assert.equal(result.calls.filter(call => call.url === EXTERNAL).length, 1);
+  assert.equal(details(result).length, 1);
+});
+
+test('the original catalogue card supplies its own matching ID instead of borrowing the page or snippet ID', async () => {
+  const correct = '43000003', url = 'https://nnov.trust-encar.ru/catalog/synthetic/model/';
+  const result = await run({
+    results: [{ url, content: PLATE + ' Лот: ' + ID }], pages: { [correct]: BLOCK() },
+    externalPages: { [url]: '<article class="car-card">34나5678<a href="/auto/' + ID + '/">Other</a></article>' +
+      '<article class="car-card">' + PLATE + '<a href="/auto/' + correct + '/">Exact</a></article>' }
+  });
+  assert.equal(result.body.status, 'found'); assert.equal(result.body.listings[0].id, correct);
+  assert.equal(result.body.listings[0].sellerUrl, BASE + correct);
+  assert.equal(result.body.listings[0].externalVerification.sourceUrl, url);
+  assert(details(result).some(call => call.url === BASE + correct));
+});
+
+test('a recovered search can replace a blocked saved hint with an independently verified official advertisement', async () => {
+  const fresh = '43000003';
+  const result = await run({ candidateIds: [ID], pages: { [ID]: BLOCK(), [fresh]: page(fresh) }, results: [{ url: BASE + fresh, content: PLATE }] });
+  assert.equal(result.body.status, 'found'); assert.equal(result.body.listings[0].id, fresh);
+  assert.equal(result.body.listings[0].externalVerification, undefined);
+  assert.equal(searchCalls(result).length, 1); assert.equal(details(result).filter(call => call.url === BASE + ID).length, 1);
+});
+
+test('explicit official rejection and unknown advertising status cannot be overridden by an exact mirror record', async t => {
+  for (const [name, body, status] of [
+    ['mismatch', page(ID, { vehicleNo: '34나5678' }), 200],
+    ['sold', page(ID, { advertisement: { status: 'SOLD' } }), 200],
+    ['unknown', page(ID, { advertisement: { status: 'UNKNOWN' } }), 200],
+    ['not found', 'Not found', 404], ['gone', 'Gone', 410]
+  ]) await t.test(name, async () => {
+    const result = await run({ results: [{ url: EXTERNAL, content: PLATE }], pages: { [ID]: new Response(body, { status }) }, externalPages: { [EXTERNAL]: externalPage() } });
+    assert.deepEqual(result.body.listings, []);
+    assert.equal(result.calls.some(call => call.url === EXTERNAL), false);
+  });
+});
+
+test('a search snippet is insufficient when the actual source is blocked, redirected, oversized or malformed', async t => {
+  for (const response of [
+    new Response('Forbidden', { status: 403 }),
+    new Response('', { status: 302, headers: { Location: 'https://evil.example/' } }),
+    new Response('too large', { headers: { 'Content-Length': String(3 * 1024 * 1024 + 1) } }),
+    new Response('<main>Unknown page ' + PLATE + '</main>')
+  ]) await t.test(String(response.status) + ':' + (response.headers.get('Content-Length') || ''), async () => {
+    const result = await run({ results: [{ url: EXTERNAL, content: PLATE }], pages: { [ID]: BLOCK() }, externalPages: { [EXTERNAL]: response } });
+    assert.deepEqual(result.body.listings, []); assert.equal(result.reply.status, 502);
+    assert.equal(result.calls.filter(call => call.url === EXTERNAL).length, 1);
+    assert.equal(result.calls.some(call => new URL(call.url).hostname === 'evil.example'), false);
+  });
+});
+
+test('only the allowed official transport and parse failures may retain an exact externally matched link', async t => {
+  for (const [name, official] of [
+    ['blocked', BLOCK()], ['unavailable', new Response('Unavailable', { status: 503 })],
+    ['malformed state', '<script>window.__PRELOADED_STATE__={broken}</script>'],
+    ['timeout', new DOMException('Synthetic timeout', 'AbortError')]
+  ]) await t.test(name, async () => {
+    const result = await run({ results: [{ url: EXTERNAL, content: PLATE }], pages: { [ID]: official }, externalPages: { [EXTERNAL]: externalPage() } });
+    assert.equal(result.body.status, 'found'); assert.equal(result.body.listings[0].externalVerification.sourceUrl, EXTERNAL);
+    assert.equal(details(result).length, 1); assert.equal(result.body.listings[0].priceStatus, 'unavailable');
+  });
+});
+
+test('at most six public source pages are fetched across both searches and unrelated bodies never supply a link', async () => {
+  const ids = Array.from({ length: 8 }, (_, index) => String(43000010 + index));
+  const urls = ids.map(id => 'https://nnov.trust-encar.ru/auto/' + id + '/');
+  const result = await run({
+    results: urls.map(url => ({ url, content: PLATE })),
+    pages: Object.fromEntries(ids.map(id => [id, BLOCK()])),
+    externalPages: Object.fromEntries(urls.map((url, index) => [url, externalPage(ids[index], '34나5678')]))
+  });
+  assert.deepEqual(result.body.listings, []); assert.equal(result.body.diagnostics.code, 'DETAIL_BLOCKED');
+  assert.equal(result.calls.filter(call => new URL(call.url).hostname === 'nnov.trust-encar.ru').length, 6);
+  assert.equal(searchCalls(result).length, 2); assert.equal(details(result).length, 6);
+});
+
+test('a saved known ID can be checked against the observed mirror route without a search API key', async () => {
+  const result = await run({ searchKey: '', candidateIds: [ID], pages: { [ID]: BLOCK() }, externalPages: { [EXTERNAL]: externalPage() } });
+  assert.equal(result.body.status, 'found'); assert.equal(result.body.listings[0].id, ID);
+  assert.equal(result.body.listings[0].externalVerification.sourceUrl, EXTERNAL);
+  assert.equal(result.body.listings[0].priceStatus, 'unavailable');
+  assert.equal(searchCalls(result).length, 0); assert.equal(details(result).length, 1);
+  assert.equal(result.calls.filter(call => call.url === EXTERNAL).length, 1);
+});
+
+test('a known-ID mirror page for another plate is rejected without guessing any other advertisement ID', async () => {
+  const result = await run({ searchKey: '', candidateIds: [ID], pages: { [ID]: BLOCK() }, externalPages: { [EXTERNAL]: externalPage(ID, '34나5678') } });
+  assert.equal(result.reply.status, 502); assert.equal(result.body.diagnostics.code, 'DETAIL_BLOCKED');
+  assert.deepEqual(result.body.listings, []); assert.equal(details(result).length, 1); assert.equal(searchCalls(result).length, 0);
+  assert.equal(result.calls.filter(call => new URL(call.url).hostname.endsWith('trust-encar.ru')).length, 1);
+});
+
+test('known-ID fallback uses at most three existing hints and never creates IDs or runs before fresh searches', async () => {
+  const ids = Array.from({ length: 5 }, (_, index) => String(43000010 + index));
+  const urls = ids.map(id => 'https://nnov.trust-encar.ru/auto/' + id + '/');
+  const result = await run({ candidateIds: ids, pages: Object.fromEntries(ids.map(id => [id, BLOCK()])),
+    externalPages: Object.fromEntries(urls.map((url, index) => [url, externalPage(ids[index], '34나5678')])) });
+  assert.deepEqual(result.body.listings, []); assert.equal(searchCalls(result).length, 2);
+  const external = result.calls.filter(call => new URL(call.url).hostname === 'nnov.trust-encar.ru');
+  assert.deepEqual(external.map(call => call.url), urls.slice(0, 3));
+  assert(result.calls.indexOf(external[0]) > result.calls.indexOf(searchCalls(result)[1]));
+  assert.equal(details(result).length, ids.length);
+  const none = await run({ searchKey: '' });
+  assert.equal(none.calls.some(call => new URL(call.url).hostname.endsWith('trust-encar.ru')), false);
 });

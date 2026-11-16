@@ -42,6 +42,13 @@ function storedRecord(listings = [listing()], plate = PLATE) {
   return { version: 1, plate, verifiedAt: new Date().toISOString(), listings };
 }
 
+function externalListing(id = '43000001') {
+  return {...listing(id, null), externalVerification: {
+    source: 'trust-encar', sourceUrl: 'https://nnov.trust-encar.ru/auto/' + id + '/',
+    checkedAt: new Date().toISOString(), advertisedAt: '2026-10-21', modifiedAt: null
+  }};
+}
+
 const plain = value => JSON.parse(JSON.stringify(value));
 
 function assertLookupIcon(button, busy = false) {
@@ -1193,4 +1200,95 @@ test('78 a failed toast renderer cannot turn a confirmed price save into a faile
   await settle();assert.equal(f.w.cars[0].sell,37770000);assert.equal(f.changeCalls.length,1);assert.equal(f.refreshListCalls.length,1);assert.equal(f.priceConfirmation.open,false);assert.equal(f.priceFeedback,null);assert.equal(f.priceControls[0].disabled,false);
   f.priceControls[0].click();await settle();assert.equal(f.changeCalls.length,1,'An acknowledged save cannot become an uncertain retry when its notification fails');
  });
+});
+
+test('external exact-plate results preserve provenance, save the link and never run automatic price recognition', async t => {
+  const item = externalListing(), f = fixture(t, {bridge: true, autoConfirm: true,
+    cars: [{id: 'car-1', plate: PLATE, sell: 12000000}],
+    autoPrice: () => { throw Error('External evidence cannot start OCR'); }});
+  f.click(); await settle(); f.reply(0, found(PLATE, [item])); await settle();
+  assert.equal(f.autoCalls.length, 0); assert.equal(f.saveCalls.length, 1);
+  assert.deepEqual(f.tabs[0].navigations, [item.sellerUrl]);
+  assert.deepEqual(f.saveCalls[0].record.listings[0].externalVerification, item.externalVerification);
+  assert.deepEqual(f.w.cars[0].encarLinks.listings[0].externalVerification, item.externalVerification);
+  assert.equal(f.priceControls.length, 0); assert.equal(f.prices.length, 0);
+  assert.equal(f.priceConfirmation.open, false); assert.equal(f.changeCalls.length, 0);
+  assert.equal(f.w.cars[0].sell, 12000000);
+  const status = f.w.document.querySelector('.snote-encar-external-status');
+  assert.equal(status.textContent, '외부 광고 확인'); assert.equal(status.tabIndex, 0);
+  assert.match(status.dataset.tooltip, /한국 엔카의 현재 광고 상태는 확인하지 못했습니다/);
+  assert.match(status.dataset.tooltip, /외부 광고 추가일 2026-10-21/);
+  assert.match(status.dataset.tooltip, /출처 https:\/\/nnov\.trust-encar\.ru\/auto\/43000001\//);
+  assert.equal(status.getAttribute('aria-label'), status.dataset.tooltip);
+  assert.equal(status.dataset.snoteIconHelp, status.dataset.tooltip, 'The shared tooltip trigger must recognize the plain status span');
+  assert.equal(f.links.length, 1, 'Only the canonical Korean advertisement is navigable');
+});
+
+test('external provenance restores on another device and saved list clicks reuse its canonical link without lookup or price work', async t => {
+  const item = externalListing(), first = fixture(t, {bridge: true});
+  first.click(); await settle(); first.reply(0, found(PLATE, [item])); await settle();
+  const next = fixture(t, {bridge: true, autoConfirm: true,
+    savedRecord: plain(first.w.cars[0].encarLinks), autoPrice: () => {throw Error('No OCR');}});
+  assert.equal(next.w.document.querySelector('.snote-encar-external-status').textContent, '외부 광고 확인');
+  assert.equal(next.links.length, 1); assert.equal(next.requests.length, 0); assert.equal(next.saveCalls.length, 0);
+  let defaultWasPrevented = null;
+  next.links[0].addEventListener('click', event => {defaultWasPrevented = event.defaultPrevented; event.preventDefault();});
+  next.links[0].dispatchEvent(new next.w.MouseEvent('click', {bubbles: true, cancelable: true}));
+  assert.equal(defaultWasPrevented, false, 'Restored external links do not force another official-page check');
+  assert.equal(next.w.SnoteEncarLink.lookupCurrent('car-1', item.id), true);
+  assert.deepEqual(next.tabs[0].navigations, [item.sellerUrl]);
+  assert.equal(next.requests.length, 0); assert.equal(next.autoCalls.length, 0); assert.equal(next.changeCalls.length, 0);
+});
+
+test('forged prices on externally confirmed listings cannot display quotes, create change controls or select OCR in mixed results', async t => {
+  const external = {...externalListing(), ...pricedListing(), trustedId: null, trustedUrl: null};
+  const official = pricedListing(39999000, new Date().toISOString(), '43000003');
+  const f = fixture(t, {bridge: true, autoConfirm: true, cars: [{id: 'car-1', plate: PLATE, sell: 12000000}],
+    autoPrice: () => {throw Error('No external OCR');}});
+  f.click(); await settle(); f.reply(0, {...found(PLATE, [external, official]), status: 'multiple'}); await settle();
+  assert.equal(f.autoCalls.length, 0); assert.equal(f.priceControls.length, 1); assert.equal(f.prices.length, 1);
+  assert.equal(f.priceControls[0].dataset.listingId, official.id);
+  const saved = f.saveCalls[0].record.listings[0];
+  assert.equal(saved.priceWon, null); assert.equal(saved.priceSource, null); assert.equal(saved.priceStatus, 'unavailable');
+  assert.deepEqual(saved.externalVerification, external.externalVerification);
+  const choices = f.priceConfirmation.querySelectorAll('input[type=radio]');
+  assert.equal(choices.length, 1); assert.equal(choices[0].value, official.id);
+  assert.equal(f.changeCalls.length, 0);
+});
+
+test('malformed external provenance is rejected rather than silently upgraded to official verification', async t => {
+  const changes = [
+    item => {item.externalVerification = null;},
+    item => {item.externalVerification.source = 'encar.com';},
+    item => {item.externalVerification.sourceUrl = 'https://nnov.trust-encar.ru.evil.example/auto/43000001/';},
+    item => {item.externalVerification.sourceUrl = 'https://user:pass@nnov.trust-encar.ru/auto/43000001/';},
+    item => {item.externalVerification.sourceUrl = 'https://nnov.trust-encar.ru:443/auto/43000001/';},
+    item => {item.externalVerification.sourceUrl = 'https://xn--fixture.trust-encar.ru/auto/43000001/';},
+    item => {item.externalVerification.sourceUrl = 'https://nnov.trust-encar.ru/auto/43000009/';},
+    item => {item.externalVerification.sourceUrl = 'https://nnov.trust-encar.ru/catalog/delete';},
+    item => {item.externalVerification.sourceUrl = 'https://nnov.trust-encar.ru/catalog/?action=delete';},
+    item => {item.externalVerification.checkedAt = 'invalid';},
+    item => {item.externalVerification.checkedAt = new Date(Date.now() + 120000).toISOString();},
+    item => {item.externalVerification.advertisedAt = '2026-02-30';},
+    item => {item.externalVerification.modifiedAt = '2026-13-01';},
+    item => {item.externalVerification.phone = 'PRIVATE';},
+    item => {item.trustedId = '43000002'; item.trustedUrl = listing().trustedUrl;}
+  ];
+  for (let index = 0; index < changes.length; index++) await t.test(String(index), async sub => {
+    const item = externalListing(); changes[index](item);
+    const f = fixture(sub, {bridge: true}); f.click(); await settle(); f.reply(0, found(PLATE, [item])); await settle();
+    assert.equal(f.links.length, 0); assert.equal(f.saveCalls.length, 0); assert.equal(f.tabs[0].closed, true);
+    assert.deepEqual(f.tabs[0].navigations, []);
+  });
+});
+
+test('external catalogue evidence keeps its exact source URL and calendar dates without adding a trusted alias', t => {
+  const item = externalListing(); item.externalVerification.sourceUrl = 'https://kazan.trust-encar.ru/catalog/tesla/model-y/?page=2';
+  item.externalVerification.advertisedAt = null; item.externalVerification.modifiedAt = '2024-02-29';
+  const f = fixture(t, {bridge: true, savedRecord: storedRecord([item])});
+  assert.equal(f.links.length, 1); assert.equal(f.links[0].href, item.sellerUrl);
+  const status = f.w.document.querySelector('.snote-encar-external-status');
+  assert.match(status.dataset.tooltip, /외부 수정일 2024-02-29/);
+  assert.doesNotMatch(status.dataset.tooltip, /외부 광고 추가일/);
+  assert.match(status.dataset.tooltip, /출처 https:\/\/kazan\.trust-encar\.ru\/catalog\/tesla\/model-y\/\?page=2/);
 });

@@ -33,12 +33,17 @@ async function run(config={}) {
    if(config.provider)return config.provider(url,options,calls);
    return config.providerReply??json(config.row??{Id:url.searchParams.get('id'),Price:2820});
   }
+  if(url.href==='https://api.tavily.com/search')return json({results:config.results??[]});
+  if(Object.hasOwn(config.externalPages??{},url.href)){
+   assert.deepEqual(options.headers,{Accept:'text/html'});assert.equal(options.redirect,'manual');
+   return new Response(config.externalPages[url.href],{headers:{'Content-Type':'text/html'}});
+  }
   if(url.origin==='https://encar.spb.ru')return new Response('<div class="no-results">Ничего не найдено</div>',{headers:{'Content-Type':'text/html'}});
   throw Error('Unexpected synthetic URL: '+url.origin);
  };
  try{
   const payload=config.payload??{plate:PLATE,candidateIds:[ID]};
-  const reply=await onRequest({request:new Request('https://snote.example/api/encar',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+TOKEN},body:JSON.stringify(payload),signal:config.signal}),env:{SUPABASE_URL:'https://fixture.supabase.co',SUPABASE_PUBLISHABLE_KEY:'synthetic_public_key',TAVILY_API_KEY:'',ENCAR_API_KEY:Object.hasOwn(config,'key')?config.key:KEY}});
+  const reply=await onRequest({request:new Request('https://snote.example/api/encar',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+TOKEN},body:JSON.stringify(payload),signal:config.signal}),env:{SUPABASE_URL:'https://fixture.supabase.co',SUPABASE_PUBLISHABLE_KEY:'synthetic_public_key',TAVILY_API_KEY:config.searchKey??'',ENCAR_API_KEY:Object.hasOwn(config,'key')?config.key:KEY}});
   return {status:reply.status,body:await reply.json(),calls,logs};
  }finally{globalThis.fetch=previous;console.info=info;}
 }
@@ -162,4 +167,23 @@ test('a provider timeout retains the earlier page observation time instead of ma
  t.mock.timers.enable({apis:['setTimeout','Date'],now:100000});let entered;const ready=new Promise(resolve=>entered=resolve);
  const pending=run({pages:{[ID]:page(ID,{},'<p>5,490만원</p>')},provider:()=>{entered();return new Promise(()=>{});}});await ready;t.mock.timers.tick(6001);const r=await pending,item=r.body.listings[0];
  assert.equal(item.priceStatus,'review');assert.equal(item.priceWon,54900000);assert(Date.parse(item.priceCheckedAt)<Date.parse(r.body.verifiedAt));assert(r.body.priceDiagnostics.codes.some(row=>row.code==='TIMEOUT'));
+});
+
+test('an externally matched link never sends a price-provider request or adopts the mirror amount while official identity/status are unavailable',async()=>{
+ const url='https://nnov.trust-encar.ru/auto/'+ID+'/';
+ const external='<main><h1>Synthetic</h1><ul class="vehicle-specs"><li><span>Лот</span><strong>'+ID+'</strong></li><li><span>Номер автомобиля</span><strong>'+PLATE+'</strong></li></ul><a href="https://www.encar.com/dc/dc_cardetailview.do?carid='+ID+'">Авто на Encar</a><p>Стоимость авто в Корее: 54 900 000 ₩</p><p>5,490만원</p></main>';
+ const r=await run({searchKey:'synthetic_search_key',pages:{[ID]:new Response('서비스 이용 제한됨',{status:403})},results:[{url,content:PLATE}],externalPages:{[url]:external}});
+ assert.equal(r.status,200);assert.equal(r.body.status,'found');assert.equal(r.body.listings[0].id,ID);
+ assert.equal(r.body.listings[0].externalVerification.sourceUrl,url);unavailable(r.body.listings[0]);
+ assert.equal(providerCalls(r).length,0);assert.equal(r.body.priceDiagnostics,undefined);
+ assert.doesNotMatch(r.logs.join(''),/12가3456|43000001|54.?900|nnov|synthetic_private|synthetic_search|synthetic_access/);
+});
+
+test('known-ID external fallback without a search key cannot consume the configured price API or import a mirror price',async()=>{
+ const url='https://nnov.trust-encar.ru/auto/'+ID+'/';
+ const external='<main><h1>Synthetic</h1><ul class="vehicle-specs"><li><span>Лот</span><strong>'+ID+'</strong></li><li><span>Номер автомобиля</span><strong>'+PLATE+'</strong></li></ul><a href="https://www.encar.com/dc/dc_cardetailview.do?carid='+ID+'">Авто на Encar</a><p>5,490만원</p></main>';
+ const r=await run({pages:{[ID]:new Response('blocked',{status:403})},externalPages:{[url]:external}});
+ assert.equal(r.body.status,'found');assert.equal(r.body.listings[0].externalVerification.sourceUrl,url);
+ unavailable(r.body.listings[0]);assert.equal(providerCalls(r).length,0);
+ assert.equal(r.calls.some(call=>new URL(call.url).hostname==='api.tavily.com'),false);
 });
