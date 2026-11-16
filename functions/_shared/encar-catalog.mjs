@@ -248,3 +248,158 @@ export async function parseCatalogPage(html, currentUrl, plate) {
   if (anchors.some(anchor => !parents(anchor).some(parent => records.includes(parent)))) fail('CATALOG_PARSE_FAILED');
   return { ids: [...ids].slice(0, 12), recordCount: records.length, exactMatchCount, linkCount: anchors.length, empty: false, nextUrl: nextPage(root, base), truncated: ids.size > 12 };
 }
+
+// A public external page confirms a plate-to-advertisement relationship only.
+// It never establishes the current Korean advertising status or price.
+const EXTERNAL_HOSTS = new Set(['encar.spb.ru', 'encar.msk.ru', 'encar.cbg.ru', 'trust-encar.ru']);
+const DNS_LABEL = /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/;
+function externalHost(host) {
+  if (EXTERNAL_HOSTS.has(host)) return true;
+  return host.length <= 253 && host.endsWith('.trust-encar.ru') && host.split('.').every(label => DNS_LABEL.test(label) && !label.startsWith('xn--'));
+}
+export function externalSourceURL(value, base = 'https://trust-encar.ru') {
+  const raw = rawURL(value), rawBase = rawURL(base);
+  if (raw.length > 2048 || rawBase.length > 2048) fail('CATALOG_CONFIG_INVALID');
+  for (const item of [raw, rawBase]) {
+    const authority = /^https:\/\/([^/?#]+)/i.exec(item)?.[1];
+    if (authority && (/[^\x00-\x7f]/.test(authority) || authority.includes(':') || authority.includes('@'))) fail('CATALOG_CONFIG_INVALID');
+    const path = item.replace(/^https:\/\/[^/?#]+/i, '').split(/[?#]/, 1)[0];
+    if (path.includes('%') || /(?:^|\/)\.{1,2}(?:\/|$)/.test(path)) fail('CATALOG_CONFIG_INVALID');
+  }
+  let url, origin;
+  try { origin = new URL(rawBase); url = new URL(raw, origin); } catch { fail('CATALOG_CONFIG_INVALID'); }
+  if (origin.protocol !== 'https:' || !externalHost(origin.hostname) || origin.username || origin.password || origin.port || origin.hash ||
+      url.protocol !== 'https:' || !externalHost(url.hostname) || url.username || url.password || url.port || url.hash || url.href.length > 2048) fail('CATALOG_CONFIG_INVALID');
+  const isDetail = /^\/auto\/[1-9][0-9]{0,11}\/?$/.test(url.pathname);
+  if ((isDetail && url.search) || (!isDetail && !/^\/catalog(?:\/[a-z0-9-]+)*\/?$/.test(url.pathname))) fail('CATALOG_CONFIG_INVALID');
+  if (UNSAFE_PATH.test(url.pathname)) fail('CATALOG_CONFIG_INVALID');
+  for (const [key, entry] of url.searchParams) {
+    if (CONTROL.test(key + entry) || WRITE_ACTION.test(key) || (/^(?:_?method|action|cmd|command|operation|task|do)$/i.test(key) && WRITE_ACTION.test(entry))) fail('CATALOG_CONFIG_INVALID');
+  }
+  return url;
+}
+
+function externalAd(node, base) {
+  if (node.tag !== 'a' || node.ignored || !node.attrs.href) return null;
+  let url; try { url = externalSourceURL(node.attrs.href, base); } catch { return null; }
+  const id = /^\/auto\/([1-9][0-9]{0,11})\/?$/.exec(url.pathname)?.[1];
+  return id ? { id, url } : null;
+}
+const EXTERNAL_RELATED = /(?:^|[\s_-])(?:related|recommend(?:ed|ations)?|similar|suggest(?:ed|ions)?|also[-_]?viewed)(?:$|[\s_-])/i;
+const EXTERNAL_INACTIVE = /(?:автомобиль\s+продан|снят\s+с\s+продажи|(?:^|\n)\s*(?:продан|продано|sold|removed|판매완료)\s*(?:\n|$))/iu;
+function nonPrimary(node) {
+  return [node, ...parents(node)].some(item => item.ignored || ['nav', 'aside', 'footer'].includes(item.tag) ||
+    EXTERNAL_RELATED.test(item.attrs.class || '') || item.attrs.role === 'complementary');
+}
+function fieldText(node) {
+  let value = text(node).trim();
+  if (['dt', 'th'].includes(node.tag)) {
+    const siblings = node.parent?.children || [], next = siblings[siblings.indexOf(node) + 1];
+    if (next && next.tag === (node.tag === 'dt' ? 'dd' : 'td') && !next.ignored) value += '\n' + text(next).trim();
+  }
+  return value;
+}
+function uniqueFields(nodes, label, pattern) {
+  const result = [];
+  for (const node of nodes) {
+    if (!['li', 'div', 'section', 'p', 'dl', 'dt', 'tr', 'th'].includes(node.tag) || !node.closed || nonPrimary(node)) continue;
+    const match = label.exec(fieldText(node));
+    if (!match) continue;
+    const value = match[1].trim();
+    if (pattern.test(value)) result.push({ node, value });
+  }
+  return result.filter(item => !result.some(other => other !== item && parents(other.node).includes(item.node)));
+}
+function infoContainer(node) {
+  const chain = [node, ...parents(node)];
+  return chain.find(item => ['ul', 'ol', 'dl', 'table'].includes(item.tag)) || chain.find(item =>
+    ['div', 'section', 'article'].includes(item.tag) && /(?:^|[\s_-])(?:car|vehicle|auto)?[\s_-]*(?:info|specs?|specifications|params?|characteristics|details|technical)(?:$|[\s_-])/i.test(item.attrs.class || ''));
+}
+function calendarDate(raw) {
+  const match = /^(\d{2})\.(\d{2})\.(\d{4})$/.exec(raw);
+  if (!match) return null;
+  const [, day, month, year] = match, value = `${year}-${month}-${day}`, date = new Date(value + 'T00:00:00.000Z');
+  return Number(year) >= 2000 && Number.isFinite(date.getTime()) && date.toISOString().slice(0, 10) === value ? value : null;
+}
+function sourceDate(value, label) {
+  const dates = [...value.matchAll(new RegExp(label + '\\s*[:：]?\\s*(\\d{2}\\.\\d{2}\\.\\d{4})(?![0-9])', 'giu'))].map(match => calendarDate(match[1]));
+  return dates.length && dates.every(date => date && date === dates[0]) ? dates[0] : null;
+}
+function officialOutlinkId(node) {
+  if (node.tag !== 'a' || node.ignored || !node.attrs.href) return null;
+  let url; try { url = new URL(node.attrs.href); } catch { return null; }
+  if (url.protocol !== 'https:' || url.username || url.password || url.port || url.hash) return null;
+  const host = url.hostname.replace(/^www\./, '');
+  if (host === 'fem.encar.com') return /^\/cars\/detail\/([1-9][0-9]{0,11})\/?$/.exec(url.pathname)?.[1] || null;
+  if (host !== 'encar.com' && host !== 'm.encar.com') return null;
+  const ids = [...url.searchParams].filter(([key]) => key.toLowerCase() === 'carid').map(([, value]) => value);
+  return ids.length === 1 && /^[1-9][0-9]{0,11}$/.test(ids[0]) ? ids[0] : null;
+}
+
+function boundedPrimaryText(node, positions, start, end, state = { started: false, ended: false }) {
+  const at = positions.get(node);
+  if (state.ended) return '';
+  if (at !== undefined && at >= end) { state.ended = true; return ''; }
+  if (node.ignored || nonPrimary(node)) return '';
+  if (at === start) { state.started = true; return ''; }
+  const output = [];
+  for (const part of node.parts) {
+    if (state.ended) break;
+    if (typeof part === 'string') { if (state.started) output.push(part); }
+    else output.push((BLOCK.has(part.tag) ? '\n' : '') + boundedPrimaryText(part, positions, start, end, state) + (BLOCK.has(part.tag) ? '\n' : ''));
+  }
+  return output.join('');
+}
+
+export async function parseExternalAdvertisement(html, currentUrl, requestedPlate) {
+  const base = externalSourceURL(currentUrl);
+  if (typeof requestedPlate !== 'string') fail('CATALOG_PARSE_FAILED');
+  const plate = requestedPlate.normalize('NFKC').replace(/[\s-]/gu, '');
+  if (!PLATE.test(plate)) fail('CATALOG_PARSE_FAILED');
+  const root = await tree(html, true, 'CATALOG_PARSE_FAILED'), all = descendants(root, () => true), positions = new Map(all.map((node, index) => [node, index]));
+  if (/<title>\s*(?:access denied|request blocked)/iu.test(html) || /(?:captcha|access denied|request blocked|enable javascript|javascript is required|доступ ограничен|проверка браузера)/iu.test(text(root))) fail('CATALOG_PARSE_FAILED');
+  const sourceUrl = base.href, detailId = /^\/auto\/([1-9][0-9]{0,11})\/?$/.exec(base.pathname)?.[1];
+  if (detailId) {
+    const headings = all.filter(node => node.tag === 'h1' && !nonPrimary(node));
+    if (headings.length !== 1) fail('CATALOG_PARSE_FAILED');
+    const start = positions.get(headings[0]);
+    const related = all.find(node => positions.get(node) > start && !node.ignored &&
+      (EXTERNAL_RELATED.test(node.attrs.class || '') || (/^h[2-6]$/.test(node.tag) && /^(?:похожие|рекомендуем|смотрите также|подобран|similar|related|recommend|추천|연관|유사)/iu.test(text(node).trim()))));
+    const end = related ? positions.get(related) : all.length;
+    const primary = all.filter(node => positions.get(node) > start && positions.get(node) < end && !nonPrimary(node));
+    const plates = uniqueFields(primary, /^Номер\s+автомобиля\s*[:：]?\s*([\s\S]+)$/iu, /\S/u);
+    const lots = uniqueFields(primary, /^(?:Лот(?:\s+объявления)?|Номер\s+лота)\s*[:：#]?\s*([1-9][0-9]{0,11})$/iu, /^[1-9][0-9]{0,11}$/);
+    const validPlates = plates.filter(item => PLATE.test(item.value.replace(/[\s-]/gu, '')));
+    const actualPlates = new Set(validPlates.map(item => item.value.replace(/[\s-]/gu, '')));
+    const actualIds = new Set(lots.map(item => item.value));
+    if (actualPlates.size !== 1 || actualIds.size !== 1 || !actualIds.has(detailId)) fail('CATALOG_PARSE_FAILED');
+    if (!validPlates.some(item => lots.some(lot => infoContainer(item.node) && infoContainer(item.node) === infoContainer(lot.node)))) fail('CATALOG_PARSE_FAILED');
+    const outlinks = primary.map(officialOutlinkId).filter(Boolean);
+    if (outlinks.some(id => id !== detailId)) fail('CATALOG_PARSE_FAILED');
+    // Only primary text contributes dates/status; related listings never do.
+    const visible = entities(boundedPrimaryText(root, positions, start, end)).normalize('NFKC');
+    if (!actualPlates.has(plate) || EXTERNAL_INACTIVE.test(visible)) return { matches: [], recordCount: 1, kind: 'detail' };
+    return { matches: [{ id: detailId, sourceUrl, advertisedAt: sourceDate(visible, 'Дата\\s+добавления\\s+объявления'), modifiedAt: sourceDate(visible, 'Дата\\s+модификации\\s+объявления') }], recordCount: 1, kind: 'detail' };
+  }
+
+  const adLinks = node => descendants(node, child => !!externalAd(child, base));
+  const headingLink = node => descendants(node, child => /^h[2-4]$/.test(child.tag) && adLinks(child).length > 0).length > 0;
+  const candidates = all.filter(node => !node.ignored && node.closed && !['main', 'body', 'html'].includes(node.tag) &&
+    (isCard(node) || (['div', 'section'].includes(node.tag) && plateTokens(text(node)).size > 0 && headingLink(node))) && adLinks(node).length > 0);
+  const candidateSet = new Set(candidates);
+  const records = candidates.filter(node => !descendants(node, child => candidateSet.has(child)).length);
+  const matches = [], idsToPlates = new Map();
+  for (const node of records) {
+    const cardText = text(node), links = new Set(adLinks(node).map(child => externalAd(child, base).id)), tokens = plateTokens(cardText);
+    if (links.size !== 1 || tokens.size !== 1) {
+      if (tokens.has(plate)) fail('CATALOG_PARSE_FAILED');
+      continue;
+    }
+    const id = [...links][0], token = [...tokens][0];
+    if (idsToPlates.has(id) && idsToPlates.get(id) !== token) fail('CATALOG_PARSE_FAILED');
+    idsToPlates.set(id, token);
+    if (token === plate && !EXTERNAL_INACTIVE.test(cardText) && !matches.some(item => item.id === id)) matches.push({ id, sourceUrl, advertisedAt: null, modifiedAt: null });
+  }
+  if (!records.length && !explicitEmpty(root)) fail('CATALOG_PARSE_FAILED');
+  return { matches: matches.slice(0, 12), recordCount: records.length, kind: 'catalog' };
+}

@@ -3,7 +3,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import './html-rewriter-setup.mjs';
-import { CATALOG_ORIGIN, CatalogError, catalogURL, configuredCatalogSearch, discoverCatalogSearch, discoverCatalogEntry, parseCatalogPage } from '../../functions/_shared/encar-catalog.mjs';
+import { CATALOG_ORIGIN, CatalogError, catalogURL, configuredCatalogSearch, discoverCatalogSearch, discoverCatalogEntry, parseCatalogPage, externalSourceURL, parseExternalAdvertisement } from '../../functions/_shared/encar-catalog.mjs';
 
 const PLATE = '999허0000', OTHER = '888호0000', ID = '81000001';
 const PAGE = CATALOG_ORIGIN + '/catalog?car_number=0000';
@@ -236,4 +236,168 @@ test('helpers never call HTTP or mutate inputs', async () => {
   const oldFetch = globalThis.fetch, html = card(); globalThis.fetch = () => { throw new Error('No HTTP in parser'); };
   try { await discoverCatalogSearch(form(), PAGE, '0000'); const result = await parseCatalogPage(html, PAGE, PLATE); assert.deepEqual(result.ids, [ID]); assert.equal(html, card()); }
   finally { globalThis.fetch = oldFetch; }
+});
+
+const EXTERNAL_ORIGIN = 'https://fixture-region.trust-encar.ru';
+const EXTERNAL_DETAIL = EXTERNAL_ORIGIN + '/auto/' + ID + '/';
+function externalDetail({ plate = PLATE, id = ID, outId = id, added = '21.10.2026', modified = '22.10.2026', related = '', before = '', status = '' } = {}) {
+  return `<main><h1>Synthetic vehicle</h1>${before}<p>Дата добавления объявления ${added}</p><p>Дата модификации объявления ${modified}</p><ul class="vehicle-specs"><li><span>Статус</span><strong>${status}</strong></li><li><span>Лот</span><strong>${id}</strong></li><li><span>Номер автомобиля</span><strong>${plate}</strong></li></ul><a href="https://www.encar.com/dc/dc_cardetailview.do?carid=${outId}">Авто на Encar</a></main>${related}`;
+}
+
+test('external source URLs support only known HTTPS detail/catalog hosts and preserve read filters', () => {
+  for (const host of ['trust-encar.ru', 'encar.spb.ru', 'encar.msk.ru', 'encar.cbg.ru', 'fixture-region.trust-encar.ru']) {
+    const url = externalSourceURL(`https://${host}/catalog/tesla/model-y/?page=2`);
+    assert.equal(url.hostname, host); assert.equal(url.searchParams.get('page'), '2');
+    assert.equal(externalSourceURL(`/auto/${ID}/`, url).href, `https://${host}/auto/${ID}/`);
+  }
+  assert.equal(externalSourceURL('?page=3', EXTERNAL_ORIGIN + '/catalog/').searchParams.get('page'), '3');
+});
+
+test('external URL checks reject host lookalikes, explicit ports, credentials, unicode and write routes', () => {
+  for (const value of [
+    'http://trust-encar.ru/auto/81000001/', 'https://trust-encar.ru.evil.example/auto/81000001/',
+    'https://nottrust-encar.ru/auto/81000001/', 'https://encar.spb.ru.evil.example/catalog/',
+    'https://sub.encar.spb.ru/catalog/', 'https://-bad.trust-encar.ru/catalog/', 'https://bad_.trust-encar.ru/catalog/',
+    'https://a..trust-encar.ru/catalog/', 'https://xn--fake.trust-encar.ru/catalog/', 'https://지역.trust-encar.ru/catalog/',
+    'https://trust-encar.ru:443/catalog/', 'https://trust-encar.ru:444/catalog/', 'https://user:pass@trust-encar.ru/catalog/',
+    '/auto/0/', '/auto/1234567890123/', '/auto/no-id/', '/auto/81000001/extra', '/auto/81000001/#x',
+    '/auto/81000001/?page=2', '/catalog/Tesla/', '/catalog/model_y/', '/catalog/?q=' + 'x'.repeat(2048),
+    '/catalog/../auto/81000001/', '/catalog/%2e%2e/auto/81000001/', '/%61uto/81000001/',
+    '/catalog/delete/', '/catalog/?action=delete', '/catalog/?_method=POST', '/catalog/?delete=1',
+    '/account/', 'javascript:alert(1)', 'https:\\trust-encar.ru/catalog/', '/catalog/\nunsafe'
+  ]) throws(() => externalSourceURL(value, EXTERNAL_ORIGIN));
+});
+
+test('external detail confirms only the main labelled plate, lot and matching official link', async () => {
+  const value = await parseExternalAdvertisement(externalDetail(), EXTERNAL_DETAIL, PLATE);
+  assert.deepEqual(value, { matches: [{ id: ID, sourceUrl: EXTERNAL_DETAIL, advertisedAt: '2026-10-21', modifiedAt: '2026-10-22' }], recordCount: 1, kind: 'detail' });
+  assert.equal(JSON.stringify(value).includes('price'), false);
+});
+
+test('external detail supports semantic dt/dd and table label-value pairs', async () => {
+  for (const fields of [
+    `<dl><dt>Лот</dt><dd>${ID}</dd><dt>Номер автомобиля</dt><dd>${PLATE}</dd></dl>`,
+    `<table><tr><th>Лот</th><td>${ID}</td></tr><tr><th>Номер автомобиля</th><td>${PLATE}</td></tr></table>`,
+    `<div class="car-info"><div>Лот: ${ID}</div><div>Номер автомобиля: ${PLATE}</div></div>`
+  ]) {
+    const value = await parseExternalAdvertisement('<h1>Fixture vehicle</h1>' + fields, EXTERNAL_DETAIL, PLATE);
+    assert.equal(value.matches[0].id, ID);
+  }
+});
+
+test('different main plate is not replaced by the requested plate in recommended cars', async () => {
+  const related = `<section class="related-cars"><h2>Похожие автомобили</h2><article><h3><a href="/auto/81000002/">Other vehicle</a></h3><ul><li>Лот 81000002</li><li>Номер автомобиля ${PLATE}</li></ul></article></section>`;
+  const result = await parseExternalAdvertisement(externalDetail({ plate: OTHER, related }), EXTERNAL_DETAIL, PLATE);
+  assert.deepEqual(result.matches, []);
+  await rejects(() => parseExternalAdvertisement(`<main><h1>Fixture vehicle</h1><ul><li>Лот ${ID}</li></ul></main>${related}`, EXTERNAL_DETAIL, PLATE));
+});
+
+test('a related heading bounds main identity even without a recognizable related CSS class', async () => {
+  const html = externalDetail({ plate: OTHER }).replace('</main>', `<h2>Похожие лоты</h2><ul><li>Лот ${ID}</li><li>Номер автомобиля ${PLATE}</li></ul></main>`);
+  assert.deepEqual((await parseExternalAdvertisement(html, EXTERNAL_DETAIL, PLATE)).matches, []);
+});
+
+test('main source ID, lot and official outgoing link must not contradict one another', async () => {
+  await rejects(() => parseExternalAdvertisement(externalDetail({ id: '81000002' }), EXTERNAL_DETAIL, PLATE));
+  await rejects(() => parseExternalAdvertisement(externalDetail({ outId: '81000002' }), EXTERNAL_DETAIL, PLATE));
+  const mixed = externalDetail().replace('</ul>', `<li>Номер автомобиля ${OTHER}</li></ul>`);
+  await rejects(() => parseExternalAdvertisement(mixed, EXTERNAL_DETAIL, PLATE));
+});
+
+test('main identity cannot borrow lot and plate from separate lists or page header', async () => {
+  for (const html of [
+    `<h1>${PLATE}</h1><ul><li>Лот ${ID}</li></ul>`,
+    `<main><h1>Fixture vehicle</h1><ul><li>Лот ${ID}</li></ul><ul><li>Номер автомобиля ${PLATE}</li></ul></main>`,
+    `<main><h1>Fixture vehicle</h1><ul><li>Лот ${ID}</li><li>Номер автомобиля UNKNOWN</li></ul><ul><li>Номер автомобиля ${PLATE}</li></ul></main>`,
+    `<h1>Fixture vehicle</h1><p>Лот ${ID}</p><p>Номер автомобиля ${PLATE}</p>`
+  ]) await rejects(() => parseExternalAdvertisement(html, EXTERNAL_DETAIL, PLATE));
+});
+
+test('detail matching ignores scripts, forms, hidden content and unrelated dates', async () => {
+  const noise = `<script>const plate='${PLATE}'</script><form>Номер автомобиля ${PLATE}</form><div hidden><ul><li>Лот ${ID}</li><li>Номер автомобиля ${PLATE}</li></ul></div>`;
+  assert.deepEqual((await parseExternalAdvertisement(externalDetail({ plate: OTHER, before: noise }), EXTERNAL_DETAIL, PLATE)).matches, []);
+  const related = '<section class="related"><p>Дата добавления объявления 01.01.2001</p></section>';
+  const found = await parseExternalAdvertisement(externalDetail({ related }), EXTERNAL_DETAIL, PLATE);
+  assert.equal(found.matches[0].advertisedAt, '2026-10-21');
+});
+
+test('a wrapper spanning the recommendations cannot leak their dates or sold status into primary evidence', async () => {
+  const html = `<main><h1>Synthetic vehicle</h1><div class="vehicle-info"><p>Дата добавления объявления 21.10.2026</p><ul><li>Лот ${ID}</li><li>Номер автомобиля ${PLATE}</li></ul><section class="related-cars"><h2>Похожие автомобили</h2><p>Дата добавления объявления 01.01.2001</p><p>Автомобиль продан или снят с продажи</p></section>Дата добавления объявления 02.02.2002 Автомобиль продан</div></main>`;
+  const result = await parseExternalAdvertisement(html, EXTERNAL_DETAIL, PLATE);
+  assert.equal(result.matches[0].advertisedAt, '2026-10-21');
+  assert.equal(result.matches[0].id, ID);
+});
+
+test('malformed publication dates become unknown without invalidating plate identity', async () => {
+  for (const added of ['31.02.2026', '29.02.2025', '00.10.2026', '21.13.2026', '21.10.1999', 'unknown']) {
+    const value = await parseExternalAdvertisement(externalDetail({ added }), EXTERNAL_DETAIL, PLATE);
+    assert.equal(value.matches[0].advertisedAt, null);
+    assert.equal(value.matches[0].id, ID);
+  }
+  const leap = await parseExternalAdvertisement(externalDetail({ added: '29.02.2024' }), EXTERNAL_DETAIL, PLATE);
+  assert.equal(leap.matches[0].advertisedAt, '2024-02-29');
+});
+
+test('explicitly removed external advertisements and browser verification cannot become active matches', async () => {
+  assert.deepEqual((await parseExternalAdvertisement(externalDetail({ status: 'Автомобиль продан или снят с продажи' }), EXTERNAL_DETAIL, PLATE)).matches, []);
+  for (const html of ['<h1>Проверка браузера...</h1>', '<title>Access Denied</title>' + externalDetail(), '<h1>Enable JavaScript</h1>']) {
+    await rejects(() => parseExternalAdvertisement(html, EXTERNAL_DETAIL, PLATE));
+  }
+});
+
+test('external catalogs use plate and ID from the same semantic card only', async () => {
+  const sourceUrl = EXTERNAL_ORIGIN + '/catalog/fixture/?page=2';
+  const result = await parseExternalAdvertisement(card(OTHER, '81000002') + card(), sourceUrl, PLATE);
+  assert.deepEqual(result.matches, [{ id: ID, sourceUrl, advertisedAt: null, modifiedAt: null }]);
+  assert.equal(result.recordCount, 2); assert.equal(result.kind, 'catalog');
+  await rejects(() => parseExternalAdvertisement(`<p>${PLATE}</p><div><a href="/auto/${ID}/">Vehicle</a></div>`, sourceUrl, PLATE));
+});
+
+test('external catalogue cards explicitly marked removed or sold never produce a usable match', async () => {
+  for (const status of ['Автомобиль продан или снят с продажи', 'Продан', 'Sold']) {
+    const html = `<article><h2><a href="/auto/${ID}/">Synthetic</a></h2><p>${PLATE}</p><p>${status}</p></article>`;
+    const value = await parseExternalAdvertisement(html, EXTERNAL_ORIGIN + '/catalog/', PLATE);
+    assert.deepEqual(value.matches, []); assert.equal(value.recordCount, 1);
+  }
+});
+
+test('catalog heading-linked record containers are supported without relying on an invented class name', async () => {
+  const html = `<div class="published-layout"><h2><a href="/auto/${ID}/">Fixture vehicle</a></h2><p>${PLATE}</p></div>`;
+  assert.equal((await parseExternalAdvertisement(html, EXTERNAL_ORIGIN + '/catalog/', PLATE)).matches[0].id, ID);
+});
+
+test('nested title wrappers cannot discard the actual card containing its sibling plate', async () => {
+  for (const cls of ['catalog-card', 'published-layout']) {
+    const html = `<div class="${cls}"><div class="card-header"><h3><a href="/auto/${ID}/">Synthetic model</a></h3></div><div class="card-body"><p>${PLATE}</p></div></div>`;
+    const result = await parseExternalAdvertisement(html, EXTERNAL_ORIGIN + '/catalog/', PLATE);
+    assert.equal(result.matches[0].id, ID); assert.equal(result.recordCount, 1);
+  }
+});
+
+test('external catalogs reject mixed IDs, different plates on the same ID, or borrowed inline page text', async () => {
+  const sourceUrl = EXTERNAL_ORIGIN + '/catalog/';
+  for (const html of [
+    card() + card(OTHER, ID),
+    `<article>${PLATE}<a href="/auto/${ID}/">One</a><a href="/auto/81000002/">Two</a></article>`,
+    `<article>${PLATE}<span> ${OTHER}</span><a href="/auto/${ID}/">One</a></article>`
+  ]) await rejects(() => parseExternalAdvertisement(html, sourceUrl, PLATE));
+  assert.deepEqual((await parseExternalAdvertisement(`<header>${PLATE}</header>${card(OTHER)}`, sourceUrl, PLATE)).matches, []);
+});
+
+test('external catalogs ignore hidden/form/script plates and unsafe links', async () => {
+  const sourceUrl = EXTERNAL_ORIGIN + '/catalog/';
+  const html = `<article><span>${OTHER}</span><span hidden>${PLATE}</span><script>${PLATE}</script><form>${PLATE}</form><a href="/auto/${ID}/">View</a></article>`;
+  assert.deepEqual((await parseExternalAdvertisement(html, sourceUrl, PLATE)).matches, []);
+  for (const href of ['https://evil.example/auto/81000001/', 'https://trust-encar.ru:443/auto/81000001/', '/auto/no-id/', '/%61uto/81000001/']) {
+    await rejects(() => parseExternalAdvertisement(`<article>${PLATE}<a href="${href}">View</a></article>`, sourceUrl, PLATE));
+  }
+});
+
+test('external parser never fetches, executes remote scripts or exposes seller metadata', async () => {
+  const previous = globalThis.fetch; globalThis.fetch = () => { throw new Error('Parser must not fetch'); };
+  try {
+    const html = externalDetail({ before: '<p>Seller PRIVATE_SELLER · PRIVATE_PHONE</p><script src="https://evil.example/run.js"></script>' });
+    const value = await parseExternalAdvertisement(html, EXTERNAL_DETAIL, PLATE);
+    assert.equal(value.matches[0].id, ID); assert.equal(JSON.stringify(value).includes('PRIVATE_'), false);
+  } finally { globalThis.fetch = previous; }
 });

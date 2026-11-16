@@ -1,0 +1,72 @@
+{
+  "release": "2.123",
+  "baseCommit": "4c46eefeedf8ab547c5a9f60d70c44ca23593850",
+  "verifiedAt": "2026-11-16T16:29:05.381038+00:00",
+  "sourceHashes": {
+    "index.html": "ad06040110c088585988cea5d13d8f5e91819c3f9581d635f11f6d5c00c4ae9f",
+    "assets/snote-encar-link.js": "b6dc1c4b271b0454fc301c93b4c8da15d1b9d8129a943d0550874aa1364e9d46",
+    "functions/api/encar.js": "d7e336efb2c7401aceab926b4d8220d978b8e9d2ae6ea751dc3fd5963673797d",
+    "functions/_shared/encar-catalog.mjs": "2bef1987a46d2264b011a9b3f2233ed6f36c923a5737b0f45e6688571367c7e0",
+    "tests/encar/catalog.test.mjs": "12961c901feeec441b59b132386a4427f0c8dc0f95d56c783c066d6f2edf1c48",
+    "tests/encar/discovery.test.mjs": "f1fb309edab97fb9b5646a668fc6f22f0b61de9b1b5cff3bd858d5467f83696e",
+    "tests/encar/server.test.mjs": "9603683eb1c6361e63112b231e0cf4d814ea907c5f65c5325ba7f244ca29fbf5",
+    "tests/encar/server-price.test.mjs": "698f3cd4f3de2433e32d93f30ff4dace8ceb45f16caa10931921b92767d45c79",
+    "tests/encar/frontend.test.cjs": "4202e9d7026d28684eef55dd5af3dde6e1de733f78e324ef7872ae65a91fb4aa",
+    "tests/encar/saved-bridge.test.cjs": "fe2531858e214210473effac639eb1aa7b6e673aa280fc962032707c207a6d0a",
+    "tests/encar/external-confirmation.browser.cjs": "73a85a51ac1762cbb0010e8735a636fa13377613b0064a1ef4f17ed4499b917b"
+  },
+  "behavior": {
+    "matching": "Exact normalized full plate in the main external vehicle or the same unambiguous catalogue card; no VIN, model or model-year equality requirement. Related vehicles never borrow the page ID.",
+    "provenance": "Validated optional externalVerification survives existing per-owner revision-CAS save and reload. No schema migration or bulk business data updates.",
+    "officialRejection": "Explicit official plate mismatch, inactive advertisement, missing vehicle and unknown ad status cannot become externally confirmed. Only bounded access/transport/parse errors qualify.",
+    "knownIds": "After catalogue/search source checks, up to three existing blocked advertisement IDs can be compared with the observed nnov.trust-encar.ru/auto/{id}/ route even without a search key. No ID arithmetic or enumeration.",
+    "display": "External confirmation label, original publication/modification dates and source/checked time tooltip. Mouse and keyboard; separate external row avoids mobile clipping. Saved links open directly while the main lookup can recheck.",
+    "prices": "External-only data cannot trigger automated capture, verified price display, price offer or sale-price mutation. Official price paths remain.",
+    "limits": {
+      "operationMs": 35000,
+      "externalStageTotalMs": 8000,
+      "externalSourcePages": 6,
+      "knownIdFallbackPages": 3,
+      "publicRequest": "HTTPS allowlist GET, manual redirects, omit credentials; no authentication tokens or search keys forwarded."
+    }
+  },
+  "validation": {
+    "coreUnitPassed": 795,
+    "relatedUnitPassed": 83,
+    "distinctUnitPassed": 878,
+    "unitFailed": 0,
+    "externalBrowserGroups": 4,
+    "externalBrowserWidths": [
+      1440,
+      390,
+      320
+    ],
+    "externalBrowserChecks": [
+      "real application CAS acknowledgement",
+      "source/date persistence and fresh workspace restore",
+      "real list direct link with zero relookup",
+      "zero automatic capture and unchanged price",
+      "forged external prices discarded",
+      "direct price bridge denial",
+      "dirty drafts and peer vehicles preserved",
+      "real mouse/keyboard tooltip",
+      "status/link/tooltip in viewport"
+    ],
+    "detailBrowserGroups": 5,
+    "priceChangeBrowserGroups": 7,
+    "inlineScripts": 7,
+    "pagesFunctionsBuild": "passed; Wrangler4.152.0",
+    "syntheticUpstreams": true
+  },
+  "production": {
+    "databaseSchemaChanges": 0,
+    "businessDataWritesByAgent": 0,
+    "productionSecretsReadOrChanged": false,
+    "deployment": "Recorded after publication in the private final receipt."
+  },
+  "limitations": [
+    "Actual third-party raw HTML compatibility and end-to-end production search/provider configuration are not verified from this restricted execution environment. Public source fields and route patterns were observed through the research browser; parser and service cases use synthetic HTML.",
+    "Externally reported dates do not establish original Korean publication timestamps or external ingestion delays.",
+    "A source that cannot be read or unambiguously matched remains unconfirmed; a missing search result is not proof of no advertisement."
+  ]
+}
