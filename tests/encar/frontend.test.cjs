@@ -141,7 +141,7 @@ function fixture(t, options = {}) {
       if(result?.ok===true&&result.saved===true&&options.applyChanged!==false&&target){target.sell=result.priceWon;if(w.activeCarId===target.id)w.document.getElementById('detail-sell').value=result.priceWon.toLocaleString('ko-KR');}
       return result;
     };
-    if(options.autoConfirm)w.snoteEncarLinksBridge.refreshList=base=>{refreshListCalls.push(plain(base));if(options.refreshList)options.refreshList(base);};
+    w.snoteEncarLinksBridge.refreshList=base=>{refreshListCalls.push(plain(base));if(options.refreshList)return options.refreshList(base);};
     if(options.autoPrice)w.snoteEncarLinksBridge.autoPrice=async(base,record,settings)=>{const call={base:plain(base),record:plain(record),settings};autoCalls.push(call);return options.autoPrice(call);};
   }
   if (options.requestTimeoutMs !== undefined || options.autoTimeoutMs !== undefined) {
@@ -768,6 +768,7 @@ test('32 successful verification saves only the bounded canonical record and rep
   f.click(); await settle(); f.reply(0, result); await settle();
   assert.equal(f.saveCalls.length, 1);
   assert.match(f.saveStatus.textContent, /저장 중/); assert.doesNotMatch(f.saveStatus.textContent, /저장했습니다/);
+  assert.equal(f.refreshListCalls.length, 0, 'A verified response cannot repaint the list before its storage ACK');
   assert.equal(f.saveRetry.hidden, true); assert.deepEqual(f.tabs[0].navigations, [listing().sellerUrl]);
   const call = f.saveCalls[0];
   assert.equal(call.base.carId, 'car-1'); assert.equal(call.base.plate, PLATE); assert.equal(call.base.canWrite, true);
@@ -777,19 +778,44 @@ test('32 successful verification saves only the bounded canonical record and rep
   saved.resolve({ ok: true }); await settle();
   assert.equal(f.saveStatus.textContent, '광고 링크를 서버에 저장했습니다.');
   assert.equal(f.saveRetry.hidden, true); assert.deepEqual(plain(f.w.cars[0].encarLinks), call.record);
+  assert.deepEqual(f.refreshListCalls, [call.base], 'The acknowledged links repaint exactly their original vehicle context');
 });
 
 test('33 failed or unconfirmed storage retains verified links and retries only the save', async t => {
   for (const failure of ['reject', 'unconfirmed']) await t.test(failure, async sub => {
-    const f = fixture(sub, { bridge: true, save: (_base, _record, index) => index ? { ok: true } : failure === 'reject' ? Promise.reject(Error('PRIVATE_DB_ERROR')) : { ok: false } });
+    const retry = deferred(), f = fixture(sub, { bridge: true, save: (_base, _record, index) => index ? retry.promise : failure === 'reject' ? Promise.reject(Error('PRIVATE_DB_ERROR')) : { ok: false } });
     f.click(); await settle(); f.reply(0, found()); await settle();
     assert.equal(f.saveCalls.length, 1); assert.equal(f.saveRetry.hidden, false);
     assert.match(f.saveStatus.textContent, /저장을 확인하지 못/); assert.doesNotMatch(f.saveStatus.textContent, /PRIVATE|저장했습니다/);
     assert.equal(f.links.length, 2); assert.deepEqual(f.tabs[0].navigations, [listing().sellerUrl]);
+    assert.equal(f.refreshListCalls.length, 0, 'A failed or unconfirmed save must not add a list icon');
     f.saveRetry.click(); await settle();
     assert.equal(f.saveCalls.length, 2); assert.equal(f.requests.length, 1, 'A save retry must not spend another lookup');
     assert.deepEqual(f.saveCalls[1].record, f.saveCalls[0].record);
+    assert.equal(f.refreshListCalls.length, 0, 'Retrying a failed save still waits for its own acknowledgement');
+    retry.resolve({ok: true}); await settle();
     assert.equal(f.saveStatus.textContent, '광고 링크를 서버에 저장했습니다.'); assert.equal(f.saveRetry.hidden, true);
+    assert.deepEqual(f.refreshListCalls, [f.saveCalls[1].base], 'Only the acknowledged retry repaints the list');
+  });
+});
+
+test('a missing or failed list renderer cannot undo an acknowledged advertisement save or create another write', async t => {
+  for (const kind of ['throws', 'absent']) await t.test(kind, async sub => {
+    const saved = deferred(), f = fixture(sub, {bridge: true, save: () => saved.promise,
+      refreshList: () => {throw Error('PRIVATE_LIST_RENDER_FAILURE');}});
+    if (kind === 'absent') delete f.w.snoteEncarLinksBridge.refreshList;
+    f.click(); await settle(); f.reply(0, found()); await settle();
+    assert.equal(f.refreshListCalls.length, 0); assert.equal(f.w.cars[0].encarLinks, undefined);
+    saved.resolve({ok: true}); await settle();
+    assert.equal(f.saveCalls.length, 1); assert.equal(f.requests.length, 1);
+    assert.equal(f.saveStatus.textContent, '광고 링크를 서버에 저장했습니다.'); assert.equal(f.saveRetry.hidden, true);
+    assert.deepEqual(plain(f.w.cars[0].encarLinks), f.saveCalls[0].record);
+    assert.equal(f.refreshListCalls.length, kind === 'throws' ? 1 : 0);
+    assert.deepEqual(f.tabs[0].navigations, [listing().sellerUrl]); assert.equal(f.links.length, 2);
+    assert.doesNotMatch(f.note.textContent + f.saveStatus.textContent, /PRIVATE|확인하지 못/);
+    f.w.SnoteEncarLink.refresh(); await settle();
+    assert.equal(f.saveCalls.length, 1); assert.equal(f.requests.length, 1);
+    assert.equal(f.refreshListCalls.length, kind === 'throws' ? 1 : 0, 'Refreshing the detail must not retry an acknowledged list repaint');
   });
 });
 
@@ -799,6 +825,7 @@ test('34 persisted car links restore immediately with no lookup, popup or write'
   assert.equal(f.requests.length, 0); assert.equal(f.openCalls.length, 0); assert.equal(f.saveCalls.length, 0);
   assert.equal(f.saveStatus.textContent,''); assert.doesNotMatch(f.saveStatus.textContent, /서버에 저장했습니다/);
   assert.equal(f.note.textContent, ''); assert.equal(f.saveRetry.hidden, true);
+  assert.equal(f.refreshListCalls.length, 0, 'Restoring saved links is not another server acknowledgement');
 });
 
 test('35 acknowledged car links survive closing and reopening without another lookup or write', async t => {
@@ -809,6 +836,7 @@ test('35 acknowledged car links survive closing and reopening without another lo
   f.reopenDetail(); await settle();
   assert.equal(f.links.length, 2); assert.equal(f.requests.length, 1); assert.equal(f.openCalls.length, 1); assert.equal(f.saveCalls.length, 1);
   assert.equal(f.saveStatus.textContent,'');
+  assert.equal(f.refreshListCalls.length, 1, 'Reopening saved detail must not add another list repaint');
 });
 
 test('36 a fresh device restores server car data without a local ID cache, then verifies its selected trusted link', async t => {
@@ -847,19 +875,22 @@ test('38 a missing, changed or inconsistent selected trusted advertisement never
 });
 
 test('39 late storage replies cannot restore feedback after vehicle, plate, actor, storage scope or data changes', async t => {
-  for (const change of ['vehicle', 'plate', 'logout', 'scope', 'replacement']) await t.test(change, async sub => {
+  for (const change of ['vehicle', 'plate', 'logout', 'actor', 'scope', 'replacement', 'closed']) await t.test(change, async sub => {
     const saved = deferred(), f = fixture(sub, { bridge: true, save: () => saved.promise });
     f.click(); await settle(); f.reply(0, found()); await settle(); assert.match(f.saveStatus.textContent, /저장 중/);
     if (change === 'vehicle') f.w.activeCarId = 'car-2';
     if (change === 'plate') f.w.cars[0].plate = SECOND_PLATE;
     if (change === 'logout') { f.state.ready = false; f.w.currentUser = null; f.w.document.getElementById('zc-cloud-gate').hidden = false; }
+    if (change === 'actor') f.w.currentUser = {username: 'other-user'};
     if (change === 'scope') f.state.storageScope = 'other-fixture-company';
     if (change === 'replacement') f.w.cars = plain(f.w.cars);
+    if (change === 'closed') f.closeDetail();
     f.w.document.getElementById('vehicle-meta').textContent = '새 화면'; await settle();
     assert.equal(f.saveStatus.textContent, ''); assert.equal(f.saveRetry.hidden, true);
     saved.resolve({ ok: true }); await settle();
     assert.equal(f.saveStatus.textContent, ''); assert.equal(f.saveRetry.hidden, true); assert.equal(f.links.length, 0);
     assert.equal(f.saveCalls.length, 1);
+    assert.equal(f.refreshListCalls.length, 0, 'A late ACK cannot repaint a changed view or account');
   });
 });
 
@@ -871,6 +902,7 @@ test('40 pending local car metadata can reopen as a recent verified hint without
   assert.equal(f.links.length, 2); assert.equal(f.saveStatus.textContent,'');
   assert.doesNotMatch(f.saveStatus.textContent, /서버에 저장했습니다|저장된 광고/);
   assert.equal(f.requests.length, 1); assert.equal(f.saveCalls.length, 1);
+  assert.equal(f.refreshListCalls.length, 0, 'Optimistic local metadata is not a confirmed list icon');
 });
 
 test('41 unsafe, mismatched, duplicate and oversized stored records cannot become links or trigger writes', async t => {
@@ -899,6 +931,7 @@ test('42 read-only staff may restore and reverify links but never call the stora
   assert.deepEqual(f.tabs[0].navigations, [listing().trustedUrl]); assert.equal(f.saveCalls.length, 0);
   assert.equal(JSON.stringify(f.w.cars[0]), before); assert.equal(f.saveRetry.hidden, true);
   assert.match(f.saveStatus.textContent, /담당 딜러|관리자/); assert.doesNotMatch(f.saveStatus.textContent, /서버에 저장했습니다/);
+  assert.equal(f.refreshListCalls.length, 0);
 });
 
 test('43 an original advertisement ID cannot also become its own trusted link or invalid server record', async t => {
@@ -1196,8 +1229,10 @@ test('78 a failed toast renderer cannot turn a confirmed price save into a faile
  for(const kind of['direct','confirmation'])await t.test(kind,async sub=>{
   const f=fixture(sub,{bridge:true,autoConfirm:true,...(kind==='direct'?{savedRecord:storedRecord([pricedListing()])}:{}),cars:[{id:'car-1',plate:PLATE,sell:12000000}]});
   f.w.toast=()=>{throw Error('SYNTHETIC_NOTICE_FAILURE');};
-  if(kind==='confirmation'){f.click();await settle();f.reply(0,found(PLATE,[pricedListing()]));await settle();f.priceChangeButton.click();}else f.priceControls[0].click();
-  await settle();assert.equal(f.w.cars[0].sell,37770000);assert.equal(f.changeCalls.length,1);assert.equal(f.refreshListCalls.length,1);assert.equal(f.priceConfirmation.open,false);assert.equal(f.priceFeedback,null);assert.equal(f.priceControls[0].disabled,false);
+  if(kind==='confirmation'){f.click();await settle();f.reply(0,found(PLATE,[pricedListing()]));await settle();}
+  const listRefreshesBeforePriceChange=f.refreshListCalls.length;
+  if(kind==='confirmation')f.priceChangeButton.click();else f.priceControls[0].click();
+  await settle();assert.equal(f.w.cars[0].sell,37770000);assert.equal(f.changeCalls.length,1);assert.equal(f.refreshListCalls.length,listRefreshesBeforePriceChange+1);assert.equal(f.priceConfirmation.open,false);assert.equal(f.priceFeedback,null);assert.equal(f.priceControls[0].disabled,false);
   f.priceControls[0].click();await settle();assert.equal(f.changeCalls.length,1,'An acknowledged save cannot become an uncertain retry when its notification fails');
  });
 });
@@ -1208,6 +1243,7 @@ test('external exact-plate results preserve provenance, save the link and never 
     autoPrice: () => { throw Error('External evidence cannot start OCR'); }});
   f.click(); await settle(); f.reply(0, found(PLATE, [item])); await settle();
   assert.equal(f.autoCalls.length, 0); assert.equal(f.saveCalls.length, 1);
+  assert.deepEqual(f.refreshListCalls, [f.saveCalls[0].base], 'External exact-plate links also become list icons after their save ACK');
   assert.deepEqual(f.tabs[0].navigations, [item.sellerUrl]);
   assert.deepEqual(f.saveCalls[0].record.listings[0].externalVerification, item.externalVerification);
   assert.deepEqual(f.w.cars[0].encarLinks.listings[0].externalVerification, item.externalVerification);

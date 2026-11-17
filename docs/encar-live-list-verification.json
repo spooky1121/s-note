@@ -1,0 +1,64 @@
+{
+  "release": "2.125",
+  "baseCommit": "32e4127bfda3072b508209a2651c1e3dc50b064f",
+  "verifiedAt": "2026-11-17T12:39:38.645655+00:00",
+  "sourceHashes": {
+    "index.html": "8f4099a5bb202192f72e549b8f128a34f237d85e12ef98abc86de7e8b1a9857d",
+    "assets/snote-encar-link.js": "924de769a2878416fd370e30acdf9b852e7327b6bde54a9e9f1e8a67049822a2",
+    "tests/encar/frontend.test.cjs": "2e93c59f14b5f8bb4224278b78d9240b9246caf454850e1517380406e8ca061e",
+    "tests/encar/live-list-icon.browser.cjs": "2b71bc88d8191d8d8fc055b18ef884cf54419601821ce9ee15af00bf652e5163",
+    "assets/vehicle-list-view.js": "9ce5f6aa6ff19d6e1ca3d575aae6fad14e01802493368cb300f2cf8e511c0399",
+    "assets/list-pagination.js": "ce78eb874f227c63b0bc1445f3d99ea5554b1a9dba6bfb1ae0bd1d4154fa6627",
+    "tests/encar/browser-smoke.cjs": "ebaaef4946be6913ba3f3e5a0873e7bc0d6c47da887a9731b0f4f766624fdb4f"
+  },
+  "behavior": {
+    "trigger": "Refresh the current scoped purchase list once, immediately after advertisement-link persistence is acknowledged and the original actor/company/vehicle/view context is still current. Official and externally confirmed matches share the same path.",
+    "renderer": "Reuse the existing guarded list renderer and Encar icon in both table and cards. No new request, page navigation or detail close is required.",
+    "preservation": "Retain search, filters, sorting, page, view mode, peer vehicles, prices and unsaved detail drafts.",
+    "failures": "No refresh before an ACK, on failed/unconfirmed storage or after context changes. Successful save retry refreshes once. Missing/throwing renderer cannot undo an acknowledged save or cause another write.",
+    "priceRegression": "Existing price-save list refresh and price-confirmation behavior remain intact."
+  },
+  "validation": {
+    "distinctUnitPassed": 897,
+    "unitFailed": 0,
+    "liveListBrowserGroups": 8,
+    "liveListWidths": [
+      1440,
+      390,
+      320
+    ],
+    "liveListModes": [
+      "list",
+      "cards"
+    ],
+    "liveListRecords": 22,
+    "liveListPage": 2,
+    "liveListChecks": [
+      "zero icons while the server write is held",
+      "actual table and card icon appear while original detail stays open",
+      "exact canonical link and no icons on peer vehicles",
+      "search / pagination / mode unchanged",
+      "memo and extra drafts retained but not saved",
+      "official and external-only results",
+      "failed save then successful held retry",
+      "late ACK cannot repaint another detail",
+      "start/end source hash equality"
+    ],
+    "existingExternalBrowserGroups": 4,
+    "existingDirectPriceBrowserGroups": 7,
+    "inlineScriptSyntaxPassed": 7,
+    "actualApplicationAndCasBridge": true,
+    "syntheticUpstreams": true
+  },
+  "production": {
+    "databaseSchemaChanges": 0,
+    "businessDataWritesByAgentInThisRelease": 0,
+    "apiSourceChanges": 0,
+    "productionSecretsReadOrChanged": false,
+    "deployment": "Exact source and production merge Cloudflare s-note checks are recorded in the private final receipt."
+  },
+  "limitations": [
+    "Browser tests use synthetic lookup/authentication/database responses. They verify the real frontend and persistence bridge; they do not claim a new live upstream discovery verification.",
+    "This release updates the originating current purchase view after its own successful link save. Cross-account push notifications and cross-tab subscriptions are unchanged."
+  ]
+}
