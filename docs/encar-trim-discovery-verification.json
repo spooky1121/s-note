@@ -1,0 +1,94 @@
+{
+  "release": "2.126",
+  "baseCommit": "8639cdec35a75a3ff74d4b983f565c1301daeec7",
+  "verifiedAt": "2026-11-17T13:06:41.052627+00:00",
+  "sourceHashes": {
+    "index.html": "a1dc9e420d4dda493c7f977e1ec7ef6aa771b18533b544e28770fac3ffbd656c",
+    "assets/snote-encar-link.js": "98d219eeda258f51ae5ba2f781235393ef53e0d07a8beb25d81b16912f165aba",
+    "functions/api/encar.js": "f18cf6767ef0a25c825038fe1818981a581dea106e27a5ac08661d7b9acb1076",
+    "functions/_shared/encar-catalog.mjs": "929ce9cc590e4cae583ca26e8552ea98a73ddc8101563c6ad9d7fb101a03a5cc",
+    "functions/api/encar-auto-price.js": "7a30c9085cb99b8c19dffd6574da8d8851f50a043e433be16a7e7e603413bf9f",
+    "tests/encar/catalog.test.mjs": "5fadf679ef1fe216d997f4717ed7fbaf82064e243f5eed174e08fd8e329480e7",
+    "tests/encar/discovery.test.mjs": "f0fe4a1d0945697de3be0a717590c72578549debc53fa5813b5069cb73a3c49d",
+    "tests/encar/frontend.test.cjs": "3eb63dd6c4596a4d0a96ea3f7642c3199ef00c0ec735a9018856456e2b4b3814",
+    "tests/encar/integration.test.mjs": "0cf2a64064e6b69c3d3f0e6ef2a5b41078673ebdd759c58d160fd7c0d5e1716b",
+    "tests/encar/server.test.mjs": "205c0fa2d773ee89bc595eb745a712940a1207ff79b85dad047b76b3f44f6223",
+    "tests/encar/live-list-icon.browser.cjs": "a8db1038b6dad0504c5be2ed72f1d26c35a9018cd60231ce6ce20090570c98f1",
+    "tests/encar/model-catalog-discovery.browser.cjs": "b6ad3fb6dd8f34e46508fe7623660ff3aeafba2d11f62ae5391ff8dee1c3d20e",
+    "tests/encar/trim-discovery.browser.cjs": "65d7662cde31ddb863764835ab41547520c18b61e8753227cf33b887511c49e3"
+  },
+  "findings": {
+    "publicNavigation": "Research browser observed a target absent from the model and generation first pages but present with its advertisement ID on the observed Long Range AWD grade page, then followed its actual individual-ad and Korean Encar links. This is a concrete missing navigation path; raw third-party HTML is not captured by that tool.",
+    "userDiagnostic": "Two searches, three results, one result mentioning the full plate, six checked candidates all with another plate. The supplied diagnostic lacks newer component/version fields, so it does not establish which client/server version ran or prove one unique upstream failure cause.",
+    "sourceCapDefect": "A synthetic actual-handler reproduction showed official negative skips consuming all external source-page slots. Fixed by separating ignored sources from attempted network fetches.",
+    "searchDifference": "Research search and Tavily are different providers. The old second query required an additional raw model phrase and site syntax; the replacement retains a quoted full plate and supported domain filtering without increasing basic-search calls."
+  },
+  "behavior": {
+    "branches": "Observed immediate model-generation-grade anchors only; grade/model hints rank siblings but never establish identity or exclude fallback branches. No fabricated catalogue slugs or advertisement IDs.",
+    "structuredHints": "Only selected make/group and optional valid grade; no raw freeform vehicle name, VIN or customer information. Invalid optional grade is omitted.",
+    "markdown": "Bounded plate-local Markdown windows prioritize candidate IDs and source links. Search text never substitutes for original HTML proof. New plate-local candidate IDs also qualify for up to three known-ID source checks, without ID arithmetic.",
+    "officialAndPriceGuards": "Official mismatch/inactive/deleted/unknown state remains authoritative; external-only evidence cannot trigger verified price reuse, screenshot, OCR or sale-price change.",
+    "diagnostics": "Fixed client/resolver release values, discoveryProvided boolean and bounded branch/skipped-source counters. No full plates, advertisement IDs, URLs, customer data or credentials are logged in diagnostics.",
+    "list": "The acknowledged-link save still updates current scoped table/cards while preserving drafts and view state.",
+    "limits": {
+      "operationMs": 35000,
+      "modelDiscoveryMs": 8000,
+      "pagesPerCatalogueRoute": 3,
+      "totalModelGenerationGradePages": 8,
+      "maximumModelStageNetworkGetsIncludingDirectories": 10,
+      "branchesPerPage": 6,
+      "externalNetworkGets": 6,
+      "externalStageTotalMs": 8000,
+      "knownIdSourceChecks": 3,
+      "basicSearchCalls": 2,
+      "localMarkdownPlateTokensPerField": 4096,
+      "localMarkdownWindows": 32
+    }
+  },
+  "validation": {
+    "distinctUnitPassed": 967,
+    "unitFailed": 0,
+    "browserGroups": {
+      "trim": 4,
+      "model": 5,
+      "liveList": 8,
+      "external": 4
+    },
+    "widths": [
+      1440,
+      390,
+      320
+    ],
+    "actualApiParserFrontendCas": true,
+    "browserChecks": [
+      "model/generation-only miss reproduction",
+      "component version diagnostics copied",
+      "actual observed grade-leaf lookup before generic search",
+      "grade alias affects priority only",
+      "search key present and absent",
+      "source provenance persisted and restored in a fresh workspace",
+      "held save has zero list icons; exact ACK updates underlying table/cards",
+      "dirty drafts, page, search, view mode and peer vehicles retained",
+      "zero external-only OCR or price mutation",
+      "source hashes equal at test start/end"
+    ],
+    "inlineScripts": 7,
+    "pagesFunctionsBuild": "passed; Wrangler 4.152.0",
+    "independentReview": "No additional concrete defects; 378 API/parser/auto-price and 357 parser/frontend tests passed (overlapping, not added to total).",
+    "syntheticUpstreams": true,
+    "legacyBrowserFixtures": "Removed historical UI release pins while retaining behavior and execution-source hash checks."
+  },
+  "production": {
+    "databaseSchemaChanges": 0,
+    "businessDataWrites": 0,
+    "vehicleReadScope": "Only the requested owner vehicle selected make/group/generation/grade/subgrade and link-presence metadata were read for comparison. No customer, financial or credential payload was retrieved.",
+    "productionSecretsReadOrChanged": false,
+    "deployment": "Exact source and production merge checks are recorded after publication in the private final receipt."
+  },
+  "limitations": [
+    "Actual production Cloudflare raw HTML retrieval, Tavily response/configuration and authenticated end-to-end lookup success remain unverified from the restricted execution environment. Browser HTTP/auth/database responses are synthetic.",
+    "Observed grade-page evidence establishes a missing route; it does not prove the precise cause of every supplied runtime diagnostic or prove all catalogue pages can be read.",
+    "Bounded traversal and request limits intentionally remain; failure to read or find a match is not proof no advertisement exists.",
+    "No claim of stale client or server is made solely from missing diagnostic fields. New safe version fields allow the next actual response to distinguish versions."
+  ]
+}

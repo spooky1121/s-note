@@ -223,7 +223,8 @@ test('actual candidate plate mismatches are reported instead of an unrelated uns
   assert.equal(result.body.diagnostics.modelCatalogRequestCount, 0); assert.equal(result.body.diagnostics.modelCatalogPageCount, 0);
   assert.equal(result.body.diagnostics.externalRequestCount, 0); assert.equal(result.body.diagnostics.externalMatchCount, 0);
   assert.equal(result.body.diagnostics.discoveryStage, 'known_candidates');
-  assert.equal(JSON.parse(searchCalls(result)[1].options.body).query, '"' + PLATE + '" site:trust-encar.ru "다른 모델"');
+  assert.equal(JSON.parse(searchCalls(result)[1].options.body).query, '"' + PLATE + '"');
+  assert.equal(result.body.diagnostics.resolverRelease, '2.126'); assert.equal(result.body.diagnostics.discoveryProvided, true);
 });
 
 test('model catalogue scanning is bounded to three observed pages and never guesses a fourth request', async () => {
@@ -266,6 +267,56 @@ test('NFKC and surrounding whitespace in safe discovery labels are normalized be
   const result = await run({ catalogPages: modelDirectory(), pages: { [ORIGINAL]: html() } },
     request({ plate: PLATE, discovery: { make: ' 토요타 ', model: 'ＲＡＶ４' } }));
   assert.equal(result.body.status, 'found'); assert.equal(searchCalls(result).length, 0);
+});
+
+test('observed generation and trim branches resolve a plate present only in the final leaf', async () => {
+  const generation = MODEL_URL + 'rav4-5/', leaf = generation + 'long-range-awd/';
+  const result = await run({ catalogPages: modelDirectory({
+    '/catalog/toyota/rav4/': '<a href="' + generation + '">RAV4 5</a>',
+    [generation]: catalogCard('34나5678', SECOND) + '<a href="' + leaf + '">Long Range AWD</a>',
+    [leaf]: catalogCard()
+  }), pages: { [ORIGINAL]: new Response('Forbidden', { status: 403 }) } },
+  request({ plate: PLATE, discovery: { ...DISCOVERY, grade: '롱레인지' } }), { TAVILY_API_KEY: '' });
+  assert.equal(result.body.status, 'found'); assert.equal(result.body.listings[0].id, ORIGINAL);
+  assert.equal(result.body.listings[0].externalVerification.sourceUrl, leaf);
+  assert.equal(result.body.listings[0].priceWon, null); assert.equal(searchCalls(result).length, 0);
+  assert.deepEqual(catalogCalls(result).map(call => call.url), [CATALOG + '/', CATALOG + '/catalog/', CATALOG + '/catalog/toyota/', MODEL_URL, generation, leaf]);
+  assert.deepEqual(detailCalls(result).map(call => call.url), [BASE + ORIGINAL]);
+});
+
+test('a wrong grade hint orders siblings without excluding a different exact-plate grade', async () => {
+  const generation = MODEL_URL + 'rav4-5/', performance = generation + 'performance/', actual = generation + 'long-range-awd/';
+  const result = await run({ catalogPages: modelDirectory({
+    '/catalog/toyota/rav4/': '<a href="' + generation + '">RAV4 5</a>',
+    [generation]: '<a href="' + actual + '">Long Range AWD</a><a href="' + performance + '">Performance</a>',
+    [performance]: catalogCard('34나5678', SECOND), [actual]: catalogCard()
+  }), pages: { [ORIGINAL]: html() } }, request({ plate: PLATE, discovery: { ...DISCOVERY, grade: '퍼포먼스' } }));
+  assert.equal(result.body.status, 'found'); assert.equal(searchCalls(result).length, 0);
+  const urls = catalogCalls(result).map(call => call.url);
+  assert.ok(urls.indexOf(performance) < urls.indexOf(actual));
+  assert.deepEqual(detailCalls(result).map(call => call.url), [BASE + ORIGINAL]);
+});
+
+test('generation and trim discovery is globally bounded to eight vehicle-directory pages', async () => {
+  const generation = MODEL_URL + 'rav4-5/', unfetched = MODEL_URL + 'rav4-6/';
+  const leaves = Array.from({ length: 6 }, (_, index) => generation + 'grade-' + index + '/');
+  const result = await run({ catalogPages: modelDirectory({
+    '/catalog/toyota/rav4/': '<a href="' + generation + '">RAV4 5</a><a href="' + unfetched + '">RAV4 6</a>',
+    [generation]: leaves.map(url => '<a href="' + url + '">Observed grade</a>').join(''),
+    ...Object.fromEntries(leaves.map(url => [url, catalogCard('34나5678', SECOND)])),
+    [unfetched]: catalogCard()
+  }) }, request({ plate: PLATE, discovery: DISCOVERY }), { TAVILY_API_KEY: '' });
+  assert.equal(result.reply.status, 502); assert.equal(result.body.diagnostics.code, 'CATALOG_INCOMPLETE');
+  assert.equal(result.body.diagnostics.modelCatalogPageCount, 8); assert.equal(result.body.diagnostics.modelBranchPageCount, 7);
+  assert.ok(result.body.diagnostics.modelCatalogRequestCount <= 10);
+  assert.equal(catalogCalls(result).some(call => call.url === unfetched), false); assert.equal(detailCalls(result).length, 0);
+});
+
+test('an optional grade uses the same bounded raw and normalized text validation as required hints', async t => {
+  for (const grade of [null, 1, [], '', 'a'.repeat(81), 'Long\nRange', 'Long\u0085Range', 'https://evil.example', '<Long Range>']) await t.test(JSON.stringify(grade), async () => {
+    const result = await run({}, request({ plate: PLATE, discovery: { ...DISCOVERY, grade } }));
+    assert.equal(result.reply.status, 400); assert.equal(result.body.diagnostics.code, 'INVALID_REQUEST'); assert.equal(result.calls.length, 2);
+  });
 });
 
 test('model directory navigation shares one eight-second budget and reserves the original search fallback', async t => {
@@ -637,13 +688,13 @@ test('plain numbers and lot labels from unknown hosts remain untrusted in every 
   assert.equal(detailCalls(result).length, 0);
 });
 
-test('empty exact search gets one quoted targeted basic search and stops when verified', async () => {
+test('empty exact search gets one quoted domain-filtered basic search without a restrictive model term', async () => {
   const result = await run({ searches: [{ results: [] }, { results: [{ url: BASE + ORIGINAL }] }], pages: { [ORIGINAL]: html() } });
   assert.equal(result.body.status, 'found');
   const calls = searchCalls(result); assert.equal(calls.length, 2);
   const first = JSON.parse(calls[0].options.body), second = JSON.parse(calls[1].options.body);
   assert.equal(first.query, '"' + PLATE + '"'); assert.equal(first.exact_match, true);
-  assert.equal(second.query, '"' + PLATE + '" site:trust-encar.ru'); assert.equal(second.exact_match, true);
+  assert.equal(second.query, '"' + PLATE + '"'); assert.equal(second.exact_match, true);
   assert.equal(second.search_depth, 'basic'); assert.equal(second.max_results, 8);
   assert.equal(first.include_raw_content, false); assert.equal(Object.hasOwn(first, 'include_domains'), false);
   assert.equal(second.include_raw_content, true);
@@ -760,7 +811,8 @@ test('diagnostics and structured logs exclude all plate, listing IDs, URLs, cred
   assert.equal(result.logs.length, 1);
   const log = JSON.parse(result.logs[0]);
   const catalogKeys = ['catalogRequestCount', 'catalogPageCount', 'catalogRecordCount', 'catalogExactMatchCount', 'catalogFormCount', 'catalogPlateFieldCount', 'catalogLinkCount',
-    'searchConfigured', 'discoveryStage', 'modelCatalogRequestCount', 'modelCatalogPageCount', 'modelCatalogRecordCount', 'modelCatalogExactMatchCount', 'externalRequestCount', 'externalMatchCount'];
+    'searchConfigured', 'discoveryStage', 'modelCatalogRequestCount', 'modelCatalogPageCount', 'modelCatalogRecordCount', 'modelCatalogExactMatchCount', 'externalRequestCount', 'externalMatchCount',
+    'resolverRelease', 'discoveryProvided', 'modelBranchPageCount', 'externalSkippedCount'];
   assert.deepEqual(Object.keys(log).sort(), [...catalogKeys, 'candidateCount', 'checkedCount', 'code', 'durationMs', 'plateMatchedCount', 'rawResultCount', 'recognizedSourceCount', 'rejected', 'requestId', 'resultCount', 'resultPlateMatchCount', 'searchCount'].sort());
   assert.deepEqual(Object.keys(result.body.diagnostics).sort(), [...catalogKeys, 'candidateCount', 'checkedCount', 'code', 'plateMatchedCount', 'rawResultCount', 'recognizedSourceCount', 'rejected', 'requestId', 'resultCount', 'resultPlateMatchCount', 'searchCount'].sort());
   for (const value of [PLATE, ORIGINAL, BASE, TOKEN, env.TAVILY_API_KEY, env.SUPABASE_PUBLISHABLE_KEY, 'PRIVATE_UPSTREAM']) {

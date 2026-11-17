@@ -420,3 +420,51 @@ test('known-ID fallback uses at most three existing hints and never creates IDs 
   const none = await run({ searchKey: '' });
   assert.equal(none.calls.some(call => new URL(call.url).hostname.endsWith('trust-encar.ru')), false);
 });
+
+test('six officially rejected external hints do not consume network-page slots needed by a later exact source', async t => {
+  const ids = Array.from({ length: 6 }, (_, index) => String(43000020 + index));
+  const stale = ids.map(id => 'https://cheboksary.trust-encar.ru/auto/' + id + '/');
+  const sourceUrl = 'https://nnov.trust-encar.ru/catalog/tesla/model-y/model-y/long-range-awd/';
+  for (const blocked of [true, false]) await t.test(blocked ? 'later source succeeds' : 'safe skip counters remain unique', async () => {
+    const result = await run({
+      searches: [stale.map(url => ({ url })), [...stale.map(url => ({ url })), { url: sourceUrl, content: PLATE }]],
+      pages: { ...Object.fromEntries(ids.map(id => [id, page(id, { vehicleNo: '34나5678' })])), [ID]: blocked ? BLOCK() : page(ID, { vehicleNo: '34나5678' }) },
+      externalPages: { [sourceUrl]: '<article class="car-card">' + PLATE + '<a href="/auto/' + ID + '/">Exact source record</a></article>' }
+    });
+    assert.equal(result.calls.filter(call => call.url === sourceUrl).length, 1);
+    assert.equal(result.calls.some(call => stale.includes(call.url)), false);
+    assert.equal(searchCalls(result).length, 2); assert.equal(details(result).length, 7);
+    if (blocked) {
+      assert.equal(result.body.status, 'found'); assert.equal(result.body.listings[0].id, ID);
+      assert.equal(result.body.listings[0].externalVerification.sourceUrl, sourceUrl);
+    } else {
+      assert.deepEqual(result.body.listings, []); assert.equal(result.body.diagnostics.externalSkippedCount, 6);
+      assert.equal(result.body.diagnostics.externalRequestCount, 1); assert.equal(result.body.diagnostics.resolverRelease, '2.126');
+      assert.equal(result.body.diagnostics.discoveryProvided, false);
+    }
+  });
+});
+
+test('a late plate-local Markdown lot gets a candidate slot and its observed detail route is independently checked', async t => {
+  const staleIds = Array.from({ length: 8 }, (_, index) => String(43000020 + index));
+  const sourceUrl = 'https://nnov.trust-encar.ru/catalog/tesla/model-y/';
+  const raw = staleIds.map(id => '## Other vehicle\n\n[Details](https://nnov.trust-encar.ru/auto/' + id + '/)\n\n34나5678\n\nImage: Лот объявления Лот: ' + id).join('\n\n---\n\n') +
+    '\n\n## Synthetic target\n\nModel Y — Long Range AWD\n\n' + PLATE + '\n\nImage: Дата регистрации\n\n' + 'Synthetic public specification. '.repeat(25) + '\n\nImage: Лот объявления Лот: ' + ID + '\n\n## Another vehicle\n\n99가9999\n\nЛот: 43000999';
+  const firstPage = '<article class="car-card">34나5678<a href="/auto/' + staleIds[0] + '/">Unrelated first catalogue page</a></article>';
+  for (const exactOriginal of [true, false]) await t.test(exactOriginal ? 'exact original proof succeeds' : 'raw Markdown never substitutes for original proof', async () => {
+    const result = await run({ results: [{ url: sourceUrl, raw_content: raw }],
+      pages: { ...Object.fromEntries(staleIds.map(id => [id, page(id, { vehicleNo: '34나5678' })])), [ID]: BLOCK() },
+      externalPages: { [sourceUrl]: firstPage, [EXTERNAL]: externalPage(ID, exactOriginal ? PLATE : '34나5678') } });
+    assert.equal(details(result)[0].url, BASE + ID);
+    assert.equal(result.calls.filter(call => call.url === EXTERNAL).length, 1);
+    assert.equal(result.calls.some(call => call.url === BASE + '43000999'), false);
+    assert.ok(details(result).length <= 6); assert.equal(searchCalls(result).length, 2);
+    if (exactOriginal) {
+      assert.equal(result.body.status, 'found'); assert.equal(result.body.listings[0].id, ID);
+      assert.equal(result.body.listings[0].externalVerification.sourceUrl, EXTERNAL);
+      assert.equal(result.body.listings[0].priceWon, null);
+    } else {
+      assert.deepEqual(result.body.listings, []); assert.equal(result.body.diagnostics.code, 'DETAIL_BLOCKED');
+    }
+  });
+});

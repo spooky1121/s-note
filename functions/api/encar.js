@@ -1,4 +1,4 @@
-import { CATALOG_ORIGIN, catalogURL, configuredCatalogSearch, discoverCatalogSearch, discoverCatalogEntry, parseCatalogPage, externalSourceURL, parseExternalAdvertisement, discoverVehicleCatalogLink, getObservedCatalogNext } from '../_shared/encar-catalog.mjs';
+import { CATALOG_ORIGIN, catalogURL, configuredCatalogSearch, discoverCatalogSearch, discoverCatalogEntry, parseCatalogPage, externalSourceURL, parseExternalAdvertisement, discoverVehicleCatalogLink, getObservedCatalogNext, discoverCatalogBranches } from '../_shared/encar-catalog.mjs';
 import { parseEncarPagePrice } from '../_shared/encar-page-price.mjs';
 
 /**
@@ -18,6 +18,8 @@ const DEADLINE_MS = 35000;
 const CATALOG_FALLBACK_BUDGET_MS = 8000;
 const MODEL_CATALOG_BUDGET_MS = 8000;
 const MAX_MODEL_CATALOG_PAGES = 3;
+const MAX_MODEL_DISCOVERY_PAGES = 8;
+const RESOLVER_RELEASE = '2.126';
 const EXTERNAL_BUDGET_MS = 8000;
 const MAX_EXTERNAL_PAGES = 6;
 const EXTERNAL_DETAIL_ERRORS = new Set(['DETAIL_BLOCKED', 'DETAIL_UNAVAILABLE', 'DETAIL_PARSE_FAILED', 'UPSTREAM_TIMEOUT']);
@@ -55,10 +57,10 @@ function operation(request) {
     resultPlateMatchCount: 0, rawResultCount: 0, recognizedSourceCount: 0, candidates: new Set(),
     catalogRequestCount: 0, catalogPageCount: 0, catalogRecordCount: 0, catalogExactMatchCount: 0,
     catalogFormCount: 0, catalogPlateFieldCount: 0, catalogLinkCount: 0, pagePrices: new Map(), priceDiagnostics: null,
-    externalSources: new Set(), externalPages: new Map(), externalChecked: new Set(), externalEvidence: new Map(), externalSpentMs: 0, detailErrors: new Set(),
-    catalogResponses: new Map(), searchConfigured: null, discoveryStage: 'input',
+    externalSources: new Set(), externalPriority: new Set(), plateLocalCandidates: new Set(), externalPages: new Map(), externalChecked: new Set(), externalIgnored: new Set(), externalEvidence: new Map(), externalSpentMs: 0, detailErrors: new Set(),
+    catalogResponses: new Map(), searchConfigured: null, discoveryStage: 'input', discoveryProvided: false,
     modelCatalogRequestCount: 0, modelCatalogPageCount: 0, modelCatalogRecordCount: 0, modelCatalogExactMatchCount: 0,
-    externalRequestCount: 0, externalMatchCount: 0,
+    modelBranchPageCount: 0, externalRequestCount: 0, externalMatchCount: 0, externalSkippedCount: 0,
     rejected: { plateMismatch: 0, notAdvertising: 0, notFound: 0 } };
   op.timer = setTimeout(() => controller.abort(new EncarError('DEADLINE_EXCEEDED')), DEADLINE_MS);
   op.abort = () => controller.abort(new EncarError('UPSTREAM_TIMEOUT'));
@@ -74,7 +76,8 @@ function remaining(op) {
 }
 
 function counters(op) {
-  return { searchCount: op.searchCount, resultCount: op.resultCount,
+  return { resolverRelease: RESOLVER_RELEASE, discoveryProvided: op.discoveryProvided,
+    searchCount: op.searchCount, resultCount: op.resultCount,
     candidateCount: op.candidates.size, checkedCount: op.checkedCount,
     plateMatchedCount: op.plateMatchedCount, resultPlateMatchCount: op.resultPlateMatchCount,
     rawResultCount: op.rawResultCount, recognizedSourceCount: op.recognizedSourceCount,
@@ -84,8 +87,8 @@ function counters(op) {
     ...(typeof op.searchConfigured === 'boolean' ? { searchConfigured: op.searchConfigured } : {}),
     discoveryStage: op.discoveryStage, modelCatalogRequestCount: op.modelCatalogRequestCount,
     modelCatalogPageCount: op.modelCatalogPageCount, modelCatalogRecordCount: op.modelCatalogRecordCount,
-    modelCatalogExactMatchCount: op.modelCatalogExactMatchCount,
-    externalRequestCount: op.externalRequestCount, externalMatchCount: op.externalMatchCount,
+    modelCatalogExactMatchCount: op.modelCatalogExactMatchCount, modelBranchPageCount: op.modelBranchPageCount,
+    externalRequestCount: op.externalRequestCount, externalMatchCount: op.externalMatchCount, externalSkippedCount: op.externalSkippedCount,
     rejected: { ...op.rejected } };
 }
 
@@ -126,9 +129,9 @@ function normalizePlate(value) {
 function discoveryOf(value) {
   if (value === undefined) return null;
   if (!value || typeof value !== 'object' || Array.isArray(value) ||
-      Object.keys(value).length !== 2 || !Object.hasOwn(value, 'make') || !Object.hasOwn(value, 'model')) throw new EncarError('INVALID_REQUEST');
+      Object.keys(value).some(key => !['make', 'model', 'grade'].includes(key)) || !Object.hasOwn(value, 'make') || !Object.hasOwn(value, 'model')) throw new EncarError('INVALID_REQUEST');
   const labels = {};
-  for (const key of ['make', 'model']) {
+  for (const key of ['make', 'model', ...(Object.hasOwn(value, 'grade') ? ['grade'] : [])]) {
     if (typeof value[key] !== 'string' || value[key].length > 80 || /[\u0000-\u001f\u007f-\u009f\\/<>]/.test(value[key]) || /:\/\//.test(value[key])) throw new EncarError('INVALID_REQUEST');
     const label = value[key].normalize('NFKC').trim().replace(/\s+/gu, ' ');
     if (!label || label.length > 80 || /[\u0000-\u001f\u007f-\u009f\\/<>]/.test(label)) throw new EncarError('INVALID_REQUEST');
@@ -305,15 +308,50 @@ function resultMentionsPlate(result, plate) {
   });
 }
 
-function rememberExternalSource(op, value) {
+// Search raw_content may be Markdown. These small, plate-local windows only
+// rank discovery hints; original HTML and the final exact plate check remain
+// mandatory. A different plate or a new Markdown card heading ends a window.
+function plateLocalContent(result, plate) {
+  const windows = [];
+  for (const field of RESULT_TEXT_FIELDS) {
+    if (typeof result?.[field] !== 'string') continue;
+    const content = result[field].normalize('NFKC');
+    const tokens = [];
+    for (const token of content.matchAll(new RegExp('(?<![0-9])' + REGIONS + '?[0-9]{2,3}[\\s-]*[가-힣][\\s-]*[0-9]{4}(?![0-9])', 'g'))) {
+      tokens.push(token);
+      if (tokens.length >= 4096) break;
+    }
+    for (let index = 0; index < tokens.length && windows.length < 32; ++index) {
+      const token = tokens[index];
+      if (token[0].replace(/[\s-]/g, '') !== plate) continue;
+      let start = Math.max(0, token.index - 1536, index ? tokens[index - 1].index + tokens[index - 1][0].length : 0);
+      let end = Math.min(content.length, token.index + token[0].length + 1536, tokens[index + 1]?.index ?? content.length);
+      const before = content.slice(start, token.index), beforeBoundaries = [...before.matchAll(/^\s*(?:#{1,6}\s+|[-*_]{3,}\s*$)/gm)];
+      if (beforeBoundaries.length) start += beforeBoundaries.at(-1).index;
+      const after = content.slice(token.index + token[0].length, end), nextBoundary = /^\s*(?:#{1,6}\s+|[-*_]{3,}\s*$)/m.exec(after);
+      if (nextBoundary) end = token.index + token[0].length + nextBoundary.index;
+      windows.push(content.slice(start, end));
+    }
+  }
+  return windows;
+}
+
+function rememberExternalSource(op, value, priority = false) {
   if (op.externalSources.size >= MAX_TOTAL_CANDIDATES) return;
-  try { op.externalSources.add(externalSourceURL(value).href); } catch (_) { /* Only public allowlisted advertisements/catalogues qualify. */ }
+  try {
+    const url = externalSourceURL(value).href;
+    op.externalSources.add(url);
+    if (priority) op.externalPriority.add(url);
+  } catch (_) { /* Only public allowlisted advertisements/catalogues qualify. */ }
 }
 
 function rememberExternalResults(op, results, plate) {
   const ranked = results.slice(0, 8).map(result => ({ result, matches: resultMentionsPlate(result, plate) }));
+  for (const { result } of ranked.filter(item => item.matches)) for (const local of plateLocalContent(result, plate)) {
+    for (const match of local.matchAll(/https?:\/\/[^\s<>"'\\]+/gi)) rememberExternalSource(op, match[0].replace(/[),.;\]}]+$/, ''), true);
+  }
   for (const matches of [true, false]) for (const { result } of ranked.filter(item => item.matches === matches)) {
-    rememberExternalSource(op, result?.url);
+    rememberExternalSource(op, result?.url, matches);
     for (const key of RESULT_TEXT_FIELDS) if (typeof result?.[key] === 'string') {
       for (const match of result[key].matchAll(/https?:\/\/[^\s<>"'\\]+/gi)) {
         rememberExternalSource(op, match[0].replace(/[),.;\]}]+$/, ''));
@@ -322,13 +360,29 @@ function rememberExternalResults(op, results, plate) {
   }
 }
 
-function candidatesFromResults(results, plate) {
+function candidatesFromResults(results, plate, op = null) {
   const ids = new Set();
   const add = value => {
     const id = idOf(value);
     if (id && ids.size < MAX_CANDIDATES) ids.add(id);
   };
+  const addLocal = value => {
+    const id = idOf(value);
+    if (id && op && op.plateLocalCandidates.size < MAX_CANDIDATES) op.plateLocalCandidates.add(id);
+    add(value);
+  };
   const limited = results.slice(0, 8).map(result => ({ result, matches: resultMentionsPlate(result, plate) }));
+  for (const { result } of limited.filter(item => item.matches)) {
+    const sourceHost = parsedURL(result?.url)?.hostname.toLowerCase().replace(/^www\./, '');
+    for (const local of plateLocalContent(result, plate)) {
+      for (const match of local.matchAll(/https?:\/\/[^\s<>"'\\]+/gi)) addLocal(idFromURL(match[0].replace(/[),.;\]}]+$/, '')));
+      const plain = local.replace(/[*_`]/g, '');
+      for (const match of plain.matchAll(/(?:\bEncar\s*ID|엔카\s*매물\s*번호)\s*[:：#]\s*([0-9]+)(?![0-9])/giu)) addLocal(match[1]);
+      if (autoExportHost(sourceHost || '') || sourceHost === 'carsbat.com') {
+        for (const match of plain.matchAll(/(?:^|[^\p{L}\p{N}])(?:Лот(?:\s+объявления)?|Номер\s+лота|Lot(?:\s+(?:number|no\.?))?)\s*[:：#№]?\s*([0-9]+)(?![0-9])/giu)) addLocal(match[1]);
+      }
+    }
+  }
   // Exact-plate evidence gets the bounded candidate slots first. Within each
   // relevance group, indexed URLs precede incidental links in snippets.
   for (const matches of [true, false]) {
@@ -362,7 +416,7 @@ function candidatesFromResults(results, plate) {
   return [...ids];
 }
 
-async function searchCandidates(op, plate, apiKey, fallback = false, discovery = null) {
+async function searchCandidates(op, plate, apiKey, fallback = false) {
   remaining(op);
   ++op.searchCount;
   const result = await fetchLimited(op, 'https://api.tavily.com/search', {
@@ -373,7 +427,7 @@ async function searchCandidates(op, plate, apiKey, fallback = false, discovery =
       Accept: 'application/json'
     },
     body: JSON.stringify({
-      query: '"' + plate + '"' + (fallback ? ' site:trust-encar.ru' + (discovery ? ' "' + discovery.model.replace(/["\\]/g, '') + '"' : '') : ''),
+      query: '"' + plate + '"',
       exact_match: true,
       search_depth: 'basic',
       max_results: 8,
@@ -401,7 +455,7 @@ async function searchCandidates(op, plate, apiKey, fallback = false, discovery =
     if (recognizedSourceHost(host)) ++op.recognizedSourceCount;
   }
   rememberExternalResults(op, results, plate);
-  return candidatesFromResults(results, plate);
+  return candidatesFromResults(results, plate, op);
 }
 
 // Extract a JSON object while respecting quotes and backslash escapes.
@@ -579,8 +633,8 @@ async function verifyCandidates(ids, getDetail) {
 }
 
 async function externalListings(op, plate, getDetail, select) {
-  const urls = [...op.externalSources].filter(url => !op.externalChecked.has(url))
-    .slice(0, Math.max(0, MAX_EXTERNAL_PAGES - op.externalChecked.size));
+  const urls = [...op.externalSources].filter(url => !op.externalChecked.has(url) && !op.externalIgnored.has(url))
+    .sort((a, b) => Number(op.externalPriority.has(b)) - Number(op.externalPriority.has(a)));
   const budget = Math.min(EXTERNAL_BUDGET_MS - op.externalSpentMs, remaining(op) - 250);
   if (urls.length && budget >= 50) {
     const startedAt = Date.now();
@@ -590,24 +644,28 @@ async function externalListings(op, plate, getDetail, select) {
     const timer = setTimeout(() => controller.abort(new EncarError('UPSTREAM_TIMEOUT')), budget);
     try {
       await mapConcurrent(urls, async value => {
-        op.externalChecked.add(value);
         try {
           const url = externalSourceURL(value);
           const sourceId = idFromURL(url.href);
           if (sourceId && op.candidates.has(sourceId)) {
             const official = await getDetail(sourceId);
-            if (official.kind !== 'error' || !EXTERNAL_DETAIL_ERRORS.has(official.code)) return;
+            if (official.kind !== 'error' || !EXTERNAL_DETAIL_ERRORS.has(official.code)) {
+              op.externalIgnored.add(value); ++op.externalSkippedCount;
+              return;
+            }
           }
           let page = op.externalPages.get(url.href);
           if (!page) {
+            if (op.externalRequestCount >= MAX_EXTERNAL_PAGES || signal.aborted) return;
             ++op.externalRequestCount;
+            op.externalChecked.add(value);
             const fetched = await fetchLimited(op, url.href, {
               method: 'GET', headers: { Accept: 'text/html' },
               credentials: 'omit', referrerPolicy: 'no-referrer'
             }, MAX_HTML_BYTES, 'DETAIL_UNAVAILABLE', signal);
             if (!fetched.ok || BLOCKED.test(fetched.text)) return;
             page = { html: fetched.text, checkedAt: new Date().toISOString() };
-          }
+          } else op.externalChecked.add(value);
           const parsed = await waitFor(parseExternalAdvertisement(page.html, url.href, plate), signal);
           for (const item of (Array.isArray(parsed?.matches) ? parsed.matches : []).slice(0, 12)) {
             const id = idOf(item?.id);
@@ -806,14 +864,26 @@ async function modelCatalogCandidates(op, plate, discovery) {
     const makeHTML = await getHTML(makeURL);
     const modelURL = await waitFor(discoverVehicleCatalogLink(makeHTML, makeURL.href, discovery, 'model'), signal);
     if (!modelURL) return [];
-    const visited = new Set();
-    let current = catalogURL(modelURL);
-    for (let pageNumber = 0; pageNumber < MAX_MODEL_CATALOG_PAGES; ++pageNumber) {
-      if (visited.has(current.href)) throw new EncarError('CATALOG_INCOMPLETE');
+    const rootPath = modelURL.pathname.replace(/\/$/, '');
+    const visited = new Set(), pending = [{ url: catalogURL(modelURL), pageNumber: 1 }];
+    let incomplete = false;
+    while (pending.length) {
+      if (op.modelCatalogPageCount >= MAX_MODEL_DISCOVERY_PAGES) throw new EncarError('CATALOG_INCOMPLETE');
+      const { url: current, pageNumber } = pending.shift();
+      if (visited.has(current.href)) { incomplete = true; continue; }
       visited.add(current.href);
       const html = await getHTML(current);
-      const parsed = await waitFor(parseExternalAdvertisement(html, current.href, plate), signal);
+      const branches = await waitFor(discoverCatalogBranches(html, current.href, discovery), signal);
+      let parsed;
+      try { parsed = await waitFor(parseExternalAdvertisement(html, current.href, plate), signal); }
+      catch (error) {
+        // A navigation-only generation/grade directory can have no vehicle
+        // cards. Only actual bounded child anchors permit further discovery.
+        if (!branches.length || error?.code !== 'CATALOG_PARSE_FAILED') throw error;
+        parsed = { recordCount: 0, matches: [] };
+      }
       ++op.modelCatalogPageCount;
+      if (current.pathname.replace(/\/$/, '') !== rootPath) ++op.modelBranchPageCount;
       op.modelCatalogRecordCount += parsed.recordCount;
       const matches = parsed.matches.slice(0, 12);
       op.modelCatalogExactMatchCount += matches.length;
@@ -821,7 +891,7 @@ async function modelCatalogCandidates(op, plate, discovery) {
         const ids = [...new Set(matches.map(item => idOf(item.id)).filter(Boolean))];
         const cached = op.catalogResponses.get(current.href);
         const checkedAt = cached?.checkedAt || new Date().toISOString();
-        rememberExternalSource(op, current.href);
+        rememberExternalSource(op, current.href, true);
         op.externalPages.set(current.href, { html, checkedAt });
         for (const item of matches) {
           const id = idOf(item.id);
@@ -835,10 +905,16 @@ async function modelCatalogCandidates(op, plate, discovery) {
         return ids;
       }
       const next = await waitFor(getObservedCatalogNext(html, current.href), signal);
-      if (!next) return [];
-      if (pageNumber + 1 === MAX_MODEL_CATALOG_PAGES) throw new EncarError('CATALOG_INCOMPLETE');
-      current = catalogURL(next, current.href);
+      const descendants = branches.filter(url => !visited.has(url.href)).map(url => ({ url: catalogURL(url), pageNumber: 1 }));
+      if (next) {
+        if (pageNumber >= MAX_MODEL_CATALOG_PAGES || visited.has(next.href)) incomplete = true;
+        else descendants.push({ url: catalogURL(next, current.href), pageNumber: pageNumber + 1 });
+      }
+      // Depth first: an observed grade branch is checked before another page
+      // of its parent catalogue; optional hints only order these siblings.
+      pending.unshift(...descendants);
     }
+    if (incomplete) throw new EncarError('CATALOG_INCOMPLETE');
     return [];
   } catch (error) { throw catalogError(error); }
   finally {
@@ -1001,6 +1077,7 @@ export async function onRequest(context) {
     let discovery, sourceUrls;
     try { discovery = discoveryOf(payload?.discovery); sourceUrls = explicitSourcesOf(payload?.sourceUrls); }
     catch (_) { return finish(400); }
+    op.discoveryProvided = !!discovery;
     const memo = new Map();
     const getDetail = id => {
       if (!memo.has(id)) memo.set(id, detail(op, id, plate).then(result => {
@@ -1012,12 +1089,13 @@ export async function onRequest(context) {
     const sourceIds = sourceUrls.map(idFromURL).filter(Boolean);
     const hints = select([...new Set([...sourceIds, ...idsOf(payload.candidateIds), ...await cachedCandidates(op, env, plate)])].slice(0, MAX_HINT_CANDIDATES));
     const knownHintFallback = async () => {
-      if (!hints.length) return [];
+      const known = [...new Set([...op.plateLocalCandidates, ...hints])];
+      if (!known.length) return [];
       let count = 0;
-      for (const id of hints) {
+      for (const id of known) {
         const official = await getDetail(id);
         if (official.kind !== 'error' || !EXTERNAL_DETAIL_ERRORS.has(official.code)) continue;
-        rememberExternalSource(op, KNOWN_HINT_SOURCE + id + '/');
+        rememberExternalSource(op, KNOWN_HINT_SOURCE + id + '/', true);
         if (++count === 3) break;
       }
       return count ? externalListings(op, plate, getDetail, select) : [];
@@ -1031,7 +1109,7 @@ export async function onRequest(context) {
     }
     if (sourceUrls.length) {
       op.discoveryStage = 'explicit_source';
-      for (const source of sourceUrls) rememberExternalSource(op, source);
+      for (const source of sourceUrls) rememberExternalSource(op, source, true);
       const explicit = await externalListings(op, plate, getDetail, select);
       if (explicit.length) {
         saveCandidates(context, plate, explicit.map(item => item.id));
@@ -1092,7 +1170,7 @@ export async function onRequest(context) {
     for (let attempt = 0; attempt < 2; attempt++) {
       if (attempt && op.candidates.size >= MAX_TOTAL_CANDIDATES) break;
       op.discoveryStage = attempt ? 'search_targeted' : 'search_exact';
-      const candidates = select(await searchCandidates(op, plate, apiKey, attempt === 1, discovery));
+      const candidates = select(await searchCandidates(op, plate, apiKey, attempt === 1));
       const verified = await verifyCandidates(candidates, getDetail);
       if (verified.listings.length) {
         remaining(op);

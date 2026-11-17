@@ -526,7 +526,7 @@ test('19 old unverified responses retain the exact note, with an optional closed
   assert.equal(f.manual.hidden, false); assert.equal(f.manual.open, false);
   assert.equal(f.copyButton.hidden, false); assert.equal(f.links.length, 0);
   f.copyButton.click(); await settle();
-  assert.deepEqual(JSON.parse(f.copyFallback.value), { service: 'snote-encar', code: 'UNVERIFIED', httpStatus: 200 });
+  assert.deepEqual(JSON.parse(f.copyFallback.value), { service: 'snote-encar', clientRelease: '2.126', code: 'UNVERIFIED', httpStatus: 200 });
   assert.equal(f.copyFallback.readOnly, true); assert.equal(f.copyFallback.hidden, false);
   assert.equal(f.w.document.activeElement, f.copyFallback); assert.equal(f.copyFallback.selectionStart, 0); assert.equal(f.copyFallback.selectionEnd, f.copyFallback.value.length);
 });
@@ -569,7 +569,7 @@ test('non-JSON server failures retain HTTP status and a temporary availability r
       assert.equal(f.tabs[0].closed, true); assert.deepEqual(f.tabs[0].navigations, []); assert.equal(f.saveCalls.length, 0);
       assert.equal(f.links.length, 2, 'Saved links remain available after an unsuccessful recheck'); assert.equal(f.button.disabled, false);
       f.copyButton.click(); await settle();
-      assert.deepEqual(JSON.parse(f.copyFallback.value), {service:'snote-encar',code:'SERVER_UNAVAILABLE',httpStatus:status});
+      assert.deepEqual(JSON.parse(f.copyFallback.value), {service:'snote-encar', clientRelease:'2.126',code:'SERVER_UNAVAILABLE',httpStatus:status});
       assert.doesNotMatch(f.copyFallback.value, /PRIVATE|12가3456|43000001|https:|token/);
     });
   }
@@ -580,7 +580,7 @@ test('unreadable JSON server failures retain availability diagnostics without re
     const f = fixture(t, {bridge:true}); f.click(); await settle();
     f.reply(0, null, {status:503, jsonPromise:Promise.reject(failure)}); await settle(); f.copyButton.click(); await settle();
     assert.equal(f.note.textContent, '광고 확인 서버가 일시적으로 응답하지 않습니다. 잠시 후 다시 시도해 주세요.');
-    assert.deepEqual(JSON.parse(f.copyFallback.value), {service:'snote-encar',code:'SERVER_UNAVAILABLE',httpStatus:503});
+    assert.deepEqual(JSON.parse(f.copyFallback.value), {service:'snote-encar', clientRelease:'2.126',code:'SERVER_UNAVAILABLE',httpStatus:503});
     assert.equal(f.tabs[0].closed, true); assert.deepEqual(f.tabs[0].navigations, []); assert.equal(f.saveCalls.length, 0);
     assert.doesNotMatch(f.copyFallback.value, /PRIVATE/);
   }
@@ -619,7 +619,7 @@ test('catalogue timeout preserves its safe diagnostic and offers manual verifica
   assert.equal(f.manual.hidden, false); assert.equal(f.manual.open, false); assert.equal(f.tabs[0].closed, true);
   assert.deepEqual(f.tabs[0].navigations, []); assert.equal(f.links.length, 0); assert.equal(f.saveCalls.length, 0);
   f.copyButton.click(); await settle();
-  assert.deepEqual(JSON.parse(f.copyFallback.value), {service:'snote-encar', code:'CATALOG_TIMEOUT', httpStatus:502, requestId:REQUEST_ID, catalogRequestCount:2});
+  assert.deepEqual(JSON.parse(f.copyFallback.value), {service:'snote-encar', clientRelease:'2.126', code:'CATALOG_TIMEOUT', httpStatus:502, requestId:REQUEST_ID, catalogRequestCount:2});
   assert.doesNotMatch(f.copyFallback.value, /PRIVATE|12가3456|43000001|https:|token/);
 });
 
@@ -660,11 +660,11 @@ test('26 diagnostic copy whitelists bounded numeric counters, UUID and known cod
     source: 'PRIVATE_SOURCE', host: 'PRIVATE_HOST', title: 'PRIVATE_TITLE', text: 'PRIVATE_TEXT', raw_content: 'PRIVATE_RAW', body: 'PRIVATE_BODY',
     rejected: { plateMismatch: 2, notAdvertising: -1, notFound: 4, private: 'PRIVATE_VALUE' } });
   f.copyButton.click(); await settle(); assert.equal(writes.length, 1);
-  assert.deepEqual(JSON.parse(writes[0]), { service: 'snote-encar', code: 'SEARCH_NO_RESULTS', httpStatus: 200, requestId: REQUEST_ID, searchCount: 3, plateMatchedCount: 2, resultPlateMatchCount: 3, rawResultCount: 5, recognizedSourceCount: 1, rejected: { plateMismatch: 2, notFound: 4 } });
+  assert.deepEqual(JSON.parse(writes[0]), { service: 'snote-encar', clientRelease: '2.126', code: 'SEARCH_NO_RESULTS', httpStatus: 200, requestId: REQUEST_ID, searchCount: 3, plateMatchedCount: 2, resultPlateMatchCount: 3, rawResultCount: 5, recognizedSourceCount: 1, rejected: { plateMismatch: 2, notFound: 4 } });
   assert.doesNotMatch(writes[0], /PRIVATE|12가3456|43000001|https:|Bearer|apiKey|token/); assert(writes[0].length < 600);
   assert.equal(f.copyFallback.hidden, true); assert.match(f.copyStatus.textContent, /복사했습니다/);
   const invalid = fixture(t); await showUnverified(invalid, { code: 'PRIVATE_TOKEN', requestId: REQUEST_ID+PLATE, searchCount: -1 }); invalid.copyButton.click(); await settle();
-  assert.deepEqual(JSON.parse(invalid.copyFallback.value), { service: 'snote-encar', code: 'UNVERIFIED', httpStatus: 200 });
+  assert.deepEqual(JSON.parse(invalid.copyFallback.value), { service: 'snote-encar', clientRelease: '2.126', code: 'UNVERIFIED', httpStatus: 200 });
 });
 
 test('27 a rejected/late clipboard operation cannot restore diagnostic text after logout', async t => {
@@ -699,7 +699,7 @@ test('middleware failures keep allowlisted request reasons without exposing resp
       assert.equal(f.tabs[0].closed, true); assert.deepEqual(f.tabs[0].navigations, []); assert.equal(f.saveCalls.length, 0);
       assert.equal(f.links.length, 2, 'Previously saved links survive a current failed recheck');
       f.copyButton.click(); await settle();
-      assert.deepEqual(JSON.parse(f.copyFallback.value), {service:'snote-encar', code, httpStatus:status});
+      assert.deepEqual(JSON.parse(f.copyFallback.value), {service:'snote-encar', clientRelease:'2.126', code, httpStatus:status});
       assert.doesNotMatch(f.copyFallback.value, /PRIVATE|12가3456|43000001|https:|token/);
     });
   }
@@ -734,12 +734,12 @@ test('29 an unknown advertisement state is an error, never a sold/inactive claim
   assert.doesNotMatch(f.note.textContent, /종료|판매\s*완료|판매\s*중단|매물.*없/);
   assert.equal(f.note.dataset.error, 'true'); assert.equal(f.tabs[0].closed, true); assert.deepEqual(f.tabs[0].navigations, []); assert.equal(f.links.length, 0);
   f.copyButton.click(); await settle();
-  assert.deepEqual(JSON.parse(f.copyFallback.value), { service: 'snote-encar', code: 'AD_STATUS_UNKNOWN', httpStatus: 502, requestId: REQUEST_ID, plateMatchedCount: 1 });
+  assert.deepEqual(JSON.parse(f.copyFallback.value), { service: 'snote-encar', clientRelease: '2.126', code: 'AD_STATUS_UNKNOWN', httpStatus: 502, requestId: REQUEST_ID, plateMatchedCount: 1 });
   assert.doesNotMatch(f.copyFallback.value, /PRIVATE|12가3456|43000001|https:|advertisementStatus/);
 });
 
 test('30 optional matched-plate, search-stage and public-catalog counts copy only whole numbers in the existing bounds', async t => {
-  const keys = ['plateMatchedCount', 'resultPlateMatchCount', 'rawResultCount', 'recognizedSourceCount', 'catalogRequestCount', 'catalogPageCount', 'catalogRecordCount', 'catalogExactMatchCount', 'catalogFormCount', 'catalogPlateFieldCount', 'catalogLinkCount'];
+  const keys = ['plateMatchedCount', 'resultPlateMatchCount', 'rawResultCount', 'recognizedSourceCount', 'catalogRequestCount', 'catalogPageCount', 'catalogRecordCount', 'catalogExactMatchCount', 'catalogFormCount', 'catalogPlateFieldCount', 'catalogLinkCount', 'modelBranchPageCount', 'externalSkippedCount'];
   for (const count of [0, 1000, -1, 1.25, 1001, '1', null, Number.NaN, Number.POSITIVE_INFINITY]) {
     const f = fixture(t); await showUnverified(f, { code: 'NO_VERIFIED_LISTING', ...Object.fromEntries(keys.map(key => [key, count])) }); f.copyButton.click(); await settle();
     const copied = JSON.parse(f.copyFallback.value);
@@ -747,7 +747,7 @@ test('30 optional matched-plate, search-stage and public-catalog counts copy onl
       if (count === 0 || count === 1000) assert.equal(copied[key], count);
       else assert.equal(Object.hasOwn(copied, key), false);
     }
-    assert.deepEqual(Object.keys(copied).filter(key => !keys.includes(key)), ['service', 'code', 'httpStatus']);
+    assert.deepEqual(Object.keys(copied).filter(key => !keys.includes(key)), ['service', 'clientRelease', 'code', 'httpStatus']);
   }
 });
 
@@ -758,7 +758,7 @@ test('31 incomplete public-catalog verification never opens partial listings and
   assert.equal(f.note.textContent, '공개 차량 목록의 일부 조회를 마치지 못했습니다. 잠시 후 다시 확인해 주세요.');
   assert.doesNotMatch(f.note.textContent, /PRIVATE|판매\s*완료|매물.*없/); assert.equal(f.tabs[0].closed, true); assert.deepEqual(f.tabs[0].navigations, []); assert.equal(f.links.length, 0);
   f.copyButton.click(); await settle();
-  assert.deepEqual(JSON.parse(f.copyFallback.value), { service: 'snote-encar', code: 'CATALOG_INCOMPLETE', httpStatus: 502, requestId: REQUEST_ID, ...counters });
+  assert.deepEqual(JSON.parse(f.copyFallback.value), { service: 'snote-encar', clientRelease: '2.126', code: 'CATALOG_INCOMPLETE', httpStatus: 502, requestId: REQUEST_ID, ...counters });
   assert.doesNotMatch(f.copyFallback.value, /PRIVATE|12가3456|43000001|https:|token|raw_content/); assert(f.copyFallback.value.length < 600);
 });
 
@@ -1356,9 +1356,37 @@ test('missing, manual-only or malformed model hints leave the original lookup pa
     {make: '토요타', group: 'RAV4／private'}, {make: '토요타', group: ' '.repeat(80) + 'RAV4'}
   ];
   for (let index = 0; index < cases.length; index++) await t.test(String(index), async sub => {
-    const f = fixture(sub, {cars: [{id: 'car-1', plate: PLATE, ...cases[index]}]});
+    const f = fixture(sub, {cars: [{id: 'car-1', plate: PLATE, grade: 'Long Range AWD', ...cases[index]}]});
     f.click(); await settle();
     assert.deepEqual(JSON.parse(f.requests[0].init.body), {plate: PLATE, candidateIds: []});
+    f.reply(0, unverified()); await settle();
+  });
+});
+
+test('structured grade narrows discovery without sending manual vehicle text, other classifications or private fields', async t => {
+  const cases = [[' 롱레인지 AWD ', '롱레인지 AWD'], ['Ｌｏｎｇ　Ｒａｎｇｅ　ＡＷＤ', 'Long Range AWD']];
+  for (const [grade, expected] of cases) await t.test(expected, async sub => {
+    const f = fixture(sub, {cars: [{id: 'car-1', plate: PLATE, make: '테슬라', group: '모델 Y', grade,
+      model: 'PRIVATE_MANUAL_VEHICLE_TEXT', trim: 'PRIVATE_TRIM', gradeText: 'PRIVATE_GRADE_TEXT',
+      discovery: {grade: 'PRIVATE_DISCOVERY_OVERRIDE', ownerId: 'PRIVATE_OWNER'}, customer: {name: 'PRIVATE_CUSTOMER'}}]});
+    f.click(); await settle();
+    assert.deepEqual(JSON.parse(f.requests[0].init.body), {plate: PLATE, candidateIds: [],
+      discovery: {make: '테슬라', model: '모델 Y', grade: expected}});
+    assert.doesNotMatch(f.requests[0].init.body, /PRIVATE|customer|owner|trim|gradeText/);
+    f.reply(0, found()); await settle();
+    assert.deepEqual(f.tabs[0].navigations, [listing().sellerUrl]);
+  });
+});
+
+test('malformed optional grades preserve valid make and model discovery rather than blocking the plate lookup', async t => {
+  const grades = [undefined, null, '', ' ', 123, true, [], {grade: 'Long Range AWD', ownerId: 'PRIVATE_OWNER'},
+    'x'.repeat(81), '\ufb03'.repeat(27), '\n롱레인지', '롱레인지\u0085', 'Long/Range', 'Long\\Range',
+    '<Long Range>', 'Long／Range', 'https://private.example/auto/43000001/'];
+  for (let index = 0; index < grades.length; index++) await t.test(String(index), async sub => {
+    const f = fixture(sub, {cars: [{id: 'car-1', plate: PLATE, make: '테슬라', group: '모델 Y', grade: grades[index],
+      model: 'PRIVATE_MANUAL_GRADE', trim: 'PRIVATE_TRIM'}]});
+    f.click(); await settle();
+    assert.deepEqual(JSON.parse(f.requests[0].init.body), {plate: PLATE, candidateIds: [], discovery: {make: '테슬라', model: '모델 Y'}});
     f.reply(0, unverified()); await settle();
   });
 });
@@ -1432,12 +1460,45 @@ test('diagnostics retain only bounded model catalogue counters and the search co
     modelCatalogRecordCount: 20, modelCatalogExactMatchCount: 0, externalRequestCount: 2, externalMatchCount: 0,
     discovery: {make: 'PRIVATE_MAKE', model: 'PRIVATE_MODEL'}, sourceUrls: ['https://private.example/'], body: 'PRIVATE_BODY'});
   f.copyButton.click(); await settle();
-  assert.deepEqual(JSON.parse(f.copyFallback.value), {service: 'snote-encar', code: 'CATALOG_NO_MATCH', httpStatus: 200,
+  assert.deepEqual(JSON.parse(f.copyFallback.value), {service: 'snote-encar', clientRelease: '2.126', code: 'CATALOG_NO_MATCH', httpStatus: 200,
     modelCatalogRequestCount: 3, modelCatalogPageCount: 1, modelCatalogRecordCount: 20, modelCatalogExactMatchCount: 0,
     externalRequestCount: 2, externalMatchCount: 0, searchConfigured: true, discoveryStage: 'model_catalog'});
   assert.doesNotMatch(f.copyFallback.value, /PRIVATE|https:|12가3456/);
   const invalid = fixture(t); await showUnverified(invalid, {searchConfigured: 'PRIVATE_SECRET', discoveryStage: 'PRIVATE_SECRET',
     modelCatalogRequestCount: -1, modelCatalogPageCount: 1001, modelCatalogRecordCount: '20', modelCatalogExactMatchCount: 1.5,
     externalRequestCount: true, externalMatchCount: null}); invalid.copyButton.click(); await settle();
-  assert.deepEqual(JSON.parse(invalid.copyFallback.value), {service: 'snote-encar', code: 'UNVERIFIED', httpStatus: 200});
+  assert.deepEqual(JSON.parse(invalid.copyFallback.value), {service: 'snote-encar', clientRelease: '2.126', code: 'UNVERIFIED', httpStatus: 200});
+});
+
+test('copied diagnostics distinguish the fixed client release from safe resolver evidence and bounded branch progress', async t => {
+  for (const resolverRelease of ['2.126', '2.125', '2.126.1']) await t.test(resolverRelease, async sub => {
+    const f = fixture(sub); await showUnverified(f, {code: 'CATALOG_NO_MATCH', clientRelease: 'PRIVATE_FORGED_CLIENT', resolverRelease,
+      discoveryProvided: true, modelBranchPageCount: 3, externalSkippedCount: 2,
+      grade: 'PRIVATE_GRADE', branchUrl: 'https://private.example/', sourceUrls: ['https://private.example/'], id: '43000001'});
+    f.copyButton.click(); await settle();
+    assert.deepEqual(JSON.parse(f.copyFallback.value), {service: 'snote-encar', clientRelease: '2.126', code: 'CATALOG_NO_MATCH',
+      httpStatus: 200, resolverRelease, modelBranchPageCount: 3, externalSkippedCount: 2, discoveryProvided: true});
+    assert.doesNotMatch(f.copyFallback.value, /PRIVATE|https:|43000001|12가3456/);
+  });
+  const absent = fixture(t); await showUnverified(absent, {code: 'CATALOG_FORM_UNSUPPORTED', clientRelease: '2.124',
+    modelBranchPageCount: 1001, externalSkippedCount: -1, discoveryProvided: 'PRIVATE_TRUE'});
+  absent.copyButton.click(); await settle();
+  assert.deepEqual(JSON.parse(absent.copyFallback.value), {service: 'snote-encar', clientRelease: '2.126', code: 'CATALOG_FORM_UNSUPPORTED', httpStatus: 200});
+  assert.doesNotMatch(absent.note.textContent, /이전 버전|구버전|오래된 버전/);
+  const disabled = fixture(t); await showUnverified(disabled, {discoveryProvided: false, modelBranchPageCount: 0, externalSkippedCount: 0});
+  disabled.copyButton.click(); await settle();
+  assert.deepEqual(JSON.parse(disabled.copyFallback.value), {service: 'snote-encar', clientRelease: '2.126', code: 'UNVERIFIED', httpStatus: 200,
+    modelBranchPageCount: 0, externalSkippedCount: 0, discoveryProvided: false});
+});
+
+test('release diagnostics reject arbitrary strings, IDs, URL data and noninteger branch counters without leaking response fields', async t => {
+  const releases = [undefined, null, 2.126, {}, ['2.126'], '', '43000001', '43000001.1', '2.126.43000001',
+    '2.126-43000001', 'https://private.example/2.126', '2.126 PRIVATE_TOKEN', '2.126\n', ' 2.126', '2.126\u0000', '2.' + '1'.repeat(31)];
+  for (let index = 0; index < releases.length; index++) await t.test(String(index), async sub => {
+    const f = fixture(sub); await showUnverified(f, {resolverRelease: releases[index], clientRelease: 'PRIVATE_CLIENT',
+      modelBranchPageCount: 1.5, externalSkippedCount: '3', discoveryProvided: {id: '43000001'}, token: 'PRIVATE_TOKEN'});
+    f.copyButton.click(); await settle();
+    assert.deepEqual(JSON.parse(f.copyFallback.value), {service: 'snote-encar', clientRelease: '2.126', code: 'UNVERIFIED', httpStatus: 200});
+    assert.doesNotMatch(f.copyFallback.value, /PRIVATE|https:|43000001|12가3456/);
+  });
 });
