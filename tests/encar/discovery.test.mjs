@@ -439,7 +439,7 @@ test('six officially rejected external hints do not consume network-page slots n
       assert.equal(result.body.listings[0].externalVerification.sourceUrl, sourceUrl);
     } else {
       assert.deepEqual(result.body.listings, []); assert.equal(result.body.diagnostics.externalSkippedCount, 6);
-      assert.equal(result.body.diagnostics.externalRequestCount, 1); assert.equal(result.body.diagnostics.resolverRelease, '2.126');
+      assert.equal(result.body.diagnostics.externalRequestCount, 1); assert.equal(result.body.diagnostics.resolverRelease, '2.127');
       assert.equal(result.body.diagnostics.discoveryProvided, false);
     }
   });
@@ -467,4 +467,108 @@ test('a late plate-local Markdown lot gets a candidate slot and its observed det
       assert.deepEqual(result.body.listings, []); assert.equal(result.body.diagnostics.code, 'DETAIL_BLOCKED');
     }
   });
+});
+
+function indexedCard({ make = 'Tesla', plate = PLATE, id = ID, extra = '', link = true } = {}) {
+  return '## ' + make + ' Synthetic vehicle\n\n' + (link ? '[Details](https://nnov.trust-encar.ru/auto/' + id + '/)\n\n' : '') +
+    make + ' Synthetic\n\n' + plate + '\n\nЛот: ' + id + '\n\n' + extra;
+}
+
+test('make-only same-card search evidence retains an explicitly marked link when official and original HTML cannot be read', async t => {
+  for (const discovery of [{ make: '테슬라' }, { make: '테슬라', model: 'Different model', grade: 'Different grade' }]) await t.test(JSON.stringify(discovery), async () => {
+    const start = Date.now();
+    const result = await run({ payload: { discovery }, results: [{ url: EXTERNAL, raw_content: indexedCard() }],
+      pages: { [ID]: BLOCK() }, externalPages: { [EXTERNAL]: '<main>Unrecognized public source HTML</main>' } });
+    assert.equal(result.reply.status, 200); assert.equal(result.body.status, 'found');
+    const item = result.body.listings[0];
+    assert.equal(item.id, ID); assert.equal(item.sellerUrl, BASE + ID);
+    assert.deepEqual({ ...item.externalVerification, checkedAt: null }, {
+      source: 'trust-encar', sourceUrl: EXTERNAL, checkedAt: null, advertisedAt: null, modifiedAt: null, method: 'search-index'
+    });
+    assert.ok(Date.parse(item.externalVerification.checkedAt) >= start && Date.parse(item.externalVerification.checkedAt) <= Date.now());
+    assert.equal(item.priceWon, null); assert.equal(item.priceStatus, 'unavailable'); assert.equal(item.trustedUrl, null);
+    assert.equal(searchCalls(result).length, 1); assert.equal(details(result).length, 1);
+    assert.equal(result.calls.filter(call => call.url === EXTERNAL).length, 1);
+    assert.equal(result.calls.some(call => new URL(call.url).origin === CATALOG), false);
+    assert.equal(result.calls.some(call => new URL(call.url).hostname === 'api.encar-api.com'), false);
+  });
+});
+
+test('same-card search evidence is prioritized before six unrelated Markdown URL candidates', async () => {
+  const other = Array.from({ length: 8 }, (_, index) => String(43000020 + index));
+  const sourceUrl = 'https://nnov.trust-encar.ru/catalog/tesla/model-y/';
+  const raw = other.map(id => indexedCard({ id, plate: '34나5678' })).join('\n\n---\n\n') + '\n\n' + indexedCard({ link: false });
+  const result = await run({ payload: { discovery: { make: 'Tesla' } }, results: [{ url: sourceUrl, raw_content: raw }],
+    pages: { ...Object.fromEntries(other.map(id => [id, page(id, { vehicleNo: '34나5678' })])), [ID]: BLOCK() },
+    externalPages: { [sourceUrl]: '<main>Unknown public catalogue structure</main>' } });
+  assert.equal(result.body.status, 'found'); assert.equal(result.body.listings[0].id, ID);
+  assert.equal(result.body.listings[0].externalVerification.method, 'search-index');
+  assert.equal(result.body.listings[0].externalVerification.sourceUrl, sourceUrl);
+  assert.equal(details(result)[0].url, BASE + ID); assert.ok(details(result).length <= 6); assert.equal(searchCalls(result).length, 1);
+});
+
+test('manufacturer, plate, ID and detail-source conflicts have precise safe search-evidence reasons', async t => {
+  const source = 'https://nnov.trust-encar.ru/catalog/tesla/model-y/';
+  const cases = [
+    ['missing manufacturer', source, indexedCard({ make: 'Synthetic', link: false }), 'SEARCH_MANUFACTURER_MISMATCH'],
+    ['different manufacturer', source, indexedCard({ make: 'Hyundai', link: false }), 'SEARCH_MANUFACTURER_MISMATCH'],
+    ['URL is not visible manufacturer text', source, indexedCard({ make: 'Synthetic', link: false, extra: 'https://nnov.trust-encar.ru/catalog/tesla/model-y/' }), 'SEARCH_MANUFACTURER_MISMATCH'],
+    ['two plates in one card', source, indexedCard({ extra: '34나5678', link: false }), 'SEARCH_PLATE_AMBIGUOUS'],
+    ['URL-only plate is not visible identity', source, '## Tesla Synthetic\n\nhttps://example.test/' + PLATE + '\n\nЛот: ' + ID, 'SEARCH_PLATE_AMBIGUOUS'],
+    ['two IDs in one card', source, indexedCard({ extra: 'Лот: 43000002', link: false }), 'SEARCH_ID_AMBIGUOUS'],
+    ['no local ID', source, '## Tesla vehicle\n\n' + PLATE, 'SEARCH_ID_MISSING'],
+    ['another detail page ID', EXTERNAL, indexedCard({ id: '43000002', link: false }), 'SEARCH_SOURCE_ID_MISMATCH']
+  ];
+  for (const [name, url, raw, reason] of cases) await t.test(name, async () => {
+    const result = await run({ payload: { discovery: { make: '테슬라' } }, results: [{ url, raw_content: raw }],
+      pages: { [ID]: BLOCK(), ['43000002']: BLOCK() },
+      externalPages: { [source]: '<main>Unknown source</main>', [EXTERNAL]: '<main>Unknown source</main>', ['https://nnov.trust-encar.ru/auto/43000002/']: '<main>Unknown source</main>' } });
+    assert.deepEqual(result.body.listings, []); assert.equal(result.body.diagnostics.searchEvidenceCount, 0);
+    assert.equal(result.body.diagnostics.searchEvidenceAcceptedCount, 0); assert.ok(result.body.diagnostics.parseReasonCounts[reason] >= 1);
+    assert.equal(result.body.diagnostics.resolverRelease, '2.127');
+    assert.doesNotMatch(JSON.stringify(result.body.diagnostics) + result.logs.join(''), /Tesla|테슬라|12가3456|43000001|nnov|synthetic_access|synthetic_tavily/);
+  });
+});
+
+test('official negative checks cannot be overridden by exact plate and manufacturer search evidence', async t => {
+  for (const [name, official] of [
+    ['different plate', page(ID, { vehicleNo: '34나5678' })], ['sold', page(ID, { advertisement: { status: 'SOLD' } })],
+    ['unknown status', page(ID, { advertisement: { status: 'UNKNOWN' } })],
+    ['not found', new Response('Not found', { status: 404 })], ['gone', new Response('Gone', { status: 410 })]
+  ]) await t.test(name, async () => {
+    const result = await run({ payload: { discovery: { make: 'Tesla' } }, results: [{ url: EXTERNAL, raw_content: indexedCard() }],
+      pages: { [ID]: official }, externalPages: { [EXTERNAL]: '<main>Unrecognized source</main>' } });
+    assert.deepEqual(result.body.listings, []); assert.equal(result.body.diagnostics.searchEvidenceCount, 1);
+    assert.equal(result.body.diagnostics.searchEvidenceAcceptedCount, 0); assert.equal(details(result).length, 1);
+    assert.equal(result.calls.some(call => call.url === EXTERNAL), false);
+  });
+});
+
+test('an actual parsed external detail for a different plate cannot be replaced by its stale search card', async () => {
+  const result = await run({ payload: { discovery: { make: 'Tesla' } }, results: [{ url: EXTERNAL, raw_content: indexedCard() }],
+    pages: { [ID]: BLOCK() }, externalPages: { [EXTERNAL]: externalPage(ID, '34나5678') } });
+  assert.deepEqual(result.body.listings, []); assert.equal(result.body.diagnostics.searchEvidenceCount, 1);
+  assert.equal(result.body.diagnostics.searchEvidenceAcceptedCount, 0);
+});
+
+test('explicit original source-ID, official outlink and multi-plate conflicts cannot be replaced by an index observation', async t => {
+  const original = externalPage();
+  const cases = [
+    original.replace('<strong>' + ID + '</strong>', '<strong>43000002</strong>'),
+    original.replace('carid=' + ID, 'carid=43000002'),
+    original.replace('</ul>', '<li><span>Номер автомобиля</span><strong>34나5678</strong></li></ul>')
+  ];
+  for (const html of cases) await t.test(html.slice(0, 40), async () => {
+    const result = await run({ payload: { discovery: { make: 'Tesla' } }, results: [{ url: EXTERNAL, raw_content: indexedCard() }],
+      pages: { [ID]: BLOCK() }, externalPages: { [EXTERNAL]: html } });
+    assert.deepEqual(result.body.listings, []); assert.equal(result.body.diagnostics.searchEvidenceCount, 1);
+    assert.equal(result.body.diagnostics.searchEvidenceAcceptedCount, 0);
+  });
+});
+
+test('original HTML evidence takes precedence over a compatible search-index observation', async () => {
+  const result = await run({ payload: { discovery: { make: 'Tesla' } }, results: [{ url: EXTERNAL, raw_content: indexedCard() }],
+    pages: { [ID]: BLOCK() }, externalPages: { [EXTERNAL]: externalPage() } });
+  assert.equal(result.body.status, 'found'); assert.equal(result.body.listings[0].externalVerification.method, undefined);
+  assert.equal(result.body.listings[0].externalVerification.advertisedAt, '2026-10-21');
 });

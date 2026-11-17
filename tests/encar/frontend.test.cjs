@@ -49,6 +49,12 @@ function externalListing(id = '43000001') {
   }};
 }
 
+function searchIndexListing(id = '43000001') {
+  const item = externalListing(id);
+  Object.assign(item.externalVerification, {method: 'search-index', advertisedAt: null, modifiedAt: null});
+  return item;
+}
+
 const plain = value => JSON.parse(JSON.stringify(value));
 
 function assertLookupIcon(button, busy = false) {
@@ -526,7 +532,7 @@ test('19 old unverified responses retain the exact note, with an optional closed
   assert.equal(f.manual.hidden, false); assert.equal(f.manual.open, false);
   assert.equal(f.copyButton.hidden, false); assert.equal(f.links.length, 0);
   f.copyButton.click(); await settle();
-  assert.deepEqual(JSON.parse(f.copyFallback.value), { service: 'snote-encar', clientRelease: '2.126', code: 'UNVERIFIED', httpStatus: 200 });
+  assert.deepEqual(JSON.parse(f.copyFallback.value), { service: 'snote-encar', clientRelease: '2.127', code: 'UNVERIFIED', httpStatus: 200 });
   assert.equal(f.copyFallback.readOnly, true); assert.equal(f.copyFallback.hidden, false);
   assert.equal(f.w.document.activeElement, f.copyFallback); assert.equal(f.copyFallback.selectionStart, 0); assert.equal(f.copyFallback.selectionEnd, f.copyFallback.value.length);
 });
@@ -569,7 +575,7 @@ test('non-JSON server failures retain HTTP status and a temporary availability r
       assert.equal(f.tabs[0].closed, true); assert.deepEqual(f.tabs[0].navigations, []); assert.equal(f.saveCalls.length, 0);
       assert.equal(f.links.length, 2, 'Saved links remain available after an unsuccessful recheck'); assert.equal(f.button.disabled, false);
       f.copyButton.click(); await settle();
-      assert.deepEqual(JSON.parse(f.copyFallback.value), {service:'snote-encar', clientRelease:'2.126',code:'SERVER_UNAVAILABLE',httpStatus:status});
+      assert.deepEqual(JSON.parse(f.copyFallback.value), {service:'snote-encar', clientRelease:'2.127',code:'SERVER_UNAVAILABLE',httpStatus:status});
       assert.doesNotMatch(f.copyFallback.value, /PRIVATE|12가3456|43000001|https:|token/);
     });
   }
@@ -580,7 +586,7 @@ test('unreadable JSON server failures retain availability diagnostics without re
     const f = fixture(t, {bridge:true}); f.click(); await settle();
     f.reply(0, null, {status:503, jsonPromise:Promise.reject(failure)}); await settle(); f.copyButton.click(); await settle();
     assert.equal(f.note.textContent, '광고 확인 서버가 일시적으로 응답하지 않습니다. 잠시 후 다시 시도해 주세요.');
-    assert.deepEqual(JSON.parse(f.copyFallback.value), {service:'snote-encar', clientRelease:'2.126',code:'SERVER_UNAVAILABLE',httpStatus:503});
+    assert.deepEqual(JSON.parse(f.copyFallback.value), {service:'snote-encar', clientRelease:'2.127',code:'SERVER_UNAVAILABLE',httpStatus:503});
     assert.equal(f.tabs[0].closed, true); assert.deepEqual(f.tabs[0].navigations, []); assert.equal(f.saveCalls.length, 0);
     assert.doesNotMatch(f.copyFallback.value, /PRIVATE/);
   }
@@ -619,7 +625,7 @@ test('catalogue timeout preserves its safe diagnostic and offers manual verifica
   assert.equal(f.manual.hidden, false); assert.equal(f.manual.open, false); assert.equal(f.tabs[0].closed, true);
   assert.deepEqual(f.tabs[0].navigations, []); assert.equal(f.links.length, 0); assert.equal(f.saveCalls.length, 0);
   f.copyButton.click(); await settle();
-  assert.deepEqual(JSON.parse(f.copyFallback.value), {service:'snote-encar', clientRelease:'2.126', code:'CATALOG_TIMEOUT', httpStatus:502, requestId:REQUEST_ID, catalogRequestCount:2});
+  assert.deepEqual(JSON.parse(f.copyFallback.value), {service:'snote-encar', clientRelease:'2.127', code:'CATALOG_TIMEOUT', httpStatus:502, requestId:REQUEST_ID, catalogRequestCount:2});
   assert.doesNotMatch(f.copyFallback.value, /PRIVATE|12가3456|43000001|https:|token/);
 });
 
@@ -660,11 +666,11 @@ test('26 diagnostic copy whitelists bounded numeric counters, UUID and known cod
     source: 'PRIVATE_SOURCE', host: 'PRIVATE_HOST', title: 'PRIVATE_TITLE', text: 'PRIVATE_TEXT', raw_content: 'PRIVATE_RAW', body: 'PRIVATE_BODY',
     rejected: { plateMismatch: 2, notAdvertising: -1, notFound: 4, private: 'PRIVATE_VALUE' } });
   f.copyButton.click(); await settle(); assert.equal(writes.length, 1);
-  assert.deepEqual(JSON.parse(writes[0]), { service: 'snote-encar', clientRelease: '2.126', code: 'SEARCH_NO_RESULTS', httpStatus: 200, requestId: REQUEST_ID, searchCount: 3, plateMatchedCount: 2, resultPlateMatchCount: 3, rawResultCount: 5, recognizedSourceCount: 1, rejected: { plateMismatch: 2, notFound: 4 } });
+  assert.deepEqual(JSON.parse(writes[0]), { service: 'snote-encar', clientRelease: '2.127', code: 'SEARCH_NO_RESULTS', httpStatus: 200, requestId: REQUEST_ID, searchCount: 3, plateMatchedCount: 2, resultPlateMatchCount: 3, rawResultCount: 5, recognizedSourceCount: 1, rejected: { plateMismatch: 2, notFound: 4 } });
   assert.doesNotMatch(writes[0], /PRIVATE|12가3456|43000001|https:|Bearer|apiKey|token/); assert(writes[0].length < 600);
   assert.equal(f.copyFallback.hidden, true); assert.match(f.copyStatus.textContent, /복사했습니다/);
   const invalid = fixture(t); await showUnverified(invalid, { code: 'PRIVATE_TOKEN', requestId: REQUEST_ID+PLATE, searchCount: -1 }); invalid.copyButton.click(); await settle();
-  assert.deepEqual(JSON.parse(invalid.copyFallback.value), { service: 'snote-encar', clientRelease: '2.126', code: 'UNVERIFIED', httpStatus: 200 });
+  assert.deepEqual(JSON.parse(invalid.copyFallback.value), { service: 'snote-encar', clientRelease: '2.127', code: 'UNVERIFIED', httpStatus: 200 });
 });
 
 test('27 a rejected/late clipboard operation cannot restore diagnostic text after logout', async t => {
@@ -699,7 +705,7 @@ test('middleware failures keep allowlisted request reasons without exposing resp
       assert.equal(f.tabs[0].closed, true); assert.deepEqual(f.tabs[0].navigations, []); assert.equal(f.saveCalls.length, 0);
       assert.equal(f.links.length, 2, 'Previously saved links survive a current failed recheck');
       f.copyButton.click(); await settle();
-      assert.deepEqual(JSON.parse(f.copyFallback.value), {service:'snote-encar', clientRelease:'2.126', code, httpStatus:status});
+      assert.deepEqual(JSON.parse(f.copyFallback.value), {service:'snote-encar', clientRelease:'2.127', code, httpStatus:status});
       assert.doesNotMatch(f.copyFallback.value, /PRIVATE|12가3456|43000001|https:|token/);
     });
   }
@@ -734,12 +740,12 @@ test('29 an unknown advertisement state is an error, never a sold/inactive claim
   assert.doesNotMatch(f.note.textContent, /종료|판매\s*완료|판매\s*중단|매물.*없/);
   assert.equal(f.note.dataset.error, 'true'); assert.equal(f.tabs[0].closed, true); assert.deepEqual(f.tabs[0].navigations, []); assert.equal(f.links.length, 0);
   f.copyButton.click(); await settle();
-  assert.deepEqual(JSON.parse(f.copyFallback.value), { service: 'snote-encar', clientRelease: '2.126', code: 'AD_STATUS_UNKNOWN', httpStatus: 502, requestId: REQUEST_ID, plateMatchedCount: 1 });
+  assert.deepEqual(JSON.parse(f.copyFallback.value), { service: 'snote-encar', clientRelease: '2.127', code: 'AD_STATUS_UNKNOWN', httpStatus: 502, requestId: REQUEST_ID, plateMatchedCount: 1 });
   assert.doesNotMatch(f.copyFallback.value, /PRIVATE|12가3456|43000001|https:|advertisementStatus/);
 });
 
 test('30 optional matched-plate, search-stage and public-catalog counts copy only whole numbers in the existing bounds', async t => {
-  const keys = ['plateMatchedCount', 'resultPlateMatchCount', 'rawResultCount', 'recognizedSourceCount', 'catalogRequestCount', 'catalogPageCount', 'catalogRecordCount', 'catalogExactMatchCount', 'catalogFormCount', 'catalogPlateFieldCount', 'catalogLinkCount', 'modelBranchPageCount', 'externalSkippedCount'];
+  const keys = ['plateMatchedCount', 'resultPlateMatchCount', 'rawResultCount', 'recognizedSourceCount', 'catalogRequestCount', 'catalogPageCount', 'catalogRecordCount', 'catalogExactMatchCount', 'catalogFormCount', 'catalogPlateFieldCount', 'catalogLinkCount', 'modelBranchPageCount', 'externalSkippedCount', 'searchEvidenceCount', 'searchEvidenceAcceptedCount'];
   for (const count of [0, 1000, -1, 1.25, 1001, '1', null, Number.NaN, Number.POSITIVE_INFINITY]) {
     const f = fixture(t); await showUnverified(f, { code: 'NO_VERIFIED_LISTING', ...Object.fromEntries(keys.map(key => [key, count])) }); f.copyButton.click(); await settle();
     const copied = JSON.parse(f.copyFallback.value);
@@ -758,7 +764,7 @@ test('31 incomplete public-catalog verification never opens partial listings and
   assert.equal(f.note.textContent, '공개 차량 목록의 일부 조회를 마치지 못했습니다. 잠시 후 다시 확인해 주세요.');
   assert.doesNotMatch(f.note.textContent, /PRIVATE|판매\s*완료|매물.*없/); assert.equal(f.tabs[0].closed, true); assert.deepEqual(f.tabs[0].navigations, []); assert.equal(f.links.length, 0);
   f.copyButton.click(); await settle();
-  assert.deepEqual(JSON.parse(f.copyFallback.value), { service: 'snote-encar', clientRelease: '2.126', code: 'CATALOG_INCOMPLETE', httpStatus: 502, requestId: REQUEST_ID, ...counters });
+  assert.deepEqual(JSON.parse(f.copyFallback.value), { service: 'snote-encar', clientRelease: '2.127', code: 'CATALOG_INCOMPLETE', httpStatus: 502, requestId: REQUEST_ID, ...counters });
   assert.doesNotMatch(f.copyFallback.value, /PRIVATE|12가3456|43000001|https:|token|raw_content/); assert(f.copyFallback.value.length < 600);
 });
 
@@ -1276,6 +1282,66 @@ test('external provenance restores on another device and saved list clicks reuse
   assert.equal(next.requests.length, 0); assert.equal(next.autoCalls.length, 0); assert.equal(next.changeCalls.length, 0);
 });
 
+test('search-index plate and make evidence is saved as search confirmation without OCR, live status claims or price controls', async t => {
+  const item = {...searchIndexListing(), ...pricedListing(), trustedId: null, trustedUrl: null};
+  const f = fixture(t, {bridge: true, autoConfirm: true, cars: [{id: 'car-1', plate: PLATE, make: '테슬라', sell: 12000000}],
+    autoPrice: () => {throw Error('Search evidence cannot start OCR');}});
+  f.click(); await settle(); f.reply(0, found(PLATE, [item])); await settle();
+  assert.equal(f.autoCalls.length, 0); assert.equal(f.changeCalls.length, 0); assert.equal(f.applyCalls.length, 0);
+  assert.equal(f.priceControls.length, 0); assert.equal(f.prices.length, 0); assert.equal(f.priceConfirmation.open, false);
+  assert.equal(f.w.cars[0].sell, 12000000);
+  assert.deepEqual(f.tabs[0].navigations, [item.sellerUrl]);
+  assert.equal(f.saveCalls.length, 1); assert.deepEqual(f.refreshListCalls, [f.saveCalls[0].base]);
+  const saved = f.saveCalls[0].record.listings[0];
+  assert.deepEqual(saved.externalVerification, item.externalVerification);
+  assert.equal(saved.priceWon, null); assert.equal(saved.priceStatus, 'unavailable'); assert.equal(saved.priceSource, null);
+  assert.deepEqual(f.w.cars[0].encarLinks.listings[0].externalVerification, item.externalVerification);
+  const status = f.w.document.querySelector('.snote-encar-external-status');
+  assert.equal(status.textContent, '검색 결과 확인'); assert.equal(status.tabIndex, 0);
+  assert.match(status.dataset.tooltip, /검색 자료에서 차량번호와 제조사를 확인했습니다/);
+  assert.match(status.dataset.tooltip, /원문 HTML은 확인하지 못했습니다/);
+  assert.match(status.dataset.tooltip, /한국 엔카의 현재 광고 상태는 확인하지 못했습니다/);
+  assert.match(status.dataset.tooltip, /검색 확인 /); assert.match(status.dataset.tooltip, /출처 https:\/\/nnov\.trust-encar\.ru/);
+  assert.doesNotMatch(status.dataset.tooltip, /외부 광고 추가일|외부 수정일/);
+  assert.equal(status.getAttribute('aria-label'), status.dataset.tooltip); assert.equal(status.dataset.snoteIconHelp, status.dataset.tooltip);
+  assert.deepEqual(f.links.map(link => link.href), [item.sellerUrl]);
+});
+
+test('saved search-index provenance restores its distinction on another device and opens only the canonical Korean link', async t => {
+  const item = searchIndexListing(), f = fixture(t, {bridge: true, autoConfirm: true, savedRecord: storedRecord([item]),
+    autoPrice: () => {throw Error('Restored search evidence cannot start OCR');}});
+  assert.equal(f.w.document.querySelector('.snote-encar-external-status').textContent, '검색 결과 확인');
+  assert.equal(f.links.length, 1); assert.equal(f.saveCalls.length, 0); assert.equal(f.refreshListCalls.length, 0);
+  assert.equal(f.w.SnoteEncarLink.lookupCurrent('car-1', item.id), true);
+  assert.deepEqual(f.tabs[0].navigations, [item.sellerUrl]);
+  assert.equal(f.requests.length, 0); assert.equal(f.autoCalls.length, 0); assert.equal(f.changeCalls.length, 0);
+  assert.equal(f.w.cars[0].encarLinks.listings[0].externalVerification.method, 'search-index');
+});
+
+test('search-index provenance rejects forged methods, extra evidence fields and unsupported publication dates', async t => {
+  const changes = [
+    item => {item.externalVerification.method = null;},
+    item => {item.externalVerification.method = 'html';},
+    item => {item.externalVerification.method = 'SEARCH-INDEX';},
+    item => {item.externalVerification.method = 'search-index ';},
+    item => {item.externalVerification.method = {name: 'search-index'};},
+    item => {item.externalVerification.method = ['search-index'];},
+    item => {item.externalVerification.plate = PLATE;},
+    item => {item.externalVerification.make = 'PRIVATE_MAKE';},
+    item => {item.externalVerification.raw_content = 'PRIVATE_RAW';},
+    item => {item.externalVerification.advertisedAt = '2026-10-21';},
+    item => {item.externalVerification.modifiedAt = '2026-10-21';}
+  ];
+  for (let index = 0; index < changes.length; index++) await t.test(String(index), async sub => {
+    const item = searchIndexListing(); changes[index](item);
+    const f = fixture(sub, {bridge: true}); f.click(); await settle(); f.reply(0, found(PLATE, [item])); await settle();
+    assert.equal(f.links.length, 0); assert.equal(f.saveCalls.length, 0); assert.equal(f.refreshListCalls.length, 0);
+    assert.equal(f.tabs[0].closed, true); assert.deepEqual(f.tabs[0].navigations, []);
+    const restored = fixture(sub, {bridge: true, savedRecord: storedRecord([item])});
+    assert.equal(restored.links.length, 0); assert.equal(restored.w.document.querySelector('.snote-encar-external-status'), null);
+  });
+});
+
 test('forged prices on externally confirmed listings cannot display quotes, create change controls or select OCR in mixed results', async t => {
   const external = {...externalListing(), ...pricedListing(), trustedId: null, trustedUrl: null};
   const official = pricedListing(39999000, new Date().toISOString(), '43000003');
@@ -1345,22 +1411,31 @@ test('selected vehicle make and model group are minimal discovery hints, while a
   assert.deepEqual(wrongPlate.tabs[0].navigations, []);
 });
 
-test('missing, manual-only or malformed model hints leave the original lookup payload unchanged', async t => {
-  const cases = [
-    {make: '토요타', model: '직접 입력 차명'}, {group: 'RAV4'}, {make: ' ', group: 'RAV4'},
-    {make: '토요타', group: ''}, {make: 123, group: 'RAV4'}, {make: '토요타', group: {model: 'RAV4'}},
-    {make: '토요타', group: 'x'.repeat(81)}, {make: 'x'.repeat(81), group: 'RAV4'},
-    {make: '토요타\u0000', group: 'RAV4'}, {make: '토요타', group: 'RAV4\u0085'},
-    {make: '\n토요타', group: 'RAV4'}, {make: '토요타', group: 'RAV4/<private>'},
-    {make: '토요타', group: 'https://private.example'}, {make: '토요타', group: 'RAV4\\private'},
-    {make: '토요타', group: 'RAV4／private'}, {make: '토요타', group: ' '.repeat(80) + 'RAV4'}
-  ];
-  for (let index = 0; index < cases.length; index++) await t.test(String(index), async sub => {
-    const f = fixture(sub, {cars: [{id: 'car-1', plate: PLATE, grade: 'Long Range AWD', ...cases[index]}]});
+test('missing or malformed manufacturer hints leave the original plate-only lookup unchanged', async t => {
+  const makes = [undefined, null, ' ', 123, {}, 'x'.repeat(81), '\ufb03'.repeat(27), '토요타\u0000', '\n토요타', '토요타／private'];
+  for (let index = 0; index < makes.length; index++) await t.test(String(index), async sub => {
+    const f = fixture(sub, {cars: [{id: 'car-1', plate: PLATE, make: makes[index], group: 'RAV4', grade: 'Long Range AWD'}]});
     f.click(); await settle();
     assert.deepEqual(JSON.parse(f.requests[0].init.body), {plate: PLATE, candidateIds: []});
     f.reply(0, unverified()); await settle();
   });
+});
+
+test('manufacturer-only discovery survives missing or malformed model hints without sending manual model text', async t => {
+  const models = [undefined, null, '', 123, {model: 'RAV4'}, 'x'.repeat(81), 'RAV4\u0085', 'RAV4/<private>',
+    'https://private.example', 'RAV4\\private', 'RAV4／private', ' '.repeat(80) + 'RAV4'];
+  for (let index = 0; index < models.length; index++) await t.test(String(index), async sub => {
+    const f = fixture(sub, {cars: [{id: 'car-1', plate: PLATE, make: ' 토요타 ', group: models[index],
+      model: 'PRIVATE_MANUAL_VEHICLE_TEXT', customer: {name: 'PRIVATE_CUSTOMER'}}]});
+    f.click(); await settle();
+    assert.deepEqual(JSON.parse(f.requests[0].init.body), {plate: PLATE, candidateIds: [], discovery: {make: '토요타'}});
+    assert.doesNotMatch(f.requests[0].init.body, /PRIVATE|customer/);
+    f.reply(0, unverified()); await settle();
+  });
+  const gradeOnly = fixture(t, {cars: [{id: 'car-1', plate: PLATE, make: '테슬라', group: {}, grade: '롱레인지'}]});
+  gradeOnly.click(); await settle();
+  assert.deepEqual(JSON.parse(gradeOnly.requests[0].init.body), {plate: PLATE, candidateIds: [], discovery: {make: '테슬라', grade: '롱레인지'}});
+  gradeOnly.reply(0, unverified()); await settle();
 });
 
 test('structured grade narrows discovery without sending manual vehicle text, other classifications or private fields', async t => {
@@ -1460,34 +1535,34 @@ test('diagnostics retain only bounded model catalogue counters and the search co
     modelCatalogRecordCount: 20, modelCatalogExactMatchCount: 0, externalRequestCount: 2, externalMatchCount: 0,
     discovery: {make: 'PRIVATE_MAKE', model: 'PRIVATE_MODEL'}, sourceUrls: ['https://private.example/'], body: 'PRIVATE_BODY'});
   f.copyButton.click(); await settle();
-  assert.deepEqual(JSON.parse(f.copyFallback.value), {service: 'snote-encar', clientRelease: '2.126', code: 'CATALOG_NO_MATCH', httpStatus: 200,
+  assert.deepEqual(JSON.parse(f.copyFallback.value), {service: 'snote-encar', clientRelease: '2.127', code: 'CATALOG_NO_MATCH', httpStatus: 200,
     modelCatalogRequestCount: 3, modelCatalogPageCount: 1, modelCatalogRecordCount: 20, modelCatalogExactMatchCount: 0,
     externalRequestCount: 2, externalMatchCount: 0, searchConfigured: true, discoveryStage: 'model_catalog'});
   assert.doesNotMatch(f.copyFallback.value, /PRIVATE|https:|12가3456/);
   const invalid = fixture(t); await showUnverified(invalid, {searchConfigured: 'PRIVATE_SECRET', discoveryStage: 'PRIVATE_SECRET',
     modelCatalogRequestCount: -1, modelCatalogPageCount: 1001, modelCatalogRecordCount: '20', modelCatalogExactMatchCount: 1.5,
     externalRequestCount: true, externalMatchCount: null}); invalid.copyButton.click(); await settle();
-  assert.deepEqual(JSON.parse(invalid.copyFallback.value), {service: 'snote-encar', clientRelease: '2.126', code: 'UNVERIFIED', httpStatus: 200});
+  assert.deepEqual(JSON.parse(invalid.copyFallback.value), {service: 'snote-encar', clientRelease: '2.127', code: 'UNVERIFIED', httpStatus: 200});
 });
 
 test('copied diagnostics distinguish the fixed client release from safe resolver evidence and bounded branch progress', async t => {
-  for (const resolverRelease of ['2.126', '2.125', '2.126.1']) await t.test(resolverRelease, async sub => {
+  for (const resolverRelease of ['2.127', '2.126', '2.127.1']) await t.test(resolverRelease, async sub => {
     const f = fixture(sub); await showUnverified(f, {code: 'CATALOG_NO_MATCH', clientRelease: 'PRIVATE_FORGED_CLIENT', resolverRelease,
       discoveryProvided: true, modelBranchPageCount: 3, externalSkippedCount: 2,
       grade: 'PRIVATE_GRADE', branchUrl: 'https://private.example/', sourceUrls: ['https://private.example/'], id: '43000001'});
     f.copyButton.click(); await settle();
-    assert.deepEqual(JSON.parse(f.copyFallback.value), {service: 'snote-encar', clientRelease: '2.126', code: 'CATALOG_NO_MATCH',
+    assert.deepEqual(JSON.parse(f.copyFallback.value), {service: 'snote-encar', clientRelease: '2.127', code: 'CATALOG_NO_MATCH',
       httpStatus: 200, resolverRelease, modelBranchPageCount: 3, externalSkippedCount: 2, discoveryProvided: true});
     assert.doesNotMatch(f.copyFallback.value, /PRIVATE|https:|43000001|12가3456/);
   });
   const absent = fixture(t); await showUnverified(absent, {code: 'CATALOG_FORM_UNSUPPORTED', clientRelease: '2.124',
     modelBranchPageCount: 1001, externalSkippedCount: -1, discoveryProvided: 'PRIVATE_TRUE'});
   absent.copyButton.click(); await settle();
-  assert.deepEqual(JSON.parse(absent.copyFallback.value), {service: 'snote-encar', clientRelease: '2.126', code: 'CATALOG_FORM_UNSUPPORTED', httpStatus: 200});
+  assert.deepEqual(JSON.parse(absent.copyFallback.value), {service: 'snote-encar', clientRelease: '2.127', code: 'CATALOG_FORM_UNSUPPORTED', httpStatus: 200});
   assert.doesNotMatch(absent.note.textContent, /이전 버전|구버전|오래된 버전/);
   const disabled = fixture(t); await showUnverified(disabled, {discoveryProvided: false, modelBranchPageCount: 0, externalSkippedCount: 0});
   disabled.copyButton.click(); await settle();
-  assert.deepEqual(JSON.parse(disabled.copyFallback.value), {service: 'snote-encar', clientRelease: '2.126', code: 'UNVERIFIED', httpStatus: 200,
+  assert.deepEqual(JSON.parse(disabled.copyFallback.value), {service: 'snote-encar', clientRelease: '2.127', code: 'UNVERIFIED', httpStatus: 200,
     modelBranchPageCount: 0, externalSkippedCount: 0, discoveryProvided: false});
 });
 
@@ -1498,7 +1573,26 @@ test('release diagnostics reject arbitrary strings, IDs, URL data and noninteger
     const f = fixture(sub); await showUnverified(f, {resolverRelease: releases[index], clientRelease: 'PRIVATE_CLIENT',
       modelBranchPageCount: 1.5, externalSkippedCount: '3', discoveryProvided: {id: '43000001'}, token: 'PRIVATE_TOKEN'});
     f.copyButton.click(); await settle();
-    assert.deepEqual(JSON.parse(f.copyFallback.value), {service: 'snote-encar', clientRelease: '2.126', code: 'UNVERIFIED', httpStatus: 200});
+    assert.deepEqual(JSON.parse(f.copyFallback.value), {service: 'snote-encar', clientRelease: '2.127', code: 'UNVERIFIED', httpStatus: 200});
     assert.doesNotMatch(f.copyFallback.value, /PRIVATE|https:|43000001|12가3456/);
   });
+});
+
+test('search evidence diagnostics keep accepted counts and fixed parse reasons without original search text or vehicle identity', async t => {
+  const reasons = ['MODEL_HTML_PARSE_FAILED', 'EXTERNAL_HTML_PARSE_FAILED', 'SEARCH_MANUFACTURER_MISMATCH',
+    'SEARCH_PLATE_AMBIGUOUS', 'SEARCH_ID_MISSING', 'SEARCH_ID_AMBIGUOUS', 'SEARCH_SOURCE_ID_MISMATCH'];
+  for (const count of [1, 1000, 0, -1, 1.5, 1001, '1', true, null]) await t.test(String(count), async sub => {
+    const f = fixture(sub); await showUnverified(f, {code: 'DETAIL_PARSE_FAILED', searchEvidenceCount: 3, searchEvidenceAcceptedCount: 1,
+      parseReasonCounts: {...Object.fromEntries(reasons.map(key => [key, count])), PRIVATE_RAW: 'PRIVATE_SEARCH_TEXT',
+        plate: PLATE, id: '43000001', raw_content: 'PRIVATE_RAW_CONTENT'}, sourceUrl: 'https://private.example/'});
+    f.copyButton.click(); await settle();
+    assert.deepEqual(JSON.parse(f.copyFallback.value), {service: 'snote-encar', clientRelease: '2.127', code: 'DETAIL_PARSE_FAILED', httpStatus: 200,
+      searchEvidenceCount: 3, searchEvidenceAcceptedCount: 1,
+      ...(count === 1 || count === 1000 ? {parseReasonCounts: Object.fromEntries(reasons.map(key => [key, count]))} : {})});
+    assert.doesNotMatch(f.copyFallback.value, /PRIVATE|https:|12가3456|43000001/);
+  });
+  for (const parseReasonCounts of [[], ['MODEL_HTML_PARSE_FAILED'], 'PRIVATE_RAW']) {
+    const f = fixture(t); await showUnverified(f, {parseReasonCounts}); f.copyButton.click(); await settle();
+    assert.equal(Object.hasOwn(JSON.parse(f.copyFallback.value), 'parseReasonCounts'), false);
+  }
 });

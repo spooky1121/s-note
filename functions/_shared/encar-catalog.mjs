@@ -2,9 +2,12 @@
 export const CATALOG_ORIGIN = 'https://encar.spb.ru';
 const CODES = new Set(['CATALOG_CONFIG_INVALID', 'CATALOG_FORM_UNSUPPORTED', 'CATALOG_PARSE_FAILED', 'CATALOG_PARSER_UNAVAILABLE']);
 export class CatalogError extends Error {
-  constructor(code) { super(CODES.has(code) ? code : 'CATALOG_PARSE_FAILED'); this.code = this.message; }
+  constructor(code, reason) {
+    super(CODES.has(code) ? code : 'CATALOG_PARSE_FAILED'); this.code = this.message;
+    if (reason === 'EXTERNAL_IDENTITY_CONFLICT') { this.reason = reason; this.sourceConflict = true; }
+  }
 }
-const fail = code => { throw new CatalogError(code); };
+const fail = (code, reason) => { throw new CatalogError(code, reason); };
 const CONTROL = /[\u0000-\u001f\u007f-\u009f]/u;
 const UNSAFE_PATH = /(?:^|\/)(?:admin|account|auth|login|logout|sign[-_]?in|sign[-_]?out|signup|register|delete|remove|destroy|create|save|update|edit|submit|checkout|payment|purchase|booking|subscribe|contact|message|send|inquiry|enquiry)(?:[./_-]|$)/i;
 const WRITE_ACTION = /^(?:post|put|patch|delete|remove|destroy|create|save|update|edit|submit|logout|login|checkout|pay)$/i;
@@ -14,6 +17,8 @@ const VOID = new Set('area base br col embed hr img input link meta param source
 const IGNORED = new Set('script style textarea template noscript svg math head'.split(' '));
 const BLOCK = new Set('article li div p section dl dt dd tr td th ul ol header footer aside main nav form'.split(' '));
 const ATTRS = 'id class href rel role hidden aria-hidden aria-label placeholder title style action method name type value checked selected disabled readonly multiple size for form formaction formmethod'.split(' ');
+const OPTIONAL_END = new Set('html head body li dt dd p rt rp option optgroup colgroup thead tbody tfoot tr td th'.split(' '));
+const P_END_START = new Set('address article aside blockquote details dialog div dl fieldset figcaption figure footer form h1 h2 h3 h4 h5 h6 header hgroup hr main menu nav ol p pre search section table ul'.split(' '));
 
 function suffixValue(value) { if (typeof value !== 'string' || !/^[0-9]{4}$/.test(value)) fail('CATALOG_CONFIG_INVALID'); return value; }
 function rawURL(value) {
@@ -68,30 +73,89 @@ function descendants(node, predicate) {
   return output;
 }
 function parents(node) { const out = []; for (let item = node.parent; item; item = item.parent) out.push(item); return out; }
+function closeStack(stack, at, explicit = false) {
+  for (let index = at; index < stack.length; index++) {
+    if ((explicit && index === at) || OPTIONAL_END.has(stack[index].tag)) stack[index].closed = true;
+  }
+  stack.length = at;
+}
+function implicitStart(stack, tag) {
+  const close = (targets, stops) => {
+    for (let index = stack.length - 1; index > 0; index--) {
+      if (targets.has(stack[index].tag)) { closeStack(stack, index); return; }
+      if (stops.has(stack[index].tag)) return;
+    }
+  };
+  if (P_END_START.has(tag)) close(new Set(['p']), new Set(['button', 'html', 'table', 'td', 'th', 'template']));
+  if (tag === 'li') close(new Set(['li']), new Set(['ul', 'ol', 'menu']));
+  if (tag === 'dt' || tag === 'dd') close(new Set(['dt', 'dd']), new Set(['dl']));
+  if (tag === 'rt' || tag === 'rp') close(new Set(['rt', 'rp']), new Set(['ruby']));
+  if (tag === 'option' || tag === 'optgroup' || tag === 'hr') close(new Set(['option']), new Set(['select', 'datalist']));
+  if (tag === 'optgroup' || tag === 'hr') close(new Set(['optgroup']), new Set(['select']));
+  if (['td', 'th', 'tr', 'thead', 'tbody', 'tfoot'].includes(tag)) close(new Set(['td', 'th']), new Set(['tr', 'table']));
+  if (['tr', 'thead', 'tbody', 'tfoot'].includes(tag)) close(new Set(['tr']), new Set(['table']));
+  if (['thead', 'tbody', 'tfoot'].includes(tag)) close(new Set(['thead', 'tbody', 'tfoot']), new Set(['table']));
+  if (['thead', 'tbody', 'tfoot', 'tr'].includes(tag)) close(new Set(['colgroup']), new Set(['table']));
+  if (tag === 'body') close(new Set(['head']), new Set(['html']));
+}
 async function tree(html, ignoreForms, code) {
   if (typeof globalThis.HTMLRewriter !== 'function') fail('CATALOG_PARSER_UNAVAILABLE');
   if (typeof html !== 'string' || new TextEncoder().encode(html).byteLength > 3 * 1024 * 1024) fail(code);
   const root = { tag: '', attrs: {}, children: [], parts: [], parent: null, ignored: false, closed: true }, stack = [root];
   let count = 0;
   try {
+    // Native HTMLRewriter exposes namespaceURI, but no canHaveContent or
+    // selfClosing flag. Probe only SVG/MathML roots in this isolated pass.
+    // Some runtimes incorrectly carry a self-closing root's namespace onto
+    // following HTML, so removing every foreign-namespace element loses data.
+    let originalCount = 0;
+    html = await new globalThis.HTMLRewriter().on('*', { element(element) {
+      if (++originalCount > 30000) fail(code);
+      if (!['svg', 'math'].includes(element.tagName.toLowerCase()) || element.namespaceURI === 'http://www.w3.org/1999/xhtml') return;
+      try { element.onEndTag(() => {}); }
+      catch (error) {
+        // This fixed runtime error means there is only a standalone tag to
+        // remove. All other failures, including resource errors, abort parsing.
+        if (error?.message !== 'Parser error: No end tag.') throw error;
+        element.removeAndKeepContent(); return;
+      }
+      element.remove();
+    } }).transform(new Response(html, { headers: { 'Content-Type': 'text/html; charset=utf-8' } })).text();
     await new globalThis.HTMLRewriter().on('*', {
       element(element) {
-        if (++count > 30000 || stack.length > 128) fail(code);
         const tag = element.tagName.toLowerCase(), attrs = {};
+        implicitStart(stack, tag);
+        if (++count > 30000 || stack.length > 128) fail(code);
         for (const name of ATTRS) { const value = element.getAttribute(name); if (value !== null) { if (value.length > 4096) fail(code); attrs[name] = entities(value); } }
         const parent = stack[stack.length - 1];
         const ignored = parent.ignored || IGNORED.has(tag) || (ignoreForms && tag === 'form') || Object.hasOwn(attrs, 'hidden') || attrs['aria-hidden'] === 'true' || /(?:display\s*:\s*none|visibility\s*:\s*hidden)/i.test(attrs.style || '');
         const node = { tag, attrs, parent, children: [], parts: [], ignored, closed: VOID.has(tag) };
         parent.children.push(node); parent.parts.push(node);
-        if (!VOID.has(tag)) { stack.push(node); element.onEndTag(() => { node.closed = true; const at = stack.indexOf(node); if (at >= 0) stack.length = at; }); }
+        if (!VOID.has(tag)) { stack.push(node); element.onEndTag(end => {
+          // Older WASM shims can dispatch an ancestor's explicit end tag to
+          // implicitly closed descendants. Only its actual owner closes here.
+          if (end.name.toLowerCase() !== node.tag) return;
+          const at = stack.indexOf(node); if (at >= 0) closeStack(stack, at, true);
+        }); }
       }
     }).onDocument({ text(chunk) {
       const node = stack[stack.length - 1];
       const optionDefault = !ignoreForms && stack.some(item => item.tag === 'option') && !stack.some(item => IGNORED.has(item.tag));
       if (!node.ignored || optionDefault) node.parts.push(chunk.text);
     } }).transform(new Response(html, { headers: { 'Content-Type': 'text/html; charset=utf-8' } })).text();
+    for (const node of stack) if (OPTIONAL_END.has(node.tag)) node.closed = true;
     return root;
   } catch { fail(code); }
+}
+function challengePage(html, root) {
+  const challenge = /^(?:captcha\b|access denied\b|request blocked\b|(?:please\s+)?enable javascript\b|javascript is required\b|доступ ограничен|проверка браузера|verify (?:that )?you are (?:a )?human\b|just a moment\b)/iu;
+  if (/<title\b[^>]*>\s*(?:access denied|request blocked|captcha|just a moment|проверка браузера|доступ ограничен|enable javascript)/iu.test(html)) return true;
+  const pageContent = node => !node.ignored && ![node, ...parents(node)].some(item => ['header', 'footer', 'aside', 'nav', 'form'].includes(item.tag));
+  if (descendants(root, node => node.tag === 'h1' && pageContent(node)).some(node => challenge.test(text(node).trim()))) return true;
+  // A footer's reCAPTCHA notice or a normal noscript recommendation is not an
+  // interstitial. Challenge prose must be the leading visible page message.
+  const visible = node => !pageContent(node) ? '' : node.parts.map(part => typeof part === 'string' ? part : visible(part)).join(' ');
+  return challenge.test(entities(visible(root)).normalize('NFKC').trim());
 }
 
 const PLATE_FIELD = /(?:гос[\s._-]*(?:номер|знак)|регистрационн[а-яё]*[\s._-]*номер|номер[\s._-]*(?:авто(?:мобил[яь])?|машины|тс)|(?:licen[cs]e|registration|vehicle|car)[\s._-]*(?:plate|number|no\b)|(?:plate|reg)[\s._-]*(?:number|no\b)|(?:vehicle|car)no\b|licenseplate|numberplate|\bplate\b|차량[\s_-]*번호|자동차[\s_-]*번호|번호판)/iu;
@@ -203,6 +267,23 @@ const MAKE_NAME_ALIASES = [
   ['Infiniti', 'Infinity', '인피니티'], ['Smart', '스마트'], ['BYD', '비야디'],
   ['Polestar', 'Folstar', '폴스타'], ['Lucid', '루시드']
 ];
+export function manufacturerMatches(value, make) {
+  const key = catalogHint(make);
+  if (!key || typeof value !== 'string' || !value.trim() || value.length > 65536) return false;
+  const aliases = catalogAliases(make, MAKE_NAME_ALIASES), words = value.normalize('NFKC').toLowerCase().match(/[\p{L}\p{N}]+/gu) || [];
+  const longest = Math.max(...[...aliases].map(alias => alias.length));
+  // Match complete words (or a short sequence such as Mercedes-Benz), never a
+  // manufacturer's letters embedded in another word or another brand name.
+  for (let start = 0; start < words.length; start++) {
+    let joined = '';
+    for (let end = start; end < words.length && end < start + 6; end++) {
+      joined += words[end];
+      if (joined.length > longest) break;
+      if (aliases.has(joined)) return true;
+    }
+  }
+  return false;
+}
 const MODEL_NAME_ALIASES = [
   ['Model Y', '모델 Y'], ['Model 3', '모델 3'], ['Model S', '모델 S'], ['Model X', '모델 X'],
   ['Grandeur', '그랜저'], ['Avante', 'Elantra', '아반떼'], ['Sonata', '쏘나타', '소나타'],
@@ -254,7 +335,7 @@ export async function discoverVehicleCatalogLink(html, currentUrl, hints, stage 
   // Static public anchors inside filter forms are safe navigation too. No form
   // controls, actions, defaults or script-driven requests are interpreted.
   const root = await tree(html, false, 'CATALOG_PARSE_FAILED'), matches = new Map();
-  if (/<title>\s*(?:access denied|request blocked)/iu.test(html) || /(?:captcha|access denied|request blocked|enable javascript|javascript is required|доступ ограничен|проверка браузера)/iu.test(text(root))) fail('CATALOG_PARSE_FAILED');
+  if (challengePage(html, root)) fail('CATALOG_PARSE_FAILED');
   for (const node of descendants(root, item => item.tag === 'a' && !item.ignored && item.closed && item.attrs.href)) {
     let url;
     try { url = catalogURL(externalSourceURL(node.attrs.href, base.href)); } catch { continue; }
@@ -276,7 +357,7 @@ export async function discoverCatalogBranches(html, currentUrl, hints = null) {
   const base = catalogURL(externalSourceURL(currentUrl)), currentPath = base.pathname.replace(/\/$/, '');
   if (!/^\/catalog(?:\/[a-z0-9-]+){2,3}$/.test(currentPath)) return [];
   const root = await tree(html, false, 'CATALOG_PARSE_FAILED');
-  if (/<title>\s*(?:access denied|request blocked)/iu.test(html) || /(?:captcha|access denied|request blocked|enable javascript|javascript is required|доступ ограничен|проверка браузера)/iu.test(text(root))) fail('CATALOG_PARSE_FAILED');
+  if (challengePage(html, root)) fail('CATALOG_PARSE_FAILED');
   const supplied = hints && typeof hints === 'object' && !Array.isArray(hints) ? hints : {};
   const model = catalogAliases(supplied.model, MODEL_NAME_ALIASES), grade = catalogAliases(supplied.grade, GRADE_NAME_ALIASES);
   const exactModel = catalogHint(supplied.model), exactGrade = catalogHint(supplied.grade), matches = new Map();
@@ -298,7 +379,7 @@ export async function discoverCatalogBranches(html, currentUrl, hints = null) {
 export async function getObservedCatalogNext(html, currentUrl) {
   const base = catalogURL(currentUrl), root = await tree(html, false, 'CATALOG_PARSE_FAILED');
   if (!/^\/catalog(?:\/[a-z0-9-]+)*\/?$/.test(base.pathname)) fail('CATALOG_PARSE_FAILED');
-  if (/<title>\s*(?:access denied|request blocked)/iu.test(html) || /(?:captcha|access denied|request blocked|enable javascript|javascript is required|доступ ограничен|проверка браузера)/iu.test(text(root))) fail('CATALOG_PARSE_FAILED');
+  if (challengePage(html, root)) fail('CATALOG_PARSE_FAILED');
   const next = nextPage(root, base);
   if (!next) return null;
   const samePath = url => url.pathname.replace(/\/$/, '');
@@ -364,7 +445,7 @@ export async function parseCatalogPage(html, currentUrl, plate) {
   if (typeof plate !== 'string') fail('CATALOG_PARSE_FAILED');
   plate = plate.normalize('NFKC').replace(/[\s-]/gu, ''); if (!PLATE.test(plate)) fail('CATALOG_PARSE_FAILED');
   const root = await tree(html, true, 'CATALOG_PARSE_FAILED'), anchors = descendants(root, node => !!adId(node, base));
-  if (/<title>\s*(?:access denied|request blocked)/iu.test(html) || /(?:captcha|access denied|request blocked|enable javascript|javascript is required|доступ ограничен|проверка браузера)/iu.test(text(root))) fail('CATALOG_PARSE_FAILED');
+  if (challengePage(html, root)) fail('CATALOG_PARSE_FAILED');
   if (descendants(root, node => looksLikeAd(node, base) && !adId(node, base)).length) fail('CATALOG_PARSE_FAILED');
   const cards = descendants(root, isCard).filter(node => descendants(node, child => !!adId(child, base)).length > 0);
   const records = cards.filter(node => !descendants(node, child => cards.includes(child)).length);
@@ -423,22 +504,30 @@ function externalAd(node, base) {
 }
 const EXTERNAL_RELATED = /(?:^|[\s_-])(?:related|recommend(?:ed|ations)?|similar|suggest(?:ed|ions)?|also[-_]?viewed)(?:$|[\s_-])/i;
 const EXTERNAL_INACTIVE = /(?:автомобиль\s+продан|снят\s+с\s+продажи|(?:^|\n)\s*(?:продан|продано|sold|removed|판매완료)\s*(?:\n|$))/iu;
+const PUBLIC_FORMS = new WeakMap();
+function publicReadForm(node) {
+  if (PUBLIC_FORMS.has(node)) return PUBLIC_FORMS.get(node);
+  const read = (node.attrs.method || '').toLowerCase() === 'get' && !PRIVATE_FIELD.test([node.attrs.id, node.attrs.class, node.attrs['aria-label']].filter(Boolean).join(' ')) &&
+    !descendants(node, child => ['input', 'select', 'textarea'].includes(child.tag) &&
+      (['password', 'email', 'tel', 'file'].includes((child.attrs.type || '').toLowerCase()) || PRIVATE_FIELD.test([child.attrs.name, child.attrs.id, child.attrs.placeholder, child.attrs['aria-label']].filter(Boolean).join(' ')))).length;
+  PUBLIC_FORMS.set(node, read); return read;
+}
 function nonPrimary(node) {
-  return [node, ...parents(node)].some(item => item.ignored || ['nav', 'aside', 'footer'].includes(item.tag) ||
+  return [node, ...parents(node)].some(item => item.ignored || ['nav', 'aside', 'footer', 'header'].includes(item.tag) || (item.tag === 'form' && !publicReadForm(item)) ||
     EXTERNAL_RELATED.test(item.attrs.class || '') || item.attrs.role === 'complementary');
 }
 function fieldText(node) {
   let value = text(node).trim();
-  if (['dt', 'th'].includes(node.tag)) {
+  if (['dt', 'th'].includes(node.tag) || (['span', 'div', 'p'].includes(node.tag) && /^(?:Лот(?:\s+объявления)?|Номер\s+лота|Номер\s+автомобиля)\s*[:：#№]?\s*$/iu.test(value))) {
     const siblings = node.parent?.children || [], next = siblings[siblings.indexOf(node) + 1];
-    if (next && next.tag === (node.tag === 'dt' ? 'dd' : 'td') && !next.ignored) value += '\n' + text(next).trim();
+    if (next && !nonPrimary(next) && (['dt', 'th'].includes(node.tag) ? next.tag === (node.tag === 'dt' ? 'dd' : 'td') : ['span', 'strong', 'div', 'p', 'b'].includes(next.tag))) value += '\n' + text(next).trim();
   }
   return value;
 }
 function uniqueFields(nodes, label, pattern) {
   const result = [];
   for (const node of nodes) {
-    if (!['li', 'div', 'section', 'p', 'dl', 'dt', 'tr', 'th'].includes(node.tag) || !node.closed || nonPrimary(node)) continue;
+    if (!['li', 'div', 'section', 'p', 'span', 'dl', 'dt', 'tr', 'th'].includes(node.tag) || !node.closed || nonPrimary(node)) continue;
     const match = label.exec(fieldText(node));
     if (!match) continue;
     const value = match[1].trim();
@@ -448,8 +537,16 @@ function uniqueFields(nodes, label, pattern) {
 }
 function infoContainer(node) {
   const chain = [node, ...parents(node)];
-  return chain.find(item => ['ul', 'ol', 'dl', 'table'].includes(item.tag)) || chain.find(item =>
-    ['div', 'section', 'article'].includes(item.tag) && /(?:^|[\s_-])(?:car|vehicle|auto)?[\s_-]*(?:info|specs?|specifications|params?|characteristics|details|technical)(?:$|[\s_-])/i.test(item.attrs.class || ''));
+  return chain.find(item => ['ul', 'ol', 'dl', 'table', 'article'].includes(item.tag)) || chain.find(item =>
+    ['div', 'section', 'article'].includes(item.tag) && (isCard(item) || /(?:^|[\s_-])(?:car|vehicle|auto)?[\s_-]*(?:info|specs?|specifications|params?|characteristics|details|technical)(?:$|[\s_-])/i.test(item.attrs.class || '')));
+}
+function sharedInfoContainer(first, second) {
+  const left = infoContainer(first), right = infoContainer(second);
+  if (left || right) return left && left === right ? left : null;
+  // Unstyled public spec grids still establish a relationship through their
+  // actual shared container. Separate semantic lists/cards cannot borrow it.
+  const other = new Set([second, ...parents(second)]);
+  return [first, ...parents(first)].find(node => other.has(node) && ['div', 'section', 'main', 'form'].includes(node.tag) && !nonPrimary(node)) || null;
 }
 function calendarDate(raw) {
   const match = /^(\d{2})\.(\d{2})\.(\d{4})$/.exec(raw);
@@ -492,28 +589,33 @@ export async function parseExternalAdvertisement(html, currentUrl, requestedPlat
   if (typeof requestedPlate !== 'string') fail('CATALOG_PARSE_FAILED');
   const plate = requestedPlate.normalize('NFKC').replace(/[\s-]/gu, '');
   if (!PLATE.test(plate)) fail('CATALOG_PARSE_FAILED');
-  const root = await tree(html, true, 'CATALOG_PARSE_FAILED'), all = descendants(root, () => true), positions = new Map(all.map((node, index) => [node, index]));
-  if (/<title>\s*(?:access denied|request blocked)/iu.test(html) || /(?:captcha|access denied|request blocked|enable javascript|javascript is required|доступ ограничен|проверка браузера)/iu.test(text(root))) fail('CATALOG_PARSE_FAILED');
+  const root = await tree(html, false, 'CATALOG_PARSE_FAILED'), all = descendants(root, () => true), positions = new Map(all.map((node, index) => [node, index]));
+  for (const node of all) if (node.tag === 'form' && !publicReadForm(node)) {
+    node.ignored = true;
+    for (const child of descendants(node, () => true)) child.ignored = true;
+  }
+  if (challengePage(html, root)) fail('CATALOG_PARSE_FAILED');
   const sourceUrl = base.href, detailId = /^\/auto\/([1-9][0-9]{0,11})\/?$/.exec(base.pathname)?.[1];
   if (detailId) {
-    const headings = all.filter(node => node.tag === 'h1' && !nonPrimary(node));
-    if (headings.length !== 1) fail('CATALOG_PARSE_FAILED');
-    const start = positions.get(headings[0]);
-    const related = all.find(node => positions.get(node) > start && !node.ignored &&
-      (EXTERNAL_RELATED.test(node.attrs.class || '') || (/^h[2-6]$/.test(node.tag) && /^(?:похожие|рекомендуем|смотрите также|подобран|similar|related|recommend|추천|연관|유사)/iu.test(text(node).trim()))));
+    const mains = all.filter(node => node.tag === 'main' && !nonPrimary(node));
+    const scope = mains.length === 1 ? mains[0] : root, start = positions.get(scope) ?? -1;
+    const within = node => scope === root || node === scope || parents(node).includes(scope);
+    const related = all.find(node => within(node) && positions.get(node) > start && !node.ignored &&
+      (EXTERNAL_RELATED.test(node.attrs.class || '') || (/^h[1-6]$/.test(node.tag) && /^(?:похожие|рекомендуем|смотрите также|подобран|similar|related|recommend|추천|연관|유사)/iu.test(text(node).trim()))));
     const end = related ? positions.get(related) : all.length;
-    const primary = all.filter(node => positions.get(node) > start && positions.get(node) < end && !nonPrimary(node));
+    const primary = all.filter(node => within(node) && positions.get(node) > start && positions.get(node) < end && !nonPrimary(node));
     const plates = uniqueFields(primary, /^Номер\s+автомобиля\s*[:：]?\s*([\s\S]+)$/iu, /\S/u);
     const lots = uniqueFields(primary, /^(?:Лот(?:\s+объявления)?|Номер\s+лота)\s*[:：#]?\s*([1-9][0-9]{0,11})$/iu, /^[1-9][0-9]{0,11}$/);
     const validPlates = plates.filter(item => PLATE.test(item.value.replace(/[\s-]/gu, '')));
     const actualPlates = new Set(validPlates.map(item => item.value.replace(/[\s-]/gu, '')));
     const actualIds = new Set(lots.map(item => item.value));
+    if (actualPlates.size > 1 || actualIds.size > 1 || (actualIds.size === 1 && !actualIds.has(detailId))) fail('CATALOG_PARSE_FAILED', 'EXTERNAL_IDENTITY_CONFLICT');
     if (actualPlates.size !== 1 || actualIds.size !== 1 || !actualIds.has(detailId)) fail('CATALOG_PARSE_FAILED');
-    if (!validPlates.some(item => lots.some(lot => infoContainer(item.node) && infoContainer(item.node) === infoContainer(lot.node)))) fail('CATALOG_PARSE_FAILED');
+    if (!validPlates.some(item => lots.some(lot => sharedInfoContainer(item.node, lot.node)))) fail('CATALOG_PARSE_FAILED');
     const outlinks = primary.map(officialOutlinkId).filter(Boolean);
-    if (outlinks.some(id => id !== detailId)) fail('CATALOG_PARSE_FAILED');
+    if (outlinks.some(id => id !== detailId)) fail('CATALOG_PARSE_FAILED', 'EXTERNAL_IDENTITY_CONFLICT');
     // Only primary text contributes dates/status; related listings never do.
-    const visible = entities(boundedPrimaryText(root, positions, start, end)).normalize('NFKC');
+    const visible = entities(boundedPrimaryText(scope, positions, -1, end, { started: true, ended: false })).normalize('NFKC');
     if (!actualPlates.has(plate) || EXTERNAL_INACTIVE.test(visible)) return { matches: [], recordCount: 1, kind: 'detail' };
     return { matches: [{ id: detailId, sourceUrl, advertisedAt: sourceDate(visible, 'Дата\\s+добавления\\s+объявления'), modifiedAt: sourceDate(visible, 'Дата\\s+модификации\\s+объявления') }], recordCount: 1, kind: 'detail' };
   }

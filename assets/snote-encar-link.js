@@ -4,7 +4,7 @@
   if (window.SnoteEncarLink) return;
 
   const ENDPOINT = '/api/encar';
-  const CLIENT_RELEASE = '2.126';
+  const CLIENT_RELEASE = '2.127';
   const CACHE_PREFIX = 'snote.encar.candidate.v1:';
   const CACHE_AGE = 7 * 24 * 60 * 60 * 1000;
   const REQUEST_TIMEOUT = 45000;
@@ -153,17 +153,19 @@
   }
 
   function discoveryHints(car) {
-    const make = discoveryLabel(car.make), model = discoveryLabel(car.group);
-    if (!make || !model) return null;
-    const grade = discoveryLabel(car.grade);
-    return {make, model, ...(grade ? {grade} : {})};
+    const make = discoveryLabel(car.make);
+    if (!make) return null;
+    const model = discoveryLabel(car.group), grade = discoveryLabel(car.grade);
+    return {make, ...(model ? {model} : {}), ...(grade ? {grade} : {})};
   }
 
   function externalVerification(value, id, verifiedAt) {
     if (!value || typeof value !== 'object' || Array.isArray(value) ||
-        Object.keys(value).some(key => !['source', 'sourceUrl', 'checkedAt', 'advertisedAt', 'modifiedAt'].includes(key)) ||
+        Object.keys(value).some(key => !['source', 'sourceUrl', 'checkedAt', 'advertisedAt', 'modifiedAt', 'method'].includes(key)) ||
+        (Object.hasOwn(value, 'method') && value.method !== 'search-index') ||
         value.source !== 'trust-encar' || typeof value.sourceUrl !== 'string' || value.sourceUrl.length > 2048 ||
         /[\u0000-\u0020\u007f-\u009f\\]/.test(value.sourceUrl) || typeof value.checkedAt !== 'string') return null;
+    const searchIndex = Object.hasOwn(value, 'method');
     let source;
     try {
       source = new URL(value.sourceUrl);
@@ -188,17 +190,21 @@
     };
     const advertisedAt = day(value.advertisedAt), modifiedAt = day(value.modifiedAt);
     if (advertisedAt === false || modifiedAt === false) return null;
-    return {source: 'trust-encar', sourceUrl: source.href, checkedAt: checked.toISOString(), advertisedAt, modifiedAt};
+    if (searchIndex && (advertisedAt !== null || modifiedAt !== null)) return null;
+    return {source: 'trust-encar', sourceUrl: source.href, checkedAt: checked.toISOString(), advertisedAt, modifiedAt,
+      ...(searchIndex ? {method: 'search-index'} : {})};
   }
 
   function isExternal(item) { return !!item?.externalVerification; }
 
   function externalStatus(item) {
-    const evidence = item.externalVerification;
+    const evidence = item.externalVerification, searchIndex = evidence.method === 'search-index';
     const label = document.createElement('span');
-    label.className = 'snote-encar-external-status'; label.textContent = '외부 광고 확인'; label.tabIndex = 0;
+    label.className = 'snote-encar-external-status'; label.textContent = searchIndex ? '검색 결과 확인' : '외부 광고 확인'; label.tabIndex = 0;
     const checked = new Intl.DateTimeFormat('ko-KR', {timeZone: 'Asia/Seoul', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23'}).format(new Date(evidence.checkedAt));
-    const tooltip = ['한국 엔카의 현재 광고 상태는 확인하지 못했습니다.', '확인 ' + checked,
+    const tooltip = [searchIndex && '검색 자료에서 차량번호와 제조사를 확인했습니다.',
+      searchIndex && '외부 광고 원문 HTML은 확인하지 못했습니다.',
+      '한국 엔카의 현재 광고 상태는 확인하지 못했습니다.', (searchIndex ? '검색 확인 ' : '확인 ') + checked,
       evidence.advertisedAt && '외부 광고 추가일 ' + evidence.advertisedAt,
       evidence.modifiedAt && '외부 수정일 ' + evidence.modifiedAt, '출처 ' + evidence.sourceUrl].filter(Boolean).join('\n');
     label.dataset.tooltip = tooltip; label.dataset.snoteIconHelp = tooltip; label.setAttribute('aria-label', tooltip);
@@ -323,11 +329,18 @@
     const safe = { service: 'snote-encar', clientRelease: CLIENT_RELEASE, code, httpStatus: Number.isInteger(httpStatus) && httpStatus >= 100 && httpStatus <= 599 ? httpStatus : null };
     if (typeof data.resolverRelease === 'string' && data.resolverRelease.length <= 32 && data.resolverRelease === data.resolverRelease.trim() && /^[0-9]{1,3}\.[0-9]{1,6}(?:\.[0-9]{1,6})?$/.test(data.resolverRelease)) safe.resolverRelease = data.resolverRelease;
     if (typeof data.requestId === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(data.requestId)) safe.requestId = data.requestId;
-    for (const key of ['searchCount', 'resultCount', 'candidateCount', 'checkedCount', 'plateMatchedCount', 'resultPlateMatchCount', 'rawResultCount', 'recognizedSourceCount', 'catalogRequestCount', 'catalogPageCount', 'catalogRecordCount', 'catalogExactMatchCount', 'catalogFormCount', 'catalogPlateFieldCount', 'catalogLinkCount', 'modelCatalogRequestCount', 'modelCatalogPageCount', 'modelCatalogRecordCount', 'modelCatalogExactMatchCount', 'externalRequestCount', 'externalMatchCount', 'modelBranchPageCount', 'externalSkippedCount']) {
+    for (const key of ['searchCount', 'resultCount', 'candidateCount', 'checkedCount', 'plateMatchedCount', 'resultPlateMatchCount', 'rawResultCount', 'recognizedSourceCount', 'catalogRequestCount', 'catalogPageCount', 'catalogRecordCount', 'catalogExactMatchCount', 'catalogFormCount', 'catalogPlateFieldCount', 'catalogLinkCount', 'modelCatalogRequestCount', 'modelCatalogPageCount', 'modelCatalogRecordCount', 'modelCatalogExactMatchCount', 'externalRequestCount', 'externalMatchCount', 'modelBranchPageCount', 'externalSkippedCount', 'searchEvidenceCount', 'searchEvidenceAcceptedCount']) {
       if (Number.isInteger(data[key]) && data[key] >= 0 && data[key] <= 1000) safe[key] = data[key];
     }
     for (const key of ['searchConfigured', 'discoveryProvided']) if (typeof data[key] === 'boolean') safe[key] = data[key];
     if (['input', 'saved_candidates', 'explicit_source', 'catalog_form', 'model_catalog', 'search_exact', 'search_targeted', 'known_candidates'].includes(data.discoveryStage)) safe.discoveryStage = data.discoveryStage;
+    const parseReasonCounts = {};
+    if (data.parseReasonCounts && typeof data.parseReasonCounts === 'object' && !Array.isArray(data.parseReasonCounts)) {
+      for (const key of ['MODEL_HTML_PARSE_FAILED', 'EXTERNAL_HTML_PARSE_FAILED', 'SEARCH_MANUFACTURER_MISMATCH', 'SEARCH_PLATE_AMBIGUOUS', 'SEARCH_ID_MISSING', 'SEARCH_ID_AMBIGUOUS', 'SEARCH_SOURCE_ID_MISMATCH']) {
+        if (Number.isInteger(data.parseReasonCounts[key]) && data.parseReasonCounts[key] > 0 && data.parseReasonCounts[key] <= 1000) parseReasonCounts[key] = data.parseReasonCounts[key];
+      }
+    }
+    if (Object.keys(parseReasonCounts).length) safe.parseReasonCounts = parseReasonCounts;
     const rejected = {};
     if (data.rejected && typeof data.rejected === 'object' && !Array.isArray(data.rejected)) {
       for (const key of ['plateMismatch', 'notAdvertising', 'notFound']) {

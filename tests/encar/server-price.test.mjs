@@ -50,6 +50,14 @@ async function run(config={}) {
 const providerCalls=r=>r.calls.filter(c=>c.url.startsWith(PROVIDER));
 function unavailable(row){assert.deepEqual([row.priceWon,row.priceCheckedAt,row.priceSource,row.priceStatus],[null,null,null,'unavailable']);}
 
+test('search-index evidence cannot consume a configured price provider or populate a page-price review',async()=>{
+ const external='https://nnov.trust-encar.ru/auto/'+ID+'/';
+ const raw='## Tesla Synthetic\n\n'+PLATE+'\n\nЛот: '+ID+'\n\n5,490만원';
+ const r=await run({payload:{plate:PLATE,discovery:{make:'테슬라'}},searchKey:'synthetic_search_key',results:[{url:external,raw_content:raw}],pages:{[ID]:new Response('Forbidden',{status:403})},externalPages:{[external]:'<main>Unknown source</main>'}});
+ assert.equal(r.body.status,'found');assert.equal(r.body.listings[0].externalVerification.method,'search-index');
+ assert.equal(providerCalls(r).length,0);unavailable(r.body.listings[0]);assert.equal(r.body.listings[0].priceReviewCandidate,undefined);
+});
+
 test('a model-directory discovery applies the same official identity and status gates before pricing',async t=>{
  const model='https://encar.spb.ru/catalog/toyota/rav4/';
  const catalogPages={
