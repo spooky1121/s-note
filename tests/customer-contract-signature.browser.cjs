@@ -38,6 +38,10 @@ async function fixture(width=1440){
  await page.waitForFunction(()=>!!window.snote222ContractSignature&&typeof window.snoteCustomerSignatureImage==='function');
  await page.evaluate(async signatures=>{
   const sample=await getAccount('dealer2');if(!sample)throw Error('Existing local sample account is required');await enterWorkspace(sample);
+  // This local-account fixture has no private company storage. Supply a synthetic
+  // registered seal; the company-assets suite exercises metadata/storage loading.
+  const seal=document.createElement('canvas');seal.width=96;seal.height=96;const ink=seal.getContext('2d');ink.strokeStyle='#d32f38';ink.lineWidth=6;ink.strokeRect(8,8,80,80);ink.fillStyle='#d32f38';ink.font='bold 23px sans-serif';ink.fillText('TEST',16,55);
+  const sealBlob=await new Promise(resolve=>seal.toBlob(resolve,'image/png'));window.__signatureFixtureCompanyStampURL=URL.createObjectURL(sealBlob);window.snoteLoadDocumentStamp=async()=>window.__signatureFixtureCompanyStampURL;
   // Local records use customer navigation; purchase navigation requires a real cloud scope.
   navigate('users');
   document.getElementById('zc-cloud-gate').hidden=true;
@@ -70,7 +74,9 @@ async function assertShown(page,signature=SIGNATURE){
  const source=await expected(page,signature);
  await page.waitForFunction(({selector,source})=>Array.from(document.querySelectorAll('#contract-paper '+selector)).some(image=>image.getAttribute('src')===source&&!image.closest('[hidden]')&&getComputedStyle(image).display!=='none'&&image.complete&&image.naturalWidth===640),{selector:IMAGE_SELECTOR,source});
  const active=(await images(page)).filter(image=>image.active&&image.src);assert.equal(active.length,1);assert.equal(active[0].side,'buyer');assert.equal(active[0].src,source);assert.equal(active[0].height,240);
- assert.equal(await page.locator('#ct-seller-stamp').evaluate(image=>getComputedStyle(image).display),'block','Company stamp stays on the seller side');
+ await page.locator('#ct-seller-stamp').waitFor({state:'visible'});await page.locator('#ct-seller-stamp').evaluate(image=>image.decode());
+ assert.equal(await page.locator('#ct-seller-stamp').getAttribute('src'),await page.evaluate(()=>window.__signatureFixtureCompanyStampURL),'Registered company stamp stays on the seller side');
+ const ink=await page.locator('#ct-seller-stamp').evaluate(image=>{const canvas=document.createElement('canvas');canvas.width=image.naturalWidth;canvas.height=image.naturalHeight;const context=canvas.getContext('2d');context.drawImage(image,0,0);const pixels=context.getImageData(0,0,canvas.width,canvas.height).data;let red=0;for(let i=0;i<pixels.length;i+=4)if(pixels[i]>150&&pixels[i+1]<100&&pixels[i+2]<120&&pixels[i+3]>200)red++;return{width:canvas.width,height:canvas.height,red};});assert.equal(ink.width,96);assert.equal(ink.height,96);assert(ink.red>1000,'The registered company seal must contain visible red ink beside the customer signature');
  return source;
 }
 async function assertHidden(page,{erased=false}={}){
@@ -95,7 +101,9 @@ async function finish(f){assert.deepEqual(f.external,[],'No external network may
    const pdfText=pdf.toString('latin1');assert.match(pdfText,/^%PDF-/);assert.equal((pdfText.match(/\/Type\s*\/Page\b/g)||[]).length,2,'The original contract print layout must produce exactly two A4 copies');
    assert.match(pdfText,/\/SMask/,'Transparent signature alpha must survive PDF printing');
    assert.match(pdfText,/\/Width 640\s*\/Height 240/,'Printed PDF must embed the trusted canvas signature bitmap');
+   assert.match(pdfText,/\/Width 96\s*\/Height 96/,'Printed PDF must retain the registered company seal beside the customer signature');
    await p.screenshot({path:path.join(ARTIFACTS,'customer-contract-signature-desktop.png')});
+   await p.locator('#contract-paper .ct-parties').screenshot({path:path.join(ARTIFACTS,'customer-contract-parties-desktop.png')});
    console.log('PASS mobile-submission canonical record → actual sales contract buyer signature; unchanged company stamp; both clean-ID print copies and real two-page PDF include signature');
 
    await p.evaluate(()=>setContractMode('purchase'));await assertHidden(p);assert.equal(await p.locator('#ct-buyer-stamp').evaluate(image=>getComputedStyle(image).display),'block');
@@ -141,6 +149,7 @@ async function finish(f){assert.deepEqual(f.external,[],'No external network may
    assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,'390px actual index must not overflow horizontally');
    const image=await p.locator('#contract-paper '+IMAGE_SELECTOR).filter({visible:true}).boundingBox();assert(image&&image.width>0&&image.height>0,'Scaled mobile contract must show the signature');
    await p.screenshot({path:path.join(ARTIFACTS,'customer-contract-signature-390.png')});
+   await p.locator('#contract-paper .ct-parties').screenshot({path:path.join(ARTIFACTS,'customer-contract-parties-390.png')});
    await p.evaluate(()=>closeContractPreview({discard:true}));await assertHidden(p,{erased:true});await finish(f);
    console.log('PASS 390px direct vehicle contract loads the saved customer and displays its received signature without horizontal overflow and clears it on close');
   }

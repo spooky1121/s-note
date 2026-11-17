@@ -1,0 +1,105 @@
+{
+  "release": "2.128",
+  "baseCommit": "ed614dee55075f68df79c00b20bda7c77b24b479",
+  "checkedAt": "2026-11-17T14:52:11.988862+00:00",
+  "changes": [
+    "Registered current-company seal replaces hardcoded contract image",
+    "Shared decoded private branding cache for settings, profile, quotation and contract",
+    "Clear all consumers before URL revocation; invalidate stale contract state and profile image probes",
+    "Await image readiness before creating two A4 print copies; preserve original customer signature"
+  ],
+  "verification": [
+    {
+      "command": "node tests/company-assets.test.mjs",
+      "passed": 19,
+      "unit": "tests"
+    },
+    {
+      "command": "npm test --prefix tests/encar",
+      "passed": 1035,
+      "unit": "tests"
+    },
+    {
+      "command": "node tests/company-document-assets.browser.cjs",
+      "passed": 4,
+      "unit": "browser groups",
+      "widths": [
+        1440,
+        390
+      ]
+    },
+    {
+      "command": "NODE_PATH=tests/encar/node_modules node tests/customer-contract-signature.browser.cjs",
+      "passed": 14,
+      "unit": "browser groups"
+    },
+    {
+      "command": "node tests/profile-company-logo.browser.cjs",
+      "passed": 6,
+      "unit": "browser groups"
+    },
+    {
+      "command": "node tests/profile-editor.browser.cjs",
+      "passed": 11,
+      "unit": "browser groups"
+    },
+    {
+      "command": "node tests/profile-account-bridge.browser.cjs",
+      "passed": 16,
+      "unit": "browser groups"
+    },
+    {
+      "command": "node tests/document-actions.browser.cjs",
+      "passed": 4,
+      "unit": "viewports",
+      "viewports": [
+        [
+          1440,
+          950
+        ],
+        [
+          390,
+          950
+        ],
+        [
+          320,
+          950
+        ],
+        [
+          320,
+          640
+        ]
+      ]
+    },
+    {
+      "command": "wrangler pages functions build functions",
+      "status": "passed",
+      "version": "4.152.0"
+    },
+    {
+      "command": "Inline JavaScript syntax (7 scripts), new/changed JS syntax and git diff --check",
+      "status": "passed"
+    }
+  ],
+  "imageChecks": [
+    "Visible transparent synthetic seal pixels beside customer signature",
+    "Two-page A4 PDF contains corporate seal and original customer-signature bitmaps",
+    "Shared settings/profile/quotation/contract company logo",
+    "No connected image references when object URL is revoked",
+    "Decode delays, missing/corrupt files, replacement/deletion and late prior-company download",
+    "Profile dirty fields preserved; stale profile responses/probes rejected; same cached URL remains usable during revalidation"
+  ],
+  "productionReadOnlyCheck": {
+    "registeredLogoMetadataFound": true,
+    "registeredStampMetadataFound": true,
+    "bothPrivateStorageObjectsExist": true,
+    "imageBytesDownloaded": false,
+    "databaseOrStorageWrites": false
+  },
+  "testData": "Synthetic accounts and generated TEST seal/logo only; browser HTTP intercepted; physical printer and authenticated production image download not exercised",
+  "sourceSha256": {
+    "index.html": "fda617bdec85020909bec02f5d4367f8c19c2004f8cad0e5cd039c06278e3097",
+    "assets/company-assets.js": "4f3e5603421f117bc09de54d4d8ca585d824021bc35957d44b7ef03f405507f2",
+    "assets/profile-editor.js": "9d36e64423a6779b1c8c551319893a4031fc74cf4c35e765f575c0f3ac479e33"
+  }
+}
