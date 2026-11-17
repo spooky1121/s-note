@@ -8,6 +8,7 @@
  byId('save').innerHTML=disk;for(const symbol of root.querySelectorAll('.snote-profile-disk'))symbol.innerHTML=disk;
  let context=null,baseline=null,request=0,closing=false,saveBusy=false,passwordBusy=false,phoneBusy=false,avatarBusy=false,returnFocus=null,previousOverflow='',closeTimer=null,sessionTimer=null;
  let challenge=null,resendAt=0,sendRequestId=null,avatar=null,avatarURL='',previewURL=null,committedPreviewURL=null;
+ let logoRequest=0,logoImageRequest=0,logoProbe=null;
  let presentation='drawer',bodyLocked=false,settingsHost=null,settingsDetails=null,settingsSummary=null,settingsClick=null,settingsToggle=null;
  const bridge=()=>window.snoteProfileBridge,phoneValue=()=>byId('phone').value.replace(/\D/g,''),busy=()=>saveBusy||passwordBusy||phoneBusy||avatarBusy;
  const current=(version=request)=>root.isConnected&&!root.hidden&&!closing&&version===request&&context&&bridge()?.current(context)&&(presentation!=='settings'||settingsHost?.isConnected&&root.parentElement===settingsHost);
@@ -31,29 +32,56 @@
  }
  function showAuth(user){byId('current-email').textContent=user?.email||'확인할 수 없음';}
  function image(img,url){const safe=typeof url==='string'&&url.length<10000&&(/^(https:|blob:)/.test(url));if(safe){img.src=url;img.hidden=false;}else{img.removeAttribute('src');img.hidden=true;}}
+ function clearCompanyLogo(){
+  ++logoImageRequest;if(logoProbe){logoProbe.onload=logoProbe.onerror=null;logoProbe=null;}
+  const img=byId('company-logo');img.onerror=null;image(img,'');
+ }
+ function showCompanyLogo(url){
+  clearCompanyLogo();if(typeof url!=='string'||url.length>=10000||!(/^(https:|blob:)/.test(url))||!current())return;
+  let source;try{source=new URL(url,document.baseURI).href;}catch(_){return;}
+  const version=request,session=context,attempt=logoImageRequest,probe=new Image(),img=byId('company-logo');logoProbe=probe;
+  const valid=()=>attempt===logoImageRequest&&context===session&&current(version);
+  probe.onerror=()=>{if(valid())clearCompanyLogo();};
+  probe.onload=()=>{
+   if(!valid())return;if(!probe.naturalWidth){clearCompanyLogo();return;}
+   if(url.startsWith('blob:')&&typeof window.snoteCompanyAssetState==='function'){
+    let state;try{state=window.snoteCompanyAssetState('companyLogo');}catch(_){}
+    if(!valid())return;if(!['ready','loading'].includes(state?.status)||state.url!==url){clearCompanyLogo();return;}
+   }
+   logoProbe=null;img.style.removeProperty('display');image(img,url);
+   img.onerror=()=>{if(valid()&&img.getAttribute('src')===url&&(!img.currentSrc||img.currentSrc===source))clearCompanyLogo();};
+  };
+  probe.src=url;
+ }
+ async function refreshCompanyLogo({reset=false}={}){
+  const attempt=++logoRequest,version=request,session=context;clearCompanyLogo();
+  if(reset||!current(version)||typeof window.snoteLoadDocumentLogo!=='function')return;
+  try{const url=await window.snoteLoadDocumentLogo();if(attempt===logoRequest&&context===session&&current(version))showCompanyLogo(url);}
+  catch(_){if(attempt===logoRequest&&context===session&&current(version))clearCompanyLogo();}
+ }
  function showAvatar(url){image(byId('avatar'),url);byId('avatar-placeholder').hidden=!byId('avatar').hidden;}
  function clearPreview(){if(previewURL){URL.revokeObjectURL(previewURL);previewURL=null;}}
  function clearCommittedPreview(){if(committedPreviewURL){if(avatarURL===committedPreviewURL)avatarURL='';URL.revokeObjectURL(committedPreviewURL);committedPreviewURL=null;}}
  function sameAvatar(a,b){return !!a&&!!b&&['user_id','company_id','avatar_path','avatar_revision'].every(key=>a[key]===b[key]);}
- function visuals(result){
-  if(Object.hasOwn(result,'companyLogoURL'))image(byId('company-logo'),result.companyLogoURL);
+ function visuals(result,{logoVersion=logoRequest}={}){
+  if(Object.hasOwn(result,'companyLogoURL')&&logoVersion===logoRequest)showCompanyLogo(result.companyLogoURL);
   const nextAvatar=Object.hasOwn(result,'avatar')?result.avatar:avatar;
   if(Object.hasOwn(result,'avatarURL')){const keepLocal=!result.avatarURL&&committedPreviewURL&&sameAvatar(avatar,nextAvatar);avatarURL=result.avatarURL||(keepLocal?committedPreviewURL:'');if(avatarURL!==committedPreviewURL)clearCommittedPreview();showAvatar(avatarURL);}
   avatar=nextAvatar;
   if(Object.hasOwn(result,'avatar')||Object.hasOwn(result,'avatarError')){status('avatar-message',result.avatarError||'',result.avatarError?'error':'info');if(result.avatarError)byId('reload').hidden=false;}
  }
- function fill(result,{preservePersonal=false,preservePhone=false}={}){
+ function fill(result,{preservePersonal=false,preservePhone=false,logoVersion=logoRequest}={}){
   const profile=result.profile,draft={name:byId('name').value,company:byId('company').value,phone:byId('phone').value},oldPhone=String(baseline?.phone||'');
   baseline={...profile};byId('name').value=preservePersonal?draft.name:String(profile.display_name||'');byId('company').value=preservePersonal?draft.company:String(profile.company_name||'');
   byId('address').value=String(profile.company_address??profile.address??'');byId('phone').value=preservePhone?draft.phone:String(profile.phone||'');
   byId('current-phone').textContent=profile.phone?'현재 연락처 · '+profile.phone:'등록된 개인 연락처가 없습니다.';
   if(oldPhone!==String(profile.phone||''))resetChallenge();
-  byId('company-note').hidden=profile.role==='admin';byId('role-label').textContent=profile.role==='admin'?'관리자 · 내 계정':profile.role==='accountant'?'경리 · 내 계정':'딜러 · 내 계정';if(result.user)showAuth(result.user);visuals(result);controls();
+  byId('company-note').hidden=profile.role==='admin';byId('role-label').textContent=profile.role==='admin'?'관리자 · 내 계정':profile.role==='accountant'?'경리 · 내 계정':'딜러 · 내 계정';if(result.user)showAuth(result.user);visuals(result,{logoVersion});controls();
  }
  async function load(){
   if(!current()||busy())return;if(dirty()&&!window.confirm('입력한 내용을 버리고 프로필을 다시 불러올까요?'))return;
-  baseline=null;clearPasswords();resetChallenge();resendAt=0;sendRequestId=null;controls();const version=++request;status('message','프로필을 불러오는 중…');byId('reload').hidden=true;
-  try{const result=await bridge().read(context);if(!current(version))return;fill(result);status('message','');}
+  baseline=null;clearPasswords();resetChallenge();resendAt=0;sendRequestId=null;controls();const version=++request,logoVersion=logoRequest;status('message','프로필을 불러오는 중…');byId('reload').hidden=true;
+  try{const result=await bridge().read(context);if(!current(version))return;fill(result,{logoVersion});status('message','');}
   catch(error){if(!current(version))return;status('message',message(error,'프로필을 불러오지 못했습니다. 다시 시도해 주세요.'),'error');byId('reload').hidden=false;controls();}
  }
  function message(error,fallback){
@@ -79,11 +107,11 @@
  }
  function invalid(text){return Object.assign(Error(text),{code:'SNOTE_PROFILE_INPUT'});}
  async function save(event){
-  event.preventDefault();if(!current()||!baseline||busy())return;const profile=values(),version=request;
+  event.preventDefault();if(!current()||!baseline||busy())return;const profile=values(),version=request,logoVersion=logoRequest;
   try{
    if(!profile.display_name||profile.display_name.length>40)throw invalid('이름은 1~40자로 입력해 주세요.');if(profile.company_name.length<2||profile.company_name.length>100)throw invalid('상사명은 2~100자로 입력해 주세요.');
    saveBusy=true;controls();status('message','저장 중…');const result=await bridge().save(context,expected(),profile);if(!current(version))return;
-   const hadChallenge=!!challenge;fill(result,{preservePhone:true});if(hadChallenge){resetChallenge();status('phone-message','기본 정보가 변경되어 인증번호를 다시 요청해 주세요.');}status('message','프로필을 저장했습니다.','success');byId('reload').hidden=true;
+   const hadChallenge=!!challenge;fill(result,{preservePhone:true,logoVersion});if(hadChallenge){resetChallenge();status('phone-message','기본 정보가 변경되어 인증번호를 다시 요청해 주세요.');}status('message','프로필을 저장했습니다.','success');byId('reload').hidden=true;
   }catch(error){if(current(version)){status('message',message(error,'프로필을 저장하지 못했습니다. 입력 내용은 유지됩니다.'),'error');byId('reload').hidden=!['40001','PROFILE_CONFLICT','CONFLICT'].includes(error?.code);}}
   finally{if(request===version){saveBusy=false;if(current())controls();}}
  }
@@ -99,10 +127,10 @@
   finally{if(request===version){phoneBusy=false;if(current()){controls();if(challenge)byId('phone-code').focus({preventScroll:true});}}}
  }
  async function phoneConfirm(event){
-  event.preventDefault();if(!current()||!baseline||busy()||!challenge)return;const version=request,pending={...challenge},code=byId('phone-code').value;
+  event.preventDefault();if(!current()||!baseline||busy()||!challenge)return;const version=request,logoVersion=logoRequest,pending={...challenge},code=byId('phone-code').value;
   if(phoneValue()!==pending.phone||!/^\d{6}$/.test(code)){status('phone-message','전화번호와 인증번호를 다시 확인해 주세요.','error');return;}
   phoneBusy=true;controls();status('phone-message','인증을 확인하는 중…');
-  try{const result=await bridge().phoneConfirm(context,{challengeId:pending.id,phone:pending.phone,code});if(!current(version))return;fill(result,{preservePersonal:true});resetChallenge();sendRequestId=null;status('phone-message','인증을 완료하고 연락처를 변경했습니다.','success');}
+  try{const result=await bridge().phoneConfirm(context,{challengeId:pending.id,phone:pending.phone,code});if(!current(version))return;fill(result,{preservePersonal:true,logoVersion});resetChallenge();sendRequestId=null;status('phone-message','인증을 완료하고 연락처를 변경했습니다.','success');}
   catch(error){if(current(version)){status('phone-message',message(error,'인증을 완료하지 못했습니다. 번호와 인증번호를 확인해 주세요.'),'error');if(['40001','PROFILE_CONFLICT','CONFLICT','CONSUMED'].includes(error?.code)){resetChallenge();byId('reload').hidden=false;}if(['LOCKED','EXPIRED','REQUEST_REUSED'].includes(error?.code))resetChallenge();}}
   finally{if(request===version){phoneBusy=false;if(current())controls();}}
  }
@@ -141,7 +169,7 @@
  function releaseBody(){if(bodyLocked){document.body.style.overflow=previousOverflow;bodyLocked=false;}}
  function finishClose(){
   root.hidden=true;root.classList.remove('is-open');closing=false;baseline=null;context=null;clearPasswords();resetChallenge();clearPreview();clearCommittedPreview();avatar=null;avatarURL='';resendAt=0;sendRequestId=null;
-  for(const id of ['name','company','phone','address'])byId(id).value='';byId('current-email').textContent='';byId('current-phone').textContent='';image(byId('company-logo'),'');showAvatar('');
+  for(const id of ['name','company','phone','address'])byId(id).value='';byId('current-email').textContent='';byId('current-phone').textContent='';++logoRequest;clearCompanyLogo();showAvatar('');
   for(const id of ['message','password-message','phone-message','avatar-message'])status(id,'');
   releaseBody();clearTimeout(closeTimer);clearInterval(sessionTimer);sessionTimer=null;
   if(presentation==='settings')settingsOpen(false);drawerPresentation();
@@ -189,11 +217,12 @@
   summary.addEventListener('click',settingsClick);details.addEventListener('toggle',settingsToggle);summary.setAttribute('aria-expanded',String(details.open));if(carryInline)showPresentation('settings',host);else if(details.open)void begin('settings',host);return true;
  }
  window.addEventListener('snote:route-changed',event=>{if(event.detail?.page!=='settings'&&presentation==='settings'&&!root.hidden)close({force:true,immediate:true});});
+ window.addEventListener('snote:company-assets-changed',event=>{if(event.detail?.kind==='companyLogo')void refreshCompanyLogo(event.detail);});
  new MutationObserver(()=>{let settings=false;try{settings=typeof route==='string'&&route==='settings';}catch{}const host=settings?document.getElementById('snote-settings-profile-body'):null;if(host&&host!==settingsHost)mountSettings(host);if(presentation==='settings'&&!root.hidden&&(!settingsHost?.isConnected||!settingsDetails?.isConnected||root.parentElement!==settingsHost))close({force:true,immediate:true});}).observe(document.body,{childList:true,subtree:true});
  const initialHost=document.getElementById('snote-settings-profile-body');if(initialHost)mountSettings(initialHost);
  root.addEventListener('input',event=>{if(event.target===byId('phone')){if(challenge&&phoneValue()!==challenge.phone)resetChallenge();sendRequestId=null;}if(event.target===byId('phone-code'))byId('phone-code').value=byId('phone-code').value.replace(/\D/g,'').slice(0,6);controls();});
  byId('form').addEventListener('submit',save);byId('phone-form').addEventListener('submit',phoneConfirm);byId('phone-send').addEventListener('click',phoneSend);byId('password-form').addEventListener('submit',passwordSave);
- byId('avatar-pick').addEventListener('click',()=>byId('avatar-file').click());byId('avatar-file').addEventListener('change',avatarChange);byId('avatar').addEventListener('error',()=>{byId('avatar').hidden=true;byId('avatar-placeholder').hidden=false;});byId('company-logo').addEventListener('error',()=>{byId('company-logo').hidden=true;});
+ byId('avatar-pick').addEventListener('click',()=>byId('avatar-file').click());byId('avatar-file').addEventListener('change',avatarChange);byId('avatar').addEventListener('error',()=>{byId('avatar').hidden=true;byId('avatar-placeholder').hidden=false;});
  byId('close').addEventListener('click',()=>close());byId('reload').addEventListener('click',load);
  document.addEventListener('keydown',event=>{
   if(root.hidden||closing||presentation==='settings')return;if(event.key==='Escape'){event.preventDefault();event.stopImmediatePropagation();return;}
