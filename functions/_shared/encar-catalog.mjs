@@ -180,6 +180,112 @@ export async function discoverCatalogEntry(html, baseUrl) {
   return [...entries.values()][0];
 }
 
+// These aliases translate display names only. URLs always come from the
+// inspected document; neither catalogue slugs nor advertisement IDs are built
+// from a vehicle's make/model hints.
+const MAKE_NAME_ALIASES = [
+  ['Toyota', '토요타', '도요타', '토요다'], ['Tesla', '테슬라'],
+  ['Hyundai', '현대', '현대자동차'], ['Kia', '기아', '기아자동차'],
+  ['Benz', 'Mercedes', 'Mercedes-Benz', '벤츠', '메르세데스벤츠'],
+  ['BMW', '비엠더블유'], ['Audi', '아우디'], ['Volkswagen', 'VW', '폭스바겐'],
+  ['Chevrolet', 'Chevrolet GM Daewoo', '쉐보레', '쉐보레 GM대우'], ['Daewoo', '대우', 'GM대우'],
+  ['Renault', 'Renault Korea', 'Renault Samsung', '르노', '르노코리아', '르노삼성'],
+  ['Ssangyong', 'Ssang Young', 'KG Mobility', 'KGM', '쌍용', 'KG모빌리티', '케이지모빌리티'],
+  ['Genesis', '제네시스'], ['Mini', '미니'], ['Porsche', '포르쉐'],
+  ['Land Rover', '랜드로버'], ['Jaguar', '재규어'], ['Lexus', '렉서스'],
+  ['Nissan', '닛산'], ['Honda', '혼다'], ['Ford', '포드'], ['Lincoln', '링컨'],
+  ['Cadillac', '캐딜락'], ['Chrysler', 'Chrystler', '크라이슬러'], ['Jeep', '지프'],
+  ['Peugeot', '푸조'], ['Citroen', 'Citroën', 'Citroen DS', '시트로엥'], ['Volvo', '볼보'],
+  ['Subaru', '스바루'], ['Suzuki', '스즈키'], ['Mitsubishi', '미쓰비시', '미츠비시'],
+  ['Mazda', 'Matsuda', '마쯔다', '마쓰다'], ['Maserati', '마세라티'],
+  ['Ferrari', '페라리'], ['Lamborghini', '람보르기니'], ['Bentley', '벤틀리'],
+  ['Rolls-Royce', '롤스로이스'], ['Aston Martin', '애스턴마틴'], ['McLaren', '맥라렌'],
+  ['Infiniti', 'Infinity', '인피니티'], ['Smart', '스마트'], ['BYD', '비야디'],
+  ['Polestar', 'Folstar', '폴스타'], ['Lucid', '루시드']
+];
+const MODEL_NAME_ALIASES = [
+  ['Model Y', '모델 Y'], ['Model 3', '모델 3'], ['Model S', '모델 S'], ['Model X', '모델 X'],
+  ['Grandeur', '그랜저'], ['Avante', 'Elantra', '아반떼'], ['Sonata', '쏘나타', '소나타'],
+  ['Casper', '캐스퍼'], ['Santa Fe', '싼타페', '산타페'], ['Tucson', '투싼'],
+  ['Palisade', '팰리세이드'], ['Sorento', '쏘렌토', '소렌토'], ['Sportage', '스포티지'],
+  ['Carnival', '카니발'], ['Morning', 'Picanto', 'Morning Picanto', '모닝'],
+  ['Ray', '레이'], ['Niro', '니로'], ['Ioniq 5', '아이오닉5'], ['Ioniq 6', '아이오닉6'],
+  ['Staria', '스타리아'], ['Starex', '스타렉스']
+];
+function catalogName(value) {
+  return String(value || '').normalize('NFKC').toLowerCase().replace(/[^\p{L}\p{N}]/gu, '');
+}
+function catalogHint(value) {
+  if (typeof value !== 'string' || !value.trim() || value.length > 120 || CONTROL.test(value) || /[\\/:?#%]/u.test(value)) return '';
+  return catalogName(value);
+}
+function catalogAliases(value, groups) {
+  const key = catalogHint(value); if (!key) return null;
+  const group = groups.find(items => items.some(item => catalogName(item) === key));
+  return new Set((group || [key]).map(catalogName));
+}
+function navigationText(node) {
+  if (node.ignored) return '';
+  // Numeric badges are counts, not part of a manufacturer's/model's name.
+  if (/(?:^|[\s_-])(?:count|counter|badge|total)(?:$|[\s_-])/i.test(node.attrs.class || '') && /^\s*[0-9][0-9\s,\.]*\s*$/u.test(text(node))) return '';
+  return node.parts.map(part => typeof part === 'string' ? part : navigationText(part)).join(' ');
+}
+function catalogueLinkMatches(node, url, aliases, stage) {
+  const label = entities(navigationText(node)).normalize('NFKC').trim().replace(/\s+/gu, ' ');
+  // A bare trailing number can belong to a model (Model 3, CX 5, RAV 4).
+  // Explicit count badges and the actual observed slug already cover model
+  // counts without guessing which of the label's digits are significant.
+  const labels = stage === 'make' ? [label, label.replace(/\s+[0-9][0-9\s,.]*$/u, '')] : [label];
+  const segment = url.pathname.replace(/\/$/, '').split('/').at(-1);
+  return aliases.has(catalogName(segment)) || labels.some(value => aliases.has(catalogName(value)));
+}
+
+export async function discoverVehicleCatalogLink(html, currentUrl, hints, stage = 'make') {
+  const base = catalogURL(currentUrl);
+  if (!['make', 'model'].includes(stage) || !hints || typeof hints !== 'object' || Array.isArray(hints)) return null;
+  const aliases = catalogAliases(hints[stage], stage === 'make' ? MAKE_NAME_ALIASES : MODEL_NAME_ALIASES);
+  if (!aliases) return null;
+  const currentPath = base.pathname.replace(/\/$/, '');
+  if (stage === 'make' ? !['', '/catalog'].includes(currentPath) : !/^\/catalog\/[a-z0-9-]+$/.test(currentPath)) return null;
+  // Static public anchors inside filter forms are safe navigation too. No form
+  // controls, actions, defaults or script-driven requests are interpreted.
+  const root = await tree(html, false, 'CATALOG_PARSE_FAILED'), matches = new Map();
+  if (/<title>\s*(?:access denied|request blocked)/iu.test(html) || /(?:captcha|access denied|request blocked|enable javascript|javascript is required|доступ ограничен|проверка браузера)/iu.test(text(root))) fail('CATALOG_PARSE_FAILED');
+  for (const node of descendants(root, item => item.tag === 'a' && !item.ignored && item.closed && item.attrs.href)) {
+    let url;
+    try { url = catalogURL(externalSourceURL(node.attrs.href, base.href)); } catch { continue; }
+    if (url.search || !/^\/catalog(?:\/[a-z0-9-]+){1,2}\/?$/.test(url.pathname)) continue;
+    const path = url.pathname.replace(/\/$/, '');
+    if (stage === 'make' ? !/^\/catalog\/[a-z0-9-]+$/.test(path) : !path.startsWith(currentPath + '/') || path.slice(currentPath.length + 1).includes('/')) continue;
+    if (!catalogueLinkMatches(node, url, aliases, stage)) continue;
+    // Slash/no-slash copies are the same observed directory. Retain the first
+    // actual href instead of inventing a canonical route.
+    matches.set(url.origin + path, matches.get(url.origin + path) || url);
+  }
+  return matches.size === 1 ? [...matches.values()][0] : null;
+}
+
+export async function getObservedCatalogNext(html, currentUrl) {
+  const base = catalogURL(currentUrl), root = await tree(html, false, 'CATALOG_PARSE_FAILED');
+  if (!/^\/catalog(?:\/[a-z0-9-]+)*\/?$/.test(base.pathname)) fail('CATALOG_PARSE_FAILED');
+  if (/<title>\s*(?:access denied|request blocked)/iu.test(html) || /(?:captcha|access denied|request blocked|enable javascript|javascript is required|доступ ограничен|проверка браузера)/iu.test(text(root))) fail('CATALOG_PARSE_FAILED');
+  const next = nextPage(root, base);
+  if (!next) return null;
+  const samePath = url => url.pathname.replace(/\/$/, '');
+  if (samePath(next) !== samePath(base) || next.href === base.href) fail('CATALOG_PARSE_FAILED');
+  const paging = /^(?:page|page_num|p|offset|cursor|start)$/i;
+  const filters = url => [...url.searchParams].filter(([key]) => !paging.test(key));
+  const before = filters(base), after = filters(next);
+  if (JSON.stringify(before.slice().sort()) !== JSON.stringify(after.slice().sort())) fail('CATALOG_PARSE_FAILED');
+  // At least one raw observed href must also pass the stricter external URL
+  // check; canonicalization cannot hide encoded paths or explicit ports.
+  const observed = descendants(root, item => item.tag === 'a' && !item.ignored && item.attrs.href).some(node => {
+    try { return externalSourceURL(node.attrs.href, base.href).href === next.href; } catch { return false; }
+  });
+  if (!observed) fail('CATALOG_PARSE_FAILED');
+  return next;
+}
+
 function plateTokens(value) {
   value = value.normalize('NFKC');
   const separator = '[\\p{Zs}\\t-]*', pattern = new RegExp('(?:' + REGIONS + separator + ')?[0-9]{2,3}' + separator + '[가-힣]' + separator + '[0-9](?:' + separator + '[0-9]){3}', 'gu'), found = new Set();

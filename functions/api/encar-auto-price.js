@@ -107,7 +107,7 @@ async function verify(op, request, env, plate, id) {
     if (response.status === 401) fail('AUTH_REQUIRED'); if (response.status === 403) fail('FORBIDDEN');
     if (!response.ok || result?.status !== 'found' || result.plate !== plate || !Array.isArray(result.listings)) fail('VEHICLE_UNVERIFIED');
     const matches = result.listings.filter(item => item?.id === id && item.sellerUrl === DETAIL + id);
-    if (matches.length !== 1) fail('VEHICLE_UNVERIFIED');
+    if (matches.length !== 1 || Object.hasOwn(matches[0], 'externalVerification')) fail('VEHICLE_UNVERIFIED');
     const checked = typeof result.verifiedAt === 'string' ? new Date(result.verifiedAt) : new Date(NaN);
     if (!Number.isFinite(checked.getTime()) || checked.toISOString() !== result.verifiedAt || checked.getTime() > Date.now() + 60000) fail('VERIFY_UNAVAILABLE');
     return { listing: matches[0], verifiedAt: result.verifiedAt };

@@ -1,0 +1,84 @@
+{
+  "release": "2.124",
+  "baseCommit": "127205fcad8071aa343ec3e0e688a33b7f7f4c9e",
+  "verifiedAt": "2026-11-17T12:23:18.365103+00:00",
+  "sourceHashes": {
+    "index.html": "19866f82c27254a1cf0e7b35cef3c94310cc3c7f951c762bec59b69e93f0701f",
+    "assets/snote-encar-link.js": "e897d03bcc157ae0082483cd6c9bf2d2e5fb4fca5d63e5a226b5cce8c02e296e",
+    "functions/api/encar.js": "719940d83b7b8e5bbe07c2eb42cde645b56750a3b7f590fe964b42604619b9e7",
+    "functions/_shared/encar-catalog.mjs": "21f186c76c65c954cb14887419ff600aacd487233061deb000667b046f5a68d5",
+    "functions/api/encar-auto-price.js": "7a30c9085cb99b8c19dffd6574da8d8851f50a043e433be16a7e7e603413bf9f",
+    "tests/encar/catalog.test.mjs": "46d7b3a2b310340e069d7e9241a5f5b4f948c76346fbb49ff9ebe3bb34ac1e23",
+    "tests/encar/discovery.test.mjs": "7e06e18f14b5506d987d9a6959b513d1dfbf2d0b75f312d57ab2b04378bc149e",
+    "tests/encar/server.test.mjs": "7bfb24958b808ac6d596caa96e6af880fab279ba81260a23fdef90deb7bc4290",
+    "tests/encar/server-price.test.mjs": "e3ab5c301b2cf0ccc6697c17e9e6702645e58d914f9585999d9696d3bbe7f47b",
+    "tests/encar/frontend.test.cjs": "a31fb3c6e11ffacf1ea0a78d7971c221a475808a8b8061fc77afa51754f2201b",
+    "tests/encar/integration.test.mjs": "5188a86d29ce0a628faf136343c71e27bf27180035bafbecd4d8cdcb1b7e6067",
+    "tests/encar-auto-price.test.mjs": "950c25a1daa686856a1d15eddf645bb3d12649ebe7e7b0eacb50eb574517d471",
+    "tests/encar/model-catalog-discovery.browser.cjs": "00aa65a8b70dfd8f0ff7a5cda112c0b7f29427065758d677e8a84f15066c662c",
+    "tests/encar/browser-smoke.cjs": "ebaaef4946be6913ba3f3e5a0873e7bc0d6c47da887a9731b0f4f766624fdb4f"
+  },
+  "behavior": {
+    "discovery": "Follow actual visible catalogue make and model anchors; selected make/group are discovery hints only. Exact normalized full plate in the same unambiguous card remains the identity criterion. No guessed slugs or advertisement IDs.",
+    "manualSource": "Strict allowlisted HTTPS external sources verified by the actual server before exposing the canonical Korean Encar link.",
+    "fallback": "Native GET form, bounded model catalogue, two basic exact-plate searches with a targeted second query, and known-ID source fallback. A form-unsupported error no longer hides actual wrong-plate findings.",
+    "officialRejection": "Official plate mismatch, inactive, deleted and unknown ad status remain authoritative.",
+    "priceGuard": "External-only results, including forged/null external markers, cannot invoke screenshot, OCR or verified-price reuse through the auto-price API.",
+    "limits": {
+      "operationMs": 35000,
+      "modelCatalogueMs": 8000,
+      "modelPages": 3,
+      "modelMaximumAdditionalGets": 5,
+      "externalTotalMs": 8000,
+      "externalPages": 6,
+      "manualSourceUrls": 3,
+      "publicRequests": "GET over HTTPS allowlist, manual redirect handling, no forwarded auth credentials."
+    }
+  },
+  "validation": {
+    "coreUnitPassed": 892,
+    "unitFailed": 0,
+    "catalogueBrowserGroups": 5,
+    "catalogueBrowserWidths": [
+      1440,
+      390,
+      320
+    ],
+    "catalogueBrowserActualApiAndParser": true,
+    "catalogueBrowserChecks": [
+      "7 unrelated search results / 6 wrong-plate candidates reproduced",
+      "observed directory-make-model GET chain and cache reuse",
+      "make/group payload without customer data",
+      "Tavily configured and missing-key cases",
+      "full-plate card identity",
+      "scoped revision CAS and read-back",
+      "fresh workspace / list / provenance restore",
+      "unrelated vehicle and unsaved draft preservation",
+      "manual Trust source and lookalike rejection",
+      "canonical official popup only",
+      "zero OCR / price mutation",
+      "execution start/end source hash equality"
+    ],
+    "externalBrowserGroups": 4,
+    "detailBrowserGroups": 5,
+    "priceChangeBrowserGroups": 7,
+    "inlineScripts": 7,
+    "pagesFunctionsBuild": "passed; Wrangler 4.152.0",
+    "independentReview": "No additional defects; 162 overlapping relevant tests passed, not added to the distinct total.",
+    "syntheticUpstreams": true
+  },
+  "production": {
+    "databaseSchemaChanges": 0,
+    "authorizedVehicleLinkMetadataRepairs": 1,
+    "repairScope": "One user-requested owned vehicle; unique target, owner/email membership, row lock, expected revision and original vehicle hash verified. Read-back confirmed one saved listing; all other dataset content hash unchanged. No identifying data or SQL included here.",
+    "financialCustomerOrOtherVehicleChanges": 0,
+    "productionSecretsReadOrChanged": false,
+    "deployment": "Exact source and production merge checks recorded after publication in the private final receipt."
+  },
+  "limitations": [
+    "Research browser observed real public catalogue links and the same-card plate/advertisement relationship. These observations are separate from the synthetic raw-HTML fixtures.",
+    "Actual Cloudflare-origin raw HTML and production automatic-discovery end-to-end success remain unverified from the restricted execution environment. A confirmed link metadata repair is not evidence of automatic production discovery success.",
+    "Official Korean current advertising status remains unconfirmed for external-only evidence. Source dates do not establish Korean publication or ingestion times.",
+    "Only up to three observed model pages are scanned; failure to find a readable exact card does not prove no advertisement exists."
+  ]
+}

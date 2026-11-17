@@ -1,4 +1,4 @@
-import { CATALOG_ORIGIN, catalogURL, configuredCatalogSearch, discoverCatalogSearch, discoverCatalogEntry, parseCatalogPage, externalSourceURL, parseExternalAdvertisement } from '../_shared/encar-catalog.mjs';
+import { CATALOG_ORIGIN, catalogURL, configuredCatalogSearch, discoverCatalogSearch, discoverCatalogEntry, parseCatalogPage, externalSourceURL, parseExternalAdvertisement, discoverVehicleCatalogLink, getObservedCatalogNext } from '../_shared/encar-catalog.mjs';
 import { parseEncarPagePrice } from '../_shared/encar-page-price.mjs';
 
 /**
@@ -16,6 +16,8 @@ const MAX_RAW_SEARCH_BYTES = 2 * 1024 * 1024;
 const TIMEOUT_MS = 10000;
 const DEADLINE_MS = 35000;
 const CATALOG_FALLBACK_BUDGET_MS = 8000;
+const MODEL_CATALOG_BUDGET_MS = 8000;
+const MAX_MODEL_CATALOG_PAGES = 3;
 const EXTERNAL_BUDGET_MS = 8000;
 const MAX_EXTERNAL_PAGES = 6;
 const EXTERNAL_DETAIL_ERRORS = new Set(['DETAIL_BLOCKED', 'DETAIL_UNAVAILABLE', 'DETAIL_PARSE_FAILED', 'UPSTREAM_TIMEOUT']);
@@ -54,6 +56,9 @@ function operation(request) {
     catalogRequestCount: 0, catalogPageCount: 0, catalogRecordCount: 0, catalogExactMatchCount: 0,
     catalogFormCount: 0, catalogPlateFieldCount: 0, catalogLinkCount: 0, pagePrices: new Map(), priceDiagnostics: null,
     externalSources: new Set(), externalPages: new Map(), externalChecked: new Set(), externalEvidence: new Map(), externalSpentMs: 0, detailErrors: new Set(),
+    catalogResponses: new Map(), searchConfigured: null, discoveryStage: 'input',
+    modelCatalogRequestCount: 0, modelCatalogPageCount: 0, modelCatalogRecordCount: 0, modelCatalogExactMatchCount: 0,
+    externalRequestCount: 0, externalMatchCount: 0,
     rejected: { plateMismatch: 0, notAdvertising: 0, notFound: 0 } };
   op.timer = setTimeout(() => controller.abort(new EncarError('DEADLINE_EXCEEDED')), DEADLINE_MS);
   op.abort = () => controller.abort(new EncarError('UPSTREAM_TIMEOUT'));
@@ -76,6 +81,11 @@ function counters(op) {
     catalogRequestCount: op.catalogRequestCount, catalogPageCount: op.catalogPageCount,
     catalogRecordCount: op.catalogRecordCount, catalogExactMatchCount: op.catalogExactMatchCount,
     catalogFormCount: op.catalogFormCount, catalogPlateFieldCount: op.catalogPlateFieldCount, catalogLinkCount: op.catalogLinkCount,
+    ...(typeof op.searchConfigured === 'boolean' ? { searchConfigured: op.searchConfigured } : {}),
+    discoveryStage: op.discoveryStage, modelCatalogRequestCount: op.modelCatalogRequestCount,
+    modelCatalogPageCount: op.modelCatalogPageCount, modelCatalogRecordCount: op.modelCatalogRecordCount,
+    modelCatalogExactMatchCount: op.modelCatalogExactMatchCount,
+    externalRequestCount: op.externalRequestCount, externalMatchCount: op.externalMatchCount,
     rejected: { ...op.rejected } };
 }
 
@@ -111,6 +121,30 @@ function normalizePlate(value) {
   if (typeof value !== 'string' || value.length > 40) return '';
   const plate = value.normalize('NFKC').replace(/[\s-]/g, '');
   return PLATE.test(plate) ? plate : '';
+}
+
+function discoveryOf(value) {
+  if (value === undefined) return null;
+  if (!value || typeof value !== 'object' || Array.isArray(value) ||
+      Object.keys(value).length !== 2 || !Object.hasOwn(value, 'make') || !Object.hasOwn(value, 'model')) throw new EncarError('INVALID_REQUEST');
+  const labels = {};
+  for (const key of ['make', 'model']) {
+    if (typeof value[key] !== 'string' || value[key].length > 80 || /[\u0000-\u001f\u007f-\u009f\\/<>]/.test(value[key]) || /:\/\//.test(value[key])) throw new EncarError('INVALID_REQUEST');
+    const label = value[key].normalize('NFKC').trim().replace(/\s+/gu, ' ');
+    if (!label || label.length > 80 || /[\u0000-\u001f\u007f-\u009f\\/<>]/.test(label)) throw new EncarError('INVALID_REQUEST');
+    labels[key] = label;
+  }
+  return labels;
+}
+
+function explicitSourcesOf(value) {
+  if (value === undefined) return [];
+  if (!Array.isArray(value) || value.length > 3) throw new EncarError('INVALID_REQUEST');
+  try { return [...new Set(value.map(item => {
+    if (typeof item !== 'string' || !/^https:\/\//i.test(item)) throw new EncarError('INVALID_REQUEST');
+    return externalSourceURL(item).href;
+  }))]; }
+  catch (_) { throw new EncarError('INVALID_REQUEST'); }
 }
 
 function idOf(value) {
@@ -328,7 +362,7 @@ function candidatesFromResults(results, plate) {
   return [...ids];
 }
 
-async function searchCandidates(op, plate, apiKey, fallback = false) {
+async function searchCandidates(op, plate, apiKey, fallback = false, discovery = null) {
   remaining(op);
   ++op.searchCount;
   const result = await fetchLimited(op, 'https://api.tavily.com/search', {
@@ -339,8 +373,8 @@ async function searchCandidates(op, plate, apiKey, fallback = false) {
       Accept: 'application/json'
     },
     body: JSON.stringify({
-      query: fallback ? plate : '"' + plate + '"',
-      ...(!fallback ? { exact_match: true } : {}),
+      query: '"' + plate + '"' + (fallback ? ' site:trust-encar.ru' + (discovery ? ' "' + discovery.model.replace(/["\\]/g, '') + '"' : '') : ''),
+      exact_match: true,
       search_depth: 'basic',
       max_results: 8,
       auto_parameters: false,
@@ -566,6 +600,7 @@ async function externalListings(op, plate, getDetail, select) {
           }
           let page = op.externalPages.get(url.href);
           if (!page) {
+            ++op.externalRequestCount;
             const fetched = await fetchLimited(op, url.href, {
               method: 'GET', headers: { Accept: 'text/html' },
               credentials: 'omit', referrerPolicy: 'no-referrer'
@@ -581,6 +616,7 @@ async function externalListings(op, plate, getDetail, select) {
               source: 'trust-encar', sourceUrl: url.href, checkedAt: page.checkedAt,
               advertisedAt: item.advertisedAt ?? null, modifiedAt: item.modifiedAt ?? null
             });
+            ++op.externalMatchCount;
           }
         } catch (_) { /* A blocked or ambiguous public page is never evidence. */ }
       });
@@ -735,11 +771,81 @@ function catalogError(error, fallback = 'CATALOG_PARSE_FAILED') {
 async function catalogHTML(op, url, stageSignal = null) {
   const safeURL = catalogURL(url);
   remaining(op);
+  if (stageSignal?.aborted) throw stageSignal.reason;
+  const cacheKey = /^\/catalog\/?$/.test(safeURL.pathname) && !safeURL.search ? safeURL.origin + '/catalog/' : safeURL.href;
+  if (op.catalogResponses.has(cacheKey)) return op.catalogResponses.get(cacheKey).html;
   ++op.catalogRequestCount;
   const result = await fetchLimited(op, safeURL.href, { method: 'GET', headers: { Accept: 'text/html' } }, MAX_HTML_BYTES, 'CATALOG_UNAVAILABLE', stageSignal);
   if (BLOCKED.test(result.text) || [403, 429].includes(result.status) || /<title>\s*(?:Just a moment|Attention Required)/i.test(result.text)) throw new EncarError('CATALOG_BLOCKED');
   if (!result.ok) throw new EncarError('CATALOG_UNAVAILABLE');
+  op.catalogResponses.set(cacheKey, { html: result.text, checkedAt: new Date().toISOString() });
   return result.text;
+}
+
+async function modelCatalogCandidates(op, plate, discovery) {
+  if (!discovery) return [];
+  const budget = Math.min(MODEL_CATALOG_BUDGET_MS, remaining(op) - 250);
+  if (budget < 50) return [];
+  const controller = new AbortController(), signal = controller.signal;
+  const abort = () => controller.abort(op.controller.signal.reason);
+  op.controller.signal.addEventListener('abort', abort, { once: true });
+  if (op.controller.signal.aborted) abort();
+  const timer = setTimeout(() => controller.abort(new EncarError('CATALOG_TIMEOUT')), budget);
+  const getHTML = async url => {
+    const before = op.catalogRequestCount;
+    try { return await catalogHTML(op, url, signal); }
+    finally { op.modelCatalogRequestCount += op.catalogRequestCount - before; }
+  };
+  try {
+    // /catalog/ is an observed public directory. Manufacturer and model paths
+    // are never constructed from hints: each is an actual visible page anchor.
+    const directory = catalogURL(CATALOG_ORIGIN + '/catalog/');
+    const directoryHTML = await getHTML(directory);
+    const makeURL = await waitFor(discoverVehicleCatalogLink(directoryHTML, directory.href, discovery, 'make'), signal);
+    if (!makeURL) return [];
+    const makeHTML = await getHTML(makeURL);
+    const modelURL = await waitFor(discoverVehicleCatalogLink(makeHTML, makeURL.href, discovery, 'model'), signal);
+    if (!modelURL) return [];
+    const visited = new Set();
+    let current = catalogURL(modelURL);
+    for (let pageNumber = 0; pageNumber < MAX_MODEL_CATALOG_PAGES; ++pageNumber) {
+      if (visited.has(current.href)) throw new EncarError('CATALOG_INCOMPLETE');
+      visited.add(current.href);
+      const html = await getHTML(current);
+      const parsed = await waitFor(parseExternalAdvertisement(html, current.href, plate), signal);
+      ++op.modelCatalogPageCount;
+      op.modelCatalogRecordCount += parsed.recordCount;
+      const matches = parsed.matches.slice(0, 12);
+      op.modelCatalogExactMatchCount += matches.length;
+      if (matches.length) {
+        const ids = [...new Set(matches.map(item => idOf(item.id)).filter(Boolean))];
+        const cached = op.catalogResponses.get(current.href);
+        const checkedAt = cached?.checkedAt || new Date().toISOString();
+        rememberExternalSource(op, current.href);
+        op.externalPages.set(current.href, { html, checkedAt });
+        for (const item of matches) {
+          const id = idOf(item.id);
+          if (!id || item.sourceUrl !== current.href || op.externalEvidence.has(id)) continue;
+          op.externalEvidence.set(id, { source: 'trust-encar', sourceUrl: current.href, checkedAt,
+            advertisedAt: item.advertisedAt ?? null, modifiedAt: item.modifiedAt ?? null });
+          ++op.externalMatchCount;
+        }
+        // The final identity test is the plate in this card, not these hints.
+        // A positive relationship needs no exhaustive scan for other adverts.
+        return ids;
+      }
+      const next = await waitFor(getObservedCatalogNext(html, current.href), signal);
+      if (!next) return [];
+      if (pageNumber + 1 === MAX_MODEL_CATALOG_PAGES) throw new EncarError('CATALOG_INCOMPLETE');
+      current = catalogURL(next, current.href);
+    }
+    return [];
+  } catch (error) { throw catalogError(error); }
+  finally {
+    clearTimeout(timer);
+    op.controller.signal.removeEventListener('abort', abort);
+    controller.abort();
+  }
 }
 
 async function catalogCandidates(op, env, plate, reserveFallback = false) {
@@ -881,6 +987,7 @@ export async function onRequest(context) {
     if (!/^https:\/\/[\w-]+\.supabase\.co$/.test(supaUrl) || !supaKey) return finish(503, [], 'error', 'SUPABASE_NOT_CONFIGURED');
     const authorization = await authorize(op, request, supaUrl, supaKey);
     if (authorization) return finish(authorization.status, [], 'error', authorization.code);
+    op.searchConfigured = !!apiKey;
     if ((request.headers.get('content-type') || '').split(';')[0].trim().toLowerCase() !== 'application/json') return finish(415, [], 'error', 'UNSUPPORTED_MEDIA_TYPE');
     let payload;
     try {
@@ -891,6 +998,9 @@ export async function onRequest(context) {
     }
     plate = normalizePlate(payload?.plate);
     if (!plate || (payload?.candidateIds !== undefined && !Array.isArray(payload.candidateIds))) return finish(400);
+    let discovery, sourceUrls;
+    try { discovery = discoveryOf(payload?.discovery); sourceUrls = explicitSourcesOf(payload?.sourceUrls); }
+    catch (_) { return finish(400); }
     const memo = new Map();
     const getDetail = id => {
       if (!memo.has(id)) memo.set(id, detail(op, id, plate).then(result => {
@@ -899,7 +1009,8 @@ export async function onRequest(context) {
       }));
       return memo.get(id);
     };
-    const hints = select([...new Set([...idsOf(payload.candidateIds), ...await cachedCandidates(op, env, plate)])].slice(0, MAX_HINT_CANDIDATES));
+    const sourceIds = sourceUrls.map(idFromURL).filter(Boolean);
+    const hints = select([...new Set([...sourceIds, ...idsOf(payload.candidateIds), ...await cachedCandidates(op, env, plate)])].slice(0, MAX_HINT_CANDIDATES));
     const knownHintFallback = async () => {
       if (!hints.length) return [];
       let count = 0;
@@ -911,15 +1022,26 @@ export async function onRequest(context) {
       }
       return count ? externalListings(op, plate, getDetail, select) : [];
     };
+    op.discoveryStage = 'saved_candidates';
     const hinted = await verifyCandidates(hints, getDetail);
     if (hinted.listings.length) {
       saveCandidates(context, plate, hinted.listings.map(item => item.id));
       remaining(op);
       return await found(hinted.listings);
     }
+    if (sourceUrls.length) {
+      op.discoveryStage = 'explicit_source';
+      for (const source of sourceUrls) rememberExternalSource(op, source);
+      const explicit = await externalListings(op, plate, getDetail, select);
+      if (explicit.length) {
+        saveCandidates(context, plate, explicit.map(item => item.id));
+        return await found(explicit);
+      }
+    }
     let catalogFailure = null;
+    op.discoveryStage = 'catalog_form';
     try {
-      const candidates = select(await catalogCandidates(op, env, plate, !!apiKey));
+      const candidates = select(await catalogCandidates(op, env, plate, !!apiKey || !!discovery));
       const verified = await verifyCandidates(candidates, getDetail);
       if (verified.listings.length) {
         remaining(op);
@@ -934,17 +1056,43 @@ export async function onRequest(context) {
     } catch (error) {
       catalogFailure = catalogError(error);
     }
+    if (discovery) {
+      op.discoveryStage = 'model_catalog';
+      try {
+        const candidates = select(await modelCatalogCandidates(op, plate, discovery));
+        const verified = await verifyCandidates(candidates, getDetail);
+        if (verified.listings.length) {
+          saveCandidates(context, plate, verified.listings.map(item => item.id));
+          return await found(verified.listings);
+        }
+        const external = await externalListings(op, plate, getDetail, select);
+        if (external.length) {
+          saveCandidates(context, plate, external.map(item => item.id));
+          return await found(external);
+        }
+      } catch (error) {
+        // Model hints only narrow discovery. A wrong or absent hint is never
+        // interpreted as a vehicle-identity mismatch or a negative ad status.
+        const modelFailure = catalogError(error);
+        if (!catalogFailure || catalogFailure.code === 'CATALOG_FORM_UNSUPPORTED') catalogFailure = modelFailure;
+      }
+    }
     if (!apiKey) {
+      op.discoveryStage = 'known_candidates';
       const external = await knownHintFallback();
       if (external.length) {
         saveCandidates(context, plate, external.map(item => item.id));
         return await found(external);
       }
-      return op.detailErrors.size ? finish(502, [], 'error', detailFailure()) : catalogFailure ? finish(502, [], 'error', catalogFailure.code) : finish(200, [], 'unverified', unverifiedCode('CATALOG_NO_MATCH'));
+      if (op.detailErrors.size) return finish(502, [], 'error', detailFailure());
+      if (catalogFailure && catalogFailure.code !== 'CATALOG_FORM_UNSUPPORTED') return finish(502, [], 'error', catalogFailure.code);
+      if (op.candidates.size) return finish(200, [], 'unverified', unverifiedCode('CATALOG_NO_MATCH'));
+      return catalogFailure ? finish(502, [], 'error', catalogFailure.code) : finish(200, [], 'unverified', unverifiedCode('CATALOG_NO_MATCH'));
     }
     for (let attempt = 0; attempt < 2; attempt++) {
       if (attempt && op.candidates.size >= MAX_TOTAL_CANDIDATES) break;
-      const candidates = select(await searchCandidates(op, plate, apiKey, attempt === 1));
+      op.discoveryStage = attempt ? 'search_targeted' : 'search_exact';
+      const candidates = select(await searchCandidates(op, plate, apiKey, attempt === 1, discovery));
       const verified = await verifyCandidates(candidates, getDetail);
       if (verified.listings.length) {
         remaining(op);
@@ -958,12 +1106,15 @@ export async function onRequest(context) {
       }
     }
     remaining(op);
+    op.discoveryStage = 'known_candidates';
     const external = await knownHintFallback();
     if (external.length) {
       saveCandidates(context, plate, external.map(item => item.id));
       return await found(external);
     }
     if (op.detailErrors.size) return finish(502, [], 'error', detailFailure());
+    if (catalogFailure && catalogFailure.code !== 'CATALOG_FORM_UNSUPPORTED') return finish(502, [], 'error', catalogFailure.code);
+    if (op.candidates.size) return finish(200, [], 'unverified', unverifiedCode('SEARCH_NO_CANDIDATES'));
     if (catalogFailure) return finish(502, [], 'error', catalogFailure.code);
     const code = unverifiedCode(op.resultCount ? 'SEARCH_NO_CANDIDATES' : 'SEARCH_NO_RESULTS');
     return finish(200, [], 'unverified', code);

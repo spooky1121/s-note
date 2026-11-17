@@ -1,7 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
 import './encar/html-rewriter-setup.mjs';
 import { onRequest } from '../functions/api/encar-auto-price.js';
+import { onRequest as resolveAdvertisement } from '../functions/api/encar.js';
 
 const ORIGIN='https://auto-price.example',ID='43000001',OTHER='43000002',PLATE='12가3456';
 const TOKEN='synthetic_auto_price_access_token_12345';
@@ -25,12 +27,13 @@ async function run(t,options={}){
   }
   if(url.origin==='https://fem.encar.com')return options.detailResponse??new Response(page(options.vehicle,options.visible||''),{headers:{'Content-Type':'text/html'}});
   if(url.origin==='https://encar.spb.ru')return new Response('<div class="no-results">Ничего не найдено</div>',{headers:{'Content-Type':'text/html'}});
+  if(url.origin==='https://nnov.trust-encar.ru')return options.externalResponse?.clone()??new Response('Not found',{status:404});
   if(url.origin==='https://api.cloudflare.com')return options.capture?.(url,init)??options.captureResponse??new Response(png(),{headers:{'Content-Type':'image/png'}});
   if(url.origin==='https://vision.googleapis.com')return options.vision?.(url,init)??options.visionResponse??json({responses:[{fullTextAnnotation:{text:options.text??('차량번호 '+PLATE+'\n판매가격 5,490만원\n월 납입금 29만원\nPRIVATE_OCR_ACCOUNT')}}]});
   assert.fail('Unexpected outbound destination '+url.origin);
  };
  console.info=(...args)=>logs.push(args.join(' '));
- try{const res=await onRequest({request:options.request??request(),env:{...ENV,...options.env}});return {res,status:res.status,body:await res.json(),calls,logs};}
+ try{const res=await (options.handler??onRequest)({request:options.request??request(),env:{...ENV,...options.env}});return {res,status:res.status,body:await res.json(),calls,logs};}
  finally{globalThis.fetch=original;console.info=info;}
 }
 const captures=result=>result.calls.filter(call=>call.url.startsWith('https://api.cloudflare.com/'));
@@ -97,6 +100,38 @@ test('request body is limited to 2 KiB even without a declared size',async t=>{
 test('authentication, active membership, canonical ID and advertisement validation precede capture billing',async t=>{
  for(const options of[{authStatus:401},{members:[]},{vehicle:{vehicleNo:'34나5678'}},{vehicle:{advertisement:{status:'SOLD'}}},{vehicle:{vehicleId:Number(OTHER),queryCarId:Number(OTHER)}}]){
   const r=await run(t,options);assert(r.status>=400);noPaid(r);
+ }
+});
+test('an authenticated direct price request rejects the real resolver external-only match before screenshot or Vision',async t=>{
+ const options=()=>({
+  detailResponse:new Response('<h1>서비스 이용 제한됨</h1>',{status:403}),
+  externalResponse:new Response('<h1>Synthetic vehicle</h1><p>Дата добавления объявления 13.11.2026</p><ul><li>Лот '+ID+'</li><li>Номер автомобиля '+PLATE+'</li></ul><p>54,900,000원</p><a href="https://www.encar.com/dc/dc_cardetailview.do?carid='+ID+'">Авто на Encar</a>',{headers:{'Content-Type':'text/html'}})
+ });
+ const resolved=await run(t,{...options(),handler:resolveAdvertisement,
+  request:new Request(ORIGIN+'/api/encar',{method:'POST',headers:{Origin:ORIGIN,Authorization:'Bearer '+TOKEN,'Content-Type':'application/json'},body:JSON.stringify({plate:PLATE,candidateIds:[ID]})}),
+  env:{TAVILY_API_KEY:'',ENCAR_API_KEY:''}});
+ assert.equal(resolved.status,200);assert.equal(resolved.body.status,'found');
+ assert.equal(resolved.body.listings[0].externalVerification.sourceUrl,'https://nnov.trust-encar.ru/auto/'+ID+'/');
+ assert.equal(resolved.body.listings[0].priceStatus,'unavailable');noPaid(resolved);
+ const result=await run(t,options());
+ assert.equal(result.status,409);assert.equal(result.body.code,'VEHICLE_UNVERIFIED');assert.equal(result.body.listing,undefined);
+ assert.equal(result.calls.filter(call=>call.url==='https://nnov.trust-encar.ru/auto/'+ID+'/').length,1);
+ noPaid(result);
+});
+test('even a resolver external marker with a forged verified price cannot take the price reuse fast path',async t=>{
+ const original=await readFile(new URL('../functions/api/encar-auto-price.js',import.meta.url),'utf8');
+ const checkedAt=new Date().toISOString();
+ for(const evidence of[{source:'trust-encar'},null,false]){
+  const resolved={status:'found',plate:PLATE,verifiedAt:checkedAt,listings:[{id:ID,sellerUrl:'https://fem.encar.com/cars/detail/'+ID,
+   externalVerification:evidence,priceWon:54900000,priceCheckedAt:checkedAt,priceSource:'encar.com',priceStatus:'verified'}]};
+  const code=original
+   .replace("import { onRequest as resolveAdvertisement } from './encar.js';",'const resolveAdvertisement=async()=>Response.json('+JSON.stringify(resolved)+');')
+   .replace("'../_shared/encar-price-ocr.mjs'",JSON.stringify(new URL('../functions/_shared/encar-price-ocr.mjs',import.meta.url).href))
+   .replace("'../_shared/api-security.js'",JSON.stringify(new URL('../functions/_shared/api-security.js',import.meta.url).href));
+  const {onRequest:handler}=await import('data:text/javascript;base64,'+Buffer.from(code).toString('base64'));
+  const result=await run(t,{handler});
+  assert.equal(result.status,409);assert.equal(result.body.code,'VEHICLE_UNVERIFIED');assert.equal(result.body.listing,undefined);
+  noPaid(result);assert.equal(result.calls.length,0);
  }
 });
 test('missing or malformed capture credentials have a fixed setup error without exposing any configured values',async t=>{

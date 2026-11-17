@@ -106,7 +106,8 @@ function fixture(t, { batches = [], plate = PLATE, providerKey = 'synthetic_sear
 test('integration: automatic fallback uses the plate and opens separately verified original/trusted links', async t => {
   const f = fixture(t, { batches: [[], [{ url: 'https://encar.spb.ru/auto/' + ORIGINAL + '/' }]] });
   f.button.click(); await f.done();
-  assert.deepEqual(f.searches.map(search => search.query), ['"' + PLATE + '"', PLATE]);
+  assert.deepEqual(f.searches.map(search => search.query), ['"' + PLATE + '"', '"' + PLATE + '" site:trust-encar.ru']);
+  assert.ok(f.searches.every(search => search.exact_match === true && search.search_depth === 'basic'));
   assert.deepEqual(f.tabs[0].navigations, [BASE + ORIGINAL]);
   assert.equal(f.tabs[0].opener, null);
   assert.deepEqual([...f.w.document.querySelectorAll('.snote-encar-results a')].map(a => a.href), [BASE + ORIGINAL, BASE + TRUSTED]);

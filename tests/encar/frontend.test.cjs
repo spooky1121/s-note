@@ -1292,3 +1292,116 @@ test('external catalogue evidence keeps its exact source URL and calendar dates 
   assert.doesNotMatch(status.dataset.tooltip, /외부 광고 추가일/);
   assert.match(status.dataset.tooltip, /출처 https:\/\/kazan\.trust-encar\.ru\/catalog\/tesla\/model-y\/\?page=2/);
 });
+
+test('selected vehicle make and model group are minimal discovery hints, while a full plate still identifies the result', async t => {
+  const f = fixture(t, {cars: [{id: 'car-1', plate: PLATE, make: '토요타', group: ' RAV4 ',
+    model: 'PRIVATE_MANUAL_VEHICLE_TEXT', trim: 'PRIVATE_TRIM', vin: 'PRIVATE_VIN', ownerId: 'PRIVATE_OWNER',
+    customer: {phone: 'PRIVATE_PHONE'}, sell: 19000000}]});
+  f.click(); await settle();
+  assert.deepEqual(JSON.parse(f.requests[0].init.body), {plate: PLATE, candidateIds: [], discovery: {make: '토요타', model: 'RAV4'}});
+  assert.doesNotMatch(f.requests[0].init.body, /PRIVATE|owner|customer|sell|trim|vin/);
+  f.reply(0, found()); await settle();
+  assert.deepEqual(f.tabs[0].navigations, [listing().sellerUrl], 'A discovery label does not replace the full-plate verification response');
+
+  const wrongPlate = fixture(t, {bridge: true, cars: [{id: 'car-1', plate: PLATE, make: '토요타', group: 'RAV4'}]});
+  wrongPlate.click(); await settle(); wrongPlate.reply(0, found(SECOND_PLATE)); await settle();
+  assert.equal(wrongPlate.links.length, 0); assert.equal(wrongPlate.saveCalls.length, 0);
+  assert.deepEqual(wrongPlate.tabs[0].navigations, []);
+});
+
+test('missing, manual-only or malformed model hints leave the original lookup payload unchanged', async t => {
+  const cases = [
+    {make: '토요타', model: '직접 입력 차명'}, {group: 'RAV4'}, {make: ' ', group: 'RAV4'},
+    {make: '토요타', group: ''}, {make: 123, group: 'RAV4'}, {make: '토요타', group: {model: 'RAV4'}},
+    {make: '토요타', group: 'x'.repeat(81)}, {make: 'x'.repeat(81), group: 'RAV4'},
+    {make: '토요타\u0000', group: 'RAV4'}, {make: '토요타', group: 'RAV4\u0085'},
+    {make: '\n토요타', group: 'RAV4'}, {make: '토요타', group: 'RAV4/<private>'},
+    {make: '토요타', group: 'https://private.example'}, {make: '토요타', group: 'RAV4\\private'},
+    {make: '토요타', group: 'RAV4／private'}, {make: '토요타', group: ' '.repeat(80) + 'RAV4'}
+  ];
+  for (let index = 0; index < cases.length; index++) await t.test(String(index), async sub => {
+    const f = fixture(sub, {cars: [{id: 'car-1', plate: PLATE, ...cases[index]}]});
+    f.click(); await settle();
+    assert.deepEqual(JSON.parse(f.requests[0].init.body), {plate: PLATE, candidateIds: []});
+    f.reply(0, unverified()); await settle();
+  });
+});
+
+test('manual Trust Encar detail addresses send the ID and safe source for server verification before opening only the Korean advertisement', async t => {
+  for (const host of ['trust-encar.ru', 'nnov.trust-encar.ru', 'encar.spb.ru', 'encar.msk.ru', 'encar.cbg.ru']) await t.test(host, async sub => {
+    const f = fixture(sub, {bridge: true, cars: [{id: 'car-1', plate: PLATE, make: '토요타', group: 'RAV4'}]});
+    await showUnverified(f);
+    const sourceUrl = 'https://' + host + '/auto/43000001/';
+    assert.equal(f.manual.querySelector('label').textContent, '엔카·외부 광고 주소');
+    f.submitAddress('  ' + sourceUrl + '  '); await settle();
+    assert.deepEqual(JSON.parse(f.requests[1].init.body), {plate: PLATE, candidateIds: ['43000001'],
+      discovery: {make: '토요타', model: 'RAV4'}, sourceUrls: [sourceUrl]});
+    assert.equal(f.manualInput.value, ''); assert.equal(f.saveCalls.length, 0);
+    assert.deepEqual(f.tabs[1].navigations, [], 'Pasted external URLs are candidates rather than verified navigation targets');
+    const item = externalListing(); item.externalVerification.sourceUrl = sourceUrl;
+    f.reply(1, found(PLATE, [item])); await settle();
+    assert.deepEqual(f.tabs[1].navigations, [item.sellerUrl]);
+    assert.equal(f.saveCalls.length, 1); assert.equal(f.links.length, 1);
+    assert.equal(f.links[0].href, item.sellerUrl);
+    assert.deepEqual(f.saveCalls[0].record.listings[0].externalVerification, item.externalVerification);
+  });
+});
+
+test('manual external hints reject unsafe or unrelated URLs without creating requests or popups', async t => {
+  const f = fixture(t); await showUnverified(f);
+  const unsafe = [
+    'http://nnov.trust-encar.ru/auto/43000001/',
+    'https://nnov.trust-encar.ru.evil.example/auto/43000001/',
+    'https://evil-trust-encar.ru/auto/43000001/',
+    'https://encar-russia.ru/auto/43000001/',
+    'https://xn--fixture.trust-encar.ru/auto/43000001/',
+    'https://user:pass@nnov.trust-encar.ru/auto/43000001/',
+    'https://nnov.trust-encar.ru:443/auto/43000001/',
+    'https://nnov.trust-encar.ru:444/auto/43000001/',
+    'https://nnov.trust-encar.ru/auto/43000001/?carid=43000002',
+    'https://nnov.trust-encar.ru/auto/43000001/?action=delete',
+    'https://nnov.trust-encar.ru/auto/43000001/#details',
+    'https://nnov.trust-encar.ru/auto/43000001/?',
+    'https://nnov.trust-encar.ru/auto/43000001/#',
+    'https://nnov.trust-encar.ru/catalog/toyota/rav4/',
+    'https://nnov.trust-encar.ru/auto/%34%33%30%30%30%30%30%31/',
+    'https://nnov.trust-encar.ru/other/../auto/43000001/',
+    'https://nnov.trust-encar.ru\\auto\\43000001\\',
+    'https://nnov.trust-encar.ru/auto/043000001/',
+    'https://nnov.trust-encar.ru/auto/43000001/delete',
+    'https://nnov.trust-encar.ru/auto/43000001/extra'
+  ];
+  for (const sourceUrl of unsafe) {
+    f.submitAddress(sourceUrl); await settle();
+    assert.equal(f.openCalls.length, 1, sourceUrl); assert.equal(f.requests.length, 1, sourceUrl);
+    assert.match(f.manual.querySelector('.snote-encar-manual-error').textContent, /HTTPS 주소/);
+  }
+});
+
+test('manual external source IDs cannot promote mismatched provenance or a failed full-plate verification', async t => {
+  for (const kind of ['source-id-mismatch', 'full-plate-mismatch']) await t.test(kind, async sub => {
+    const f = fixture(sub, {bridge: true}); await showUnverified(f);
+    f.submitAddress('https://nnov.trust-encar.ru/auto/43000001/'); await settle();
+    const item = externalListing();
+    if (kind === 'source-id-mismatch') item.externalVerification.sourceUrl = 'https://nnov.trust-encar.ru/auto/43000009/';
+    f.reply(1, found(kind === 'full-plate-mismatch' ? SECOND_PLATE : PLATE, [item])); await settle();
+    assert.deepEqual(f.tabs[1].navigations, []); assert.equal(f.tabs[1].closed, true);
+    assert.equal(f.links.length, 0); assert.equal(f.saveCalls.length, 0);
+  });
+});
+
+test('diagnostics retain only bounded model catalogue counters and the search configuration and stage enums', async t => {
+  const f = fixture(t); await showUnverified(f, {code: 'CATALOG_NO_MATCH',
+    searchConfigured: true, discoveryStage: 'model_catalog', modelCatalogRequestCount: 3, modelCatalogPageCount: 1,
+    modelCatalogRecordCount: 20, modelCatalogExactMatchCount: 0, externalRequestCount: 2, externalMatchCount: 0,
+    discovery: {make: 'PRIVATE_MAKE', model: 'PRIVATE_MODEL'}, sourceUrls: ['https://private.example/'], body: 'PRIVATE_BODY'});
+  f.copyButton.click(); await settle();
+  assert.deepEqual(JSON.parse(f.copyFallback.value), {service: 'snote-encar', code: 'CATALOG_NO_MATCH', httpStatus: 200,
+    modelCatalogRequestCount: 3, modelCatalogPageCount: 1, modelCatalogRecordCount: 20, modelCatalogExactMatchCount: 0,
+    externalRequestCount: 2, externalMatchCount: 0, searchConfigured: true, discoveryStage: 'model_catalog'});
+  assert.doesNotMatch(f.copyFallback.value, /PRIVATE|https:|12가3456/);
+  const invalid = fixture(t); await showUnverified(invalid, {searchConfigured: 'PRIVATE_SECRET', discoveryStage: 'PRIVATE_SECRET',
+    modelCatalogRequestCount: -1, modelCatalogPageCount: 1001, modelCatalogRecordCount: '20', modelCatalogExactMatchCount: 1.5,
+    externalRequestCount: true, externalMatchCount: null}); invalid.copyButton.click(); await settle();
+  assert.deepEqual(JSON.parse(invalid.copyFallback.value), {service: 'snote-encar', code: 'UNVERIFIED', httpStatus: 200});
+});
