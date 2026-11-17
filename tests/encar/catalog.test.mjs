@@ -3,7 +3,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import './html-rewriter-setup.mjs';
-import { CATALOG_ORIGIN, CatalogError, catalogURL, configuredCatalogSearch, discoverCatalogSearch, discoverCatalogEntry, discoverVehicleCatalogLink, getObservedCatalogNext, parseCatalogPage, externalSourceURL, parseExternalAdvertisement } from '../../functions/_shared/encar-catalog.mjs';
+import { CATALOG_ORIGIN, CatalogError, catalogURL, configuredCatalogSearch, discoverCatalogSearch, discoverCatalogEntry, discoverVehicleCatalogLink, discoverCatalogBranches, getObservedCatalogNext, parseCatalogPage, externalSourceURL, parseExternalAdvertisement } from '../../functions/_shared/encar-catalog.mjs';
 
 const PLATE = '999허0000', OTHER = '888호0000', ID = '81000001';
 const PAGE = CATALOG_ORIGIN + '/catalog?car_number=0000';
@@ -503,4 +503,99 @@ test('catalogue navigation performs no HTTP, submits no form and does not execut
     assert.equal((await discoverVehicleCatalogLink(html, CATALOG_ORIGIN + '/catalog/', { make: 'Toyota' }, 'make')).pathname, '/catalog/toyota/');
     assert.equal((await getObservedCatalogNext('<a rel="next" href="?page=2">Next</a>', CATALOG_ORIGIN + '/catalog/toyota/rav4/')).search, '?page=2');
   } finally { globalThis.fetch = previous; }
+});
+
+test('observed generation and grade branches reach an exact plate absent from parent model pages', async () => {
+  const model = CATALOG_ORIGIN + '/catalog/tesla/model-y/', generation = model + 'model-y/', leaf = generation + 'long-range-awd/';
+  const hints = { model: '모델 Y', grade: '롱레인지' }, plate = '12가3456', id = '43000001';
+  const modelHTML = '<h1>Tesla Model Y</h1><nav><a href="' + generation + '">Model Y <span class="count">40</span></a></nav>' + card(OTHER, '43000002');
+  const generationHTML = '<h1>Model Y</h1><a href="' + leaf + '"><span>Long Range</span> <strong>AWD</strong><span class="badge">12</span></a>' + card(OTHER, '43000002');
+  assert.deepEqual((await parseExternalAdvertisement(modelHTML, model, plate)).matches, []);
+  const first = await discoverCatalogBranches(modelHTML, model, hints);
+  assert.deepEqual(first.map(url => url.href), [generation]);
+  assert.deepEqual((await parseExternalAdvertisement(generationHTML, first[0], plate)).matches, []);
+  const second = await discoverCatalogBranches(generationHTML, first[0], hints);
+  assert.deepEqual(second.map(url => url.href), [leaf]);
+  assert.equal((await parseExternalAdvertisement(card(plate, id), second[0], plate)).matches[0].id, id);
+  assert.deepEqual(await discoverCatalogBranches(card(plate, id), second[0], hints), []);
+});
+
+test('model hints prioritize an observed generation while retaining other generations', async () => {
+  const model = CATALOG_ORIGIN + '/catalog/tesla/model-y/';
+  const html = '<a href="model-y-juniper/">Model Y Juniper 30</a><a href="model-y/">Model Y <span class="count">40</span></a><a href="another-generation/">Another generation</a>';
+  assert.deepEqual((await discoverCatalogBranches(html, model, { model: '모델 Y' })).map(url => url.href), [model + 'model-y/', model + 'model-y-juniper/', model + 'another-generation/']);
+  assert.deepEqual((await discoverCatalogBranches(html, model, { model: 'unrelated model' })).map(url => url.href), [model + 'model-y-juniper/', model + 'model-y/', model + 'another-generation/']);
+});
+
+test('Tesla grade aliases rank actual Long Range branches without excluding other grades', async () => {
+  const generation = CATALOG_ORIGIN + '/catalog/tesla/model-y/model-y/';
+  const html = '<a href="performance/">Performance</a><a href="long-range-rwd/">Long Range RWD</a><a href="long-range-awd/">Long Range AWD</a><a href="standard-range/">Standard Range</a>';
+  assert.deepEqual((await discoverCatalogBranches(html, generation, { grade: '롱레인지' })).map(url => url.pathname.split('/').at(-2)), ['long-range-rwd', 'long-range-awd', 'performance', 'standard-range']);
+  assert.deepEqual((await discoverCatalogBranches(html, generation, { grade: 'Long Range AWD' })).map(url => url.pathname.split('/').at(-2)), ['long-range-awd', 'long-range-rwd', 'performance', 'standard-range']);
+  assert.equal((await discoverCatalogBranches(html, generation, { grade: '퍼포먼스' }))[0].pathname, new URL('performance/', generation).pathname);
+});
+
+test('branch selection follows published hrefs and does not fabricate routes from hints', async () => {
+  const model = CATALOG_ORIGIN + '/catalog/tesla/model-y/';
+  assert.deepEqual(await discoverCatalogBranches('<p>No child links.</p>', model, { model: '모델 Y', grade: '롱레인지' }), []);
+  const html = '<a href="published-generation/">Model&nbsp;Y</a><a href="other-generation/">Other</a>';
+  assert.equal((await discoverCatalogBranches(html, model, { model: '모델 Y' }))[0].href, model + 'published-generation/');
+  const generation = model + 'published-generation/';
+  assert.equal((await discoverCatalogBranches('<a href="published-grade/">Long Range AWD</a>', generation, { grade: '롱레인지' }))[0].href, generation + 'published-grade/');
+  for (const hints of [null, [], 'Model Y', { model: 'https://evil.example', grade: ['Long Range'] }, { model: 'x'.repeat(121), grade: 'Performance\n' }]) {
+    assert.equal((await discoverCatalogBranches(html, model, hints)).length, 2);
+  }
+});
+
+test('branches are restricted to immediate children of the exact current model and generation', async () => {
+  const model = CATALOG_ORIGIN + '/catalog/tesla/model-y/', generation = model + 'model-y/';
+  const invalid = [
+    '/catalog/toyota/model-y/', '/catalog/tesla/model-3/model-y/', '/catalog/tesla/model-y-new/model-y/',
+    '/catalog/tesla/', model, model + 'model-y/long-range-awd/', model + 'model-y/?page=2',
+    model + 'model-y/#next', '/auto/43000001/', '/logout', model + 'redirect/', model + 'redirect-to-example/'
+  ];
+  for (const href of invalid) assert.deepEqual(await discoverCatalogBranches(`<a href="${href}">Model Y</a>`, model, { model: 'Model Y' }), []);
+  assert.deepEqual(await discoverCatalogBranches('<a href="../model-y-juniper/long-range-awd/">Long Range AWD</a>', generation, { grade: '롱레인지' }), []);
+  assert.deepEqual(await discoverCatalogBranches('<a href="long-range-awd/">Long Range AWD</a>', CATALOG_ORIGIN + '/catalog/tesla/'), []);
+  assert.deepEqual(await discoverCatalogBranches('<a href="deeper/">Deeper</a>', generation + 'long-range-awd/'), []);
+});
+
+test('branch anchors reject hidden, scripted, foreign, encoded and credentialed destinations', async () => {
+  const model = CATALOG_ORIGIN + '/catalog/tesla/model-y/';
+  const unsafe = [
+    '<a href="model-y/" hidden>Model Y</a>', '<div aria-hidden="true"><a href="model-y/">Model Y</a></div>',
+    '<div style="display:none"><a href="model-y/">Model Y</a></div>', '<script>"<a href=\"model-y/\">Model Y</a>"</script>',
+    '<a href="javascript:alert(1)">Model Y</a>', '<a href="https://evil.example/catalog/tesla/model-y/model-y/">Model Y</a>',
+    '<a href="https://encar.spb.ru.evil.example/catalog/tesla/model-y/model-y/">Model Y</a>',
+    '<a href="https://user:pass@encar.spb.ru/catalog/tesla/model-y/model-y/">Model Y</a>',
+    '<a href="https://encar.spb.ru:443/catalog/tesla/model-y/model-y/">Model Y</a>',
+    '<a href="/catalog/tesla/model-y/%6dodel-y/">Model Y</a>', '<a href="/catalog/tesla/model-y/../model-y/model-y/">Model Y</a>',
+    '<a href="model-y/?redirect=https://evil.example">Model Y</a>', '<a href="delete/">Model Y</a>'
+  ];
+  for (const html of unsafe) assert.deepEqual(await discoverCatalogBranches(html, model, { model: 'Model Y' }), []);
+});
+
+test('branch discovery deduplicates observed slash copies and returns at most six ranked URLs', async () => {
+  const model = CATALOG_ORIGIN + '/catalog/tesla/model-y/';
+  const html = '<a href="generation-0/">Other</a><a href="generation-0">Duplicate</a>' +
+    Array.from({ length: 7 }, (_, index) => `<a href="generation-${index + 1}/">${index === 6 ? 'Model Y' : 'Other'}</a>`).join('');
+  assert.deepEqual((await discoverCatalogBranches(html, model, { model: 'Model Y' })).map(url => url.href), [model + 'generation-7/', ...Array.from({ length: 5 }, (_, index) => model + `generation-${index}/`)]);
+});
+
+test('branch navigation reads static links inside forms without submitting or making requests', async () => {
+  const previous = globalThis.fetch; globalThis.fetch = () => { throw new Error('No HTTP in branch parser'); };
+  try {
+    const model = CATALOG_ORIGIN + '/catalog/tesla/model-y/';
+    const html = '<form action="/delete" method="post"><input name="redirect" value="https://evil.example"><a href="model-y/">Model Y</a><button>Submit</button></form><script>throw Error("must not run")</script>';
+    assert.deepEqual((await discoverCatalogBranches(html, model, { model: 'Model Y' })).map(url => url.href), [model + 'model-y/']);
+  } finally { globalThis.fetch = previous; }
+});
+
+test('branch discovery rejects browser verification pages and unsafe base URLs', async () => {
+  const model = CATALOG_ORIGIN + '/catalog/tesla/model-y/';
+  await rejects(() => discoverCatalogBranches('<title>Access Denied</title><a href="model-y/">Model Y</a>', model));
+  await rejects(() => discoverCatalogBranches('<h1>Captcha</h1><a href="model-y/">Model Y</a>', model));
+  for (const url of ['https://evil.example/catalog/tesla/model-y/', 'https://user:pass@encar.spb.ru/catalog/tesla/model-y/', 'https://encar.spb.ru:443/catalog/tesla/model-y/']) {
+    await rejects(() => discoverCatalogBranches('<a href="model-y/">Model Y</a>', url), 'CATALOG_CONFIG_INVALID');
+  }
 });

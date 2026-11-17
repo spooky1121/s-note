@@ -4,6 +4,7 @@
   if (window.SnoteEncarLink) return;
 
   const ENDPOINT = '/api/encar';
+  const CLIENT_RELEASE = '2.126';
   const CACHE_PREFIX = 'snote.encar.candidate.v1:';
   const CACHE_AGE = 7 * 24 * 60 * 60 * 1000;
   const REQUEST_TIMEOUT = 45000;
@@ -145,12 +146,17 @@
     } catch (_) { return null; }
   }
 
+  function discoveryLabel(value) {
+    if (typeof value !== 'string' || value.length > 80 || /[\u0000-\u001f\u007f-\u009f\\/<>]/.test(value)) return null;
+    const label = value.normalize('NFKC').trim().replace(/\s+/gu, ' ');
+    return label && label.length <= 80 && !/[\u0000-\u001f\u007f-\u009f\\/<>]/.test(label) ? label : null;
+  }
+
   function discoveryHints(car) {
-    const values = [car.make, car.group];
-    if (values.some(value => typeof value !== 'string' || value.length > 80 || /[\u0000-\u001f\u007f-\u009f\\/<>]/.test(value))) return null;
-    const [make, model] = values.map(value => value.normalize('NFKC').trim().replace(/\s+/gu, ' '));
-    if (!make || !model || make.length > 80 || model.length > 80 || /[\u0000-\u001f\u007f-\u009f\\/<>]/.test(make + model)) return null;
-    return {make, model};
+    const make = discoveryLabel(car.make), model = discoveryLabel(car.group);
+    if (!make || !model) return null;
+    const grade = discoveryLabel(car.grade);
+    return {make, model, ...(grade ? {grade} : {})};
   }
 
   function externalVerification(value, id, verifiedAt) {
@@ -314,12 +320,13 @@
   function setDiagnostics(raw, httpStatus, fallbackCode) {
     const data = raw && typeof raw === 'object' && !Array.isArray(raw) ? raw : {};
     const code = typeof data.code === 'string' && SAFE_CODES.has(data.code) ? data.code : fallbackCode;
-    const safe = { service: 'snote-encar', code, httpStatus: Number.isInteger(httpStatus) && httpStatus >= 100 && httpStatus <= 599 ? httpStatus : null };
+    const safe = { service: 'snote-encar', clientRelease: CLIENT_RELEASE, code, httpStatus: Number.isInteger(httpStatus) && httpStatus >= 100 && httpStatus <= 599 ? httpStatus : null };
+    if (typeof data.resolverRelease === 'string' && data.resolverRelease.length <= 32 && data.resolverRelease === data.resolverRelease.trim() && /^[0-9]{1,3}\.[0-9]{1,6}(?:\.[0-9]{1,6})?$/.test(data.resolverRelease)) safe.resolverRelease = data.resolverRelease;
     if (typeof data.requestId === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(data.requestId)) safe.requestId = data.requestId;
-    for (const key of ['searchCount', 'resultCount', 'candidateCount', 'checkedCount', 'plateMatchedCount', 'resultPlateMatchCount', 'rawResultCount', 'recognizedSourceCount', 'catalogRequestCount', 'catalogPageCount', 'catalogRecordCount', 'catalogExactMatchCount', 'catalogFormCount', 'catalogPlateFieldCount', 'catalogLinkCount', 'modelCatalogRequestCount', 'modelCatalogPageCount', 'modelCatalogRecordCount', 'modelCatalogExactMatchCount', 'externalRequestCount', 'externalMatchCount']) {
+    for (const key of ['searchCount', 'resultCount', 'candidateCount', 'checkedCount', 'plateMatchedCount', 'resultPlateMatchCount', 'rawResultCount', 'recognizedSourceCount', 'catalogRequestCount', 'catalogPageCount', 'catalogRecordCount', 'catalogExactMatchCount', 'catalogFormCount', 'catalogPlateFieldCount', 'catalogLinkCount', 'modelCatalogRequestCount', 'modelCatalogPageCount', 'modelCatalogRecordCount', 'modelCatalogExactMatchCount', 'externalRequestCount', 'externalMatchCount', 'modelBranchPageCount', 'externalSkippedCount']) {
       if (Number.isInteger(data[key]) && data[key] >= 0 && data[key] <= 1000) safe[key] = data[key];
     }
-    if (typeof data.searchConfigured === 'boolean') safe.searchConfigured = data.searchConfigured;
+    for (const key of ['searchConfigured', 'discoveryProvided']) if (typeof data[key] === 'boolean') safe[key] = data[key];
     if (['input', 'saved_candidates', 'explicit_source', 'catalog_form', 'model_catalog', 'search_exact', 'search_targeted', 'known_candidates'].includes(data.discoveryStage)) safe.discoveryStage = data.discoveryStage;
     const rejected = {};
     if (data.rejected && typeof data.rejected === 'object' && !Array.isArray(data.rejected)) {

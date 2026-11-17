@@ -93,7 +93,7 @@ async function checkExternal(f,source){
   for(const width of[1440,390,320]){
    const searchConfigured=width!==320,f=await fixture(width,cars()),p=f.page,service=createService(onRequest,{searchConfigured});let savedCars;
    try{
-    assert.equal(f.release,'2.124');await connect(f,service);const peer=await p.evaluate(()=>normalizedCars([window.__encarFixtureCars[1]],currentUser.username)[0]);
+    await connect(f,service);const peer=await p.evaluate(()=>normalizedCars([window.__encarFixtureCars[1]],currentUser.username)[0]);
     await p.locator('#detail-memo').fill('검색 중 보존할 미저장 메모');await openFound(f,()=>p.locator('#vehicle-encar-check').click());
     assert.deepEqual(f.requests[0].discovery,{make:'토요타',model:'RAV4'});assert.deepEqual(f.requests[0].candidateIds,[]);
     await checkExternal(f,MODEL);assert.equal(service.replies[0].body.status,'found');assert.equal(service.calls.filter(call=>call.url==='https://api.tavily.com/search').length,0,'Observed model traversal finds the exact plate before unrelated generic search');

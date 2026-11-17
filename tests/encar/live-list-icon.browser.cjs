@@ -31,7 +31,7 @@ async function listState(page){return page.evaluate(()=>({
  cardIds:[...document.querySelectorAll('#list-mobile [data-registration-car-id]')].map(element=>element.dataset.registrationCarId)
 }));}
 async function setup(f,mode,{paged=true}={}){
- const p=f.page;assert.equal(f.release,'2.125');
+ const p=f.page;
  await p.evaluate(async()=>{await closeVehicle({discard:true,animate:false});if(navigate('buy')!==true)throw Error('Actual purchase route is required');});
  await p.locator('#list-query').fill('검증');
  if(await p.locator('#list-screen').getAttribute('data-vehicle-view')!==mode)await p.locator('#snote-vehicle-view-switch').click();

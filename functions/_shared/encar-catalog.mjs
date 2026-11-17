@@ -212,6 +212,10 @@ const MODEL_NAME_ALIASES = [
   ['Ray', '레이'], ['Niro', '니로'], ['Ioniq 5', '아이오닉5'], ['Ioniq 6', '아이오닉6'],
   ['Staria', '스타리아'], ['Starex', '스타렉스']
 ];
+const GRADE_NAME_ALIASES = [
+  ['Long Range', 'Long Range AWD', 'Long Range RWD', '롱레인지', '롱레인지 AWD', '롱레인지 RWD'],
+  ['Performance', '퍼포먼스'], ['Standard Range', '스탠다드 레인지']
+];
 function catalogName(value) {
   return String(value || '').normalize('NFKC').toLowerCase().replace(/[^\p{L}\p{N}]/gu, '');
 }
@@ -263,6 +267,32 @@ export async function discoverVehicleCatalogLink(html, currentUrl, hints, stage 
     matches.set(url.origin + path, matches.get(url.origin + path) || url);
   }
   return matches.size === 1 ? [...matches.values()][0] : null;
+}
+
+// Model catalogues can expose separate generation and grade directories. Read
+// only their actual immediate child anchors; hints rank the observed branches
+// without being evidence for vehicle identity or inventing a URL to request.
+export async function discoverCatalogBranches(html, currentUrl, hints = null) {
+  const base = catalogURL(externalSourceURL(currentUrl)), currentPath = base.pathname.replace(/\/$/, '');
+  if (!/^\/catalog(?:\/[a-z0-9-]+){2,3}$/.test(currentPath)) return [];
+  const root = await tree(html, false, 'CATALOG_PARSE_FAILED');
+  if (/<title>\s*(?:access denied|request blocked)/iu.test(html) || /(?:captcha|access denied|request blocked|enable javascript|javascript is required|доступ ограничен|проверка браузера)/iu.test(text(root))) fail('CATALOG_PARSE_FAILED');
+  const supplied = hints && typeof hints === 'object' && !Array.isArray(hints) ? hints : {};
+  const model = catalogAliases(supplied.model, MODEL_NAME_ALIASES), grade = catalogAliases(supplied.grade, GRADE_NAME_ALIASES);
+  const exactModel = catalogHint(supplied.model), exactGrade = catalogHint(supplied.grade), matches = new Map();
+  for (const node of descendants(root, item => item.tag === 'a' && !item.ignored && item.closed && item.attrs.href)) {
+    let url;
+    try { url = catalogURL(externalSourceURL(node.attrs.href, base.href)); } catch { continue; }
+    const path = url.pathname.replace(/\/$/, '');
+    if (url.search || !path.startsWith(currentPath + '/') || !/^[a-z0-9-]+$/.test(path.slice(currentPath.length + 1)) || /\/(?:redirect|redirector)(?:-|\/|$)/i.test(path)) continue;
+    const exact = key => key && catalogueLinkMatches(node, url, new Set([key]), 'model');
+    const score = (exact(exactGrade) ? 100 : grade && catalogueLinkMatches(node, url, grade, 'model') ? 80 : 0) +
+      (exact(exactModel) ? 40 : model && catalogueLinkMatches(node, url, model, 'model') ? 20 : 0);
+    const key = url.origin + path, previous = matches.get(key);
+    if (previous) previous.score = Math.max(previous.score, score);
+    else matches.set(key, { url, score, order: matches.size });
+  }
+  return [...matches.values()].sort((a, b) => b.score - a.score || a.order - b.order).slice(0, 6).map(item => item.url);
 }
 
 export async function getObservedCatalogNext(html, currentUrl) {
