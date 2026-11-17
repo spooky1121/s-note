@@ -1,0 +1,39 @@
+/* A4 document geometry is independent of the screen viewport and popup chrome. */
+@media screen {
+ #contract-paper,#zc76-receipt-paper{flex-shrink:0!important;overflow:visible!important}
+ #contract-paper .ct-footer,#zc76-receipt-paper .snote202-receipt-brand{
+  position:static!important;inset:auto!important;width:auto!important;margin-top:3mm!important;
+ }
+ #zc76-receipt-paper .zc76-foot{padding-bottom:0}
+}
+
+@media print {
+ :is(.contract-paper,#zc76-receipt-paper) input::-webkit-calendar-picker-indicator{display:none!important}
+ #zc76-receipt-paper input::placeholder{color:transparent!important}
+ body:has(#contract-overlay.open) #contract-print-pages .contract-paper{
+  padding:10mm 14mm 18mm!important;overflow:visible!important;
+ }
+ /* The narrow-screen rule formerly changed the printed legal clauses to one column. */
+ body:has(#contract-overlay.open) #contract-print-pages .ct-terms{
+  column-count:2!important;column-gap:9px!important;
+ }
+ body:has(#contract-overlay.open) #contract-print-pages .ct-section{margin-top:1mm!important}
+ body:has(#contract-overlay.open) #contract-print-pages .ct-confirm{padding:7px 9px!important}
+ body:has(#contract-overlay.open) #contract-print-pages .ct-party-row{grid-template-columns:106px minmax(0,1fr)!important}
+ body:has(#contract-overlay.open) #contract-print-pages .ct-party-row.address-row{
+  grid-template-columns:minmax(0,1fr)!important;gap:2px!important;align-content:start;
+ }
+ .contract-print-copy .ct-address-print-text{
+  min-height:28px;font-size:10px;line-height:1.35;white-space:pre-wrap;overflow-wrap:anywhere;word-break:normal;
+ }
+ body:has(#contract-overlay.open) #contract-print-pages .ct-footer{
+  position:absolute!important;left:14mm;right:14mm;bottom:9mm!important;height:9mm!important;margin:0!important;
+ }
+ body:has(#zc76-receipt-overlay:not([hidden])) #zc76-receipt-paper{
+  padding:9mm 12mm 18mm!important;overflow:visible!important;
+ }
+ #zc76-receipt-paper .zc76-foot{padding-bottom:0!important}
+ body:has(#zc76-receipt-overlay:not([hidden])) #zc76-receipt-paper .snote202-receipt-brand{
+  position:absolute!important;left:12mm;right:12mm;bottom:9mm!important;height:7mm!important;margin:0!important;
+ }
+}
