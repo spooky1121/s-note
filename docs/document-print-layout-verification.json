@@ -1,0 +1,93 @@
+{
+  "release": "2.129",
+  "baseCommit": "d8b1f5cccb6a380b09a6064ee115cacaa1e7f069",
+  "checkedAt": "2026-11-17T15:16:43.457454+00:00",
+  "baseline": {
+    "receiptFooterMarginMm": 2.8,
+    "contractMobileBodyFooterOverlapPx": 4.01,
+    "narrowEditorCompanyAddressFalseRejection": {
+      "clientHeightPx": 44,
+      "scrollHeightPx": 62
+    }
+  },
+  "after": {
+    "receipt": {
+      "cases": 6,
+      "pagesPerCase": [
+        1
+      ],
+      "minBodyFooterGapPx": 31.34,
+      "minFooterMarginMm": 9.0,
+      "overflowCount": 0
+    },
+    "contract": {
+      "cases": 6,
+      "pagesPerCase": [
+        2
+      ],
+      "minBodyFooterGapPx": 40.05,
+      "minFooterMarginMm": 9.0,
+      "overflowCount": 0
+    }
+  },
+  "verification": [
+    {
+      "command": "node tests/document-print-layout.browser.cjs",
+      "status": "passed",
+      "widths": [
+        1440,
+        390,
+        320
+      ],
+      "pdfCases": 12,
+      "scenarioVariants": [
+        "standard",
+        "long address and special agreement"
+      ],
+      "overlongAddressBlockedAndDraftPreserved": true
+    },
+    {
+      "command": "NODE_PATH=tests/encar/node_modules node tests/customer-contract-signature.browser.cjs",
+      "passed": 14,
+      "unit": "browser groups",
+      "finalAddressValidationIncluded": true
+    },
+    {
+      "command": "node tests/company-document-assets.browser.cjs",
+      "passed": 4,
+      "unit": "browser groups"
+    },
+    {
+      "command": "node tests/document-actions.browser.cjs",
+      "passed": 4,
+      "unit": "viewports"
+    },
+    {
+      "command": "wrangler pages functions build functions",
+      "version": "4.152.0",
+      "status": "passed"
+    },
+    {
+      "command": "Seven inline scripts and new test JavaScript syntax; git diff --check",
+      "status": "passed"
+    }
+  ],
+  "contentChecks": [
+    "All 11 legal clauses preserved in both copies",
+    "Complete customer address and special-agreement text present in extracted PDF text",
+    "Final receipt consent, date, confirmer and branding present",
+    "Transparent 640x240 customer signature and 96x96 synthetic corporate seal bitmaps embedded",
+    "No text, form or image bounds escape A4 or overlap the footer",
+    "Fixed screen close/print rail and editable source values preserved"
+  ],
+  "dataScope": {
+    "allBrowserDataSynthetic": true,
+    "realDatabaseOrStorageWrites": false,
+    "physicalPrinterTested": false
+  },
+  "sourceSha256": {
+    "index.html": "003959c626b8127df450c9b05c8c85076adcde074badab755c516882caa1fd1e",
+    "assets/document-print.css": "bf19654e2b10deadba0fd1a7df1262be75fc6bf8c4b42d68d66e5067bb11725e",
+    "tests/document-print-layout.browser.cjs": "45f390d2d84e4434ea278052d8e78679ce6d2d877572ef61dc8c080fa3d85fbc"
+  }
+}
