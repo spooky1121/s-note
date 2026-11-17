@@ -1,0 +1,82 @@
+{
+  "release": "2.127",
+  "baseCommit": "af17733b307fc93da4fd8f58fd29da41e0ff26f5",
+  "verifiedAt": "2026-11-17T13:39:56.454924+00:00",
+  "sourceHashes": {
+    "index.html": "839e530c536fd1f604cf6e52f96c7d06586767f79841475a57cb9a844f2be7d2",
+    "assets/snote-encar-link.js": "0fd7c20dcf89f0242ec3e2446720e7cd8dddfb56d0e5fb5881626d4ab3c294c1",
+    "functions/api/encar.js": "fc72cb8f98d3d14ec781ffe1cf7e532600e8931817926b4daf35603b1bc0fa57",
+    "functions/_shared/encar-catalog.mjs": "e3a85c9e07075a736254cd730856ce5061970ef550d267eda25006a69ccac10c",
+    "functions/api/encar-auto-price.js": "7a30c9085cb99b8c19dffd6574da8d8851f50a043e433be16a7e7e603413bf9f",
+    "tests/encar/catalog.test.mjs": "1f8e5f47f12bb84677dcdf19c985c006957417b2f15d1885d26b1aada2f6fd1f",
+    "tests/encar/discovery.test.mjs": "9d67573e07b6691aacf7cd805e6765a7bad57aaa31c7b473b9571021f03f4811",
+    "tests/encar/frontend.test.cjs": "1d7b217d1726e8cfa38d457f53c3976605c38e5e20c2805febe31650250ddc42",
+    "tests/encar/saved-bridge.test.cjs": "c1c7b464ac6bdf1343f9919e550ba827676051f5e49f4a882025d4420ca7d5da",
+    "tests/encar/server.test.mjs": "5efb40d9399540f239ccb99726c5810a062a80810f7ddbe4b38476783ea1181e",
+    "tests/encar/server-price.test.mjs": "45d07f30e064af26daf8c2a075beb4dfe2e43fa29ec0f8eb72fb533e2256618e",
+    "tests/encar/model-catalog-discovery.browser.cjs": "c633b02142f529a76f056086a025292678f4995a95696b6565d0833c56231838",
+    "tests/encar/trim-discovery.browser.cjs": "83d8af13081cc1c3f068de27ae1604bb52a748652a732864a915a2f073aea7b0",
+    "tests/encar/plate-first.browser.cjs": "1ff05270614d780a7aabf8d2400485210c21ccf549d6f75c166f07f11aa260c6",
+    "tests/encar/plate-first.workerd.cjs": "473e29430db9d3c0d2d667894220b9a4054f5b12ee8125af3f476c2c2848c712"
+  },
+  "findings": {
+    "runtimeDiagnostic": "The user confirmed client and resolver 2.126. One indexed document mentioned the full plate, but no individually checked candidate matched; catalogue parsing and all six external-source attempts produced no match. A document mention is not itself a confirmed advertisement.",
+    "nativeParser": "Previous parser af17733 reproduced 13 false negatives on ordinary SVG/optional-end/unstyled/form/footer fixtures in native workerd. These are concrete runtime compatibility defects; the exact production HTML was not captured, so a unique production triggering tag is not asserted."
+  },
+  "behavior": {
+    "matching": "Full normalized plate is primary. A make is sufficient input; model, generation, grade, year and VIN are not required identity conditions. Optional valid model/grade are routing hints only.",
+    "priority": "After saved/manual hints, one exact-plate search precedes catalogue navigation when make and a search key are present. Unresolved requests retain bounded catalogue and second domain-filtered basic search; at most two search calls.",
+    "searchSource": "An allowlisted Trust search document can supply a link when one visible Markdown card block has the exact full plate, a positive manufacturer match, and exactly one associated advertisement ID. URL-only identity claims, multiple plates/IDs, wrong maker or conflicting detail-source ID do not qualify.",
+    "provenance": "Search-only evidence uses optional externalVerification.method=search-index, checkedAt is search confirmation time, original added/modified dates are null. UI says 검색 결과 확인 and states that original HTML and current Korean ad status are unconfirmed. Legacy original-page records retain their five-field shape.",
+    "negativePrecedence": "Official plate mismatch, inactive, deleted and unknown status are authoritative. A freshly parsed external primary mismatch or explicit Lot/outlink/duplicate-plate identity conflict blocks stale search-index promotion.",
+    "priceGuard": "HTML and search-index external evidence both have unavailable price. Automatic capture, OCR, verified-price reuse, manual price application and direct sale-price writes remain blocked for external-only evidence.",
+    "htmlCompatibility": "Isolated svg/math-root pass distinguishes a standalone root using only the exact documented No end tag runtime failure; known standalone roots keep following HTML while paired roots remove foreign content. Optional HTML end rules prevent artificial depth. Public GET forms and unstyled primary specs can be read; hidden/private/recommended records remain excluded. Actual depth/node/size caps and unknown-error rejection remain.",
+    "persistence": "Optional method is validated, saved via existing owner/revision CAS, restored, and reflected immediately in the current table/cards after ACK. Dirty drafts, peers and view state are preserved.",
+    "diagnostics": "Sanitized component versions, bounded evidence counters and seven fixed reason keys; no raw HTML, exception strings, plates, advertisement IDs, URLs or credentials."
+  },
+  "validation": {
+    "distinctUnitPassed": 1035,
+    "unitFailed": 0,
+    "browserGroups": {
+      "plateFirst": 4,
+      "model": 5,
+      "trim": 4,
+      "liveList": 8,
+      "external": 4
+    },
+    "widths": [
+      1440,
+      390,
+      320
+    ],
+    "actualApiParserFrontendCas": true,
+    "native": {
+      "engine": "Cloudflare workerd through Miniflare",
+      "miniflareVersion": "5.20261019.2-beta",
+      "workerdVersion": "1.20261019.1",
+      "compatibilityDate": "2026-10-01",
+      "baselineCommit": "af17733b307fc93da4fd8f58fd29da41e0ff26f5",
+      "baselinePositiveControls": 2,
+      "baselineOrdinaryHtmlFalseNegatives": 13,
+      "fixedAssertionsPassed": 25,
+      "outboundRequests": 0,
+      "parserSha256": "e3a85c9e07075a736254cd730856ce5061970ef550d267eda25006a69ccac10c"
+    },
+    "inlineScriptSyntaxPassed": 7,
+    "pagesFunctionsBuild": "passed; Wrangler 4.152.0",
+    "independentReview": "No additional blocking defects; API/parser/auto-price 413 overlapping tests passed. Native review identified and verified the standalone foreign-root edge case before freeze.",
+    "testInfrastructure": "One concurrent Chromium fixture navigation timed out; the isolated rerun completed all model-browser scenarios with unchanged source. No implementation retry was hidden.",
+    "syntheticUpstreams": true
+  },
+  "production": {
+    "businessDataReadsOrWritesByAgent": 0,
+    "databaseSchemaChanges": 0,
+    "productionSecretsReadOrChanged": false,
+    "deployment": "Exact source and merge Cloudflare s-note checks are recorded after publication in the private final receipt."
+  },
+  "limitations": [
+    "Authenticated production lookup, actual Tavily payload and third-party raw HTML remain unverified from this restricted execution environment. Browser and native HTML fixtures are synthetic; native runtime compatibility is measured directly.",
+    "Search-index evidence is a lower-confidence link source, not original-page or current official advertisement/price verification. It can be stale; explicit fresh negative evidence takes precedence.",
+    "A resultPlateMatchCount greater than zero does not guarantee that the same block also provides an unambiguous advertisement ID and manufacturer. Such incomplete or contradictory documents remain unconfirmed."
+  ]
+}

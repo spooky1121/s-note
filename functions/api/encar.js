@@ -1,4 +1,4 @@
-import { CATALOG_ORIGIN, catalogURL, configuredCatalogSearch, discoverCatalogSearch, discoverCatalogEntry, parseCatalogPage, externalSourceURL, parseExternalAdvertisement, discoverVehicleCatalogLink, getObservedCatalogNext, discoverCatalogBranches } from '../_shared/encar-catalog.mjs';
+import { CATALOG_ORIGIN, catalogURL, configuredCatalogSearch, discoverCatalogSearch, discoverCatalogEntry, parseCatalogPage, externalSourceURL, parseExternalAdvertisement, discoverVehicleCatalogLink, getObservedCatalogNext, discoverCatalogBranches, manufacturerMatches } from '../_shared/encar-catalog.mjs';
 import { parseEncarPagePrice } from '../_shared/encar-page-price.mjs';
 
 /**
@@ -19,7 +19,7 @@ const CATALOG_FALLBACK_BUDGET_MS = 8000;
 const MODEL_CATALOG_BUDGET_MS = 8000;
 const MAX_MODEL_CATALOG_PAGES = 3;
 const MAX_MODEL_DISCOVERY_PAGES = 8;
-const RESOLVER_RELEASE = '2.126';
+const RESOLVER_RELEASE = '2.127';
 const EXTERNAL_BUDGET_MS = 8000;
 const MAX_EXTERNAL_PAGES = 6;
 const EXTERNAL_DETAIL_ERRORS = new Set(['DETAIL_BLOCKED', 'DETAIL_UNAVAILABLE', 'DETAIL_PARSE_FAILED', 'UPSTREAM_TIMEOUT']);
@@ -58,6 +58,7 @@ function operation(request) {
     catalogRequestCount: 0, catalogPageCount: 0, catalogRecordCount: 0, catalogExactMatchCount: 0,
     catalogFormCount: 0, catalogPlateFieldCount: 0, catalogLinkCount: 0, pagePrices: new Map(), priceDiagnostics: null,
     externalSources: new Set(), externalPriority: new Set(), plateLocalCandidates: new Set(), externalPages: new Map(), externalChecked: new Set(), externalIgnored: new Set(), externalEvidence: new Map(), externalSpentMs: 0, detailErrors: new Set(),
+    externalMismatches: new Set(), searchEvidence: new Map(), searchEvidenceAccepted: new Set(), searchEvidenceCount: 0, searchEvidenceAcceptedCount: 0, parseReasonCounts: {},
     catalogResponses: new Map(), searchConfigured: null, discoveryStage: 'input', discoveryProvided: false,
     modelCatalogRequestCount: 0, modelCatalogPageCount: 0, modelCatalogRecordCount: 0, modelCatalogExactMatchCount: 0,
     modelBranchPageCount: 0, externalRequestCount: 0, externalMatchCount: 0, externalSkippedCount: 0,
@@ -89,6 +90,7 @@ function counters(op) {
     modelCatalogPageCount: op.modelCatalogPageCount, modelCatalogRecordCount: op.modelCatalogRecordCount,
     modelCatalogExactMatchCount: op.modelCatalogExactMatchCount, modelBranchPageCount: op.modelBranchPageCount,
     externalRequestCount: op.externalRequestCount, externalMatchCount: op.externalMatchCount, externalSkippedCount: op.externalSkippedCount,
+    searchEvidenceCount: op.searchEvidenceCount, searchEvidenceAcceptedCount: op.searchEvidenceAcceptedCount, parseReasonCounts: { ...op.parseReasonCounts },
     rejected: { ...op.rejected } };
 }
 
@@ -129,9 +131,9 @@ function normalizePlate(value) {
 function discoveryOf(value) {
   if (value === undefined) return null;
   if (!value || typeof value !== 'object' || Array.isArray(value) ||
-      Object.keys(value).some(key => !['make', 'model', 'grade'].includes(key)) || !Object.hasOwn(value, 'make') || !Object.hasOwn(value, 'model')) throw new EncarError('INVALID_REQUEST');
+      Object.keys(value).some(key => !['make', 'model', 'grade'].includes(key)) || !Object.hasOwn(value, 'make')) throw new EncarError('INVALID_REQUEST');
   const labels = {};
-  for (const key of ['make', 'model', ...(Object.hasOwn(value, 'grade') ? ['grade'] : [])]) {
+  for (const key of ['make', ...(Object.hasOwn(value, 'model') ? ['model'] : []), ...(Object.hasOwn(value, 'grade') ? ['grade'] : [])]) {
     if (typeof value[key] !== 'string' || value[key].length > 80 || /[\u0000-\u001f\u007f-\u009f\\/<>]/.test(value[key]) || /:\/\//.test(value[key])) throw new EncarError('INVALID_REQUEST');
     const label = value[key].normalize('NFKC').trim().replace(/\s+/gu, ' ');
     if (!label || label.length > 80 || /[\u0000-\u001f\u007f-\u009f\\/<>]/.test(label)) throw new EncarError('INVALID_REQUEST');
@@ -336,6 +338,53 @@ function plateLocalContent(result, plate) {
   return windows;
 }
 
+function parseReason(op, code) {
+  op.parseReasonCounts[code] = Math.min(1000, (op.parseReasonCounts[code] || 0) + 1);
+}
+
+function rememberSearchEvidence(op, results, plate, discovery, checkedAt) {
+  if (!discovery?.make) return;
+  for (const result of results) {
+    let source;
+    try { source = externalSourceURL(result?.url); } catch { continue; }
+    if (!resultMentionsPlate(result, plate)) continue;
+    for (const field of RESULT_TEXT_FIELDS) {
+      if (typeof result?.[field] !== 'string') continue;
+      // Full Markdown card boundaries are retained here. Unlike hint windows,
+      // another plate in this same block makes the search proof ambiguous.
+      const content = result[field].normalize('NFKC');
+      const blocks = content.split(/(?=^#{1,6}\s+)|^\s*[-*_]{3,}\s*$/gm, 4096);
+      for (const block of blocks) {
+        if (block.length > 8192 || !resultMentionsPlate({ content: block }, plate)) continue;
+        const visible = block.replace(/\]\([^)]*\)/g, ']').replace(/https?:\/\/[^\s<>"'\\]+/gi, '');
+        const plates = new Set([...visible.matchAll(new RegExp('(?<![0-9])' + REGIONS + '?[0-9]{2,3}[\\s-]*[가-힣][\\s-]*[0-9]{4}(?![0-9])', 'g'))].map(match => normalizePlate(match[0])));
+        plates.delete('');
+        if (plates.size !== 1 || !plates.has(plate)) { parseReason(op, 'SEARCH_PLATE_AMBIGUOUS'); continue; }
+        if (!manufacturerMatches(visible, discovery.make)) { parseReason(op, 'SEARCH_MANUFACTURER_MISMATCH'); continue; }
+        const ids = new Set();
+        for (const match of block.matchAll(/https?:\/\/[^\s<>"'\\]+/gi)) {
+          const id = idFromURL(match[0].replace(/[),.;\]}]+$/, ''));
+          if (id) ids.add(id);
+        }
+        const plain = visible.replace(/[*_`]/g, '');
+        for (const match of plain.matchAll(/(?:^|[^\p{L}\p{N}])(?:Лот(?:\s+объявления)?|Номер\s+лота|Lot(?:\s+(?:number|no\.?))?|Encar\s*ID|엔카\s*매물\s*번호)\s*[:：#№]?\s*([0-9]+)(?![0-9])/giu)) {
+          const id = idOf(match[1]); if (id) ids.add(id);
+        }
+        if (ids.size !== 1) { parseReason(op, ids.size ? 'SEARCH_ID_AMBIGUOUS' : 'SEARCH_ID_MISSING'); continue; }
+        const id = [...ids][0], sourceId = idFromURL(source.href);
+        if (sourceId && sourceId !== id) { parseReason(op, 'SEARCH_SOURCE_ID_MISMATCH'); continue; }
+        if (!op.searchEvidence.has(id) && op.searchEvidence.size < MAX_CANDIDATES) {
+          op.searchEvidence.set(id, { source: 'trust-encar', sourceUrl: source.href, checkedAt,
+            advertisedAt: null, modifiedAt: null, method: 'search-index' });
+          ++op.searchEvidenceCount;
+          op.plateLocalCandidates.add(id);
+          rememberExternalSource(op, source.href, true);
+        }
+      }
+    }
+  }
+}
+
 function rememberExternalSource(op, value, priority = false) {
   if (op.externalSources.size >= MAX_TOTAL_CANDIDATES) return;
   try {
@@ -416,7 +465,7 @@ function candidatesFromResults(results, plate, op = null) {
   return [...ids];
 }
 
-async function searchCandidates(op, plate, apiKey, fallback = false) {
+async function searchCandidates(op, plate, apiKey, fallback = false, discovery = null) {
   remaining(op);
   ++op.searchCount;
   const result = await fetchLimited(op, 'https://api.tavily.com/search', {
@@ -455,7 +504,8 @@ async function searchCandidates(op, plate, apiKey, fallback = false) {
     if (recognizedSourceHost(host)) ++op.recognizedSourceCount;
   }
   rememberExternalResults(op, results, plate);
-  return candidatesFromResults(results, plate, op);
+  rememberSearchEvidence(op, results, plate, discovery, new Date().toISOString());
+  return [...new Set([...op.searchEvidence.keys(), ...candidatesFromResults(results, plate, op)])].slice(0, MAX_CANDIDATES);
 }
 
 // Extract a JSON object while respecting quotes and backslash escapes.
@@ -667,6 +717,7 @@ async function externalListings(op, plate, getDetail, select) {
             page = { html: fetched.text, checkedAt: new Date().toISOString() };
           } else op.externalChecked.add(value);
           const parsed = await waitFor(parseExternalAdvertisement(page.html, url.href, plate), signal);
+          if (parsed.kind === 'detail' && !parsed.matches.length) op.externalMismatches.add(url.href);
           for (const item of (Array.isArray(parsed?.matches) ? parsed.matches : []).slice(0, 12)) {
             const id = idOf(item?.id);
             if (!id || externalSourceURL(item.sourceUrl).href !== url.href || op.externalEvidence.has(id)) continue;
@@ -676,7 +727,11 @@ async function externalListings(op, plate, getDetail, select) {
             });
             ++op.externalMatchCount;
           }
-        } catch (_) { /* A blocked or ambiguous public page is never evidence. */ }
+        } catch (error) {
+          if (error?.sourceConflict === true) op.externalMismatches.add(value);
+          if (error?.code === 'CATALOG_PARSE_FAILED' || error?.code === 'CATALOG_PARSER_UNAVAILABLE') parseReason(op, 'EXTERNAL_HTML_PARSE_FAILED');
+          /* A blocked or ambiguous public page is never HTML evidence. */
+        }
       });
     } finally {
       op.externalSpentMs += Math.max(0, Date.now() - startedAt);
@@ -700,6 +755,24 @@ async function externalListings(op, plate, getDetail, select) {
       id, sellerUrl: ENCAR_DETAIL + id, trustedId: null, trustedUrl: null, model: '',
       externalVerification: op.externalEvidence.get(id), ...unavailablePrice()
     });
+  }
+  return [...listings.values()].sort((a, b) => a.id.localeCompare(b.id));
+}
+
+async function searchListings(op, plate, getDetail, select) {
+  const ids = select([...op.searchEvidence.keys()]);
+  if (!ids.length) return [];
+  const verified = await verifyCandidates(ids, getDetail);
+  const listings = new Map(verified.listings.map(item => [item.id, item]));
+  for (const id of ids) {
+    if (listings.has(id)) continue;
+    const evidence = op.searchEvidence.get(id), official = await getDetail(id);
+    if (official.kind !== 'error' || !EXTERNAL_DETAIL_ERRORS.has(official.code) || op.externalMismatches.has(evidence.sourceUrl)) continue;
+    listings.set(id, { id, sellerUrl: ENCAR_DETAIL + id, trustedId: null, trustedUrl: null, model: '',
+      externalVerification: evidence, ...unavailablePrice() });
+    if (!op.searchEvidenceAccepted.has(id)) {
+      op.searchEvidenceAccepted.add(id); ++op.searchEvidenceAcceptedCount;
+    }
   }
   return [...listings.values()].sort((a, b) => a.id.localeCompare(b.id));
 }
@@ -841,7 +914,7 @@ async function catalogHTML(op, url, stageSignal = null) {
 }
 
 async function modelCatalogCandidates(op, plate, discovery) {
-  if (!discovery) return [];
+  if (!discovery?.model) return [];
   const budget = Math.min(MODEL_CATALOG_BUDGET_MS, remaining(op) - 250);
   if (budget < 50) return [];
   const controller = new AbortController(), signal = controller.signal;
@@ -877,6 +950,7 @@ async function modelCatalogCandidates(op, plate, discovery) {
       let parsed;
       try { parsed = await waitFor(parseExternalAdvertisement(html, current.href, plate), signal); }
       catch (error) {
+        if (error?.code === 'CATALOG_PARSE_FAILED') parseReason(op, 'MODEL_HTML_PARSE_FAILED');
         // A navigation-only generation/grade directory can have no vehicle
         // cards. Only actual bounded child anchors permit further discovery.
         if (!branches.length || error?.code !== 'CATALOG_PARSE_FAILED') throw error;
@@ -1116,6 +1190,28 @@ export async function onRequest(context) {
         return await found(explicit);
       }
     }
+    const searchAttempt = async attempt => {
+      op.discoveryStage = attempt ? 'search_targeted' : 'search_exact';
+      const candidates = select(await searchCandidates(op, plate, apiKey, attempt === 1, discovery));
+      const verified = await verifyCandidates(candidates, getDetail);
+      if (verified.listings.length) return verified.listings;
+      const external = await externalListings(op, plate, getDetail, select);
+      if (external.length) return external;
+      return searchListings(op, plate, getDetail, select);
+    };
+    let earlySearch = false, searchFailure = null;
+    // A caller's make is enough to evaluate a same-card search observation.
+    // Public catalogue forms and model names are no prerequisite for this path.
+    if (apiKey && discovery) {
+      earlySearch = true;
+      try {
+        const listings = await searchAttempt(0);
+        if (listings.length) {
+          saveCandidates(context, plate, listings.map(item => item.id));
+          return await found(listings);
+        }
+      } catch (error) { searchFailure = error; }
+    }
     let catalogFailure = null;
     op.discoveryStage = 'catalog_form';
     try {
@@ -1134,7 +1230,7 @@ export async function onRequest(context) {
     } catch (error) {
       catalogFailure = catalogError(error);
     }
-    if (discovery) {
+    if (discovery?.model) {
       op.discoveryStage = 'model_catalog';
       try {
         const candidates = select(await modelCatalogCandidates(op, plate, discovery));
@@ -1167,20 +1263,13 @@ export async function onRequest(context) {
       if (op.candidates.size) return finish(200, [], 'unverified', unverifiedCode('CATALOG_NO_MATCH'));
       return catalogFailure ? finish(502, [], 'error', catalogFailure.code) : finish(200, [], 'unverified', unverifiedCode('CATALOG_NO_MATCH'));
     }
-    for (let attempt = 0; attempt < 2; attempt++) {
+    if (searchFailure) throw searchFailure;
+    for (let attempt = earlySearch ? 1 : 0; attempt < 2; attempt++) {
       if (attempt && op.candidates.size >= MAX_TOTAL_CANDIDATES) break;
-      op.discoveryStage = attempt ? 'search_targeted' : 'search_exact';
-      const candidates = select(await searchCandidates(op, plate, apiKey, attempt === 1));
-      const verified = await verifyCandidates(candidates, getDetail);
-      if (verified.listings.length) {
-        remaining(op);
-        saveCandidates(context, plate, verified.listings.map(item => item.id));
-        return await found(verified.listings);
-      }
-      const external = await externalListings(op, plate, getDetail, select);
-      if (external.length) {
-        saveCandidates(context, plate, external.map(item => item.id));
-        return await found(external);
+      const listings = await searchAttempt(attempt);
+      if (listings.length) {
+        saveCandidates(context, plate, listings.map(item => item.id));
+        return await found(listings);
       }
     }
     remaining(op);

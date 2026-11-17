@@ -96,7 +96,7 @@ async function checkExternal(f,source){
     await connect(f,service);const peer=await p.evaluate(()=>normalizedCars([window.__encarFixtureCars[1]],currentUser.username)[0]);
     await p.locator('#detail-memo').fill('검색 중 보존할 미저장 메모');await openFound(f,()=>p.locator('#vehicle-encar-check').click());
     assert.deepEqual(f.requests[0].discovery,{make:'토요타',model:'RAV4'});assert.deepEqual(f.requests[0].candidateIds,[]);
-    await checkExternal(f,MODEL);assert.equal(service.replies[0].body.status,'found');assert.equal(service.calls.filter(call=>call.url==='https://api.tavily.com/search').length,0,'Observed model traversal finds the exact plate before unrelated generic search');
+    await checkExternal(f,MODEL);assert.equal(service.replies[0].body.status,'found');assert.equal(service.calls.filter(call=>call.url==='https://api.tavily.com/search').length,searchConfigured?1:0,'One plate-first search may precede the observed catalogue fallback; missing keys require no search');
     assert.deepEqual(service.calls.filter(call=>new URL(call.url).origin===CATALOG).map(call=>new URL(call.url).pathname),['/','/catalog/','/catalog/toyota/','/catalog/toyota/rav4/'],'Unsupported native forms fall back to observed directory, make and model anchors without repeating requests');
     assert.equal(await p.evaluate(()=>window.__encarFixtureWrites.length),1);assert.equal(await p.locator('#detail-memo').inputValue(),'검색 중 보존할 미저장 메모');assert.deepEqual(await p.evaluate(()=>normalizedCars([window.__encarFixtureCars[1]],currentUser.username)[0]),peer);
     savedCars=await p.evaluate(()=>structuredClone(window.__encarFixtureCars));await p.screenshot({path:path.join(ART,'model-discovery-'+width+'.png')});await finish(f);
@@ -107,7 +107,7 @@ async function checkExternal(f,source){
     if(width===1440){await restored.page.evaluate(async()=>{await closeVehicle({discard:true,animate:false});navigate('buy');});const opening=restored.context.waitForEvent('page');await restored.page.locator('.snote-list-encar[data-encar-car-id="encar-car-1"]').first().click();const popup=await opening;await popup.waitForURL(SELLER);await popup.close();assert.equal(restored.requests.length,0);}
     await finish(restored);
    }catch(error){await restored.context.close();throw error;}
-   results.push({width,actualApiAndParser:true,searchConfigured,modelDiscoveryBeforeGenericSearch:true,plateOnlyIdentity:true,scopedCasSaved:true,sourceRestored:true,dirtyDraftAndPeerPreserved:true,noCaptureOrPriceMutation:true});
+   results.push({width,actualApiAndParser:true,searchConfigured,plateFirstThenObservedModelFallback:true,plateOnlyIdentity:true,scopedCasSaved:true,sourceRestored:true,dirtyDraftAndPeerPreserved:true,noCaptureOrPriceMutation:true});
    console.log('PASS '+width+'px browser -> actual catalogue navigation/parser -> exact-plate external evidence -> scoped CAS save and restoration');
   }
   const f=await fixture(390,cars(false)),p=f.page,service=createService(onRequest);

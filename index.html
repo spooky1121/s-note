@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.126">
+<html lang="ko" data-snote-release="2.127">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -9429,7 +9429,7 @@ function snoteEncarLinksExternal(item,verifiedAt){
  if(!Object.hasOwn(item,'externalVerification'))return {};
  const value=item.externalVerification,keys=['source','sourceUrl','checkedAt','advertisedAt','modifiedAt'];
  const invalid=()=>{throw snoteEncarLinksError('INVALID_DATA','외부 광고의 출처와 확인 시각을 다시 확인해 주세요.');};
- if(!value||typeof value!=='object'||Array.isArray(value)||Object.keys(value).length!==keys.length||!keys.every(key=>Object.hasOwn(value,key))||value.source!=='trust-encar')invalid();
+ if(!value||typeof value!=='object'||Array.isArray(value)||Object.keys(value).some(key=>!keys.includes(key)&&key!=='method')||!keys.every(key=>Object.hasOwn(value,key))||value.source!=='trust-encar'||Object.hasOwn(value,'method')&&(value.method!=='search-index'||value.advertisedAt!==null||value.modifiedAt!==null))invalid();
  if(typeof value.sourceUrl!=='string'||value.sourceUrl.length>2048||/[\u0000-\u0020\u007f-\u009f\\]/.test(value.sourceUrl))invalid();
  let url;try{url=new URL(value.sourceUrl);}catch(_){invalid();}
  const host=url.hostname.toLowerCase(),regional=/^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+trust-encar\.ru$/.test(host)&&!host.split('.').some(label=>label.startsWith('xn--'));
@@ -9442,7 +9442,7 @@ function snoteEncarLinksExternal(item,verifiedAt){
  if(!Number.isFinite(time.getTime())||time.toISOString()!==value.checkedAt||time.getTime()>Date.now()+60000||time.getTime()>Date.parse(verifiedAt)+60000)invalid();
  const dayValid=day=>day===null||typeof day==='string'&&/^\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])$/.test(day)&&new Date(day+'T00:00:00Z').toISOString().slice(0,10)===day;
  if(!dayValid(value.advertisedAt)||!dayValid(value.modifiedAt))invalid();
- return {externalVerification:{source:'trust-encar',sourceUrl:url.href,checkedAt:time.toISOString(),advertisedAt:value.advertisedAt,modifiedAt:value.modifiedAt}};
+ return {externalVerification:{source:'trust-encar',sourceUrl:url.href,checkedAt:time.toISOString(),advertisedAt:value.advertisedAt,modifiedAt:value.modifiedAt,...(Object.hasOwn(value,'method')?{method:'search-index'}:{})}};
 }
 function snoteEncarLinksRecord(base,value){
  const plain=item=>!!item&&typeof item==='object'&&!Array.isArray(item);
@@ -10961,11 +10961,11 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 <script type="module" src="assets/income-settlement-parent.js?v=2.112"></script>
 <script src="assets/vehicle-sharing.js?v=2.107" defer></script>
 <script src="assets/shared-vehicle-markers.js?v=2.87" defer></script>
-<script src="assets/release-info.js?v=2.126" defer></script>
+<script src="assets/release-info.js?v=2.127" defer></script>
 <script src="assets/company-purchase.js?v=2.77" defer></script>
 <script src="assets/recycle-bin.js?v=2.77" defer></script>
 <script src="assets/profile-editor.js?v=2.102" defer></script>
-<script src="assets/snote-encar-link.js?v=2.126" defer></script>
+<script src="assets/snote-encar-link.js?v=2.127" defer></script>
 <link rel="stylesheet" href="assets/encar-price-ocr.css?v=2.110">
 <script src="assets/encar-price-ocr.js?v=2.110" defer></script>
 <script src="assets/document-mms.js?v=2.44" defer></script>

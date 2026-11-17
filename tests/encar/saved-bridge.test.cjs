@@ -466,6 +466,17 @@ test('external advertisement provenance survives actual CAS storage and a fresh 
  assert.equal((await restored.bridge.save(restored.bridge.context('car-a'),value)).ok,true);
  assert.deepEqual(restored.serverRecord().encarLinks.listings[0].externalVerification,value.listings[0].externalVerification);
 });
+test('search-index provenance survives scoped CAS and reload without becoming original-page or price verification',async()=>{
+ const f=ocrFixture(),base=f.bridge.context('car-a'),value=externalRecord();
+ Object.assign(value.listings[0].externalVerification,{method:'search-index',advertisedAt:null,modifiedAt:null});
+ await f.bridge.save(base,value);const before=clone([...f.server]),writes=f.calls.length;
+ assert.deepEqual(f.serverRecord().encarLinks,value);
+ const restored=fixture({server:[...f.server]});assert.deepEqual(restored.context.cars[0].encarLinks,value);
+ await assert.rejects(f.bridge.autoPrice(base,value),error=>error.code==='EXTERNAL_ONLY');
+ assert.throws(()=>f.bridge.applyPrice(base,value,'43000001'),error=>error.code==='INVALID_DATA');
+ await assert.rejects(f.bridge.changePrice(base,value,'43000001',{expectedSellWon:12000000}),error=>error.code==='INVALID_DATA');
+ assert.equal(f.ocrCalls.length,0);assert.equal(f.calls.length,writes);assert.deepEqual([...f.server],before);
+});
 test('external metadata schema rejects malformed sources, dates, aliases and price claims before any database write',async()=>{
  const changes=[
   data=>{data.listings[0].externalVerification=null;},
@@ -479,6 +490,9 @@ test('external metadata schema rejects malformed sources, dates, aliases and pri
   data=>{data.listings[0].externalVerification.modifiedAt='2026-13-01';},
   data=>{data.listings[0].externalVerification.checkedAt=new Date(Date.now()+120000).toISOString();},
   data=>{data.listings[0].externalVerification.phone='PRIVATE';},
+  data=>{data.listings[0].externalVerification.method='original';},
+  data=>{data.listings[0].externalVerification.method=null;},
+  data=>{data.listings[0].externalVerification.method='search-index';},
   data=>{data.listings[0].trustedId='43000002';data.listings[0].trustedUrl=record().listings[0].trustedUrl;},
   data=>{Object.assign(data.listings[0],{priceWon:37770000,priceCheckedAt:data.verifiedAt,priceSource:'encar-api.com',priceStatus:'verified'});}
  ];

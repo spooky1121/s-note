@@ -3,7 +3,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import './html-rewriter-setup.mjs';
-import { CATALOG_ORIGIN, CatalogError, catalogURL, configuredCatalogSearch, discoverCatalogSearch, discoverCatalogEntry, discoverVehicleCatalogLink, discoverCatalogBranches, getObservedCatalogNext, parseCatalogPage, externalSourceURL, parseExternalAdvertisement } from '../../functions/_shared/encar-catalog.mjs';
+import { CATALOG_ORIGIN, CatalogError, catalogURL, configuredCatalogSearch, discoverCatalogSearch, discoverCatalogEntry, discoverVehicleCatalogLink, discoverCatalogBranches, getObservedCatalogNext, parseCatalogPage, externalSourceURL, parseExternalAdvertisement, manufacturerMatches } from '../../functions/_shared/encar-catalog.mjs';
 
 const PLATE = '999허0000', OTHER = '888호0000', ID = '81000001';
 const PAGE = CATALOG_ORIGIN + '/catalog?car_number=0000';
@@ -598,4 +598,89 @@ test('branch discovery rejects browser verification pages and unsafe base URLs',
   for (const url of ['https://evil.example/catalog/tesla/model-y/', 'https://user:pass@encar.spb.ru/catalog/tesla/model-y/', 'https://encar.spb.ru:443/catalog/tesla/model-y/']) {
     await rejects(() => discoverCatalogBranches('<a href="model-y/">Model Y</a>', url), 'CATALOG_CONFIG_INVALID');
   }
+});
+
+test('manufacturer evidence uses controlled aliases and complete Unicode word tokens', () => {
+  for (const [content, make] of [['Tesla Model Y', '테슬라'], ['TOYOTA RAV4', '도요타'], ['Mercedes-Benz E-Class', '벤츠'], ['KG Mobility Torres', '쌍용'], ['현대자동차 아반떼', 'Hyundai'], ['A page about Unknown Motors', 'Unknown Motors']]) {
+    assert.equal(manufacturerMatches(content, make), true, make);
+  }
+  for (const [content, make] of [['NotTesla Model Y', '테슬라'], ['BMWer', 'BMW'], ['Teslax', 'Tesla'], ['Toyota', '테슬라'], ['Unknown MotorsPlus', 'Unknown Motors'], ['Model Y', '테슬라'], ['Tesla', 'https://tesla'], ['Tesla', 'Tesla\n'], ['Tesla', ''], ['Tesla', null], [null, 'Tesla']]) {
+    assert.equal(manufacturerMatches(content, make), false);
+  }
+});
+
+test('doctype and ignored SVG/MathML self-closing children cannot abort public vehicle parsing', async () => {
+  const shell = '<!doctype html><html><head><title>Public vehicles</title></head><body><header><h1>Public website</h1><svg xmlns="http://www.w3.org/2000/svg"><path d="M0 0h1"/><use href="#logo"/><foreignObject><div>' + OTHER + '</div></foreignObject></svg><svg/><math><mi/><mrow><mo>+</mo></mrow></math></header>';
+  const result = await parseExternalAdvertisement(shell + externalDetail() + '</body></html>', EXTERNAL_DETAIL, PLATE);
+  assert.equal(result.matches[0].id, ID);
+  assert.equal((await discoverCatalogBranches(shell + '<a href="model-y/">Model Y</a></body></html>', CATALOG_ORIGIN + '/catalog/tesla/model-y/', { model: '모델 Y' })).length, 1);
+  const foreignPlate = `<svg><text>${PLATE}</text><foreignObject><div>Номер автомобиля ${PLATE}</div></foreignObject></svg>`;
+  assert.deepEqual((await parseExternalAdvertisement(foreignPlate + externalDetail({ plate: OTHER }), EXTERNAL_DETAIL, PLATE)).matches, []);
+});
+
+test('optional list and option endings preserve siblings without consuming the actual depth budget', async () => {
+  const links = '<ul><li hidden><a href="hidden/">Hidden</a>' + Array.from({ length: 150 }, (_, index) => `<li><a href="generation-${index}/">${index === 149 ? 'Model Y' : 'Other'}</a>`).join('') + '</ul>';
+  const branches = await discoverCatalogBranches(links, CATALOG_ORIGIN + '/catalog/tesla/model-y/', { model: '모델 Y' });
+  assert.equal(branches[0].pathname, '/catalog/tesla/model-y/generation-149/');
+  const options = Array.from({ length: 150 }, (_, index) => `<option value="value-${index}">Option ${index}`).join('');
+  const selected = await discoverCatalogSearch(form('<input name="plate"><select name="brand">' + options + '</select>'), PAGE, '0000');
+  assert.equal(selected.url.searchParams.get('brand'), 'value-0');
+  assert.equal((await parseExternalAdvertisement(`<ul class="car-info"><li>Лот: ${ID}<li>Номер автомобиля ${PLATE}</ul>`, EXTERNAL_DETAIL, PLATE)).matches[0].id, ID);
+});
+
+test('optional definition and table cells retain exact label/value relationships', async () => {
+  for (const fields of [
+    `<dl><dt>Лот<dd>${ID}<dt>Номер автомобиля<dd>${PLATE}</dl>`,
+    `<table><tbody><tr><th>Лот<td>${ID}<tr><th>Номер автомобиля<td>${PLATE}</table>`
+  ]) assert.equal((await parseExternalAdvertisement(fields, EXTERNAL_DETAIL, PLATE)).matches[0].id, ID);
+});
+
+test('real HTML nesting and source size/node limits remain enforced after foreign preprocessing', async () => {
+  await rejects(() => parseExternalAdvertisement('<div>'.repeat(130) + externalDetail() + '</div>'.repeat(130), EXTERNAL_DETAIL, PLATE));
+  await rejects(() => discoverCatalogBranches('<svg>' + '<path/>'.repeat(30001) + '</svg><a href="model-y/">Model Y</a>', CATALOG_ORIGIN + '/catalog/tesla/model-y/'));
+  await rejects(() => parseExternalAdvertisement(' '.repeat(3 * 1024 * 1024 + 1), EXTERNAL_DETAIL, PLATE));
+});
+
+test('extra site headings and unstyled same-primary spec grids do not impose a vehicle heading constraint', async () => {
+  const grid = `<div><div><span>Лот</span><strong>${ID}</strong></div><div><span>Номер автомобиля</span><strong>${PLATE}</strong></div></div>`;
+  for (const html of [
+    '<header><h1>Public site</h1></header><main><h1>Inventory</h1><h1>Vehicle</h1>' + grid + '</main>',
+    '<h2>Vehicle specifications</h2>' + grid,
+    '<main><div><p>Лот ' + ID + '</p><p>Номер автомобиля ' + PLATE + '</p></div></main>'
+  ]) assert.equal((await parseExternalAdvertisement(html, EXTERNAL_DETAIL, PLATE)).matches[0].id, ID);
+});
+
+test('explicit public GET form wrappers are readable while private or write forms remain excluded', async () => {
+  const fields = `<div><p>Лот ${ID}</p><p>Номер автомобиля ${PLATE}</p></div>`;
+  assert.equal((await parseExternalAdvertisement('<form method="get" action="/catalog/">' + fields + '</form>', EXTERNAL_DETAIL, PLATE)).matches[0].id, ID);
+  for (const prefix of ['<form method="post">', '<form method="get" id="login">', '<form method="get"><input type="password">', '<form method="get"><input name="phone">']) {
+    await rejects(() => parseExternalAdvertisement(prefix + fields + '</form>', EXTERNAL_DETAIL, PLATE));
+  }
+});
+
+test('relaxed detail grouping still rejects separate cards, hidden/header identity and recommended mismatches', async () => {
+  for (const html of [
+    `<main><article><p>Лот ${ID}</p></article><article><p>Номер автомобиля ${PLATE}</p></article></main>`,
+    `<header><div><p>Лот ${ID}</p><p>Номер автомобиля ${PLATE}</p></div></header><main><h1>Vehicle</h1></main>`,
+    `<main><div><p>Лот ${ID}</p><p hidden>Номер автомобиля ${PLATE}</p></div></main>`,
+    `<main><div><p>Лот ${ID}</p></div><section class="related-cars"><div><p>Лот ${ID}</p><p>Номер автомобиля ${PLATE}</p></div></section></main>`
+  ]) await rejects(() => parseExternalAdvertisement(html, EXTERNAL_DETAIL, PLATE));
+  const page = '<header><h1>Site</h1></header><main><div><p>Лот ' + ID + '</p><p>Номер автомобиля ' + OTHER + '</p></div><h2>Похожие автомобили</h2><div><p>Лот ' + ID + '</p><p>Номер автомобиля ' + PLATE + '</p></div></main>';
+  assert.deepEqual((await parseExternalAdvertisement(page, EXTERNAL_DETAIL, PLATE)).matches, []);
+});
+
+test('normal footer captcha and JavaScript notices do not override exact vehicle evidence', async () => {
+  for (const footer of ['<footer>This site is protected by reCAPTCHA.</footer>', '<footer><h2>Enable JavaScript for the map</h2></footer>', '<noscript>Please enable JavaScript for maps.</noscript>']) {
+    assert.equal((await parseExternalAdvertisement(externalDetail() + footer, EXTERNAL_DETAIL, PLATE)).matches[0].id, ID);
+  }
+  for (const challenge of ['<title>Access Denied</title>', '<h1>Проверка браузера</h1>', '<h1>Enable JavaScript</h1>', '<h1>Captcha</h1>']) {
+    await rejects(() => parseExternalAdvertisement(challenge + externalDetail(), EXTERNAL_DETAIL, PLATE));
+  }
+});
+
+test('explicit primary source conflicts are distinguishable from missing structure without leaking source data', async () => {
+  for (const html of [externalDetail({ id: '81000002' }), externalDetail({ outId: '81000002' }), externalDetail().replace('</ul>', `<li>Номер автомобиля ${OTHER}</li></ul>`), externalDetail().replace('</ul>', '<li>Лот 81000002</li></ul>')]) {
+    await assert.rejects(() => parseExternalAdvertisement(html, EXTERNAL_DETAIL, PLATE), error => error instanceof CatalogError && error.code === 'CATALOG_PARSE_FAILED' && error.reason === 'EXTERNAL_IDENTITY_CONFLICT' && error.sourceConflict === true && !error.message.includes(PLATE));
+  }
+  await assert.rejects(() => parseExternalAdvertisement('<h1>Vehicle</h1>', EXTERNAL_DETAIL, PLATE), error => error instanceof CatalogError && error.code === 'CATALOG_PARSE_FAILED' && error.sourceConflict === undefined && error.reason === undefined);
 });

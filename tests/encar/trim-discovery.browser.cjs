@@ -8,6 +8,8 @@ const {fixture,setBrowser,finish}=require('./browser-smoke.cjs');
 const ROOT=path.resolve(__dirname,'../..'),ART=process.env.ENCAR_TRIM_ARTIFACT_DIR||'/tmp/snote-encar-trim-catalog';
 const FILES=['index.html','assets/release-info.js','assets/snote-encar-link.js','functions/api/encar.js','functions/_shared/encar-catalog.mjs','tests/encar/browser-smoke.cjs','tests/encar/trim-discovery.browser.cjs'];
 const hashes=()=>Object.fromEntries(FILES.map(file=>[file,crypto.createHash('sha256').update(fs.readFileSync(path.join(ROOT,file))).digest('hex')]));
+const CLIENT_RELEASE=/const CLIENT_RELEASE = '([0-9.]+)'/.exec(fs.readFileSync(path.join(ROOT,'assets/snote-encar-link.js'),'utf8'))[1];
+const RESOLVER_RELEASE=/const RESOLVER_RELEASE = '([0-9.]+)'/.exec(fs.readFileSync(path.join(ROOT,'functions/api/encar.js'),'utf8'))[1];
 const ACTOR='11111111-1111-4111-8111-111111111111',ALIAS='cld_'+ACTOR.replaceAll('-','').slice(0,18);
 const PLATE='12가3456',OTHER='34나5678',ID='43000001',CAR='encar-car-1',SELLER='https://fem.encar.com/cars/detail/'+ID;
 const CATALOG='https://encar.spb.ru',MODEL='/catalog/tesla/model-y/',GENERATION=MODEL+'model-y/',TRIM=GENERATION+'long-range-awd/';
@@ -81,12 +83,12 @@ async function prepare(f){
 async function baselineFailure(f,service){
  const p=f.page,opening=f.context.waitForEvent('page');await p.locator('#vehicle-encar-check').click();const popup=await opening;if(!popup.isClosed())await popup.waitForEvent('close');
  await p.locator('#vehicle-encar-check:not([disabled])').waitFor();await p.locator('.snote-encar-copy').waitFor({state:'visible'});
- const result=service.replies.at(-1).body;assert.equal(result.listings.length,0);assert.equal(result.diagnostics.resolverRelease,'2.126');assert.equal(result.diagnostics.discoveryProvided,true);
+ const result=service.replies.at(-1).body;assert.equal(result.listings.length,0);assert.equal(result.diagnostics.resolverRelease,RESOLVER_RELEASE);assert.equal(result.diagnostics.discoveryProvided,true);
  assert.equal(result.diagnostics.searchCount,2);assert.equal(result.diagnostics.resultCount,7);assert.equal(result.diagnostics.rejected.plateMismatch,6);
  assert(!service.calls.some(call=>call.url===CATALOG+GENERATION||call.url===CATALOG+TRIM),'The parent-only fixture cannot invent missing child routes');
  await p.evaluate(()=>Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async value=>{window.__trimCopiedDiagnostics=value;}}}));
  await p.locator('.snote-encar-copy').click();await p.waitForFunction(()=>typeof window.__trimCopiedDiagnostics==='string');const diagnostic=await p.evaluate(()=>JSON.parse(window.__trimCopiedDiagnostics));
- assert.equal(diagnostic.clientRelease,'2.126');assert.equal(diagnostic.resolverRelease,'2.126');assert.equal(diagnostic.discoveryProvided,true);
+ assert.equal(diagnostic.clientRelease,CLIENT_RELEASE);assert.equal(diagnostic.resolverRelease,RESOLVER_RELEASE);assert.equal(diagnostic.discoveryProvided,true);
  assert.equal(await p.locator(ICON).count(),0);assert.equal(await p.evaluate(()=>window.__encarFixtureWrites.length),0);
  service.branches=true;return diagnostic;
 }
@@ -126,7 +128,7 @@ async function verifySaved(f,before){
     const opening=f.context.waitForEvent('page');await p.locator('#vehicle-encar-check').click();const popup=await opening;await popup.waitForURL(SELLER);await popup.close();
     await p.waitForFunction(()=>window.__encarFixtureWriteWaiting);assert.equal(await p.locator(ICON).count(),0,'A found leaf is not advertised in the list before the server ACK');assert.equal(await p.evaluate(()=>window.__encarFixtureWrites.length),0);
     assert.deepEqual(f.requests.at(-1).discovery,DISCOVERY);assert.deepEqual(f.requests.at(-1).candidateIds,[]);
-    const calls=service.calls.slice(start);assert.equal(calls.filter(call=>call.url==='https://api.tavily.com/search').length,0,'Observed generation/grade navigation succeeds without generic search');
+    const calls=service.calls.slice(start);assert.equal(calls.filter(call=>call.url==='https://api.tavily.com/search').length,width===320?0:1,'A plate-first search precedes the observed grade fallback only when a search key is configured');
     assert.deepEqual(calls.filter(call=>new URL(call.url).origin===CATALOG).map(call=>new URL(call.url).pathname),['/','/catalog/','/catalog/tesla/',MODEL,GENERATION,TRIM]);
     assert.equal(service.replies.at(-1).body.status,'found');
     await p.evaluate(()=>{window.__encarFixtureWriteMode='ok';window.__encarFixtureReleaseWrite();});await verifySaved(f,before);
@@ -138,7 +140,7 @@ async function verifySaved(f,before){
     assert.equal(await restored.page.evaluate(()=>window.__encarFixtureCars[0].encarLinks.listings[0].externalVerification.sourceUrl),CATALOG+TRIM);assert.equal(restored.autoPriceRequests.length,0);
     await finish(restored);
    }catch(error){await restored.context.close();throw error;}
-   results.push({width,actualApiParserIndexAndCas:true,observedGenerationAndTrimTraversal:true,gradeForwarded:true,noSearchKey:width===320,noGenericSearch:true,
+   results.push({width,actualApiParserIndexAndCas:true,observedGenerationAndTrimTraversal:true,gradeForwarded:true,noSearchKey:width===320,plateFirstThenObservedTrimFallback:true,
     exactPlateLeafOnly:true,liveListAfterAck:true,provenanceRestored:true,peerAndDraftsPreserved:true,noOcrOrPriceMutation:true});
    console.log('PASS '+width+'px real API/parser finds the exact plate only through observed generation/trim links, saves and refreshes the open-detail list after ACK');
   }
