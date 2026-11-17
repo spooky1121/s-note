@@ -264,6 +264,7 @@
       saveStatus.textContent = '광고 링크를 서버에 저장했습니다.';
       if (JSON.stringify(displayedRecord) === JSON.stringify(record)) displayedSaved = true;
       refreshPriceControls();
+      refreshSavedList(context);
       maybeOpenPriceConfirmation();
       return true;
     } catch (_) {
@@ -505,8 +506,8 @@
       JSON.stringify(job.record) === JSON.stringify(savedRecord(context.car.encarLinks, context.plate));
   }
 
-  function refreshSavedPriceList(context) {
-    try { window.snoteEncarLinksBridge?.refreshList?.(context.storage); } catch (_) { /* A list repaint cannot undo an acknowledged price save. */ }
+  function refreshSavedList(context) {
+    try { window.snoteEncarLinksBridge?.refreshList?.(context.storage); } catch (_) { /* A list repaint cannot undo an acknowledged save. */ }
   }
 
   function priceToast(message) {
@@ -591,7 +592,7 @@
       const result = await window.snoteEncarLinksBridge.changePrice(offer.context.storage, offer.record, offer.selected.id, {expectedSellWon:offer.expectedSellWon});
       if (priceOffer !== offer || !priceOfferCurrent(offer)) return;
       if (result?.ok !== true || result.priceWon !== offer.selected.priceWon || result.saved !== true) throw Error('PRICE_SAVE_NOT_CONFIRMED');
-      closePriceConfirmation(true);priceToast('저장 되었습니다.');refreshSavedPriceList(offer.context);
+      closePriceConfirmation(true);priceToast('저장 되었습니다.');refreshSavedList(offer.context);
     } catch (_) {
       if (priceOffer === offer && priceOfferCurrent(offer)) {
         // A failed server acknowledgement may leave only this price staged by
@@ -632,7 +633,7 @@
         if (applyJob !== job || job.version !== applyVersion || !directPriceCurrent(job)) return;
         if (result?.ok !== true || result.priceWon !== item.priceWon || result.saved !== true) throw Error('PRICE_SAVE_NOT_CONFIRMED');
         directPriceRetry = null;priceToast('저장 되었습니다.');
-        refreshSavedPriceList(context);
+        refreshSavedList(context);
       } catch (_) {
         if (applyJob === job && job.version === applyVersion && directPriceCurrent(job)) {
           directPriceRetry = job;priceToast('저장 확인이 필요합니다.');
