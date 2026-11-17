@@ -28,7 +28,7 @@ function page(id = ID, overrides = {}) {
   } } }) + ';</script>';
 }
 
-async function run({ results = [], searches, pages = {}, candidateIds, cacheIds, externalPages = {}, searchKey = ENV.TAVILY_API_KEY } = {}) {
+async function run({ results = [], searches, pages = {}, candidateIds, cacheIds, externalPages = {}, searchKey = ENV.TAVILY_API_KEY, payload = {}, catalogPages = {} } = {}) {
   const calls = [], pending = [], logs = [];
   const previousFetch = globalThis.fetch, previousInfo = console.info;
   let searchIndex = 0;
@@ -41,9 +41,10 @@ async function run({ results = [], searches, pages = {}, candidateIds, cacheIds,
     if (url.origin === CATALOG) {
       assert.equal(options.method, 'GET');
       assert.equal(options.redirect, 'manual');
-      return new Response(url.pathname === '/'
+      const body = catalogPages[url.href] ?? catalogPages[url.pathname] ?? (url.pathname === '/'
         ? '<form action="/catalog" method="get"><input name="car_number" aria-label="Номер автомобиля"><button>Поиск</button></form>'
-        : '<div class="no-results">Ничего не найдено</div>', { headers: { 'Content-Type': 'text/html' } });
+        : '<div class="no-results">Ничего не найдено</div>');
+      return body instanceof Response ? body.clone() : new Response(body, { headers: { 'Content-Type': 'text/html' } });
     }
     if (url.href === 'https://api.tavily.com/search') {
       const batch = searches ? searches[searchIndex++] : results;
@@ -72,7 +73,7 @@ async function run({ results = [], searches, pages = {}, candidateIds, cacheIds,
     const reply = await onRequest({
       request: new Request('https://snote.example/api/encar', {
         method: 'POST', headers: { Authorization: 'Bearer ' + TOKEN, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ plate: PLATE, ...(candidateIds ? { candidateIds } : {}) })
+        body: JSON.stringify({ plate: PLATE, ...(candidateIds ? { candidateIds } : {}), ...payload })
       }),
       env: {
         ...ENV,
@@ -251,6 +252,58 @@ test('a freshly fetched exact main-vehicle match retains an official link with s
   assert.equal(details(result).length, 1);
   assert.equal(result.calls.some(call => new URL(call.url).hostname === 'api.encar-api.com'), false);
   assert.doesNotMatch(result.logs.join(''), /12가3456|43000001|nnov|PRIVATE_INDEX|synthetic_access|synthetic_tavily/);
+});
+
+test('an explicit external source is verified before generic search without requiring a search key', async () => {
+  const sourceUrl = 'https://cheboksary.trust-encar.ru/auto/' + ID + '/';
+  const result = await run({ searchKey: '', payload: { sourceUrls: [sourceUrl, sourceUrl] },
+    pages: { [ID]: BLOCK() }, externalPages: { [sourceUrl]: externalPage() } });
+  assert.equal(result.reply.status, 200); assert.equal(result.body.status, 'found');
+  assert.equal(result.body.listings[0].id, ID); assert.equal(result.body.listings[0].externalVerification.sourceUrl, sourceUrl);
+  assert.equal(result.calls.filter(call => call.url === sourceUrl).length, 1);
+  assert.equal(details(result).length, 1); assert.equal(searchCalls(result).length, 0);
+  assert.equal(result.calls.some(call => new URL(call.url).origin === CATALOG), false);
+  const detailCall = details(result)[0], externalCall = result.calls.find(call => call.url === sourceUrl);
+  assert(result.calls.indexOf(detailCall) < result.calls.indexOf(externalCall));
+});
+
+test('an explicit catalogue source discovers its card ID without borrowing an ID from its URL', async () => {
+  const sourceUrl = 'https://nnov.trust-encar.ru/catalog/toyota/rav4/';
+  const result = await run({ payload: { sourceUrls: [sourceUrl] }, pages: { [ID]: BLOCK() },
+    externalPages: { [sourceUrl]: '<article class="car-card">' + PLATE + '<a href="/auto/' + ID + '/">Synthetic model</a></article>' } });
+  assert.equal(result.body.status, 'found'); assert.equal(result.body.listings[0].id, ID);
+  assert.equal(result.body.listings[0].externalVerification.sourceUrl, sourceUrl);
+  assert.equal(searchCalls(result).length, 0); assert.equal(details(result).length, 1);
+  const externalCall = result.calls.find(call => call.url === sourceUrl);
+  assert(result.calls.indexOf(externalCall) < result.calls.indexOf(details(result)[0]));
+});
+
+test('explicit official negatives also win over a supplied exact external source', async t => {
+  for (const [name, official] of [
+    ['plate mismatch', page(ID, { vehicleNo: '34나5678' })],
+    ['sold', page(ID, { advertisement: { status: 'SOLD' } })],
+    ['unknown', page(ID, { advertisement: { status: 'UNKNOWN' } })],
+    ['not found', new Response('Not found', { status: 404 })],
+    ['gone', new Response('Gone', { status: 410 })]
+  ]) await t.test(name, async () => {
+    const result = await run({ payload: { sourceUrls: [EXTERNAL] }, pages: { [ID]: official }, externalPages: { [EXTERNAL]: externalPage() } });
+    assert.deepEqual(result.body.listings, []); assert.equal(details(result).length, 1);
+    assert.equal(result.calls.some(call => call.url === EXTERNAL), false);
+    assert.equal(result.body.diagnostics.externalRequestCount, 0);
+  });
+});
+
+test('unsafe or excessive explicit source URLs are rejected before search, catalogue or detail fetches', async t => {
+  for (const sourceUrls of [null, EXTERNAL, [EXTERNAL, EXTERNAL, EXTERNAL, EXTERNAL], [123], ['/auto/' + ID + '/'],
+    ['//nnov.trust-encar.ru/auto/' + ID + '/'], ['http://nnov.trust-encar.ru/auto/' + ID + '/'],
+    ['https://nnov.trust-encar.ru.evil.example/auto/' + ID + '/'], ['https://user:pass@nnov.trust-encar.ru/auto/' + ID + '/'],
+    ['https://nnov.trust-encar.ru:443/auto/' + ID + '/'], [EXTERNAL + '?cmd=delete'], [EXTERNAL + '#x'],
+    ['https://nnov.trust-encar.ru/catalog/../auto/' + ID + '/'],
+    ['https://nnov.trust-encar.ru/%61uto/' + ID + '/'], ['https://nnov.trust-encar.ru/catalog/?delete=1']]) await t.test(JSON.stringify(sourceUrls), async () => {
+    const result = await run({ payload: { sourceUrls } });
+    assert.equal(result.reply.status, 400); assert.equal(result.body.diagnostics.code, 'INVALID_REQUEST');
+    assert.equal(result.calls.length, 2); assert.equal(details(result).length, 0); assert.equal(searchCalls(result).length, 0);
+  });
 });
 
 test('a snippet matching only a recommended vehicle never promotes the current external page ID', async () => {

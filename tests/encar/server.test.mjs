@@ -156,6 +156,147 @@ function catalogCard(plate = PLATE, id = ORIGINAL) {
   return '<article class="car-card"><span class="car-number">' + plate + '</span><a href="/auto/' + id + '/">Synthetic vehicle</a></article>';
 }
 
+const DISCOVERY = { make: '토요타', model: 'RAV4' };
+const MODEL_URL = CATALOG + '/catalog/toyota/rav4/';
+function modelDirectory(overrides = {}) {
+  return {
+    '/': '<a href="/catalog/">Каталог автомобилей</a>',
+    '/catalog/': '<a href="/catalog/toyota/">Toyota <span class="count">45</span></a>',
+    '/catalog/toyota/': '<a href="/catalog/toyota/rav4/">RAV4</a>',
+    '/catalog/toyota/rav4/': catalogCard(),
+    ...overrides
+  };
+}
+
+test('unsupported native form resolves through observed make and model anchors before broad search', async () => {
+  const result = await run({ catalogPages: modelDirectory(), pages: { [ORIGINAL]: html() } }, request({ plate: PLATE, discovery: DISCOVERY }));
+  assert.equal(result.reply.status, 200); assert.equal(result.body.status, 'found');
+  assert.equal(result.body.listings[0].id, ORIGINAL); assert.equal(searchCalls(result).length, 0);
+  assert.deepEqual(catalogCalls(result).map(call => call.url), [CATALOG + '/', CATALOG + '/catalog/', CATALOG + '/catalog/toyota/', MODEL_URL]);
+  assert.equal(catalogCalls(result).filter(call => call.url === CATALOG + '/catalog/').length, 1);
+  assert.deepEqual(detailCalls(result).map(call => call.url), [BASE + ORIGINAL]);
+});
+
+test('an exact observed model card can retain a link without a search key when official access is blocked', async () => {
+  const result = await run({ catalogPages: modelDirectory(), pages: { [ORIGINAL]: new Response('Forbidden', { status: 403 }) } },
+    request({ plate: PLATE, discovery: DISCOVERY }), { TAVILY_API_KEY: '' });
+  assert.equal(result.body.status, 'found'); assert.equal(result.body.listings[0].id, ORIGINAL);
+  assert.deepEqual(result.body.listings[0].externalVerification, {
+    source: 'trust-encar', sourceUrl: MODEL_URL, checkedAt: result.body.listings[0].externalVerification.checkedAt,
+    advertisedAt: null, modifiedAt: null
+  });
+  assert.ok(Number.isFinite(Date.parse(result.body.listings[0].externalVerification.checkedAt)));
+  assert.equal(result.body.listings[0].trustedUrl, null); assert.equal(result.body.listings[0].priceStatus, 'unavailable');
+  assert.equal(result.body.listings[0].priceWon, null); assert.equal(searchCalls(result).length, 0);
+  assert.equal(catalogCalls(result).filter(call => call.url === MODEL_URL).length, 1);
+  assert.equal(detailCalls(result).length, 1);
+  assert.equal(result.calls.some(call => new URL(call.url).hostname === 'encar-api.com'), false);
+});
+
+test('observed model pagination follows the actual next link and stops immediately on a matching card', async () => {
+  const next = MODEL_URL + '?page=2';
+  const result = await run({ catalogPages: modelDirectory({
+    '/catalog/toyota/rav4/': catalogCard('34나5678', SECOND) + '<a rel="next" href="?page=2">Следующая</a>',
+    [next]: catalogCard() + '<a rel="next" href="?page=3">Следующая</a>'
+  }), pages: { [ORIGINAL]: html() } }, request({ plate: PLATE, discovery: DISCOVERY }));
+  assert.equal(result.body.status, 'found'); assert.equal(searchCalls(result).length, 0);
+  assert.equal(catalogCalls(result).filter(call => call.url === next).length, 1);
+  assert.equal(catalogCalls(result).some(call => call.url === MODEL_URL + '?page=3'), false);
+  assert.deepEqual(detailCalls(result).map(call => call.url), [BASE + ORIGINAL]);
+});
+
+test('an unavailable make hint is only a discovery miss and does not reject a matching official vehicle', async () => {
+  const result = await run({ catalogPages: modelDirectory(), results: [{ url: BASE + ORIGINAL }], pages: { [ORIGINAL]: html() } },
+    request({ plate: PLATE, discovery: { make: '다른 제조사', model: '다른 모델' } }));
+  assert.equal(result.body.status, 'found'); assert.equal(result.body.listings[0].id, ORIGINAL);
+  assert.equal(searchCalls(result).length, 1); assert.equal(catalogCalls(result).length, 2);
+});
+
+test('actual candidate plate mismatches are reported instead of an unrelated unsupported form', async () => {
+  const ids = Array.from({ length: 6 }, (_, index) => String(43000010 + index));
+  const result = await run({ catalogPages: modelDirectory(), searches: [{ results: ids.map(id => ({ url: BASE + id })) }, { results: [] }],
+    pages: Object.fromEntries(ids.map(id => [id, html(base({ vehicleNo: '34나5678', vehicleId: Number(id), queryCarId: Number(id) }))])) },
+  request({ plate: PLATE, discovery: { make: '다른 제조사', model: '다른 모델' } }));
+  assert.equal(result.reply.status, 200); assert.equal(result.body.status, 'unverified');
+  assert.equal(result.body.diagnostics.code, 'PLATE_MISMATCH'); assert.equal(result.body.diagnostics.rejected.plateMismatch, 6);
+  assert.equal(result.body.diagnostics.searchConfigured, true); assert.equal(result.body.diagnostics.searchCount, 2);
+  assert.equal(result.body.diagnostics.modelCatalogRequestCount, 0); assert.equal(result.body.diagnostics.modelCatalogPageCount, 0);
+  assert.equal(result.body.diagnostics.externalRequestCount, 0); assert.equal(result.body.diagnostics.externalMatchCount, 0);
+  assert.equal(result.body.diagnostics.discoveryStage, 'known_candidates');
+  assert.equal(JSON.parse(searchCalls(result)[1].options.body).query, '"' + PLATE + '" site:trust-encar.ru "다른 모델"');
+});
+
+test('model catalogue scanning is bounded to three observed pages and never guesses a fourth request', async () => {
+  const result = await run({ catalogPages: modelDirectory({
+    '/catalog/toyota/rav4/': catalogCard('34나5678', SECOND) + '<a rel="next" href="?page=2">Next</a>',
+    [MODEL_URL + '?page=2']: catalogCard('34나5678', SECOND) + '<a rel="next" href="?page=3">Next</a>',
+    [MODEL_URL + '?page=3']: catalogCard('34나5678', SECOND) + '<a rel="next" href="?page=4">Next</a>'
+  }) }, request({ plate: PLATE, discovery: DISCOVERY }), { TAVILY_API_KEY: '' });
+  assert.equal(result.reply.status, 502); assert.equal(result.body.diagnostics.code, 'CATALOG_INCOMPLETE');
+  assert.equal(result.body.diagnostics.searchConfigured, false); assert.equal(result.body.diagnostics.modelCatalogPageCount, 3);
+  assert.equal(result.body.diagnostics.modelCatalogRequestCount, 4); assert.equal(result.body.diagnostics.modelCatalogRecordCount, 3);
+  assert.equal(result.body.diagnostics.modelCatalogExactMatchCount, 0); assert.equal(detailCalls(result).length, 0);
+  assert.equal(catalogCalls(result).some(call => call.url === MODEL_URL + '?page=4'), false);
+});
+
+test('official negative evidence overrides a model card even when its full plate matches', async t => {
+  for (const overrides of [{ vehicleNo: '34나5678' }, { advertisement: { status: 'SOLD' } }, { advertisement: { status: 'UNKNOWN' } }]) await t.test(JSON.stringify(overrides), async () => {
+    const result = await run({ catalogPages: modelDirectory(), pages: { [ORIGINAL]: html(base(overrides)) } },
+      request({ plate: PLATE, discovery: DISCOVERY }), { TAVILY_API_KEY: '' });
+    assert.deepEqual(result.body.listings, []); assert.equal(detailCalls(result).length, 1);
+    assert.equal(result.body.diagnostics.modelCatalogExactMatchCount, 1);
+    assert.equal(result.body.diagnostics.externalMatchCount, 1);
+    assert.equal(result.body.diagnostics.externalRequestCount, 0);
+    assert.ok(['PLATE_MISMATCH', 'AD_INACTIVE', 'AD_STATUS_UNKNOWN'].includes(result.body.diagnostics.code));
+  });
+});
+
+test('discovery hints require exactly two bounded plain text fields before any discovery request', async t => {
+  for (const value of [null, [], {}, { make: '토요타' }, { make: '토요타', model: 'RAV4', url: 'extra' },
+    { make: 1, model: 'RAV4' }, { make: '토요타', model: '' }, { make: '토요타', model: 'a'.repeat(81) },
+    { make: '토요타', model: 'RAV4\nNext' }, { make: '토요타', model: 'RAV4\u0085Next' },
+    { make: 'https://evil.example', model: 'RAV4' }, { make: '토요타', model: '../RAV4' }, { make: '토요타', model: '<RAV4>' }]) await t.test(JSON.stringify(value), async () => {
+    const result = await run({}, request({ plate: PLATE, discovery: value }));
+    assert.equal(result.reply.status, 400); assert.equal(result.body.diagnostics.code, 'INVALID_REQUEST');
+    assert.equal(result.calls.length, 2); assert.equal(searchCalls(result).length, 0); assert.equal(catalogCalls(result).length, 0);
+  });
+});
+
+test('NFKC and surrounding whitespace in safe discovery labels are normalized before observed anchor matching', async () => {
+  const result = await run({ catalogPages: modelDirectory(), pages: { [ORIGINAL]: html() } },
+    request({ plate: PLATE, discovery: { make: ' 토요타 ', model: 'ＲＡＶ４' } }));
+  assert.equal(result.body.status, 'found'); assert.equal(searchCalls(result).length, 0);
+});
+
+test('model directory navigation shares one eight-second budget and reserves the original search fallback', async t => {
+  t.mock.timers.enable({ apis: ['setTimeout', 'Date'], now: 100000 });
+  let entered; const ready = new Promise(resolve => { entered = resolve; });
+  let cancelled = false;
+  const body = new ReadableStream({ pull() { entered(); }, cancel() { cancelled = true; } }, { highWaterMark: 0 });
+  const pending = run({ observeCatalog: true, catalogPages: modelDirectory({ '/catalog/toyota/rav4/': () => new Response(body) }),
+    onCall(call) { if (call.url === CATALOG + '/catalog/toyota/') t.mock.timers.tick(5000); },
+    results: [{ url: BASE + ORIGINAL }], pages: { [ORIGINAL]: html() }
+  }, request({ plate: PLATE, discovery: DISCOVERY }));
+  await ready; assert.equal(Date.now(), 105000); t.mock.timers.tick(3001);
+  const result = await pending;
+  assert.equal(result.reply.status, 200); assert.equal(result.body.status, 'found');
+  assert.equal(cancelled, true); assert.equal(Date.now(), 108001); assert.equal(searchCalls(result).length, 1);
+  assert.equal(catalogCalls(result).length, 4); assert.equal(detailCalls(result).length, 1);
+});
+
+test('model navigation uses the operation deadline rather than opening an independent 35-second window', async t => {
+  t.mock.timers.enable({ apis: ['setTimeout', 'Date'], now: 100000 });
+  let entered; const ready = new Promise(resolve => { entered = resolve; });
+  const body = new ReadableStream({ pull() { entered(); } }, { highWaterMark: 0 });
+  const pending = run({ observeCatalog: true, catalogPages: modelDirectory({ '/catalog/toyota/rav4/': () => new Response(body) }),
+    onCall(call) { if (new URL(call.url).origin === env.SUPABASE_URL) t.mock.timers.tick(9000); }
+  }, request({ plate: PLATE, discovery: DISCOVERY }));
+  await ready; t.mock.timers.tick(17001);
+  const result = await pending;
+  assert.equal(result.body.status, 'error'); assert.equal(result.body.diagnostics.code, 'DEADLINE_EXCEEDED');
+  assert.equal(catalogCalls(result).length, 4); assert.equal(searchCalls(result).length, 0);
+});
+
 test('unauthenticated request performs no external requests', async () => {
   const result = await run({}, request({ plate: PLATE }, { Authorization: '' }));
   assert.equal(result.reply.status, 401);
@@ -496,13 +637,13 @@ test('plain numbers and lot labels from unknown hosts remain untrusted in every 
   assert.equal(detailCalls(result).length, 0);
 });
 
-test('empty exact search gets one unquoted plate-only basic search and stops when verified', async () => {
+test('empty exact search gets one quoted targeted basic search and stops when verified', async () => {
   const result = await run({ searches: [{ results: [] }, { results: [{ url: BASE + ORIGINAL }] }], pages: { [ORIGINAL]: html() } });
   assert.equal(result.body.status, 'found');
   const calls = searchCalls(result); assert.equal(calls.length, 2);
   const first = JSON.parse(calls[0].options.body), second = JSON.parse(calls[1].options.body);
   assert.equal(first.query, '"' + PLATE + '"'); assert.equal(first.exact_match, true);
-  assert.equal(second.query, PLATE); assert.equal(Object.hasOwn(second, 'exact_match'), false);
+  assert.equal(second.query, '"' + PLATE + '" site:trust-encar.ru'); assert.equal(second.exact_match, true);
   assert.equal(second.search_depth, 'basic'); assert.equal(second.max_results, 8);
   assert.equal(first.include_raw_content, false); assert.equal(Object.hasOwn(first, 'include_domains'), false);
   assert.equal(second.include_raw_content, true);
@@ -618,7 +759,8 @@ test('diagnostics and structured logs exclude all plate, listing IDs, URLs, cred
   assert.equal(result.body.status, 'error'); assert.equal(result.body.diagnostics.code, 'SEARCH_UNAVAILABLE');
   assert.equal(result.logs.length, 1);
   const log = JSON.parse(result.logs[0]);
-  const catalogKeys = ['catalogRequestCount', 'catalogPageCount', 'catalogRecordCount', 'catalogExactMatchCount', 'catalogFormCount', 'catalogPlateFieldCount', 'catalogLinkCount'];
+  const catalogKeys = ['catalogRequestCount', 'catalogPageCount', 'catalogRecordCount', 'catalogExactMatchCount', 'catalogFormCount', 'catalogPlateFieldCount', 'catalogLinkCount',
+    'searchConfigured', 'discoveryStage', 'modelCatalogRequestCount', 'modelCatalogPageCount', 'modelCatalogRecordCount', 'modelCatalogExactMatchCount', 'externalRequestCount', 'externalMatchCount'];
   assert.deepEqual(Object.keys(log).sort(), [...catalogKeys, 'candidateCount', 'checkedCount', 'code', 'durationMs', 'plateMatchedCount', 'rawResultCount', 'recognizedSourceCount', 'rejected', 'requestId', 'resultCount', 'resultPlateMatchCount', 'searchCount'].sort());
   assert.deepEqual(Object.keys(result.body.diagnostics).sort(), [...catalogKeys, 'candidateCount', 'checkedCount', 'code', 'plateMatchedCount', 'rawResultCount', 'recognizedSourceCount', 'rejected', 'requestId', 'resultCount', 'resultPlateMatchCount', 'searchCount'].sort());
   for (const value of [PLATE, ORIGINAL, BASE, TOKEN, env.TAVILY_API_KEY, env.SUPABASE_PUBLISHABLE_KEY, 'PRIVATE_UPSTREAM']) {

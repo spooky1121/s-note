@@ -128,6 +128,31 @@
     return value === expected ? expected : null;
   }
 
+  function externalHost(host) {
+    return ['encar.spb.ru', 'encar.msk.ru', 'encar.cbg.ru', 'trust-encar.ru'].includes(host) ||
+      /^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+trust-encar\.ru$/.test(host) && !host.split('.').some(label => label.startsWith('xn--'));
+  }
+
+  function manualExternalSource(value) {
+    if (typeof value !== 'string' || value.length > 2048 || /[\u0000-\u001f\u007f-\u009f\\]/.test(value)) return null;
+    const text = value.trim();
+    if (/[\u0000-\u0020\u007f-\u009f\\?#]/.test(text)) return null;
+    try {
+      const url = new URL(text), detail = /^\/auto\/([1-9][0-9]{0,11})\/?$/.exec(url.pathname);
+      if (!externalHost(url.hostname) || url.protocol !== 'https:' || url.username || url.password || url.port ||
+          url.href !== text || !detail) return null;
+      return {id: detail[1], sourceUrl: url.href};
+    } catch (_) { return null; }
+  }
+
+  function discoveryHints(car) {
+    const values = [car.make, car.group];
+    if (values.some(value => typeof value !== 'string' || value.length > 80 || /[\u0000-\u001f\u007f-\u009f\\/<>]/.test(value))) return null;
+    const [make, model] = values.map(value => value.normalize('NFKC').trim().replace(/\s+/gu, ' '));
+    if (!make || !model || make.length > 80 || model.length > 80 || /[\u0000-\u001f\u007f-\u009f\\/<>]/.test(make + model)) return null;
+    return {make, model};
+  }
+
   function externalVerification(value, id, verifiedAt) {
     if (!value || typeof value !== 'object' || Array.isArray(value) ||
         Object.keys(value).some(key => !['source', 'sourceUrl', 'checkedAt', 'advertisedAt', 'modifiedAt'].includes(key)) ||
@@ -136,10 +161,7 @@
     let source;
     try {
       source = new URL(value.sourceUrl);
-      const host = source.hostname;
-      const known = ['encar.spb.ru', 'encar.msk.ru', 'encar.cbg.ru', 'trust-encar.ru'].includes(host) ||
-        /^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+trust-encar\.ru$/.test(host) && !host.split('.').some(label => label.startsWith('xn--'));
-      if (!known || source.protocol !== 'https:' || source.username || source.password || source.port || source.hash ||
+      if (!externalHost(source.hostname) || source.protocol !== 'https:' || source.username || source.password || source.port || source.hash ||
           source.href !== value.sourceUrl || source.pathname.includes('%')) return null;
       const detail = /^\/auto\/([1-9][0-9]{0,11})\/?$/.exec(source.pathname);
       if (detail ? detail[1] !== String(id) || !!source.search : !/^\/catalog(?:\/[a-z0-9-]+)*\/?$/.test(source.pathname)) return null;
@@ -256,6 +278,8 @@
 
   function candidateFromUrl(value) {
     if (typeof value !== 'string' || value.length > 2048 || /[\u0000-\u001f\u007f]/.test(value)) return null;
+    const external = manualExternalSource(value);
+    if (external) return external.id;
     try {
       const url = new URL(value.trim());
       if (url.protocol !== 'https:' || url.username || url.password || url.port) return null;
@@ -291,9 +315,11 @@
     const code = typeof data.code === 'string' && SAFE_CODES.has(data.code) ? data.code : fallbackCode;
     const safe = { service: 'snote-encar', code, httpStatus: Number.isInteger(httpStatus) && httpStatus >= 100 && httpStatus <= 599 ? httpStatus : null };
     if (typeof data.requestId === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(data.requestId)) safe.requestId = data.requestId;
-    for (const key of ['searchCount', 'resultCount', 'candidateCount', 'checkedCount', 'plateMatchedCount', 'resultPlateMatchCount', 'rawResultCount', 'recognizedSourceCount', 'catalogRequestCount', 'catalogPageCount', 'catalogRecordCount', 'catalogExactMatchCount', 'catalogFormCount', 'catalogPlateFieldCount', 'catalogLinkCount']) {
+    for (const key of ['searchCount', 'resultCount', 'candidateCount', 'checkedCount', 'plateMatchedCount', 'resultPlateMatchCount', 'rawResultCount', 'recognizedSourceCount', 'catalogRequestCount', 'catalogPageCount', 'catalogRecordCount', 'catalogExactMatchCount', 'catalogFormCount', 'catalogPlateFieldCount', 'catalogLinkCount', 'modelCatalogRequestCount', 'modelCatalogPageCount', 'modelCatalogRecordCount', 'modelCatalogExactMatchCount', 'externalRequestCount', 'externalMatchCount']) {
       if (Number.isInteger(data[key]) && data[key] >= 0 && data[key] <= 1000) safe[key] = data[key];
     }
+    if (typeof data.searchConfigured === 'boolean') safe.searchConfigured = data.searchConfigured;
+    if (['input', 'saved_candidates', 'explicit_source', 'catalog_form', 'model_catalog', 'search_exact', 'search_targeted', 'known_candidates'].includes(data.discoveryStage)) safe.discoveryStage = data.discoveryStage;
     const rejected = {};
     if (data.rejected && typeof data.rejected === 'object' && !Array.isArray(data.rejected)) {
       for (const key of ['plateMismatch', 'notAdvertising', 'notFound']) {
@@ -690,7 +716,7 @@
     refreshPriceControls();
   }
 
-  async function lookup(manualIds = null, selectedLink = null) {
+  async function lookup(manualIds = null, selectedLink = null, options = {}) {
     syncContext();
     if (applyJob || priceOffer?.saving || priceWritePending() || document.getElementById('vehicle-overlay')?.getAttribute('aria-busy') === 'true') return;
     const context = currentContext();
@@ -715,11 +741,15 @@
       const token = await abortable(window.zc86Cloud.getAccessToken(), job.controller.signal);
       if (!stillCurrent(job)) { closeWaitingTab(job); return; }
       if (!token) throw lookupError('로그인 세션이 만료되었습니다. 다시 로그인해 주세요.', 'AUTH_REQUIRED');
+      const discovery = discoveryHints(context.car);
+      const sourceUrls = Array.isArray(options.sourceUrls) ? options.sourceUrls.map(manualExternalSource).filter(Boolean)
+        .filter(source => manualIds?.includes(source.id)).map(source => source.sourceUrl).slice(0, 3) : [];
       const response = await abortable(fetch(ENDPOINT, {
         method: 'POST',
         headers: {'Content-Type': 'application/json', Accept: 'application/json', Authorization: 'Bearer ' + token},
         body: JSON.stringify({plate: context.plate, candidateIds: manualIds === null ?
-          [...new Set([...(savedRecord(context.car.encarLinks, context.plate)?.listings.map(item => item.id) || []), ...readCandidates(context.plate)])].slice(0, 12) : manualIds}),
+          [...new Set([...(savedRecord(context.car.encarLinks, context.plate)?.listings.map(item => item.id) || []), ...readCandidates(context.plate)])].slice(0, 12) : manualIds,
+          ...(discovery ? {discovery} : {}), ...(sourceUrls.length ? {sourceUrls} : {})}),
         signal: job.controller.signal,
         cache: 'no-store',
         credentials: 'same-origin'
@@ -853,12 +883,13 @@
     if (manual.hidden || active || applyJob) return;
     const id = candidateFromUrl(manualInput.value);
     if (!id) {
-      manualError.textContent = '엔카 광고의 HTTPS 주소를 확인해 주세요.';
+      manualError.textContent = '엔카·외부 광고의 HTTPS 주소를 확인해 주세요.';
       manualInput.focus();
       return;
     }
+    const source = manualExternalSource(manualInput.value);
     manualError.textContent = '';
-    lookup([id]);
+    lookup([id], null, source ? {sourceUrls: [source.sourceUrl]} : {});
   }
 
   function lookupCurrent(carId, listingId) {
@@ -927,8 +958,8 @@
     manual = document.createElement('details'); manual.className = 'snote-encar-manual'; manual.hidden = true;
     const summary = document.createElement('summary'); summary.textContent = '광고 주소로 확인';
     const form = document.createElement('form'); form.noValidate = true; form.addEventListener('submit', verifyManual);
-    const label = document.createElement('label'); label.htmlFor = 'snote-encar-manual-url'; label.textContent = '엔카 광고 주소';
-    manualInput = document.createElement('input'); manualInput.id = 'snote-encar-manual-url'; manualInput.type = 'url'; manualInput.inputMode = 'url'; manualInput.maxLength = 2048; manualInput.autocomplete = 'off'; manualInput.spellcheck = false; manualInput.placeholder = 'https://fem.encar.com/cars/detail/…';
+    const label = document.createElement('label'); label.htmlFor = 'snote-encar-manual-url'; label.textContent = '엔카·외부 광고 주소';
+    manualInput = document.createElement('input'); manualInput.id = 'snote-encar-manual-url'; manualInput.type = 'url'; manualInput.inputMode = 'url'; manualInput.maxLength = 2048; manualInput.autocomplete = 'off'; manualInput.spellcheck = false; manualInput.placeholder = '엔카·외부 광고 주소';
     manualButton = document.createElement('button'); manualButton.type = 'submit'; manualButton.textContent = '주소 확인';
     manualError = document.createElement('span'); manualError.className = 'snote-encar-manual-error'; manualError.setAttribute('role', 'status');
     form.append(label, manualInput, manualButton, manualError); manual.append(summary, form);

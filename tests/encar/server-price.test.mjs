@@ -38,7 +38,7 @@ async function run(config={}) {
    assert.deepEqual(options.headers,{Accept:'text/html'});assert.equal(options.redirect,'manual');
    return new Response(config.externalPages[url.href],{headers:{'Content-Type':'text/html'}});
   }
-  if(url.origin==='https://encar.spb.ru')return new Response('<div class="no-results">Ничего не найдено</div>',{headers:{'Content-Type':'text/html'}});
+  if(url.origin==='https://encar.spb.ru')return new Response(config.catalogPages?.[url.href]??config.catalogPages?.[url.pathname]??'<div class="no-results">Ничего не найдено</div>',{headers:{'Content-Type':'text/html'}});
   throw Error('Unexpected synthetic URL: '+url.origin);
  };
  try{
@@ -49,6 +49,28 @@ async function run(config={}) {
 }
 const providerCalls=r=>r.calls.filter(c=>c.url.startsWith(PROVIDER));
 function unavailable(row){assert.deepEqual([row.priceWon,row.priceCheckedAt,row.priceSource,row.priceStatus],[null,null,null,'unavailable']);}
+
+test('a model-directory discovery applies the same official identity and status gates before pricing',async t=>{
+ const model='https://encar.spb.ru/catalog/toyota/rav4/';
+ const catalogPages={
+  '/':'<a href="/catalog/">Каталог</a>',
+  '/catalog/':'<a href="/catalog/toyota/">Toyota</a>',
+  '/catalog/toyota/':'<a href="/catalog/toyota/rav4/">RAV4</a>',
+  [model]:'<article class="car-card">'+PLATE+'<a href="/auto/'+ID+'/">Synthetic model 5,490만원</a></article>'
+ };
+ for(const [name,official,expected]of[
+  ['blocked',new Response('Forbidden',{status:403}),0],
+  ['wrong plate',page(ID,{vehicleNo:'34나5678'}),0],
+  ['sold',page(ID,{advertisement:{status:'SOLD'}}),0],
+  ['live exact official vehicle',page(),1]
+ ])await t.test(name,async()=>{
+  const r=await run({payload:{plate:PLATE,discovery:{make:'토요타',model:'RAV4'}},catalogPages,pages:{[ID]:official}});
+  assert.equal(providerCalls(r).length,expected);
+  if(expected){assert.equal(r.body.listings[0].priceWon,28200000);assert.equal(r.body.listings[0].priceStatus,'verified');}
+  else if(name==='blocked'){assert.equal(r.body.status,'found');assert.equal(r.body.listings[0].externalVerification.sourceUrl,model);unavailable(r.body.listings[0]);}
+  else assert.deepEqual(r.body.listings,[]);
+ });
+});
 
 test('canonical, live, same-plate advertisement receives exact provider KRW price and fetch time only',async()=>{
  const start=Date.now(),r=await run({row:{Id:ID,Price:2820,VehicleNo:PLATE,Status:'ADVERTISE',Seller:{name:'PRIVATE_SELLER',phone:'PRIVATE_PHONE'},previousPrice:99,priceEur:1}}),item=r.body.listings[0];

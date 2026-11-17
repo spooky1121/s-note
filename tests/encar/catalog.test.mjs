@@ -3,7 +3,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import './html-rewriter-setup.mjs';
-import { CATALOG_ORIGIN, CatalogError, catalogURL, configuredCatalogSearch, discoverCatalogSearch, discoverCatalogEntry, parseCatalogPage, externalSourceURL, parseExternalAdvertisement } from '../../functions/_shared/encar-catalog.mjs';
+import { CATALOG_ORIGIN, CatalogError, catalogURL, configuredCatalogSearch, discoverCatalogSearch, discoverCatalogEntry, discoverVehicleCatalogLink, getObservedCatalogNext, parseCatalogPage, externalSourceURL, parseExternalAdvertisement } from '../../functions/_shared/encar-catalog.mjs';
 
 const PLATE = '999허0000', OTHER = '888호0000', ID = '81000001';
 const PAGE = CATALOG_ORIGIN + '/catalog?car_number=0000';
@@ -399,5 +399,108 @@ test('external parser never fetches, executes remote scripts or exposes seller m
     const html = externalDetail({ before: '<p>Seller PRIVATE_SELLER · PRIVATE_PHONE</p><script src="https://evil.example/run.js"></script>' });
     const value = await parseExternalAdvertisement(html, EXTERNAL_DETAIL, PLATE);
     assert.equal(value.matches[0].id, ID); assert.equal(JSON.stringify(value).includes('PRIVATE_'), false);
+  } finally { globalThis.fetch = previous; }
+});
+
+test('observed make and model catalogue anchors work without a registration-number form', async () => {
+  const directory = CATALOG_ORIGIN + '/catalog/';
+  const makeHTML = '<!doctype html><html><head><title>Автомобили из Кореи — Каталог</title></head><body><form method="post" action="/private-submit"><input name="brand"><a href="/catalog/hyundai/">Hyundai <span class="count">1000</span></a><a href="/catalog/toyota/">Toyota <span class="count">809</span></a></form></body></html>';
+  const make = await discoverVehicleCatalogLink(makeHTML, directory, { make: '토요타', model: 'RAV4' }, 'make');
+  assert.equal(make.href, CATALOG_ORIGIN + '/catalog/toyota/');
+  const modelHTML = '<ul><li><a href="/catalog/toyota/camry/">Camry 20</a></li><li><a href="/catalog/toyota/rav4/"><span>RAV4</span><span class="badge">147</span></a></li></ul>';
+  const model = await discoverVehicleCatalogLink(modelHTML, make, { make: '토요타', model: 'RAV4' }, 'model');
+  assert.equal(model.href, CATALOG_ORIGIN + '/catalog/toyota/rav4/');
+  const vehicle = await parseExternalAdvertisement(card(), model, PLATE);
+  assert.equal(vehicle.matches[0].id, ID);
+});
+
+test('make aliases change matching names but never construct a missing route', async () => {
+  const directory = CATALOG_ORIGIN + '/catalog/';
+  for (const [make, slug, label] of [
+    ['도요타', 'toyota', 'Toyota'], ['테슬라', 'tesla', 'Tesla'], ['현대', 'hyundai', 'Hyundai'],
+    ['기아', 'kia', 'Kia'], ['벤츠', 'mercedes-benz', 'Mercedes-Benz'], ['르노삼성', 'renault', 'Renault'],
+    ['KG모빌리티', 'ssangyong', 'Ssangyong'], ['쉐보레', 'chevrolet', 'Chevrolet (GM Daewoo)']
+  ]) {
+    const result = await discoverVehicleCatalogLink(`<a href="/catalog/${slug}/">${label}</a>`, directory, { make }, 'make');
+    assert.equal(result.href, CATALOG_ORIGIN + '/catalog/' + slug + '/');
+    assert.equal(await discoverVehicleCatalogLink('<p>There is no matching anchor.</p>', directory, { make }, 'make'), null);
+  }
+});
+
+test('observed catalogue labels tolerate count badges and preserve digits belonging to the model', async () => {
+  const make = CATALOG_ORIGIN + '/catalog/toyota/';
+  for (const label of ['RAV4 <span class="count">147</span>', '<strong>RAV</strong><span>4</span> 147', 'RAV4']) {
+    const url = await discoverVehicleCatalogLink(`<a href="/catalog/toyota/rav4/">${label}</a>`, make, { model: 'RAV4' }, 'model');
+    assert.equal(url.href, make + 'rav4/');
+  }
+  assert.equal(await discoverVehicleCatalogLink('<a href="/catalog/toyota/rav4-prime/">RAV4 Prime 23</a>', make, { model: 'RAV4' }, 'model'), null);
+  assert.equal(await discoverVehicleCatalogLink('<a href="/catalog/toyota/rav4/">RAV4 147</a>', make, { model: 'RAV' }, 'model'), null);
+  assert.equal(await discoverVehicleCatalogLink('<a href="/catalog/toyota/rav4/">RAV <span>4</span></a>', make, { model: 'RAV' }, 'model'), null);
+  assert.equal((await discoverVehicleCatalogLink('<a href="/catalog/tesla/model-y/">Model Y <span class="badge">200</span></a>', CATALOG_ORIGIN + '/catalog/tesla/', { model: '모델 Y' }, 'model')).pathname, '/catalog/tesla/model-y/');
+});
+
+test('navigation follows the actual published slug rather than a translated or generated URL', async () => {
+  const make = await discoverVehicleCatalogLink('<a href="/catalog/published-make-name/">Toyota 20</a>', CATALOG_ORIGIN + '/catalog/', { make: '토요타' }, 'make');
+  assert.equal(make.pathname, '/catalog/published-make-name/');
+  const model = await discoverVehicleCatalogLink('<a href="/catalog/published-make-name/published-model-name/">RAV4 <span class="count">5</span></a>', make, { model: 'RAV4' }, 'model');
+  assert.equal(model.pathname, '/catalog/published-make-name/published-model-name/');
+  assert.equal((await discoverVehicleCatalogLink('<a href="/catalog/tesla/published-model/">Model&nbsp;Y</a>', CATALOG_ORIGIN + '/catalog/tesla/', { model: '모델 Y' }, 'model')).pathname, '/catalog/tesla/published-model/');
+});
+
+test('catalogue make/model discovery rejects absent, malformed or ambiguous hints and links', async () => {
+  const directory = CATALOG_ORIGIN + '/catalog/';
+  for (const hints of [null, [], {}, { make: '' }, { make: ' ' }, { make: 'Toyota\n' }, { make: 'https://toyota' }, { make: 'x'.repeat(121) }]) {
+    assert.equal(await discoverVehicleCatalogLink('<a href="/catalog/toyota/">Toyota</a>', directory, hints, 'make'), null);
+  }
+  const ambiguous = '<a href="/catalog/toyota/">Toyota</a><a href="/catalog/alternate/">Toyota</a>';
+  assert.equal(await discoverVehicleCatalogLink(ambiguous, directory, { make: '토요타' }, 'make'), null);
+  assert.equal(await discoverVehicleCatalogLink('<a href="/catalog/toyota/">Toyota</a><a href="/catalog/toyota">Toyota</a>', directory, { make: '토요타' }, 'make').then(url => url.pathname), '/catalog/toyota/');
+  assert.equal(await discoverVehicleCatalogLink('<a href="/catalog/toyota/rav4/">RAV4</a>', directory, { model: 'RAV4' }, 'model'), null);
+  assert.equal(await discoverVehicleCatalogLink('<a href="/catalog/toyota/">Toyota</a>', directory, { make: 'Toyota' }, 'unknown'), null);
+});
+
+test('navigation cannot escape its observed make or borrow deeper generation/trim routes', async () => {
+  const make = CATALOG_ORIGIN + '/catalog/toyota/';
+  for (const href of ['/catalog/honda/rav4/', '/catalog/toyota/rav4/generation/', '/catalog/toyota/', '/catalog/toyota/rav4/?sort=price']) {
+    assert.equal(await discoverVehicleCatalogLink(`<a href="${href}">RAV4</a>`, make, { model: 'RAV4' }, 'model'), null);
+  }
+  assert.equal(await discoverVehicleCatalogLink('<a href="/catalog/toyota/rav4/">Toyota</a>', CATALOG_ORIGIN + '/catalog/', { make: 'Toyota' }, 'make'), null);
+});
+
+test('navigation ignores hidden, scripted and unsafe catalogue destinations', async () => {
+  const directory = CATALOG_ORIGIN + '/catalog/';
+  for (const html of [
+    '<a href="/catalog/toyota/" hidden>Toyota</a>', '<div aria-hidden="true"><a href="/catalog/toyota/">Toyota</a></div>',
+    '<script>"<a href=\"/catalog/toyota/\">Toyota</a>"</script>', '<a href="javascript:location=\'/catalog/toyota/\'">Toyota</a>',
+    '<a href="https://evil.example/catalog/toyota/">Toyota</a>', '<a href="https://encar.spb.ru.evil.example/catalog/toyota/">Toyota</a>',
+    '<a href="https://user:password@encar.spb.ru/catalog/toyota/">Toyota</a>', '<a href="https://encar.spb.ru:443/catalog/toyota/">Toyota</a>',
+    '<a href="/catalog/%74oyota/">Toyota</a>', '<a href="/catalog/../catalog/toyota/">Toyota</a>', '<a href="/catalog/delete/">Toyota</a>'
+  ]) assert.equal(await discoverVehicleCatalogLink(html, directory, { make: 'Toyota' }, 'make'), null);
+  assert.equal((await discoverVehicleCatalogLink('<footer><a href="/catalog/toyota/">Toyota</a></footer>', directory, { make: 'Toyota' }, 'make')).pathname, '/catalog/toyota/');
+});
+
+test('observed next-page navigation retains the same model and all existing filters', async () => {
+  const current = CATALOG_ORIGIN + '/catalog/toyota/rav4/?page=2&sort=new&fuel=hybrid';
+  const next = await getObservedCatalogNext('<nav class="pagination"><a rel="next" href="?page=3&amp;sort=new&amp;fuel=hybrid">Следующая</a></nav>', current);
+  assert.equal(next.href, CATALOG_ORIGIN + '/catalog/toyota/rav4/?page=3&sort=new&fuel=hybrid');
+  assert.equal(await getObservedCatalogNext('<a href="?page=3">3</a>', current), null);
+  assert.equal(await getObservedCatalogNext('<div>No more pages.</div>', current), null);
+  assert.equal((await getObservedCatalogNext('<form method="post" action="/submit"><a rel="next" href="?page=3&amp;sort=new&amp;fuel=hybrid">Next</a></form>', current)).href, next.href);
+});
+
+test('next-page navigation rejects loops, conflicting next links and changed model/filter scopes', async () => {
+  const current = CATALOG_ORIGIN + '/catalog/toyota/rav4/?page=2&sort=new';
+  for (const href of ['?page=2&sort=new', '?page=3&sort=price', '?page=3', '/catalog/honda/?page=3&sort=new', 'https://evil.example/catalog/toyota/rav4/?page=3&sort=new', 'https://encar.spb.ru:443/catalog/toyota/rav4/?page=3&sort=new']) {
+    await rejects(() => getObservedCatalogNext(`<a rel="next" href="${href.replaceAll('&', '&amp;')}">Next</a>`, current));
+  }
+  await rejects(() => getObservedCatalogNext('<a rel="next" href="?page=3&amp;sort=new">Next</a><a rel="next" href="?page=4&amp;sort=new">Next</a>', current));
+});
+
+test('catalogue navigation performs no HTTP, submits no form and does not execute scripts', async () => {
+  const previous = globalThis.fetch; globalThis.fetch = () => { throw new Error('No HTTP in navigation parser'); };
+  try {
+    const html = '<form action="https://evil.example/delete" method="post"><a href="/catalog/toyota/">Toyota 4</a><button>Submit</button></form><script>throw Error("do not execute")</script>';
+    assert.equal((await discoverVehicleCatalogLink(html, CATALOG_ORIGIN + '/catalog/', { make: 'Toyota' }, 'make')).pathname, '/catalog/toyota/');
+    assert.equal((await getObservedCatalogNext('<a rel="next" href="?page=2">Next</a>', CATALOG_ORIGIN + '/catalog/toyota/rav4/')).search, '?page=2');
   } finally { globalThis.fetch = previous; }
 });
