@@ -25,7 +25,7 @@ async function run(t,options={}){
    if(url.pathname==='/auth/v1/user')return options.authResponse??json({id:'11111111-1111-4111-8111-111111111111'},options.authStatus??200);
    if(url.pathname==='/rest/v1/zc_members')return options.memberResponse??json(options.members??[{user_id:'11111111-1111-4111-8111-111111111111'}]);
   }
-  if(url.origin==='https://fem.encar.com')return options.detailResponse??new Response(page(options.vehicle,options.visible||''),{headers:{'Content-Type':'text/html'}});
+  if(url.origin==='https://fem.encar.com')return options.detail?.(url,init)??options.detailResponse??new Response(page(options.vehicle,options.visible||''),{headers:{'Content-Type':'text/html'}});
   if(url.origin==='https://encar.spb.ru')return new Response('<div class="no-results">Ничего не найдено</div>',{headers:{'Content-Type':'text/html'}});
   if(url.origin==='https://nnov.trust-encar.ru')return options.externalResponse?.clone()??new Response('Not found',{status:404});
   if(url.origin==='https://api.cloudflare.com')return options.capture?.(url,init)??options.captureResponse??new Response(png(),{headers:{'Content-Type':'image/png'}});
@@ -80,10 +80,10 @@ test('verified current canonical vehicle is rendered once and OCR produces a rev
  assert.equal(captures(r).length,1);assert.equal(visions(r).length,1);
  assert.doesNotMatch(JSON.stringify(r.body)+r.logs.join(''),/PRIVATE_|synthetic_private|MUST_NOT_USE_|base64|fullTextAnnotation/);
  const capture=captures(r)[0];assert.equal(capture.url,'https://api.cloudflare.com/client/v4/accounts/'+ACCOUNT+'/browser-rendering/screenshot');
- assert.deepEqual(capture.init.headers,{Authorization:'Bearer '+BROWSER,'Content-Type':'application/json',Accept:'image/png'});
- const payload=JSON.parse(capture.init.body);assert.equal(payload.url,'https://fem.encar.com/cars/detail/'+ID);assert.deepEqual(Object.keys(payload).sort(),['gotoOptions','screenshotOptions','url','viewport']);assert.equal(payload.gotoOptions.waitUntil,'networkidle2');assert(payload.gotoOptions.timeout<=15000);
+ assert.deepEqual(capture.init.headers,{Authorization:'Bearer '+BROWSER,'Content-Type':'application/json',Accept:'image/jpeg, image/png'});
+ const payload=JSON.parse(capture.init.body);assert.equal(payload.url,'https://fem.encar.com/cars/detail/'+ID);assert.deepEqual(Object.keys(payload).sort(),['gotoOptions','screenshotOptions','url','viewport']);assert.deepEqual(payload.screenshotOptions,{type:'jpeg',quality:98,fullPage:false,captureBeyondViewport:false});assert.equal(payload.gotoOptions.waitUntil,'networkidle2');assert(payload.gotoOptions.timeout<=15000);
  assert.deepEqual(payload.viewport,{width:1440,height:1200,deviceScaleFactor:1});assert.equal(payload.screenshotOptions.fullPage,false);
- const vision=visions(r)[0];assert.equal(vision.url,'https://vision.googleapis.com/v1/images:annotate');assert.equal(vision.init.headers['x-goog-api-key'],VISION);assert.equal(vision.init.headers.Authorization,undefined);
+ const vision=visions(r)[0];const visionURL=new URL(vision.url);assert.equal(visionURL.origin+visionURL.pathname,'https://vision.googleapis.com/v1/images:annotate');assert.equal(visionURL.searchParams.get('fields'),'responses(error,fullTextAnnotation(text),textAnnotations(description))');assert.deepEqual([...visionURL.searchParams.keys()],['fields']);assert.equal(vision.init.headers['x-goog-api-key'],VISION);assert.equal(vision.init.headers.Authorization,undefined);
  const body=JSON.parse(vision.init.body);assert.equal(body.requests.length,1);assert.equal(body.requests[0].features[0].type,'DOCUMENT_TEXT_DETECTION');assert.equal(Buffer.from(body.requests[0].image.content,'base64').byteLength,png().byteLength);
  for(const c of[capture,vision]){assert.equal(c.init.redirect,'manual');assert.equal(c.init.credentials,'omit');assert.equal(c.init.cache,'no-store');assert.equal(c.init.referrerPolicy,'no-referrer');assert(c.init.signal instanceof AbortSignal);}
  assert(r.calls.every(c=>!c.url.startsWith('https://api.tavily.com')&&!c.url.startsWith('https://api.encar-api.com')));
@@ -200,4 +200,121 @@ test('the overall deadline stays bounded when little time remains for recognitio
 });
 test('cancelling before the request never reaches a paid endpoint',async t=>{
  const controller=new AbortController();controller.abort();const r=await run(t,{request:request({plate:PLATE,id:ID},{signal:controller.signal})});assert.equal(r.body.code,'REQUEST_ABORTED');noPaid(r);
+});
+
+function jpeg(width=1440,height=1200,marker=0xc0){return new Uint8Array([255,216,255,marker,0,17,8,height>>8,height&255,width>>8,width&255,3,1,17,0,2,17,0,3,17,0,255,217]);}
+async function snapshot(response){return {status:response.status,headers:Object.fromEntries(response.headers),body:await response.json()};}
+
+test('JPEG screenshot request retains bounded PNG compatibility and checks baseline/progressive SOF dimensions',async t=>{
+ for(const image of[jpeg(),jpeg(320,200,0xc2),png()]){const r=await run(t,{captureResponse:new Response(image,{headers:{'Content-Type':image[0]===255?'image/jpeg':'image/png'}})});assert.equal(r.status,200);assert.equal(visions(r).length,1);}
+ const bad=jpeg();bad[5]=0;
+ for(const image of[jpeg(319,1200),jpeg(1440,199),jpeg(2880,3000),jpeg(3000,1200),jpeg(1440,1200,0xc1),jpeg().subarray(0,21),bad,new Uint8Array([255,216,255,218,0,2,255,217])]){const r=await run(t,{captureResponse:new Response(image,{headers:{'Content-Type':'image/jpeg'}})});assert.equal(r.body.code,'CAPTURE_INVALID');assert.equal(visions(r).length,0);}
+ const mismatch=await run(t,{captureResponse:new Response(png(),{headers:{'Content-Type':'image/jpeg'}})});assert.equal(mismatch.body.code,'CAPTURE_INVALID');
+});
+
+test('native toBase64 fast path and legacy fallback send exactly the original bounded image bytes',async t=>{
+ const original=Object.getOwnPropertyDescriptor(Uint8Array.prototype,'toBase64');let nativeCalls=0;
+ try{Object.defineProperty(Uint8Array.prototype,'toBase64',{configurable:true,value:function(){nativeCalls++;return Buffer.from(this).toString('base64');}});const r=await run(t);assert.equal(r.status,200);assert.equal(nativeCalls,1);const payload=JSON.parse(visions(r)[0].init.body);assert.deepEqual(Buffer.from(payload.requests[0].image.content,'base64'),Buffer.from(png()));}
+ finally{if(original)Object.defineProperty(Uint8Array.prototype,'toBase64',original);else delete Uint8Array.prototype.toBase64;}
+ const r=await run(t);assert.equal(r.status,200);assert.deepEqual(Buffer.from(JSON.parse(visions(r)[0].init.body).requests[0].image.content,'base64'),Buffer.from(png()));
+});
+
+test('settled OCR cache rechecks Auth/member/current advertisement on every request and preserves source price time',async t=>{
+ t.mock.timers.enable({apis:['Date'],now:100000});let first,second;
+ const r=await run(t,{handler:async context=>{first=await snapshot(await onRequest(context));t.mock.timers.setTime(105000);second=await snapshot(await onRequest({...context,request:request()}));return new Response(JSON.stringify(second.body),{status:second.status});}});
+ assert.equal(first.status,200);assert.equal(second.status,200);assert.equal(first.body.diagnostics.priceCacheHit,false);assert.equal(second.body.diagnostics.priceCacheHit,true);
+ assert.equal(first.body.listing.priceCheckedAt,second.body.listing.priceCheckedAt);assert.notEqual(first.body.verifiedAt,second.body.verifiedAt);
+ assert.equal(captures(r).length,1);assert.equal(visions(r).length,1);assert.equal(r.calls.filter(call=>call.url.includes('/auth/v1/user')).length,2);assert.equal(r.calls.filter(call=>call.url.includes('/rest/v1/zc_members')).length,2);assert.equal(r.calls.filter(call=>call.url.startsWith('https://fem.encar.com/')).length,2);
+ assert.doesNotMatch(JSON.stringify([first,second])+r.logs.join(''),/PRIVATE_|synthetic_private|base64|fullTextAnnotation/);
+});
+
+test('OCR cache expires at ten seconds and failed OCR is never cached',async t=>{
+ t.mock.timers.enable({apis:['Date'],now:100000});let first,expired;
+ const r=await run(t,{handler:async context=>{first=await snapshot(await onRequest(context));t.mock.timers.setTime(110000);expired=await snapshot(await onRequest({...context,request:request()}));return new Response(JSON.stringify(expired.body));}});
+ assert.equal(captures(r).length,2);assert.equal(visions(r).length,2);assert.equal(expired.body.diagnostics.priceCacheHit,false);assert.notEqual(first.body.listing.priceCheckedAt,expired.body.listing.priceCheckedAt);
+ let attempt=0,failed;
+ const retry=await run(t,{vision:()=>json({responses:[{fullTextAnnotation:{text:PLATE+(++attempt===1?'\n5,490만원\n4,500만원':'\n5,490만원')}}]}),handler:async context=>{failed=await snapshot(await onRequest(context));return onRequest({...context,request:request()});}});
+ assert.equal(failed.body.code,'PRICE_AMBIGUOUS');assert.equal(retry.status,200);assert.equal(captures(retry).length,2);assert.equal(visions(retry).length,2);
+});
+
+test('warm OCR cache cannot bypass missing configuration, revoked Auth or a changed plate/advertisement',async t=>{
+ for(const mode of['config','auth','sold','plate'])await t.test(mode,async()=>{let warmed=false,second;const options={detail:()=>new Response(page(warmed&&mode==='sold'?{advertisement:{status:'SOLD'}}:warmed&&mode==='plate'?{vehicleNo:'34나5678'}:{})),handler:async context=>{assert.equal((await snapshot(await onRequest(context))).status,200);warmed=true;if(mode==='auth')options.authStatus=401;second=await snapshot(await onRequest({...context,request:request(),env:mode==='config'?{...context.env,CLOUDFLARE_BROWSER_TOKEN:''}:context.env}));return new Response(JSON.stringify(second.body),{status:second.status});}};const r=await run(t,options);assert.notEqual(r.status,200);if(mode==='config')assert.equal(r.body.code,'SETUP_REQUIRED');if(mode==='auth')assert.equal(r.body.code,'AUTH_REQUIRED');assert.equal(captures(r).length,1);assert.equal(visions(r).length,1);assert.equal(r.body.listing,undefined);});
+});
+
+test('429 capture Retry-After is preserved beyond 30 seconds and cooldown still revalidates each request',async t=>{
+ t.mock.timers.enable({apis:['Date'],now:100000});let captureCalls=0,first,held;
+ const r=await run(t,{capture:()=>++captureCalls===1?new Response('PRIVATE',{status:429,headers:{'Retry-After':'120'}}):new Response(png(),{headers:{'Content-Type':'image/png'}}),handler:async context=>{first=await snapshot(await onRequest(context));t.mock.timers.setTime(105000);held=await snapshot(await onRequest({...context,request:request()}));t.mock.timers.setTime(220001);return onRequest({...context,request:request()});}});
+ assert.equal(first.status,429);assert.equal(first.body.retryAfterSeconds,120);assert.equal(first.headers['retry-after'],'120');assert.equal(held.status,429);assert.equal(held.body.retryAfterSeconds,115);assert.equal(held.body.diagnostics.stage,'capture');assert.equal(held.body.diagnostics.upstreamStatus,429);assert.equal(r.status,200);assert.equal(captures(r).length,2);assert.equal(visions(r).length,1);assert.equal(r.calls.filter(call=>call.url.includes('/auth/v1/user')).length,3);
+});
+
+test('Vision cooldown stops another billed screenshot and recovers after the server delay',async t=>{
+ t.mock.timers.enable({apis:['Date'],now:100000});let visionCalls=0,first,held;
+ const r=await run(t,{vision:()=>++visionCalls===1?new Response('PRIVATE',{status:429,headers:{'Retry-After':'60'}}):json({responses:[{fullTextAnnotation:{text:PLATE+'\n5,490만원'}}]}),handler:async context=>{first=await snapshot(await onRequest(context));held=await snapshot(await onRequest({...context,request:request()}));t.mock.timers.setTime(160001);return onRequest({...context,request:request()});}});
+ assert.equal(first.body.code,'OCR_RATE_LIMITED');assert.equal(first.body.retryAfterSeconds,60);assert.equal(held.body.diagnostics.stage,'vision');assert.equal(r.status,200);assert.equal(captures(r).length,2);assert.equal(visions(r).length,2);
+});
+
+test('provider Retry-After HTTP dates and bounded day values survive 5xx without a hidden 503 response',async t=>{
+ t.mock.timers.enable({apis:['Date'],now:Date.parse('2026-11-18T12:00:00Z')});
+ for(const [header,expected]of[['Wed, 18 Nov 2026 12:02:00 GMT',120],['3600',3600],['172800',86400],['-1',3],['PRIVATE invalid value',3],['Wed, 31 Feb 2027 00:00:00 GMT',3],['Mon, 18 Nov 2026 12:02:00 GMT',3]]){
+  const r=await run(t,{captureResponse:new Response('PRIVATE',{status:503,headers:{'Retry-After':header}})});assert.equal(r.status,502);assert.equal(r.body.code,'CAPTURE_UNAVAILABLE');assert.equal(r.body.retryAfterSeconds,expected);assert.equal(r.res.headers.get('Retry-After'),String(expected));assert.equal(r.body.diagnostics.upstreamStatus,503);assert.equal(captures(r).length,1);assert.equal(visions(r).length,0);assert.doesNotMatch(JSON.stringify(r.body),/PRIVATE/);
+ }
+});
+
+test('429/5xx never retry inside one request, while transient cooldown is distinct from successful price cache',async t=>{
+ for(const status of[429,502,503,504]){let first,held;const r=await run(t,{captureResponse:new Response('PRIVATE',{status}),handler:async context=>{first=await snapshot(await onRequest(context));held=await snapshot(await onRequest({...context,request:request()}));return new Response(JSON.stringify(held.body),{status:held.status});}});assert.equal(first.body.diagnostics.priceCacheHit,false);assert.equal(held.body.diagnostics.priceCacheHit,false);assert.equal(captures(r).length,1);assert.equal(visions(r).length,0);assert.equal(first.status,status===429?429:502);}
+});
+
+test('runtime caches are isolated by the real fetch function used by each independent fixture',async t=>{
+ const first=await run(t),second=await run(t);assert.equal(first.status,200);assert.equal(second.status,200);assert.equal(captures(first).length,1);assert.equal(captures(second).length,1);assert.equal(second.body.diagnostics.priceCacheHit,false);
+});
+
+test('cache evicts beyond 32 identities without replacing verification or leaking data between plates',async t=>{
+ let capturedFirst,hitLast;
+ const r=await run(t,{detail:url=>new Response(page({vehicleId:Number(url.pathname.split('/').pop()),queryCarId:Number(url.pathname.split('/').pop())})),handler:async context=>{for(let i=0;i<33;i++){const result=await snapshot(await onRequest({...context,request:request({plate:PLATE,id:String(Number(ID)+i)})}));assert.equal(result.status,200);assert.equal(result.body.diagnostics.priceCacheHit,false);}capturedFirst=await snapshot(await onRequest({...context,request:request()}));hitLast=await snapshot(await onRequest({...context,request:request({plate:PLATE,id:String(Number(ID)+32)})}));return new Response(JSON.stringify(hitLast.body));}});
+ assert.equal(capturedFirst.body.diagnostics.priceCacheHit,false);assert.equal(hitLast.body.diagnostics.priceCacheHit,true);assert.equal(captures(r).length,34);assert.equal(visions(r).length,34);assert.equal(r.calls.filter(call=>call.url.includes('/auth/v1/user')).length,35);
+});
+
+test('request/release headers and stage diagnostics expose fixed safe fields only',async t=>{
+ const r=await run(t,{captureResponse:new Response('PRIVATE',{status:502,headers:{'Retry-After':'120'}})}),d=r.body.diagnostics;
+ assert.match(r.res.headers.get('X-Request-ID'),/^[0-9a-f-]{36}$/);assert.equal(d.requestId,r.res.headers.get('X-Request-ID'));assert.equal(r.res.headers.get('X-Encar-Resolver-Release'),'2.137');assert.equal(d.endpoint,'encar-auto-price');assert.equal(d.stage,'capture');assert.equal(d.upstreamStatus,502);assert.equal(d.retryAfterSeconds,120);assert.equal(d.priceCacheHit,false);
+ assert.deepEqual(Object.keys(d).sort(),['endpoint','priceCacheHit','requestId','resolverRelease','retryAfterSeconds','stage','upstreamStatus']);assert.doesNotMatch(JSON.stringify(d),/PRIVATE|https:|Bearer|token|base64|fullTextAnnotation/);
+});
+
+test('cancelling one concurrent capture cannot cancel another request or its settled result',async t=>{
+ const controller=new AbortController();let entered,firstCapture=true,aborted,success;
+ const started=new Promise(resolve=>entered=resolve);
+ const r=await run(t,{capture:(_url,init)=>{if(firstCapture){firstCapture=false;entered();return new Promise((_,reject)=>init.signal.addEventListener('abort',()=>reject(new DOMException('Aborted','AbortError')),{once:true}));}return new Response(png(),{headers:{'Content-Type':'image/png'}});},handler:async context=>{const first=onRequest({...context,request:request({plate:PLATE,id:ID},{signal:controller.signal})});await started;const second=onRequest({...context,request:request()});controller.abort();aborted=await snapshot(await first);success=await snapshot(await second);return onRequest({...context,request:request()});}});
+ assert.equal(aborted.body.code,'REQUEST_ABORTED');assert.equal(success.status,200);assert.equal(r.status,200);assert.equal(r.body.diagnostics.priceCacheHit,true);assert.equal(r.body.listing.priceCheckedAt,success.body.listing.priceCheckedAt);assert.equal(captures(r).length,2);assert.equal(visions(r).length,1);assert.equal(r.calls.filter(call=>call.url.includes('/auth/v1/user')).length,3);
+});
+
+test('the same advertisement ID with a newly verified plate cannot inherit the old plate price',async t=>{
+ let currentPlate=PLATE;
+ const options={detail:()=>new Response(page({vehicleNo:currentPlate})),vision:()=>json({responses:[{fullTextAnnotation:{text:currentPlate+'\n판매가격 '+(currentPlate===PLATE?'5,490':'4,500')+'만원'}}]}),handler:async context=>{const first=await snapshot(await onRequest(context));assert.equal(first.body.listing.priceWon,54900000);currentPlate='34나5678';return onRequest({...context,request:request({plate:currentPlate,id:ID})});}};
+ const r=await run(t,options);assert.equal(r.status,200);assert.equal(r.body.plate,currentPlate);assert.equal(r.body.listing.priceWon,45000000);assert.equal(r.body.diagnostics.priceCacheHit,false);assert.equal(captures(r).length,2);assert.equal(visions(r).length,2);
+});
+
+async function resolverFixture(status,body,headers={}){
+ const original=await readFile(new URL('../functions/api/encar-auto-price.js',import.meta.url),'utf8');
+ const code=original.replace("import { onRequest as resolveAdvertisement } from './encar.js';",'const resolveAdvertisement=async()=>new Response('+JSON.stringify(typeof body==='string'?body:JSON.stringify(body))+','+JSON.stringify({status,headers:{'Content-Type':typeof body==='string'?'text/html':'application/json',...headers}})+');')
+  .replace("'../_shared/encar-price-ocr.mjs'",JSON.stringify(new URL('../functions/_shared/encar-price-ocr.mjs',import.meta.url).href))
+  .replace("'../_shared/api-security.js'",JSON.stringify(new URL('../functions/_shared/api-security.js',import.meta.url).href));
+ return (await import('data:text/javascript;base64,'+Buffer.from(code).toString('base64'))).onRequest;
+}
+
+test('resolver 502/429 preserve temporary verification failure and full Retry-After before any paid endpoint',async t=>{
+ for(const [status,retry]of[[502,120],[429,60]]){
+  const handler=await resolverFixture(status,{status:'error',diagnostics:{code:'SEARCH_UNAVAILABLE'}},{'Retry-After':String(retry)}),r=await run(t,{handler});
+  assert.equal(r.status,502);assert.equal(r.body.code,'VERIFY_UNAVAILABLE');assert.equal(r.body.retryAfterSeconds,retry);assert.equal(r.res.headers.get('Retry-After'),String(retry));assert.equal(r.body.diagnostics.stage,'verify');assert.equal(r.body.diagnostics.upstreamStatus,status);noPaid(r);
+ }
+ const html=await run(t,{handler:await resolverFixture(503,'<h1>PRIVATE temporary error</h1>',{'Retry-After':'120'})});assert.equal(html.status,502);assert.equal(html.body.code,'VERIFY_UNAVAILABLE');assert.equal(html.body.retryAfterSeconds,120);noPaid(html);assert.doesNotMatch(JSON.stringify(html.body),/PRIVATE/);
+ const absent=await run(t,{handler:await resolverFixture(504,{status:'error'})});assert.equal(absent.body.retryAfterSeconds,3);noPaid(absent);
+});
+
+test('resolver deterministic Auth/setup failures and genuine unverified vehicles keep their guards',async t=>{
+ for(const [status,body,expectedStatus,expectedCode]of[
+  [401,{status:'error'},401,'AUTH_REQUIRED'],[403,{status:'error'},403,'FORBIDDEN'],
+  [503,{status:'error',diagnostics:{code:'SUPABASE_NOT_CONFIGURED'}},503,'SETUP_REQUIRED'],
+  [200,{status:'unverified',plate:PLATE,listings:[]},409,'VEHICLE_UNVERIFIED']]){
+  const r=await run(t,{handler:await resolverFixture(status,body,{'Retry-After':'120'})});assert.equal(r.status,expectedStatus);assert.equal(r.body.code,expectedCode);assert.equal(r.body.retryAfterSeconds,undefined);assert.equal(r.res.headers.get('Retry-After'),null);noPaid(r);
+ }
 });

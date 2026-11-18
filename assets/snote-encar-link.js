@@ -4,17 +4,35 @@
   if (window.SnoteEncarLink) return;
 
   const ENDPOINT = '/api/encar';
-  const CLIENT_RELEASE = '2.128';
+  const CLIENT_RELEASE = '2.137';
   const CACHE_PREFIX = 'snote.encar.candidate.v1:';
   const CACHE_AGE = 7 * 24 * 60 * 60 * 1000;
-  const REQUEST_TIMEOUT = 45000;
+  const REQUEST_TIMEOUT = 75000;
   const AUTO_PRICE_TIMEOUT = 65000;
+  const MAX_RETRY_AFTER_SECONDS = 86400;
+  const MAX_AUTO_RETRY_WAIT_SECONDS = 30;
+  const RETRY_STATUSES = new Set([429, 502, 503, 504]);
+  const ENDPOINTS = new Set(['encar', 'encar-auto-price']);
+  const DETERMINISTIC_EDGE_CODES = new Set([1010,1020,1102]);
+  const STAGES = new Set(['input','auth','member','search','detail','catalog','model_catalog','external','price','verify','capture','vision']);
+  const NETWORK_STAGES = new Set(['request','response','body','timeout','abort','connect','fetch','auth_user','membership',
+    'CONFIG_INVALID','RPC_NETWORK_ERROR','RPC_TIMEOUT','RPC_HTTP_ERROR','RPC_INVALID_RESPONSE','RPC_RESPONSE_INVALID','AUTH_NETWORK_ERROR','MEMBERSHIP_NETWORK_ERROR']);
+  const AUTO_SERVER_CODES = new Set(['VERIFY_UNAVAILABLE','CAPTURE_AUTH_FAILED','CAPTURE_RATE_LIMITED','CAPTURE_UNAVAILABLE','CAPTURE_INVALID','CAPTURE_TIMEOUT',
+    'OCR_AUTH_FAILED','OCR_RATE_LIMITED','OCR_UNAVAILABLE','OCR_INVALID','OCR_TIMEOUT','CAPTURE_BLOCKED','VEHICLE_UNVERIFIED','PRICE_NOT_FOUND','PRICE_AMBIGUOUS','REQUEST_TIMEOUT','REQUEST_ABORTED']);
+  const NON_RETRY_CODES = new Set(['AUTH_REQUIRED','AUTH_FAILED','AUTH_UNAVAILABLE','SESSION_UNAVAILABLE','SESSION_CONTEXT_CHANGED','UNAUTHORIZED','FORBIDDEN','STAFF_REQUIRED',
+    'SUPABASE_NOT_CONFIGURED','SEARCH_NOT_CONFIGURED','SEARCH_AUTH_FAILED','SEARCH_QUOTA_EXCEEDED','CATALOG_CONFIG_INVALID','CATALOG_FORM_UNSUPPORTED','CATALOG_PARSER_UNAVAILABLE',
+    'METHOD_NOT_ALLOWED','NOT_FOUND','INVALID_REQUEST','INVALID_RESPONSE','UNSUPPORTED_MEDIA_TYPE','REQUEST_TOO_LARGE','PAYLOAD_TOO_LARGE','PLATE_MISMATCH','AD_INACTIVE','DETAIL_NOT_FOUND','DETAIL_BLOCKED','DETAIL_PARSE_FAILED','AD_STATUS_UNKNOWN','CATALOG_BLOCKED','CATALOG_PARSE_FAILED','CATALOG_INCOMPLETE','CATALOG_LIMIT_EXCEEDED',
+    'REQUEST_BUDGET_EXCEEDED','CAPTURE_INVALID','OCR_INVALID','AUTO_PRICE_NOT_CONFIGURED','AUTO_PRICE_SETUP_REQUIRED','AUTO_PRICE_AUTH_REQUIRED','AUTO_PRICE_PLATE_MISMATCH','AUTO_PRICE_BLOCKED',
+    'SETUP_REQUIRED','CAPTURE_AUTH_FAILED','OCR_AUTH_FAILED','CAPTURE_BLOCKED','VEHICLE_UNVERIFIED','PRICE_API_KEY_MISSING','PRICE_API_AUTH_FAILED']);
   const MAX_PRICE_WON = 1000000000000;
   const PRICE_SOURCES = new Set(['encar.com', 'encar-api.com', 'encar.com-ocr']);
   const REQUEST_MESSAGES = Object.freeze({
     SESSION_CONTEXT_CHANGED: '로그인 정보가 변경되었습니다. 다시 로그인한 뒤 광고를 확인해 주세요.',
     UNAUTHORIZED: '로그인이 필요합니다. 다시 로그인해 주세요.',
     FORBIDDEN: '허용되지 않은 요청입니다. S-NOTE에서 다시 시도해 주세요.',
+    AUTH_REQUIRED: '로그인이 필요합니다. 다시 로그인해 주세요.',
+    AUTH_FAILED: '로그인 인증을 다시 확인해 주세요.',
+    STAFF_REQUIRED: '이 기능을 사용할 수 있는 직원 권한을 확인해 주세요.',
     RATE_LIMITED: '요청이 많습니다. 잠시 후 다시 시도해 주세요.'
   });
   const PRICE_MESSAGES = Object.freeze({
@@ -58,12 +76,15 @@
     CATALOG_PARSER_UNAVAILABLE: '공개 차량 목록의 처리 기능을 사용할 수 없습니다. 관리자에게 문의해 주세요.',
     CATALOG_LIMIT_EXCEEDED: '공개 차량 목록의 확인 범위를 초과했습니다. 관리자에게 문의해 주세요.',
     UPSTREAM_TIMEOUT: '광고 검색 또는 상세 확인 응답이 지연됐습니다. 잠시 후 다시 확인해 주세요.',
-    DEADLINE_EXCEEDED: '광고 확인 시간이 초과됐습니다. 잠시 후 다시 확인해 주세요.'
+    DEADLINE_EXCEEDED: '광고 확인 시간이 초과됐습니다. 잠시 후 다시 확인해 주세요.',
+    REQUEST_BUDGET_EXCEEDED: '한 번에 확인할 수 있는 광고 조회 범위에 도달했습니다. 잠시 후 다시 확인해 주세요.',
+    SESSION_UNAVAILABLE: '로그인 확인 서버에 연결하지 못했습니다. 잠시 후 다시 확인해 주세요.',
+    AUTH_UNAVAILABLE: '계정 확인 서버에 연결하지 못했습니다. 잠시 후 다시 확인해 주세요.'
   });
   const SAFE_CODES = new Set([...Object.keys(UNVERIFIED_MESSAGES), ...Object.keys(ERROR_MESSAGES),
-    'METHOD_NOT_ALLOWED', 'AUTH_REQUIRED', 'AUTH_FAILED', 'STAFF_REQUIRED', 'AUTH_UNAVAILABLE',
+    'METHOD_NOT_ALLOWED', 'AUTH_REQUIRED', 'AUTH_FAILED', 'STAFF_REQUIRED', 'AUTH_UNAVAILABLE','UPSTREAM_ERROR','NOT_FOUND','PAYLOAD_TOO_LARGE',
     'INVALID_REQUEST', 'UNSUPPORTED_MEDIA_TYPE', 'REQUEST_TOO_LARGE',
-    'HTTP_ERROR', 'UNVERIFIED', 'CLIENT_TIMEOUT', 'NETWORK_ERROR', 'INVALID_RESPONSE', ...Object.keys(PRICE_MESSAGES), ...Object.keys(REQUEST_MESSAGES)]);
+    'HTTP_ERROR', 'UNVERIFIED', 'CLIENT_TIMEOUT', 'NETWORK_ERROR', 'INVALID_RESPONSE', ...AUTO_SERVER_CODES, ...Object.keys(PRICE_MESSAGES), ...Object.keys(REQUEST_MESSAGES)]);
   const CATALOG_FAILURES = new Set(Object.keys(ERROR_MESSAGES).filter(code => code.startsWith('CATALOG_')));
   let active = null;
   let contextKey = '';
@@ -78,6 +99,152 @@
   let displayedRecord = null, displayedSaved = false, applyJob = null, applyVersion = 0, directPriceRetry = null;
   let priceDialog, priceDialogBody, priceDialogStatus, priceDialogConfirm, priceDialogCancel;
   let pendingPriceOffer = null, priceOffer = null, priceOfferEpoch = 0;
+  const cooldowns = [];
+  let cooldownView = null, cooldownTimer = null;
+
+  function sameLookup(job, context) {
+    return !!job && !!context?.ready && job.key === context.key && job.actor === context.actor && job.car === context.car &&
+      (job.storage?.key || '') === (context.storage?.key || '');
+  }
+
+  function retryAfter(value) {
+    if (Number.isInteger(value) && value >= 0) return Math.min(MAX_RETRY_AFTER_SECONDS, value);
+    if (typeof value !== 'string' || value.length > 128) return null;
+    const text=value.trim();
+    if (/^\d{1,10}$/.test(text)) return Math.min(MAX_RETRY_AFTER_SECONDS, Number(text));
+    if(!/^(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun), \d{2} (?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{4} \d{2}:\d{2}:\d{2} GMT$/i.test(text))return null;
+    const date=Date.parse(text);
+    if(!Number.isFinite(date)||new Date(date).toUTCString().toLowerCase()!==text.toLowerCase())return null;
+    return Math.max(0, Math.min(MAX_RETRY_AFTER_SECONDS, Math.ceil((date-Date.now())/1000)));
+  }
+
+  function cooldownFor(context, endpoint) {
+    if (!context) return null;
+    for (let i=cooldowns.length-1;i>=0;i--) if (cooldowns[i].until<=Date.now()) cooldowns.splice(i,1);
+    return cooldowns.find(item=>item.actor===context.actor&&item.companyId===(context.storage?.company?.id||context.storage?.companyId||'')&&item.userId===(context.storage?.user?.id||context.storage?.userId||context.actor?.username||'')&&item.endpoint===endpoint)||null;
+  }
+
+  function rememberCooldown(context, endpoint, seconds, status) {
+    if (![429,500,502,503,504].includes(status)||!seconds) return;
+    let value=cooldownFor(context,endpoint);
+    if (!value) {value={actor:context.actor,companyId:context.storage?.company?.id||context.storage?.companyId||'',userId:context.storage?.user?.id||context.storage?.userId||context.actor?.username||'',endpoint,until:0};cooldowns.push(value);}
+    value.until=Math.max(value.until,Date.now()+seconds*1000);
+    if(cooldowns.length>16)cooldowns.splice(0,cooldowns.length-16);
+  }
+
+  function clearCooldownView() { cooldownView=null;clearTimeout(cooldownTimer);cooldownTimer=null; }
+
+  function showCooldown(context, endpoint, message) {
+    const value=cooldownFor(context,endpoint);if(!value)return false;
+    clearCooldownView();cooldownView={context,endpoint,message};
+    const tick=()=>{
+      const view=cooldownView,now=currentContext();if(!view||!sameLookup(view.context,now)){clearCooldownView();return;}
+      const pending=cooldownFor(now,view.endpoint),seconds=pending?Math.ceil((pending.until-Date.now())/1000):0;
+      if(!active){const message=view.message+(seconds?' · '+seconds+'초 후 다시 확인할 수 있습니다.':' · 다시 확인해 주세요.');if(note.textContent!==message)setNote(message,true);if(view.endpoint==='encar')button.disabled=!!seconds||!now.ready;}
+      if(seconds)cooldownTimer=setTimeout(tick,Math.max(100,Math.min(1000,pending.until-Date.now())));else clearCooldownView();
+    };tick();return true;
+  }
+
+  function waitRetry(milliseconds, signal) {
+    return new Promise((resolve,reject)=>{
+      let timer;const stop=()=>{clearTimeout(timer);signal.removeEventListener('abort',stop);reject(new DOMException('요청이 취소되었습니다.','AbortError'));};
+      if(signal.aborted){stop();return;}signal.addEventListener('abort',stop,{once:true});timer=setTimeout(()=>{signal.removeEventListener('abort',stop);resolve();},milliseconds);
+    });
+  }
+
+  function retryCode(data) {
+    const value=data?.diagnostics?.code||data?.code;
+    return typeof value==='string'?value:'';
+  }
+
+  function canRetry(status, code, attempt, job, seconds=0) {
+    return attempt===1&&RETRY_STATUSES.has(status)&&!NON_RETRY_CODES.has(code)&&!job.controller.signal.aborted&&
+      seconds<=MAX_AUTO_RETRY_WAIT_SECONDS&&stillCurrent(job)&&job.deadline-Date.now()>Math.max(seconds*1000,850)+1000;
+  }
+
+  function responseRetryAfter(response,data) {
+    const header=retryAfter(response?.headers?.get?.('retry-after'));
+    return header??retryAfter(data?.retryAfterSeconds)??retryAfter(data?.diagnostics?.retryAfterSeconds)??0;
+  }
+
+  function diagnosticsInput(value) {
+    const top=value&&typeof value==='object'&&!Array.isArray(value)?value:{},nested=top.diagnostics&&typeof top.diagnostics==='object'&&!Array.isArray(top.diagnostics)?top.diagnostics:{};
+    const result={...nested};
+    for(const key of ['code','stage','networkStage','endpoint','attempt','retryAfterSeconds','fromCache','priceCacheHit','upstreamStatus','requestId','responseType','rayId','ray_id','error_code','cloudflareErrorCode','requestCount','reusedCount','budgetLimit','budgetRemaining','budgetExhausted'])if(!Object.hasOwn(result,key)&&Object.hasOwn(top,key))result[key]=top[key];
+    if(typeof top.diagnosticCode==='string'&&SAFE_CODES.has(top.diagnosticCode))result.code=top.diagnosticCode;
+    return result;
+  }
+
+  function discardResponse(response) {try{void response.body?.cancel().catch(()=>{});}catch(_) {}}
+
+  async function readHttpResponse(response,{signal,endpoint}={}) {
+    const evidence=responseEvidence(response),json=evidence.responseType==='json',maximum=json?128*1024:16384;
+    let data=null,parseError=null,text='';const aborted=()=>{if(signal?.aborted)throw new DOMException('요청이 취소되었습니다.','AbortError');};
+    const wait=value=>signal?abortable(value,signal):Promise.resolve(value);
+    try{
+      aborted();
+      if(response.body?.getReader&&(json||response.status>=400)){
+        const reader=response.body.getReader(),chunks=[];let length=0;
+        try{for(;;){const next=await wait(reader.read());aborted();if(next.done)break;const available=maximum-length;if(next.value.byteLength>available){if(json)throw Object.assign(lookupError('응답 크기를 확인하지 못했습니다.','INVALID_RESPONSE'),{responseTooLarge:true});chunks.push(next.value.subarray(0,Math.max(0,available)));length=maximum;break;}chunks.push(next.value);length+=next.value.byteLength;if(!json&&length===maximum)break;}
+          const bytes=new Uint8Array(length);let offset=0;for(const chunk of chunks){bytes.set(chunk,offset);offset+=chunk.byteLength;}text=new TextDecoder('utf-8',{fatal:json}).decode(bytes);
+        }finally{try{void reader.cancel().catch(()=>{});}catch(_){}try{reader.releaseLock();}catch(_) {}}
+        if(json)data=JSON.parse(text);
+      }else if(json&&typeof response.json==='function'){
+        data=await wait(response.json());aborted();if(JSON.stringify(data).length>maximum)throw Object.assign(lookupError('응답 크기를 확인하지 못했습니다.','INVALID_RESPONSE'),{responseTooLarge:true});
+      }else discardResponse(response);
+    }catch(error){aborted();parseError=error?.message==='SESSION_CONTEXT_CHANGED'||NON_RETRY_CODES.has(error?.code)?error:lookupError('광고 응답을 확인하지 못했습니다.','INVALID_RESPONSE');if(error?.responseTooLarge)parseError.responseTooLarge=true;}
+    if(!json&&evidence.responseType==='html'){
+      const match=/<[^>]{0,200}\bclass\s*=\s*["'][^"']*\bcf-error-code\b[^"']*["'][^>]*>\s*(1\d{3})\s*</i.exec(text)||/<title[^>]*>\s*(?:error\s*)?(1\d{3})(?:\s*[:|–-]|\s*<\/title)/i.exec(text);
+      if(match)evidence.cloudflareErrorCode=Number(match[1]);
+    }
+    addEdgeEvidence(evidence,data);const seconds=responseRetryAfter(response,data),diagnostics=sanitizeDiagnostics(diagnosticsInput(data),response.status,parseError?.responseTooLarge?'INVALID_RESPONSE':json?'HTTP_ERROR':'SERVER_UNAVAILABLE',{endpoint,retryAfterSeconds:seconds});Object.assign(diagnostics,evidence);
+    const requestId=response.headers.get('x-request-id'),release=response.headers.get('x-encar-resolver-release');
+    if(!diagnostics.requestId&&typeof requestId==='string'&&/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(requestId)&&requestId.length===36)diagnostics.requestId=requestId;
+    if(!diagnostics.resolverRelease&&typeof release==='string'&&release.length<=32&&release===release.trim()&&/^[0-9]{1,3}\.[0-9]{1,6}(?:\.[0-9]{1,6})?$/.test(release))diagnostics.resolverRelease=release;
+    return{data,json,parseError,httpStatus:response.status,diagnostics,retryAfterSeconds:seconds,...evidence};
+  }
+
+  async function retryPause(job, seconds) {
+    const milliseconds=Math.max(seconds*1000,600+Math.floor(Math.random()*251)),until=Date.now()+milliseconds;let timer;
+    const pulse=()=>{if(stillCurrent(job)&&!job.controller.signal.aborted){const message='일시적인 응답 지연으로 '+Math.max(1,Math.ceil((until-Date.now())/1000))+'초 후 한 번 다시 확인합니다.';if(note.textContent!==message)setNote(message);timer=setTimeout(pulse,250);}};
+    pulse();try{await waitRetry(milliseconds,job.controller.signal);}finally{clearTimeout(timer);}
+  }
+
+  async function requestLookup(job, payload, token) {
+    for(let attempt=1;attempt<=2;attempt++){
+      if(!stillCurrent(job)||job.controller.signal.aborted)throw new DOMException('요청이 취소되었습니다.','AbortError');
+      job.lookupAttempts=attempt;job.clientRequestCount++;
+      const response=await abortable(fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json',Authorization:'Bearer '+token},body:payload,signal:job.controller.signal,cache:'no-store',credentials:'same-origin'}),job.controller.signal);
+      if(!stillCurrent(job)){discardResponse(response);throw new DOMException('요청이 취소되었습니다.','AbortError');}
+      job.httpStatus=response.status;job.responseEvidence=responseEvidence(response);
+      const parsed=await readHttpResponse(response,{signal:job.controller.signal,endpoint:'encar'}),{data,parseError,json}=parsed;
+      job.httpStatus=response.status;job.responseEvidence={responseType:parsed.responseType,observedAt:parsed.observedAt,...(parsed.rayId?{rayId:parsed.rayId}:{}),...(parsed.cloudflareErrorCode?{cloudflareErrorCode:parsed.cloudflareErrorCode}:{})};
+      const diagnostic=parsed.diagnostics,edge=diagnostic.cloudflareErrorCode;
+      const seconds=parsed.retryAfterSeconds||(edge===1102||retryCode(data)==='REQUEST_BUDGET_EXCEEDED'?5:0);job.retryAfterSeconds=seconds;
+      rememberCooldown(job,'encar',seconds,response.status);
+      const requestCode=retryCode(data)||(parseError?.message==='SESSION_CONTEXT_CHANGED'?'SESSION_CONTEXT_CHANGED':parseError?.code);
+      if(canRetry(response.status,requestCode,attempt,job,seconds)&&!parseError?.responseTooLarge&&data?.autoRetry!==false&&!DETERMINISTIC_EDGE_CODES.has(Number(edge))){
+        addEdgeEvidence(job.responseEvidence,data);setDiagnostics(diagnostic,response.status,json?'HTTP_ERROR':'SERVER_UNAVAILABLE',{endpoint:'encar',attempt,retryAfterSeconds:seconds,clientRequestCount:job.clientRequestCount});Object.assign(diagnosticSnapshot,job.responseEvidence);
+        await retryPause(job,seconds);continue;
+      }
+      return{response,data,parseError,json,diagnostics:parsed.diagnostics};
+    }
+  }
+
+  async function requestAutoPrice(job, context, record, listingId) {
+    const pending=cooldownFor(context,'encar-auto-price');
+    if(pending)throw Object.assign(new Error('자동 가격 확인 대기 중'),{code:'AUTO_PRICE_RATE_LIMITED',httpStatus:429,retryAfterSeconds:Math.ceil((pending.until-Date.now())/1000)});
+    for(let attempt=1;attempt<=2;attempt++){
+      job.priceAttempts=attempt;job.clientRequestCount++;
+      try{return await abortable(window.snoteEncarLinksBridge.autoPrice(context.storage,record,{signal:job.controller.signal,listingId,deadline:job.deadline,attempt}),job.controller.signal);}
+      catch(error){
+        const data=diagnosticsInput(error),edge=Number(data.cloudflareErrorCode??data.error_code),seconds=retryAfter(error?.retryAfterSeconds)||retryAfter(data.retryAfterSeconds)||(edge===1102||data.code==='REQUEST_BUDGET_EXCEEDED'?5:0),status=error?.httpStatus;
+        rememberCooldown(context,'encar-auto-price',seconds,status);job.priceRetryAfterSeconds=seconds;
+        if(canRetry(status,retryCode(data),attempt,job,seconds)&&error?.autoRetry!==false&&!DETERMINISTIC_EDGE_CODES.has(Number(data.cloudflareErrorCode??data.error_code))){await retryPause(job,seconds);continue;}
+        throw error;
+      }
+    }
+  }
 
   function normalizePlate(value) {
     return String(value || '').normalize('NFKC').replace(/[\s-]+/g, '');
@@ -308,6 +475,7 @@
   }
 
   function resetFeedback() {
+    clearCooldownView();
     closePriceConfirmation(true);
     pendingPriceOffer = null;
     ++feedbackVersion;
@@ -350,16 +518,27 @@
     else if (typeof code === 'string' && code.length === 4 && /^1[0-9]{3}$/.test(code)) evidence.cloudflareErrorCode = Number(code);
   }
 
-  function setDiagnostics(raw, httpStatus, fallbackCode) {
+  function sanitizeDiagnostics(raw, httpStatus, fallbackCode, extra = {}) {
     const data = raw && typeof raw === 'object' && !Array.isArray(raw) ? raw : {};
-    const code = typeof data.code === 'string' && SAFE_CODES.has(data.code) ? data.code : fallbackCode;
+    const code = typeof data.code === 'string' && SAFE_CODES.has(data.code) ? data.code : SAFE_CODES.has(fallbackCode) ? fallbackCode : 'HTTP_ERROR';
     const safe = { service: 'snote-encar', clientRelease: CLIENT_RELEASE, code, httpStatus: Number.isInteger(httpStatus) && httpStatus >= 100 && httpStatus <= 599 ? httpStatus : null };
+    const endpoint=extra.endpoint||data.endpoint;if(ENDPOINTS.has(endpoint))safe.endpoint=endpoint;
+    for(const key of ['stage','networkStage'])if(STAGES.has(data[key])||NETWORK_STAGES.has(data[key]))safe[key]=data[key];
+    const attempt=extra.attempt??data.attempt;if(Number.isInteger(attempt)&&attempt>=1&&attempt<=2)safe.attempt=attempt;
+    const after=extra.retryAfterSeconds??data.retryAfterSeconds;if(Number.isInteger(after)&&after>=0&&after<=MAX_RETRY_AFTER_SECONDS)safe.retryAfterSeconds=after;
+    if(typeof data.fromCache==='boolean')safe.fromCache=data.fromCache;
+    if(typeof data.priceCacheHit==='boolean'){safe.priceCacheHit=data.priceCacheHit;if(!Object.hasOwn(safe,'fromCache'))safe.fromCache=data.priceCacheHit;}
+    if(Number.isInteger(extra.clientRequestCount)&&extra.clientRequestCount>=1&&extra.clientRequestCount<=4)safe.clientRequestCount=extra.clientRequestCount;
+    if(['json','html','text','other'].includes(data.responseType))safe.responseType=data.responseType;
+    const ray=safeRay(data.rayId)||safeRay(data.ray_id);if(ray)safe.rayId=ray;
+    const edge=data.cloudflareErrorCode??data.error_code;if(Number.isInteger(edge)&&edge>=1000&&edge<=1999)safe.cloudflareErrorCode=edge;else if(typeof edge==='string'&&/^1\d{3}$/.test(edge)&&edge.length===4)safe.cloudflareErrorCode=Number(edge);
+    if(Number.isInteger(data.upstreamStatus)&&data.upstreamStatus>=100&&data.upstreamStatus<=599)safe.upstreamStatus=data.upstreamStatus;
     if (typeof data.resolverRelease === 'string' && data.resolverRelease.length <= 32 && data.resolverRelease === data.resolverRelease.trim() && /^[0-9]{1,3}\.[0-9]{1,6}(?:\.[0-9]{1,6})?$/.test(data.resolverRelease)) safe.resolverRelease = data.resolverRelease;
     if (typeof data.requestId === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(data.requestId)) safe.requestId = data.requestId;
-    for (const key of ['searchCount', 'resultCount', 'candidateCount', 'checkedCount', 'plateMatchedCount', 'resultPlateMatchCount', 'rawResultCount', 'recognizedSourceCount', 'catalogRequestCount', 'catalogPageCount', 'catalogRecordCount', 'catalogExactMatchCount', 'catalogFormCount', 'catalogPlateFieldCount', 'catalogLinkCount', 'modelCatalogRequestCount', 'modelCatalogPageCount', 'modelCatalogRecordCount', 'modelCatalogExactMatchCount', 'externalRequestCount', 'externalMatchCount', 'modelBranchPageCount', 'externalSkippedCount', 'searchEvidenceCount', 'searchEvidenceAcceptedCount']) {
+    for (const key of ['requestCount', 'reusedCount', 'budgetLimit', 'budgetRemaining', 'searchCount', 'resultCount', 'candidateCount', 'checkedCount', 'plateMatchedCount', 'resultPlateMatchCount', 'rawResultCount', 'recognizedSourceCount', 'catalogRequestCount', 'catalogPageCount', 'catalogRecordCount', 'catalogExactMatchCount', 'catalogFormCount', 'catalogPlateFieldCount', 'catalogLinkCount', 'modelCatalogRequestCount', 'modelCatalogPageCount', 'modelCatalogRecordCount', 'modelCatalogExactMatchCount', 'externalRequestCount', 'externalMatchCount', 'modelBranchPageCount', 'externalSkippedCount', 'searchEvidenceCount', 'searchEvidenceAcceptedCount']) {
       if (Number.isInteger(data[key]) && data[key] >= 0 && data[key] <= 1000) safe[key] = data[key];
     }
-    for (const key of ['searchConfigured', 'discoveryProvided']) if (typeof data[key] === 'boolean') safe[key] = data[key];
+    for (const key of ['searchConfigured', 'discoveryProvided','budgetExhausted']) if (typeof data[key] === 'boolean') safe[key] = data[key];
     if (['input', 'saved_candidates', 'explicit_source', 'catalog_form', 'model_catalog', 'search_exact', 'search_targeted', 'known_candidates'].includes(data.discoveryStage)) safe.discoveryStage = data.discoveryStage;
     const parseReasonCounts = {};
     if (data.parseReasonCounts && typeof data.parseReasonCounts === 'object' && !Array.isArray(data.parseReasonCounts)) {
@@ -375,9 +554,13 @@
       }
     }
     if (Object.keys(rejected).length) safe.rejected = rejected;
-    diagnosticSnapshot = safe;
+    return safe;
+  }
+
+  function setDiagnostics(raw, httpStatus, fallbackCode, extra = {}) {
+    diagnosticSnapshot = sanitizeDiagnostics(raw,httpStatus,fallbackCode,extra);
     copyButton.hidden = false;
-    return code;
+    return diagnosticSnapshot.code;
   }
 
   function providerPriceDiagnostics(raw,httpStatus,mainCode=null){
@@ -387,7 +570,7 @@
       CONTEXT_MISMATCH:'PRICE_API_INVALID',CURRENCY_UNSUPPORTED:'PRICE_API_INVALID',NON_CASH_PRICE:'PRICE_API_INVALID',PRICE_INVALID:'PRICE_API_INVALID',PAGE_TEXT_LIMIT:'PRICE_API_INVALID',PAGE_PARSER_UNAVAILABLE:'PRICE_API_INVALID',PAGE_AMBIGUOUS:'AUTO_PRICE_AMBIGUOUS',PAGE_EMPTY:'PRICE_API_INVALID',PAGE_PARSE_FAILED:'PRICE_API_INVALID'};
     const codes=raw.codes.filter(item=>item&&Object.hasOwn(mapping,item.code)&&Number.isInteger(item.count)&&item.count>0&&item.count<=1000&&
       (item.httpStatus===null||Number.isInteger(item.httpStatus)&&item.httpStatus>=100&&item.httpStatus<=599)).map(item=>({code:item.code,httpStatus:item.httpStatus,count:item.count}));
-    if(!codes.length)return null;const code=mapping[codes[0].code];setDiagnostics({code:mainCode||code},httpStatus,mainCode||code);
+    if(!codes.length)return null;const code=mapping[codes[0].code];if(!mainCode||diagnosticSnapshot?.endpoint!=='encar-auto-price')setDiagnostics({code:mainCode||code},httpStatus,mainCode||code,{endpoint:'encar'});
     const price={codes};for(const key of['providerRequests','pageReviewCount'])if(Number.isInteger(raw[key])&&raw[key]>=0&&raw[key]<=1000)price[key]=raw[key];diagnosticSnapshot.price=price;return code;
   }
 
@@ -471,7 +654,9 @@
     if(button)button.hidden=context?.car.status==='판매완료';
     const savedKey=JSON.stringify(savedRecord(context?.car.encarLinks,context?.plate));
     const nextKey = context?.key || '';
+    let changed=false;
     if (nextKey !== contextKey || (context?.actor || null) !== contextActor || !!context?.ready !== contextReady || (context?.car || null) !== contextCar || (context?.storage?.key || '') !== contextStorageKey) {
+      changed=true;
       cancel();
       contextKey = nextKey;
       contextActor = context?.actor || null;
@@ -488,6 +673,7 @@
     if (directPriceRetry && !directPriceCurrent(directPriceRetry)) directPriceRetry = null;
     if (priceOffer && !priceOfferCurrent(priceOffer)) closePriceConfirmation(true);
     maybeOpenPriceConfirmation();
+    if(changed&&!active&&context&&!button.hidden&&cooldownFor(context,'encar'))showCooldown(context,'encar','광고 조회 요청을 잠시 기다리고 있습니다.');
   }
 
   function resetContext() {
@@ -764,8 +950,10 @@
     refreshPriceControls();
   }
 
-  async function lookup(manualIds = null, selectedLink = null, options = {}) {
+  function lookup(manualIds = null, selectedLink = null, options = {}) {
     syncContext();
+    const existing=currentContext();
+    if(active&&sameLookup(active,existing)){button.disabled=true;renderLookupButton(true);return active.promise;}
     if (applyJob || priceOffer?.saving || priceWritePending() || document.getElementById('vehicle-overlay')?.getAttribute('aria-busy') === 'true') return;
     const context = currentContext();
     if (!context || !/^(?:[가-힣]{2})?\d{2,3}[가-힣]\d{4}$/.test(context.plate)) {
@@ -776,15 +964,22 @@
       setNote('S-NOTE 온라인 로그인 후 사용할 수 있습니다.', true);
       return;
     }
+    if(cooldownFor(context,'encar')){showCooldown(context,'encar','광고 조회 요청을 잠시 기다리고 있습니다.');return Promise.resolve(false);}
     cancel();
     restoreSaved(context);
-    const job = {...context, controller: new AbortController(), waitingTab: prepareTab(), timedOut: false};
+    const job = {...context, controller: new AbortController(), waitingTab: prepareTab(), timedOut: false,deadline:Date.now()+REQUEST_TIMEOUT,lookupAttempts:0,priceAttempts:0,clientRequestCount:0};
     active = job;
     refreshPriceControls();
     button.disabled = true;
     renderLookupButton(true);
     setNote('차량번호와 광고 상태를 확인하고 있습니다.');
-    let timeout = setTimeout(() => { job.timedOut = true; job.controller.abort(); }, REQUEST_TIMEOUT);
+    const timeout = setTimeout(() => { job.timedOut = true; job.controller.abort(); }, REQUEST_TIMEOUT);
+    let resolve,reject;job.promise=new Promise((yes,no)=>{resolve=yes;reject=no;});
+    performLookup(job,context,manualIds,selectedLink,options,timeout).then(resolve,reject);
+    return job.promise;
+  }
+
+  async function performLookup(job,context,manualIds,selectedLink,options,timeout) {
     try {
       const token = await abortable(window.zc86Cloud.getAccessToken(), job.controller.signal);
       if (!stillCurrent(job)) { closeWaitingTab(job); return; }
@@ -792,29 +987,22 @@
       const discovery = discoveryHints(context.car);
       const sourceUrls = Array.isArray(options.sourceUrls) ? options.sourceUrls.map(manualExternalSource).filter(Boolean)
         .filter(source => manualIds?.includes(source.id)).map(source => source.sourceUrl).slice(0, 3) : [];
-      const response = await abortable(fetch(ENDPOINT, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json', Accept: 'application/json', Authorization: 'Bearer ' + token},
-        body: JSON.stringify({plate: context.plate, candidateIds: manualIds === null ?
+      const payload=JSON.stringify({plate: context.plate, candidateIds: manualIds === null ?
           [...new Set([...(savedRecord(context.car.encarLinks, context.plate)?.listings.map(item => item.id) || []), ...readCandidates(context.plate)])].slice(0, 12) : manualIds,
-          ...(discovery ? {discovery} : {}), ...(sourceUrls.length ? {sourceUrls} : {})}),
-        signal: job.controller.signal,
-        cache: 'no-store',
-        credentials: 'same-origin'
-      }), job.controller.signal);
+          ...(discovery ? {discovery} : {}), ...(sourceUrls.length ? {sourceUrls} : {})});
+      const outcome=await requestLookup(job,payload,token),{response,data,parseError,json}=outcome;
       if (!stillCurrent(job)) { closeWaitingTab(job); return; }
-      job.httpStatus = response.status;
-      job.responseEvidence = responseEvidence(response);
-      if (!(response.headers.get('content-type') || '').includes('application/json')) {
+      diagnosticSnapshot=null;copyButton.hidden=true;copyFallback.hidden=true;copyFallback.value='';copyStatus.textContent='';
+      if (!json) {
+        setDiagnostics(outcome.diagnostics,response.status,response.status>=500?'SERVER_UNAVAILABLE':'HTTP_ERROR',{endpoint:'encar',attempt:job.lookupAttempts,retryAfterSeconds:job.retryAfterSeconds,clientRequestCount:job.clientRequestCount});
         if (response.status >= 500) throw lookupError(ERROR_MESSAGES.SERVER_UNAVAILABLE, 'SERVER_UNAVAILABLE');
         throw lookupError('엔카 조회 기능이 아직 연결되지 않았습니다. 관리자에게 문의해 주세요.');
       }
-      let data;
-      try { data = await abortable(response.json(), job.controller.signal); }
-      catch (error) {
+      if(parseError){const error=parseError;
         const requestError = typeof error?.code === 'string' && Object.hasOwn(REQUEST_MESSAGES, error.code) ||
           error?.message === 'SESSION_CONTEXT_CHANGED';
         if (response.status >= 500 && !job.controller.signal.aborted && stillCurrent(job) && !requestError) {
+          setDiagnostics({...outcome.diagnostics,code:parseError.responseTooLarge?'INVALID_RESPONSE':'SERVER_UNAVAILABLE'},response.status,'SERVER_UNAVAILABLE',{endpoint:'encar',attempt:job.lookupAttempts,retryAfterSeconds:job.retryAfterSeconds,clientRequestCount:job.clientRequestCount});
           throw lookupError(ERROR_MESSAGES.SERVER_UNAVAILABLE, 'SERVER_UNAVAILABLE');
         }
         throw error;
@@ -827,8 +1015,7 @@
           403: '이 기능을 사용할 수 있는 직원 권한을 확인해 주세요.',
           503: ERROR_MESSAGES.SERVER_UNAVAILABLE
         };
-        const diagnostics = typeof data?.code === 'string' && Object.hasOwn(REQUEST_MESSAGES, data.code) ? {code:data.code} : data?.diagnostics;
-        const code = setDiagnostics(diagnostics, response.status, 'HTTP_ERROR');
+        const code = setDiagnostics(outcome.diagnostics, response.status, 'HTTP_ERROR',{endpoint:'encar',attempt:job.lookupAttempts,retryAfterSeconds:job.retryAfterSeconds,clientRequestCount:job.clientRequestCount});
         if (response.status >= 500 && CATALOG_FAILURES.has(code)) manual.hidden = false;
         throw lookupError(REQUEST_MESSAGES[code] || ERROR_MESSAGES[code] || messages[response.status] || '지금은 광고를 확인할 수 없습니다. 잠시 후 다시 시도해 주세요.');
       }
@@ -840,7 +1027,7 @@
         if (listings.length) throw lookupError('광고 확인 응답이 올바르지 않습니다. 다시 시도해 주세요.');
         closeWaitingTab(job);
         if (manualIds === null) { try { localStorage.removeItem(CACHE_PREFIX + context.plate); } catch (_) {} }
-        const code = setDiagnostics(data.diagnostics, response.status, 'UNVERIFIED');
+        const code = setDiagnostics(data.diagnostics, response.status, 'UNVERIFIED',{endpoint:'encar',attempt:job.lookupAttempts,clientRequestCount:job.clientRequestCount});
         setNote(UNVERIFIED_MESSAGES[code] || '일치하는 현재 광고를 확인하지 못했습니다. 나중에 다시 확인해 주세요.');
         manual.hidden = false;
         return;
@@ -856,19 +1043,20 @@
       const automaticId=selectedLink?.sellerId||(record.listings.length===1?record.listings[0].id:null),automaticItem=record.listings.find(item=>item.id===automaticId);
       if (automaticItem && !isExternal(automaticItem) && !['verified','review'].includes(automaticItem.priceStatus) &&
           context.storage?.canWrite && context.car.status!=='판매완료' && typeof window.snoteEncarLinksBridge?.autoPrice==='function') {
-        setNote('광고 화면에서 가격을 자동 확인하고 있습니다.');clearTimeout(timeout);
-        timeout=setTimeout(()=>{job.timedOut=true;job.controller.abort();},AUTO_PRICE_TIMEOUT);
+        setNote('광고 화면에서 가격을 자동 확인하고 있습니다.');
+        const priceTimeout=setTimeout(()=>{job.priceTimedOut=true;job.controller.abort();},Math.max(1,Math.min(AUTO_PRICE_TIMEOUT,job.deadline-Date.now())));
         try {
-          const quoted=await abortable(window.snoteEncarLinksBridge.autoPrice(context.storage,record,{signal:job.controller.signal,listingId:automaticId}),job.controller.signal);
+          const quoted=await requestAutoPrice(job,context,record,automaticId);
           if(!stillCurrent(job)){closeWaitingTab(job);return;}
           const revised=savedRecord(quoted,context.plate),links=value=>value.listings.map(item=>[item.id,item.sellerUrl,item.trustedId,item.trustedUrl]);
           if(!revised||JSON.stringify(links(revised))!==JSON.stringify(links(record)))throw Error('AUTO_PRICE_INVALID');
           record=revised;
         } catch(error) {
           if(!stillCurrent(job)){closeWaitingTab(job);return;}
-          const code=job.timedOut?'AUTO_PRICE_TIMEOUT':error?.code==='AUTH_REQUIRED'?'AUTO_PRICE_AUTH_REQUIRED':typeof error?.code==='string'&&Object.hasOwn(PRICE_MESSAGES,error.code)?error.code:'AUTO_PRICE_UNAVAILABLE';
-          job.priceMessage=PRICE_MESSAGES[code];job.priceCode=code;setDiagnostics({code},null,code);
-        }
+          const code=job.timedOut||job.priceTimedOut?'AUTO_PRICE_TIMEOUT':error?.code==='AUTH_REQUIRED'?'AUTO_PRICE_AUTH_REQUIRED':typeof error?.code==='string'&&Object.hasOwn(PRICE_MESSAGES,error.code)?error.code:'AUTO_PRICE_UNAVAILABLE';
+          job.priceMessage=PRICE_MESSAGES[code];job.priceCode=code;setDiagnostics(diagnosticsInput(error),error?.httpStatus??null,code,{endpoint:'encar-auto-price',attempt:job.priceAttempts||undefined,retryAfterSeconds:job.priceRetryAfterSeconds??retryAfter(error?.retryAfterSeconds)??0,clientRequestCount:job.clientRequestCount});
+          record={...record,listings:record.listings.map(item=>item.id===automaticId&&!['verified','review'].includes(item.priceStatus)?{...item,priceWon:null,priceCheckedAt:null,priceSource:null,priceStatus:'unavailable'}:item)};
+        }finally{clearTimeout(priceTimeout);}
       }
       if(record.listings.some(item=>!isExternal(item))&&!record.listings.some(item=>!isExternal(item)&&['verified','review'].includes(item.priceStatus))){
         const provider=providerPriceDiagnostics(data.priceDiagnostics,response.status,job.priceCode),code=provider||(typeof data.priceDiagnostics?.code==='string'&&Object.hasOwn(PRICE_MESSAGES,data.priceDiagnostics.code)?data.priceDiagnostics.code:null);
@@ -913,7 +1101,7 @@
       if (!stillCurrent(job)) return;
       const requestCode = typeof error?.code === 'string' && Object.hasOwn(REQUEST_MESSAGES, error.code) ? error.code :
         error?.message === 'SESSION_CONTEXT_CHANGED' ? error.message : null;
-      if (!diagnosticSnapshot) setDiagnostics(null, job.httpStatus ?? error?.httpStatus, job.timedOut ? 'CLIENT_TIMEOUT' : requestCode || error?.diagnosticCode || 'NETWORK_ERROR');
+      if (!diagnosticSnapshot||job.timedOut) setDiagnostics(job.timedOut?{...diagnosticSnapshot,code:'CLIENT_TIMEOUT'}:null, job.httpStatus ?? error?.httpStatus, job.timedOut ? 'CLIENT_TIMEOUT' : requestCode || error?.diagnosticCode || 'NETWORK_ERROR',{endpoint:'encar',attempt:job.lookupAttempts||undefined,retryAfterSeconds:job.retryAfterSeconds||0,clientRequestCount:job.clientRequestCount});
       if (job.responseEvidence) Object.assign(diagnosticSnapshot, job.responseEvidence);
       setNote(job.timedOut ? '확인이 지연되고 있습니다. 잠시 후 다시 시도해 주세요.' : REQUEST_MESSAGES[requestCode] || error?.userMessage || '광고 확인에 실패했습니다. 연결 상태를 확인하고 다시 시도해 주세요.', true);
     } finally {
@@ -924,6 +1112,7 @@
         renderLookupButton();
         syncContext();
         if(job.priceMessage)setNote((note.textContent?note.textContent+' ':'')+job.priceMessage,true);
+        if(!showCooldown(context,'encar',note.textContent||'광고 조회 요청을 잠시 기다리고 있습니다.')&&job.priceMessage)showCooldown(context,'encar-auto-price',job.priceMessage);
       }
     }
   }
@@ -946,11 +1135,11 @@
   function lookupCurrent(carId, listingId) {
     syncContext();
     const context = currentContext(), id = String(listingId ?? '');
-    if (!context?.ready || !context.storage || String(context.car.id) !== String(carId ?? '') || !validId(id) ||
-        active || applyJob || retryRecord || priceOffer?.saving || priceWritePending() ||
-        document.getElementById('vehicle-overlay')?.getAttribute('aria-busy') === 'true') return false;
+    if (!context?.ready || !context.storage || String(context.car.id) !== String(carId ?? '') || !validId(id)) return false;
     const record = savedRecord(context.car.encarLinks, context.plate), listing = record?.listings.find(item => item.id === id);
     if (!listing) return false;
+    if(active&&sameLookup(active,context)){void lookup([id],{sellerId:id,id,trusted:false});return true;}
+    if(applyJob || retryRecord || priceOffer?.saving || priceWritePending() ||document.getElementById('vehicle-overlay')?.getAttribute('aria-busy') === 'true')return false;
     if (isExternal(listing)) {
       const tab = prepareTab();
       if (tab && !tab.closed) tab.location.replace(listing.sellerUrl);
@@ -1037,7 +1226,7 @@
     });
     window.addEventListener('pagehide', resetContext);
     window.addEventListener('pageshow', syncContext);
-    window.SnoteEncarLink = Object.freeze({refresh: syncContext, lookupCurrent});
+    window.SnoteEncarLink = Object.freeze({refresh: syncContext, lookupCurrent,readHttpResponse});
     syncContext();
   }
 

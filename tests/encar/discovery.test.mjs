@@ -5,7 +5,8 @@ import './html-rewriter-setup.mjs';
 
 const source = (await readFile(new URL('../../functions/api/encar.js', import.meta.url), 'utf8'))
   .replace("'../_shared/encar-catalog.mjs'", JSON.stringify(new URL('../../functions/_shared/encar-catalog.mjs', import.meta.url).href))
-  .replace("'../_shared/encar-page-price.mjs'", JSON.stringify(new URL('../../functions/_shared/encar-page-price.mjs', import.meta.url).href));
+  .replace("'../_shared/encar-page-price.mjs'", JSON.stringify(new URL('../../functions/_shared/encar-page-price.mjs', import.meta.url).href))
+  .replace("'../_shared/encar-request-budget.mjs'", JSON.stringify(new URL('../../functions/_shared/encar-request-budget.mjs', import.meta.url).href));
 const { onRequest } = await import('data:text/javascript;base64,' + Buffer.from(source).toString('base64'));
 const PLATE = '12가3456';
 const ID = '43000001';
@@ -439,7 +440,7 @@ test('six officially rejected external hints do not consume network-page slots n
       assert.equal(result.body.listings[0].externalVerification.sourceUrl, sourceUrl);
     } else {
       assert.deepEqual(result.body.listings, []); assert.equal(result.body.diagnostics.externalSkippedCount, 6);
-      assert.equal(result.body.diagnostics.externalRequestCount, 1); assert.equal(result.body.diagnostics.resolverRelease, '2.127');
+      assert.equal(result.body.diagnostics.externalRequestCount, 1); assert.equal(result.body.diagnostics.resolverRelease, '2.137');
       assert.equal(result.body.diagnostics.discoveryProvided, false);
     }
   });
@@ -525,7 +526,7 @@ test('manufacturer, plate, ID and detail-source conflicts have precise safe sear
       externalPages: { [source]: '<main>Unknown source</main>', [EXTERNAL]: '<main>Unknown source</main>', ['https://nnov.trust-encar.ru/auto/43000002/']: '<main>Unknown source</main>' } });
     assert.deepEqual(result.body.listings, []); assert.equal(result.body.diagnostics.searchEvidenceCount, 0);
     assert.equal(result.body.diagnostics.searchEvidenceAcceptedCount, 0); assert.ok(result.body.diagnostics.parseReasonCounts[reason] >= 1);
-    assert.equal(result.body.diagnostics.resolverRelease, '2.127');
+    assert.equal(result.body.diagnostics.resolverRelease, '2.137');
     assert.doesNotMatch(JSON.stringify(result.body.diagnostics) + result.logs.join(''), /Tesla|테슬라|12가3456|43000001|nnov|synthetic_access|synthetic_tavily/);
   });
 });

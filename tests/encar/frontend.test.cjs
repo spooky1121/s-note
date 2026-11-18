@@ -15,6 +15,7 @@ const SECOND_PLATE = '34나5678';
 const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
 const settle = async () => {
   await new Promise(resolve => setImmediate(resolve));
+  await pause(2);
   await new Promise(resolve => setImmediate(resolve));
 };
 
@@ -56,6 +57,17 @@ function searchIndexListing(id = '43000001') {
 }
 
 const plain = value => JSON.parse(JSON.stringify(value));
+// Original response-field tests keep their exact core schema assertions. The
+// additive client transport fields are independently checked here and below.
+function legacyDiagnostic(text) {
+  const value=JSON.parse(text);
+  if(value.endpoint!==undefined)assert.ok(['encar','encar-auto-price'].includes(value.endpoint));
+  if(value.attempt!==undefined)assert.ok(Number.isInteger(value.attempt)&&value.attempt>=1&&value.attempt<=2);
+  if(value.retryAfterSeconds!==undefined)assert.ok(Number.isInteger(value.retryAfterSeconds)&&value.retryAfterSeconds>=0&&value.retryAfterSeconds<=86400);
+  if(value.clientRequestCount!==undefined)assert.ok(Number.isInteger(value.clientRequestCount)&&value.clientRequestCount>=1&&value.clientRequestCount<=4);
+  for(const key of['endpoint','attempt','retryAfterSeconds','clientRequestCount'])delete value[key];
+  return value;
+}
 
 function assertLookupIcon(button, busy = false) {
   assert.equal(button.tagName, 'BUTTON');
@@ -96,7 +108,10 @@ function fixture(t, options = {}) {
   const w = dom.window;
   w.Date = class extends Date { constructor(...args) { super(...(args.length ? args : ['2026-11-18T00:00:00.000Z'])); } };
   const state = { ready: options.ready ?? true, canWrite: options.canWrite ?? true, storageScope: 'fixture-company' };
-  const events = [], openCalls = [], tabs = [], requests = [], saveCalls = [], applyCalls = [], changeCalls = [], autoCalls = [], refreshListCalls = [], toasts = [];
+  const events = [], openCalls = [], tabs = [], requests = [], saveCalls = [], applyCalls = [], changeCalls = [], autoCalls = [], refreshListCalls = [], toasts = [],retryDelays=[];
+  let repeatedFailure=null;
+  const realSetTimeout=w.setTimeout.bind(w);w.setTimeout=(handler,delay,...args)=>{let actual=delay;if(delay===75000&&options.requestTimeoutMs!==undefined)actual=options.requestTimeoutMs;else if(delay===65000&&options.autoTimeoutMs!==undefined)actual=options.autoTimeoutMs;else if(delay>=600&&delay<=850&&!options.realRetryDelays){retryDelays.push(delay);actual=0;}return realSetTimeout(handler,actual,...args);};
+  w.TextDecoder=TextDecoder;
   w.toast = message => toasts.push(message);
   w.cars = plain(options.cars || [{ id: 'car-1', plate: PLATE }, { id: 'car-2', plate: SECOND_PLATE }]);
   if (options.savedRecord !== undefined) w.cars[0].encarLinks = plain(options.savedRecord);
@@ -151,12 +166,7 @@ function fixture(t, options = {}) {
     w.snoteEncarLinksBridge.refreshList=base=>{refreshListCalls.push(plain(base));if(options.refreshList)return options.refreshList(base);};
     if(options.autoPrice)w.snoteEncarLinksBridge.autoPrice=async(base,record,settings)=>{const call={base:plain(base),record:plain(record),settings};autoCalls.push(call);return options.autoPrice(call);};
   }
-  if (options.requestTimeoutMs !== undefined || options.autoTimeoutMs !== undefined) {
-    const realSetTimeout = w.setTimeout.bind(w);
-    w.setTimeout = (handler, delay, ...args) => realSetTimeout(
-      handler, delay === 45000 && options.requestTimeoutMs !== undefined ? options.requestTimeoutMs : delay === 65000 && options.autoTimeoutMs !== undefined ? options.autoTimeoutMs : delay, ...args
-    );
-  }
+  function fakeResponse(body,opts={}){const status=opts.status??200;return{status,ok:status>=200&&status<300,headers:{get(name){return name.toLowerCase()==='content-type'?(opts.contentType??'application/json'):name.toLowerCase()==='cf-ray'?(opts.cfRay??null):name.toLowerCase()==='retry-after'?(opts.retryAfter??null):null;}},json:()=>opts.jsonPromise||Promise.resolve(body)};}
   w.open = (url, target, features) => {
     events.push('open');
     openCalls.push({ url, target, features });
@@ -184,6 +194,9 @@ function fixture(t, options = {}) {
     };
     if (init.signal.aborted) abort();
     else init.signal.addEventListener('abort', abort, { once: true });
+    // Legacy diagnostic scenarios script the same failure for the one bounded
+    // retry. Fresh user clicks always have a different signal and are unscripted.
+    if(!options.manualRetries&&repeatedFailure?.signal===init.signal){const saved=repeatedFailure;repeatedFailure=null;queueMicrotask(()=>pending.resolve(fakeResponse(saved.body,saved.opts)));}
     return pending.promise;
   };
 
@@ -194,7 +207,7 @@ function fixture(t, options = {}) {
   t.after(() => { w.close(); assert.equal(errors.length, 0, 'No unhandled DOM errors'); });
 
   return {
-    w, state, events, openCalls, tabs, requests, saveCalls, applyCalls, changeCalls, autoCalls, refreshListCalls, toasts, button,
+    w, state, events, openCalls, tabs, requests, saveCalls, applyCalls, changeCalls, autoCalls, refreshListCalls, toasts, retryDelays, button,
     originalOpenVehicle, originalCloseVehicle,
     get note() { return w.document.querySelector('.snote-encar-note'); },
     get links() { return [...w.document.querySelectorAll('.snote-encar-results a')]; },
@@ -217,13 +230,9 @@ function fixture(t, options = {}) {
     click() { button.click(); },
     submitAddress(value) { this.manual.open = true; this.manualInput.value = value; this.manual.querySelector('button').click(); },
     reply(index, body, opts = {}) {
-      const status = opts.status ?? 200;
-      requests[index].pending.resolve({
-        status,
-        ok: status >= 200 && status < 300,
-        headers: { get(name) { return name.toLowerCase() === 'content-type' ? (opts.contentType ?? 'application/json') : name.toLowerCase() === 'cf-ray' ? (opts.cfRay ?? null) : null; } },
-        json: () => opts.jsonPromise || Promise.resolve(body)
-      });
+      if(opts.jsonPromise)opts.jsonPromise.catch(()=>{});
+      if([429,502,503,504].includes(opts.status))repeatedFailure={signal:requests[index].init.signal,body,opts};
+      requests[index].pending.resolve(fakeResponse(body,opts));
     }
   };
 }
@@ -533,7 +542,7 @@ test('19 old unverified responses retain the exact note, with an optional closed
   assert.equal(f.manual.hidden, false); assert.equal(f.manual.open, false);
   assert.equal(f.copyButton.hidden, false); assert.equal(f.links.length, 0);
   f.copyButton.click(); await settle();
-  assert.deepEqual(JSON.parse(f.copyFallback.value), { service: 'snote-encar', clientRelease: '2.128', code: 'UNVERIFIED', httpStatus: 200 });
+  assert.deepEqual(legacyDiagnostic(f.copyFallback.value), { service: 'snote-encar', clientRelease: '2.137', code: 'UNVERIFIED', httpStatus: 200 });
   assert.equal(f.copyFallback.readOnly, true); assert.equal(f.copyFallback.hidden, false);
   assert.equal(f.w.document.activeElement, f.copyFallback); assert.equal(f.copyFallback.selectionStart, 0); assert.equal(f.copyFallback.selectionEnd, f.copyFallback.value.length);
 });
@@ -576,7 +585,7 @@ test('non-JSON server failures retain HTTP status and a temporary availability r
       assert.equal(f.tabs[0].closed, true); assert.deepEqual(f.tabs[0].navigations, []); assert.equal(f.saveCalls.length, 0);
       assert.equal(f.links.length, 2, 'Saved links remain available after an unsuccessful recheck'); assert.equal(f.button.disabled, false);
       f.copyButton.click(); await settle();
-      assert.deepEqual(JSON.parse(f.copyFallback.value), {service:'snote-encar', clientRelease:'2.128',code:'SERVER_UNAVAILABLE',httpStatus:status,responseType:'html',observedAt:'2026-11-18T00:00:00.000Z'});
+      assert.deepEqual(legacyDiagnostic(f.copyFallback.value), {service:'snote-encar', clientRelease:'2.137',code:'SERVER_UNAVAILABLE',httpStatus:status,responseType:'html',observedAt:'2026-11-18T00:00:00.000Z'});
       assert.doesNotMatch(f.copyFallback.value, /PRIVATE|12가3456|43000001|https:|token/);
     });
   }
@@ -587,13 +596,13 @@ test('unreadable JSON server failures retain availability diagnostics without re
     const f = fixture(t, {bridge:true}); f.click(); await settle();
     f.reply(0, null, {status:503, jsonPromise:Promise.reject(failure)}); await settle(); f.copyButton.click(); await settle();
     assert.equal(f.note.textContent, '광고 확인 서버가 일시적으로 응답하지 않습니다. 잠시 후 다시 시도해 주세요.');
-    assert.deepEqual(JSON.parse(f.copyFallback.value), {service:'snote-encar', clientRelease:'2.128',code:'SERVER_UNAVAILABLE',httpStatus:503,responseType:'json',observedAt:'2026-11-18T00:00:00.000Z'});
+    assert.deepEqual(legacyDiagnostic(f.copyFallback.value), {service:'snote-encar', clientRelease:'2.137',code:'SERVER_UNAVAILABLE',httpStatus:503,responseType:'json',observedAt:'2026-11-18T00:00:00.000Z'});
     assert.equal(f.tabs[0].closed, true); assert.deepEqual(f.tabs[0].navigations, []); assert.equal(f.saveCalls.length, 0);
     assert.doesNotMatch(f.copyFallback.value, /PRIVATE/);
   }
   const f = fixture(t); f.click(); await settle();
   f.reply(0, null, {status:503,jsonPromise:Promise.reject(Error('SESSION_CONTEXT_CHANGED'))}); await settle(); f.copyButton.click(); await settle();
-  assert.equal(JSON.parse(f.copyFallback.value).code, 'SESSION_CONTEXT_CHANGED');
+  assert.equal(legacyDiagnostic(f.copyFallback.value).code, 'SESSION_CONTEXT_CHANGED');
 });
 
 test('22 a manual URL supplies only its explicit ID and cannot navigate until the server verifies the original seller', async t => {
@@ -626,7 +635,7 @@ test('catalogue timeout preserves its safe diagnostic and offers manual verifica
   assert.equal(f.manual.hidden, false); assert.equal(f.manual.open, false); assert.equal(f.tabs[0].closed, true);
   assert.deepEqual(f.tabs[0].navigations, []); assert.equal(f.links.length, 0); assert.equal(f.saveCalls.length, 0);
   f.copyButton.click(); await settle();
-  assert.deepEqual(JSON.parse(f.copyFallback.value), {service:'snote-encar', clientRelease:'2.128', code:'CATALOG_TIMEOUT', httpStatus:502, responseType:'json', observedAt:'2026-11-18T00:00:00.000Z', requestId:REQUEST_ID, catalogRequestCount:2});
+  assert.deepEqual(legacyDiagnostic(f.copyFallback.value), {service:'snote-encar', clientRelease:'2.137', code:'CATALOG_TIMEOUT', httpStatus:502, responseType:'json', observedAt:'2026-11-18T00:00:00.000Z', requestId:REQUEST_ID, catalogRequestCount:2});
   assert.doesNotMatch(f.copyFallback.value, /PRIVATE|12가3456|43000001|https:|token/);
 });
 
@@ -667,11 +676,11 @@ test('26 diagnostic copy whitelists bounded numeric counters, UUID and known cod
     source: 'PRIVATE_SOURCE', host: 'PRIVATE_HOST', title: 'PRIVATE_TITLE', text: 'PRIVATE_TEXT', raw_content: 'PRIVATE_RAW', body: 'PRIVATE_BODY',
     rejected: { plateMismatch: 2, notAdvertising: -1, notFound: 4, private: 'PRIVATE_VALUE' } });
   f.copyButton.click(); await settle(); assert.equal(writes.length, 1);
-  assert.deepEqual(JSON.parse(writes[0]), { service: 'snote-encar', clientRelease: '2.128', code: 'SEARCH_NO_RESULTS', httpStatus: 200, requestId: REQUEST_ID, searchCount: 3, plateMatchedCount: 2, resultPlateMatchCount: 3, rawResultCount: 5, recognizedSourceCount: 1, rejected: { plateMismatch: 2, notFound: 4 } });
+  assert.deepEqual(legacyDiagnostic(writes[0]), { service: 'snote-encar', clientRelease: '2.137', code: 'SEARCH_NO_RESULTS', httpStatus: 200, requestId: REQUEST_ID, searchCount: 3, plateMatchedCount: 2, resultPlateMatchCount: 3, rawResultCount: 5, recognizedSourceCount: 1, rejected: { plateMismatch: 2, notFound: 4 } });
   assert.doesNotMatch(writes[0], /PRIVATE|12가3456|43000001|https:|Bearer|apiKey|token/); assert(writes[0].length < 600);
   assert.equal(f.copyFallback.hidden, true); assert.match(f.copyStatus.textContent, /복사했습니다/);
   const invalid = fixture(t); await showUnverified(invalid, { code: 'PRIVATE_TOKEN', requestId: REQUEST_ID+PLATE, searchCount: -1 }); invalid.copyButton.click(); await settle();
-  assert.deepEqual(JSON.parse(invalid.copyFallback.value), { service: 'snote-encar', clientRelease: '2.128', code: 'UNVERIFIED', httpStatus: 200 });
+  assert.deepEqual(legacyDiagnostic(invalid.copyFallback.value), { service: 'snote-encar', clientRelease: '2.137', code: 'UNVERIFIED', httpStatus: 200 });
 });
 
 test('27 a rejected/late clipboard operation cannot restore diagnostic text after logout', async t => {
@@ -687,9 +696,9 @@ test('28 unavailable popups and native token errors never expose raw exceptions'
   assert.equal(blocked.links.length, 2); assert.match(blocked.note.textContent, /링크/); assert.doesNotMatch(blocked.note.textContent, /PRIVATE/);
   const failed = fixture(t, { token: () => Promise.reject(Error('PRIVATE_TOKEN_ERROR')) }); failed.click(); await settle();
   assert.equal(failed.requests.length, 0); assert.equal(failed.tabs[0].closed, true); assert.doesNotMatch(failed.note.textContent, /PRIVATE/); failed.copyButton.click(); await settle();
-  assert.equal(JSON.parse(failed.copyFallback.value).code, 'NETWORK_ERROR');
+  assert.equal(legacyDiagnostic(failed.copyFallback.value).code, 'NETWORK_ERROR');
   const expired = fixture(t, { token: () => Promise.resolve(null) }); expired.click(); await settle(); expired.copyButton.click(); await settle();
-  assert.equal(expired.requests.length, 0); assert.equal(JSON.parse(expired.copyFallback.value).code, 'AUTH_REQUIRED');
+  assert.equal(expired.requests.length, 0); assert.equal(legacyDiagnostic(expired.copyFallback.value).code, 'AUTH_REQUIRED');
 });
 
 test('middleware failures keep allowlisted request reasons without exposing response fields or opening advertisements', async t => {
@@ -706,13 +715,13 @@ test('middleware failures keep allowlisted request reasons without exposing resp
       assert.equal(f.tabs[0].closed, true); assert.deepEqual(f.tabs[0].navigations, []); assert.equal(f.saveCalls.length, 0);
       assert.equal(f.links.length, 2, 'Previously saved links survive a current failed recheck');
       f.copyButton.click(); await settle();
-      assert.deepEqual(JSON.parse(f.copyFallback.value), {service:'snote-encar', clientRelease:'2.128', code, httpStatus:status,responseType:'json',observedAt:'2026-11-18T00:00:00.000Z'});
+      assert.deepEqual(legacyDiagnostic(f.copyFallback.value), {service:'snote-encar', clientRelease:'2.137', code, httpStatus:status,responseType:'json',observedAt:'2026-11-18T00:00:00.000Z'});
       assert.doesNotMatch(f.copyFallback.value, /PRIVATE|12가3456|43000001|https:|token/);
     });
   }
   const unknown = fixture(t); unknown.click(); await settle();
   unknown.reply(0, {ok:false, code:'PRIVATE_UNKNOWN', error:'PRIVATE_RESPONSE'}, {status:503}); await settle(); unknown.copyButton.click(); await settle();
-  assert.equal(JSON.parse(unknown.copyFallback.value).code, 'HTTP_ERROR'); assert.doesNotMatch(unknown.note.textContent, /PRIVATE/);
+  assert.equal(legacyDiagnostic(unknown.copyFallback.value).code, 'HTTP_ERROR'); assert.doesNotMatch(unknown.note.textContent, /PRIVATE/);
 });
 
 test('current account-context exceptions preserve their reason while late exceptions remain silent', async t => {
@@ -721,8 +730,8 @@ test('current account-context exceptions preserve their reason while late except
       const f = fixture(t, {bridge:true}); f.click(); await settle();
       const error = typed ? Object.assign(Error('PRIVATE_AUTH_ERROR'), {code, httpStatus:503}) : Error(code);
       f.requests[0].pending.reject(error); await settle(); f.copyButton.click(); await settle();
-      assert.equal(JSON.parse(f.copyFallback.value).code, code);
-      assert.equal(JSON.parse(f.copyFallback.value).httpStatus, typed ? 503 : null);
+      assert.equal(legacyDiagnostic(f.copyFallback.value).code, code);
+      assert.equal(legacyDiagnostic(f.copyFallback.value).httpStatus, typed ? 503 : null);
       assert.match(f.note.textContent, /로그인/); assert.doesNotMatch(f.note.textContent, /PRIVATE/);
       assert.equal(f.tabs[0].closed, true); assert.equal(f.saveCalls.length, 0); assert.deepEqual(f.tabs[0].navigations, []);
     }
@@ -741,7 +750,7 @@ test('29 an unknown advertisement state is an error, never a sold/inactive claim
   assert.doesNotMatch(f.note.textContent, /종료|판매\s*완료|판매\s*중단|매물.*없/);
   assert.equal(f.note.dataset.error, 'true'); assert.equal(f.tabs[0].closed, true); assert.deepEqual(f.tabs[0].navigations, []); assert.equal(f.links.length, 0);
   f.copyButton.click(); await settle();
-  assert.deepEqual(JSON.parse(f.copyFallback.value), { service: 'snote-encar', clientRelease: '2.128', code: 'AD_STATUS_UNKNOWN', httpStatus: 502, responseType:'json', observedAt:'2026-11-18T00:00:00.000Z', requestId: REQUEST_ID, plateMatchedCount: 1 });
+  assert.deepEqual(legacyDiagnostic(f.copyFallback.value), { service: 'snote-encar', clientRelease: '2.137', code: 'AD_STATUS_UNKNOWN', httpStatus: 502, responseType:'json', observedAt:'2026-11-18T00:00:00.000Z', requestId: REQUEST_ID, plateMatchedCount: 1 });
   assert.doesNotMatch(f.copyFallback.value, /PRIVATE|12가3456|43000001|https:|advertisementStatus/);
 });
 
@@ -749,7 +758,7 @@ test('30 optional matched-plate, search-stage and public-catalog counts copy onl
   const keys = ['plateMatchedCount', 'resultPlateMatchCount', 'rawResultCount', 'recognizedSourceCount', 'catalogRequestCount', 'catalogPageCount', 'catalogRecordCount', 'catalogExactMatchCount', 'catalogFormCount', 'catalogPlateFieldCount', 'catalogLinkCount', 'modelBranchPageCount', 'externalSkippedCount', 'searchEvidenceCount', 'searchEvidenceAcceptedCount'];
   for (const count of [0, 1000, -1, 1.25, 1001, '1', null, Number.NaN, Number.POSITIVE_INFINITY]) {
     const f = fixture(t); await showUnverified(f, { code: 'NO_VERIFIED_LISTING', ...Object.fromEntries(keys.map(key => [key, count])) }); f.copyButton.click(); await settle();
-    const copied = JSON.parse(f.copyFallback.value);
+    const copied = legacyDiagnostic(f.copyFallback.value);
     for (const key of keys) {
       if (count === 0 || count === 1000) assert.equal(copied[key], count);
       else assert.equal(Object.hasOwn(copied, key), false);
@@ -765,7 +774,7 @@ test('31 incomplete public-catalog verification never opens partial listings and
   assert.equal(f.note.textContent, '공개 차량 목록의 일부 조회를 마치지 못했습니다. 잠시 후 다시 확인해 주세요.');
   assert.doesNotMatch(f.note.textContent, /PRIVATE|판매\s*완료|매물.*없/); assert.equal(f.tabs[0].closed, true); assert.deepEqual(f.tabs[0].navigations, []); assert.equal(f.links.length, 0);
   f.copyButton.click(); await settle();
-  assert.deepEqual(JSON.parse(f.copyFallback.value), { service: 'snote-encar', clientRelease: '2.128', code: 'CATALOG_INCOMPLETE', httpStatus: 502, responseType:'json', observedAt:'2026-11-18T00:00:00.000Z', requestId: REQUEST_ID, ...counters });
+  assert.deepEqual(legacyDiagnostic(f.copyFallback.value), { service: 'snote-encar', clientRelease: '2.137', code: 'CATALOG_INCOMPLETE', httpStatus: 502, responseType:'json', observedAt:'2026-11-18T00:00:00.000Z', requestId: REQUEST_ID, ...counters });
   assert.doesNotMatch(f.copyFallback.value, /PRIVATE|12가3456|43000001|https:|token|raw_content/); assert(f.copyFallback.value.length < 600);
 });
 
@@ -1137,7 +1146,7 @@ test('62 a reviewed price keeps its source metadata while the visible amount use
 test('63 safe provider diagnostics distinguish API failure without persisting or copying raw data',async t=>{
  const item={...pricedListing(),priceWon:null,priceCheckedAt:null,priceSource:null,priceStatus:'unavailable'},f=fixture(t,{bridge:true,autoConfirm:true,cars:[{id:'car-1',plate:PLATE,sell:12000000}]});
  f.click();await settle();f.reply(0,{...found(PLATE,[item]),priceDiagnostics:{providerRequests:0,pageReviewCount:0,codes:[{code:'KEY_MISSING',httpStatus:null,count:1},{code:'PRIVATE_VALUE',httpStatus:200,count:1}],raw:'PRIVATE_RAW',key:'PRIVATE_KEY'}});await settle();
- assert.equal(f.priceConfirmation.open,false);assert.match(f.note.textContent,/가격 API 키 설정/);f.copyButton.click();await settle();const copied=JSON.parse(f.copyFallback.value);assert.equal(copied.code,'PRICE_API_KEY_MISSING');assert.deepEqual(copied.price,{providerRequests:0,pageReviewCount:0,codes:[{code:'KEY_MISSING',httpStatus:null,count:1}]});assert(!f.copyFallback.value.includes('PRIVATE'));
+ assert.equal(f.priceConfirmation.open,false);assert.match(f.note.textContent,/가격 API 키 설정/);f.copyButton.click();await settle();const copied=legacyDiagnostic(f.copyFallback.value);assert.equal(copied.code,'PRICE_API_KEY_MISSING');assert.deepEqual(copied.price,{providerRequests:0,pageReviewCount:0,codes:[{code:'KEY_MISSING',httpStatus:null,count:1}]});assert(!f.copyFallback.value.includes('PRIVATE'));
  assert.equal(Object.hasOwn(f.saveCalls[0].record,'priceDiagnostics'),false);
 });
 
@@ -1224,7 +1233,7 @@ test('76 public list lookup validates the open saved advertisement and opens its
  const item=pricedListing(),f=fixture(t,{bridge:true,autoConfirm:true,savedRecord:storedRecord([item]),cars:[{id:'car-1',plate:PLATE,sell:12000000}]});
  for(const args of[['other-car',item.id],['car-1','43000009'],['car-1','javascript:bad'],['car-1',null]])assert.equal(f.w.SnoteEncarLink.lookupCurrent(...args),false);assert.equal(f.openCalls.length,0);
  f.w.document.getElementById('vehicle-overlay').setAttribute('aria-busy','true');assert.equal(f.w.SnoteEncarLink.lookupCurrent('car-1',item.id),false);f.w.document.getElementById('vehicle-overlay').setAttribute('aria-busy','false');
- assert.equal(f.w.SnoteEncarLink.lookupCurrent('car-1',item.id),true);assert.deepEqual(f.events,['open','token']);assert.equal(f.w.SnoteEncarLink.lookupCurrent('car-1',item.id),false);await settle();assert.deepEqual(JSON.parse(f.requests[0].init.body),{plate:PLATE,candidateIds:[item.id]});f.reply(0,found(PLATE,[item]));await settle();assert.equal(f.priceConfirmation.open,true);
+ assert.equal(f.w.SnoteEncarLink.lookupCurrent('car-1',item.id),true);assert.deepEqual(f.events,['open','token']);assert.equal(f.w.SnoteEncarLink.lookupCurrent('car-1',item.id),true);assert.equal(f.openCalls.length,1);await settle();assert.equal(f.requests.length,1);assert.deepEqual(JSON.parse(f.requests[0].init.body),{plate:PLATE,candidateIds:[item.id]});f.reply(0,found(PLATE,[item]));await settle();assert.equal(f.priceConfirmation.open,true);
 });
 
 test('77 saving and unavailable scopes cannot start a public list lookup or direct price save',async t=>{
@@ -1536,14 +1545,14 @@ test('diagnostics retain only bounded model catalogue counters and the search co
     modelCatalogRecordCount: 20, modelCatalogExactMatchCount: 0, externalRequestCount: 2, externalMatchCount: 0,
     discovery: {make: 'PRIVATE_MAKE', model: 'PRIVATE_MODEL'}, sourceUrls: ['https://private.example/'], body: 'PRIVATE_BODY'});
   f.copyButton.click(); await settle();
-  assert.deepEqual(JSON.parse(f.copyFallback.value), {service: 'snote-encar', clientRelease: '2.128', code: 'CATALOG_NO_MATCH', httpStatus: 200,
+  assert.deepEqual(legacyDiagnostic(f.copyFallback.value), {service: 'snote-encar', clientRelease: '2.137', code: 'CATALOG_NO_MATCH', httpStatus: 200,
     modelCatalogRequestCount: 3, modelCatalogPageCount: 1, modelCatalogRecordCount: 20, modelCatalogExactMatchCount: 0,
     externalRequestCount: 2, externalMatchCount: 0, searchConfigured: true, discoveryStage: 'model_catalog'});
   assert.doesNotMatch(f.copyFallback.value, /PRIVATE|https:|12가3456/);
   const invalid = fixture(t); await showUnverified(invalid, {searchConfigured: 'PRIVATE_SECRET', discoveryStage: 'PRIVATE_SECRET',
     modelCatalogRequestCount: -1, modelCatalogPageCount: 1001, modelCatalogRecordCount: '20', modelCatalogExactMatchCount: 1.5,
     externalRequestCount: true, externalMatchCount: null}); invalid.copyButton.click(); await settle();
-  assert.deepEqual(JSON.parse(invalid.copyFallback.value), {service: 'snote-encar', clientRelease: '2.128', code: 'UNVERIFIED', httpStatus: 200});
+  assert.deepEqual(legacyDiagnostic(invalid.copyFallback.value), {service: 'snote-encar', clientRelease: '2.137', code: 'UNVERIFIED', httpStatus: 200});
 });
 
 test('copied diagnostics distinguish the fixed client release from safe resolver evidence and bounded branch progress', async t => {
@@ -1552,18 +1561,18 @@ test('copied diagnostics distinguish the fixed client release from safe resolver
       discoveryProvided: true, modelBranchPageCount: 3, externalSkippedCount: 2,
       grade: 'PRIVATE_GRADE', branchUrl: 'https://private.example/', sourceUrls: ['https://private.example/'], id: '43000001'});
     f.copyButton.click(); await settle();
-    assert.deepEqual(JSON.parse(f.copyFallback.value), {service: 'snote-encar', clientRelease: '2.128', code: 'CATALOG_NO_MATCH',
+    assert.deepEqual(legacyDiagnostic(f.copyFallback.value), {service: 'snote-encar', clientRelease: '2.137', code: 'CATALOG_NO_MATCH',
       httpStatus: 200, resolverRelease, modelBranchPageCount: 3, externalSkippedCount: 2, discoveryProvided: true});
     assert.doesNotMatch(f.copyFallback.value, /PRIVATE|https:|43000001|12가3456/);
   });
   const absent = fixture(t); await showUnverified(absent, {code: 'CATALOG_FORM_UNSUPPORTED', clientRelease: '2.124',
     modelBranchPageCount: 1001, externalSkippedCount: -1, discoveryProvided: 'PRIVATE_TRUE'});
   absent.copyButton.click(); await settle();
-  assert.deepEqual(JSON.parse(absent.copyFallback.value), {service: 'snote-encar', clientRelease: '2.128', code: 'CATALOG_FORM_UNSUPPORTED', httpStatus: 200});
+  assert.deepEqual(legacyDiagnostic(absent.copyFallback.value), {service: 'snote-encar', clientRelease: '2.137', code: 'CATALOG_FORM_UNSUPPORTED', httpStatus: 200});
   assert.doesNotMatch(absent.note.textContent, /이전 버전|구버전|오래된 버전/);
   const disabled = fixture(t); await showUnverified(disabled, {discoveryProvided: false, modelBranchPageCount: 0, externalSkippedCount: 0});
   disabled.copyButton.click(); await settle();
-  assert.deepEqual(JSON.parse(disabled.copyFallback.value), {service: 'snote-encar', clientRelease: '2.128', code: 'UNVERIFIED', httpStatus: 200,
+  assert.deepEqual(legacyDiagnostic(disabled.copyFallback.value), {service: 'snote-encar', clientRelease: '2.137', code: 'UNVERIFIED', httpStatus: 200,
     modelBranchPageCount: 0, externalSkippedCount: 0, discoveryProvided: false});
 });
 
@@ -1574,7 +1583,7 @@ test('release diagnostics reject arbitrary strings, IDs, URL data and noninteger
     const f = fixture(sub); await showUnverified(f, {resolverRelease: releases[index], clientRelease: 'PRIVATE_CLIENT',
       modelBranchPageCount: 1.5, externalSkippedCount: '3', discoveryProvided: {id: '43000001'}, token: 'PRIVATE_TOKEN'});
     f.copyButton.click(); await settle();
-    assert.deepEqual(JSON.parse(f.copyFallback.value), {service: 'snote-encar', clientRelease: '2.128', code: 'UNVERIFIED', httpStatus: 200});
+    assert.deepEqual(legacyDiagnostic(f.copyFallback.value), {service: 'snote-encar', clientRelease: '2.137', code: 'UNVERIFIED', httpStatus: 200});
     assert.doesNotMatch(f.copyFallback.value, /PRIVATE|https:|43000001|12가3456/);
   });
 });
@@ -1587,14 +1596,14 @@ test('search evidence diagnostics keep accepted counts and fixed parse reasons w
       parseReasonCounts: {...Object.fromEntries(reasons.map(key => [key, count])), PRIVATE_RAW: 'PRIVATE_SEARCH_TEXT',
         plate: PLATE, id: '43000001', raw_content: 'PRIVATE_RAW_CONTENT'}, sourceUrl: 'https://private.example/'});
     f.copyButton.click(); await settle();
-    assert.deepEqual(JSON.parse(f.copyFallback.value), {service: 'snote-encar', clientRelease: '2.128', code: 'DETAIL_PARSE_FAILED', httpStatus: 200,
+    assert.deepEqual(legacyDiagnostic(f.copyFallback.value), {service: 'snote-encar', clientRelease: '2.137', code: 'DETAIL_PARSE_FAILED', httpStatus: 200,
       searchEvidenceCount: 3, searchEvidenceAcceptedCount: 1,
       ...(count === 1 || count === 1000 ? {parseReasonCounts: Object.fromEntries(reasons.map(key => [key, count]))} : {})});
     assert.doesNotMatch(f.copyFallback.value, /PRIVATE|https:|12가3456|43000001/);
   });
   for (const parseReasonCounts of [[], ['MODEL_HTML_PARSE_FAILED'], 'PRIVATE_RAW']) {
     const f = fixture(t); await showUnverified(f, {parseReasonCounts}); f.copyButton.click(); await settle();
-    assert.equal(Object.hasOwn(JSON.parse(f.copyFallback.value), 'parseReasonCounts'), false);
+    assert.equal(Object.hasOwn(legacyDiagnostic(f.copyFallback.value), 'parseReasonCounts'), false);
   }
 });
 
@@ -1614,9 +1623,9 @@ test('edge diagnostics retain only validated code/ray and client observation, wi
     f.reply(0, {...entry, message:'PRIVATE', token:'PRIVATE', cookie:'PRIVATE', Authorization:'PRIVATE',
       observedAt:'PRIVATE_SERVER_TIME', responseType:'PRIVATE_TYPE', url:'https://private/?token=PRIVATE', plate:PLATE},
       {status:503,cfRay:entry.cfRay}); await settle(); f.copyButton.click(); await settle();
-    assert.deepEqual(JSON.parse(f.copyFallback.value), {service:'snote-encar',clientRelease:'2.128',code:'HTTP_ERROR',httpStatus:503,
+    assert.deepEqual(legacyDiagnostic(f.copyFallback.value), {service:'snote-encar',clientRelease:'2.137',code:'HTTP_ERROR',httpStatus:503,
       responseType:'json',observedAt:'2026-11-18T00:00:00.000Z',...(entry.ray?{rayId:entry.ray}:{}),...(entry.code?{cloudflareErrorCode:entry.code}:{})});
-    assert.equal(f.requests.length,1); assert.equal(f.saveCalls.length,0); assert.equal(f.tabs[0].closed,true);
+    assert.equal(f.requests.length,entry.code===1010?1:2); assert.equal(f.saveCalls.length,0); assert.equal(f.tabs[0].closed,true);
     assert.doesNotMatch(f.copyFallback.value,/PRIVATE|12가3456|Authorization|cookie|https:/);
   });
 });
@@ -1627,7 +1636,7 @@ test('non-JSON and broken JSON keep safe header evidence through catch', async t
     f.reply(0,'PRIVATE_BODY',{status:503,contentType,cfRay:'abcdef0123456789-ICN',
       ...(responseType==='json'?{jsonPromise:Promise.reject(new SyntaxError('PRIVATE_BODY'))}:{})});
     await settle(); f.copyButton.click(); await settle();
-    assert.deepEqual(JSON.parse(f.copyFallback.value),{service:'snote-encar',clientRelease:'2.128',code:'SERVER_UNAVAILABLE',httpStatus:503,
+    assert.deepEqual(legacyDiagnostic(f.copyFallback.value),{service:'snote-encar',clientRelease:'2.137',code:'SERVER_UNAVAILABLE',httpStatus:503,
       responseType,observedAt:'2026-11-18T00:00:00.000Z',rayId:'abcdef0123456789-icn'});
   }
 });
@@ -1637,11 +1646,98 @@ test('edge evidence clears on manual retry and close, and late response cannot r
   f.reply(0,{error_code:1010,ray_id:'abcdef0123456789'},{status:503}); await settle();
   f.copyButton.click(); await settle(); assert.match(f.copyFallback.value,/rayId/);
   f.click(); await settle(); assert.equal(f.copyButton.hidden,true); assert.equal(f.copyFallback.value,'');
-  f.reply(1,{status:'error'},{status:503}); await settle(); f.copyButton.click(); await settle();
-  assert.equal(JSON.parse(f.copyFallback.value).rayId,undefined); assert.equal(JSON.parse(f.copyFallback.value).cloudflareErrorCode,undefined);
-  f.click(); await settle(); f.closeDetail(); await settle();
-  f.reply(2,{error_code:1010,ray_id:'abcdef0123456789'},{status:503}); await settle();
+  f.reply(f.requests.length-1,{status:'error'},{status:503}); await settle(); f.copyButton.click(); await settle();
+  assert.equal(legacyDiagnostic(f.copyFallback.value).rayId,undefined); assert.equal(legacyDiagnostic(f.copyFallback.value).cloudflareErrorCode,undefined);
+  f.click(); await settle(); const cancelledIndex=f.requests.length-1;f.closeDetail(); await settle();
+  f.reply(cancelledIndex,{error_code:1010,ray_id:'abcdef0123456789'},{status:503}); await settle();
   assert.equal(f.copyButton.hidden,true); assert.equal(f.copyFallback.value,'');
-  f.reopenDetail(); await settle(); f.click(); await settle(); f.reply(3,found()); await settle();
-  assert.equal(f.copyButton.hidden,true); assert.equal(f.requests.length,4); assert.deepEqual(f.tabs[3].navigations,[listing().sellerUrl]);
+  f.reopenDetail(); await settle(); f.click(); await settle();const finalIndex=f.requests.length-1; f.reply(finalIndex,found()); await settle();
+  assert.equal(f.copyButton.hidden,true); assert.equal(f.requests.length,finalIndex+1); assert.deepEqual(f.tabs.at(-1).navigations,[listing().sellerUrl]);
+});
+
+async function diagnostic(f){f.copyButton.click();await settle();return JSON.parse(f.copyFallback.value);}
+async function waitRequests(f,count){const until=Date.now()+1500;while(f.requests.length<count&&Date.now()<until)await settle();assert.equal(f.requests.length,count);}
+
+test('v2.137 same-context clicks join one request, one popup and one acknowledged save',async t=>{
+ const token=deferred(),f=fixture(t,{bridge:true,manualRetries:true,token:()=>token.promise,savedRecord:storedRecord()});f.click();
+ for(let i=0;i<10;i++){f.button.dispatchEvent(new f.w.MouseEvent('click'));assert.equal(f.w.SnoteEncarLink.lookupCurrent('car-1','43000001'),true);}
+ assert.equal(f.openCalls.length,1);assert.deepEqual(f.events,['open','token']);assert.equal(f.button.disabled,true);token.resolve('fixed-token');await settle();assert.equal(f.requests.length,1);assert.equal(f.requests[0].aborted,false);f.reply(0,found());await settle();assert.equal(f.saveCalls.length,1);assert.equal(f.tabs[0].navigations.length,1);assert.equal(f.button.disabled,false);
+});
+
+test('v2.137 temporary HTTP failures retry once with the same token, body and deadline before recovery',async t=>{
+ for(const status of[429,502,503,504])await t.test(String(status),async sub=>{
+  const f=fixture(sub,{bridge:true,manualRetries:true});f.click();await settle();f.reply(0,{status:'error',diagnostics:{code:'SEARCH_UNAVAILABLE',stage:'search',networkStage:'fetch'}},{status});await waitRequests(f,2);
+  assert.equal(f.events.filter(e=>e==='token').length,1);assert.equal(f.openCalls.length,1);assert.equal(f.requests[0].init.body,f.requests[1].init.body);assert.equal(f.requests[0].init.headers.Authorization,f.requests[1].init.headers.Authorization);assert.equal(f.requests[0].init.signal,f.requests[1].init.signal);assert.equal(f.retryDelays.length,1);assert(f.retryDelays[0]>=600&&f.retryDelays[0]<=850);
+  f.reply(1,found());await settle();assert.equal(f.saveCalls.length,1);assert.deepEqual(f.tabs[0].navigations,[listing().sellerUrl]);assert.equal(f.copyButton.hidden,true);assert.equal(f.requests.length,2);
+ });
+});
+
+test('v2.137 the second failure is final and the next user click starts a real new operation',async t=>{
+ const f=fixture(t,{bridge:true,manualRetries:true});f.click();await settle();f.reply(0,{status:'error'},{status:503});await waitRequests(f,2);f.reply(1,{status:'error'},{status:503});await settle();const copied=await diagnostic(f);assert.equal(copied.attempt,2);assert.equal(copied.clientRequestCount,2);assert.equal(copied.endpoint,'encar');assert.equal(f.button.disabled,false);assert.equal(f.requests.length,2);assert.equal(f.saveCalls.length,0);
+ f.click();await settle();assert.equal(f.requests.length,3);f.reply(2,found());await settle();assert.equal(f.saveCalls.length,1);assert.equal(f.copyButton.hidden,true);
+});
+
+test('v2.137 authentication, configuration, invalid input, plate and deterministic parser errors never auto retry',async t=>{
+ for(const code of['AUTH_REQUIRED','AUTH_FAILED','AUTH_UNAVAILABLE','SESSION_UNAVAILABLE','UNAUTHORIZED','FORBIDDEN','STAFF_REQUIRED','SUPABASE_NOT_CONFIGURED','SEARCH_NOT_CONFIGURED','SEARCH_AUTH_FAILED','SEARCH_QUOTA_EXCEEDED','INVALID_REQUEST','NOT_FOUND','PAYLOAD_TOO_LARGE','PLATE_MISMATCH','DETAIL_PARSE_FAILED','CATALOG_PARSE_FAILED'])await t.test(code,async sub=>{
+  const f=fixture(sub,{bridge:true,manualRetries:true});f.click();await settle();f.reply(0,{ok:false,code,stage:'auth',networkStage:'RPC_NETWORK_ERROR'},{status:503});await settle();assert.equal(f.requests.length,1);assert.equal(f.retryDelays.length,0);assert.equal(f.saveCalls.length,0);const copied=await diagnostic(f);assert.equal(copied.code,code);assert.equal(copied.stage,'auth');assert.equal(copied.networkStage,'RPC_NETWORK_ERROR');assert.equal(copied.endpoint,'encar');
+ });
+});
+
+test('v2.137 provider Retry-After values above 30 seconds are preserved and never retried early',async t=>{
+ for(const seconds of[60,120,3600,86400,99999999])await t.test(String(seconds),async sub=>{
+  const f=fixture(sub,{bridge:true,manualRetries:true});let clock=Date.now();f.w.Date.now=()=>clock;f.click();await settle();f.reply(0,{status:'error',retryAfterSeconds:seconds,diagnostics:{code:'SEARCH_RATE_LIMITED',stage:'search',upstreamStatus:429}},{status:429,retryAfter:String(seconds)});await settle();assert.equal(f.requests.length,1);assert.equal(f.retryDelays.length,0);assert.equal(f.button.disabled,true);assert.match(f.note.textContent,new RegExp(String(Math.min(seconds,86400))+'초'));assert.equal((await diagnostic(f)).retryAfterSeconds,Math.min(seconds,86400));
+  f.button.dispatchEvent(new f.w.MouseEvent('click'));await settle();assert.equal(f.requests.length,1);assert.equal(f.openCalls.length,1);
+  if(seconds===60){clock+=61000;await pause(1050);assert.equal(f.button.disabled,false);f.click();await settle();assert.equal(f.requests.length,2);f.reply(1,found());await settle();assert.equal(f.saveCalls.length,1);}
+ });
+});
+
+test('v2.137 Retry-After HTTP dates preserve real waits and reject normalized invalid dates or weekdays',async t=>{
+ for(const [header,expected]of[
+  ['Sat, 28 Feb 2026 00:02:00 GMT',120],
+  ['sat, 28 feb 2026 00:02:00 gmt',120],
+  ['Sun, 28 Feb 2026 00:02:00 GMT',0],
+  ['Tue, 31 Feb 2026 00:02:00 GMT',0],
+  ['Sun, 29 Feb 2026 00:02:00 GMT',0],
+  ['Sat, 28 Feb 2026 24:02:00 GMT',0]
+ ])await t.test(header,async sub=>{
+  const f=fixture(sub);f.w.Date.now=()=>Date.parse('2026-02-28T00:00:00.000Z');
+  const parsed=await f.w.SnoteEncarLink.readHttpResponse(new Response('{}',{status:503,headers:{'content-type':'application/json','retry-after':header}}),{endpoint:'encar'});
+  assert.equal(parsed.retryAfterSeconds,expected);assert.equal(parsed.diagnostics.retryAfterSeconds,expected);assert.equal(f.requests.length,0);
+ });
+});
+
+test('v2.137 a short Retry-After is actually awaited once and cancellation prevents the retry',async t=>{
+ const f=fixture(t,{bridge:true,manualRetries:true,realRetryDelays:true});f.click();await settle();f.reply(0,{status:'error',diagnostics:{code:'SEARCH_RATE_LIMITED'}},{status:429,retryAfter:'1'});await settle();assert.equal(f.requests.length,1);assert.equal(f.button.disabled,true);f.closeDetail();await settle();await pause(1100);assert.equal(f.requests.length,1);assert.equal(f.requests[0].aborted,true);assert.equal(f.saveCalls.length,0);assert.equal(f.copyButton.hidden,true);
+});
+
+test('v2.137 cooldown is isolated by account and company instead of leaking to a new scope',async t=>{
+ for(const kind of['company','account'])await t.test(kind,async sub=>{
+  const f=fixture(sub,{bridge:true,manualRetries:true});f.click();await settle();f.reply(0,{status:'error',diagnostics:{code:'SEARCH_RATE_LIMITED'}},{status:429,retryAfter:'60'});await settle();assert.equal(f.button.disabled,true);
+  if(kind==='company')f.state.storageScope='another-company';else f.w.currentUser={username:'another-account'};f.w.SnoteEncarLink.refresh();assert.equal(f.button.disabled,false);f.click();await settle();assert.equal(f.requests.length,2);f.reply(1,found());await settle();assert.equal(f.saveCalls.length,1);assert.equal(f.saveCalls[0].base.companyId,kind==='company'?'another-company':'fixture-company');
+ });
+});
+
+test('v2.137 budget exhaustion keeps its bounded request counters and enforces only a manual cooldown',async t=>{
+ const f=fixture(t,{bridge:true,manualRetries:true});f.click();await settle();f.reply(0,{status:'error',retryAfterSeconds:5,diagnostics:{code:'REQUEST_BUDGET_EXCEEDED',stage:'detail',requestCount:44,reusedCount:3,budgetLimit:44,budgetRemaining:0,budgetExhausted:true,token:'PRIVATE'}},{status:502,retryAfter:'5'});await settle();assert.equal(f.requests.length,1);assert.equal(f.retryDelays.length,0);assert.equal(f.button.disabled,true);const copied=await diagnostic(f);assert.deepEqual({code:copied.code,stage:copied.stage,requestCount:copied.requestCount,reusedCount:copied.reusedCount,budgetLimit:copied.budgetLimit,budgetRemaining:copied.budgetRemaining,budgetExhausted:copied.budgetExhausted,retryAfterSeconds:copied.retryAfterSeconds},{code:'REQUEST_BUDGET_EXCEEDED',stage:'detail',requestCount:44,reusedCount:3,budgetLimit:44,budgetRemaining:0,budgetExhausted:true,retryAfterSeconds:5});assert.doesNotMatch(f.copyFallback.value,/PRIVATE/);assert.match(f.note.textContent,/범위/);
+});
+
+test('v2.137 the pure bounded reader identifies Cloudflare 1102 without exposing HTML or performing I/O',async t=>{
+ const f=fixture(t),before=f.note.textContent,response=new Response('<html><title>Worker resource error</title><span class="cf-error-code">1102</span><p>PRIVATE_URL https://private/?token=PRIVATE</p></html>',{status:503,headers:{'content-type':'text/html','cf-ray':'abcdef0123456789-ICN','retry-after':'120','x-request-id':'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa','x-encar-resolver-release':'2.137'}});
+ const parsed=await f.w.SnoteEncarLink.readHttpResponse(response,{endpoint:'encar'});assert.equal(parsed.data,null);assert.equal(parsed.responseType,'html');assert.equal(parsed.cloudflareErrorCode,1102);assert.equal(parsed.retryAfterSeconds,120);assert.equal(parsed.diagnostics.rayId,'abcdef0123456789-icn');assert.equal(parsed.diagnostics.requestId,'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa');assert.equal(parsed.diagnostics.resolverRelease,'2.137');assert.doesNotMatch(JSON.stringify(parsed),/PRIVATE|https:/);assert.equal(f.note.textContent,before);assert.equal(f.requests.length,0);assert.equal(f.openCalls.length,0);
+ const large=await f.w.SnoteEncarLink.readHttpResponse(new Response(JSON.stringify({secret:'PRIVATE'.repeat(30000)}),{headers:{'content-type':'application/json'}}),{endpoint:'encar'});assert.equal(large.data,null);assert.equal(large.diagnostics.code,'INVALID_RESPONSE');assert.equal(large.parseError.responseTooLarge,true);assert.doesNotMatch(JSON.stringify(large.diagnostics),/PRIVATE/);
+});
+
+test('v2.137 a resource-1102 HTML reply is never retried and preserves acknowledged advertisements',async t=>{
+ const f=fixture(t,{bridge:true,manualRetries:true,savedRecord:storedRecord()});f.click();await settle();f.requests[0].pending.resolve(new Response('<title>Error 1102 | Cloudflare</title><p>PRIVATE_RESOURCE_BODY</p>',{status:503,headers:{'content-type':'text/html','cf-ray':'abcdef0123456789-ICN'}}));await settle();assert.equal(f.requests.length,1);assert.equal(f.retryDelays.length,0);assert.equal(f.saveCalls.length,0);assert.equal(f.links.length,2);assert.equal(f.button.disabled,true);const copied=await diagnostic(f);assert.equal(copied.cloudflareErrorCode,1102);assert.equal(copied.retryAfterSeconds,5);assert.equal(copied.endpoint,'encar');assert.doesNotMatch(f.copyFallback.value,/PRIVATE/);
+});
+
+test('v2.137 automatic-price rate limits preserve verified links and the existing sale price with endpoint-specific diagnostics',async t=>{
+ const item={...listing(),priceWon:null,priceCheckedAt:null,priceSource:null,priceStatus:'unavailable'},f=fixture(t,{bridge:true,manualRetries:true,autoConfirm:true,cars:[{id:'car-1',plate:PLATE,sell:12000000}],autoPrice:()=>{throw Object.assign(Error('PRIVATE_PRICE_BODY'),{code:'AUTO_PRICE_RATE_LIMITED',diagnosticCode:'CAPTURE_RATE_LIMITED',httpStatus:429,retryAfterSeconds:120,diagnostics:{code:'CAPTURE_RATE_LIMITED',stage:'capture',priceCacheHit:false,upstreamStatus:429,requestId:REQUEST_ID,token:'PRIVATE'}});}});
+ f.click();await settle();f.reply(0,found(PLATE,[item]));await settle();assert.equal(f.autoCalls.length,1);assert.equal(f.saveCalls.length,1);assert.equal(f.links.length,2);assert.equal(f.w.cars[0].sell,12000000);assert.equal(f.changeCalls.length,0);assert.equal(f.priceConfirmation.open,false);assert.equal(f.prices[0].textContent,'광고 가격 확인 불가');assert.deepEqual(f.tabs[0].navigations,[item.sellerUrl]);const copied=await diagnostic(f);assert.equal(copied.endpoint,'encar-auto-price');assert.equal(copied.httpStatus,429);assert.equal(copied.code,'CAPTURE_RATE_LIMITED');assert.equal(copied.stage,'capture');assert.equal(copied.fromCache,false);assert.equal(copied.retryAfterSeconds,120);assert.equal(copied.clientRequestCount,2);assert.doesNotMatch(f.copyFallback.value,/PRIVATE|12가3456|43000001|https:/);
+ f.click();await settle();f.reply(1,found(PLATE,[item]));await settle();assert.equal(f.requests.length,2,'The next main advertisement lookup is freshly verified');assert.equal(f.autoCalls.length,1,'A price endpoint cooldown cannot be bypassed by another main lookup');assert.equal(f.w.cars[0].sell,12000000);
+});
+
+test('v2.137 one total deadline includes retry waits and the automatic-price phase',async t=>{
+ const f=fixture(t,{bridge:true,manualRetries:true,realRetryDelays:true,requestTimeoutMs:25});f.click();await settle();f.reply(0,{status:'error'},{status:503,retryAfter:'1'});await pause(60);assert.equal(f.requests.length,1);assert.equal((await diagnostic(f)).code,'CLIENT_TIMEOUT');assert.equal(f.requests[0].aborted,true);assert.equal(f.saveCalls.length,0);
+ const held=deferred(),item={...listing(),priceStatus:'unavailable',priceWon:null,priceCheckedAt:null,priceSource:null},g=fixture(t,{bridge:true,manualRetries:true,autoConfirm:true,requestTimeoutMs:25,autoTimeoutMs:100,autoPrice:()=>held.promise,cars:[{id:'car-1',plate:PLATE,sell:12000000}]});const started=Date.now();g.click();await settle();g.reply(0,found(PLATE,[item]));await pause(60);assert.equal(g.autoCalls.length,1);assert(g.autoCalls[0].settings.deadline>=started+74000&&g.autoCalls[0].settings.deadline<=started+76000);assert.equal(g.autoCalls[0].settings.signal.aborted,true);assert.equal(g.w.cars[0].sell,12000000);assert.equal(g.saveCalls.length,1);assert.equal((await diagnostic(g)).endpoint,'encar-auto-price');held.resolve(storedRecord([pricedListing()]));await settle();assert.equal(g.priceConfirmation.open,false);
 });

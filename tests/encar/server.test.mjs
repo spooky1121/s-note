@@ -5,7 +5,8 @@ import './html-rewriter-setup.mjs';
 
 const source = (await readFile(new URL('../../functions/api/encar.js', import.meta.url), 'utf8')).replace(
   "'../_shared/encar-catalog.mjs'", JSON.stringify(new URL('../../functions/_shared/encar-catalog.mjs', import.meta.url).href))
-  .replace("'../_shared/encar-page-price.mjs'", JSON.stringify(new URL('../../functions/_shared/encar-page-price.mjs', import.meta.url).href));
+  .replace("'../_shared/encar-page-price.mjs'", JSON.stringify(new URL('../../functions/_shared/encar-page-price.mjs', import.meta.url).href))
+  .replace("'../_shared/encar-request-budget.mjs'", JSON.stringify(new URL('../../functions/_shared/encar-request-budget.mjs', import.meta.url).href));
 const { onRequest } = await import('data:text/javascript;base64,' + Buffer.from(source).toString('base64'));
 const USER_ID = '10000000-0000-4000-8000-000000000001';
 const TOKEN = 'test_access_token_with_more_than_thirty_characters';
@@ -224,7 +225,7 @@ test('actual candidate plate mismatches are reported instead of an unrelated uns
   assert.equal(result.body.diagnostics.externalRequestCount, 0); assert.equal(result.body.diagnostics.externalMatchCount, 0);
   assert.equal(result.body.diagnostics.discoveryStage, 'known_candidates');
   assert.equal(JSON.parse(searchCalls(result)[1].options.body).query, '"' + PLATE + '"');
-  assert.equal(result.body.diagnostics.resolverRelease, '2.127'); assert.equal(result.body.diagnostics.discoveryProvided, true);
+  assert.equal(result.body.diagnostics.resolverRelease, '2.137'); assert.equal(result.body.diagnostics.discoveryProvided, true);
 });
 
 test('model catalogue scanning is bounded to three observed pages and never guesses a fourth request', async () => {
@@ -753,7 +754,7 @@ test('provider authentication, rate, quota and unavailable errors never trigger 
     [429, 'SEARCH_RATE_LIMITED'], [432, 'SEARCH_QUOTA_EXCEEDED'], [433, 'SEARCH_QUOTA_EXCEEDED'], [503, 'SEARCH_UNAVAILABLE']]) {
     await t.test(String(status), async () => {
       const result = await run({ searches: [{ status }] });
-      assert.equal(result.body.status, 'error'); assert.equal(result.reply.status, 502);
+      assert.equal(result.body.status, 'error'); assert.equal(result.reply.status, status === 429 ? 429 : 502);
       assert.equal(result.body.diagnostics.code, code); assert.equal(searchCalls(result).length, 1);
     });
   }
@@ -812,9 +813,15 @@ test('diagnostics and structured logs exclude all plate, listing IDs, URLs, cred
   const log = JSON.parse(result.logs[0]);
   const catalogKeys = ['catalogRequestCount', 'catalogPageCount', 'catalogRecordCount', 'catalogExactMatchCount', 'catalogFormCount', 'catalogPlateFieldCount', 'catalogLinkCount',
     'searchConfigured', 'discoveryStage', 'modelCatalogRequestCount', 'modelCatalogPageCount', 'modelCatalogRecordCount', 'modelCatalogExactMatchCount', 'externalRequestCount', 'externalMatchCount',
-    'resolverRelease', 'discoveryProvided', 'modelBranchPageCount', 'externalSkippedCount', 'searchEvidenceCount', 'searchEvidenceAcceptedCount', 'parseReasonCounts'];
+    'resolverRelease', 'discoveryProvided', 'modelBranchPageCount', 'externalSkippedCount', 'searchEvidenceCount', 'searchEvidenceAcceptedCount', 'parseReasonCounts', 'requestCount', 'reusedCount', 'budgetLimit', 'budgetRemaining', 'budgetExhausted', 'stage'];
   assert.deepEqual(Object.keys(log).sort(), [...catalogKeys, 'candidateCount', 'checkedCount', 'code', 'durationMs', 'plateMatchedCount', 'rawResultCount', 'recognizedSourceCount', 'rejected', 'requestId', 'resultCount', 'resultPlateMatchCount', 'searchCount'].sort());
   assert.deepEqual(Object.keys(result.body.diagnostics).sort(), [...catalogKeys, 'candidateCount', 'checkedCount', 'code', 'plateMatchedCount', 'rawResultCount', 'recognizedSourceCount', 'rejected', 'requestId', 'resultCount', 'resultPlateMatchCount', 'searchCount'].sort());
+  assert.equal(result.body.diagnostics.requestCount, result.calls.length);
+  for (const key of ['requestCount', 'reusedCount', 'budgetLimit', 'budgetRemaining']) assert(Number.isSafeInteger(result.body.diagnostics[key]) && result.body.diagnostics[key] >= 0);
+  assert.equal(result.body.diagnostics.budgetLimit, 44);
+  assert.equal(result.body.diagnostics.budgetRemaining, 44 - result.calls.length);
+  assert.equal(typeof result.body.diagnostics.budgetExhausted, 'boolean');
+  assert(['input', 'auth', 'member', 'search', 'detail', 'catalog', 'model_catalog', 'external', 'price'].includes(result.body.diagnostics.stage));
   for (const value of [PLATE, ORIGINAL, BASE, TOKEN, env.TAVILY_API_KEY, env.SUPABASE_PUBLISHABLE_KEY, 'PRIVATE_UPSTREAM']) {
     assert.equal(JSON.stringify(result.body.diagnostics).includes(value), false);
     assert.equal(result.logs.join('').includes(value), false);
@@ -1366,4 +1373,81 @@ test('both search attempts share one eight-second external-source budget', async
   assert.equal(Date.now(), 108001); assert.equal(searchCalls(result).length, 2);
   assert.equal(result.calls.filter(call => call.url === second).length, 1);
   assert.equal(result.calls.find(call => call.url === second).options.signal.aborted, true);
+});
+
+// This observed call graph needed53 upstream requests before the operation
+// budget:18 aliases plus canonical detail pages, both catalogs and external pages.
+function heavyLookupFixture() {
+  const ids=Array.from({length:18},(_,i)=>String(43000100+i));
+  const canonical=Array.from({length:18},(_,i)=>String(53000100+i));
+  const model='/catalog/toyota/rav4/',generation=model+'rav4-5/';
+  const leaves=Array.from({length:6},(_,i)=>generation+'grade-'+i+'/');
+  const other=catalogCard('34나5678','63000001');
+  const catalogPages={
+    '/':'<form action="/search" method="get"><label for="number">Номер автомобиля</label><input id="number" name="car_number"><button>Поиск</button></form>',
+    '/catalog/':'<a href="/catalog/toyota/">Toyota <span class="count">45</span></a>',
+    '/catalog/toyota/':'<a href="'+model+'">RAV4</a>',
+    [model]:'<a href="'+generation+'">RAV4 5</a><a href="'+model+'rav4-6/">RAV4 6</a>',
+    [generation]:leaves.map(path=>'<a href="'+path+'">Observed grade</a>').join(''),
+    ...Object.fromEntries(leaves.map(path=>[path,other])),
+    '/search':call=>{const page=Number(new URL(call.url).searchParams.get('page')||1);return new Response(other+(page<=3?'<a rel="next" href="?car_number=3456&page='+(page+1)+'">Next</a>':''),{headers:{'Content-Type':'text/html'}});}
+  };
+  const pages={};for(const[i,id]of ids.entries()){
+    pages[id]=html(base({vehicleNo:PLATE,vehicleId:Number(canonical[i]),queryCarId:Number(id),advertisement:{status:'SOLD'},manage:{dummy:true,dummyVehicleId:Number(id)}}));
+    pages[canonical[i]]=html(base({vehicleNo:PLATE,vehicleId:Number(canonical[i]),queryCarId:Number(canonical[i]),advertisement:{status:'SOLD'},manage:{dummy:false,dummyVehicleId:null}}));
+  }
+  const externalPages=Object.fromEntries(Array.from({length:7},(_,i)=>['https://carsbat.com/vehicle/synthetic-'+i,'<p>No matching vehicle</p>']));
+  const results=[{url:BASE+ids[12],content:PLATE+' '+ids.slice(13).map(id=>BASE+id).join(' ')},...Object.keys(externalPages).map(url=>({url,title:'Synthetic source'}))];
+  return {ids,config:{pages,catalogPages,results,externalPages},extraEnv:{ENCAR_CACHE:{async get(){return JSON.stringify(ids.slice(6,12));},async put(){assert.fail('Rejected or unverified candidates cannot enter KV');}}}};
+}
+
+test('the former53-fetch discovery graph stops within44 with explicit retryable error, then a fresh request still succeeds',async()=>{
+  const fixture=heavyLookupFixture();
+  const r=await run(fixture.config,request({plate:PLATE,candidateIds:fixture.ids.slice(0,6),discovery:DISCOVERY}),fixture.extraEnv);
+  assert.equal(r.reply.status,502);assert.equal(r.body.status,'error');assert.equal(r.body.diagnostics.code,'REQUEST_BUDGET_EXCEEDED');assert.deepEqual(r.body.listings,[]);assert.equal(r.body.verifiedAt,null);
+  assert.equal(r.reply.headers.get('Retry-After'),'5');assert.equal(r.body.retryAfterSeconds,5);
+  assert(r.calls.length>=38&&r.calls.length<=44,'The fixture must reach the real fetch budget rather than reject its input early');assert.equal(r.body.diagnostics.requestCount,r.calls.length);assert.equal(r.body.diagnostics.budgetLimit,44);assert.equal(r.body.diagnostics.budgetRemaining,44-r.calls.length);assert.equal(r.body.diagnostics.budgetExhausted,true);assert(['catalog','model_catalog','external','detail','search'].includes(r.body.diagnostics.stage));
+  assert.equal(r.calls.filter(call=>new URL(call.url).origin===env.SUPABASE_URL).length,2,'Auth and membership consume real request capacity');
+  assert.doesNotMatch(JSON.stringify(r.body.diagnostics)+r.logs.join(''),/12가3456|430001|530001|carsbat|synthetic_|PRIVATE_|https:/);
+  const recovered=await run({pages:{[ORIGINAL]:html()}},request({plate:PLATE,candidateIds:[ORIGINAL]}));assert.equal(recovered.reply.status,200);assert.equal(recovered.body.status,'found');assert.equal(recovered.body.listings[0].id,ORIGINAL);assert.equal(recovered.calls.length,3,'An exhausted operation cannot poison the next operation budget');
+});
+
+test('ten sequential lookups keep full-plate KV isolation and live authorization without an isolate-wide request budget',async()=>{
+  const kv=new Map(),keys=[],ids=Array.from({length:10},(_,i)=>String(44000100+i)),plates=['12가3456','34나3456','12가0005','12가3456','34나0005','34나3456','12가0005','12가3456','34나0005','34나3456'];
+  const cache={async get(key){keys.push(key);return kv.get(key)??null;},async put(key,value){kv.set(key,value);}};
+  const requestIds=new Set();
+  for(const[i,plate]of plates.entries()){
+    const id=ids[i],r=await run({pages:{[id]:html(base({vehicleNo:plate,vehicleId:Number(id),queryCarId:Number(id),manage:{dummy:false,dummyVehicleId:null}}))}},request({plate,candidateIds:[id]}),{ENCAR_CACHE:cache});
+    assert.equal(r.reply.status,200);assert.equal(r.body.status,'found');assert.equal(r.body.plate,plate);assert.deepEqual(r.body.listings.map(item=>item.id),[id]);assert(r.calls.length<=44);assert.equal(r.calls.filter(call=>new URL(call.url).origin===env.SUPABASE_URL).length,2,'Every lookup rechecks the user and membership');assert.equal(searchCalls(r).length,0);assert.equal(r.reply.headers.get('Retry-After'),null);assert(!requestIds.has(r.reply.headers.get('X-Request-ID')));requestIds.add(r.reply.headers.get('X-Request-ID'));assert.equal(keys.at(-1),'encar:candidates:v1:'+plate);assert.deepEqual(JSON.parse(kv.get('encar:candidates:v1:'+plate)),[id]);
+  }
+  assert.equal(requestIds.size,10);assert.deepEqual([...kv.keys()].sort(),[...new Set(plates.map(plate=>'encar:candidates:v1:'+plate))].sort());
+});
+
+test('search429 preserves safe Retry-After seconds and HTTP dates without a30-second clamp',async t=>{
+  const now=Date.UTC(2026,10,18);t.mock.timers.enable({apis:['Date'],now});
+  for(const[raw,expected]of[['0',0],['60',60],['120',120],['3600',3600],['86401',86400],[new Date(now+120000).toUTCString(),120],['-1',null],['1.5',null],['PRIVATE',null],['999999999999999999999',null],[new Date(now-1000).toUTCString(),null],['2026-11-18T00:02:00Z',null],['Wed, 31 Feb 2027 00:00:00 GMT',null]])await t.test(raw,async()=>{
+    const result=await run({searches:[new Response('PRIVATE_PROVIDER_BODY',{status:429,headers:{'Content-Type':'text/plain','Retry-After':raw}})]});
+    assert.equal(result.reply.status,429);assert.equal(result.body.status,'error');assert.equal(result.body.diagnostics.code,'SEARCH_RATE_LIMITED');assert.equal(result.body.diagnostics.stage,'search');assert.equal(result.body.diagnostics.upstreamStatus,429);assert.equal(result.reply.headers.get('X-Encar-Resolver-Release'),'2.137');assert.equal(searchCalls(result).length,1);assert.deepEqual(result.body.listings,[]);
+    assert.equal(result.body.retryAfterSeconds,expected===null?undefined:expected);assert.equal(result.reply.headers.get('Retry-After'),expected===null?null:String(expected));assert.doesNotMatch(JSON.stringify(result.body)+result.logs.join(''),/PRIVATE_PROVIDER_BODY|PRIVATE|synthetic_|https:/);
+  });
+});
+
+test('temporary Auth and membership failures retain their own upstream stage and wait time without public discovery',async t=>{
+  for(const stage of['auth','member'])for(const status of[429,502,503,504])await t.test(stage+' '+status,async()=>{
+    const error=new Response('PRIVATE_AUTH_BODY',{status,headers:{'Retry-After':'120'}}),r=await run(stage==='auth'?{authResponse:error}:{membershipResponse:error});
+    assert.equal(r.reply.status,502);assert.equal(r.body.diagnostics.code,'AUTH_UNAVAILABLE');assert.equal(r.body.diagnostics.stage,stage);assert.equal(r.body.diagnostics.upstreamStatus,status);assert.equal(r.body.retryAfterSeconds,120);assert.equal(r.reply.headers.get('Retry-After'),'120');assert.equal(r.calls.length,stage==='auth'?1:2);assert.equal(r.body.diagnostics.requestCount,r.calls.length);assert.deepEqual(r.body.listings,[]);assert.doesNotMatch(JSON.stringify(r.body)+r.logs.join(''),/PRIVATE_AUTH_BODY|fixture\.supabase|test_access/);
+  });
+});
+
+test('public detail and catalog503 retry evidence survives later fallback work rather than becoming a fake empty success',async t=>{
+  await t.test('catalog',async()=>{const r=await run({catalogPages:{'/':new Response('PRIVATE_CATALOG',{status:503,headers:{'Retry-After':'3600'}})}},request(),{TAVILY_API_KEY:''});assert.equal(r.reply.status,502);assert.equal(r.body.diagnostics.code,'CATALOG_UNAVAILABLE');assert.equal(r.body.diagnostics.stage,'catalog');assert.equal(r.body.diagnostics.upstreamStatus,503);assert.equal(r.body.retryAfterSeconds,3600);assert.equal(r.reply.headers.get('Retry-After'),'3600');assert.deepEqual(r.body.listings,[]);});
+  await t.test('detail',async()=>{const r=await run({pages:{[ORIGINAL]:new Response('PRIVATE_DETAIL',{status:503,headers:{'Retry-After':'60'}})}},request({plate:PLATE,candidateIds:[ORIGINAL]}));assert.equal(r.reply.status,502);assert.equal(r.body.diagnostics.code,'DETAIL_UNAVAILABLE');assert.equal(r.body.diagnostics.stage,'detail');assert.equal(r.body.diagnostics.upstreamStatus,503);assert.equal(r.body.retryAfterSeconds,60);assert.equal(r.reply.headers.get('Retry-After'),'60');assert.equal(detailCalls(r).length,1);assert.deepEqual(r.body.listings,[]);});
+});
+
+test('confirmed search rate and quota errors win over a later optional budget stop',async t=>{
+  for(const status of[429,432,433])await t.test(String(status),async()=>{
+    const heavy=heavyLookupFixture(),r=await run({...heavy.config,searches:[new Response('PRIVATE_SEARCH_ERROR',{status,headers:{'Retry-After':'60'}})]},request({plate:PLATE,candidateIds:heavy.ids.slice(0,6),discovery:DISCOVERY}),heavy.extraEnv);
+    assert.equal(r.reply.status,status===429?429:502);assert.equal(r.body.diagnostics.code,status===429?'SEARCH_RATE_LIMITED':'SEARCH_QUOTA_EXCEEDED');assert.equal(r.body.diagnostics.stage,'search');assert.equal(r.body.diagnostics.upstreamStatus,status);assert.equal(r.body.diagnostics.budgetExhausted,true);assert(r.calls.length<=44);assert.deepEqual(r.body.listings,[]);assert.equal(searchCalls(r).length,1);
+    if(status===429){assert.equal(r.body.retryAfterSeconds,60);assert.equal(r.reply.headers.get('Retry-After'),'60');}else{assert.equal(r.body.autoRetry,false);assert.equal(r.body.retryAfterSeconds,undefined);assert.equal(r.reply.headers.get('Retry-After'),null);}assert.doesNotMatch(JSON.stringify(r.body.diagnostics)+r.logs.join(''),/PRIVATE_SEARCH_ERROR|12가3456|430001|530001|https:/);
+  });
 });
