@@ -1,0 +1,49 @@
+@media screen{
+ .co-workspace{max-width:1180px;margin:0 auto;color:#334155}
+ .co-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:16px}
+ .co-heading h2{font-size:20px;letter-spacing:-.5px;margin:0;color:#263246;font-weight:650}
+ .co-meta{font-size:12px;color:#8b95a5;margin:5px 0 0}
+ .co-actions{display:flex;gap:9px;align-items:center}
+ .co-icon{display:grid;place-items:center;width:32px;min-width:32px;height:32px;padding:6px;border:0;background:transparent;color:#1670df;box-shadow:none;cursor:pointer;border-radius:5px}
+ .co-icon svg{width:20px;height:20px;display:block}.co-icon:disabled{opacity:.35;cursor:default}
+ .co-icon:hover:not(:disabled){background:#f2f5fa;translate:0 -1px}
+ .co-icon:focus-visible{outline:2px solid #7c9fe6;outline-offset:2px}
+ .co-toolbar{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;margin-bottom:8px}
+ .co-toolbar select{width:100%;min-width:0;height:36px;border:1px solid #e3e8ef;background:#fff;border-radius:7px;color:#4a586c;padding:5px 9px;font:inherit;font-size:12px}
+ .co-status{font-size:12px;color:#8692a4;min-height:18px;line-height:1.5;margin:9px 0 14px}.co-status.is-error{color:#b94351}
+ #contract-office-form{display:grid;gap:14px}
+ .co-card-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+ .co-card{min-width:0;background:#fff;border:1px solid #e8ecf2;border-radius:10px;padding:16px 18px}
+ .co-card h3{font-size:13px;color:#39465b;letter-spacing:-.2px;font-weight:650;margin:0 0 13px}
+ .co-field-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px 14px}
+ .co-field-input{display:flex;flex-direction:column;gap:5px;font-size:11px;color:#7b8799;min-width:0}
+ .co-field-input input,.co-field-input textarea{box-sizing:border-box;width:100%;min-width:0;height:33px;border:1px solid #e5e9ef;border-radius:6px;background:#fbfcfe;color:#36465d;padding:6px 8px;font:inherit;font-size:12px;line-height:1.45;box-shadow:none}
+ .co-field-input textarea{height:auto;min-height:84px;resize:vertical}.co-field-input input:focus,.co-field-input textarea:focus{outline:2px solid #c1d5f7;outline-offset:0;background:#fff}
+ .co-wide{grid-column:1/-1}
+ .co-preview{box-sizing:border-box;width:min(650px,calc(100vw - 24px));max-width:calc(100vw - 24px);max-height:calc(100dvh - 24px);padding:14px 14px 18px;border:1px solid #e4e8ef;border-radius:13px;background:#f3f5f8;color:#40516a;box-shadow:0 18px 70px #14213c38;overflow:auto}
+ .co-preview::backdrop{background:#15223755;backdrop-filter:blur(5px)}
+ .co-preview-controls{position:sticky;top:0;float:right;z-index:10;display:flex;flex-direction:column;gap:5px;background:#fffffff0;border-radius:6px;padding:2px}
+ .co-preview-controls .co-close{color:#555b65;font-size:25px;font-weight:350;line-height:1}.co-preview-controls .co-print{color:#d12d3e}
+ .co-preview-tabs{display:flex;gap:8px;padding-right:45px;margin:3px 0 5px}.co-preview-tabs button{font:inherit;font-size:12px;border:0;background:transparent;color:#8591a4;padding:7px 10px;border-radius:5px;cursor:pointer}.co-preview-tabs button[aria-pressed=true]{background:#fff;color:#2566bd}
+ .co-preview-status{font-size:11px;line-height:1.5;max-width:calc(100% - 45px);margin:0 0 12px;color:#7f8da2;min-height:17px}
+ .co-preview-viewport{clear:both;overflow:visible;min-width:0}.co-paper{margin:0 auto;background:#fff;box-shadow:0 2px 8px #1e314418}.co-paper.is-preview-hidden{display:none}
+ .co-print-field.is-overflow{background:#ffedf0;outline:1px solid #d15c69}
+ @media(max-width:700px){.co-card-pair{grid-template-columns:1fr}.co-card{padding:14px}.co-toolbar{grid-template-columns:1fr}.co-heading h2{font-size:18px}.co-field-input input,.co-field-input textarea,.co-toolbar select{font-size:16px}.co-field-grid{gap:10px}.co-preview{padding:10px 8px 12px}}
+}
+.co-paper{position:relative;box-sizing:border-box;width:595px;height:841px;min-width:595px;max-width:none;flex:none;isolation:isolate;overflow:visible}
+.co-paper>img{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:fill;pointer-events:none}
+.co-overlay{position:absolute;inset:0;pointer-events:none}
+.co-print-field{box-sizing:border-box;position:absolute;display:flex;align-items:center;justify-content:flex-start;color:#111;background:transparent;border:0;padding:0;white-space:nowrap;line-height:1;overflow:visible;font-family:'Malgun Gothic','Noto Sans KR','Apple SD Gothic Neo',sans-serif;font-size:calc(var(--co-font,8) * 1px);font-weight:400;letter-spacing:0;text-shadow:none}
+.co-print-field.co-print-number{justify-content:flex-end;text-align:right}.co-print-field.co-print-multiline{display:block;white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere;line-height:1.05;padding-top:3px}
+@media print{
+ @page{size:A4 portrait;margin:0}
+ body:has(#contract-office-dialog[open]){margin:0!important;padding:0!important;width:210mm!important;background:#fff!important;overflow:visible!important}
+ body:has(#contract-office-dialog[open])>*:not(#contract-office-dialog){display:none!important}
+ body:has(#contract-office-dialog[open])>#contract-office-dialog{display:block!important;position:static!important;inset:auto!important;width:210mm!important;max-width:210mm!important;height:auto!important;max-height:none!important;margin:0!important;padding:0!important;overflow:visible!important;border:0!important;border-radius:0!important;background:#fff!important;box-shadow:none!important}
+ #contract-office-dialog::backdrop{display:none!important}#contract-office-dialog .co-preview-controls,#contract-office-dialog .co-preview-tabs,#contract-office-preview-status{display:none!important}
+ #contract-office-dialog .co-preview-viewport{display:block!important;width:210mm!important;height:auto!important;margin:0!important;padding:0!important;overflow:visible!important}
+ #contract-office-dialog .co-paper{display:block!important;width:210mm!important;min-width:210mm!important;max-width:210mm!important;height:297mm!important;min-height:297mm!important;max-height:297mm!important;margin:0!important;padding:0!important;zoom:1!important;transform:none!important;box-shadow:none!important;break-inside:avoid!important;break-after:page!important;page-break-after:always!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+ #contract-office-dialog .co-paper:last-child{break-after:auto!important;page-break-after:auto!important}
+ #contract-office-dialog .co-print-field{font-size:calc(var(--co-font,8) * 1pt)!important;color:#111!important;outline:0!important;background:transparent!important}
+ #contract-office-dialog .co-print-field.co-print-multiline{padding-top:3pt!important}
+}
