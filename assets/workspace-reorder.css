@@ -1,21 +1,13 @@
-.snote-reorder-tools{position:fixed;z-index:2147481999;box-sizing:border-box;display:flex;align-items:center;gap:6px;margin:0;padding:4px 7px;min-height:30px;border:1px solid #e2e9f4;border-radius:8px;background:#fffffff5;box-shadow:0 3px 12px #24426c0a;color:#788394;font-size:11px}
-.snote-reorder-tools[hidden]{display:none!important}
-.snote-reorder-tools .snote-reorder-help{margin-right:auto;white-space:nowrap}
-.snote-reorder-tools button{border:0;border-radius:6px;background:#f1f4f9;color:#4d6381;padding:5px 8px;min-height:27px;font:inherit;font-size:11px;line-height:1.2;cursor:pointer}
-.snote-reorder-tools button:hover{background:#e8eef8}.snote-reorder-tools button:disabled{opacity:.35;cursor:default}
-.snote-reorder-tools button.snote-reorder-done{background:#eaf1ff;color:#235ed0;font-weight:600}
 .snote-reorder-instructions{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
 .snote-reorder-enabled .snote-reorder-item{-webkit-touch-callout:none}
 .snote-reorder-edit .snote-reorder-item{cursor:grab!important;touch-action:none!important;user-select:none!important;-webkit-user-select:none!important;transform:none!important}
 .snote-reorder-edit .snote-reorder-item>:is(svg,span,img,strong){animation:snote-reorder-wiggle .25s ease-in-out infinite alternate;transform-origin:center}
 .snote-reorder-edit .snote-reorder-item:nth-child(even)>:is(svg,span,img,strong){animation-direction:alternate-reverse}
-.snote-reorder-edit .snote-reorder-item.snote-reorder-selected{outline:1px dashed #91afe8!important;outline-offset:-2px}
-.snote-reorder-edit .snote-reorder-item.snote-reorder-source{opacity:.35!important}
-.snote-reorder-ghost{position:fixed;z-index:2147482000;pointer-events:none!important;opacity:.94;box-sizing:border-box;border-radius:9px;background:#fff;box-shadow:0 7px 24px #233d6726;outline:1px solid #b5c9ed;overflow:hidden}
-.snote-reorder-ghost>*{box-sizing:border-box!important;display:flex!important;align-items:center!important;gap:9px!important;width:100%!important;height:100%!important;margin:0!important;padding:8px 12px!important;border:0!important;background:#fff!important;color:#345685!important;opacity:1!important;font:inherit!important;text-align:left!important;pointer-events:none!important;transform:none!important;animation:none!important}
-.snote-reorder-ghost svg{width:20px!important;height:20px!important;flex:none}.snote-reorder-ghost img{max-width:100%;max-height:100%;object-fit:contain}
+.snote-reorder-edit .snote-reorder-item.snote-reorder-source{opacity:0!important}
+.snote-reorder-ghost{position:fixed;z-index:2147482000;pointer-events:none!important;opacity:1;box-sizing:border-box;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;outline:0!important;overflow:visible}
+.snote-reorder-ghost>*{box-sizing:border-box!important;border:0!important;background:transparent!important;box-shadow:none!important;outline:0!important;opacity:1!important;pointer-events:none!important;animation:none!important;rotate:none!important;translate:none!important}
 .snote-reorder-notice{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:2147482001;max-width:calc(100vw - 32px);box-sizing:border-box;padding:10px 15px;border-radius:10px;background:#27374bee;color:white;box-shadow:0 4px 20px #172b4d20;font-size:12px;text-align:center}
 .snote-reorder-notice[hidden]{display:none!important}
 @keyframes snote-reorder-wiggle{from{rotate:-.8deg;translate:-.6px 0}to{rotate:.8deg;translate:.6px 0}}
 @media(prefers-reduced-motion:reduce){.snote-reorder-edit .snote-reorder-item>:is(svg,span,img,strong){animation:none!important}}
-@media print{.snote-reorder-tools,.snote-reorder-ghost,.snote-reorder-notice{display:none!important}.snote-reorder-item>*{animation:none!important;rotate:none!important;translate:none!important}}
+@media print{.snote-reorder-ghost,.snote-reorder-notice{display:none!important}.snote-reorder-item>*{animation:none!important;rotate:none!important;translate:none!important}}

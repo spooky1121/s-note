@@ -46,11 +46,8 @@
   if(mounted.has(container))return mounted.get(container);
   const tiles=options.mode==='tiles',selector=options.itemSelector||':scope > button',uid='snote-reorder-'+(++sequence),original=new Map();
   let destroyed=false,ctx=null,model=null,editing=false,selected=null,gesture=null,suppressUntil=0,observerQueued=false;
-  const bar=node('div','snote-reorder-tools'),help=node('span','snote-reorder-help','순서 변경'),up=node('button','','위로'),down=node('button','','아래로'),done=node('button','snote-reorder-done','완료');
-  bar.hidden=true;bar.setAttribute('role','group');bar.setAttribute('aria-label','순서 변경');
-  const instructions=node('span','snote-reorder-instructions','길게 눌러 순서를 바꿀 수 있습니다. 키보드는 F2 또는 Alt와 위아래 방향키를 사용하세요.');instructions.id=uid;
-  for(const [button,label]of[[up,'선택한 항목 위로 이동'],[down,'선택한 항목 아래로 이동'],[done,'순서 변경 완료']]){button.type='button';button.setAttribute('aria-label',label);}
-  bar.append(help,up,down,done,instructions);container.before(bar);container.classList.add('snote-reorder-container');container.dataset.reorderMode=tiles?'tiles':'sidebar';
+  const motion=new Map(),instructions=node('span','snote-reorder-instructions','길게 눌러 자리를 바꿀 수 있습니다. F2 또는 Alt와 위아래 방향키로 이동하고 Esc 키나 바깥 영역을 눌러 마칩니다.'),status=node('span','snote-reorder-instructions');instructions.id=uid;status.setAttribute('role','status');status.setAttribute('aria-live','polite');status.setAttribute('aria-atomic','true');
+  container.before(instructions,status);container.classList.add('snote-reorder-container');container.dataset.reorderMode=tiles?'tiles':'sidebar';
   function items(){
    let found;try{found=[...container.querySelectorAll(selector)].filter(e=>e.parentElement===container);}catch{return[];}
    const ids=new Set(),duplicates=new Set(),rows=[];
@@ -59,13 +56,17 @@
   }
   function getOrder(){return items().map(row=>row.id);}
   function available(){return !destroyed&&container.isConnected&&!!ctx&&same(options,ctx);}
-  function placeTools(){if(!editing)return;const r=container.getBoundingClientRect();bar.style.left=Math.max(8,Math.min(r.left,innerWidth-r.width-8))+'px';bar.style.top=Math.max(8,r.top-36)+'px';bar.style.width=Math.min(r.width,innerWidth-16)+'px';}
-  function paint(){const rows=items(),index=rows.findIndex(row=>row.id===selected);up.disabled=index<=0;down.disabled=index<0||index>=rows.length-1;for(const row of rows){row.element.classList.toggle('snote-reorder-selected',editing&&row.id===selected);row.element.classList.toggle('snote-reorder-source',!!gesture?.dragging&&row.id===gesture.id);}}
-  function applyIds(order){
+  function paint(){for(const row of items()){row.element.classList.toggle('snote-reorder-selected',editing&&row.id===selected);row.element.classList.toggle('snote-reorder-source',!!gesture?.dragging&&row.id===gesture.id);}}
+  function stopMotion(){for(const animation of motion.values())animation.cancel();motion.clear();}
+  function applyIds(order,animate=false){
    const rows=items(),map=new Map(rows.map(row=>[row.id,row.element])),ids=[...order.filter(id=>map.has(id)),...rows.map(row=>row.id).filter(id=>!order.includes(id))];
    if(ids.join('|')===rows.map(row=>row.id).join('|'))return;
+   const moving=animate&&!matchMedia('(prefers-reduced-motion: reduce)').matches,before=new Map();
+   if(moving)for(const row of rows)for(const child of row.element.children)before.set(child,child.getBoundingClientRect());
+   stopMotion();
    const focus=document.activeElement,managed=new Set(map.values()),children=[...container.childNodes];let i=0;
    container.replaceChildren(...children.map(child=>managed.has(child)?map.get(ids[i++]):child));
+   if(moving)for(const row of rows){if(gesture?.dragging&&row.id===gesture.id)continue;for(const child of row.element.children){const start=before.get(child),end=child.getBoundingClientRect(),dx=start.x-end.x,dy=start.y-end.y;if(Math.abs(dx)+Math.abs(dy)<1||typeof child.animate!=='function')continue;const animation=child.animate([{translate:dx+'px '+dy+'px'},{translate:'0px 0px'}],{duration:220,easing:'cubic-bezier(.2,.8,.25,1)',fill:'both'});animation.id='snote-reorder-shift';motion.set(child,animation);const clear=()=>{if(motion.get(child)===animation)motion.delete(child);};animation.oncancel=clear;animation.onfinish=()=>{clear();animation.cancel();};}}
    if(focus instanceof HTMLElement&&container.contains(focus))focus.focus({preventScroll:true});paint();
   }
   function apply(){if(!available()||editing||gesture)return;if(model?.order)applyIds(model.order);}
@@ -78,38 +79,41 @@
     const e=row.element;if(!original.has(e))original.set(e,{described:e.getAttribute('aria-describedby'),keys:e.getAttribute('aria-keyshortcuts')});
     e.classList.add('snote-reorder-item');e.dataset.reorderItem=row.id;e.setAttribute('aria-describedby',[original.get(e).described,uid].filter(Boolean).join(' '));e.setAttribute('aria-keyshortcuts','F2 Alt+ArrowUp Alt+ArrowDown');
    }
-   apply();paint();placeTools();load(model,ctx,options);
+   apply();paint();load(model,ctx,options);
   }
   function enter(id){
-   refresh();if(!available()||items().length<2)return false;if(active&&active!==controller)active.exit();active=controller;editing=true;selected=items().some(row=>row.id===id)?id:getOrder()[0];container.classList.add('snote-reorder-edit');bar.hidden=false;placeTools();paint();return true;
+   refresh();if(!available()||items().length<2)return false;if(active&&active!==controller)active.exit();active=controller;editing=true;selected=items().some(row=>row.id===id)?id:getOrder()[0];container.classList.add('snote-reorder-edit');status.textContent='자리 편집 중입니다. 방향키로 바꾸고 Esc 키나 바깥 영역을 눌러 마칩니다.';paint();return true;
   }
   function finishGesture(cancel=false,event){
    const g=gesture;if(!g)return;gesture=null;clearTimeout(g.timer);cancelAnimationFrame(g.raf);g.ghost?.remove();
    try{if(container.hasPointerCapture?.(g.pointerId))container.releasePointerCapture(g.pointerId);}catch{}
-   if(g.dragging){suppressUntil=performance.now()+650;const originalContext=same(options,g.context)&&container.contains(g.element);if(cancel){if(originalContext)applyIds(g.start);}else if(g.moved&&originalContext)commit();}
+   if(g.dragging){suppressUntil=performance.now()+650;const originalContext=same(options,g.context)&&container.contains(g.element);if(cancel){if(originalContext)applyIds(g.start,true);}else if(g.moved&&originalContext)commit();}
    paint();if(event&&g.dragging)event.preventDefault();
   }
-  function exit(cancel=false){finishGesture(cancel);editing=false;bar.hidden=true;container.classList.remove('snote-reorder-edit');if(active===controller)active=null;paint();apply();}
+  function exit(cancel=false){finishGesture(cancel);if(editing)status.textContent='자리 편집을 마쳤습니다.';editing=false;container.classList.remove('snote-reorder-edit');if(active===controller)active=null;paint();apply();}
   function commit(){if(!available())return;const order=getOrder();model.version++;model.loaded=true;model.order=order;updateModel(model,controller);try{options.onReorder?.([...order]);}catch{}void save(model,ctx,options,order);}
-  function move(id,delta){refresh();if(!available())return false;const order=getOrder(),from=order.indexOf(id),to=Math.max(0,Math.min(order.length-1,from+delta));if(from<0||from===to)return false;if(!editing&&!enter(id))return false;selected=id;order.splice(to,0,order.splice(from,1)[0]);applyIds(order);commit();items().find(row=>row.id===id)?.element.focus({preventScroll:true});paint();return true;}
+  function move(id,delta){refresh();if(!available()||!Number.isInteger(delta))return false;const order=getOrder(),from=order.indexOf(id),to=Math.max(0,Math.min(order.length-1,from+delta));if(from<0||from===to)return false;if(!editing&&!enter(id))return false;selected=id;[order[from],order[to]]=[order[to],order[from]];applyIds(order,true);commit();status.textContent='선택한 항목을 '+(to+1)+'번째 자리로 옮겼습니다.';items().find(row=>row.id===id)?.element.focus({preventScroll:true});paint();return true;}
   function target(event){if(!(event.target instanceof Element))return null;return items().find(row=>row.element===event.target||row.element.contains(event.target))||null;}
-  function ghostFor(element){const ghost=node('div','snote-reorder-ghost'),copy=element.cloneNode(true),source=[element,...element.querySelectorAll('*')],clones=[copy,...copy.querySelectorAll('*')];
+  function ghostFor(element){const ghost=node('div','snote-reorder-ghost'),graphic=tiles?(element.querySelector('[data-reorder-graphic],.co-document-shape')||element.querySelector('svg,img')):null,original=graphic||element,copy=original.cloneNode(true),source=[original,...original.querySelectorAll('*')],clones=[copy,...copy.querySelectorAll('*')];
    for(let i=0;i<clones.length;i++){const e=clones[i],s=getComputedStyle(source[i]);for(const name of[...e.attributes].map(a=>a.name))if(name==='id'||name.startsWith('on')||name==='tabindex')e.removeAttribute(name);
     for(const property of['font','color','display','width','height','min-width','min-height','gap','flex-direction','align-items','justify-content','padding','border-radius','box-sizing','transform'])e.style.setProperty(property,s.getPropertyValue(property),'important');
     if(e instanceof HTMLButtonElement)e.disabled=true;
    }
-   ghost.setAttribute('aria-hidden','true');ghost.inert=true;ghost.append(copy);const r=element.getBoundingClientRect();ghost.style.width=r.width+'px';ghost.style.height=r.height+'px';document.body.append(ghost);return ghost;
+   const r=element.getBoundingClientRect();if(graphic){const box=graphic.getBoundingClientRect();copy.style.setProperty('position','absolute','important');copy.style.setProperty('left',box.left-r.left+'px','important');copy.style.setProperty('top',box.top-r.top+'px','important');if(graphic.matches('.co-document-shape,[data-reorder-graphic]'))copy.style.setProperty('transform','none','important');}else copy.querySelectorAll('.zc81-dash-lock,.support-unread-badge,.count').forEach(e=>e.remove());
+   copy.style.setProperty('margin','0','important');ghost.dataset.reorderGhost=tiles?'graphic':'menu';ghost.setAttribute('aria-hidden','true');ghost.inert=true;ghost.append(copy);ghost.style.width=r.width+'px';ghost.style.height=r.height+'px';document.body.append(ghost);return ghost;
   }
   function scrollParent(){let e=container.parentElement;while(e&&e!==document.body){const s=getComputedStyle(e);if(/auto|scroll/.test(s.overflowY)&&e.scrollHeight>e.clientHeight+1)return e;e=e.parentElement;}return document.scrollingElement;}
   function dragAt(x,y){
    const g=gesture;if(!g?.dragging||!available())return;g.x=x;g.y=y;g.ghost.style.left=x-g.offsetX+'px';g.ghost.style.top=y-g.offsetY+'px';
-   const bounds=container.getBoundingClientRect();if(x<bounds.left||x>bounds.right||y<bounds.top||y>bounds.bottom)return;
-   const hit=document.elementFromPoint(x,y),row=items().find(row=>row.element!==g.element&&(row.element===hit||row.element.contains(hit)));if(!row)return;
-   const order=getOrder(),from=order.indexOf(g.id),to=order.indexOf(row.id);if(from<0||to<0||from===to)return;order.splice(to,0,order.splice(from,1)[0]);applyIds(order);g.moved=getOrder().join('|')!==g.start.join('|');
+   const bounds=container.getBoundingClientRect(),scrollX=container.scrollLeft-g.scrollLeft,scrollY=container.scrollTop-g.scrollTop,position=[x,y,bounds.left,bounds.top,scrollX,scrollY];
+   if(g.lastPosition&&position.every((value,index)=>Math.abs(value-g.lastPosition[index])<.5))return;g.lastPosition=position;
+   if(x<bounds.left||x>bounds.right||y<bounds.top||y>bounds.bottom)return;
+   const to=g.slots.findIndex(slot=>{const inset=Math.min(3,slot.width/10,slot.height/10),left=bounds.left+slot.left-scrollX,top=bounds.top+slot.top-scrollY;return x>=left+inset&&x<=left+slot.width-inset&&y>=top+inset&&y<=top+slot.height-inset;});if(to<0||to===g.lastSlot)return;
+   g.lastSlot=to;const order=[...g.start];[order[g.from],order[to]]=[order[to],order[g.from]];applyIds(order,true);g.moved=to!==g.from;
   }
   function autoScroll(){const g=gesture;if(!g?.dragging)return;const e=g.scroll,b=e===document.scrollingElement?{top:0,bottom:innerHeight}:e.getBoundingClientRect(),distance=g.y<b.top+28?-9:g.y>b.bottom-28?9:0;if(distance){e.scrollTop+=distance;dragAt(g.x,g.y);}g.raf=requestAnimationFrame(autoScroll);}
   function beginDrag(){
-   const g=gesture;if(!g||!available()||!enter(g.id))return;g.dragging=true;g.start=getOrder();const r=g.element.getBoundingClientRect();g.offsetX=Math.min(r.width,Math.max(0,g.x-r.left));g.offsetY=Math.min(r.height,Math.max(0,g.y-r.top));g.ghost=ghostFor(g.element);g.scroll=scrollParent();
+   const g=gesture;if(!g||!available()||!enter(g.id))return;g.dragging=true;g.start=getOrder();g.from=g.start.indexOf(g.id);g.lastSlot=g.from;g.lastPosition=null;const bounds=container.getBoundingClientRect();g.slots=items().map(row=>{const r=row.element.getBoundingClientRect();return{left:r.left-bounds.left,top:r.top-bounds.top,width:r.width,height:r.height};});g.scrollLeft=container.scrollLeft;g.scrollTop=container.scrollTop;const r=g.element.getBoundingClientRect();g.offsetX=Math.min(r.width,Math.max(0,g.x-r.left));g.offsetY=Math.min(r.height,Math.max(0,g.y-r.top));g.ghost=ghostFor(g.element);g.scroll=scrollParent();
    try{container.setPointerCapture(g.pointerId);}catch{}paint();dragAt(g.x,g.y);autoScroll();
   }
   function pointerDown(event){
@@ -132,14 +136,13 @@
   const observer=new MutationObserver(()=>{if(observerQueued)return;observerQueued=true;queueMicrotask(()=>{observerQueued=false;refresh();});});observer.observe(container,{childList:true});
   container.addEventListener('pointerdown',pointerDown,true);container.addEventListener('click',click,true);container.addEventListener('keydown',keydown,true);container.addEventListener('contextmenu',contextMenu);
   document.addEventListener('pointermove',pointerMove,{capture:true,passive:false});document.addEventListener('pointerup',pointerUp,true);document.addEventListener('pointercancel',pointerCancel,true);document.addEventListener('touchmove',touchMove,{capture:true,passive:false});document.addEventListener('touchend',touchEnd,{capture:true,passive:false});document.addEventListener('touchcancel',touchCancel,true);
-  document.addEventListener('scroll',placeTools,true);window.addEventListener('resize',placeTools);
-  up.onclick=()=>move(selected,-1);down.onclick=()=>move(selected,1);done.onclick=()=>{const item=items().find(row=>row.id===selected);exit();item?.element.focus({preventScroll:true});};
-  function destroy(){if(destroyed)return;exit(true);destroyed=true;observer.disconnect();controllers.delete(controller);mounted.delete(container);bar.remove();container.classList.remove('snote-reorder-container','snote-reorder-enabled');delete container.dataset.reorderMode;
+  function resized(){if(editing||gesture)exit(true);}window.addEventListener('resize',resized);
+  function destroy(){if(destroyed)return;exit(true);stopMotion();destroyed=true;observer.disconnect();controllers.delete(controller);mounted.delete(container);instructions.remove();status.remove();container.classList.remove('snote-reorder-container','snote-reorder-enabled');delete container.dataset.reorderMode;
    for(const[e,attrs]of original){e.classList.remove('snote-reorder-item','snote-reorder-selected','snote-reorder-source');delete e.dataset.reorderItem;for(const[name,value]of[['aria-describedby',attrs.described],['aria-keyshortcuts',attrs.keys]])if(value==null)e.removeAttribute(name);else e.setAttribute(name,value);}
    container.removeEventListener('pointerdown',pointerDown,true);container.removeEventListener('click',click,true);container.removeEventListener('keydown',keydown,true);container.removeEventListener('contextmenu',contextMenu);document.removeEventListener('pointermove',pointerMove,true);document.removeEventListener('pointerup',pointerUp,true);document.removeEventListener('pointercancel',pointerCancel,true);document.removeEventListener('touchmove',touchMove,true);document.removeEventListener('touchend',touchEnd,true);document.removeEventListener('touchcancel',touchCancel,true);
-   document.removeEventListener('scroll',placeTools,true);window.removeEventListener('resize',placeTools);
+   window.removeEventListener('resize',resized);
   }
-  const controller={refresh,destroy,enter,exit,getOrder,move,apply,get model(){return model;},set model(value){model=value;},contains:element=>container.contains(element)||bar.contains(element)};
+  const controller={refresh,destroy,enter,exit,getOrder,move,apply,get model(){return model;},set model(value){model=value;},contains:element=>container.contains(element)};
   mounted.set(container,controller);controllers.add(controller);refresh();return controller;
  }
  function menuId(element){const attr=element.dataset.page||element.dataset.workspaceId||element.dataset.reorderId,match=element.getAttribute('onclick')?.match(/^navigate\('([a-zA-Z]+)'\)$/);const id=attr||match?.[1];return ROUTES.has(id)?id:null;}

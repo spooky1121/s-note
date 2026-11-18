@@ -1,6 +1,7 @@
 @media screen{
  .co-workspace{max-width:1180px;margin:0 auto;color:#334155}
  .co-heading{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px 16px;margin-bottom:16px}
+ .co-heading-actions-only{justify-content:flex-end}
  .co-heading h2{font-size:20px;letter-spacing:-.5px;margin:0;color:#263246;font-weight:650}
  .co-actions{display:flex;gap:9px;align-items:center}
  #snote-contract-office [hidden]{display:none!important}

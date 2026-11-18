@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.135">
+<html lang="ko" data-snote-release="2.136">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -3225,8 +3225,8 @@ button, input, select, textarea { font-family: inherit; }
 <link rel="stylesheet" href="assets/vehicle-memo.css?v=2.92">
 <link rel="stylesheet" href="assets/sidebar-hover.css?v=2.92">
 <link rel="stylesheet" href="assets/accountant-workspace.css?v=2.130">
-<link rel="stylesheet" href="assets/contract-office.css?v=2.135">
-<link rel="stylesheet" href="assets/workspace-ledgers.css?v=2.135">
+<link rel="stylesheet" href="assets/contract-office.css?v=2.136">
+<link rel="stylesheet" href="assets/workspace-ledgers.css?v=2.136">
 </head>
 <body class="snote-typography">
 
@@ -5096,6 +5096,74 @@ const PRESTOCK_BANK_TOTAL=208248902; // 첨부 이미지 기준 샘플 원화 �
 const PRESTOCK_BANK_LABEL='우리은행 1005404896688';
 let psEditingId=null,psMenuId=null,psPendingAction=null;
 let psExpanded=false; // 최초 7건, 더보기 이후 10줄 높이에서 내부 스크롤
+
+const snote136PrestockDrafts=new Map();let snote136PrestockView=0,snote136PrestockJob=null,snote136PrestockScope='';
+function snote136PrestockContext(){const context=snote135FinanceContext();return context?.ready&&window.zc86Cloud?.ready&&['admin','accountant'].includes(context.role)?context:null;}
+function snote136PrestockCurrent(job,view=true){const now=snote136PrestockContext();return !!job&&!!now&&now.key===job.context.key&&now.authority.client===job.context.authority.client&&currentUser===job.actor&&(!view||route==='prestock'&&snote136PrestockView===job.view);}
+function snote136PrestockValues(row){return {date:String(row.date||'').replaceAll('-','.'),model:String(row.model||''),plate:String(row.plate||''),dealer:String(row.dealer||''),amount:prestockFormatWon(row.amount)};}
+function snote136PrestockDraft(row){const context=snote136PrestockContext(),draft=snote136PrestockDrafts.get(row.id);return context&&draft?.key===context.key?draft:null;}
+function snote136PrestockStart(input){
+ const context=snote136PrestockContext(),id=input.dataset.psRow,row=prestockAllRows().find(item=>item.id===id);if(!context||route!=='prestock'||!row||row.type==='adjustment')return null;
+ let draft=snote136PrestockDraft(row);if(!draft){draft={id,key:context.key,baseline:JSON.stringify(row),values:snote136PrestockValues(row),attempt:null};snote136PrestockDrafts.set(id,draft);}psEditingId=id;return draft;
+}
+function snote136PrestockMessage(text,tone='info'){const status=$('ps-inline-status');if(status){status.hidden=!text;status.textContent=text;status.dataset.tone=tone;}}
+function snote136PrestockInput(input,event){
+ const draft=snote136PrestockStart(input);if(!draft)return;
+ if(input.dataset.psField==='amount'&&!event?.isComposing&&input.dataset.psComposing!=='1'){
+  const raw=input.value.replaceAll(',','');if(/^\d{1,13}$/.test(raw)){const end=input.selectionStart===input.value.length;input.value=prestockFormatWon(Number(raw));if(end)input.setSelectionRange(input.value.length,input.value.length);}
+ }
+ draft.values[input.dataset.psField]=input.value;draft.error='';
+ for(const field of document.querySelectorAll('[data-ps-row="'+draft.id+'"]')){field.removeAttribute('aria-invalid');if(field!==input&&field.dataset.psField===input.dataset.psField)field.value=input.value;}
+ snote136PrestockMessage('');
+}
+function snote136PrestockCancel(id){if(snote136PrestockJob&&snote136PrestockCurrent(snote136PrestockJob))return;snote136PrestockDrafts.delete(id);psEditingId=null;refreshPrestockDisplay();snote136PrestockMessage('입력 변경을 취소했습니다.');}
+function snote136PrestockKey(event,id){
+ if(event.isComposing||event.keyCode===229||event.currentTarget.dataset.psComposing==='1')return;
+ if(event.key==='Enter'){event.preventDefault();event.stopPropagation();snote136PrestockInput(event.currentTarget);void snote136SavePrestock(id);}
+ else if(event.key==='Escape'){event.preventDefault();event.stopPropagation();snote136PrestockCancel(id);}
+}
+function snote136PrestockField(row,key,label,mode){
+ const draft=snote136PrestockDraft(row),values=draft?.values||snote136PrestockValues(row),readonly=row.type==='adjustment'||!snote136PrestockContext(),busy=snote136PrestockJob&&snote136PrestockCurrent(snote136PrestockJob);
+ const max={date:10,model:65,plate:22,dealer:35,amount:20}[key];
+ return `<input class="ps-inline-input ps-inline-${key}" data-ps-row="${esc(row.id)}" data-ps-field="${key}" aria-label="${esc(label)}" aria-describedby="ps-inline-status" type="text" ${key==='amount'?'inputmode="numeric"':key==='date'?'inputmode="numeric"':''} maxlength="${max}" autocomplete="off" spellcheck="false" value="${esc(values[key])}" ${readonly?'readonly':''} ${busy?'disabled':''} ${row.type==='adjustment'?'title="차량 상세에서 관리하는 조정 내역입니다."':''} onfocus="snote136PrestockStart(this)" oninput="snote136PrestockInput(this,event)" onkeydown="snote136PrestockKey(event,'${esc(row.id)}')" oncompositionstart="this.dataset.psComposing='1'" oncompositionend="this.dataset.psComposing='0';snote136PrestockInput(this,event)" />`;
+}
+function snote136PrestockMenuButton(row){return `<button type="button" class="ps-amount-trigger ps-inline-menu" data-tooltip="선재고 상환 및 취소 메뉴" aria-label="${esc(row.model||'선재고')} 상환 및 취소 메뉴" aria-haspopup="menu" aria-expanded="${psMenuId===row.id?'true':'false'}" ${snote136PrestockJob&&snote136PrestockCurrent(snote136PrestockJob)?'disabled':''} onclick="openPrestockMenu(event,'${esc(row.id)}')"><span class="ps-chevron">▾</span></button>`;}
+function snote136PrestockBusy(busy){for(const field of document.querySelectorAll('#prestock-card [data-ps-row],#prestock-card .ps-inline-menu,#prestock-card .ps-entry-submit'))field.disabled=busy;}
+function snote136PrestockInvalid(id,key,message){for(const field of document.querySelectorAll('[data-ps-row="'+id+'"][data-ps-field="'+key+'"]'))field.setAttribute('aria-invalid','true');snote136PrestockMessage(message,'error');[...document.querySelectorAll('[data-ps-row="'+id+'"][data-ps-field="'+key+'"]')].find(field=>field.getClientRects().length)?.focus();return null;}
+function snote136PrestockPatch(draft){
+ const value=draft.values,dateRaw=String(value.date||'').trim(),date=/^\d{8}$/.test(dateRaw)?dateRaw.replace(/^(\d{4})(\d{2})(\d{2})$/,'$1-$2-$3'):dateRaw.replaceAll('.','-'),model=String(value.model||'').trim(),plate=String(value.plate||'').trim(),dealer=String(value.dealer||'').trim(),amount=prestockParseWon(value.amount);
+ if(!isValidPrestockDate(date))return snote136PrestockInvalid(draft.id,'date','올바른 날짜를 입력해 주세요. 예: 2026.11.18');
+ if(!model||model.length>65)return snote136PrestockInvalid(draft.id,'model','차명 또는 내용을 1~65자로 입력해 주세요.');
+ if(plate.length>22)return snote136PrestockInvalid(draft.id,'plate','차량번호는 22자 이내로 입력해 주세요.');if(dealer.length>35)return snote136PrestockInvalid(draft.id,'dealer','담당자는 35자 이내로 입력해 주세요.');
+ if(!Number.isSafeInteger(amount)||amount<0)return snote136PrestockInvalid(draft.id,'amount','지급액을 원 단위 정수로 입력해 주세요. 빈 금액은 저장하지 않습니다.');
+ return {date,model,plate,dealer,amount};
+}
+async function snote136PrestockFlush(){let timer;try{return await Promise.race([window.zc86Cloud.flush(),new Promise(resolve=>{timer=setTimeout(()=>resolve({ok:false,error:'서버 저장 결과를 아직 확인하지 못했습니다. 입력은 유지됩니다. Enter를 눌러 다시 확인해 주세요.'}),15000);})]);}finally{clearTimeout(timer);}}
+function snote136SavePrestock(id){
+ const context=snote136PrestockContext(),draft=snote136PrestockDrafts.get(id);if(!context||route!=='prestock'||!draft||draft.key!==context.key)return Promise.resolve(false);
+ if(snote136PrestockJob&&snote136PrestockCurrent(snote136PrestockJob,false)){snote136PrestockMessage('먼저 요청한 저장 결과를 확인하고 있습니다.');return snote136PrestockJob.promise||Promise.resolve(false);}
+ const patch=snote136PrestockPatch(draft);if(!patch)return Promise.resolve(false);
+ const job={context,actor:currentUser,view:snote136PrestockView,draft,submitted:JSON.stringify(draft.values)};snote136PrestockJob=job;snote136PrestockBusy(true);snote136PrestockMessage('변경사항을 저장하고 있습니다…');
+ job.promise=(async()=>{try{
+  const preflight=await snote136PrestockFlush();if(!snote136PrestockCurrent(job))return false;if(preflight?.ok!==true||window.zc86Cloud.conflict)throw Error(preflight?.error||'서버 저장 상태를 먼저 확인해 주세요.');
+  const raw=localStorage.getItem(PRESTOCK_V148_KEY),rows=JSON.parse(raw||'null');if(!Array.isArray(rows))throw Error('선재고 원장을 다시 불러온 뒤 수정해 주세요.');
+  const matches=rows.map((row,index)=>({row,index})).filter(item=>item.row?.id===id);if(matches.length!==1||matches[0].row.type==='adjustment')throw Error('변경할 내역을 다시 확인해 주세요. 조정 내역은 차량 상세에서 수정합니다.');
+  const {row,index}=matches[0],baseline=JSON.stringify(row);
+  if(draft.attempt){if(baseline!==draft.attempt.rowAfter)throw Error('저장 확인 중 원본 내역이 변경되었습니다. 서버 자료를 다시 불러와 주세요.');draft.baseline=baseline;draft.attempt=null;}
+  if(baseline!==draft.baseline)throw Error('다른 화면에서 내역이 변경되었습니다. 입력은 유지됩니다. 원본 자료를 다시 확인해 주세요.');
+  if(JSON.stringify(draft.values)!==job.submitted||snote136PrestockDrafts.get(id)!==draft)return false;
+  const changed=Object.entries(patch).some(([key,value])=>value!==(key==='plate'||key==='dealer'?String(row[key]||''):row[key]));
+  if(changed){const next=[...rows];next[index]={...row,...patch};if(!savePrestockRows(next,job))throw Error('변경사항을 저장하지 못했습니다. 입력은 유지됩니다.');draft.attempt={rowAfter:JSON.stringify(next[index])};
+   const saved=await snote136PrestockFlush();if(!snote136PrestockCurrent(job))return false;if(saved?.ok!==true||window.zc86Cloud.conflict)throw Error(saved?.error||'서버 저장을 확인하지 못했습니다. 입력은 유지됩니다.');
+   const latest=JSON.parse(localStorage.getItem(PRESTOCK_V148_KEY)||'null'),target=Array.isArray(latest)?latest.filter(item=>item?.id===id):[];if(target.length!==1||JSON.stringify(target[0])!==draft.attempt.rowAfter)throw Error('저장 중 내역이 변경되었습니다. 서버 자료를 다시 확인해 주세요.');
+  }
+  if(!snote136PrestockCurrent(job)||JSON.stringify(draft.values)!==job.submitted)return false;
+  snote136PrestockDrafts.delete(id);psEditingId=null;if(snote136PrestockJob===job){snote136PrestockJob=null;snote136PrestockBusy(false);}refreshPrestockDisplay();refreshLinkedPrestockViews();snote136PrestockMessage('변경사항을 저장했습니다.','success');return true;
+ }catch(error){if(snote136PrestockCurrent(job)){draft.error=error?.message||'저장하지 못했습니다. 입력은 유지됩니다.';snote136PrestockMessage(draft.error,'error');}return false;}
+ finally{if(snote136PrestockJob===job){snote136PrestockJob=null;if(snote136PrestockCurrent(job))snote136PrestockBusy(false);}}
+ })();return job.promise;
+}
+
 function prestockLegacyRows(){
  try{
   const parsed=JSON.parse(localStorage.getItem(PRESTOCK_STORAGE_KEY)||'[]');
@@ -5115,7 +5183,8 @@ function prestockAllRows(){
  }catch(err){console.warn('선재고 저장 데이터를 불러올 수 없습니다.',err)}
  return prestockDefaults();
 }
-function savePrestockRows(rows){
+function savePrestockRows(rows,transaction=null){
+ if(snote136PrestockJob&&snote136PrestockCurrent(snote136PrestockJob,false)&&snote136PrestockJob!==transaction){toast('선재고 저장 결과를 확인한 뒤 다시 시도해 주세요.');return false;}
  try{localStorage.setItem(PRESTOCK_V148_KEY,JSON.stringify(rows));return true}
  catch(_){toast('저장 공간 문제로 변경사항을 저장하지 못했습니다.');return false}
 }
@@ -5186,7 +5255,13 @@ function refreshLinkedPrestockViews(){
 window.addEventListener('storage',event=>{
  if(event.key===PRESTOCK_V148_KEY||event.key===PRESTOCK_STORAGE_KEY){
   refreshLinkedPrestockViews();
-  if(isFinanceManager()&&route==='prestock')buildPrestockManagement();
+  if(isFinanceManager()&&route==='prestock'){
+   const context=snote136PrestockContext(),preserve=context&&context.key===snote136PrestockScope&&$('prestock-card')&&[...snote136PrestockDrafts.values()].every(draft=>draft.key===context.key);
+   if(!preserve)buildPrestockManagement();else{
+    refreshPrestockDisplay();const rows=prestockAllRows();
+    if([...snote136PrestockDrafts.values()].some(draft=>{const row=rows.find(item=>item.id===draft.id),raw=row?JSON.stringify(row):null;return raw!==draft.baseline&&raw!==draft.attempt?.rowAfter;}))snote136PrestockMessage('다른 화면에서 내역이 변경되었습니다. 입력은 유지됩니다. 원본 자료를 다시 확인해 주세요.','error');
+   }
+  }
  }
 });
 
@@ -5281,21 +5356,14 @@ function snote222LedgerColor(row){
  return matches.length===1?matches[0].color||'':'';
 }
 function prestockTableRow(r){
- const date=String(r.date||'').replaceAll('-','.');
- const editing=psEditingId===r.id;
- const amount=Number(r.amount)||0;
- const value=amount?prestockFormatWon(amount):'-';
- const badge=r.repaid?'<span class="ps-repaid-tag">✓ 상환완료</span>':'';
- const adjusted=r.type==='adjustment';
- const amountCell=adjusted?`<span class="ps-amount-trigger" title="차량 상세에서 관리하는 금액 조정 내역" style="cursor:default">${value} <small>조정</small></span>`:editing?`<div class="ps-money-editor"><input id="ps-edit-amount" aria-label="수정 지급액 (원)" value="${amount?prestockFormatWon(amount):''}" type="text" maxlength="20" inputmode="numeric" oninput="formatPrestockWon(this)" onkeydown="prestockEditKey(event,'${esc(r.id)}')"/><button type="button" class="ps-edit-save" onclick="confirmPrestockEdit('${esc(r.id)}')">수정</button><button type="button" class="ps-edit-cancel" onclick="cancelPrestockEdit()" aria-label="금액 수정 취소">×</button></div>`:`<button type="button" class="ps-amount-trigger" aria-label="${esc(r.model)} 지급액 메뉴 열기" aria-haspopup="menu" aria-expanded="${psMenuId===r.id?'true':'false'}" onclick="openPrestockMenu(event,'${esc(r.id)}')"><span class="${amount?'':'ps-amount-blank'}">${value}</span><span class="ps-chevron">▾</span></button>`;
- return `<tr class="${r.type==='tax'?'ps-tax':''} ${r.sample?'ps-example':'ps-user-entry'} ${r.repaid?'ps-repaid':''}" data-prestock-row="${esc(r.id)}"><td>${esc(date)}</td><td class="ps-primary">${esc(r.model||'-')}${badge}</td><td>${esc(r.plate||'-')}</td><td>${esc(r.dealer||'-')}</td><td class="ps-money ps-money-action">${amountCell}</td></tr>`;
+ const badge=r.repaid?'<span class="ps-repaid-tag">✓ 상환완료</span>':'',adjusted=r.type==='adjustment';
+ return `<tr class="${r.type==='tax'?'ps-tax':''} ${r.sample?'ps-example':'ps-user-entry'} ${r.repaid?'ps-repaid':''}" data-prestock-row="${esc(r.id)}"><td>${snote136PrestockField(r,'date','일자','desktop')}</td><td class="ps-primary">${snote136PrestockField(r,'model','차명 / 내용','desktop')}${badge}${adjusted?'<small class="ps-inline-derived">차량 조정</small>':''}</td><td>${snote136PrestockField(r,'plate','차량번호','desktop')}</td><td>${snote136PrestockField(r,'dealer','담당자','desktop')}</td><td class="ps-money ps-money-action"><div class="ps-inline-amount">${snote136PrestockField(r,'amount','지급액 (원)','desktop')}${adjusted?'':snote136PrestockMenuButton(r)}</div></td></tr>`;
 }
 function prestockMobileRow(r){
- const editing=psEditingId===r.id, amount=Number(r.amount)||0, value=amount?prestockFormatWon(amount):'-', adjusted=r.type==='adjustment';
- const editor=adjusted?`<span class="ps-amount-trigger" title="상세에서 수정할 수 있는 금액 조정 내역">${value}원 · 조정</span>`:editing?`<div class="ps-money-editor"><input id="ps-edit-amount-mobile" aria-label="수정 지급액 (원)" value="${amount?prestockFormatWon(amount):''}" type="text" inputmode="numeric" maxlength="20" oninput="formatPrestockWon(this)" onkeydown="prestockEditKey(event,'${esc(r.id)}')"/><button type="button" class="ps-edit-save" onclick="confirmPrestockEdit('${esc(r.id)}')">수정</button><button type="button" class="ps-edit-cancel" onclick="cancelPrestockEdit()">×</button></div>`:`<button type="button" class="ps-amount-trigger" aria-label="${esc(r.model)} 지급액 메뉴 열기" aria-haspopup="menu" onclick="openPrestockMenu(event,'${esc(r.id)}')"><span>${value==='-'?'-':value+'원'}</span><span class="ps-chevron">▾</span></button>`;
- return `<article class="ps-mobile-row ${r.repaid?'ps-repaid':''}" data-prestock-row="${esc(r.id)}"><div class="ps-mobile-title"><div><span class="snote222-model-line"><strong>${esc(r.model||'-')}</strong></span>${r.repaid?'<span class="ps-repaid-tag">✓ 상환완료</span>':''}</div><span class="ps-mobile-date">${esc(String(r.date||'').replaceAll('-','.'))}</span></div><div class="ps-mobile-meta"><span>차량번호 <b>${esc(r.plate||'-')}</b></span><span>담당자 <b>${esc(r.dealer||'-')}</b></span></div><div class="ps-mobile-amount"><span>지급액</span>${editor}</div></article>`;
+ const adjusted=r.type==='adjustment';
+ return `<article class="ps-mobile-row ${r.repaid?'ps-repaid':''}" data-prestock-row="${esc(r.id)}"><div class="ps-mobile-title"><div>${snote136PrestockField(r,'model','차명 / 내용','mobile')}${r.repaid?'<span class="ps-repaid-tag">✓ 상환완료</span>':''}${adjusted?'<small class="ps-inline-derived">차량 조정</small>':''}</div>${snote136PrestockField(r,'date','일자','mobile')}</div><div class="ps-mobile-meta"><label>차량번호 ${snote136PrestockField(r,'plate','차량번호','mobile')}</label><label>담당자 ${snote136PrestockField(r,'dealer','담당자','mobile')}</label></div><div class="ps-mobile-amount"><span>지급액</span><div class="ps-inline-amount">${snote136PrestockField(r,'amount','지급액 (원)','mobile')}${adjusted?'':snote136PrestockMenuButton(r)}</div></div></article>`;
 }
-function prestockVisibleEdit(){return window.matchMedia('(max-width:760px)').matches?($('ps-edit-amount-mobile')||$('ps-edit-amount')):($('ps-edit-amount')||$('ps-edit-amount-mobile'));}
+function prestockVisibleEdit(){return [...document.querySelectorAll('[data-ps-row="'+psEditingId+'"][data-ps-field="amount"]')].find(input=>input.getClientRects().length)||null;}
 function prestockSection(){
  const {rows,total,balance,repaid}=prestockSums();
  const now=todayLocal();
@@ -5306,11 +5374,11 @@ function prestockSection(){
    <div class="ps-stat"><span>미상환 선재고 합계</span><strong id="ps-total">${prestockFormatWon(total)}<small>원</small></strong><p>상환완료 금액은 합산 제외</p></div>
    <div class="ps-stat ps-balance ${balance<0?'ps-negative':''}"><span>선재고 현재 잔액</span><strong id="ps-balance">${prestockFormatWon(balance)}<small>원</small></strong><p>통장 총액 − 미상환 합계</p></div>
   </div>
-  <div class="ps-ledger-head"><div><h4>선재고 거래 내역</h4><p>지급액을 클릭하면 상환·금액수정·취소가 가능합니다.</p></div><span class="ps-row-count" id="ps-row-count">미상환 ${rows.filter(r=>!r.repaid).length}건</span></div>
-  <div class="ps-scroll" id="ps-scroll"><table class="ps-table"><thead><tr><th>일자</th><th>차명 / 내용</th><th>차량번호</th><th>담당자</th><th class="ps-money">지급액 (원) ▾</th></tr></thead><tbody id="ps-tbody">${displayRows.map(prestockTableRow).join('')}</tbody><tfoot><tr><td colspan="4">미상환 지급 합계</td><td id="ps-table-total" class="ps-money">${prestockFormatWon(total)}</td></tr></tfoot></table></div><div class="ps-mobile-list" id="ps-mobile-list">${displayRows.map(prestockMobileRow).join('')}</div><div class="ps-list-controls" id="ps-list-controls">${prestockMoreMarkup(rows.length)}</div>
+  <div class="ps-ledger-head"><div><h4>선재고 거래 내역</h4><p>항목을 수정한 뒤 Enter를 누르면 저장됩니다.</p></div><span class="ps-row-count" id="ps-row-count">미상환 ${rows.filter(r=>!r.repaid).length}건</span></div>
+  <div class="ps-scroll" id="ps-scroll"><table class="ps-table"><thead><tr><th>일자</th><th>차명 / 내용</th><th>차량번호</th><th>담당자</th><th class="ps-money">지급액 (원) ▾</th></tr></thead><tbody id="ps-tbody">${displayRows.map(prestockTableRow).join('')}</tbody><tfoot><tr><td colspan="4">미상환 지급 합계</td><td id="ps-table-total" class="ps-money">${prestockFormatWon(total)}</td></tr></tfoot></table></div><div class="ps-mobile-list" id="ps-mobile-list">${displayRows.map(prestockMobileRow).join('')}</div><div class="ps-list-controls" id="ps-list-controls">${prestockMoreMarkup(rows.length)}</div><p id="ps-inline-status" class="ps-inline-status" role="status" aria-live="polite" hidden></p>
   <div id="ps-action-menu" class="ps-action-pop" role="menu" aria-label="선재고 지급액 작업"><button type="button" role="menuitem" onclick="choosePrestockAction('repay')">선재고상환</button><button type="button" role="menuitem" onclick="choosePrestockAction('edit')">금액수정</button><button type="button" class="ps-danger" role="menuitem" onclick="choosePrestockAction('delete')">취소</button></div>
-  <form class="ps-entry-form" id="ps-entry-form" autocomplete="off" onsubmit="addPrestockEntry(event)"><div class="ps-form-title"><strong>선재고 내역 추가</strong><span>입력 후 추가 버튼을 누르면 목록과 잔액에 바로 반영됩니다.</span></div><div class="ps-fields">
-   <label>일자 <input id="ps-date" type="date" value="${now}" onclick="openDateInputCalendar(this)" required aria-label="선재고 일자" /></label><label>차명 / 내용 <input id="ps-model" type="text" maxlength="65" placeholder="예: 코나 / 세금 납부" required aria-label="차명 또는 내용" /></label><label>차량번호 <input id="ps-plate" type="text" maxlength="22" placeholder="선택 입력" aria-label="선재고 차량번호" /></label><label>담당자 <input id="ps-dealer" type="text" maxlength="35" placeholder="선택 입력" aria-label="선재고 담당자" /></label><label>지급액 (원) <input id="ps-amount" type="text" inputmode="numeric" placeholder="예: 15,000,000" maxlength="20" oninput="formatPrestockWon(this)" aria-label="선재고 지급액 (원)" /></label><button class="ps-add" type="submit" aria-label="선재고 내역 추가" title="선재고 내역 추가">${snote238VehicleIcon('add')}</button>
+  <form class="ps-entry-form" id="ps-entry-form" autocomplete="off" onsubmit="addPrestockEntry(event)"><div class="ps-form-title"><div class="ps-form-heading"><strong>선재고 내역 추가</strong><button class="ps-entry-submit" type="submit" aria-label="선재고 내역 추가" data-tooltip="선재고 내역 추가"><img src="assets/prestock-add-arrow.webp?v=2.136" alt="" width="32" height="24" /></button></div><span>입력 후 추가 버튼을 누르면 목록과 잔액에 바로 반영됩니다.</span></div><div class="ps-fields">
+   <label>일자 <input id="ps-date" type="date" value="${now}" onclick="openDateInputCalendar(this)" required aria-label="선재고 일자" /></label><label>차명 / 내용 <input id="ps-model" type="text" maxlength="65" placeholder="예: 코나 / 세금 납부" required aria-label="차명 또는 내용" /></label><label>차량번호 <input id="ps-plate" type="text" maxlength="22" placeholder="선택 입력" aria-label="선재고 차량번호" /></label><label>담당자 <input id="ps-dealer" type="text" maxlength="35" placeholder="선택 입력" aria-label="선재고 담당자" /></label><label>지급액 (원) <input id="ps-amount" type="text" inputmode="numeric" placeholder="예: 15,000,000" maxlength="20" oninput="formatPrestockWon(this)" aria-label="선재고 지급액 (원)" /></label>
   </div></form>
 
  </section>`;
@@ -5324,7 +5392,7 @@ function closePrestockMenu(){
  document.querySelectorAll('.ps-amount-trigger[aria-expanded="true"]').forEach(b=>b.setAttribute('aria-expanded','false'));
 }
 function openPrestockMenu(event,id){
- event.stopPropagation();if(!isFinanceManager())return;
+ event.stopPropagation();if(!isFinanceManager()||snote136PrestockJob&&snote136PrestockCurrent(snote136PrestockJob,false))return;
  const pop=$('ps-action-menu');if(!pop)return;
  if(psMenuId===id){closePrestockMenu();return}
  closePrestockMenu();psMenuId=id;
@@ -5338,20 +5406,14 @@ function choosePrestockAction(type){
  const id=psMenuId;closePrestockMenu();if(!id||!isFinanceManager())return;
  const row=prestockAllRows().find(r=>r.id===id);if(!row)return;
  if(row.type==='adjustment'){toast('금액 조정 내역은 차량 상세에서 변경해주세요.');return;}
- if(type==='edit'){psEditingId=id;refreshPrestockDisplay();prestockVisibleEdit()?.focus();prestockVisibleEdit()?.select();return}
+ if(type==='edit'){psEditingId=id;prestockVisibleEdit()?.focus();prestockVisibleEdit()?.select();return}
  if(type==='repay'&&row.repaid){toast('이미 상환 완료된 내역입니다.');return}
  if(type==='repay'&&!(row.amount>0)){toast('상환하려면 지급액이 먼저 등록되어 있어야 합니다.');return}
  if(type==='repay'||type==='delete')openPrestockConfirmation(type,id);
 }
-function cancelPrestockEdit(){psEditingId=null;refreshPrestockDisplay()}
-function prestockEditKey(event,id){if(event.key==='Enter'){event.preventDefault();confirmPrestockEdit(id)}else if(event.key==='Escape'){event.stopPropagation();cancelPrestockEdit()}}
-function confirmPrestockEdit(id){
- if(!isFinanceManager()||psEditingId!==id)return;
- const raw=(prestockVisibleEdit()?.value||'').replaceAll(',','').trim();
- const amount=prestockParseWon(raw);if(!Number.isFinite(amount)){toast('원 단위 정수로 금액을 입력해주세요.');prestockVisibleEdit()?.focus();return}
-if(!Number.isSafeInteger(amount)||amount<0){toast('금액을 확인해주세요.');return}
- openPrestockConfirmation('edit',id,amount);
-}
+function cancelPrestockEdit(){if(psEditingId)snote136PrestockCancel(psEditingId);}
+function prestockEditKey(event,id){snote136PrestockKey(event,id);}
+function confirmPrestockEdit(id){return snote136SavePrestock(id);}
 function openPrestockConfirmation(type,id,amount){
  if(!isFinanceManager())return;
  const row=prestockAllRows().find(r=>r.id===id);if(!row)return;
@@ -5419,7 +5481,7 @@ window.addEventListener('pointerdown',e=>{if(psMenuId&&!e.target.closest('#ps-ac
 window.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('ps-confirm-overlay')?.classList.contains('open')){e.stopImmediatePropagation();closePrestockConfirmation()}else if(e.key==='Escape'&&psMenuId){e.stopImmediatePropagation();closePrestockMenu()}},{capture:true});
 
 function buildPrestockManagement(){
- psExpanded=false;
+ snote136PrestockView++;snote136PrestockScope=snote136PrestockContext()?.key||'';snote136PrestockDrafts.clear();psEditingId=null;psExpanded=false;
  $('alt-title').style.display='none';$('alt-copy').style.display='none';
  $('alt-title').textContent='';$('alt-copy').textContent='';
  $('alt-content').innerHTML=prestockSection();
@@ -5428,7 +5490,7 @@ function buildPrestockManagement(){
   const layout=document.createElement('div');layout.className='snote-prestock-workspace';
   const entry=document.createElement('section');entry.className='snote-prestock-entry';entry.setAttribute('aria-label','선재고 거래 입력');
   const ledger=document.createElement('section');ledger.className='snote-prestock-ledger';ledger.setAttribute('aria-label','선재고 거래 목록');head.before(layout);entry.append(form);
-  for(const element of[head,$('ps-scroll'),$('ps-mobile-list'),$('ps-list-controls')])if(element)ledger.append(element);layout.append(entry,ledger);
+  for(const element of[head,$('ps-scroll'),$('ps-mobile-list'),$('ps-list-controls'),$('ps-inline-status')])if(element)ledger.append(element);layout.append(entry,ledger);
  }
  prestockUpdateViewport();
 }
@@ -10220,7 +10282,7 @@ async function reload(){if(!S.ready)return;
  const before={client:S.client,user:S.user,company:S.company?.id,epoch:cloudWriteEpoch,queue:[...S.queue],conflict:S.conflict};
  const current=()=>S.client===before.client&&S.user===before.user&&S.company?.id===before.company;
  snote216ResetMonthly();snoteEncarLinksReset();S.ready=false;snoteRefreshSalesOverview();clearTimeout(S.timer);S.queue.clear();
- try{if(cloudFlushTask)await cloudFlushTask;S.queue.clear();S.conflict=false;await Promise.all([restoreDatasets({discardIdleRecovery:true}),snoteLoadDealerRates({force:true})]);loadCarsForUser();loadCovers();await refreshMedia();await Promise.all([window.SnoteFinanceLock?.load(currentUser),window.SnoteDashboardDisplay?.load(currentUser)]);buildStats();navigate(route);S.ready=true;snoteRefreshSalesOverview();snoteStartAccessTracking();showStatus('● 서버 자료 다시 불러옴');void snote220RefreshTaxonomy().catch(()=>{});snote216InitMonthly();}
+ try{if(cloudFlushTask)await cloudFlushTask;S.queue.clear();S.conflict=false;await Promise.all([restoreDatasets({discardIdleRecovery:true}),snoteLoadDealerRates({force:true})]);loadCarsForUser();loadCovers();await refreshMedia();await Promise.all([window.SnoteFinanceLock?.load(currentUser),window.SnoteDashboardDisplay?.load(currentUser)]);buildStats();navigate(route);S.ready=true;if(route==='prestock'&&byId('prestock-card')){snote136PrestockScope=snote136PrestockContext()?.key||'';refreshPrestockDisplay();}snoteRefreshSalesOverview();snoteStartAccessTracking();showStatus('● 서버 자료 다시 불러옴');void snote220RefreshTaxonomy().catch(()=>{});snote216InitMonthly();}
  catch(e){if(current()){
   // A failed read did not replace the local data. Keep both queued edits and
   // uncertain requests recoverable instead of reporting an empty save queue.
@@ -10229,7 +10291,7 @@ async function reload(){if(!S.ready)return;
    for(const[key,pending]of cloudPendingWrites)if(pending.client===before.client&&pending.user===before.user&&pending.company===before.company&&pending.epoch===before.epoch)S.queue.add(key);
    S.conflict=before.conflict;
   }
-  S.ready=true;snoteRefreshSalesOverview();snoteStartAccessTracking();fail(e,'새로고침');snote216InitMonthly();
+  S.ready=true;if(route==='prestock'&&byId('prestock-card')){snote136PrestockScope=snote136PrestockContext()?.key||'';refreshPrestockDisplay();}snoteRefreshSalesOverview();snoteStartAccessTracking();fail(e,'새로고침');snote216InitMonthly();
  }}
 }
 status.addEventListener('click',reload);
@@ -11180,12 +11242,12 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 <script type="module" src="assets/income-settlement-parent.js?v=2.112"></script>
 <script src="assets/vehicle-sharing.js?v=2.107" defer></script>
 <script src="assets/shared-vehicle-markers.js?v=2.87" defer></script>
-<link rel="stylesheet" href="assets/workspace-reorder.css?v=2.135">
+<link rel="stylesheet" href="assets/workspace-reorder.css?v=2.136">
 <script src="assets/workspace-order-store.js?v=2.135" defer></script>
-<script src="assets/workspace-reorder.js?v=2.135" defer></script>
-<script src="assets/release-info.js?v=2.135" defer></script>
+<script src="assets/workspace-reorder.js?v=2.136" defer></script>
+<script src="assets/release-info.js?v=2.136" defer></script>
 <script src="assets/company-purchase.js?v=2.130" defer></script>
-<script src="assets/contract-office.js?v=2.135" defer></script>
+<script src="assets/contract-office.js?v=2.136" defer></script>
 <script src="assets/recycle-bin.js?v=2.77" defer></script>
 <script src="assets/company-assets.js?v=2.128" defer></script>
 <script src="assets/profile-editor.js?v=2.128" defer></script>
