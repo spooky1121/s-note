@@ -1,0 +1,77 @@
+{
+  "release": "2.132",
+  "baseCommit": "c1355f4f9f8a1df7cb7696e074327dbabacd82ef",
+  "checkedDateKorea": "2026-11-18",
+  "companySeal": {
+    "source": "existing authenticated private companyStamp loader",
+    "positions": {
+      "sellerTop": [276.5, 122, 49, 19],
+      "sellerBottom": [246.5, 724, 49, 19]
+    },
+    "coordinateSystem": "original 595 by 841 point form; x, y, width, height",
+    "imageFit": "contain, original aspect and transparency",
+    "verifiedBeforePreviewAndPrint": true,
+    "configuredAssetFailureBlocksPrint": true,
+    "missingAssetLeavesSlotsBlank": true,
+    "otherCompanyOrDefaultSealFallback": false
+  },
+  "buyerNameSeal": {
+    "control": "출력용 이름 도장",
+    "defaultEnabled": false,
+    "source": "current buyerName, rendered locally as transparent red PNG",
+    "positions": {
+      "buyerTop": [486.5, 122, 49, 19],
+      "buyerBottom": [484.5, 724, 49, 19]
+    },
+    "bottomRequiresMatchingCertBuyerName": true,
+    "nameChangeRegeneratesAndCancelsOldPreview": true,
+    "clearedOn": ["empty name", "option off", "new document", "load document", "reset", "account or company change"],
+    "saveAcknowledgmentKeepsCurrentPrintOption": true,
+    "optionOrImageStoredInDraftPayload": false,
+    "customerSignatureOrConsentStateModified": false
+  },
+  "document": {
+    "originalPdfAndBothSvgAssetsUnchanged": true,
+    "fieldsAndPayloadKeys": 39,
+    "pages": 2,
+    "paper": "A4",
+    "companySealImagesOnFront": 2,
+    "enabledMatchingBuyerSealImagesOnFront": 2,
+    "sealImagesOnBack": 0,
+    "nameFieldIntersections": 0,
+    "unrelatedOriginalGlyphIntersections": 0,
+    "intentionalSignatureLabelOverlay": true,
+    "physicalPrinterTested": false
+  },
+  "verification": [
+    {"command": "npm test --prefix tests/encar", "passed": 1064, "failed": 0},
+    {"command": "node tests/contract-office.browser.cjs", "passedGroups": 2, "widths": [1440, 390], "pdfCases": 4},
+    {"command": "node tests/accountant-workspace.browser.cjs", "passedGroups": 4, "widths": [1440, 390, 320]},
+    {"command": "Seven inline scripts and affected JavaScript syntax; git diff --check", "status": "passed"},
+    {"command": "wrangler pages functions build functions", "version": "4.152.0", "status": "passed"}
+  ],
+  "cases": [
+    "Actual company asset metadata, authenticated private download, blob decode and state bridge",
+    "Ready, missing, invalid or failed image load; no arbitrary or stale URL",
+    "Company change or closed preview cancels late decode and cannot print",
+    "Current generated name matches drawn text; PNG corners transparent and PDF alpha mask preserved",
+    "Name mismatch, new/load/reset, blank and disabled options cannot reuse old buyer graphic",
+    "Existing 39-field KRW/km values, save acknowledgment, late edits, CAS, lost acknowledgment and list ordering preserved",
+    "Original signature-slot coordinates and name/non-signature glyph collision audit"
+  ],
+  "productionMetadata": {
+    "privateBucketConfirmed": true,
+    "authenticatedMediaReadGrantConfirmed": true,
+    "activeSameCompanyMemberReadPoliciesConfirmed": true,
+    "brandingPassesExistingRestrictiveVehiclePolicies": true,
+    "databaseOrPolicyChanges": false
+  },
+  "dataScope": {
+    "testNamesAndImages": "synthetic only",
+    "productionQueries": "policy, function and bucket metadata only",
+    "realCompanyImageOrCustomerDataExtracted": false,
+    "productionDatabaseOrStorageWrites": false,
+    "generatedImagesOrNamesAddedToBrowserStorage": false,
+    "newDatabaseMigration": false
+  }
+}
