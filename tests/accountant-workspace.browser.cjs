@@ -37,12 +37,18 @@ async function setup(p,{hold=false,error=null}={}){
 }
 async function ready(p){await p.waitForFunction(()=>snoteEnsureCompanyPurchase()===true&&snoteCompanyPurchaseBridge.context()?.canRead===true);}
 async function scope(p){return p.evaluate(()=>({context:snoteCompanyPurchaseBridge.context(),ids:getFiltered('list').map(car=>car.id),owners:[...new Set(getFiltered('list').map(car=>car.ownerId))],calls:__companyMock.calls.length}));}
-async function office(p){
- await p.evaluate(()=>navigate('contractOffice'));await ready(p);await p.locator('#snote-contract-office').waitFor({state:'visible'});await p.locator('#contract-office-form').waitFor({state:'visible'});
- await p.waitForFunction(()=>__companyMock.officeCalls.some(call=>call.name==='snote_transfer_contract_list'));
+async function office(p,width){
+ await p.evaluate(()=>navigate('contractOffice'));await ready(p);await p.locator('#snote-contract-office').waitFor({state:'visible'});assert.equal(await p.locator('#screen-title').textContent(),'매입 업무');
+ const landing=p.locator('#contract-office-landing'),tiles=landing.locator('button[data-document-kind]');await landing.waitFor({state:'visible'});
+ assert.deepEqual(await tiles.evaluateAll(buttons=>buttons.map(button=>button.dataset.documentKind)),['purchase','sale','presentation','contract']);
+ for(const label of ['매입서류','매도서류','제시표','계약서'])assert.equal(await landing.getByRole('button',{name:label,exact:true}).isVisible(),true);
+ assert.equal(await p.locator('#contract-office-form').isVisible(),false,'Initial purchase-work landing must show the four choices before the form');assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+ assert.equal(await p.evaluate(()=>__companyMock.officeWriteAttempts.length),0);await p.screenshot({path:path.join(OUT,'office-tiles-'+width+'.png')});
+ await landing.locator('[data-document-kind="purchase"]').click();await p.locator('#contract-office-workspace-pane').waitFor({state:'visible'});await p.locator('#contract-office-form').waitFor({state:'visible'});
+ assert.equal(await landing.isVisible(),false);assert.equal(await p.locator('#contract-office-form [name]').count(),39,'The first tile opens the complete existing purchase-document form');
  await p.waitForFunction(()=>[...document.querySelectorAll('#contract-office-vehicle option')].some(option=>option.textContent.includes('이전 직원 매물')));
  const options=await p.locator('#contract-office-vehicle option').allTextContents();for(const text of['내 매물 1','딜러 매물 0','비활성 담당 매물','이전 직원 매물'])assert(options.some(option=>option.includes(text)),'Office vehicle choices must include canonical same-company owner '+text);
- assert(options.every(option=>!option.includes('타회사')&&!option.includes('다른 상사')));assert.equal(await p.locator('#contract-office-new').isVisible(),true);assert.equal(await p.evaluate(()=>__companyMock.officeWriteAttempts.length),0);
+ assert(options.every(option=>!option.includes('타회사')&&!option.includes('다른 상사')));assert.equal(await p.evaluate(()=>__companyMock.officeWriteAttempts.length),0);await p.screenshot({path:path.join(OUT,'office-form-'+width+'.png')});
 }
 async function layoutAndData(width){
  const f=await fixture(width),p=f.page;
@@ -54,7 +60,7 @@ async function layoutAndData(width){
   assert(initial.ids.includes('company-inactive')&&initial.ids.includes('company-moved')&&initial.ids.includes('company-own-1'));assert(!initial.ids.includes('other-company-cache'));
   assert.equal(await p.locator('#list-table tbody tr').count(),20);assert.equal(await p.locator('#accountant-bar').isVisible(),true);
   await p.waitForFunction(()=>document.querySelector('#snote-purchase-overview .sales-overview-metric dd')?.textContent==='27대');assert.equal(await p.evaluate(()=>snotePurchaseOverviewBridge.snapshot().cars.length),29,'Purchase history includes every canonical company vehicle, including sold ones');
-  const nav=await p.locator('#desktop-nav button').allTextContents();assert.match(nav[0],/계약/);assert.match(await p.locator('#desktop-nav button').first().getAttribute('onclick'),/contractOffice/);assert(nav.every(text=>!text.includes('대시보드')&&!text.includes('상사 매입')));
+  const nav=await p.locator('#desktop-nav button').allTextContents();assert.equal(nav[0].trim(),'매입 업무');assert.match(await p.locator('#desktop-nav button').first().getAttribute('onclick'),/contractOffice/);assert(nav.every(text=>!text.includes('대시보드')&&!text.includes('상사 매입')&&!text.includes('계약서 업무')));
   assert.equal(await p.evaluate(()=>snotePageAllowed('companyBuy')),false);assert.equal(await p.evaluate(()=>snotePageAllowed('dashboard')),false);
   await p.locator('#accountant-dealer-filter').selectOption(await p.evaluate(()=>__companyMock.aliasD));await p.evaluate(()=>handleAccountantDealerFilter());assert.equal(await p.evaluate(()=>getFiltered('list').length),21);
   await p.locator('#list-query').fill('딜러 매물 0');assert.equal(await p.evaluate(()=>getFiltered('list').length),1);await p.locator('#list-query').fill('');await p.locator('#accountant-dealer-filter').selectOption('all');await p.evaluate(()=>handleAccountantDealerFilter());
@@ -74,7 +80,7 @@ async function layoutAndData(width){
   assert.equal(await p.locator('#inventory-lender-filter option[value="none"]').count(),1);await p.locator('#inventory-lender-filter').selectOption('none');assert.equal(await p.locator('#inventory-finance-tbody tr').count(),2,'Unregistered and blank finance lenders remain visible');await p.locator('#inventory-lender-filter').selectOption('all');
   const search=await p.locator('#inventory-finance-search').evaluate(input=>{const search=input.closest('.search'),r=search.getBoundingClientRect(),parent=search.parentElement.getBoundingClientRect();return{width:r.width,parent:parent.width,height:input.getBoundingClientRect().height};});if(width>760)assert(search.width<=301,'Accountant desktop finance search must be compact');else assert(search.width>=search.parent-2,'Mobile finance search must use the available width');
   await p.locator('#inventory-finance-search').fill('이전 직원');assert.equal(await p.locator('#inventory-finance-tbody tr').count(),2);await p.locator('#inventory-finance-search').fill('');await p.screenshot({path:path.join(OUT,'finance-'+width+'.png')});
-  if(includeOffice){await office(p);await p.screenshot({path:path.join(OUT,'office-'+width+'.png')});}
+  if(includeOffice){await office(p,width);await p.screenshot({path:path.join(OUT,'office-'+width+'.png')});}
   assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);assert.equal(await p.evaluate(()=>__companyMock.writes.length),0);assert.equal(await p.evaluate(()=>__companyMock.carWriteAttempts.length),0);assert.equal(await p.evaluate(()=>__companyMock.officeWriteAttempts.length),0);
   results.push({width,companyBuyCount:26,companyPurchaseHistory:29,currentMonthPurchases:27,soldCount:3,currentMonthSold:2,loanTotal:21500000,loanRows:7,knownLenderUsage:20000000,unknownOrBlankLenderRows:2,compactSearch:search,office:includeOffice,unrelatedCompanyExcluded:true,noCarWrites:true});
   await finish(f);console.log('PASS '+width+' accountant canonical company lists, filters/paging, finance reconciliation, read-only car actions and '+(includeOffice?'office navigation':'office pending'));

@@ -1,0 +1,67 @@
+{
+  "release": "2.131",
+  "baseCommit": "6749d14bf0dd0c3abf869a9d42bf31cced816c27",
+  "checkedDateKorea": "2026-11-18",
+  "interface": {
+    "menuAndScreenTitle": "매입 업무",
+    "routeIdentifierPreserved": "contractOffice",
+    "initialTiles": ["매입서류", "매도서류", "제시표", "계약서"],
+    "desktopColumns": 4,
+    "mobileColumns": 2,
+    "firstTileOpensExistingForm": true,
+    "otherTilesShowPreparationNoticeOnly": true,
+    "newContractSubtitleRemoved": true,
+    "savedDocumentDropdownRemoved": true,
+    "savedDocumentAccess": "문서 목록 icon and record buttons",
+    "tileHoverButtonBoundsStable": true,
+    "formEntryFocus": "heading; no automatic mobile input focus",
+    "dirtyBackToTilesRequiresConfirmation": true
+  },
+  "defaults": {
+    "whenApplied": "new draft only, after verified ready company context",
+    "deliveryDate": "current calendar date in Asia/Seoul",
+    "sellerName": "verified company name",
+    "sellerPhone": "verified company business phone",
+    "sellerAddress": "verified company business address and detail",
+    "certSellerName": "verified company name",
+    "savedRecordsAndExistingDraftsOverwritten": false,
+    "newDraftBlockedDuringReconnect": true,
+    "overlongCompanyData": "preserved in full with field-limit notice; existing save and print validation applies"
+  },
+  "printing": {
+    "formPrinterIcon": "red outline printer",
+    "directPrintPreparesCurrentFormPreview": true,
+    "waitsForFontsAndOriginalImages": true,
+    "duplicatePreparationAndPrintBlocked": true,
+    "contextChangeOrPreviewCloseCancelsPendingPrint": true,
+    "originalPdfAndBothSvgBackgroundsUnchanged": true,
+    "fields": 39,
+    "pages": 2,
+    "paper": "A4",
+    "physicalPrinterTested": false
+  },
+  "verification": [
+    {"command": "npm test --prefix tests/encar", "passed": 1064, "failed": 0},
+    {"command": "node tests/accountant-workspace.browser.cjs", "passedGroups": 4, "widths": [1440, 390, 320]},
+    {"command": "node tests/contract-office.browser.cjs", "passedGroups": 2, "widths": [1440, 390]},
+    {"command": "Seven inline scripts and affected JavaScript syntax; git diff --check", "status": "passed"},
+    {"command": "wrangler pages functions build functions", "version": "4.152.0", "status": "passed"}
+  ],
+  "retainedCases": [
+    "All 39 fields, integer KRW, comma mileage, saved-record blank values and zero values",
+    "Save acknowledgment, late edits, CAS conflict, network error and lost acknowledgment",
+    "Old list response cannot overwrite a newer acknowledged save",
+    "Company switch, role loss and denied canonical vehicle scope fail closed",
+    "Loading preserves existing draft and cannot create empty company defaults",
+    "Dirty route or tile navigation cancellation preserves input",
+    "Direct printer remains red and prints original two-sided form with no input overflow",
+    "No private customer store reads, local PII draft cache or vehicle dataset writes"
+  ],
+  "dataScope": {
+    "browserData": "synthetic only",
+    "productionDatabaseOrStorageWrites": false,
+    "newDatabaseMigration": false,
+    "existingDraftRpcAnd39KeySchemaPreserved": true,
+    "accountantMenuPermissionsUnchanged": true
+  }
+}

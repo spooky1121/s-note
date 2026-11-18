@@ -1,16 +1,31 @@
 @media screen{
  .co-workspace{max-width:1180px;margin:0 auto;color:#334155}
- .co-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:16px}
+ .co-heading{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px 16px;margin-bottom:16px}
  .co-heading h2{font-size:20px;letter-spacing:-.5px;margin:0;color:#263246;font-weight:650}
- .co-meta{font-size:12px;color:#8b95a5;margin:5px 0 0}
  .co-actions{display:flex;gap:9px;align-items:center}
+ #snote-contract-office [hidden]{display:none!important}
+ .co-document-tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;padding:12px 0 24px}
+ .co-document-tile{box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;min-width:0;min-height:220px;padding:25px 14px;border:1px solid #e5eaf1;border-radius:15px;background:#fff;color:#3479d5;box-shadow:0 3px 13px #243e6205;cursor:pointer;translate:none!important;transform:none!important;transition:box-shadow .18s ease,border-color .18s ease}
+ .co-document-tile:hover{border-color:#cad8ec;box-shadow:0 9px 22px #243e6210}.co-document-tile:hover .co-document-shape{transform:translateY(-3px)}
+ .co-document-tile:focus-visible{outline:2px solid #8cb0e5;outline-offset:4px}
+ .co-document-tile[data-document-kind=sale]{color:#398c74}.co-document-tile[data-document-kind=presentation]{color:#8172b5}.co-document-tile[data-document-kind=contract]{color:#687d99}
+ .co-document-shape{display:grid;place-items:center;width:96px;height:112px;flex:none;transition:transform .18s ease}
+ #snote-contract-office .co-document-shape svg{display:block!important;width:86px!important;height:106px!important;max-width:none!important;max-height:none!important;overflow:visible}
+ .co-document-label{font-size:15px;font-weight:600;letter-spacing:-.35px;color:#394b63;line-height:1.5}
+ .co-form-heading{display:flex;align-items:center;gap:8px;margin:0 0 12px}.co-form-heading h3{font-size:14px;font-weight:600;margin:0;color:#5b6b80}.co-back{color:#6e7c8e}
  .co-icon{display:grid;place-items:center;width:32px;min-width:32px;height:32px;padding:6px;border:0;background:transparent;color:#1670df;box-shadow:none;cursor:pointer;border-radius:5px}
  .co-icon svg{width:20px;height:20px;display:block}.co-icon:disabled{opacity:.35;cursor:default}
  .co-icon:hover:not(:disabled){background:#f2f5fa;translate:0 -1px}
  .co-icon:focus-visible{outline:2px solid #7c9fe6;outline-offset:2px}
- .co-toolbar{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;margin-bottom:8px}
+ .co-toolbar{display:grid;grid-template-columns:minmax(0,1fr);max-width:680px;gap:12px;margin-bottom:8px}
  .co-toolbar select{width:100%;min-width:0;height:36px;border:1px solid #e3e8ef;background:#fff;border-radius:7px;color:#4a586c;padding:5px 9px;font:inherit;font-size:12px}
  .co-status{font-size:12px;color:#8692a4;min-height:18px;line-height:1.5;margin:9px 0 14px}.co-status.is-error{color:#b94351}
+ .co-direct-print{color:#d12d3e}
+ .co-history-panel{border:1px solid #e5eaf1;border-radius:9px;background:#fff;margin:12px 0;padding:12px 14px;max-width:680px}
+ .co-history-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:5px}.co-history-heading h3{font-size:13px;font-weight:600;margin:0;color:#55657b}.co-history-close{font-size:24px;color:#555b65}
+ .co-history-list{max-height:260px;overflow:auto;scrollbar-width:thin;scrollbar-color:#d5dae2 transparent}
+ .co-saved-record{display:block;box-sizing:border-box;width:100%;border:0;border-bottom:1px solid #edf0f5;border-radius:0;padding:11px 7px;text-align:left;background:transparent;color:#53647a;font:inherit;font-size:12px;line-height:1.5;cursor:pointer}
+ .co-saved-record:hover,.co-saved-record[aria-current=true]{background:#f5f8fd;color:#2764b7}.co-saved-record:focus-visible{outline:2px solid #acc7ec;outline-offset:-2px}.co-saved-record:disabled{opacity:.45;cursor:default}.co-history-empty{font-size:12px;color:#8b96a7;margin:12px 5px}
  #contract-office-form{display:grid;gap:14px}
  .co-card-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
  .co-card{min-width:0;background:#fff;border:1px solid #e8ecf2;border-radius:10px;padding:16px 18px}
@@ -28,7 +43,8 @@
  .co-preview-status{font-size:11px;line-height:1.5;max-width:calc(100% - 45px);margin:0 0 12px;color:#7f8da2;min-height:17px}
  .co-preview-viewport{clear:both;overflow:visible;min-width:0}.co-paper{margin:0 auto;background:#fff;box-shadow:0 2px 8px #1e314418}.co-paper.is-preview-hidden{display:none}
  .co-print-field.is-overflow{background:#ffedf0;outline:1px solid #d15c69}
- @media(max-width:700px){.co-card-pair{grid-template-columns:1fr}.co-card{padding:14px}.co-toolbar{grid-template-columns:1fr}.co-heading h2{font-size:18px}.co-field-input input,.co-field-input textarea,.co-toolbar select{font-size:16px}.co-field-grid{gap:10px}.co-preview{padding:10px 8px 12px}}
+ @media(max-width:700px){.co-card-pair{grid-template-columns:1fr}.co-card{padding:14px}.co-toolbar{grid-template-columns:1fr}.co-heading h2{font-size:18px}.co-actions{gap:6px;max-width:100%;flex-wrap:wrap}.co-field-input input,.co-field-input textarea,.co-toolbar select{font-size:16px}.co-field-grid{gap:10px}.co-preview{padding:10px 8px 12px}.co-document-tiles{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding-top:6px}.co-document-tile{min-height:185px;padding:18px 10px;gap:10px}.co-document-shape{width:82px;height:98px}#snote-contract-office .co-document-shape svg{width:74px!important;height:92px!important}.co-document-label{font-size:14px}}
+ @media(prefers-reduced-motion:reduce){.co-document-tile,.co-document-shape{transition:none}.co-document-tile:hover .co-document-shape{transform:none}}
 }
 .co-paper{position:relative;box-sizing:border-box;width:595px;height:841px;min-width:595px;max-width:none;flex:none;isolation:isolate;overflow:visible}
 .co-paper>img{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:fill;pointer-events:none}
