@@ -3,7 +3,7 @@ const test=require('node:test'),assert=require('node:assert/strict'),fs=require(
 const html=fs.readFileSync(path.resolve(__dirname,'../../index.html'),'utf8');
 function between(start,end){const at=html.indexOf(start),stop=html.indexOf(end,at);assert(at>=0&&stop>at,start);return html.slice(at,stop);}
 const entry=between('function snote239EncarListing(','function snote202InventoryAge(');
-const scope=between('function isPurchaseListRoute(','let snotePurchaseNavigationScope=');
+const scope=between('function isAccountant(){','function isSnoteAdmin(){')+between('function isPurchaseListRoute(','let snotePurchaseNavigationScope=');
 const refresh=between(' refreshList(base){',' async autoPrice(');
 const ID='43000001',SECOND='43000002',OWNER='cld_own',OTHER='cld_other';
 function record(){return {version:1,plate:'12가3456',verifiedAt:new Date().toISOString(),listings:[{id:ID,sellerUrl:'https://fem.encar.com/cars/detail/'+ID},{id:SECOND,sellerUrl:'https://fem.encar.com/cars/detail/'+SECOND}]};}

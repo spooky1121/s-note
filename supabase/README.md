@@ -1,5 +1,7 @@
 # 상사정보 저장 기능 적용
 
+v2.130 경리의 상사 전체 차량 조회·계약서 업무와 대표 관리자 직원 로그인 ID 표시는 [경리 업무·직원 ID 안내](../docs/accountant-workspace.md)의 두 마이그레이션을 사용합니다. 연결된 운영 DB에 적용하고, 실제 역할별 조회·저장·권한 검증과 검증 자료 롤백을 완료했습니다. Cloudflare Pages 배포만으로 다른 DB에 자동 적용되지는 않습니다.
+
 v2.63 신규 공유 알림과 공유 표시에는 [신규 공유 SQL](migrations/20261105105113_shared_vehicle_registered_notifications.sql)을 추가 적용한다. 운영 적용·권한 확인을 완료했다.
 
 공유 차량 변경 알림은 [알림 안내](../docs/vehicle-notifications.md)의 두 추가 마이그레이션을 사용한다. 운영 DB 적용과 권한 검증을 완료했다.

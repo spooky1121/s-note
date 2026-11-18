@@ -1,0 +1,92 @@
+{
+  "release": "2.130",
+  "baseCommit": "bcfe884af420edd2290976bbff4ddf48c5a8874e",
+  "originalReleaseBase": "71e0087503042b567df4ec0a71089a1eb65f6fc4",
+  "checkedDateKorea": "2026-11-18",
+  "scope": {
+    "accountantFirstMenu": "contractOffice",
+    "accountantDashboardHidden": true,
+    "accountantCompanyBuyRemoved": true,
+    "adminCompanyBuyRetained": true,
+    "accountantCanonicalSameCompanyCarsOnly": true,
+    "formerAndInactiveOwnersIncluded": true,
+    "soldMonthFilterPreserved": true,
+    "financeUnknownAndBlankLendersIncluded": true,
+    "financeDesktopSearchWidthPx": 300,
+    "staffId": "read-only login email beside staff name, below name on mobile",
+    "staffReader": "verified active same-company admin only",
+    "staffLookupAdditionalAuthOrSessionRequests": 0
+  },
+  "database": {
+    "productionMigrationsApplied": [
+      {
+        "path": "supabase/migrations/20261118113726_accountant_company_workspace_contract_drafts.sql",
+        "sha256": "e401b57dbcf671a3fc80b2321edeabbb6d229668ce9975100e3b6f205da63276"
+      },
+      {
+        "path": "supabase/migrations/20261118114817_company_staff_login_ids.sql",
+        "sha256": "28916d133fed614ab02c2988526afd9d0aa7452dacfe8714387fee49c21f53df"
+      }
+    ],
+    "draftRlsEnabled": true,
+    "anonymousDraftRead": false,
+    "authenticatedDraftDelete": false,
+    "authenticatedDraftCompanyChange": false,
+    "directAuthEmailGrant": false,
+    "publicRpcSecurityInvoker": true,
+    "privateStaffHelperGuardedSecurityDefiner": true,
+    "newRpcAnonymousExecute": false,
+    "liveRoleVerification": "admin/accountant synthetic draft create, revise, read; stale revision, foreign company, staff and anonymous denials; transaction rolled back",
+    "persistedSyntheticDraftsAfterRollback": 0,
+    "newSecurityAdvisorFindings": 0
+  },
+  "form": {
+    "originalPdf": "assets/forms/vehicle-transfer-dealer-2021.pdf",
+    "originalPdfSha256": "6a17600e22a67af7edf98579a0cc83ec211ab8b40aaaa3adb7b666d61ee22b70",
+    "fields": 39,
+    "money": "integer KRW; empty and zero distinct",
+    "printPages": 2,
+    "paper": "A4",
+    "originalLegalClauses": 10,
+    "manualSignatureOrSealSlotsLeftBlank": 8,
+    "originalPdfByteIdentical": true,
+    "originalVectorShapesCompared": 2089,
+    "originalVectorCoordinateComponentsCompared": 387212,
+    "vectorShapeMismatches": 0,
+    "maxVectorCoordinateErrorPt": 0.000171,
+    "printedInputOriginalGlyphIntersections": 0,
+    "printedInputCellRuleIntersections": 0,
+    "oversizedPrintInputBlocked": true,
+    "browserLocalStoragePiiDraftAdded": false
+  },
+  "verification": [
+    {"command": "npm test --prefix tests/encar", "passed": 1064, "failed": 0},
+    {"command": "node tests/accountant-workspace-db.cjs", "passedGroups": 16},
+    {"command": "node tests/staff-login-ids-db.cjs", "passedGroups": 6, "independentCrossReviewPassedGroups": 6},
+    {"command": "node tests/accountant-workspace.browser.cjs", "passedGroups": 4, "widths": [1440, 390, 320]},
+    {"command": "node tests/company-purchase.browser.cjs", "passedGroups": 4, "widths": [1440, 390, 320]},
+    {"command": "node tests/contract-office.browser.cjs", "passedGroups": 2, "widths": [1440, 390]},
+    {"command": "node tests/staff-login-ids.browser.cjs", "passedGroups": 4, "widths": [1440, 390]},
+    {"command": "node tests/icon-sizing.browser.cjs", "status": "existing fixture mismatch", "firstFailure": "Legacy fixture expects 5 header SVG actions; unchanged current header has 6", "followUp": "Targeted staff alignment passes. Baseline and working registration geometry are identical: 28px host, 17px SVG, 16.6667px painted ink, center alignment. Optional legacy fixture edits were discarded."},
+    {"command": "wrangler pages functions build functions", "version": "4.152.0", "status": "passed"},
+    {"command": "Seven inline scripts and affected JavaScript syntax; git diff --check", "status": "passed"}
+  ],
+  "cases": [
+    "Canonical load, role denial, timeout and old-company response fail closed",
+    "Company list pagination, search, dealer filter and finance totals reconcile without unrelated or duplicate cars",
+    "Admin/dealer own inventory and existing admin company menu preserved",
+    "All 39 inputs, comma money and mileage reach the exact saved payload",
+    "Save acknowledgment, late edits, conflicts, network failure and lost acknowledgment preserve drafts",
+    "Old list cannot undo a newer revision; route reentry refreshes saved records",
+    "Dirty navigation cancellation preserves form; role/company change clears form and preview",
+    "Staff email is readonly, safe missing/error fallback, late response discarded",
+    "Name-only save behavior and input/save/delete center alignment preserved"
+  ],
+  "dataScope": {
+    "browserFixtures": "synthetic only",
+    "liveDatabaseTests": "synthetic contract payloads under actual verified role context, rolled back",
+    "realCustomerVehicleOrMediaWrites": false,
+    "realStaffEmailExtractedIntoArtifacts": false,
+    "physicalPrinterTested": false
+  }
+}
