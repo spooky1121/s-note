@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.131">
+<html lang="ko" data-snote-release="2.132">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -3225,7 +3225,7 @@ button, input, select, textarea { font-family: inherit; }
 <link rel="stylesheet" href="assets/vehicle-memo.css?v=2.92">
 <link rel="stylesheet" href="assets/sidebar-hover.css?v=2.92">
 <link rel="stylesheet" href="assets/accountant-workspace.css?v=2.130">
-<link rel="stylesheet" href="assets/contract-office.css?v=2.131">
+<link rel="stylesheet" href="assets/contract-office.css?v=2.132">
 </head>
 <body class="snote-typography">
 
@@ -8444,6 +8444,20 @@ window.snoteContractOfficeBridge=Object.freeze({
  async list(context){const rows=await snote130OfficeRpc(context,'snote_transfer_contract_list',{p_expected_company_id:context.companyId});if(!Array.isArray(rows))throw Error('계약서 목록 응답을 확인하지 못했습니다.');return rows.map(snote130OfficeRecord);},
  async save(context,value){snote130OfficeAssert(context);return snote130OfficeRecord(await snote130OfficeRpc(context,'snote_transfer_contract_save',{p_expected_company_id:context.companyId,p_id:value.id,p_car_owner_id:value.carOwnerId??null,p_car_id:value.carId??null,p_expected_revision:value.expectedRevision,p_payload:value.payload}));},
  async vehicles(context){snote130OfficeAssert(context);await window.snoteWaitCompanyPurchase();snote130OfficeAssert(context);return cars.filter(snoteCompanyCarAllowed).map(car=>({id:String(car.id),ownerId:S.carScopes.get(car).ownerId,model:String(car.model||''),plate:String(car.plate||''),year:car.year||'',vin:String(car.vin||''),km:Number(String(car.km??'').replaceAll(',',''))||0,status:car.status,ownerName:dealerLabel(car),buy:Number(car.buy)||0,sell:Number(car.sell)||0,soldPrice:car.soldPrice==null?null:Number(car.soldPrice)}));},
+ async stamp(context){
+  snote130OfficeAssert(context);let url;
+  try{url=await snote128LoadCompanyAsset('companyStamp');}catch(_){snote130OfficeAssert(context);throw Object.assign(Error('등록된 법인도장을 불러오지 못했습니다. 다시 확인해 주세요.'),{code:'COMPANY_STAMP_UNAVAILABLE'});}
+  snote130OfficeAssert(context);const state=snote128AssetStore().snapshot('companyStamp');
+  if(state.companyId!==context.companyId||state.userId!==context.userId)throw Object.assign(Error('법인도장의 상사 연결을 다시 확인해 주세요.'),{code:'CONTEXT_CHANGED'});
+  if(state.status==='missing'&&!url&&state.url===null)return {status:'missing',url:null};
+  if(state.status==='ready'&&typeof url==='string'&&url.startsWith('blob:')&&state.url===url)return {status:'ready',url};
+  throw Object.assign(Error('등록된 법인도장 상태를 확인하지 못했습니다.'),{code:'COMPANY_STAMP_UNAVAILABLE'});
+ },
+ stampCurrent(context,stamp){
+  if(!snote130OfficeCurrent(context)||!snote130OfficeContext()?.ready)return false;
+  const state=snote128AssetStore().snapshot('companyStamp');if(state.companyId!==context.companyId||state.userId!==context.userId)return false;
+  return stamp?.status==='missing'?state.status==='missing'&&state.url===null:stamp?.status==='ready'&&state.status==='ready'&&typeof stamp.url==='string'&&stamp.url.startsWith('blob:')&&state.url===stamp.url;
+ },
  company(context){snote130OfficeAssert(context);return {name:S.company.name||'',business_number:S.company.business_number||'',representative_name:S.company.representative_name||'',business_phone:S.company.business_phone||'',address:[S.company.business_address,S.company.business_address_detail].filter(Boolean).join(' '),agentName:currentUser.name||''};}
 });
 const getOwnUuid=owner=>snoteCompanyOwnerRows().find(m=>ownerAlias(m.user_id)===owner)?.user_id||null;
@@ -11053,9 +11067,9 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 <script type="module" src="assets/income-settlement-parent.js?v=2.112"></script>
 <script src="assets/vehicle-sharing.js?v=2.107" defer></script>
 <script src="assets/shared-vehicle-markers.js?v=2.87" defer></script>
-<script src="assets/release-info.js?v=2.131" defer></script>
+<script src="assets/release-info.js?v=2.132" defer></script>
 <script src="assets/company-purchase.js?v=2.130" defer></script>
-<script src="assets/contract-office.js?v=2.131" defer></script>
+<script src="assets/contract-office.js?v=2.132" defer></script>
 <script src="assets/recycle-bin.js?v=2.77" defer></script>
 <script src="assets/company-assets.js?v=2.128" defer></script>
 <script src="assets/profile-editor.js?v=2.128" defer></script>

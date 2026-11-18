@@ -35,6 +35,11 @@
  .co-field-input input,.co-field-input textarea{box-sizing:border-box;width:100%;min-width:0;height:33px;border:1px solid #e5e9ef;border-radius:6px;background:#fbfcfe;color:#36465d;padding:6px 8px;font:inherit;font-size:12px;line-height:1.45;box-shadow:none}
  .co-field-input textarea{height:auto;min-height:84px;resize:vertical}.co-field-input input:focus,.co-field-input textarea:focus{outline:2px solid #c1d5f7;outline-offset:0;background:#fff}
  .co-wide{grid-column:1/-1}
+ .co-buyer-seal-control{display:flex;align-items:center;flex-wrap:wrap;gap:8px 10px;min-height:34px;margin-top:12px;padding-top:10px;border-top:1px solid #edf0f5}
+ .co-buyer-seal-option{display:inline-flex;align-items:center;gap:7px;font-size:12px;color:#67778c;cursor:pointer}
+ #snote-contract-office #contract-office-buyer-seal-toggle{box-sizing:border-box;width:14px!important;min-width:14px!important;height:14px!important;min-height:14px!important;margin:0!important;padding:0!important;accent-color:#2873c5;flex:none}
+ #snote-contract-office .co-buyer-seal-preview{display:block;width:34px;height:34px;object-fit:contain;flex:none;border:0;background:transparent;box-shadow:none}
+ .co-buyer-seal-caption{font-size:10px;color:#8a95a5;line-height:1.45}
  .co-preview{box-sizing:border-box;width:min(650px,calc(100vw - 24px));max-width:calc(100vw - 24px);max-height:calc(100dvh - 24px);padding:14px 14px 18px;border:1px solid #e4e8ef;border-radius:13px;background:#f3f5f8;color:#40516a;box-shadow:0 18px 70px #14213c38;overflow:auto}
  .co-preview::backdrop{background:#15223755;backdrop-filter:blur(5px)}
  .co-preview-controls{position:sticky;top:0;float:right;z-index:10;display:flex;flex-direction:column;gap:5px;background:#fffffff0;border-radius:6px;padding:2px}
@@ -49,6 +54,7 @@
 .co-paper{position:relative;box-sizing:border-box;width:595px;height:841px;min-width:595px;max-width:none;flex:none;isolation:isolate;overflow:visible}
 .co-paper>img{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:fill;pointer-events:none}
 .co-overlay{position:absolute;inset:0;pointer-events:none}
+.co-print-seal{position:absolute;display:block;object-fit:contain;background:transparent;border:0;box-shadow:none;padding:0;max-width:none;max-height:none;pointer-events:none;z-index:3;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 .co-print-field{box-sizing:border-box;position:absolute;display:flex;align-items:center;justify-content:flex-start;color:#111;background:transparent;border:0;padding:0;white-space:nowrap;line-height:1;overflow:visible;font-family:'Malgun Gothic','Noto Sans KR','Apple SD Gothic Neo',sans-serif;font-size:calc(var(--co-font,8) * 1px);font-weight:400;letter-spacing:0;text-shadow:none}
 .co-print-field.co-print-number{justify-content:flex-end;text-align:right}.co-print-field.co-print-multiline{display:block;white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere;line-height:1.05;padding-top:3px}
 @media print{
