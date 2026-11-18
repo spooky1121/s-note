@@ -98,7 +98,7 @@ async function nameSyncChecks(p){
 }
 
 async function buyerSealChecks(p,width){
- const toggle=p.locator('#contract-office-buyer-seal-toggle'),thumb=p.locator('#contract-office-buyer-seal-preview');assert.equal(await p.getByLabel('인감도장',{exact:true}).count(),1);
+ const toggle=p.locator('#contract-office-buyer-seal-toggle'),thumb=p.locator('#contract-office-buyer-seal-preview');assert.equal(await p.getByLabel('도장날인',{exact:true}).count(),1);
  assert.equal(await toggle.isChecked(),false,'Entered customer data must not silently opt into a generated seal');await toggle.check();
  await p.waitForFunction(()=>{const i=document.getElementById('contract-office-buyer-seal-preview');return i&&!i.hidden&&i.complete&&i.naturalWidth>0;});
  const first=await thumb.getAttribute('src');assert.match(first,/^data:image\/png/);assert((await thumb.getAttribute('alt')).includes(VALUES[personalName()]));assert.equal(await p.evaluate(src=>__contractMock.renderedSealText[src],first),VALUES[personalName()],'The actual canvas draw calls must contain the selected current name');
