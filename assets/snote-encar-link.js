@@ -4,7 +4,7 @@
   if (window.SnoteEncarLink) return;
 
   const ENDPOINT = '/api/encar';
-  const CLIENT_RELEASE = '2.127';
+  const CLIENT_RELEASE = '2.128';
   const CACHE_PREFIX = 'snote.encar.candidate.v1:';
   const CACHE_AGE = 7 * 24 * 60 * 60 * 1000;
   const REQUEST_TIMEOUT = 45000;
@@ -321,6 +321,33 @@
     manual.hidden = true; manual.open = false; manualInput.value = ''; manualError.textContent = '';
     copyButton.hidden = true; copyButton.disabled = false; copyStatus.textContent = '';
     copyFallback.hidden = true; copyFallback.value = '';
+  }
+
+  // Transport evidence is request-local and never includes raw headers/body text.
+  function responseEvidence(response) {
+    const mediaType = (response.headers.get('content-type') || '').split(';', 1)[0].trim().toLowerCase();
+    const responseType = mediaType === 'application/json' || /^application\/[a-z0-9.+-]+\+json$/.test(mediaType) ? 'json' :
+      mediaType === 'text/html' ? 'html' : mediaType === 'text/plain' ? 'text' : 'other';
+    const evidence = {responseType, observedAt: new Date().toISOString()};
+    const ray = safeRay(response.headers.get('cf-ray'));
+    if (ray) evidence.rayId = ray;
+    return evidence;
+  }
+
+  function safeRay(value) {
+    // Exact length check also rejects a trailing newline (JS $ accepts one).
+    return typeof value === 'string' && (value.length === 16 || value.length === 20) &&
+      /^[0-9a-f]{16}(?:-[A-Z]{3})?$/i.test(value) ? value.toLowerCase() : null;
+  }
+
+  function addEdgeEvidence(evidence, data) {
+    if (!data || typeof data !== 'object' || Array.isArray(data)) return;
+    // A valid response header wins over a conflicting JSON ray_id.
+    const ray = safeRay(data.ray_id);
+    if (!evidence.rayId && ray) evidence.rayId = ray;
+    const code = data.error_code;
+    if (Number.isInteger(code) && code >= 1000 && code <= 1999) evidence.cloudflareErrorCode = code;
+    else if (typeof code === 'string' && code.length === 4 && /^1[0-9]{3}$/.test(code)) evidence.cloudflareErrorCode = Number(code);
   }
 
   function setDiagnostics(raw, httpStatus, fallbackCode) {
@@ -777,6 +804,7 @@
       }), job.controller.signal);
       if (!stillCurrent(job)) { closeWaitingTab(job); return; }
       job.httpStatus = response.status;
+      job.responseEvidence = responseEvidence(response);
       if (!(response.headers.get('content-type') || '').includes('application/json')) {
         if (response.status >= 500) throw lookupError(ERROR_MESSAGES.SERVER_UNAVAILABLE, 'SERVER_UNAVAILABLE');
         throw lookupError('엔카 조회 기능이 아직 연결되지 않았습니다. 관리자에게 문의해 주세요.');
@@ -793,6 +821,7 @@
       }
       if (!stillCurrent(job)) { closeWaitingTab(job); return; }
       if (!response.ok || data?.status === 'error') {
+        addEdgeEvidence(job.responseEvidence, data);
         const messages = {
           401: '로그인 세션이 만료되었습니다. 다시 로그인해 주세요.',
           403: '이 기능을 사용할 수 있는 직원 권한을 확인해 주세요.',
@@ -885,6 +914,7 @@
       const requestCode = typeof error?.code === 'string' && Object.hasOwn(REQUEST_MESSAGES, error.code) ? error.code :
         error?.message === 'SESSION_CONTEXT_CHANGED' ? error.message : null;
       if (!diagnosticSnapshot) setDiagnostics(null, job.httpStatus ?? error?.httpStatus, job.timedOut ? 'CLIENT_TIMEOUT' : requestCode || error?.diagnosticCode || 'NETWORK_ERROR');
+      if (job.responseEvidence) Object.assign(diagnosticSnapshot, job.responseEvidence);
       setNote(job.timedOut ? '확인이 지연되고 있습니다. 잠시 후 다시 시도해 주세요.' : REQUEST_MESSAGES[requestCode] || error?.userMessage || '광고 확인에 실패했습니다. 연결 상태를 확인하고 다시 시도해 주세요.', true);
     } finally {
       clearTimeout(timeout);
