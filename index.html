@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.136">
+<html lang="ko" data-snote-release="2.137">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -9706,23 +9706,28 @@ window.snoteEncarLinksBridge={
    renderCars();return true;
   }catch(_){return false;}
  },
- async autoPrice(base,record,{signal,listingId}={}){
+ async autoPrice(base,record,{signal,listingId,deadline}={}){
   snoteEncarLinksCheck(base);
   const safe=snoteEncarLinksRecord(base,record);
   const selected=listingId?safe.listings.find(item=>item.id===listingId):safe.listings.length===1?safe.listings[0]:null;
   if(!selected)throw Object.assign(snoteEncarLinksError('AUTO_PRICE_AMBIGUOUS','광고가 여러 개여서 자동으로 가격을 선택하지 않았습니다.'),{userMessage:'광고가 여러 개여서 자동으로 가격을 선택하지 않았습니다.'});
   if(selected.externalVerification)throw snoteEncarLinksError('EXTERNAL_ONLY','외부 광고에서 확인한 링크입니다. 한국 엔카의 현재 광고가격을 확인한 뒤 변경해 주세요.');
   if(['verified','review'].includes(selected.priceStatus))return safe;
+  if(signal?.aborted)throw snoteEncarLinksError('AUTO_PRICE_CANCELLED','자동 가격 확인을 취소했습니다.');
+  if(Number.isFinite(deadline)&&deadline<=Date.now())throw Object.assign(snoteEncarLinksError('AUTO_PRICE_TIMEOUT','자동 가격 확인 시간이 초과됐습니다.'),{userMessage:'자동 가격 확인 시간이 초과됐습니다.'});
   const controller=new AbortController(),abort=()=>controller.abort();signal?.addEventListener('abort',abort,{once:true});if(signal?.aborted)abort();
-  let timedOut=false;const timer=setTimeout(()=>{timedOut=true;controller.abort();},65000);
+  let timedOut=false,autoEvidence=null,autoHttpStatus=null,autoRetryAfter=0;const remaining=Number.isFinite(deadline)?Math.max(1,Math.min(65000,deadline-Date.now())):65000;const timer=setTimeout(()=>{timedOut=true;controller.abort();},remaining);
   const current=()=>{snoteEncarLinksCheck(base);if(controller.signal.aborted)throw snoteEncarLinksError('AUTO_PRICE_CANCELLED','자동 가격 확인을 취소했습니다.');};
   try{
    const session=await snoteEncarOcrWait(base.client.auth.getSession(),controller.signal);current();const auth=session?.data?.session;
    if(session?.error||auth?.user?.id!==base.user.id||typeof auth?.access_token!=='string'||!/^[-A-Za-z0-9._]{30,5000}$/.test(auth.access_token))throw snoteEncarLinksError('AUTH_REQUIRED','로그인 세션을 다시 확인해 주세요.');
    const response=await snoteEncarOcrWait(fetch('/api/encar-auto-price',{method:'POST',credentials:'same-origin',cache:'no-store',redirect:'error',referrerPolicy:'no-referrer',headers:{Authorization:'Bearer '+auth.access_token,'Content-Type':'application/json'},body:JSON.stringify({plate:base.plate,id:selected.id}),signal:controller.signal}),controller.signal);current();
-   const data=await snoteEncarOcrJson(response,controller.signal);current();
-   if(!response.ok||data?.ok!==true){const serverCode=typeof data?.code==='string'?data.code:'';let code='AUTO_PRICE_UNAVAILABLE',message='광고 화면에서 가격을 확인하지 못했습니다. 기존 광고 링크는 계속 사용할 수 있습니다.';
+   autoHttpStatus=response.status;
+   const decoded=window.SnoteEncarLink?.readHttpResponse?await window.SnoteEncarLink.readHttpResponse(response,{signal:controller.signal,endpoint:'encar-auto-price'}):{data:await snoteEncarOcrJson(response,controller.signal),json:true,diagnostics:{endpoint:'encar-auto-price'}};current();
+   const data=decoded.data;autoEvidence=decoded.diagnostics;autoRetryAfter=Number.isInteger(decoded.retryAfterSeconds)&&decoded.retryAfterSeconds>=0&&decoded.retryAfterSeconds<=86400?decoded.retryAfterSeconds:0;
+   if(!response.ok||decoded.json===false||data?.ok!==true){const serverCode=typeof data?.code==='string'?data.code:'';let code='AUTO_PRICE_UNAVAILABLE',message='광고 화면에서 가격을 확인하지 못했습니다. 기존 광고 링크는 계속 사용할 수 있습니다.';
     if(response.status===401){code='AUTH_REQUIRED';message='로그인 세션을 다시 확인해 주세요.';}
+    else if(response.status===403){code='FORBIDDEN';message='자동 가격 확인 권한을 다시 확인해 주세요.';}
     else if(['SETUP_REQUIRED','CAPTURE_AUTH_FAILED','OCR_AUTH_FAILED'].includes(serverCode)){code='AUTO_PRICE_SETUP_REQUIRED';message='자동 가격 인식 서비스 연결 설정을 확인해 주세요.';}
     else if(serverCode==='CAPTURE_BLOCKED'){code='AUTO_PRICE_BLOCKED';message='엔카에서 자동 화면 확인을 제한했습니다. 기존 광고 링크로 확인해 주세요.';}
     else if(serverCode==='PLATE_MISMATCH'){code='AUTO_PRICE_PLATE_MISMATCH';message='자동으로 연 광고 화면의 차량번호를 확인하지 못했습니다.';}
@@ -9730,12 +9735,12 @@ window.snoteEncarLinksBridge={
     else if(serverCode==='PRICE_NOT_FOUND'){code='AUTO_PRICE_NOT_FOUND';message='광고 화면에서 판매가격을 확인하지 못했습니다.';}
     else if(response.status===429){code='AUTO_PRICE_RATE_LIMITED';message='자동 가격 확인 요청이 많습니다. 잠시 후 다시 시도해 주세요.';}
     else if(/TIMEOUT/.test(serverCode)){code='AUTO_PRICE_TIMEOUT';message='광고 화면의 자동 가격 확인이 지연됐습니다. 잠시 후 다시 시도해 주세요.';}
-    throw Object.assign(snoteEncarLinksError(code,message),{userMessage:message});
+    throw Object.assign(snoteEncarLinksError(code,message),{userMessage:message,httpStatus:response.status,endpoint:'encar-auto-price',diagnosticCode:autoEvidence?.code||code,diagnostics:autoEvidence,retryAfterSeconds:autoRetryAfter});
    }
    if(data.plate!==base.plate||data.listing?.id!==selected.id||typeof data.verifiedAt!=='string')throw snoteEncarLinksError('INVALID_DATA','자동 가격 확인 대상이 일치하지 않습니다.');
    const next={...safe,verifiedAt:data.verifiedAt,listings:safe.listings.map(item=>item.id===selected.id?{...item,priceWon:data.listing.priceWon,priceCheckedAt:data.listing.priceCheckedAt,priceSource:data.listing.priceSource,priceStatus:data.listing.priceStatus}:item)};
    const checked=snoteEncarLinksRecord(base,next);if(!['verified','review'].includes(checked.listings.find(item=>item.id===selected.id)?.priceStatus))throw snoteEncarLinksError('INVALID_DATA','확인할 자동 가격이 없습니다.');return checked;
-  }catch(error){if(timedOut)throw Object.assign(snoteEncarLinksError('AUTO_PRICE_TIMEOUT','자동 가격 확인 응답이 지연됐습니다.'),{userMessage:'자동 가격 확인 응답이 지연됐습니다.'});throw error;}
+  }catch(error){if(timedOut)error=Object.assign(snoteEncarLinksError('AUTO_PRICE_TIMEOUT','자동 가격 확인 응답이 지연됐습니다.'),{userMessage:'자동 가격 확인 응답이 지연됐습니다.'});if(error&&typeof error==='object'){if(Number.isInteger(autoHttpStatus)&&error.httpStatus===undefined)error.httpStatus=autoHttpStatus;if(autoEvidence&&!error.diagnostics)error.diagnostics=autoEvidence;if(autoRetryAfter&&!error.retryAfterSeconds)error.retryAfterSeconds=autoRetryAfter;error.endpoint='encar-auto-price';}throw error;}
   finally{clearTimeout(timer);signal?.removeEventListener('abort',abort);controller.abort();}
  },
  async changePrice(base,record,listingId,{expectedSellWon}={}){
@@ -11245,13 +11250,13 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 <link rel="stylesheet" href="assets/workspace-reorder.css?v=2.136">
 <script src="assets/workspace-order-store.js?v=2.135" defer></script>
 <script src="assets/workspace-reorder.js?v=2.136" defer></script>
-<script src="assets/release-info.js?v=2.136" defer></script>
+<script src="assets/release-info.js?v=2.137" defer></script>
 <script src="assets/company-purchase.js?v=2.130" defer></script>
 <script src="assets/contract-office.js?v=2.136" defer></script>
 <script src="assets/recycle-bin.js?v=2.77" defer></script>
 <script src="assets/company-assets.js?v=2.128" defer></script>
 <script src="assets/profile-editor.js?v=2.128" defer></script>
-<script src="assets/snote-encar-link.js?v=2.128" defer></script>
+<script src="assets/snote-encar-link.js?v=2.137" defer></script>
 <link rel="stylesheet" href="assets/encar-price-ocr.css?v=2.110">
 <script src="assets/encar-price-ocr.js?v=2.110" defer></script>
 <script src="assets/document-mms.js?v=2.44" defer></script>

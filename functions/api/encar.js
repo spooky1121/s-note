@@ -1,5 +1,6 @@
 import { CATALOG_ORIGIN, catalogURL, configuredCatalogSearch, discoverCatalogSearch, discoverCatalogEntry, parseCatalogPage, externalSourceURL, parseExternalAdvertisement, discoverVehicleCatalogLink, getObservedCatalogNext, discoverCatalogBranches, manufacturerMatches } from '../_shared/encar-catalog.mjs';
 import { parseEncarPagePrice } from '../_shared/encar-page-price.mjs';
+import { createEncarRequestBudget } from '../_shared/encar-request-budget.mjs';
 
 /**
  * S-NOTE / Cloudflare Pages Function: POST /api/encar
@@ -19,13 +20,17 @@ const CATALOG_FALLBACK_BUDGET_MS = 8000;
 const MODEL_CATALOG_BUDGET_MS = 8000;
 const MAX_MODEL_CATALOG_PAGES = 3;
 const MAX_MODEL_DISCOVERY_PAGES = 8;
-const RESOLVER_RELEASE = '2.127';
+const RESOLVER_RELEASE = '2.137';
 const EXTERNAL_BUDGET_MS = 8000;
 const MAX_EXTERNAL_PAGES = 6;
 const EXTERNAL_DETAIL_ERRORS = new Set(['DETAIL_BLOCKED', 'DETAIL_UNAVAILABLE', 'DETAIL_PARSE_FAILED', 'UPSTREAM_TIMEOUT']);
 const MAX_HINT_CANDIDATES = MAX_CANDIDATES * 2;
 const MAX_DISCOVERY_RESERVE = MAX_CANDIDATES;
 const MAX_TOTAL_CANDIDATES = MAX_HINT_CANDIDATES + MAX_DISCOVERY_RESERVE;
+// Leave room below the edge subrequest limit and preserve official checks when
+// optional public-directory discovery has already consumed most of the budget.
+const OFFICIAL_REQUEST_RESERVE = 6;
+const BUDGET_RETRY_SECONDS = 5;
 const ENCAR_DETAIL = 'https://fem.encar.com/cars/detail/';
 // This is an observed public mirror route for rechecking already known IDs,
 // never a formula for guessing an advertisement ID from a vehicle number.
@@ -47,12 +52,39 @@ const PLATE = new RegExp('^(?:' + REGIONS + ')?[0-9]{2,3}[가-힣][0-9]{4}$');
 const BLOCKED = /has_been_cr_blocked|서비스\s*이용\s*제한됨|비정상적인\s*트래픽|<title>\s*(?:Access Denied|Request blocked)/i;
 
 class EncarError extends Error {
-  constructor(code) { super(code); this.code = code; }
+  constructor(code, safe = {}) {
+    super(code); this.code = code;
+    if (Number.isInteger(safe.retryAfterSeconds) && safe.retryAfterSeconds >= 0 && safe.retryAfterSeconds <= 86400) this.retryAfterSeconds = safe.retryAfterSeconds;
+    if (Number.isInteger(safe.upstreamStatus) && safe.upstreamStatus >= 100 && safe.upstreamStatus <= 599) this.upstreamStatus = safe.upstreamStatus;
+    if (['auth', 'member', 'search', 'detail', 'catalog', 'model_catalog', 'external', 'price'].includes(safe.stage)) this.stage = safe.stage;
+  }
+}
+
+function retryAfterSeconds(value, now = Date.now()) {
+  if (typeof value !== 'string' || value.length > 80) return null;
+  const text = value.trim();
+  if (/^\d+$/.test(text)) {
+    const seconds = Number(text);
+    return Number.isSafeInteger(seconds) ? Math.min(86400, seconds) : null;
+  }
+  if (!/^(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun), \d{2} (?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{4} \d{2}:\d{2}:\d{2} GMT$/i.test(text)) return null;
+  const time = Date.parse(text), seconds = Math.ceil((time - now) / 1000);
+  if (!Number.isFinite(time) || new Date(time).toUTCString().toLowerCase() !== text.toLowerCase()) return null;
+  return Number.isSafeInteger(seconds) && seconds >= 0 ? Math.min(86400, seconds) : null;
+}
+
+function upstreamError(op, code, result, stage) {
+  const error = new EncarError(code, { retryAfterSeconds: result.retryAfterSeconds, upstreamStatus: result.status, stage });
+  const previous = op.failures.get(code);
+  if (!previous || !(previous.retryAfterSeconds > (error.retryAfterSeconds ?? -1))) op.failures.set(code, error);
+  return error;
 }
 
 function operation(request) {
   const controller = new AbortController(), startedAt = Date.now();
   const op = { requestId: crypto.randomUUID(), startedAt, deadline: startedAt + DEADLINE_MS,
+    requestBudget: createEncarRequestBudget({ deadline: startedAt + DEADLINE_MS }),
+    requestStage: 'input', budgetExhausted: false, budgetStage: null, failures: new Map(),
     controller, searchCount: 0, resultCount: 0, checkedCount: 0, plateMatchedCount: 0,
     resultPlateMatchCount: 0, rawResultCount: 0, recognizedSourceCount: 0, candidates: new Set(),
     catalogRequestCount: 0, catalogPageCount: 0, catalogRecordCount: 0, catalogExactMatchCount: 0,
@@ -76,8 +108,36 @@ function remaining(op) {
   return op.deadline - Date.now();
 }
 
+function consumeRequest(op, stage, optional = false) {
+  op.requestStage = stage;
+  if (optional && op.requestBudget.remaining() <= OFFICIAL_REQUEST_RESERVE) {
+    if (!op.budgetExhausted) op.budgetStage = stage;
+    op.budgetExhausted = true;
+    throw new EncarError('REQUEST_BUDGET_EXCEEDED');
+  }
+  try { op.requestBudget.consume(stage); }
+  catch (error) {
+    if (error?.code === 'REQUEST_BUDGET_EXCEEDED') {
+      if (!op.budgetExhausted) op.budgetStage = stage;
+      op.budgetExhausted = true;
+    }
+    if (['DEADLINE_EXCEEDED', 'REQUEST_BUDGET_EXCEEDED'].includes(error?.code)) throw new EncarError(error.code);
+    throw error;
+  }
+}
+
+function reuseRequest(op, stage) {
+  op.requestStage = stage;
+  try { op.requestBudget.reuse(stage); }
+  catch (_) { throw new EncarError('DEADLINE_EXCEEDED'); }
+}
+
 function counters(op) {
+  const budget = op.requestBudget.diagnostics();
   return { resolverRelease: RESOLVER_RELEASE, discoveryProvided: op.discoveryProvided,
+    requestCount: budget.requestCount, reusedCount: budget.reusedCount,
+    budgetLimit: budget.budgetLimit, budgetRemaining: budget.remaining,
+    budgetExhausted: op.budgetExhausted, stage: op.budgetStage || op.requestStage,
     searchCount: op.searchCount, resultCount: op.resultCount,
     candidateCount: op.candidates.size, checkedCount: op.checkedCount,
     plateMatchedCount: op.plateMatchedCount, resultPlateMatchCount: op.resultPlateMatchCount,
@@ -95,12 +155,17 @@ function counters(op) {
 }
 
 function response(op, httpStatus, plate = '', listings = [], status = 'error', code = 'INVALID_REQUEST') {
+  if (op.budgetExhausted && !listings.length && !['SEARCH_RATE_LIMITED', 'SEARCH_QUOTA_EXCEEDED'].includes(code)) {
+    httpStatus = 502; status = 'error'; code = 'REQUEST_BUDGET_EXCEEDED';
+  }
   const body = {
     plate,
     verifiedAt: listings.length ? new Date().toISOString() : null,
     listings,
     status
   };
+  const failure = code === 'REQUEST_BUDGET_EXCEEDED' ? null : op.failures.get(code);
+  const retryAfter = code === 'REQUEST_BUDGET_EXCEEDED' ? BUDGET_RETRY_SECONDS : failure?.retryAfterSeconds;
   if (op.priceDiagnostics) body.priceDiagnostics = {
     providerRequests: op.priceDiagnostics.providerRequests,
     pageReviewCount: op.priceDiagnostics.pageReviewCount,
@@ -108,8 +173,12 @@ function response(op, httpStatus, plate = '', listings = [], status = 'error', c
   };
   if (status === 'error' || status === 'unverified') {
     body.diagnostics = { code, requestId: op.requestId, ...counters(op) };
-    console.info(JSON.stringify({ requestId: op.requestId, code, ...counters(op), durationMs: Math.max(0, Date.now() - op.startedAt) }));
+    if (failure?.upstreamStatus) body.diagnostics.upstreamStatus = failure.upstreamStatus;
+    if (failure?.stage) body.diagnostics.stage = failure.stage;
+    console.info(JSON.stringify({ ...body.diagnostics, durationMs: Math.max(0, Date.now() - op.startedAt) }));
   }
+  if (status === 'error' && Number.isInteger(retryAfter)) body.retryAfterSeconds = retryAfter;
+  if (status === 'error' && code === 'SEARCH_QUOTA_EXCEEDED') body.autoRetry = false;
   return new Response(JSON.stringify(body), {
     status: httpStatus,
     headers: {
@@ -117,6 +186,8 @@ function response(op, httpStatus, plate = '', listings = [], status = 'error', c
       'Cache-Control': 'no-store, private',
       'X-Content-Type-Options': 'nosniff',
       'X-Request-ID': op.requestId,
+      'X-Encar-Resolver-Release': RESOLVER_RELEASE,
+      ...(status === 'error' && Number.isInteger(retryAfter) ? { 'Retry-After': String(retryAfter) } : {}),
       ...(httpStatus === 405 ? { Allow: 'POST' } : {})
     }
   });
@@ -204,7 +275,7 @@ async function readLimited(source, maxBytes, signal) {
   }
 }
 
-async function fetchLimited(op, url, options = {}, maxBytes = MAX_SEARCH_BYTES, unavailable = 'SEARCH_UNAVAILABLE', stageSignal = null) {
+async function fetchLimited(op, url, options = {}, maxBytes = MAX_SEARCH_BYTES, unavailable = 'SEARCH_UNAVAILABLE', stageSignal = null, stage = 'search', optional = false) {
   const budget = remaining(op);
   if (stageSignal?.aborted) throw stageSignal.reason;
   const controller = new AbortController();
@@ -214,13 +285,15 @@ async function fetchLimited(op, url, options = {}, maxBytes = MAX_SEARCH_BYTES, 
   stageSignal?.addEventListener('abort', stopStage, { once: true });
   const timer = setTimeout(() => controller.abort(new EncarError(budget <= TIMEOUT_MS ? 'DEADLINE_EXCEEDED' : 'UPSTREAM_TIMEOUT')), Math.min(TIMEOUT_MS, budget));
   try {
+    consumeRequest(op, stage, optional);
     const fetched = await waitFor(fetch(url, {
       ...options,
       redirect: 'manual',
       signal: controller.signal
     }), controller.signal);
     const text = await readLimited(fetched, maxBytes, controller.signal);
-    return { ok: fetched.ok, status: fetched.status, text };
+    const retryAfter = [429, 502, 503, 504].includes(fetched.status) ? retryAfterSeconds(fetched.headers.get('Retry-After')) : null;
+    return { ok: fetched.ok, status: fetched.status, text, ...(retryAfter === null ? {} : { retryAfterSeconds: retryAfter }) };
   } catch (error) {
     if (error instanceof EncarError) throw error;
     if (error?.message === 'body-limit' && unavailable === 'CATALOG_UNAVAILABLE') throw new EncarError('CATALOG_LIMIT_EXCEEDED');
@@ -238,8 +311,12 @@ async function authorize(op, request, supaUrl, supaKey) {
   const bearer = request.headers.get('authorization') || '';
   if (!/^Bearer\s+[A-Za-z0-9._-]{30,5000}$/i.test(bearer)) return { status: 401, code: 'AUTH_REQUIRED' };
   const headers = { apikey: supaKey, Authorization: bearer };
-  const auth = await fetchLimited(op, supaUrl + '/auth/v1/user', { method: 'GET', headers }, 64 * 1024, 'AUTH_UNAVAILABLE');
-  if (!auth.ok) return { status: auth.status >= 500 ? 502 : 401, code: auth.status >= 500 ? 'AUTH_UNAVAILABLE' : 'AUTH_FAILED' };
+  const auth = await fetchLimited(op, supaUrl + '/auth/v1/user', { method: 'GET', headers }, 64 * 1024, 'AUTH_UNAVAILABLE', null, 'auth');
+  if (!auth.ok) {
+    const unavailable = auth.status >= 500 || auth.status === 429, code = unavailable ? 'AUTH_UNAVAILABLE' : 'AUTH_FAILED';
+    upstreamError(op, code, auth, 'auth');
+    return { status: unavailable ? 502 : 401, code };
+  }
   let user;
   try { user = JSON.parse(auth.text); } catch (_) { throw new EncarError('AUTH_UNAVAILABLE'); }
   if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(user?.id || '')) return { status: 401, code: 'AUTH_FAILED' };
@@ -248,8 +325,12 @@ async function authorize(op, request, supaUrl, supaKey) {
   url.searchParams.set('user_id', 'eq.' + user.id);
   url.searchParams.set('active', 'eq.true');
   url.searchParams.set('limit', '1');
-  const membership = await fetchLimited(op, url.toString(), { method: 'GET', headers }, 64 * 1024, 'AUTH_UNAVAILABLE');
-  if (!membership.ok) return { status: membership.status >= 500 ? 502 : 403, code: membership.status >= 500 ? 'AUTH_UNAVAILABLE' : 'STAFF_REQUIRED' };
+  const membership = await fetchLimited(op, url.toString(), { method: 'GET', headers }, 64 * 1024, 'AUTH_UNAVAILABLE', null, 'member');
+  if (!membership.ok) {
+    const unavailable = membership.status >= 500 || membership.status === 429, code = unavailable ? 'AUTH_UNAVAILABLE' : 'STAFF_REQUIRED';
+    upstreamError(op, code, membership, 'member');
+    return { status: unavailable ? 502 : 403, code };
+  }
   let members;
   try { members = JSON.parse(membership.text); } catch (_) { throw new EncarError('AUTH_UNAVAILABLE'); }
   return Array.isArray(members) && members.some(member => member?.user_id === user.id) ? null : { status: 403, code: 'STAFF_REQUIRED' };
@@ -487,10 +568,10 @@ async function searchCandidates(op, plate, apiKey, fallback = false, discovery =
     })
   }, fallback ? MAX_RAW_SEARCH_BYTES : MAX_SEARCH_BYTES);
   if (!result.ok) {
-    if ([401, 403].includes(result.status)) throw new EncarError('SEARCH_AUTH_FAILED');
-    if ([432, 433].includes(result.status)) throw new EncarError('SEARCH_QUOTA_EXCEEDED');
-    if (result.status === 429) throw new EncarError('SEARCH_RATE_LIMITED');
-    throw new EncarError('SEARCH_UNAVAILABLE');
+    if ([401, 403].includes(result.status)) throw upstreamError(op, 'SEARCH_AUTH_FAILED', result, 'search');
+    if ([432, 433].includes(result.status)) throw upstreamError(op, 'SEARCH_QUOTA_EXCEEDED', result, 'search');
+    if (result.status === 429) throw upstreamError(op, 'SEARCH_RATE_LIMITED', result, 'search');
+    throw upstreamError(op, 'SEARCH_UNAVAILABLE', result, 'search');
   }
   let payload;
   try { payload = JSON.parse(result.text); } catch (_) { throw new EncarError('SEARCH_UNAVAILABLE'); }
@@ -591,10 +672,10 @@ async function detail(op, id, plate) {
     ++op.checkedCount;
     const fetched = await fetchLimited(op, ENCAR_DETAIL + id, {
       method: 'GET', headers: { Accept: 'text/html' }
-    }, MAX_HTML_BYTES, 'DETAIL_UNAVAILABLE');
-    if (BLOCKED.test(fetched.text) || [403, 429].includes(fetched.status)) return { kind: 'error', code: 'DETAIL_BLOCKED' };
+    }, MAX_HTML_BYTES, 'DETAIL_UNAVAILABLE', null, 'detail');
+    if (BLOCKED.test(fetched.text) || [403, 429].includes(fetched.status)) { upstreamError(op, 'DETAIL_BLOCKED', fetched, 'detail'); return { kind: 'error', code: 'DETAIL_BLOCKED' }; }
     if (fetched.status === 404 || fetched.status === 410) { ++op.rejected.notFound; return { kind: 'unverified' }; }
-    if (!fetched.ok) return { kind: 'error', code: 'DETAIL_UNAVAILABLE' };
+    if (!fetched.ok) { upstreamError(op, 'DETAIL_UNAVAILABLE', fetched, 'detail'); return { kind: 'error', code: 'DETAIL_UNAVAILABLE' }; }
     const base = extractState(fetched.text).cars.base;
     const actualPlate = normalizePlate(base.vehicleNo);
     const originalId = idOf(base.vehicleId);
@@ -712,10 +793,10 @@ async function externalListings(op, plate, getDetail, select) {
             const fetched = await fetchLimited(op, url.href, {
               method: 'GET', headers: { Accept: 'text/html' },
               credentials: 'omit', referrerPolicy: 'no-referrer'
-            }, MAX_HTML_BYTES, 'DETAIL_UNAVAILABLE', signal);
+            }, MAX_HTML_BYTES, 'DETAIL_UNAVAILABLE', signal, 'external', true);
             if (!fetched.ok || BLOCKED.test(fetched.text)) return;
             page = { html: fetched.text, checkedAt: new Date().toISOString() };
-          } else op.externalChecked.add(value);
+          } else { op.externalChecked.add(value); reuseRequest(op, 'external'); }
           const parsed = await waitFor(parseExternalAdvertisement(page.html, url.href, plate), signal);
           if (parsed.kind === 'detail' && !parsed.matches.length) op.externalMismatches.add(url.href);
           for (const item of (Array.isArray(parsed?.matches) ? parsed.matches : []).slice(0, 12)) {
@@ -865,6 +946,7 @@ async function addPrices(op, env, listings, plate) {
       let httpStatus = null;
       try {
         const url = new URL(PRICE_PROVIDER); url.searchParams.set('id', item.id);
+        consumeRequest(op, 'price');
         op.priceDiagnostics.providerRequests++;
         const fetched = await waitFor(fetch(url.href, {
           method: 'GET', headers: { 'x-api-key': key, Accept: 'application/json' },
@@ -884,7 +966,7 @@ async function addPrices(op, env, listings, plate) {
         if (priceWon === null) { priceDiagnostic(op, code, httpStatus); return; }
         if (controller.signal.aborted) { priceDiagnostic(op, 'TIMEOUT', httpStatus); return; }
         Object.assign(item, { priceWon, priceCheckedAt: new Date().toISOString(), priceSource: 'encar-api.com', priceStatus: 'verified' });
-      } catch (error) { priceDiagnostic(op, controller.signal.aborted ? 'TIMEOUT' : error?.message === 'body-limit' ? 'RESPONSE_LIMIT' : 'UNAVAILABLE', httpStatus); }
+      } catch (error) { priceDiagnostic(op, error?.code === 'REQUEST_BUDGET_EXCEEDED' ? 'REQUEST_BUDGET_EXCEEDED' : controller.signal.aborted ? 'TIMEOUT' : error?.message === 'body-limit' ? 'RESPONSE_LIMIT' : 'UNAVAILABLE', httpStatus); }
     }));
   } finally {
     clearTimeout(timer);
@@ -904,11 +986,12 @@ async function catalogHTML(op, url, stageSignal = null) {
   remaining(op);
   if (stageSignal?.aborted) throw stageSignal.reason;
   const cacheKey = /^\/catalog\/?$/.test(safeURL.pathname) && !safeURL.search ? safeURL.origin + '/catalog/' : safeURL.href;
-  if (op.catalogResponses.has(cacheKey)) return op.catalogResponses.get(cacheKey).html;
+  const stage = op.discoveryStage === 'model_catalog' ? 'model_catalog' : 'catalog';
+  if (op.catalogResponses.has(cacheKey)) { reuseRequest(op, stage); return op.catalogResponses.get(cacheKey).html; }
   ++op.catalogRequestCount;
-  const result = await fetchLimited(op, safeURL.href, { method: 'GET', headers: { Accept: 'text/html' } }, MAX_HTML_BYTES, 'CATALOG_UNAVAILABLE', stageSignal);
-  if (BLOCKED.test(result.text) || [403, 429].includes(result.status) || /<title>\s*(?:Just a moment|Attention Required)/i.test(result.text)) throw new EncarError('CATALOG_BLOCKED');
-  if (!result.ok) throw new EncarError('CATALOG_UNAVAILABLE');
+  const result = await fetchLimited(op, safeURL.href, { method: 'GET', headers: { Accept: 'text/html' } }, MAX_HTML_BYTES, 'CATALOG_UNAVAILABLE', stageSignal, stage, true);
+  if (BLOCKED.test(result.text) || [403, 429].includes(result.status) || /<title>\s*(?:Just a moment|Attention Required)/i.test(result.text)) throw upstreamError(op, 'CATALOG_BLOCKED', result, stage);
+  if (!result.ok) throw upstreamError(op, 'CATALOG_UNAVAILABLE', result, stage);
   op.catalogResponses.set(cacheKey, { html: result.text, checkedAt: new Date().toISOString() });
   return result.text;
 }
@@ -1158,6 +1241,7 @@ export async function onRequest(context) {
         if (result.kind === 'error') op.detailErrors.add(result.code);
         return result;
       }));
+      else reuseRequest(op, 'detail');
       return memo.get(id);
     };
     const sourceIds = sourceUrls.map(idFromURL).filter(Boolean);
@@ -1286,7 +1370,7 @@ export async function onRequest(context) {
     const code = unverifiedCode(op.resultCount ? 'SEARCH_NO_CANDIDATES' : 'SEARCH_NO_RESULTS');
     return finish(200, [], 'unverified', code);
   } catch (error) {
-    return finish(502, [], 'error', error instanceof EncarError ? error.code : 'SEARCH_UNAVAILABLE');
+    return finish(error?.code === 'SEARCH_RATE_LIMITED' ? 429 : 502, [], 'error', error instanceof EncarError ? error.code : 'SEARCH_UNAVAILABLE');
   } finally {
     clearTimeout(op.timer);
     request.signal?.removeEventListener('abort', op.abort);

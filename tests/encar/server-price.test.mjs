@@ -7,7 +7,8 @@ import './html-rewriter-setup.mjs';
 
 const source = (await readFile(new URL('../../functions/api/encar.js', import.meta.url), 'utf8'))
   .replace("'../_shared/encar-catalog.mjs'", JSON.stringify(new URL('../../functions/_shared/encar-catalog.mjs', import.meta.url).href))
-  .replace("'../_shared/encar-page-price.mjs'", JSON.stringify(new URL('../../functions/_shared/encar-page-price.mjs', import.meta.url).href));
+  .replace("'../_shared/encar-page-price.mjs'", JSON.stringify(new URL('../../functions/_shared/encar-page-price.mjs', import.meta.url).href))
+  .replace("'../_shared/encar-request-budget.mjs'", JSON.stringify(new URL('../../functions/_shared/encar-request-budget.mjs', import.meta.url).href));
 const { onRequest } = await import('data:text/javascript;base64,' + Buffer.from(source).toString('base64'));
 const PLATE='12가3456', ID='43000001', ALIAS='43000002';
 const ACTOR='10000000-0000-4000-8000-000000000001', TOKEN='synthetic_access_token_longer_than_thirty_characters';
@@ -43,8 +44,8 @@ async function run(config={}) {
  };
  try{
   const payload=config.payload??{plate:PLATE,candidateIds:[ID]};
-  const reply=await onRequest({request:new Request('https://snote.example/api/encar',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+TOKEN},body:JSON.stringify(payload),signal:config.signal}),env:{SUPABASE_URL:'https://fixture.supabase.co',SUPABASE_PUBLISHABLE_KEY:'synthetic_public_key',TAVILY_API_KEY:config.searchKey??'',ENCAR_API_KEY:Object.hasOwn(config,'key')?config.key:KEY}});
-  return {status:reply.status,body:await reply.json(),calls,logs};
+  const reply=await onRequest({request:new Request('https://snote.example/api/encar',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+TOKEN},body:JSON.stringify(payload),signal:config.signal}),env:{SUPABASE_URL:'https://fixture.supabase.co',SUPABASE_PUBLISHABLE_KEY:'synthetic_public_key',TAVILY_API_KEY:config.searchKey??'',ENCAR_API_KEY:Object.hasOwn(config,'key')?config.key:KEY,...(config.cacheIds?{ENCAR_CACHE:{async get(){return JSON.stringify(config.cacheIds);},async put(){}}}:{})}});
+  return {status:reply.status,headers:reply.headers,body:await reply.json(),calls,logs};
  }finally{globalThis.fetch=previous;console.info=info;}
 }
 const providerCalls=r=>r.calls.filter(c=>c.url.startsWith(PROVIDER));
@@ -216,4 +217,19 @@ test('known-ID external fallback without a search key cannot consume the configu
  assert.equal(r.body.status,'found');assert.equal(r.body.listings[0].externalVerification.sourceUrl,url);
  unavailable(r.body.listings[0]);assert.equal(providerCalls(r).length,0);
  assert.equal(r.calls.some(call=>new URL(call.url).hostname==='api.tavily.com'),false);
+});
+
+test('the44th actual fetch may price one verified listing while exhaustion preserves both exact live advertisements',async()=>{
+ const ids=Array.from({length:18},(_,i)=>String(45000100+i)),canonical=Array.from({length:18},(_,i)=>String(55000100+i)),pages={};
+ for(const[i,id]of ids.entries()){
+  pages[id]=page(id,{vehicleNo:PLATE,vehicleId:Number(canonical[i]),queryCarId:Number(id),advertisement:{status:'SOLD'},manage:{dummy:true,dummyVehicleId:Number(id)}});
+  pages[canonical[i]]=page(canonical[i],{vehicleNo:PLATE,vehicleId:Number(canonical[i]),queryCarId:Number(canonical[i]),advertisement:{status:[12,13].includes(i)?'ADVERTISE':'SOLD'},manage:{dummy:false,dummyVehicleId:null}});
+ }
+ const other='<article class="car-card"><span class="car-number">34나5678</span><a href="/auto/65000001/">Another vehicle</a></article>',catalogPages={
+  '/':'<form action="/catalog" method="get"><label for="n">Номер автомобиля</label><input id="n" name="car_number"><button>Поиск</button></form>'
+ };
+ for(let i=1;i<=3;i++)catalogPages['https://encar.spb.ru/catalog?'+(i===1?'car_number=3456':'page='+i+'&car_number=3456')]=other+'<a rel="next" href="?page='+(i+1)+'">Next</a>';
+ const r=await run({payload:{plate:PLATE,candidateIds:ids.slice(0,6)},cacheIds:ids.slice(6,12),searchKey:'synthetic_budget_search_key',catalogPages,pages,results:[{url:'https://fem.encar.com/cars/detail/'+ids[12],content:PLATE+' '+ids.slice(13).map(id=>'https://fem.encar.com/cars/detail/'+id).join(' ')}],provider(url){return json({Id:url.searchParams.get('id'),Price:2820,VehicleNo:PLATE,Status:'ADVERTISE'});}});
+ assert.equal(r.calls.length,44,'Auth,12 old aliases and originals,catalogue,search,new aliases/originals and one price all count');assert.equal(providerCalls(r).length,1);assert.equal(r.status,200);assert.equal(r.body.status,'multiple');assert.deepEqual(r.body.listings.map(item=>item.id).sort(),canonical.slice(12,14));assert.equal(r.headers.get('Retry-After'),null);assert.equal(r.body.retryAfterSeconds,undefined);assert.equal(r.body.diagnostics,undefined,'Verified links are not turned into a budget error');
+ assert.equal(r.body.priceDiagnostics.providerRequests,1);assert(r.body.priceDiagnostics.codes.some(item=>item.code==='REQUEST_BUDGET_EXCEEDED'));const priced=r.body.listings.filter(item=>item.priceStatus==='verified'),unpriced=r.body.listings.filter(item=>item.priceStatus==='unavailable');assert.equal(priced.length,1);assert.equal(priced[0].priceWon,28200000);assert.equal(unpriced.length,1);unavailable(unpriced[0]);assert.doesNotMatch(JSON.stringify(r.body)+r.logs.join(''),/synthetic_budget|synthetic_private|synthetic_access|PRIVATE_/);
 });

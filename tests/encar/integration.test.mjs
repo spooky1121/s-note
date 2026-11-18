@@ -10,7 +10,8 @@ const frontend = await readFile(new URL('../../assets/snote-encar-link.js', impo
 const backend = (await readFile(new URL('../../functions/api/encar.js', import.meta.url), 'utf8'))
   .replace(/(['"])\.\.\/_shared\/encar-catalog\.mjs\1/g,
     JSON.stringify(new URL('../../functions/_shared/encar-catalog.mjs', import.meta.url).href))
-  .replace("'../_shared/encar-page-price.mjs'", JSON.stringify(new URL('../../functions/_shared/encar-page-price.mjs', import.meta.url).href));
+  .replace("'../_shared/encar-page-price.mjs'", JSON.stringify(new URL('../../functions/_shared/encar-page-price.mjs', import.meta.url).href))
+  .replace("'../_shared/encar-request-budget.mjs'", JSON.stringify(new URL('../../functions/_shared/encar-request-budget.mjs', import.meta.url).href));
 const { onRequest } = await import('data:text/javascript;base64,' + Buffer.from(backend).toString('base64'));
 const PLATE = '12가3456', ORIGINAL = '43000001', TRUSTED = '43000002';
 const BASE = 'https://fem.encar.com/cars/detail/';
@@ -32,12 +33,12 @@ function fixture(t, { batches = [], plate = PLATE, providerKey = 'synthetic_sear
   const dom = new JSDOM('<!doctype html><div id="zc-cloud-gate" hidden></div>' +
     '<div id="zc86-topbar"></div><section id="vehicle-overlay" class="open"><header class="vehicle-header"><div class="vehicle-heading"><div class="vehicle-heading-row"><h2 id="vehicle-title">차량</h2><div id="vehicle-header-actions" role="group" aria-label="차량 작업"></div></div><p id="vehicle-meta">차량</p></div></header></section>',
   { url: 'https://integration.example/', runScripts: 'outside-only' });
-  const w = dom.window, requests = [], searches = [], tabs = [], logs = [], catalogRequests = [];
+  const w = dom.window, requests = [], searches = [], tabs = [], logs = [], catalogRequests = [], upstreamCalls = [];
   const previousFetch = globalThis.fetch, previousInfo = console.info;
   console.info = value => logs.push(value);
   let heldDetail = null;
   globalThis.fetch = async (value, options = {}) => {
-    const url = new URL(value);
+    const url = new URL(value);upstreamCalls.push(url.href);
     const json = body => new Response(JSON.stringify(body), { headers: { 'Content-Type': 'application/json' } });
     if (url.href === 'https://fixture.supabase.co/auth/v1/user') return json({ id: USER });
     if (url.origin === 'https://fixture.supabase.co' && url.pathname === '/rest/v1/zc_members') return json([{ user_id: USER }]);
@@ -53,7 +54,7 @@ function fixture(t, { batches = [], plate = PLATE, providerKey = 'synthetic_sear
     }
     if (url.href === 'https://api.tavily.com/search') {
       searches.push(JSON.parse(options.body));
-      return json({ results: batches.shift() || [] });
+      const batch=batches.shift()||[];return batch instanceof Response?batch:json({ results: batch });
     }
     if (url.origin === 'https://fem.encar.com' && [ORIGINAL, TRUSTED].some(id => url.href === BASE + id)) {
       if (heldDetail) await heldDetail;
@@ -94,7 +95,7 @@ function fixture(t, { batches = [], plate = PLATE, providerKey = 'synthetic_sear
     }
     assert.fail('Integration fixture did not finish');
   }
-  return { w, button, tabs, searches, requests, logs, catalogRequests, done,
+  return { w, button, tabs, searches, requests, logs, catalogRequests, upstreamCalls, done,
     holdDetails(promise) { heldDetail = promise; },
     get note() { return w.document.querySelector('.snote-encar-note').textContent; },
     get manual() { return w.document.querySelector('.snote-encar-manual'); },
@@ -195,4 +196,19 @@ test('integration: a supplied URL for another plate stays unverified through bot
   assert.equal(f.tabs[1].closed, true); assert.deepEqual(f.tabs[1].navigations, []);
   assert.match(f.note, /차량번호가 현재 차량과 일치하지/);
   assert.equal(f.w.document.querySelectorAll('.snote-encar-results a').length, 0);
+});
+
+test('integration: ten completed client lookups reauthorize independently and never reuse an advertisement for another full plate with the same suffix',async t=>{
+  const f=fixture(t,{batches:[[{url:BASE+ORIGINAL,title:PLATE}]]});
+  for(let i=0;i<10;i++){
+    f.button.click();await f.done();assert.equal(f.requests.length,i+1);assert.equal(f.tabs.length,i+1);assert.deepEqual(f.tabs[i].navigations,[BASE+ORIGINAL]);assert.equal(f.tabs[i].closed,false);
+    assert.equal(f.upstreamCalls.filter(url=>url==='https://fixture.supabase.co/auth/v1/user').length,i+1);assert.equal(f.upstreamCalls.filter(url=>new URL(url).pathname==='/rest/v1/zc_members').length,i+1);
+  }
+  assert.equal(f.searches.length,1,'Verified local candidate hints avoid repeat discovery but never skip official detail checks');assert.equal(f.upstreamCalls.filter(url=>url===BASE+ORIGINAL).length,10);
+  f.w.cars[0].plate='34나3456';f.button.click();await f.done();assert.equal(f.requests.length,11);assert.equal(f.requests.at(-1).plate,'34나3456');assert.deepEqual(f.requests.at(-1).candidateIds,[],'The previous full plate candidate cache cannot leak through a shared suffix');assert.equal(f.tabs[10].closed,true);assert.deepEqual(f.tabs[10].navigations,[]);assert.equal(f.w.document.querySelectorAll('.snote-encar-results a').length,0);assert.equal(f.w.cars[0].sell,undefined);
+});
+
+test('integration: one temporary upstream503 recovers through one bounded client retry and only opens its verified exact-plate result',async t=>{
+  const f=fixture(t,{batches:[new Response('PRIVATE_PROVIDER_ERROR',{status:503,headers:{'Retry-After':'0'}}),[{url:BASE+ORIGINAL,title:PLATE}]]});
+  f.button.click();await f.done();assert.equal(f.requests.length,2);assert.equal(f.searches.length,2);assert.equal(f.tabs.length,1,'A retry reuses its waiting tab rather than opening another');assert.deepEqual(f.tabs[0].navigations,[BASE+ORIGINAL]);assert.equal(f.upstreamCalls.filter(url=>url==='https://fixture.supabase.co/auth/v1/user').length,2);assert.equal(f.upstreamCalls.filter(url=>new URL(url).pathname==='/rest/v1/zc_members').length,2);assert.equal(f.w.cars[0].sell,undefined);assert.doesNotMatch(f.logs.join(''),/PRIVATE_PROVIDER_ERROR|synthetic_integration|synthetic_search_secret/);
 });
