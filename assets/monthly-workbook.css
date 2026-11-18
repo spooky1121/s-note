@@ -35,3 +35,6 @@
   #print-snapshot .print-expanded .print-month-note{break-inside:avoid}
   #print-snapshot .print-expanded .print-summary{grid-template-columns:repeat(4,minmax(0,1fr))}
 }
+
+/* Current company finance is a read-only live summary, separate from stored workbooks. */
+.finance-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:0;padding:2px 17px 17px}.finance-summary>div{min-width:0}.finance-summary dt{color:#7b8ca3;font-size:var(--snote-text-label)}.finance-summary dd{margin:7px 0 0;font-size:var(--snote-text-subheading,17px);font-weight:650;color:#294566;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}.finance-summary .negative{color:#b16c60}#finance-status[data-state=error]{color:#b16c60}@media(max-width:500px){.finance-summary{grid-template-columns:1fr;gap:12px;padding:2px 12px 15px}.finance-summary>div{display:flex;align-items:baseline;justify-content:space-between;gap:10px}.finance-summary dd{margin:0;text-align:right}}

@@ -1,5 +1,7 @@
 .snote221-income-button{min-height:34px;padding:7px 11px;border:1px solid #cadbf0;border-radius:8px;background:#f2f7ff;color:#456c9b;font-family:inherit;font-size:11px;font-weight:650;white-space:nowrap;cursor:pointer;transition:background 160ms,border-color 160ms}
 .snote221-income-button:hover{background:#e7f0ff;border-color:#9fbbe0}
+.snote221-income-button.is-settled{color:#16815c;background:#eff9f3;border-color:#c8e7d5}
+.snote221-income-button.is-settled:hover{color:#106847;background:#e4f4eb;border-color:#a8d6bd}
 .snote221-income-button:focus-visible{outline:2px solid #83a9db;outline-offset:2px}
 .vehicle-right .snote221-income-button{display:block;margin-top:9px}
 .acct-mobile-card>.snote221-income-button{display:block;margin:12px 0 0 auto}

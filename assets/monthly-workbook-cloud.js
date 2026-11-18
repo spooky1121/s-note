@@ -1,4 +1,4 @@
-import { TYPE, VERSION, validateBook, listBooks, mergeMonth, fingerprint } from './monthly-workbook-model.js';
+import { TYPE, VERSION, validateBook, listBooks, mergeMonth, fingerprint } from './monthly-workbook-model.js?v=2.135';
 
 const MAX_ATTEMPTS = 3;
 const MESSAGES = {
