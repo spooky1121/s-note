@@ -1,5 +1,7 @@
 # 상사정보 저장 기능 적용
 
+v2.133 **서류 업무**의 매입·매도 구분에는 [문서 종류 SQL](migrations/20261118134644_transfer_document_kinds.sql)을 추가 적용합니다. 운영 DB 적용과 권한·저장·롤백 검증을 완료했습니다. 기존 39개 입력값은 유지하고 문서 종류만 별도 메타데이터로 저장합니다. [서류 업무 안내](../docs/document-office.md)를 확인하세요.
+
 v2.130 경리의 상사 전체 차량 조회·계약서 업무와 대표 관리자 직원 로그인 ID 표시는 [경리 업무·직원 ID 안내](../docs/accountant-workspace.md)의 두 마이그레이션을 사용합니다. 연결된 운영 DB에 적용하고, 실제 역할별 조회·저장·권한 검증과 검증 자료 롤백을 완료했습니다. Cloudflare Pages 배포만으로 다른 DB에 자동 적용되지는 않습니다.
 
 v2.63 신규 공유 알림과 공유 표시에는 [신규 공유 SQL](migrations/20261105105113_shared_vehicle_registered_notifications.sql)을 추가 적용한다. 운영 적용·권한 확인을 완료했다.

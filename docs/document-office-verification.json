@@ -1,0 +1,87 @@
+{
+  "release": "2.133",
+  "baseCommit": "9b68f8e12e2785b3c60228aefe38a71f441f3e19",
+  "checkedDateKorea": "2026-11-18",
+  "interface": {
+    "menuAndScreenTitle": "서류 업무",
+    "purchaseTileEnabled": true,
+    "saleTileEnabled": true,
+    "purchaseCompanySide": "seller",
+    "saleCompanySide": "buyer",
+    "counterpartySealFollowsOppositeSide": true,
+    "nameSync": "top seller/buyer input to respective bottom name only",
+    "bottomManualEditsChangeTopName": false,
+    "savedNamesOverwrittenOnLoad": false,
+    "inlineControlLabel": "인감도장",
+    "controlPosition": "right of counterparty name label",
+    "controlSizePx": [14, 14],
+    "minimumViewportWidthPx": 320,
+    "horizontalOverflowOrNestedLabels": false
+  },
+  "seals": {
+    "previousHeightPt": 19,
+    "newHeightPt": 28.5,
+    "scale": 1.5,
+    "containFramePt": [73.5, 28.5],
+    "sourcePositions": {
+      "sellerTop": [265.5, 117, 73.5, 28.5],
+      "buyerTop": [485.25, 117, 73.5, 28.5],
+      "sellerBottom": [234.25, 721.25, 73.5, 28.5],
+      "buyerBottom": [499.25, 721.25, 73.5, 28.5]
+    },
+    "aspectRatioPreserved": true,
+    "companyAspectOver2BlocksPrint": true,
+    "independentlyAuditedPdfCount": 8,
+    "independentlyAuditedSealCount": 24,
+    "actualCompanyAspect1_5SizePt": [42.75, 28.5],
+    "actualInkDateAndFooterCollisions": 0,
+    "minimumBuyerBottomRedInkDateGapPt": 1.708333,
+    "minimumBuyerBottomRedInkFooterGapPt": 1.5,
+    "comparison": "same final PDF at 24x ink resolution, distinct from unscaled font metric boxes",
+    "originalPdfAndBothSvgAssetsUnchanged": true,
+    "pagesPerPdf": 2,
+    "paper": "A4",
+    "physicalPrinterTested": false
+  },
+  "database": {
+    "migration": "supabase/migrations/20261118134644_transfer_document_kinds.sql",
+    "migrationSha256": "dd6f8a39101fcd4b3117f4091366302ad3031eff953447053b2d3213af388716",
+    "productionApplied": true,
+    "kindMetadata": "immutable purchase or sale outside 39-field payload",
+    "existingRowsDefaultKind": "purchase",
+    "oldColumnsFingerprintUnchanged": true,
+    "kindColumnAuthenticatedInsert": true,
+    "kindColumnAuthenticatedUpdate": false,
+    "rlsEnabled": true,
+    "newAndLegacyRpcSecurityInvoker": true,
+    "anonymousAndServiceRpcExecute": false,
+    "legacyRpcScope": "purchase only; sale IDs cannot be read or overwritten",
+    "liveVerification": "verified active admin/accountant, both kinds create/revise/read/list, CAS and kind mismatch, legacy compatibility, invalid kind, foreign company and anonymous denial; rolled back",
+    "persistedSyntheticVerificationRows": 0,
+    "newSecurityAdvisorFindings": 0
+  },
+  "verification": [
+    {"command": "npm test --prefix tests/encar", "passed": 1064, "failed": 0},
+    {"command": "node tests/transfer-document-kinds-db.cjs", "passedGroups": 14, "independentReviewPassedGroups": 14},
+    {"command": "node tests/accountant-workspace.browser.cjs", "passedGroups": 4, "widths": [1440, 390, 320]},
+    {"command": "node tests/contract-office.browser.cjs", "passedScenarios": 4, "modes": ["purchase", "sale"], "widths": [1440, 390], "pdfCases": 8},
+    {"command": "Independent original asset, geometry and final PDF ink audit", "status": "passed"},
+    {"command": "Seven inline scripts and affected JavaScript syntax; git diff --check", "status": "passed"},
+    {"command": "wrangler pages functions build functions", "version": "4.152.0", "status": "passed"}
+  ],
+  "retainedChecks": [
+    "39 payload fields, integer KRW, mileage commas and saved blank/zero values",
+    "Same-company car and private stamp authorization; no extra login/session checks",
+    "Mode switch clears old parties and print option; mode-specific history and strict acknowledgment",
+    "Old-kind list response cannot replace current-kind records",
+    "Save acknowledgment, late edits, CAS, network failure and lost acknowledgment preserve drafts",
+    "Reconnection, dirty navigation, closed preview and company/role changes preserve or clear state appropriately"
+  ],
+  "dataScope": {
+    "browserNamesImagesAndDocuments": "synthetic only",
+    "liveDatabaseVerification": "synthetic payloads in rollback transaction under actual verified roles",
+    "realCustomerOrCompanyImagesExtracted": false,
+    "existingDocumentValuesOrCustomerSignatureStateChanged": false,
+    "privateStorageOrVehicleDatasetsWritten": false
+  }
+}
