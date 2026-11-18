@@ -1,8 +1,9 @@
 /* Paginate view copies only; source datasets and aggregate totals remain untouched. */
 (function(){
  'use strict';
- const states=new Map(),size=20;
- window.snote236Paginate=function(rows,key,signature,hostId,render){
+ const states=new Map();
+ window.snote236Paginate=function(rows,key,signature,hostId,render,pageSize=20){
+  const size=Number.isSafeInteger(pageSize)&&pageSize>0&&pageSize<=100?pageSize:20;signature+=':size'+size;
   window.SnoteListSort?.bind(key,render);rows=window.SnoteListSort?.apply(rows,key)||rows;rows=window.SnotePurchaseRegistrationSuccess?.prioritize(rows,key)||rows;signature+=':sort'+(window.SnoteListSort?.revision(key)||0);
   let state=states.get(key);
   if(!state||state.signature!==signature){state={signature,page:1};states.set(key,state);}

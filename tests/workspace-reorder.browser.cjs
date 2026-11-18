@@ -1,0 +1,103 @@
+'use strict';
+// Actual workspace/operator assets. All identities, Auth calls and persistence are synthetic.
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),os=require('node:os');
+const {chromium}=require('./encar/node_modules/playwright');
+const {fixture,setBrowser,finish}=require('./encar/browser-smoke.cjs');
+const ROOT=path.resolve(__dirname,'..'),OUT=process.env.REORDER_ARTIFACTS||path.join(os.tmpdir(),'snote-workspace-reorder');fs.mkdirSync(OUT,{recursive:true});
+const A='11111111-1111-4111-8111-111111111111',COMPANY='bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
+const ids=(p,nav)=>p.locator(nav+' > button[data-page]').evaluateAll(rows=>rows.map(row=>row.dataset.page));
+async function mainFixture(width=1440,role='dealer'){
+ const f=await fixture(width),p=f.page;
+ await p.evaluate(async({A,COMPANY,role})=>{
+  await closeVehicle({discard:true});const S=__encarFixtureState;
+  S.company={...S.company,id:COMPANY};S.members=[{user_id:A,company_id:COMPANY,role,active:true,display_name:'합성 계정'}];currentUser.role=role;
+  const t=window.__reorderTest={reads:[],writes:[],version:1,hold:false,pending:[],stored:{},navigations:[]};
+  const scope=ctx=>[ctx.actorId,ctx.companyId,ctx.role].join(':');
+  t.stored[[A,COMPANY,'dealer'].join(':')+':sidebar']=['sell','buy','dashboard','users','finance','settings','contractArchive','foreign-menu'];
+  const context=()=>S.ready&&!S.loading&&S.members.some(m=>m.user_id===S.user.id&&m.company_id===S.company.id&&m.role===currentUser.role&&m.active)?{ready:true,key:JSON.stringify([S.user.id,S.company.id,currentUser.role,t.version]),actorId:S.user.id,companyId:S.company.id,role:currentUser.role}:null;
+  const current=ctx=>{const now=context();return !!now&&now.key===ctx?.key;};
+  window.snoteWorkspaceOrderBridge={context,current,async read(ctx,section){if(!current(ctx))throw Error('STALE_READ');t.reads.push({actorId:ctx.actorId,companyId:ctx.companyId,role:ctx.role,section});const result=structuredClone(t.stored[scope(ctx)+':'+section]||null);if(t.hold)await new Promise(resolve=>t.pending.push(resolve));return result;},async save(ctx,section,order){if(!current(ctx))throw Error('STALE_SAVE');t.stored[scope(ctx)+':'+section]=[...order];t.writes.push({actorId:ctx.actorId,companyId:ctx.companyId,role:ctx.role,section,ids:[...order]});return{ids:[...order]};}};
+  buildMenus();window.dispatchEvent(new Event('snote:workspace-order-context'));
+ },{A,COMPANY,role});
+ await p.waitForFunction(()=>document.querySelector('#desktop-nav.snote-reorder-enabled')&&document.querySelector('#mobile-drawer-nav.snote-reorder-enabled'));
+ if(role==='dealer')await p.waitForFunction(()=>document.querySelector('#desktop-nav > button').dataset.page==='sell');
+ return f;
+}
+async function holdMouse(p,item){const b=await item.boundingBox();await p.mouse.move(b.x+b.width/2,b.y+b.height/2);await p.mouse.down();await p.waitForTimeout(510);return b;}
+async function moveMouse(p,item){const b=await item.boundingBox();await p.mouse.move(b.x+b.width/2,b.y+b.height/2,{steps:8});}
+async function mainMouseAndRoles(){
+ const f=await mainFixture(),p=f.page;
+ try{
+  const dealer=['sell','buy','dashboard','users','finance','settings'];assert.deepEqual(await ids(p,'#desktop-nav'),dealer);assert.deepEqual(await ids(p,'#mobile-drawer-nav'),dealer);
+  assert.equal(await p.evaluate(()=>__reorderTest.reads.filter(r=>r.section==='sidebar').length),1,'Both navigation copies must share one scoped read');
+  await p.locator('#desktop-nav [data-page=buy]').click();assert.equal(await p.evaluate(()=>route),'buy');
+  const bottom=await p.locator('#bottom-nav button').evaluateAll(rows=>rows.map(row=>row.getAttribute('onclick'))),originalSet=(await ids(p,'#desktop-nav')).slice().sort();
+  const before=await holdMouse(p,p.locator('#desktop-nav [data-page=buy]'));await p.locator('#desktop-nav.snote-reorder-edit').waitFor();const after=await p.locator('#desktop-nav [data-page=buy]').boundingBox();assert.deepEqual(after,before,'Edit entry must not move the button hit box');
+  await moveMouse(p,p.locator('#desktop-nav [data-page=settings]'));await p.mouse.up();await p.waitForFunction(()=>__reorderTest.writes.length===1);
+  assert.equal(await p.evaluate(()=>route),'buy','A consumed long press cannot navigate');assert.deepEqual(await ids(p,'#desktop-nav'),['sell','dashboard','users','finance','settings','buy']);assert.deepEqual(await ids(p,'#mobile-drawer-nav'),await ids(p,'#desktop-nav'));assert.deepEqual((await ids(p,'#desktop-nav')).slice().sort(),originalSet);assert.deepEqual(await p.locator('#bottom-nav button').evaluateAll(rows=>rows.map(row=>row.getAttribute('onclick'))),bottom);
+  await p.locator('#desktop-nav').screenshot({path:path.join(OUT,'sidebar-edit-1440.png')});await p.keyboard.press('Escape');assert.equal(await p.locator('#desktop-nav').evaluate(e=>e.classList.contains('snote-reorder-edit')),false);
+  const first=p.locator('#desktop-nav > button').first();await first.focus();await p.keyboard.press('Alt+ArrowDown');await p.waitForFunction(()=>__reorderTest.writes.length===2);assert.equal((await ids(p,'#desktop-nav'))[1],'sell');await p.getByRole('button',{name:'순서 변경 완료',exact:true}).click();assert.equal(await p.locator('#desktop-nav').evaluate(e=>e.classList.contains('snote-reorder-edit')),false);await p.locator('#desktop-nav > button').first().focus();await p.keyboard.press('F2');await p.mouse.click(900,850);assert.equal(await p.locator('#desktop-nav').evaluate(e=>e.classList.contains('snote-reorder-edit')),false,'Clicking outside ends edit mode');
+  await p.evaluate(()=>{buildMenus();window.SnoteWorkspaceReorder.refresh();});await p.waitForFunction(()=>document.querySelector('#desktop-nav > button').dataset.page==='dashboard');assert.equal((await ids(p,'#desktop-nav'))[1],'sell','A route rebuild preserves the chosen existing-item order');
+  for(const role of['admin','accountant','dealer']){
+   await p.evaluate(role=>{const S=__encarFixtureState;currentUser.role=role;S.members[0].role=role;__reorderTest.version++;buildMenus();window.dispatchEvent(new Event('snote:workspace-order-context'));},role);
+   await p.waitForTimeout(80);const order=await ids(p,'#desktop-nav'),allowed=role==='admin'?['dashboard','buy','sell','finance','users','companyBuy','prestock','inventoryFinance','monthly','settings']:role==='accountant'?['contractOffice','contractArchive','buy','sell','prestock','inventoryFinance','monthly']:['dashboard','buy','sell','finance','users','settings'];
+   assert.deepEqual(order.slice().sort(),allowed.slice().sort(),role+' must retain exactly its permitted existing menus');assert.deepEqual(await ids(p,'#mobile-drawer-nav'),order);assert.equal(new Set(order).size,order.length);
+   if(role==='admin')assert.equal(order[0],'dashboard','Dealer order does not overwrite administrator order');
+  }
+  await p.waitForTimeout(700);await p.locator('#desktop-nav [data-page=sell]').click();assert.equal(await p.evaluate(()=>route),'sell','Ordinary clicks still navigate after editing');
+  await finish(f);console.log('PASS actual sidebar: exact role permissions, shared menu copies, long press/drag, stable hit boxes, keyboard, persistence and ordinary navigation');
+ }catch(error){await p.screenshot({path:path.join(OUT,'sidebar-failure.png')}).catch(()=>{});await f.context.close();throw error;}
+}
+async function staleResponse(){
+ const f=await mainFixture(),p=f.page;
+ try{
+  await holdMouse(p,p.locator('#desktop-nav [data-page=buy]'));await p.locator('#desktop-nav.snote-reorder-edit').waitFor();
+  await p.evaluate(()=>{const S=__encarFixtureState;currentUser.role='accountant';S.members[0].role='accountant';__reorderTest.version++;buildMenus();window.dispatchEvent(new Event('snote:workspace-order-context'));});
+  await p.mouse.up();await p.waitForFunction(()=>document.querySelector('#desktop-nav > button').dataset.page==='contractOffice');assert.equal(await p.locator('#desktop-nav').evaluate(e=>e.classList.contains('snote-reorder-edit')),false);assert.equal(await p.evaluate(()=>__reorderTest.writes.length),0,'Cancelling an old-role drag cannot save or restore old ordering into new menu nodes');
+  await p.evaluate(()=>{const S=__encarFixtureState;__reorderTest.hold=true;S.company.id='cccccccc-cccc-4ccc-8ccc-cccccccccccc';S.members[0].company_id=S.company.id;__reorderTest.version++;buildMenus();window.dispatchEvent(new Event('snote:workspace-order-context'));});await p.waitForFunction(()=>__reorderTest.pending.length===1);
+  await p.evaluate(()=>{const S=__encarFixtureState;__reorderTest.hold=false;S.company.id='dddddddd-dddd-4ddd-8ddd-dddddddddddd';S.members[0].company_id=S.company.id;currentUser.role='accountant';S.members[0].role='accountant';__reorderTest.version++;buildMenus();window.dispatchEvent(new Event('snote:workspace-order-context'));for(const release of __reorderTest.pending.splice(0))release();});
+  await p.waitForFunction(()=>document.querySelector('#desktop-nav > button').dataset.page==='contractOffice');await p.waitForTimeout(120);assert.equal((await ids(p,'#desktop-nav')).includes('settings'),false);assert.equal((await ids(p,'#desktop-nav')).includes('contractArchive'),true);assert.equal(await p.evaluate(()=>__reorderTest.writes.length),0);
+  await finish(f);console.log('PASS a late previous-company sidebar preference cannot reorder or add menus in the new accountant context');
+ }catch(error){await f.context.close();throw error;}
+}
+async function touchDrawer(){
+ const f=await mainFixture(390,'admin'),p=f.page;
+ try{
+  await p.setViewportSize({width:390,height:430});await p.evaluate(()=>{navigate('buy');openMobileDrawer();});await p.waitForTimeout(360);const cdp=await f.context.newCDPSession(p);await cdp.send('Emulation.setTouchEmulationEnabled',{enabled:true,maxTouchPoints:1});
+  const touch=async(type,x,y)=>cdp.send('Input.dispatchTouchEvent',{type,touchPoints:type==='touchEnd'?[]:[{x,y,radiusX:2,radiusY:2,id:0}]});
+  const original=await ids(p,'#mobile-drawer-nav'),start=await p.locator('#mobile-drawer-nav [data-page=buy]').boundingBox();let x=start.x+start.width/2,y=start.y+start.height/2;
+  await touch('touchStart',x,y);for(const delta of[15,35,65]){await touch('touchMove',x,y-delta);await p.waitForTimeout(35);}await touch('touchEnd',x,y-65);await p.waitForTimeout(520);assert.equal(await p.locator('#mobile-drawer-nav').evaluate(e=>e.classList.contains('snote-reorder-edit')),false);assert.deepEqual(await ids(p,'#mobile-drawer-nav'),original);assert.equal(await p.evaluate(()=>__reorderTest.writes.length),0);assert((await p.locator('.mobile-drawer-body').evaluate(e=>e.scrollTop))>0,'Movement before the long press must keep native drawer scrolling');
+  await p.locator('.mobile-drawer-body').evaluate(e=>{e.scrollTop=0;});const source=await p.locator('#mobile-drawer-nav [data-page=dashboard]').boundingBox(),target=await p.locator('#mobile-drawer-nav [data-page=sell]').boundingBox();x=source.x+source.width/2;y=source.y+source.height/2;
+  await touch('touchStart',x,y);await p.waitForTimeout(510);await p.locator('#mobile-drawer-nav.snote-reorder-edit').waitFor();await touch('touchMove',target.x+target.width/2,target.y+target.height/2);await touch('touchEnd',x,y);await p.waitForFunction(()=>__reorderTest.writes.length===1);assert.equal(await p.evaluate(()=>route),'buy');assert.equal(await p.locator('#mobile-drawer-nav').evaluate(e=>e.classList.contains('snote-reorder-edit')),true);assert.deepEqual(await ids(p,'#desktop-nav'),await ids(p,'#mobile-drawer-nav'));assert.equal((await ids(p,'#mobile-drawer-nav'))[2],'dashboard');assert((await p.locator('.mobile-drawer-body').evaluate(e=>e.scrollTop))<2,'Activated touch dragging must not scroll the drawer');
+  await p.screenshot({path:path.join(OUT,'sidebar-edit-390.png')});await p.keyboard.press('Escape');assert.equal(await p.locator('#mobile-drawer-nav').evaluate(e=>e.classList.contains('snote-reorder-edit')),false);assert.equal(await p.evaluate(()=>document.body.classList.contains('mobile-drawer-visible')),true);await p.evaluate(()=>closeMobileDrawer());await finish(f);console.log('PASS real touch: move-before-hold scrolls, 450ms activates capture/drag, release suppresses navigation and Escape exits editing only');
+ }catch(error){await p.screenshot({path:path.join(OUT,'touch-failure.png')}).catch(()=>{});await f.context.close();throw error;}
+}
+async function operatorFixture(browser,{allowed=true}={}){
+ const origin='https://reorder-operator.example',token='synthetic-reorder-operator-token',sessionId='22222222-2222-4222-8222-222222222222',metadataKey='snote_order_v1_platform_operator_operator-sidebar';
+ const user={id:A,email:'synthetic-operator@example.test',user_metadata:{preserve:'synthetic-canary',[metadataKey]:{version:1,ids:['support','access','accounts','vehicles','buy']}}};
+ const context=await browser.newContext({viewport:{width:1440,height:950}}),p=await context.newPage(),f={context,page:p,errors:[],requests:[],auth:[],writes:[],external:[]};p.on('pageerror',e=>f.errors.push(e.message));
+ await p.addInitScript(({user,token})=>{window.__orderSession={access_token:token,user};window.__orderAuthCalls=[];},{user,token});
+ await context.route('**/*',async route=>{const req=route.request(),url=new URL(req.url());
+  if(url.href.includes('/@supabase/supabase-js@'))return route.fulfill({contentType:'application/javascript',body:`export function createClient(url,key){return{auth:{async getSession(){__orderAuthCalls.push('getSession');return{data:{session:__orderSession},error:null}},async getUser(token){__orderAuthCalls.push('getUser');const r=await fetch(url+'/auth/v1/user',{headers:{apikey:key,Authorization:'Bearer '+token}});return{data:{user:await r.json()},error:null}},onAuthStateChange(callback){window.__orderAuthChange=callback;return{data:{subscription:{unsubscribe(){}}}}},async signOut(){__orderSession=null;__orderAuthChange('SIGNED_OUT',null);return{error:null}}},async rpc(){return{data:{ok:true},error:null}}};}`});
+  if(url.hostname.endsWith('.supabase.co')&&url.pathname==='/auth/v1/user'){
+   const headers={'access-control-allow-origin':'*','access-control-allow-methods':'GET,PUT,OPTIONS','access-control-allow-headers':'authorization,apikey,content-type'};if(req.method()==='OPTIONS')return route.fulfill({status:204,headers});assert.equal(req.headers().authorization,'Bearer '+token);f.auth.push(req.method());
+   if(req.method()==='PUT'){const b=req.postDataJSON();assert.deepEqual(Object.keys(b),['data']);assert.deepEqual(Object.keys(b.data),[metadataKey]);assert.equal(b.data[metadataKey].version,1);assert(b.data[metadataKey].ids.every(id=>['vehicles','accounts','access','support'].includes(id)));f.writes.push(b);Object.assign(user.user_metadata,b.data);}
+   return route.fulfill({headers,contentType:'application/json',body:JSON.stringify(user)});
+  }
+  if(url.origin!==origin){f.external.push(url.href);return route.abort();}
+  if(url.pathname==='/api/operator'){assert.equal(req.headers().authorization,'Bearer '+token);const b=req.postDataJSON();f.requests.push(b);const result=b.action==='context'?{ok:true,allowed,actorId:A,sessionId,email:user.email}:b.action==='support-unread'?{ok:true,unreadTotal:0}:{ok:true,items:[],total:0,page:1,pageSize:20,unreadTotal:0};return route.fulfill({contentType:'application/json',body:JSON.stringify(result)});}
+  const file=path.resolve(ROOT,url.pathname==='/'?'operator.html':url.pathname.slice(1));if(!file.startsWith(ROOT+path.sep)||!fs.existsSync(file))return route.abort();const type={'.html':'text/html','.js':'application/javascript','.css':'text/css','.png':'image/png','.svg':'image/svg+xml'}[path.extname(file)]||'application/octet-stream';return route.fulfill({contentType:type,body:fs.readFileSync(file)});
+ });await p.goto(origin,{waitUntil:'networkidle'});return f;
+}
+async function operator(browser){
+ const denied=await operatorFixture(browser,{allowed:false});assert.equal(await denied.page.evaluate(()=>snoteWorkspaceOrderBridge.context()),null);assert.equal(denied.auth.length,0);assert.equal(await denied.page.locator('#operator-navigation').evaluate(e=>e.classList.contains('snote-reorder-enabled')),false);assert.deepEqual(denied.errors,[]);await denied.context.close();
+ const f=await operatorFixture(browser),p=f.page;
+ try{
+  await p.waitForFunction(()=>document.querySelector('#operator-navigation > button').dataset.view==='support');const order=()=>p.locator('#operator-navigation > button').evaluateAll(rows=>rows.map(row=>row.dataset.view));assert.deepEqual(await order(),['support','access','accounts','vehicles']);assert.equal(await p.locator('#operator-navigation > button').count(),4);
+  const calls=await p.evaluate(()=>__orderAuthCalls.filter(c=>c==='getSession').length),contexts=f.requests.filter(r=>r.action==='context').length;
+  await holdMouse(p,p.locator('#operator-navigation [data-view=support]'));await moveMouse(p,p.locator('#operator-navigation [data-view=vehicles]'));await p.mouse.up();await p.waitForFunction(()=>__orderAuthCalls.filter(c=>c==='getUser').length>=3);await p.waitForTimeout(120);assert.equal(f.writes.length,1);assert.deepEqual(f.writes[0].data['snote_order_v1_platform_operator_operator-sidebar'].ids,['access','accounts','vehicles','support']);assert.equal(await p.evaluate(()=>__orderAuthCalls.filter(c=>c==='getSession').length),calls,'Preference saving must not repeat session discovery');assert.equal(f.requests.filter(r=>r.action==='context').length,contexts);assert.equal(await p.locator('#operator-page-title').textContent(),'모든차량DB');
+  assert.equal(await p.evaluate(()=>__orderSession.user.user_metadata.preserve),'synthetic-canary');await p.keyboard.press('Escape');await p.waitForTimeout(700);await p.locator('#operator-navigation [data-view=accounts]').click();await p.waitForFunction(()=>document.querySelector('#operator-page-title').textContent==='계정관리');
+  await p.locator('#operator-navigation').screenshot({path:path.join(OUT,'operator-sidebar-1440.png')});const snapshot=await p.evaluate(()=>snoteWorkspaceOrderBridge.context());await p.locator('#operator-signout').click();await p.waitForFunction(()=>snoteWorkspaceOrderBridge.context()===null);const writes=f.writes.length;assert.equal(await p.evaluate(async snapshot=>{try{await snoteWorkspaceOrderBridge.save(snapshot,'operator-sidebar',['vehicles']);return false;}catch{return true;}},snapshot),true);assert.equal(f.writes.length,writes);assert.deepEqual(f.external,[]);assert.deepEqual(f.errors,[]);await f.context.close();console.log('PASS real operator: verified-only context, pinned Auth metadata read/ACK/save, preserved unrelated metadata, no new session lookup, four existing buttons and logout guard');
+ }catch(error){await p.screenshot({path:path.join(OUT,'operator-failure.png')}).catch(()=>{});await f.context.close();throw error;}
+}
+(async()=>{const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium'});setBrowser(browser);const failures=[],groups=process.env.REORDER_TEST_GROUP==='scope'?[staleResponse]:[mainMouseAndRoles,staleResponse,touchDrawer,()=>operator(browser)];try{for(const run of groups)try{await run();}catch(error){failures.push(error);console.error(error.stack||error);}}finally{await browser.close();}if(failures.length)throw Error(failures.length+' workspace reorder group(s) failed');})().catch(error=>{console.error(error.stack||error);process.exitCode=1;});

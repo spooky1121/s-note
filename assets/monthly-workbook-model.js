@@ -179,6 +179,17 @@ function safe(number) {
   return number === 0 ? 0 : number;
 }
 const sum = numbers => numbers.reduce((total, number) => safe(total + (number === null ? 0 : number)), 0);
+/** Read-only parent aggregate. Never merges current finance into a saved monthly record. */
+export function normalizeInventoryFinance(value, companyId) {
+  if (!plain(value) || typeof value.ready !== 'boolean' || typeof value.companyId !== 'string'
+      || !value.companyId || (companyId !== undefined && value.companyId !== companyId)
+      || typeof value.key !== 'string' || value.key.length > 2000) return null;
+  if (!value.ready) return { key: value.key, companyId: value.companyId, ready: false };
+  if (!value.key || !Number.isSafeInteger(value.limit) || value.limit < 0
+      || !Number.isSafeInteger(value.used) || value.used < 0
+      || !Number.isSafeInteger(value.remaining) || value.remaining !== value.limit - value.used) return null;
+  return { key: value.key, companyId: value.companyId, ready: true, limit: value.limit, used: value.used, remaining: value.remaining };
+}
 function cashTotals(book) {
   const buyCount = sum(book.dealers.map(row => row.buyCount)), sellCount = sum(book.dealers.map(row => row.sellCount));
   const buyFee = sum(book.dealers.map(row => row.buyFee)), sellFee = sum(book.dealers.map(row => row.sellFee)), yardFee = sum(book.dealers.map(row => row.yardFee));
@@ -186,7 +197,7 @@ function cashTotals(book) {
   const operatingNet = safe(income - expense), adjustment = sum(book.adjustments.map(row => row.amount));
   return { buyCount, sellCount, buyFee, sellFee, yardFee, income, expense, operatingNet, adjustment, cashNet: sum([operatingNet, adjustment]) };
 }
-export function calculate(value, allBooks = []) {
+export function calculate(value, allBooks = [], options = {}) {
   const book = normalizeBook(value);
   const books = new Map(listBooks(allBooks).map(item => [item.month, item]));
   books.set(book.month, book);
@@ -217,8 +228,14 @@ export function calculate(value, allBooks = []) {
   const activeFinance = book.finance.filter(row => row.limit !== null || row.used !== null);
   const limits = book.finance.map(row => row.limit).filter(number => number !== null);
   const uses = book.finance.map(row => row.used).filter(number => number !== null);
-  const financeKnown = activeFinance.length > 0 && activeFinance.every(row => row.limit !== null && row.used !== null);
-  const financeLimit = limits.length ? sum(limits) : null, financeUsed = uses.length ? sum(uses) : null;
+  let financeKnown = activeFinance.length > 0 && activeFinance.every(row => row.limit !== null && row.used !== null);
+  let financeLimit = limits.length ? sum(limits) : null, financeUsed = uses.length ? sum(uses) : null;
+  if (own(options, 'inventoryFinance')) {
+    const current = normalizeInventoryFinance(options.inventoryFinance);
+    financeKnown = current?.ready === true;
+    financeLimit = financeKnown ? current.limit : null;
+    financeUsed = financeKnown ? current.used : null;
+  }
   return { ...result, bankActual, bankKnown, bankDifference: bankKnown && result.closingKnown ? safe(bankActual - result.closing) : null,
     receivableTotal: sum(book.receivables.map(row => row.amount)), financeLimit, financeUsed,
     financeRemaining: financeKnown ? safe(financeLimit - financeUsed) : null, financeKnown };
@@ -249,8 +266,8 @@ function csvCell(value) {
   if (/^[\t\r\n]/.test(text) || /^[\s\uFEFF]*[=+\-@]/.test(text)) text = "'" + text;
   return /[",\r\n]/.test(text) ? '"' + text.replaceAll('"', '""') + '"' : text;
 }
-export function exportCSV(value, allBooks = []) {
-  const book = normalizeBook(value), total = calculate(book, allBooks);
+export function exportCSV(value, allBooks = [], options = {}) {
+  const book = normalizeBook(value), total = calculate(book, allBooks, options), liveFinance = own(options, 'inventoryFinance');
   const rows = [[`월정산 ${book.month}`], ['통화', '원'], [], ['요약', '값'],
     ['매입 대수', total.buyCount], ['매도 대수', total.sellCount], ['매입비 상사수입', total.buyFee], ['매도비 상사수입', total.sellFee], ['마당비 수입', total.yardFee],
     ['수입 합계', total.income], ['지출 합계', total.expense], ['운영수익', total.operatingNet], ['현금조정', total.adjustment], ['월 현금증감', total.cashNet],
@@ -265,8 +282,13 @@ export function exportCSV(value, allBooks = []) {
   for (const row of book.adjustments) rows.push([row.label, row.amount]);
   rows.push([], ['계좌 잔액'], ['계좌명', '잔액']);
   for (const row of book.accounts) rows.push([row.label, row.balance]);
-  rows.push([], ['재고금융'], ['항목', '약정한도', '사용액', '잔여한도', '참고 비율(%)']);
-  for (const row of book.finance) rows.push([row.label, row.limit, row.used, row.limit !== null && row.used !== null ? safe(row.limit - row.used) : null, row.rate]);
+  if (liveFinance) {
+    rows.push([], ['재고금융 · 현재 등록 기준'], ['항목', '전체 한도', '현재 사용', '잔여 한도'],
+      ['현재 등록 금융사 합계', total.financeLimit, total.financeUsed, total.financeRemaining]);
+  } else {
+    rows.push([], ['재고금융'], ['항목', '약정한도', '사용액', '잔여한도', '참고 비율(%)']);
+    for (const row of book.finance) rows.push([row.label, row.limit, row.used, row.limit !== null && row.used !== null ? safe(row.limit - row.used) : null, row.rate]);
+  }
   rows.push([], ['미수/정산 보조'], ['항목', '금액', '메모']);
   for (const row of book.receivables) rows.push([row.label, row.amount, row.note]);
   rows.push([], ['월 메모'], [book.note]);

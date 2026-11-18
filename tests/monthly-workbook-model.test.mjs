@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   TYPE, VERSION, createBook, normalizeBook, validateBook, calculate, parseNumber,
-  previousMonth, listBooks, legacyRows, mergeMonth, fingerprint, exportCSV
+  previousMonth, listBooks, legacyRows, mergeMonth, fingerprint, exportCSV, normalizeInventoryFinance
 } from '../assets/monthly-workbook-model.js';
 
 const clone = value => structuredClone(value);
@@ -264,4 +264,41 @@ test('CSV round-trips Korean text/quotes/newlines and guards text formulas witho
   assert(rows.some(row => row.length === 7 && row[0] === '' && row[1] === '' && row[6] === '0'));
   const invalidBook = clone(book); invalidBook.dealers[0].buyFee = 0.1;
   invalid(() => exportCSV(invalidBook));
+});
+
+
+test('current registered finance overrides only presentation and supports company totals above manual input limits', async () => {
+  const book = manual('2026-11', 1000);
+  book.dealers[0].buyFee = 500;
+  Object.assign(book.finance[0], { label: '과거 수기 기록', limit: 777, used: 333, rate: 2.5 });
+  const original = clone(book), before = await fingerprint(book);
+  const inventoryFinance = { key: 'company-a:user-a:epoch-2', companyId: 'company-a', ready: true, limit: 5000000000000, used: 2300000000000, remaining: 2700000000000 };
+  freeze(book); freeze(inventoryFinance);
+  const total = calculate(book, [], { inventoryFinance });
+  assert.deepEqual([total.financeLimit, total.financeUsed, total.financeRemaining, total.financeKnown], [5000000000000, 2300000000000, 2700000000000, true]);
+  assert.equal(total.closing, 1500);
+  const rows = csvRows(exportCSV(book, [], { inventoryFinance }));
+  assert.deepEqual(rows.find(row => row[0] === '현재 등록 금융사 합계'), ['현재 등록 금융사 합계', '5000000000000', '2300000000000', '2700000000000']);
+  assert(!rows.some(row => row.includes('과거 수기 기록')));
+  assert.deepEqual(book, original); assert.equal(await fingerprint(book), before);
+  assert.equal(calculate(book).financeLimit, 777, 'existing persisted model behavior remains available without a live overlay');
+});
+
+test('unready or invalid current finance never falls back to old workbook amounts and explicit zero is real', () => {
+  const book = manual('2026-11'); Object.assign(book.finance[0], { limit: 777, used: 333 });
+  for (const inventoryFinance of [null, { key: 'k', companyId: 'a', ready: false, limit: 0, used: 0, remaining: 0 }, { key: 'k', companyId: 'a', ready: true, limit: 10, used: 5, remaining: 99 }]) {
+    const total = calculate(book, [], { inventoryFinance });
+    assert.deepEqual([total.financeLimit, total.financeUsed, total.financeRemaining, total.financeKnown], [null, null, null, false]);
+    assert(!exportCSV(book, [], { inventoryFinance }).includes('777'));
+  }
+  const inventoryFinance = { key: 'k', companyId: 'a', ready: true, limit: 0, used: 0, remaining: 0 };
+  assert.equal(calculate(book, [], { inventoryFinance }).financeKnown, true);
+  assert.equal(calculate(book, [], { inventoryFinance }).financeLimit, 0);
+});
+
+test('parent finance aggregate validation rejects other companies, coercion and unsafe or inconsistent amounts', () => {
+  const valid = { key: 'k', companyId: 'a', ready: true, limit: 100, used: 150, remaining: -50 };
+  assert.deepEqual(normalizeInventoryFinance(valid, 'a'), valid);
+  assert.equal(normalizeInventoryFinance(valid, 'b'), null);
+  for (const changed of [{ ready: 'true' }, { key: '' }, { limit: '100' }, { used: -1 }, { limit: Number.MAX_SAFE_INTEGER + 1 }, { remaining: 50 }]) assert.equal(normalizeInventoryFinance({ ...valid, ...changed }, 'a'), null);
 });

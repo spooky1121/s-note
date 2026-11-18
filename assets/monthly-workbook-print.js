@@ -1,4 +1,4 @@
-import { normalizeBook, calculate, previousMonth } from './monthly-workbook-model.js';
+import { normalizeBook, calculate, previousMonth } from './monthly-workbook-model.js?v=2.135';
 
 const escaped = value => String(value ?? '').replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character]));
 const integer = new Intl.NumberFormat('ko-KR', { maximumFractionDigits: 0 });
@@ -33,8 +33,9 @@ function summary(label, value, key) {
 }
 
 /** Returns a text-only, escaped print snapshot. The caller owns the print container. */
-export function renderPrint(value, allBooks = [], { companyName = '', saved = false, printedAt = new Date() } = {}) {
-  const book = normalizeBook(value), total = calculate(book, allBooks);
+export function renderPrint(value, allBooks = [], options = {}) {
+  const { companyName = '', saved = false, printedAt = new Date() } = options;
+  const book = normalizeBook(value), total = calculate(book, allBooks, options), liveFinance = Object.hasOwn(options, 'inventoryFinance');
   const expanded = book.dealers.length > 12 || book.expenses.length > 16 || book.adjustments.length > 6
     || book.accounts.length > 6 || book.finance.length > 6 || book.receivables.length > 6
     || book.dealers.some(row => row.name.length > 30)
@@ -80,11 +81,17 @@ export function renderPrint(value, allBooks = [], { companyName = '', saved = fa
   rows.push(`<p>통장-결산 차액 = 입력 계좌잔액 합계 − 마감잔액: <strong>${escaped(money(total.bankDifference))}</strong>. 계좌잔액은 입력된 계좌만 합산하며, 미입력 계좌는 실제 0원과 다릅니다.</p>`);
 
   rows.push('</div><div class="print-support-block">');
+  if (liveFinance) {
+    rows.push(table('재고금융 한도 · 현재 등록 기준', ['항목', '전체 한도(원)', '현재 사용(원)', '잔여 한도(원)'],
+      ['<tr>' + textCell('현재 등록 금융사 합계') + [total.financeLimit, total.financeUsed, total.financeRemaining].map(amount => numericCell(amount, '미확인')).join('') + '</tr>'], '', 'finance'));
+    rows.push('<p>재고금융 관리의 현재 상사 전체 합계입니다. 월말 자금에는 합산하지 않습니다.</p>');
+  } else {
   rows.push(table('재고금융 한도', ['항목', '약정한도(원)', '사용액(원)', '잔여한도(원)', '참고 비율(%)'], book.finance.map(row => {
     const remaining = row.limit !== null && row.used !== null ? row.limit - row.used : null;
     return '<tr>' + textCell(row.label) + numericCell(row.limit) + numericCell(row.used) + numericCell(remaining, '미확정') + textCell(row.rate === null ? '—' : String(row.rate) + '%') + '</tr>';
   }), '<tr><th scope="row">금융 합계</th>' + numericCell(total.financeLimit, '미입력') + numericCell(total.financeUsed, '미입력') + numericCell(total.financeRemaining, '미확정') + textCell('참고만 표시') + '</tr>', 'finance'));
   rows.push('<p>한도·사용액이 일부만 입력된 경우 잔여한도 합계는 미확정입니다. 참고 비율로 이자나 수입을 자동 계산하지 않습니다.</p>');
+  }
 
   rows.push('</div><div class="print-support-block print-tail">');
   rows.push(table('미수·정산 보조내역', ['항목', '금액(원)', '메모'], book.receivables.map(row => '<tr>' + textCell(row.label) + numericCell(row.amount) + textCell(row.note, true) + '</tr>'),
