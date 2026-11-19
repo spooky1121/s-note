@@ -113,8 +113,13 @@ test('vehicle editing merges only validated KRW changes and preserves private so
  assert.equal(r.status,200);const saved=s.saved.p_vehicle;assert.equal(saved.buy,1234567);assert.equal(saved.sell,1500000);assert.equal(saved.costs.repair,50000);assert.equal(saved.costs.polish,10000);assert.equal(saved.moneyUnit,'KRW');assert.deepEqual(saved.taxonomyCatalogRef,original.taxonomyCatalogRef);assert.deepEqual(saved.customerSnapshot,original.customerSnapshot);assert.equal(saved.identityCipher,original.identityCipher);
  assert(!JSON.stringify(r.body).includes('untouched'));assert(!JSON.stringify(r.body).includes('customerSnapshot'));
 });
+test('operator can preserve an active contract status without creating a completed sale',async t=>{
+ const s=fixture(t,{vehicle:{id:SOURCE.carId,ownerId:alias(OWNER),model:'합성 계약 차량',plate:'12가3456',status:'판매중',buy:100,sell:150}});
+ const r=await call({action:'vehicle-save',...scopeBody,expected:7,patch:{status:'계약중'},moneyUnit:'KRW',requestId:REQUEST});
+ assert.equal(r.status,200);assert.equal(s.saved.p_vehicle.status,'계약중');assert.equal(s.saved.p_vehicle.ownerId,alias(OWNER));assert.equal(s.saved.p_vehicle.sell,1500000);assert.equal(Object.hasOwn(s.saved.p_vehicle,'soldAt'),false);assert.equal(Object.hasOwn(s.saved.p_vehicle,'soldPrice'),false);
+});
 test('invalid owner/cipher/float patches and stale revisions never invoke the privileged write RPC',async t=>{
- for(const patch of [{ownerId:RECIPIENT},{identityCipher:'replace'},{buy:1.5},{costs:{private:1}},{repairItems:[{memo:'x',amount:-1}]},{year:9999}]){
+ for(const patch of [{ownerId:RECIPIENT},{identityCipher:'replace'},{buy:1.5},{costs:{private:1}},{repairItems:[{memo:'x',amount:-1}]},{year:9999},{status:'unknown'}]){
   const s=fixture(t),r=await call({action:'vehicle-save',...scopeBody,expected:7,patch,moneyUnit:'KRW',requestId:REQUEST});assert.equal(r.status,400);assert.equal(s.saved,undefined);
  }
  const s=fixture(t,{revision:8}),r=await call({action:'vehicle-save',...scopeBody,expected:7,patch:{model:'변경'},moneyUnit:'KRW',requestId:REQUEST});assert.equal(r.status,409);assert.equal(s.saved,undefined);

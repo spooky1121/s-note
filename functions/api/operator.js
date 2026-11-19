@@ -144,7 +144,7 @@ function vehiclePatch(patch) {
       if (!Array.isArray(value) || value.length > 100) fail('INVALID_REQUEST');
       result[key] = value.map(row => { fields(row, ['memo', 'amount']); return { memo: label(row.memo, 160, true), amount: money(row.amount) }; });
     } else if (key === 'year') { if (!Number.isInteger(value) || value < 1900 || value > new Date().getUTCFullYear() + 1) fail('INVALID_REQUEST'); result[key] = value; }
-    else if (key === 'status') { if (!['판매중', '수리중', '판매완료'].includes(value)) fail('INVALID_REQUEST'); result[key] = value; }
+    else if (key === 'status') { if (!['판매중', '계약중', '수리중', '판매완료'].includes(value)) fail('INVALID_REQUEST'); result[key] = value; }
     else if (['purchaseAt', 'soldAt'].includes(key)) { if (typeof value !== 'string' || value && !/^\d{4}-\d{2}-\d{2}$/.test(value)) fail('INVALID_REQUEST'); result[key] = value; }
     else if (key === 'km') { const raw = typeof value === 'number' ? String(value) : value; if (typeof raw !== 'string' || !/^[\d,]{1,12}$/.test(raw) || Number(raw.replaceAll(',', '')) > 9999999) fail('INVALID_REQUEST'); result[key] = Number(raw.replaceAll(',', '')).toLocaleString('en-US'); }
     else result[key] = label(value, key === 'extra' ? 5000 : 200, !['model', 'plate'].includes(key));

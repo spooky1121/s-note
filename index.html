@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.143">
+<html lang="ko" data-snote-release="2.144">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -77,6 +77,7 @@ tr.vehicle-clickable{cursor:pointer;transition:background .15s}tr.vehicle-clicka
 .status-select.onsale{color:#168359;background:#e6f8ef;border-color:#caeedd}
 .status-select.pending{color:#ce3143;background:#fff0f0;border-color:#f6d6db}
 .status-select.done{color:#2658db;background:#eaf0ff;border-color:#d1deff}
+.status-select.contract,.status.contract{color:#c72b45;background:#fff0f3;border-color:#f3ccd5}
 .status-select:focus-visible{outline:2px solid #92aeff}
 .repair-group{margin:15px 0 12px;border:1px solid #e8eef7;background:#fbfcff;border-radius:13px;padding:16px}
 .repair-top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
@@ -1827,6 +1828,7 @@ body:has(#monthly-screen[style*="block"]) #accountant-bar{display:none!important
 .zc75-status{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;padding:6px 10px;font-size:10.5px;font-weight:900;white-space:nowrap}
 .zc75-status.selling{color:#16835b;background:#e7f8ef;border:1px solid #c8ecd8}
 .zc75-status.done{color:#275fd0;background:#eaf0ff;border:1px solid #cfddfc}
+.zc75-status.contract{color:#c72b45;background:#fff0f3;border:1px solid #f3ccd5}
 .zc75-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-width:195px}
 .zc75-actions .zc72-listbtn.delete{margin-left:0}
 .zc72-listbtn.contract{background:#eaf5ff;color:#2677ad;border:1px solid #c5e5f7}
@@ -3303,7 +3305,7 @@ button, input, select, textarea { font-family: inherit; }
 <div class="list-screen" id="list-screen"><section class="panel"><div class="panel-head"><div class="list-heading"><div class="list-title-line"><h2 id="list-title">전체 차량 목록</h2><span id="buy-search-host" hidden></span></div><p id="list-desc">차량별 상태와 금액을 확인할 수 있습니다.</p></div><span id="snote-vehicle-count" role="status" aria-live="polite" aria-label="차량 대수" hidden></span><div class="zc-list-actions"><button id="zc80-buy-scan" type="button" class="zc80-buy-scan" aria-label="등록증으로 자동 등록" title="등록증으로 자동 등록" onclick="openAutoRegistration()" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3H5v18h14V9l-6-6ZM13 3v6h6M8 15h8M12 11v8"/></svg></button><button id="snote92-buy-manual" type="button" onclick="openAdd()" aria-label="신규 등록" title="신규 등록" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M12 5v14"/></svg></button><input id="zc-import-model-photos" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden onchange="importModelPhotoBundle(event)" /></div></div><div id="snote-sales-month-filter" class="snote-sales-month-filter" hidden>
  <div class="snote-sales-month-control"><label for="snote-sales-month">판매 월</label><div class="snote-sales-month-picker"><button id="snote-sales-month-prev" type="button" aria-label="이전 달" onclick="snote226MoveSalesMonth(-1)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 6-6 6 6 6"/></svg></button><select id="snote-sales-month" aria-label="판매 완료 월" onchange="snote226SetSalesMonth(this.value)"></select><button id="snote-sales-month-next" type="button" aria-label="다음 달" onclick="snote226MoveSalesMonth(1)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m10 6 6 6-6 6"/></svg></button></div><button id="snote-sales-current-month" type="button" onclick="snote226SetSalesMonth('current')">이번 달</button></div>
  <p class="snote-sales-month-summary"><span>판매 완료일 기준</span><strong id="snote-sales-month-count" role="status" aria-live="polite"></strong></p>
- </div><div class="searchrow"><label class="search"><span class="search-icon"></span><input aria-label="차량 검색" type="search" id="list-query" placeholder="차량명 또는 차량번호 검색" oninput="renderCars()" /></label><select aria-label="차량 상태" class="filter" id="list-filter" onchange="renderCars()"><option value="all">전체 상태</option><option value="판매중">판매중</option><option value="판매완료">판매완료</option></select></div><div class="tablewrap" id="list-table"></div><div class="mobile-list" id="list-mobile"></div><nav id="list-pagination" class="snote-pagination" aria-label="차량 목록 페이지"></nav></section></div>
+ </div><div class="searchrow"><label class="search"><span class="search-icon"></span><input aria-label="차량 검색" type="search" id="list-query" placeholder="차량명 또는 차량번호 검색" oninput="renderCars()" /></label><select aria-label="차량 상태" class="filter" id="list-filter" onchange="renderCars()"><option value="all">전체 상태</option><option value="판매중">판매중</option><option value="계약중">계약중</option><option value="판매완료">판매완료</option></select></div><div class="tablewrap" id="list-table"></div><div class="mobile-list" id="list-mobile"></div><nav id="list-pagination" class="snote-pagination" aria-label="차량 목록 페이지"></nav></section></div>
        <div class="alt-screen" id="alt-screen">
          <section id="dealer-finance-overview" aria-label="수익 정산 현황" style="display:none">
            <div class="stats" id="stats"></div>
@@ -4635,12 +4637,13 @@ function updateNewCarPreview(){const target=$('new-visual-preview');if(!target)r
 function coverPhoto(c){let photos=carPhotos(c.id);return photos.find(p=>p.id===covers[c.id])||photos[0]||null}
 function thumbHtml(c){let photo=coverPhoto(c);if(photo)return `<img src="${esc(photo.url)}" alt="${esc(c.model)} 실차 사진" />`;const visual=fallbackImage(c);return `<img src="${esc(visual.src)}" alt="${esc(c.model)} ${esc(visual.label)}"/><span class="zc-ref-label">${esc(visual.label)}</span>`}
 function mediaCountHtml(c){let n=carPhotos(c.id).length;let docs=(carFiles(c.id).some(m=>m.group==='registration')?1:0)+(carFiles(c.id).filter(m=>m.group==='inspection1'||m.group==='inspection2').length);return `<span class="media-col"><strong>${n}</strong>/10장 · 서류 <strong>${docs}</strong>/3</span>`}
-function statusClass(s){return s==='판매완료'?'done':s==='수리중'?'pending':'onsale'}
+function statusClass(s){return s==='판매완료'?'done':s==='계약중'?'contract':s==='수리중'?'pending':'onsale'}
 function statusSelect(c){
  if(isAccountant())return `<span class="status ${statusClass(c.status)}" title="경리 계정은 판매·삭제 권한이 없습니다">${esc(c.status)}</span>`;
  // 매입관리와 판매완료 목록에서만 취소 메뉴를 보여줍니다.
- const values=isPurchaseListRoute()&&c.status!=='판매완료'?['판매중','판매완료','매입취소']:
-  route==='sell'&&c.status==='판매완료'?['판매중','판매완료','판매취소']:['판매중','판매완료'];
+ const active=['판매중','계약중','판매완료'];
+ const values=isPurchaseListRoute()&&c.status!=='판매완료'?[...active,'매입취소']:
+  route==='sell'&&c.status==='판매완료'?['판매중','판매완료','판매취소']:c.status==='판매완료'?['판매중','판매완료']:active;
  return `<select class="status-select ${statusClass(c.status)}" aria-label="${esc(c.plate)} 차량 상태 변경" onclick="event.stopPropagation()" onkeydown="event.stopPropagation()" onchange="changeVehicleStatus(event,'${c.id}')">${values.map(s=>`<option value="${s}" ${c.status===s?'selected':''}>${s==='매입취소'?'매입 취소':s==='판매취소'?'판매 취소':s}</option>`).join('')}</select>`;
 }
 let pendingStatusChange=null;
@@ -4653,7 +4656,8 @@ function snote237DeleteVehicle(){
 function changeVehicleStatus(event,id,options={}){event?.stopPropagation();if(!currentUser)return;if(isAccountant()){toast('경리 계정은 차량 판매·판매취소·삭제를 할 수 없습니다.');return;}
  const c=cars.find(x=>x.id===id&&canManageCar(x));if(!c)return;
  const next=event.target.value,old=c.status;event.target.value=old;
- if(!['판매중','판매완료','매입취소','판매취소'].includes(next)||next===old)return;
+ if(!['판매중','계약중','판매완료','매입취소','판매취소'].includes(next)||next===old)return;
+ if(next==='계약중'&&old==='판매완료')return;
  // 화면별 허용 작업을 재검증해, 임의 이벤트로 다른 메뉴에서 삭제하지 못하도록 합니다.
  if(next==='매입취소'&&!(options.fromDetail&&activeCarId===id&&$('vehicle-overlay').classList.contains('open'))&&(!isPurchaseListRoute()||old==='판매완료'))return;
  if(next==='판매취소'&&(route!=='sell'||old!=='판매완료'))return;
@@ -4666,7 +4670,7 @@ function changeVehicleStatus(event,id,options={}){event?.stopPropagation();if(!c
  $('status-target').innerHTML=cancel?`<span class="status cancel-pill">${next==='매입취소'?'차량 삭제':'매입 관리 복귀'}</span>`:`<span class="status ${statusClass(next)}">${esc(next)}</span>`;
  const sale=next==='판매완료';$('confirm-sale-fields').style.display=sale?'grid':'none';
  $('confirm-sold-date').value=c.soldAt||todayLocal();$('confirm-sold-price').value=detailMoneyValue(c.soldPrice??c.sell);
- $('status-confirm-copy').textContent=next==='매입취소'?'선택한 차량을 휴지통으로 이동합니다. 계속하시겠습니까?':next==='판매취소'?'판매완료 처리를 취소하고 이 차량을 매입 관리로 되돌리시겠습니까?':sale?'판매를 완료하려면 판매 날짜와 실제 판매 금액을 입력한 뒤 확인해주세요.':'차량 상태를 변경하시겠습니까?';
+ $('status-confirm-copy').textContent=next==='매입취소'?'선택한 차량을 휴지통으로 이동합니다. 계속하시겠습니까?':next==='판매취소'?'판매완료 처리를 취소하고 이 차량을 매입 관리로 되돌리시겠습니까?':sale?'판매를 완료하려면 판매 날짜와 실제 판매 금액을 입력한 뒤 확인해주세요.':next==='계약중'?'계약중으로 표시하고 매입관리 목록에 그대로 유지합니다.':'차량 상태를 변경하시겠습니까?';
  $('status-confirm-warning').textContent=next==='매입취소'?'차량 정보, 비용, 사진·서류와 연결된 고객정보를 휴지통에 보관합니다. 휴지통에서 복원할 수 있습니다.':next==='판매취소'?'차량과 첨부 사진·서류는 유지됩니다. 판매완료 날짜와 실제 판매가 기록은 삭제되고, 재고 및 매입관리 목록으로 이동합니다.':sale?'확인하면 차량이 판매 완료 페이지로 이동하고, 재고 및 매입관리 목록에서는 제외됩니다.':old==='판매완료'?'확인하면 차량이 재고 관리와 매입관리 목록으로 돌아갑니다. 기존 판매 날짜·금액은 기록으로 남지만 활성 재고의 마진 계산에는 사용되지 않습니다.':'상태 변경 후에도 차량정보와 등록한 사진·비용 내역은 유지됩니다.';
  if(isAccountant()){
    if(next==='매입취소')$('status-confirm-warning').textContent='차량과 연결된 자료를 휴지통에 보관하며, 휴지통에서 복원할 수 있습니다.';
@@ -4769,6 +4773,7 @@ async function confirmStatusChange(){
  const backup={...c};c.status=req.next;
  if(req.next==='판매완료'){c.soldAt=soldAt;c.soldPrice=soldPrice;const interest=snote239Interest(c);if(interest.ready){c.costs={...c.costs,inventoryInterest:interest.amountWon};c.inventoryInterestSnapshot=globalThis.SnoteInventoryInterest.snapshot(c,snoteInventoryLendersFor(c));}}
  if(!persistCars(c.ownerId)){for(const key of Object.keys(c))if(!Object.hasOwn(backup,key))delete c[key];Object.assign(c,backup);toast('상태를 저장하지 못했습니다.');return}
+ if(req.next==='계약중'&&isPurchaseListRoute()&&!['all','계약중'].includes($('list-filter').value))$('list-filter').value='all';
  closeStatusModal();const wasSold=req.old==='판매완료';if(activeCarId===req.id)closeVehicle();
  buildStats();buildMenus();
  if(req.next==='판매완료'){if(navigate('sell'))snote226SetSalesMonth(snote226SoldMonth(c)||'undated');toast('판매일과 실제 판매가를 저장했습니다.');return}
@@ -7899,10 +7904,10 @@ async function buildCustomerManagement(){
   await window.SnoteCustomerList.mount({host,records,isCurrent:current,readIdentities:records=>window.snote214ReadCustomerIdentities(records),
    carFor:r=>{const linked=cars.filter(c=>String(c.id)===String(r.carId)&&c.ownerId===ownerId);return linked.length===1?linked[0]:null;},
    renderRow:(r,identity,car)=>{
-    const status=car?.status==='판매완료'?'판매완료':'판매중';
+    const status=car?.status==='판매완료'?'판매완료':car?.status==='계약중'?'계약중':'판매중';
     const action=(kind,attr,label)=>`<button class="snote-list-action ${kind==='delete'?'is-danger':''}" type="button" ${attr}="${esc(r.carId)}" ${kind==='delete'?'data-customer-generation="'+esc(window.snoteCustomerRestoreGeneration?.(r)||'')+'" data-customer-updated-at="'+esc(window.snoteCustomerUpdatedAt?.(r)||'')+'"':''} aria-label="${label}" data-tooltip="${label}">${snote237CustomerIcon(kind)}</button>`;
     const visual=car?thumbHtml(car):'<svg viewBox="0 0 64 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m13 21 6-12h26l6 12M11 22h42v15H11zM15 37v4m34-4v4M17 27h6m18 0h6"/></svg>';
-    return `<tr><td data-label="차량"><button type="button" class="snote202-car-open snote-customer-car" data-customer-car="${esc(r.carId)}" aria-label="${esc(car?.model||r.carModel||r.plate||'차량')} 차량 상세 보기"><span class="snote-customer-thumb" aria-hidden="true">${visual}</span><span class="snote-customer-car-copy"><strong>${esc(car?.model||r.carModel||'연결 차량 없음')}</strong><small>${esc(car?.plate||r.plate||'')}</small></span></button></td><td data-label="고객"><b>${esc(r.name||'')}</b><small>${esc(r.phone||'')}</small></td><td data-label="식별번호" data-customer-identity="${esc(r.carId)}">${esc(identity)}</td><td data-label="상태"><span class="zc75-status ${status==='판매완료'?'done':'selling'}">${status}</span></td><td data-label="주소">${esc(r.address||'미입력')}</td><td data-label="관리"><div class="zc75-actions">${action('sale','data-customer-open','판매 진행')}${action('contract','data-customer-contract','계약서 확인')}${action('receipt','data-customer-receipt','인수증 확인')}${action('delete','data-customer-delete','고객 삭제')}</div></td></tr>`;
+    return `<tr><td data-label="차량"><button type="button" class="snote202-car-open snote-customer-car" data-customer-car="${esc(r.carId)}" aria-label="${esc(car?.model||r.carModel||r.plate||'차량')} 차량 상세 보기"><span class="snote-customer-thumb" aria-hidden="true">${visual}</span><span class="snote-customer-car-copy"><strong>${esc(car?.model||r.carModel||'연결 차량 없음')}</strong><small>${esc(car?.plate||r.plate||'')}</small></span></button></td><td data-label="고객"><b>${esc(r.name||'')}</b><small>${esc(r.phone||'')}</small></td><td data-label="식별번호" data-customer-identity="${esc(r.carId)}">${esc(identity)}</td><td data-label="상태"><span class="zc75-status ${status==='판매완료'?'done':status==='계약중'?'contract':'selling'}">${status}</span></td><td data-label="주소">${esc(r.address||'미입력')}</td><td data-label="관리"><div class="zc75-actions">${action('sale','data-customer-open','판매 진행')}${action('contract','data-customer-contract','계약서 확인')}${action('receipt','data-customer-receipt','인수증 확인')}${action('delete','data-customer-delete','고객 삭제')}</div></td></tr>`;
    }});
  }catch(e){if(current())host.innerHTML='<div class="empty">고객정보를 불러오지 못했습니다. 연결 상태를 확인해 주세요.</div>';}
 }
@@ -11255,7 +11260,7 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 <link rel="stylesheet" href="assets/workspace-reorder.css?v=2.136">
 <script src="assets/workspace-order-store.js?v=2.135" defer></script>
 <script src="assets/workspace-reorder.js?v=2.136" defer></script>
-<script src="assets/release-info.js?v=2.143" defer></script>
+<script src="assets/release-info.js?v=2.144" defer></script>
 <script src="assets/company-purchase.js?v=2.130" defer></script>
 <script src="assets/transfer-document-layout.js?v=2.143" defer></script>
 <script src="assets/transfer-name-seal.js?v=2.143" defer></script>
