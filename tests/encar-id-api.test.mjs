@@ -54,6 +54,11 @@ test('malformed, anonymous and rejected Auth identities cannot reach membership 
 test('upstream authentication failures and redirects fail closed without following another host',async t=>{
  for(const authResponse of[()=>json({message:'PRIVATE_UPSTREAM'},503),()=>new Response(null,{status:302,headers:{Location:'https://secret.invalid'}}),()=>new Response('{broken',{headers:{'Content-Type':'application/json'}})]){const s=fixture(t,{authResponse}),r=await run(createEncarIdHandler({search:s.search}));assert(r.status>=400);assert.equal(s.calls.length,1);assert.deepEqual(s.providers,[]);assert(!JSON.stringify(r.body).includes('PRIVATE'));assert(!JSON.stringify(r.body).includes('secret.invalid'));}
 });
+test('authentication transport and malformed upstream bodies identify the Auth stage without searching providers',async t=>{
+ for(const stage of['authResponse','memberResponse'])for(const response of[()=>{throw new TypeError('PRIVATE_AUTH_NETWORK https://secret.invalid');},()=>new Response('{broken'),()=>new Response('x'.repeat(65537))]){
+  const s=fixture(t,{[stage]:response}),r=await run(createEncarIdHandler({search:s.search}));assert.equal(r.status,502);assert.equal(r.body.code,'AUTH_UNAVAILABLE');assert.equal(r.body.error,'로그인 정보를 확인하지 못했습니다.');assert.equal(s.calls.length,stage==='authResponse'?1:2);assert.deepEqual(s.providers,[]);assert(!JSON.stringify(r.body).includes('PRIVATE'));assert(!JSON.stringify(r.body).includes('secret.invalid'));
+ }
+});
 test('only same-origin POST requests are accepted before any external traffic',async t=>{
  const s=fixture(t),handler=createEncarIdHandler({search:s.search});for(const method of['GET','PUT','DELETE','OPTIONS']){const r=await run(handler,request({}, {method}));assert.equal(r.status,405);}
  for(const headers of[{Origin:'https://foreign.invalid'},{'Sec-Fetch-Site':'cross-site'},{'Sec-Fetch-Site':'same-site'}])assert.equal((await run(handler,request({plate:PLATE},{headers}))).status,403);noTraffic(s);

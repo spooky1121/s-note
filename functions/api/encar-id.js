@@ -11,7 +11,12 @@ const fail=(code,status)=>Object.assign(new Error(code),{code,status});
 function json(value,status=200){return hardenAPIResponse(new Response(JSON.stringify(value),{status,headers:{'Content-Type':'application/json; charset=utf-8','X-Snote-Release':'2.145'}}));}
 function error(code,status=502){return json({ok:false,status:code==='NOT_FOUND'?'not_found':'error',code,error:MESSAGES[code]||MESSAGES.PROVIDERS_UNAVAILABLE},status);}
 function abortScope(parent,milliseconds){const controller=new AbortController(),abort=()=>controller.abort(parent?.reason);parent?.addEventListener('abort',abort,{once:true});if(parent?.aborted)abort();const timer=setTimeout(()=>controller.abort(fail('REQUEST_TIMEOUT',504)),milliseconds);return{signal:controller.signal,dispose(){clearTimeout(timer);parent?.removeEventListener('abort',abort);}};}
-async function boundedJson(url,headers,signal){const scope=abortScope(signal,5000);try{const response=await fetch(url,{method:'GET',headers,signal:scope.signal,redirect:'error',cache:'no-store'});if(!response.ok)throw fail(response.status===401? 'AUTH_FAILED':'AUTH_UNAVAILABLE',response.status===401?401:502);const bytes=await readBoundedBytes(response,65536,{timeoutMs:5000});return JSON.parse(new TextDecoder().decode(bytes));}finally{scope.dispose();}}
+async function boundedJson(url,headers,signal){
+ const scope=abortScope(signal,5000);
+ try{const response=await fetch(url,{method:'GET',headers,signal:scope.signal,redirect:'error',cache:'no-store'});if(!response.ok)throw fail(response.status===401?'AUTH_FAILED':'AUTH_UNAVAILABLE',response.status===401?401:502);const bytes=await readBoundedBytes(response,65536,{timeoutMs:5000});return JSON.parse(new TextDecoder().decode(bytes));}
+ catch(e){if(signal.aborted||e?.code==='AUTH_FAILED'||e?.code==='AUTH_UNAVAILABLE')throw e;throw fail('AUTH_UNAVAILABLE',502);}
+ finally{scope.dispose();}
+}
 async function authorize(request,env,signal){
  const origin=typeof env.SUPABASE_URL==='string'?env.SUPABASE_URL.trim().replace(/\/$/,''):'',key=typeof env.SUPABASE_PUBLISHABLE_KEY==='string'?env.SUPABASE_PUBLISHABLE_KEY.trim():'';
  if(!/^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(origin)||!key||key.length>8192)throw fail('AUTH_UNAVAILABLE',503);
