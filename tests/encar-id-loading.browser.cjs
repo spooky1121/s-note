@@ -1,23 +1,29 @@
 'use strict';
-// Actual application + native Chromium tabs; all identity, data and responses are synthetic.
+// Actual application + Chromium. Identity, cars and all responses are synthetic.
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 const{chromium}=require('./encar/node_modules/playwright');
 const{fixture,setBrowser,finish}=require('./encar/browser-smoke.cjs');
-const{install,clean,confirm,closePopup,pending,found,dialog,idText}=require('./encar-id.browser.cjs');
-const OUT=process.env.ENCAR_LOADING_ARTIFACT_DIR||'/workspace/work/encar-ad-tab-ui/loading';fs.mkdirSync(OUT,{recursive:true});
-async function run(width){const f=await fixture(width,null,{lookupUnavailable:true}),p=f.page;let state;try{
- state=await install(f);const button=p.locator('#vehicle-encar-check'),modal=dialog(p),loader=modal.locator('[data-encar-id-loading]'),status=modal.locator('[role="status"]');
- const active=async(body=found())=>{const popup=await pending(f,state,button,body);await loader.waitFor({state:'visible'});assert.equal(await loader.getAttribute('aria-hidden'),'true');assert.equal(await modal.getAttribute('aria-busy'),'true');assert.match(await popup.locator('body').innerText(),/엔카|광고|검색/);return popup;};
- const stopped=async()=>{await loader.waitFor({state:'hidden'});assert.equal(await modal.getAttribute('aria-busy'),null);};
- const first=await active();assert.equal(await loader.locator('.snote-encar-id-scan-lens').evaluate(e=>getComputedStyle(e).animationName),'snote-encar-search');assert.equal(await loader.locator('.snote-encar-id-loading-dots span').count(),3);assert.match(await status.innerText(),/찾고 있습니다|검색/);await p.screenshot({path:path.join(OUT,'searching-'+width+'.png')});
- await p.emulateMedia({reducedMotion:'reduce'});assert.equal(await loader.locator('.snote-encar-id-scan-lens').evaluate(e=>getComputedStyle(e).animationName),'none');await p.screenshot({path:path.join(OUT,'searching-reduced-'+width+'.png')});await p.emulateMedia({reducedMotion:'no-preference'});
- state.held.shift()();await first.waitForURL('https://fem.encar.com/cars/detail/43123456');await modal.waitFor({state:'hidden'});await stopped();assert.equal(await first.evaluate(()=>window.opener===null),true);await first.close();await clean(f,state);
- const limited=await active({ok:false,code:'UPSTREAM_RATE_LIMITED'});state.held.shift()();await closePopup(limited);await status.filter({hasText:'검색 브라우저의 실행 요청'}).waitFor();await stopped();await confirm(p);
- const cancelled=await active();await confirm(p);await closePopup(cancelled);await stopped();state.held.shift()();await p.waitForTimeout(50);
- await p.evaluate(()=>{const original=window.setTimeout;window.__fastEncarDeadline=true;window.setTimeout=(fn,ms,...args)=>original(fn,window.__fastEncarDeadline&&(ms===55000||ms===60000)?120:ms,...args);});
- const timedOut=await active();await closePopup(timedOut);await status.filter({hasText:'시간이 초과'}).waitFor();await stopped();await p.evaluate(()=>window.__fastEncarDeadline=false);state.held.shift()();await confirm(p);
- const stale=await active();await p.evaluate(()=>{__encarFixtureState.user={id:'99999999-9999-4999-8999-999999999999'};currentUser={...currentUser,username:'other-synthetic-account'};});await modal.waitFor({state:'hidden'});await closePopup(stale);await stopped();state.held.shift()();await p.waitForTimeout(50);
- assert.equal(await idText(p),'');assert.equal(await p.evaluate(()=>__encarFixtureWrites.length),0);assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);assert.equal(state.requests.length,5);console.log('PASS Encar tab/loading',width,'native reserved tab, success/rate/close/timeout/account-change + reduced-motion');return{width,requests:state.requests.length,pass:true};
- }finally{state?.held.splice(0).forEach(resolve=>resolve());await finish(f);}}
-async function main(){const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium'});setBrowser(browser);try{const results=[];for(const width of[1440,390])results.push(await run(width));fs.writeFileSync(path.join(OUT,'results.json'),JSON.stringify({syntheticOnly:true,liveProviderVerified:false,results},null,2)+'\n');}finally{await browser.close();}}
+const OUT=process.env.ENCAR_LOADING_ARTIFACT_DIR||'/workspace/work/encar-id-gloar-ui/loading';fs.mkdirSync(OUT,{recursive:true});
+const found={ok:true,status:'found',plate:'12가3456',id:'43123456',provider:'gloar'};
+async function run(width){
+ const f=await fixture(width,null,{lookupUnavailable:true}),p=f.page;let release=null,next=found,requests=0;
+ try{
+  await p.route('**/api/encar-id',async route=>{requests++;await new Promise(resolve=>{release=resolve;});release=null;try{await route.fulfill({status:next.ok?200:429,contentType:'application/json',body:JSON.stringify(next)});}catch{}});
+  await p.waitForFunction(()=>!!window.SnoteEncarId);await p.locator('#vehicle-encar-check:not([disabled])').waitFor();
+  const dialog=p.locator('#snote-encar-id-dialog'),loader=dialog.locator('[data-encar-id-loading]'),status=dialog.locator('[role="status"]');
+  async function pending(){await p.locator('#vehicle-encar-check').click();await loader.waitFor({state:'visible'});for(let i=0;!release&&i<100;i++)await p.waitForTimeout(10);assert(release,'A pending real request must hold the animation');assert.equal(await loader.getAttribute('aria-hidden'),'true');assert.equal(await dialog.getAttribute('aria-busy'),'true');}
+  async function stopped(){await loader.waitFor({state:'hidden'});assert.equal(await dialog.getAttribute('aria-busy'),null);}
+  await pending();
+  assert.equal(await loader.locator('.snote-encar-id-scan-lens').evaluate(e=>getComputedStyle(e).animationName),'snote-encar-search');
+  assert.equal(await loader.locator('.snote-encar-id-loading-dots span').count(),3);assert.equal(await status.innerText(),'GLOAR DATA에서 광고 ID를 찾고 있습니다.');await p.screenshot({path:path.join(OUT,'searching-'+width+'.png')});
+  await p.emulateMedia({reducedMotion:'reduce'});assert.equal(await loader.locator('.snote-encar-id-scan-lens').evaluate(e=>getComputedStyle(e).animationName),'none');assert.match(await status.innerText(),/찾고 있습니다/);await p.screenshot({path:path.join(OUT,'searching-reduced-'+width+'.png')});await p.emulateMedia({reducedMotion:'no-preference'});
+  release();await dialog.locator('[data-encar-ad-id]').filter({hasText:'43123456'}).waitFor();await stopped();assert.equal((await dialog.innerText()).trim(),'광고 ID\n43123456\n확인');await dialog.getByRole('button',{name:'확인',exact:true}).click();
+  next={ok:false,code:'UPSTREAM_RATE_LIMITED'};await pending();release();await status.filter({hasText:'검색 브라우저의 실행 요청'}).waitFor();await stopped();await dialog.getByRole('button',{name:'확인',exact:true}).click();
+  next=found;await pending();await dialog.getByRole('button',{name:'확인',exact:true}).click();await stopped();assert.equal(await dialog.isVisible(),false);release();await p.waitForTimeout(40);
+  await pending();await p.evaluate(()=>{__encarFixtureState.user={id:'99999999-9999-4999-8999-999999999999'};currentUser={...currentUser,username:'other-synthetic-account'};});await dialog.waitFor({state:'hidden'});await stopped();release();await p.waitForTimeout(40);
+  assert.equal(await dialog.locator('[data-encar-ad-id]').innerText(),'');assert.equal(await p.evaluate(()=>__encarFixtureWrites.length),0);assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);assert.equal(requests,4);
+  console.log('PASS searching animation',width,'pending/success/rate-limit/close/account-change + reduced-motion; no writes');return{width,requests,pass:true};
+ }finally{release?.();await finish(f);}
+}
+async function main(){const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium'});setBrowser(browser);try{const results=[];for(const width of[1440,390])results.push(await run(width));fs.writeFileSync(path.join(OUT,'results.json'),JSON.stringify({syntheticOnly:true,results},null,2)+'\n');}finally{await browser.close();}}
 if(require.main===module)main().catch(error=>{console.error(error.stack);process.exitCode=1;});
