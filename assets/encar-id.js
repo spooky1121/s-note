@@ -1,4 +1,4 @@
-/* External advertisement ID lookup only. No listing, price, vehicle or local writes. */
+/* Advertisement ID lookup and manual Encar link. No price, vehicle or local writes. */
 (()=>{'use strict';
  if(window.SnoteEncarId)return;
  const bridge=()=>window.snoteEncarIdBridge,ID=/^[1-9][0-9]{5,11}$/,providers=new Set(['gloar']);
@@ -10,11 +10,13 @@
  for(const name of['card','beam','lens']){const shape=document.createElement('span');shape.className='snote-encar-id-scan-'+name;scan.append(shape);}
  const dots=document.createElement('div');dots.className='snote-encar-id-loading-dots';for(let index=0;index<3;index++)dots.append(document.createElement('span'));loading.append(scan,dots);
  const output=document.createElement('output');output.dataset.encarAdId='';output.hidden=true;output.setAttribute('aria-label','광고 ID');
+ const adLink=document.createElement('a');adLink.dataset.encarAdLink='';adLink.className='snote-encar-id-link';adLink.target='_blank';adLink.rel='noopener noreferrer';adLink.hidden=true;
  const status=document.createElement('p');status.className='snote-encar-id-status';status.setAttribute('role','status');status.setAttribute('aria-live','polite');
  const confirm=document.createElement('button');confirm.type='button';confirm.className='snote-encar-id-confirm';confirm.textContent='확인';confirm.addEventListener('click',close);
- dialog.append(title,loading,output,status,confirm);document.body.append(dialog);
+ dialog.append(title,loading,output,adLink,status,confirm);document.body.append(dialog);
+ function clearLink(){adLink.hidden=true;adLink.removeAttribute('href');adLink.textContent='';}
  function busy(active){loading.hidden=!active;if(active)dialog.setAttribute('aria-busy','true');else dialog.removeAttribute('aria-busy');}
- function close(){const active=session;session=null;++sequence;if(active){active.controller.abort();clearTimeout(active.timeout);}if(dialog.open)dialog.close();busy(false);output.value='';output.textContent='';output.hidden=true;status.textContent='';sync();}
+ function close(){const active=session;session=null;++sequence;if(active){active.controller.abort();clearTimeout(active.timeout);}if(dialog.open)dialog.close();busy(false);output.value='';output.textContent='';output.hidden=true;clearLink();status.textContent='';sync();}
  function live(s){return session===s&&dialog.open&&bridge()?.current(s.context)===true;}
  function message(code){return({SEARCH_NOT_CONFIGURED:'검색 서비스 설정을 확인해 주세요.',SEARCH_AUTH_FAILED:'검색 서비스의 인증 설정을 확인해 주세요.',SEARCH_RATE_LIMITED:'검색 서비스가 요청을 제한했습니다. 잠시 후 다시 확인해 주세요.',SEARCH_UNAVAILABLE:'검색 서비스에 연결하지 못했습니다.',SEARCH_INVALID_RESPONSE:'검색 서비스의 응답을 확인하지 못했습니다.',SEARCH_TIMEOUT:'광고 검색 시간이 초과됐습니다.',NOT_FOUND:'광고 ID를 찾지 못했습니다.',AUTH_REQUIRED:'다시 로그인한 뒤 확인해 주세요.',AUTH_FAILED:'다시 로그인한 뒤 확인해 주세요.',STAFF_REQUIRED:'현재 계정의 차량을 다시 확인해 주세요.',RATE_LIMITED:'요청이 많습니다. 잠시 후 다시 확인해 주세요.',UPSTREAM_RATE_LIMITED:'검색 브라우저의 실행 요청이 제한되었습니다. 잠시 후 다시 확인해 주세요.',LOOKUP_NOT_CONFIGURED:'광고 검색 서버 설정을 확인해 주세요.',BROWSER_UNAVAILABLE:'광고 검색 서버에 연결하지 못했습니다. 잠시 후 다시 확인해 주세요.',BROWSER_BUSY:'다른 광고 검색이 진행 중입니다. 잠시 후 다시 확인해 주세요.',AUTH_UNAVAILABLE:'로그인 정보를 확인하지 못했습니다. 잠시 후 다시 확인해 주세요.',PROVIDER_UNSUPPORTED:'GLOAR DATA의 검색 화면을 확인하지 못했습니다.',PROVIDERS_UNAVAILABLE:'GLOAR DATA의 검색 응답을 확인하지 못했습니다.',GLOAR_PAGE_UNAVAILABLE:'GLOAR DATA에 연결하지 못했습니다.',GLOAR_ACCESS_BLOCKED:'GLOAR DATA에서 검색 브라우저의 접근을 제한했습니다.',GLOAR_NAVIGATION_BLOCKED:'GLOAR DATA의 검색 화면을 확인하지 못했습니다.',GLOAR_INPUT_MISSING:'GLOAR DATA의 검색창을 찾지 못했습니다.',GLOAR_INPUT_UNAVAILABLE:'GLOAR DATA의 검색창을 사용할 수 없습니다.',GLOAR_INPUT_UNCONFIRMED:'GLOAR DATA의 검색창에 차량번호가 적용됐는지 확인하지 못했습니다.',GLOAR_FOCUS_FAILED:'GLOAR DATA의 검색창을 선택하지 못했습니다.',GLOAR_ENTER_FAILED:'GLOAR DATA의 차량 검색을 실행하지 못했습니다.',GLOAR_NO_NAVIGATION:'GLOAR DATA의 검색 결과가 갱신됐는지 확인하지 못했습니다.',GLOAR_UNAVAILABLE:'GLOAR DATA에 연결하지 못했습니다.',GLOAR_SEARCH_UNCONFIRMED:'GLOAR DATA의 검색 결과가 갱신됐는지 확인하지 못했습니다.',GLOAR_ID_UNVERIFIED:'GLOAR DATA에서 원본 엔카 광고 ID를 확인하지 못했습니다.',GLOAR_AMBIGUOUS:'GLOAR DATA에서 광고 ID를 하나로 확인하지 못했습니다.',BROWSER_AUTH_FAILED:'광고 검색 서버의 인증 설정을 확인해 주세요.',REQUEST_TIMEOUT:'광고 ID 검색 시간이 초과됐습니다. 다시 확인해 주세요.'})[code]||'광고 ID를 확인하지 못했습니다. 잠시 후 다시 확인해 주세요.';}
  async function abortable(signal,operation){
@@ -27,7 +29,7 @@
   if(session)return false;
   const context=bridge()?.context(String(carId??''),options.entry);if(!context)return false;
   const controller=new AbortController(),s={context,controller,sequence:++sequence,timeout:null,timedOut:false};session=s;
-  output.hidden=true;output.textContent='';output.value='';status.textContent='GLOAR DATA에서 광고 ID를 찾고 있습니다.';busy(true);dialog.showModal();sync();
+  output.hidden=true;output.textContent='';output.value='';clearLink();status.textContent='GLOAR DATA에서 광고 ID를 찾고 있습니다.';busy(true);dialog.showModal();sync();
   s.timeout=setTimeout(()=>{s.timedOut=true;controller.abort();},55000);
   try{
    const token=await abortable(controller.signal,()=>bridge().accessToken(context));if(!live(s))return false;if(!token)throw Error('AUTH_REQUIRED');
@@ -36,8 +38,9 @@
    if(!response.ok||data?.ok!==true||data.status!=='found')throw Error(typeof data?.code==='string'?data.code:data?.status==='not_found'?'NOT_FOUND':'INVALID_RESPONSE');
    if(data.plate!==context.plate||typeof data.id!=='string'||!ID.test(data.id)||!providers.has(data.provider))throw Error('INVALID_RESPONSE');
    output.value=data.id;output.textContent=data.id;output.hidden=false;status.textContent='';
+   const url='https://fem.encar.com/cars/detail/'+data.id;adLink.href=url;adLink.textContent=url;adLink.hidden=false;
    return true;
-  }catch(error){if(live(s)){output.hidden=true;status.textContent=message(s.timedOut?'REQUEST_TIMEOUT':error?.message);}}finally{clearTimeout(s.timeout);if(live(s)){busy(false);confirm.focus();}}
+  }catch(error){if(live(s)){output.hidden=true;clearLink();status.textContent=message(s.timedOut?'REQUEST_TIMEOUT':error?.message);}}finally{clearTimeout(s.timeout);if(live(s)){busy(false);confirm.focus();}}
   return false;
  }
  function sync(){
@@ -48,6 +51,7 @@
   }
  }
  const detail=document.getElementById('vehicle-encar-check');detail?.addEventListener('click',event=>{event.preventDefault();event.stopPropagation();void lookup(detail.dataset.encarIdCar,{entry:'detail'});});
+ adLink.addEventListener('click',event=>{if(!session||!live(session)||adLink.hidden){event.preventDefault();close();}});
  dialog.addEventListener('cancel',event=>{event.preventDefault();close();});
  const list=document.getElementById('list-screen');if(list)new MutationObserver(sync).observe(list,{childList:true,subtree:true});
  const overlay=document.getElementById('vehicle-overlay');if(overlay)new MutationObserver(sync).observe(overlay,{attributes:true,attributeFilter:['class','aria-hidden'],childList:true,subtree:true});
