@@ -27,36 +27,41 @@ function fixture(t,config={}){
 }
 async function run(handler,req=request(),env=ENV){const response=await handler({request:req,env});assert.match(response.headers.get('Cache-Control'),/no-store.*private/);assert.equal(response.headers.get('X-Content-Type-Options'),'nosniff');assert.equal(response.headers.get('Cross-Origin-Resource-Policy'),'same-origin');assert.match(response.headers.get('Content-Type'),/^application\/json/);return{response,status:response.status,body:await response.json()};}
 function noTraffic(state){assert.deepEqual(state.calls,[]);assert.deepEqual(state.providers,[]);}
+test('configuration GET exposes presence only and never authenticates or searches',async t=>{
+ const s=fixture(t);for(const key of['','synthetic-search-secret']){
+  const r=await run(onRequest,request({}, {method:'GET',headers:{Authorization:''}}),{...ENV,TAVILY_API_KEY:key});assert.equal(r.status,200);assert.deepEqual(r.body,{ok:true,configured:!!key,provider:'tavily',release:'2.147'});assert(!JSON.stringify(r.body).includes('synthetic-search-secret'));assert(!JSON.stringify(r.body).includes(ENV.SUPABASE_URL));
+ }noTraffic(s);
+});
 test('verified active membership returns only the requested advertisement ID payload',async t=>{
  const s=fixture(t),r=await run(createEncarIdHandler({search:s.search}));assert.equal(r.status,200);assert.deepEqual(r.body,{ok:true,status:'found',plate:PLATE,id:'43123456',provider:'carnect'});assert.equal(s.calls.length,2);assert.deepEqual(s.providers,['carnect']);const text=JSON.stringify(r.body);for(const value of['PRIVATE_METADATA','PRIVATE_PHONE','priceWon',TOKEN,USER,COMPANY])assert(!text.includes(value));
 });
 test('injected search is ordered and a later source can find the exact plate without a write',async t=>{
  const s=fixture(t,{search:p=>p.id==='carnect'?{status:'not_found'}:{status:'found',plate:PLATE,id:'43123457',sourceUrl:p.url}}),r=await run(createEncarIdHandler({search:s.search}));assert.equal(r.status,200);assert.equal(r.body.provider,'gloar');assert.deepEqual(s.providers,['carnect','gloar']);assert.equal(s.calls.length,2);assert(s.calls.every(c=>c.options.method==='GET'));
 });
-test('the production export refuses missing Browser Run credentials after authorization without an external request',async t=>{
- const s=fixture(t),r=await run(onRequest);assert.equal(r.status,503);assert.equal(r.body.ok,false);assert.equal(r.body.code,'LOOKUP_NOT_CONFIGURED');assert.equal(r.body.status,'error');assert(!('id'in r.body));assert.equal(s.calls.length,2);assert.deepEqual(s.providers,[]);
+test('the production export refuses missing search credentials after authorization without an external request',async t=>{
+ const s=fixture(t),r=await run(onRequest);assert.equal(r.status,503);assert.equal(r.body.ok,false);assert.equal(r.body.code,'SEARCH_NOT_CONFIGURED');assert.equal(r.body.status,'error');assert(!('id'in r.body));assert.equal(s.calls.length,2);assert.deepEqual(s.providers,[]);
 });
-test('one authorized browser transport serves the ordered search and closes immediately after the first match',async t=>{
+test('one authorized search transport serves the ordered lookup and releases after the first match',async t=>{
  const s=fixture(t);let launches=0,closed=0;
- const createSearch=async({env,signal})=>{assert.equal(s.calls.length,2,'Auth and active membership must precede paid browser launch');assert.equal(env,ENV);assert.equal(signal.aborted,false);launches++;return{search:s.search,close:async()=>{closed++;}};};
+ const createSearch=async({env,signal})=>{assert.equal(s.calls.length,2,'Auth and active membership must precede the external search');assert.equal(env,ENV);assert.equal(signal.aborted,false);launches++;return{search:s.search,close:async()=>{closed++;}};};
  const r=await run(createEncarIdHandler({createSearch}));assert.equal(r.status,200);assert.equal(r.body.id,'43123456');assert.equal(launches,1);assert.equal(closed,1);assert.deepEqual(s.providers,['carnect']);
 });
-test('a bounded shared session creation can use the originating Pages waitUntil with its proper context',async t=>{
+test('a custom transport can use the originating Pages waitUntil with its proper context',async t=>{
  const s=fixture(t),held=[];let context;const handler=createEncarIdHandler({createSearch:async({waitUntil})=>{const creation=Promise.resolve('synthetic metadata');waitUntil(creation);return{search:s.search};}});
  context={request:request(),env:ENV,waitUntil(promise){assert.equal(this,context);held.push(promise);}};
  const response=await handler(context);assert.equal(response.status,200);assert.equal(held.length,1);assert.deepEqual(await Promise.all(held),['synthetic metadata']);assert.deepEqual(s.providers,['carnect']);
 });
-test('all three sources share one browser and stop at Trust instead of launching parallel searches',async t=>{
+test('all three sources use one transport and stop at Trust instead of launching parallel searches',async t=>{
  let active=0,closed=0,launches=0;const order=[];
  const s=fixture(t,{search:async p=>{assert.equal(active,0);active++;order.push(p.id);await new Promise(resolve=>setTimeout(resolve,1));active--;return p.id==='trust'?{status:'found',plate:PLATE,id:'43123457',sourceUrl:p.url}:{status:'not_found'};}});
  const r=await run(createEncarIdHandler({createSearch:async()=>{launches++;return{search:s.search,close:()=>{closed++;}};}}));assert.equal(r.status,200);assert.equal(r.body.provider,'trust');assert.deepEqual(order,['carnect','gloar','trust']);assert.equal(launches,1);assert.equal(closed,1);
 });
-test('an unauthorized request never constructs a browser transport',async t=>{
+test('an unauthorized request never constructs an external search transport',async t=>{
  const s=fixture(t,{members:[]});let launches=0;const r=await run(createEncarIdHandler({createSearch:async()=>{launches++;return{search:s.search};}}));assert.equal(r.status,403);assert.equal(launches,0);assert.deepEqual(s.providers,[]);
 });
-test('Browser Run launch failures are safe, preserve request limits, and never attempt another launch',async t=>{
- for(const code of['BROWSER_UNAVAILABLE','BROWSER_BUSY','UPSTREAM_RATE_LIMITED']){
-  const s=fixture(t);let launches=0;const r=await run(createEncarIdHandler({createSearch:async()=>{launches++;throw Object.assign(new Error('PRIVATE_BROWSER_TOKEN'),{code,retryAfter:27});}}));assert.equal(r.status,code==='UPSTREAM_RATE_LIMITED'?429:code==='BROWSER_BUSY'?503:502);assert.equal(r.body.code,code);assert.equal(launches,1);assert.deepEqual(s.providers,[]);assert(!JSON.stringify(r.body).includes('PRIVATE'));if(code==='UPSTREAM_RATE_LIMITED'||code==='BROWSER_BUSY')assert.equal(r.response.headers.get('Retry-After'),'27');
+test('search service configuration and quota failures stop after one transport initialization',async t=>{
+ for(const code of['SEARCH_AUTH_FAILED','SEARCH_UNAVAILABLE','SEARCH_INVALID_RESPONSE','SEARCH_RATE_LIMITED']){
+  const s=fixture(t);let launches=0;const r=await run(createEncarIdHandler({createSearch:async()=>{launches++;throw Object.assign(new Error('PRIVATE_BROWSER_TOKEN'),{code,retryAfter:27});}}));assert.equal(r.status,code==='SEARCH_RATE_LIMITED'?429:502);assert.equal(r.body.code,code);assert.equal(launches,1);assert.deepEqual(s.providers,[]);assert(!JSON.stringify(r.body).includes('PRIVATE'));if(code==='SEARCH_RATE_LIMITED')assert.equal(r.response.headers.get('Retry-After'),'27');
  }
 });
 test('an empty result or a cleanup failure never opens an ad or replaces a successful ID response',async t=>{
@@ -85,8 +90,8 @@ test('authentication transport and malformed upstream bodies identify the Auth s
   const s=fixture(t,{[stage]:response}),r=await run(createEncarIdHandler({search:s.search}));assert.equal(r.status,502);assert.equal(r.body.code,'AUTH_UNAVAILABLE');assert.equal(r.body.error,'로그인 정보를 확인하지 못했습니다.');assert.equal(s.calls.length,stage==='authResponse'?1:2);assert.deepEqual(s.providers,[]);assert(!JSON.stringify(r.body).includes('PRIVATE'));assert(!JSON.stringify(r.body).includes('secret.invalid'));
  }
 });
-test('only same-origin POST requests are accepted before any external traffic',async t=>{
- const s=fixture(t),handler=createEncarIdHandler({search:s.search});for(const method of['GET','PUT','DELETE','OPTIONS']){const r=await run(handler,request({}, {method}));assert.equal(r.status,405);}
+test('unsupported methods and cross-origin POST fail before external traffic',async t=>{
+ const s=fixture(t),handler=createEncarIdHandler({search:s.search});for(const method of['PUT','DELETE','OPTIONS']){const r=await run(handler,request({}, {method}));assert.equal(r.status,405);}
  for(const headers of[{Origin:'https://foreign.invalid'},{'Sec-Fetch-Site':'cross-site'},{'Sec-Fetch-Site':'same-site'}])assert.equal((await run(handler,request({plate:PLATE},{headers}))).status,403);noTraffic(s);
 });
 test('bearer syntax, JSON media type and content encoding fail before Auth or provider traffic',async t=>{
