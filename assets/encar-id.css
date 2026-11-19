@@ -24,8 +24,8 @@
  @keyframes snote-encar-search{0%,100%{transform:translate(-8px,-3px)}50%{transform:translate(7px,4px)}}
  @keyframes snote-encar-scan{0%,100%{transform:translateX(0);opacity:.2}50%{transform:translateX(57px);opacity:.8}}
  @keyframes snote-encar-dot{0%,80%,100%{opacity:.35;transform:translateY(0)}40%{opacity:1;transform:translateY(-2px)}}
- .snote-encar-id-dialog output{display:block;margin:8px 0 24px;font-size:29px;font-weight:600;letter-spacing:.8px;font-variant-numeric:tabular-nums;color:#253b57}
- .snote-encar-id-dialog output[hidden]{display:none}
+ .snote-encar-ad-link{display:flex;align-items:center;justify-content:center;text-decoration:none;margin-bottom:10px}
+ .snote-encar-ad-link[hidden]{display:none}
  .snote-encar-id-status{margin:5px 0 22px;line-height:1.65;font-size:13px;color:#7b8797;word-break:keep-all}
  .snote-encar-id-status:empty{display:none}
  .snote-encar-id-confirm{box-sizing:border-box;width:100%;min-height:38px;border:0;border-radius:9px;background:#edf4ff;color:#2868bf;font:inherit;font-size:13px;cursor:pointer}
