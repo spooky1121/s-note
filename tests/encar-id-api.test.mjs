@@ -29,7 +29,7 @@ async function run(handler,req=request(),env=ENV){const response=await handler({
 function noTraffic(state){assert.deepEqual(state.calls,[]);assert.deepEqual(state.providers,[]);}
 test('configuration GET exposes Browser Run presence only and never authenticates or launches',async t=>{
  const s=fixture(t);for(const token of['','synthetic-browser-secret']){
-  const r=await run(onRequest,request({}, {method:'GET',headers:{Authorization:''}}),{...ENV,CLOUDFLARE_ACCOUNT_ID:'a'.repeat(32),CLOUDFLARE_BROWSER_TOKEN:token,TAVILY_API_KEY:'unused-search-secret'});assert.equal(r.status,200);assert.deepEqual(r.body,{ok:true,configured:!!token,provider:'gloar',release:'2.148'});assert(!JSON.stringify(r.body).includes('synthetic-browser-secret'));assert(!JSON.stringify(r.body).includes(ENV.SUPABASE_URL));
+  const r=await run(onRequest,request({}, {method:'GET',headers:{Authorization:''}}),{...ENV,CLOUDFLARE_ACCOUNT_ID:'a'.repeat(32),CLOUDFLARE_BROWSER_TOKEN:token,TAVILY_API_KEY:'unused-search-secret'});assert.equal(r.status,200);assert.deepEqual(r.body,{ok:true,configured:!!token,provider:'gloar',release:'2.151'});assert(!JSON.stringify(r.body).includes('synthetic-browser-secret'));assert(!JSON.stringify(r.body).includes(ENV.SUPABASE_URL));
  }noTraffic(s);
 });
 test('verified active membership returns only the requested original advertisement ID',async t=>{
@@ -47,7 +47,7 @@ test('an unauthorized request never starts GLOAR or any other provider',async t=
  const s=fixture(t,{members:[]}),r=await run(createEncarIdHandler({lookup:s.lookup}));assert.equal(r.status,403);assert.deepEqual(s.providers,[]);
 });
 test('browser settings, auth, quota and GLOAR stage errors are distinct and do not leak raw data',async t=>{
- for(const [code,status] of [['BROWSER_AUTH_FAILED',502],['BROWSER_UNAVAILABLE',502],['BROWSER_BUSY',503],['UPSTREAM_RATE_LIMITED',429],['GLOAR_INPUT_MISSING',502],['GLOAR_SEARCH_UNCONFIRMED',502],['GLOAR_ID_UNVERIFIED',502],['GLOAR_ACCESS_BLOCKED',502],['GLOAR_AMBIGUOUS',502]]){
+ for(const [code,status] of [['BROWSER_AUTH_FAILED',502],['BROWSER_UNAVAILABLE',502],['BROWSER_BUSY',503],['UPSTREAM_RATE_LIMITED',429],['BROWSER_DAILY_LIMIT',429],['GLOAR_INPUT_MISSING',502],['GLOAR_SEARCH_UNCONFIRMED',502],['GLOAR_ID_UNVERIFIED',502],['GLOAR_ACCESS_BLOCKED',502],['GLOAR_AMBIGUOUS',502]]){
   const s=fixture(t,{lookup:()=>{throw Object.assign(new Error('PRIVATE_BROWSER_TOKEN https://secret.invalid'),{code,retryAfter:27});}}),r=await run(createEncarIdHandler({lookup:s.lookup}));assert.equal(r.status,status);assert.equal(r.body.code,code);assert.deepEqual(s.providers,['gloar']);assert(!JSON.stringify(r.body).includes('PRIVATE'));assert(!JSON.stringify(r.body).includes('secret.invalid'));if(status===429||code==='BROWSER_BUSY')assert.equal(r.response.headers.get('Retry-After'),'27');
  }
 });

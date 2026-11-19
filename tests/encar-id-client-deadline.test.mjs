@@ -88,12 +88,12 @@ test('closing a pending body read cannot hang or overwrite a subsequent successf
 });
 
 test('search animation is decorative and runs only while a real lookup is pending',async()=>{
- for(const outcome of['found','limited']){
+ for(const outcome of['found','limited','daily']){
   const response=deferred(),f=fixture({fetchResponse:()=>response.promise});assert.equal(f.loading.hidden,true);assert.equal(f.loading.attributes.get('aria-hidden'),'true');
   const lookup=f.start();await flush();assert.equal(f.loading.hidden,false);assert.equal(f.dialog.attributes.get('aria-busy'),'true');assert.equal(f.output.hidden,true);
-  response.resolve(outcome==='found'?success():new Response(JSON.stringify({ok:false,code:'UPSTREAM_RATE_LIMITED'}),{status:429,headers:{'Content-Type':'application/json'}}));
+  response.resolve(outcome==='found'?success():new Response(JSON.stringify({ok:false,code:outcome==='daily'?'BROWSER_DAILY_LIMIT':'UPSTREAM_RATE_LIMITED'}),{status:429,headers:{'Content-Type':'application/json'}}));
   assert.equal(await settled(lookup),outcome==='found');assert.equal(f.loading.hidden,true);assert.equal(f.dialog.attributes.has('aria-busy'),false);
-  if(outcome==='found'){assert.equal(f.output.value,'43123456');assert.equal(f.status.textContent,'');}else{assert.equal(f.output.hidden,true);assert.match(f.status.textContent,/검색 브라우저의 실행 요청/);}
+  if(outcome==='found'){assert.equal(f.output.value,'43123456');assert.equal(f.status.textContent,'');}else{assert.equal(f.output.hidden,true);assert.equal(f.status.textContent,outcome==='daily'?'Cloudflare 검색 브라우저의 하루 사용 한도에 도달했습니다. Cloudflare 사용량·요금제를 확인해 주세요.':'Cloudflare 검색 브라우저가 요청을 제한했습니다. Cloudflare 사용량·요금제를 확인해 주세요.');}
   f.api.reset();assert.equal(f.loading.hidden,true);
  }
 });

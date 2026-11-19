@@ -1,8 +1,11 @@
 // Server-owned Browser Run session metadata only. No socket, stream, token,
 // vehicle or customer record is stored. Cache API is local/best effort; it is
 // deliberately not treated as a distributed lock.
+import { browserLimitFailure } from './encar-id-browser-limits.mjs';
+
 export const BROWSER_KEEP_ALIVE_MS = 30000;
 const METADATA_TTL_MS = 25000;
+const CACHE_IO_TIMEOUT_MS = 750;
 const CACHE_NAME = 'snote:encar-browser-session:v1';
 const POLICY_VERSION = 'external-id-browser-guardrails-v2';
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -17,7 +20,7 @@ export function browserRetryAfter(response){
  const date=Date.parse(value);return Number.isFinite(date)?Math.max(1,Math.min(3600,Math.ceil((date-Date.now())/1000))):20;
 }
 function stateFor(storage){if(!storage||(typeof storage!=='object'&&typeof storage!=='function'))return defaultState;let state=states.get(storage);if(!state){state={known:new Map(),creating:new Map()};states.set(storage,state);}return state;}
-async function bounded(operation,milliseconds=250){let timer;try{return await Promise.race([operation,new Promise((_,reject)=>{timer=setTimeout(()=>reject(fail()),milliseconds);})]);}finally{clearTimeout(timer);}}
+async function bounded(operation,milliseconds=CACHE_IO_TIMEOUT_MS){let timer;try{return await Promise.race([operation,new Promise((_,reject)=>{timer=setTimeout(()=>reject(fail()),milliseconds);})]);}finally{clearTimeout(timer);}}
 async function interruptible(operation,signal){if(signal?.aborted)throw aborted();let stop;const interrupted=new Promise((_,reject)=>{if(signal){stop=()=>reject(aborted());signal.addEventListener('abort',stop,{once:true});}});try{return await Promise.race([operation,interrupted]);}finally{if(stop)signal.removeEventListener('abort',stop);}}
 function valid(record,now){return record&&typeof record==='object'&&UUID.test(record.sessionId||'')&&Number.isSafeInteger(record.expiresAt)&&record.expiresAt>now&&record.expiresAt<=now+BROWSER_KEEP_ALIVE_MS;}
 async function bodyJson(response,signal){
@@ -40,7 +43,14 @@ export async function acquireKnownSession({account,token,guardrails,fetchImpl,si
  let cache=null;try{if(typeof cacheStorage?.open==='function')cache=await bounded(cacheStorage.open(CACHE_NAME));}catch{}
  async function remember(record){
   state.known.set(fingerprint,{...record});
-  if(cache)try{await bounded(cache.put(key,new Response(JSON.stringify(record),{headers:{'Content-Type':'application/json','Cache-Control':'max-age=25'}})));}catch{}
+  if(cache)try{
+   // The response may finish before slow Cache API I/O. Retain the complete
+   // actual write, not only the shorter foreground deadline. The record's
+   // expiry was computed before I/O and must never move when a late put ends.
+   const writing=Promise.resolve().then(()=>cache.put(key,new Response(JSON.stringify(record),{headers:{'Content-Type':'application/json','Cache-Control':'max-age=25'}})));
+   if(typeof waitUntil==='function')try{waitUntil(writing.catch(()=>{}));}catch{}
+   await bounded(writing);
+  }catch{}
  }
  async function read(){
   const inMemory=state.known.get(fingerprint);if(valid(inMemory,Date.now()))return{...inMemory};state.known.delete(fingerprint);
@@ -71,13 +81,13 @@ export async function acquireKnownSession({account,token,guardrails,fetchImpl,si
      return await bounded((async()=>{
       const response=await fetchImpl(`https://api.cloudflare.com/client/v4/accounts/${account}/browser-run/devtools/browser?keep_alive=${BROWSER_KEEP_ALIVE_MS}`,{method:'POST',redirect:'manual',cache:'no-store',signal:controller.signal,headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify({guardrails})});
       if(controller.signal.aborted){try{void response.body?.cancel().catch(()=>{});}catch{}throw fail();}
-      if(response.status===429){try{void response.body?.cancel().catch(()=>{});}catch{}throw fail('UPSTREAM_RATE_LIMITED',{retryAfter:browserRetryAfter(response)});}
+      if(response.status===429)throw await browserLimitFailure(response,{signal:controller.signal});
       if(response.status===401||response.status===403){try{void response.body?.cancel().catch(()=>{});}catch{}throw fail('BROWSER_AUTH_FAILED');}
       if(!response.ok){try{void response.body?.cancel().catch(()=>{});}catch{}throw fail();}
       const data=await bodyJson(response,controller.signal);if(controller.signal.aborted||!UUID.test(data?.sessionId||''))throw fail();
       const created={sessionId:data.sessionId,expiresAt:Date.now()+METADATA_TTL_MS};await remember(created);return created;
      })(),8000);
-    }catch(error){if(error?.code==='UPSTREAM_RATE_LIMITED'||error?.code==='BROWSER_AUTH_FAILED')throw error;throw fail();}
+    }catch(error){if(error?.code==='UPSTREAM_RATE_LIMITED'||error?.code==='BROWSER_DAILY_LIMIT'||error?.code==='BROWSER_AUTH_FAILED')throw error;throw fail();}
     finally{clearTimeout(timer);controller.abort();}
    })();
    state.creating.set(fingerprint,creating);
