@@ -49,20 +49,31 @@
   const ctx=canvas.getContext('2d',{willReadFrequently:true});if(!ctx)throw Error('NAME_SEAL_UNAVAILABLE');
   const random=randomFor(name);
   ctx.save();ctx.translate(WIDTH/2,HEIGHT/2);ctx.rotate(-.052);
-  ctx.strokeStyle='#a52632';ctx.fillStyle='#a0202c';ctx.lineJoin='round';
+  ctx.strokeStyle='#b22643';ctx.fillStyle='#ad1f3a';ctx.lineJoin='round';
   outline(ctx,163,267,10.5,random);outline(ctx,151,254,3.8,random);
   ctx.save();ctx.beginPath();ctx.ellipse(0,0,142,243,0,0,Math.PI*2);ctx.clip();letters(ctx,name);ctx.restore();ctx.restore();
-  // Subtle uneven ink density and tiny paper-grain gaps, deterministic per name.
-  const pixels=ctx.getImageData(0,0,WIDTH,HEIGHT),data=pixels.data;
+  // Uneven pressure and a restrained rose tint soften the ink without blurring
+  // the name. All texture comes from this name's seed, never an external image.
+  const pixels=ctx.getImageData(0,0,WIDTH,HEIGHT),data=pixels.data,mask=new Uint8ClampedArray(data);
   for(let y=0;y<HEIGHT;y++)for(let x=0;x<WIDTH;x++){
    const i=(y*WIDTH+x)*4;if(!data[i+3])continue;
-   const grain=random(),pressure=.88+.08*Math.sin(x*.024+y*.013)+.04*grain;
-   data[i+3]=Math.round(data[i+3]*pressure*(grain<.012?.24:1));
+   const grain=random(),broad=Math.sin(x*.017+y*.009),paper=Math.sin(x*.061-y*.038),rose=(1+Math.sin(x*.014-y*.011))*.125;
+   data[i]=Math.round(173+rose*46+broad*4);data[i+1]=Math.round(28+rose*35+grain*3);data[i+2]=Math.round(55+rose*63+broad*5);
+   const pressure=.735+.075*broad+.025*paper+.045*grain;
+   data[i+3]=Math.round(data[i+3]*pressure*(grain<.024?.22:1));
+  }
+  // A one-pixel, low-alpha fringe suggests ink absorbed by paper. It does not
+  // redraw or displace a glyph, and cannot fill the grain cut into real strokes.
+  for(let y=1;y<HEIGHT-1;y++)for(let x=1;x<WIDTH-1;x++){
+   const i=(y*WIDTH+x)*4;if(mask[i+3])continue;
+   const near=Math.max(mask[i-1],mask[i+7],mask[i-WIDTH*4+3],mask[i+WIDTH*4+3]);
+   if(near<64)continue;
+   data[i]=187;data[i+1]=42;data[i+2]=76;data[i+3]=Math.round(near*.043);
   }
   ctx.putImageData(pixels,0,0);ctx.globalCompositeOperation='destination-out';
-  for(let n=0;n<470;n++){
-   const x=25+random()*(WIDTH-50),y=22+random()*(HEIGHT-44),radius=.4+random()*1.5;
-   ctx.globalAlpha=.35+random()*.65;ctx.beginPath();ctx.ellipse(x,y,radius,radius*(.55+random()),random()*Math.PI,0,Math.PI*2);ctx.fill();
+  for(let n=0;n<760;n++){
+   const x=25+random()*(WIDTH-50),y=22+random()*(HEIGHT-44),radius=.35+random()*1.2;
+   ctx.globalAlpha=.25+random()*.6;ctx.beginPath();ctx.ellipse(x,y,radius,radius*(.55+random()),random()*Math.PI,0,Math.PI*2);ctx.fill();
   }
   ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1;
   const image=canvas.toDataURL('image/png');if(!image.startsWith('data:image/png;base64,'))throw Error('NAME_SEAL_UNAVAILABLE');
