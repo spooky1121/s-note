@@ -1,7 +1,7 @@
 /* Print-only rendering of the currently verified company image. No storage or cache. */
 (()=>{'use strict';
  if(window.SnoteTransferCompanySeal)return;
- const MIN_EDGE=1536,MAX_EDGE=4096,MAX_PIXELS=8000000,MAX_SOURCE_EDGE=16384,MAX_SOURCE_PIXELS=64000000;
+ const MIN_EDGE=2048,MAX_EDGE=4096,MAX_PIXELS=8000000,MAX_SOURCE_EDGE=16384,MAX_SOURCE_PIXELS=64000000;
  const unavailable=()=>Object.assign(Error('COMPANY_STAMP_UNAVAILABLE'),{code:'COMPANY_STAMP_UNAVAILABLE'});
  const clamp=(value,minimum,maximum)=>Math.max(minimum,Math.min(maximum,value));
  function create(source){
@@ -26,21 +26,21 @@
    // Remove a near-white paper cast while keeping faint coloured stamp ink.
    if(minimum>215&&maximum-minimum<18){const paper=(minimum-215)/27;coverage*=Math.pow(1-paper,2);}
    const highlight=1-coverage;
-   data[offset]=Math.round(181+22*highlight);
-   data[offset+1]=Math.round(28+16*highlight);
-   data[offset+2]=Math.round(55+23*highlight);
+   data[offset]=Math.round(184+22*highlight);
+   data[offset+1]=Math.round(32+16*highlight);
+   data[offset+2]=Math.round(81+23*highlight);
    alpha[pixel]=Math.round(sourceAlpha*coverage*.79);if(alpha[pixel])inkPixels++;
   }
   if(!inkPixels)throw unavailable();
   // Match the edge radius to the source enlargement so fine original strokes
   // remain defined on paper. Only existing alpha is sharpened: no characters or
   // opaque pixels are reconstructed outside the registered image's ink.
-  const radius=clamp(Math.round(scale*.5),1,12);
+  const radius=clamp(Math.round(scale*.55),1,24);
   for(let y=0;y<height;y++)for(let x=0;x<width;x++){
    const pixel=y*width+x,center=alpha[pixel];if(!center){data[pixel*4+3]=0;continue;}
    const left=Math.max(0,x-radius),right=Math.min(width-1,x+radius),above=Math.max(0,y-radius),below=Math.min(height-1,y+radius);
    const surrounding=(alpha[y*width+left]+alpha[y*width+right]+alpha[above*width+x]+alpha[below*width+x]+alpha[above*width+left]+alpha[above*width+right]+alpha[below*width+left]+alpha[below*width+right])/8;
-   data[pixel*4+3]=clamp(Math.round(center+.24*(center-surrounding)),0,255);
+   data[pixel*4+3]=clamp(Math.round(center+.4*(center-surrounding)),0,255);
   }
   ctx.putImageData(pixels,0,0);
   const image=canvas.toDataURL('image/png');if(!image.startsWith('data:image/png;base64,'))throw unavailable();
