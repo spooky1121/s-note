@@ -5,7 +5,6 @@ export const API_POLICIES = Object.freeze({
   '/api/ocr': { methods: ['GET', 'POST'], limit: 30, maximum: 6 * 1024 * 1024, image: true },
   '/api/encar': { methods: ['POST'], limit: 60, maximum: 4096 },
   '/api/encar-id': { methods: ['GET', 'POST'], limit: null, maximum: 1024, publicNavigationGet: true },
-  '/api/gloar-search': { methods: ['GET', 'POST'], limit: null, maximum: 1024, publicNavigationGet: true },
   '/api/encar-auto-price': { methods: ['GET', 'POST'], limit: 30, maximum: 2048, publicNavigationGet: true },
   '/api/customer-intake': { methods: ['GET', 'POST'], limit: 120, maximum: 64 * 1024, publicPost: true },
   '/api/customer-identity': { methods: ['GET', 'POST'], limit: 240, maximum: 32 * 1024 },

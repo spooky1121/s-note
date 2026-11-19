@@ -21,7 +21,7 @@ test('reject cross-origin and same-site subdomains before dispatch', async () =>
   assert.equal(inspectAPIRequest(post()).response, undefined); // Non-browser clients still undergo Auth checks downstream.
 });
 test('only configuration-only status policies permit external top-level document GET navigation', async () => {
-  assert.deepEqual(Object.entries(API_POLICIES).filter(([,p])=>p.publicNavigationGet).map(([path])=>path).sort(),['/api/encar-auto-price','/api/encar-id','/api/gloar-search']);
+  assert.deepEqual(Object.entries(API_POLICIES).filter(([,p])=>p.publicNavigationGet).map(([path])=>path).sort(),['/api/encar-auto-price','/api/encar-id']);
   for(const site of ['cross-site','same-site']) {
     const headers={'Sec-Fetch-Site':site,'Sec-Fetch-Mode':'navigate','Sec-Fetch-Dest':'document'};
     let called=false;const res=await onRequest({request:request('/api/encar-auto-price',{headers}),next:()=>{called=true;return Response.json({ok:true,configured:true});}});
