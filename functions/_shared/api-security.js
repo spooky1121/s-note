@@ -4,7 +4,7 @@ export const API_POLICIES = Object.freeze({
   '/api/weather': { methods: ['GET'], limit: 60, maximum: 0 },
   '/api/ocr': { methods: ['GET', 'POST'], limit: 30, maximum: 6 * 1024 * 1024, image: true },
   '/api/encar': { methods: ['POST'], limit: 60, maximum: 4096 },
-  '/api/encar-id': { methods: ['POST'], limit: 30, maximum: 1024 },
+  '/api/encar-id': { methods: ['POST'], limit: null, maximum: 1024 },
   '/api/encar-auto-price': { methods: ['GET', 'POST'], limit: 30, maximum: 2048, publicNavigationGet: true },
   '/api/customer-intake': { methods: ['GET', 'POST'], limit: 120, maximum: 64 * 1024, publicPost: true },
   '/api/customer-identity': { methods: ['GET', 'POST'], limit: 240, maximum: 32 * 1024 },
@@ -81,6 +81,9 @@ export function inspectAPIRequest(request) {
 export function createBurstLimiter({ maxEntries = 4096, windowMs = 60000, now = Date.now } = {}) {
   const entries = new Map(); let nextSweep = 0;
   return function limit(request, path, policy) {
+    // ID searches have no application per-minute quota. They still undergo
+    // origin, body, Auth and membership checks and upstream service limits.
+    if (policy.limit === null) return null;
     // This header is supplied/overwritten by Cloudflare on the public edge.
     // Do not use client-controlled Authorization, query strings or X-Forwarded-For.
     const ip = request.headers.get('CF-Connecting-IP');

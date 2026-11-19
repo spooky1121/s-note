@@ -7,11 +7,11 @@ import { searchBrowserProvider } from '../_shared/encar-id-provider-ui.mjs';
 // Browser credentials, navigation and JavaScript are owned by this server.
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const PLATE=/^(?:(?:서울|부산|대구|인천|광주|대전|울산|세종|경기|강원|충북|충남|전북|전남|경북|경남|제주))?[0-9]{2,3}[가-힣][0-9]{4}$/;
-const MESSAGES={AUTH_REQUIRED:'로그인이 필요합니다.',AUTH_FAILED:'로그인을 다시 확인해 주세요.',STAFF_REQUIRED:'현재 계정의 사용 권한을 확인해 주세요.',AUTH_UNAVAILABLE:'로그인 정보를 확인하지 못했습니다.',INVALID_REQUEST:'차량번호를 확인해 주세요.',LOOKUP_NOT_CONFIGURED:'광고 ID 검색 서버 설정을 확인해 주세요.',BROWSER_UNAVAILABLE:'광고 검색 서버에 연결하지 못했습니다.',UPSTREAM_RATE_LIMITED:'광고 검색 서버의 요청 한도입니다. 잠시 후 다시 확인해 주세요.',NOT_FOUND:'광고 ID를 찾지 못했습니다.',PROVIDERS_UNAVAILABLE:'외부 사이트의 검색 응답을 확인하지 못했습니다.',REQUEST_TIMEOUT:'광고 ID 검색 시간이 초과됐습니다.',REQUEST_ABORTED:'광고 ID 검색을 취소했습니다.'};
-const STATUS={AUTH_REQUIRED:401,AUTH_FAILED:401,STAFF_REQUIRED:403,AUTH_UNAVAILABLE:502,INVALID_REQUEST:400,LOOKUP_NOT_CONFIGURED:503,BROWSER_UNAVAILABLE:502,UPSTREAM_RATE_LIMITED:429,NOT_FOUND:200,PROVIDERS_UNAVAILABLE:502,REQUEST_TIMEOUT:504,REQUEST_ABORTED:408};
+const MESSAGES={AUTH_REQUIRED:'로그인이 필요합니다.',AUTH_FAILED:'로그인을 다시 확인해 주세요.',STAFF_REQUIRED:'현재 계정의 사용 권한을 확인해 주세요.',AUTH_UNAVAILABLE:'로그인 정보를 확인하지 못했습니다.',INVALID_REQUEST:'차량번호를 확인해 주세요.',LOOKUP_NOT_CONFIGURED:'광고 ID 검색 서버 설정을 확인해 주세요.',BROWSER_UNAVAILABLE:'광고 검색 서버에 연결하지 못했습니다.',BROWSER_BUSY:'다른 광고 검색이 진행 중입니다. 잠시 후 다시 확인해 주세요.',UPSTREAM_RATE_LIMITED:'광고 검색 서버의 요청 한도입니다. 잠시 후 다시 확인해 주세요.',NOT_FOUND:'광고 ID를 찾지 못했습니다.',PROVIDERS_UNAVAILABLE:'외부 사이트의 검색 응답을 확인하지 못했습니다.',REQUEST_TIMEOUT:'광고 ID 검색 시간이 초과됐습니다.',REQUEST_ABORTED:'광고 ID 검색을 취소했습니다.'};
+const STATUS={AUTH_REQUIRED:401,AUTH_FAILED:401,STAFF_REQUIRED:403,AUTH_UNAVAILABLE:502,INVALID_REQUEST:400,LOOKUP_NOT_CONFIGURED:503,BROWSER_UNAVAILABLE:502,BROWSER_BUSY:503,UPSTREAM_RATE_LIMITED:429,NOT_FOUND:200,PROVIDERS_UNAVAILABLE:502,REQUEST_TIMEOUT:504,REQUEST_ABORTED:408};
 const fail=(code,status)=>Object.assign(new Error(code),{code,status});
-function json(value,status=200){return hardenAPIResponse(new Response(JSON.stringify(value),{status,headers:{'Content-Type':'application/json; charset=utf-8','X-Snote-Release':'2.145'}}));}
-function error(code,status=502,retryAfter){const response=json({ok:false,status:code==='NOT_FOUND'?'not_found':'error',code,error:MESSAGES[code]||MESSAGES.PROVIDERS_UNAVAILABLE},status);if(code==='UPSTREAM_RATE_LIMITED')response.headers.set('Retry-After',String(Number.isInteger(retryAfter)?Math.max(1,Math.min(3600,retryAfter)):20));return response;}
+function json(value,status=200){return hardenAPIResponse(new Response(JSON.stringify(value),{status,headers:{'Content-Type':'application/json; charset=utf-8','X-Snote-Release':'2.146'}}));}
+function error(code,status=502,retryAfter){const response=json({ok:false,status:code==='NOT_FOUND'?'not_found':'error',code,error:MESSAGES[code]||MESSAGES.PROVIDERS_UNAVAILABLE},status);if(code==='UPSTREAM_RATE_LIMITED'||code==='BROWSER_BUSY')response.headers.set('Retry-After',String(Number.isInteger(retryAfter)?Math.max(1,Math.min(3600,retryAfter)):20));return response;}
 function abortScope(parent,milliseconds){const controller=new AbortController(),abort=()=>controller.abort(parent?.reason);parent?.addEventListener('abort',abort,{once:true});if(parent?.aborted)abort();const timer=setTimeout(()=>controller.abort(fail('REQUEST_TIMEOUT',504)),milliseconds);return{signal:controller.signal,dispose(){clearTimeout(timer);parent?.removeEventListener('abort',abort);}};}
 async function boundedJson(url,headers,signal){
  const scope=abortScope(signal,5000);
@@ -29,9 +29,10 @@ async function authorize(request,env,signal){
  const rows=await boundedJson(url.href,headers,signal);if(!Array.isArray(rows)||!rows.some(row=>row.user_id===user.id&&UUID.test(row.company_id||'')&&row.active===true&&['admin','dealer','accountant'].includes(row.role)))throw fail('STAFF_REQUIRED',403);
 }
 async function closeTransport(transport){if(typeof transport?.close!=='function')return;let timer;try{await Promise.race([Promise.resolve().then(()=>transport.close()),new Promise(resolve=>{timer=setTimeout(resolve,1000);})]);}catch{}finally{clearTimeout(timer);}}
-async function productionTransport({env,signal}){const browser=await createBrowserSession(env,{signal});return{search:(provider,options)=>searchBrowserProvider(provider,{...options,browser}),close:()=>browser.close()};}
+async function productionTransport({env,signal,waitUntil}){const browser=await createBrowserSession(env,{signal,waitUntil});return{search:(provider,options)=>searchBrowserProvider(provider,{...options,browser}),close:()=>browser.close()};}
 export function createEncarIdHandler({search=null,createSearch=null}={}){
- return async function onRequest({request,env={}}){
+ return async function onRequest(context){
+  const {request,env={}}=context;
   const checked=inspectAPIRequest(request);if(checked.response)return checked.response;
   const scope=abortScope(request.signal,45000);let transport;
   try{
@@ -39,7 +40,7 @@ export function createEncarIdHandler({search=null,createSearch=null}={}){
    if(!body||typeof body!=='object'||Array.isArray(body)||Object.keys(body).length!==1||typeof body.plate!=='string'||body.plate.length>40)throw fail('INVALID_REQUEST',400);
    const plate=body.plate.normalize('NFKC').replace(/[\s-]+/g,'');if(!PLATE.test(plate))throw fail('INVALID_REQUEST',400);
    await authorize(request,env,scope.signal);
-   if(typeof search==='function')transport={search};else if(typeof createSearch==='function')transport=await createSearch({env,signal:scope.signal});
+   if(typeof search==='function')transport={search};else if(typeof createSearch==='function')transport=await createSearch({env,signal:scope.signal,waitUntil:typeof context.waitUntil==='function'?promise=>context.waitUntil(promise):undefined});
    if(typeof transport?.search!=='function')throw fail('LOOKUP_NOT_CONFIGURED',503);
    const result=await resolveEncarId({plate,search:transport.search,signal:scope.signal});
    if(result.status==='found')return json({ok:true,status:'found',plate,id:result.id,provider:result.provider});

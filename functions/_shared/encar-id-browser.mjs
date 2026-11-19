@@ -1,3 +1,5 @@
+import { acquireKnownSession, browserRetryAfter } from './encar-id-browser-session.mjs';
+
 // Fixed server-owned Browser Run transport for the ID-only lookup. This is not
 // a general URL/code endpoint; the public API accepts only a Korean plate.
 const MAX_MESSAGE = 1024 * 1024;
@@ -32,16 +34,6 @@ function destination(value) {
   if (!allowed || url.protocol !== 'https:' || url.username || url.password || url.port || url.hash || authority?.toLowerCase() !== host) throw failure('PROVIDER_UNSUPPORTED');
   return url.href;
 }
-function retryAfter(response) {
-  const raw = response.headers?.get('Retry-After') || '';
-  if (/^[0-9]{1,10}$/.test(raw)) return Math.max(1, Math.min(3600, Number(raw)));
-  const date = Date.parse(raw);
-  if (Number.isFinite(date)) return Math.max(1, Math.min(3600, Math.ceil((date - Date.now()) / 1000)));
-  return 20;
-}
-function encodedGuardrails() {
-  return btoa(JSON.stringify(GUARDRAILS)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
-}
 async function waitFor(operation, { signal, milliseconds }) {
   if (signal?.aborted) throw aborted();
   let timer, abort;
@@ -53,49 +45,48 @@ async function waitFor(operation, { signal, milliseconds }) {
   finally { clearTimeout(timer); if (signal && abort) signal.removeEventListener('abort', abort); }
 }
 
-/** One browser for the entire ordered provider sequence; never relaunch/retry. */
-export async function createBrowserSession(env = {}, { signal, fetchImpl = fetch } = {}) {
+/** Reconnect a feature-owned browser, with an isolated context per lookup. */
+export async function createBrowserSession(env = {}, { signal, fetchImpl = fetch, cacheStorage = globalThis.caches, waitUntil } = {}) {
   checkSignal(signal);
   if (signal?.aborted) throw aborted();
   const account = typeof env.CLOUDFLARE_ACCOUNT_ID === 'string' ? env.CLOUDFLARE_ACCOUNT_ID.trim() : '';
   const token = typeof env.CLOUDFLARE_BROWSER_TOKEN === 'string' ? env.CLOUDFLARE_BROWSER_TOKEN.trim() : '';
   if (!/^[a-f0-9]{32}$/i.test(account) || !token || token.length > 4096 || /[^\x21-\x7e]/u.test(token)) throw failure('LOOKUP_NOT_CONFIGURED');
   if (typeof fetchImpl !== 'function') throw failure();
-  const controller = new AbortController();
-  const abortLaunch = () => controller.abort();
-  signal?.addEventListener('abort', abortLaunch, { once: true });
-  let launchTimer = setTimeout(abortLaunch, LAUNCH_TIMEOUT);
-  const launched = Promise.resolve().then(() => {
-    if (signal?.aborted) throw aborted();
-    return fetchImpl(`https://api.cloudflare.com/client/v4/accounts/${account}/browser-run/devtools/browser?keep_alive=10000`, {
-      method: 'GET', redirect: 'manual', cache: 'no-store', signal: controller.signal,
-      headers: { Upgrade: 'websocket', Authorization: `Bearer ${token}`, 'cf-brapi-guardrails': encodedGuardrails() }
+  const options = { account, token, guardrails: GUARDRAILS, fetchImpl, signal, cacheStorage, waitUntil };
+  let known = await acquireKnownSession(options), response;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const controller = new AbortController(), abortLaunch = () => controller.abort();
+    signal?.addEventListener('abort', abortLaunch, { once: true });
+    const timer = setTimeout(abortLaunch, LAUNCH_TIMEOUT);
+    const launched = Promise.resolve().then(() => {
+      if (signal?.aborted) throw aborted();
+      return fetchImpl(`https://api.cloudflare.com/client/v4/accounts/${account}/browser-run/devtools/browser/${known.sessionId}`, {
+        method: 'GET', redirect: 'manual', cache: 'no-store', signal: controller.signal,
+        headers: { Upgrade: 'websocket', Authorization: `Bearer ${token}` }
+      });
     });
-  });
-  let response;
-  try { response = await waitFor(launched, { signal, milliseconds: LAUNCH_TIMEOUT }); }
-  catch (error) {
-    controller.abort();
-    // A transport ignoring AbortSignal can still return a session late. Destroy
-    // that session rather than leaving a paid browser alive until idle expiry.
-    void launched.then(late => {
-      const socket = late?.webSocket;
-      if (!socket) return;
-      try { socket.accept(); socket.send(JSON.stringify({ id: 1, method: 'Browser.close' })); } catch {}
-      safeClose(socket);
-    }).catch(() => {});
-    throw signal?.aborted ? aborted() : failure();
-  } finally {
-    clearTimeout(launchTimer); launchTimer = null;
-    signal?.removeEventListener('abort', abortLaunch);
+    try { response = await waitFor(launched, { signal, milliseconds: LAUNCH_TIMEOUT }); }
+    catch {
+      controller.abort();
+      // Closing only this late connection must never terminate a shared browser.
+      void launched.then(late => { const socket = late?.webSocket; if (!socket) return; try { socket.accept(); } catch {} safeClose(socket); }).catch(() => {});
+      throw signal?.aborted ? aborted() : failure();
+    } finally { clearTimeout(timer); signal?.removeEventListener('abort', abortLaunch); }
+    if (response?.status === 429) throw failure('UPSTREAM_RATE_LIMITED', { retryAfter: browserRetryAfter(response) });
+    if (response?.status === 409) throw failure('BROWSER_BUSY', { retryAfter: browserRetryAfter(response) });
+    if (attempt === 0 && known.reused && [404, 410].includes(response?.status)) {
+      try { void response.body?.cancel().catch(() => {}); } catch {}
+      await known.invalidate(); known = await acquireKnownSession(options); continue;
+    }
+    break;
   }
-  if (response?.status === 429) throw failure('UPSTREAM_RATE_LIMITED', { retryAfter: retryAfter(response) });
   const socket = response?.webSocket;
   if (response?.status !== 101 || !socket || typeof socket.accept !== 'function') {
     try { void response?.body?.cancel().catch(() => {}); } catch {}
     throw failure();
   }
-  let serial = 0, active = true, closePromise = null;
+  let serial = 0, active = true, closePromise = null, browserContextId = null;
   const pending = new Map(), abandoned = new Map(), closingPages = new Set(), eventHandlers = new Map(), closeHandlers = new Set();
   function rejectAll(error) {
     for (const item of [...pending.values()]) item.finish(error);
@@ -116,7 +107,7 @@ export async function createBrowserSession(env = {}, { signal, fetchImpl = fetch
         if (requestSignal && abort) requestSignal.removeEventListener('abort', abort);
         error ? reject(error) : resolve(value);
       };
-      pending.set(id, { finish, sessionId });
+      pending.set(id, { finish, sessionId, method });
       timer = setTimeout(() => finish(failure(), undefined, true), milliseconds);
       if (!cleanup && requestSignal) { abort = () => finish(aborted(), undefined, true); requestSignal.addEventListener('abort', abort, { once: true }); }
       try { socket.send(payload); } catch { finish(failure()); }
@@ -145,7 +136,8 @@ export async function createBrowserSession(env = {}, { signal, fetchImpl = fetch
         return; // Aborted results never revive a lookup; release late resources.
       }
       if ((data.sessionId || undefined) !== item.sessionId) throw failure();
-      item.finish(data.error ? failure() : null, data.result);
+      const transientContext = item.method === 'Runtime.evaluate' && data.error?.code === -32000 && /Execution context was destroyed|Cannot find context with specified id|Cannot find execution context|Cannot find default execution context|Inspected target navigated or closed/i.test(data.error.message || '');
+      item.finish(data.error ? failure(transientContext ? 'PAGE_CONTEXT_UNAVAILABLE' : 'BROWSER_UNAVAILABLE') : null, data.result);
     } catch { void close(); }
   }
   function disconnected() { void close(); }
@@ -158,13 +150,14 @@ export async function createBrowserSession(env = {}, { signal, fetchImpl = fetch
     signal?.removeEventListener('abort', parentAborted);
     rejectAll(signal?.aborted ? aborted() : failure());
     closePromise = (async () => {
-      try { await send('Browser.close', {}, { cleanup: true, milliseconds: CLEANUP_TIMEOUT }); } catch {}
+      try { if (browserContextId) await send('Target.disposeBrowserContext', { browserContextId }, { cleanup: true, milliseconds: CLEANUP_TIMEOUT }); } catch {}
       finally {
         rejectAll(failure());
         socket.removeEventListener('message', message);
         socket.removeEventListener('close', disconnected);
         socket.removeEventListener('error', disconnected);
         safeClose(socket);
+        try { await known.touch(); } catch {}
       }
     })();
     return closePromise;
@@ -189,6 +182,12 @@ export async function createBrowserSession(env = {}, { signal, fetchImpl = fetch
   try { socket.accept(); } catch { await close(); throw failure(); }
   signal?.addEventListener('abort', parentAborted, { once: true });
   if (signal?.aborted) { await close(); throw aborted(); }
+  try {
+    const createdContext = await send('Target.createBrowserContext', { disposeOnDetach: true }, { requestSignal: signal });
+    browserContextId = createdContext?.browserContextId;
+    if (typeof browserContextId !== 'string' || !/^[a-zA-Z0-9_-]{1,200}$/.test(browserContextId)) throw failure();
+    await known.touch();
+  } catch (error) { await close(); throw error; }
 
   return Object.freeze({
     async newPage({ signal: pageSignal } = {}) {
@@ -197,12 +196,13 @@ export async function createBrowserSession(env = {}, { signal, fetchImpl = fetch
         try { await waitFor(Promise.all([...closingPages]), { signal: pageSignal, milliseconds: CLEANUP_TIMEOUT }); }
         catch (error) { void close(); throw error; }
       }
-      const created = await send('Target.createTarget', { url: 'about:blank' }, {
+      const created = await send('Target.createTarget', { url: 'about:blank', browserContextId }, {
         requestSignal: pageSignal,
         onLateResult(result) {
           if (typeof result?.targetId === 'string' && /^[a-zA-Z0-9_-]{1,200}$/.test(result.targetId)) void destroyTarget(result.targetId).catch(() => {});
         }
       });
+      void known.touch().catch(() => {});
       const targetId = created?.targetId;
       if (typeof targetId !== 'string' || !/^[a-zA-Z0-9_-]{1,200}$/.test(targetId)) throw failure();
       let closed = false;
