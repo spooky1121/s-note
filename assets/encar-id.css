@@ -1,0 +1,15 @@
+@media screen{
+ #snote-app #list-screen .snote-mobile-encar-actions{display:inline-flex;align-items:center;gap:5px;flex:none}
+ #snote-app #list-screen .snote-encar-column{text-align:center}
+ #snote-app #list-screen .snote-encar-column .snote-list-encar{margin:auto}
+ #snote-app #list-screen .snote-list-encar:disabled{opacity:.35;cursor:default}
+ .snote-encar-id-dialog{box-sizing:border-box;width:min(340px,calc(100vw - 32px));max-width:calc(100vw - 32px);border:1px solid #e5e9ef;border-radius:18px;padding:25px 24px 20px;background:#fff;color:#334155;box-shadow:0 20px 65px #14213c30;text-align:center}
+ .snote-encar-id-dialog::backdrop{background:#15223744;backdrop-filter:blur(4px)}
+ .snote-encar-id-dialog h2{margin:0 0 18px;font-size:14px;font-weight:550;color:#8792a1}
+ .snote-encar-id-dialog output{display:block;margin:8px 0 24px;font-size:29px;font-weight:600;letter-spacing:.8px;font-variant-numeric:tabular-nums;color:#253b57}
+ .snote-encar-id-dialog output[hidden]{display:none}
+ .snote-encar-id-status{margin:5px 0 22px;line-height:1.65;font-size:13px;color:#7b8797;word-break:keep-all}
+ .snote-encar-id-status:empty{display:none}
+ .snote-encar-id-confirm{box-sizing:border-box;width:100%;min-height:38px;border:0;border-radius:9px;background:#edf4ff;color:#2868bf;font:inherit;font-size:13px;cursor:pointer}
+ .snote-encar-id-confirm:hover{background:#e3edfc}.snote-encar-id-confirm:focus-visible{outline:2px solid #91b1e4;outline-offset:3px}
+}

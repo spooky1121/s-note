@@ -1,0 +1,9 @@
+# Advertisement lookup test gates
+
+The active Encar-button flow is now the read-only `/api/encar-id` contract. Run `npm test --prefix tests/encar` for the API, ordered resolver, retired endpoints, independent parsers and unrelated application regressions. Run `npm run test:browser --prefix tests/encar` for the actual list/card/detail ID-only UI.
+
+The old `server`, `discovery`, `server-price`, `frontend`, `integration`, `saved-bridge`, `list-price-entry`, and automatic-price endpoint specs describe the removed workflow. They remain as historical reference; they are deliberately absent from the current gate. The original baseline is commit `07494c5cec445d741267ca0ca3b8a21d4d5eb533`. Their former Korean-page, automatic-price and database-write behavior must not be restored to make those old expectations pass.
+
+Provider and Browser Run tests use synthetic DOMs, sockets and search results. The production API connects one Browser Run session to the ordered public-UI adapters; missing server credentials fail closed with `LOOKUP_NOT_CONFIGURED`. Actual account handshake and Carnect/GLOAR/Trust plate-search success remain unverified in this execution environment. The user requested a production test deployment. Mocked UI, CDP, resolver and build success do not establish live-site search coverage.
+
+Native runtime checks require a Wrangler Pages Functions build and a toolchain supplying `miniflare` via `NODE_PATH`. Run `node tests/encar-id-browser.workerd.cjs` for the Workers WebSocket client and `node tests/encar-id.workerd.cjs <pages-build-output>` for the actual compiled default API, synthetic Auth/browser services, ordered early exit, cleanup, rate limits and serialized browser-script execution. Both prohibit real outbound requests. These checks catch Workers fetch options and bundler helper behavior that Node mocks cannot establish.

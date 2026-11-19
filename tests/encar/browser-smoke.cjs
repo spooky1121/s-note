@@ -105,7 +105,7 @@ async function fixture(width=1440,savedCars=null,{primaryColor=null,weather=null
   }
   f.unexpected.push(url.pathname);return route.abort();
  });
- await page.goto(ORIGIN,{waitUntil:'networkidle'});await page.waitForFunction(skipLookup=>!!window.__encarFixtureAuth&&(skipLookup||!!window.SnoteEncarLink)&&!!window.SnoteRelease,lookupUnavailable);await page.evaluate(()=>window.__encarFixtureAuth);f.release=await releaseLabels(page,{width});
+ await page.goto(ORIGIN,{waitUntil:'networkidle'});await page.waitForFunction(skipLookup=>!!window.__encarFixtureAuth&&(skipLookup||!!window.SnoteEncarId)&&!!window.SnoteRelease,lookupUnavailable);await page.evaluate(()=>window.__encarFixtureAuth);f.release=await releaseLabels(page,{width});
  await page.evaluate(async({actor,company,alias,token,plate,secondPlate,savedCars,primaryColor})=>{
   await enterWorkspace({username:alias,name:'가상 검증 딜러',role:'dealer',company:'가상 검증 상사',employeeNo:'TEST',union:''});
   cars=[{id:'encar-car-1',ownerId:alias,model:'가상 검증 차량 1',plate,year:2026,km:'10,000',buy:1000,sell:1200,status:'판매중'},{id:'encar-car-2',ownerId:alias,model:'가상 검증 차량 2',plate:secondPlate,year:2026,km:'20,000',buy:1500,sell:1700,status:'판매중'}];
