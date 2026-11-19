@@ -41,6 +41,11 @@ test('one authorized browser transport serves the ordered search and closes imme
  const createSearch=async({env,signal})=>{assert.equal(s.calls.length,2,'Auth and active membership must precede paid browser launch');assert.equal(env,ENV);assert.equal(signal.aborted,false);launches++;return{search:s.search,close:async()=>{closed++;}};};
  const r=await run(createEncarIdHandler({createSearch}));assert.equal(r.status,200);assert.equal(r.body.id,'43123456');assert.equal(launches,1);assert.equal(closed,1);assert.deepEqual(s.providers,['carnect']);
 });
+test('a bounded shared session creation can use the originating Pages waitUntil with its proper context',async t=>{
+ const s=fixture(t),held=[];let context;const handler=createEncarIdHandler({createSearch:async({waitUntil})=>{const creation=Promise.resolve('synthetic metadata');waitUntil(creation);return{search:s.search};}});
+ context={request:request(),env:ENV,waitUntil(promise){assert.equal(this,context);held.push(promise);}};
+ const response=await handler(context);assert.equal(response.status,200);assert.equal(held.length,1);assert.deepEqual(await Promise.all(held),['synthetic metadata']);assert.deepEqual(s.providers,['carnect']);
+});
 test('all three sources share one browser and stop at Trust instead of launching parallel searches',async t=>{
  let active=0,closed=0,launches=0;const order=[];
  const s=fixture(t,{search:async p=>{assert.equal(active,0);active++;order.push(p.id);await new Promise(resolve=>setTimeout(resolve,1));active--;return p.id==='trust'?{status:'found',plate:PLATE,id:'43123457',sourceUrl:p.url}:{status:'not_found'};}});
@@ -50,8 +55,8 @@ test('an unauthorized request never constructs a browser transport',async t=>{
  const s=fixture(t,{members:[]});let launches=0;const r=await run(createEncarIdHandler({createSearch:async()=>{launches++;return{search:s.search};}}));assert.equal(r.status,403);assert.equal(launches,0);assert.deepEqual(s.providers,[]);
 });
 test('Browser Run launch failures are safe, preserve request limits, and never attempt another launch',async t=>{
- for(const code of['BROWSER_UNAVAILABLE','UPSTREAM_RATE_LIMITED']){
-  const s=fixture(t);let launches=0;const r=await run(createEncarIdHandler({createSearch:async()=>{launches++;throw Object.assign(new Error('PRIVATE_BROWSER_TOKEN'),{code,retryAfter:27});}}));assert.equal(r.status,code==='UPSTREAM_RATE_LIMITED'?429:502);assert.equal(r.body.code,code);assert.equal(launches,1);assert.deepEqual(s.providers,[]);assert(!JSON.stringify(r.body).includes('PRIVATE'));if(code==='UPSTREAM_RATE_LIMITED')assert.equal(r.response.headers.get('Retry-After'),'27');
+ for(const code of['BROWSER_UNAVAILABLE','BROWSER_BUSY','UPSTREAM_RATE_LIMITED']){
+  const s=fixture(t);let launches=0;const r=await run(createEncarIdHandler({createSearch:async()=>{launches++;throw Object.assign(new Error('PRIVATE_BROWSER_TOKEN'),{code,retryAfter:27});}}));assert.equal(r.status,code==='UPSTREAM_RATE_LIMITED'?429:code==='BROWSER_BUSY'?503:502);assert.equal(r.body.code,code);assert.equal(launches,1);assert.deepEqual(s.providers,[]);assert(!JSON.stringify(r.body).includes('PRIVATE'));if(code==='UPSTREAM_RATE_LIMITED'||code==='BROWSER_BUSY')assert.equal(r.response.headers.get('Retry-After'),'27');
  }
 });
 test('an empty result or a cleanup failure never opens an ad or replaces a successful ID response',async t=>{

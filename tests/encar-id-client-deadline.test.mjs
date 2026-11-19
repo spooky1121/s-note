@@ -27,8 +27,8 @@ function fixture({token=()=>Promise.resolve(TOKEN),fetchResponse}={}){
   fetch(...args){state.requests.push(args);return fetchResponse?fetchResponse(...args):Promise.resolve(state.responses.shift()??success());},
   window:{snoteEncarIdBridge:{context(carId){return carId==='synthetic-car'?context:null;},current(value){return value===context;},accessToken:token}}};
  vm.runInNewContext(source,sandbox,{filename:'assets/encar-id.js'});
- const dialog=elements.find(e=>e.tag==='dialog'),status=elements.find(e=>e.tag==='p'),output=elements.find(e=>e.tag==='output');
- return{...state,button,dialog,status,output,api:sandbox.window.SnoteEncarId,
+ const dialog=elements.find(e=>e.tag==='dialog'),status=elements.find(e=>e.tag==='p'),output=elements.find(e=>e.tag==='output'),loading=elements.find(e=>e.className==='snote-encar-id-loading');
+ return{...state,button,dialog,status,output,loading,api:sandbox.window.SnoteEncarId,
   deadline(){const timer=[...timers.values()].find(t=>t.ms===55000);assert(timer,'The active client deadline must exist');timer.fn();},
   start(){return sandbox.window.SnoteEncarId.lookup('synthetic-car');}};
 }
@@ -51,6 +51,7 @@ test('the lookup deadline also bounds a pending session token and ignores its la
  const token=deferred(),f=fixture({token:()=>token.promise}),lookup=f.start();await flush();
  assert.equal(f.button.disabled,true);f.deadline();assert.equal(await settled(lookup),false);
  assert.equal(f.dialog.open,true);assert.equal(f.dialog.attributes.has('aria-busy'),false);
+ assert.equal(f.loading.hidden,true,'A timed-out search must stop its loading decoration');
  assert.match(f.status.textContent,/시간이 초과/);assert.equal(f.requests.length,0);assert.equal(f.output.hidden,true);
  token.resolve(TOKEN);await flush();assert.equal(f.requests.length,0,'A late token cannot start a request');
  f.api.reset();assert.equal(f.button.disabled,false);
@@ -58,7 +59,7 @@ test('the lookup deadline also bounds a pending session token and ignores its la
 
 test('closing during token acquisition settles immediately and allows a fresh lookup',async()=>{
  const oldToken=deferred();let tokens=0;const f=fixture({token:()=>++tokens===1?oldToken.promise:Promise.resolve(TOKEN)}),old=f.start();await flush();
- f.api.reset();assert.equal(await settled(old),false);assert.equal(f.dialog.open,false);assert.equal(f.button.disabled,false);
+ assert.equal(f.loading.hidden,false);f.api.reset();assert.equal(await settled(old),false);assert.equal(f.dialog.open,false);assert.equal(f.button.disabled,false);assert.equal(f.loading.hidden,true);
  const fresh=f.start();assert.equal(await settled(fresh),true);assert.equal(f.output.value,'43123456');
  oldToken.resolve(TOKEN);await flush();assert.equal(f.requests.length,1);assert.equal(f.output.value,'43123456');f.api.reset();
 });
@@ -84,4 +85,15 @@ test('closing a pending body read cannot hang or overwrite a subsequent successf
  assert.equal(await settled(f.start()),true);assert.equal(f.output.value,'43123457');
  body.read.resolve({done:false,value:new TextEncoder().encode(JSON.stringify({ok:true,status:'found',plate:PLATE,id:'43999999',provider:'trust'}))});await flush();
  assert.equal(f.output.value,'43123457');assert.equal(f.dialog.open,true);assert.equal(f.requests.length,2);body.cancel.resolve();f.api.reset();
+});
+
+test('search animation is decorative and runs only while a real lookup is pending',async()=>{
+ for(const outcome of['found','limited']){
+  const response=deferred(),f=fixture({fetchResponse:()=>response.promise});assert.equal(f.loading.hidden,true);assert.equal(f.loading.attributes.get('aria-hidden'),'true');
+  const lookup=f.start();await flush();assert.equal(f.loading.hidden,false);assert.equal(f.dialog.attributes.get('aria-busy'),'true');assert.equal(f.output.hidden,true);
+  response.resolve(outcome==='found'?success():new Response(JSON.stringify({ok:false,code:'UPSTREAM_RATE_LIMITED'}),{status:429,headers:{'Content-Type':'application/json'}}));
+  assert.equal(await settled(lookup),outcome==='found');assert.equal(f.loading.hidden,true);assert.equal(f.dialog.attributes.has('aria-busy'),false);
+  if(outcome==='found'){assert.equal(f.output.value,'43123456');assert.equal(f.status.textContent,'');}else{assert.equal(f.output.hidden,true);assert.match(f.status.textContent,/검색 브라우저의 실행 요청/);}
+  f.api.reset();assert.equal(f.loading.hidden,true);
+ }
 });

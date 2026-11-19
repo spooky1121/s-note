@@ -72,6 +72,13 @@ test('burst brake cannot be bypassed by changing JWT/query; resets and caps memo
   assert.equal(limiter(req('192.0.2.3'), '/api/weather', policy), null, 'Saturated tracking never denies unrelated new clients');
   now = 60001; assert.equal(limiter(req('192.0.2.3'), '/api/weather', policy), null);
 });
+test('ID lookups have no application minute quota while origin and authentication checks remain', async () => {
+  const policy=API_POLICIES['/api/encar-id'],limiter=createBurstLimiter(),headers={Origin:ORIGIN,'Content-Type':'application/json',Authorization:'Bearer '+JWT,'CF-Connecting-IP':'192.0.2.123'};
+  assert.equal(policy.limit,null);
+  for(let i=0;i<120;i++){const req=request('/api/encar-id',{method:'POST',headers,body:'{"plate":"12가3456"}'});assert.equal(inspectAPIRequest(req).response,undefined);assert.equal(limiter(req,'/api/encar-id',policy),null);}
+  assert.equal(inspectAPIRequest(request('/api/encar-id',{method:'POST',headers:{...headers,Origin:'https://foreign.invalid'},body:'{}'})).response.status,403);
+  assert.equal(inspectAPIRequest(request('/api/encar-id',{method:'POST',headers:{...headers,Authorization:''},body:'{}'})).response.status,401);
+});
 test('API success, provider errors and exceptions all receive security headers', async () => {
   for (const next of [() => new Response('ok', { status: 200, headers: { 'Retry-After': '20' } }), () => new Response('{}', { status: 503 }), () => { throw Error('secret-provider-key'); }]) {
     const res = await onRequest({ request: request('/api/weather'), next });

@@ -5,13 +5,18 @@
  let session=null,sequence=0;
  const dialog=document.createElement('dialog');dialog.id='snote-encar-id-dialog';dialog.className='snote-encar-id-dialog snote-popup-native';dialog.setAttribute('aria-labelledby','snote-encar-id-title');
  const title=document.createElement('h2');title.id='snote-encar-id-title';title.textContent='광고 ID';
+ const loading=document.createElement('div');loading.className='snote-encar-id-loading';loading.dataset.encarIdLoading='';loading.hidden=true;loading.setAttribute('aria-hidden','true');
+ const scan=document.createElement('div');scan.className='snote-encar-id-scan';
+ for(const name of['card','beam','lens']){const shape=document.createElement('span');shape.className='snote-encar-id-scan-'+name;scan.append(shape);}
+ const dots=document.createElement('div');dots.className='snote-encar-id-loading-dots';for(let index=0;index<3;index++)dots.append(document.createElement('span'));loading.append(scan,dots);
  const output=document.createElement('output');output.dataset.encarAdId='';output.hidden=true;output.setAttribute('aria-label','광고 ID');
  const status=document.createElement('p');status.className='snote-encar-id-status';status.setAttribute('role','status');status.setAttribute('aria-live','polite');
  const confirm=document.createElement('button');confirm.type='button';confirm.className='snote-encar-id-confirm';confirm.textContent='확인';confirm.addEventListener('click',close);
- dialog.append(title,output,status,confirm);document.body.append(dialog);
- function close(){const active=session;session=null;++sequence;if(active){active.controller.abort();clearTimeout(active.timeout);}if(dialog.open)dialog.close();dialog.removeAttribute('aria-busy');output.value='';output.textContent='';output.hidden=true;status.textContent='';sync();}
+ dialog.append(title,loading,output,status,confirm);document.body.append(dialog);
+ function busy(active){loading.hidden=!active;if(active)dialog.setAttribute('aria-busy','true');else dialog.removeAttribute('aria-busy');}
+ function close(){const active=session;session=null;++sequence;if(active){active.controller.abort();clearTimeout(active.timeout);}if(dialog.open)dialog.close();busy(false);output.value='';output.textContent='';output.hidden=true;status.textContent='';sync();}
  function live(s){return session===s&&dialog.open&&bridge()?.current(s.context)===true;}
- function message(code){return({NOT_FOUND:'광고 ID를 찾지 못했습니다.',AUTH_REQUIRED:'다시 로그인한 뒤 확인해 주세요.',AUTH_FAILED:'다시 로그인한 뒤 확인해 주세요.',STAFF_REQUIRED:'현재 계정의 차량을 다시 확인해 주세요.',RATE_LIMITED:'요청이 많습니다. 잠시 후 다시 확인해 주세요.',UPSTREAM_RATE_LIMITED:'광고 검색 요청 한도입니다. 잠시 후 다시 확인해 주세요.',LOOKUP_NOT_CONFIGURED:'광고 검색 서버 설정을 확인해 주세요.',BROWSER_UNAVAILABLE:'광고 검색 서버에 연결하지 못했습니다. 잠시 후 다시 확인해 주세요.',AUTH_UNAVAILABLE:'로그인 정보를 확인하지 못했습니다. 잠시 후 다시 확인해 주세요.',PROVIDER_UNSUPPORTED:'외부 사이트의 검색 화면을 확인하지 못했습니다.',REQUEST_TIMEOUT:'광고 ID 검색 시간이 초과됐습니다. 다시 확인해 주세요.'})[code]||'광고 ID를 확인하지 못했습니다. 잠시 후 다시 확인해 주세요.';}
+ function message(code){return({NOT_FOUND:'광고 ID를 찾지 못했습니다.',AUTH_REQUIRED:'다시 로그인한 뒤 확인해 주세요.',AUTH_FAILED:'다시 로그인한 뒤 확인해 주세요.',STAFF_REQUIRED:'현재 계정의 차량을 다시 확인해 주세요.',RATE_LIMITED:'요청이 많습니다. 잠시 후 다시 확인해 주세요.',UPSTREAM_RATE_LIMITED:'검색 브라우저의 실행 요청이 제한되었습니다. 잠시 후 다시 확인해 주세요.',LOOKUP_NOT_CONFIGURED:'광고 검색 서버 설정을 확인해 주세요.',BROWSER_UNAVAILABLE:'광고 검색 서버에 연결하지 못했습니다. 잠시 후 다시 확인해 주세요.',BROWSER_BUSY:'다른 광고 검색이 진행 중입니다. 잠시 후 다시 확인해 주세요.',AUTH_UNAVAILABLE:'로그인 정보를 확인하지 못했습니다. 잠시 후 다시 확인해 주세요.',PROVIDER_UNSUPPORTED:'외부 사이트의 검색 화면을 확인하지 못했습니다.',REQUEST_TIMEOUT:'광고 ID 검색 시간이 초과됐습니다. 다시 확인해 주세요.'})[code]||'광고 ID를 확인하지 못했습니다. 잠시 후 다시 확인해 주세요.';}
  async function abortable(signal,operation){
   if(signal.aborted)throw Error('ABORTED');
   let abort;const interrupted=new Promise((resolve,reject)=>{abort=()=>reject(Error('ABORTED'));signal.addEventListener('abort',abort,{once:true});});
@@ -22,7 +27,7 @@
   if(session)return false;
   const context=bridge()?.context(String(carId??''),options.entry);if(!context)return false;
   const controller=new AbortController(),s={context,controller,sequence:++sequence,timeout:null,timedOut:false};session=s;
-  output.hidden=true;output.textContent='';output.value='';status.textContent='광고 ID를 찾고 있습니다.';dialog.setAttribute('aria-busy','true');dialog.showModal();sync();
+  output.hidden=true;output.textContent='';output.value='';status.textContent='광고 ID를 찾고 있습니다.';busy(true);dialog.showModal();sync();
   s.timeout=setTimeout(()=>{s.timedOut=true;controller.abort();},55000);
   try{
    const token=await abortable(controller.signal,()=>bridge().accessToken(context));if(!live(s))return false;if(!token)throw Error('AUTH_REQUIRED');
@@ -32,7 +37,7 @@
    if(data.plate!==context.plate||typeof data.id!=='string'||!ID.test(data.id)||!providers.has(data.provider))throw Error('INVALID_RESPONSE');
    output.value=data.id;output.textContent=data.id;output.hidden=false;status.textContent='';
    return true;
-  }catch(error){if(live(s)){output.hidden=true;status.textContent=message(s.timedOut?'REQUEST_TIMEOUT':error?.message);}}finally{clearTimeout(s.timeout);if(live(s)){dialog.removeAttribute('aria-busy');confirm.focus();}}
+  }catch(error){if(live(s)){output.hidden=true;status.textContent=message(s.timedOut?'REQUEST_TIMEOUT':error?.message);}}finally{clearTimeout(s.timeout);if(live(s)){busy(false);confirm.focus();}}
   return false;
  }
  function sync(){
