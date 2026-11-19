@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="GLOAR DATA의 실제 차량번호 검색 결과를 확인하는 S-NOTE 테스트 페이지">
+  <title>GLOAR 검색 테스트 · S-NOTE</title>
+  <link rel="stylesheet" href="/assets/gloar-search-test.css?v=2.148">
+  <script src="/assets/idle-auth-storage.js?v=2.148" defer></script>
+  <script src="/assets/gloar-search-test.js?v=2.148" defer></script>
+</head>
+<body>
+  <main class="search-page">
+    <header class="page-header">
+      <a class="brand" href="/">S-NOTE</a>
+      <span class="test-label">검색 테스트</span>
+    </header>
+    <section class="search-card" aria-labelledby="page-title">
+      <div class="card-heading">
+        <div>
+          <p class="eyebrow">GLOAR DATA</p>
+          <h1 id="page-title">차량번호로 광고 찾기</h1>
+        </div>
+        <span class="configuration" id="configuration" role="status">설정 확인 중</span>
+      </div>
+      <p class="description">사이트 상단 검색창에 차량번호를 입력해 실제 차량 링크를 가져옵니다.</p>
+      <div class="auth-notice" id="auth-notice" hidden>
+        <p id="auth-message">이 탭에서 S-NOTE에 로그인한 다음, 브라우저 뒤로가기로 돌아와 검색해 주세요.</p>
+        <a href="/">S-NOTE 로그인으로 이동 <span aria-hidden="true">↗</span></a>
+      </div>
+      <form id="search-form" novalidate>
+        <label for="plate">차량번호</label>
+        <div class="search-row">
+          <input id="plate" name="plate" value="28오6877" maxlength="40" autocomplete="off" spellcheck="false" required aria-describedby="plate-hint search-status">
+          <button id="search-button" type="submit">검색</button>
+          <button id="cancel-button" class="secondary" type="button" hidden>취소</button>
+        </div>
+        <p class="input-hint" id="plate-hint">현재 S-NOTE에 로그인한 계정으로 검색합니다.</p>
+      </form>
+      <div class="search-feedback">
+        <span class="spinner" id="search-spinner" aria-hidden="true" hidden></span>
+        <p id="search-status" role="status" aria-live="polite">차량번호를 확인하고 검색을 눌러 주세요.</p>
+      </div>
+    </section>
+    <section class="results-card" id="results-section" aria-labelledby="results-title" hidden>
+      <div class="results-heading">
+        <h2 id="results-title">검색 결과</h2>
+        <span id="result-count" class="result-count"></span>
+      </div>
+      <ul id="results" class="result-list"></ul>
+    </section>
+    <details id="diagnostics" hidden>
+      <summary>진단 정보</summary>
+      <pre id="diagnostic-output"></pre>
+    </details>
+    <footer>차량 정보와 판매가는 변경하지 않습니다.</footer>
+  </main>
+</body>
+</html>
