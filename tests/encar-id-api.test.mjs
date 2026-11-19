@@ -17,7 +17,7 @@ function fixture(t,config={}){
  const state={calls:[],providers:[]};
  if(!originals.has(t)){originals.set(t,globalThis.fetch);t.after(()=>{globalThis.fetch=originals.get(t);originals.delete(t);});}
  globalThis.fetch=async(input,options={})=>{
-  const url=new URL(input);state.calls.push({url:url.href,options});assert.equal(url.origin,ENV.SUPABASE_URL,'No direct external, search, Korean Encar, price or write endpoint is permitted in this fixture');assert.equal(options.method,'GET');assert.equal(options.cache,'no-store');assert.equal(options.redirect,'error');assert.equal(options.headers.apikey,ENV.SUPABASE_PUBLISHABLE_KEY);assert.equal(options.headers.Authorization,'Bearer '+TOKEN);
+  const url=new URL(input);state.calls.push({url:url.href,options});assert.equal(url.origin,ENV.SUPABASE_URL,'No direct external, search, Korean Encar, price or write endpoint is permitted in this fixture');assert.equal(options.method,'GET');assert.equal(options.cache,'no-store');assert.equal(options.redirect,'manual');assert.equal(options.headers.apikey,ENV.SUPABASE_PUBLISHABLE_KEY);assert.equal(options.headers.Authorization,'Bearer '+TOKEN);
   if(options.signal?.aborted)throw new DOMException('Aborted','AbortError');
   if(url.pathname==='/auth/v1/user')return config.authResponse?.()??json(config.user===undefined?{id:USER,user_metadata:{secret:'PRIVATE_METADATA',role:'admin'}}:config.user);
   assert.equal(url.pathname,'/rest/v1/zc_members');assert.equal(url.searchParams.get('user_id'),'eq.'+USER);assert.equal(url.searchParams.get('active'),'eq.true');assert.equal(url.searchParams.get('limit'),'1');assert.equal(url.searchParams.get('select'),'user_id,company_id,role,active');return config.memberResponse?.()??json(config.members===undefined?[member]:config.members);
@@ -33,8 +33,29 @@ test('verified active membership returns only the requested advertisement ID pay
 test('injected search is ordered and a later source can find the exact plate without a write',async t=>{
  const s=fixture(t,{search:p=>p.id==='carnect'?{status:'not_found'}:{status:'found',plate:PLATE,id:'43123457',sourceUrl:p.url}}),r=await run(createEncarIdHandler({search:s.search}));assert.equal(r.status,200);assert.equal(r.body.provider,'gloar');assert.deepEqual(s.providers,['carnect','gloar']);assert.equal(s.calls.length,2);assert(s.calls.every(c=>c.options.method==='GET'));
 });
-test('the default production export deliberately remains unconfigured until a real provider contract is verified',async t=>{
+test('the production export refuses missing Browser Run credentials after authorization without an external request',async t=>{
  const s=fixture(t),r=await run(onRequest);assert.equal(r.status,503);assert.equal(r.body.ok,false);assert.equal(r.body.code,'LOOKUP_NOT_CONFIGURED');assert.equal(r.body.status,'error');assert(!('id'in r.body));assert.equal(s.calls.length,2);assert.deepEqual(s.providers,[]);
+});
+test('one authorized browser transport serves the ordered search and closes immediately after the first match',async t=>{
+ const s=fixture(t);let launches=0,closed=0;
+ const createSearch=async({env,signal})=>{assert.equal(s.calls.length,2,'Auth and active membership must precede paid browser launch');assert.equal(env,ENV);assert.equal(signal.aborted,false);launches++;return{search:s.search,close:async()=>{closed++;}};};
+ const r=await run(createEncarIdHandler({createSearch}));assert.equal(r.status,200);assert.equal(r.body.id,'43123456');assert.equal(launches,1);assert.equal(closed,1);assert.deepEqual(s.providers,['carnect']);
+});
+test('all three sources share one browser and stop at Trust instead of launching parallel searches',async t=>{
+ let active=0,closed=0,launches=0;const order=[];
+ const s=fixture(t,{search:async p=>{assert.equal(active,0);active++;order.push(p.id);await new Promise(resolve=>setTimeout(resolve,1));active--;return p.id==='trust'?{status:'found',plate:PLATE,id:'43123457',sourceUrl:p.url}:{status:'not_found'};}});
+ const r=await run(createEncarIdHandler({createSearch:async()=>{launches++;return{search:s.search,close:()=>{closed++;}};}}));assert.equal(r.status,200);assert.equal(r.body.provider,'trust');assert.deepEqual(order,['carnect','gloar','trust']);assert.equal(launches,1);assert.equal(closed,1);
+});
+test('an unauthorized request never constructs a browser transport',async t=>{
+ const s=fixture(t,{members:[]});let launches=0;const r=await run(createEncarIdHandler({createSearch:async()=>{launches++;return{search:s.search};}}));assert.equal(r.status,403);assert.equal(launches,0);assert.deepEqual(s.providers,[]);
+});
+test('Browser Run launch failures are safe, preserve request limits, and never attempt another launch',async t=>{
+ for(const code of['BROWSER_UNAVAILABLE','UPSTREAM_RATE_LIMITED']){
+  const s=fixture(t);let launches=0;const r=await run(createEncarIdHandler({createSearch:async()=>{launches++;throw Object.assign(new Error('PRIVATE_BROWSER_TOKEN'),{code,retryAfter:27});}}));assert.equal(r.status,code==='UPSTREAM_RATE_LIMITED'?429:502);assert.equal(r.body.code,code);assert.equal(launches,1);assert.deepEqual(s.providers,[]);assert(!JSON.stringify(r.body).includes('PRIVATE'));if(code==='UPSTREAM_RATE_LIMITED')assert.equal(r.response.headers.get('Retry-After'),'27');
+ }
+});
+test('an empty result or a cleanup failure never opens an ad or replaces a successful ID response',async t=>{
+ for(const found of[true,false]){const s=fixture(t,{search:p=>found?{status:'found',plate:PLATE,id:'43123456',sourceUrl:p.url}:{status:'not_found'}});let closed=0;const r=await run(createEncarIdHandler({createSearch:async()=>({search:s.search,close:()=>{closed++;throw new Error('PRIVATE_CLEANUP');}})}));assert.equal(r.status,200);assert.equal(r.body.ok,found);assert.equal(closed,1);assert(!JSON.stringify(r.body).includes('PRIVATE'));}
 });
 test('three actual no-match fixtures return NOT_FOUND without a guessed ID',async t=>{
  const s=fixture(t,{search:()=>({status:'not_found'})}),r=await run(createEncarIdHandler({search:s.search}));assert.equal(r.status,200);assert.equal(r.body.ok,false);assert.equal(r.body.status,'not_found');assert.equal(r.body.code,'NOT_FOUND');assert(!('id'in r.body));assert.deepEqual(s.providers,['carnect','gloar','trust']);
