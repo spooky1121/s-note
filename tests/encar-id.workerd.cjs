@@ -1,84 +1,124 @@
 'use strict';
-// Actual compiled Pages API in workerd. All Auth/Tavily replies are synthetic.
-// NODE_PATH=/path/to/tools/node_modules node tests/encar-id.workerd.cjs /tmp/pages.js
-const assert=require('node:assert/strict'),fs=require('node:fs');
+// Actual compiled Pages route, native Workers fetch/WebSocket/CDP and actual
+// serialized provider actions against synthetic local DOM. No real outbound.
+// NODE_PATH=/path/to/tools/node_modules node tests/encar-id.workerd.cjs <pages-build>
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 const{Miniflare,Response:WorkerResponse,convertV4MiniflareOptions}=require('miniflare');
+const{JSDOM}=require(path.join(__dirname,'encar/node_modules/jsdom'));
 const ORIGIN='https://native-id-api.example',USER='11111111-1111-4111-8111-111111111111',COMPANY='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
 const JWT='eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzeW50aGV0aWMifQ.c2lnbmF0dXJl';
-const ENV={SUPABASE_URL:'https://native-id-auth.supabase.co',SUPABASE_PUBLISHABLE_KEY:'synthetic-public-key',TAVILY_API_KEY:'synthetic-search-token'};
-const PLATE='12가3456',REAL_PLATE='66너7230',ID='43123456',REAL_ID='43138217',HOSTS=['carnect.biz','gloar-data.com','encar.spb.ru'];
+const PLATE='12가3456',ID='43123456',SECOND_PLATE='28오6877',SECOND_ID='43156966',DETAIL='https://gloar-data.com/en/lot/native-opaque-key-99999999';
+const ENV={SUPABASE_URL:'https://native-id-auth.supabase.co',SUPABASE_PUBLISHABLE_KEY:'synthetic-public-key',CLOUDFLARE_ACCOUNT_ID:'a'.repeat(32),CLOUDFLARE_BROWSER_TOKEN:'synthetic-browser-token'};
 const fixture=`
-let mode='carnect',stats;const reset=()=>{stats={auth:0,members:0,searches:[],extracts:[],unexpected:[]};};reset();
-const detail=(host,plate,id)=>({url:'https://'+host+(host==='carnect.biz'?'/car/43999999':host==='gloar-data.com'?'/en/lot/synthetic-car-'+id:'/auto/'+id+'/'),title:host==='encar.spb.ru'?'Synthetic vehicle — лот '+id:'Synthetic vehicle',content:'',raw_content:host==='encar.spb.ru'?'# Synthetic vehicle\\nЛот\\n'+id+'\\nНомер автомобиля\\n'+plate:'# Synthetic vehicle\\nLicense plate: '+plate+'\\nEncar ID: '+id,id:'opaque-search-document-0001'});
-export default{async fetch(request){
+const SESSION='1909cef7-23e8-4394-bc31-27404bf4348f',BASE='https://api.cloudflare.com/client/v4/accounts/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/browser-run/devtools/browser';
+let mode='found',stats,nextContext=0,nextTarget=0;
+const reset=()=>{stats={auth:0,members:0,creates:0,connects:0,contexts:[],disposed:[],navigations:[],commands:[],guardrails:[],unexpected:[]};};reset();
+export default{async fetch(request,env){
  const url=new URL(request.url);
- if(url.hostname==='fixture.internal'){if(url.pathname==='/reset'){mode=url.searchParams.get('mode')||'carnect';reset();}return Response.json(stats);}
+ if(url.hostname==='fixture.internal'){if(url.pathname==='/reset'){mode=url.searchParams.get('mode')||'found';reset();}return Response.json(stats);}
  if(url.origin==='https://native-id-auth.supabase.co'){
-  if(request.method!=='GET'||request.headers.get('Authorization')!=='Bearer ${JWT}'||request.headers.get('apikey')!=='synthetic-public-key')throw Error('Synthetic Auth contract mismatch');
-  if(url.pathname==='/auth/v1/user'){stats.auth++;return Response.json({id:'${USER}'});}
-  if(url.pathname==='/rest/v1/zc_members'){stats.members++;return Response.json(mode==='denied'?[]:[{user_id:'${USER}',company_id:'${COMPANY}',role:'dealer',active:true}]);}
+  if(request.method!=='GET'||request.headers.get('Authorization')!=='Bearer ${JWT}'||request.headers.get('apikey')!=='synthetic-public-key')throw Error('Auth must be read-only and use requesting account');
+  if(url.pathname==='/auth/v1/user'){stats.auth++;return mode==='auth_error'?new Response('PRIVATE_AUTH',{status:503}):Response.json({id:'${USER}'});}
+  if(url.pathname==='/rest/v1/zc_members'){stats.members++;if(url.searchParams.get('user_id')!=='eq.${USER}'||url.searchParams.get('active')!=='eq.true'||url.searchParams.get('limit')!=='1')throw Error('Membership contract');return Response.json(mode==='denied'?[]:[{user_id:'${USER}',company_id:'${COMPANY}',role:'dealer',active:true}]);}
  }
- if(url.origin==='https://api.tavily.com'){
-  if(request.method!=='POST'||request.headers.get('Authorization')!=='Bearer synthetic-search-token'||request.headers.get('Content-Type')!=='application/json')throw Error('Unsafe search authentication');
-  const body=await request.json();
-  if(url.pathname==='/search'){
-   const hosts=body.include_domains,host=hosts?.[0];
-   if(!Array.isArray(hosts)||hosts.length!==1||!${JSON.stringify(HOSTS)}.includes(host)||body.include_domains_mode!=='restrict'||body.exact_match!==true||body.search_depth!=='basic'||body.auto_parameters!==false||body.include_answer!==false||body.include_raw_content!=='markdown'||body.max_results!==6)throw Error('Unsafe or speculative search request');
-   const plate=body.query?.includes('"${REAL_PLATE}"')?'${REAL_PLATE}':'${PLATE}';if(body.query!=='"'+plate+'" site:'+host)throw Error('Query must be the exact plate and provider');stats.searches.push({host,plate});
-   if(mode==='search_auth')return Response.json({detail:'PRIVATE_AUTH'},{status:401});
-   if(mode==='search_limit')return Response.json({detail:'PRIVATE_LIMIT'},{status:429,headers:{'Retry-After':'31'}});
-   if(mode==='search_quota')return Response.json({detail:'PRIVATE_QUOTA'},{status:432,headers:{'Retry-After':'32'}});
-   if(mode==='search_unavailable')return Response.json({detail:'PRIVATE_FAILURE'},{status:503});
-   if(mode==='search_invalid')return new Response('{broken',{headers:{'Content-Type':'application/json'}});
-   const wanted=mode==='real_66'?'encar.spb.ru':mode==='extract'?'carnect.biz':({carnect:'carnect.biz',gloar:'gloar-data.com',trust:'encar.spb.ru'})[mode];
-   if(mode==='not_found'||!['mismatch','related','path_only','foreign_result'].includes(mode)&&host!==wanted)return Response.json({results:[]});
-   const id=plate==='${REAL_PLATE}'?'${REAL_ID}':'${ID}',record=detail(host,plate,id);
-   if(mode==='mismatch')record.raw_content=detail(host,'34나5678',id).raw_content;
-   if(mode==='related'){Object.assign(record,detail(host,'34나5678','43111111'));record.raw_content+='\\n## Похожие автомобили\\nЛот\\n'+id+'\\nНомер автомобиля\\n'+plate;}
-   if(mode==='path_only'){record.raw_content='# Synthetic vehicle\\nLicense plate: '+plate;record.id=id;record.content=plate;}
-   if(mode==='extract'){record.raw_content=null;record.content='License plate: '+plate;}
-   if(mode==='foreign_result')record.url='https://foreign.invalid/auto/'+id+'/';
-   return Response.json({results:[record]});
-  }
-  if(url.pathname==='/extract'){
-   if(!Array.isArray(body.urls)||body.urls.length<1||body.urls.length>3||body.extract_depth!=='basic'||body.format!=='markdown'||body.include_images!==false)throw Error('Unsafe extraction request');
-   for(const value of body.urls){const target=new URL(value);if(target.protocol!=='https:'||!${JSON.stringify(HOSTS)}.includes(target.hostname)||!/^(?:\\/car\\/|\\/en\\/lot\\/|\\/auto\\/)/.test(target.pathname))throw Error('Unsafe extraction target');}
-   stats.extracts.push([...body.urls]);return Response.json({results:body.urls.map(value=>({url:value,raw_content:mode==='extract'?'# Synthetic vehicle\\nLicense plate: ${PLATE}\\nEncar ID: ${ID}':'# Synthetic vehicle\\nLicense plate: ${PLATE}'})),failed_results:[]});
-  }
+ if(url.origin!=='https://api.cloudflare.com'){stats.unexpected.push({url:request.url,method:request.method});return new Response('Unexpected origin',{status:502});}
+ if(request.headers.get('Authorization')!=='Bearer synthetic-browser-token')throw Error('Browser must use server credentials');
+ if(request.url===BASE+'?keep_alive=30000'&&request.method==='POST'){
+  const body=await request.json();stats.creates++;stats.guardrails.push(body.guardrails);
+  if(JSON.stringify(body.guardrails)!==JSON.stringify({allowedDomains:['gloar-data.com','*.gloar-data.com'],allowedDomainSets:['common-cdns']}))throw Error('GLOAR-only guardrails required');
+  return Response.json({sessionId:SESSION,webSocketDebuggerUrl:'wss://foreign.invalid/must-not-be-used'});
  }
- stats.unexpected.push({origin:url.origin,path:url.pathname,method:request.method});return new Response('Unexpected request',{status:502});
+ if(request.url!==BASE+'/'+SESSION||request.method!=='GET'||request.headers.get('Upgrade')!=='websocket'){stats.unexpected.push({url:request.url,method:request.method});return new Response('Unexpected browser call',{status:502});}
+ stats.connects++;
+ if(mode==='browser_limit')return new Response('PRIVATE_LIMIT',{status:429,headers:{'Retry-After':'31'}});
+ if(mode==='browser_busy')return new Response('PRIVATE_BUSY',{status:409,headers:{'Retry-After':'32'}});
+ if(mode==='browser_auth')return new Response('PRIVATE_TOKEN',{status:403});
+ const pair=new WebSocketPair(),[client,socket]=Object.values(pair);socket.accept();
+ const contexts=new Set(),targets=new Map(),attached=new Map();
+ const dom=async(operation,fields={})=>{const response=await env.DOM.fetch('https://dom.fixture/'+operation,{method:'POST',body:JSON.stringify({mode,...fields})});const body=await response.json();if(!response.ok)throw Error(body.error||'DOM failure');return body;};
+ socket.addEventListener('message',event=>{void(async()=>{
+  const command=JSON.parse(event.data);stats.commands.push(command.method);let result={};
+  if(command.method==='Target.createBrowserContext'){if(command.params.disposeOnDetach!==true)throw Error('Context must dispose on detach');const browserContextId='context-'+(++nextContext);contexts.add(browserContextId);stats.contexts.push(browserContextId);result={browserContextId};}
+  if(command.method==='Target.createTarget'){if(command.params.url!=='about:blank'||!contexts.has(command.params.browserContextId))throw Error('Own isolated context required');const targetId='target-'+(++nextTarget);targets.set(targetId,command.params.browserContextId);result={targetId};}
+  if(command.method==='Target.attachToTarget'){if(!targets.has(command.params.targetId))throw Error('Unknown target');const sessionId='page-'+command.params.targetId;attached.set(sessionId,command.params.targetId);result={sessionId};}
+  const targetId=attached.get(command.sessionId);
+  if(command.method==='Page.navigate'){const target=new URL(command.params.url);if(target.origin!=='https://gloar-data.com'||!/^\\/en(?:\\/lot\\/[A-Za-z0-9_-]+)?\\/?$/.test(target.pathname))throw Error('Fixed GLOAR navigation only');stats.navigations.push(command.params.url);await dom('navigate',{targetId,url:command.params.url});result={frameId:'frame-'+targetId,loaderId:'loader-'+command.id};}
+  if(command.method==='Runtime.evaluate'){try{const evaluated=await dom('evaluate',{targetId,expression:command.params.expression});result={result:{value:evaluated.value}};}catch{result={exceptionDetails:{text:'Synthetic remote evaluation failed'}};}}
+  if(command.method==='Input.dispatchKeyEvent'&&command.params.type==='keyDown')await dom('enter',{targetId});
+  if(command.method==='Target.closeTarget'){await dom('close',{targetId:command.params.targetId});targets.delete(command.params.targetId);result={success:true};}
+  if(command.method==='Target.disposeBrowserContext'){if(!contexts.has(command.params.browserContextId))throw Error('Cannot dispose another context');for(const[id,context]of targets)if(context===command.params.browserContextId){await dom('close',{targetId:id});targets.delete(id);}contexts.delete(command.params.browserContextId);stats.disposed.push(command.params.browserContextId);}
+  if(command.method==='Browser.close')throw Error('Do not terminate reusable browser');
+  socket.send(JSON.stringify({id:command.id,...(command.sessionId?{sessionId:command.sessionId}:{}),result}));
+  if(command.method==='Page.navigate')socket.send(JSON.stringify({method:'Page.lifecycleEvent',sessionId:command.sessionId,params:{...result,name:'DOMContentLoaded'}}));
+ })().catch(error=>{stats.unexpected.push({cdpError:String(error.message)});try{socket.close(1011,'Fixture failure');}catch{}});});
+ return new Response(null,{status:101,webSocket:client});
 }};`;
-async function loadScript(path){let script=fs.readFileSync(path,'utf8');if(script.startsWith('--')){const boundary=script.split('\r\n')[0].slice(2),form=await new Response(script,{headers:{'Content-Type':'multipart/form-data; boundary='+boundary}}).formData(),metadata=JSON.parse(form.get('metadata'));script=await form.get(metadata.main_module).text();}return script;}
+const windows=new Map(),domStats={evaluations:0,nameHelpers:0,enters:[],errors:[],navigations:[],closed:0};
+function documentFor(url,mode){
+ if(mode==='blocked')return '<!doctype html><title>Just a moment...</title><main>Verify you are human</main>';
+ const header='<header><input id="headerSearchInput" placeholder="Enter 17-digit VIN, Lot #, or Plate..."></header>';
+ if(!new URL(url).pathname.startsWith('/en/lot/'))return '<!doctype html><title>GLOAR DATA</title>'+header+'<main id="catalog">'+Array.from({length:12},(_,i)=>'<a href="/en/lot/old-'+i+'">Unchanged catalog '+i+'</a>').join('')+'</main><div id="search-portal"></div>';
+ const plate=mode==='second_plate'?SECOND_PLATE:PLATE,id=mode==='second_plate'?SECOND_ID:ID,primary=['mismatch','related'].includes(mode)?'34나5678':plate;
+ let html='<!doctype html><title>Synthetic GLOAR vehicle</title>'+header+'<main><h1>Synthetic Tesla</h1><p>Plate <span>'+primary.slice(0,2)+'</span><span>'+primary.slice(2)+'</span></p>';
+ if(mode!=='no_id')html+='<a href="https://fem.encar.com/cars/detail/'+id+'">Source Encar</a>';
+ if(mode==='ambiguous')html+='<a href="https://www.encar.com/dc/dc_cardetailview.do?carid=43111111">Second source</a>';
+ html+='</main>';if(mode==='related')html+='<h2>Похожие автомобили</h2><article><p>'+plate+'</p><a href="https://fem.encar.com/cars/detail/'+id+'">Encar</a></article>';return html;
+}
+function makeWindow(targetId,url,mode){
+ windows.get(targetId)?.close();const dom=new JSDOM(documentFor(url,mode),{url,runScripts:'outside-only'}),window=dom.window;
+ Object.defineProperty(window.document,'readyState',{get:()=> 'complete',configurable:true});
+ window.HTMLElement.prototype.getClientRects=function(){return this.hidden?[]:[{width:100,height:24,top:0,left:0,right:100,bottom:24}];};
+ const input=window.document.getElementById('headerSearchInput');if(input)input.addEventListener('keydown',event=>{
+  if(event.key!=='Enter')return;domStats.enters.push({plate:input.value,focused:window.document.activeElement===input,url:window.location.href});
+  const portal=window.document.getElementById('search-portal');if(!portal)return;
+  if(mode==='not_found'){window.document.getElementById('catalog').replaceChildren();portal.innerHTML='<p>No results found</p>';}else portal.innerHTML='<a href="'+DETAIL+'">Matching search result '+input.value+'</a>';
+ });windows.set(targetId,window);domStats.navigations.push(url);
+}
+async function domService(request){try{
+ const operation=new URL(request.url).pathname.slice(1),body=await request.json();
+ if(operation==='navigate'){makeWindow(body.targetId,body.url,body.mode);return WorkerResponse.json({ok:true});}
+ if(operation==='close'){const window=windows.get(body.targetId);if(window){window.close();windows.delete(body.targetId);domStats.closed++;}return WorkerResponse.json({ok:true});}
+ const window=windows.get(body.targetId);assert(window,'DOM target must exist');
+ if(operation==='enter'){window.document.activeElement.dispatchEvent(new window.KeyboardEvent('keydown',{key:'Enter',code:'Enter',bubbles:true}));return WorkerResponse.json({ok:true});}
+ assert.equal(operation,'evaluate');domStats.evaluations++;if(body.expression.includes('__name'))domStats.nameHelpers++;
+ assert.equal(window.__name,undefined,'Do not inject helper into fixture; production must serialize it');
+ return WorkerResponse.json({value:await window.eval(body.expression)});
+}catch(error){domStats.errors.push(String(error.stack||error));return WorkerResponse.json({error:String(error.message)},{status:500});}}
+async function loadScript(filename){let script=fs.readFileSync(filename,'utf8');if(script.startsWith('--')){const boundary=script.split('\r\n')[0].slice(2),form=await new Response(script,{headers:{'Content-Type':'multipart/form-data; boundary='+boundary}}).formData(),metadata=JSON.parse(form.get('metadata'));script=await form.get(metadata.main_module).text();}return script;}
 (async()=>{
- const script=await loadScript(process.argv[2]);let outbound=0;assert(!script.includes('/browser-run/devtools/browser'),'The compiled lookup must not import the browser search transport');
- const withoutKey={...ENV};delete withoutKey.TAVILY_API_KEY;
- const options={workers:[
-  ...[['api',ENV],['no-key-api',withoutKey]].map(([name,bindings])=>({name,modulesRoot:'/native-id-api',modules:[{type:'ESModule',path:'/native-id-api/'+name+'.mjs',contents:script}],compatibilityDate:'2026-10-01',bindings,serviceBindings:{ASSETS:()=>new WorkerResponse('synthetic-static')},outboundService:'id-fixture'})),
-  {name:'id-fixture',modulesRoot:'/native-id-api',modules:[{type:'ESModule',path:'/native-id-api/fixture.mjs',contents:fixture}],compatibilityDate:'2026-10-01'}
- ],cf:false,outboundService:()=>{outbound++;return new WorkerResponse('Outbound forbidden',{status:502});}};
+ const script=await loadScript(process.argv[2]);assert(script.includes('headerSearchInput'),'Compile actual GLOAR production route');assert(!script.includes('api.tavily.com'),'No search-engine fallback in production');
+ const noToken={...ENV};delete noToken.CLOUDFLARE_BROWSER_TOKEN;
+ let outbound=0;const options={workers:[
+  ...[['api',ENV],['no-token-api',noToken]].map(([name,bindings])=>({name,modulesRoot:'/native-gloar-api',modules:[{type:'ESModule',path:'/native-gloar-api/'+name+'.mjs',contents:script}],compatibilityDate:'2026-10-01',bindings,serviceBindings:{ASSETS:()=>new WorkerResponse('synthetic-static')},outboundService:'id-fixture'})),
+  {name:'id-fixture',modulesRoot:'/native-gloar-api',modules:[{type:'ESModule',path:'/native-gloar-api/fixture.mjs',contents:fixture}],serviceBindings:{DOM:domService},compatibilityDate:'2026-10-01'}
+ ],cf:false,outboundService:()=>{outbound++;return new WorkerResponse('Actual outbound prohibited',{status:502});}};
  const runtime=new Miniflare(typeof convertV4MiniflareOptions==='function'?{...convertV4MiniflareOptions(options),telemetry:{enabled:false}}:options),reports=[];
  try{
-  const upstream=await runtime.getWorker('id-fixture'),noKey=await runtime.getWorker('no-key-api');
-  const optionsFor=(plate=PLATE)=>({method:'POST',headers:{Origin:ORIGIN,'Content-Type':'application/json',Authorization:'Bearer '+JWT},body:JSON.stringify({plate})});
-  const call=(plate=PLATE)=>runtime.dispatchFetch(ORIGIN+'/api/encar-id',optionsFor(plate));
-  const stats=async()=>{const state=await(await upstream.fetch('https://fixture.internal/stats')).json();assert.deepEqual(state.unexpected,[],'No browser, provider, Korean Encar, price or database-write call is allowed');return state;};
-  const reset=mode=>upstream.fetch('https://fixture.internal/reset?mode='+mode);
-  await reset('carnect');
-  for(const[worker,configured]of[[null,true],[noKey,false]]){const response=worker?await worker.fetch(ORIGIN+'/api/encar-id'):await runtime.dispatchFetch(ORIGIN+'/api/encar-id');assert.equal(response.status,200);assert.deepEqual(await response.json(),{ok:true,configured,provider:'tavily',release:'2.147'});}
-  let state=await stats();assert.equal(state.auth,0);assert.equal(state.members,0);assert.equal(state.searches.length,0);reports.push({mode:'public-configuration',externalCalls:0});
-  for(const[kind,status]of[['foreign-origin',403],['extra-url',400],['missing-auth',401]]){const options=optionsFor();if(kind==='foreign-origin')options.headers.Origin='https://foreign.invalid';if(kind==='extra-url')options.body=JSON.stringify({plate:PLATE,url:'https://foreign.invalid'});if(kind==='missing-auth')delete options.headers.Authorization;const response=await runtime.dispatchFetch(ORIGIN+'/api/encar-id',options);assert.equal(response.status,status);}
-  state=await stats();assert.equal(state.auth,0);assert.equal(state.members,0);assert.equal(state.searches.length,0);reports.push({mode:'request-boundaries',externalCalls:0});
-  for(const mode of['carnect','gloar','trust','real_66','not_found','mismatch','related','path_only','foreign_result','extract']){
-   await reset(mode);const plate=mode==='real_66'?REAL_PLATE:PLATE,response=await call(plate),body=await response.json();state=await stats();assert.equal(state.auth,1);assert.equal(state.members,1);assert.match(response.headers.get('Cache-Control'),/no-store/);assert.equal(response.headers.get('X-Snote-Release'),'2.147');assert(!JSON.stringify(body).includes('opaque-search-document'));
-   if(['not_found','mismatch','related','path_only','foreign_result'].includes(mode)){assert.equal(body.ok,false,JSON.stringify({mode,body}));assert(!('id'in body));assert.equal(state.searches.length,3);if(['path_only','foreign_result'].includes(mode))assert.equal(response.status,502);else{assert.equal(response.status,200);assert.equal(body.status,'not_found');}if(mode==='foreign_result')assert.equal(state.extracts.length,0);}
-   else{const provider=mode==='real_66'?'trust':mode==='extract'?'carnect':mode,id=mode==='real_66'?REAL_ID:ID;assert.equal(response.status,200,JSON.stringify({mode,body}));assert.deepEqual(body,{ok:true,status:'found',plate,id,provider});const expected=provider==='carnect'?1:provider==='gloar'?2:3;assert.equal(state.searches.length,expected);if(mode==='extract')assert.equal(state.extracts.length,1);}
-   assert.deepEqual(state.searches.map(item=>item.host),HOSTS.slice(0,state.searches.length));reports.push({mode,status:response.status,searches:state.searches.length,extracts:state.extracts.length});
+  const upstream=await runtime.getWorker('id-fixture'),noKey=await runtime.getWorker('no-token-api');
+  const requestOptions=(plate=PLATE)=>({method:'POST',headers:{Origin:ORIGIN,'Content-Type':'application/json',Authorization:'Bearer '+JWT},body:JSON.stringify({plate})});
+  const call=(plate=PLATE)=>runtime.dispatchFetch(ORIGIN+'/api/encar-id',requestOptions(plate));
+  const state=async()=>{const s=await(await upstream.fetch('https://fixture.internal/stats')).json();assert.deepEqual(s.unexpected,[],'No unexpected network or CDP call');return s;};
+  const reset=async mode=>{assert.equal(windows.size,0,'Previous request must release DOM target');await upstream.fetch('https://fixture.internal/reset?mode='+mode);};
+  await reset('found');
+  for(const[worker,configured]of[[null,true],[noKey,false]]){const response=worker?await worker.fetch(ORIGIN+'/api/encar-id'):await runtime.dispatchFetch(ORIGIN+'/api/encar-id');assert.equal(response.status,200);assert.deepEqual(await response.json(),{ok:true,configured,provider:'gloar',release:'2.148'});}
+  let s=await state();assert.equal(s.auth+s.members+s.creates+s.connects,0);reports.push({mode:'configuration',externalCalls:0});
+  for(const[kind,status]of[['foreign-origin',403],['extra-url',400],['missing-auth',401]]){const init=requestOptions();if(kind==='foreign-origin')init.headers.Origin='https://foreign.invalid';if(kind==='extra-url')init.body=JSON.stringify({plate:PLATE,url:'https://foreign.invalid'});if(kind==='missing-auth')delete init.headers.Authorization;assert.equal((await runtime.dispatchFetch(ORIGIN+'/api/encar-id',init)).status,status);}
+  s=await state();assert.equal(s.auth+s.members+s.creates+s.connects,0);reports.push({mode:'request-boundaries',externalCalls:0});
+  for(const mode of['found','warm_found','second_plate','not_found','mismatch','related','no_id','ambiguous','blocked']){
+   await reset(mode);const plate=mode==='second_plate'?SECOND_PLATE:PLATE,response=await call(plate),body=await response.json();s=await state();
+   assert.equal(s.auth,1);assert.equal(s.members,1);assert.equal(s.connects,1);assert.equal(s.contexts.length,1);assert.deepEqual(s.disposed,s.contexts);assert.equal(windows.size,0);assert.equal(s.commands.filter(x=>x==='Target.closeTarget').length,1);assert.match(response.headers.get('Cache-Control'),/no-store/);assert.equal(response.headers.get('X-Snote-Release'),'2.148');assert(!JSON.stringify(body).includes('PRIVATE'));
+   if(['found','warm_found','second_plate'].includes(mode)){assert.equal(response.status,200,JSON.stringify({mode,body}));assert.deepEqual(body,{ok:true,status:'found',plate,id:mode==='second_plate'?SECOND_ID:ID,provider:'gloar'});if(mode==='warm_found')assert.equal(s.creates,0);assert.deepEqual(s.navigations,['https://gloar-data.com/en',DETAIL]);}
+   else if(['not_found','mismatch','related'].includes(mode)){assert.equal(response.status,200,JSON.stringify({mode,body}));assert.equal(body.code,'NOT_FOUND');assert(!('id'in body));}
+   else{assert.equal(response.status,502,JSON.stringify({mode,body}));assert.equal(body.code,({no_id:'GLOAR_ID_UNVERIFIED',ambiguous:'GLOAR_AMBIGUOUS',blocked:'GLOAR_ACCESS_BLOCKED'})[mode]);assert(!('id'in body));}
+   reports.push({mode,status:response.status,creates:s.creates,connects:s.connects,navigations:s.navigations.length});
   }
-  for(const[mode,status,code,retry]of[['search_auth',502,'SEARCH_AUTH_FAILED'],['search_limit',429,'SEARCH_RATE_LIMITED','31'],['search_quota',429,'SEARCH_RATE_LIMITED','32'],['search_unavailable',502,'SEARCH_UNAVAILABLE'],['search_invalid',502,'SEARCH_UNAVAILABLE']]){
-   await reset(mode);const response=await call(),body=await response.json();state=await stats();assert.equal(response.status,status,JSON.stringify({mode,body}));assert.equal(body.code,code);assert.equal(state.searches.length,1,'Common service/auth/quota failure must stop immediately');assert.equal(state.extracts.length,0);assert(!JSON.stringify(body).includes('PRIVATE'));if(retry)assert.equal(response.headers.get('Retry-After'),retry);reports.push({mode,status,searches:1});
+  for(const[mode,status,code,retry]of[['browser_limit',429,'UPSTREAM_RATE_LIMITED','31'],['browser_busy',503,'BROWSER_BUSY','32'],['browser_auth',502,'BROWSER_AUTH_FAILED',null]]){
+   await reset(mode);const response=await call(),body=await response.json();s=await state();assert.equal(response.status,status,JSON.stringify(body));assert.equal(body.code,code);if(retry)assert.equal(response.headers.get('Retry-After'),retry);assert.equal(s.connects,1);assert.equal(s.creates,0);assert.equal(s.contexts.length,0);assert(!JSON.stringify(body).includes('PRIVATE'));reports.push({mode,status,connects:1});
   }
-  await reset('carnect');const noKeyOptions=optionsFor();delete noKeyOptions.headers.Origin;let response=await noKey.fetch(ORIGIN+'/api/encar-id',noKeyOptions),body=await response.json();state=await stats();assert.equal(response.status,503,JSON.stringify(body));assert.equal(body.code,'SEARCH_NOT_CONFIGURED');assert.equal(state.auth,1);assert.equal(state.members,1);assert.equal(state.searches.length,0);reports.push({mode:'missing-key',searches:0});
-  await reset('denied');response=await call();state=await stats();assert.equal(response.status,403);assert.equal(state.searches.length,0);assert.equal(state.extracts.length,0);reports.push({mode:'denied',searches:0});
-  assert.equal(outbound,0);console.log('PASS native Pages v2.147: indexed search only, full-plate/primary-ID proof, 66너7230→43138217, ordered early exit, bounded extraction, configuration/auth/quota distinctions; no Browser Run/provider/Korean/price/database requests; synthetic only, actual external outbound=0.');console.log(JSON.stringify(reports));
- }finally{await runtime.dispose();}
+  await reset('found');const init=requestOptions();delete init.headers.Origin;let response=await noKey.fetch(ORIGIN+'/api/encar-id',init),body=await response.json();s=await state();assert.equal(response.status,503,JSON.stringify(body));assert.equal(body.code,'LOOKUP_NOT_CONFIGURED');assert.equal(s.auth,1);assert.equal(s.members,1);assert.equal(s.creates+s.connects,0);reports.push({mode:'missing-server-token',status:response.status});
+  for(const[mode,status,code]of[['denied',403,'STAFF_REQUIRED'],['auth_error',502,'AUTH_UNAVAILABLE']]){await reset(mode);response=await call();body=await response.json();s=await state();assert.equal(response.status,status);assert.equal(body.code,code);assert.equal(s.creates+s.connects,0);reports.push({mode,status});}
+  assert.equal(outbound,0);assert.deepEqual(domStats.errors,[]);assert(domStats.nameHelpers>0,'Actual compiled serialized function must supply __name');assert(domStats.enters.length>=8);assert(domStats.enters.every(item=>item.focused&&[PLATE,SECOND_PLATE].includes(item.plate)&&item.url==='https://gloar-data.com/en'));assert(domStats.navigations.every(url=>new URL(url).origin==='https://gloar-data.com'));
+  console.log('PASS native compiled GLOAR-only Pages lookup: server credentials, Auth/membership, native WebSocket/CDP, actual serialized DOM action, headerSearchInput+Enter, new result after unchanged catalog, primary plate/original ID proof, reuse/cleanup, limits/auth/stage errors. Synthetic only; actual outbound=0.');
+  console.log(JSON.stringify({reports,dom:{evaluations:domStats.evaluations,nameHelpers:domStats.nameHelpers,enters:domStats.enters.length,closed:domStats.closed},outbound}));
+ }finally{for(const window of windows.values())window.close();windows.clear();await runtime.dispose();}
 })().catch(error=>{console.error(error);process.exitCode=1;});

@@ -26,7 +26,7 @@ class Socket extends EventTarget{
 async function fixture(options={}){
  const socket=options.socket||new Socket(options.handler),requests=[];
  const fetchImpl=async(url,init)=>{requests.push({url,init});return init.method==='POST'?sessionResponse():{status:101,webSocket:socket};};
- const browser=await createBrowserSession(ENV,{fetchImpl,signal:options.signal,cacheStorage:cachesFixture()});return{socket,requests,browser};
+ const browser=await createBrowserSession(ENV,{fetchImpl,signal:options.signal,cacheStorage:cachesFixture(),...(options.gloarOnly===undefined?{}:{gloarOnly:options.gloarOnly})});return{socket,requests,browser};
 }
 
 test('one authenticated guarded WebSocket supports all three provider pages without a relaunch',async()=>{
@@ -46,6 +46,27 @@ test('missing or malformed server credentials cannot open any socket or leak the
  }assert.equal(calls,0);
 });
 
+test('GLOAR-only sessions use only GLOAR guardrails and reject all other destinations before navigation',async()=>{
+ const f=await fixture({gloarOnly:true});try{
+  assert.deepEqual(JSON.parse(f.requests[0].init.body).guardrails,{allowedDomains:['gloar-data.com','*.gloar-data.com'],allowedDomainSets:['common-cdns']});
+  const page=await f.browser.newPage();
+  for(const url of['https://gloar-data.com/en','https://gloar-data.com/en/lot/synthetic-car'])await page.goto(url);
+  const before=f.socket.commands.length;
+  for(const url of['https://carnect.biz/catalog?tab=encar','https://encar.spb.ru/catalog/','https://api.gloar-data.com/en','https://gloar-data.com.evil.invalid/en'])await assert.rejects(page.goto(url),error=>error.code==='PROVIDER_UNSUPPORTED');
+  assert.equal(f.socket.commands.length,before);await page.close();
+ }finally{await f.browser.close();}
+});
+
+test('GLOAR-only guardrails cannot reuse the broader legacy-provider browser metadata',async()=>{
+ const records=new Map(),storage={async open(){return{async match(key){return records.get(String(key))?.clone();},async put(key,value){records.set(String(key),value.clone());},async delete(key){return records.delete(String(key));}};}};
+ let creates=0;const guardrails=[];
+ const fetchImpl=async(url,options)=>{if(options.method==='POST'){creates++;guardrails.push(JSON.parse(options.body).guardrails);return sessionResponse(creates===1?ID:'22222222-2222-4222-8222-222222222222');}return{status:101,webSocket:new Socket()};};
+ const old=await createBrowserSession(ENV,{fetchImpl,cacheStorage:storage});await old.close();
+ const first=await createBrowserSession(ENV,{fetchImpl,cacheStorage:storage,gloarOnly:true});await first.close();
+ const warm=await createBrowserSession(ENV,{fetchImpl,cacheStorage:storage,gloarOnly:true});await warm.close();
+ assert.equal(creates,2);assert(guardrails[0].allowedDomains.includes('carnect.biz'));assert.deepEqual(guardrails[1].allowedDomains,['gloar-data.com','*.gloar-data.com']);assert.equal(records.size,2);
+});
+
 test('Cloudflare 429 is not retried and exposes only a bounded Retry-After',async()=>{
  for(const retry of['42','9999999999','invalid']){let calls=0;
   await assert.rejects(createBrowserSession(ENV,{fetchImpl:async()=>{calls++;return new Response('PRIVATE_TOKEN',{status:429,headers:{'Retry-After':retry}});}}),e=>e.code==='UPSTREAM_RATE_LIMITED'&&e.retryAfter===(retry==='42'?42:retry==='9999999999'?3600:20)&&!e.message.includes('PRIVATE'));
@@ -55,7 +76,7 @@ test('Cloudflare 429 is not retried and exposes only a bounded Retry-After',asyn
 
 test('failed authentication or an invalid upgrade is never retried or followed to another endpoint',async()=>{
  for(const status of[302,401,403,500]){const calls=[];
-  await assert.rejects(createBrowserSession(ENV,{fetchImpl:async(...args)=>{calls.push(args);return new Response('PRIVATE_FAILURE',{status,headers:{Location:'https://foreign.invalid'}});}}),e=>e.code==='BROWSER_UNAVAILABLE'&&!e.message.includes('PRIVATE'));
+  await assert.rejects(createBrowserSession(ENV,{fetchImpl:async(...args)=>{calls.push(args);return new Response('PRIVATE_FAILURE',{status,headers:{Location:'https://foreign.invalid'}});}}),e=>e.code===([401,403].includes(status)?'BROWSER_AUTH_FAILED':'BROWSER_UNAVAILABLE')&&!e.message.includes('PRIVATE'));
   assert.equal(calls.length,1);assert.equal(calls[0][1].redirect,'manual');
  }
 });
@@ -64,6 +85,13 @@ test('late connections after caller cancellation disconnect without destroying t
  const controller=new AbortController(),late=deferred(),socket=new Socket(),waiting=deferred();let calls=0;
  const starting=createBrowserSession(ENV,{signal:controller.signal,cacheStorage:cachesFixture(),fetchImpl:(url,init)=>{calls++;if(init.method==='POST')return Promise.resolve(sessionResponse());waiting.resolve();return late.promise;}});await waiting.promise;controller.abort();await assert.rejects(starting,e=>e.code==='ABORTED'&&e.name==='AbortError');
  late.resolve({status:101,webSocket:socket});await flush();assert.equal(calls,2);assert.equal(socket.accepted,1);assert.deepEqual(socket.commands,[]);assert.equal(socket.closed,1);
+});
+
+test('a known-session 401 or 403 reports browser authentication failure without relaunching or leaking',async()=>{
+ for(const status of[401,403]){let calls=0;
+  await assert.rejects(createBrowserSession(ENV,{cacheStorage:cachesFixture(),fetchImpl:async(url,options)=>{calls++;return options.method==='POST'?sessionResponse():new Response('PRIVATE_TOKEN',{status});}}),error=>error.code==='BROWSER_AUTH_FAILED'&&!error.message.includes('PRIVATE'));
+  assert.equal(calls,2);
+ }
 });
 
 test('connection timeout cancels an uncooperative fetch without retrying acquisition',async t=>{

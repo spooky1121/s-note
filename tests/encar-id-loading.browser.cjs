@@ -3,8 +3,8 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 const{chromium}=require('./encar/node_modules/playwright');
 const{fixture,setBrowser,finish}=require('./encar/browser-smoke.cjs');
-const OUT=process.env.ENCAR_LOADING_ARTIFACT_DIR||'/workspace/work/encar-id-v2146/loading';fs.mkdirSync(OUT,{recursive:true});
-const found={ok:true,status:'found',plate:'12가3456',id:'43123456',provider:'carnect'};
+const OUT=process.env.ENCAR_LOADING_ARTIFACT_DIR||'/workspace/work/encar-id-gloar-ui/loading';fs.mkdirSync(OUT,{recursive:true});
+const found={ok:true,status:'found',plate:'12가3456',id:'43123456',provider:'gloar'};
 async function run(width){
  const f=await fixture(width,null,{lookupUnavailable:true}),p=f.page;let release=null,next=found,requests=0;
  try{
@@ -15,7 +15,7 @@ async function run(width){
   async function stopped(){await loader.waitFor({state:'hidden'});assert.equal(await dialog.getAttribute('aria-busy'),null);}
   await pending();
   assert.equal(await loader.locator('.snote-encar-id-scan-lens').evaluate(e=>getComputedStyle(e).animationName),'snote-encar-search');
-  assert.equal(await loader.locator('.snote-encar-id-loading-dots span').count(),3);await p.screenshot({path:path.join(OUT,'searching-'+width+'.png')});
+  assert.equal(await loader.locator('.snote-encar-id-loading-dots span').count(),3);assert.equal(await status.innerText(),'GLOAR DATA에서 광고 ID를 찾고 있습니다.');await p.screenshot({path:path.join(OUT,'searching-'+width+'.png')});
   await p.emulateMedia({reducedMotion:'reduce'});assert.equal(await loader.locator('.snote-encar-id-scan-lens').evaluate(e=>getComputedStyle(e).animationName),'none');assert.match(await status.innerText(),/찾고 있습니다/);await p.screenshot({path:path.join(OUT,'searching-reduced-'+width+'.png')});await p.emulateMedia({reducedMotion:'no-preference'});
   release();await dialog.locator('[data-encar-ad-id]').filter({hasText:'43123456'}).waitFor();await stopped();assert.equal((await dialog.innerText()).trim(),'광고 ID\n43123456\n확인');await dialog.getByRole('button',{name:'확인',exact:true}).click();
   next={ok:false,code:'UPSTREAM_RATE_LIMITED'};await pending();release();await status.filter({hasText:'검색 브라우저의 실행 요청'}).waitFor();await stopped();await dialog.getByRole('button',{name:'확인',exact:true}).click();
