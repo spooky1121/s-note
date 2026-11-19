@@ -29,14 +29,18 @@
    data[offset]=Math.round(181+22*highlight);
    data[offset+1]=Math.round(28+16*highlight);
    data[offset+2]=Math.round(55+23*highlight);
-   alpha[pixel]=Math.round(sourceAlpha*coverage*.85);if(alpha[pixel])inkPixels++;
+   alpha[pixel]=Math.round(sourceAlpha*coverage*.79);if(alpha[pixel])inkPixels++;
   }
   if(!inkPixels)throw unavailable();
-  // A light alpha-edge contrast preserves the source strokes after interpolation.
-  // It does not reconstruct, replace, or draw any characters in the original seal.
+  // Match the edge radius to the source enlargement so fine original strokes
+  // remain defined on paper. Only existing alpha is sharpened: no characters or
+  // opaque pixels are reconstructed outside the registered image's ink.
+  const radius=clamp(Math.round(scale*.5),1,12);
   for(let y=0;y<height;y++)for(let x=0;x<width;x++){
-   const pixel=y*width+x,center=alpha[pixel],left=x?alpha[pixel-1]:center,right=x+1<width?alpha[pixel+1]:center,above=y?alpha[pixel-width]:center,below=y+1<height?alpha[pixel+width]:center;
-   data[pixel*4+3]=clamp(Math.round(center+.08*(center-(left+right+above+below)/4)),0,255);
+   const pixel=y*width+x,center=alpha[pixel];if(!center){data[pixel*4+3]=0;continue;}
+   const left=Math.max(0,x-radius),right=Math.min(width-1,x+radius),above=Math.max(0,y-radius),below=Math.min(height-1,y+radius);
+   const surrounding=(alpha[y*width+left]+alpha[y*width+right]+alpha[above*width+x]+alpha[below*width+x]+alpha[above*width+left]+alpha[above*width+right]+alpha[below*width+left]+alpha[below*width+right])/8;
+   data[pixel*4+3]=clamp(Math.round(center+.24*(center-surrounding)),0,255);
   }
   ctx.putImageData(pixels,0,0);
   const image=canvas.toDataURL('image/png');if(!image.startsWith('data:image/png;base64,'))throw unavailable();
