@@ -4,7 +4,7 @@
 export const BROWSER_KEEP_ALIVE_MS = 30000;
 const METADATA_TTL_MS = 25000;
 const CACHE_NAME = 'snote:encar-browser-session:v1';
-const POLICY_VERSION = 'external-id-providers-v2146';
+const POLICY_VERSION = 'external-id-browser-guardrails-v2';
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const defaultState = { known: new Map(), creating: new Map() };
 const states = new WeakMap();
@@ -32,7 +32,9 @@ async function bodyJson(response,signal){
 
 /** Reuse only IDs this feature created; never list or borrow account sessions. */
 export async function acquireKnownSession({account,token,guardrails,fetchImpl,signal,cacheStorage=globalThis.caches,waitUntil}={}){
- const fingerprint=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(POLICY_VERSION+'\n'+account+'\n'+token))),byte=>byte.toString(16).padStart(2,'0')).join('');
+ // Session guardrails are immutable. A restricted GLOAR lookup must never
+ // reconnect a broader legacy-provider session created with the same token.
+ const fingerprint=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(POLICY_VERSION+'\n'+account+'\n'+token+'\n'+JSON.stringify(guardrails)))),byte=>byte.toString(16).padStart(2,'0')).join('');
  if(signal?.aborted)throw aborted();
  const state=stateFor(cacheStorage),key='https://snote-browser-session.invalid/'+fingerprint;
  let cache=null;try{if(typeof cacheStorage?.open==='function')cache=await bounded(cacheStorage.open(CACHE_NAME));}catch{}
@@ -70,11 +72,12 @@ export async function acquireKnownSession({account,token,guardrails,fetchImpl,si
       const response=await fetchImpl(`https://api.cloudflare.com/client/v4/accounts/${account}/browser-run/devtools/browser?keep_alive=${BROWSER_KEEP_ALIVE_MS}`,{method:'POST',redirect:'manual',cache:'no-store',signal:controller.signal,headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify({guardrails})});
       if(controller.signal.aborted){try{void response.body?.cancel().catch(()=>{});}catch{}throw fail();}
       if(response.status===429){try{void response.body?.cancel().catch(()=>{});}catch{}throw fail('UPSTREAM_RATE_LIMITED',{retryAfter:browserRetryAfter(response)});}
+      if(response.status===401||response.status===403){try{void response.body?.cancel().catch(()=>{});}catch{}throw fail('BROWSER_AUTH_FAILED');}
       if(!response.ok){try{void response.body?.cancel().catch(()=>{});}catch{}throw fail();}
       const data=await bodyJson(response,controller.signal);if(controller.signal.aborted||!UUID.test(data?.sessionId||''))throw fail();
       const created={sessionId:data.sessionId,expiresAt:Date.now()+METADATA_TTL_MS};await remember(created);return created;
      })(),8000);
-    }catch(error){if(error?.code==='UPSTREAM_RATE_LIMITED')throw error;throw fail();}
+    }catch(error){if(error?.code==='UPSTREAM_RATE_LIMITED'||error?.code==='BROWSER_AUTH_FAILED')throw error;throw fail();}
     finally{clearTimeout(timer);controller.abort();}
    })();
    state.creating.set(fingerprint,creating);

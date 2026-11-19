@@ -33,7 +33,7 @@ function fixture({token=()=>Promise.resolve(TOKEN),fetchResponse}={}){
   start(){return sandbox.window.SnoteEncarId.lookup('synthetic-car');}};
 }
 function success(id='43123456'){
- return new Response(JSON.stringify({ok:true,status:'found',plate:PLATE,id,provider:'carnect'}),{headers:{'Content-Type':'application/json'}});
+ return new Response(JSON.stringify({ok:true,status:'found',plate:PLATE,id,provider:'gloar'}),{headers:{'Content-Type':'application/json'}});
 }
 async function settled(promise){
  const pending=Symbol('pending');const value=await Promise.race([promise,setImmediate(pending)]);
