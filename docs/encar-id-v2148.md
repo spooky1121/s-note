@@ -2,7 +2,7 @@
 
 차량 상세·매입 목록·카드의 기존 Encar 버튼은 이제 GLOAR DATA의 실제 검색창을 사용한다. 검색엔진 색인, Carnect/Trust 순차 검색, 추측한 검색 URL은 운영 경로에서 제외했다.
 
-화면 v2.150은 찾은 ID 아래에 `https://fem.encar.com/cars/detail/{ID}` 전체 링크를 표시한다. 사용자가 링크를 누를 때만 새 탭으로 열리며 자동 탭 열기·탭 예약은 없다. 검색 중·실패·닫기·계정 변경 시 링크를 숨기고 주소도 제거한다. 검색 서버는 v2.148 그대로 유지한다.
+화면 v2.150부터 찾은 ID 아래에 `https://fem.encar.com/cars/detail/{ID}` 전체 링크를 표시한다. 사용자가 링크를 누를 때만 새 탭으로 열리며 자동 탭 열기·탭 예약은 없다. 검색 중·실패·닫기·계정 변경 시 링크를 숨기고 주소도 제거한다. 차량번호 검색 흐름은 유지하고, [v2.151](encar-browser-limits-v2151.md)에서 Cloudflare 한도 진단과 세션 캐시 저장을 보완했다.
 
 ## 동작
 
@@ -26,7 +26,7 @@
 
 기존 Production의 `CLOUDFLARE_ACCOUNT_ID`, 암호화된 `CLOUDFLARE_BROWSER_TOKEN`을 사용한다. 토큰에는 해당 계정의 Browser Run Edit 권한이 필요하다. 클라이언트에서 키를 입력하거나 전송하지 않는다. 로그인 검증용 `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`는 기존대로 유지한다. 이 경로는 `TAVILY_API_KEY`를 사용하지 않는다.
 
-`GET /api/encar-id`는 키 존재 여부만 `{ok,configured,provider:"gloar",release:"2.148"}`로 알린다. 실제 인증·검색 성공을 뜻하지 않는다. POST는 `{plate}`만 허용하며 임의 URL·코드·자격증명을 받지 않는다.
+`GET /api/encar-id`는 키 존재 여부만 `{ok,configured,provider:"gloar",release:"2.151"}`로 알린다. 실제 인증·검색 성공을 뜻하지 않는다. POST는 `{plate}`만 허용하며 임의 URL·코드·자격증명을 받지 않는다.
 
 ## 검증 범위
 

@@ -1,4 +1,5 @@
 import { acquireKnownSession, browserRetryAfter } from './encar-id-browser-session.mjs';
+import { browserLimitFailure } from './encar-id-browser-limits.mjs';
 
 // Fixed server-owned Browser Run transport for the ID-only lookup. This is not
 // a general URL/code endpoint; the public API accepts only a Korean plate.
@@ -78,7 +79,7 @@ export async function createBrowserSession(env = {}, { signal, fetchImpl = fetch
       void launched.then(late => { const socket = late?.webSocket; if (!socket) return; try { socket.accept(); } catch {} safeClose(socket); }).catch(() => {});
       throw signal?.aborted ? aborted() : failure();
     } finally { clearTimeout(timer); signal?.removeEventListener('abort', abortLaunch); }
-    if (response?.status === 429) throw failure('UPSTREAM_RATE_LIMITED', { retryAfter: browserRetryAfter(response) });
+    if (response?.status === 429) throw await browserLimitFailure(response, { signal });
     if (response?.status === 409) throw failure('BROWSER_BUSY', { retryAfter: browserRetryAfter(response) });
     if ([401, 403].includes(response?.status)) throw failure('BROWSER_AUTH_FAILED');
     if (attempt === 0 && known.reused && [404, 410].includes(response?.status)) {

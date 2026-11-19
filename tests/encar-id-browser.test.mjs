@@ -2,6 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { setImmediate } from 'node:timers/promises';
 import { createBrowserSession } from '../functions/_shared/encar-id-browser.mjs';
+import { acquireKnownSession } from '../functions/_shared/encar-id-browser-session.mjs';
+import { browserLimitFailure } from '../functions/_shared/encar-id-browser-limits.mjs';
 
 // Workers' documented response.webSocket contract is emulated here. These
 // fixtures do not authenticate Cloudflare or visit a live provider.
@@ -200,7 +202,7 @@ test('cold concurrent requests single-flight only session metadata and create fr
 test('cancelled caller stops waiting while another caller may use the one metadata acquisition',async()=>{
  const storage=cachesFixture(),post=deferred(),waiting=deferred(),controller=new AbortController(),retained=[];let creates=0,connections=0;
  const fetchImpl=async(url,init)=>{if(init.method==='POST'){creates++;waiting.resolve();return post.promise;}connections++;return{status:101,webSocket:new Socket()};};
- const first=createBrowserSession(ENV,{fetchImpl,cacheStorage:storage,signal:controller.signal,waitUntil:promise=>retained.push(promise)});await waiting.promise;const second=createBrowserSession(ENV,{fetchImpl,cacheStorage:storage});controller.abort();await assert.rejects(first,error=>error.code==='ABORTED');post.resolve(sessionResponse());const browser=await second;await browser.close();assert.equal(creates,1);assert.equal(connections,1);assert.equal(retained.length,1);await retained[0];
+ const first=createBrowserSession(ENV,{fetchImpl,cacheStorage:storage,signal:controller.signal,waitUntil:promise=>retained.push(promise)});await waiting.promise;const second=createBrowserSession(ENV,{fetchImpl,cacheStorage:storage});controller.abort();await assert.rejects(first,error=>error.code==='ABORTED');post.resolve(sessionResponse());const browser=await second;await browser.close();assert.equal(creates,1);assert.equal(connections,1);assert(retained.length>=2,'Retain acquisition and its actual cache write');await Promise.all(retained);
 });
 
 test('a named-cache record can reconnect a known session without reusing request-owned I/O',async()=>{
@@ -243,4 +245,65 @@ test('only known navigation-context CDP errors are transient; script failures st
 test('a new browser whose first connection fails with 404 is not launched again',async()=>{
  let created=0,connected=0;
  await assert.rejects(createBrowserSession(ENV,{cacheStorage:cachesFixture(),fetchImpl:async(url,init)=>{if(init.method==='POST'){created++;return sessionResponse();}connected++;return new Response('new connection failed',{status:404});}}),error=>error.code==='BROWSER_UNAVAILABLE');assert.equal(created,1);assert.equal(connected,1);
+});
+
+test('a slow metadata put remains retained after the foreground deadline and another request can reuse it',async t=>{
+ t.mock.timers.enable({apis:['setTimeout','Date'],now:100000});
+ const records=new Map(),started=deferred(),late=deferred(),retained=[];let puts=0,creates=0;
+ const storage=()=>({async open(){return{async match(key){return records.get(String(key))?.clone();},async put(key,response){if(++puts===1){started.resolve();await late.promise;}records.set(String(key),response.clone());},async delete(key){return records.delete(String(key));}};}});
+ const options={account:ENV.CLOUDFLARE_ACCOUNT_ID,token:ENV.CLOUDFLARE_BROWSER_TOKEN,guardrails:{allowedDomains:['gloar-data.com']},fetchImpl:async()=>{creates++;return sessionResponse();},waitUntil:promise=>retained.push(promise)};
+ const first=acquireKnownSession({...options,cacheStorage:storage()});await started.promise;
+ t.mock.timers.tick(750);const lease=await first;assert.equal(lease.sessionId,ID);assert.equal(records.size,0);assert(retained.length>=2,'Retain the actual write as well as acquisition metadata');
+ let finished=0;for(const promise of retained)void promise.then(()=>{finished++;});await flush();assert(finished<retained.length,'The actual write must remain pending after the response is ready');
+ t.mock.timers.tick(5000);late.resolve();await Promise.all(retained);assert.equal(records.size,1);
+ const saved=await [...records.values()][0].clone().json();assert.equal(saved.expiresAt,125000,'Late persistence cannot give the original record a later expiry');
+ const second=await acquireKnownSession({...options,cacheStorage:storage()});assert.equal(second.sessionId,ID);assert.equal(second.reused,true);assert.equal(creates,1,'The next isolate reads the retained cache write instead of launching again');
+});
+
+test('an expired record written late never revives an old browser lease',async t=>{
+ t.mock.timers.enable({apis:['setTimeout','Date'],now:200000});
+ const records=new Map(),started=deferred(),late=deferred(),retained=[];let puts=0,creates=0;
+ const storage=()=>({async open(){return{async match(key){return records.get(String(key))?.clone();},async put(key,response){if(++puts===1){started.resolve();await late.promise;}records.set(String(key),response.clone());},async delete(key){return records.delete(String(key));}};}});
+ const options={account:ENV.CLOUDFLARE_ACCOUNT_ID,token:ENV.CLOUDFLARE_BROWSER_TOKEN,guardrails:{allowedDomains:['gloar-data.com']},fetchImpl:async()=>sessionResponse(++creates===1?ID:'22222222-2222-4222-8222-222222222222'),waitUntil:promise=>retained.push(promise)};
+ const first=acquireKnownSession({...options,cacheStorage:storage()});await started.promise;t.mock.timers.tick(750);await first;
+ t.mock.timers.tick(26000);late.resolve();await Promise.all(retained);
+ const saved=await [...records.values()][0].clone().json();assert.equal(saved.expiresAt,225000);assert(saved.expiresAt<Date.now());
+ const second=await acquireKnownSession({...options,cacheStorage:storage()});assert.equal(creates,2);assert.equal(second.reused,false);assert.equal(second.sessionId,'22222222-2222-4222-8222-222222222222');
+});
+
+test('cache rejection and missing or throwing waitUntil remain nonfatal without unhandled rejections',async()=>{
+ for(const waitUntil of[undefined,'not-a-function',()=>{throw Error('PRIVATE_WAIT_UNTIL');}]){
+  let creates=0;const cacheStorage={async open(){return{async match(){},put(){return Promise.reject(Error('PRIVATE_CACHE_PUT'));}};}};
+  const lease=await acquireKnownSession({account:ENV.CLOUDFLARE_ACCOUNT_ID,token:ENV.CLOUDFLARE_BROWSER_TOKEN,guardrails:{allowedDomains:['gloar-data.com']},cacheStorage,waitUntil,fetchImpl:async()=>{creates++;return sessionResponse();}});
+  assert.equal(lease.sessionId,ID);assert.equal(creates,1);await flush();
+ }
+});
+
+test('a documented Browser Run daily-time response stays a distinct quota error without a relaunch',async()=>{
+ let creates=0;
+ await assert.rejects(createBrowserSession(ENV,{cacheStorage:cachesFixture(),fetchImpl:async()=>{creates++;return Response.json({errors:[{message:'Browser time limit exceeded for today'}]},{status:429});}}),error=>error.code==='BROWSER_DAILY_LIMIT'&&Number.isInteger(error.retryAfter)&&error.retryAfter>=1&&error.retryAfter<=86400&&!error.message.includes('errors'));
+ assert.equal(creates,1);
+});
+
+test('daily browser time cannot be retried before the next UTC reset even with a short Retry-After',async t=>{
+ t.mock.timers.enable({apis:['setTimeout','Date'],now:Date.UTC(2026,10,19,12,0,0)});
+ const error=await browserLimitFailure(Response.json({errors:[{message:'Browser time limit exceeded for today'}]},{status:429,headers:{'Retry-After':'7'}}));
+ assert.equal(error.code,'BROWSER_DAILY_LIMIT');assert.equal(error.retryAfter,43200);assert.equal(error.message,'BROWSER_DAILY_LIMIT');
+ const generic=await browserLimitFailure(Response.json({errors:[{message:'Too many browser acquisition requests'}]},{status:429,headers:{'Retry-After':'7'}}));
+ assert.equal(generic.code,'UPSTREAM_RATE_LIMITED');assert.equal(generic.retryAfter,7);
+});
+
+test('generic, malformed and oversize 429 bodies remain generic and never leak provider content',async()=>{
+ const bodies=[JSON.stringify({errors:[{message:'Too many requests PRIVATE_DETAIL'}]}),'{broken PRIVATE_DETAIL',JSON.stringify({errors:[{message:'Browser time limit exceeded for today'}],padding:'x'.repeat(5000),private:'PRIVATE_DETAIL'})];
+ for(const body of bodies){
+  const error=await browserLimitFailure(new Response(body,{status:429,headers:{'Retry-After':'9'}}));
+  assert.equal(error.code,'UPSTREAM_RATE_LIMITED');assert.equal(error.retryAfter,9);assert.equal(error.message,'UPSTREAM_RATE_LIMITED');assert(!JSON.stringify(error).includes('PRIVATE'));assert(!('body'in error));
+ }
+});
+
+test('a stalled limit-response body stops at 500ms and does not await a hanging reader cancellation',async t=>{
+ t.mock.timers.enable({apis:['setTimeout']});const started=deferred();let cancelled=0,released=0;
+ const response={status:429,headers:new Headers({'Retry-After':'13'}),body:{getReader(){return{read(){started.resolve();return new Promise(()=>{});},cancel(){cancelled++;return new Promise(()=>{});},releaseLock(){released++;}};}}};
+ const pending=browserLimitFailure(response);await started.promise;t.mock.timers.tick(500);
+ const error=await pending;assert.equal(error.code,'UPSTREAM_RATE_LIMITED');assert.equal(error.retryAfter,13);assert(cancelled>=1);assert.equal(released,1);
 });
