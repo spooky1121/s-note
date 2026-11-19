@@ -122,7 +122,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.</metadata>
 <path d="M338 151H571" stroke-width="0.6"/>
 <path d="M68 197V261" stroke-width="0.6"/>
 <path d="M151 197V261" stroke-width="0.6"/>
-<path d="M354 197V261" stroke-width="0.6"/>
+<path d="M338 197V261" stroke-width="0.6"/>
 <path d="M68 218H571" stroke-width="0.6"/>
 <path d="M68 239H571" stroke-width="0.6"/>
 <path d="M151 264V288" stroke-width="0.6"/>
@@ -135,8 +135,8 @@ OTHER DEALINGS IN THE FONT SOFTWARE.</metadata>
 <text x="563" y="34" font-size="8.3" text-anchor="end" font-weight="600">이전등록용</text>
 <text x="297.5" y="60" font-size="14" text-anchor="middle" font-weight="500">자동차양도증명서(자동차매매업자거래용)</text>
 <text x="29" y="76" font-size="6.8" text-anchor="start" font-weight="600">※ 유의사항을 읽고 작성하여 주시기 바랍니다.</text>
-<text x="83" y="88.6" font-size="7.2" text-anchor="middle" font-weight="600">중고자동차</text>
-<text x="83" y="97.4" font-size="7.2" text-anchor="middle" font-weight="600">제시 또는 매도 번호</text>
+<text x="29" y="93" font-size="8" text-anchor="start" font-weight="600" data-role="header-label">중고자동차 제시 또는 매도번호</text>
+<text x="144" y="93" font-size="8" text-anchor="start" font-weight="600" data-role="header-association">서울특별시자동차매매사업조합 2630000885</text>
 <text x="45" y="142.0" font-size="9" text-anchor="middle" font-weight="600">계약</text>
 <text x="45" y="158.0" font-size="9" text-anchor="middle" font-weight="600">당사자</text>
 <text x="85" y="143.0" font-size="8.1" text-anchor="middle" font-weight="600">양도인</text>
@@ -156,8 +156,8 @@ OTHER DEALINGS IN THE FONT SOFTWARE.</metadata>
 <text x="109.5" y="207.5" font-size="7.7" text-anchor="middle" font-weight="600">등록번호 및 상호</text>
 <text x="109.5" y="228.5" font-size="8.2" text-anchor="middle" font-weight="600" letter-spacing="5.2">대표자</text>
 <text x="109.5" y="250" font-size="8.2" text-anchor="middle" font-weight="600" letter-spacing="5.2">취급자</text>
-<text x="345" y="230" font-size="7" text-anchor="end" font-weight="400" data-role="signature-label">(직인)</text>
-<text x="345" y="251" font-size="7" text-anchor="end" font-weight="400" data-role="signature-label">(인)</text>
+<text x="333" y="230" font-size="7" text-anchor="end" font-weight="400" data-role="signature-label">(직인)</text>
+<text x="333" y="251" font-size="7" text-anchor="end" font-weight="400" data-role="signature-label">(인)</text>
 <text x="562" y="230" font-size="7" text-anchor="end" font-weight="400" data-role="signature-label">(직인)</text>
 <text x="562" y="251" font-size="7" text-anchor="end" font-weight="400" data-role="signature-label">(인)</text>
 <text x="86" y="276" font-size="8.8" text-anchor="middle" font-weight="600" letter-spacing="2">계약연월일</text>

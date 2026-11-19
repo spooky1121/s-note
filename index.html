@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.140">
+<html lang="ko" data-snote-release="2.141">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -3225,7 +3225,7 @@ button, input, select, textarea { font-family: inherit; }
 <link rel="stylesheet" href="assets/vehicle-memo.css?v=2.92">
 <link rel="stylesheet" href="assets/sidebar-hover.css?v=2.92">
 <link rel="stylesheet" href="assets/accountant-workspace.css?v=2.130">
-<link rel="stylesheet" href="assets/contract-office.css?v=2.138">
+<link rel="stylesheet" href="assets/contract-office.css?v=2.141">
 <link rel="stylesheet" href="assets/workspace-ledgers.css?v=2.136">
 </head>
 <body class="snote-typography">
@@ -10535,11 +10535,12 @@ window.snoteCompanyAssetScope=()=>{
 };
 function snote128ClearCompanyConsumers(kind,oldURL){
  if(kind==='companyStamp'&&(!oldURL||snote128StampState.url===oldURL))snote128StampState={status:'idle',url:null};
+ if(kind==='companyStamp'){const preview=document.getElementById('contract-office-dialog');if(preview?.__coStampArtwork&&(!oldURL||preview.__coStampArtwork.source===oldURL))preview.__coStampArtwork=null;}
  const fallback=new URL('assets/snote-logo.png',document.baseURI).href;
  for(const image of document.querySelectorAll('img')){
-  if(oldURL?image.getAttribute('src')!==oldURL:image.dataset.snoteCompanyAsset!==kind)continue;
+  if(oldURL?image.getAttribute('src')!==oldURL&&image.dataset.snoteCompanySource!==oldURL:image.dataset.snoteCompanyAsset!==kind)continue;
   if(kind==='companyLogo'&&image.classList.contains('zc-footer-emblem')){image.closest('.snote-document-logo')?.classList.remove('is-company-logo');snote128BindCompanyImage(image,null,kind,'S-NOTE',fallback);}
-  else{image.onerror=null;image.removeAttribute('src');image.hidden=true;image.style.display='none';}
+  else{image.onerror=null;image.removeAttribute('src');delete image.dataset.snoteCompanySource;image.hidden=true;image.style.display='none';}
  }
 }
 function snote128AssetStore(){
@@ -11250,11 +11251,12 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 <link rel="stylesheet" href="assets/workspace-reorder.css?v=2.136">
 <script src="assets/workspace-order-store.js?v=2.135" defer></script>
 <script src="assets/workspace-reorder.js?v=2.136" defer></script>
-<script src="assets/release-info.js?v=2.140" defer></script>
+<script src="assets/release-info.js?v=2.141" defer></script>
 <script src="assets/company-purchase.js?v=2.130" defer></script>
-<script src="assets/transfer-document-layout.js?v=2.140" defer></script>
-<script src="assets/transfer-name-seal.js?v=2.138" defer></script>
-<script src="assets/contract-office.js?v=2.140" defer></script>
+<script src="assets/transfer-document-layout.js?v=2.141" defer></script>
+<script src="assets/transfer-name-seal.js?v=2.141" defer></script>
+<script src="assets/transfer-company-seal.js?v=2.141" defer></script>
+<script src="assets/contract-office.js?v=2.141" defer></script>
 <script src="assets/recycle-bin.js?v=2.77" defer></script>
 <script src="assets/company-assets.js?v=2.128" defer></script>
 <script src="assets/profile-editor.js?v=2.128" defer></script>

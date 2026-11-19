@@ -78,7 +78,7 @@
 .co-paper>img{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:fill;pointer-events:none}
 .co-overlay{position:absolute;inset:0;pointer-events:none}
 .co-print-seal{position:absolute;display:block;object-fit:contain;background:transparent;border:0;box-shadow:none;padding:0;max-width:none;max-height:none;pointer-events:none;z-index:3;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-.co-print-field{box-sizing:border-box;position:absolute;display:flex;align-items:center;justify-content:flex-start;color:#111;background:transparent;border:0;padding:0;white-space:nowrap;line-height:1;overflow:visible;font-family:'Malgun Gothic','Noto Sans KR','Apple SD Gothic Neo',sans-serif;font-size:calc(var(--co-font,8) * 1px);font-weight:400;letter-spacing:0;text-shadow:none}
+.co-print-field{box-sizing:border-box;position:absolute;display:flex;align-items:center;justify-content:flex-start;color:#111;background:transparent;border:0;padding:0;white-space:nowrap;line-height:1;overflow:visible;font-family:'Malgun Gothic','Noto Sans KR','Apple SD Gothic Neo',sans-serif;font-size:calc(var(--co-font,8) * 1px);font-weight:600;letter-spacing:0;text-shadow:none}
 .co-print-field.co-print-number{justify-content:flex-end;text-align:right}.co-print-field.co-print-multiline{display:block;white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere;line-height:1.05;padding-top:3px}
 @media print{
  @page{size:A4 portrait;margin:0}
