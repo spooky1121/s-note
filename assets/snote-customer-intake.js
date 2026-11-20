@@ -54,6 +54,21 @@
     return text(item?.id) + '|' + (Number.isFinite(time) ? String(time) : text(item?.submittedAt));
   }
 
+  const customerName = value => text(value).trim().replace(/\s+/g, ' ');
+
+  // Only an imported authenticated request may replace the saved original signature.
+  // Merely receiving another request must not attach its signature to the current draft.
+  function signatureForSave(customer) {
+    const s = state, selected = s?.selectedSubmission;
+    if (!s || !selected || !isCurrent(s) || currentContext().user !== s.actor ||
+        customer?.ownerId !== s.username || String(customer?.carId) !== String(s.carId) ||
+        customerName(customer.name) !== selected.name || digits(customer.phone) !== selected.phone) return null;
+    const listed = s.requests.find(item => item.id === selected.intakeSource.requestId);
+    if (listed && (listed.revokedAt || listed.status === 'revoked')) return null;
+    return structuredClone({customerSignature: selected.signature, customerSignatureSignedAt: selected.signedAt,
+      intakeSource: selected.intakeSource});
+  }
+
   function signatureValue(value) {
     if (!value || typeof value !== 'object' || Array.isArray(value) || value.version !== 1 ||
         Object.keys(value).some(key => !['version', 'strokes'].includes(key)) ||
@@ -461,6 +476,11 @@
       s.applied.add(submissionKey(item)); s.appliedIds.add(item.id);
       s.unsavedImport = item.canonicalApplied !== true;
       s.signatureCleared = false;
+      s.selectedSubmission = item.submittedAt && !item.revokedAt && item.status === 'submitted' ? {
+        name: customerName(source.name), phone: digits(source.phone || item.phone),
+        signature: signatureValue(source.signature), signedAt: source.signedAt || item.submittedAt,
+        intakeSource: {requestId: item.id, submittedAt: item.submittedAt}
+      } : null;
       renderSignature(s, item.submission?.signature, item.submission?.signedAt);
       if (automatic && item.canonicalApplied === true) delete byId('zc72-sale-modal').dataset.snoteHistoryDirty;
       message(s, automatic ? '고객이 제출한 정보를 판매 입력칸에 자동으로 채웠습니다.' : '판매 입력칸에 불러왔습니다. 내용을 확인한 뒤 고객정보 저장 또는 기존 문서 절차로 저장해 주세요.', 'success');
@@ -495,10 +515,10 @@
       return;
     }
     const s = {
-      id: sequence, username: context.user.username, role: context.user.role, carId: context.carId,
+      id: sequence, actor: context.user, username: context.user.username, role: context.user.role, carId: context.carId,
       cloud: context.cloud, canCreate: context.car.status !== '판매완료', controllers: new Set(),
       requests: [], link: null, busy: false, reading: false, blocked: false, loaded: false, timer: null,
-      baseline: formValues(), applied: new Set(), appliedIds: new Set(), manualOnly: new Set(),
+      baseline: formValues(), applied: new Set(), appliedIds: new Set(), manualOnly: new Set(), selectedSubmission: null,
       unsavedImport: byId('zc72-sale-modal')?.dataset.snoteHistoryDirty === '1' || byId('zc72-sale-form')?.dataset.snote196ManualReset === '1'
     };
     if (typeof customer?.intakeSource?.requestId === 'string') s.appliedIds.add(customer.intakeSource.requestId);
@@ -550,7 +570,7 @@
   });
   document.addEventListener('reset', event => {
     if (event.target?.id === 'zc72-sale-form') {
-      if(state&&isCurrent(state)){state.unsavedImport=true;state.signatureCleared=true;renderSignature(state,null);}
+      if(state&&isCurrent(state)){state.unsavedImport=true;state.signatureCleared=true;state.selectedSubmission=null;renderSignature(state,null);}
       const panel=byId('snote-sale-signature');if(panel)panel.replaceChildren(node('strong','','고객 원제출 서명'),node('p','snote-sale-signature-empty','접수된 서명이 없습니다.'));
       window.snote222ContractSignature?.clear();window.snote250ReceiptSignature?.clear();
     }
@@ -558,6 +578,7 @@
   window.addEventListener('pagehide', close);
   window.snoteIntakeOpen = open;
   window.snoteIntakeClose = close;
+  window.snoteIntakeSignatureForSave = signatureForSave;
   window.snoteIntakeCustomerSaved = function () {
     const s = state;
     if (s && isCurrent(s)) { s.baseline = formValues(); s.unsavedImport = false; }

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.155">
+<html lang="ko" data-snote-release="2.156">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -7808,6 +7808,8 @@ async function saleProgressContract(event,documentType='contract'){
   const rrnCipher=rrn?await zc80EncryptRrn(rrn):null;
   if(currentUser!==actor||view!==snote214SaleView||zc72SaleCarId!==carId)return;
   const record={id:ownerId+':'+carId,ownerId,carId,name,phone,address,mailing,refund,refundBank:refundData.bank,refundAccount:refundData.account,refundHolder:refundData.holder,...details,carModel:car.model||'',plate:car.plate||'',contractData:prev?.contractData||null,contractSavedAt:prev?.contractSavedAt||null,customerSignature:prev?.customerSignature,customerSignatureSignedAt:prev?.customerSignatureSignedAt,intakeSource:prev?.intakeSource,rrnCipher,residentConfirmed:!!rrnCipher,createdAt:prev?.createdAt||Date.now(),updatedAt:Date.now()};
+  const selectedSignature=window.snoteIntakeSignatureForSave?.(record);
+  if(selectedSignature)Object.assign(record,selectedSignature);
   await zc72Write(record,{requireExisting:Boolean(prev),expectedRestoreGeneration:snote214SaleRestoreGeneration,expectedUpdatedAt:window.snoteCustomerUpdatedAt?.(prev)??null});
   if(currentUser!==actor||view!==snote214SaleView||zc72SaleCarId!==carId||activeCarId!==carId||$('zc72-sale-modal').hidden)return;
   snote214SaleRestoreGeneration=window.snoteCustomerRestoreGeneration?.(record)||snote214SaleRestoreGeneration;
@@ -9205,6 +9207,9 @@ async function snote214SaveCustomer(ctx,car,incoming,pending,identityOnly=false,
  delete payload.identityCipher;
  if(Object.hasOwn(latest?.payload||{},'identityCipher'))payload.identityCipher=latest.payload.identityCipher;
  for(const key of ['customerSignature','customerSignatureSignedAt','intakeSource'])if(latest){if(Object.hasOwn(latest.payload||{},key))payload[key]=latest.payload[key];else delete payload[key];}
+ // Preserve originals for ordinary edits; an explicitly imported request can select a new original.
+ const selectedSignature=!identityOnly&&window.snoteIntakeSignatureForSave?.(incoming);
+ if(selectedSignature)Object.assign(payload,selectedSignature);
  if(encrypted)payload.identityCipher=encrypted;
  if(identityOnly)payload.updatedAt=Date.now();
  const base=snoteRecycleContext();if(!base||base.userId!==ctx.uid||base.companyId!==ctx.companyId)throw snoteRecycleError('RECYCLE_CONTEXT_CHANGED','로그인 또는 상사가 변경되었습니다. 현재 화면을 다시 열어 주세요.');
@@ -10940,7 +10945,7 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 })();
 
 </script>
-<script src="assets/snote-customer-intake.js?v=2.60" defer></script>
+<script src="assets/snote-customer-intake.js?v=2.156" defer></script>
 <script type="module" src="assets/quick-calculator.js?v=2.85"></script>
 <script type="module" src="assets/vehicle-taxonomy-ui.js?v=2.82"></script>
 <script src="assets/vehicle-taxonomy-probe.js?v=2.80" defer></script>
@@ -10950,7 +10955,7 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 <link rel="stylesheet" href="assets/workspace-reorder.css?v=2.136">
 <script src="assets/workspace-order-store.js?v=2.135" defer></script>
 <script src="assets/workspace-reorder.js?v=2.136" defer></script>
-<script src="assets/release-info.js?v=2.155" defer></script>
+<script src="assets/release-info.js?v=2.156" defer></script>
 <link rel="stylesheet" href="assets/encar-id.css?v=2.154">
 <script src="assets/encar-id.js?v=2.154" defer></script>
 <script src="assets/company-purchase.js?v=2.130" defer></script>
