@@ -2,7 +2,7 @@
 (()=>{'use strict';
  if(window.SnoteIconSizing)return;
  const glyphSize=20,hosts='button,a,label,[role="button"]';
- const closeControls='button.snote-popup-close,button.close-button,#close-search';
+ const closeControls='button.snote-popup-close,button.close-button,button.snote-chat-close,button.co-close,button.co-history-close,#close-search';
  const navigation='nav,.sidebar,.bottom-nav,#bottom-nav,.mobile-drawer,#mobile-drawer';
  const excluded='.topbar-profile,#snote-profile-trigger,#snote-weather,.snote-mobile-sort select,.snote-sort-header,.photo-thumb,.doc-thumb,.zoom-hit,.add-tile';
  const calculatorShapes={'+':'<path d="M12 4v16M4 12h16"/>','−':'<path d="M4 12h16"/>','×':'<path d="M5 5l14 14M19 5 5 19"/>','÷':'<path d="M4 12h16"/><circle cx="12" cy="5" r="1" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1" fill="currentColor" stroke="none"/>','=':'<path d="M4 8h16M4 16h16"/>','%':'<path d="M5 20 19 4"/><circle cx="7" cy="7" r="2.5"/><circle cx="17" cy="17" r="2.5"/>','+/−':'<path d="M3 6h7M6.5 2.5v7M17 3 8 21M16 18h6"/>'};
@@ -108,10 +108,10 @@
  }
  function flat(host,nav,mixed){
   const plus=host.querySelector('.mobile-plus');if(plus&&!stepKind(host))for(const[k,v]of[['background','transparent'],['box-shadow','none'],['color','rgb(49, 92, 245)'],['width','20px'],['height','20px'],['margin-top','0px']])if(plus.style.getPropertyValue(k)!==v||plus.style.getPropertyPriority(k)!=='important')plus.style.setProperty(k,v,'important');
-  // Close controls share a quiet X with a square hover target.
+  // Close presentation is shared with close-controls.css, including dynamic popups.
   if(host.matches(closeControls)){
    if(host.classList.contains('snote-flat-icon-control'))host.classList.remove('snote-flat-icon-control');
-   for(const[k,v]of[['background','var(--snote-close-background, transparent)'],['border','0px solid transparent'],['border-radius','4px'],['box-shadow','none'],['color','rgb(75, 75, 80)'],['width','30px'],['height','30px'],['min-width','30px'],['min-height','30px'],['padding','0px'],['margin','0px'],['box-sizing','border-box']])if(host.style.getPropertyValue(k)!==v||host.style.getPropertyPriority(k)!=='important')host.style.setProperty(k,v,'important');
+   for(const[k,v]of[['background','var(--snote-close-background, #dc4c5c)'],['border','0px solid transparent'],['border-radius','var(--snote-close-radius, 8px)'],['box-shadow','none'],['color','var(--snote-close-color, #fff)'],['width','30px'],['height','30px'],['min-width','30px'],['min-height','30px'],['padding','0px'],['margin','0px'],['box-sizing','border-box']])if(host.style.getPropertyValue(k)!==v||host.style.getPropertyPriority(k)!=='important')host.style.setProperty(k,v,'important');
    return;
   }
   const step=stepKind(host);if(step){compactStep(host,step);return;}clearStep(host);
