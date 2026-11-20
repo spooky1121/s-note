@@ -1,0 +1,13 @@
+/* Keep the feature cards on the same outer grid as the login/hero card. */
+@media screen{
+ #zc-cloud-gate .snote-login-info{box-sizing:border-box;width:min(1440px,100%);margin:0 auto;padding:42px 0 24px}
+ #zc-cloud-gate .snote-auth-features{align-items:stretch}
+ #zc-cloud-gate .snote204-auth-header>.snote-wordmark{display:inline-flex}
+ #zc-cloud-gate #snote-login-description[hidden]{display:none}
+}
+@media screen and (max-width:860px){
+ #zc-cloud-gate .snote-login-info{width:min(600px,100%);padding:32px 0 24px}
+}
+@media screen and (max-width:600px){
+ #zc-cloud-gate .snote-login-info{width:100%;padding:28px 24px}
+}
