@@ -4,7 +4,7 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('n
 const ROOT=path.resolve(__dirname,'..');
 (async()=>{const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium'});setBrowser(browser);try{
  for(const width of[1440,390,320]){
-  const f=await fixture(width),p=f.page;assert.equal(await p.locator('#detail-buy').inputValue(),'10,000,000');assert.equal(await p.locator('#detail-sell').inputValue(),'12,000,000');
+  const f=await fixture(width,null,{paymentAccountsRegistered:true}),p=f.page;assert.equal(await p.locator('#detail-buy').inputValue(),'10,000,000');assert.equal(await p.locator('#detail-sell').inputValue(),'12,000,000');
   assert.equal(await p.evaluate(()=>normalizeCosts(cars[0]).performanceInspection),0);assert.equal(await p.evaluate(()=>snoteVehicleHasChanges()),false);
   await p.evaluate(async()=>{await closeVehicle({discard:true});openAdd();});await p.locator('#new-performanceInspection').fill('234567');assert.equal(await p.locator('#new-performanceInspection').inputValue(),'234,567');assert.equal(await p.evaluate(()=>costInputs('new').performanceInspection),234567);assert.equal(await p.locator('#add-cost-summary .sum-cell strong').first().textContent(),'234,567원');await p.evaluate(()=>{closeAdd();openVehicle('encar-car-1');});
   await p.locator('#detail-performanceInspection').fill('123456');assert.equal(await p.locator('#detail-performanceInspection').inputValue(),'123,456');assert.equal(await p.evaluate(()=>snoteVehicleHasChanges()),true,'Editing only the new inspection fee must participate in save/discard protection');

@@ -25,7 +25,7 @@ async function ready(page){
 
 async function setup(width=1440){
  const second=oldCar({id:'encar-car-2',model:'완전 미분류 차량의 원래 제목',make:'',group:'',generation:'',grade:'직접입력 트림 원문',subgrade:'수기 세부정보',plate:'34나5678'});
- const f=await fixture(width,[oldCar(),second]),p=f.page;
+ const f=await fixture(width,[oldCar(),second],{paymentAccountsRegistered:true}),p=f.page;
  await ready(p);await p.evaluate(()=>closeVehicle({discard:true}));
  await p.evaluate(({actor,company,catalog})=>{
   const S=__encarFixtureState,previous=S.client;

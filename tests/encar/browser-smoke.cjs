@@ -54,7 +54,7 @@ async function releaseLifecycle(page,version){
  console.log('PASS actual HTML canonical release synchronizes all three original badges, late added markers/subtrees, and duplicate-script refresh without changing app state');
 }
 
-async function fixture(width=1440,savedCars=null,{primaryColor=null,weather=null,sessionToken=TOKEN,encarLogoUnavailable=false,lookupUnavailable=false}={}){
+async function fixture(width=1440,savedCars=null,{primaryColor=null,weather=null,sessionToken=TOKEN,encarLogoUnavailable=false,lookupUnavailable=false,paymentAccountsRegistered=false}={}){
  const context=await browser.newContext({viewport:{width,height:950}}),page=await context.newPage();
  const f={context,page,requests:[],autoPriceRequests:[],logouts:[],navigations:[],external:[],unexpected:[],errors:[],responses:[],dialogs:[],dialogAnswers:[],unexpectedDialogs:[]};
  const answerDialog=async dialog=>{
@@ -84,7 +84,7 @@ async function fixture(width=1440,savedCars=null,{primaryColor=null,weather=null
    if(request.method()==='OPTIONS')return route.fulfill({status:204,headers});
    assert.equal(request.method(),'POST');const scope=await page.evaluate(()=>({user_id:__encarFixtureState.user.id,company_id:__encarFixtureState.company.id}));
    assert.equal(JSON.parse(request.postData()).p_company,scope.company_id);
-   return route.fulfill({headers,contentType:'application/json',body:JSON.stringify({...scope,revision:0,accounts:{vehicle:null,transfer:null}})});
+   return route.fulfill({headers,contentType:'application/json',body:JSON.stringify({...scope,revision:paymentAccountsRegistered?1:0,accounts:{vehicle:paymentAccountsRegistered?{bank:'검증은행',number:'0000001234567',holder:'합성 예금주'}:null,transfer:null}})});
   }
   if(url.origin!==ORIGIN){f.external.push(url.href);return route.abort();}
   if(encarLogoUnavailable&&url.pathname===ENCAR_WORDMARK_PATH)return route.abort();
