@@ -1,0 +1,31 @@
+/* Personal receiving accounts use the same quiet profile controls. */
+[data-snote-payment-section][hidden],[data-snote-payment-row][hidden]{display:none!important}
+[data-snote-payment-account]{min-width:0;overflow-wrap:anywhere;word-break:normal;font-variant-numeric:tabular-nums}
+.snote-payment-document-holder{font-weight:400}
+@media screen{
+ #snote-profile-dialog .snote-payment-profile-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+ #snote-profile-dialog .snote-payment-profile-heading h3{margin:0}
+ #snote-profile-dialog .snote-payment-save{display:grid;place-items:center;flex:none;width:30px;height:30px;min-height:30px;padding:5px;border:0;border-radius:7px;background:transparent;color:#1768d8;box-shadow:none}
+ #snote-profile-dialog .snote-payment-save:hover:enabled{background:#edf3fc}
+ #snote-profile-dialog #snote-payment-form{margin:0;padding:0;text-align:left}
+ #snote-profile-dialog .snote-payment-fields{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px}
+ #snote-profile-dialog .snote-payment-fields fieldset{min-width:0;margin:0;padding:0;border:0}
+ #snote-profile-dialog .snote-payment-fields legend{padding:0;margin:0 0 12px;color:#435268;font-size:12px;font-weight:600}
+ #snote-profile-dialog .snote-payment-fields label{margin-bottom:11px;font-size:11px}
+ #snote-profile-dialog .snote-payment-fields input{min-height:38px;margin-top:5px;padding:9px 10px;font-size:12px;line-height:1.4}
+ #snote-profile-dialog .snote-payment-fields input[id$="-number"]{font-variant-numeric:tabular-nums}
+ #snote-profile-dialog .snote-payment-help{margin:4px 0 0;color:#919baa;font-size:10px;line-height:1.6}
+}
+@media screen and (max-width:480px){
+ #snote-profile-dialog .snote-payment-fields{grid-template-columns:minmax(0,1fr);gap:15px}
+ #snote-profile-dialog .snote-payment-fields fieldset+fieldset{padding-top:15px;border-top:1px solid #edf0f5}
+ #snote-profile-dialog .snote-payment-fields input{font-size:16px}
+}
+/* This section is deliberately absent when no saved account is available. */
+#contract-paper [data-snote-payment-section],#contract-print-pages [data-snote-payment-section]{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:4mm;margin:.4mm 0;padding:.3mm 0;border-block:1px solid #e2e5e9;color:#283646;font-family:inherit;font-size:8px;line-height:1.2}
+#contract-paper [data-snote-payment-row],#contract-print-pages [data-snote-payment-row]{min-width:0}
+#contract-paper [data-snote-payment-account],#contract-print-pages [data-snote-payment-account]{font-size:8px;line-height:1.2}
+@media print{
+ #snote-payment-profile{display:none!important}
+ [data-snote-payment-account]{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+}

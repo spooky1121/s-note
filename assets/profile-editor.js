@@ -10,19 +10,19 @@
  let challenge=null,resendAt=0,sendRequestId=null,avatar=null,avatarURL='',previewURL=null,committedPreviewURL=null;
  let logoRequest=0,logoImageRequest=0,logoProbe=null;
  let presentation='drawer',bodyLocked=false,settingsHost=null,settingsDetails=null,settingsSummary=null,settingsClick=null,settingsToggle=null;
- const bridge=()=>window.snoteProfileBridge,phoneValue=()=>byId('phone').value.replace(/\D/g,''),busy=()=>saveBusy||passwordBusy||phoneBusy||avatarBusy;
+ const bridge=()=>window.snoteProfileBridge,phoneValue=()=>byId('phone').value.replace(/\D/g,''),busy=()=>saveBusy||passwordBusy||phoneBusy||avatarBusy||!!window.SnotePaymentAccounts?.profileBusy();
  const current=(version=request)=>root.isConnected&&!root.hidden&&!closing&&version===request&&context&&bridge()?.current(context)&&(presentation!=='settings'||settingsHost?.isConnected&&root.parentElement===settingsHost);
  function status(id,text,tone='info'){const el=byId(id);el.textContent=text;el.dataset.tone=tone;}
  function values(){return {display_name:byId('name').value.trim(),company_name:byId('company').value.trim(),phone:String(baseline?.phone||''),address:String(baseline?.address||'')};}
  function personalDirty(){return !!baseline&&(byId('name').value.trim()!==String(baseline.display_name||'')||byId('company').value.trim()!==String(baseline.company_name||''));}
  function passwordDirty(){return ['password-current','password-new','password-confirm'].some(id=>byId(id).value.length>0);}
- function dirty(){return personalDirty()||passwordDirty()||!!baseline&&phoneValue()!==String(baseline.phone||'');}
+ function dirty(){return personalDirty()||passwordDirty()||!!baseline&&phoneValue()!==String(baseline.phone||'')||!!window.SnotePaymentAccounts?.profileDirty();}
  function clearPasswords(){for(const id of ['password-current','password-new','password-confirm'])byId(id).value='';}
  function expected(withPhone=false){const value={user_id:baseline.user_id,company_id:baseline.company_id,display_name:baseline.display_name,company_name:baseline.company_name,revision:baseline.revision};if(withPhone)value.phone=String(baseline.phone||'');return value;}
  function resetChallenge(){challenge=null;byId('phone-code').value='';byId('phone-code-row').hidden=true;byId('phone-countdown').textContent='';}
  function controls(){
   const ready=!!baseline&&current(),working=busy(),now=Date.now();
-  for(const input of root.querySelectorAll('input,textarea'))input.disabled=!ready||working;
+  for(const input of root.querySelectorAll('input,textarea'))if(!input.closest('.snote-payment-profile'))input.disabled=!ready||working;
   byId('company').readOnly=baseline?.role!=='admin';byId('address').readOnly=true;
   byId('save').disabled=!ready||working||!personalDirty();byId('password-save').disabled=!ready||working;byId('avatar-pick').disabled=!ready||working||!avatar;
   const wait=Math.max(0,Math.ceil((resendAt-now)/1000));byId('phone-send').disabled=!ready||working||wait>0||phoneValue()===String(baseline?.phone||'');byId('phone-send').textContent=wait?`재요청 ${wait>=60?Math.ceil(wait/60)+'분':wait+'초'}`:challenge?'다시 받기':'인증번호 받기';
@@ -168,6 +168,7 @@
  }
  function releaseBody(){if(bodyLocked){document.body.style.overflow=previousOverflow;bodyLocked=false;}}
  function finishClose(){
+  window.SnotePaymentAccounts?.closeProfile();
   root.hidden=true;root.classList.remove('is-open');closing=false;baseline=null;context=null;clearPasswords();resetChallenge();clearPreview();clearCommittedPreview();avatar=null;avatarURL='';resendAt=0;sendRequestId=null;
   for(const id of ['name','company','phone','address'])byId(id).value='';byId('current-email').textContent='';byId('current-phone').textContent='';++logoRequest;clearCompanyLogo();showAvatar('');
   for(const id of ['message','password-message','phone-message','avatar-message'])status(id,'');
@@ -200,6 +201,7 @@
   baseline=null;saveBusy=false;passwordBusy=false;phoneBusy=false;avatarBusy=false;showPresentation(mode,host);root.hidden=false;clearPasswords();
   for(const id of ['message','password-message','phone-message','avatar-message'])status(id,'');root.querySelector('details').open=false;
   if(mode==='drawer')requestAnimationFrame(()=>{if(!root.hidden&&!closing){root.classList.add('is-open');panel.focus({preventScroll:true});}});
+  void window.SnotePaymentAccounts?.openProfile();
   sessionTimer=setInterval(()=>{if(!closing&&!root.hidden&&!bridge()?.current(context))close({force:true});else if(current())controls();},200);await load();return true;
  }
  async function open(){return begin('drawer');}

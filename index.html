@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.156">
+<html lang="ko" data-snote-release="2.157">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -3422,8 +3422,8 @@ button, input, select, textarea { font-family: inherit; }
     </tbody></table>
    </section>
    <div class="q8-grand"><div><div class="q8-total-label">최종 견적 금액</div><div class="q8-total-desc">차량대금 + 이전비용 합계</div></div><div class="q8-total-value"><strong id="quote-grand-total">0</strong><span>원</span></div></div>
-   <section class="q8-section q8-bank-section"><div class="q8-section-title"><span class="q8-index">03</span><h2>입금 안내</h2><small>PAYMENT INFORMATION</small></div>
-    <div class="q8-bank-grid"><div class="q8-bank-card"><div class="q8-bank-type">01 · 차량대금 입금</div><div class="q8-bank-en">VEHICLE PAYMENT</div><div class="q8-bank-money"><span id="quote-bank-car">0</span><small>원</small></div><div class="q8-bank-line"><strong>우리은행</strong> 1005-304-826434<br/><span class="q8-holder">예금주 · 상사명 입력</span></div></div><div class="q8-bank-card"><div class="q8-bank-type">02 · 이전비용 입금</div><div class="q8-bank-en">TRANSFER & REGISTRATION</div><div class="q8-bank-money"><span id="quote-bank-transfer">0</span><small>원</small></div><div class="q8-bank-line"><strong>우리은행</strong> 1002-966-532614<br/><span class="q8-holder">예금주 · 서영민</span></div></div></div>
+   <section class="q8-section q8-bank-section" data-snote-payment-section hidden><div class="q8-section-title"><span class="q8-index">03</span><h2>입금 안내</h2><small>PAYMENT INFORMATION</small></div>
+    <div class="q8-bank-grid"><div class="q8-bank-card" data-snote-payment-row="vehicle" hidden><div class="q8-bank-type">01 · 차대금 입금</div><div class="q8-bank-en">VEHICLE PAYMENT</div><div class="q8-bank-money"><span id="quote-bank-car">0</span><small>원</small></div><div class="q8-bank-line" data-snote-payment-account="vehicle"></div></div><div class="q8-bank-card" data-snote-payment-row="transfer" hidden><div class="q8-bank-type">02 · 이전비 입금</div><div class="q8-bank-en">TRANSFER & REGISTRATION</div><div class="q8-bank-money"><span id="quote-bank-transfer">0</span><small>원</small></div><div class="q8-bank-line" data-snote-payment-account="transfer"></div></div></div>
    </section>
    <div class="q8-info-note"><span class="q8-note-icon">i</span><span>취득세·공채·이전 관련 비용은 예상 금액이며 실제 등록 조건에 따라 달라질 수 있습니다. 입금 전 계좌번호와 예금주를 다시 확인해 주세요.</span></div>
    <footer class="q8-bottom"><img class="zc-footer-emblem" src="data:image/png;base64,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" alt="S-NOTE 자동차 로고" /><strong class="snote95-footer-company">상호명 · 상사명</strong></footer>
@@ -3460,6 +3460,10 @@ button, input, select, textarea { font-family: inherit; }
      <div class="ct-money-bar"><label>총 매매금액</label><div class="ct-money-right"><input id="ct-total-price" inputmode="numeric" oninput="ctUpdateMoney()" aria-label="총 매매금액 (원)" /><strong>원</strong></div></div>
      <div class="ct-payment-grid"><div class="ct-payment"><label>계약금 (원)</label><input id="ct-deposit" inputmode="numeric" value="0" oninput="ctUpdateMoney()" /><div class="ct-payment-date"><span>입금일</span><input id="ct-deposit-date" type="text" placeholder="YYYY-MM-DD" maxlength="10" /></div></div><div class="ct-payment"><label>중도금 (원)</label><input id="ct-interim" inputmode="numeric" value="0" oninput="ctUpdateMoney()" /><div class="ct-payment-date"><span>입금일</span><input id="ct-interim-date" type="text" placeholder="YYYY-MM-DD" maxlength="10" /></div></div><div class="ct-payment"><label>잔금 (자동 계산)</label><input id="ct-balance" value="0" readonly /><div class="ct-payment-date"><span>예정일</span><input id="ct-balance-date" type="text" placeholder="YYYY-MM-DD" maxlength="10" /></div></div></div>
    </section>
+   <div class="snote-payment-contract" data-snote-payment-section hidden>
+    <div data-snote-payment-row="vehicle" hidden><strong>차대금 입금계좌</strong><span data-snote-payment-account="vehicle"></span></div>
+    <div data-snote-payment-row="transfer" hidden><strong>이전비 입금계좌</strong><span data-snote-payment-account="transfer"></span></div>
+   </div>
    <section class="ct-section ct-legal-section"><div class="ct-heading"><span>03</span>계약 조건<small>GENERAL TERMS</small></div>
      <div class="ct-terms"><div class="ct-term"><b>제1조 (당사자표시)</b> 양도인을 &quot;갑&quot;이라 하고, 양수인을 &quot;을&quot;이라 한다.</div>
 <div class="ct-term"><b>제2조 (동시이행등)</b> ①&quot;갑&quot;은 잔금수령과 상환으로 소유권이전등록에 필요한 서류와 매매목적물을 &quot;을&quot;에게 인도하기로 한다. 다만, &quot;갑&quot;과 &quot;을&quot;의 합의에 의하여 매매금액의 2/3 이상의 상당액을 지급한 때에는 매매 목적물을 인도할 수 있다. ②&quot;을&quot;은 &quot;갑&quot;에게 잔금을 지급함과 동시에 소유권이전등록의 절차에 필요한 서류와 등록비용을 자동차매매업자(이하 &quot;매매업자&quot;라 한다)에게 교부하여야 한다. 다만 매매업자가 매수할 때에는 그러하지 아니한다.</div>
@@ -6485,16 +6489,18 @@ function openQuotePreview(){delete $('quote-overlay').dataset.snoteHistoryDirty;
  updateQuoteTotals();
  $('vehicle-overlay').classList.remove('open');$('vehicle-overlay').setAttribute('aria-hidden','true');
  $('quote-overlay').classList.add('open');$('quote-overlay').setAttribute('aria-hidden','false');
+ const paymentActor=currentUser,paymentCar=quoteCarId;void window.SnotePaymentAccounts?.loadDocument(()=>currentUser===paymentActor&&quoteCarId===paymentCar&&$('quote-overlay').classList.contains('open'));
  window.requestAnimationFrame(resizeQuotePreview);
 }
 function closeQuotePreview(){
+ window.SnotePaymentAccounts?.clearDocument();
  $('quote-overlay').classList.remove('open');$('quote-overlay').setAttribute('aria-hidden','true');
  quoteCarId=null;
  if(activeCarId){$('vehicle-overlay').classList.add('open');$('vehicle-overlay').setAttribute('aria-hidden','false')}
 }
 function resizeQuotePreview(){const paper=$('quote-paper');if(!$('quote-overlay').classList.contains('open')||!paper)return;const width=paper.closest('.snote-popup-card')?.clientWidth||window.innerWidth-68;paper.style.setProperty('--quote-scale',Math.max(.1,Math.min(1,width/794)));}
 window.addEventListener('resize',resizeQuotePreview);
-async function printQuote(){if(!$('quote-overlay').classList.contains('open'))return;const actor=currentUser,car=quoteCarId,scope=snote128DocumentScope();await snote95UpdateDocumentCompany();await document.fonts?.ready;if(currentUser!==actor||quoteCarId!==car||!snote128DocumentCurrent(scope)||!$('quote-overlay').classList.contains('open'))return;window.print()}
+async function printQuote(){if(!$('quote-overlay').classList.contains('open'))return;const actor=currentUser,car=quoteCarId,scope=snote128DocumentScope();const [,accountsReady]=await Promise.all([snote95UpdateDocumentCompany(),window.SnotePaymentAccounts?.loadDocument(()=>currentUser===actor&&quoteCarId===car&&$('quote-overlay').classList.contains('open'))??Promise.resolve(false)]);if(!accountsReady){toast('입금계좌를 확인하지 못했습니다. 다시 불러온 뒤 인쇄해 주세요.');return;}await document.fonts?.ready;if(currentUser!==actor||quoteCarId!==car||!snote128DocumentCurrent(scope)||!$('quote-overlay').classList.contains('open'))return;window.print()}
 
 
 /* v1.9 · Contract preview (client-only draft) */
@@ -6512,6 +6518,7 @@ function snote222ContractSignatureContext(){
  return {actor:currentUser,ownerId:car?.ownerId||'',carId:contractCarId,view:snote214ContractView,mode:contractMode,open:$('contract-overlay').classList.contains('open'),customerName:$('ct-buyer-name').value};
 }
 function snote222ResetContractSession(){
+ window.SnotePaymentAccounts?.clearDocument();
  snote128ResetContractStamp();
  window.SnoteCustomerList?.clear();
  snote235SaleReturn=null;
@@ -6659,6 +6666,7 @@ function setContractMode(mode){if(!['sale','purchase'].includes(mode))return;if(
  }
  ctSetParty('seller',mode==='sale'?dealer:contractOwner);ctSetParty('buyer',mode==='purchase'?dealer:contractOwner);
  syncContractStampSide();
+ if($('contract-overlay').classList.contains('open')){const actor=currentUser,car=contractCarId,view=snote214ContractView;if(mode==='purchase')window.SnotePaymentAccounts?.clearDocument();else void window.SnotePaymentAccounts?.loadDocument(()=>currentUser===actor&&contractCarId===car&&snote214ContractView===view&&contractMode==='sale'&&$('contract-overlay').classList.contains('open'));}
  const c=cars.find(x=>x.id===contractCarId);if(c){const edited=mode==='sale'?(c.status==='판매완료'&&$('detail-sold-price')?.value!==''?readDetailMoney($('detail-sold-price').value):readDetailMoney($('detail-sell').value)):readDetailMoney($('detail-buy').value);const fallback=mode==='sale'?(c.status==='판매완료'?salePrice(c):c.sell):c.buy;const price=Number.isFinite(edited)&&edited>=0?edited:fallback;$('ct-total-price').value=Math.round(price).toLocaleString('ko-KR')} ctUpdateMoney();
  buildContractPrintPages();
 }
@@ -6681,6 +6689,7 @@ function openContractPreview({loadCustomer=true}={}){snote251ContractCustomerTas
  snote128RefreshContractStamp();
  snote214ContractIdentityBaseline=zc72Digits($('ct-buyer-id').value);
  requestAnimationFrame(resizeContractPreview);
+ const paymentActor=currentUser,paymentCar=contractCarId,paymentView=snote214ContractView;void window.SnotePaymentAccounts?.loadDocument(()=>currentUser===paymentActor&&contractCarId===paymentCar&&snote214ContractView===paymentView&&contractMode==='sale'&&$('contract-overlay').classList.contains('open'));
  if(loadCustomer)snote251ContractCustomerTask=snote251LoadContractCustomer();
 }
 async function snote251LoadContractCustomer(){
@@ -6728,7 +6737,7 @@ async function closeContractPreview(options={}){
 }
 function resizeContractPreview(){const paper=$('contract-paper');if(!$('contract-overlay').classList.contains('open')||!paper)return;const width=paper.closest('.snote-popup-card')?.clientWidth||window.innerWidth-68;paper.style.setProperty('--contract-scale',Math.max(.1,Math.min(1,width/794)));}
 window.addEventListener('resize',resizeContractPreview);
-async function printContract(){if(!$('contract-overlay').classList.contains('open'))return;const loadingActor=currentUser,loadingCar=contractCarId,loadingView=snote214ContractView;if(!await snote251ContractCustomerTask)return;await document.fonts?.ready;if(currentUser!==loadingActor||contractCarId!==loadingCar||snote214ContractView!==loadingView||!$('contract-overlay').classList.contains('open'))return;if(!ctCompanyFieldsFit())return;if(ctReadMoney('ct-deposit')+ctReadMoney('ct-interim')>ctReadMoney('ct-total-price')){toast('계약금과 중도금의 합계가 매매금액을 초과합니다.');return}if(!$('ct-contract-date').value||!$('ct-plate').value.trim()||!$('ct-seller-name').value.trim()){toast('계약일·차량번호·매도인을 입력해주세요.');return}if(!fitContractSpecial()){toast('특약사항이 A4 출력 공간을 초과합니다. 내용을 조금 줄여주세요.');$('ct-special').focus();return}const actor=currentUser,car=contractCarId,view=snote214ContractView,scope=snote128DocumentScope();const [,stampReady]=await Promise.all([snote95UpdateDocumentCompany(),snote128RefreshContractStamp()]);if(!snote128DocumentCurrent(scope))return;if(currentUser!==actor||contractCarId!==car||snote214ContractView!==view||!$('contract-overlay').classList.contains('open'))return;if(!stampReady||snote128StampState.status==='error'){toast('상사 도장을 불러오지 못했습니다. 설정의 등록 이미지를 확인한 뒤 다시 인쇄해 주세요.');return;}if(window.snote222ContractSignature&&!await window.snote222ContractSignature.ready()){toast('고객 서명 표시를 확인한 뒤 다시 인쇄해 주세요.');return}if(currentUser!==actor||contractCarId!==car||snote214ContractView!==view||!snote128DocumentCurrent(scope)||!$('contract-overlay').classList.contains('open'))return;buildContractPrintPages();if(typeof zc75ScheduleContractSave==='function')zc75ScheduleContractSave(true);window.print()}
+async function printContract(){if(!$('contract-overlay').classList.contains('open'))return;const loadingActor=currentUser,loadingCar=contractCarId,loadingView=snote214ContractView;if(!await snote251ContractCustomerTask)return;await document.fonts?.ready;if(currentUser!==loadingActor||contractCarId!==loadingCar||snote214ContractView!==loadingView||!$('contract-overlay').classList.contains('open'))return;if(!ctCompanyFieldsFit())return;if(ctReadMoney('ct-deposit')+ctReadMoney('ct-interim')>ctReadMoney('ct-total-price')){toast('계약금과 중도금의 합계가 매매금액을 초과합니다.');return}if(!$('ct-contract-date').value||!$('ct-plate').value.trim()||!$('ct-seller-name').value.trim()){toast('계약일·차량번호·매도인을 입력해주세요.');return}if(!fitContractSpecial()){toast('특약사항이 A4 출력 공간을 초과합니다. 내용을 조금 줄여주세요.');$('ct-special').focus();return}const actor=currentUser,car=contractCarId,view=snote214ContractView,scope=snote128DocumentScope();const [,stampReady,accountsReady]=await Promise.all([snote95UpdateDocumentCompany(),snote128RefreshContractStamp(),contractMode==='sale'?(window.SnotePaymentAccounts?.loadDocument(()=>currentUser===actor&&contractCarId===car&&snote214ContractView===view&&contractMode==='sale'&&$('contract-overlay').classList.contains('open'))??Promise.resolve(false)):Promise.resolve(true)]);if(!accountsReady){toast('입금계좌를 확인하지 못했습니다. 다시 불러온 뒤 인쇄해 주세요.');return;}if(!snote128DocumentCurrent(scope))return;if(currentUser!==actor||contractCarId!==car||snote214ContractView!==view||!$('contract-overlay').classList.contains('open'))return;if(!stampReady||snote128StampState.status==='error'){toast('상사 도장을 불러오지 못했습니다. 설정의 등록 이미지를 확인한 뒤 다시 인쇄해 주세요.');return;}if(window.snote222ContractSignature&&!await window.snote222ContractSignature.ready()){toast('고객 서명 표시를 확인한 뒤 다시 인쇄해 주세요.');return}if(currentUser!==actor||contractCarId!==car||snote214ContractView!==view||!snote128DocumentCurrent(scope)||!$('contract-overlay').classList.contains('open'))return;buildContractPrintPages();if(typeof zc75ScheduleContractSave==='function')zc75ScheduleContractSave(true);window.print()}
 
 
 /* v1.27: label-oriented VIN OCR, runs entirely in the browser. No full OCR text is retained. */
@@ -10528,6 +10537,7 @@ async function snote90RemoveCarMedia(carId){
 // Profile actions use one verified identity and a captured JWT throughout each request.
 let snoteProfileSession=null,snoteProfileEpoch=0,snoteProfileAvatarMeta=null,snoteProfileAvatarImageCache=null;
 function snoteProfileResetAssets(options={}){
+ window.SnotePaymentAccounts?.reset();
  if(!options.keepCompanyAssets){snote128ResetCompanyAssets();window.SnoteContractOffice?.reset();}
  if(snoteProfileAvatarImageCache?.url)URL.revokeObjectURL(snoteProfileAvatarImageCache.url);
  snoteProfileAvatarImageCache=null;snoteProfileAvatarMeta=null;snoteProfileSession=null;snoteProfileEpoch++;
@@ -10545,6 +10555,22 @@ function snoteProfileContext(){
  return {key:S.company.id+':'+S.user.id+':'+snoteProfileEpoch,userId:S.user.id,companyId:S.company.id,client:S.client};
 }
 function snoteProfileCurrent(context){const now=snoteProfileContext();return !!context&&now?.key===context.key&&now.client===context.client;}
+function snotePaymentAccountsContext(){
+ const context=snoteProfileContext(),member=S.members.find(item=>item.user_id===S.user?.id&&item.company_id===S.company?.id&&item.active===true);
+ return context&&['admin','dealer'].includes(member?.role)?{...context,role:member.role}:null;
+}
+function snotePaymentAccountsCurrent(context){const now=snotePaymentAccountsContext();return !!context&&now?.key===context.key&&now.client===context.client&&now.role===context.role;}
+function snotePaymentAccountsAssert(context){if(!snotePaymentAccountsCurrent(context))throw snoteProfileError('SNOTE_PROFILE_CONTEXT','로그인 또는 상사가 변경되었습니다.');}
+function snotePaymentAccountsCheck(context,data){
+ snotePaymentAccountsAssert(context);
+ if(data?.user_id!==context.userId||data?.company_id!==context.companyId||!Number.isSafeInteger(data?.revision)||data.revision<0||!data.accounts||typeof data.accounts!=='object'||Array.isArray(data.accounts))throw snoteProfileError('INVALID_RESPONSE','입금계좌 정보를 확인하지 못했습니다.');
+ return data;
+}
+window.snotePaymentAccountsBridge=Object.freeze({
+ context:snotePaymentAccountsContext,current:snotePaymentAccountsCurrent,
+ async read(context){snotePaymentAccountsAssert(context);const bound=await snoteProfilePinned(context);snotePaymentAccountsAssert(context);return snotePaymentAccountsCheck(context,await snoteProfileRpc(context,bound,'snote_payment_accounts_read',{p_company:context.companyId}));},
+ async save(context,revision,accounts){snotePaymentAccountsAssert(context);if(!Number.isSafeInteger(revision)||revision<0)throw snoteProfileError('INVALID_INPUT','저장할 계좌 정보를 다시 확인해 주세요.');const bound=await snoteProfilePinned(context);snotePaymentAccountsAssert(context);return snotePaymentAccountsCheck(context,await snoteProfileRpc(context,bound,'snote_payment_accounts_save',{p_company:context.companyId,p_expected_revision:revision,p_accounts:accounts}));}
+});
 function snoteProfileError(code,message){return Object.assign(Error(message),{code});}
 function snoteProfileAssert(context){if(!snoteProfileCurrent(context))throw snoteProfileError('SNOTE_PROFILE_CONTEXT','로그인 정보가 변경되었습니다.');}
 async function snoteProfilePinned(context){
@@ -10955,7 +10981,7 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 <link rel="stylesheet" href="assets/workspace-reorder.css?v=2.136">
 <script src="assets/workspace-order-store.js?v=2.135" defer></script>
 <script src="assets/workspace-reorder.js?v=2.136" defer></script>
-<script src="assets/release-info.js?v=2.156" defer></script>
+<script src="assets/release-info.js?v=2.157" defer></script>
 <link rel="stylesheet" href="assets/encar-id.css?v=2.154">
 <script src="assets/encar-id.js?v=2.154" defer></script>
 <script src="assets/company-purchase.js?v=2.130" defer></script>
@@ -10965,7 +10991,9 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 <script src="assets/contract-office.js?v=2.143" defer></script>
 <script src="assets/recycle-bin.js?v=2.77" defer></script>
 <script src="assets/company-assets.js?v=2.128" defer></script>
-<script src="assets/profile-editor.js?v=2.128" defer></script>
+<script src="assets/profile-editor.js?v=2.157" defer></script>
+<link rel="stylesheet" href="assets/payment-accounts.css?v=2.157">
+<script src="assets/payment-accounts.js?v=2.157" defer></script>
 <script src="assets/document-mms.js?v=2.44" defer></script>
 <script src="assets/workspace-polish.js?v=2.77" defer></script>
 <script src="assets/list-sort.js?v=2.120" defer></script>
@@ -10984,5 +11012,10 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 <link rel="stylesheet" href="assets/purchase-registration-success.css?v=2.120">
 <script src="assets/purchase-registration.js?v=2.121" defer></script>
 <script src="assets/purchase-registration-success.js?v=2.120" defer></script>
+
+<script>
+window.addEventListener('snote:payment-accounts-changed',()=>{if(typeof contractMode!=='undefined'&&contractMode==='purchase')document.querySelector('#contract-paper [data-snote-payment-section]')?.setAttribute('hidden','');if(document.getElementById('contract-overlay')?.classList.contains('open'))buildContractPrintPages();});
+</script>
+
 </body>
 </html>
