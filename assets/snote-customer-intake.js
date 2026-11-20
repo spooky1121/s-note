@@ -6,7 +6,7 @@
     'zc72-mailing', 'zc73-mailing-detail', 'zc74-same-address',
     'zc74-refund-bank', 'zc74-refund-account', 'zc74-refund-holder', 'zc72-rrn'];
   let state = null;
-  let sequence = 0;
+  let sequence = 0, addressFitFrame = null, addressFitTop = false;
   const byId = id => document.getElementById(id);
   const text = value => typeof value === 'string' ? value : '';
   const digits = value => String(value || '').replace(/\D/g, '');
@@ -58,6 +58,49 @@
 
   // Only an imported authenticated request may replace the saved original signature.
   // Merely receiving another request must not attach its signature to the current draft.
+  function fitSaleAddresses(resetTop = false) {
+    addressFitTop = addressFitTop || resetTop;
+    if (addressFitFrame !== null) return;
+    addressFitFrame = window.requestAnimationFrame(() => {
+      addressFitFrame = null;
+      const top = addressFitTop; addressFitTop = false;
+      if (byId('zc72-sale-modal')?.hidden !== false) return;
+      for (const id of ['zc72-address', 'zc72-mailing']) {
+        const field = byId(id); if (!field || !field.getBoundingClientRect().width) continue;
+        field.style.overflowY = 'hidden'; field.style.height = 'auto';
+        const style = getComputedStyle(field), border = (parseFloat(style.borderTopWidth) || 0) + (parseFloat(style.borderBottomWidth) || 0);
+        const minimum = parseFloat(style.minHeight) || 68, maximum = parseFloat(style.maxHeight) || 180;
+        const content = field.scrollHeight + border, height = Math.min(maximum, Math.max(minimum, content));
+        field.style.height = Math.ceil(height) + 'px';
+        field.style.overflowY = content > maximum ? 'auto' : 'hidden';
+        if (top || content <= maximum) field.scrollTop = 0;
+      }
+    });
+  }
+
+  function receiptDetailsValue(value) {
+    const keys=['children','business','privacyConsent','insuranceConfirmed','delegationConfirmed','cashConfirmed','consentVersion'];
+    if(!value||typeof value!=='object'||Array.isArray(value)||Object.keys(value).length!==keys.length||keys.some(key=>!Object.hasOwn(value,key))||value.consentVersion!=='receipt-v1'||
+      ![null,'none','two','three'].includes(value.children)||![null,'invoice','cash'].includes(value.business)||
+      ['privacyConsent','insuranceConfirmed','delegationConfirmed','cashConfirmed'].some(key=>typeof value[key]!=='boolean'))return null;
+    return Object.fromEntries(keys.map(key=>[key,value[key]]));
+  }
+  function renderReceiptDetails(s,value) {
+    if(!isCurrent(s))return;
+    let panel=byId('snote-sale-receipt-details');
+    if(!panel){panel=node('section','snote-sale-receipt-details');panel.id='snote-sale-receipt-details';panel.setAttribute('aria-label','고객이 제출한 인수증 정보');s.signature.before(panel);}
+    panel.replaceChildren();const receipt=receiptDetailsValue(value);panel.hidden=!receipt;
+    if(!receipt)return;
+    panel.append(node('strong','','인수증 입력 정보'));
+    const choices=node('p','snote-sale-receipt-choices');
+    choices.textContent='다자녀: '+({none:'없음',two:'2자녀',three:'3자녀'}[receipt.children]||'미선택')+' · 사업자: '+({invoice:'세금계산서',cash:'현금영수증'}[receipt.business]||'미선택');panel.append(choices);
+    const list=node('ul','snote-sale-receipt-checks');
+    for(const [key,label] of [['privacyConsent','개인정보 수집 동의'],['insuranceConfirmed','차량 인수·보증보험 확인'],['delegationConfirmed','이전등록 대행 위임'],['cashConfirmed','현금영수증 발급 동의']]){
+      const item=node('li',receipt[key]?'is-confirmed':'',label+' · '+(receipt[key]?'확인':'미확인'));list.append(item);
+    }
+    panel.append(list);
+  }
+
   function signatureForSave(customer) {
     const s = state, selected = s?.selectedSubmission;
     if (!s || !selected || !isCurrent(s) || currentContext().user !== s.actor ||
@@ -66,7 +109,7 @@
     const listed = s.requests.find(item => item.id === selected.intakeSource.requestId);
     if (listed && (listed.revokedAt || listed.status === 'revoked')) return null;
     return structuredClone({customerSignature: selected.signature, customerSignatureSignedAt: selected.signedAt,
-      intakeSource: selected.intakeSource});
+      intakeSource: selected.intakeSource, receiptDetails:receiptDetailsValue(selected.receiptDetails)});
   }
 
   function signatureValue(value) {
@@ -121,8 +164,7 @@
     drawSignature(canvas, signature);
     const date = timestamp(signedAt);
     s.signature.append(node('strong', '', '고객 원제출 서명'), canvas,
-      node('p', 'snote-intake-meta', date ? '서명 접수 ' + date : '고객이 휴대폰에서 제출한 서명'),
-      node('p', 'snote-intake-meta', '원래 제출한 정보의 서명입니다. 이후 수정한 내용의 새 서명이 아닙니다.'));
+      node('p', 'snote-intake-meta', date ? '서명 접수 ' + date : '고객이 휴대폰에서 제출한 서명'));
   }
 
   function arrival(s, item) {
@@ -143,6 +185,7 @@
       state.requests = [];
     }
     state = null;
+    byId('snote-sale-receipt-details')?.remove();
     byId('snote-intake-panel')?.replaceChildren();
     const signature = byId('snote-sale-signature');
     if (signature) signature.replaceChildren(node('strong', '', '고객 원제출 서명'), node('p', 'snote-sale-signature-empty', '접수된 서명이 없습니다.'));
@@ -454,6 +497,7 @@
       const values = {};
       for (const field of ['name', 'addressBase', 'addressDetail', 'mailingBase', 'mailingDetail', 'refundBank', 'refundAccount', 'refundHolder']) values[field] = text(source[field]);
       values.sameAddress = source.sameAddress === true;
+      values.receiptDetails = receiptDetailsValue(source.receiptDetails);
       values.phone = phoneFormat(text(source.phone) || text(item.phone));
       const bank = byId('zc74-refund-bank');
       if (bank && values.refundBank && values.refundBank.length <= 35 &&
@@ -464,6 +508,7 @@
       }
       // The general customer mapper never receives a resident number.
       zc74LoadCustomer(values);
+      renderReceiptDetails(s,values.receiptDetails);
       for (const id of FIELDS.filter(id => id !== 'zc72-rrn')) byId(id)?.dispatchEvent(new Event('input', { bubbles: true }));
       if (readRrn && byId('zc72-rrn')) {
         const field = byId('zc72-rrn');
@@ -479,7 +524,7 @@
       s.selectedSubmission = item.submittedAt && !item.revokedAt && item.status === 'submitted' ? {
         name: customerName(source.name), phone: digits(source.phone || item.phone),
         signature: signatureValue(source.signature), signedAt: source.signedAt || item.submittedAt,
-        intakeSource: {requestId: item.id, submittedAt: item.submittedAt}
+        intakeSource: {requestId: item.id, submittedAt: item.submittedAt}, receiptDetails:receiptDetailsValue(source.receiptDetails)
       } : null;
       renderSignature(s, item.submission?.signature, item.submission?.signedAt);
       if (automatic && item.canonicalApplied === true) delete byId('zc72-sale-modal').dataset.snoteHistoryDirty;
@@ -498,6 +543,7 @@
 
   function open(customer = null) {
     close();
+    fitSaleAddresses(true);
     const panel = byId('snote-intake-panel');
     if (!panel) return;
     panel.classList.add('snote-intake');
@@ -553,6 +599,7 @@
     if (!s.canCreate) message(s, '판매완료 차량은 새 링크를 보낼 수 없습니다. 기존 요청 내역만 확인할 수 있습니다.');
     renderRequests(s);
     renderSignature(s, customer?.customerSignature, customer?.customerSignatureSignedAt);
+    renderReceiptDetails(s,customer?.receiptDetails);
     const observer = new MutationObserver(() => { if (!isCurrent(s)) close(); });
     s.observer = observer;
     for (const element of [byId('zc72-sale-modal'), byId('zc-cloud-gate'), byId('auth-shell')]) {
@@ -571,14 +618,25 @@
   document.addEventListener('reset', event => {
     if (event.target?.id === 'zc72-sale-form') {
       if(state&&isCurrent(state)){state.unsavedImport=true;state.signatureCleared=true;state.selectedSubmission=null;renderSignature(state,null);}
+      fitSaleAddresses(true);
+      const details=byId('snote-sale-receipt-details');if(details){details.replaceChildren();details.hidden=true;}
       const panel=byId('snote-sale-signature');if(panel)panel.replaceChildren(node('strong','','고객 원제출 서명'),node('p','snote-sale-signature-empty','접수된 서명이 없습니다.'));
       window.snote222ContractSignature?.clear();window.snote250ReceiptSignature?.clear();
     }
   });
+  document.addEventListener('input', event => {
+    if (['zc72-address', 'zc72-mailing', 'zc73-address-detail', 'zc73-mailing-detail'].includes(event.target?.id)) fitSaleAddresses();
+  });
+  document.addEventListener('change', event => {
+    if (['zc72-address', 'zc72-mailing', 'zc74-same-address'].includes(event.target?.id)) fitSaleAddresses(true);
+  });
+  window.addEventListener('resize', () => fitSaleAddresses(true));
   window.addEventListener('pagehide', close);
   window.snoteIntakeOpen = open;
   window.snoteIntakeClose = close;
   window.snoteIntakeSignatureForSave = signatureForSave;
+  window.snote160ReceiptDetails = receiptDetailsValue;
+  window.snote160ReceiptDetailsLoaded = function(customer){if(state&&isCurrent(state))renderReceiptDetails(state,customer?.receiptDetails);fitSaleAddresses(true);};
   window.snoteIntakeCustomerSaved = function () {
     const s = state;
     if (s && isCurrent(s)) { s.baseline = formValues(); s.unsavedImport = false; }
@@ -610,7 +668,7 @@
         .sort((a,b) => Date.parse(b.submittedAt)-Date.parse(a.submittedAt))[0];
       if (!source) return customer;
       return {...customer, customerSignature:signatureValue(source.submission.signature), customerSignatureSignedAt:source.submission.signedAt || source.submittedAt,
-        intakeSource:{requestId:source.id,submittedAt:source.submittedAt}};
+        intakeSource:{requestId:source.id,submittedAt:source.submittedAt},receiptDetails:receiptDetailsValue(source.submission.receiptDetails)};
     } finally {clearTimeout(timer);}
   };
   window.snoteRenderCustomerSignature = drawSignature;

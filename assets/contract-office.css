@@ -84,8 +84,21 @@
 .co-print-company-name-stacked{flex-direction:column;align-items:flex-start;justify-content:center;gap:1px}.co-print-company-name-stacked span{display:block;line-height:1}
 .co-print-field[data-field=encumbrance]{white-space:pre}
 .co-print-field.co-print-number{justify-content:flex-end;text-align:right}.co-print-field.co-print-multiline{display:block;white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere;line-height:1.05;padding-top:3px}
+/* Keep the source form and every overlay coordinate in the same uniformly
+   scaled frame, reserving a separate footer without stretching the artwork. */
+.co-paper>img,.co-paper>.co-overlay{transform:scale(.93);transform-origin:top center}
+.co-paper{--co-footer-scale:.7496}
+.co-document-footer{position:absolute;left:calc(14mm * var(--co-footer-scale));right:calc(14mm * var(--co-footer-scale));bottom:calc(9mm * var(--co-footer-scale));height:calc(9mm * var(--co-footer-scale));box-sizing:border-box;border-top:1px solid #d9eaf5;padding-top:calc(2mm * var(--co-footer-scale));display:flex;align-items:center;justify-content:flex-end;gap:calc(5px * var(--co-footer-scale));font-family:'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif;letter-spacing:0;text-align:right;color:#243e54}
+.co-document-footer .snote-document-brand{display:flex;align-items:center;justify-content:flex-start;flex:none;width:calc(22mm * var(--co-footer-scale));height:calc(6.5mm * var(--co-footer-scale));margin-right:auto;position:relative;overflow:hidden}
+.co-document-footer .snote-document-brand img{display:block;position:absolute;left:50%;top:50%;width:200%;height:auto;max-width:none;transform:translate(-50%,-50%);object-fit:contain}
+.co-document-footer .snote-document-logo{display:flex;align-items:center;justify-content:center;flex:none;width:calc(11mm * var(--co-footer-scale));height:calc(6.5mm * var(--co-footer-scale))}
+.co-document-footer .snote-document-logo:not(.is-company-logo){display:none}
+.co-document-footer .zc-footer-emblem{display:block;width:100%;height:100%;object-fit:contain}
+.co-document-footer .zc-footer-emblem[hidden]{display:none}
+.co-document-footer .snote95-footer-company{display:block;max-width:calc(120mm * var(--co-footer-scale));font-size:calc(8.5px * var(--co-footer-scale));line-height:1.25;font-weight:800;overflow-wrap:anywhere}
 @media print{
  @page{size:A4 portrait;margin:0}
+ #contract-office-dialog .co-paper{--co-footer-scale:1}
  body:has(#contract-office-dialog[open]){margin:0!important;padding:0!important;width:210mm!important;background:#fff!important;overflow:visible!important}
  body:has(#contract-office-dialog[open])>*:not(#contract-office-dialog){display:none!important}
  body:has(#contract-office-dialog[open])>#contract-office-dialog{display:block!important;position:static!important;inset:auto!important;width:210mm!important;max-width:210mm!important;height:auto!important;max-height:none!important;margin:0!important;padding:0!important;overflow:visible!important;border:0!important;border-radius:0!important;background:#fff!important;box-shadow:none!important}

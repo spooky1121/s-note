@@ -117,3 +117,41 @@
 @media (prefers-reduced-motion: reduce) {
   #snote-intake-panel * { transition: none; }
 }
+
+/* v2.160: readable addresses and compact customer/account fields. */
+#zc72-sale-modal #zc72-sale-form .zc72-grid{grid-template-columns:minmax(0,.95fr) minmax(0,1.15fr) minmax(0,1fr);gap:12px}
+#zc72-sale-modal #zc72-sale-form .zc72-field input:not([type=checkbox]),#zc72-sale-modal #zc72-sale-form .zc72-field select{height:33px;min-height:33px;padding:6px 9px;line-height:20px}
+#zc72-sale-modal #zc72-sale-form .snote-sale-addresses{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}
+#zc72-sale-modal #zc72-sale-form .snote-sale-addresses .zc73-address-line{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:7px}
+#zc72-sale-modal #zc72-sale-form .snote-sale-addresses textarea{width:100%;height:68px;min-height:68px;max-height:180px;padding:9px 10px;line-height:1.65;font-size:12px;resize:vertical;overflow-y:hidden}
+#zc72-sale-modal #zc72-sale-form .snote-sale-addresses .zc73-address-line button{width:auto;min-width:74px;height:33px;min-height:33px;padding:6px 8px;font-size:11px}
+#zc72-sale-modal #zc72-sale-form .snote-sale-bottom{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:stretch}
+#zc72-sale-modal #zc72-sale-form .snote-sale-bottom>.zc74-account-fields{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.45fr) minmax(0,.9fr);gap:9px 12px;padding:12px}
+#zc72-sale-modal #zc72-sale-form .zc74-account-heading{grid-column:1/-1}
+#zc72-sale-modal #zc72-sale-form .snote-sale-signature{grid-column:1/-1;padding:12px}
+#zc72-sale-modal #zc72-sale-form .snote-sale-receipt-details{grid-column:1/-1;padding:12px;border:1px solid #dbe6ee;border-radius:10px;background:#f9fbfd;color:#52677f;font-size:11px;line-height:1.6;min-width:0}
+#zc72-sale-modal #zc72-sale-form .snote-sale-receipt-details[hidden]{display:none}
+#zc72-sale-modal #zc72-sale-form .snote-sale-receipt-details>strong{display:block;font-size:12px;font-weight:700;color:#344c64}
+#zc72-sale-modal .snote-sale-receipt-choices{margin:7px 0 9px;overflow-wrap:anywhere}
+#zc72-sale-modal .snote-sale-receipt-checks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px 10px;margin:0;padding:0;list-style:none;color:#8b9baa}
+#zc72-sale-modal .snote-sale-receipt-checks .is-confirmed{color:#2c7b67}
+#zc72-sale-modal #zc72-sale-form .snote-intake-signature-canvas{width:min(100%,320px);max-height:112px;margin-top:8px}
+#zc72-sale-modal #zc72-sale-form .snote-sale-signature-empty{min-height:60px}
+@media(max-width:650px){
+ #zc72-sale-modal #zc72-sale-form .zc72-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+ #zc72-sale-modal #zc72-sale-form .zc72-grid>.zc72-field:nth-child(2){grid-column:auto}
+ #zc72-sale-modal #zc72-sale-form .zc72-grid>.zc72-field:nth-child(3){grid-column:1/-1;max-width:240px}
+ #zc72-sale-modal #zc72-sale-form .zc72-field input:not([type=checkbox]),#zc72-sale-modal #zc72-sale-form .zc72-field select{height:38px;min-height:38px;font-size:16px;line-height:22px}
+ #zc72-sale-modal #zc72-sale-form .snote-sale-addresses{grid-template-columns:minmax(0,1fr)}
+ #zc72-sale-modal #zc72-sale-form .snote-sale-addresses textarea{height:72px;min-height:72px;font-size:16px}
+ #zc72-sale-modal #zc72-sale-form .snote-sale-bottom>.zc74-account-fields{grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);padding:10px;gap:10px}
+ #zc72-sale-modal #zc72-sale-form .zc74-account-fields>.zc72-field:last-child{grid-column:1/-1;max-width:220px}
+ #zc72-sale-modal #zc72-sale-form .snote-sale-addresses .zc73-address-line button{min-height:38px;height:38px}
+}
+@media(max-width:359px){
+ #zc72-sale-modal #zc72-sale-form .zc72-grid{grid-template-columns:minmax(0,1fr)}
+ #zc72-sale-modal #zc72-sale-form .zc72-grid>.zc72-field:nth-child(3){grid-column:auto;max-width:none}
+ #zc72-sale-modal #zc72-sale-form .snote-sale-bottom>.zc74-account-fields{grid-template-columns:minmax(0,1fr)}
+ #zc72-sale-modal #zc72-sale-form .zc74-account-fields>.zc72-field:last-child{grid-column:auto;max-width:none}
+ #zc72-sale-modal .snote-sale-receipt-checks{grid-template-columns:minmax(0,1fr)}
+}

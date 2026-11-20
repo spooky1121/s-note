@@ -7,8 +7,8 @@
   <meta name="robots" content="noindex, nofollow, noarchive">
   <meta name="theme-color" content="#f5f7fb">
   <title>S-NOTE | 고객정보 입력</title>
-  <link rel="stylesheet" href="assets/customer-intake.css?v=2.15">
-  <script src="assets/customer-intake.js?v=2.41" defer></script>
+  <link rel="stylesheet" href="assets/customer-intake.css?v=2.160">
+  <script src="assets/customer-intake.js?v=2.160" defer></script>
 <link rel="stylesheet" href="assets/reference-theme.css?v=2.59">
 <script src="assets/icon-feedback.js?v=2.54" defer></script>
 <script src="assets/action-controls.js?v=2.60" defer></script>
@@ -58,14 +58,25 @@
               <div id="verified-note" class="verified-note" hidden>휴대전화 확인 완료 <strong id="verified-phone"></strong></div>
             </section>
             <section data-wizard-step="refund" aria-labelledby="refund-heading" hidden>
-              <div class="section-heading"><h2 id="refund-heading" tabindex="-1">환급계좌를 입력해 주세요</h2><p>이전비 환급이 필요한 경우에만 입력해 주세요. 없으면 다음으로 넘어갈 수 있습니다.</p></div>
+              <div class="section-heading"><h2 id="refund-heading" tabindex="-1">환급계좌와 인수증 정보를 입력해 주세요</h2><p>필요한 항목만 입력해 주세요. 선택하지 않고 다음으로 넘어갈 수 있습니다.</p></div>
               <label class="field" for="refund-bank"><span>은행명 <small>선택</small></span><input id="refund-bank" name="refundBank" type="text" autocomplete="off" maxlength="35" placeholder="예: 신한은행"></label><label class="field" for="refund-account"><span>계좌번호 <small>선택</small></span><input id="refund-account" name="refundAccount" type="text" inputmode="numeric" autocomplete="off" maxlength="32" placeholder="숫자 또는 하이픈(-)"></label><label class="field" for="refund-holder"><span>예금주 <small>선택</small></span><input id="refund-holder" name="refundHolder" type="text" autocomplete="off" maxlength="50" placeholder="예금주 성함"></label>
+              <section class="receipt-details-fields" aria-labelledby="receipt-details-heading">
+                <h3 id="receipt-details-heading">인수증 작성 정보 <small>선택</small></h3>
+                <fieldset class="receipt-choice-group"><legend>다자녀 여부</legend><div class="receipt-choices"><label><input type="radio" name="receipt-children" value="none"> 없음</label><label><input type="radio" name="receipt-children" value="two"> 2자녀</label><label><input type="radio" name="receipt-children" value="three"> 3자녀</label></div></fieldset>
+                <fieldset class="receipt-choice-group"><legend>사업자 여부</legend><div class="receipt-choices"><label><input type="radio" name="receipt-business" value="invoice"> 사업자 · 세금계산서</label><label><input type="radio" name="receipt-business" value="cash"> 개인 · 현금영수증</label></div></fieldset>
+              </section>
             </section>
             <section data-wizard-step="consent" aria-labelledby="consent-heading" hidden>
               <div class="section-heading"><h2 id="consent-heading" tabindex="-1">내용을 확인하고 서명해 주세요</h2><p>동의와 서명을 마친 뒤 한 번에 접수합니다.</p></div>
               <dl id="input-summary" class="input-summary"></dl>
-              <div class="consent-card"><label class="check-row"><input id="required-consent" type="checkbox" required><span>개인정보 수집·이용에 동의합니다. <em>필수</em></span></label><p class="consent-brief">입력정보와 서명을 계약·이전등록 업무에 사용합니다.</p><details class="consent-details"><summary>수집·이용 안내 보기</summary><p class="consent-copy"><span data-company-name>담당 상사</span>에서 차량 계약·이전등록, 계약서·인수증 작성과 거래 안내를 위해 성함, 주민번호, 인증한 휴대전화번호, 주소 및 입력한 등기주소, 서명을 수집·이용합니다. 주민번호는 별도로 암호화해 저장합니다. 이 입력 링크를 통한 제출 내역은 30일간 보관합니다. 고객관리와 매매계약에 반영된 정보의 보관·삭제 문의는 해당 상사에 요청해 주세요. 동의하지 않으시면 이 화면에서 접수할 수 없습니다.</p></details></div>
+              <div class="consent-card receipt-consent-all"><label class="check-row"><input id="receipt-privacy-consent" type="checkbox"><span>개인정보 수집 동의함</span></label><p class="consent-brief">선택하면 아래 개인정보 수집·이용, 환급계좌 및 인수증 확인 항목을 모두 체크합니다. 각 항목의 내용을 확인한 뒤 선택해 주세요.</p></div>
+              <div class="consent-card"><label class="check-row"><input id="required-consent" type="checkbox" required><span>개인정보 수집·이용에 동의합니다. <em>필수</em></span></label><p class="consent-brief">입력정보와 서명을 계약·이전등록 업무에 사용합니다.</p><details class="consent-details"><summary>수집·이용 안내 보기</summary><p class="consent-copy"><span data-company-name>담당 상사</span>에서 차량 계약·이전등록, 계약서·인수증 작성과 거래 안내를 위해 성함, 주민번호, 인증한 휴대전화번호, 주소 및 입력한 등기주소, 다자녀·사업자 여부, 인수증 확인·동의 내용과 서명을 수집·이용합니다. 주민번호는 별도로 암호화해 저장합니다. 이 입력 링크를 통한 제출 내역은 30일간 보관합니다. 고객관리와 매매계약에 반영된 정보의 보관·삭제 문의는 해당 상사에 요청해 주세요. 동의하지 않으시면 이 화면에서 접수할 수 없습니다.</p></details></div>
               <div id="refund-consent-section" class="consent-card" hidden><label class="check-row"><input id="refund-consent" type="checkbox"><span>환급계좌 수집·이용에 동의합니다. <em>계좌 입력 시 필수</em></span></label><p class="consent-brief">입력한 계좌정보를 이전비 환급 업무에 사용합니다.</p><details class="consent-details"><summary>수집·이용 안내 보기</summary><p class="consent-copy">입력한 은행명·계좌번호·예금주는 <span data-company-name>담당 상사</span>의 이전비 환급 업무에 사용합니다. 이 입력 링크를 통한 제출 내역은 30일간 보관합니다. 고객관리와 매매계약에 반영된 정보의 보관·삭제 문의는 해당 상사에 요청해 주세요. 동의하지 않으시면 이전 단계에서 환급계좌를 비워 두실 수 있습니다.</p></details></div>
+              <div class="consent-card receipt-consent-items" aria-label="인수증 확인 항목">
+                <label class="check-row"><input id="receipt-insurance-confirmed" type="checkbox" data-receipt-consent><span>차량 인수 및 보증보험증권 사본 수령 내용을 확인했습니다.</span></label><p class="consent-copy">차량을 인수받은 시점 이후의 제세공과금, 사고·차량손해 및 행정처분에 관한 책임을 확인하고, 인수 전 발생한 문제는 매도인에게 책임이 있음을 확인합니다. 보험 가입 후 출고하며 인허가 보증보험증권 사본을 제공받았음을 확인합니다.</p>
+                <label class="check-row"><input id="receipt-delegation-confirmed" type="checkbox" data-receipt-consent><span>이전등록 대행과 양도증명서 작성을 위임합니다.</span></label><p class="consent-copy">자동차 이전등록에 관한 사항과 양도증명서 매수인란의 인장날인 등 작성 권한을 매매업자에게 위임합니다.</p>
+                <label class="check-row"><input id="receipt-cash-confirmed" type="checkbox" data-receipt-consent><span>현금영수증 발급 및 이전등록 신고에 동의합니다.</span></label><p class="consent-copy">양도증명서에 명시된 차량의 이전등록 신고와 현금영수증 발급에 동의합니다. 매수금액과 양도증명서 금액 차이로 인한 책임은 알선종사원 및 알선상사에 있음을 확인합니다.</p>
+              </div>
               <div class="signature-field"><div class="signature-label"><label for="signature-canvas">손서명 <em>필수</em></label><button id="signature-clear" type="button">다시 서명</button></div><canvas id="signature-canvas" width="600" height="240" tabindex="0" role="img" aria-label="손서명 입력 영역. 손가락이나 마우스로 직접 서명해 주세요." aria-describedby="signature-help signature-status">손서명을 지원하는 브라우저에서 입력해 주세요.</canvas><p id="signature-help" class="field-help">위 영역에 손가락이나 마우스로 직접 서명해 주세요.</p><p id="signature-status" class="signature-status" role="status" aria-live="polite">아직 서명하지 않았습니다.</p></div>
             </section>
           </fieldset>
