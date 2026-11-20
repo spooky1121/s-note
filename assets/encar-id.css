@@ -3,6 +3,17 @@
  #snote-app #list-screen .snote-encar-column{text-align:center}
  #snote-app #list-screen .snote-encar-column .snote-list-encar{margin:auto}
  #snote-app #list-screen .snote-list-encar:disabled{opacity:.35;cursor:default}
+ .snote-encar-advertisement{display:flex;align-items:center;flex-wrap:wrap;gap:5px 8px;max-width:100%;margin-top:8px;color:#64748b;font-size:11px;line-height:1.5;font-variant-numeric:tabular-nums}
+ .snote-encar-advertisement[hidden],.snote-encar-advertisement [hidden]{display:none!important}
+ .snote-encar-ad-price{color:#34475e;font-weight:600;overflow-wrap:anywhere}
+ .snote-encar-price-refresh,.snote-encar-price-change{flex:none;display:inline-flex;align-items:center;justify-content:center;border:0;background:transparent;box-shadow:none;color:#2672c8;font:inherit;line-height:1.4;cursor:pointer;border-radius:5px}
+ .snote-encar-price-refresh{width:24px;height:24px;padding:4px}
+ .snote-encar-price-refresh svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+ .snote-encar-price-change{min-height:24px;padding:3px 5px;font-size:10px;font-weight:550}
+ .snote-encar-price-refresh:hover:enabled,.snote-encar-price-change:hover:enabled{background:#edf4fc}
+ .snote-encar-price-refresh:disabled,.snote-encar-price-change:disabled{opacity:.45;cursor:default}
+ .snote-encar-price-message{flex-basis:100%;min-width:0;color:#8b7380;font-size:10px;font-weight:400;overflow-wrap:anywhere}
+ .snote-encar-price-message:empty{display:none}
  .snote-encar-id-dialog{box-sizing:border-box;width:min(340px,calc(100vw - 32px));max-width:calc(100vw - 32px);border:1px solid #e5e9ef;border-radius:18px;padding:25px 24px 20px;background:#fff;color:#334155;box-shadow:0 20px 65px #14213c30;text-align:center}
  .snote-encar-id-dialog::backdrop{background:#15223744;backdrop-filter:blur(4px)}
  .snote-encar-id-dialog h2{margin:0 0 18px;font-size:14px;font-weight:550;color:#8792a1}

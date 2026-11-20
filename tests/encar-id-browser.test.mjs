@@ -28,8 +28,28 @@ class Socket extends EventTarget{
 async function fixture(options={}){
  const socket=options.socket||new Socket(options.handler),requests=[];
  const fetchImpl=async(url,init)=>{requests.push({url,init});return init.method==='POST'?sessionResponse():{status:101,webSocket:socket};};
- const browser=await createBrowserSession(ENV,{fetchImpl,signal:options.signal,cacheStorage:cachesFixture(),...(options.gloarOnly===undefined?{}:{gloarOnly:options.gloarOnly})});return{socket,requests,browser};
+ const browser=await createBrowserSession(ENV,{fetchImpl,signal:options.signal,cacheStorage:cachesFixture(),...(options.gloarOnly===undefined?{}:{gloarOnly:options.gloarOnly}),...(options.encarOnly===undefined?{}:{encarOnly:options.encarOnly})});return{socket,requests,browser};
 }
+
+test('native price contexts use a distinct fixed native Encar guardrail and reject GLOAR destinations',async()=>{
+ const f=await fixture({encarOnly:true});try{
+  assert.deepEqual(JSON.parse(f.requests[0].init.body).guardrails,{allowedDomains:['fem.encar.com','*.encar.com'],allowedDomainSets:['common-cdns']});
+  const page=await f.browser.newPage();await page.goto('https://fem.encar.com/cars/detail/43123456?listAdvType=share&adnm=mo_detail_url');
+  const before=f.socket.commands.length;
+  for(const url of['https://gloar-data.com/en','https://carnect.biz/catalog?tab=encar','https://encar.spb.ru/catalog/','https://api.encar.com/v1/readside/vehicle/43123456','https://fem.encar.com.evil.invalid/cars/detail/43123456'])await assert.rejects(page.goto(url),error=>error.code==='PROVIDER_UNSUPPORTED');
+  assert.equal(f.socket.commands.length,before);await page.close();
+ }finally{await f.browser.close();}
+ await assert.rejects(createBrowserSession(ENV,{gloarOnly:true,encarOnly:true}),error=>error.code==='PROVIDER_UNSUPPORTED');
+});
+
+test('native price guardrails cannot reuse GLOAR browser session metadata',async()=>{
+ const storage=cachesFixture();let creates=0;
+ const fetchImpl=async(url,options)=>{if(options.method==='POST'){creates++;return sessionResponse(creates===1?ID:'22222222-2222-4222-8222-222222222222');}return{status:101,webSocket:new Socket()};};
+ const gloar=await createBrowserSession(ENV,{fetchImpl,cacheStorage:storage,gloarOnly:true});await gloar.close();
+ const native=await createBrowserSession(ENV,{fetchImpl,cacheStorage:storage,encarOnly:true});await native.close();
+ const warm=await createBrowserSession(ENV,{fetchImpl,cacheStorage:storage,encarOnly:true});await warm.close();
+ assert.equal(creates,2);
+});
 
 test('one authenticated guarded WebSocket supports all three provider pages without a relaunch',async()=>{
  const f=await fixture();try{
