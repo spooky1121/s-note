@@ -77,6 +77,15 @@ async function fixture(width=1440,savedCars=null,{primaryColor=null,weather=null
   if(url.origin==='https://synthetic.supabase.co'&&url.pathname==='/auth/v1/logout'){
    const headers={'access-control-allow-origin':'*','access-control-allow-methods':'POST, OPTIONS','access-control-allow-headers':'authorization, apikey, content-type, cache-control, pragma'};if(request.method()==='OPTIONS')return route.fulfill({status:204,headers});assert.equal(request.method(),'POST');assert.equal(url.searchParams.get('scope'),'local');assert.equal(request.headers().authorization,'Bearer '+sessionToken);f.logouts.push({sessionToken,scope:'local'});return route.fulfill({status:204,headers});
   }
+  // Unrelated feature suites have no saved receiving accounts. The payment suite
+  // overrides this route with its own authenticated per-actor read/save fixture.
+  if(url.origin==='https://synthetic.supabase.co'&&url.pathname==='/rest/v1/rpc/snote_payment_accounts_read'){
+   const headers={'access-control-allow-origin':'*','access-control-allow-methods':'POST, OPTIONS','access-control-allow-headers':'authorization, apikey, content-type, cache-control, pragma'};
+   if(request.method()==='OPTIONS')return route.fulfill({status:204,headers});
+   assert.equal(request.method(),'POST');const scope=await page.evaluate(()=>({user_id:__encarFixtureState.user.id,company_id:__encarFixtureState.company.id}));
+   assert.equal(JSON.parse(request.postData()).p_company,scope.company_id);
+   return route.fulfill({headers,contentType:'application/json',body:JSON.stringify({...scope,revision:0,accounts:{vehicle:null,transfer:null}})});
+  }
   if(url.origin!==ORIGIN){f.external.push(url.href);return route.abort();}
   if(encarLogoUnavailable&&url.pathname===ENCAR_WORDMARK_PATH)return route.abort();
   if(lookupUnavailable&&url.pathname==='/assets/snote-encar-link.js')return route.fulfill({contentType:'application/javascript',body:'/* Synthetic unavailable lookup controller. */'});
@@ -145,6 +154,7 @@ async function fixture(width=1440,savedCars=null,{primaryColor=null,weather=null
    if(window.__encarFixtureWriteMode==='lost-response'){window.__encarFixtureWriteFailures++;return{data:null,error:{message:'SYNTHETIC_RESPONSE_LOST_AFTER_COMMIT'}};}
    return{data:revision,error:null};
   }};
+  S.client.supabaseUrl='https://synthetic.supabase.co';S.client.supabaseKey='synthetic_public_key';
   S.rpcConfig={client:S.client,url:'https://synthetic.supabase.co',key:'synthetic_public_key'};
   document.getElementById('zc-cloud-gate').hidden=true;
  },{actor:ACTOR,company:COMPANY,alias:ALIAS,token:sessionToken,plate:PLATE,secondPlate:SECOND_PLATE,savedCars,primaryColor});
