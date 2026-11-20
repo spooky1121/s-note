@@ -38,7 +38,7 @@
    if(!response.ok||data?.ok!==true||data.status!=='found')throw Error(typeof data?.code==='string'?data.code:data?.status==='not_found'?'NOT_FOUND':'INVALID_RESPONSE');
    if(data.plate!==context.plate||typeof data.id!=='string'||!ID.test(data.id)||!providers.has(data.provider))throw Error('INVALID_RESPONSE');
    output.value=data.id;output.textContent=data.id;output.hidden=false;status.textContent='';
-   const url='https://fem.encar.com/cars/detail/'+data.id;adLink.href=url;adLink.textContent=url;adLink.hidden=false;
+   const url='https://fem.encar.com/cars/detail/'+data.id+'?listAdvType=share&adnm=mo_detail_url';adLink.href=url;adLink.textContent=url;adLink.hidden=false;
    return true;
   }catch(error){if(live(s)){output.hidden=true;clearLink();status.textContent=message(s.timedOut?'REQUEST_TIMEOUT':error?.message);}}finally{clearTimeout(s.timeout);if(live(s)){busy(false);confirm.focus();}}
   return false;
