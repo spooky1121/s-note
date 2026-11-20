@@ -1,4 +1,7 @@
 /* A4 document geometry is independent of the screen viewport and popup chrome. */
+#zc76-receipt-paper .snote202-receipt-brand .snote-document-logo{display:flex;align-items:center;justify-content:center;width:16mm;height:5mm;flex:none}
+#zc76-receipt-paper .snote202-receipt-brand .snote-document-logo .zc-footer-emblem{display:block;position:static;width:100%;height:100%;max-width:none;transform:none;object-fit:contain;filter:none}
+#zc76-receipt-paper .snote202-receipt-brand .zc-footer-emblem[hidden]{display:none}
 @media screen {
  #contract-paper,#zc76-receipt-paper{flex-shrink:0!important;overflow:visible!important}
  #contract-paper .ct-footer,#zc76-receipt-paper .snote202-receipt-brand{

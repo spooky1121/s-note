@@ -37,7 +37,7 @@ async function open(p,kind,long){
    snote222ContractSignature.set(person);await printContract();
   }
   if(__printLayout.prints!==before+1){const dimensions=id=>{const e=document.getElementById(id),s=getComputedStyle(e);return{id,value:e.value,scrollWidth:e.scrollWidth,clientWidth:e.clientWidth,scrollHeight:e.scrollHeight,clientHeight:e.clientHeight,font:s.font,fontSize:s.fontSize};};throw Error('Actual document print entry point did not pass validation: '+JSON.stringify({kind,long,toast:document.getElementById('toast')?.textContent,stampStatus:typeof snote128StampState==='undefined'?null:snote128StampState.status,fonts:document.fonts.status,contractView:snote214ContractView,fields:['ct-seller-name','ct-seller-address','ct-special'].map(dimensions)}));}
-  return {address:person.address,special,docDate:document.getElementById('zc76-doc-date').value,terms:document.querySelector('#contract-paper .ct-terms').textContent,sourceInputs:kind==='contract'?[...document.querySelectorAll('#contract-paper input')].map(el=>el.value):[],signature:window.snoteCustomerSignatureImage(signature)};
+  return {address:person.address,special,docDate:document.getElementById('zc76-doc-date').value,companyName:__encarFixtureState.company.name,logo:__printLayout.logo,terms:document.querySelector('#contract-paper .ct-terms').textContent,sourceInputs:kind==='contract'?[...document.querySelectorAll('#contract-paper input')].map(el=>el.value):[],signature:window.snoteCustomerSignatureImage(signature)};
  },{kind,long,signature:SIGNATURE});
 }
 async function measure(p,selector){
@@ -77,13 +77,14 @@ function assertLayout(metric,label){
     }
     assert.equal(await p.locator('#contract-print-pages [id]').count(),0);
    }else{
+    const logo=p.locator('#zc76-receipt-paper .zc-footer-emblem');assert.equal(await logo.getAttribute('src'),expected.logo);assert.equal(await logo.isVisible(),true);assert.deepEqual(await logo.evaluate(image=>({complete:image.complete,width:image.naturalWidth,height:image.naturalHeight})),{complete:true,width:192,height:64},'Receipt print must use the decoded company logo');assert.equal(await p.locator('#zc76-receipt-paper .snote95-footer-company').textContent(),expected.companyName);
     assert.equal(await p.locator('#snote215-receipt-signature-image').getAttribute('src'),expected.signature);assert.equal(await p.locator('#zc76-doc-date').inputValue(),expected.docDate,'Print layout must preserve the entered receipt date');
     assert.equal(await p.locator('#zc76-confirm-insurance').isChecked(),true);assert.equal(await p.locator('#zc76-delegation').isChecked(),true);assert.equal(await p.locator('#zc76-cash-confirm').isChecked(),true);
    }
    const pdfPath=path.join(OUT,suffix+'.pdf'),pdf=await p.pdf({format:'A4',printBackground:true,preferCSSPageSize:true,path:pdfPath}),pageCount=(pdf.toString('latin1').match(/\/Type\s*\/Page\b/g)||[]).length;
    assert.equal(pageCount,kind==='receipt'?1:2,'Actual PDF must have the intended complete A4 copies');
    const text=execFileSync('pdftotext',['-layout',pdfPath,'-'],{encoding:'utf8'}),plain=compact(text);fs.writeFileSync(path.join(OUT,suffix+'.txt'),text);
-   if(kind==='receipt'){for(const phrase of ['현금영수증발급동의및확인서','위내용을설명듣고확인하였음.','합성인쇄고객','제로카'])assert(plain.includes(phrase),'Receipt PDF must include its final consent/signature/footer content: '+phrase);}
+   if(kind==='receipt'){for(const phrase of ['현금영수증발급동의및확인서','위내용을설명듣고확인하였음.','합성인쇄고객',compact(expected.companyName)])assert(plain.includes(phrase),'Receipt PDF must include its final consent/signature/footer content: '+phrase);assert.match(pdf.toString('latin1'),/\/Width 192\s*\/Height 64/,'Receipt PDF must embed the current company logo');}
    else{assert.equal((plain.match(/제11조/g)||[]).length,2);assert.equal((plain.match(/본계약내용을확인하고이에동의합니다/g)||[]).length,2);assert(plain.includes(compact(expected.address)),'Actual PDF must contain the complete customer address');assert(plain.includes(compact(expected.special)),'Actual PDF must contain the complete special agreement');assert.match(pdf.toString('latin1'),/\/Width 96\s*\/Height 96/,'Corporate seal bitmap must remain embedded');}
    assert.match(pdf.toString('latin1'),/\/Width 640\s*\/Height 240/,'Customer signature bitmap must remain embedded');
    await p.screenshot({path:path.join(OUT,suffix+'.png'),fullPage:true});results.push({kind,width,long,pageCount,metrics});
