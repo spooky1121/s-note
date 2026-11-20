@@ -7,7 +7,8 @@
   const kind=!button.hasAttribute('data-document-print')&&/계약서|인수증/.test(label)&&/출력/.test(label)?'document':button.hasAttribute('data-document-print')||/인쇄|출력|print/i.test(label)||['print-button','income-print'].includes(button.id)?'print':/저장/.test(label)||['save-now','income-save','vehicle-header-save','snote214-save-customer'].includes(button.id)?'save':null;
   if(!kind)return;let svg=button.querySelector('svg');
   if(!svg){svg=document.createElementNS('http://www.w3.org/2000/svg','svg');button.prepend(svg);}
-  if(svg.dataset.snoteActionSymbol!==kind){svg.innerHTML=shapes[kind];svg.dataset.snoteActionSymbol=kind;svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('fill','none');svg.setAttribute('stroke','currentColor');svg.setAttribute('stroke-width','1.7');svg.setAttribute('stroke-linecap','round');svg.setAttribute('stroke-linejoin','round');svg.setAttribute('aria-hidden','true');svg.setAttribute('focusable','false');svg.classList.add('snote-action-symbol');}
+  const semanticDocument=kind==='document'&&['contract','receipt','sale','encar'].includes(svg.dataset.snoteActionIcon);
+  if(!semanticDocument&&svg.dataset.snoteActionSymbol!==kind){svg.innerHTML=shapes[kind];svg.dataset.snoteActionSymbol=kind;svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('fill','none');svg.setAttribute('stroke','currentColor');svg.setAttribute('stroke-width','1.7');svg.setAttribute('stroke-linecap','round');svg.setAttribute('stroke-linejoin','round');svg.setAttribute('aria-hidden','true');svg.setAttribute('focusable','false');svg.classList.add('snote-action-symbol');}
   const own='snote-'+kind+'-control';for(const candidate of ['save','print','document'])if(candidate!==kind)button.classList.remove('snote-'+candidate+'-control');if(!button.classList.contains(own))button.classList.add(own);
   const iconOnly=!button.textContent.trim();button.classList.toggle('snote-action-icon-only',iconOnly);
  }

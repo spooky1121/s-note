@@ -1,7 +1,7 @@
 /* Sort view copies before pagination; no source records or identity values are persisted. */
 (()=>{'use strict';const states=new Map(),bindings=new Map(),tables=new Map(),custom=new Map(),originals=new WeakMap(),collator=new Intl.Collator('ko',{numeric:true,sensitivity:'base'});const context=key=>key+':'+(typeof route==='string'?route:'');
 const clean=s=>String(s||'').replace(/[↕↑↓▾]/g,'').replace(/\s/g,'');const number=v=>Number(String(v??'').replace(/[^\d.-]/g,''))||0;
-function cellValue(cell,label){if(!cell)return '';const field=cell.querySelector('input,select');const text=field?(field.tagName==='SELECT'?field.selectedOptions[0]?.textContent:field.value):cell.textContent;return /금액|가격|매입가|판매가|비용|원가|마진|한도|이율|지급액|대출금|주행거리|연식/.test(label)?number(text):String(text||'').trim();}
+function cellValue(cell,label){if(!cell)return '';const field=cell.querySelector('input,select');const text=field?(field.tagName==='SELECT'?field.selectedOptions[0]?.textContent:field.value):cell.textContent;return /금액|가격|매입가|판매가|비용|원가|마진|수익|한도|이율|지급액|대출금|주행거리|연식/.test(label)?number(text):String(text||'').trim();}
 function value(row,state,key){const label=clean(state.label);if(custom.has(key))return custom.get(key)(row,label,state.column);if(row?.nodeType===1)return cellValue(row.cells[state.column],label);const c=row.car||row.entry||row;const linked=c.carId!=null&&typeof cars!=='undefined'?cars.find(x=>String(x.id)===String(c.carId)):null;const car=linked||c;
  if(/차량정보|^차량$|차명|^차량명$/.test(label))return car.model||c.model||'';
  if(/색상/.test(label))return car.color||'';if(/차량번호/.test(label))return car.plate||c.plate||'';
@@ -10,7 +10,7 @@ function value(row,state,key){const label=clean(state.label);if(custom.has(key))
  if(/매입가격|매입가/.test(label))return car.buy==null?'':number(car.buy);if(/재고대출금/.test(label))return number(c.loan??car.inventoryLoan);
  if(/판매예정가|판매가/.test(label))return typeof salePrice==='function'&&car.status==='판매완료'?salePrice(car):number(car.sell);
  if(/재고금융/.test(label))return c.lender||((number(car.inventoryLoan)>0)?car.inventoryLender||'미지정':'현금');
- if(/부대비용|총투입원가|예상마진/.test(label)){const t=typeof totals==='function'?totals(car.buy,typeof salePrice==='function'?salePrice(car):car.sell,normalizeCosts(car)):{};return /부대/.test(label)?t.direct:/원가/.test(label)?t.landed:t.margin;}
+ if(/부대비용|총투입원가|예상(?:마진|수익)/.test(label)){const t=typeof totals==='function'?totals(car.buy,typeof salePrice==='function'?salePrice(car):car.sell,normalizeCosts(car)):{};return /부대/.test(label)?t.direct:/원가/.test(label)?t.landed:t.margin;}
  if(/담당|딜러/.test(label))return c.dealer||((typeof dealerLabel==='function')?dealerLabel({ownerId:c.dealerId||car.ownerId}):car.ownerId)||'';
  if(/지급액/.test(label))return number(c.amount);if(/경과일자/.test(label))return car.purchaseAt?Math.floor((Date.now()-Date.parse(car.purchaseAt+'T00:00:00'))/86400000):'';
  if(/엔카|^광고$/.test(label))return 0;if(/사진|서류/.test(label))return typeof carFiles==='function'?carFiles(car.id).length:0;

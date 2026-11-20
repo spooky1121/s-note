@@ -1,0 +1,2 @@
+/* A contracting vehicle stays in its purchase view and keeps every action available. */
+#list-screen :is(tr.vehicle-clickable,.vehicle-card,.acct-mobile-card).snote-contracting-vehicle{opacity:.48}

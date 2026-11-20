@@ -3,7 +3,7 @@
  #snote-app #list-screen .snote-encar-column{text-align:center}
  #snote-app #list-screen .snote-encar-column .snote-list-encar{margin:auto}
  #snote-app #list-screen .snote-list-encar:disabled{opacity:.35;cursor:default}
- .snote-encar-advertisement{display:flex;align-items:center;flex-wrap:wrap;gap:5px 8px;max-width:100%;margin-top:8px;color:#64748b;font-size:11px;line-height:1.5;font-variant-numeric:tabular-nums}
+ .snote-encar-advertisement{display:flex;flex:0 1 auto;align-items:center;flex-wrap:wrap;gap:4px 6px;min-width:0;max-width:100%;margin:0;color:#64748b;font-size:11px;line-height:1.5;font-variant-numeric:tabular-nums}
  .snote-encar-advertisement[hidden],.snote-encar-advertisement [hidden]{display:none!important}
  .snote-encar-ad-price{color:#34475e;font-weight:600;overflow-wrap:anywhere}
  .snote-encar-price-refresh,.snote-encar-price-change{flex:none;display:inline-flex;align-items:center;justify-content:center;border:0;background:transparent;box-shadow:none;color:#2672c8;font:inherit;line-height:1.4;cursor:pointer;border-radius:5px}
