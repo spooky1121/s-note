@@ -28,7 +28,7 @@ function fixture({token=()=>Promise.resolve(TOKEN),fetchResponse}={}){
   window:{snoteEncarIdBridge:{context(carId){return carId==='synthetic-car'?context:null;},current(value){return value===context;},accessToken:token}}};
  vm.runInNewContext(source,sandbox,{filename:'assets/encar-id.js'});
  const dialog=elements.find(e=>e.tag==='dialog'),status=elements.find(e=>e.tag==='p'),output=elements.find(e=>e.tag==='output'),loading=elements.find(e=>e.className==='snote-encar-id-loading');
- return{...state,button,dialog,status,output,loading,api:sandbox.window.SnoteEncarId,
+ return{...state,button,dialog,status,output,loading,diagnostics:elements.find(e=>Object.hasOwn(e.dataset,'encarErrorDetails')),diagnostic(field){return elements.find(e=>e.attributes.has('data-encar-error-'+field)).textContent;},api:sandbox.window.SnoteEncarId,
   deadline(){const timer=[...timers.values()].find(t=>t.ms===55000);assert(timer,'The active client deadline must exist');timer.fn();},
   start(){return sandbox.window.SnoteEncarId.lookup('synthetic-car');}};
 }
@@ -96,4 +96,26 @@ test('search animation is decorative and runs only while a real lookup is pendin
   if(outcome==='found'){assert.equal(f.output.value,'43123456');assert.equal(f.status.textContent,'');}else{assert.equal(f.output.hidden,true);assert.equal(f.status.textContent,outcome==='daily'?'Cloudflare 검색 브라우저의 하루 사용 한도에 도달했습니다. Cloudflare 사용량·요금제를 확인해 주세요.':'Cloudflare 검색 브라우저가 요청을 제한했습니다. Cloudflare 사용량·요금제를 확인해 주세요.');}
   f.api.reset();assert.equal(f.loading.hidden,true);
  }
+});
+
+test('diagnostics distinguish the observed GLOAR, Cloudflare and S-NOTE stages without claiming a site outage',async()=>{
+ for(const [code,http,origin,observed] of [['GLOAR_INPUT_UNCONFIRMED',502,'GLOAR 검색 화면',false],['BROWSER_UNAVAILABLE',502,'Cloudflare 연결 구간',false],['UPSTREAM_RATE_LIMITED',429,'Cloudflare 연결 구간',true],['BROWSER_DAILY_LIMIT',429,'Cloudflare 연결 구간',true],['AUTH_UNAVAILABLE',502,'S-NOTE 서버·인증',false]]){
+  const f=fixture({fetchResponse:()=>Promise.resolve(new Response(JSON.stringify({ok:false,code,error:'PRIVATE_PROVIDER_TOKEN_AND_BODY'}),{status:http,headers:{'Content-Type':'application/json'}}))});
+  assert.equal(await settled(f.start()),false);assert.equal(f.diagnostics.hidden,false);assert.equal(f.diagnostic('source'),'오류 구간: '+origin);assert.equal(f.diagnostic('code'),'오류 코드: '+code);assert.equal(f.diagnostic('http'),'S-NOTE 응답: HTTP '+http);
+  assert.equal(f.diagnostic('note'),observed?'해당 처리 결과를 확인했습니다.':'해당 구간에서 중단됐으며, 서버 장애 여부는 확인되지 않았습니다.');
+  if(code==='GLOAR_INPUT_UNCONFIRMED'){assert.equal(f.status.textContent,'서버에 오류가 있습니다. 잠시후 다시 시도해주세요.');assert.match(f.diagnostic('stage'),/입력값 확인/);}
+  assert(!Object.values(f.diagnostics.children).some(e=>e.textContent.includes('PRIVATE')));f.api.reset();assert.equal(f.diagnostics.hidden,true);assert.equal(f.diagnostic('code'),'');
+ }
+});
+
+test('network, unreadable and unknown failures remain unconfirmed and never echo provider diagnostics or raw bodies',async()=>{
+ for(const [fetchResponse,code,http] of [[()=>{throw new TypeError('PRIVATE_NETWORK_TOKEN');},'NETWORK_ERROR','HTTP 응답 없음'],[()=>Promise.resolve(new Response('PRIVATE_BODY',{status:503,headers:{'Content-Type':'application/json'}})),'RESPONSE_UNREADABLE','HTTP 503'],[()=>Promise.resolve(new Response(JSON.stringify({ok:false,code:'PRIVATE_VENDOR_CODE',error:'PRIVATE_VENDOR_BODY',diagnostics:{source:'gloar',detail:'PRIVATE_DETAIL'}}),{status:502,headers:{'Content-Type':'application/json'}})),'UNKNOWN_ERROR','HTTP 502']]){
+  const f=fixture({fetchResponse});assert.equal(await settled(f.start()),false);assert.equal(f.diagnostic('source'),'오류 구간: 확인되지 않음');assert.equal(f.diagnostic('code'),'오류 코드: '+code);assert.equal(f.diagnostic('http'),'S-NOTE 응답: '+http);assert(![f.status.textContent,...f.diagnostics.children.map(e=>e.textContent)].join(' ').includes('PRIVATE'));f.api.reset();
+ }
+});
+
+test('diagnostics are cleared for a fresh lookup, normal absence, success and reset',async()=>{
+ const response=deferred();let calls=0;const f=fixture({fetchResponse:()=>++calls===1?Promise.resolve(new Response('{"ok":false,"code":"GLOAR_INPUT_UNCONFIRMED"}',{status:502,headers:{'Content-Type':'application/json'}})):response.promise});
+ await settled(f.start());assert.equal(f.diagnostics.hidden,false);f.api.reset();const fresh=f.start();await flush();assert.equal(f.diagnostics.hidden,true);assert.equal(f.diagnostic('stage'),'');response.resolve(success());assert.equal(await settled(fresh),true);assert.equal(f.diagnostics.hidden,true);assert.equal(f.diagnostic('source'),'');f.api.reset();
+ const empty=fixture({fetchResponse:()=>Promise.resolve(new Response('{"ok":false,"code":"NOT_FOUND"}',{headers:{'Content-Type':'application/json'}}))});assert.equal(await settled(empty.start()),false);assert.equal(empty.diagnostics.hidden,true);empty.api.reset();
 });

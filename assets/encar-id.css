@@ -31,6 +31,11 @@
  .snote-encar-id-link:hover{color:#184e95}.snote-encar-id-link:focus-visible{outline:2px solid #91b1e4;outline-offset:3px;border-radius:3px}
  .snote-encar-id-status{margin:5px 0 22px;line-height:1.65;font-size:13px;color:#7b8797;word-break:keep-all}
  .snote-encar-id-status:empty{display:none}
+ .snote-encar-error-details{margin:-8px 0 18px;padding:11px 12px;border:1px solid #edf1f5;border-radius:10px;background:#f8fafc;color:#64748b;text-align:left;font-size:11px;line-height:1.55;overflow-wrap:anywhere}
+ .snote-encar-error-details[hidden]{display:none}
+ .snote-encar-error-details p{margin:3px 0}
+ .snote-encar-error-details [data-encar-error-source]{color:#334155;font-weight:600}
+ .snote-encar-error-details [data-encar-error-note]{color:#8591a1;font-size:10px}
  .snote-encar-id-confirm{box-sizing:border-box;width:100%;min-height:38px;border:0;border-radius:9px;background:#edf4ff;color:#2868bf;font:inherit;font-size:13px;cursor:pointer}
  .snote-encar-id-confirm:hover{background:#e3edfc}.snote-encar-id-confirm:focus-visible{outline:2px solid #91b1e4;outline-offset:3px}
 }
