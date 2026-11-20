@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.158">
+<html lang="ko" data-snote-release="2.159">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -4793,10 +4793,10 @@ function snote202FinanceState(c){
 }
 /* 매입일부터 경과한 날짜: 한국 현지 달력 날짜의 차이(매입일 당일 0일) */
 function snote239EncarIcon(car){
- if(!isPurchaseListRoute()||!car||car.status==='판매완료')return '';
- return `<button type="button" class="snote-list-encar" data-encar-id-car="${esc(String(car.id))}" aria-label="${esc(car.model||car.plate||'차량')} 엔카 광고 ID 확인" data-tooltip="엔카 광고 ID 확인" disabled onclick="snote145OpenEncarId(event,this.dataset.encarIdCar)" onkeydown="event.stopPropagation()"><img class="snote-encar-wordmark" src="assets/encar-wordmark.png?v=2.73" width="34" height="17" alt="" aria-hidden="true" draggable="false"></button>`;
+ if(!isPurchaseListRoute()||!car||car.status==='판매완료'||!window.snoteEncarSavedAdvertisement?.(car))return '';
+ return `<button type="button" class="snote-list-encar" data-encar-id-car="${esc(String(car.id))}" aria-label="${esc(car.model||car.plate||'차량')} 엔카 광고 열기" data-tooltip="엔카 광고 열기" disabled onclick="snote145OpenEncarId(event,this.dataset.encarIdCar)" onkeydown="event.stopPropagation()"><img class="snote-encar-wordmark" src="assets/encar-wordmark.png?v=2.73" width="34" height="17" alt="" aria-hidden="true" draggable="false"></button>`;
 }
-function snote145OpenEncarId(event,carId){event?.preventDefault();event?.stopPropagation();if(typeof window.SnoteEncarId?.lookup==='function')void window.SnoteEncarId.lookup(carId,{entry:'list'});else toast('광고 ID 검색을 준비하고 있습니다.');}
+function snote145OpenEncarId(event,carId){event?.preventDefault();event?.stopPropagation();if(typeof window.SnoteEncarId?.lookup==='function')void window.SnoteEncarId.lookup(carId,{entry:'list'});else toast('엔카 광고를 준비하고 있습니다.');}
 function snote202InventoryAge(value){
  const raw=String(value||'').trim().replaceAll('.','-').replaceAll('/','-');
  const m=/^(\d{4})-(\d{1,2})-(\d{1,2})$/.exec(raw);
@@ -9642,6 +9642,191 @@ function snote145EncarCurrent(base){const now=base&&snote145EncarContext(base.ca
 window.snoteEncarIdBridge=Object.freeze({context:snote145EncarContext,current:snote145EncarCurrent,
  async accessToken(base){if(!snote145EncarCurrent(base))return null;const{data,error}=await base.client.auth.getSession();return !error&&snote145EncarCurrent(base)&&data?.session?.user?.id===base.user.id&&typeof data.session.access_token==='string'&&/^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/.test(data.session.access_token)?data.session.access_token:null;}
 });
+// v2.159: persist only the selected advertisement fields through the existing
+// owner dataset CAS transport and confirmed server revision.
+const snote159EncarId=/^[1-9][0-9]{5,11}$/;
+const snote159EncarMax=1000000000000;
+const snote159EncarPending=new Map(),snote159EncarPriceCommits=new WeakMap();
+let snote159EncarTail=Promise.resolve();
+function snote159EncarError(code,message){return Object.assign(new Error(message),{code,userMessage:message});}
+function snote159EncarUrl(id){return 'https://fem.encar.com/cars/detail/'+id+'?listAdvType=share&adnm=mo_detail_url';}
+function snote159EncarDate(value){
+ if(typeof value!=='string')return null;const date=new Date(value);
+ return Number.isFinite(date.getTime())&&date.toISOString()===value&&date.getTime()<=Date.now()+60000?value:null;
+}
+function snote159EncarRecord(car,value=car?.encarLinks){
+ const plate=snoteEncarLinksPlate(car?.plate),plain=item=>!!item&&typeof item==='object'&&!Array.isArray(item);
+ if(!plate||!plain(value)||snoteEncarLinksPlate(value.plate)!==plate||!snote159EncarDate(value.verifiedAt))return null;
+ if(value.version===1){
+  // Multiple old advertisements have no unambiguous primary ID. Re-discover
+  // instead of silently selecting one of them or trusting a bare saved hint.
+  if(Object.keys(value).some(key=>!['version','plate','verifiedAt','listings'].includes(key))||!Array.isArray(value.listings)||value.listings.length!==1)return null;
+  const item=value.listings[0];if(!plain(item)||typeof item.id!=='string'||!snote159EncarId.test(item.id)||![snote159EncarUrl(item.id),'https://fem.encar.com/cars/detail/'+item.id].includes(item.sellerUrl))return null;
+  return {version:2,plate,id:item.id,url:snote159EncarUrl(item.id),verifiedAt:value.verifiedAt,priceWon:null,priceCheckedAt:null,priceSource:null};
+ }
+ const keys=['version','plate','id','url','verifiedAt','priceWon','priceCheckedAt','priceSource'];
+ if(value.version!==2||Object.keys(value).some(key=>!keys.includes(key))||!keys.every(key=>Object.hasOwn(value,key))||typeof value.id!=='string'||!snote159EncarId.test(value.id)||value.url!==snote159EncarUrl(value.id))return null;
+ const missing=value.priceWon===null&&value.priceCheckedAt===null&&value.priceSource===null;
+ if(!missing&&(!Number.isSafeInteger(value.priceWon)||value.priceWon<=0||value.priceWon>snote159EncarMax||!snote159EncarDate(value.priceCheckedAt)||value.priceSource!=='encar'))return null;
+ return {version:2,plate,id:value.id,url:snote159EncarUrl(value.id),verifiedAt:value.verifiedAt,priceWon:value.priceWon,priceCheckedAt:value.priceCheckedAt,priceSource:value.priceSource};
+}
+function snote159EncarSame(left,right){return JSON.stringify(left)===JSON.stringify(right);}
+function snote159EncarScope(base,write=false){
+ if(!snote145EncarCurrent(base))throw snote159EncarError('CONTEXT_CHANGED','현재 차량과 로그인 상태를 다시 확인해 주세요.');
+ const member=S.members.find(item=>item.user_id===S.user.id&&item.company_id===S.company.id&&item.active===true&&item.role===currentUser.role);
+ const owner=snoteCompanyOwnerRows().find(item=>item.company_id===S.company.id&&ownerAlias(item.user_id)===base.car.ownerId);
+ if(!member||!owner)throw snote159EncarError('FORBIDDEN','차량의 담당 딜러를 확인해 주세요.');
+ if(write&&(!['dealer','admin'].includes(member.role)||member.role==='dealer'&&owner.user_id!==member.user_id))throw snote159EncarError('FORBIDDEN','담당 딜러 또는 관리자만 엔카 정보를 저장할 수 있습니다.');
+ return {...base,ownerId:owner.user_id,ownerAlias:base.car.ownerId,storage:storageKey('cars',base.car.ownerId),datasetKey:cloudKey('cars',owner.user_id),pendingKey:JSON.stringify([S.company.id,owner.user_id,base.carId])};
+}
+function snote159EncarRows(scope){
+ let rows;try{rows=JSON.parse(localStorage.getItem(scope.storage)||'null');}catch(_){}
+ const matches=Array.isArray(rows)?rows.map((row,index)=>({row,index})).filter(item=>String(item.row?.id)===scope.carId&&item.row.ownerId===scope.ownerAlias):[];
+ const revision=Number(S.revisions.get(scope.datasetKey));
+ if(matches.length!==1||!Number.isSafeInteger(revision)||revision<0||snoteEncarLinksPlate(matches[0].row.plate)!==scope.plate)throw snote159EncarError('CONTEXT_CHANGED','차량의 서버 저장 상태를 먼저 확인해 주세요.');
+ return {rows,index:matches[0].index,row:matches[0].row,revision};
+}
+function snote159EncarPublish(pending){
+ if(!S.ready||pending.companyId!==S.company?.id||S.saving||S.queue.has(pending.datasetKey)||S.conflict)return false;
+ try{
+  const stored=snote159EncarRows(pending),record=snote159EncarRecord(stored.row);
+  if(stored.revision<=pending.revision||!snote159EncarSame(record,pending.record))return false;
+  if(snote159EncarPending.get(pending.pendingKey)===pending)snote159EncarPending.delete(pending.pendingKey);
+  return true;
+ }catch(_){return false;}
+}
+function snote159EncarSavedCar(car){
+ if(!S.ready||S.loading||!S.client||!S.user||!S.company||!currentUser||currentUser.username!==ownerAlias(S.user.id))return null;
+ const actor=S.members.find(item=>item.user_id===S.user.id&&item.company_id===S.company.id&&item.active===true&&item.role===currentUser.role&&['dealer','admin','accountant'].includes(item.role));
+ if(!actor||actor.role==='dealer'&&car?.ownerId!==currentUser.username)return null;
+ const owner=getOwnUuid(car?.ownerId),plate=snoteEncarLinksPlate(car?.plate);if(!owner||!plate)return null;
+ const scope={carId:String(car.id),plate,ownerAlias:car.ownerId,storage:storageKey('cars',car.ownerId),datasetKey:cloudKey('cars',owner),pendingKey:JSON.stringify([S.company.id,owner,String(car.id)])};
+ try{
+  const stored=snote159EncarRows(scope),record=snote159EncarRecord(car),wire=snote159EncarRecord(stored.row),pending=snote159EncarPending.get(scope.pendingKey);
+  if(pending&&!snote159EncarPublish(pending)){
+   // A lost ACK is not a failed transaction. Keep only the previously confirmed
+   // public link visible until the normal flush reconciliation establishes it.
+   if(snote159EncarSame(wire,pending.record))return pending.previousRecord?structuredClone(pending.previousRecord):null;
+   if(!snote159EncarSame(record,pending.record))snote159EncarPending.delete(scope.pendingKey);
+   else return pending.previousRecord?structuredClone(pending.previousRecord):null;
+  }
+  return stored.revision>=1&&record&&snote159EncarSame(record,wire)?structuredClone(record):null;
+ }catch(_){return null;}
+}
+window.snoteEncarSavedAdvertisement=snote159EncarSavedCar;
+function snote159EncarChanged(scope){
+ if(isPurchaseListRoute()&&typeof renderCars==='function')renderCars();
+ window.dispatchEvent(new CustomEvent('snote:encar-advertisement-changed',{detail:{carId:scope.carId}}));
+}
+async function snote159EncarSaveMetadata(base,createRecord){
+ let scope=snote159EncarScope(base,true);
+ if(S.saving||S.conflict||snoteVehicleSaveTask||snoteVehicleCloseTask||snoteVehicleUnconfirmedWrite)throw snote159EncarError('PENDING','진행 중인 차량 저장을 먼저 확인해 주세요.');
+ const view=base.entry==='detail'?snoteVehicleContext():null,job=view?{context:view,promise:null}:null;
+ if(job){snoteVehicleSaveTask=job;snoteVehicleSaveBusy(true);}
+ const task=snote159EncarTail.catch(()=>{}).then(async()=>{
+  scope=snote159EncarScope(base,true);const prepared=await flush();scope=snote159EncarScope(base,true);
+  if(prepared?.ok!==true||S.conflict||S.queue.size)throw snote159EncarError('NETWORK','기존 차량의 서버 저장을 먼저 확인해 주세요.');
+  snote159EncarSavedCar(scope.car);
+  const oldPending=snote159EncarPending.get(scope.pendingKey);
+  if(oldPending&&!snote159EncarPublish(oldPending))throw snote159EncarError('NETWORK','이전 엔카 광고의 서버 저장을 먼저 확인해 주세요.');
+  const stored=snote159EncarRows(scope),previousRecord=snote159EncarRecord(stored.row),record=createRecord(previousRecord);
+  if(!snote159EncarRecord(scope.car,record))throw snote159EncarError('INVALID_DATA','저장할 엔카 광고 정보를 확인해 주세요.');
+  if(stored.revision>=1&&snote159EncarSame(previousRecord,record)&&snote159EncarSame(snote159EncarRecord(scope.car),record))return {saved:true,record:structuredClone(record)};
+  const had=Object.hasOwn(scope.car,'encarLinks'),old=scope.car.encarLinks;
+  const pending={...scope,companyId:S.company.id,record,previousRecord,revision:stored.revision};
+  snote159EncarPending.set(scope.pendingKey,pending);scope.car.encarLinks=record;
+  const rows=stored.rows.slice();rows[stored.index]={...stored.row,encarLinks:record};
+  try{localStorage.setItem(scope.storage,JSON.stringify(rows));}
+  catch(_){if(had)scope.car.encarLinks=old;else delete scope.car.encarLinks;snote159EncarPending.delete(scope.pendingKey);throw snote159EncarError('NETWORK','엔카 광고 정보를 저장하지 못했습니다.');}
+  const saved=await flush(),published=snote159EncarPublish(pending);
+  if(saved?.ok!==true||!published)throw snote159EncarError('NETWORK','엔카 광고의 서버 저장을 확인하지 못했습니다. 저장 상태를 다시 확인해 주세요.');
+  // The authorized write may finish after the view closes, but never launch a
+  // second operation or update that old view after its context has changed.
+  scope=snote159EncarScope(base,true);snote159EncarChanged(scope);
+  return {saved:true,record:structuredClone(record)};
+ });
+ if(job)job.promise=task.then(()=>true,()=>false);snote159EncarTail=task.catch(()=>{});
+ try{return await task;}finally{if(job&&snoteVehicleSaveTask===job){snoteVehicleSaveTask=null;if(snoteVehicleCurrent(view))snoteVehicleSaveBusy(false);}}
+}
+function snote159EncarPlanned(base){
+ const scope=snote159EncarScope(base),value=base.entry==='detail'?readDetailMoney(byId('detail-sell')?.value):SnoteMoney.car(scope.car)?.sell??0;
+ if(!Number.isSafeInteger(value)||value<0||value>snote159EncarMax)throw snote159EncarError('INVALID_DATA','판매예정가를 다시 확인해 주세요.');
+ return value;
+}
+function snote159EncarPriceStored(base){
+ const scope=snote159EncarScope(base,true),stored=snote159EncarRows(scope),record=snote159EncarSavedCar(scope.car);
+ if(snote159EncarPending.has(scope.pendingKey))throw snote159EncarError('PENDING','엔카 광고가격의 서버 저장을 먼저 확인해 주세요.');
+ if(!record||record.priceSource!=='encar'||!Number.isSafeInteger(record.priceWon)||record.priceWon<=0)throw snote159EncarError('INVALID_DATA','확인된 엔카 광고가격이 없습니다.');
+ if(scope.car.moneyUnit!=='KRW'||!Number.isSafeInteger(scope.car.sell??0)||SnoteMoney.car(stored.row).sell!==(scope.car.sell??0))throw snote159EncarError('CONTEXT_CHANGED','판매예정가의 서버 저장 상태를 다시 확인해 주세요.');
+ return {scope,stored,record,recordKey:JSON.stringify(record),price:scope.car.sell??0};
+}
+function snote159EncarPriceBaseline(context){
+ if(!snoteVehicleCurrent(context)||!snoteVehicleDraftBase||!snoteVehicleSameView(snoteVehicleDraftBase.context))throw snote159EncarError('CONTEXT_CHANGED','현재 차량 입력을 다시 확인해 주세요.');
+ let signature;try{signature=JSON.parse(snoteVehicleDraftBase.signature);}catch(_){}
+ const fields=signature?.[0]?.filter(field=>Array.isArray(field)&&field[0]==='detail-sell');
+ if(fields?.length!==1||typeof fields[0][1]!=='string')throw snote159EncarError('CONTEXT_CHANGED','현재 판매예정가 입력을 다시 확인해 주세요.');
+ return fields[0][1];
+}
+async function snote159EncarChangePrice(base,expectedSellWon){
+ if(!Number.isSafeInteger(expectedSellWon)||expectedSellWon<0||expectedSellWon>snote159EncarMax)throw snote159EncarError('INVALID_DATA','기존 판매예정가를 다시 확인해 주세요.');
+ let selected=snote159EncarPriceStored(base);const context=base.entry==='detail'?snoteVehicleContext():null;
+ if(!context||context.car!==selected.scope.car||!snoteVehicleCurrent(context)||context.car.status==='판매완료')throw snote159EncarError('FORBIDDEN','현재 판매 중인 차량의 판매예정가만 변경할 수 있습니다.');
+ const previous=snoteVehicleUnconfirmedWrite;
+ const ownPending=previous?.kind==='encar-price'&&snoteVehicleSameView(previous.context)&&previous.recordKey===selected.recordKey&&previous.expectedSellWon===expectedSellWon&&previous.priceWon===selected.record.priceWon;
+ if(S.saving||S.conflict||snoteVehicleSaveTask||snoteVehicleCloseTask||previous&&!ownPending||S.queue.size&&(!ownPending||[...S.queue].some(key=>key!==selected.scope.datasetKey)))throw snote159EncarError('PENDING','진행 중인 차량 저장을 먼저 확인해 주세요.');
+ const input=byId('detail-sell');if(!input||input.disabled||input.readOnly)throw snote159EncarError('FORBIDDEN','현재 판매예정가를 수정할 수 없습니다.');
+ const priceWon=selected.record.priceWon,receipt=snote159EncarPriceCommits.get(base);
+ if(receipt?.recordKey===selected.recordKey&&receipt.expectedSellWon===expectedSellWon&&receipt.priceWon===priceWon&&selected.price===priceWon&&!S.queue.size)return {saved:true,priceWon};
+ if(!ownPending&&(selected.price!==expectedSellWon||input.value!==snote159EncarPriceBaseline(context)||snote159EncarPlanned(base)!==expectedSellWon))throw snote159EncarError('CONTEXT_CHANGED','판매예정가를 직접 수정 중입니다. 현재 입력을 먼저 저장한 뒤 다시 확인해 주세요.');
+ if(!ownPending&&selected.price===priceWon)return {saved:true,priceWon};
+ const job={context,promise:null};snoteVehicleSaveTask=job;snoteVehicleSaveBusy(true);let pending=ownPending?previous:null;
+ const task=snote159EncarTail.catch(()=>{}).then(async()=>{
+  snote159EncarScope(base,true);const prepared=await flush();snote159EncarScope(base,true);
+  if(prepared?.ok!==true||S.conflict||S.queue.size)throw snote159EncarError('NETWORK','가격 변경의 서버 저장 상태를 확인하지 못했습니다.');
+  if(pending){snoteVehicleAcknowledgePending(context);if(snoteVehicleUnconfirmedWrite===pending)throw snote159EncarError('NETWORK','가격 변경의 서버 저장을 아직 확인하지 못했습니다.');return {saved:true,priceWon};}
+  const refreshed=snote159EncarPriceStored(base);
+  if(refreshed.recordKey!==selected.recordKey||refreshed.price!==expectedSellWon||input.value!==snote159EncarPriceBaseline(context)||snote159EncarPlanned(base)!==expectedSellWon)throw snote159EncarError('CONTEXT_CHANGED','가격 확인 중 현재 입력이 변경되었습니다.');
+  selected=refreshed;const {scope,stored}=selected,car=scope.car,hadSell=Object.hasOwn(car,'sell'),oldSell=car.sell,oldInput=input.value,staged=detailMoneyValue(priceWon);
+  // Preserve every other original wire value, including sibling/legacy rows and
+  // already-KRW mobile imports. Only this one sell field is encoded for storage.
+  const wireSell=stored.row.moneyUnit==='KRW'?priceWon:SnoteMoney.storeCar({...SnoteMoney.car(stored.row),sell:priceWon}).sell;
+  pending={kind:'encar-price',context,scopeKey:context.scopeKey,revision:stored.revision,recordKey:selected.recordKey,listingId:selected.record.id,expectedSellWon,priceWon,
+   confirmed(){
+    if(!snoteVehicleCurrent(context)||S.saving||S.conflict||S.queue.has(scope.datasetKey)||Number(S.revisions.get(scope.datasetKey))<=pending.revision||car.sell!==priceWon)return false;
+    try{const row=snote159EncarRows(scope).row;return SnoteMoney.car(row).sell===priceWon&&snote159EncarSame(snote159EncarRecord(row),selected.record);}catch(_){return false;}
+   },
+   acknowledged(){snote159EncarPriceCommits.set(base,{recordKey:selected.recordKey,expectedSellWon,priceWon});},
+   undo(){
+    if(!snoteVehicleSameView(context)||car.sell!==priceWon)return false;
+    try{const latest=snote159EncarRows(scope),rows=latest.rows.slice();rows[latest.index]={...latest.row,sell:stored.row.sell};if(!Object.hasOwn(stored.row,'sell'))delete rows[latest.index].sell;localStorage.setItem(scope.storage,JSON.stringify(rows));}catch(_){return false;}
+    if(hadSell)car.sell=oldSell;else delete car.sell;if(input.value===staged)input.value=oldInput;updateDetailSummary();return true;
+   }};
+  const rows=stored.rows.slice();rows[stored.index]={...stored.row,sell:wireSell};car.sell=priceWon;input.value=staged;input.dispatchEvent(new Event('input',{bubbles:true}));
+  try{localStorage.setItem(scope.storage,JSON.stringify(rows));}
+  catch(_){if(hadSell)car.sell=oldSell;else delete car.sell;if(input.value===staged)input.value=oldInput;updateDetailSummary();throw snote159EncarError('NETWORK','가격 변경을 저장하지 못했습니다.');}
+  snoteVehicleUnconfirmedWrite=pending;
+  const saved=await flush();snote159EncarScope(base,true);
+  if(saved?.ok!==true||S.conflict||S.queue.size)throw snote159EncarError('NETWORK','가격 변경의 서버 저장을 확인하지 못했습니다. 현재 입력은 유지됩니다.');
+  snoteVehicleAcknowledgePending(context);if(snoteVehicleUnconfirmedWrite===pending)throw snote159EncarError('NETWORK','가격 변경의 저장 확인을 마치지 못했습니다.');
+  buildStats();snote159EncarChanged(scope);return {saved:true,priceWon};
+ });
+ job.promise=task.then(()=>true,()=>false);snote159EncarTail=task.catch(()=>{});
+ try{return await task;}finally{if(pending&&snoteVehicleUnconfirmedWrite===pending&&!snoteVehicleSameView(context))snoteVehicleUnconfirmedWrite=null;if(snoteVehicleSaveTask===job){snoteVehicleSaveTask=null;if(snoteVehicleCurrent(context))snoteVehicleSaveBusy(false);}}
+}
+window.snoteEncarIdBridge=Object.freeze({...window.snoteEncarIdBridge,
+ saved(base){try{const scope=snote159EncarScope(base);return snote159EncarSavedCar(scope.car);}catch(_){return null;}},
+ plannedPrice:snote159EncarPlanned,
+ async saveLink(base,value){
+  if(!value||Object.keys(value).some(key=>!['id','plate','provider'].includes(key))||typeof value.id!=='string'||!snote159EncarId.test(value.id)||value.plate!==base?.plate||value.provider!=='gloar')throw snote159EncarError('INVALID_DATA','조회된 엔카 광고와 차량번호를 다시 확인해 주세요.');
+  return snote159EncarSaveMetadata(base,previous=>previous?.id===value.id?previous:{version:2,plate:base.plate,id:value.id,url:snote159EncarUrl(value.id),verifiedAt:new Date().toISOString(),priceWon:null,priceCheckedAt:null,priceSource:null});
+ },
+ async savePrice(base,value){
+  if(!value||Object.keys(value).some(key=>!['id','plate','priceWon','checkedAt','source'].includes(key))||typeof value.id!=='string'||!snote159EncarId.test(value.id)||value.plate!==base?.plate||!Number.isSafeInteger(value.priceWon)||value.priceWon<=0||value.priceWon>snote159EncarMax||value.source!=='encar'||!snote159EncarDate(value.checkedAt)||Date.parse(value.checkedAt)<Date.now()-15*60*1000)throw snote159EncarError('INVALID_DATA','확인된 엔카 광고가격을 다시 조회해 주세요.');
+  return snote159EncarSaveMetadata(base,previous=>{if(!previous||previous.id!==value.id)throw snote159EncarError('CONTEXT_CHANGED','저장된 광고 링크가 변경되었습니다.');return {...previous,priceWon:value.priceWon,priceCheckedAt:value.checkedAt,priceSource:'encar'};});
+ },
+ changePrice:snote159EncarChangePrice
+});
+
 // Private document sharing uses the authenticated vehicle owner scope.
 function snoteDocumentContext(){
  if(!S.ready||S.loading||S.busy||!S.user||!S.company||!S.client||!currentUser||currentUser.username!==ownerAlias(S.user.id)||!byId('vehicle-overlay')?.classList.contains('open'))return null;
@@ -10997,9 +11182,9 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 <link rel="stylesheet" href="assets/workspace-reorder.css?v=2.136">
 <script src="assets/workspace-order-store.js?v=2.135" defer></script>
 <script src="assets/workspace-reorder.js?v=2.136" defer></script>
-<script src="assets/release-info.js?v=2.158" defer></script>
-<link rel="stylesheet" href="assets/encar-id.css?v=2.154">
-<script src="assets/encar-id.js?v=2.154" defer></script>
+<script src="assets/release-info.js?v=2.159" defer></script>
+<link rel="stylesheet" href="assets/encar-id.css?v=2.159">
+<script src="assets/encar-id.js?v=2.159" defer></script>
 <script src="assets/company-purchase.js?v=2.130" defer></script>
 <script src="assets/transfer-document-layout.js?v=2.143" defer></script>
 <script src="assets/transfer-name-seal.js?v=2.143" defer></script>

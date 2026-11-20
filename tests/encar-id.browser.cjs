@@ -1,77 +1,204 @@
 'use strict';
-// Actual application and Chromium. All identity, data and ID lookups are synthetic.
+// Real application/CAS/Chromium with synthetic auth, ads and owner datasets only.
+// No provider, SMS, production database or real vehicle data is contacted.
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
-const{chromium}=require('./encar/node_modules/playwright');
-const{fixture,setBrowser,finish}=require('./encar/browser-smoke.cjs');
-const OUT=process.env.ENCAR_ID_ARTIFACT_DIR||'/workspace/work/encar-error-diagnostics-v2154/qa';fs.mkdirSync(OUT,{recursive:true});
-const PLATE='12가3456',SECOND='34나5678',CAR='encar-car-1',ENDPOINT='/api/encar-id';
+const {chromium}=require('./encar/node_modules/playwright');
+const {fixture,setBrowser,finish}=require('./encar/browser-smoke.cjs');
+const OUT=process.env.ENCAR_ID_ARTIFACT_DIR||'/workspace/work/encar-saved-v2159/browser';fs.mkdirSync(OUT,{recursive:true});
+const SCENARIO=process.env.ENCAR_SAVED_TEST_SCENARIO||'all';
+const WIDTHS=process.env.ENCAR_ID_TEST_WIDTHS?process.env.ENCAR_ID_TEST_WIDTHS.split(',').map(Number):[1440,390];
+const CAR='encar-car-1',OTHER_CAR='encar-car-2',PLATE='12가3456',SECOND='34나5678',ID='43123456';
+const URL_FOR=id=>'https://fem.encar.com/cars/detail/'+id+'?listAdvType=share&adnm=mo_detail_url';
 const dialog=p=>p.locator('#snote-encar-id-dialog');
-const idText=p=>p.locator('#snote-encar-id-dialog [data-encar-ad-id]').evaluateAll(nodes=>nodes.map(e=>e.textContent||'').join('').trim());
-const found=(id='43123456',provider='gloar',plate=PLATE)=>({ok:true,status:'found',plate,id,provider});
-async function install(f){
- const p=f.page,state={requests:[],legacy:[],replies:[],held:[],popups:[],windowOpens:[],manualNavigations:[],expectedNavigations:[],manualClicks:0,before:null};
- f.context.on('page',page=>state.popups.push(page));
- await f.context.route('https://fem.encar.com/**',async route=>{const url=new URL(route.request().url());assert.equal(url.origin,'https://fem.encar.com');assert.match(url.pathname,/^\/cars\/detail\/[1-9][0-9]{5,11}$/);assert.equal(url.search,'?listAdvType=share&adnm=mo_detail_url');state.manualNavigations.push(url.href);await route.fulfill({contentType:'text/html;charset=utf-8',body:'<!doctype html><title>가상 엔카 광고</title><p>실제 외부 요청 없는 합성 광고 페이지</p>'});});
+const found=(id=ID,plate=PLATE,provider='gloar')=>({ok:true,status:'found',plate,id,provider});
+const results=[];
+async function until(p,check,message,ms=15000){const end=Date.now()+ms;while(Date.now()<end){if(await check())return;await p.waitForTimeout(20);}assert.fail(message);}
+async function setup(width=1440,{savedCars=null,wireKRW=false}={}){
+ const f=await fixture(width,savedCars,{lookupUnavailable:true}),p=f.page;
+ const state={ids:[],prices:[],idReplies:[],priceReplies:[],holds:[],legacy:[],popups:[],navigations:[],priceWon:12000000};f.ads=state;
+ f.context.on('page',popup=>state.popups.push(popup));
+ await f.context.route('https://fem.encar.com/**',async route=>{
+  const url=new URL(route.request().url());assert.match(url.pathname,/^\/cars\/detail\/[1-9][0-9]{5,11}$/);assert.equal(url.search,'?listAdvType=share&adnm=mo_detail_url');state.navigations.push(url.href);
+  await route.fulfill({contentType:'text/html;charset=utf-8',body:'<!doctype html><title>합성 광고</title><p>외부 요청 없는 엔카 광고 응답</p>'});
+ });
  await p.route('**/api/encar*',async route=>{
-  const req=route.request(),url=new URL(req.url());
-  if(url.pathname!==ENDPOINT){state.legacy.push(url.pathname);return route.fulfill({status:410,contentType:'application/json',body:'{"ok":false,"code":"RETIRED"}'});}
+  const req=route.request(),url=new URL(req.url()),body=req.postDataJSON();
+  if(!['/api/encar-id','/api/encar-ad-price'].includes(url.pathname)){state.legacy.push(url.pathname);return route.fulfill({status:410,contentType:'application/json',body:'{"ok":false,"code":"RETIRED"}'});}
   assert.equal(req.method(),'POST');assert.match(req.headers()['content-type'],/^application\/json/);assert.equal(req.headers().authorization,'Bearer '+await p.evaluate(()=>__encarFixtureSession.access_token));
-  const body=req.postDataJSON();assert.deepEqual(Object.keys(body),['plate'],'The new lookup must not send old IDs, customer data, price or arbitrary URLs');assert.equal(body.plate,PLATE);state.requests.push(body);
-  const reply=state.replies.shift();assert(reply,'Every ID request must have an explicit synthetic response');
-  if(reply.hold)await new Promise(resolve=>state.held.push(resolve));
+  assert([PLATE,SECOND].includes(body.plate),'Only the fixture vehicle plate may be queried');
+  let reply;
+  if(url.pathname==='/api/encar-id'){assert.deepEqual(Object.keys(body),['plate']);state.ids.push(body);reply=state.idReplies.shift();assert(reply,'Every GLOAR discovery must have an explicit synthetic response');}
+  else{assert.deepEqual(Object.keys(body).sort(),['id','plate']);assert.match(body.id,/^[1-9][0-9]{5,11}$/);state.prices.push(body);reply=state.priceReplies.shift()||{body:{ok:true,id:body.id,plate:body.plate,priceWon:state.priceWon,checkedAt:new Date().toISOString(),source:'encar'}};}
+  if(reply.hold)await new Promise(resolve=>state.holds.push({path:url.pathname,release:resolve}));
   try{await route.fulfill({status:reply.status||200,contentType:'application/json',body:JSON.stringify(reply.body)});}catch(error){if(!reply.hold)throw error;}
  });
- await p.evaluate(()=>{window.__encarIdOpens=[];window.open=(...args)=>{__encarIdOpens.push(args);return null;};});
- await p.waitForFunction(()=>!!window.SnoteEncarId);await p.locator('#vehicle-encar-check:not([disabled])').waitFor();
- state.before=await p.evaluate(()=>JSON.stringify(cars));return state;
+ await p.waitForFunction(()=>!!window.SnoteEncarId&&typeof snoteEncarIdBridge.saveLink==='function'&&typeof snoteEncarIdBridge.saved==='function');
+ // The shared fixture hydrates an authoritative revision-zero dataset without
+ // performing the normal cloud read. Supply that read receipt, not a mutation.
+ await p.evaluate(()=>{const S=__encarFixtureState;S.revisions.set('cars:'+S.user.id,__encarFixtureRevision);});
+ if(wireKRW){
+  await p.evaluate(async()=>{
+   await closeVehicle({discard:true});const S=__encarFixtureState,wire=structuredClone(__encarFixtureCars);
+   wire[0]={...wire[0],moneyUnit:'KRW',buy:10000000,sell:12000000,costs:{performanceInspection:123457,purchaseFee:2},repairItems:[{memo:'합성 원본 수리',amount:3}]};
+   __encarFixtureCars=wire;__encarFixtureRevision=1;cars=normalizedCars(wire,currentUser.username);
+   localStorage.setItem(carsStoreKey(currentUser.username),JSON.stringify(wire));S.revisions.set('cars:'+S.user.id,1);S.queue.clear();openVehicle('encar-car-1');
+  });
+ }
+ if(savedCars){
+  await p.evaluate(async()=>{persistCars();const result=await zc86Cloud.flush();if(result?.ok!==true)throw Error('Synthetic saved dataset bootstrap failed');renderCars();renderVehicle();});
+ }
+ await buy(p);await reopen(p);
+ await p.locator('#vehicle-encar-check:not([disabled])').waitFor();return f;
 }
-async function clean(f,state){
- const p=f.page;assert.deepEqual(state.legacy,[],'The old lookup, auto-price and OCR endpoints must never be reached');assert.equal(state.popups.length,state.manualClicks,'Only an explicit native link click may open another browser page');assert.deepEqual(state.manualNavigations,state.expectedNavigations,'Only explicitly clicked verified links may navigate');assert.deepEqual(await p.evaluate(()=>__encarIdOpens),[],'ID lookup must never call window.open');assert.deepEqual(f.navigations,[]);assert.deepEqual(f.autoPriceRequests,[]);assert.deepEqual(f.requests,[]);assert.equal(await p.evaluate(()=>__encarFixtureWrites.length),0,'No vehicle dataset may be written by an ID lookup');assert.equal(await p.evaluate(()=>JSON.stringify(cars)),state.before,'Even an existing Encar record and all vehicle values must stay unchanged');
+async function clean(f){
+ assert.deepEqual(f.ads.legacy,[],'Retired resolver/auto-price/OCR endpoints must not be invoked');
+ assert.deepEqual(f.requests,[]);assert.deepEqual(f.autoPriceRequests,[]);assert.deepEqual(f.navigations,[]);
+ assert.equal(f.ads.idReplies.length,0,'Every queued discovery response must be consumed');assert.equal(f.ads.priceReplies.length,0,'Every queued price response must be consumed');
+ for(const hold of f.ads.holds.splice(0))hold.release();await finish(f);
 }
-async function assertClearLink(p){const link=dialog(p).locator('[data-encar-ad-link]');assert.equal(await link.getAttribute('href'),null);assert.equal(await link.textContent(),'');assert.equal(await link.evaluate(element=>element.hidden),true);}
-async function assertDiagnosticsHidden(p){assert.equal(await dialog(p).locator('[data-encar-error-details]').evaluate(element=>element.hidden),true);}
-async function assertDiagnostics(p,{source,stage,code,http,note='해당 구간에서 중단됐으며, 서버 장애 여부는 확인되지 않았습니다.'}){const panel=dialog(p).locator('[data-encar-error-details]');await panel.waitFor({state:'visible'});assert.match(await panel.locator('[data-encar-error-source]').innerText(),source);assert.match(await panel.locator('[data-encar-error-stage]').innerText(),stage);if(code)assert.equal((await panel.locator('[data-encar-error-code]').innerText()).trim(),'오류 코드: '+code);assert.match(await panel.locator('[data-encar-error-http]').innerText(),new RegExp(String(http)));assert.equal(await panel.locator('[data-encar-error-note]').innerText(),note);assert.equal(await idText(p),'');await assertClearLink(p);}
-async function confirm(p){await dialog(p).getByRole('button',{name:'확인',exact:true}).click();await dialog(p).waitFor({state:'hidden'});await assertClearLink(p);await assertDiagnosticsHidden(p);}
-async function assertID(p,id){
- await dialog(p).waitFor({state:'visible'});await p.locator('#snote-encar-id-dialog [data-encar-ad-id]').filter({hasText:id}).waitFor();
- assert.equal((await p.locator('#snote-encar-id-dialog [data-encar-ad-id]').innerText()).trim(),id);assert.equal(await dialog(p).locator('h2').innerText(),'엔카 링크 페이지');
- const link=dialog(p).locator('[data-encar-ad-link]'),url='https://fem.encar.com/cars/detail/'+id+'?listAdvType=share&adnm=mo_detail_url';assert.equal(await dialog(p).locator('a').count(),1);assert.equal(await link.isVisible(),true);assert.equal(await link.textContent(),url);assert.equal(await link.getAttribute('href'),url);assert.equal(await link.getAttribute('target'),'_blank');assert.equal(await link.getAttribute('rel'),'noopener noreferrer');
- assert.equal(await dialog(p).locator('iframe,input[type="number"]').count(),0,'The popup must contain no price controls');
- const order=await link.evaluate(element=>{const output=document.querySelector('#snote-encar-id-dialog [data-encar-ad-id]');return !!(element.compareDocumentPosition(output)&Node.DOCUMENT_POSITION_FOLLOWING)&&output.getBoundingClientRect().top>=element.getBoundingClientRect().bottom-1&&parseFloat(getComputedStyle(output).fontSize)<=10&&parseFloat(getComputedStyle(output).fontSize)<parseFloat(getComputedStyle(element).fontSize);});assert.equal(order,true,'The full advertisement link must appear above the small verified ID');
- const text=await dialog(p).innerText();assert(!/만원|판매예정가|판매가 변경/.test(text));assert.equal(await dialog(p).getByRole('button',{name:'확인',exact:true}).count(),1);
- await assertDiagnosticsHidden(p);
+async function snapshot(p){return p.evaluate(()=>({runtime:structuredClone(cars),wire:structuredClone(__encarFixtureCars),writes:structuredClone(__encarFixtureWrites),revision:__encarFixtureRevision,pending:__encarFixtureState.queue.size}));}
+async function saved(p,id=CAR){return p.evaluate(id=>{const context=snoteEncarIdBridge.context(id,'detail');return context?snoteEncarIdBridge.saved(context):null;},id);}
+async function awaitSaved(p,id=ID){await p.waitForFunction(({car,id})=>{const context=snoteEncarIdBridge.context(car,'detail');return context&&snoteEncarIdBridge.saved(context)?.id===id;},{car:CAR,id});return saved(p);}
+async function lookup(f,reply=found()){
+ f.ads.idReplies.push(reply?.body?reply:{body:reply});await f.page.locator('#vehicle-encar-check').click();await dialog(f.page).waitFor({state:'visible'});
 }
-async function clickAdvertisement(f,state,id){const url='https://fem.encar.com/cars/detail/'+id+'?listAdvType=share&adnm=mo_detail_url';state.manualClicks++;state.expectedNavigations.push(url);const opened=f.context.waitForEvent('page');await dialog(f.page).locator('[data-encar-ad-link]').click();const popup=await opened;await popup.waitForURL(url);assert.equal(await popup.evaluate(()=>window.opener===null),true,'The manually opened advertisement has no DOM opener');assert.equal(await dialog(f.page).isVisible(),true,'Opening the link must retain the ID popup');await assertID(f.page,id);await popup.close();}
+async function assertFound(p,id=ID){
+ await p.locator('#snote-encar-id-dialog [data-encar-ad-id]').filter({hasText:id}).waitFor();
+ const link=dialog(p).locator('[data-encar-ad-link]');assert.equal(await link.getAttribute('href'),URL_FOR(id));assert.equal(await link.textContent(),URL_FOR(id));assert.equal(await link.getAttribute('target'),'_blank');assert.equal(await link.getAttribute('rel'),'noopener noreferrer');
+ assert.equal(await dialog(p).locator('[data-encar-error-details]').isVisible(),false);
+}
+async function closeID(p){await dialog(p).getByRole('button',{name:'확인',exact:true}).click();await dialog(p).waitFor({state:'hidden'});}
+async function awaitPrice(p,amount){
+ await p.waitForFunction(amount=>{const context=snoteEncarIdBridge.context('encar-car-1','detail');return context&&snoteEncarIdBridge.saved(context)?.priceWon===amount;},amount);
+ assert.match(await p.locator('#snote-encar-ad-price').textContent(),new RegExp(amount.toLocaleString('en-US')));
+}
+async function openSaved(f,selector='#vehicle-encar-check',id=ID){
+ const before=f.ads.ids.length,opened=f.context.waitForEvent('page');await (typeof selector==='string'?f.page.locator(selector):selector).click();const popup=await opened;await popup.waitForURL(URL_FOR(id));assert.equal(await popup.evaluate(()=>opener===null),true,'The explicitly clicked saved advertisement must have no opener');assert.equal(f.ads.ids.length,before,'A saved-link click must not repeat GLOAR discovery');await popup.close();return popup;
+}
 async function buy(p){await p.evaluate(async()=>{await closeVehicle({discard:true});navigate('buy');});await p.locator('#list-screen').waitFor({state:'visible'});}
-function listButton(p){return p.locator('#list-screen button.snote-list-encar[data-encar-id-car="'+CAR+'"]:visible').first();}
-async function run(width){const f=await fixture(width,null,{lookupUnavailable:true}),p=f.page;let state;const report={width};
- try{
-  state=await install(f);
-  // Old saved advertisement hints must neither skip the new lookup nor cause a save.
-  await p.evaluate(()=>{cars[0].encarLinks={version:1,plate:'12가3456',verifiedAt:'2026-01-01T00:00:00.000Z',listings:[{id:'42000000',sellerUrl:'https://fem.encar.com/cars/detail/42000000'}]};renderVehicle();});state.before=await p.evaluate(()=>JSON.stringify(cars));
-  state.replies.push({body:found()});await p.locator('#vehicle-encar-check').click();await assertID(p,'43123456');await p.screenshot({path:path.join(OUT,'detail-id-'+width+'.png')});assert.equal(state.popups.length,0,'A successful lookup itself must not open a tab');await clickAdvertisement(f,state,'43123456');await confirm(p);await clean(f,state);report.detailIDAndManualLink=true;
-  await buy(p);assert.equal(await p.locator('#list-table th').filter({hasText:/엔카/}).count(),1,'The restored purchase table must have an Encar column, including its existing sort indicator');
-  assert.equal(await p.locator('#list-screen button.snote-list-encar[data-encar-id-car="encar-car-2"]:visible').count(),1,'A vehicle without an old saved advertisement must also have an Encar button');
-  state.replies.push({body:found('43123457','gloar')});await listButton(p).click();await assertID(p,'43123457');assert.equal(await p.locator('#vehicle-overlay.open').count(),0,'A list lookup must not open or reset a vehicle detail draft');await confirm(p);await clean(f,state);await p.screenshot({path:path.join(OUT,'list-id-'+width+'.png')});report.listRestored=true;
-  await p.locator('#snote-vehicle-view-switch').click();await p.waitForFunction(()=>document.getElementById('list-screen').dataset.vehicleView==='cards');state.replies.push({body:found('43123458')});await listButton(p).click();await assertID(p,'43123458');await confirm(p);await clean(f,state);await p.screenshot({path:path.join(OUT,'cards-id-'+width+'.png')});report.cardsIDOnly=true;
-  state.replies.push({body:{ok:false,status:'not_found',code:'NOT_FOUND',error:'광고 ID를 찾지 못했습니다.'}});await listButton(p).click();await dialog(p).waitFor({state:'visible'});await dialog(p).locator('[data-encar-id-loading]').waitFor({state:'hidden'});assert.equal(await idText(p),'');await assertClearLink(p);await assertDiagnosticsHidden(p);await confirm(p);await clean(f,state);report.notFoundNoSideEffect=true;
-  for(const body of[found('<img src=x onerror=alert(1)>'),found('43123459','gloar',SECOND),found('43123459','carnect'),found('43123459','trust')]){
-   state.replies.push({body});await listButton(p).click();await dialog(p).waitFor({state:'visible'});await dialog(p).locator('[data-encar-id-loading]').waitFor({state:'hidden'});assert.equal(await idText(p),'','A malformed or wrong-plate response must not display an accepted ID');await assertClearLink(p);assert.equal(await dialog(p).locator('img[src="x"]').count(),0);await confirm(p);await clean(f,state);
-  }report.responseValidation=true;report.gloarProviderOnly=true;
-  state.replies.push({body:{ok:false,status:'error',code:'GLOAR_INPUT_MISSING',error:'Untrusted upstream text'}});await listButton(p).click();await dialog(p).locator('[role="status"]').filter({hasText:'GLOAR DATA의 검색창을 찾지 못했습니다.'}).waitFor();assert.equal(await idText(p),'');await assertClearLink(p);assert(!((await dialog(p).innerText()).includes('Untrusted upstream text')));await confirm(p);await clean(f,state);report.safeGloarErrors=true;
-  for(const failure of[
-   {code:'GLOAR_INPUT_UNCONFIRMED',source:/GLOAR/,stage:/입력|input/i,message:'서버에 오류가 있습니다. 잠시후 다시 시도해주세요.'},
-   {code:'UPSTREAM_RATE_LIMITED',source:/Cloudflare/,stage:/요청|브라우저|한도/,note:'해당 처리 결과를 확인했습니다.'},
-   {code:'BROWSER_DAILY_LIMIT',source:/Cloudflare/,stage:/사용량|한도|브라우저/,note:'해당 처리 결과를 확인했습니다.'},
-   {code:'AUTH_UNAVAILABLE',source:/S-NOTE/,stage:/인증|로그인|권한/}
-  ]){const count=state.requests.length;state.replies.push({status:502,body:{ok:false,status:'error',code:failure.code,error:'PRIVATE_PROVIDER_TEXT',diagnostics:{source:'UNTRUSTED_SOURCE',stage:'UNTRUSTED_STAGE'}}});await listButton(p).click();await dialog(p).locator('[data-encar-id-loading]').waitFor({state:'hidden'});if(failure.message)assert.equal(await dialog(p).locator('[role="status"]').innerText(),failure.message);await assertDiagnostics(p,{...failure,http:502});assert.equal(state.requests.length,count+1,'Diagnostics must not make another API request');assert(!((await dialog(p).innerText()).includes('PRIVATE_PROVIDER_TEXT')));assert(!((await dialog(p).innerText()).includes('UNTRUSTED_')));if(failure.code==='GLOAR_INPUT_UNCONFIRMED'){assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);await p.screenshot({path:path.join(OUT,'input-unconfirmed-'+width+'.png')});}await confirm(p);await clean(f,state);}
-  const badCode='<img src=x onerror=alert(1)> PRIVATE_TOKEN_123';state.replies.push({status:502,body:{ok:false,status:'error',code:badCode,error:'PRIVATE_PROVIDER_TEXT',source:'UNTRUSTED_SOURCE'}});await listButton(p).click();await dialog(p).locator('[data-encar-id-loading]').waitFor({state:'hidden'});await dialog(p).locator('[data-encar-error-details]').waitFor({state:'visible'});assert.equal(await dialog(p).locator('[data-encar-error-code]').innerText(),'오류 코드: UNKNOWN_ERROR');const safeText=await dialog(p).innerText();assert(!safeText.includes(badCode)&&!safeText.includes('PRIVATE_TOKEN_123')&&!safeText.includes('PRIVATE_PROVIDER_TEXT')&&!safeText.includes('UNTRUSTED_SOURCE'));assert.equal(await dialog(p).locator('img[src="x"]').count(),0);await assertClearLink(p);assert.equal(await idText(p),'');await confirm(p);await clean(f,state);report.safeFailureDiagnostics=true;
-  // A second click while busy must not start another upstream sequence.
-  const before=state.requests.length;state.replies.push({body:found('43123460'),hold:true});await listButton(p).click();for(let attempt=0;!state.held.length&&attempt<150;attempt++)await p.waitForTimeout(10);assert(state.held.length,'The explicit held ID request must reach the new endpoint');await assertClearLink(p);await assertDiagnosticsHidden(p);await listButton(p).evaluate(e=>{e.click();e.click();});assert.equal(state.requests.length,before+1,'A pending lookup must not fan out duplicate sequences');
-  await p.evaluate(()=>{__encarFixtureState.user={id:'99999999-9999-4999-8999-999999999999'};currentUser={...currentUser,username:'other-synthetic-account'};});state.held.shift()();await dialog(p).waitFor({state:'hidden'});assert.equal(await idText(p),'','A response after an account change must not display the former account vehicle result');await assertClearLink(p);await assertDiagnosticsHidden(p);report.staleAccountBlocked=true;
-  assert.equal(await p.evaluate(()=>__encarFixtureWrites.length),0);assert.equal(state.popups.length,state.manualClicks);assert.deepEqual(state.legacy,[]);assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);report.explicitNativeLink=true;report.requests=state.requests.length;report.pass=true;
- }catch(error){await p.screenshot({path:path.join(OUT,'failure-'+width+'.png')}).catch(()=>{});throw error;}finally{state?.held.splice(0).forEach(resolve=>resolve());await finish(f);}
- console.log('PASS Encar ID + manual link detail/list/cards',width,'no automatic navigation/window.open/price/save; explicit native link and stale-account guards');return report;
+const icon=(p,id=CAR)=>p.locator('#list-screen .snote-list-encar[data-encar-id-car="'+id+'"]');
+async function reopen(p,id=CAR){await p.evaluate(async id=>{if(document.getElementById('vehicle-overlay').classList.contains('open'))await closeVehicle({discard:true});openVehicle(id);},id);}
+async function discovery(width){
+ const f=await setup(width),p=f.page,s=f.ads;try{
+  const original=await snapshot(p);await buy(p);assert.equal(await icon(p,CAR).count(),0);assert.equal(await icon(p,OTHER_CAR).count(),0,'Unsearched vehicles must have no Encar icon');await reopen(p);
+  await p.evaluate(()=>__encarFixtureWriteMode='hold');await lookup(f);await p.waitForFunction(()=>__encarFixtureWriteWaiting);
+  assert.equal(await saved(p),null,'An optimistic link must not be usable before the server ACK');assert.equal(await icon(p).count(),0,'Pending metadata cannot publish the purchase-list icon');assert.equal(s.popups.length,0,'First discovery must retain the explicit result link instead of navigating');
+  await p.evaluate(()=>{__encarFixtureWriteMode='ok';__encarFixtureReleaseWrite();});await assertFound(p);const record=await awaitSaved(p);
+  assert.equal(record.plate,PLATE);assert.equal(record.url,URL_FOR(ID));assert.equal(record.version,2);assert((await icon(p).count())>0);await awaitPrice(p,12000000);await closeID(p);
+  const written=await snapshot(p);assert.equal(written.wire[0].encarLinks.id,ID);assert.equal(written.wire[0].encarLinks.url,URL_FOR(ID));assert.deepEqual(written.wire[1],original.wire[1],'Link/price metadata updates must preserve sibling rows');assert.equal(written.runtime[0].sell,12000000);
+  const priceRequests=s.prices.length;await openSaved(f);assert.equal(s.ids.length,1);assert.equal(s.prices.length,priceRequests,'A fresh cached advertised amount avoids a repeated browser price request');
+  await p.screenshot({path:path.join(OUT,'saved-detail-'+width+'.png')});await buy(p);assert.equal(await icon(p,OTHER_CAR).count(),0);const direct=icon(p).filter({visible:true}).first();assert(await direct.count());await openSaved(f,direct);assert.equal(s.prices.length,priceRequests,'A list link click must not fetch or modify prices');
+  await p.locator('#snote-vehicle-view-switch').click();await p.waitForFunction(()=>document.getElementById('list-screen').dataset.vehicleView==='cards');await openSaved(f,icon(p).filter({visible:true}).first());await p.screenshot({path:path.join(OUT,'saved-cards-'+width+'.png')});
+  const wire=(await snapshot(p)).wire;await clean(f);
+  const restored=await setup(width,{savedCars:wire});try{assert.equal((await saved(restored.page)).id,ID);const before=(await snapshot(restored.page)).writes.length;await openSaved(restored);assert.equal(restored.ads.ids.length,0,'A new browser must reuse persisted server metadata');assert.equal((await snapshot(restored.page)).writes.length,before,'Reusing a fresh saved link must not create another vehicle mutation');await clean(restored);}catch(error){await restored.context.close().catch(()=>{});throw error;}
+  results.push({name:'discovery/saved link/list/cards/reload',width,passed:true});console.log('PASS '+width+' first discovery waits for DB ACK; saved detail/list/card links open directly with no opener, no rediscovery, correct persisted metadata and sibling preservation');
+ }catch(error){await p.screenshot({path:path.join(OUT,'failure-discovery-'+width+'.png')}).catch(()=>{});await f.context.close().catch(()=>{});throw error;}
 }
-async function main(){const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium'});setBrowser(browser);try{const reports=[];for(const width of[1440,390])reports.push(await run(width));fs.writeFileSync(path.join(OUT,'browser-results.json'),JSON.stringify({syntheticOnly:true,liveProviderVerified:false,productionReads:0,productionWrites:0,reports},null,2)+'\n');}finally{await browser.close();}}
-if(require.main===module)main().catch(error=>{console.error(error.stack);process.exitCode=1;});
+async function comparison(width,{wireKRW=false}={}){
+ const f=await setup(width,{wireKRW}),p=f.page,s=f.ads;try{
+  const original=await snapshot(p);s.priceWon=54900000;await p.locator('#detail-extra').fill('아직 저장하지 않은 설명');f.answerConfirm(false,/변경하시겠습니까/);
+  await lookup(f);await assertFound(p);await awaitPrice(p,54900000);await closeID(p);await until(p,()=>f.dialogs.filter(d=>d.type==='confirm'&&/변경하시겠습니까/.test(d.message)).length===1,'The current advertised amount must be compared with the planned price');
+  let state=await snapshot(p);assert.equal(state.runtime[0].sell,12000000,'Cancel must preserve planned price');assert.equal(await p.locator('#detail-sell').inputValue(),'12,000,000');assert.equal(await p.locator('#detail-extra').inputValue(),'아직 저장하지 않은 설명');
+  assert.equal(await p.locator('#snote-encar-advertisement').evaluate(panel=>[panel,...panel.children].filter(node=>!node.hidden).every(node=>{const r=node.getBoundingClientRect();return r.left>=0&&r.right<=innerWidth+1;})),true,'Advertisement amount and both controls must stay inside the viewport');await p.screenshot({path:path.join(OUT,'price-comparison-'+width+'-'+(wireKRW?'KRW':'legacy')+'.png')});
+  const before=state.writes.length;f.answerConfirm(true,/변경하시겠습니까/);await p.locator('#snote-encar-price-change').click();await p.waitForFunction(()=>cars[0].sell===54900000&&!snoteVehicleSaveTask);await until(p,async()=>(await snapshot(p)).writes.length===before+1,'Accept must make exactly one isolated sale-price write');
+  state=await snapshot(p);assert.equal(state.wire[0].sell,wireKRW?54900000:5490,'The raw storage price must preserve its original won/legacy denomination');assert.equal(state.wire[0].moneyUnit,wireKRW?'KRW':undefined);assert.equal(state.wire[0].buy,original.wire[0].buy);assert.deepEqual(state.wire[0].costs,original.wire[0].costs);assert.deepEqual(state.wire[0].repairItems,original.wire[0].repairItems);assert.deepEqual(state.wire[1],original.wire[1]);assert.equal(state.wire[0].extra,original.wire[0].extra,'An ad-price confirmation must not commit another unsaved field');assert.equal(await p.locator('#detail-extra').inputValue(),'아직 저장하지 않은 설명');assert.equal(await p.locator('#detail-sell').inputValue(),'54,900,000');assert.match(await p.locator('#toast').textContent(),/저장되었습니다/);assert.match(await p.locator('#snote-encar-ad-price').textContent(),/54,900,000/);
+  await p.screenshot({path:path.join(OUT,'price-'+width+'-'+(wireKRW?'KRW':'legacy')+'.png')});await clean(f);results.push({name:'price comparison/cancel/accept/raw unit isolation',width,wireKRW,passed:true});console.log('PASS '+width+' '+(wireKRW?'KRW':'legacy')+' advertised price remains integer won; cancellation is read-only; confirmation saves only sell and preserves drafts, sibling data and original wire units');
+ }catch(error){await p.screenshot({path:path.join(OUT,'failure-price-'+width+'-'+wireKRW+'.png')}).catch(()=>{});await f.context.close().catch(()=>{});throw error;}
+}
+async function failures(){
+ for(const mode of ['fail','lost-response']){
+  const f=await setup(),p=f.page;try{
+   await p.evaluate(mode=>__encarFixtureWriteMode=mode,mode);await lookup(f);await dialog(p).locator('[data-encar-id-loading]').waitFor({state:'hidden'});assert.equal(await saved(p),null,'Unacknowledged metadata cannot become an active saved link');assert.equal(await icon(p).count(),0);assert.equal(f.ads.popups.length,0);assert.equal(f.ads.prices.length,0,'An unconfirmed link must not trigger a price request');
+   await closeID(p);await p.evaluate(async()=>{__encarFixtureWriteMode='ok';const result=await zc86Cloud.flush();if(result?.ok!==true)throw Error('Synthetic retry reconciliation failed');renderCars();});await awaitSaved(p);assert((await icon(p).count())>0,'An explicitly reconciled server ACK can publish the recovered link');if(mode==='lost-response')assert.equal((await snapshot(p)).writes.length,1,'A lost ACK must reconcile the committed snapshot without duplicate writes');
+   await clean(f);results.push({name:'unacknowledged metadata and recovery',mode,passed:true});
+  }catch(error){await p.screenshot({path:path.join(OUT,'failure-write-'+mode+'.png')}).catch(()=>{});await f.context.close().catch(()=>{});throw error;}
+ }
+ const f=await setup(),p=f.page,s=f.ads;try{
+  s.priceReplies.push({status:429,body:{ok:false,code:'UPSTREAM_RATE_LIMITED',error:'PRIVATE_PROVIDER_ERROR'}});await lookup(f);await assertFound(p);await awaitSaved(p);await closeID(p);await until(p,()=>s.prices.length===1,'Price request must have been attempted');await p.waitForFunction(()=>!document.getElementById('snote-encar-price-refresh').disabled);assert(!((await p.locator('#snote-encar-advertisement').textContent()).includes('PRIVATE_PROVIDER_ERROR')));assert.equal((await snapshot(p)).runtime[0].sell,12000000);await openSaved(f);assert.equal(s.ids.length,1,'A price-service restriction must not force GLOAR rediscovery');await clean(f);results.push({name:'price failure preserves saved navigation',passed:true});
+ }catch(error){await f.context.close().catch(()=>{});throw error;}
+}
+async function diagnostics(){
+ const f=await setup(),p=f.page,s=f.ads;try{
+  const original=(await snapshot(p)).wire;
+  for(const item of [
+   {status:200,body:{ok:false,status:'not_found',code:'NOT_FOUND',error:'PRIVATE_PROVIDER_TEXT'},hidden:true},
+   {status:502,body:{ok:false,code:'GLOAR_INPUT_UNCONFIRMED',error:'PRIVATE_PROVIDER_TEXT'},source:/GLOAR/,message:'서버에 오류가 있습니다. 잠시후 다시 시도해주세요.'},
+   {status:429,body:{ok:false,code:'UPSTREAM_RATE_LIMITED',error:'PRIVATE_PROVIDER_TEXT'},source:/Cloudflare/},
+   {status:429,body:{ok:false,code:'BROWSER_DAILY_LIMIT',error:'PRIVATE_PROVIDER_TEXT'},source:/Cloudflare/},
+   {status:502,body:{ok:false,code:'AUTH_UNAVAILABLE',error:'PRIVATE_PROVIDER_TEXT'},source:/S-NOTE/},
+   {status:502,body:{ok:false,code:'<img src=x onerror=alert(1)> PRIVATE_TOKEN_123',error:'PRIVATE_PROVIDER_TEXT'},source:/확인되지 않음/}
+  ]){
+   await lookup(f,item);await dialog(p).locator('[data-encar-id-loading]').waitFor({state:'hidden'});assert.equal(await dialog(p).locator('[data-encar-ad-link]').getAttribute('href'),null);assert.equal(await dialog(p).locator('[data-encar-ad-id]').textContent(),'');const text=await dialog(p).innerText();assert(!/PRIVATE_PROVIDER_TEXT|PRIVATE_TOKEN_123|onerror/.test(text));assert.equal(await dialog(p).locator('img[src="x"]').count(),0);
+   if(item.hidden)assert.equal(await dialog(p).locator('[data-encar-error-details]').isVisible(),false);else{assert.match(await dialog(p).locator('[data-encar-error-source]').textContent(),item.source);if(item.message)assert.equal(await dialog(p).locator('[role="status"]').textContent(),item.message);}
+   await closeID(p);
+  }
+  for(const bad of [found('<img src=x onerror=alert(1)>'),found(ID,SECOND),found(ID,PLATE,'trust')]){await lookup(f,bad);await dialog(p).locator('[data-encar-id-loading]').waitFor({state:'hidden'});assert.equal(await saved(p),null);await closeID(p);}
+  assert.deepEqual((await snapshot(p)).wire,original);assert.equal((await snapshot(p)).writes.length,0);assert.equal(s.prices.length,0);await clean(f);results.push({name:'fixed failure diagnostics and malformed response rejection',passed:true});console.log('PASS bounded GLOAR diagnostics, unknown/private text sanitization, wrong plate/provider/ID rejection and failed-search read-only behavior');
+ }catch(error){await f.context.close().catch(()=>{});throw error;}
+}
+async function stale(){
+ for(const action of ['close','reopen','other-car','account']){
+  const f=await setup(),p=f.page,s=f.ads;try{
+   s.idReplies.push({body:found(),hold:true});await p.locator('#vehicle-encar-check').click();await until(p,()=>s.holds.some(h=>h.path==='/api/encar-id'),'Discovery must reach its held response');
+   await p.evaluate(async action=>{if(action==='account'){__encarFixtureState.user={id:'99999999-9999-4999-8999-999999999999'};currentUser={...currentUser,username:'other-synthetic-account'};}else{await closeVehicle({discard:true});if(action!=='close')openVehicle(action==='other-car'?'encar-car-2':'encar-car-1');}},action);
+   s.holds.splice(0).forEach(h=>h.release());await dialog(p).waitFor({state:'hidden'});await p.waitForTimeout(80);assert.equal((await snapshot(p)).writes.length,0);assert.equal(s.popups.length,0);assert.equal(s.prices.length,0);await clean(f);results.push({name:'stale discovery ignored',action,passed:true});
+  }catch(error){await f.context.close().catch(()=>{});throw error;}
+ }
+ const f=await setup(),p=f.page,s=f.ads;try{
+  s.priceReplies.push({body:{ok:true,id:ID,plate:PLATE,priceWon:13000000,checkedAt:new Date().toISOString(),source:'encar'},hold:true});await lookup(f);await assertFound(p);await awaitSaved(p);await until(p,()=>s.holds.some(h=>h.path==='/api/encar-ad-price'),'Price request must reach held response');await closeID(p);await reopen(p);s.holds.splice(0).forEach(h=>h.release());await p.waitForTimeout(100);
+  const state=await snapshot(p);assert.equal(state.runtime[0].sell,12000000);assert.equal(state.wire[0].encarLinks.priceWon,null);assert.equal(f.dialogs.filter(d=>d.type==='confirm').length,0,'A price response from a previous opening cannot prompt or overwrite the reopened vehicle');await clean(f);results.push({name:'stale price cannot prompt/write after same-car reopen',passed:true});console.log('PASS late discovery and price responses ignore closed/reopened cars, other vehicles and switched accounts');
+ }catch(error){await f.context.close().catch(()=>{});throw error;}
+}
+async function invalidStored(){
+ const f=await setup(),p=f.page;try{
+  await lookup(f);await assertFound(p);await awaitPrice(p,12000000);await closeID(p);
+  await p.evaluate(async()=>{await closeVehicle({discard:true});const S=__encarFixtureState;for(const data of [cars[0],__encarFixtureCars[0]])data.encarLinks.url='https://fem.encar.com.evil.example/cars/detail/43123456';localStorage.setItem(carsStoreKey(currentUser.username),JSON.stringify(__encarFixtureCars));S.queue.clear();openVehicle('encar-car-1');renderCars();});assert.equal(await saved(p),null);assert.equal(await icon(p).count(),0,'An untrusted stored URL cannot publish an Encar icon');
+  f.ads.idReplies.push({body:{ok:false,status:'not_found',code:'NOT_FOUND'}});await p.locator('#vehicle-encar-check').click();await dialog(p).locator('[data-encar-id-loading]').waitFor({state:'hidden'});assert.equal(f.ads.popups.length,0);await closeID(p);
+  await p.evaluate(async()=>{await closeVehicle({discard:true});cars[0].plate='34나5678';renderCars();openVehicle('encar-car-1');});assert.equal(await saved(p),null);assert.equal(await icon(p).count(),0,'A changed vehicle plate must invalidate a previously saved advertisement');await clean(f);results.push({name:'untrusted URL and changed plate reject saved navigation',passed:true});
+ }catch(error){await f.context.close().catch(()=>{});throw error;}
+}
+async function permissions(){
+ const f=await setup(),p=f.page;try{
+  await lookup(f);await assertFound(p);await awaitPrice(p,12000000);await closeID(p);const before=await snapshot(p),requests=f.ads.prices.length;
+  const denied=await p.evaluate(async()=>{
+   currentUser={...currentUser,role:'accountant'};__encarFixtureState.members[0].role='accountant';
+   const b=snoteEncarIdBridge,context=b.context('encar-car-1','detail'),record=b.saved(context),codes=[];
+   if(!context||!record)throw Error('Synthetic accountant must retain readable saved advertisement');
+   for(const run of [()=>b.saveLink(context,{id:record.id,plate:record.plate,provider:'gloar'}),()=>b.savePrice(context,{id:record.id,plate:record.plate,priceWon:13000000,checkedAt:new Date().toISOString(),source:'encar'}),()=>b.changePrice(context,12000000)])try{await run();codes.push('UNEXPECTED_WRITE');}catch(error){codes.push(error.code);}
+   SnoteEncarId.sync();return codes;
+  });
+  assert.deepEqual(denied,['FORBIDDEN','FORBIDDEN','FORBIDDEN']);assert.equal(await p.locator('#snote-encar-price-change').isVisible(),false);assert.equal(await p.evaluate(()=>SnoteEncarId.refreshPrice()),false);assert.equal(f.ads.prices.length,requests);assert.deepEqual((await snapshot(p)).wire,before.wire);assert.equal((await snapshot(p)).writes.length,before.writes.length);await openSaved(f);
+  await p.evaluate(()=>{cars[0].status='판매완료';renderCars();SnoteEncarId.sync();});assert.equal(await icon(p).count(),0,'Sold cars must not publish purchase-list Encar icons');assert.equal(await p.evaluate(()=>snoteEncarIdBridge.context('encar-car-1','detail')),null);assert.equal(await p.evaluate(()=>snote239EncarIcon(cars[0])), '');
+  await clean(f);results.push({name:'accountant read-only enforcement and sold icon exclusion',passed:true});console.log('PASS actual accountant context can open a confirmed saved link but cannot discover/save price/sell; sold vehicles have no purchase-list advertisement icon');
+ }catch(error){await f.context.close().catch(()=>{});throw error;}
+}
+async function priceSaves(){
+ for(const mode of ['fail','lost-response']){
+  const f=await setup(),p=f.page;try{
+   f.ads.priceWon=13000000;f.answerConfirm(false,/변경하시겠습니까/);await lookup(f);await assertFound(p);await awaitPrice(p,13000000);await closeID(p);await until(p,()=>f.dialogAnswers.length===0,'Initial comparison must be cancelled');const before=(await snapshot(p)).writes.length;
+   await p.evaluate(mode=>__encarFixtureWriteMode=mode,mode);f.answerConfirm(true,/변경하시겠습니까/);await p.locator('#snote-encar-price-change').click();await p.waitForFunction(()=>!snoteVehicleSaveTask&&snoteVehicleUnconfirmedWrite?.kind==='encar-price');
+   let state=await snapshot(p);assert.equal(state.runtime[0].sell,13000000);assert.equal(state.wire[0].sell,mode==='lost-response'?1300:1200);assert.match(await p.locator('#toast').textContent(),/저장하지 못했습니다/);assert.equal((await saved(p)).id,ID,'An uncertain price save must keep its confirmed advertisement link available');
+   await p.evaluate(async()=>{__encarFixtureWriteMode='ok';const result=await zc86Cloud.flush();if(result?.ok!==true)throw Error('Synthetic price recovery failed');snoteVehicleAcknowledgePending(snoteVehicleContext());});await p.waitForFunction(()=>!snoteVehicleUnconfirmedWrite);
+   state=await snapshot(p);assert.equal(state.runtime[0].sell,13000000);assert.equal(state.wire[0].sell,1300);assert.equal(state.writes.length,before+1,'A committed price must be reconciled without a duplicate sell write');await reopen(p);assert.equal(await p.locator('#detail-sell').inputValue(),'13,000,000');await clean(f);results.push({name:'sale-price failure/lost ACK recovery',mode,passed:true});
+  }catch(error){await f.context.close().catch(()=>{});throw error;}
+ }
+ const f=await setup(),p=f.page;try{
+  f.ads.priceReplies.push({body:{ok:true,id:ID,plate:PLATE,priceWon:13000000,checkedAt:new Date().toISOString(),source:'encar'},hold:true});await lookup(f);await assertFound(p);await until(p,()=>f.ads.holds.length===1,'Hold price before editing the planned amount');await closeID(p);await p.locator('#detail-sell').fill('12,500,000');await p.locator('#detail-sell').dispatchEvent('input');f.answerConfirm(true,/변경하시겠습니까/);f.ads.holds.splice(0).forEach(item=>item.release());await awaitPrice(p,13000000);await until(p,()=>f.dialogAnswers.length===0,'Current edited price must be compared');await p.waitForFunction(()=>!snoteVehicleSaveTask);await until(p,async()=>/변경되었습니다/.test(await p.locator('#toast').textContent()),'Dirty manual sale-price edit must be rejected by the actual bridge');
+  const state=await snapshot(p);assert.equal(state.runtime[0].sell,12000000);assert.equal(state.wire[0].sell,1200);assert.equal(state.writes.length,2,'Only link and advertised-price metadata may be saved');assert.equal(await p.locator('#detail-sell').inputValue(),'12,500,000');await clean(f);results.push({name:'manual planned-price edit while advertising response pending is preserved',passed:true});console.log('PASS failed/lost sale-price ACKs recover without duplicate commits, and an in-flight ad lookup cannot overwrite a manually edited planned price');
+ }catch(error){await f.context.close().catch(()=>{});throw error;}
+}
+async function main(){
+ const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium'});setBrowser(browser);
+ try{
+  if(SCENARIO==='all'||SCENARIO==='links')for(const width of WIDTHS)await discovery(width);
+  if(SCENARIO==='all'||SCENARIO==='price'){await comparison(1440);await comparison(390,{wireKRW:true});if(WIDTHS.includes(320))await comparison(320);}
+  if(SCENARIO==='all'||SCENARIO==='failures')await failures();
+  if(SCENARIO==='all'||SCENARIO==='diagnostics')await diagnostics();
+  if(SCENARIO==='all'||SCENARIO==='stale')await stale();
+  if(SCENARIO==='all'||SCENARIO==='invalid')await invalidStored();
+  if(SCENARIO==='all'||SCENARIO==='permissions')await permissions();
+  if(SCENARIO==='all'||SCENARIO==='price-saves')await priceSaves();
+  fs.writeFileSync(path.join(OUT,'browser-results.json'),JSON.stringify({syntheticOnly:true,productionReads:0,productionWrites:0,liveProviderVerified:false,passed:true,results},null,2)+'\n');
+ }finally{await browser.close();}
+}
+if(require.main===module)main().catch(error=>{console.error(error.stack||error);process.exitCode=1;});

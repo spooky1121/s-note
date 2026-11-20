@@ -14,18 +14,21 @@ function fixture({token=()=>Promise.resolve(TOKEN),fetchResponse}={}){
  function element(tag){
   const listeners=new Map();
   const node={tag,attributes:new Map(),dataset:{},children:[],open:false,hidden:false,value:'',textContent:'',disabled:false,
-   append(...children){this.children.push(...children);},setAttribute(key,value){this.attributes.set(key,value);},removeAttribute(key){this.attributes.delete(key);},
+   append(...children){this.children.push(...children);},setAttribute(key,value){this.attributes.set(key,value);},getAttribute(key){return this.attributes.get(key)??null;},removeAttribute(key){this.attributes.delete(key);},remove(){},
    addEventListener(event,handler){listeners.set(event,handler);},showModal(){this.open=true;},close(){this.open=false;},focus(){},
    click(){listeners.get('click')?.({preventDefault(){},stopPropagation(){}});}};
   elements.push(node);return node;
  }
  const button=element('button');button.dataset.encarIdCar='synthetic-car';
- const state={requests:[],responses:[],context};
- const sandbox={AbortController,Uint8Array,TextDecoder,Error,Set,Promise,
-  document:{createElement:element,body:{append(){}},querySelectorAll(){return[button];},getElementById(){return null;}},
+ const state={requests:[],responses:[],context};let savedRecord=null;
+ const sandbox={AbortController,Uint8Array,TextDecoder,Error,Set,Promise,queueMicrotask,
+  document:{createElement:element,body:{append(){}},querySelectorAll(){return[button];},getElementById(){return null;},addEventListener(){}},
   setTimeout(fn,ms){const id=++nextTimer;timers.set(id,{fn,ms});return id;},clearTimeout(id){timers.delete(id);},setInterval(){},
   fetch(...args){state.requests.push(args);return fetchResponse?fetchResponse(...args):Promise.resolve(state.responses.shift()??success());},
-  window:{snoteEncarIdBridge:{context(carId){return carId==='synthetic-car'?context:null;},current(value){return value===context;},accessToken:token}}};
+  window:{addEventListener(){},snoteEncarIdBridge:{context(carId){return carId==='synthetic-car'?context:null;},current(value){return value===context;},accessToken:token,
+   saved(){const popup=elements.find(e=>e.tag==='dialog'),output=elements.find(e=>e.tag==='output');return popup?.open&&!output?.hidden&&output?.value===savedRecord?.id?savedRecord:null;},
+   async saveLink(base,value){savedRecord={version:2,plate:base.plate,id:value.id,url:'https://fem.encar.com/cars/detail/'+value.id+'?listAdvType=share&adnm=mo_detail_url',verifiedAt:new Date().toISOString(),priceWon:null,priceCheckedAt:null,priceSource:null};return{record:savedRecord,saved:true};}
+  }}};
  vm.runInNewContext(source,sandbox,{filename:'assets/encar-id.js'});
  const dialog=elements.find(e=>e.tag==='dialog'),status=elements.find(e=>e.tag==='p'),output=elements.find(e=>e.tag==='output'),loading=elements.find(e=>e.className==='snote-encar-id-loading');
  return{...state,button,dialog,status,output,loading,diagnostics:elements.find(e=>Object.hasOwn(e.dataset,'encarErrorDetails')),diagnostic(field){return elements.find(e=>e.attributes.has('data-encar-error-'+field)).textContent;},api:sandbox.window.SnoteEncarId,

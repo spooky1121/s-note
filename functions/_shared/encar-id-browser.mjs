@@ -15,6 +15,10 @@ const GLOAR_GUARDRAILS = Object.freeze({
   allowedDomains: Object.freeze(['gloar-data.com', '*.gloar-data.com']),
   allowedDomainSets: Object.freeze(['common-cdns'])
 });
+const ENCAR_GUARDRAILS = Object.freeze({
+  allowedDomains: Object.freeze(['fem.encar.com', '*.encar.com']),
+  allowedDomainSets: Object.freeze(['common-cdns'])
+});
 
 function failure(code = 'BROWSER_UNAVAILABLE', extras = {}) {
   return Object.assign(new Error(code), { code, ...extras });
@@ -28,14 +32,14 @@ function safeClose(socket) {
 function checkSignal(signal) {
   if (signal !== undefined && (!signal || typeof signal.aborted !== 'boolean' || typeof signal.addEventListener !== 'function' || typeof signal.removeEventListener !== 'function')) throw failure();
 }
-function destination(value, gloarOnly = false) {
+function destination(value, gloarOnly = false, encarOnly = false) {
   if (typeof value !== 'string' || value.length > 2048 || value !== value.trim() || /[\u0000-\u0020\u007f\\#]/u.test(value)) throw failure('PROVIDER_UNSUPPORTED');
   // Keep an explicit :443 disallowed too; URL.port would erase it.
   const authority = /^https:\/\/([^/?#]+)/i.exec(value)?.[1];
   let url;
   try { url = new URL(value); } catch { throw failure('PROVIDER_UNSUPPORTED'); }
   const host = url.hostname.toLowerCase();
-  const allowed = gloarOnly ? host === 'gloar-data.com' : host === 'carnect.biz' || host.endsWith('.carnect.biz') || host === 'gloar-data.com' || host.endsWith('.gloar-data.com') || host === 'encar.spb.ru';
+  const allowed = encarOnly ? host === 'fem.encar.com' : gloarOnly ? host === 'gloar-data.com' : host === 'carnect.biz' || host.endsWith('.carnect.biz') || host === 'gloar-data.com' || host.endsWith('.gloar-data.com') || host === 'encar.spb.ru';
   if (!allowed || url.protocol !== 'https:' || url.username || url.password || url.port || url.hash || authority?.toLowerCase() !== host) throw failure('PROVIDER_UNSUPPORTED');
   return url.href;
 }
@@ -51,15 +55,15 @@ async function waitFor(operation, { signal, milliseconds }) {
 }
 
 /** Reconnect a feature-owned browser, with an isolated context per lookup. */
-export async function createBrowserSession(env = {}, { signal, fetchImpl = fetch, cacheStorage = globalThis.caches, waitUntil, gloarOnly = false } = {}) {
+export async function createBrowserSession(env = {}, { signal, fetchImpl = fetch, cacheStorage = globalThis.caches, waitUntil, gloarOnly = false, encarOnly = false } = {}) {
   checkSignal(signal);
   if (signal?.aborted) throw aborted();
-  if (typeof gloarOnly !== 'boolean') throw failure('PROVIDER_UNSUPPORTED');
+  if (typeof gloarOnly !== 'boolean' || typeof encarOnly !== 'boolean' || gloarOnly && encarOnly) throw failure('PROVIDER_UNSUPPORTED');
   const account = typeof env.CLOUDFLARE_ACCOUNT_ID === 'string' ? env.CLOUDFLARE_ACCOUNT_ID.trim() : '';
   const token = typeof env.CLOUDFLARE_BROWSER_TOKEN === 'string' ? env.CLOUDFLARE_BROWSER_TOKEN.trim() : '';
   if (!/^[a-f0-9]{32}$/i.test(account) || !token || token.length > 4096 || /[^\x21-\x7e]/u.test(token)) throw failure('LOOKUP_NOT_CONFIGURED');
   if (typeof fetchImpl !== 'function') throw failure();
-  const options = { account, token, guardrails: gloarOnly ? GLOAR_GUARDRAILS : GUARDRAILS, fetchImpl, signal, cacheStorage, waitUntil };
+  const options = { account, token, guardrails: encarOnly ? ENCAR_GUARDRAILS : gloarOnly ? GLOAR_GUARDRAILS : GUARDRAILS, fetchImpl, signal, cacheStorage, waitUntil };
   let known = await acquireKnownSession(options), response;
   for (let attempt = 0; attempt < 2; attempt++) {
     const controller = new AbortController(), abortLaunch = () => controller.abort();
@@ -238,7 +242,7 @@ export async function createBrowserSession(env = {}, { signal, fetchImpl = fetch
         await command('Page.setLifecycleEventsEnabled', { enabled: true });
         return Object.freeze({
           async goto(url) {
-            const target = destination(url, gloarOnly), observed = [];
+            const target = destination(url, gloarOnly, encarOnly), observed = [];
             let frameId, loaderId, readyResolve, readyReject;
             const ready = new Promise((resolve, reject) => { readyResolve = resolve; readyReject = reject; });
             // The session may close before Page.navigate replies. Keep that
