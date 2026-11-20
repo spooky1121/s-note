@@ -747,3 +747,49 @@ test('customer verification link exposes an exact integer won price while keepin
  const calls=mock(t,()=>response({ok:true,status:'pending',flowVersion:'wizard-v1',car:{...CAR,sell:2300.0001},companyName:'합성 상사',phoneMasked:'010-****-5678',expiresAt:'2099-01-01T00:00:00Z',rrnEnabled:true}));
  const result=await call({action:'info',flowVersion:'wizard-v1',token:TOKEN},{env:RRN_ENV});assert.equal(result.result.status,200);assert.equal(result.body.car.sellWon,23000001);assert.equal(result.body.car.sell,2300.0001);assert(calls.every(x=>!x.url.includes('solapi')));
 });
+
+const RECEIPT = { children: 'two', business: 'cash', privacyConsent: true, insuranceConfirmed: true, delegationConfirmed: true, cashConfirmed: true, consentVersion: 'receipt-v1' };
+const withReceipt = receipt => wizardSubmit({ customer: { ...wizardSubmit().customer, receiptDetails: receipt } });
+
+test('receipt additions use an atomic v4 save and keep the legacy wizard customer argument unchanged', async t => {
+  const calls = mock(t, entry => entry.url.endsWith('/snote_intake_submit_context_v3') ? response(CONTEXT) : response({ ok: true, submittedAt: '2026-11-21T00:00:00Z', canonicalApplied: true }));
+  const result = await call(withReceipt(RECEIPT));
+  assert.equal(result.result.status, 200); assert.equal(calls.length, 2);
+  assert.ok(calls[1].url.endsWith('/snote_intake_submit_v4'));
+  assert.deepEqual(calls[1].body.p_receipt_details, RECEIPT);
+  assert.equal(Object.hasOwn(calls[1].body.p_customer, 'receiptDetails'), false);
+  assert.deepEqual(calls[1].body.p_signature, NORMAL_SIGNATURE);
+  assert.equal(JSON.stringify(calls[1].body).includes(TEST_RRN), false);
+});
+
+test('receipt choices and explicit booleans are validated without inferring consent from the general checkbox', async t => {
+  const calls = mock(t, entry => entry.url.endsWith('/snote_intake_submit_context_v3') ? response(CONTEXT) : response({ ok: true, submittedAt: '2026-11-21T00:00:00Z', canonicalApplied: false }));
+  const unchecked = { children: null, business: null, privacyConsent: false, insuranceConfirmed: false, delegationConfirmed: false, cashConfirmed: false, consentVersion: 'receipt-v1' };
+  assert.equal((await call(withReceipt(unchecked))).result.status, 200);
+  assert.deepEqual(calls[1].body.p_receipt_details, unchecked);
+  const before = calls.length;
+  for (const invalid of [null, [], {}, { ...RECEIPT, children: 'four' }, { ...RECEIPT, business: true }, { ...RECEIPT, consentVersion: 'unknown' }, { ...RECEIPT, privacyConsent: 'true' }, { ...RECEIPT, delegationConfirmed: 1 }, { ...RECEIPT, signature: SIGNATURE }, { ...RECEIPT, cashConfirmed: undefined }]) {
+    const result = await call(withReceipt(invalid)); assert.equal(result.result.status, 400); assert.equal(result.body.code, 'VALIDATION_ERROR');
+  }
+  assert.equal(calls.length, before, 'Invalid receipt data must not reach Auth/SQL or SMS');
+  assert.equal((await call(submit({ customer: { ...submit().customer, receiptDetails: RECEIPT } }))).result.status, 400, 'Legacy unsigned requests must not add signed receipt details');
+  assert.equal(calls.length, before);
+});
+
+test('a missing receipt migration fails closed without dropping the customers explicit receipt choices', async t => {
+  const calls = mock(t, entry => entry.url.endsWith('/snote_intake_submit_context_v3') ? response(CONTEXT) : response({ code: 'PGRST202', message: 'PRIVATE_DB_DETAIL' }, 404));
+  const result = await call(withReceipt(RECEIPT));
+  assert.equal(result.body.code, 'DB_SETUP_REQUIRED');
+  assert.equal(calls.length, 2); assert.ok(calls[1].url.endsWith('/snote_intake_submit_v4'));
+  assert.equal(JSON.stringify(result.body).includes('PRIVATE_DB_DETAIL'), false);
+});
+
+test('authenticated intake lists expose only validated receipt snapshots and keep old submissions unconsented', async t => {
+  let receipt = RECEIPT, unsigned = false;
+  mock(t, () => response([{ id: ID, submittedAt: '2026-11-21T00:00:00Z', hasSignature: true, submission: { name: '테스트', ...(unsigned ? {} : { signature: SIGNATURE }), signedAt: '2026-11-21T00:00:00Z', flowVersion: FLOW, ...(receipt === undefined ? {} : { receiptDetails: receipt }), identityCipher: 'PRIVATE_CIPHER' } }]));
+  const list = () => call({ action: 'list', carId: 'car-1' }, { authorization: `Bearer ${JWT}` });
+  const result = await list(); assert.equal(result.result.status, 200); assert.deepEqual(result.body.requests[0].submission.receiptDetails, RECEIPT); assert.equal(JSON.stringify(result.body).includes('PRIVATE_CIPHER'), false);
+  receipt = undefined; const old = await list(); assert.equal(Object.hasOwn(old.body.requests[0].submission, 'receiptDetails'), false);
+  receipt = { ...RECEIPT, arbitraryHtml: '<script>PRIVATE_SCRIPT</script>' }; const malformed = await list(); assert.equal(malformed.body.code, 'UPSTREAM_ERROR'); assert.equal(JSON.stringify(malformed.body).includes('PRIVATE_SCRIPT'), false);
+  receipt = RECEIPT; unsigned = true; assert.equal((await list()).body.code, 'UPSTREAM_ERROR', 'Receipt claims without their original signature cannot become signed confirmation');
+});

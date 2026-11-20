@@ -7,9 +7,10 @@
   const $ = id => document.getElementById(id);
   const stages = ['car', 'details', 'success', 'terminal'];
   const steps = ['name', 'rrn', 'address', 'phone', 'refund', 'consent'];
-  const stepLabels = {name: '성함', rrn: '주민등록번호', address: '등본상 주소', phone: '휴대전화 확인', refund: '환급계좌', consent: '동의·손서명'};
+  const stepLabels = {name: '성함', rrn: '주민등록번호', address: '등본상 주소', phone: '휴대전화 확인', refund: '환급·인수증', consent: '동의·손서명'};
   const headings = {name: 'details-heading', rrn: 'rrn-heading', address: 'address-heading', phone: 'verify-heading', refund: 'refund-heading', consent: 'consent-heading'};
-  const fieldSteps = {'customer-name': 'name', 'rrn-front': 'rrn', 'rrn-back': 'rrn', 'address-base': 'address', 'address-detail': 'address', 'mailing-base': 'address', 'mailing-detail': 'address', 'customer-phone': 'phone', 'verification-code': 'phone', 'refund-bank': 'refund', 'refund-account': 'refund', 'refund-holder': 'refund', 'required-consent': 'consent', 'refund-consent': 'consent', 'signature-canvas': 'consent'};
+  const fieldSteps = {'customer-name': 'name', 'rrn-front': 'rrn', 'rrn-back': 'rrn', 'address-base': 'address', 'address-detail': 'address', 'mailing-base': 'address', 'mailing-detail': 'address', 'customer-phone': 'phone', 'verification-code': 'phone', 'refund-bank': 'refund', 'refund-account': 'refund', 'refund-holder': 'refund', 'required-consent': 'consent', 'refund-consent': 'consent', 'signature-canvas': 'consent', 'receipt-privacy-consent':'consent', 'receipt-insurance-confirmed':'consent', 'receipt-delegation-confirmed':'consent', 'receipt-cash-confirmed':'consent'};
+  const receiptConsentIds = ['receipt-privacy-consent', 'receipt-insurance-confirmed', 'receipt-delegation-confirmed', 'receipt-cash-confirmed'];
   const customerKeys = {name: 'customer-name', addressBase: 'address-base', addressDetail: 'address-detail', mailingBase: 'mailing-base', mailingDetail: 'mailing-detail', refundBank: 'refund-bank', refundAccount: 'refund-account', refundHolder: 'refund-holder'};
   const form = $('customer-form'), fields = $('customer-fields');
   const canvas = $('signature-canvas'), context = canvas.getContext('2d');
@@ -145,6 +146,7 @@
     $('verified-phone').textContent = '';
     $('input-summary').replaceChildren();
     form.reset();
+    for(const id of receiptConsentIds)$(id).indeterminate=false;
   }
   function finish(submittedAt, existing) {
     clearPrivateState(); busy = ''; message('');
@@ -334,10 +336,25 @@
     }
   });
 
+  function receiptChoice(name, allowed) {
+    const value = form.querySelector('input[name="' + name + '"]:checked')?.value;
+    return allowed.includes(value) ? value : null;
+  }
+  function receiptDetails() {
+    return {children:receiptChoice('receipt-children',['none','two','three']),business:receiptChoice('receipt-business',['invoice','cash']),
+      privacyConsent:$('receipt-privacy-consent').checked,insuranceConfirmed:$('receipt-insurance-confirmed').checked,
+      delegationConfirmed:$('receipt-delegation-confirmed').checked,cashConfirmed:$('receipt-cash-confirmed').checked,consentVersion:'receipt-v1'};
+  }
+  function receiptLowerConsentIds() { return ['required-consent', ...(hasRefund()?['refund-consent']:[]), ...receiptConsentIds.slice(1)]; }
+  function syncReceiptConsent() {
+    const master=$('receipt-privacy-consent');
+    master.indeterminate=master.checked && receiptLowerConsentIds().some(id=>!$(id).checked);
+  }
   function hasRefund() { return ['refund-bank', 'refund-account', 'refund-holder'].some(id => $(id).value.trim()); }
   function syncRefundConsent() {
     $('refund-consent-section').hidden = !hasRefund();
     if (!hasRefund()) $('refund-consent').checked = false;
+    syncReceiptConsent();
   }
   function clearValidation() {
     form.querySelectorAll('input,canvas').forEach(field => { if (field.setCustomValidity) field.setCustomValidity(''); field.removeAttribute('aria-invalid'); });
@@ -399,6 +416,7 @@
     syncRefundConsent();
     const rows = [['성함', $('customer-name').value.trim()], ['주민번호', '입력 완료'], ['등본주소', [$('address-base').value.trim(), $('address-detail').value.trim()].filter(Boolean).join(' ')], ['휴대전화', phoneText(verifiedPhone)]];
     if (!$('same-address').checked && $('mailing-base').value.trim()) rows.push(['등기주소', [$('mailing-base').value.trim(), $('mailing-detail').value.trim()].filter(Boolean).join(' ')]);
+    const receipt=receiptDetails();rows.push(['다자녀',({none:'없음',two:'2자녀',three:'3자녀'})[receipt.children]||'선택 안 함'],['사업자',({invoice:'사업자 · 세금계산서',cash:'개인 · 현금영수증'})[receipt.business]||'선택 안 함']);
     rows.push(['환급계좌', hasRefund() ? [$('refund-bank').value.trim(), $('refund-account').value.trim(), $('refund-holder').value.trim()].join(' · ') : '입력 안 함']);
     const fragment = document.createDocumentFragment();
     for (const [label, value] of rows) { const term = document.createElement('dt'), detail = document.createElement('dd'); term.textContent = label; detail.textContent = value; fragment.append(term, detail); }
@@ -446,6 +464,8 @@
     if (uncertainSubmission || busy === 'submit') return;
     if (signatureStrokes.length) clearSignature(true);
     $('required-consent').checked = false;
+    $('refund-consent').checked = false;
+    for (const id of receiptConsentIds) {$(id).checked=false;$(id).indeterminate=false;}
   }
   function signaturePoint(event) {
     const rect = canvas.getBoundingClientRect();
@@ -541,8 +561,20 @@
   form.addEventListener('input', event => {
     clearValidation();
     if (!busy && !uncertainSubmission) message('');
-    if (!['verification-code', 'required-consent', 'refund-consent'].includes(event.target.id)) invalidateAttestation();
+    if (!['verification-code', 'required-consent', 'refund-consent', ...receiptConsentIds].includes(event.target.id)) invalidateAttestation();
     syncMailing(); syncRefundConsent();
+  });
+  $('receipt-privacy-consent').addEventListener('change',()=>{
+    if(busy||uncertainSubmission)return;
+    const checked=$('receipt-privacy-consent').checked;
+    if(signatureStrokes.length)clearSignature(true);
+    for(const id of receiptLowerConsentIds())$(id).checked=checked;
+    syncReceiptConsent();
+  });
+  for(const id of ['required-consent','refund-consent',...receiptConsentIds.slice(1)])$(id).addEventListener('change',()=>{
+    if(busy||uncertainSubmission)return;
+    if(signatureStrokes.length)clearSignature(true);
+    syncReceiptConsent();
   });
   for (const id of ['rrn-front', 'rrn-back']) $(id).addEventListener('input', event => { if (!event.isComposing) event.currentTarget.value = event.currentTarget.value.replace(/\D/g, '').slice(0, id === 'rrn-front' ? 6 : 7); });
   form.addEventListener('submit', async event => {
@@ -559,6 +591,7 @@
       customer.sameAddress = $('same-address').checked;
       customer.refundAccount = customer.refundAccount.replace(/\s/g, '');
       customer.phone = verifiedPhone;
+      customer.receiptDetails = receiptDetails();
       const signature = {version: 1, strokes: signatureStrokes.map(stroke => stroke.map(point => [point[0], point[1]]))};
       pendingSubmission = {token, session, vehicleConfirmed: true, consent: true, refundConsent: hasRefund() && $('refund-consent').checked, rrn: $('rrn-front').value + $('rrn-back').value, rrnNoticeAccepted: true, signature, customer};
     }

@@ -11,6 +11,7 @@ const RRN_HKDF_INFO = 'snote-customer-intake:rrn:v1:aes-256-gcm';
 const TOKEN = /^[a-f0-9]{64}$/;
 const UUID = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i;
 const CUSTOMER_FIELDS = ['name', 'addressBase', 'addressDetail', 'mailingBase', 'mailingDetail', 'sameAddress', 'refundBank', 'refundAccount', 'refundHolder'];
+const RECEIPT_FIELDS = ['children', 'business', 'privacyConsent', 'insuranceConfirmed', 'delegationConfirmed', 'cashConfirmed', 'consentVersion'];
 const ACTION_FIELDS = {
   create: ['carId', 'phone'], list: ['carId'], revoke: ['id'], 'read-rrn': ['id'], info: ['token'],
   'send-code': ['token'], verify: ['token', 'challengeId', 'code'],
@@ -160,7 +161,7 @@ function phone(value) {
 function token(value) { if (typeof value !== 'string' || !TOKEN.test(value)) fail('INVALID_LINK'); return value; }
 function uuid(value) { if (typeof value !== 'string' || !UUID.test(value)) fail('VALIDATION_ERROR'); return value; }
 function customer(value, wizard = false) {
-  whitelist(value, wizard ? [...CUSTOMER_FIELDS, 'phone'] : CUSTOMER_FIELDS);
+  whitelist(value, wizard ? [...CUSTOMER_FIELDS, 'phone', 'receiptDetails'] : CUSTOMER_FIELDS);
   if (typeof value.sameAddress !== 'boolean') fail('VALIDATION_ERROR');
   const result = {
     name: text(value.name, 50), addressBase: text(value.addressBase, 200), addressDetail: text(value.addressDetail, 100, false),
@@ -174,7 +175,16 @@ function customer(value, wizard = false) {
   const refund = [result.refundBank, result.refundAccount, result.refundHolder];
   if (refund.some(Boolean) && (!refund.every(Boolean) || !/^[\d-]{6,32}$/.test(result.refundAccount) || result.refundAccount.replace(/-/g, '').length < 6)) fail('VALIDATION_ERROR');
   if (wizard) result.phone = phone(value.phone);
+  if (wizard && Object.hasOwn(value, 'receiptDetails')) result.receiptDetails = receiptDetails(value.receiptDetails);
   return result;
+}
+function receiptDetails(value) {
+  whitelist(value, RECEIPT_FIELDS);
+  if (Object.keys(value).length !== RECEIPT_FIELDS.length || !RECEIPT_FIELDS.every(key => Object.hasOwn(value, key))
+    || ![null, 'none', 'two', 'three'].includes(value.children) || ![null, 'invoice', 'cash'].includes(value.business)
+    || ['privacyConsent', 'insuranceConfirmed', 'delegationConfirmed', 'cashConfirmed'].some(key => typeof value[key] !== 'boolean')
+    || value.consentVersion !== 'receipt-v1') fail('VALIDATION_ERROR');
+  return Object.fromEntries(RECEIPT_FIELDS.map(key => [key, value[key]]));
 }
 function signature(value) {
   whitelist(value, ['version', 'strokes']);
@@ -376,6 +386,10 @@ async function perform(request, config, body, rrnEncryption) {
         }
         if (typeof row.submission.signedAt === 'string') result.submission.signedAt = row.submission.signedAt;
         if (row.submission.flowVersion === FLOW_VERSION) result.submission.flowVersion = FLOW_VERSION;
+        if (Object.hasOwn(row.submission, 'receiptDetails')) {
+          if (row.submission.flowVersion !== FLOW_VERSION || !result.submission.signature || typeof row.submission.signedAt !== 'string' || !Number.isFinite(Date.parse(row.submission.signedAt))) fail('UPSTREAM_ERROR');
+          try { result.submission.receiptDetails = receiptDetails(row.submission.receiptDetails); } catch { fail('UPSTREAM_ERROR'); }
+        }
       }
       return result;
     }) };
@@ -448,6 +462,8 @@ async function perform(request, config, body, rrnEncryption) {
     if (body.refundConsent !== undefined && typeof body.refundConsent !== 'boolean') fail('VALIDATION_ERROR');
     if (typeof body.session !== 'string' || !TOKEN.test(body.session)) fail('SESSION_EXPIRED');
     const details = customer(body.customer, wizard);
+    const receipt = details.receiptDetails;
+    delete details.receiptDetails;
     if (details.refundBank && body.refundConsent !== true) fail('VALIDATION_ERROR');
     if (!details.refundBank && body.refundConsent === true) fail('VALIDATION_ERROR');
     details.refundConsent = body.refundConsent === true;
@@ -462,7 +478,8 @@ async function perform(request, config, body, rrnEncryption) {
       const context = verifiedContext(await rpc(config, 'snote_intake_submit_context_v3', { p_token_hash: tokenHash, p_session_hash: args.p_session_hash }));
       if (details.phone !== context.phone) fail('VALIDATION_ERROR');
       args.p_identity_cipher = await encryptIdentityCipher(rrnEncryption, context, context.carId, rrn);
-      const data = await rpc(config, 'snote_intake_submit_v3', args);
+      if (receipt !== undefined) args.p_receipt_details = receipt;
+      const data = await rpc(config, receipt === undefined ? 'snote_intake_submit_v3' : 'snote_intake_submit_v4', args);
       if (data.ok !== true || typeof data.submittedAt !== 'string' || typeof data.canonicalApplied !== 'boolean') fail('UPSTREAM_ERROR');
       return { ok: true, submittedAt: data.submittedAt, ...(data.alreadySubmitted === true ? { alreadySubmitted: true } : {}), canonicalApplied: data.canonicalApplied };
     }
