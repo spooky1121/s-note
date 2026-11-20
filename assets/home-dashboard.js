@@ -30,7 +30,7 @@
   const labelLine=node('div',null,'snote-home-kpi-label');labelLine.append(node('span',label),icon(kind));
   const amount=node('strong',null,'snote-home-kpi-value');amount.append(node('span',masked?'-':value==null?'—':number(value),'snote-home-number'));if(!masked&&value!=null)amount.append(node('small',unit));
   if(!masked&&value!=null&&value<0)amount.classList.add('is-negative');
-  const caption=masked?'마진 숨김':value==null?empty:detail;
+  const caption=masked?'수익 숨김':value==null?empty:detail;
   card.setAttribute('aria-label',label+' · '+(masked?'숨김':value==null?'아직 연결되지 않음':number(value)+unit)+(caption?' · '+caption:''));card.dataset.tooltip=caption||label;card.append(labelLine,amount,node('p',caption,'snote-home-kpi-caption'));return card;
  }
  function chart(data,{field,title,color,money=false}){
@@ -72,7 +72,7 @@
  function settlement(data,key,hideMargin){
   const card=node('section',null,'snote-home-settlement-card');card.append(header('수익 정산',null,'finance',key));
   const list=node('dl',null,'snote-home-settlement');
-  for(const[label,value,caption,masked]of [['이번 달 마진',data.monthMargin,'이번 달 판매 완료 기준',hideMargin],['올해 마진',data.yearMargin,'올해 판매 완료 기준',hideMargin],['재고 예상마진',data.inventoryMargin,'현재 보유 차량 기준',false]]){
+  for(const[label,value,caption,masked]of [['이번 달 수익',data.monthMargin,'이번 달 판매 완료 기준',hideMargin],['올해 수익',data.yearMargin,'올해 판매 완료 기준',hideMargin],['재고 예상수익',data.inventoryMargin,'현재 보유 차량 기준',false]]){
    const row=node('div');row.dataset.marginHidden=String(masked);row.append(node('dt',label));const amount=node('dd',masked?'-':won(value));amount.classList.toggle('is-negative',!masked&&value<0);row.append(amount,node('small',caption));list.append(row);
   }
   card.append(list);return card;
@@ -80,7 +80,7 @@
  function render(data,key,hideMargin){
   host.replaceChildren();host.dataset.state='ready';host.setAttribute('aria-busy','false');
   const kpis=node('div',null,'snote-home-kpis');kpis.setAttribute('role','group');kpis.setAttribute('aria-label','대시보드 요약');
-  kpis.append(kpi('총투자금',data.totalInvestment,{kind:'capital',detail:'현재 보유 차량 원가'}),kpi('재고금',data.inventoryCapital,{kind:'inventory',detail:'재고금융 등록금액'}),kpi('현금',data.cash,{kind:'cash',detail:'총투자금 − 재고금융'}),kpi('이번 달 매입 대수',data.monthPurchaseCount,{kind:'purchase',unit:'대',detail:Number(data.month.slice(5))+'월 매입 기준'}),kpi('이번 달 판매 대수',data.monthSaleCount,{kind:'sale',unit:'대',detail:Number(data.month.slice(5))+'월 판매 완료 기준'}),kpi('이번 달 마진',data.monthMargin,{kind:'profit',detail:'판매가 − 매입 원가·부대비용',masked:hideMargin}),kpi('올해 마진',data.yearMargin,{kind:'year',detail:data.month.slice(0,4)+'년 판매 완료 기준',masked:hideMargin}));
+  kpis.append(kpi('총투자금',data.totalInvestment,{kind:'capital',detail:'현재 보유 차량 원가'}),kpi('재고금',data.inventoryCapital,{kind:'inventory',detail:'재고금융 등록금액'}),kpi('현금',data.cash,{kind:'cash',detail:'총투자금 − 재고금융'}),kpi('이번 달 매입 대수',data.monthPurchaseCount,{kind:'purchase',unit:'대',detail:Number(data.month.slice(5))+'월 매입 기준'}),kpi('이번 달 판매 대수',data.monthSaleCount,{kind:'sale',unit:'대',detail:Number(data.month.slice(5))+'월 판매 완료 기준'}),kpi('이번 달 수익',data.monthMargin,{kind:'profit',detail:'판매가 − 매입 원가·부대비용',masked:hideMargin}),kpi('올해 수익',data.yearMargin,{kind:'year',detail:data.month.slice(0,4)+'년 판매 완료 기준',masked:hideMargin}));
   const graphs=node('div',null,'snote-home-graphs');graphs.append(chart(data,{field:'purchases',title:'매입',color:'#4b80eb'}),chart(data,{field:'sales',title:'매도',color:'#4aa6b0'}),chart(data,{field:'margin',title:'판매수익',color:'#8a78cf',money:true}));
   const cards=node('div',null,'snote-home-details');cards.append(listCard('매입 차량',data.inventoryRecent,data.inventoryCount,'buy',key),listCard('판매 완료',data.soldRecent,data.soldCount,'sell',key,true),settlement(data,key,hideMargin));host.append(kpis,graphs,cards);
  }

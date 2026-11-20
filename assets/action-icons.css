@@ -1,0 +1,11 @@
+/* Matching transparent, 24-unit action drawings; controls retain their handlers. */
+.snote-action-glyph{display:block;fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+#vehicle-overlay #vehicle-encar-check>svg.snote-encar-glyph{width:20px;height:20px;color:#e52534;stroke:#e52534;stroke-width:2.2}
+#snote-app #list-screen .snote-list-encar>svg.snote-encar-glyph{display:block;width:21px;height:21px;color:#e52534;stroke:#e52534;stroke-width:2.2;max-width:100%}
+#snote-contract-office .co-document-shape>svg[data-snote-action-icon]{width:68px!important;height:68px!important;stroke-width:.8}
+@media screen and (max-width:760px){
+ #snote-app #list-screen .snote-list-encar>svg.snote-encar-glyph{width:22px;height:22px}
+}
+@media screen and (max-width:700px){
+ #snote-contract-office .co-document-shape>svg[data-snote-action-icon]{width:58px!important;height:58px!important}
+}

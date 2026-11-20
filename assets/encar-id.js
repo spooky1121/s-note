@@ -83,7 +83,7 @@
  priceRefresh.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 6v5h-5M4 18v-5h5M6 8a7 7 0 0 1 11.5-2L20 9M4 15l2.5 3A7 7 0 0 0 18 16"/></svg>';
  const priceChange=document.createElement('button');priceChange.id='snote-encar-price-change';priceChange.type='button';priceChange.className='snote-encar-price-change';priceChange.textContent='판매가 변경';
  const priceMessage=document.createElement('span');priceMessage.id='snote-encar-price-message';priceMessage.className='snote-encar-price-message';priceMessage.setAttribute('role','status');priceMessage.setAttribute('aria-live','polite');
- pricePanel.append(priceLabel,priceRefresh,priceChange,priceMessage);document.getElementById('vehicle-meta')?.after(pricePanel);
+ pricePanel.append(priceLabel,priceRefresh,priceChange,priceMessage);document.getElementById('vehicle-title')?.after(pricePanel);
  const setText=(node,value)=>{if(node.textContent!==value)node.textContent=value;};
  const adURL=id=>'https://fem.encar.com/cars/detail/'+id+'?listAdvType=share&adnm=mo_detail_url';
  const won=value=>Number.isSafeInteger(value)&&value>0&&value<=MAX_WON;

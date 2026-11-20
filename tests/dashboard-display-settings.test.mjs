@@ -22,7 +22,7 @@ test('head initialization is immediate, safely hidden before a confirmed read an
 });
 
 test('a new local preference defaults OFF, survives reload per account and emits no finance-lock event',async()=>{
- const h=harness();await h.load({username:'demo-A',role:'dealer'});assert.equal(h.api.hidden(),false);assert.match(h.api.markup(),/대시보드 마진 숨기기/);assert.match(h.api.markup(),/role="switch"/);await h.change(true);assert.equal(h.api.hidden(),true);assert.deepEqual(JSON.parse(h.storage.get(h.key('demo-A'))),{schemaVersion:1,hidden:true});
+ const h=harness();await h.load({username:'demo-A',role:'dealer'});assert.equal(h.api.hidden(),false);assert.match(h.api.markup(),/대시보드 수익 숨기기/);assert.match(h.api.markup(),/role="switch"/);await h.change(true);assert.equal(h.api.hidden(),true);assert.deepEqual(JSON.parse(h.storage.get(h.key('demo-A'))),{schemaVersion:1,hidden:true});
  const restored=harness();restored.storage.set(restored.key('demo-A'),h.storage.get(h.key('demo-A')));await restored.load({username:'demo-A',role:'dealer'});assert.equal(restored.api.hidden(),true);await restored.load({username:'demo-B',role:'admin'});assert.equal(restored.api.hidden(),false);assert(h.events.every(event=>event.type==='snote:dashboard-display-changed'));assert(h.events.some(event=>event.detail.source==='save'));
 });
 
