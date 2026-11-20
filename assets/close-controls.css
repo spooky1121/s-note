@@ -1,9 +1,11 @@
-/* Quiet inset close controls shared by drawers, dialogs and standalone windows. */
+/* Shared red close controls; layout and close handlers remain with each popup. */
 @media screen{
- button.snote-popup-close,button.close-button,#close-search{display:grid!important;place-items:center!important;box-sizing:border-box;width:30px!important;height:30px!important;min-width:30px!important;min-height:30px!important;margin:0!important;padding:0!important;border:0!important;border-radius:4px!important;background:var(--snote-close-background,transparent)!important;color:#4b4b50!important;box-shadow:none!important;cursor:pointer;transform:none!important;translate:none!important;transition:background-color .15s ease!important}
- :is(button.snote-popup-close,button.close-button,#close-search):is(:hover,:focus-visible){--snote-close-background:#e5e5e8}
- :is(button.snote-popup-close,button.close-button,#close-search):focus-visible{outline:2px solid #8a8f98!important;outline-offset:2px!important}
- :is(button.snote-popup-close,button.close-button,#close-search) svg{fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+ button.snote-popup-close,button.close-button,button.snote-chat-close,button.co-close,button.co-history-close,#close-search{--snote-close-background:#dc4c5c;--snote-close-color:#fff;--snote-close-radius:8px;display:grid!important;place-items:center!important;box-sizing:border-box;width:30px!important;height:30px!important;min-width:30px!important;min-height:30px!important;margin:0!important;padding:0!important;border:0!important;border-radius:var(--snote-close-radius)!important;background:var(--snote-close-background)!important;color:var(--snote-close-color)!important;box-shadow:none!important;cursor:pointer;transform:none!important;translate:none!important;transition:background-color .15s ease!important}
+ :is(button.snote-popup-close,button.close-button,button.snote-chat-close,button.co-close,button.co-history-close,#close-search):is(:hover,:focus-visible){--snote-close-background:#c53d4d}
+ :is(button.snote-popup-close,button.close-button,button.snote-chat-close,button.co-close,button.co-history-close,#close-search):focus-visible{outline:2px solid #b33646!important;outline-offset:3px!important}
+ :is(button.snote-popup-close,button.close-button,button.snote-chat-close,button.co-close,button.co-history-close,#close-search) svg{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+ /* The chatbot's old pale hover layer must not cover the common red surface. */
+ button.snote-chat-close::before{display:none!important}
  .snote-popup-overlay .snote-popup-frame>button.snote-popup-close,
  #vehicle-overlay .vehicle-detail-frame>button.detail-close,
  :is(#overlay,#zc-auto-reg-overlay,#zc182-finance-overlay) .snote-popup-frame>button.snote-popup-close,
@@ -47,5 +49,5 @@
  #snote-vehicle-sharing.snote-popup-native>button.snote-popup-close{inset:calc(10px + env(safe-area-inset-top,0px)) max(10px,env(safe-area-inset-right,0px)) auto auto!important}
 }
 @media screen and (min-width:561px){html[data-embedded="true"] .income-actions{padding-right:16px}}
-@media(prefers-reduced-motion:reduce){button.snote-popup-close,button.close-button,#close-search{transition:none!important}}
-@media print{button.snote-popup-close,button.close-button,#close-search{display:none!important}}
+@media(prefers-reduced-motion:reduce){button.snote-popup-close,button.close-button,button.snote-chat-close,button.co-close,button.co-history-close,#close-search{transition:none!important}}
+@media print{button.snote-popup-close,button.close-button,button.snote-chat-close,button.co-close,button.co-history-close,#close-search{display:none!important}}
