@@ -3,29 +3,43 @@
 [data-snote-payment-account]{min-width:0;overflow-wrap:anywhere;word-break:normal;font-variant-numeric:tabular-nums}
 .snote-payment-document-holder{font-weight:400}
 @media screen{
- #snote-profile-dialog .snote-payment-profile-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
- #snote-profile-dialog .snote-payment-profile-heading h3{margin:0}
- #snote-profile-dialog .snote-payment-save{display:grid;place-items:center;flex:none;width:30px;height:30px;min-height:30px;padding:5px;border:0;border-radius:7px;background:transparent;color:#1768d8;box-shadow:none}
- #snote-profile-dialog .snote-payment-save:hover:enabled{background:#edf3fc}
- #snote-profile-dialog #snote-payment-form{margin:0;padding:0;text-align:left}
- #snote-profile-dialog .snote-payment-fields{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px}
- #snote-profile-dialog .snote-payment-fields fieldset{min-width:0;margin:0;padding:0;border:0}
- #snote-profile-dialog .snote-payment-fields legend{padding:0;margin:0 0 12px;color:#435268;font-size:12px;font-weight:600}
- #snote-profile-dialog .snote-payment-fields label{margin-bottom:11px;font-size:11px}
- #snote-profile-dialog .snote-payment-fields input{min-height:38px;margin-top:5px;padding:9px 10px;font-size:12px;line-height:1.4}
- #snote-profile-dialog .snote-payment-fields input[id$="-number"]{font-variant-numeric:tabular-nums}
- #snote-profile-dialog .snote-payment-help{margin:4px 0 0;color:#919baa;font-size:10px;line-height:1.6}
+ .snote-payment-settings{grid-column:1/-1;min-width:0;margin:0;background:#fff;border:1px solid #e3e9f1;border-radius:16px;padding:20px 22px;scroll-margin-top:84px}
+ .snote-payment-settings .snote-payment-profile{margin:0;padding:0;border:0;box-shadow:none;min-width:0;scroll-margin-top:84px}
+ .snote-payment-settings .snote-payment-profile h3{font-size:15px;font-weight:650;color:#2c3d55}
+ .snote-payment-settings .snote-payment-fields label{display:block;min-width:0;color:#59687c;line-height:1.5}
+ .snote-payment-settings .snote-payment-fields input{box-sizing:border-box;display:block;width:100%;min-width:0;border:1px solid #e1e7ef;border-radius:8px;background:#fff;color:#25374c;font-family:inherit;outline:none}
+ .snote-payment-settings .snote-payment-fields input:focus{border-color:#86afe8;box-shadow:0 0 0 3px #edf4fe}
+ .snote-payment-settings .snote-profile-message{margin:10px 0 0;font-size:11px;line-height:1.5;color:#64748b}
+ .snote-payment-settings .snote-profile-message:empty{display:none}
+ .snote-payment-settings .snote-profile-message[data-tone="error"]{color:#b84949}
+ .snote-payment-settings .snote-profile-message[data-tone="success"]{color:#288357}
+ .snote-payment-settings .snote-profile-text-button{margin:9px 0 0;padding:0;border:0;background:transparent;color:#2468c4;font:inherit;font-size:11px;cursor:pointer}
+ :is(#snote-profile-dialog,.snote-payment-settings) .snote-payment-save svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+
+ :is(#snote-profile-dialog,.snote-payment-settings) .snote-payment-profile-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+ :is(#snote-profile-dialog,.snote-payment-settings) .snote-payment-profile-heading h3{margin:0}
+ :is(#snote-profile-dialog,.snote-payment-settings) .snote-payment-save{display:grid;place-items:center;flex:none;width:30px;height:30px;min-height:30px;padding:5px;border:0;border-radius:7px;background:transparent;color:#1768d8;box-shadow:none}
+ :is(#snote-profile-dialog,.snote-payment-settings) .snote-payment-save:hover:enabled{background:#edf3fc}
+ :is(#snote-profile-dialog,.snote-payment-settings) #snote-payment-form{margin:0;padding:0;text-align:left}
+ :is(#snote-profile-dialog,.snote-payment-settings) .snote-payment-fields{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px}
+ :is(#snote-profile-dialog,.snote-payment-settings) .snote-payment-fields fieldset{min-width:0;margin:0;padding:0;border:0}
+ :is(#snote-profile-dialog,.snote-payment-settings) .snote-payment-fields legend{padding:0;margin:0 0 12px;color:#435268;font-size:12px;font-weight:600}
+ :is(#snote-profile-dialog,.snote-payment-settings) .snote-payment-fields label{margin-bottom:11px;font-size:11px}
+ :is(#snote-profile-dialog,.snote-payment-settings) .snote-payment-fields input{min-height:38px;margin-top:5px;padding:9px 10px;font-size:12px;line-height:1.4}
+ :is(#snote-profile-dialog,.snote-payment-settings) .snote-payment-fields input[id$="-number"]{font-variant-numeric:tabular-nums}
+ :is(#snote-profile-dialog,.snote-payment-settings) .snote-payment-help{margin:4px 0 0;color:#919baa;font-size:10px;line-height:1.6}
 }
 @media screen and (max-width:480px){
- #snote-profile-dialog .snote-payment-fields{grid-template-columns:minmax(0,1fr);gap:15px}
- #snote-profile-dialog .snote-payment-fields fieldset+fieldset{padding-top:15px;border-top:1px solid #edf0f5}
- #snote-profile-dialog .snote-payment-fields input{font-size:16px}
+ .snote-payment-settings{padding:18px 16px}
+ :is(#snote-profile-dialog,.snote-payment-settings) .snote-payment-fields{grid-template-columns:minmax(0,1fr);gap:15px}
+ :is(#snote-profile-dialog,.snote-payment-settings) .snote-payment-fields fieldset+fieldset{padding-top:15px;border-top:1px solid #edf0f5}
+ :is(#snote-profile-dialog,.snote-payment-settings) .snote-payment-fields input{font-size:16px}
 }
 /* This section is deliberately absent when no saved account is available. */
 #contract-paper [data-snote-payment-section],#contract-print-pages [data-snote-payment-section]{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:4mm;margin:.4mm 0;padding:.3mm 0;border-block:1px solid #e2e5e9;color:#283646;font-family:inherit;font-size:8px;line-height:1.2}
 #contract-paper [data-snote-payment-row],#contract-print-pages [data-snote-payment-row]{min-width:0}
 #contract-paper [data-snote-payment-account],#contract-print-pages [data-snote-payment-account]{font-size:8px;line-height:1.2}
 @media print{
- #snote-payment-profile{display:none!important}
+ #snote-payment-profile,.snote-payment-settings{display:none!important}
  [data-snote-payment-account]{print-color-adjust:exact;-webkit-print-color-adjust:exact}
 }

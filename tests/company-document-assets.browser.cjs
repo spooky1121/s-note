@@ -11,11 +11,12 @@ const widths=process.env.COMPANY_ASSET_TEST_WIDTHS?process.env.COMPANY_ASSET_TES
 assert(widths.length&&widths.every(w=>[1440,1024,390,320].includes(w)));fs.mkdirSync(OUT,{recursive:true});
 
 async function setup(width){
- const f=await fixture(width),p=f.page,sessionToken=await p.evaluate(()=>__encarFixtureSession.access_token);
+ const f=await fixture(width,null,{paymentAccountsRegistered:true}),p=f.page,sessionToken=await p.evaluate(()=>__encarFixtureSession.access_token);
  await f.context.route('**/api/vehicle-taxonomy-probe**',route=>route.fulfill({status:503,contentType:'application/json',body:JSON.stringify({ok:false,code:'SETUP_REQUIRED'})}));
  // Profile RPCs use the real account bridge but receive only local synthetic replies.
  await f.context.route(ORIGIN+'/rest/v1/rpc/**',async route=>{
   const req=route.request(),name=new URL(req.url()).pathname.split('/').pop(),headers={'access-control-allow-origin':'*','access-control-allow-headers':'authorization,apikey,content-type','access-control-allow-methods':'POST,OPTIONS'};
+  if(name==='snote_payment_accounts_read')return route.fallback();
   if(req.method()==='OPTIONS')return route.fulfill({status:204,headers});
   assert.equal(req.method(),'POST');assert.equal(req.headers().authorization,'Bearer '+sessionToken);
   const profile={user_id:ACTOR,company_id:COMPANY,role:'admin',display_name:'합성 이미지 관리자',company_name:'합성 이미지 상사',phone:'01012345678',address:'서울 합성로 1',company_address:'서울 합성로 1',revision:0};

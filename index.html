@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.157">
+<html lang="ko" data-snote-release="2.158">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -3926,6 +3926,7 @@ addEventListener('change',snoteMarkNavigationDraft,true);
 addEventListener('reset',event=>{const host=event.target.closest?.(SNOTE_DRAFT_HOSTS);if(host)delete host.dataset.snoteHistoryDirty;},true);
 function snotePrepareRouteChange(){
  if(window.SnoteContractOffice?.beforeLeave?.()===false)return false;
+ if(window.SnotePaymentAccounts?.prepareRouteChange?.()===false)return false;
  if(window.snoteProfileEditor?.prepareRouteChange?.()===false)return false;
  if(window.snoteIncomePrepareRouteChange&&!window.snoteIncomePrepareRouteChange())return false;
  const drafts=[...document.querySelectorAll(SNOTE_DRAFT_HOSTS)].filter(el=>el.dataset.snoteHistoryDirty==='1'&&el.getClientRects().length);
@@ -4448,10 +4449,11 @@ function snoteRenderSettingsSections(){
  nav.innerHTML=[['settings',general],['recycle','휴지통']].map(([page,label])=>`<button type="button" data-settings-page="${page}"${route===page?' aria-current="page"':''} onclick="navigate('${page}')">${label}</button>`).join('');
 }
 function snoteProfileSettingsMarkup(){return '<section id="snote-settings-profile" class="snote-settings-profile"><details id="snote-settings-profile-details"><summary><strong>프로필 설정</strong><span data-profile-settings-action>펼치기</span></summary><div id="snote-settings-profile-body"></div></details></section>';}
+function snotePaymentSettingsMarkup(){return '<section id="snote-settings-payment" class="snote-payment-settings" aria-label="입금계좌 설정"><div id="snote-settings-payment-body"></div></section>';}
 function snoteRenderDealerSettings(){
  if(!currentUser||isAccountant()||isSnoteAdmin())return;
  $('alt-title').style.display='none';$('alt-copy').style.display='none';
- $('alt-content').innerHTML=`<section class="snote-settings-home" aria-label="내 설정">${snoteProfileSettingsMarkup()}${window.SnoteFinanceLock?.markup()||''}${window.SnoteDashboardDisplay?.markup()||''}${window.SnoteIdleSession?.markup()||''}${window.SnoteDealerFinanceRates?.markup()||''}<button type="button" class="snote-settings-recycle-link" aria-label="휴지통 열기" onclick="navigate('recycle')"><span class="snote-settings-recycle-symbol" aria-hidden="true">${ico('recycle')}</span><span><strong>휴지통</strong><small>삭제한 차량·고객정보·사진·서류를 확인하고 복원합니다.</small></span><span class="snote-settings-link-arrow" aria-hidden="true">›</span></button></section>`;
+ $('alt-content').innerHTML=`<section class="snote-settings-home" aria-label="내 설정">${snoteProfileSettingsMarkup()}${snotePaymentSettingsMarkup()}${window.SnoteFinanceLock?.markup()||''}${window.SnoteDashboardDisplay?.markup()||''}${window.SnoteIdleSession?.markup()||''}${window.SnoteDealerFinanceRates?.markup()||''}<button type="button" class="snote-settings-recycle-link" aria-label="휴지통 열기" onclick="navigate('recycle')"><span class="snote-settings-recycle-symbol" aria-hidden="true">${ico('recycle')}</span><span><strong>휴지통</strong><small>삭제한 차량·고객정보·사진·서류를 확인하고 복원합니다.</small></span><span class="snote-settings-link-arrow" aria-hidden="true">›</span></button></section>`;
 }
 window.addEventListener('snote:contract-office-ready',()=>{if(['contractOffice','contractArchive'].includes(route)&&isAccountant())buildAlt();});
 window.addEventListener('snote:company-cars-ready',()=>{if(['contractOffice','contractArchive'].includes(route)&&isAccountant()&&!$('snote-contract-office'))buildAlt();});
@@ -6463,7 +6465,20 @@ function snote128RefreshContractStamp(){
  }).catch(()=>{if(current()){snote128StampState={status:'error',url:null,scope,car,view};syncContractStampSide();buildContractPrintPages();}return false;});
  return snote128StampReady;
 }
-function openQuotePreview(){delete $('quote-overlay').dataset.snoteHistoryDirty;
+let snote158QuoteRequest=0;
+async function openQuotePreview(){
+ const view=snoteVehicleViewContext();if(!view||!canManageCar(view.car))return false;
+ const request=++snote158QuoteRequest,current=()=>request===snote158QuoteRequest&&snoteVehicleSameView(view)&&canManageCar(view.car);
+ const state=await window.SnotePaymentAccounts?.ensureQuoteAccounts(current);
+ if(!current())return false;
+ if(state==='missing'){
+  window.alert('입금 계좌 먼저 입력 하셔야합니다');
+  if(!current())return false;
+  if(navigate('settings')!==false&&route==='settings'&&currentUser===view.actor)await window.SnotePaymentAccounts?.focusSettings();
+  return false;
+ }
+ if(state!=='registered'){toast('입금계좌를 확인하지 못했습니다. 연결 상태를 확인한 뒤 다시 시도해 주세요.');return false;}
+ delete $('quote-overlay').dataset.snoteHistoryDirty;
  snote95UpdateDocumentCompany();
  if(!currentUser||!activeCarId)return;
  const c=cars.find(x=>x.id===activeCarId&&canManageCar(x));if(!c)return;
@@ -6491,6 +6506,7 @@ function openQuotePreview(){delete $('quote-overlay').dataset.snoteHistoryDirty;
  $('quote-overlay').classList.add('open');$('quote-overlay').setAttribute('aria-hidden','false');
  const paymentActor=currentUser,paymentCar=quoteCarId;void window.SnotePaymentAccounts?.loadDocument(()=>currentUser===paymentActor&&quoteCarId===paymentCar&&$('quote-overlay').classList.contains('open'));
  window.requestAnimationFrame(resizeQuotePreview);
+ return true;
 }
 function closeQuotePreview(){
  window.SnotePaymentAccounts?.clearDocument();
@@ -10166,7 +10182,7 @@ async function snoteSaveCompanyProfile(event){
 function snoteRenderAdminSettings(){
  if(!isSnoteAdmin()||!S.ready)return;
  const host=byId('alt-content');const invitePane=byId('zc86-invite-area');const inviteHome=byId('zc86-admin-tools');if(invitePane&&inviteHome&&invitePane.parentElement!==inviteHome)inviteHome.appendChild(invitePane);byId('alt-title').style.display='none';byId('alt-copy').style.display='none';
- host.innerHTML=`<div class="snote90-settings">${snoteProfileSettingsMarkup()}${window.SnoteFinanceLock?.markup()||''}${window.SnoteDashboardDisplay?.markup()||''}${window.SnoteIdleSession?.markup()||''}${window.SnoteDealerFinanceRates?.markup()||''}<section class="snote90-panel">
+ host.innerHTML=`<div class="snote90-settings">${snoteProfileSettingsMarkup()}${snotePaymentSettingsMarkup()}${window.SnoteFinanceLock?.markup()||''}${window.SnoteDashboardDisplay?.markup()||''}${window.SnoteIdleSession?.markup()||''}${window.SnoteDealerFinanceRates?.markup()||''}<section class="snote90-panel">
  <h3>상사 정보</h3><p>상사 정보와 관리자 연락처를 입력한 뒤 저장하세요. 도장·로고 이미지는 등록 시 별도로 저장됩니다.</p>
  <form id="snote90-company-form">
  <div class="snote-company-fields">
@@ -10981,7 +10997,7 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 <link rel="stylesheet" href="assets/workspace-reorder.css?v=2.136">
 <script src="assets/workspace-order-store.js?v=2.135" defer></script>
 <script src="assets/workspace-reorder.js?v=2.136" defer></script>
-<script src="assets/release-info.js?v=2.157" defer></script>
+<script src="assets/release-info.js?v=2.158" defer></script>
 <link rel="stylesheet" href="assets/encar-id.css?v=2.154">
 <script src="assets/encar-id.js?v=2.154" defer></script>
 <script src="assets/company-purchase.js?v=2.130" defer></script>
@@ -10991,9 +11007,9 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 <script src="assets/contract-office.js?v=2.143" defer></script>
 <script src="assets/recycle-bin.js?v=2.77" defer></script>
 <script src="assets/company-assets.js?v=2.128" defer></script>
-<script src="assets/profile-editor.js?v=2.157" defer></script>
-<link rel="stylesheet" href="assets/payment-accounts.css?v=2.157">
-<script src="assets/payment-accounts.js?v=2.157" defer></script>
+<script src="assets/profile-editor.js?v=2.158" defer></script>
+<link rel="stylesheet" href="assets/payment-accounts.css?v=2.158">
+<script src="assets/payment-accounts.js?v=2.158" defer></script>
 <script src="assets/document-mms.js?v=2.44" defer></script>
 <script src="assets/workspace-polish.js?v=2.77" defer></script>
 <script src="assets/list-sort.js?v=2.120" defer></script>

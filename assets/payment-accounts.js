@@ -64,9 +64,10 @@
  }
 
  let section,form,saveButton,reloadButton,message,profileContext=null,baseline=null,profileVersion=0,loading=false,saving=false;
+ let presentation=null,settingsHost=null,readTask=null;
  const fields={};
  function mount(){
-  if(section?.isConnected)return true;
+  if(section)return true;
   const body=dialog?.querySelector('.snote-profile-body');if(!body)return false;
   section=document.createElement('section');section.id='snote-payment-profile';section.className='snote-profile-section snote-payment-profile';section.hidden=true;
   const heading=document.createElement('div');heading.className='snote-payment-profile-heading';
@@ -77,7 +78,7 @@
   form=document.createElement('form');form.id='snote-payment-form';form.autocomplete='off';form.noValidate=true;
   const grid=document.createElement('div');grid.className='snote-payment-fields';
   for(const kind of kinds){
-   const fieldset=document.createElement('fieldset'),legend=document.createElement('legend');legend.textContent=labels[kind];fieldset.append(legend);fields[kind]={};
+   const fieldset=document.createElement('fieldset'),legend=document.createElement('legend');legend.textContent=labels[kind]+' 계좌';fieldset.append(legend);fields[kind]={};
    for(const [key,label,max] of [['bank','은행명',35],['number','계좌번호',32],['holder','예금주',60]]){
     const host=document.createElement('label'),input=document.createElement('input');input.id='snote-payment-'+kind+'-'+key;input.name=kind+'-'+key;input.type='text';input.maxLength=max;input.autocomplete='off';input.spellcheck=false;input.placeholder=label;
     if(key==='number'){input.inputMode='text';input.setAttribute('aria-label',labels[kind]+' 계좌번호');}
@@ -91,20 +92,25 @@
   message=document.createElement('p');message.id='snote-payment-message';message.className='snote-profile-message';message.setAttribute('role','status');message.setAttribute('aria-live','polite');section.append(message);
   reloadButton=document.createElement('button');reloadButton.id='snote-payment-reload';reloadButton.type='button';reloadButton.className='snote-profile-text-button';reloadButton.textContent='다시 불러오기';reloadButton.hidden=true;section.append(reloadButton);
   const first=body.querySelector(':scope > .snote-profile-section');if(first)first.after(section);else body.append(section);
-  form.addEventListener('submit',saveProfile);form.addEventListener('input',controls);reloadButton.addEventListener('click',()=>void readProfile(true));
+  form.addEventListener('submit',saveProfile);form.addEventListener('input',controls);reloadButton.addEventListener('click',()=>void startRead(true));
   controls();return true;
  }
  function status(text,tone='info'){if(!message)return;message.textContent=text;message.dataset.tone=tone;}
  const rawFields=()=>Object.fromEntries(kinds.map(kind=>[kind,Object.fromEntries(['bank','number','holder'].map(key=>[key,fields[kind]?.[key]?.value||'']))]));
  function fieldSignature(value){return JSON.stringify(value);}
  function baselineFields(){return Object.fromEntries(kinds.map(kind=>[kind,baseline?.accounts[kind]||{bank:'',number:'',holder:''}]));}
- function profileDirty(){return !!baseline&&fieldSignature(rawFields())!==fieldSignature(baselineFields());}
- function profileBusy(){return saving;}
- const profileLive=version=>version===profileVersion&&!!profileContext&&isCurrent(profileContext)&&!!section&&!section.hidden&&dialog?.hidden===false;
+ function editorDirty(){return !!baseline&&fieldSignature(rawFields())!==fieldSignature(baselineFields());}
+ function profileDirty(){return presentation==='profile'&&editorDirty();}
+ function profileBusy(){return presentation==='profile'&&saving;}
+ function settingsRoute(){try{return typeof route==='string'&&route==='settings';}catch{return false;}}
+ const settingsElement=()=>settingsRoute()?document.getElementById('snote-settings-payment-body'):null;
+ const sameEditor=context=>!!context&&!!profileContext&&profileContext.key===context.key&&profileContext.client===context.client&&profileContext.role===context.role;
+ const profileLive=version=>version===profileVersion&&!!profileContext&&isCurrent(profileContext)&&!!section&&section.isConnected&&!section.hidden&&
+  (presentation==='profile'?dialog?.hidden===false&&dialog.contains(section):presentation==='settings'&&settingsRoute()&&settingsHost?.isConnected&&section.parentElement===settingsHost);
  function controls(){
   if(!section)return;const ready=!!baseline&&profileLive(profileVersion)&&!loading&&!saving;
   for(const input of section.querySelectorAll('input'))input.disabled=!ready;
-  saveButton.disabled=!ready||!profileDirty();reloadButton.disabled=loading||saving;
+  saveButton.disabled=!ready||!editorDirty();reloadButton.disabled=loading||saving;
   section.setAttribute('aria-busy',String(loading||saving));
  }
  function fill(value){baseline=value;for(const kind of kinds)for(const key of ['bank','number','holder'])fields[kind][key].value=value.accounts[kind]?.[key]||'';controls();}
@@ -116,7 +122,7 @@
  }
  async function readProfile(confirmDirty=false){
   if(!profileContext||!isCurrent(profileContext)||saving)return false;
-  if(confirmDirty&&profileDirty()&&!window.confirm('입력한 입금계좌를 버리고 다시 불러올까요?'))return false;
+  if(confirmDirty&&editorDirty()&&!window.confirm('입력한 입금계좌를 버리고 다시 불러올까요?'))return false;
   const version=++profileVersion;loading=true;baseline=null;for(const kind of kinds)for(const input of Object.values(fields[kind]))input.value='';controls();status('입금계좌를 불러오는 중…');reloadButton.hidden=true;
   try{
    const result=receipt(profileContext,await bridge().read(profileContext));
@@ -127,14 +133,60 @@
    return false;
   }finally{if(version===profileVersion){loading=false;controls();}}
  }
- async function openProfile(){
-  closeProfile();if(!mount())return false;
-  const context=contextNow();if(!context)return false;
-  profileContext=context;section.hidden=false;return readProfile();
+ function startRead(confirmDirty=false){readTask=readProfile(confirmDirty);return readTask;}
+ function clearEditor(){
+  ++profileVersion;profileContext=null;baseline=null;loading=false;saving=false;readTask=null;presentation=null;
+  if(section){for(const kind of kinds)for(const input of Object.values(fields[kind]))input.value='';section.hidden=true;status('');reloadButton.hidden=true;controls();}
+ }
+ function placeProfile(){
+  const body=dialog?.querySelector('.snote-profile-body');if(!body)return false;
+  const first=body.querySelector(':scope > .snote-profile-section');
+  if(first&&first!==section)first.after(section);else body.append(section);
+  presentation='profile';section.hidden=false;return true;
+ }
+ function mountSettings(host){
+  if(!(host instanceof Element)||!host.isConnected||!settingsRoute()||!mount())return false;
+  settingsHost=host;
+  // The same editor may be in a visible profile drawer. Keep its draft there.
+  if(presentation==='profile'&&dialog?.hidden===false)return false;
+  const context=contextNow();if(!context){clearEditor();return false;}
+  const preserve=sameEditor(context)&&(!!baseline||loading||saving);
+  if(!preserve)clearEditor();
+  profileContext=context;presentation='settings';host.append(section);section.hidden=false;controls();
+  return preserve?(loading?(readTask||Promise.resolve(false)):Promise.resolve(!!baseline)):startRead();
+ }
+ async function openProfile({inline=false}={}){
+  if(inline){const host=settingsElement();return host?mountSettings(host):false;}
+  const context=contextNow();if(!context||!mount())return false;
+  const preserve=sameEditor(context)&&(!!baseline||loading||saving);
+  if(!preserve)clearEditor();
+  profileContext=context;if(!placeProfile()){clearEditor();return false;}controls();
+  return preserve?(loading?(readTask||false):!!baseline):startRead();
  }
  function closeProfile(){
-  ++profileVersion;profileContext=null;baseline=null;loading=false;saving=false;
-  if(section){for(const kind of kinds)for(const input of Object.values(fields[kind]))input.value='';section.hidden=true;status('');reloadButton.hidden=true;controls();}
+  if(presentation!=='profile')return;
+  clearEditor();const host=settingsElement();if(host)void mountSettings(host);
+ }
+ function prepareRouteChange(){
+  if(presentation!=='settings')return true;
+  if(!profileContext||!isCurrent(profileContext))return true;
+  if(saving){status('입금계좌 저장이 끝난 후 이동해 주세요.');return false;}
+  return !editorDirty()||window.confirm('저장하지 않은 입금계좌 변경사항을 버리고 이동할까요?');
+ }
+ async function focusSettings(){
+  const host=settingsElement();if(!host)return false;
+  const mounted=mountSettings(host);if(mounted===false)return false;
+  if(!await mounted||!profileLive(profileVersion)||presentation!=='settings')return false;
+  const kind=kinds.find(value=>!baseline.accounts[value])||'vehicle';
+  section.scrollIntoView({behavior:window.matchMedia?.('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});
+  fields[kind].bank.focus({preventScroll:true});return true;
+ }
+ async function ensureQuoteAccounts(current=()=>true){
+  const context=contextNow();if(!context)return 'unavailable';
+  const live=()=>{try{return isCurrent(context)&&current()===true;}catch{return false;}};
+  if(!live())return 'stale';
+  try{const result=receipt(context,await bridge().read(context));if(!live())return 'stale';return kinds.some(kind=>result.accounts[kind])?'registered':'missing';}
+  catch{return live()?'unavailable':'stale';}
  }
  async function saveProfile(event){
   event?.preventDefault();const context=profileContext,version=profileVersion;
@@ -149,7 +201,17 @@
   }catch(error){if(profileLive(version)){status(errorMessage(error,'입금계좌를 저장하지 못했습니다. 입력 내용은 유지됩니다.'),'error');reloadButton.hidden=false;}return false;
   }finally{if(version===profileVersion){saving=false;controls();}}
  }
- function reset(){closeProfile();clearDocument();}
+ function reset(){clearEditor();clearDocument();}
  mount();
- window.SnotePaymentAccounts=Object.freeze({openProfile,closeProfile,profileDirty,profileBusy,clearDocument,loadDocument,reset});
+ window.SnotePaymentAccounts=Object.freeze({openProfile,closeProfile,profileDirty,profileBusy,mountSettings,focusSettings,prepareRouteChange,ensureQuoteAccounts,clearDocument,loadDocument,reset});
+ window.addEventListener('snote:route-changed',event=>{
+  if(event.detail?.page==='settings'){const host=settingsElement();if(host)void mountSettings(host);}
+  else if(presentation==='settings')clearEditor();
+ });
+ new MutationObserver(()=>{
+  const host=settingsElement();
+  if(host&&host!==settingsHost)void mountSettings(host);
+  else if(presentation==='settings'&&(!host||section?.parentElement!==host)){clearEditor();settingsHost=null;}
+ }).observe(document.body,{childList:true,subtree:true});
+ const initialHost=settingsElement();if(initialHost)void mountSettings(initialHost);
 })();

@@ -201,7 +201,7 @@
   baseline=null;saveBusy=false;passwordBusy=false;phoneBusy=false;avatarBusy=false;showPresentation(mode,host);root.hidden=false;clearPasswords();
   for(const id of ['message','password-message','phone-message','avatar-message'])status(id,'');root.querySelector('details').open=false;
   if(mode==='drawer')requestAnimationFrame(()=>{if(!root.hidden&&!closing){root.classList.add('is-open');panel.focus({preventScroll:true});}});
-  void window.SnotePaymentAccounts?.openProfile();
+  void window.SnotePaymentAccounts?.openProfile({inline:mode==='settings'});
   sessionTimer=setInterval(()=>{if(!closing&&!root.hidden&&!bridge()?.current(context))close({force:true});else if(current())controls();},200);await load();return true;
  }
  async function open(){return begin('drawer');}
