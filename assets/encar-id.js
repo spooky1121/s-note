@@ -193,9 +193,20 @@
  function sync(){
   if(session&&!bridge()?.current(session.context)){close();return;}
   renderPrice();
-  for(const button of document.querySelectorAll('button[data-encar-id-car],#vehicle-encar-check')){
+  for(const button of document.querySelectorAll('button[data-encar-id-car],a.snote-list-encar[data-encar-id-car],#vehicle-encar-check')){
    const detail=button.id==='vehicle-encar-check',carId=button.dataset.encarIdCar;
-   const context=bridge()?.context(carId,detail?'detail':'list');button.disabled=!context||!!session&&!saved(context);
+   const context=bridge()?.context(carId,detail?'detail':'list');
+   if(button.tagName==='A'){
+    // Saved list links use native navigation and an index-local activation guard.
+    // A temporarily open detail drawer must not strip their URL and leave them
+    // dependent on this optional search/price bundle being available to reopen it.
+    if(context){const record=saved(context);
+     if(record){if(button.getAttribute('href')!==record.url)button.setAttribute('href',record.url);button.removeAttribute('aria-disabled');button.removeAttribute('tabindex');}
+     else{button.removeAttribute('href');button.setAttribute('aria-disabled','true');button.tabIndex=-1;}
+    }
+    continue;
+   }
+   button.disabled=!context||!!session&&!saved(context);
    if(detail){const label=context&&saved(context)?'엔카 광고 열기':'엔카 광고 찾기';if(button.getAttribute('aria-label')!==label)button.setAttribute('aria-label',label);if(button.dataset.tooltip!==label)button.dataset.tooltip=label;}
   }
  }

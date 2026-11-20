@@ -10,6 +10,18 @@
 :is(#quote-paper,.contract-paper,#zc76-receipt-paper) .snote95-footer-company{display:block;max-width:120mm;margin:0;font-size:8.5px;line-height:1.25;letter-spacing:0;overflow-wrap:anywhere;color:#243e54;font-weight:800}
 /* A4 document geometry is independent of the screen viewport and popup chrome. */
 #zc76-receipt-paper .snote202-receipt-brand .zc-footer-emblem[hidden]{display:none}
+/* The application lists use nowrap cells. Receipt prose needs independent,
+   content-sized cells, especially the complete retention-period wording. */
+#zc76-receipt-paper .zc76-privacy col:nth-child(1){width:22%!important}
+#zc76-receipt-paper .zc76-privacy col:nth-child(2){width:44%!important}
+#zc76-receipt-paper .zc76-privacy col:nth-child(3){width:34%!important}
+#zc76-receipt-paper .zc76-privacy :is(th,td){white-space:normal!important;overflow-wrap:anywhere;word-break:keep-all;vertical-align:middle;overflow:visible;text-overflow:clip}
+#zc76-receipt-paper .zc76-privacy th{height:8mm!important;padding:5px 8px!important;font-size:7.6pt!important;line-height:1.45!important}
+#zc76-receipt-paper .zc76-privacy td{height:23mm!important;padding:6px 8px!important;font-size:7.6pt!important;line-height:1.5!important}
+#zc76-receipt-paper .zc76-privacy td:nth-child(1){width:22%!important}
+#zc76-receipt-paper .zc76-privacy td:nth-child(2){width:44%!important}
+#zc76-receipt-paper .zc76-privacy td:nth-child(3){width:34%!important}
+#zc76-receipt-paper .zc76-privacy p{margin:2px 0!important}
 @media screen {
  #contract-paper,#zc76-receipt-paper{flex-shrink:0!important;overflow:visible!important}
  #contract-paper .ct-footer,#zc76-receipt-paper .snote202-receipt-brand{
