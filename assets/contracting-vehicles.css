@@ -1,2 +1,6 @@
-/* A contracting vehicle stays in its purchase view and keeps every action available. */
-#list-screen :is(tr.vehicle-clickable,.vehicle-card,.acct-mobile-card).snote-contracting-vehicle{opacity:.48}
+/* Keep identity, amounts and actions readable; the image alone carries the softened state. */
+@media screen {
+ #list-screen :is(tr.vehicle-clickable,.vehicle-card,.acct-mobile-card).snote-contracting-vehicle{opacity:1;background:#fafafa}
+ #list-screen .snote-contracting-vehicle .car-thumb>img{opacity:.55;filter:saturate(.5)}
+ #list-screen .snote-contracting-vehicle .snote-contract-stamp{opacity:1}
+}

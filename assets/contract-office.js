@@ -223,16 +223,16 @@
   pane.append(paneHead,toolbar,historyPanel,status,form);root.append(heading,landing,archive,pane);host.replaceChildren(root);renderPayload(s,blank());s.baseline=snapshot(s);
   const marks={purchase:'<path d="M25 39v17m-7-7 7 7 7-7M17 31h24"/>',sale:'<path d="M25 56V39m-7 7 7-7 7 7M17 31h24"/>',presentation:'<path d="M17 33h24M17 42h24M17 51h18"/>',contract:'<path d="m17 46 6 6 15-17M17 29h24"/>'};
   const makeTile=(id,label,mark,container,template=false)=>{
-   const tile=node('button',null,'co-document-tile');tile.type='button';tile.dataset.reorderId=id;if(template)tile.dataset.templateKind=id;else tile.dataset.documentKind=id;tile.setAttribute('aria-label',label);
+   const ready=!template&&isKind(id),tile=node('button',null,'co-document-tile');tile.type='button';tile.dataset.reorderId=id;tile.dataset.documentReady=String(ready);if(template)tile.dataset.templateKind=id;else tile.dataset.documentKind=id;tile.setAttribute('aria-label',label+(ready?'':' · 준비 중'));if(!ready)tile.setAttribute('aria-disabled','true');
    const shape=node('span',null,'co-document-shape');shape.setAttribute('aria-hidden','true');shape.innerHTML=((id==='contract'||id==='receipt')&&window.snote161ActionIcon?.(id))||'<svg viewBox="0 0 58 72" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5h25l11 12v48H12z" fill="currentColor" fill-opacity=".035"/><path d="M37 5v13h11"/>'+mark+'</svg>';tile.append(shape,node('span',label,'co-document-label'));
-   tile.onclick=()=>{if(!current(s))return;if(!template&&isKind(id))openForm(s,id);else if(typeof toast==='function')toast(label+'는 준비 중입니다.');};container.append(tile);
+   if(!ready)tile.append(node('span','준비 중','co-document-availability'));tile.onclick=()=>{if(current(s)&&ready)openForm(s,id);};container.append(tile);
   };
-  for(const[kind,label]of[['purchase','매입서류'],['sale','매도서류'],['presentation','제시표'],['contract','계약서']])makeTile(kind,label,marks[kind],documentIcons);
+  for(const[kind,label]of[['purchase','매입서류'],['sale','매도서류'],['presentation','제시표'],['contract','계약서 작성']])makeTile(kind,label,marks[kind],documentIcons);
   for(const[id,label,mark]of[
    ['business-registration','사업자등록증','<path d="M19 55V35h20v20M24 40h2m6 0h2m-10 6h2m6 0h2M27 55v-5h5v5"/>'],
    ['non-business-confirmation','비사업용 사실확인서','<path d="M18 30h22M18 37h18m-17 12 6 6 14-15"/>'],
    ['receipt','인수증','<path d="M19 30h20M19 38h20M19 46h12m-12 9h20"/>'],
-   ['contract','계약서','<path d="M18 30h22M18 37h16m-14 18 6-2 13-13-4-4-13 13-2 6Z"/>'],
+   ['contract','계약서 양식','<path d="M18 30h22M18 37h16m-14 18 6-2 13-13-4-4-13 13-2 6Z"/>'],
    ['vehicle-management-registration','자동차관리등록증','<path d="M18 48v-8l4-7h14l4 7v8M18 40h22M21 48v4m16-4v4M22 44h2m10 0h2"/>'],
    ['shareholders','주주명부','<circle cx="24" cy="34" r="5"/><circle cx="36" cy="38" r="4"/><path d="M16 53v-5a8 8 0 0 1 16 0v5m3-10a7 7 0 0 1 8 7v3"/>']
   ])makeTile(id,label,mark,templateIcons,true);

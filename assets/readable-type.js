@@ -9,7 +9,7 @@
    const head=rule.cssText.slice(0,rule.cssText.indexOf('{'));if(/^@media\s+print\b/i.test(head))continue;const child=rules(rule.cssRules);if(child)result+=head+'{'+child+'}';
   }
  }return result;}
- function rebuild(){queued=false;let css='';for(const source of document.styleSheets){if(source.ownerNode===sheet||source.disabled||source.media?.mediaText==='print')continue;try{const content=rules(source.cssRules);css+=source.media?.mediaText?'@media '+source.media.mediaText+'{'+content+'}':content;}catch{}}
+ function rebuild(){queued=false;let css='';for(const source of document.styleSheets){if(source.ownerNode===sheet||source.ownerNode?.hasAttribute('data-snote-type-scale')||source.disabled||source.media?.mediaText==='print')continue;try{const content=rules(source.cssRules);css+=source.media?.mediaText?'@media '+source.media.mediaText+'{'+content+'}':content;}catch{}}
   sheet.textContent='@media screen{'+css+'}';document.documentElement.dataset.snoteFontIncrease='2px';window.dispatchEvent(new Event('snote-fonts-enlarged'));
  }
  function schedule(){if(queued)return;queued=true;requestAnimationFrame(rebuild);}

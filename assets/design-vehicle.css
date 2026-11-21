@@ -1,0 +1,83 @@
+/* Vehicle-only hierarchy and mobile sections. Business controls remain in their original DOM. */
+@media screen {
+ #vehicle-overlay .vehicle-modal>.vehicle-header{padding-top:13px!important;padding-bottom:12px!important}
+ #vehicle-overlay .vehicle-header h2{font-size:20px;line-height:1.35;font-weight:700}
+ #vehicle-overlay .vehicle-header-actions{display:flex;flex-wrap:nowrap;gap:7px;min-width:0}
+ #vehicle-overlay #vehicle-header-actions>.vehicle-header-action{display:inline-flex;flex:0 0 auto;align-items:center;justify-content:center;gap:6px;width:auto;min-width:44px;height:38px;padding:0 10px;border-radius:8px;font-size:12px;font-weight:600;line-height:1.2;white-space:nowrap}
+ #vehicle-overlay #vehicle-header-actions>button[hidden]{display:none!important}
+ body.accountant-mode #vehicle-overlay #vehicle-header-actions>.vehicle-header-save{display:none!important}
+ #vehicle-overlay #vehicle-header-actions>.vehicle-header-action svg{flex:none;width:18px;height:18px}
+ #vehicle-overlay #vehicle-header-actions>#vehicle-header-save{order:0;padding-inline:14px;border-color:var(--blue,#315cf5)!important;background:var(--blue,#315cf5)!important;color:#fff!important}
+ /* The shared icon fitter writes transparent backgrounds inline. A decorative layer
+    gives this existing save control its primary treatment without changing that fitter. */
+ #vehicle-overlay #vehicle-header-actions>#vehicle-header-save::before{position:absolute;inset:0;border:1px solid var(--blue,#315cf5);border-radius:inherit;background:var(--blue,#315cf5);content:'';pointer-events:none}
+ #vehicle-overlay #vehicle-header-actions>#vehicle-header-save>:is(svg,.design-vehicle-action-label){position:relative;z-index:1;color:#fff!important}
+ #vehicle-overlay #vehicle-header-actions>#vehicle-header-save svg.snote-action-symbol{stroke:#fff!important}
+ #vehicle-overlay #vehicle-header-actions>#vehicle-header-save:hover::before{filter:brightness(.95)}
+ #vehicle-overlay #vehicle-header-actions>.contract-launch{order:1;padding-inline:12px;border-color:#c9d7fb;background:#edf3ff;color:#234dba}
+ #vehicle-overlay #vehicle-header-actions>#vehicle-encar-check{order:10;margin-left:8px}
+ #vehicle-overlay #vehicle-header-actions>.quote-launch{order:11}
+ #vehicle-overlay #vehicle-header-actions>#vehicle-header-share{order:12}
+ #vehicle-overlay #vehicle-header-actions>#vehicle-header-received-leave{order:13}
+ #vehicle-overlay #vehicle-header-actions>#vehicle-header-delete{order:20;margin-left:8px;border-color:#f0dce1;background:#fff;color:#bb3449}
+ #vehicle-overlay #vehicle-header-actions>.vehicle-header-action:disabled{opacity:.45}
+ #vehicle-overlay #vehicle-header-actions>.vehicle-header-action:focus-visible{outline:3px solid #9bbcf3;outline-offset:2px}
+ #vehicle-overlay #vehicle-header-actions>.vehicle-header-action .design-vehicle-action-label{display:inline;font:inherit;line-height:inherit}
+ #vehicle-overlay .design-vehicle-summary{display:flex;align-items:center;flex-wrap:wrap;gap:8px 20px;min-width:0;margin-top:7px;line-height:1.45}
+ #vehicle-overlay #design-vehicle-plate{font-size:15px;font-weight:700;letter-spacing:-.25px;overflow-wrap:anywhere}
+ #vehicle-overlay .design-vehicle-summary-amount{display:flex;align-items:baseline;gap:8px;min-width:0}
+ #vehicle-overlay #design-vehicle-price-label{font-size:11px;font-weight:500;color:var(--vehicle-muted,#748095)}
+ #vehicle-overlay #design-vehicle-price{font-size:17px;font-weight:750;letter-spacing:-.35px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+ #vehicle-overlay .vehicle-header .vehicle-meta-line{font-size:11px;line-height:1.5}
+ #vehicle-overlay .design-vehicle-tabs{display:none}
+ #vehicle-overlay :is(.car-identity-head h3,.car-cost-head h3,.media-section-head h3,.vehicle-memo-section h3){font-size:14px;font-weight:650}
+ #vehicle-overlay .vehicle-body .car-identity-section .vehicle-identity-grid>label,#vehicle-overlay .sold-fields>label,#vehicle-overlay #car-cost-section :is(.cost-edit,.detail-lender-row)>label{font-size:12px;line-height:1.4}
+ #vehicle-overlay .vehicle-body .car-identity-section .vehicle-identity-grid>label>:is(input,select:not([hidden])),#vehicle-overlay .vehicle-body .sold-info-section .sold-fields input,#vehicle-overlay #car-cost-section :is(input,.detail-lender-row select),#vehicle-overlay #detail-color-trigger.detail-color-trigger{font-size:13px}
+}
+@media screen and (min-width:1100px) {
+ #vehicle-overlay .vehicle-modal>.vehicle-body{grid-template-columns:minmax(0,1.05fr) minmax(0,1.3fr) minmax(0,.85fr)}
+ #vehicle-overlay .vehicle-modal>.vehicle-body #car-cost-section{align-self:start;max-height:100%}
+ #vehicle-overlay .vehicle-media-grid{align-self:start;max-height:100%}
+ #vehicle-overlay .vehicle-info-column>.vehicle-memo-section{height:104px}
+ #vehicle-overlay .vehicle-info-column{overflow:auto;scrollbar-width:thin;overscroll-behavior:contain}
+}
+@media screen and (max-width:1099px) and (min-width:761px) {
+ #vehicle-overlay .vehicle-heading-row{align-items:flex-start}
+ #vehicle-overlay .vehicle-header-actions{flex-wrap:wrap}
+}
+@media screen and (max-width:760px) {
+ #vehicle-overlay .vehicle-modal>.vehicle-header{padding:calc(12px + env(safe-area-inset-top,0px)) 12px 0!important}
+ #vehicle-overlay .vehicle-heading{display:flex;flex-direction:column;gap:0}
+ #vehicle-overlay .vehicle-heading-row{display:contents}
+ #vehicle-overlay .vehicle-name-links{order:0;flex:none;width:100%;min-height:32px;padding-left:44px;padding-right:0;box-sizing:border-box}
+ #vehicle-overlay .vehicle-header h2{font-size:17px;line-height:1.4}
+ #vehicle-overlay .design-vehicle-summary{order:1;justify-content:space-between;gap:5px 12px;margin-top:7px}
+ #vehicle-overlay #design-vehicle-plate{font-size:15px}
+ #vehicle-overlay #design-vehicle-price{font-size:17px}
+ #vehicle-overlay .vehicle-header .vehicle-meta-line{order:2;margin:4px 0 9px;font-size:11px}
+ #vehicle-overlay #vehicle-header-actions{order:3;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;width:100%;margin:0 0 10px}
+ #vehicle-overlay #vehicle-header-actions>.vehicle-header-action{min-width:0;min-height:44px;height:44px;margin:0;padding:0 5px;gap:5px;font-size:12px}
+ #vehicle-overlay #vehicle-header-actions>:is(#vehicle-header-save,.contract-launch){grid-column:span 2;height:44px}
+ #vehicle-overlay #vehicle-header-actions>:is(#vehicle-encar-check,#vehicle-header-delete){margin-left:0}
+ #vehicle-overlay #vehicle-header-actions>.vehicle-header-action svg{width:20px;height:20px}
+ #vehicle-overlay .design-vehicle-tabs{order:4;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;margin:0 -2px;padding:0;border-bottom:0}
+ #vehicle-overlay .design-vehicle-tabs[hidden]{display:none!important}
+ #vehicle-overlay .design-vehicle-tabs button{position:relative;min-width:0;min-height:44px;margin:0;padding:11px 2px;border:0;border-radius:0;background:transparent;color:var(--vehicle-muted,#748095);font-size:13px;font-weight:600;line-height:1.4;white-space:nowrap}
+ #vehicle-overlay .design-vehicle-tabs button[aria-selected="true"]{color:var(--blue,#315cf5);font-weight:750}
+ #vehicle-overlay .design-vehicle-tabs button[aria-selected="true"]::after{position:absolute;inset:auto 10px 0;height:3px;border-radius:3px 3px 0 0;background:currentColor;content:''}
+ #vehicle-overlay .design-vehicle-tabs button:focus-visible{outline:2px solid var(--blue,#315cf5);outline-offset:-4px;border-radius:5px}
+ #vehicle-overlay .vehicle-modal>.vehicle-body .design-vehicle-inactive{display:none!important}
+ #vehicle-overlay .vehicle-body .car-identity-section .vehicle-identity-grid>label>:is(input,select:not([hidden])),#vehicle-overlay .vehicle-body .sold-info-section .sold-fields input,#vehicle-overlay #car-cost-section :is(input,.detail-lender-row select),#vehicle-overlay #detail-color-trigger.detail-color-trigger{font-size:16px}
+ #vehicle-overlay .vehicle-media-grid .photo-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+ body.accountant-mode #vehicle-overlay #vehicle-header-actions{display:flex;flex-wrap:wrap}
+ body.accountant-mode #vehicle-overlay .vehicle-header .vehicle-meta-line{margin-bottom:12px}
+}
+@media screen and (max-width:350px) {
+ #vehicle-overlay .design-vehicle-summary{gap:5px 8px}
+ #vehicle-overlay .design-vehicle-summary-amount{gap:5px}
+ #vehicle-overlay #design-vehicle-price-label{font-size:10px}
+ #vehicle-overlay #design-vehicle-price{font-size:16px}
+ #vehicle-overlay #vehicle-header-actions>.vehicle-header-action{gap:4px;font-size:11px}
+ #vehicle-overlay .design-vehicle-tabs button{font-size:12px}
+}
+@media print{#vehicle-overlay :is(.design-vehicle-summary,.design-vehicle-tabs){display:none!important}}

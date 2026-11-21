@@ -1,0 +1,48 @@
+/* One compact purchase toolbar and an optional trend view on small screens. */
+@media screen{
+ #snote-purchase-overview .snote-purchase-brief,
+ #snote-purchase-overview .snote-purchase-overview-toggle{display:none}
+}
+@media screen and (max-width:760px){
+ #snote-purchase-overview[data-design-purchase-expanded]{padding:6px 12px;margin-bottom:12px}
+ #snote-purchase-overview[data-design-purchase-expanded] .sales-overview-head{display:flex;align-items:center;gap:7px;min-height:44px;margin:0}
+ #snote-purchase-overview[data-design-purchase-expanded] .sales-overview-head h2{flex:none;font-size:14px;white-space:nowrap}
+ #snote-purchase-overview[data-design-purchase-expanded] .sales-overview-period{display:none}
+ #snote-purchase-overview .snote-purchase-brief{display:block;flex:1;min-width:0;color:#63718a;font-size:12px;line-height:1.4;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ #snote-purchase-overview .snote-purchase-overview-toggle{display:grid;place-items:center;flex:none;width:44px;min-width:44px;height:44px;min-height:44px;margin:0 -7px 0 0;padding:12px;border:0;border-radius:7px;background:transparent;color:#677d9d;box-shadow:none;cursor:pointer;translate:none!important}
+ #snote-purchase-overview .snote-purchase-overview-toggle svg{display:block;width:18px;height:18px;transition:transform .18s ease}
+ #snote-purchase-overview .snote-purchase-overview-toggle:focus-visible{outline:2px solid #8eacf1;outline-offset:-2px}
+ #snote-purchase-overview[data-design-purchase-expanded=true] .snote-purchase-overview-toggle svg{transform:rotate(180deg)}
+ #snote-purchase-overview[data-design-purchase-expanded=true] .sales-overview-body{margin:9px 0 5px}
+ #snote-purchase-overview[data-design-purchase-expanded=false]>.sales-overview-body,
+ #snote-purchase-overview[data-design-purchase-expanded=false]>.sales-overview-foot{display:none}
+ #snote-app #list-screen[data-vehicle-view][data-design-purchase=true]>.panel{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;padding:12px 12px 0;align-items:center}
+ #snote-app #list-screen[data-design-purchase=true]>.panel>.panel-head,
+ #snote-app #list-screen[data-design-purchase=true] .panel-head>.list-heading,
+ #snote-app #list-screen[data-design-purchase=true] .list-title-line,
+ #snote-app #list-screen[data-design-purchase=true] .snote-vehicle-heading-actions{display:contents}
+ #snote-app #list-screen[data-design-purchase=true] .snote-vehicle-title-with-count{grid-column:1;grid-row:1;display:flex;align-items:center;gap:6px;min-width:0;margin:0}
+ #snote-app #list-screen[data-design-purchase=true] #list-title{width:auto;min-height:0;padding:0;font-size:16px;white-space:nowrap}
+ #snote-app #list-screen[data-design-purchase=true] #snote-vehicle-count{font-size:12px}
+ #snote-app #list-screen[data-design-purchase=true] .zc-list-actions.snote-vehicle-actions{grid-column:2;grid-row:1;position:static;display:flex;gap:0;margin:0;width:auto;min-width:0}
+ #snote-app #list-screen[data-design-purchase=true] .zc-list-actions>button,
+ #snote-app #list-screen[data-design-purchase=true] .snote-vehicle-add-slot>button{width:44px;min-width:44px;height:44px;min-height:44px;margin:0;padding:12px}
+ #snote-app #list-screen[data-design-purchase=true] #buy-search-host{grid-column:1/-1;grid-row:2;display:block;width:auto;min-width:0;margin:0}
+ #snote-app #list-screen[data-design-purchase=true] #buy-search-host>.search{width:100%;max-width:none;min-width:0;min-height:44px;margin:0;padding:0 11px}
+ #snote-app #list-screen[data-design-purchase=true] #buy-search-host input{width:100%;min-width:0;min-height:44px}
+ #snote-app #list-screen[data-design-purchase=true]>.panel>.snote-mobile-sort{grid-column:1;grid-row:3;order:initial;display:flex;gap:3px;max-width:none;min-width:0;width:auto;margin:0 0 2px}
+ #snote-app #list-screen[data-design-purchase=true]>.panel>.snote-mobile-sort label{min-width:0;flex:1}
+ #snote-app #list-screen[data-design-purchase=true]>.panel>.snote-mobile-sort select{min-width:0;width:100%;padding-inline:7px}
+ #snote-app #list-screen[data-design-purchase=true]>.panel>.snote-mobile-sort>button{flex:none;width:44px;min-width:44px;height:44px;min-height:44px;background:transparent}
+ #snote-app #list-screen[data-design-purchase=true] #snote-vehicle-view-toolbar{grid-column:2;grid-row:3;margin:0 0 2px;gap:0;justify-content:flex-end}
+ #snote-app #list-screen[data-design-purchase=true]>.panel>:is(#list-table,#list-mobile){grid-column:1/-1;grid-row:4;min-width:0;width:100%;margin:0;padding:0 0 10px}
+ #snote-app #list-screen[data-design-purchase=true]>.panel>#list-pagination{grid-column:1/-1;grid-row:5;min-width:0;margin:4px 0 12px}
+ #snote-app #list-screen[data-design-purchase=true] #list-desc:empty{display:none}
+}
+@media screen and (max-width:360px){
+ #snote-purchase-overview[data-design-purchase-expanded]{padding-inline:10px}
+ #snote-purchase-overview[data-design-purchase-expanded] .sales-overview-head{gap:5px}
+ #snote-app #list-screen[data-vehicle-view][data-design-purchase=true]>.panel{padding-inline:10px;column-gap:5px}
+}
+@media(prefers-reduced-motion:reduce){#snote-purchase-overview .snote-purchase-overview-toggle svg{transition:none}}
+@media print{#snote-purchase-overview .snote-purchase-brief,#snote-purchase-overview .snote-purchase-overview-toggle{display:none!important}}

@@ -10,6 +10,11 @@
  #snote-purchase-columns header{margin:0 0 18px}
  #snote-purchase-columns h2{margin:0;font-size:17px;font-weight:650;line-height:1.4;letter-spacing:-.4px}
  #snote-purchase-columns header p{margin:7px 0 0;color:#8793a6;font-size:11px;line-height:1.6}
+ #snote-purchase-columns .snote-purchase-presets{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;padding:4px;margin:0 0 15px;border-radius:10px;background:#f2f4f8}
+ #snote-purchase-columns .snote-purchase-presets>button{min-width:0;min-height:36px;margin:0;padding:7px 5px;border:0;border-radius:7px;background:transparent;color:#657389;font:inherit;font-size:12px;font-weight:550;cursor:pointer;translate:none!important}
+ #snote-purchase-columns .snote-purchase-presets>button[aria-pressed=true]{background:#fff;color:#285fce;box-shadow:0 1px 4px #24385610}
+ #snote-purchase-columns .snote-purchase-presets>button:hover{color:#285fce;background:#ffffff9c}
+ #snote-purchase-columns .snote-purchase-presets>button:focus-visible{outline:2px solid #8eacf1;outline-offset:1px}
  #snote-purchase-columns .snote-purchase-column-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
  #snote-purchase-columns .snote-purchase-column-option{display:flex;align-items:center;gap:8px;min-width:0;min-height:42px;box-sizing:border-box;margin:0;padding:10px;border:1px solid #e7ecf4;border-radius:9px;background:#fff;color:#5a687d;font-size:12px;line-height:1.5;cursor:pointer}
  #snote-purchase-columns input[type=checkbox]{appearance:auto;flex:none;box-sizing:border-box;width:15px;height:15px;min-width:15px;min-height:15px;margin:0;padding:0;accent-color:#315cf5}
@@ -59,6 +64,7 @@
  #list-screen[data-purchase-columns-active=true][data-purchase-no-accountant-fields=true] .acct-mobile-fields{display:none!important}
  #list-screen[data-purchase-columns-active=true][data-purchase-no-extra-fields=true] .snote-purchase-extra-fields{display:none!important}
  @media(max-width:760px){#snote-app #snote-vehicle-view-toolbar>.snote-purchase-columns-trigger{width:44px;height:44px;min-width:44px;min-height:44px;padding:12px}}
+ @media(max-width:760px){#snote-purchase-columns .snote-purchase-presets>button{min-height:44px}}
  @media(max-width:380px){#snote-purchase-columns>.snote-popup-native-body{padding:19px 15px}#snote-purchase-columns .snote-purchase-column-options{grid-template-columns:1fr}}
 }
 @media print{#snote-purchase-columns,#snote-purchase-columns::backdrop,#snote-purchase-columns-trigger{display:none!important}}
