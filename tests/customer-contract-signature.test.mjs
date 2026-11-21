@@ -25,12 +25,12 @@ function fixture(extra = {}) {
     get rendered() { return rendered; } };
 }
 
-test('explicit saved customer uses sanitized image and labels its original submission', () => {
+test('explicit saved customer uses sanitized image and its actual KST signature timestamp', () => {
   const f = fixture();
   assert.equal(f.controller.set(f.person), true);
   assert.equal(f.rendered.visible, true);
   assert.equal(f.rendered.image, png);
-  assert.match(f.rendered.caption, /^고객 원제출 서명/);
+  assert.equal(f.rendered.caption, '고객 서명; 2026.11.01 19:00:00');
 });
 
 test('purchase never receives a sales buyer signature; sale restores the same scope', () => {
@@ -151,4 +151,27 @@ test('a delayed intake resolver cannot attach a signature after the document is 
  const f=fixture();let release;f.sandbox.snoteResolveDocumentCustomer=customer=>new Promise(resolve=>release=()=>resolve(customer));
  const pending=f.controller.setSaved(f.person);f.context={...f.context,open:false};f.controller.clear();release();
  assert.equal(await pending,false);assert.equal(f.rendered.visible,false);
+});
+
+
+test('signature timestamp uses KST even across year and midnight boundaries', () => {
+  const f = fixture();
+  assert.equal(f.sandbox.snoteCustomerSignatureCaption('2026-12-31T15:00:00.000Z'), '고객 서명; 2027.01.01 00:00:00');
+  assert.equal(f.sandbox.snoteCustomerSignatureCaption('2026-11-20T23:42:17-05:00'), '고객 서명; 2026.11.21 13:42:17');
+});
+
+test('missing and invalid stored timestamps never invent a current signing time', () => {
+  for (const value of [null,undefined,'','invalid-date',0,new Date()]) {
+    const f=fixture();
+    f.controller.set({...f.person,customerSignatureSignedAt:value});
+    assert.equal(f.rendered.visible,true);
+    assert.equal(f.rendered.caption,'고객 서명;');
+  }
+});
+
+test('explicitly selected second saved signature carries its own timestamp', () => {
+  const f=fixture();f.controller.set(f.person);
+  const second={...f.person,customerSignatureSignedAt:'2026-11-21T01:02:03Z'};
+  f.controller.set(second);
+  assert.equal(f.rendered.caption,'고객 서명; 2026.11.21 10:02:03');
 });

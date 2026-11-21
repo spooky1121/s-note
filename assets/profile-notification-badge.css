@@ -1,0 +1,10 @@
+/* One readable numeric badge on the avatar; keep the profile hover animation. */
+@media screen{
+ #snote-app #snote-profile-trigger.snote-has-notifications::after{content:none!important;display:none!important}
+ #snote-app #snote-profile-trigger>.snote-profile-unread-badge{position:absolute;left:calc(var(--profile-collapsed-width,48px) - 18px);top:-3px;z-index:3;display:grid;place-items:center;box-sizing:border-box;width:22px;height:22px;border:2px solid #fff;border-radius:50%;background:#e83e52;color:#fff;font:750 10px/1 var(--snote-font-family,sans-serif);font-variant-numeric:tabular-nums;letter-spacing:-.3px;pointer-events:none;animation:snote-profile-unread-blink 1.35s ease-in-out infinite}
+ #snote-app #snote-profile-trigger>.snote-profile-unread-badge[data-overflow=true]{font-size:8.5px}
+ #snote-app #snote-profile-trigger>.snote-profile-unread-badge[hidden]{display:none!important}
+}
+@keyframes snote-profile-unread-blink{0%,100%{opacity:1}50%{opacity:.35}}
+@media(prefers-reduced-motion:reduce){#snote-app #snote-profile-trigger>.snote-profile-unread-badge{animation:none!important;opacity:1}}
+@media print{#snote-profile-unread-badge{display:none!important}}

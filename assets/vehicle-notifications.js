@@ -14,6 +14,8 @@
   unread=Number.isSafeInteger(Number(count))?Math.max(0,Number(count)):0;
   const profile=document.getElementById('snote-profile-trigger'),menu=document.getElementById('snote-profile-notifications');
   for(const el of [profile,menu])if(el){el.classList.toggle('snote-has-notifications',unread>0);el.dataset.unreadCount=String(unread);}
+  let context;try{context=bridge()?.context();}catch{}
+  window.SnoteProfileNotificationBadge?.update('notifications',unread,context);
   if(menu){menu.setAttribute('aria-label',unread?'알림, 새 알림 '+unread+'개':'알림');menu.setAttribute('aria-haspopup','dialog');menu.setAttribute('aria-controls',dialog.id);}
  }
  function close(){++viewVersion;++listVersion;opened=null;dialog.close();list.replaceChildren();status.textContent='';}
