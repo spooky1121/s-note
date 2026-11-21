@@ -40,6 +40,7 @@
   const calculator=document.getElementById('snote-calculator-close');if(calculator&&!calculator.classList.contains('snote-popup-close')){const panel=document.getElementById('snote-calculator-panel'),content=document.createElement('div');content.className='snote-calculator-content';content.append(...panel.childNodes);panel.append(content,calculator);mark(calculator);}
   for(const [id,handler] of [['zoom-overlay','closeZoom()'],['snote201-image-zoom','snote201CloseImageZoom()']]){
    const zoom=document.getElementById(id),zoomClose=zoom?.querySelector('button[onclick="'+handler+'"]');
+   if(zoom?.hasAttribute('data-snote-image-viewer'))continue;
    if(zoomClose&&!zoomClose.classList.contains('snote-popup-close')){const frame=document.createElement('div'),body=document.createElement('div');frame.className='snote-popup-frame';body.className='snote-zoom-body';body.append(...zoom.childNodes);frame.append(body,zoomClose);zoom.append(frame);zoom.classList.add('snote-popup-overlay');mark(zoomClose);}
   }
  }
