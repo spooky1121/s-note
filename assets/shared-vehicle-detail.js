@@ -1,0 +1,114 @@
+/* The normal vehicle drawer, backed by one scoped sharing grant instead of own datasets. */
+(()=>{'use strict';if(window.SnoteSharedVehicleDetail)return;
+ const byId=id=>document.getElementById(id),bridge=()=>window.snoteVehicleShareBridge,root=()=>byId('vehicle-overlay');
+ const UUID=/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i;
+ const presets={read:{edit:false,delete:false,label:'읽기'},edit:{edit:true,delete:false,label:'수정'},delete:{edit:false,delete:true,label:'삭제'},all:{edit:true,delete:true,label:'모든 권한'}};
+ const editable=new Set(['detail-make','detail-model','detail-vin','detail-km','detail-purchase-date','detail-color','detail-buy','detail-sell','detail-memo']);
+ let session=null,serial=0;
+ const esc=value=>String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+ const projection=item=>'snote-shared:'+item.companyId+':'+item.ownerId+':'+encodeURIComponent(item.carId).replaceAll("'",'%27');
+ const actor=()=>typeof currentUser==='undefined'?null:currentUser;
+ const active=()=>session!==null;
+ const current=s=>!!s&&session===s&&actor()===s.actor&&activeCarId===s.id&&root()?.classList.contains('open')&&bridge()?.current?.(s.context)===true;
+ function capabilities(value){const p=presets[value?.permission],native=value?.nativeAccess===true&&value.permission==='all'&&value.invitationId===null&&value.version===null;
+  if(value?.apiVersion!==2||value.canRead!==true||!p||value.canEdit!==p.edit||value.canDelete!==p.delete||!native&&!(value.nativeAccess===false&&UUID.test(value.invitationId||'')&&Number.isSafeInteger(value.version)&&value.version>0))return null;
+  return{...p,permission:value.permission,access:native?null:{invitationId:value.invitationId,version:value.version}};
+ }
+ const sameAccess=(a,b)=>a===null&&b===null||!!a&&!!b&&a.invitationId===b.invitationId&&a.version===b.version;
+ const scope=(s,action,extra={})=>({p_action:action,p_company:s.item.companyId,p_owner:s.item.ownerId,p_car:s.item.carId,...extra});
+ function normalize(raw,s){if(!raw||typeof raw!=='object'||String(raw.id)!==s.item.carId||typeof raw.model!=='string'||!raw.model.trim())throw Error('INVALID_RESPONSE');const c=window.SnoteMoney.car(raw);return{...c,id:s.id,ownerId:'cld_'+s.item.ownerId.replaceAll('-','').slice(0,18),km:c.km??c.mileage??''};}
+ function note(s,message,error=false){if(!current(s))return;let node=byId('snote-shared-detail-status');if(!node){node=document.createElement('p');node.id='snote-shared-detail-status';node.setAttribute('role','status');node.setAttribute('aria-live','polite');root().querySelector('.vehicle-heading').append(node);}node.textContent=message;node.classList.toggle('is-error',error);}
+ const errorMessage=e=>/SHARE_ACCESS_CHANGED/.test(String(e?.message))?'공유 권한이 변경되었습니다. 최신 권한을 확인한 뒤 다시 저장해 주세요.':/CONFLICT/.test(String(e?.message))?'다른 딜러가 먼저 수정했습니다. 입력 내용은 유지됩니다. 차량을 다시 열어 최신 정보를 확인해 주세요.':/FORBIDDEN|CAR_NOT_FOUND|42501/.test(String(e?.message)+' '+e?.code)?'차량이 삭제되었거나 공유 권한이 해제되었습니다.':String(e?.userMessage||'서버 저장을 확인하지 못했습니다. 입력 내용은 유지됩니다. 다시 시도해 주세요.');
+ function remember(s,el){if(!el||s.restore.has(el))return;s.restore.set(el,{hidden:el.hidden,disabled:el.disabled,readOnly:el.readOnly,display:el.style.display,maxLength:el.maxLength,options:el.tagName==='SELECT'?el.innerHTML:null,value:el.tagName==='SELECT'?el.value:null,tooltip:el.getAttribute('data-tooltip'),ariaLabel:el.getAttribute('aria-label')});}
+ function snapshot(s){for(const el of root().querySelectorAll('input,select,textarea,button,#detail-model-wrapper,#detail-grade-custom-wrapper,#sold-info-section,[data-cost-setting],.detail-lender-row,.detail-repair'))remember(s,el);}
+ function hide(s,el){if(!el)return;remember(s,el);el.hidden=true;}
+ function policy(s){if(!current(s))return;const overlay=root();
+  for(const el of overlay.querySelectorAll('input,select,textarea')){remember(s,el);const can=s.cap.edit&&editable.has(el.id);if(el.tagName==='SELECT'||el.type==='file')el.disabled=!can;else el.readOnly=!can;}
+  for(const el of overlay.querySelectorAll('#vehicle-header-actions>button'))if(!['vehicle-header-save','vehicle-header-delete'].includes(el.id))hide(s,el);
+  for(const selector of ['#snote-encar-advertisement','#snote-cost-settings-trigger','#photo-add','#vehicle-document-share','.detail-repair .repair-top button','.detail-repair .repair-remove','.vehicle-document-actions','.doc-footer'])for(const el of overlay.querySelectorAll(selector))hide(s,el);
+  const save=byId('vehicle-header-save'),remove=byId('vehicle-header-delete');for(const el of [save,remove])remember(s,el);save.hidden=!s.cap.edit;remove.hidden=!s.cap.delete;save.disabled=remove.disabled=!!s.saving||!!s.deleting;
+  const interest=byId('detail-inventory-start-trigger');remember(s,interest);interest.disabled=true;interest.dataset.tooltip='공유 차량의 재고이자 (조회 전용)';interest.setAttribute('aria-label','재고이자 · 공유 차량 조회 전용');
+  const color=byId('detail-color-trigger');remember(s,color);color.disabled=!s.cap.edit;for(const button of overlay.querySelectorAll('#detail-color-menu button')){remember(s,button);button.disabled=!s.cap.edit;}
+ }
+ function fixedCosts(s){const raw=s.car.costs||{},costs=Object.fromEntries(COST_FIELDS.map(([key])=>[key,Number(raw[key]||0)]));costs.inventoryInterest=Number(raw.inventoryInterest||0);costs.repair=normalizeRepairItems(s.car).reduce((sum,row)=>sum+Number(row.amount||0),0);costs.customCosts=SnoteCustomCosts.normalize(s.car.customCosts);return costs;}
+ function summary(){const s=session;if(!current(s))return;const costs=fixedCosts(s),buy=readDetailMoney(byId('detail-buy').value),sell=readDetailMoney(byId('detail-sell').value);byId('detail-cost-summary').innerHTML=summaryHTML(buy,sell,costs);const metric=byId('vehicle-cash-investment');if(metric){const cash=buy+totals(buy,0,costs).direct-Number(costs.incomeTax||0)-Number(s.car.inventoryLoan||0);metric.textContent=num(cash)+'원';metric.classList.toggle('equity-negative',cash<0);}}
+ function values(){return JSON.stringify([...editable].map(id=>[id,byId(id)?.value||'']));}
+ const dirty=s=>current(s)&&s.baseline!==values();
+ function populateSelect(id,value,label){const field=byId(id);field.replaceChildren(new Option(label||value||'미등록',value||''));field.value=value||'';}
+ function render(force=false){const s=session;if(!current(s))return;if(s.rendered&&!force){policy(s);summary();return;}
+  const c=s.car;root().dataset.snoteSharedDetail='true';byId('vehicle-title').textContent=c.model;byId('vehicle-meta').textContent=[c.plate,c.year?c.year+'년식':'',c.km!==''?formatKm(c.km)+' km':'',s.item.ownerName?'담당 '+s.item.ownerName:''].filter(Boolean).join(' · ');
+  const loan=Number(c.inventoryLoan||0),costs=fixedCosts(s),cash=Number(c.buy||0)+totals(c.buy,0,costs).direct-Number(costs.incomeTax||0)-loan;
+  const metrics=[['상태','<span class="status '+statusClass(c.status)+'">'+esc(c.status||'미등록')+'</span>'],['매입가',num(c.buy)+'원'],['판매예정가',num(c.sell)+'원'],['재고금융 분류',esc(loan>0?c.inventoryLender||'미지정':'현금')],['현금 투자금','<span id="vehicle-cash-investment" class="'+(cash<0?'equity-negative':'')+'">'+num(cash)+'원</span>']];
+  byId('vehicle-overview').innerHTML=metrics.map(([label,value])=>'<div class="vehicle-metric"><label>'+label+'</label><strong>'+value+'</strong></div>').join('');
+  renderDetailIdentity(c);byId('detail-model-wrapper').style.display='flex';byId('detail-model').value=c.model;byId('detail-model').maxLength=200;
+  const make=byId('detail-make');if(![...make.options].some(option=>option.value===(c.make||'')))make.add(new Option(c.make||'미등록',c.make||''));make.value=c.make||'';
+  for(const[id,value]of [['detail-group',c.group],['detail-generation',c.generation],['detail-grade',c.grade]])populateSelect(id,String(value||''),String(value||'미등록'));
+  byId('detail-grade-custom-wrapper').style.display='none';byId('sold-info-section').style.display='none';
+  byId('detail-buy').value=detailMoneyValue(c.buy);byId('detail-sell').value=detailMoneyValue(c.sell);byId('detail-inventory-loan').value=detailMoneyValue(loan);byId('detail-inventory-interest').value=detailMoneyValue(costs.inventoryInterest);byId('detail-interest-basis').textContent='';
+  const lender=byId('detail-inventory-lender');populateSelect(lender.id,String(c.inventoryLender||''),String(c.inventoryLender||'미지정'));
+  byId('detail-cost-fields').innerHTML=COST_FIELDS.map(([key,label])=>'<label>'+esc(label)+'<input class="detail-money-input" id="detail-'+key+'" value="'+esc(detailMoneyValue(costs[key]))+'" readonly></label>').join('');
+  const custom=byId('detail-custom-cost-fields'),labels=SnoteCustomCosts.labels(c.customCostLabels);custom.replaceChildren();for(const[key,amount]of Object.entries(costs.customCosts)){const label=document.createElement('label'),caption=document.createElement('span'),input=document.createElement('input');caption.textContent=labels[key]||'추가 비용';input.id='detail-shared-'+key;input.className='detail-money-input';input.value=detailMoneyValue(amount);input.readOnly=true;label.append(caption,input);custom.append(label);}renderRepairRows('detail',normalizeRepairItems(c));
+  for(const el of [byId('detail-inventory-loan').closest('label'),byId('detail-inventory-interest').closest('label'),lender.closest('.detail-lender-row'),root().querySelector('.detail-repair')]){remember(s,el);el.hidden=false;}
+  hide(s,byId('acct-readonly-panel'));byId('photo-count').textContent='0 / 5';byId('photo-grid').replaceChildren();byId('doc-grid').replaceChildren();
+  s.rendered=true;policy(s);summary();s.baseline=values();delete root().dataset.snoteHistoryDirty;note(s,'공유 받은 차량 · '+s.cap.label);renderMedia(s);
+ }
+ async function request(s,action,extra={}){if(!current(s))throw Error('CONTEXT_CHANGED');const result=await bridge().rpc(s.context,scope(s,action,extra));if(!current(s))throw Error('CONTEXT_CHANGED');return result;}
+ async function check(s){if(!current(s)||s.checking)return;s.checking=true;try{const value=await request(s,'read'),cap=capabilities(value);if(!cap)throw Error('FORBIDDEN');if(!current(s))return;if(value.car?.status==='판매완료')throw Error('CAR_NOT_FOUND');const changed=!sameAccess(cap.access,s.cap.access)||cap.permission!==s.cap.permission;s.cap=cap;policy(s);if(changed){s.mediaSerial++;for(const url of s.urls)URL.revokeObjectURL(url);s.urls=[];s.files=[];s.zoom=null;closeZoom();renderMedia(s);note(s,'공유 권한이 변경되었습니다 · '+cap.label);void loadMedia(s);}}
+  catch(e){if(current(s)){toast(errorMessage(e));cleanup(s);}}finally{s.checking=false;}}
+ async function open(item){const context=bridge()?.context?.(),who=actor(),opening=++serial;if(!context||!bridge()?.current?.(context))return false;
+  if(active()&&!await close())return false;else if(!active()&&root().classList.contains('open')&&!await closeVehicle())return false;
+  const valid=()=>serial===opening&&actor()===who&&bridge()?.current?.(context)===true&&typeof route==='string'&&route==='buy';if(!valid())return false;
+  try{const incoming=await bridge().rpc(context,{p_action:'incoming'});if(!valid())return false;const found=Array.isArray(incoming)&&incoming.find(row=>row.state==='accepted'&&row.companyId===item?.companyId&&row.ownerId===item?.ownerId&&row.carId===item?.carId);if(!found)throw Error('FORBIDDEN');
+   const value=await bridge().rpc(context,{p_action:'read',p_company:found.companyId,p_owner:found.ownerId,p_car:found.carId});if(!valid())return false;const cap=capabilities(value);if(!cap||!Number.isSafeInteger(value.revision)||value.revision<0)throw Error('FORBIDDEN');
+   const s={opening,context,actor:who,item:found,id:projection(found),raw:value.car,cap,revision:value.revision,restore:new Map(),files:[],urls:[],saving:null,deleting:false,rendered:false,mediaSerial:0};s.car=normalize(value.car,s);if(s.car.status==='판매완료')throw Error('CAR_NOT_FOUND');
+   session=s;snapshot(s);window.snoteDrawerMotion?.cancel(root());++snote224VehicleOpen;activeCarId=s.id;activeDocTab='registration';hideVehicleSaveSuccess();snoteVehicleDraftBase=null;vinOcrReset();root().classList.add('open');root().setAttribute('aria-hidden','false');root().querySelector('.vehicle-modal').scrollTop=0;render(true);
+   s.timer=setInterval(()=>{if(session!==s)return;if(!current(s)){cleanup(s);return;}if(!s.saving&&!s.deleting)void check(s);},15000);
+   s.scopeTimer=setInterval(()=>{if(session===s&&!current(s))cleanup(s);},250);void loadMedia(s);return true;
+  }catch(error){if(session?.opening===opening)cleanup(session);if(valid())toast(errorMessage(error));return false;}}
+ function cleanup(s){if(session!==s)return true;session=null;clearInterval(s.timer);clearInterval(s.scopeTimer);s.mediaSerial++;for(const url of s.urls)URL.revokeObjectURL(url);s.urls=[];
+  for(const[el,before]of s.restore){if(!el?.isConnected)continue;el.hidden=before.hidden;for(const[attr,value]of [['data-tooltip',before.tooltip],['aria-label',before.ariaLabel]]){if(value===null)el.removeAttribute(attr);else el.setAttribute(attr,value);}if('disabled'in el)el.disabled=before.disabled;if('readOnly'in el)el.readOnly=before.readOnly;el.style.display=before.display;if(before.options!==null){el.innerHTML=before.options;el.value=before.value;}if('maxLength'in el&&typeof before.maxLength==='number'){if(before.maxLength>=0)el.maxLength=before.maxLength;else el.removeAttribute('maxlength');}}
+  delete root().dataset.snoteSharedDetail;byId('snote-shared-detail-status')?.remove();snoteVehicleCloseNow();return true;}
+ function close({discard=false,animate=!discard}={}){const s=session;if(!s)return Promise.resolve(true);if(s.closeTask)return s.closeTask;if(discard||!current(s)){cleanup(s);return Promise.resolve(true);}
+  s.closeTask=(async()=>{if(s.saving&&!await s.saving)return false;if(!current(s))return false;if(dirty(s)&&s.cap.edit){if(confirm('변경사항을 저장하시겠습니까?\n확인: 저장 후 닫기 · 취소: 저장하지 않고 닫기')){if(!await save({closeAfterSave:false})||!current(s)||dirty(s))return false;}}
+   if(animate&&window.snoteDrawerMotion)return window.snoteDrawerMotion.close(root(),()=>cleanup(s),()=>current(s));return cleanup(s);
+  })().finally(()=>{s.closeTask=null;});return s.closeTask;}
+ async function openOwn(id){const who=actor();++serial;if(!await close())return false;if(actor()!==who)return false;openVehicle(id);return true;}
+ function patch(s){const string=(id,max=200)=>{const value=String(byId(id)?.value||'').trim();if(value.length>max||/[\u0000-\u001f\u007f]/.test(value))throw Error('입력 내용을 확인해 주세요.');return value;};
+  const model=string('detail-model');if(!model)throw Error('차량명을 입력해 주세요.');const mileage=parseMileage(byId('detail-km').value||'0'),buy=readDetailMoney(byId('detail-buy').value),sell=readDetailMoney(byId('detail-sell').value);
+  if(!Number.isInteger(mileage)||mileage<0||mileage>9999999||![buy,sell].every(n=>Number.isSafeInteger(n)&&n>=0&&n<=1000000000000))throw Error('주행거리와 금액을 확인해 주세요.');
+  const memo=String(byId('detail-memo').value||'').replace(/\r\n?/g,'\n');if(memo.length>2000||/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/.test(memo))throw Error('메모는 제어문자 없이 2,000자 이내로 입력해 주세요.');
+  const purchaseAt=string('detail-purchase-date');if(purchaseAt&&!/^\d{4}-\d{2}-\d{2}$/.test(purchaseAt))throw Error('매입 날짜를 확인해 주세요.');const make=byId('detail-make').value==='__manual__'?'':string('detail-make');
+  return{model,make,vin:string('detail-vin',25).toUpperCase(),mileage,color:string('detail-color',50),purchaseAt,vehicleMemo:memo,buy:s.raw.moneyUnit==='KRW'?buy:SnoteMoney.legacy(buy),sell:s.raw.moneyUnit==='KRW'?sell:SnoteMoney.legacy(sell)};
+ }
+ function save({closeAfterSave=true}={}){const s=session;if(!current(s)||!s.cap.edit||s.deleting)return Promise.resolve(false);if(s.saving)return s.saving;
+  let body;try{body=patch(s);}catch(error){note(s,error.message,true);return Promise.resolve(false);}const submitted=values(),grant=s.cap.access,revision=s.revision;
+  s.saving=(async()=>{try{const value=await request(s,'update',{p_expected:revision,p_patch:body,p_access:grant}),cap=capabilities(value);if(!cap||!Number.isSafeInteger(value.revision)||value.revision<=revision||!sameAccess(grant,cap.access))throw Error('INVALID_RESPONSE');if(!current(s))return false;
+   s.raw=value.car;s.car=normalize(value.car,s);s.revision=value.revision;s.cap=cap;s.baseline=submitted;const unchanged=values()===submitted;window.dispatchEvent(new Event('snote-vehicle-sharing-updated'));
+   if(unchanged){render(true);toast('저장되었습니다.');if(closeAfterSave){cleanup(s);return true;}}else note(s,'저장했습니다. 추가로 수정한 내용은 다시 저장해 주세요.');return unchanged;
+  }catch(error){if(current(s)){note(s,errorMessage(error),true);if(/FORBIDDEN|SHARE_ACCESS|42501/.test(String(error?.message)+' '+error?.code))void check(s);}return false;}
+  finally{s.saving=null;if(current(s))policy(s);}})();policy(s);return s.saving;
+ }
+ async function remove(){const s=session;if(!current(s)||!s.cap.delete||s.saving||s.deleting||!confirm('이 공유 차량을 휴지통으로 이동할까요? 차량 소유자가 휴지통에서 복원할 수 있습니다.'))return false;s.deleting=true;policy(s);const op=s.deleteRequest||(s.deleteRequest={requestId:crypto.randomUUID(),expected:s.revision,access:s.cap.access});
+  try{const result=await request(s,'delete',{p_expected:op.expected,p_patch:{requestId:op.requestId},p_access:op.access});if(result?.ok!==true||result.deleted!==true||result.carId!==s.item.carId||result.requestId!==op.requestId||typeof result.alreadyProcessed!=='boolean')throw Error('INVALID_RESPONSE');if(!current(s))return false;cleanup(s);window.dispatchEvent(new Event('snote-vehicle-sharing-updated'));toast('차량을 휴지통으로 이동했습니다.');return true;
+  }catch(error){if(current(s)){note(s,errorMessage(error),true);if(/FORBIDDEN|SHARE_ACCESS|CONFLICT|42501|40001/.test(String(error?.message)+' '+error?.code))s.deleteRequest=null;}return false;}
+  finally{s.deleting=false;if(current(s))policy(s);}}
+ async function loadMedia(s){if(!current(s))return;const generation=++s.mediaSerial,grant=s.cap.access;try{const result=await request(s,'media',{p_access:grant});if(!current(s)||s.mediaSerial!==generation||!sameAccess(grant,s.cap.access)||!Array.isArray(result))return;
+  s.files=result.filter(file=>file&&typeof file.id==='string'&&typeof file.path==='string'&&['photos','registration','inspection1','inspection2'].includes(file.group)).map(file=>({...file,url:null}));renderMedia(s);
+  for(const file of s.files){const blob=await bridge().file(s.context,file.path);if(!current(s)||s.mediaSerial!==generation||!sameAccess(grant,s.cap.access))return;if(!(blob instanceof Blob)||!/^image\/(jpeg|png|webp)$/.test(blob.type))continue;
+   const url=URL.createObjectURL(blob);if(!current(s)){URL.revokeObjectURL(url);return;}file.url=url;s.urls.push(url);renderMedia(s);}
+ }catch(error){if(current(s)){note(s,'사진·서류를 불러오지 못했습니다. 공유 상태를 확인한 뒤 차량을 다시 열어 주세요.',true);if(/FORBIDDEN|SHARE_ACCESS|42501/.test(String(error?.message)+' '+error?.code))void check(s);}}}
+ function fileButton(file,cls,label){const button=document.createElement('button');button.type='button';button.className=cls;button.setAttribute('aria-label',label+' 확대 보기');if(file.url){const image=document.createElement('img');image.src=file.url;image.alt=file.name||label;button.append(image);}else{button.textContent='불러오는 중';button.disabled=true;}button.onclick=()=>openZoom(file.id);return button;}
+ function renderMedia(s){if(!current(s))return;const photos=s.files.filter(file=>file.group==='photos').slice(0,5);byId('photo-count').textContent=photos.length+' / 5';const grid=byId('photo-grid');grid.replaceChildren();for(const[file,index]of photos.map((f,i)=>[f,i])){const tile=document.createElement('div');tile.className='photo-tile';tile.append(fileButton(file,'photo-thumb','실차 사진 '+(index+1)));grid.append(tile);}if(!photos.length){const empty=document.createElement('p');empty.className='snote-shared-detail-empty';empty.textContent='등록된 사진이 없습니다.';grid.append(empty);}
+  for(const kind of ['registration','inspection']){const tab=byId('doc-tab-'+kind);tab.classList.toggle('active',activeDocTab===kind);tab.setAttribute('aria-selected',String(activeDocTab===kind));}
+  const groups=activeDocTab==='registration'?[['registration','자동차등록증']]:[['inspection1','성능·상태점검기록부 · 1페이지'],['inspection2','성능·상태점검기록부 · 2페이지']];const docs=byId('doc-grid');docs.replaceChildren();for(const[group,label]of groups){const card=document.createElement('article'),title=document.createElement('div'),body=document.createElement('div');card.className='doc-card';title.className='doc-title';title.textContent=label;body.className='doc-body';const file=s.files.find(file=>file.group===group);if(file)body.append(fileButton(file,'doc-thumb',label));else{const placeholder=document.createElement('div');placeholder.className='doc-placeholder';placeholder.textContent='미등록';body.append(placeholder);}card.append(title,body);docs.append(card);}policy(s);
+ }
+ function showDocTab(which){if(!session||!['registration','inspection'].includes(which))return;activeDocTab=which;renderMedia(session);}
+ function openZoom(id){const s=session,file=s?.files.find(file=>file.id===id);if(!current(s)||!file?.url)return;s.zoom=file;zoomRecordId='snote-shared:'+id;byId('zoom-image').src=file.url;byId('zoom-caption').textContent=file.name||'차량 이미지';byId('zoom-overlay').classList.add('open');byId('zoom-overlay').setAttribute('aria-hidden','false');}
+ function downloadZoom(){const s=session;if(!current(s)||!s.zoom?.url||!byId('zoom-overlay').classList.contains('open'))return;const link=document.createElement('a');link.href=s.zoom.url;link.download=s.zoom.name||'차량 이미지';document.body.append(link);link.click();link.remove();}
+ root().addEventListener('input',()=>{if(current(session)){root().dataset.snoteHistoryDirty='1';summary();}});
+ root().addEventListener('change',event=>{if(!current(session))return;if(['detail-make','detail-group','detail-generation','detail-grade'].includes(event.target.id)){event.stopImmediatePropagation();event.preventDefault();}root().dataset.snoteHistoryDirty='1';summary();},true);
+ new MutationObserver(()=>{if(current(session))policy(session);}).observe(root(),{subtree:true,childList:true});
+ window.addEventListener('snote-vehicle-sharing-updated',()=>{if(current(session)&&!session.saving&&!session.deleting)void check(session);});
+ window.addEventListener('snote:route-changed',()=>{++serial;if(session&&typeof route==='string'&&route!=='buy')cleanup(session);});window.addEventListener('pagehide',()=>{++serial;if(session)cleanup(session);});
+ window.SnoteSharedVehicleDetail=Object.freeze({active,open,openOwn,render:()=>render(),save,remove,close,summary,showDocTab,openZoom,downloadZoom,cancelPending:()=>{serial++;}});
+})();

@@ -123,6 +123,8 @@
  }
  function fit(host){
   if(!host.isConnected)return;
+  // Sizing must preserve hidden permissions/steps, including previous inline circle layout.
+  if(host.hidden||host.closest('[hidden]')){reset(host);return;}
   if(host.matches(closeControls)){reset(host);flat(host,false,false);return;}
   if(!host.matches(hosts)||host.closest(excluded)&&!(host.matches('.add-tile')&&stepKind(host))||host.querySelector('input:not([type="file"]):not([type="hidden"]),select,textarea')){reset(host);return;}
   const step=stepKind(host);if(step)fitStepText(host,step);else clearStepText(host);

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.165">
+<html lang="ko" data-snote-release="2.166">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -3202,7 +3202,7 @@ button, input, select, textarea { font-family: inherit; }
 <link rel="stylesheet" href="assets/workspace-refine.css?v=2.85">
 <script src="assets/icon-feedback.js?v=2.96" defer></script>
 <link rel="stylesheet" href="assets/icon-sizing.css?v=2.86">
-<script src="assets/icon-sizing.js?v=2.165" defer></script>
+<script src="assets/icon-sizing.js?v=2.166" defer></script>
 <script src="assets/action-controls.js?v=2.161" defer></script>
 <script src="assets/readable-type.js?v=2.59" defer></script>
 <link rel="stylesheet" href="assets/mobile-shell.css?v=2.59">
@@ -3216,8 +3216,8 @@ button, input, select, textarea { font-family: inherit; }
 <link rel="stylesheet" href="assets/profile-notification-badge.css?v=2.165">
 <script src="assets/profile-notification-badge.js?v=2.165" defer></script>
 <script src="assets/vehicle-notifications.js?v=2.165" defer></script>
-<link rel="stylesheet" href="assets/close-controls.css?v=2.165">
-<script src="assets/close-controls.js?v=2.165" defer></script>
+<link rel="stylesheet" href="assets/close-controls.css?v=2.166">
+<script src="assets/close-controls.js?v=2.166" defer></script>
 <link rel="stylesheet" href="assets/recycle-bin.css?v=2.77">
 <link rel="stylesheet" href="assets/profile-editor.css?v=2.82">
 <link rel="stylesheet" href="assets/profile-compact.css?v=2.89">
@@ -4346,7 +4346,7 @@ document.addEventListener('focusout',event=>{
 function renderDetailIdentity(c){initDetailCatalog(c);$('detail-vin').value=c.vin||'';$('detail-km').value=c.km==null||String(c.km).trim()===''?'':formatKm(c.km);$('detail-purchase-date').value=c.purchaseAt||'';$('detail-extra').value=c.extra||'';$('detail-memo').value=typeof c.vehicleMemo==='string'?c.vehicleMemo:'';$('detail-memo').readOnly=false;setupColorSelect('detail',c.color||'');const sold=c.status==='판매완료';$('sold-info-section').style.display=sold?'block':'none';$('detail-sold-date').value=c.soldAt||'';$('detail-sold-price').value=sold?detailMoneyValue(salePrice(c)):'';}
 function renderDetailCosts(c){syncLenderPicker(c.inventoryLender);$('detail-buy').value=detailMoneyValue(c.buy);$('detail-sell').value=detailMoneyValue(c.sell);$('detail-inventory-loan').value=detailMoneyValue(inventoryLoanOf(c));const costs=normalizeCosts(c);$('detail-inventory-interest').value=detailMoneyValue(costs.inventoryInterest);delete $('detail-inventory-interest').dataset.snoteInterestAutomatic;$('detail-cost-fields').innerHTML=COST_FIELDS.map(([key,label])=>`<label>${label}<input class="detail-money-input" type="text" id="detail-${key}" value="${detailMoneyValue(costs[key])}" placeholder="-" autocomplete="off" spellcheck="false" inputmode="decimal" oninput="updateDetailSummary()" /></label>`).join('');renderRepairRows('detail',normalizeRepairItems(c));window.SnoteVehicleCostSettings?.renderCustomCostFields(c,{preserveDraft:false});void window.SnoteVehicleCostSettings?.refresh();updateDetailSummary()}
 for(const id of ['detail-inventory-loan','detail-inventory-lender','detail-purchase-date','detail-sold-date'])for(const type of ['input','change'])document.getElementById(id)?.addEventListener(type,()=>{if(activeCarId)updateDetailSummary();});
-function updateDetailSummary(){try{snote239DetailInterest();const costs=costInputs('detail');const buy=readDetailMoney($('detail-buy').value);$('detail-cost-summary').innerHTML=summaryHTML(buy,readDetailMoney($('sold-info-section').style.display==='block'&&$('detail-sold-price').value?$('detail-sold-price').value:$('detail-sell').value),costs);const invested=buy+totals(buy,0,costs).direct-Number(costs.incomeTax||0),loan=cleanLoanInput('detail-inventory-loan'),cash=invested-loan;const metric=$('vehicle-cash-investment');if(metric){metric.textContent=num(cash)+'원';metric.classList.toggle('equity-negative',cash<0);}}catch(e){$('detail-cost-summary').textContent=e.message;const metric=$('vehicle-cash-investment');if(metric)metric.textContent='입력 확인';}}
+function updateDetailSummary(){if(window.SnoteSharedVehicleDetail?.active())return window.SnoteSharedVehicleDetail.summary();try{snote239DetailInterest();const costs=costInputs('detail');const buy=readDetailMoney($('detail-buy').value);$('detail-cost-summary').innerHTML=summaryHTML(buy,readDetailMoney($('sold-info-section').style.display==='block'&&$('detail-sold-price').value?$('detail-sold-price').value:$('detail-sell').value),costs);const invested=buy+totals(buy,0,costs).direct-Number(costs.incomeTax||0),loan=cleanLoanInput('detail-inventory-loan'),cash=invested-loan;const metric=$('vehicle-cash-investment');if(metric){metric.textContent=num(cash)+'원';metric.classList.toggle('equity-negative',cash<0);}}catch(e){$('detail-cost-summary').textContent=e.message;const metric=$('vehicle-cash-investment');if(metric)metric.textContent='입력 확인';}}
 let vehicleSaveSuccessTimer=null;
 function hideVehicleSaveSuccess(){
  if(vehicleSaveSuccessTimer!==null){clearTimeout(vehicleSaveSuccessTimer);vehicleSaveSuccessTimer=null;}
@@ -4372,6 +4372,7 @@ function showVehicleSaveSuccess({closeAfterSave=true}={}){
  },1100);
 }
 function saveVehicleCosts({closeAfterSave=true}={}){
+ if(window.SnoteSharedVehicleDetail?.active())return window.SnoteSharedVehicleDetail.save({closeAfterSave});
  if(isAccountant())return saveAccountantVehicle({closeAfterSave});
  const context=snoteVehicleContext();if(!context){toast('로그인 및 차량 연결 상태를 확인해 주세요.');return Promise.resolve(false);}
  if(snoteVehicleSaveTask&&snoteVehicleCurrent(snoteVehicleSaveTask.context))return snoteVehicleSaveTask.promise;
@@ -4664,6 +4665,7 @@ function statusSelect(c){
 }
 let pendingStatusChange=null;
 function snote237DeleteVehicle(){
+ if(window.SnoteSharedVehicleDetail?.active())return window.SnoteSharedVehicleDetail.remove();
  const c=cars.find(item=>item.id===activeCarId&&canManageCar(item));
  if(!c||isAccountant()||!$('vehicle-overlay').classList.contains('open'))return;
  if($('vehicle-overlay').getAttribute('aria-busy')==='true'){toast('저장 완료 후 다시 삭제해 주세요.');return;}
@@ -7199,6 +7201,7 @@ function snoteVehicleSaveFinished(context,submitted,{closeAfterSave=true}={}){
  renderVehicle();snoteVehicleRememberDraft();showVehicleSaveSuccess({closeAfterSave});return true;
 }
 function openVehicle(id){
+ if(window.SnoteSharedVehicleDetail?.active())return window.SnoteSharedVehicleDetail.openOwn(id);window.SnoteSharedVehicleDetail?.cancelPending();
  const overlay=$('vehicle-overlay');delete overlay.dataset.snoteHistoryDirty;hideVehicleSaveSuccess();snoteVehicleDraftBase=null;
  if(!currentUser)return;const car=cars.find(x=>x.id===id);if(!car||(isAccountant()?!snotePurchaseCarVisible(car):isPurchaseListRoute()&&(route==='companyBuy'?!snotePurchaseCarVisible(car):car.ownerId!==snotePurchaseContext()?.ownerAlias)))return;window.snoteDrawerMotion?.cancel(overlay);
  const actor=currentUser,opening=++snote224VehicleOpen;
@@ -7212,6 +7215,7 @@ function openVehicle(id){
 function snoteVehicleCloseNow(){window.snoteDrawerMotion?.cancel($('vehicle-overlay'));window.snoteResetWorkspaceUi?.();window.snoteResetDocumentMms?.();hideVehicleSaveSuccess();clearAccountantRegistrationPreview();closeColorPickers();closeZoom();vinOcrReset();snoteVehicleDraftBase=null;delete $('vehicle-overlay').dataset.snoteHistoryDirty;activeCarId=null;$('vehicle-overlay').classList.remove('open');window.SnoteVehicleCostSettings?.reset?.({view:'detail'});$('vehicle-overlay').setAttribute('aria-hidden','true');snoteVehicleSaveBusy(false);return true;}
 function snote248VehicleClose(animate){const context=snoteVehicleViewContext();if(!animate||!context||!window.snoteDrawerMotion)return snoteVehicleCloseNow();return window.snoteDrawerMotion.close($('vehicle-overlay'),()=>snoteVehicleCloseNow(),()=>snoteVehicleSameView(context));}
 function closeVehicle({discard=false,animate=!discard}={}){
+ if(window.SnoteSharedVehicleDetail?.active())return window.SnoteSharedVehicleDetail.close({discard,animate});
  const pending=window.snoteDrawerMotion?.pending($('vehicle-overlay'));if(pending&&!discard)return pending;
  const context=snoteVehicleContext()||snoteVehicleViewContext();
  if(discard||!context)return Promise.resolve(snoteVehicleDiscardPending()?snote248VehicleClose(animate):false);
@@ -7223,9 +7227,9 @@ function closeVehicle({discard=false,animate=!discard}={}){
  job.promise=(async()=>{try{const saved=await(saving?saving.promise:saveVehicleCosts({closeAfterSave:false}));if(saved&&snoteVehicleCurrent(context)&&!snoteVehicleHasChanges())return snote248VehicleClose(animate);return false;}finally{if(snoteVehicleCloseTask===job)snoteVehicleCloseTask=null;}})();
  return job.promise;
 }
-function triggerMediaInput(type){if(!fileDB){toast('이미지 저장 기능을 사용할 수 없는 브라우저입니다.');return}const id=type==='photos'?'photo-input':type+'-input';$(id).click()}
+function triggerMediaInput(type){if(window.SnoteSharedVehicleDetail?.active())return;if(!fileDB){toast('이미지 저장 기능을 사용할 수 없는 브라우저입니다.');return}const id=type==='photos'?'photo-input':type+'-input';$(id).click()}
 let activeDocTab='registration';
-function showDocTab(which){if(!['registration','inspection'].includes(which))return;activeDocTab=which;renderDocTab()}
+function showDocTab(which){if(window.SnoteSharedVehicleDetail?.active())return window.SnoteSharedVehicleDetail.showDocTab(which);if(!['registration','inspection'].includes(which))return;activeDocTab=which;renderDocTab()}
 function snoteVehicleMediaClick(action,id){return esc(action+'('+JSON.stringify(String(id))+')')}
 function renderVehiclePhotos(car){
  const photos=carPhotos(car.id),featured=coverPhoto(car);
@@ -7430,12 +7434,12 @@ function saveAccountantVehicle({closeAfterSave=true}={}){
  })();return job.promise;
 }
 
-function renderVehicle(){const deleteCar=cars.find(item=>item.id===activeCarId);const encarButton=$('vehicle-encar-check');if(encarButton){encarButton.hidden=deleteCar?.status==='판매완료';encarButton.dataset.encarIdCar=String(deleteCar?.id||'');}if($('vehicle-header-delete'))$('vehicle-header-delete').hidden=!deleteCar||isAccountant()||!canManageCar(deleteCar);const draft=snoteVehicleDraftForRender();if(isAccountant()){const c=cars.find(x=>x.id===activeCarId&&canManageCar(x));if(c){renderAccountantVehicle(c);snoteVehicleRestoreDraft(draft);}return;}placeFinanceLenderAtTop(false);if(!currentUser||!activeCarId)return;const c=cars.find(x=>x.id===activeCarId&&canManageCar(x));if(!c)return;const photos=carPhotos(c.id),all=carFiles(c.id);const featured=coverPhoto(c);$('vehicle-title').textContent=c.model;$('vehicle-meta').textContent=`${isAccountant()?'담당 '+dealerLabel(c)+' · ':''}${c.plate}  ·  ${c.year}년식  ·  ${c.km}km${c.color?' · '+c.color:''}${c.purchaseAt?' · 매입일 '+c.purchaseAt:''}`;
+function renderVehicle(){if(window.SnoteSharedVehicleDetail?.active())return window.SnoteSharedVehicleDetail.render();const deleteCar=cars.find(item=>item.id===activeCarId);const encarButton=$('vehicle-encar-check');if(encarButton){encarButton.hidden=deleteCar?.status==='판매완료';encarButton.dataset.encarIdCar=String(deleteCar?.id||'');}if($('vehicle-header-delete'))$('vehicle-header-delete').hidden=!deleteCar||isAccountant()||!canManageCar(deleteCar);const draft=snoteVehicleDraftForRender();if(isAccountant()){const c=cars.find(x=>x.id===activeCarId&&canManageCar(x));if(c){renderAccountantVehicle(c);snoteVehicleRestoreDraft(draft);}return;}placeFinanceLenderAtTop(false);if(!currentUser||!activeCarId)return;const c=cars.find(x=>x.id===activeCarId&&canManageCar(x));if(!c)return;const photos=carPhotos(c.id),all=carFiles(c.id);const featured=coverPhoto(c);$('vehicle-title').textContent=c.model;$('vehicle-meta').textContent=`${isAccountant()?'담당 '+dealerLabel(c)+' · ':''}${c.plate}  ·  ${c.year}년식  ·  ${c.km}km${c.color?' · '+c.color:''}${c.purchaseAt?' · 매입일 '+c.purchaseAt:''}`;
   $('vehicle-overview').innerHTML=[['상태',statusSelect(c)],['매입가',`${num(c.buy)}원`],[c.status==='판매완료'?'판매가':'판매예정가',`${num(salePrice(c))}원`],['재고금융 분류',lenderBadge(c)],['현금 투자금',`<span id="vehicle-cash-investment" class="${inventoryInvestmentOf(c)-inventoryLoanOf(c)<0?'equity-negative':''}">${num(inventoryInvestmentOf(c)-inventoryLoanOf(c))}원</span>`]].map(([label,val])=>`<div class="vehicle-metric${label==='현금 투자금'?' vehicle-cash':''}"><label>${label}</label><strong>${val}</strong></div>`).join('');
   renderDetailIdentity(c);renderDetailCosts(c);
   renderVehiclePhotos(c);
   renderDocTab();snoteVehicleRestoreDraft(draft)}
-async function handleMediaFiles(event,group){if(isAccountant()){toast('경리 계정은 차량 사진과 서류를 변경할 수 없습니다.');return;}const input=event.target;const raw=Array.from(input.files||[]);input.value='';if(!raw.length||!activeCarId)return;const carId=activeCarId;const chosen=group==='photos'?raw:raw.slice(0,1);if(raw.some(file=>!file.type.startsWith('image/'))){toast('이미지 파일만 등록할 수 있습니다.');return}if(chosen.some(f=>f.size>15*1024*1024)){toast('파일당 최대 15MB까지 등록할 수 있습니다.');return}let existing=carFiles(carId);if(group==='photos'){const remaining=5-carPhotos(carId).length;if(raw.length>remaining){toast(`실차 사진은 최대 5장입니다. 현재 ${remaining}장까지 추가할 수 있습니다.`);return}}
+async function handleMediaFiles(event,group){if(window.SnoteSharedVehicleDetail?.active()){event.target.value='';return;}if(isAccountant()){toast('경리 계정은 차량 사진과 서류를 변경할 수 없습니다.');return;}const input=event.target;const raw=Array.from(input.files||[]);input.value='';if(!raw.length||!activeCarId)return;const carId=activeCarId;const chosen=group==='photos'?raw:raw.slice(0,1);if(raw.some(file=>!file.type.startsWith('image/'))){toast('이미지 파일만 등록할 수 있습니다.');return}if(chosen.some(f=>f.size>15*1024*1024)){toast('파일당 최대 15MB까지 등록할 수 있습니다.');return}let existing=carFiles(carId);if(group==='photos'){const remaining=5-carPhotos(carId).length;if(raw.length>remaining){toast(`실차 사진은 최대 5장입니다. 현재 ${remaining}장까지 추가할 수 있습니다.`);return}}
  const previous=group==='photos'?[]:existing.filter(m=>m.group===group).map(m=>m.id);const records=chosen.map((file,i)=>({id:'image-'+Date.now()+'-'+i+'-'+Math.random().toString(36).slice(2,9),carId,ownerId:cars.find(c=>c.id===carId)?.ownerId||currentUser.username,group,filename:file.name,createdAt:Date.now()+i,blob:file}));try{const draftVIN=group==='registration'?$('detail-vin').value:null;
  await updateDB(records,previous);await refreshMedia();
  if(group==='registration'&&activeCarId===carId&&canManageCar(cars.find(c=>c.id===carId))){
@@ -7447,7 +7451,7 @@ function setCoverPhoto(id){const item=carFiles(activeCarId).find(f=>f.id===id&&f
 async function removeMedia(id){const item=carFiles(activeCarId).find(f=>f.id===id);if(!item)return;if(!confirm(`${item.group==='photos'?'실차 사진':'차량 서류'}를 휴지통으로 이동할까요?`))return;try{await updateDB([],[id]);if(covers[activeCarId]===id){delete covers[activeCarId];saveCover()}if(zoomRecordId===id)closeZoom();await refreshMedia();if(item.group==='registration')showVinOcrState('info','등록증이 삭제되었습니다. 차대번호는 자동으로 삭제되지 않습니다.');toast('사진·서류를 휴지통으로 이동했습니다.')}catch(err){toast('삭제하지 못했습니다.')}}
 function openZoom(id){if(!activeCarId)return;const item=carFiles(activeCarId).find(f=>f.id===id);if(!item)return;zoomRecordId=id;$('zoom-image').src=item.url;$('zoom-caption').textContent=item.filename;$('zoom-overlay').classList.add('open');$('zoom-overlay').setAttribute('aria-hidden','false')}
 function closeZoom(){zoomRecordId=null;$('zoom-overlay').classList.remove('open');$('zoom-overlay').setAttribute('aria-hidden','true');$('zoom-image').removeAttribute('src')}
-function downloadZoom(){if(!zoomRecordId||!activeCarId)return;const item=carFiles(activeCarId).find(f=>f.id===zoomRecordId);if(!item)return;const a=document.createElement('a');a.href=item.url;a.download=item.filename||'image';document.body.appendChild(a);a.click();a.remove()}
+function downloadZoom(){if(window.SnoteSharedVehicleDetail?.active())return window.SnoteSharedVehicleDetail.downloadZoom();if(!zoomRecordId||!activeCarId)return;const item=carFiles(activeCarId).find(f=>f.id===zoomRecordId);if(!item)return;const a=document.createElement('a');a.href=item.url;a.download=item.filename||'image';document.body.appendChild(a);a.click();a.remove()}
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){if($('vin-select-overlay').classList.contains('open')){closeVinAreaPicker();return;}if($('contract-overlay').classList.contains('open')){closeContractPreview();return;}if($('quote-overlay').classList.contains('open')){closeQuotePreview();return;}if(document.querySelector('.color-picker.expanded')){closeColorPickers();return;}if(pendingStatusChange)closeStatusModal();else if(zoomRecordId)closeZoom();else if(activeCarId)closeVehicle();else closeAdd({animate:true})}});
 window.addEventListener('beforeprint',()=>{if($('contract-overlay')?.classList.contains('open'))buildContractPrintPages();});
 async function snoteFileDatabaseReady(db){fileDB=db;if(!snoteMediaStartupDeferred)await refreshMedia();}
@@ -11296,12 +11300,12 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 <script type="module" src="assets/income-settlement-parent.js?v=2.112"></script>
 <script src="assets/vehicle-sharing.js?v=2.165" defer></script>
 <script src="assets/shared-vehicle-markers.js?v=2.165" defer></script>
-<link rel="stylesheet" href="assets/received-share-list.css?v=2.165">
-<script src="assets/received-share-list.js?v=2.165" defer></script>
+<link rel="stylesheet" href="assets/received-share-list.css?v=2.166">
+<script src="assets/received-share-list.js?v=2.166" defer></script>
 <link rel="stylesheet" href="assets/workspace-reorder.css?v=2.136">
 <script src="assets/workspace-order-store.js?v=2.135" defer></script>
 <script src="assets/workspace-reorder.js?v=2.136" defer></script>
-<script src="assets/release-info.js?v=2.165" defer></script>
+<script src="assets/release-info.js?v=2.166" defer></script>
 <link rel="stylesheet" href="assets/encar-id.css?v=2.162">
 <script src="assets/encar-id.js?v=2.162" defer></script>
 <script src="assets/company-purchase.js?v=2.130" defer></script>
@@ -11346,5 +11350,7 @@ window.addEventListener('snote:payment-accounts-changed',()=>{if(typeof contract
 <link rel="stylesheet" href="assets/vehicle-viewport.css?v=2.163">
 <link rel="stylesheet" href="assets/document-viewport.css?v=2.165">
 <script src="assets/document-viewport.js?v=2.165" defer></script>
+<link rel="stylesheet" href="assets/shared-vehicle-detail.css?v=2.166">
+<script src="assets/shared-vehicle-detail.js?v=2.166" defer></script>
 </body>
 </html>
