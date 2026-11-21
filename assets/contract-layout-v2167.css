@@ -16,3 +16,12 @@
 @media screen{
  .contract-paper .ct-doc-title .contract-toggle{float:none!important;position:static;margin:0 0 5px!important}
 }
+
+@media screen{
+ /* Validation and retry notices must sit above the contract's modal backdrop. */
+ body:has(#contract-overlay.open) #toast{z-index:4000;max-width:min(540px,calc(100vw - 32px));white-space:normal;text-align:center;line-height:1.5}
+ #contract-overlay [data-document-print][aria-busy="true"]{opacity:.65;cursor:progress!important}
+ #contract-overlay [data-document-print][aria-busy="true"] svg{animation:snote-contract-print-pulse 1s ease-in-out infinite}
+ @keyframes snote-contract-print-pulse{50%{opacity:.35}}
+ @media(prefers-reduced-motion:reduce){#contract-overlay [data-document-print][aria-busy="true"] svg{animation:none}}
+}
