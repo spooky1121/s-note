@@ -1,6 +1,15 @@
-/* Keep identity, amounts and actions readable; the image alone carries the softened state. */
+/* A quiet rose surface, leading accent and explicit label make contracted stock easy to scan. */
 @media screen {
- #list-screen :is(tr.vehicle-clickable,.vehicle-card,.acct-mobile-card).snote-contracting-vehicle{opacity:1;background:#fafafa}
+ #list-screen :is(tr.vehicle-clickable,.vehicle-card,.acct-mobile-card).snote-contracting-vehicle{opacity:1;background:#fff5f6}
+ #snote-app #list-screen #list-table tr.snote-contracting-vehicle:not(.is-shared-vehicle)>td{background:#fff5f6!important;border-bottom-color:#f0d6db}
+ #snote-app #list-screen #list-table tr.snote-contracting-vehicle>td:first-child{box-shadow:inset 4px 0 0 #db4158!important}
+ #snote-app #list-screen #list-table tr.snote-contracting-vehicle:not(.is-shared-vehicle):hover>td{background:#ffedf0!important}
+ #snote-app #list-screen[data-vehicle-view] #list-mobile>:is(.vehicle-card,.acct-mobile-card).snote-contracting-vehicle{border-color:#e9bdc6!important;box-shadow:inset 4px 0 0 #db4158!important}
+ #snote-app #list-screen[data-vehicle-view] #list-mobile>:is(.vehicle-card,.acct-mobile-card).snote-contracting-vehicle:not(.is-shared-vehicle){background:#fff5f6!important}
+ #snote-app #list-screen[data-vehicle-view] #list-mobile>:is(.vehicle-card,.acct-mobile-card).snote-contracting-vehicle:hover{border-color:#d98496!important;box-shadow:inset 4px 0 0 #c92f4b!important}
+ /* Put the label inside the text node's element, not its grid container. */
+ #snote-app #list-screen .snote-contracting-vehicle :is(.car-name,.acct-car-cell strong,.vehicle-title>span:first-child,.acct-mobile-heading strong)::before{content:'계약중';display:inline-block;margin:0 6px 2px 0;padding:2px 6px;border:1px solid #b92540;border-radius:5px;background:#b92540;color:#fff;font-size:12px;font-weight:650;line-height:1.35;letter-spacing:0;vertical-align:1px;white-space:nowrap}
+ #snote-app #list-screen .snote-contracting-vehicle :is(.status-select,.status){border:1px solid #e6a6b3!important;background:#ffe3e9!important;color:#9f1239!important;font-weight:700}
  #list-screen .snote-contracting-vehicle .car-thumb>img{opacity:.55;filter:saturate(.5)}
- #list-screen .snote-contracting-vehicle .snote-contract-stamp{opacity:1}
+ #snote-app #list-screen .snote-contracting-vehicle .snote-contract-stamp{opacity:1;background:#fff;border-width:1.6px;box-shadow:0 1px 3px #9f12391f}
 }

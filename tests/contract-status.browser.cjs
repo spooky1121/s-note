@@ -9,7 +9,7 @@ const ID='encar-car-1',PLATE='12가3456';
 const status=p=>p.locator('#list-screen select.status-select[aria-label="'+PLATE+' 차량 상태 변경"]:visible');
 const current=p=>p.evaluate(id=>{const c=cars.find(c=>c.id===id);return {route,status:c.status,soldAt:c.soldAt??null,soldPrice:c.soldPrice??null,ids:getFiltered('list').map(c=>c.id)};},ID);
 async function red(locator){const color=await locator.evaluate(e=>getComputedStyle(e).color),[r,g,b]=color.match(/[\d.]+/g).map(Number);assert(r>140&&r>g*1.4&&r>b*1.15,'Contract status must have readable red text: '+color);return color;}
-async function buy(p){await p.evaluate(async()=>{await closeVehicle({discard:true});navigate('buy');});await status(p).waitFor();}
+async function buy(p){await p.evaluate(async()=>{await closeVehicle({discard:true});navigate('buy');});if(await p.locator('#list-screen').getAttribute('data-vehicle-view')!=='list'){await p.locator('#snote-vehicle-view-switch').click();await p.waitForFunction(()=>document.getElementById('list-screen').dataset.vehicleView==='list');}await status(p).waitFor();}
 async function propose(p,next){await status(p).selectOption(next);await p.locator('#status-overlay.open').waitFor();assert.equal(await p.locator('#status-target').innerText(),next);}
 async function filter(p,value){const control=p.locator('#list-filter');if(await control.isVisible())return control.selectOption(value);await control.evaluate((e,value)=>{e.value=value;e.dispatchEvent(new Event('change',{bubbles:true}));},value);}
 async function flush(p){const result=await p.evaluate(()=>zc86Cloud.flush());assert.equal(result.ok,true,'Status changes must be acknowledged by the real scoped cloud-write bridge');return p.evaluate(()=>structuredClone(__encarFixtureCars));}
