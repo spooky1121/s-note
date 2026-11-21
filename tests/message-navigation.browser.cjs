@@ -18,8 +18,10 @@ async function choose(page,accept){await page.locator(MESSAGE+' '+(accept?'[data
 async function run(){
  const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium'});
  try{
-  setBrowser(browser);const f=await fixture(320),p=f.page;
-  await p.setViewportSize({width:320,height:640});f.manualMessages=true;
+  // Desktop route Back retains its guarded navigation behavior. Mobile Back
+  // dismisses one popup instead and is covered by mobile-popup-history.browser.
+  setBrowser(browser);const f=await fixture(1440),p=f.page;
+  await p.setViewportSize({width:1440,height:900});f.manualMessages=true;
   await p.evaluate(async()=>{
    __snoteFixtureManualMessages=true;
    await closeVehicle({discard:true});
@@ -81,7 +83,7 @@ async function run(){
   assert.equal((await begin(p,'sell')).promise,true);
   await p.locator(MESSAGE).waitFor();
   const box=await p.locator(MESSAGE).boundingBox();
-  assert(box.x>=0&&box.y>=0&&box.x+box.width<=320.5&&box.y+box.height<=640.5);
+  const viewport=p.viewportSize();assert(box.x>=0&&box.y>=0&&box.x+box.width<=viewport.width+.5&&box.y+box.height<=viewport.height+.5);
   await choose(p,false);
   assert.equal(await result(p),false);
   assert.equal(await p.evaluate(()=>route),'users');

@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createDecipheriv, hkdfSync } from 'node:crypto';
 import { onRequest } from '../functions/api/income-settlement.js';
-import { createSource, createDocument, sourceFingerprint, documentFingerprint, serializePublic, TEMPLATE_ID } from '../assets/income-settlement-model.js';
+import { createSource, createDocument, sourceFingerprint, documentFingerprint, serializePublic, calculate, TEMPLATE_ID } from '../assets/income-settlement-model.js';
 
 // Every HTTP request is intercepted. No production DB, SMS or OCR is contacted.
 const ENV = { SUPABASE_URL: 'https://income-test.supabase.co', SUPABASE_PUBLISHABLE_KEY: 'test-public-key', CUSTOMER_INTAKE_OTP_SECRET: 'test-only-existing-server-secret-with-at-least-32-characters' };
@@ -368,4 +368,17 @@ test('inspection expense is returned with won precision, retained on save and in
  const writes=state.writes.length;dataset().payload[0].costs.performanceInspection=1.2346;
  const stale=await call(saveBody(reopened,reopened.document,'test-inspection-stale'));
  assert.equal(stale.result.status,409);assert.equal(state.writes.length,writes);assert.equal(dataset().payload[0].costs.performanceInspection,1.2346);
+});
+
+
+test('historical input records stay byte-identical on load while save/reopen calculations exclude finance interest', async t => {
+ const {state,dataset}=fixture(t),current=dataset().payload[0],custom='custom-11111111-1111-4111-8111-111111111111';
+ Object.assign(current,{inventoryLoan:1000,inventoryLender:'검증금융',purchaseAt:'2026-09-21',customCosts:{[custom]:100000}});state.lenders=[['검증금융',100000,6]];
+ const initial=await load();assert(initial.source.inventoryInterestWon>0);initial.document.cells.D15=50000;initial.document.cells.B15='합성 증빙 비용';
+ current.incomeSettlement=record(initial.document,initial.sourceVersion);const historical=copy(dataset()),beforeWrites=state.writes.length;
+ const loaded=await load();assert.equal(loaded.sourceChanged,false);assert.deepEqual(dataset(),historical);assert.equal(state.writes.length,beforeWrites);
+ const expected=calculate(loaded.document,{...loaded.source,inventoryInterestWon:0});assert.equal(expected.cells.D28,150000);assert.deepEqual(calculate(loaded.document,loaded.source),expected);
+ const saved=await call(saveBody(loaded));assert.equal(saved.result.status,200);assert.deepEqual(saved.body.document,loaded.document);
+ const afterSave=copy(dataset()),writes=state.writes.length,reopened=await load();assert.deepEqual(dataset(),afterSave);assert.equal(state.writes.length,writes);assert.deepEqual(calculate(reopened.document,reopened.source),expected);
+ assert.equal(current.costs.inventoryInterest,2);assert.equal(current.inventoryLoan,1000);
 });

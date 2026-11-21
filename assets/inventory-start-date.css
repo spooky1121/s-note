@@ -1,8 +1,8 @@
 #vehicle-overlay .snote-interest-heading{display:flex;align-items:center;gap:6px;min-height:19px;flex-wrap:wrap}
-#vehicle-overlay #detail-inventory-start-trigger{appearance:none;display:inline;padding:0;margin:0;min-width:0;min-height:0;border:0;border-radius:3px;background:transparent;box-shadow:none;color:inherit;font:inherit;line-height:inherit;text-align:left;cursor:pointer}
-#vehicle-overlay #detail-inventory-start-trigger:hover{color:#176ce8}
-#vehicle-overlay #detail-inventory-start-trigger:focus-visible{outline:2px solid #99c1ff;outline-offset:3px}
-#vehicle-overlay #detail-inventory-start-trigger:disabled{cursor:default;opacity:1;color:inherit}
+#vehicle-overlay :is(#detail-inventory-start-trigger,#detail-inventory-loan-start-trigger){appearance:none;display:inline;padding:0;margin:0;min-width:0;min-height:0;border:0;border-radius:3px;background:transparent;box-shadow:none;color:inherit;font:inherit;line-height:inherit;text-align:left;cursor:pointer}
+#vehicle-overlay :is(#detail-inventory-start-trigger,#detail-inventory-loan-start-trigger):hover{color:#176ce8}
+#vehicle-overlay :is(#detail-inventory-start-trigger,#detail-inventory-loan-start-trigger):focus-visible{outline:2px solid #99c1ff;outline-offset:3px}
+#vehicle-overlay :is(#detail-inventory-start-trigger,#detail-inventory-loan-start-trigger):disabled{cursor:default;opacity:1;color:inherit}
 #vehicle-overlay .snote-interest-heading .snote-interest-basis{position:static;display:inline;font-size:10px;line-height:1.5;margin:0;color:#8e9aab;font-weight:400}
 #snote-inventory-start-dialog{box-sizing:border-box;width:min(360px,calc(100vw - 32px));max-height:calc(100dvh - 48px);padding:27px 22px 20px;margin:auto;border:1px solid #e5e9ef;border-radius:17px;background:#fff;color:#263348;box-shadow:0 20px 70px #172b4d24;overflow:auto;font-family:inherit}
 #snote-inventory-start-dialog::backdrop{background:#23334842;backdrop-filter:blur(4px)}

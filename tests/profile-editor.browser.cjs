@@ -40,7 +40,7 @@ async function boot(f,{role='dealer',height=950}={}){
  await open(p);
 }
 
-async function open(p){await p.locator('#snote-profile-trigger').click();await p.getByRole('menuitem',{name:'프로필 설정',exact:true}).click();await p.locator(DRAWER+':not([hidden])').waitFor();await p.waitForFunction(()=>document.getElementById('snote-profile-name').value===__profile.snapshot.display_name&&!document.getElementById('snote-profile-name').disabled);await settle(p);}
+async function open(p){await p.locator('#snote-profile-trigger').click();await p.getByRole('menuitem',{name:'프로필 설정',exact:true}).click();await p.locator(DRAWER+':not([hidden])').waitFor();await p.waitForFunction(()=>document.getElementById('snote-profile-name').value===__profile.snapshot.display_name&&!document.getElementById('snote-profile-name').disabled);await settle(p);assert.equal(await p.locator(DRAWER+' [id^="snote-payment-"],'+DRAWER+' .snote-payment-profile').count(),0,'Receiving accounts must be editable only in the Settings menu');}
 async function settle(p){await p.locator(DRAWER+'.is-open').waitFor();await p.locator('.snote-profile-panel').evaluate(async el=>{await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));await Promise.all(el.getAnimations().map(a=>a.finished.catch(()=>{})));});}
 async function close(p){await p.locator('#snote-profile-close').click();await p.locator(DRAWER).waitFor({state:'hidden'});}
 async function position(p,width,height){

@@ -177,12 +177,12 @@ test('custom amounts stay integer won in legacy and KRW cars, including stored o
   const changed=createSource({...stored,customCosts:{...stored.customCosts,[ORPHAN]:656}});assert.notEqual(await sourceFingerprint(legacy),await sourceFingerprint(changed));
 });
 
-test('custom costs and interest enter D28 once and reduce actual income and tax without inventing VAT evidence', () => {
+test('custom costs enter D28 once while inventory finance interest never reduces income or tax', () => {
   const original=car({purchaseAt:'2026-01-01',soldAt:'2026-02-01',buy:1000,soldPrice:2000,inventoryLoan:1000,inventoryLender:'검증금융'}),lenders=[['검증금융',100000,6]];
   const base=createSource(original,{lenders}),source=createSource({...original,customCosts:{[CUSTOM]:40000,[ORPHAN]:60000}},{lenders}),doc=createDocument(source);doc.cells.D15=11000;
   const before=structuredClone(doc),plain=calculate(doc,base),actual=calculate(doc,source);
   assert.equal(source.inventoryInterestWon,50959);assert.equal(source.customCostsWon,100000);assert.deepEqual(source.costSuggestions,[]);
-  assert.equal(actual.cells.D28,161959);assert.equal(actual.cells.E36,plain.cells.E36-100000);assert.equal(actual.cells.D39,plain.cells.D39-100000);
+  assert.equal(actual.cells.D28,111000);assert.deepEqual(formulaValues(actual),formulaValues(calculate(doc,{...source,inventoryInterestWon:0})),'All formulas ignore finance interest');assert.equal(calculate(doc,base).cells.D28,11000);assert.equal(actual.cells.E36,plain.cells.E36-100000);assert.equal(actual.cells.D39,plain.cells.D39-100000);
   assert.equal(actual.totals.purchaseIncome,plain.totals.purchaseIncome-100000);assert.equal(actual.totals.purchaseIncomeTax,plain.totals.purchaseIncomeTax-3000);assert.equal(actual.totals.purchaseLocalTax,plain.totals.purchaseLocalTax-300);assert.equal(actual.totals.purchaseNet,plain.totals.purchaseNet-96700);
   assert.equal(actual.cells.F28,plain.cells.F28);assert.equal(actual.cells.H28,plain.cells.H28);assert.equal(actual.totals.vat,plain.totals.vat);assert.equal(actual.totals.brokerNet,plain.totals.brokerNet);
   assert.deepEqual(calculate(doc,source),actual);assert.deepEqual(doc,before);
@@ -194,7 +194,7 @@ test('automatic custom totals can exceed manual input limits while retaining saf
   assert.equal(source.customCostsWon,128000000000000);assert.equal(result.cells.D28,128000000000000);assert(Object.values(formulaValues(result)).every(Number.isSafeInteger));
   assert.throws(()=>parseMoney(10000000000000),{code:'VALIDATION_ERROR'},'Manual money inputs retain their original limit');
   const zero=document({D8:0,D10:0,D11:0,D31:0});assert.equal(calculate(zero,{customCostsWon:Number.MAX_SAFE_INTEGER}).cells.D28,Number.MAX_SAFE_INTEGER);
-  assert.throws(()=>calculate(zero,{customCostsWon:Number.MAX_SAFE_INTEGER,inventoryInterestWon:1}),{code:'VALIDATION_ERROR'},'Combining automatic totals cannot silently overflow');
+  assert.equal(calculate(zero,{customCostsWon:Number.MAX_SAFE_INTEGER,inventoryInterestWon:1}).cells.D28,Number.MAX_SAFE_INTEGER,'Excluded interest cannot alter or overflow income costs');const overflow=structuredClone(zero);overflow.cells.D15=1;assert.throws(()=>calculate(overflow,{customCostsWon:Number.MAX_SAFE_INTEGER}),{code:'VALIDATION_ERROR'},'Combining manual and custom costs cannot silently overflow');
 });
 
 test('invalid custom amounts and oversized stored maps fail validation rather than partially reducing cost', () => {
@@ -209,9 +209,9 @@ test('live income notes and print snapshots show automatic custom costs and the 
   const source=createSource(car({customCosts:{[CUSTOM]:100000},inventoryLoan:1000,inventoryLender:'검증금융',purchaseAt:'2026-01-01',soldAt:'2026-02-01'}),{lenders:[['검증금융',100000,6]]}),doc=createDocument(source),result=calculate(doc,source);
   const dom=new JSDOM('<!doctype html><html><body><div id="income-sheet"></div><div id="income-live-summary"></div></body></html>'),previous=globalThis.document;globalThis.document=dom.window.document;
   try{
-    const form=buildForm();form.updateCalculation(result,doc,source);const note=dom.window.document.querySelector('.income-interest-note');assert.equal(note.hidden,false);assert.match(note.textContent,/재고금융 이자 50,959원/);assert.match(note.textContent,/추가 비용 100,000원/);
+    const form=buildForm();form.updateCalculation(result,doc,source);const note=dom.window.document.querySelector('.income-interest-note');assert.equal(note.hidden,false);assert.doesNotMatch(note.textContent,/재고금융 이자/);assert.match(note.textContent,/추가 비용 100,000원/);
     const snapshot=dom.window.document.createElement('section');snapshot.append(buildPrintSnapshot(doc,{source,domDocument:dom.window.document}));
-    assert.match(snapshot.querySelector('.print-footer').textContent,/재고금융 이자 50,959원 · 추가 비용 100,000원 포함/);assert.equal(Number(snapshot.querySelector('[data-cell-address="D28"]').textContent.replaceAll(',','')),150959);
+    assert.match(snapshot.querySelector('.print-footer').textContent,/추가 비용 100,000원 포함/);assert.equal(Number(snapshot.querySelector('[data-cell-address="D28"]').textContent.replaceAll(',','')),100000);
     const customOnly={...source,inventoryInterestWon:0};form.updateCalculation(calculate(doc,customOnly),doc,customOnly);assert.equal(note.hidden,false);assert.equal(note.textContent,'추가 비용 100,000원 자동 반영 (차량 부대비용 포함)');form.reset();assert.equal(note.hidden,true);
   }finally{if(previous===undefined)delete globalThis.document;else globalThis.document=previous;dom.window.close();}
 });
