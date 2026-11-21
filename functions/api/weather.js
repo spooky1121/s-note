@@ -1,7 +1,7 @@
 /* First-party KMA observations. No customer data, GPS permission or browser API key. */
 const FEED='https://www.kma.go.kr/XML/weather/sfc_web_map.xml';
 // Representative ASOS stations; select an available station near the connection region.
-const STATIONS=[
+export const STATIONS=[
  [90,38.2509,128.5647],[95,38.1479,127.3042],[98,37.9019,127.0607],[99,37.8859,126.7665],
  [100,37.6771,128.7183],[101,37.9026,127.7357],[105,37.7515,128.891],[106,37.5071,129.1243],
  [108,37.5714,126.9658],[112,37.4777,126.6249],[114,37.3375,127.9466],[115,37.4813,130.8986],
