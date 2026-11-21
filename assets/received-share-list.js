@@ -27,6 +27,7 @@
  function args(entry,action){return{p_action:action,p_company:entry.item.companyId,p_owner:entry.item.ownerId,p_car:entry.item.carId,...(action==='media'&&entry.access.grant?{p_access:entry.access.grant}:{})};}
  async function read(c,item,run){
   const key=JSON.stringify([c.key,item.companyId,item.ownerId,item.carId,item.invitationId,item.version,item.permission]);let ticket=!run.fresh&&pendingReads.get(key);
+  if(ticket?.expired)return null;
   if(!ticket){ticket={promise:bridge().rpc(c,{p_action:'read',p_company:item.companyId,p_owner:item.ownerId,p_car:item.carId})};pendingReads.set(key,ticket);const settled=()=>{if(pendingReads.get(key)===ticket)pendingReads.delete(key);};ticket.promise.then(settled,settled);}
   const value=await ticket.promise;if(!currentRun(c,run))return null;
   const cap=access(value),raw=value?.car;
@@ -37,28 +38,50 @@
   const car=Object.freeze({...clean,id,ownerId:'cld_'+item.ownerId.replaceAll('-','').slice(0,18),km:clean.km??clean.mileage??'',model:raw.model.slice(0,200),plate:typeof raw.plate==='string'?raw.plate.slice(0,30):''});
   return{item:{...item},car,access:cap,url:previous?.url||null,photoAt:previous?.photoAt||0,readAt:Date.now(),photoJob:null};
  }
- // A route visit always verifies incoming grants; only an unchanged, recently read grant can reuse its session snapshot.
+ function incomingItems(result){
+  if(!Array.isArray(result)||result.length>1000)throw Error('INVALID_RESPONSE');
+  const counts=new Map();for(const item of result.filter(itemAllowed)){const id=idFor(item);counts.set(id,(counts.get(id)||0)+1);}
+  return result.filter(item=>itemAllowed(item)&&counts.get(idFor(item))===1);
+ }
+ function accept(items,run){
+  const accepted=new Map(items.map(item=>[idFor(item),item]));let changed=false;run.accepted=accepted;
+  for(const[id,entry]of entries)if(!accepted.has(id)||!sameGrant(entry.item,accepted.get(id))){revoke(entry);entries.delete(id);visible.delete(id);changed=true;}
+  // This incoming ACK verified the same grant. Keep its row while refreshing the data snapshot.
+  for(const item of items){const id=idFor(item),old=entries.get(id);if(old){if(old.item.ownerName!==item.ownerName||!visible.has(id))changed=true;old.item={...item};visible.add(id);}else if(visible.delete(id))changed=true;}if(changed)repaint();
+ }
+ // A route visit always verifies incoming grants; only a recently read grant can reuse its snapshot.
  function refresh(force=false,{urgent=false,warm=false}={}){const c=scope();if(!c||!listRoute()&&!warm)return Promise.resolve();
   // Coalesce repeated invalidations: hide immediately, finish current transports, then validate once more.
   if(job&&force&&!urgent){job.recheck=true;job.blocked=true;pendingReads.clear();clearEntries();return job.completion||job.promise;}
-  if(job&&!force&&!urgent)return job.completion||job.promise;if(!force&&!urgent&&Date.now()-last<15000)return Promise.resolve();
+  if(job&&!force&&!urgent){job.revalidate?.();return job.completion||job.promise;}if(!force&&!urgent&&Date.now()-last<15000)return Promise.resolve();
   if(job){epoch++;job=null;}if(force)clearEntries();
   const run={epoch,key:c.key,fresh:force,promise:null};job=run;initialized=true;
-  run.promise=(async()=>{try{
-   const result=await bridge().rpc(c,{p_action:'incoming'});if(!currentRun(c,run)||run.blocked)return;
-   if(!Array.isArray(result)||result.length>1000)throw Error('INVALID_RESPONSE');
-   const counts=new Map();for(const item of result.filter(itemAllowed)){const id=idFor(item);counts.set(id,(counts.get(id)||0)+1);}
-   const items=result.filter(item=>itemAllowed(item)&&counts.get(idFor(item))===1),accepted=new Map(items.map(item=>[idFor(item),item]));
-   for(const[id,entry]of entries)if(!accepted.has(id)||!sameGrant(entry.item,accepted.get(id))){revoke(entry);entries.delete(id);visible.delete(id);}
-   for(const item of items){const id=idFor(item),old=entries.get(id);if(old&&!force&&Date.now()-old.readAt<30000){old.item={...item};visible.add(id);}else visible.delete(id);}repaint();
-   let cursor=0;await Promise.all(Array.from({length:Math.min(6,items.length)},async()=>{while(cursor<items.length){if(!currentRun(c,run)||run.blocked)return;const item=items[cursor++],id=idFor(item),old=entries.get(id);if(old&&!force&&visible.has(id)&&Date.now()-old.readAt<30000)continue;
+  let progress;const timeout=()=>Object.assign(Error('SHARE_REFRESH_TIMEOUT'),{code:'SHARE_REFRESH_TIMEOUT'});
+  const deadline=new Promise((_,reject)=>{run.fail=error=>{run.blocked=true;reject(error);};progress=()=>{clearTimeout(run.timer);run.timer=setTimeout(()=>run.fail(timeout()),12000);};progress();});
+  const fetchRows=async()=>{
+   const result=await bridge().rpc(c,{p_action:'incoming'});if(!currentRun(c,run)||run.blocked)return;progress();
+   const items=incomingItems(result);accept(items,run);let cursor=0;
+   // Authorization polling remains independent of a large or slowly progressing snapshot queue.
+   run.revalidate=()=>{if(run.revalidation||!currentRun(c,run)||run.blocked)return;let timer;
+    run.revalidation=(async()=>{try{
+     const reply=await Promise.race([bridge().rpc(c,{p_action:'incoming'}),new Promise((_,reject)=>{timer=setTimeout(()=>reject(timeout()),12000);})]);
+     if(!currentRun(c,run)||run.blocked)return;const next=incomingItems(reply),prior=run.accepted;accept(next,run);
+     items.splice(cursor,0,...next.filter(item=>!sameGrant(item,prior.get(idFor(item)))));
+    }catch(error){if(currentRun(c,run)&&!run.blocked)run.fail(error);}finally{clearTimeout(timer);run.revalidation=null;}})();
+   };
+   const worker=async()=>{while(cursor<items.length){if(!currentRun(c,run)||run.blocked)return;const item=items[cursor++],id=idFor(item),old=entries.get(id);if(!sameGrant(item,run.accepted.get(id)))continue;if(old&&!force&&visible.has(id)&&Date.now()-old.readAt<30000)continue;
     let entry=null;try{entry=await read(c,item,run);}catch{}
-    if(!currentRun(c,run)||run.blocked)return;
-    if(entry){const previous=entries.get(id);if(previous&&sameGrant(previous.item,entry.item)){const photoState={url:previous.url,photoAt:previous.photoAt,photoJob:previous.photoJob};Object.assign(previous,entry,photoState);entry=previous;}entries.set(id,entry);visible.add(id);}else{revoke(entries.get(id));entries.delete(id);visible.delete(id);}repaint();
-   }}));
+    if(!currentRun(c,run)||run.blocked)return;progress();if(!sameGrant(item,run.accepted.get(id)))continue;
+    if(entry)entry.item={...run.accepted.get(id)};
+    let changed=false;
+    if(entry){const previous=entries.get(id),sameCar=previous&&JSON.stringify(previous.car)===JSON.stringify(entry.car);changed=!previous||!sameCar||!sameGrant(previous.item,entry.item)||previous.item.ownerName!==entry.item.ownerName||!visible.has(id);if(previous&&sameGrant(previous.item,entry.item)){const photoState={url:previous.url,photoAt:previous.photoAt,photoJob:previous.photoJob,car:sameCar?previous.car:entry.car};Object.assign(previous,entry,photoState);entry=previous;}entries.set(id,entry);visible.add(id);}else{changed=entries.has(id)||visible.has(id);revoke(entries.get(id));entries.delete(id);visible.delete(id);}if(changed)repaint();
+   }};
+   do{await Promise.all(Array.from({length:Math.min(6,items.length-cursor)},worker));if(run.revalidation)await run.revalidation;}while(currentRun(c,run)&&!run.blocked&&cursor<items.length);
    if(currentRun(c,run)&&!run.blocked){last=Date.now();if(listRoute())scan();}
-  }catch{if(currentRun(c,run)){for(const entry of entries.values())revoke(entry);entries.clear();visible.clear();last=Date.now();repaint();}}
-  finally{if(job===run){job=null;if(run.recheck&&sameAccount(c))run.next=refresh(true,{warm:true});}}})();run.completion=run.promise.then(()=>run.next);return run.completion;
+  };
+  run.promise=(async()=>{try{await Promise.race([fetchRows(),deadline]);}
+  catch(error){if(currentRun(c,run)){run.blocked=true;if(error?.code==='SHARE_REFRESH_TIMEOUT')for(const ticket of pendingReads.values())ticket.expired=true;for(const entry of entries.values())revoke(entry);entries.clear();visible.clear();last=error?.code==='SHARE_REFRESH_TIMEOUT'?0:Date.now();repaint();}}
+  finally{clearTimeout(run.timer);if(job===run){job=null;if(run.recheck&&sameAccount(c))run.next=refresh(true,{warm:true});}}})();run.completion=run.promise.then(()=>run.next);return run.completion;
  }
  function ready(){const c=scope();if(c&&!initialized)void refresh(false,{urgent:true,warm:true});}
  function paintPhoto(entry){const src=entry.url||(typeof fallbackImage==='function'?fallbackImage(entry.car).src:'');for(const image of document.querySelectorAll('img[data-received-share-photo]'))if(image.dataset.receivedSharePhoto===entry.car.id)image.src=src;}

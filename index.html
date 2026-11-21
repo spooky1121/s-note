@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.172">
+<html lang="ko" data-snote-release="2.173">
 <head>
 <meta charset="utf-8" />
 <link rel="stylesheet" href="assets/message-popup.css?v=2.172">
@@ -3188,7 +3188,7 @@ button, input, select, textarea { font-family: inherit; }
 <script src="assets/money.js?v=2.76"></script>
 <script src="assets/custom-cost-model.js?v=2.85"></script>
 <script src="assets/inventory-interest.js?v=2.112"></script>
-<script src="assets/list-pagination.js?v=2.135"></script>
+<script src="assets/list-pagination.js?v=2.173"></script>
 <script src="assets/popup-controls.js?v=2.168" defer></script>
 <link rel="stylesheet" href="assets/list-style.css?v=2.37">
 <script src="assets/customer-list.js?v=2.102" defer></script>
@@ -3672,11 +3672,12 @@ function accountantFilter(){return isFinanceManager()?($('accountant-dealer-filt
 function handleAccountantDealerFilter(){renderCars();if(['finance','inventoryFinance'].includes(route))buildAlt();}
 function renderAccountantBar(){const bar=$('accountant-bar');if(!bar)return;bar.hidden=!isFinanceManager()||['settings','recycle','dashboard','contractOffice','contractArchive'].includes(route)||route==='buy'&&!isAccountant();if(!isFinanceManager())return;
  const select=$('accountant-dealer-filter'),prior=select.value||'all';
- const scopedCars=route==='companyBuy'?cars.filter(snotePurchaseCarVisible):cars,owners=[...new Set(scopedCars.map(c=>c.ownerId))].filter(Boolean);
- select.innerHTML='<option value="all">전체 딜러</option>'+owners.map(id=>`<option value="${esc(id)}">${esc(dealerLabel({ownerId:id}))}</option>`).join('');
+ const scopedCars=route==='companyBuy'?cars.filter(snotePurchaseCarVisible):cars,owners=[...new Set(scopedCars.map(c=>c.ownerId))].filter(Boolean).sort();
+ const ownerOptions='<option value="all">전체 딜러</option>'+owners.map(id=>`<option value="${esc(id)}">${esc(dealerLabel({ownerId:id}))}</option>`).join('');
+ if(select.innerHTML!==ownerOptions)select.innerHTML=ownerOptions;
  select.value=owners.includes(prior)?prior:'all';
  const inv=scopedCars.filter(c=>c.status!=='판매완료').length,sold=scopedCars.length-inv;
- $('accountant-overview').innerHTML=`<div class="acct-mini">전체 차량<strong>${scopedCars.length}대</strong></div><div class="acct-mini">매입보유차량<strong>${inv}대</strong></div><div class="acct-mini">판매완료<strong>${sold}대</strong></div>`;
+ const overview=`<div class="acct-mini">전체 차량<strong>${scopedCars.length}대</strong></div><div class="acct-mini">매입보유차량<strong>${inv}대</strong></div><div class="acct-mini">판매완료<strong>${sold}대</strong></div>`;if($('accountant-overview').innerHTML!==overview)$('accountant-overview').innerHTML=overview;
 }
 async function refreshAccountantWorkspace(){if(!isAccountant())return;if(window.zc86Cloud?.ready){window.snoteRefreshCompanyPurchase?.();return;}dealerAccounts=await getAllAccounts();loadCarsForUser();loadCovers();if(fileDB)await refreshMedia();renderAccountantBar();buildStats();navigate(route);toast('모든 딜러 차량 정보를 다시 불러왔습니다.')}
 
@@ -4600,7 +4601,7 @@ function snote226RenderSalesMonth(count){
  const select=$('snote-sales-month'),options=[];
  for(const month of [...months].sort().reverse()){const option=document.createElement('option');option.value=month;option.textContent=snote226SalesMonthLabel(month);options.push(option);}
  for(const [value,label]of [['all','전체 기간'],['undated','판매일 확인 필요']]){const option=document.createElement('option');option.value=value;option.textContent=label;options.push(option);}
- select.replaceChildren(...options);select.value=selected;
+ const optionKey=JSON.stringify(options.map(option=>[option.value,option.textContent]));if(select.dataset.snoteMonths!==optionKey){select.replaceChildren(...options);select.dataset.snoteMonths=optionKey;}select.value=selected;
  $('snote-sales-month-prev').disabled=!snote226ShiftSalesMonth(selected,-1);$('snote-sales-month-next').disabled=!snote226ShiftSalesMonth(selected,1);
  $('snote-sales-current-month').setAttribute('aria-pressed',String(selected===current));$('snote-sales-month-count').textContent=count+'대';
 }
@@ -4906,21 +4907,52 @@ function snotePurchaseDateSortKey(value){
  const time=Date.parse(key+'T00:00:00Z');
  return Number.isFinite(time)&&new Date(time).toISOString().slice(0,10)===key?key:'';
 }
+/* Reconcile list projections by identity; observers may decorate retained rows and headers. */
+const snoteVehicleListViews=new WeakMap();
+function snoteRenderVehicleList(host,html,scope){
+ const previous=snoteVehicleListViews.get(host),same=previous?.actor===currentUser&&previous.role===currentUser?.role&&previous.scope===scope&&previous.root?.parentNode===host;
+ if(same&&previous.html===html)return;
+ const template=document.createElement('template');template.innerHTML=html;
+ const root=template.content.firstElementChild,table=root?.tagName==='TABLE'?root:null;
+ const frame=table?table.className+'|'+table.tHead?.outerHTML:'cards';
+ const nextRows=table?[...table.tBodies[0].children]:[...template.content.children];
+ const keyed=nextRows.length>0&&nextRows.every(row=>row.hasAttribute('data-registration-car-id'))&&new Set(nextRows.map(row=>row.dataset.registrationCarId)).size===nextRows.length;
+ const records=new Map();
+ if(same&&keyed&&previous.frame===frame&&previous.keyed){
+  const body=table?previous.root.tBodies[0]:host;
+  const wanted=new Set(nextRows.map(row=>row.dataset.registrationCarId));
+  for(const row of [...body.children])if(!wanted.has(row.dataset.registrationCarId))row.remove();
+  nextRows.forEach((row,index)=>{
+   const id=row.dataset.registrationCarId,raw=row.outerHTML,old=previous.rows.get(id);
+   const node=old?.html===raw&&old.node.parentNode===body?old.node:row;
+   if(old&&node!==old.node&&old.node.parentNode===body)old.node.remove();
+   if(body.children[index]!==node)body.insertBefore(node,body.children[index]||null);
+   records.set(id,{html:raw,node});
+  });
+  snoteVehicleListViews.set(host,{actor:currentUser,role:currentUser?.role,scope,html,frame,keyed,root:host.firstElementChild,rows:records});return;
+ }
+ if(keyed)for(const row of nextRows)records.set(row.dataset.registrationCarId,{html:row.outerHTML,node:row});
+ host.replaceChildren(template.content);
+ snoteVehicleListViews.set(host,{actor:currentUser,role:currentUser?.role,scope,html,frame,keyed,root:host.firstElementChild,rows:records});
+}
+function snoteVehicleListIdentity(car){return String(car.ownerId||'')+'\u0000'+String(car.id||'');}
+function snoteVehicleRegistrationTime(car){const match=/^vehicle-.+-([a-z0-9]+)-[a-z0-9]+$/.exec(String(car.id||''));return match?parseInt(match[1],36)||0:0;}
+function snoteVehicleListTie(a,b){const recent=snoteVehicleRegistrationTime(b)-snoteVehicleRegistrationTime(a);if(recent)return recent;const left=snoteVehicleListIdentity(a),right=snoteVehicleListIdentity(b);return left<right?-1:left>right?1:0;}
 function renderCars(){
  const count=$('snote-vehicle-count');if(count)count.hidden=route!=='buy'&&route!=='sell';
  snoteRefreshSalesOverview();
  const scope=snotePurchaseContext(),navigation=scope?.key||'';if(navigation!==snotePurchaseNavigationScope){snotePurchaseNavigationScope=navigation;buildMenus();}
- if((route==='companyBuy'||isAccountant())&&window.snoteEnsureCompanyPurchase?.()!==true){const status=window.snoteCompanyPurchaseMessage?.()||'상사 매물을 불러오는 중…',copy=`<div class="empty"><p>${esc(status)}</p><button class="snote-list-action" type="button" aria-label="상사 매입 새로고침" data-tooltip="새로고침" onclick="window.snoteRefreshCompanyPurchase?.()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 5v6h-6M4 19v-6h6M5.5 8a7 7 0 0 1 11.6-2L20 9M4 15l2.9 3A7 7 0 0 0 18.5 16"/></svg></button></div>`;$('list-table').innerHTML=copy;$('list-mobile').innerHTML=copy;$('list-pagination').replaceChildren();$('list-pagination').hidden=true;if(count)count.textContent='0대';snote226RenderSalesMonth(0);return;}
+ if((route==='companyBuy'||isAccountant())&&window.snoteEnsureCompanyPurchase?.()!==true){const status=window.snoteCompanyPurchaseMessage?.()||'상사 매물을 불러오는 중…',copy=`<div class="empty"><p>${esc(status)}</p><button class="snote-list-action" type="button" aria-label="상사 매입 새로고침" data-tooltip="새로고침" onclick="window.snoteRefreshCompanyPurchase?.()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 5v6h-6M4 19v-6h6M5.5 8a7 7 0 0 1 11.6-2L20 9M4 15l2.9 3A7 7 0 0 0 18.5 16"/></svg></button></div>`;snoteRenderVehicleList($('list-table'),copy,route+':'+navigation);snoteRenderVehicleList($('list-mobile'),copy,route+':'+navigation);if($('list-pagination').childNodes.length)$('list-pagination').replaceChildren();$('list-pagination').hidden=true;if(count)count.textContent='0대';snote226RenderSalesMonth(0);return;}
  if(isAccountant()&&!['buy','sell'].includes(route))return;
  if(route==='companyBuy'||isAccountant())renderAccountantBar();
  const all=getFiltered('list'),inventory=isPurchaseListRoute();
  if(route==='buy'||route==='sell'){$('list-title').textContent=route==='buy'?'매입 차량':'판매 차량';if(count)count.textContent=num(all.length)+'대';}
- if(inventory)all.sort((a,b)=>snotePurchaseDateSortKey(b.purchaseAt).localeCompare(snotePurchaseDateSortKey(a.purchaseAt)));
+ if(inventory)all.sort((a,b)=>snotePurchaseDateSortKey(b.purchaseAt).localeCompare(snotePurchaseDateSortKey(a.purchaseAt))||snoteVehicleListTie(a,b));
  const l=snote236Paginate(all,'vehicles',JSON.stringify([currentUser?.username,route,isPurchaseListRoute()?scope?.key:'',$('list-query')?.value,$('list-filter')?.value,route==='buy'&&!isAccountant()?'all':accountantFilter(),snote226ActiveSalesMonth()]),'list-pagination',()=>renderCars());
  if(route==='sell'&&!l.length){
   const period=snote226ActiveSalesMonth(),label=snote226SalesMonthLabel(period),empty=`<div class="empty snote-sales-empty"><strong>${esc(label)}에 조건에 맞는 판매 완료 차량이 없습니다.</strong><p>${period==='all'?'검색어나 담당자 조건을 확인해 주세요.':'다른 월을 선택하거나 전체 기간에서 확인해 주세요.'}</p>${period!=='all'?'<button type="button" onclick="snote226SetSalesMonth(\'all\')">전체 기간 보기</button>':''}</div>`;
-  $('list-table').innerHTML=empty;$('list-mobile').innerHTML=empty;
- }else{$('list-table').innerHTML=carTable(l,inventory);$('list-mobile').innerHTML=carMobile(l,inventory);}
+  snoteRenderVehicleList($('list-table'),empty,route+':'+navigation);snoteRenderVehicleList($('list-mobile'),empty,route+':'+navigation);
+ }else{snoteRenderVehicleList($('list-table'),carTable(l,inventory),route+':'+navigation);snoteRenderVehicleList($('list-mobile'),carMobile(l,inventory),route+':'+navigation);}
  snote226RenderSalesMonth(all.length);
  window.SnotePurchaseRegistrationSuccess?.rendered();
 }
@@ -5009,7 +5041,7 @@ function restoreFinanceCompanies(){
   if(!Array.isArray(saved))return;
   const clean=[];const used=new Set();
   for(const item of saved){if(!Array.isArray(item))continue;const name=String(item[0]||'').trim(),limit=Number(SnoteMoney.toWon(item[1]));if(name&&name.length<=45&&!used.has(name)&&Number.isFinite(limit)&&limit>=0&&limit<=1000000000000){clean.push([name,limit,item[2]!=null&&String(item[2]).trim()!==''&&Number.isFinite(Number(item[2]))&&Number(item[2])>=0&&Number(item[2])<=100?Number(item[2]):null]);used.add(name)}}
-  ACC44_LENDER_LIMITS=clean;INVENTORY_LENDERS=clean.map(x=>x[0]);
+  ACC44_LENDER_LIMITS=clean;const catalog=globalThis.snoteDealerRatesBridge?.companyLenderNames?.();INVENTORY_LENDERS=Array.isArray(catalog)?catalog:clean.map(x=>x[0]);
  }catch(e){console.warn('금융사 설정 불러오기 실패',e)}
 }
 function persistFinanceCompanies(next){
@@ -5017,9 +5049,10 @@ function persistFinanceCompanies(next){
  try{const extra=snote203Meta();const prepared=next.map(x=>[x[0],x[1],x[2]!=null&&String(x[2]).trim()!==''&&Number.isFinite(Number(x[2]))?Number(x[2]):(ACC44_LENDER_LIMITS.find(y=>y[0]===x[0])?.[2]??null)]);localStorage.setItem(ZC157_FINANCE_KEY,JSON.stringify([...prepared.map(x=>[x[0],SnoteMoney.legacy(x[1]),x[2]]),{[SNOTE203_META]:extra}]));ACC44_LENDER_LIMITS=prepared;INVENTORY_LENDERS=prepared.map(x=>x[0]);return true}
  catch(e){toast('금융사 설정 저장에 실패했습니다.');return false}
 }
-// Company settings supply picker names. Personal rate profiles never replace this catalog.
+// Company settings supply picker names. Personal rate overrides never expand this catalog.
 function snote169CompanyLenderNames(){
- const rows=Array.isArray(ACC44_LENDER_LIMITS)?ACC44_LENDER_LIMITS:[];
+ const catalog=globalThis.snoteDealerRatesBridge?.companyLenderNames?.();
+ const rows=Array.isArray(catalog)?catalog.map(name=>[name]):Array.isArray(ACC44_LENDER_LIMITS)?ACC44_LENDER_LIMITS:[];
  return [...new Set(rows.filter(Array.isArray).map(row=>typeof row[0]==='string'?row[0].trim():'').filter(name=>name&&Array.from(name).length<=45&&!/[\u0000-\u001f\u007f]/.test(name)))];
 }
 function snote169LenderOptions(selected='',placeholder='미지정',saved=''){
@@ -9632,7 +9665,7 @@ window.snoteVehicleCostSettingsBridge={context:snoteCostPreferenceContext,
 };
 
 // Annual rates are personal financial preferences, independent of company limits.
-let snoteDealerRatesEpoch=0,snoteDealerRatesModule=null;
+let snoteDealerRatesEpoch=0,snoteDealerRatesModule=null,snoteDealerLenderCatalog=null;
 function snoteDealerRatesContext(){
  if(!S.client||!S.user||!S.company||typeof S.user.id!=='string'||typeof S.company.id!=='string')return null;
  const members=S.members.filter(row=>row.user_id===S.user.id&&row.company_id===S.company.id&&row.active===true);
@@ -9642,18 +9675,25 @@ function snoteDealerRatesContext(){
  return {key:JSON.stringify([S.company.id,S.user.id,member.role,snoteDealerRatesEpoch]),companyId:S.company.id,userId:S.user.id,ownerAlias:alias,role:member.role,actor:S.user,client:S.client,canWrite:member.role!=='accountant'};
 }
 function snoteDealerRatesCurrent(base){const now=base&&snoteDealerRatesContext();return !!now&&['key','companyId','userId','ownerAlias','role','actor','client','canWrite'].every(key=>base[key]===now[key]);}
+function snoteDealerCompanyLenderNames(){
+ const context=snoteDealerRatesContext();
+ if(snoteDealerLenderCatalog&&!snoteDealerRatesCurrent(snoteDealerLenderCatalog.context))snoteDealerLenderCatalog=null;
+ if(!context)return S.user||S.company||String(currentUser?.username||'').startsWith('cld_')?[]:null;
+ if(context.role!=='dealer')return null;
+ return snoteDealerLenderCatalog&&snoteDealerRatesCurrent(snoteDealerLenderCatalog.context)?[...snoteDealerLenderCatalog.names]:[];
+}
 function snoteDealerRatesAssert(base,write=false){if(!snoteDealerRatesCurrent(base)||write&&(!base.canWrite||!S.ready||S.loading||S.busy))throw Object.assign(Error('현재 딜러의 로그인과 재고 이율 설정을 다시 확인해 주세요.'),{code:'CONTEXT_CHANGED'});}
 async function snoteDealerRatesRpc(base,name,args={},write=false){
  snoteDealerRatesAssert(base,write);const result=await base.client.rpc(name,{p_expected_company_id:base.companyId,...args});snoteDealerRatesAssert(base,write);
  if(result.error){const code=result.error.code;throw Object.assign(Error(code==='40001'?'다른 창에서 이율이 변경되었습니다. 다시 불러온 뒤 저장해 주세요.':code==='42501'?'본인 계정의 재고 이율만 변경할 수 있습니다.':'재고 이율을 서버에서 확인하지 못했습니다. 다시 시도해 주세요.'),{code:code||'NETWORK'});}
  return result.data;
 }
-window.snoteDealerRatesBridge={context:snoteDealerRatesContext,current:snoteDealerRatesCurrent,
+window.snoteDealerRatesBridge={context:snoteDealerRatesContext,current:snoteDealerRatesCurrent,companyLenderNames:snoteDealerCompanyLenderNames,
  load:base=>snoteDealerRatesRpc(base,'snote_dealer_finance_rates_list'),
  save:(base,rates,revision)=>snoteDealerRatesRpc(base,'snote_dealer_finance_rates_save',{p_expected_user_id:base.userId,p_rates:rates,p_expected_revision:revision},true),
  companyFor(car){const scope=car&&S.carScopes.get(car);if(scope&&scope.epoch===snote220CatalogEpoch&&scope.carId===String(car.id)&&ownerAlias(scope.ownerId)===car.ownerId)return scope.companyId;if(!car?.ownerId||car.ownerId===ownerAlias(S.user?.id||''))return S.company?.id;return undefined;}
 };
-function snoteResetDealerRates(){snoteDealerRatesEpoch++;window.SnoteDealerFinanceRates?.reset();}
+function snoteResetDealerRates(){snoteDealerRatesEpoch++;snoteDealerLenderCatalog=null;window.SnoteDealerFinanceRates?.reset();}
 function snoteAdoptDealerLenderCatalog(){
  INVENTORY_LENDERS=snote169CompanyLenderNames();
  if(!S.ready)return;
@@ -9668,11 +9708,16 @@ async function snoteLoadDealerRates({force=false}={}){
  if(!window.SnoteDealerFinanceRates){if(!snoteDealerRatesModule)snoteDealerRatesModule=import('./assets/dealer-finance-rates.js?v=2.172').catch(error=>{snoteDealerRatesModule=null;throw error;});await snoteDealerRatesModule;}
  const loaded=await window.SnoteDealerFinanceRates.refresh({force});if(loaded)snoteAdoptDealerLenderCatalog();return loaded;
 }
-document.addEventListener('snote:dealer-finance-rates-changed',()=>{
+document.addEventListener('snote:dealer-finance-rates-changed',event=>{
+ if(event.detail?.source==='reset')snoteDealerLenderCatalog=null;
+ // The authenticated own profile exposes registered company names without limits
+ // or a personal-rate requirement. Only a confirmed current response replaces them.
+ const context=snoteDealerRatesContext(),config=window.SnoteDealerFinanceRates?.config();
+ if(context?.role==='dealer'&&event.detail?.ready===true&&event.detail.contextKey===context.key&&Array.isArray(config?.lenderNames))snoteDealerLenderCatalog={context,names:[...config.lenderNames]};
  snoteAdoptDealerLenderCatalog();
  if(!S.ready||!snoteDealerRatesContext())return;
  buildStats();renderCars();
- if(activeCarId&&byId('vehicle-overlay')?.classList.contains('open'))updateDetailSummary();
+ if(activeCarId&&byId('vehicle-overlay')?.classList.contains('open')&&window.SnoteSharedVehicleDetail?.active()!==true)updateDetailSummary();
  if(byId('overlay')?.classList.contains('open'))updateAddSummary();
  if(['finance','inventoryFinance','acctFinance'].includes(route))buildAlt();
 });
@@ -11482,11 +11527,11 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 <script src="assets/vehicle-sharing.js?v=2.172" defer></script>
 <script src="assets/shared-vehicle-markers.js?v=2.170" defer></script>
 <link rel="stylesheet" href="assets/received-share-list.css?v=2.167">
-<script src="assets/received-share-list.js?v=2.169" defer></script>
+<script src="assets/received-share-list.js?v=2.173" defer></script>
 <link rel="stylesheet" href="assets/workspace-reorder.css?v=2.136">
 <script src="assets/workspace-order-store.js?v=2.135" defer></script>
 <script src="assets/workspace-reorder.js?v=2.172" defer></script>
-<script src="assets/release-info.js?v=2.172" defer></script>
+<script src="assets/release-info.js?v=2.173" defer></script>
 <link rel="stylesheet" href="assets/encar-id.css?v=2.162">
 <script src="assets/encar-id.js?v=2.172" defer></script>
 <script src="assets/company-purchase.js?v=2.172" defer></script>

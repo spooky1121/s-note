@@ -8,6 +8,7 @@ const A='11111111-1111-4111-8111-111111111111',B='22222222-2222-4222-8222-222222
 const migrationFile=fs.readdirSync(path.join(ROOT,'supabase/migrations')).find(name=>name.endsWith('_dealer_inventory_finance_rates.sql'));
 assert(migrationFile,'A CLI-generated dealer inventory finance rates migration must exist');
 const migrationPath=path.join(ROOT,'supabase/migrations',migrationFile),migration=fs.readFileSync(migrationPath,'utf8');
+const datasetBaseline=JSON.parse(fs.readFileSync(path.join(ROOT,'tests/recycle-bin-db.cjs'),'utf8').match(/^const BASELINE=(.+);$/m)[1]);
 (async()=>{const db=new PGlite();await db.waitReady;const results=[];
  const scalar=async(query,params=[])=>Object.values((await db.query(query,params)).rows[0])[0];
  async function actor(role,id,fn){await db.exec('set role '+role);await db.query("select set_config('request.jwt.claim.sub',$1,false),set_config('request.jwt.claim.role',$2,false)",[id||'',role]);try{return await fn();}finally{await db.exec('reset role');}}
@@ -20,6 +21,8 @@ const migrationPath=path.join(ROOT,'supabase/migrations',migrationFile),migratio
  const cars=async(owner,company,payload)=>db.query("insert into public.zc_datasets values($1,$2,'cars',$3::jsonb) on conflict(company_id,owner_id,dataset) do update set payload=excluded.payload",[company,owner,JSON.stringify(payload)]);
  try{
   await db.exec("create role anon;create role authenticated;create role service_role bypassrls;create schema auth;create table auth.users(id uuid primary key,email_confirmed_at timestamptz default now(),deleted_at timestamptz,banned_until timestamptz);create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;create function auth.jwt() returns jsonb language sql stable as $$select jsonb_build_object('role',current_setting('request.jwt.claim.role',true),'is_anonymous',false)$$;grant usage on schema auth,public to anon,authenticated,service_role;create table public.zc_companies(id uuid primary key);create table public.zc_members(user_id uuid,company_id uuid,role text,active boolean);create table public.zc_datasets(company_id uuid,owner_id uuid,dataset text,payload jsonb,primary key(company_id,owner_id,dataset));create schema snote_private;create table snote_private.vehicle_shares(company_id uuid,owner_id uuid,car_id text,recipient_id uuid,recipient_company_id uuid,state text,permission text default 'read');");
+  await db.exec(datasetBaseline.functions.find(row=>row.name==='zc_is_member').definition);
+  await db.exec('alter table public.zc_datasets enable row level security;grant select on public.zc_datasets,public.zc_members to authenticated;create policy zc_datasets_read on public.zc_datasets for select to authenticated using('+datasetBaseline.policies.find(row=>row.name==='zc_datasets_read').using+')');
   await db.query('insert into public.zc_companies values($1),($2)',[C,D]);
   for(const id of[A,B,AC,OFF,FOREIGN,FORMER])await db.query('insert into auth.users(id) values($1)',[id]);
   for(const[id,company,role,active]of[[A,C,'dealer',true],[B,C,'admin',true],[AC,C,'accountant',true],[OFF,C,'dealer',false],[FOREIGN,D,'dealer',true],[FORMER,C,'dealer',true]])await db.query('insert into public.zc_members values($1,$2,$3,$4)',[id,company,role,active]);
@@ -50,8 +53,12 @@ const migrationPath=path.join(ROOT,'supabase/migrations',migrationFile),migratio
   await db.query("insert into public.zc_datasets values($1,$2,'finance_limits',$3::jsonb)",[C,NIL,JSON.stringify(financeC)]);
   const fallbackBefore=await scalar("select payload from public.zc_datasets where company_id=$1 and dataset='finance_limits'",[C]);
   const full=own(await list(A),A);assert.deepEqual(full.lenderNames,['KB캐피탈','금리미설정','문자금리','정밀기존']);assert.deepEqual(full.fallbackRates,{'KB캐피탈':5.5,'문자금리':7.25,'정밀기존':5.1235});
+  assert.equal((await actor('authenticated',A,()=>db.query("select payload from public.zc_datasets where dataset='finance_limits'"))).rows.length,0);
+  for(const id of[B,AC])assert.equal((await actor('authenticated',id,()=>db.query("select payload from public.zc_datasets where dataset='finance_limits'"))).rows.length,1);
+  assert.equal(own(await list(A),A).lenderNames.includes('금리미설정'),true);assert.deepEqual(own(await list(A),A).rates,{'KB캐피탈':6.125});
+  pass('existing dataset RLS hides company limits from dealers while the own catalog includes every registered lender without requiring personal or default rates');
   assert.equal(JSON.stringify(full).includes('150000'),false);assert.equal(JSON.stringify(full).includes('prestock'),false);
-  const cleared=await save(A,{},1);assert.equal(cleared.revision,2);assert.deepEqual(cleared.rates,{});assert.equal(own(await list(A),A).fallbackRates['KB캐피탈'],5.5);assert.deepEqual(await scalar("select payload from public.zc_datasets where company_id=$1 and dataset='finance_limits'",[C]),fallbackBefore);
+  const cleared=await save(A,{},1);assert.equal(cleared.revision,2);assert.deepEqual(cleared.rates,{});const inherited=own(await list(A),A);assert.equal(inherited.fallbackRates['KB캐피탈'],5.5);assert.deepEqual(inherited.lenderNames,full.lenderNames);assert.deepEqual(inherited.rates,{});assert.deepEqual(await scalar("select payload from public.zc_datasets where company_id=$1 and dataset='finance_limits'",[C]),fallbackBefore);
   pass('clearing an override restores server-derived legacy fallback without exposing limits or changing company settings');
 
   assert.equal((await get(AC)).revision,0);await denied(()=>save(AC,{'KB캐피탈':4},0));await denied(()=>get(OFF));
