@@ -21,15 +21,17 @@
  const canChange=s=>!!s&&supported(s.account.role)&&s.confirmed&&current(s)&&s.status==='ready';
  const retrying=s=>!!s&&['load-error','save-error'].includes(s.status);
  function feedback(s){return s?.status==='loading'?'설정을 불러오는 중…':s?.status==='saving'?'저장 중…':s?.message||'';}
+ function popupResult(s,tone,operation=s.operation){if(typeof global.snoteNotify!=='function'||!operationCurrent(s,operation))return;s.popupResult=true;global.snoteNotify(s.message,{tone,key:'dashboard-display-result',isCurrent:()=>operationCurrent(s,operation),returnFocus:false});}
+ function inlineFeedback(s){return !s?.popupResult||typeof global.snoteNotify!=='function';}
  function paint(){
   const host=doc?.getElementById?.('snote-dashboard-margin-setting');if(!host)return hidden();
   if(!state||!supported(state.account.role)){host.hidden=true;return hidden();}
   host.hidden=false;host.dataset.state=state.status;host.setAttribute('aria-busy',String(busy(state)));
   const input=host.querySelector('#snote-dashboard-margin-toggle'),status=host.querySelector('#snote-dashboard-margin-status'),retry=host.querySelector('#snote-dashboard-margin-retry');
   if(input){input.checked=hidden();input.disabled=!canChange(state);input.setAttribute('aria-checked',String(input.checked));}
-  if(status){status.textContent=feedback(state);status.hidden=!status.textContent;status.dataset.error=String(retrying(state));}
+  if(status){status.textContent=feedback(state);status.hidden=!status.textContent||!inlineFeedback(state);status.dataset.error=String(retrying(state));}
   if(retry){retry.hidden=!retrying(state);retry.disabled=busy(state)||!accountCurrent(state);}
-  const row=host.querySelector('.snote-dashboard-margin-feedback');if(row)row.hidden=!feedback(state)&&!retrying(state);
+  const row=host.querySelector('.snote-dashboard-margin-feedback');if(row)row.hidden=(!feedback(state)||!inlineFeedback(state))&&!retrying(state);
   return hidden();
  }
  function notify(source){if(doc?.dispatchEvent&&typeof global.CustomEvent==='function')doc.dispatchEvent(new global.CustomEvent('snote:dashboard-display-changed',{detail:{hidden:hidden(),contextKey:state?.key||null,source}}));}
@@ -41,14 +43,14 @@
  const operationCurrent=(s,operation)=>current(s)&&s.operation===operation;
  function read(s){
   if(!s||state!==s)return Promise.resolve(true);if(s.pending)return s.pending;
-  const operation=++s.operation;s.status='loading';s.message='';paint();notify('loading');
+  const operation=++s.operation;s.status='loading';s.message='';s.popupResult=false;paint();notify('loading');
   const job=Promise.resolve().then(async()=>{
    try{
     if(!current(s)||!s.account.username)throw Error('DASHBOARD_DISPLAY_SESSION');
     const value=s.mode==='local'?localRead(s):validate(await timeout(s.bridge.load(s.context)));
     if(!operationCurrent(s,operation))return true;s.hidden=value;s.confirmed=true;s.status='ready';s.message='';paint();notify('load');return value;
    }catch(_){
-    if(state!==s||s.epoch!==epoch||s.operation!==operation)return true;s.status='load-error';s.message='표시 설정을 불러오지 못했습니다. 다시 시도해 주세요.';paint();notify('load-error');return hidden();
+    if(state!==s||s.epoch!==epoch||s.operation!==operation)return true;s.status='load-error';s.message='표시 설정을 불러오지 못했습니다. 다시 시도해 주세요.';popupResult(s,'error',operation);paint();notify('load-error');return hidden();
    }finally{if(s.operation===operation){s.pending=null;if(state===s)paint();}}
   });s.pending=job;return job;
  }
@@ -64,20 +66,20 @@
  }
  function save(desired){
   const s=state;if(!canChange(s)||s.pending||typeof desired!=='boolean'){paint();return Promise.resolve(false);}if(desired===s.hidden){paint();return Promise.resolve(true);}
-  const operation=++s.operation;s.status='saving';s.message='';paint();
+  const operation=++s.operation;s.status='saving';s.message='';s.popupResult=false;paint();
   const job=Promise.resolve().then(async()=>{
    try{
     const saved=validate(s.mode==='local'?localSave(s,desired):await timeout(s.bridge.save(s.context,desired)));
-    if(!operationCurrent(s,operation))return false;if(saved!==desired)throw Error('DASHBOARD_DISPLAY_UNCONFIRMED');s.hidden=saved;s.confirmed=true;s.status='ready';s.message='저장 완료';paint();notify('save');return true;
+    if(!operationCurrent(s,operation))return false;if(saved!==desired)throw Error('DASHBOARD_DISPLAY_UNCONFIRMED');s.hidden=saved;s.confirmed=true;s.status='ready';s.message='저장 완료';popupResult(s,'success',operation);paint();notify('save');return true;
    }catch(_){
-    if(state!==s||s.epoch!==epoch||s.operation!==operation)return false;s.status='save-error';s.message='표시 설정을 저장하지 못했습니다. 기존 설정을 유지합니다.';paint();notify('save-error');return false;
+    if(state!==s||s.epoch!==epoch||s.operation!==operation)return false;s.status='save-error';s.message='표시 설정을 저장하지 못했습니다. 기존 설정을 유지합니다.';popupResult(s,'error',operation);paint();notify('save-error');return false;
    }finally{if(s.operation===operation){s.pending=null;if(state===s)paint();}}
   });s.pending=job;return job;
  }
- function reset(){epoch++;state=null;const host=doc?.getElementById?.('snote-dashboard-margin-setting');if(host){host.hidden=true;const input=host.querySelector('#snote-dashboard-margin-toggle');if(input){input.checked=true;input.disabled=true;input.setAttribute('aria-checked','true');}const status=host.querySelector('#snote-dashboard-margin-status');if(status){status.textContent='';status.hidden=true;}}notify('reset');}
+ function reset(){epoch++;state=null;global.SnoteMessages?.dismiss('dashboard-display-result');const host=doc?.getElementById?.('snote-dashboard-margin-setting');if(host){host.hidden=true;const input=host.querySelector('#snote-dashboard-margin-toggle');if(input){input.checked=true;input.disabled=true;input.setAttribute('aria-checked','true');}const status=host.querySelector('#snote-dashboard-margin-status');if(status){status.textContent='';status.hidden=true;}}notify('reset');}
  function markup(){
-  const s=state;if(!s||!supported(s.account.role))return '';const text=feedback(s),retry=retrying(s);
-  return '<section id="snote-dashboard-margin-setting" aria-labelledby="snote-dashboard-margin-title" data-state="'+s.status+'" aria-busy="'+busy(s)+'"><div class="snote-dashboard-margin-copy"><strong id="snote-dashboard-margin-title">대시보드 수익 숨기기</strong><span id="snote-dashboard-margin-description">이번 달·올해 수익을 -로 표시합니다.</span></div><label class="snote-dashboard-margin-switch"><input id="snote-dashboard-margin-toggle" type="checkbox" role="switch" aria-label="대시보드 수익 숨기기" aria-describedby="snote-dashboard-margin-description" aria-checked="'+hidden()+'"'+(hidden()?' checked':'')+(canChange(s)?'':' disabled')+'></label><div class="snote-dashboard-margin-feedback"'+(!text&&!retry?' hidden':'')+'><p id="snote-dashboard-margin-status" role="status" aria-live="polite" data-error="'+retry+'"'+(!text?' hidden':'')+'>'+escape(text)+'</p><button id="snote-dashboard-margin-retry" type="button"'+(!retry?' hidden':'')+(!accountCurrent(s)?' disabled':'')+'>다시 시도</button></div></section>';
+  const s=state;if(!s||!supported(s.account.role))return '';const text=feedback(s),retry=retrying(s),inline=inlineFeedback(s);
+  return '<section id="snote-dashboard-margin-setting" aria-labelledby="snote-dashboard-margin-title" data-state="'+s.status+'" aria-busy="'+busy(s)+'"><div class="snote-dashboard-margin-copy"><strong id="snote-dashboard-margin-title">대시보드 수익 숨기기</strong><span id="snote-dashboard-margin-description">이번 달·올해 수익을 -로 표시합니다.</span></div><label class="snote-dashboard-margin-switch"><input id="snote-dashboard-margin-toggle" type="checkbox" role="switch" aria-label="대시보드 수익 숨기기" aria-describedby="snote-dashboard-margin-description" aria-checked="'+hidden()+'"'+(hidden()?' checked':'')+(canChange(s)?'':' disabled')+'></label><div class="snote-dashboard-margin-feedback"'+((!text||!inline)&&!retry?' hidden':'')+'><p id="snote-dashboard-margin-status" role="status" aria-live="polite" data-error="'+retry+'"'+(!text||!inline?' hidden':'')+'>'+escape(text)+'</p><button id="snote-dashboard-margin-retry" type="button"'+(!retry?' hidden':'')+(!accountCurrent(s)?' disabled':'')+'>다시 시도</button></div></section>';
  }
  doc?.addEventListener?.('change',event=>{if(event.target?.id!=='snote-dashboard-margin-toggle')return;const desired=event.target.checked;paint();void save(desired);});
  doc?.addEventListener?.('click',event=>{if(event.target?.closest?.('#snote-dashboard-margin-retry')&&state){const s=state;void(current(s)?read(s):load(s.account));}});

@@ -1,11 +1,15 @@
 import {createVehicleTaxonomyStore,normalizeTaxonomyEntry,taxonomyEntryFromCar,taxonomyIdentity} from './vehicle-taxonomy-store.js?v=2.20';
 
 const bridge=()=>window.snoteVehicleTaxonomyBridge;
-let scope=null,store=null,entries=[],pending=[],loading=null,busy=false,activeSaves=0,activeRetries=0,epoch=0,status='';
+let scope=null,store=null,entries=[],pending=[],loading=null,busy=false,activeSaves=0,activeRetries=0,epoch=0,status='',feedback=null,feedbackVersion=0;
 const notices=[];
 function error(code,message){return Object.assign(new Error(message),{code});}
 function current(captured=scope){return !!captured&&captured.uiEpoch===epoch&&scope?.key===captured.key&&bridge()?.context()?.key===captured.key;}
 function check(captured){if(!current(captured))throw error('CONTEXT_CHANGED','로그인 또는 상사가 변경되었습니다.');}
+function report(captured,tone){
+  if(!current(captured)||!status)return;const version=++feedbackVersion;feedback={text:status,tone,epoch};
+  window.snoteNotify(status,{tone,key:'vehicle-taxonomy:'+captured.key,isCurrent:()=>current(captured)&&version===feedbackVersion});
+}
 function key(context){return 'snote-company-taxonomy-pending:research-20261107-v1:'+context.company_id+':'+context.user_id;}
 function persist(){
   if(!current())return;
@@ -40,16 +44,19 @@ if(form){const holder=document.createElement('div');form.querySelector('.modal-t
 let stateCode='';
 function render(){
   const visible=current(),message=status||(pending.length?'차종 목록에 서버 저장을 확인할 항목 '+pending.length+'건이 있습니다.':'');
+  const popup=feedback?.epoch===epoch&&feedback.text===message;
   const tip=document.querySelector('#overlay .formtip');
   if(tip){tip.textContent='';tip.hidden=true;}
   for(const item of notices){
     item.box.hidden=!visible||(!message&&!item.box.id.endsWith('-inline'));
     if(visible&&!message&&item.box.id.endsWith('-inline')){item.box.hidden=true;item.text.textContent='';}
     else item.text.textContent=message;
+    item.text.hidden=popup;item.box.dataset.tone=popup?feedback.tone:'info';
     item.box.dataset.state=stateCode;
     item.retry.hidden=!pending.length&&stateCode!=='SETUP_REQUIRED'&&stateCode!=='NETWORK';
     item.retry.disabled=busy||!!loading;
     item.sql.hidden=stateCode!=='SETUP_REQUIRED';
+    if(popup&&item.retry.hidden&&item.sql.hidden)item.box.hidden=true;
   }
 }
 function refreshOptions(){
@@ -58,7 +65,7 @@ function refreshOptions(){
   const modal=document.getElementById('overlay');
   if(modal?.classList.contains('open')&&['make','group','generation','grade'].every(field=>!document.getElementById('new-'+field)?.value&&!document.getElementById('snote98-'+field+'-input')?.value.trim()))window.fillVehicleSelect?.('make');
 }
-function reset(){epoch++;scope=null;store=null;entries=[];pending=[];loading=null;busy=false;activeSaves=0;activeRetries=0;status='';stateCode='';render();}
+function reset(){epoch++;++feedbackVersion;feedback=null;scope=null;store=null;entries=[];pending=[];loading=null;busy=false;activeSaves=0;activeRetries=0;status='';stateCode='';render();}
 function session(){
   const next=bridge()?.context();if(!next)throw error('CONTEXT_CHANGED','온라인 로그인과 상사 연결을 확인해 주세요.');
   if(scope?.key===next.key)return scope;
@@ -83,7 +90,7 @@ async function load(){
   const task=(async()=>{try{
     await store.load();check(captured);
     if(!pending.length){status='';stateCode='';}render();return true;
-  }catch(failure){if(current(captured)){stateCode=failure.code||'NETWORK';status=messageFor(failure,false);render();}throw failure;}
+  }catch(failure){if(current(captured)){stateCode=failure.code||'NETWORK';status=messageFor(failure,false);report(captured,'error');render();}throw failure;}
   finally{if(current(captured)&&loading===task){loading=null;render();}}})();
   loading=task;render();return task;
 }
@@ -101,25 +108,25 @@ async function saveCar(car){
   const item={carId:String(car.id||''),entry,vehicleSaved:false};
   if(!item.carId||item.carId.length>200)throw error('INVALID_DATA','차량 식별자를 확인해 주세요.');
   const existing=pending.find(row=>row.carId===item.carId);if(existing)pending[pending.indexOf(existing)]=item;else pending.push(item);
-  persist();activeSaves++;busy=true;stateCode='saving';status='차량과 직접 입력 분류의 서버 저장을 확인하고 있습니다.';render();
+  persist();++feedbackVersion;activeSaves++;busy=true;stateCode='saving';status='차량과 직접 입력 분류의 서버 저장을 확인하고 있습니다.';render();
   try{
-    await commit(item,captured);check(captured);stateCode='saved';status='직접 입력한 분류를 상사 공용 DB에 저장했습니다. 다음 등록에서 선택할 수 있습니다.';
+    await commit(item,captured);check(captured);stateCode='saved';status='직접 입력한 분류를 상사 공용 DB에 저장했습니다. 다음 등록에서 선택할 수 있습니다.';report(captured,'success');
     return {state:'saved',vehicleSaved:true};
   }catch(failure){
-    check(captured);stateCode=failure.code||'NETWORK';status=messageFor(failure,item.vehicleSaved);persist();
+    check(captured);stateCode=failure.code||'NETWORK';status=messageFor(failure,item.vehicleSaved);persist();report(captured,'error');
     return {state:'pending',vehicleSaved:item.vehicleSaved,code:stateCode};
   }finally{if(current(captured)){activeSaves--;busy=activeSaves>0||activeRetries>0;if(busy){stateCode='saving';status='다른 분류 저장을 이어서 확인하고 있습니다.';}render();}}
 }
 async function retryPending(){
   if(busy)return;
   let captured;try{captured=session();}catch(_){return;}
-  activeRetries++;busy=true;stateCode='saving';status='서버 저장 상태를 다시 확인하고 있습니다.';render();
+  ++feedbackVersion;activeRetries++;busy=true;stateCode='saving';status='서버 저장 상태를 다시 확인하고 있습니다.';render();
   try{
     // A successful server read also verifies that a newly applied migration is ready.
     await store.load();check(captured);
     for(const item of [...pending]){if(!pending.includes(item))continue;await commit(item,captured);}
-    check(captured);stateCode='saved';status='상사 공용 차종 목록을 확인했습니다. 다음 차량 등록에서 선택할 수 있습니다.';
-  }catch(failure){if(current(captured)){stateCode=failure.code||'NETWORK';status=messageFor(failure,pending.length>0&&pending.every(row=>row.vehicleSaved));persist();}}
+    check(captured);stateCode='saved';status='상사 공용 차종 목록을 확인했습니다. 다음 차량 등록에서 선택할 수 있습니다.';report(captured,'success');
+  }catch(failure){if(current(captured)){stateCode=failure.code||'NETWORK';status=messageFor(failure,pending.length>0&&pending.every(row=>row.vehicleSaved));persist();report(captured,'error');}}
   finally{if(current(captured)){activeRetries--;busy=activeSaves>0||activeRetries>0;if(busy){stateCode='saving';status='다른 분류 저장을 이어서 확인하고 있습니다.';}render();}}
 }
 window.snoteResetVehicleTaxonomy=reset;

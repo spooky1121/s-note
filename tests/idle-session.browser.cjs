@@ -39,6 +39,7 @@ async function setup(width,state=server()){
    if(state.logoutMode==='offline')return route.abort('internetdisconnected');
    return route.fulfill({status:204,headers});
   }
+  if(url.pathname==='/rest/v1/rpc/snote_payment_accounts_read'){assert.equal(req.method(),'POST');return route.fulfill({status:403,headers,contentType:'application/json',body:JSON.stringify({code:'42501',message:'This isolated idle-session fixture does not grant payment account reads'})});}
   assert.equal(url.pathname,'/auth/v1/user');assert.equal(req.method(),'PUT');
   const body=req.postDataJSON();assert.deepEqual(Object.keys(body),['data']);assert.deepEqual(Object.keys(body.data),[FIELD]);assert([5,10,15,30,60].includes(body.data[FIELD]));
   state.puts.push({userId:identity.sub,sessionId:identity.session_id,body:clone(body),jwt});
@@ -57,7 +58,7 @@ async function setup(width,state=server()){
   const auth=await S.client.auth.getSession();for(const store of [localStorage,sessionStorage]){store.setItem(authKey,JSON.stringify(auth.data.session));store.setItem(authKey+'-code-verifier','synthetic-verifier');store.setItem(authKey+'-user','synthetic-user-cache');store.setItem('sb-unrelated-auth-token','do-not-remove');}
   localStorage.setItem('snote95-remember-login','1');await Promise.all([SnoteFinanceLock.load(currentUser),SnoteDashboardDisplay.load(currentUser),SnoteIdleSession.load(currentUser)]);buildMenus();navigate('settings');
  },{actor:ACTOR,other:OTHER,company:COMPANY,url:DB,key:KEY,user:clone(state.users[ACTOR]),peer:clone(state.users[OTHER]),sid:SID,authKey:AUTH_KEY});
- await p.locator(HOST+'[data-state="ready"]').waitFor();assert.equal(await p.evaluate(()=>SnoteIdleSession.inspect().armed),true);return f;
+ await p.locator(HOST+'[data-state="ready"]').waitFor();assert.equal(await p.evaluate(()=>SnoteIdleSession.inspect().armed),true);await p.evaluate(()=>{window.__idlePreferencePopups=[];window.addEventListener('snote:message-open',event=>{if(event.detail.key.startsWith('idle-session:'))window.__idlePreferencePopups.push(event.detail);});});return f;
 }
 async function selectMinutes(f,minutes,{error=false}={}){
  await f.page.locator(SELECT).selectOption(String(minutes));
@@ -76,11 +77,11 @@ async function preferencesAndWarning(width){
  const s=server(),f=await setup(width,s),p=f.page;
  try{
   assert.equal(await p.locator(SELECT).inputValue(),'30');assert.deepEqual(await p.locator(SELECT+' option').evaluateAll(options=>options.map(o=>Number(o.value))),[5,10,15,30,60]);
-  const before=clone(s.users[ACTOR].user_metadata);await selectMinutes(f,15);assert.equal(s.puts.length,1);assert.equal(s.puts[0].sessionId,SID);assert.deepEqual(s.users[ACTOR].user_metadata,{...before,[FIELD]:15});assert.equal(await p.evaluate(()=>__encarFixtureState.user===__idleUserReference),true);
-  s.putMode='failure';await selectMinutes(f,5,{error:true});assert.equal(await p.locator(SELECT).inputValue(),'15');s.putMode='ok';await p.locator('#snote-idle-retry').click();await p.locator(HOST+'[data-state="ready"]').waitFor();
+  const before=clone(s.users[ACTOR].user_metadata);await selectMinutes(f,15);assert.equal(s.puts.length,1);assert.equal(s.puts[0].sessionId,SID);assert.deepEqual(s.users[ACTOR].user_metadata,{...before,[FIELD]:15});assert.equal(await p.evaluate(()=>__encarFixtureState.user===__idleUserReference),true);assert.equal(await p.evaluate(()=>__idlePreferencePopups.at(-1)?.tone),'success');assert.equal(await p.locator('#snote-idle-status').isVisible(),false);assert.match(await p.locator('#snote-idle-status').textContent(),/저장 완료/);
+  s.putMode='failure';await selectMinutes(f,5,{error:true});assert.equal(await p.locator(SELECT).inputValue(),'15');assert.equal(await p.evaluate(()=>__idlePreferencePopups.at(-1)?.tone),'error');assert.equal(await p.locator('#snote-idle-status').isVisible(),false);assert.match(await p.locator('#snote-idle-status').textContent(),/저장하지 못/);s.putMode='ok';await p.locator('#snote-idle-retry').click();await p.locator(HOST+'[data-state="ready"]').waitFor();
   s.putMode='ack-only';await selectMinutes(f,10,{error:true});assert.equal(await p.locator(SELECT).inputValue(),'15');s.putMode='ok';await p.locator('#snote-idle-retry').click();await p.locator(HOST+'[data-state="ready"]').waitFor();
   await p.evaluate(async()=>{SnoteIdleSession.reset();await SnoteIdleSession.load(currentUser);});assert.equal(await p.locator(SELECT).inputValue(),'15');
-  const deadline=await p.evaluate(()=>SnoteIdleSession.inspect().deadline);await advanceTo(p,deadline-60000);await p.locator(WARNING+'[open]').waitFor();assert.equal(await p.locator('.snote-idle-countdown').textContent(),'1:00');
+  const preferencePopupCount=await p.evaluate(()=>__idlePreferencePopups.length),deadline=await p.evaluate(()=>SnoteIdleSession.inspect().deadline);await advanceTo(p,deadline-60000);await p.locator(WARNING+'[open]').waitFor();assert.equal(await p.locator('.snote-idle-countdown').textContent(),'1:00');assert.equal(await p.evaluate(()=>__idlePreferencePopups.length),preferencePopupCount,'Idle ticking must keep its existing warning without repeated setting popups');
   await p.clock.runFor(250);await p.screenshot({path:path.join(OUT,'warning-'+width+'.png'),fullPage:width<=760});await p.locator(CONTINUE).click();await p.locator(WARNING).waitFor({state:'detached'});const renewed=await p.evaluate(()=>SnoteIdleSession.inspect());assert.equal(renewed.expired,false);assert.equal(renewed.deadline-renewed.lastActivity,15*60000);assert(renewed.deadline>deadline);assert.equal(s.logouts.length,0);
   // Script-generated events and a programmatic scroll cannot count as personal activity.
   const last=renewed.lastActivity;await p.clock.fastForward(5000);await p.evaluate(()=>{document.body.dispatchEvent(new PointerEvent('pointerdown',{bubbles:true}));document.body.dispatchEvent(new KeyboardEvent('keydown',{key:'A',bubbles:true}));window.scrollTo(0,20);});assert.equal(await p.evaluate(()=>SnoteIdleSession.inspect().lastActivity),last);

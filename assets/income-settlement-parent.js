@@ -9,6 +9,7 @@ let active=null;
 function failure(code,message){return Object.assign(new Error(message),{code});}
 function current(context){return active===context&&bridge()?.current(context.base);}
 function check(context){if(!current(context))throw failure('CONTEXT_CHANGED','로그인 또는 정산 대상이 변경되었습니다.');}
+function confirmationCurrent(context=active){const version=context?.version,tail=context?.tail,dirty=context?.dirty;return ()=>active===context&&(!context||current(context)&&context.version===version&&context.tail===tail&&context.dirty===dirty);}
 function post(context,message){if(current(context))frame.contentWindow?.postMessage({...message,contextKey:context.public.key},location.origin);}
 function close(){
  const context=active;active=null;
@@ -56,21 +57,27 @@ async function demoRequest(context,body){
 function init(context){if(context.ready&&context.initial&&current(context)){loadingClose.hidden=false;post(context,{type:'SNOTE_INCOME_INIT',context:context.public,...publicData(context.initial)});}}
 async function open(carId){
  if(active?.base.carId===carId&&dialog.open)return;
- if(active?.dirty&&!confirm('현재 작성 중인 정산서 대신 다른 차량을 열까요?'))return;
+ const previous=active,base=bridge()?.context(carId);if(!base)throw failure('FORBIDDEN','판매 완료 차량과 로그인 권한을 확인해 주세요.');
+ if(previous?.dirty){const unchanged=confirmationCurrent(previous),isCurrent=()=>unchanged()&&bridge()?.current(base);if(!await window.snoteConfirm('현재 작성 중인 정산서 대신 다른 차량을 열까요?',{isCurrent})||!isCurrent())return;}
+ if(active!==previous||!bridge()?.current(base))return;
  close();
- const base=bridge()?.context(carId);if(!base)throw failure('FORBIDDEN','판매 완료 차량과 로그인 권한을 확인해 주세요.');
  const nonce=crypto.randomUUID();
- const context={base,public:{...base,key:base.key+':'+nonce},dirty:false,ready:false,initial:null,tail:Promise.resolve()};
+ const context={base,public:{...base,key:base.key+':'+nonce},dirty:false,ready:false,initial:null,tail:Promise.resolve(),version:0};
  active=context;
  loadingClose.hidden=false;
- try{frame.contentWindow.location.replace('income-settlement.html?v=2.112');}catch(_){frame.src='income-settlement.html?v=2.112';}
+ try{frame.contentWindow.location.replace('income-settlement.html?v=2.172');}catch(_){frame.src='income-settlement.html?v=2.172';}
  dialog.showModal();
  try{context.initial=await enqueue(context,()=>request(context,{action:'load'}));init(context);}
- catch(error){if(current(context)){close();window.toast?.(error.message||'정산서를 불러오지 못했습니다.');}}
+ catch(error){if(current(context)){close();window.snoteNotify?.(error.message||'정산서를 불러오지 못했습니다.',{tone:'error',isCurrent:()=>bridge()?.current(context.base)});}}
 }
 window.snoteIncomeOpenForCar=open;
 window.snoteResetIncomeSettlement=close;
-window.snoteIncomePrepareRouteChange=()=>{if(!dialog.open)return true;if(active?.dirty&&!confirm('정산서 작성 내용이 있습니다. 서버에 저장하지 않고 화면을 이동할까요?'))return false;close();return true;};
+window.snoteIncomePrepareRouteChange=()=>{
+ if(!dialog.open)return true;
+ if(!active?.dirty){close();return true;}
+ const isCurrent=confirmationCurrent();
+ return window.snoteConfirm('정산서 작성 내용이 있습니다. 서버에 저장하지 않고 화면을 이동할까요?',{isCurrent}).then(accepted=>{if(!accepted||!isCurrent())return false;close();return true;});
+};
 dialog.addEventListener('cancel',event=>{event.preventDefault();if(active?.initial&&active.ready)post(active,{type:'SNOTE_INCOME_REQUEST_CLOSE'});else close();});
 window.addEventListener('message',event=>{
  if(event.origin!==location.origin||event.source!==frame.contentWindow||!event.data||typeof event.data!=='object')return;
@@ -80,8 +87,13 @@ window.addEventListener('message',event=>{
   context.ready=true;init(context);return;
  }
  if(data.contextKey!==context.public.key||!current(context))return;
- if(data.type==='SNOTE_INCOME_DIRTY'){context.dirty=data.dirty===true;return;}
- if(data.type==='SNOTE_INCOME_CLOSE'){if(data.dirty===true&&!confirm('정산서를 저장하지 않고 닫을까요?'))return;close();return;}
+ if(data.type==='SNOTE_INCOME_DIRTY'){context.version++;context.dirty=data.dirty===true;return;}
+ if(data.type==='SNOTE_INCOME_CLOSE'){
+  const isCurrent=confirmationCurrent(context);
+  if(data.dirty===true)void window.snoteConfirm('정산서를 저장하지 않고 닫을까요?',{isCurrent}).then(accepted=>{if(accepted&&isCurrent())close();});
+  else close();
+  return;
+ }
  if(!['SNOTE_INCOME_SAVE','SNOTE_INCOME_LOAD','SNOTE_INCOME_PRINT_VALIDATE'].includes(data.type)||typeof data.requestId!=='string'||data.requestId.length>100)return;
  const responseType=data.type==='SNOTE_INCOME_SAVE'?'SNOTE_INCOME_RESULT':data.type==='SNOTE_INCOME_LOAD'?'SNOTE_INCOME_SYNC':'SNOTE_INCOME_PRINT_RESULT';
  const identifiers={type:responseType,requestId:data.requestId,clientSeq:data.clientSeq};

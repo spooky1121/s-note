@@ -40,7 +40,7 @@ function fixture({dataset='cars',initial=[{id:'car-a',status:'판매완료',sold
  // suspension and replacement are exercised by the dedicated auth suites.
  const context={S,snoteOwnershipAllowed:()=>true,Storage,localStorage:storage,LEGACY:{monthly:STORAGE},ownerAlias:value=>value,cloudKey:(ds,owner)=>ds+':'+owner,
   storageKey:()=>STORAGE,toEntry:()=>({ds:dataset,owner:OWNER}),isShared:()=>dataset==='monthly',defaultBody:()=> '[]',parsePayload:JSON.parse,
-  showStatus:value=>statuses.push(value),errMsg:error=>error.message,fail:error=>failures.push(error.message),alert:value=>alerts.push(value),
+  showStatus:value=>statuses.push(value),errMsg:error=>error.message,fail:error=>failures.push(error.message),window:{snoteAlert:async value=>{alerts.push(value);return true;}},
   setTimeout:()=>1,clearTimeout(){}};
  storage.setItem(STORAGE,JSON.stringify(initial));vm.createContext(context);vm.runInContext(scrub+source,context);
  return {S,row,storage,calls,reads,alerts,failures,statuses,context,setMode(value){mode=value;},setReadMode(value){readMode=value;},
@@ -152,14 +152,14 @@ test('a canonical restore epoch rejects stale ACKs even for the same authenticat
 
 function withActualRestore(f){
  const c=f.context;Object.assign(c,{
-  LEGACY:{},NIL:'nil',currentUser:{username:OWNER},route:'sell',snote220CatalogEpoch:1,
+  LEGACY:{},NIL:'nil',currentUser:{username:OWNER},route:'sell',activeCarId:null,snote220CatalogEpoch:1,
   storageKey:(dataset,owner)=>dataset+'-'+owner,
   snote221ResetIncome(){},snote220InvalidateCatalog(){c.snote220CatalogEpoch++;},snote216ResetMonthly(){},snote216InitMonthly(){},
   snoteCompanyActor:()=>({role:'dealer'}),snoteCompanyOwnerRows:()=>[{user_id:OWNER}],
-  snoteEncarLinksReset(){},snoteRefreshSalesOverview(){},snoteStartAccessTracking(){},snote220RefreshTaxonomy:async()=>{},
-  confirm:()=>true,loadCarsForUser(){},loadCovers(){},refreshMedia:async()=>{},buildStats(){},navigate(){},window:{}
+  snoteEncarLinksReset(){},snoteRefreshSalesOverview(){},snoteStartAccessTracking(){},snote220RefreshTaxonomy:async()=>{},snoteLoadDealerRates:async()=>true,
+  loadCarsForUser(){},loadCovers(){},refreshMedia:async()=>{},buildStats(){},navigate(){},window:{...c.window,snoteConfirm:async()=>true}
  });f.S.companyOwners=new Map();f.S.members=[];
- vm.runInContext(between('async function restoreDatasets(){','async function prepareLegacyAccount(')+between('async function reload(){if(!S.ready)return;',"status.addEventListener('click',reload);"),c);
+ vm.runInContext(between('function snote253MessageCurrent(','function snotePrepareRouteChange(')+between('async function restoreDatasets(){','async function prepareLegacyAccount(')+between('async function reload(){if(!S.ready)return;',"status.addEventListener('click',reload);"),c);
  return f;
 }
 for(const mode of ['lose','fail'])test(`actual failed reload preserves pending ${mode} write and newer edits remain retryable`,async()=>{
@@ -181,7 +181,7 @@ test('actual successful reload clears old recovery snapshots and later edits use
  const next=[...edited(),{id:'car-b'}];f.write(next);const reads=f.reads.length;assert.equal((await f.flush()).ok,true);assert.equal(f.reads.length,reads);assert.equal(f.calls.at(-1).p_expected,8);assert.deepEqual(f.row.payload,next);
 });
 test('actual reload drains an in-flight write and preserves its uncertain result if refresh fails',async()=>{
- const f=withActualRestore(fixture()),hold=f.hold('write');f.write(edited());const saving=f.flush();await hold.entered.promise;f.setReadMode('error');const refreshing=f.context.reload();assert.equal(f.S.ready,false);hold.release.resolve();await saving;await refreshing;
+ const f=withActualRestore(fixture()),hold=f.hold('write');f.write(edited());const saving=f.flush();await hold.entered.promise;f.setReadMode('error');const refreshing=f.context.reload();assert.equal(f.S.ready,true,'The current workspace stays ready until the popup decision resolves');await new Promise(resolve=>setImmediate(resolve));assert.equal(f.S.ready,false);hold.release.resolve();await saving;await refreshing;
  assert.equal(f.S.queue.has(KEY),true);assert.equal(f.S.ready,true);assert.equal(f.S.revisions.get(KEY),7);f.setReadMode('ok');assert.equal((await f.flush()).ok,true);assert.equal(f.S.revisions.get(KEY),8);assert.equal(f.calls.length,1);
 });
 test('successful restore invalidates a stale same-account in-flight ACK before it can replace canonical revision',async()=>{

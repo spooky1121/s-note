@@ -7,7 +7,7 @@
  const ROUTES=new Set(['dashboard','buy','sell','finance','users','companyBuy','prestock','inventoryFinance','monthly','settings','contractOffice','contractArchive']);
  let active=null,sequence=0,scanQueued=false,noticeTimer=null;
  const node=(tag,cls,text)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(text)e.textContent=text;return e;};
- function notice(text){let e=document.getElementById('snote-reorder-notice');if(!e){e=node('div','snote-reorder-notice');e.id='snote-reorder-notice';e.setAttribute('role','status');document.body.append(e);}e.textContent=text;e.hidden=false;clearTimeout(noticeTimer);noticeTimer=setTimeout(()=>{e.hidden=true;},4500);}
+ function notice(text){if(window.snoteNotify){window.snoteNotify(text,{tone:'error',key:'workspace-order'});return;}let e=document.getElementById('snote-reorder-notice');if(!e){e=node('div','snote-reorder-notice');e.id='snote-reorder-notice';e.setAttribute('role','status');document.body.append(e);}e.textContent=text;e.hidden=false;clearTimeout(noticeTimer);noticeTimer=setTimeout(()=>{e.hidden=true;},4500);}
  function cleanIds(value){if(!Array.isArray(value)||value.length>32||value.some(id=>typeof id!=='string'||!ID.test(id)))throw Error('ORDER_FORMAT_INVALID');return [...new Set(value)];}
  function context(options){
   try{

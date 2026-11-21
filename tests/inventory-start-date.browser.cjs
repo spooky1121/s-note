@@ -15,6 +15,7 @@ fs.mkdirSync(OUT,{recursive:true});
     await p.waitForFunction(()=>!!window.SnoteInventoryStartDate&&!!window.snoteInventoryStartBridge);
     const setup=await p.evaluate(async()=>{
      ACC44_LENDER_LIMITS=[['KB캐피탈',150000,6],['JB우리금융',150000,12]];INVENTORY_LENDERS=ACC44_LENDER_LIMITS.map(x=>x[0]);
+     if(!await SnoteDealerFinanceRates.refresh({force:true}))throw Error('Synthetic seeded lender rates did not load');
      const today=SnoteInventoryInterest.today(),ago=days=>{const d=new Date(today+'T00:00:00Z');d.setUTCDate(d.getUTCDate()-days);return d.toISOString().slice(0,10);},c=cars[0];
      Object.assign(c,{purchaseAt:ago(31),inventoryLoan:10000000,inventoryLender:'KB캐피탈'});delete c.inventoryStartedAt;delete c.inventoryInterestSnapshot;
      if(!persistCars(c.ownerId))throw Error('SETUP_PERSIST_FAILED');const saved=await zc86Cloud.flush();if(saved?.ok!==true)throw Error('SETUP_ACK_FAILED');renderVehicle();snoteVehicleRememberDraft();
@@ -24,14 +25,22 @@ fs.mkdirSync(OUT,{recursive:true});
     const interest=p.locator('#detail-inventory-interest'),trigger=p.locator('#detail-inventory-start-trigger');
     assert.equal(await interest.inputValue(),'50,959');assert.equal(await p.locator('#detail-interest-basis').textContent(),'연 6%');assert.equal(await trigger.textContent(),'재고이자');assert.match(await trigger.getAttribute('data-tooltip'),new RegExp(setup.purchase));
     const layout=await p.locator('#detail-interest-basis').evaluate(e=>{const note=e.getBoundingClientRect(),label=document.getElementById('detail-inventory-start-trigger').getBoundingClientRect(),field=document.getElementById('detail-inventory-interest').getBoundingClientRect();return{beside:note.x>=label.right-1,center:Math.abs(note.y+note.height/2-label.y-label.height/2)<3,aboveInput:note.bottom<=field.y+1};});assert(layout.beside&&layout.center&&layout.aboveInput,JSON.stringify(layout));
-    await trigger.scrollIntoViewIfNeeded();await p.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));await p.mouse.move(1,1);await trigger.hover();
-    if(!await p.locator('#snote-icon-tooltip').isVisible()){await p.mouse.move(1,1);await trigger.hover();}
-    await p.locator('#snote-icon-tooltip').waitFor({state:'visible'});assert.match(await p.locator('#snote-icon-tooltip').textContent(),new RegExp(setup.purchase));
+    await trigger.scrollIntoViewIfNeeded();await p.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+    for(let attempt=0;attempt<3;attempt++){await p.mouse.move(1,1);await trigger.hover();try{await p.locator('#snote-icon-tooltip').waitFor({state:'visible',timeout:1000});break;}catch(error){if(attempt===2)throw error;}}
+    assert.match(await p.locator('#snote-icon-tooltip').textContent(),new RegExp(setup.purchase));
     await p.locator('#detail-memo').fill('미저장 메모 '+width);await p.locator('#detail-extra').fill('미저장 비고 '+width);
     await trigger.click();const dialog=p.locator('#snote-inventory-start-dialog');await dialog.waitFor({state:'visible'});
     assert.equal(await p.locator('#snote-inventory-start-date').inputValue(),setup.purchase);assert.equal(await p.locator('#snote-inventory-start-date').getAttribute('max'),setup.today);
     const bounds=await dialog.boundingBox();assert(bounds.x>=0&&bounds.x+bounds.width<=width+1&&bounds.width<=360);assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
     await p.screenshot({path:path.join(OUT,width+'.png')});
+    if(width===1440){
+     f.manualMessages=true;await p.evaluate(()=>{window.__snoteFixtureManualMessages=true;});await p.locator('#snote-inventory-start-date').fill('');await p.locator('.snote-inventory-start-save').click();
+     await p.locator('#snote-message-dialog[open]').waitFor();assert.match(await p.locator('#snote-message-copy').textContent(),/올바른 재고 시작일/);assert.equal(await p.locator('.snote-inventory-start-status').isVisible(),false);assert.equal(await p.locator('#snote-inventory-start-date').getAttribute('aria-invalid'),'true');
+     await p.keyboard.press('Escape');await p.locator('#snote-message-dialog').waitFor({state:'hidden'});assert.equal(await dialog.isVisible(),true,'Dismissing the error must keep the date editor open');assert.equal(await p.evaluate(()=>document.activeElement.id),'snote-inventory-start-date');
+     f.manualMessages=false;await p.evaluate(()=>{window.__snoteFixtureManualMessages=false;window.__inventoryStartOriginal=window.snoteInventoryStartBridge;window.snoteInventoryStartBridge={...window.__inventoryStartOriginal,async save(){throw Object.assign(Error('SYNTHETIC_DATE_SAVE_FAILED'),{userMessage:'합성 재고 시작일 저장 오류'});}};});
+     await p.locator('#snote-inventory-start-date').fill(setup.chosen);await p.locator('.snote-inventory-start-save').click();await p.waitForFunction(()=>document.querySelector('.snote-inventory-start-status').dataset.tone==='error');assert.equal(await dialog.isVisible(),true);assert.equal(await p.locator('#snote-inventory-start-date').inputValue(),setup.chosen);assert.equal(await p.locator('.snote-inventory-start-status').isVisible(),false);
+     await p.evaluate(()=>{window.snoteInventoryStartBridge=window.__inventoryStartOriginal;});
+    }
     await p.locator('#snote-inventory-start-date').fill(setup.chosen);await p.locator('.snote-inventory-start-save').click();await dialog.waitFor({state:'hidden'});
     await p.waitForFunction(date=>window.__encarFixtureCars[0].inventoryStartedAt===date,setup.chosen);
     const saved=await p.evaluate(()=>({row:window.__encarFixtureCars[0],dirty:snoteVehicleHasChanges(),live:cars[0].costs.inventoryInterest,writes:window.__encarFixtureWrites.length}));

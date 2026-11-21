@@ -2,7 +2,7 @@
 (()=>{'use strict';
  if(window.SnoteEncarId)return;
  const bridge=()=>window.snoteEncarIdBridge,ID=/^[1-9][0-9]{5,11}$/,providers=new Set(['gloar']);
- let session=null,sequence=0,priceJob=null,priceWrite=null,priceState=null,pendingComparison=null,detailScope=null;
+ let session=null,sequence=0,priceJob=null,priceWrite=null,priceState=null,pendingComparison=null,detailScope=null,priceComparison=null;
  const compared=new Set(),MAX_WON=1000000000000,FRESH_MS=15*60*1000;
  const dialog=document.createElement('dialog');dialog.id='snote-encar-id-dialog';dialog.className='snote-encar-id-dialog snote-popup-native';dialog.setAttribute('aria-labelledby','snote-encar-id-title');
  const title=document.createElement('h2');title.id='snote-encar-id-title';title.textContent='차량 광고 검색';
@@ -102,8 +102,9 @@
   AUTH_REQUIRED:'다시 로그인한 뒤 광고 금액을 확인해 주세요.',AUTH_FAILED:'다시 로그인한 뒤 광고 금액을 확인해 주세요.',AUTH_UNAVAILABLE:'광고 금액 조회의 로그인 확인을 완료하지 못했습니다.',STAFF_REQUIRED:'현재 차량의 조회 권한을 확인해 주세요.',PLATE_MISMATCH:'광고의 차량번호를 확인하지 못해 금액을 적용하지 않았습니다.',REQUEST_TIMEOUT:'엔카 광고 금액 확인 시간이 초과됐습니다. 다시 확인해 주세요.',PRICE_UNAVAILABLE:'광고 금액을 확인하지 못했습니다. 잠시 후 다시 확인해 주세요.'
  };return Object.hasOwn(messages,code)?messages[code]:'광고 금액을 확인하지 못했습니다. 잠시 후 다시 확인해 주세요.';}
  function writeFailure(code,link=false){const messages={FORBIDDEN:link?'본인 담당 차량의 광고 링크만 저장할 수 있습니다.':'판매예정가 변경 권한을 확인해 주세요.',CONTEXT_CHANGED:'차량이나 입력 내용이 변경되었습니다. 현재 내용을 다시 확인해 주세요.',CONFLICT:'다른 화면에서 차량이 변경되었습니다. 최신 자료를 확인해 주세요.',PENDING:'진행 중인 차량 저장이 끝난 뒤 다시 시도해 주세요.'};return Object.hasOwn(messages,code)?messages[code]:(link?'광고 링크를 저장하지 못했습니다. 차량 저장 상태를 확인한 뒤 다시 시도해 주세요.':'판매예정가를 저장하지 못했습니다. 현재 입력과 서버 저장 상태를 확인해 주세요.');}
- function notify(text){if(typeof window.toast==='function')window.toast(text);}
- function cancelPrice(){if(priceJob){priceJob.controller.abort();clearTimeout(priceJob.timeout);}priceJob=null;priceState=null;pendingComparison=null;}
+ function notify(text,options={}){window.snoteNotify(text,options);}
+ function lookupFailure(s,text){if(!live(s))return;status.textContent='';notify(text,{tone:'error',isCurrent:()=>live(s)});}
+ function cancelPrice(){if(priceJob){priceJob.controller.abort();clearTimeout(priceJob.timeout);}priceJob=null;priceState=null;pendingComparison=null;priceComparison=null;}
  function reset(){cancelPrice();priceWrite=null;detailScope=null;compared.clear();close();pricePanel.hidden=true;setText(priceLabel,'');setText(priceMessage,'');priceLabel.removeAttribute('title');}
  function sameStored(context,record){const value=current(context)&&saved(context);return value&&value.id===record.id&&value.plate===record.plate&&value.priceWon===record.priceWon&&value.priceCheckedAt===record.priceCheckedAt&&value.priceSource==='encar';}
  function openSaved(record){
@@ -113,8 +114,8 @@
  async function applyPrice(context,record,expected){
   if(priceWrite||!sameStored(context,record)||planned(context)!==expected||!writable(context))return false;
   const operation={context,id:record.id};priceWrite=operation;sync();
-  try{const result=await bridge().changePrice(context,expected);if(!current(context)||priceWrite!==operation)return false;if(result?.saved!==true||result.priceWon!==record.priceWon)throw Error('INVALID_RESPONSE');notify('저장되었습니다.');return true;}
-  catch(error){if(current(context)&&priceWrite===operation){priceState={key:context.key,id:record.id,message:writeFailure(error?.code)};notify(priceState.message);}return false;}
+  try{const result=await bridge().changePrice(context,expected);if(!current(context)||priceWrite!==operation)return false;if(result?.saved!==true||result.priceWon!==record.priceWon)throw Error('INVALID_RESPONSE');notify('저장되었습니다.',{tone:'success',isCurrent:()=>current(context)});return true;}
+  catch(error){if(current(context)&&priceWrite===operation){priceState={key:context.key,id:record.id,message:writeFailure(error?.code)};notify(priceState.message,{tone:'error',isCurrent:()=>current(context)&&saved(context)?.id===record.id});}return false;}
   finally{if(priceWrite===operation){priceWrite=null;sync();}}
  }
  async function comparePrice(context,record,{repeat=false}={}){
@@ -124,9 +125,10 @@
   // Keep the confirmation available when returning from the explicitly opened advertisement.
   if(dialog.open||document.hidden){pendingComparison={context,record,repeat};return false;}
   if(compared.size>=128)compared.clear();compared.add(key);pendingComparison=null;
-  const accepted=window.confirm('엔카 광고가 '+record.priceWon.toLocaleString('ko-KR')+'원입니다.\n현재 판매예정가는 '+expected.toLocaleString('ko-KR')+'원입니다.\n판매예정가를 엔카 광고금액으로 변경하시겠습니까?');
-  if(!accepted||!sameStored(context,record)||planned(context)!==expected)return false;
-  return applyPrice(context,record,expected);
+  const comparison={},job=priceJob,valid=()=>priceComparison===comparison&&priceJob===job&&!priceWrite&&!dialog.open&&!document.hidden&&sameStored(context,record)&&planned(context)===expected&&writable(context);priceComparison=comparison;
+  try{const accepted=await window.snoteConfirm('엔카 광고가 '+record.priceWon.toLocaleString('ko-KR')+'원입니다.\n현재 판매예정가는 '+expected.toLocaleString('ko-KR')+'원입니다.\n판매예정가를 엔카 광고금액으로 변경하시겠습니까?',{isCurrent:valid});
+   if(!accepted||!valid())return false;return applyPrice(context,record,expected);
+  }finally{if(priceComparison===comparison)priceComparison=null;}
  }
  function resumeComparison(){const value=pendingComparison;if(!value||dialog.open||document.hidden)return;pendingComparison=null;void comparePrice(value.context,value.record,{repeat:value.repeat});}
  async function refreshPrice(context=detailContext(),{force=false,repeat=false}={}){
@@ -148,7 +150,7 @@
    const result=await bridge().savePrice(context,{id:data.id,plate:data.plate,priceWon:data.priceWon,checkedAt:new Date(checked).toISOString(),source:'encar'});if(!live())return false;
    const stored=saved(context);if(result?.saved!==true||!stored||stored.id!==record.id||stored.priceWon!==data.priceWon||stored.priceSource!=='encar')throw Error('INVALID_RESPONSE');
    priceState=null;sync();await comparePrice(context,stored,{repeat});return true;
-  }catch(error){if(live()||job.timedOut&&priceJob===job&&current(context)&&saved(context)?.id===record.id){priceState={key:context.key,id:record.id,message:priceFailure(job.timedOut?'REQUEST_TIMEOUT':error?.code)};}return false;}
+  }catch(error){if(live()||job.timedOut&&priceJob===job&&current(context)&&saved(context)?.id===record.id){priceState={key:context.key,id:record.id,message:priceFailure(job.timedOut?'REQUEST_TIMEOUT':error?.code)};notify(priceState.message,{tone:'error',key:'encar-price:'+context.key+':'+record.id,isCurrent:()=>current(context)&&saved(context)?.id===record.id});}return false;}
   finally{clearTimeout(job.timeout);if(priceJob===job){priceJob=null;sync();}}})();return job.promise;
  }
  function renderPrice(){
@@ -161,7 +163,7 @@
   if(priced(record))priceLabel.title='광고 금액 확인 · '+new Date(record.priceCheckedAt).toLocaleString('ko-KR');else priceLabel.removeAttribute('title');
   priceRefresh.hidden=!writable(context);priceRefresh.disabled=checking||writing;priceRefresh.setAttribute('aria-busy',String(checking));
   const expected=planned(context);priceChange.hidden=!priced(record)||!writable(context)||expected===null||expected===record.priceWon;priceChange.disabled=checking||writing;
-  setText(priceMessage,priceState?.key===context.key&&priceState.id===record.id?priceState.message:'');
+  setText(priceMessage,'');
  }
  priceRefresh.addEventListener('click',()=>{void refreshPrice(detailContext(),{force:true,repeat:true});});
  priceChange.addEventListener('click',()=>{const context=detailContext(),record=context&&saved(context);if(record)void refreshPrice(context,{force:!fresh(record),repeat:true});});
@@ -184,10 +186,10 @@
    title.textContent='엔카 링크 페이지';output.value=data.id;output.textContent=data.id;output.hidden=false;status.textContent='광고 링크를 저장하고 있습니다.';
    const url=adURL(data.id);adLink.href=url;adLink.textContent=url;adLink.hidden=false;
    try{const result=await bridge().saveLink(context,{id:data.id,plate:data.plate,provider:data.provider});if(!live(s))return false;if(result?.saved!==true||saved(context)?.id!==data.id)throw Error('INVALID_RESPONSE');}
-   catch(error){if(live(s)){status.textContent=writeFailure(error?.code,true);clearDiagnostics();}return false;}
-   status.textContent='';sync();if(context.entry==='detail')void refreshPrice(context);
+   catch(error){if(live(s)){lookupFailure(s,writeFailure(error?.code,true));clearDiagnostics();}return false;}
+   status.textContent='';notify('광고 링크를 저장했습니다.',{tone:'success',isCurrent:()=>live(s)});sync();if(context.entry==='detail')void refreshPrice(context);
    return true;
-  }catch(error){if(live(s)){const raw=error?.message,code=s.timedOut?'REQUEST_TIMEOUT':raw==='NOT_FOUND'||Object.prototype.hasOwnProperty.call(diagnosticCodes,raw)?raw:s.phase==='request'?'NETWORK_ERROR':s.phase==='response'?'RESPONSE_UNREADABLE':'UNKNOWN_ERROR';output.hidden=true;clearLink();status.textContent=message(code);showDiagnostics(code,s);}}finally{clearTimeout(s.timeout);if(live(s)){busy(false);confirm.focus();}}
+  }catch(error){if(live(s)){const raw=error?.message,code=s.timedOut?'REQUEST_TIMEOUT':raw==='NOT_FOUND'||Object.prototype.hasOwnProperty.call(diagnosticCodes,raw)?raw:s.phase==='request'?'NETWORK_ERROR':s.phase==='response'?'RESPONSE_UNREADABLE':'UNKNOWN_ERROR';output.hidden=true;clearLink();lookupFailure(s,message(code));showDiagnostics(code,s);}}finally{clearTimeout(s.timeout);if(live(s)){busy(false);if(!window.SnoteMessages?.active())confirm.focus();}}
   return false;
  }
  function sync(){

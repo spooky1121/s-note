@@ -10,10 +10,10 @@ function show(snapshot){
  const message=node('p','','중복된 차량번호의 매입재고에 자동차 등록증을 등록하시겠습니까?');message.id='snote-registration-duplicate-message';
  const status=node('p','snote-registration-duplicate-status');status.setAttribute('role','status');status.setAttribute('aria-live','polite');
  const actions=node('div','snote-registration-duplicate-actions'),no=node('button','btn-ghost','아니오'),yes=node('button','btn-primary','예');no.type=yes.type='button';
- const s={snapshot,root,panel,status,no,yes,resolve,promise,busy:false,focus:document.activeElement};state=s;
+ const s={snapshot,root,panel,status,no,yes,resolve,promise,busy:false,messageVersion:0,focus:document.activeElement};state=s;
  no.onclick=()=>close(true);yes.onclick=async()=>{
   if(state!==s||s.busy||!bridge()?.current(snapshot))return;
-  s.busy=true;yes.disabled=no.disabled=true;panel.setAttribute('aria-busy','true');status.textContent='자동차 등록증을 저장하고 있습니다.';
+  const version=++s.messageVersion;s.busy=true;yes.disabled=no.disabled=true;panel.setAttribute('aria-busy','true');status.hidden=false;status.dataset.tone='info';status.textContent='자동차 등록증을 저장하고 있습니다.';
   try{
    const result=await bridge().attach(snapshot);if(state!==s)return;
    s.busy=false;
@@ -23,7 +23,8 @@ function show(snapshot){
    if(state!==s)return;s.busy=false;
    if(!bridge()?.current(snapshot)){close();return;}
    yes.disabled=no.disabled=false;panel.setAttribute('aria-busy','false');
-   status.textContent=error?.userMessage||'자동차 등록증을 저장하지 못했습니다. 연결 상태를 확인한 뒤 다시 시도해 주세요.';
+   status.textContent=error?.userMessage||'자동차 등록증을 저장하지 못했습니다. 연결 상태를 확인한 뒤 다시 시도해 주세요.';status.dataset.tone='error';status.hidden=true;
+   window.snoteNotify(status.textContent,{tone:'error',key:'registration-duplicate',isCurrent:()=>state===s&&s.messageVersion===version&&root.isConnected&&bridge()?.current(snapshot)===true,returnFocus:yes});
   }
  };
  actions.append(no,yes);panel.append(message,status,actions);root.append(panel);document.body.append(root);
@@ -40,7 +41,7 @@ async function check({repeat=false}={}){
  return show(snapshot);
 }
 document.addEventListener('keydown',event=>{
- if(!state)return;
+ if(!state||window.SnoteMessages?.active())return;
  if(event.key==='Escape'){event.preventDefault();event.stopImmediatePropagation();if(!state.busy)close(true);return;}
  if(event.key==='Tab'){const buttons=[state.no,state.yes].filter(e=>!e.disabled);if(!buttons.length){event.preventDefault();return;}const index=buttons.indexOf(document.activeElement);if(event.shiftKey&&index<=0){event.preventDefault();buttons.at(-1).focus();}else if(!event.shiftKey&&(index<0||index===buttons.length-1)){event.preventDefault();buttons[0].focus();}}
 },true);

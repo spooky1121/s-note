@@ -1,0 +1,23 @@
+@media screen{
+ #snote-message-dialog{box-sizing:border-box;width:min(440px,calc(100vw - 32px));max-width:calc(100vw - 32px);max-height:calc(100dvh - 32px);margin:auto;padding:0;border:1px solid #e6ebf2;border-radius:22px;background:#fff;color:#17253c;box-shadow:0 24px 80px #142b5533;font-family:inherit;overflow:visible;z-index:10000}
+ #snote-message-dialog::backdrop{background:#14243d52;backdrop-filter:blur(3px)}
+ #snote-message-dialog[open]{animation:snote-message-enter .18s ease-out}
+ #snote-message-dialog .snote-message-body{box-sizing:border-box;max-height:calc(100dvh - 34px);overflow:auto;padding:28px 24px 22px;border-radius:inherit;text-align:center}
+ #snote-message-dialog>.snote-popup-close{position:absolute;top:4px;right:4px;z-index:1;width:30px;height:30px}
+ #snote-message-dialog .snote-message-icon{display:grid;place-items:center;width:44px;height:44px;margin:0 auto 14px;color:#315cf5;background:#eef3ff;border-radius:50%}
+ #snote-message-dialog .snote-message-icon svg{width:28px;height:28px}
+ #snote-message-dialog[data-tone=success] .snote-message-icon{color:#16956b;background:#eaf8f1}
+ #snote-message-dialog[data-tone=error] .snote-message-icon{color:#d64c5f;background:#fff0f2}
+ #snote-message-dialog h2{margin:0 12px 12px;font-size:18px;font-weight:700;line-height:1.4;letter-spacing:-.4px}
+ #snote-message-dialog #snote-message-copy{margin:0;font-size:14px;font-weight:400;line-height:1.7;white-space:pre-wrap;overflow-wrap:anywhere;color:#526178}
+ #snote-message-dialog .snote-message-actions{display:flex;justify-content:center;gap:10px;margin-top:24px}
+ #snote-message-dialog .snote-message-actions button{flex:1;min-width:0;min-height:42px;padding:10px 16px;border:1px solid #dce4ee;border-radius:12px;background:#f6f8fb;color:#465773;font:inherit;font-size:14px;font-weight:600;line-height:1.4;cursor:pointer}
+ #snote-message-dialog [data-message-accept]{border-color:#315cf5!important;background:#315cf5!important;color:#fff!important}
+ #snote-message-dialog [data-message-accept][data-danger=true]{border-color:#d64c5f!important;background:#d64c5f!important}
+ #snote-message-dialog button:focus-visible{outline:3px solid #a9c2ff;outline-offset:3px}
+ #snote-message-dialog [hidden]{display:none!important}
+ #toast{display:none!important}
+ @keyframes snote-message-enter{from{opacity:0;transform:translateY(8px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+ @media(prefers-reduced-motion:reduce){#snote-message-dialog[open]{animation:none}}
+}
+@media print{#snote-message-dialog,#snote-message-dialog::backdrop,#toast{display:none!important}}

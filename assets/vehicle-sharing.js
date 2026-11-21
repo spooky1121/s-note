@@ -11,7 +11,7 @@
  const dialog=document.createElement('dialog');dialog.id='snote-vehicle-sharing';dialog.setAttribute('aria-labelledby','vehicle-sharing-title');dialog.innerHTML='<div class="vehicle-sharing-frame"><button type="button" class="snote-popup-close" aria-label="차량 공유 닫기">×</button><header><h2 id="vehicle-sharing-title">차량 공유</h2><p id="vehicle-sharing-subtitle"></p></header><p id="vehicle-sharing-status" role="status"></p><main id="vehicle-sharing-body"></main></div>';document.body.append(dialog);
  const body=dialog.querySelector('main'),status=dialog.querySelector('[role=status]'),title=dialog.querySelector('h2'),subtitle=dialog.querySelector('header p');let session=null,sequence=0,urls=[];
  const node=(tag,text,cls)=>{const e=document.createElement(tag);if(text!=null)e.textContent=text;if(cls)e.className=cls;return e;};
- const current=s=>session===s&&dialog.open&&!inSales()&&bridge()?.current(s.context);
+ const current=s=>!!s&&session===s&&dialog.open&&!inSales()&&routePage()===s.route&&bridge()?.current(s.context)&&(s.mode!=='owner'||s.carId==null||String(activeCarId)===String(s.carId));
  const grant=value=>UUID.test(value?.invitationId||'')&&Number.isSafeInteger(value?.version)&&value.version>0?{invitationId:value.invitationId,version:value.version}:null;
  const sameGrant=(a,b)=>a===null&&b===null||!!a&&!!b&&a.invitationId===b.invitationId&&a.version===b.version;
  function capability(value){const p=preset(value?.permission),access=grant(value),native=value?.nativeAccess===true&&value.permission==='all'&&value.invitationId===null&&value.version===null;
@@ -21,12 +21,12 @@
  function close(){++sequence;if(session?.timer)clearInterval(session.timer);if(session?.permissionTimer)clearInterval(session.permissionTimer);session=null;release();dialog.close();body.replaceChildren();status.textContent='';}
  dialog.querySelector('.snote-popup-close').onclick=close;dialog.addEventListener('cancel',event=>{event.preventDefault();close();});
  function error(e){const message=String(e?.message||'');return /INVALID_VEHICLE_MEMO/.test(message)?'차량 메모는 제어문자 없이 2,000자 이내로 입력해 주세요.':/SHARE_ACCESS_CHANGED/.test(message)?'공유 권한이 변경되었습니다. 최신 권한을 확인해 주세요.':/CAR_NOT_FOUND/.test(message)?'차량이 삭제되었거나 더 이상 공유되지 않습니다.':/CONFLICT/.test(message)?'다른 딜러가 먼저 수정했습니다. 다시 불러온 뒤 변경해 주세요.':/DEALER_NOT_FOUND/.test(message)?'이메일이 일치하는 활성 딜러 계정을 찾을 수 없습니다.':/SELF_SHARE/.test(message)?'본인 차량은 본인에게 공유할 수 없습니다.':/SHARE_LIMIT/.test(message)?'차량당 최대 30명까지 공유할 수 있습니다.':/FORBIDDEN|SHARE_ACCESS_REQUIRED|42501/.test(message+' '+e?.code)?'차량 공유 권한이 없거나 공유가 해제되었습니다.':/PGRST202|42P01/.test(e?.code||'')?'차량 공유 DB 연결을 확인해 주세요.':'서버 응답을 확인하지 못했습니다. 입력은 유지되며 다시 시도할 수 있습니다.';}
- function note(message,bad=false){status.textContent=message;status.classList.toggle('is-error',bad);}
+ function note(message,bad=false,success=false){const popup=!!message&&(bad||success),s=session,generation=sequence,view=s?.view,mode=s?.mode,carId=s?.carId;status.textContent=popup?'':message;status.classList.toggle('is-error',!popup&&bad);if(popup)window.snoteNotify(message,{tone:bad?'error':'success',isCurrent:s?()=>current(s)&&s.view===view&&s.mode===mode&&s.carId===carId:()=>dialog.open&&sequence===generation});}
  const scope=(s,action,extra={})=>({p_action:action,p_company:s.companyId,p_owner:s.ownerId,p_car:s.carId,...extra});
  async function request(s,action,extra={}){const view=s.view;if(!current(s))throw Error('CONTEXT_CHANGED');const value=await bridge().rpc(s.context,scope(s,action,extra));if(!current(s)||s.view!==view)throw Error('CONTEXT_CHANGED');return value;}
  function changed(){window.dispatchEvent(new Event('snote-vehicle-sharing-updated'));window.dispatchEvent(new Event('snote-vehicle-changed'));}
  function permissionSelect(value,label){const select=node('select');select.setAttribute('aria-label',label);for(const[key,p]of Object.entries(permissions)){const option=node('option',p.label);option.value=key;select.append(option);}select.value=preset(value)?value:'read';return select;}
- function begin(label){if(inSales())return null;close();const context=bridge()?.context();title.textContent=label;subtitle.textContent='';dialog.showModal();if(!context){note('온라인 딜러 계정으로 로그인한 뒤 이용해 주세요.',true);return null;}const s={context,id:++sequence,permissionDrafts:new Map()};session=s;note('불러오는 중…');s.timer=setInterval(()=>{if(session!==s){clearInterval(s.timer);return;}if(!bridge()?.current(context)||inSales())close();},250);return s;}
+ function begin(label){if(inSales())return null;close();const context=bridge()?.context();title.textContent=label;subtitle.textContent='';dialog.showModal();if(!context){note('온라인 딜러 계정으로 로그인한 뒤 이용해 주세요.',true);return null;}const s={context,route:routePage(),id:++sequence,permissionDrafts:new Map()};session=s;note('불러오는 중…');s.timer=setInterval(()=>{if(session!==s){clearInterval(s.timer);return;}if(!current(s))close();},250);return s;}
  async function outgoing(s){
   const revision=s.outgoingVersion=(s.outgoingVersion||0)+1,entries=await request(s,'outgoing');if(!current(s)||s.outgoingVersion!==revision)return;if(!Array.isArray(entries))throw Error('INVALID_RESPONSE');
   const list=body.querySelector('.vehicle-sharing-recipients');if(!list)return;list.replaceChildren();if(!entries.length)list.append(node('p','아직 초대한 딜러가 없습니다.','vehicle-sharing-empty'));
@@ -41,12 +41,12 @@
    save.onclick=async()=>{if(!current(s)||!editable||!preset(select.value)||select.value===item.permission||row.dataset.busy==='true')return;const desired=select.value;row.dataset.busy='true';select.disabled=true;save.disabled=true;remove.disabled=true;
     try{const result=await request(s,'permissions',{p_target:item.id,p_permission:desired,p_access:access});
      if(result?.ok!==true||result.apiVersion!==2||result.recipientId!==item.id||result.invitationId!==access.invitationId||!Number.isSafeInteger(result.version)||result.version<=access.version||result.permission!==desired||!states[result.state])throw Error('INVALID_RESPONSE');
-     if(current(s)){s.permissionDrafts.delete(item.invitationId);await outgoing(s);note('공유 권한을 저장했습니다.');changed();}
+     if(current(s)){s.permissionDrafts.delete(item.invitationId);await outgoing(s);if(!current(s))return;note('공유 권한을 저장했습니다.',false,true);changed();}
     }catch(e){if(current(s)){note(error(e),true);select.value=item.permission;s.permissionDrafts.delete(item.invitationId);try{await outgoing(s);}catch(_){}}}
     finally{row.dataset.busy='false';if(current(s)&&row.isConnected){select.disabled=!editable;save.disabled=select.value===item.permission;remove.disabled=false;}}
    };
-   remove.onclick=async()=>{if(!current(s)||row.dataset.busy==='true'||!confirm((item.email||'딜러')+'님의 '+(accepted(item)?'차량 공유를 해제할까요?':item.state==='pending'?'차량 공유 초대를 취소할까요?':'초대 기록을 삭제할까요?')))return;row.dataset.busy='true';remove.disabled=true;select.disabled=true;save.disabled=true;
-    try{const result=await request(s,'revoke',{p_target:item.id});if(result?.ok!==true||result.apiVersion!==2)throw Error('INVALID_RESPONSE');if(current(s)){s.permissionDrafts.delete(item.invitationId);await outgoing(s);note(accepted(item)?'공유를 해제했습니다.':'초대 기록을 삭제했습니다.');changed();}}
+   remove.onclick=async()=>{if(!current(s)||row.dataset.busy==='true'||row.dataset.confirming==='true')return;const generation=s.outgoingVersion,valid=()=>current(s)&&s.outgoingVersion===generation&&row.isConnected&&row.dataset.busy!=='true'&&row.dataset.confirming==='true';row.dataset.confirming='true';let acceptedAction;try{acceptedAction=await window.snoteConfirm((item.email||'딜러')+'님의 '+(accepted(item)?'차량 공유를 해제할까요?':item.state==='pending'?'차량 공유 초대를 취소할까요?':'초대 기록을 삭제할까요?'),{isCurrent:valid});if(!acceptedAction||!valid())return;}finally{row.dataset.confirming='false';}row.dataset.busy='true';remove.disabled=true;select.disabled=true;save.disabled=true;
+    try{const result=await request(s,'revoke',{p_target:item.id});if(result?.ok!==true||result.apiVersion!==2)throw Error('INVALID_RESPONSE');if(current(s)){s.permissionDrafts.delete(item.invitationId);await outgoing(s);if(!current(s))return;note(accepted(item)?'공유를 해제했습니다.':'초대 기록을 삭제했습니다.',false,true);changed();}}
     catch(e){if(current(s)){note(error(e),true);row.dataset.busy='false';remove.disabled=false;select.disabled=!editable;save.disabled=!editable||select.value===item.permission;}}
    };
    actions.append(select,save,remove);row.append(info,actions);list.append(row);
@@ -62,7 +62,7 @@
   form.onsubmit=async event=>{event.preventDefault();if(!form.reportValidity()||s.sending||!preset(select.value))return;const email=input.value.trim(),permission=select.value;s.sending=true;add.disabled=true;
    try{await bridge().flush(s.context);const result=await request(s,'grant',{p_email:email,p_permission:permission});
     if(result?.ok!==true||result.apiVersion!==2||!states[result.state]||!UUID.test(result.invitationId||'')||!Number.isSafeInteger(result.version)||result.version<1||!preset(result.permission))throw Error('INVALID_RESPONSE');
-    if(current(s)){await outgoing(s);if(input.value.trim()===email)input.value='';note(result.state==='pending'?'차량 공유 초대를 보냈습니다. 상대가 수락하면 공유됩니다.':result.state==='accepted'?'이미 초대를 수락한 딜러입니다.':'이미 거부한 초대입니다. 초대 기록을 삭제한 뒤 다시 보낼 수 있습니다.');changed();}
+    if(current(s)){await outgoing(s);if(!current(s))return;if(input.value.trim()===email)input.value='';note(result.state==='pending'?'차량 공유 초대를 보냈습니다. 상대가 수락하면 공유됩니다.':result.state==='accepted'?'이미 초대를 수락한 딜러입니다.':'이미 거부한 초대입니다. 초대 기록을 삭제한 뒤 다시 보낼 수 있습니다.',false,true);changed();}
    }catch(e){if(current(s))note(error(e),true);}finally{s.sending=false;if(current(s))add.disabled=false;}
   };
   try{await bridge().flush(s.context);await outgoing(s);if(current(s)){note('등록된 딜러 이메일과 공유 권한을 선택하세요.');input.focus();}}catch(e){if(current(s))note(error(e),true);}
@@ -80,6 +80,7 @@
   if(s.remove){s.remove.hidden=!s.capabilities.canDelete;s.remove.disabled=s.deleting===true||!s.capabilities.canDelete;}
   return s.capabilities;
  }
+ function editorGuard(s,form){const view=s.view,revision=s.revision,permission=s.capabilities?.permission,access=s.capabilities?.access,inputs=JSON.stringify([...new FormData(form)]);return()=>current(s)&&s.mode==='editor'&&s.view===view&&s.form===form&&s.revision===revision&&s.capabilities?.permission===permission&&sameGrant(s.capabilities?.access,access)&&!s.saving&&!s.deleting&&JSON.stringify([...new FormData(form)])===inputs;}
  function denyEditor(s,e){if(!current(s))return;setCapabilities(s,{});if(/FORBIDDEN|CAR_NOT_FOUND|42501/.test(String(e?.message)+' '+e?.code)){s.view++;release();body.replaceChildren(node('p','차량이 삭제되었거나 공유가 해제되었습니다. 공유 목록을 다시 확인해 주세요.','vehicle-sharing-empty'));const back=node('button','공유 목록');back.type='button';back.onclick=inbox;body.append(back);s.mode='unavailable';}note(error(e),true);}
  async function checkAccess(s){if(!current(s)||s.mode!=='editor'||s.checking)return false;const view=s.view;s.checking=true;try{const value=await request(s,'read');if(!current(s)||s.view!==view)return false;setCapabilities(s,value);return s.capabilities.valid;}catch(e){if(current(s)&&s.view===view)denyEditor(s,e);return false;}finally{s.checking=false;}}
  async function edit(s,item){
@@ -95,7 +96,7 @@
    }
    const save=node('button',null,'vehicle-sharing-save');save.type='submit';save.setAttribute('aria-label','공유 차량 저장');save.dataset.tooltip='공유 차량 저장';save.innerHTML=disk;
    const remove=node('button',null,'vehicle-sharing-delete');remove.type='button';remove.setAttribute('aria-label','공유 차량 삭제');remove.dataset.tooltip='공유 차량 삭제';remove.innerHTML=trash;
-   const back=node('button','공유 목록');back.type='button';back.onclick=()=>{if(!s.capabilities?.canEdit||confirm('입력한 내용을 닫고 공유 목록으로 돌아갈까요?'))inbox();};
+   const back=node('button','공유 목록');back.type='button';back.onclick=async()=>{const valid=editorGuard(s,form);if(!valid())return;if(s.capabilities?.canEdit&&!await window.snoteConfirm('입력한 내용을 닫고 공유 목록으로 돌아갈까요?',{isCurrent:valid}))return;if(valid())void inbox();};
    const actions=node('div',null,'vehicle-sharing-editor-actions');actions.append(back,save,remove);form.append(grid,actions);body.append(form);Object.assign(s,{form,save,remove,revision:result.revision});setCapabilities(s,result);note(s.capabilities.valid?'서버에서 불러온 최신 차량입니다.':'공유 권한을 확인하지 못해 읽기 전용으로 표시합니다.',!s.capabilities.valid);
    form.onsubmit=async event=>{event.preventDefault();if(!current(s)||!s.capabilities?.canEdit||!form.reportValidity()||s.saving||s.deleting)return;
     s.saving=true;save.disabled=true;const view=s.view,submitted=JSON.stringify([...new FormData(form)]),patch={};
@@ -103,19 +104,19 @@
      if(raw.moneyUnit!=='KRW'){patch.buy=SnoteMoney.legacy(patch.buy);patch.sell=SnoteMoney.legacy(patch.sell);}
      const access=s.capabilities.access,saved=await request(s,'update',{p_expected:s.revision,p_patch:patch,p_access:access});
      if(saved?.apiVersion!==2||!Number.isSafeInteger(saved.revision)||saved.revision<=s.revision)throw Error('INVALID_RESPONSE');
-     if(current(s)&&s.view===view&&s.capabilities.canEdit&&sameGrant(s.capabilities.access,access)){s.revision=saved.revision;note(submitted===JSON.stringify([...new FormData(form)])?'공유 차량을 서버에 저장했습니다.':'저장 중 추가로 수정한 내용이 있습니다. 다시 저장해 주세요.');}
+     if(current(s)&&s.view===view&&s.capabilities.canEdit&&sameGrant(s.capabilities.access,access)){s.revision=saved.revision;note(submitted===JSON.stringify([...new FormData(form)])?'공유 차량을 서버에 저장했습니다.':'저장 중 추가로 수정한 내용이 있습니다. 다시 저장해 주세요.',false,true);}
     }catch(e){if(current(s)&&s.view===view){note(error(e),true);if(/FORBIDDEN|SHARE_ACCESS|42501/.test(String(e?.message)+' '+e?.code))await checkAccess(s);}}
     finally{s.saving=false;if(current(s)&&s.view===view)save.disabled=!s.capabilities?.canEdit;}
    };
-   remove.onclick=async()=>{if(!current(s)||!s.capabilities?.canDelete||s.saving||s.deleting||!confirm('이 공유 차량을 휴지통으로 이동할까요? 차량 소유자가 휴지통에서 복원할 수 있습니다.'))return;
+   remove.onclick=async()=>{if(!current(s)||!s.capabilities?.canDelete||s.saving||s.deleting||s.deletePrompt)return;const prompt={},validEditor=editorGuard(s,form),valid=()=>validEditor()&&s.capabilities?.canDelete&&s.deletePrompt===prompt;s.deletePrompt=prompt;try{if(!await window.snoteConfirm('이 공유 차량을 휴지통으로 이동할까요? 차량 소유자가 휴지통에서 복원할 수 있습니다.',{isCurrent:valid})||!valid())return;}finally{if(s.deletePrompt===prompt)s.deletePrompt=null;}
     const view=s.view,op=s.deleteRequest||(s.deleteRequest={requestId:crypto.randomUUID(),expected:s.revision,access:s.capabilities.access});s.deleting=true;remove.disabled=true;save.disabled=true;
     try{const result=await request(s,'delete',{p_expected:op.expected,p_patch:{requestId:op.requestId},p_access:op.access});
      if(result?.ok!==true||result.carId!==s.carId||result.requestId!==op.requestId||result.deleted!==true||typeof result.alreadyProcessed!=='boolean')throw Error('INVALID_RESPONSE');
-     if(current(s)&&s.view===view){s.view++;s.mode='deleted';release();body.replaceChildren(node('p','차량을 휴지통으로 이동했습니다. 차량 소유자가 복원할 수 있습니다.','vehicle-sharing-empty'));const back=node('button','공유 목록');back.type='button';back.onclick=inbox;body.append(back);note('공유 차량을 삭제했습니다.');changed();}
+     if(current(s)&&s.view===view){s.view++;s.mode='deleted';release();body.replaceChildren(node('p','차량을 휴지통으로 이동했습니다. 차량 소유자가 복원할 수 있습니다.','vehicle-sharing-empty'));const back=node('button','공유 목록');back.type='button';back.onclick=inbox;body.append(back);note('공유 차량을 삭제했습니다.',false,true);changed();}
     }catch(e){if(current(s)&&s.view===view){note(error(e),true);if(/FORBIDDEN|SHARE_ACCESS|CONFLICT|42501|40001/.test(String(e?.message)+' '+e?.code))s.deleteRequest=null;if(/FORBIDDEN|SHARE_ACCESS|42501/.test(String(e?.message)+' '+e?.code))await checkAccess(s);}}
     finally{s.deleting=false;if(current(s)&&s.view===view){remove.disabled=!s.capabilities?.canDelete;save.disabled=!s.capabilities?.canEdit;}}
    };
-   const refresh=node('button','최신 정보 다시 불러오기','vehicle-sharing-refresh');refresh.type='button';refresh.onclick=()=>{if(!s.capabilities?.canEdit||confirm('현재 입력 대신 서버의 최신 정보를 불러올까요?'))edit(s,item);};body.append(refresh);await files(s);
+   const refresh=node('button','최신 정보 다시 불러오기','vehicle-sharing-refresh');refresh.type='button';refresh.onclick=async()=>{const valid=editorGuard(s,form);if(!valid())return;if(s.capabilities?.canEdit&&!await window.snoteConfirm('현재 입력 대신 서버의 최신 정보를 불러올까요?',{isCurrent:valid}))return;if(valid())void edit(s,item);};body.append(refresh);await files(s);
    if(!s.permissionTimer)s.permissionTimer=setInterval(()=>void checkAccess(s),15000);
   }catch(e){if(current(s))note(error(e),true);}
  }

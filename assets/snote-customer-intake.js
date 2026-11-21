@@ -189,10 +189,13 @@
     if (signature) signature.replaceChildren(node('p', 'snote-sale-signature-empty', '접수된 서명이 없습니다.'));
   }
 
-  function message(s, content, kind = '') {
+  function message(s, content, kind = '', notify = true, returnFocus) {
     if (!isCurrent(s)) return;
+    const popup = !!content && ['error', 'success'].includes(kind) && typeof window.snoteNotify === 'function';
     s.message.textContent = content;
     s.message.className = 'snote-intake-message' + (kind ? ' is-' + kind : '');
+    s.message.hidden = popup;
+    if (popup && notify) window.snoteNotify(content, { tone: kind, key: 'customer-intake:' + s.id, isCurrent: () => isCurrent(s), returnFocus });
   }
 
   function failure(error, action) {
@@ -327,7 +330,7 @@
   }
 
   async function refresh(s, manual) {
-    if (!isCurrent(s) || document.hidden || s.reading || s.busy) { schedule(s); return; }
+    if (!isCurrent(s) || document.hidden || s.reading || s.busy || window.SnoteMessages?.active()) { schedule(s); return; }
     s.reading = true;
     controls(s);
     if (manual) message(s, '요청 내역을 확인하는 중입니다.');
@@ -339,6 +342,7 @@
       s.requests = result.requests.filter(item => item && typeof item.id === 'string');
       const wasBlocked = s.blocked;
       s.blocked = false;
+      s.listError = '';
       s.loaded = true;
       if (s.link && !s.requests.some(item => item.id === s.link.id && !item.revokedAt &&
           item.status !== 'revoked' && item.status !== 'expired' &&
@@ -350,7 +354,9 @@
     } catch (error) {
       if (!isCurrent(s)) return;
       if ([401, 403, 503].includes(error?.status)) s.blocked = true;
-      message(s, failure(error, 'list'), 'error');
+      const content = failure(error, 'list');
+      message(s, content, 'error', manual || s.listError !== content);
+      s.listError = content;
     } finally {
       if (isCurrent(s)) { s.reading = false; controls(s); schedule(s); }
     }
@@ -365,12 +371,17 @@
     if (!isCurrent(s) || s.busy || s.reading || s.blocked || !s.canCreate) return;
     const phone = digits(s.phone.value);
     if (!/^(?:010\d{8}|01[16789]\d{7,8})$/.test(phone)) {
-      message(s, '문자를 받을 휴대전화 번호를 확인해 주세요.', 'error');
+      message(s, '문자를 받을 휴대전화 번호를 확인해 주세요.', 'error', true, s.phone);
       s.phone.focus();
       return;
     }
+    const pending = () => JSON.stringify(s.requests.filter(item => requestStatus(item)[1] === 'pending').map(item => [item.id, item.status, item.expiresAt, item.revokedAt]));
+    const previous = pending();
+    const valid = () => isCurrent(s) && !s.busy && !s.reading && !s.blocked && s.canCreate &&
+      currentContext().car?.status !== '판매완료' && digits(s.phone.value) === phone && pending() === previous;
     if (s.requests.some(item => requestStatus(item)[1] === 'pending') &&
-        !window.confirm('새 링크를 보내면 이전에 보낸 입력 대기 링크는 취소됩니다. 새로 보내시겠습니까?')) return;
+        (!await window.snoteConfirm?.('새 링크를 보내면 이전에 보낸 입력 대기 링크는 취소됩니다. 새로 보내시겠습니까?', { isCurrent: valid }) || !valid())) return;
+    if (!valid()) return;
     s.busy = true;
     clearTimeout(s.timer);
     controls(s);
@@ -434,7 +445,11 @@
   }
 
   async function revoke(s, item) {
-    if (!isCurrent(s) || s.busy || s.reading || !window.confirm('이 고객 입력 요청을 취소하시겠습니까? 제출된 기록은 보관 기간 동안 유지됩니다.')) return;
+    if (!isCurrent(s) || s.busy || s.reading || item.revokedAt || item.status === 'revoked') return;
+    const signature = submissionKey(item), status = item.status;
+    const valid = () => isCurrent(s) && !s.busy && !s.reading && s.requests.includes(item) &&
+      submissionKey(item) === signature && item.status === status && !item.revokedAt;
+    if (!valid() || !await window.snoteConfirm?.('이 고객 입력 요청을 취소하시겠습니까? 제출된 기록은 보관 기간 동안 유지됩니다.', { isCurrent: valid, danger: true }) || !valid()) return;
     s.busy = true;
     clearTimeout(s.timer);
     controls(s);
@@ -463,13 +478,18 @@
     const readRrn = item.hasRrn === true;
     const before = formValues();
     if (automatic && (before !== s.baseline || s.unsavedImport)) { arrival(s, item); return; }
-    const existingRrn = Boolean(byId('zc72-rrn')?.value);
+    const existingRrn = Boolean(byId('zc72-rrn')?.value), signature = submissionKey(item), source = item.submission;
+    const available = () => isCurrent(s) && s.requests.includes(item) && item.submission === source &&
+      submissionKey(item) === signature && !(typeof zc72SaleLoading !== 'undefined' && zc72SaleLoading);
+    const unchanged = () => available() && !s.busy && !s.reading && formValues() === before;
     if (!automatic && readRrn && existingRrn) {
-      if (!window.confirm('판매 정보와 현재 입력된 주민번호를 고객이 제출한 정보로 바꾸시겠습니까?')) return;
-    } else if (!automatic && before !== s.baseline && !window.confirm(readRrn
-      ? '판매 정보에 수정한 내용이 있습니다. 고객이 제출한 정보로 바꾸고 주민번호를 불러오시겠습니까?'
-      : '판매 정보에 수정한 내용이 있습니다. 고객이 제출한 입력정보로 바꾸시겠습니까? 주민번호는 유지됩니다.')) return;
-    if (!isCurrent(s)) return;
+      if (!await window.snoteConfirm?.('판매 정보와 현재 입력된 주민번호를 고객이 제출한 정보로 바꾸시겠습니까?', { isCurrent: unchanged }) || !unchanged()) return;
+    } else if (!automatic && before !== s.baseline) {
+      if (!await window.snoteConfirm?.(readRrn
+        ? '판매 정보에 수정한 내용이 있습니다. 고객이 제출한 정보로 바꾸고 주민번호를 불러오시겠습니까?'
+        : '판매 정보에 수정한 내용이 있습니다. 고객이 제출한 입력정보로 바꾸시겠습니까? 주민번호는 유지됩니다.', { isCurrent: unchanged }) || !unchanged()) return;
+    }
+    if (!unchanged()) return;
     s.busy = true;
     clearTimeout(s.timer);
     controls(s);
@@ -487,11 +507,12 @@
         }
         if (formValues() !== before) {
           if (automatic) { arrival(s, item); return; }
-          if (!window.confirm('불러오는 동안 판매 정보가 수정되었습니다. 최신 수정 내용과 주민번호를 고객이 제출한 정보로 바꾸시겠습니까?')) return;
+          const latest = formValues();
+          const stillLatest = () => available() && s.busy && !s.reading && formValues() === latest;
+          if (!await window.snoteConfirm?.('불러오는 동안 판매 정보가 수정되었습니다. 최신 수정 내용과 주민번호를 고객이 제출한 정보로 바꾸시겠습니까?', { isCurrent: stillLatest }) || !stillLatest()) return;
         }
       }
-      if (!isCurrent(s)) return;
-      const source = item.submission;
+      if (!available()) return;
       const values = {};
       for (const field of ['name', 'addressBase', 'addressDetail', 'mailingBase', 'mailingDetail', 'refundBank', 'refundAccount', 'refundHolder']) values[field] = text(source[field]);
       values.sameAddress = source.sameAddress === true;

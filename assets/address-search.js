@@ -18,9 +18,10 @@
 
   function fail() {
     window.clearTimeout(loadTimer);
-    status.hidden = false;
+    status.hidden = typeof window.snoteNotify === 'function';
     status.dataset.tone = 'error';
     status.textContent = '주소 검색을 불러오지 못했습니다. 창을 닫고 다시 검색하거나 주소를 직접 입력해 주세요.';
+    window.snoteNotify?.(status.textContent,{tone:'error',key:'address-error'});
     notify('error');
   }
 
@@ -31,7 +32,7 @@
   document.getElementById('close-search').addEventListener('click', closeSearch);
   window.addEventListener('pagehide', () => notify('closed'));
   window.addEventListener('keydown', event => {
-    if (event.key === 'Escape') { event.preventDefault(); closeSearch(); }
+    if (event.key === 'Escape' && !window.SnoteMessages?.active()) { event.preventDefault(); closeSearch(); }
   });
 
   try {
@@ -43,6 +44,7 @@
   } catch (_) {
     status.dataset.tone = 'error';
     status.textContent = '고객정보 입력 화면의 주소 검색 버튼으로 열어 주세요.';
+    if(window.snoteNotify){status.hidden=true;window.snoteNotify(status.textContent,{tone:'error',key:'address-error'});}
     return;
   }
 

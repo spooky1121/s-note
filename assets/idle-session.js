@@ -36,20 +36,22 @@
  const retrying=s=>s?.status==='load-error'||s?.status==='save-error';
  const canChange=s=>!!s&&current(s)&&s.confirmed&&!s.expired&&!busy(s)&&['dealer','admin'].includes(s.account.role);
  function feedback(s){return s?.status==='loading'?'설정을 불러오는 중…':s?.status==='saving'?'저장 중…':s?.message||'';}
+ function popupHandled(s,text=feedback(s)){return typeof global.snoteNotify==='function'&&!!text&&s?.popupMessage===text;}
+ function popupFeedback(s,tone,operation=s.operation){if(typeof global.snoteNotify!=='function'||!current(s)||s.operation!==operation||s.expired||!s.message)return;s.popupMessage=s.message;global.snoteNotify(s.message,{tone,key:'idle-session:'+tone,isCurrent:()=>operationCurrent(s,operation)&&!s.expired,returnFocus:false});}
  function render(){
   const host=doc?.getElementById?.('snote-idle-session-setting');if(!host)return state?.minutes||DEFAULT;
   const s=state;host.hidden=!s||!['dealer','admin'].includes(s.account.role);if(!s)return DEFAULT;
   host.dataset.state=s.status;host.setAttribute('aria-busy',String(busy(s)));
   const input=host.querySelector('#snote-idle-minutes'),status=host.querySelector('#snote-idle-status'),retry=host.querySelector('#snote-idle-retry'),row=host.querySelector('.snote-idle-feedback');
   if(input){input.value=String(s.minutes);input.disabled=!canChange(s);}
-  if(status){status.textContent=feedback(s);status.hidden=!feedback(s);status.dataset.error=String(retrying(s));}
+  if(status){status.textContent=feedback(s);status.hidden=!feedback(s)||popupHandled(s);status.dataset.error=String(retrying(s));}
   if(retry){retry.hidden=!retrying(s);retry.disabled=busy(s)||!accountCurrent(s);}
-  if(row)row.hidden=!feedback(s)&&!retrying(s);return s.minutes;
+  if(row)row.hidden=(!feedback(s)||popupHandled(s))&&!retrying(s);return s.minutes;
  }
  function markup(){
   const s=state;if(!s||!['dealer','admin'].includes(s.account.role))return '';
   const text=feedback(s),retry=retrying(s);
-  return '<section id="snote-idle-session-setting" aria-labelledby="snote-idle-title" data-state="'+s.status+'" aria-busy="'+busy(s)+'"><div class="snote-idle-copy"><strong id="snote-idle-title">자동 로그아웃</strong><span id="snote-idle-description">선택한 시간 동안 사용하지 않으면 로그아웃합니다.</span></div><select id="snote-idle-minutes" aria-label="자동 로그아웃 대기 시간" aria-describedby="snote-idle-description"'+(canChange(s)?'':' disabled')+'>'+MINUTES.map(value=>'<option value="'+value+'"'+(s.minutes===value?' selected':'')+'>'+value+'분</option>').join('')+'</select><div class="snote-idle-feedback"'+(!text&&!retry?' hidden':'')+'><p id="snote-idle-status" role="status" aria-live="polite" data-error="'+retry+'"'+(!text?' hidden':'')+'>'+escape(text)+'</p><button id="snote-idle-retry" type="button"'+(!retry?' hidden':'')+'>다시 시도</button></div></section>';
+  return '<section id="snote-idle-session-setting" aria-labelledby="snote-idle-title" data-state="'+s.status+'" aria-busy="'+busy(s)+'"><div class="snote-idle-copy"><strong id="snote-idle-title">자동 로그아웃</strong><span id="snote-idle-description">선택한 시간 동안 사용하지 않으면 로그아웃합니다.</span></div><select id="snote-idle-minutes" aria-label="자동 로그아웃 대기 시간" aria-describedby="snote-idle-description"'+(canChange(s)?'':' disabled')+'>'+MINUTES.map(value=>'<option value="'+value+'"'+(s.minutes===value?' selected':'')+'>'+value+'분</option>').join('')+'</select><div class="snote-idle-feedback"'+((!text||popupHandled(s,text))&&!retry?' hidden':'')+'><p id="snote-idle-status" role="status" aria-live="polite" data-error="'+retry+'"'+(!text||popupHandled(s,text)?' hidden':'')+'>'+escape(text)+'</p><button id="snote-idle-retry" type="button"'+(!retry?' hidden':'')+'>다시 시도</button></div></section>';
  }
  function timeout(promise){let timer;return Promise.race([Promise.resolve(promise),new Promise((_,reject)=>{timer=global.setTimeout(()=>reject(Error('IDLE_SESSION_TIMEOUT')),REQUEST_TIMEOUT);})]).finally(()=>global.clearTimeout(timer));}
  function validActivity(value,s,now){
@@ -171,11 +173,11 @@
     if(!operationCurrent(s,operation))return false;
     if(!validMinutes(result?.minutes)||!identifier(result?.sessionId))throw Error('INVALID_IDLE_ACK');
     if(s.armed&&s.sessionId!==result.sessionId)throw Error('IDLE_SESSION_CHANGED');
-    s.minutes=result.minutes;s.sessionId=result.sessionId;s.confirmed=true;s.status=result.fallback===true?'load-error':'ready';s.message=result.fallback===true?'설정을 불러오지 못해 30분을 적용합니다. 다시 시도해 주세요.':'';start(s);tick();render();notify(result.fallback===true?'load-error':'load');return result.fallback!==true;
+    s.minutes=result.minutes;s.sessionId=result.sessionId;s.confirmed=true;s.status=result.fallback===true?'load-error':'ready';s.message=result.fallback===true?'설정을 불러오지 못해 30분을 적용합니다. 다시 시도해 주세요.':'';start(s);tick();if(result.fallback===true)popupFeedback(s,'error',operation);render();notify(result.fallback===true?'load-error':'load');return result.fallback!==true;
    }catch{
     if(!operationCurrent(s,operation))return false;
     if(!s.confirmed){s.minutes=DEFAULT;const sid=s.mode==='local'?localSession(s):s.context?.sessionId;if(identifier(sid)){s.sessionId=sid;s.confirmed=true;start(s);}}
-    s.status='load-error';s.message='설정을 불러오지 못해 '+s.minutes+'분을 적용합니다. 다시 시도해 주세요.';render();notify('load-error');return false;
+    s.status='load-error';s.message='설정을 불러오지 못해 '+s.minutes+'분을 적용합니다. 다시 시도해 주세요.';popupFeedback(s,'error',operation);render();notify('load-error');return false;
    }finally{if(s.operation===operation){s.pending=null;if(state===s)render();}}
   });s.pending=job;return job;
  }
@@ -197,8 +199,8 @@
     let result;if(s.mode==='local'){writeJSON(localKey(s),{version:1,minutes});result={minutes:localRead(s)};}else result=await timeout(s.bridge.save(s.context,minutes));
     if(!operationCurrent(s,operation)||s.expired)return false;
     if(!validMinutes(result?.minutes)||result.minutes!==minutes)throw Error('INVALID_IDLE_SAVE_ACK');
-    s.minutes=minutes;s.status='ready';s.message='저장 완료';tick();render();notify('save');return true;
-   }catch{if(!operationCurrent(s,operation)||s.expired)return false;s.status='save-error';s.message='설정을 저장하지 못했습니다. 기존 시간을 유지합니다.';render();return false;}
+    s.minutes=minutes;s.status='ready';s.message='저장 완료';tick();popupFeedback(s,'success',operation);render();notify('save');return true;
+   }catch{if(!operationCurrent(s,operation)||s.expired)return false;s.status='save-error';s.message='설정을 저장하지 못했습니다. 기존 시간을 유지합니다.';popupFeedback(s,'error',operation);render();return false;}
    finally{if(s.operation===operation){s.pending=null;if(state===s)render();}}
   });s.pending=job;return job;
  }

@@ -14,7 +14,7 @@
   if(described.includes('snote-icon-tooltip')){const ids=described.filter(id=>id!=='snote-icon-tooltip');if(ids.length)el.setAttribute('aria-describedby',ids.join(' '));else el.removeAttribute('aria-describedby');}
  }
  function mark(el){
-  if(!(el instanceof Element))return;
+  if(!(el instanceof Element)||el.closest('#snote-message-dialog .snote-message-actions'))return;
   if(inLeftNavigation(el)){clearMenuHelp(el);return;}
   if(el.matches('canvas,video,iframe')||!el.matches(selector)||el.closest('.snote-icon-tooltip'))return;
   const text=clean(el.textContent),icon=el.hasAttribute('data-tooltip')||el.querySelector('svg,img,i')||/icon|weather/i.test(el.className)||el.getAttribute('role')==='img'||(!text&&el.hasAttribute('aria-label'))||/^[+＋×✕✖−\-↻↺⋮…⚙☰↑↓←→✓✔⌄]+$/u.test(text);
