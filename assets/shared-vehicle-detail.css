@@ -1,0 +1,7 @@
+@media screen{
+ #vehicle-overlay[data-snote-shared-detail] [hidden],#vehicle-overlay[data-snote-shared-detail] #photo-add[hidden]{display:none!important}
+ #vehicle-overlay[data-snote-shared-detail] #snote-shared-detail-status{margin:4px 0 0;color:#55739b;font-size:11px;line-height:1.5}
+ #vehicle-overlay[data-snote-shared-detail] #snote-shared-detail-status.is-error{color:#c53746}
+ #vehicle-overlay[data-snote-shared-detail] input[readonly],#vehicle-overlay[data-snote-shared-detail] textarea[readonly]{color:#687587;background:#f8fafc}
+ #vehicle-overlay[data-snote-shared-detail] .snote-shared-detail-empty{grid-column:1/-1;margin:8px 0;color:#8a96a6;font-size:11px}
+}

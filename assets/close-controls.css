@@ -1,23 +1,23 @@
-/* The same red circular close image in every popup; positions and handlers stay local. */
+/* A smaller red close image keeps the original hit area and local close handlers. */
 @media screen{
  button.snote-popup-close,button.close-button,button.snote-chat-close,button.co-close,button.co-history-close,#close-search{display:grid!important;place-items:center!important;box-sizing:border-box;width:30px!important;height:30px!important;min-width:30px!important;min-height:30px!important;margin:0!important;padding:0!important;border:0!important;border-radius:50%!important;background:transparent!important;color:#fff!important;box-shadow:none!important;cursor:pointer;transform:none!important;translate:none!important}
  :is(button.snote-popup-close,button.close-button,button.snote-chat-close,button.co-close,button.co-history-close,#close-search):focus-visible{outline:2px solid #cf2e40!important;outline-offset:3px!important}
- :is(button.snote-popup-close,button.close-button,button.snote-chat-close,button.co-close,button.co-history-close,#close-search)>.snote-close-image{display:block!important;flex:none;box-sizing:border-box;width:30px!important;height:30px!important;max-width:none!important;max-height:none!important;margin:0!important;padding:0!important;border:0!important;border-radius:50%!important;object-fit:contain;pointer-events:none;transform:none!important;filter:none;transition:filter .15s ease}
+ :is(button.snote-popup-close,button.close-button,button.snote-chat-close,button.co-close,button.co-history-close,#close-search)>.snote-close-image{display:block!important;flex:none;box-sizing:border-box;width:24px!important;height:24px!important;max-width:none!important;max-height:none!important;margin:0!important;padding:0!important;border:0!important;border-radius:50%!important;object-fit:contain;pointer-events:none;transform:none!important;filter:none;transition:filter .15s ease}
  :is(button.snote-popup-close,button.close-button,button.snote-chat-close,button.co-close,button.co-history-close,#close-search):is(:hover,:focus-visible)>.snote-close-image{filter:brightness(.92)}
  /* The chatbot's old pale hover layer must not cover the common red surface. */
  button.snote-chat-close::before{display:none!important}
  .snote-popup-overlay .snote-popup-frame>button.snote-popup-close,
  #vehicle-overlay .vehicle-detail-frame>button.detail-close,
  :is(#overlay,#zc-auto-reg-overlay,#zc182-finance-overlay) .snote-popup-frame>button.snote-popup-close,
- #snote-calculator-panel>button.snote-popup-close{inset:10px auto auto 10px!important}
+ #snote-calculator-panel>button.snote-popup-close{inset:4px auto auto 4px!important}
  #overlay .snote-popup-card .modal-top,
  #zc-auto-reg-overlay .zc71-modal-header,
  #zc-auto-reg-overlay .zc71-wizard-header,
  #zc182-finance-overlay .zc182-modal-head{padding-left:52px!important;padding-right:16px!important}
  #snote-calculator-panel .snote-calculator-heading{padding-left:40px}
  #mobile-drawer .mobile-drawer-header{position:relative;padding-left:52px}
- #mobile-drawer .mobile-drawer-header>button.snote-popup-close{inset:10px auto auto 10px!important}
- #income-close,#close-search{position:fixed;inset:10px auto auto 10px;z-index:100}
+ #mobile-drawer .mobile-drawer-header>button.snote-popup-close{inset:4px auto auto 4px!important}
+ #income-close,#close-search{position:fixed;inset:4px auto auto 4px;z-index:100}
  html:not([data-embedded="true"]) .income-heading{padding-left:44px}
  .search-header{padding-left:52px}
  #zc85-postcode-overlay .zc85-postcode-head{padding-right:52px!important}
@@ -26,7 +26,14 @@
  :is(#vin-select-overlay,#status-overlay,#ps-confirm-overlay,#zc-dashboard-gate,#zc80-unlock,#zc85-postcode-overlay,#zoom-overlay,#snote201-image-zoom) .snote-popup-frame>button.snote-popup-close,
  #zc72-sale-modal .snote-sale-frame>button.snote-popup-close,
  dialog.snote-popup-native>button.snote-popup-close,
- #snote-vehicle-sharing.snote-popup-native>button.snote-popup-close{inset:10px 10px auto auto!important}
+ #snote-vehicle-sharing.snote-popup-native>button.snote-popup-close{inset:4px 4px auto auto!important}
+ #snote-chatbot button.snote-chat-close{top:-6px;right:-6px}
+ .co-preview-controls button.co-close,.co-history-heading button.co-history-close{position:relative;top:-6px;right:-6px}
+ #snote-profile-dialog:not(.is-inline) #snote-profile-close{top:-6px!important;left:-6px!important}
+ #overlay.snote-registration-wizard .snote-popup-frame>button.snote-popup-close{inset:9px 9px auto auto!important}
+ #quote-overlay .snote-document-controls{top:2px;right:2px}
+ /* Full-height document rails already touch the frame; keep their hit areas inside it. */
+ :is(#contract-overlay,#zc76-receipt-overlay) .snote-document-controls button.snote-popup-close>.snote-close-image{align-self:start;justify-self:end}
 }
 @media screen and (min-width:761px){#vehicle-overlay .vehicle-header{padding-left:52px!important}}
 @media screen and (max-width:760px){
@@ -42,11 +49,12 @@
  :is(#overlay,#zc-auto-reg-overlay,#zc182-finance-overlay) .snote-popup-frame>button.snote-popup-close,
  #snote-calculator-panel>button.snote-popup-close,
  #mobile-drawer .mobile-drawer-header>button.snote-popup-close,
- #income-close,#close-search{inset:calc(10px + env(safe-area-inset-top,0px)) auto auto max(10px,env(safe-area-inset-left,0px))!important}
+ #income-close,#close-search{inset:calc(4px + env(safe-area-inset-top,0px)) auto auto max(4px,env(safe-area-inset-left,0px))!important}
  :is(#vin-select-overlay,#status-overlay,#ps-confirm-overlay,#zc-dashboard-gate,#zc80-unlock,#zc85-postcode-overlay,#zoom-overlay,#snote201-image-zoom) .snote-popup-frame>button.snote-popup-close,
  #zc72-sale-modal .snote-sale-frame>button.snote-popup-close,
  dialog.snote-popup-native>button.snote-popup-close,
- #snote-vehicle-sharing.snote-popup-native>button.snote-popup-close{inset:calc(10px + env(safe-area-inset-top,0px)) max(10px,env(safe-area-inset-right,0px)) auto auto!important}
+ #snote-vehicle-sharing.snote-popup-native>button.snote-popup-close{inset:calc(4px + env(safe-area-inset-top,0px)) max(4px,env(safe-area-inset-right,0px)) auto auto!important}
+ #overlay.snote-registration-wizard .snote-popup-frame>button.snote-popup-close{inset:calc(9px + env(safe-area-inset-top,0px)) max(9px,env(safe-area-inset-right,0px)) auto auto!important}
 }
 @media screen and (min-width:561px){html[data-embedded="true"] .income-actions{padding-right:16px}}
 @media(prefers-reduced-motion:reduce){button.snote-popup-close,button.close-button,button.snote-chat-close,button.co-close,button.co-history-close,#close-search{transition:none!important}}

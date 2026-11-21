@@ -63,7 +63,7 @@
  function scan(){for(const image of document.querySelectorAll('img[data-received-share-photo]'))observer.observe(image);}
  function thumbnail(car){if(!has(car))return null;const entry=entries.get(car.id),fallback=typeof fallbackImage==='function'?fallbackImage(car).src:'';return'<img src="'+escaped(entry.url||fallback)+'" alt="'+escaped(car.model)+' 공유 차량 사진" data-received-share-photo="'+escaped(car.id)+'" />';}
  function open(id,event){const entry=entries.get(String(id));if(!entry||!live())return false;event?.preventDefault();event?.stopPropagation();
-  if(window.SnoteVehicleSharing?.openReceived)void window.SnoteVehicleSharing.openReceived(entry.item);else if(typeof toast==='function')toast('공유 차량 화면을 불러오지 못했습니다. 새로고침해 주세요.');return true;
+  if(window.SnoteSharedVehicleDetail?.open)void window.SnoteSharedVehicleDetail.open(entry.item);else if(typeof toast==='function')toast('공유 차량 화면을 불러오지 못했습니다. 새로고침해 주세요.');return true;
  }
  window.SnoteReceivedVehicleList=Object.freeze({rows,has,car:id=>live()?entries.get(String(id))?.car||null:null,ownerLabel:car=>has(car)?String(entries.get(car.id).item.ownerName||'공유 딜러'):'',permission:car=>has(car)?entries.get(car.id).access.label:'',thumbnail,open,refresh:()=>refresh(true)});
  new MutationObserver(scan).observe(document.getElementById('list-screen')||document.body,{subtree:true,childList:true});

@@ -8,7 +8,7 @@
   if(!button.hasAttribute('aria-label'))button.setAttribute('aria-label',button.getAttribute('title')||button.textContent.trim()||'닫기');
   const image=button.firstElementChild;
   if(button.childNodes.length===1&&image?.matches('img.snote-close-image')&&image.getAttribute('src')===imageURL)return;
-  const replacement=document.createElement('img');replacement.className='snote-close-image';replacement.src=imageURL;replacement.alt='';replacement.setAttribute('aria-hidden','true');replacement.draggable=false;replacement.width=30;replacement.height=30;
+  const replacement=document.createElement('img');replacement.className='snote-close-image';replacement.src=imageURL;replacement.alt='';replacement.setAttribute('aria-hidden','true');replacement.draggable=false;replacement.width=24;replacement.height=24;
   button.replaceChildren(replacement);
  }
  function scan(root){if(!(root instanceof Element))return;if(root.matches(selector))render(root);root.querySelectorAll(selector).forEach(render);}
