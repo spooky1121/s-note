@@ -8,10 +8,11 @@
  #zoom-overlay[data-snote-image-viewer] #zoom-image[hidden]{display:none!important}
  #zoom-overlay[data-snote-image-viewer] .vehicle-image-actions{position:absolute;top:8px;right:8px;z-index:2;display:flex;align-items:center;gap:6px;margin:0;padding:0;border:0;background:transparent}
  #zoom-overlay[data-snote-image-viewer] .vehicle-image-actions>button{box-sizing:border-box;flex:none;display:grid;place-items:center;width:30px;height:30px;min-width:30px;min-height:30px;margin:0;padding:0;border:0;border-radius:50%;cursor:pointer}
- #zoom-overlay[data-snote-image-viewer] #zoom-download{background:rgba(15,25,42,.64);color:#fff;box-shadow:0 1px 8px #0003}
- #zoom-overlay[data-snote-image-viewer] #zoom-download:hover{background:rgba(15,25,42,.84)}
- #zoom-overlay[data-snote-image-viewer] #zoom-download:disabled{opacity:.4;cursor:default}
- #zoom-overlay[data-snote-image-viewer] #zoom-download svg{width:20px;height:20px;fill:none;stroke:currentColor}
+ #zoom-overlay[data-snote-image-viewer] .vehicle-image-actions>button[hidden]{display:none!important}
+ #zoom-overlay[data-snote-image-viewer] :is(#zoom-download,#zoom-share){background:rgba(15,25,42,.64);color:#fff;box-shadow:0 1px 8px #0003}
+ #zoom-overlay[data-snote-image-viewer] :is(#zoom-download,#zoom-share):hover{background:rgba(15,25,42,.84)}
+ #zoom-overlay[data-snote-image-viewer] :is(#zoom-download,#zoom-share):disabled{opacity:.4;cursor:default}
+ #zoom-overlay[data-snote-image-viewer] :is(#zoom-download,#zoom-share) svg{width:20px;height:20px;fill:none;stroke:currentColor}
  #zoom-overlay[data-snote-image-viewer] .vehicle-image-actions>button.snote-popup-close{position:static!important;inset:auto!important}
  #zoom-overlay[data-snote-image-viewer] .vehicle-image-actions>button:focus-visible{outline:2px solid #fff!important;outline-offset:3px!important}
  #zoom-overlay[data-snote-image-viewer] #zoom-status{position:absolute;inset:0;display:grid;place-items:center;padding:45px 15px 20px;text-align:center;color:#f0f4fa;font:400 13px/1.6 system-ui,sans-serif}
