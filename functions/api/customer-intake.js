@@ -6,6 +6,9 @@ const LEGACY_MAX_BODY = 16 * 1024;
 const FLOW_VERSION = 'wizard-v1';
 const CONSENT_VERSION = '2026-11-01';
 const RRN_NOTICE_VERSION = '2026-11-01-r1';
+// Customer invitations and OTPs share the operator's registered sender.
+// Dealer profile numbers, client payloads and legacy env values cannot override it.
+const CUSTOMER_INTAKE_SENDER = '01096669997';
 const RRN_HKDF_SALT = 'snote-customer-intake:rrn:v1:hkdf-salt';
 const RRN_HKDF_INFO = 'snote-customer-intake:rrn:v1:aes-256-gcm';
 const TOKEN = /^[a-f0-9]{64}$/;
@@ -74,7 +77,7 @@ function errorResponse(error) {
 const CONFIG_NAMES = [
   'SUPABASE_URL', 'SUPABASE_PUBLISHABLE_KEY', 'SUPABASE_SERVICE_ROLE_KEY',
   'CUSTOMER_INTAKE_PUBLIC_ORIGIN', 'SOLAPI_API_KEY', 'SOLAPI_API_SECRET',
-  'SOLAPI_SENDER', 'CUSTOMER_INTAKE_OTP_SECRET'
+  'CUSTOMER_INTAKE_OTP_SECRET'
 ];
 function inspectConfiguration(env = {}) {
   const values = Object.fromEntries(CONFIG_NAMES.map(name => [name, typeof env?.[name] === 'string' ? env[name].trim() : '']));
@@ -92,8 +95,6 @@ function inspectConfiguration(env = {}) {
     publicOrigin = new URL(values.CUSTOMER_INTAKE_PUBLIC_ORIGIN);
     if (publicOrigin.protocol !== 'https:' || publicOrigin.username || publicOrigin.password || publicOrigin.search || publicOrigin.hash || publicOrigin.pathname !== '/' || !publicOrigin.hostname.includes('.')) throw new Error('invalid');
   } catch { issue('CUSTOMER_INTAKE_PUBLIC_ORIGIN', '실제 운영 HTTPS 주소를 경로·쿼리·해시 없이 입력해 주세요.'); }
-  const sender = values.SOLAPI_SENDER.replace(/[ -]/g, '');
-  if (!/^\d{8,11}$/.test(sender)) issue('SOLAPI_SENDER', '승인된 국내 발신번호를 숫자 8~11자리로 입력해 주세요.');
   for (const name of ['SUPABASE_PUBLISHABLE_KEY', 'SUPABASE_SERVICE_ROLE_KEY', 'SOLAPI_API_KEY', 'SOLAPI_API_SECRET', 'CUSTOMER_INTAKE_OTP_SECRET']) {
     if (/[\r\n]/.test(values[name])) issue(name, '줄바꿈 없이 한 줄로 입력해 주세요.');
   }
@@ -103,7 +104,7 @@ function inspectConfiguration(env = {}) {
       supabase: supabase.origin, publicOrigin: publicOrigin.origin,
       publishable: values.SUPABASE_PUBLISHABLE_KEY, serviceRole: values.SUPABASE_SERVICE_ROLE_KEY,
       apiKey: values.SOLAPI_API_KEY, apiSecret: values.SOLAPI_API_SECRET,
-      otpSecret: values.CUSTOMER_INTAKE_OTP_SECRET, sender
+      otpSecret: values.CUSTOMER_INTAKE_OTP_SECRET, sender: CUSTOMER_INTAKE_SENDER
     },
     issues
   };
