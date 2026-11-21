@@ -2,7 +2,7 @@
 (() => {
  'use strict';
  if(window.SnoteInventoryStartDate)return;
- let dialog,dateInput,status,saveButton,cancelButton,closeButton,carLabel,state=null,epoch=0;
+ let dialog,dateInput,status,saveButton,cancelButton,closeButton,carLabel,state=null,epoch=0,loanHoverTimer=null,loanHoverArmed=true;
  const bridge=()=>window.snoteInventoryStartBridge;
  function current(job){return state===job&&job.epoch===epoch&&bridge()?.current(job.base)===true;}
  function message(text,tone='info'){
@@ -10,6 +10,7 @@
   if(status.hidden&&job)window.snoteNotify(text,{tone,key:'inventory-start:'+job.epoch,isCurrent:()=>current(job)&&job.messageVersion===version&&dialog.open,returnFocus:()=>dateInput.disabled?saveButton:dateInput});
  }
  function close(force=false){
+  clearTimeout(loanHoverTimer);
   if(state?.saving&&!force)return;
   const previous=state;if(previous?.timer)clearInterval(previous.timer);
   state=null;epoch++;if(dialog?.open)dialog.close();
@@ -45,7 +46,7 @@
  function create(){
   if(dialog)return;
   dialog=document.createElement('dialog');dialog.id='snote-inventory-start-dialog';dialog.setAttribute('aria-labelledby','snote-inventory-start-title');
-  dialog.innerHTML='<button type="button" class="snote-popup-close" aria-label="재고 시작일 닫기">×</button><h2 id="snote-inventory-start-title">재고 시작일</h2><p class="snote-inventory-start-car"></p><label class="snote-inventory-start-label">시작일<input type="date" id="snote-inventory-start-date" required min="1900-01-01" autocomplete="off"></label><p class="snote-inventory-start-status" role="status" aria-live="polite"></p><footer><button type="button" class="snote-inventory-start-cancel">취소</button><button type="button" class="snote-inventory-start-save">저장</button></footer>';
+  dialog.innerHTML='<button type="button" class="snote-popup-close" aria-label="재고 시작일 닫기">×</button><h2 id="snote-inventory-start-title">재고 시작일</h2><p class="snote-inventory-start-car"></p><label class="snote-inventory-start-label">시작일<input type="date" id="snote-inventory-start-date" required min="1900-01-01" autocomplete="off"></label><p class="snote-inventory-start-status" role="status" aria-live="polite"></p><footer><button type="button" class="snote-inventory-start-cancel">취소</button><button type="button" class="snote-inventory-start-save" aria-label="저장"></button></footer>';
   document.body.append(dialog);dateInput=dialog.querySelector('input');status=dialog.querySelector('[role=status]');saveButton=dialog.querySelector('.snote-inventory-start-save');cancelButton=dialog.querySelector('.snote-inventory-start-cancel');closeButton=dialog.querySelector('.snote-popup-close');carLabel=dialog.querySelector('.snote-inventory-start-car');
   saveButton.onclick=save;cancelButton.onclick=()=>close();closeButton.onclick=()=>close();
   dialog.addEventListener('cancel',event=>{event.preventDefault();close();});
@@ -61,5 +62,32 @@
   saveButton.disabled=false;cancelButton.disabled=false;closeButton.disabled=false;dateInput.removeAttribute('aria-invalid');message(job.retryDate?'이전 저장의 확인이 필요합니다. 저장을 눌러 다시 확인해 주세요.':'');
   dialog.showModal();dateInput.focus();job.timer=setInterval(()=>{if(!current(job))close(true);},250);
  }
+ // Hover only the caption, never the editable loan amount. A modal-generated
+ // pointerleave must not rearm it, or closing over the caption would reopen it.
+ const loanTrigger=document.getElementById('detail-inventory-loan-start-trigger');
+ function loanContext(){
+  if(!loanTrigger||loanTrigger.disabled||document.getElementById('detail-inventory-start-trigger')?.disabled||dialog?.open||state?.saving||window.SnoteMessages?.active()||document.querySelector('dialog[open]'))return null;
+  try{return bridge()?.context()||null;}catch{return null;}
+ }
+ function openFromLoan(){
+  clearTimeout(loanHoverTimer);if(!loanContext())return;
+  loanHoverArmed=false;open();
+ }
+ if(loanTrigger){
+  loanTrigger.addEventListener('click',openFromLoan);
+  loanTrigger.addEventListener('pointerenter',event=>{
+   if(event.pointerType!=='mouse'||!loanHoverArmed)return;
+   const base=loanContext();if(!base)return;
+   clearTimeout(loanHoverTimer);loanHoverTimer=setTimeout(()=>{
+    loanHoverTimer=null;if(!loanHoverArmed||!loanContext()||bridge()?.current(base)!==true)return;
+    loanHoverArmed=false;open();
+   },250);
+  });
+  loanTrigger.addEventListener('pointerleave',()=>{clearTimeout(loanHoverTimer);loanHoverTimer=null;});
+  document.addEventListener('pointermove',event=>{
+   if(event.pointerType==='mouse'&&!dialog?.open&&!window.SnoteMessages?.active()&&!loanTrigger.contains(event.target))loanHoverArmed=true;
+  },true);
+ }
+ window.addEventListener('pagehide',()=>{clearTimeout(loanHoverTimer);loanHoverTimer=null;loanHoverArmed=false;});
  window.SnoteInventoryStartDate=Object.freeze({open,close:()=>close()});
 })();

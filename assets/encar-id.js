@@ -79,11 +79,9 @@
  async function json(response,signal){if(!/application\/json/i.test(response.headers.get('Content-Type')||''))throw Error('INVALID_RESPONSE');const reader=response.body?.getReader();if(!reader)throw Error('INVALID_RESPONSE');let size=0;const chunks=[];try{for(;;){const{done,value}=await abortable(signal,()=>reader.read());if(done)break;size+=value.byteLength;if(size>16384)throw Error('INVALID_RESPONSE');chunks.push(value);}}catch(e){try{void Promise.resolve(reader.cancel()).catch(()=>{});}catch{}throw e;}finally{reader.releaseLock();}const bytes=new Uint8Array(size);let at=0;for(const chunk of chunks){bytes.set(chunk,at);at+=chunk.byteLength;}return JSON.parse(new TextDecoder().decode(bytes));}
  const pricePanel=document.createElement('div');pricePanel.id='snote-encar-advertisement';pricePanel.className='snote-encar-advertisement';pricePanel.hidden=true;
  const priceLabel=document.createElement('span');priceLabel.id='snote-encar-ad-price';priceLabel.className='snote-encar-ad-price';
- const priceRefresh=document.createElement('button');priceRefresh.id='snote-encar-price-refresh';priceRefresh.type='button';priceRefresh.className='snote-encar-price-refresh';priceRefresh.setAttribute('aria-label','엔카 광고가 새로 확인');priceRefresh.title='엔카 광고가 새로 확인';
- priceRefresh.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 6v5h-5M4 18v-5h5M6 8a7 7 0 0 1 11.5-2L20 9M4 15l2.5 3A7 7 0 0 0 18 16"/></svg>';
  const priceChange=document.createElement('button');priceChange.id='snote-encar-price-change';priceChange.type='button';priceChange.className='snote-encar-price-change';priceChange.textContent='판매가 변경';
  const priceMessage=document.createElement('span');priceMessage.id='snote-encar-price-message';priceMessage.className='snote-encar-price-message';priceMessage.setAttribute('role','status');priceMessage.setAttribute('aria-live','polite');
- pricePanel.append(priceLabel,priceRefresh,priceChange,priceMessage);document.getElementById('vehicle-title')?.after(pricePanel);
+ pricePanel.append(priceLabel,priceChange,priceMessage);document.getElementById('vehicle-title')?.after(pricePanel);
  const setText=(node,value)=>{if(node.textContent!==value)node.textContent=value;};
  const adURL=id=>'https://fem.encar.com/cars/detail/'+id+'?listAdvType=share&adnm=mo_detail_url';
  const won=value=>Number.isSafeInteger(value)&&value>0&&value<=MAX_WON;
@@ -161,11 +159,9 @@
   pricePanel.hidden=false;const checking=!!priceJob&&priceJob.context.key===context.key&&priceJob.id===record.id,writing=!!priceWrite&&priceWrite.context.key===context.key;
   setText(priceLabel,priced(record)?'엔카 광고가 '+record.priceWon.toLocaleString('ko-KR')+'원':checking?'엔카 광고가 확인 중…':'엔카 광고가 확인 필요');
   if(priced(record))priceLabel.title='광고 금액 확인 · '+new Date(record.priceCheckedAt).toLocaleString('ko-KR');else priceLabel.removeAttribute('title');
-  priceRefresh.hidden=!writable(context);priceRefresh.disabled=checking||writing;priceRefresh.setAttribute('aria-busy',String(checking));
   const expected=planned(context);priceChange.hidden=!priced(record)||!writable(context)||expected===null||expected===record.priceWon;priceChange.disabled=checking||writing;
   setText(priceMessage,'');
  }
- priceRefresh.addEventListener('click',()=>{void refreshPrice(detailContext(),{force:true,repeat:true});});
  priceChange.addEventListener('click',()=>{const context=detailContext(),record=context&&saved(context);if(record)void refreshPrice(context,{force:!fresh(record),repeat:true});});
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)resumeComparison();});window.addEventListener('focus',resumeComparison);
  window.addEventListener('snote:encar-advertisement-changed',()=>sync());

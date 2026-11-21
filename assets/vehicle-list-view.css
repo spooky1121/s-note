@@ -1,5 +1,12 @@
 /* Vehicle view controls reuse the existing list, sorting and scoped card records. */
 @media screen {
+ #snote-app #list-screen .snote-document-column {text-align:center;white-space:nowrap}
+ #snote-app #list-screen .snote-document-count {display:inline-flex;align-items:baseline;gap:1px;color:#67758b;font-size:12px;font-variant-numeric:tabular-nums;white-space:nowrap}
+ #snote-app #list-screen .snote-document-count strong {color:#3c4d65;font-weight:650}
+ #snote-app #list-screen .snote-document-count.is-pending {color:#919bad;font-size:11px}
+ #snote-app #list-screen .snote-mobile-documents {display:inline-flex;align-items:center;gap:7px;margin-top:5px;color:#919bad;font-size:11px}
+}
+@media screen {
  #snote-app #list-screen[data-vehicle-view] > .panel {
   display:flex;flex-wrap:wrap;align-items:center;column-gap:12px;row-gap:0;
  }
@@ -145,6 +152,10 @@
  #snote-app #list-screen[data-vehicle-view=cards] #list-mobile :is(.vehicle-card,.acct-mobile-card) > .car-thumb {width:72px;height:66px}
  #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .vehicle-price {font-size:13px}
  #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .acct-mobile-fields > div:is(:nth-child(3),:nth-child(4)) {grid-column:1/-1}
+}
+@media screen {
+ /* Include the native arrow and padding after readable-type enlarges the label. */
+ #snote-app #list-screen[data-vehicle-view] :is(#list-table,#list-mobile) :is(td,.vehicle-right,.snote-mobile-encar-actions) > .status-select {width:auto;min-width:calc(4em + 40px);max-width:none;flex:none}
 }
 @media(prefers-reduced-motion:reduce) {
  #snote-app #list-screen .snote-vehicle-view-toggle > button.snote-list-action,

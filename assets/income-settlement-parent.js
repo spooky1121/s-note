@@ -1,4 +1,4 @@
-import {createSource,createDocument,sourceFingerprint} from './income-settlement-model.js?v=2.112';
+import {createSource,createDocument,sourceFingerprint} from './income-settlement-model.js?v=2.174';
 
 const bridge=()=>window.snoteIncomeSettlementBridge;
 const dialog=document.createElement('dialog');dialog.id='snote221-income-dialog';dialog.setAttribute('aria-label','차량 소득정산');
@@ -65,7 +65,7 @@ async function open(carId){
  const context={base,public:{...base,key:base.key+':'+nonce},dirty:false,ready:false,initial:null,tail:Promise.resolve(),version:0};
  active=context;
  loadingClose.hidden=false;
- try{frame.contentWindow.location.replace('income-settlement.html?v=2.172');}catch(_){frame.src='income-settlement.html?v=2.172';}
+ try{frame.contentWindow.location.replace('income-settlement.html?v=2.174');}catch(_){frame.src='income-settlement.html?v=2.174';}
  dialog.showModal();
  try{context.initial=await enqueue(context,()=>request(context,{action:'load'}));init(context);}
  catch(error){if(current(context)){close();window.snoteNotify?.(error.message||'정산서를 불러오지 못했습니다.',{tone:'error',isCurrent:()=>bridge()?.current(context.base)});}}

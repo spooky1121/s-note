@@ -3,12 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="assets/mobile-popup-history.js?v=2.174"></script>
   <meta name="color-scheme" content="light">
   <title>소득정산 · S-NOTE</title>
-  <link rel="stylesheet" href="assets/income-settlement.css?v=2.25">
+  <link rel="stylesheet" href="assets/income-settlement.css?v=2.174">
   <link rel="stylesheet" href="assets/message-popup.css?v=2.172">
-  <script src="assets/message-popup.js?v=2.172" defer></script>
-  <script type="module" src="assets/income-settlement.js?v=2.172"></script>
+  <script src="assets/message-popup.js?v=2.174" defer></script>
+  <script type="module" src="assets/income-settlement.js?v=2.174"></script>
 <style>@media screen{html[data-embedded="true"] #income-close{visibility:hidden}}</style>
 <link rel="stylesheet" href="assets/reference-theme.css?v=2.59">
 <script src="assets/icon-feedback.js?v=2.172" defer></script>
@@ -27,9 +28,8 @@
       <div class="income-heading"><div class="income-heading-line"><h1>소득정산</h1></div><p id="income-vehicle">차량 정보를 불러오는 중입니다.</p></div>
       <div class="income-actions">
         <span id="income-save-status" role="status" aria-live="polite">연결 대기</span>
-        <button id="income-refresh" class="income-icon-button" type="button" disabled aria-label="서버 새로고침" title="서버 새로고침"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5M6.1 7a7 7 0 0 1 11.6-1L20 9M4 15l2.3 3A7 7 0 0 0 18 17"/></svg></button>
         <button id="income-print" type="button" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 8V3h10v5M7 17H4V9h16v8h-3M7 14h10v7H7zM17 11h.01"/></svg><span>인쇄 / PDF</span></button>
-        <button id="income-save" class="primary" type="button" disabled>서버 저장</button>
+        <button id="income-save" class="primary income-icon-button" type="button" disabled aria-label="정산 저장" data-tooltip="정산 저장"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h12l4 4v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2ZM7 3v6h9V3M7 21v-7h10v7M13 5v2"/></svg></button>
         <button id="income-close" class="income-icon-button close-button" type="button" aria-label="소득정산 닫기"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
       </div>
     </header>

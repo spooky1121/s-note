@@ -2,7 +2,7 @@
  .snote-shared-vehicle-marker{display:inline-flex;align-items:center;justify-content:center;flex:none;line-height:1;vertical-align:middle;color:#315cf5}
  .snote-shared-vehicle-marker>svg{display:block;width:100%;height:100%;max-width:100%;fill:none;stroke:currentColor;pointer-events:none}
  #snote-app #list-screen .car-thumb{position:relative}
- #snote-app #list-screen .car-thumb>.snote-shared-vehicle-marker--photo{position:absolute;top:0;right:0;left:auto;z-index:4;width:26.6667%;height:auto;aspect-ratio:1;box-sizing:border-box;margin:0;padding:3px;border:1px solid #fff;border-radius:50%;background:#ffffffed;box-shadow:0 2px 5px #183e7524;color:#1d4ed8;opacity:.78;cursor:inherit;pointer-events:none}
+ #snote-app #list-screen .car-thumb>.snote-shared-vehicle-marker--photo{position:absolute;top:0;right:auto;left:0;z-index:4;width:53.3333%;height:auto;aspect-ratio:1;box-sizing:border-box;margin:0;padding:4px;border:0;border-radius:0;background:transparent;box-shadow:none;color:#1d4ed8;opacity:.78;cursor:inherit;pointer-events:none}
  #snote-app #list-screen .car-thumb>.snote-shared-vehicle-marker--photo>svg{stroke-width:2.4}
  #snote-app #list-screen .snote-shared-vehicle-marker--list-title{width:14px;height:14px;margin:0 0 0 5px;vertical-align:-2px;pointer-events:none}
  #vehicle-title>.snote-shared-vehicle-marker--title{width:20px;height:20px;margin:0;align-self:center}

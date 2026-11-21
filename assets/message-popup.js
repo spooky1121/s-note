@@ -18,7 +18,7 @@
  let parentApi=null;
  try{if(parent!==own&&parent.location.origin===location.origin)parentApi=parent.SnoteMessages;}catch{}
  if(parentApi?._request){
-  const api=Object.freeze({confirm:(text,options)=>parentApi._request('confirm',text,options,own),alert:(text,options)=>parentApi._request('alert',text,options,own),notify:(text,options)=>{void parentApi._request('notify',text,options,own);},active:()=>parentApi.active(),clear:()=>parentApi._clearOwner(own),dismiss:key=>parentApi._dismissOwner(own,key),_request:(kind,text,options,owner)=>parentApi._request(kind,text,options,owner),_clearOwner:owner=>parentApi._clearOwner(owner),_dismissOwner:(owner,key)=>parentApi._dismissOwner(owner,key)});
+  const api=Object.freeze({confirm:(text,options)=>parentApi._request('confirm',text,options,own),alert:(text,options)=>parentApi._request('alert',text,options,own),notify:(text,options)=>{void parentApi._request('notify',text,options,own);},active:()=>parentApi.active(),clear:()=>parentApi._clearOwner(own),dismiss:key=>parentApi._dismissOwner(own,key),dismissTop:options=>parentApi._dismissTop(own,options),_request:(kind,text,options,owner)=>parentApi._request(kind,text,options,owner),_clearOwner:owner=>parentApi._clearOwner(owner),_dismissOwner:(owner,key)=>parentApi._dismissOwner(owner,key),_dismissTop:(owner,options)=>parentApi._dismissTop(owner,options)});
   own.SnoteMessages=api;own.snoteConfirm=api.confirm;own.snoteAlert=api.alert;own.snoteNotify=api.notify;
   installValidation(api);own.addEventListener('pagehide',api.clear);return;
  }
@@ -45,6 +45,12 @@
   const matches=item=>(!owner||item.owner===owner)&&item.kind==='notify'&&(key===undefined||item.options.key===key);
   const removed=queue.filter(matches);queue=queue.filter(item=>!matches(item));for(const item of removed)item.resolve(null);
   if(active&&matches(active))finish(false);
+ }
+ // Browser Back cancels only this decision. It must not choose a parent's
+ // "discard" branch, or clear unrelated decisions waiting in the queue.
+ function dismissTop(owner,{abort=false}={}){
+  if(!active||owner&&active.owner!==owner)return false;
+  finish(false,{aborted:abort});return true;
  }
  function mount(){
   if(dialog)return true;if(!doc.body)return false;
@@ -85,7 +91,7 @@
   if(kind!=='notify'&&active?.kind==='notify'&&Number(active.options.duration??(active.options.tone==='error'?0:3000))>0)finish(false,{restoreFocus:false});
   if(kind==='confirm')queue.unshift(item);else queue.push(item);next();return task;
  }
- const api=Object.freeze({confirm:(text,options)=>request('confirm',text,options),alert:(text,options)=>request('alert',text,options),notify:(text,options)=>{void request('notify',text,options);},active:()=>!!active,clear:()=>clearOwner(),dismiss:key=>dismissOwner(null,key),_request:request,_clearOwner:clearOwner,_dismissOwner:dismissOwner});
+ const api=Object.freeze({confirm:(text,options)=>request('confirm',text,options),alert:(text,options)=>request('alert',text,options),notify:(text,options)=>{void request('notify',text,options);},active:()=>!!active,clear:()=>clearOwner(),dismiss:key=>dismissOwner(null,key),dismissTop:options=>dismissTop(null,options),_request:request,_clearOwner:clearOwner,_dismissOwner:dismissOwner,_dismissTop:dismissTop});
  own.SnoteMessages=api;own.snoteConfirm=api.confirm;own.snoteAlert=api.alert;own.snoteNotify=api.notify;
  installValidation(api);
  // Keep keystrokes inside the topmost message rather than closing its parent popup.

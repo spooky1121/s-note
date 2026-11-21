@@ -2,7 +2,7 @@
 (()=>{'use strict';if(window.SnoteReceivedVehicleList)return;
  const bridge=()=>window.snoteVehicleShareBridge,UUID=/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i;
  const permissions={read:{label:'읽기',edit:false,delete:false},edit:{label:'수정',edit:true,delete:false},delete:{label:'삭제',edit:false,delete:true},all:{label:'모든 권한',edit:true,delete:true}};
- let account=null,accountActor=null,accountRole='',epoch=0,job=null,last=0,initialized=false,renderFrame=0;const entries=new Map(),visible=new Set(),pendingReads=new Map(),photoCandidates=new Map();
+ let account=null,accountActor=null,accountRole='',epoch=0,job=null,last=0,initialized=false,renderFrame=0;const entries=new Map(),visible=new Set(),pendingReads=new Map(),photoCandidates=new Map(),leftGrants=new Map();
  const actor=()=>typeof currentUser==='undefined'?null:currentUser,eligible=()=>['dealer','admin'].includes(actor()?.role);
  const listRoute=()=>typeof route==='string'&&route==='buy'&&eligible();
  const context=()=>bridge()?.context?.(),valid=c=>!!c&&bridge()?.current?.(c)===true;
@@ -14,11 +14,11 @@
   if(value?.apiVersion!==2||value.canRead!==true||!p||value.canEdit!==p.edit||value.canDelete!==p.delete||!native&&!(value.nativeAccess===false&&UUID.test(value.invitationId||'')&&Number.isSafeInteger(value.version)&&value.version>0))return null;
   return{permission:value.permission,label:p.label,grant:native?null:{invitationId:value.invitationId,version:value.version}};
  }
- function itemAllowed(item){return item?.state==='accepted'&&item.nativeAccess===false&&UUID.test(item.companyId||'')&&UUID.test(item.ownerId||'')&&typeof item.carId==='string'&&item.carId.length>0&&item.carId.length<=200&&!!access(item);}
+ function itemAllowed(item){return item?.state==='accepted'&&item.nativeAccess===false&&UUID.test(item.companyId||'')&&UUID.test(item.ownerId||'')&&typeof item.carId==='string'&&item.carId.length>0&&item.carId.length<=200&&!!access(item)&&!(leftGrants.get(item.invitationId)>=item.version);}
  function revoke(entry){if(entry?.url)URL.revokeObjectURL(entry.url);if(entry){entry.url=null;for(const[url,source]of photoCandidates)if(source.car.id===entry.car.id){URL.revokeObjectURL(url);photoCandidates.delete(url);}}}
  function clearEntries(){for(const entry of entries.values())revoke(entry);for(const url of photoCandidates.keys())URL.revokeObjectURL(url);photoCandidates.clear();entries.clear();visible.clear();repaint();}
  function repaint(){if(renderFrame)return;renderFrame=requestAnimationFrame(()=>{renderFrame=0;if(listRoute()&&typeof renderCars==='function')renderCars();});}
- function reset(next,who=actor()){account=next;accountActor=who;accountRole=who?.role||'';epoch++;job=null;pendingReads.clear();clearEntries();last=0;initialized=false;}
+ function reset(next,who=actor()){account=next;accountActor=who;accountRole=who?.role||'';epoch++;job=null;pendingReads.clear();leftGrants.clear();clearEntries();last=0;initialized=false;}
  function scope(){const c=context();if(!eligible()||!valid(c)){if(account!==null||entries.size||job)reset(null,null);return null;}if(c.key!==account||actor()!==accountActor||actor()?.role!==accountRole)reset(c.key,actor());return c;}
  const has=car=>live()&&!!car&&visible.has(String(car.id))&&entries.get(String(car.id))?.car===car;
  function rows(){return live()?[...entries].filter(([id])=>visible.has(id)).map(([,entry])=>entry.car):[];}
@@ -36,7 +36,7 @@
   const converted=window.SnoteMoney?.car(raw);if(!converted||typeof converted!=='object')return null;
   const id=idFor(item),previous=entries.get(id);const clean={...converted};delete clean.car;delete clean.entry;delete clean.carId;
   const car=Object.freeze({...clean,id,ownerId:'cld_'+item.ownerId.replaceAll('-','').slice(0,18),km:clean.km??clean.mileage??'',model:raw.model.slice(0,200),plate:typeof raw.plate==='string'?raw.plate.slice(0,30):''});
-  return{item:{...item},car,access:cap,url:previous?.url||null,photoAt:previous?.photoAt||0,readAt:Date.now(),photoJob:null};
+  return{item:{...item},car,access:cap,url:previous?.url||null,photoAt:previous?.photoAt||0,readAt:Date.now(),photoJob:null,documentCount:null};
  }
  function incomingItems(result){
   if(!Array.isArray(result)||result.length>1000)throw Error('INVALID_RESPONSE');
@@ -74,7 +74,7 @@
     if(!currentRun(c,run)||run.blocked)return;progress();if(!sameGrant(item,run.accepted.get(id)))continue;
     if(entry)entry.item={...run.accepted.get(id)};
     let changed=false;
-    if(entry){const previous=entries.get(id),sameCar=previous&&JSON.stringify(previous.car)===JSON.stringify(entry.car);changed=!previous||!sameCar||!sameGrant(previous.item,entry.item)||previous.item.ownerName!==entry.item.ownerName||!visible.has(id);if(previous&&sameGrant(previous.item,entry.item)){const photoState={url:previous.url,photoAt:previous.photoAt,photoJob:previous.photoJob,car:sameCar?previous.car:entry.car};Object.assign(previous,entry,photoState);entry=previous;}entries.set(id,entry);visible.add(id);}else{changed=entries.has(id)||visible.has(id);revoke(entries.get(id));entries.delete(id);visible.delete(id);}if(changed)repaint();
+    if(entry){const previous=entries.get(id),sameCar=previous&&JSON.stringify(previous.car)===JSON.stringify(entry.car);changed=!previous||!sameCar||!sameGrant(previous.item,entry.item)||previous.item.ownerName!==entry.item.ownerName||!visible.has(id);if(previous&&sameGrant(previous.item,entry.item)){const photoState={url:previous.url,photoAt:previous.photoAt,photoJob:previous.photoJob,documentCount:previous.documentCount,car:sameCar?previous.car:entry.car};Object.assign(previous,entry,photoState);entry=previous;}entries.set(id,entry);visible.add(id);}else{changed=entries.has(id)||visible.has(id);revoke(entries.get(id));entries.delete(id);visible.delete(id);}if(changed)repaint();
    }};
    do{await Promise.all(Array.from({length:Math.min(6,items.length-cursor)},worker));if(run.revalidation)await run.revalidation;}while(currentRun(c,run)&&!run.blocked&&cursor<items.length);
    if(currentRun(c,run)&&!run.blocked){last=Date.now();if(listRoute())scan();}
@@ -87,7 +87,9 @@
  function paintPhoto(entry){const src=entry.url||(typeof fallbackImage==='function'?fallbackImage(entry.car).src:'');for(const image of document.querySelectorAll('img[data-received-share-photo]'))if(image.dataset.receivedSharePhoto===entry.car.id)image.src=src;}
  async function photo(entry){const now=Date.now();if(!live()||!visible.has(entry.car.id)||entries.get(entry.car.id)!==entry||entry.photoJob||now-entry.photoAt<(entry.url?30000:15000))return;const c=context(),version=epoch;entry.photoAt=now;
   const current=()=>version===epoch&&sameAccount(c)&&live()&&visible.has(entry.car.id)&&entries.get(entry.car.id)===entry;
-  let candidate=null;entry.photoJob=(async()=>{try{const result=await bridge().rpc(c,args(entry,'media'));if(!current()||!Array.isArray(result))return;const first=result.find(row=>row?.group==='photos'&&typeof row.path==='string');if(!first){revoke(entry);entry.photoAt=Date.now();paintPhoto(entry);return;}
+  let candidate=null;entry.photoJob=(async()=>{try{const result=await bridge().rpc(c,args(entry,'media'));if(!current()||!Array.isArray(result))return;
+   const count=new Set(result.filter(row=>['registration','inspection1','inspection2'].includes(row?.group)).map(row=>row.group)).size;if(entry.documentCount!==count){entry.documentCount=count;repaint();}
+   const first=result.find(row=>row?.group==='photos'&&typeof row.path==='string');if(!first){revoke(entry);entry.photoAt=Date.now();paintPhoto(entry);return;}
    const blob=await bridge().file(c,first.path);if(!current()||!(blob instanceof Blob)||!/^image\/(jpeg|png|webp)$/.test(blob.type))return;
    candidate=URL.createObjectURL(blob);photoCandidates.set(candidate,entry);const preview=new Image();preview.src=candidate;await preview.decode();if(!current()||!photoCandidates.has(candidate)||!preview.naturalWidth)return;
    const previous=entry.url;entry.url=candidate;entry.photoAt=Date.now();photoCandidates.delete(candidate);candidate=null;paintPhoto(entry);if(previous)URL.revokeObjectURL(previous);
@@ -100,7 +102,11 @@
  function open(id,event){const entry=entries.get(String(id));if(!entry||!visible.has(String(id))||!live())return false;event?.preventDefault();event?.stopPropagation();
   if(window.SnoteSharedVehicleDetail?.open)void window.SnoteSharedVehicleDetail.open(entry.item);else if(typeof toast==='function')toast('공유 차량 화면을 불러오지 못했습니다. 새로고침해 주세요.');return true;
  }
- window.SnoteReceivedVehicleList=Object.freeze({rows,has,car:id=>live()&&visible.has(String(id))?entries.get(String(id))?.car||null:null,ownerLabel:car=>has(car)?String(entries.get(car.id).item.ownerName||'공유 딜러'):'',permission:car=>has(car)?entries.get(car.id).access.label:'',thumbnail,open,refresh:()=>refresh(true)});
+ function forget(c,item,grant){if(!sameAccount(c)||!UUID.test(grant?.invitationId||'')||!Number.isSafeInteger(grant.version))return false;const id=idFor(item),matches=row=>row?.invitationId===grant.invitationId&&row?.version===grant.version;
+  leftGrants.set(grant.invitationId,Math.max(grant.version,leftGrants.get(grant.invitationId)||0));if(matches(job?.accepted?.get(id)))job.accepted.delete(id);
+  const entry=entries.get(id);if(!matches(entry?.item))return false;revoke(entry);entries.delete(id);visible.delete(id);repaint();return true;
+ }
+ window.SnoteReceivedVehicleList=Object.freeze({rows,has,car:id=>live()&&visible.has(String(id))?entries.get(String(id))?.car||null:null,ownerLabel:car=>has(car)?String(entries.get(car.id).item.ownerName||'공유 딜러'):'',permission:car=>has(car)?entries.get(car.id).access.label:'',documentCount:car=>has(car)?entries.get(car.id).documentCount:null,thumbnail,open,forget,refresh:()=>refresh(true)});
  new MutationObserver(scan).observe(document.getElementById('list-screen')||document.body,{subtree:true,childList:true});
  window.addEventListener('snote:route-changed',()=>{visible.clear();repaint();if(listRoute())void refresh(false,{urgent:true});else ready();});
  window.addEventListener('snote:sales-data-changed',ready);

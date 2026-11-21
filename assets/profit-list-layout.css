@@ -17,3 +17,10 @@
   width:100%;max-width:100%;min-width:0;margin:0;padding:0;overflow-x:auto;overscroll-behavior-x:contain;
  }
 }
+
+@media screen{
+ .profit-average-days{display:grid;grid-template-columns:1fr auto;gap:5px 12px;align-items:center;margin-top:17px;padding-top:13px;border-top:1px solid #ffffff2b;position:relative;z-index:1}
+ .profit-average-days>span{font-size:12px;color:#dce7ff}.profit-average-value{font-size:23px;line-height:1.25;letter-spacing:-.5px;color:#fff}.profit-average-days>small{grid-column:1/-1;color:#cfddf9;font-size:10px;line-height:1.5}
+ .profit-chart-legend{display:flex;flex-wrap:wrap;gap:8px 17px;margin:12px 0 0;font-size:10px;color:#70829a;line-height:1.5}
+ .profit-chart-legend>span{display:inline-flex;align-items:center;gap:6px}.profit-chart-legend>span::before{content:'';width:18px;border-top:3px solid #20aa83}.profit-chart-legend>.profit-legend-sales::before{border-top:3px dashed #5077ee}
+}

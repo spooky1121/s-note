@@ -203,8 +203,7 @@ function range(start, end) {
 }
 
 export function calculate(raw, source = {}) {
-  const interest = source?.inventoryInterestWon ?? 0;
-  if (!Number.isSafeInteger(interest) || interest < 0 || interest > MAX_MONEY) invalid('재고 이자를 확인해 주세요.');
+  // Keep legacy source metadata/fingerprints stable; finance interest is not an income-settlement expense.
   const customCosts = source?.customCostsWon ?? 0;
   if (!Number.isSafeInteger(customCosts) || customCosts < 0) invalid('추가 비용의 원 단위 합계를 확인해 주세요.');
   const doc = normalizeDocument(raw), cache = new Map(), active = new Set();
@@ -213,7 +212,7 @@ export function calculate(raw, source = {}) {
     if (active.has(id)) invalid('순환 수식은 계산할 수 없습니다.');
     active.add(id);
     let value = FORMULAS[id] ? evaluate(FORMULAS[id]) : typeof doc.cells[id] === 'number' ? rational(BigInt(doc.cells[id])) : ZERO;
-    if (id === 'D28') value = add(add(value, rational(BigInt(interest))), rational(BigInt(customCosts)));
+    if (id === 'D28') value = add(value, rational(BigInt(customCosts)));
     active.delete(id); cache.set(id, value); return value;
   }
   function evaluate(node) {

@@ -1,7 +1,6 @@
 /* Dealer receiving accounts. Never fall back to another account or a sample account. */
 (() => {
  'use strict';
- const dialog=document.getElementById('snote-profile-dialog');
  const kinds=['vehicle','transfer'],labels={vehicle:'차대금',transfer:'이전비'};
  const empty=()=>({vehicle:null,transfer:null});
  const bridge=()=>window.snotePaymentAccountsBridge;
@@ -69,7 +68,6 @@
  const fields={};
  function mount(){
   if(section)return true;
-  const body=dialog?.querySelector('.snote-profile-body');if(!body)return false;
   section=document.createElement('section');section.id='snote-payment-profile';section.className='snote-profile-section snote-payment-profile';section.hidden=true;
   const heading=document.createElement('div');heading.className='snote-payment-profile-heading';
   const title=document.createElement('h3');title.textContent='내 입금계좌';heading.append(title);
@@ -92,7 +90,6 @@
   const help=document.createElement('p');help.className='snote-payment-help';help.textContent='저장한 계좌만 견적서·계약서에 표시됩니다. 비워서 저장하면 표시하지 않습니다.';section.append(help);
   message=document.createElement('p');message.id='snote-payment-message';message.className='snote-profile-message';message.setAttribute('role','status');message.setAttribute('aria-live','polite');section.append(message);
   reloadButton=document.createElement('button');reloadButton.id='snote-payment-reload';reloadButton.type='button';reloadButton.className='snote-profile-text-button';reloadButton.textContent='다시 불러오기';reloadButton.hidden=true;section.append(reloadButton);
-  const first=body.querySelector(':scope > .snote-profile-section');if(first)first.after(section);else body.append(section);
   form.addEventListener('submit',saveProfile);form.addEventListener('input',()=>{++editVersion;controls();});reloadButton.addEventListener('click',()=>void startRead(true));
   controls();return true;
  }
@@ -104,13 +101,11 @@
  function fieldSignature(value){return JSON.stringify(value);}
  function baselineFields(){return Object.fromEntries(kinds.map(kind=>[kind,baseline?.accounts[kind]||{bank:'',number:'',holder:''}]));}
  function editorDirty(){return !!baseline&&fieldSignature(rawFields())!==fieldSignature(baselineFields());}
- function profileDirty(){return presentation==='profile'&&editorDirty();}
- function profileBusy(){return presentation==='profile'&&saving;}
  function settingsRoute(){try{return typeof route==='string'&&route==='settings';}catch{return false;}}
  const settingsElement=()=>settingsRoute()?document.getElementById('snote-settings-payment-body'):null;
  const sameEditor=context=>!!context&&!!profileContext&&profileContext.key===context.key&&profileContext.client===context.client&&profileContext.role===context.role;
  const profileLive=version=>version===profileVersion&&!!profileContext&&isCurrent(profileContext)&&!!section&&section.isConnected&&!section.hidden&&
-  (presentation==='profile'?dialog?.hidden===false&&dialog.contains(section):presentation==='settings'&&settingsRoute()&&settingsHost?.isConnected&&section.parentElement===settingsHost);
+  presentation==='settings'&&settingsRoute()&&settingsHost?.isConnected&&section.parentElement===settingsHost;
  function discardScope(){
   // Recheck the exact editor and draft after an asynchronous discard decision.
   const version=profileVersion,context=profileContext,snapshot=baseline,edit=editVersion,draft=fieldSignature(rawFields());
@@ -148,34 +143,14 @@
   ++profileVersion;profileContext=null;baseline=null;loading=false;saving=false;readTask=null;presentation=null;
   if(section){for(const kind of kinds)for(const input of Object.values(fields[kind]))input.value='';section.hidden=true;status('');reloadButton.hidden=true;controls();}
  }
- function placeProfile(){
-  const body=dialog?.querySelector('.snote-profile-body');if(!body)return false;
-  const first=body.querySelector(':scope > .snote-profile-section');
-  if(first&&first!==section)first.after(section);else body.append(section);
-  presentation='profile';section.hidden=false;return true;
- }
  function mountSettings(host){
   if(!(host instanceof Element)||!host.isConnected||!settingsRoute()||!mount())return false;
   settingsHost=host;
-  // The same editor may be in a visible profile drawer. Keep its draft there.
-  if(presentation==='profile'&&dialog?.hidden===false)return false;
   const context=contextNow();if(!context){clearEditor();return false;}
   const preserve=sameEditor(context)&&(!!baseline||loading||saving);
   if(!preserve)clearEditor();
   profileContext=context;presentation='settings';host.append(section);section.hidden=false;controls();
   return preserve?(loading?(readTask||Promise.resolve(false)):Promise.resolve(!!baseline)):startRead();
- }
- async function openProfile({inline=false}={}){
-  if(inline){const host=settingsElement();return host?mountSettings(host):false;}
-  const context=contextNow();if(!context||!mount())return false;
-  const preserve=sameEditor(context)&&(!!baseline||loading||saving);
-  if(!preserve)clearEditor();
-  profileContext=context;if(!placeProfile()){clearEditor();return false;}controls();
-  return preserve?(loading?(readTask||false):!!baseline):startRead();
- }
- function closeProfile(){
-  if(presentation!=='profile')return;
-  clearEditor();const host=settingsElement();if(host)void mountSettings(host);
  }
  function prepareRouteChange(){
   if(presentation!=='settings')return true;
@@ -213,8 +188,7 @@
   }finally{if(version===profileVersion){saving=false;controls();}}
  }
  function reset(){clearEditor();clearDocument();}
- mount();
- window.SnotePaymentAccounts=Object.freeze({openProfile,closeProfile,profileDirty,profileBusy,mountSettings,focusSettings,prepareRouteChange,ensureQuoteAccounts,clearDocument,loadDocument,documentState,reset});
+ window.SnotePaymentAccounts=Object.freeze({mountSettings,focusSettings,prepareRouteChange,ensureQuoteAccounts,clearDocument,loadDocument,documentState,reset});
  window.addEventListener('snote:route-changed',event=>{
   if(event.detail?.page==='settings'){const host=settingsElement();if(host)void mountSettings(host);}
   else if(presentation==='settings')clearEditor();

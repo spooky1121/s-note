@@ -2,7 +2,7 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
 const {chromium}=require('./encar/node_modules/playwright');
 const {fixture,setBrowser}=require('./encar/browser-smoke.cjs');
-const ROOT=path.resolve(__dirname,'..'),OUT='/workspace/work/v2112-inventory-start-browser';
+const ROOT=path.resolve(__dirname,'..'),OUT=process.env.INVENTORY_START_ARTIFACTS||'/workspace/work/ui-v2174/inventory-start';
 const sourceNames=['index.html','assets/inventory-interest.js','assets/inventory-start-date.js','assets/inventory-start-date.css'];
 const hashes=()=>Object.fromEntries(sourceNames.map(file=>[file,crypto.createHash('sha256').update(fs.readFileSync(path.join(ROOT,file))).digest('hex')]));
 fs.mkdirSync(OUT,{recursive:true});
@@ -23,13 +23,27 @@ fs.mkdirSync(OUT,{recursive:true});
     });
     await p.locator('#car-cost-section').scrollIntoViewIfNeeded();
     const interest=p.locator('#detail-inventory-interest'),trigger=p.locator('#detail-inventory-start-trigger');
+    const loanTrigger=p.locator('#detail-inventory-loan-start-trigger'),dialog=p.locator('#snote-inventory-start-dialog');
+    assert.equal(await loanTrigger.textContent(),'재고대출금');
+    if(width===1440){
+     await p.locator('#detail-inventory-loan').hover();await p.waitForTimeout(350);assert.equal(await dialog.isVisible(),false,'Editing the loan field must not open the date popup');
+     await p.mouse.move(1,1);await loanTrigger.hover();await dialog.waitFor({state:'visible'});
+     await p.locator('#snote-inventory-start-date').fill(setup.other);await loanTrigger.dispatchEvent('pointerenter',{pointerType:'mouse'});assert.equal(await p.locator('#snote-inventory-start-date').inputValue(),setup.other,'Hover must preserve an open date draft');
+     await p.locator('.snote-inventory-start-cancel').click();await dialog.waitFor({state:'hidden'});
+     await loanTrigger.dispatchEvent('pointerenter',{pointerType:'mouse'});await p.waitForTimeout(350);assert.equal(await dialog.isVisible(),false,'Closing must not immediately reopen from a stationary pointer');
+     await p.mouse.move(1,1);await loanTrigger.hover();await dialog.waitFor({state:'visible'});assert.equal(await p.locator('#snote-inventory-start-date').inputValue(),setup.purchase);await p.locator('.snote-inventory-start-cancel').click();
+    }else{
+     await loanTrigger.dispatchEvent('pointerenter',{pointerType:'touch'});await p.waitForTimeout(350);assert.equal(await dialog.isVisible(),false,'Touch pointer entry must not open a hover popup');
+     await loanTrigger.click();await dialog.waitFor({state:'visible'});await p.locator('.snote-inventory-start-cancel').click();
+    }
     assert.equal(await interest.inputValue(),'50,959');assert.equal(await p.locator('#detail-interest-basis').textContent(),'연 6%');assert.equal(await trigger.textContent(),'재고이자');assert.match(await trigger.getAttribute('data-tooltip'),new RegExp(setup.purchase));
     const layout=await p.locator('#detail-interest-basis').evaluate(e=>{const note=e.getBoundingClientRect(),label=document.getElementById('detail-inventory-start-trigger').getBoundingClientRect(),field=document.getElementById('detail-inventory-interest').getBoundingClientRect();return{beside:note.x>=label.right-1,center:Math.abs(note.y+note.height/2-label.y-label.height/2)<3,aboveInput:note.bottom<=field.y+1};});assert(layout.beside&&layout.center&&layout.aboveInput,JSON.stringify(layout));
     await trigger.scrollIntoViewIfNeeded();await p.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
     for(let attempt=0;attempt<3;attempt++){await p.mouse.move(1,1);await trigger.hover();try{await p.locator('#snote-icon-tooltip').waitFor({state:'visible',timeout:1000});break;}catch(error){if(attempt===2)throw error;}}
     assert.match(await p.locator('#snote-icon-tooltip').textContent(),new RegExp(setup.purchase));
     await p.locator('#detail-memo').fill('미저장 메모 '+width);await p.locator('#detail-extra').fill('미저장 비고 '+width);
-    await trigger.click();const dialog=p.locator('#snote-inventory-start-dialog');await dialog.waitFor({state:'visible'});
+    await trigger.click();await dialog.waitFor({state:'visible'});
+    const save=p.locator('.snote-inventory-start-save');await save.locator('svg').waitFor({state:'visible'});assert.equal((await save.textContent()).trim(),'');assert.equal(await save.getAttribute('aria-label'),'저장');
     assert.equal(await p.locator('#snote-inventory-start-date').inputValue(),setup.purchase);assert.equal(await p.locator('#snote-inventory-start-date').getAttribute('max'),setup.today);
     const bounds=await dialog.boundingBox();assert(bounds.x>=0&&bounds.x+bounds.width<=width+1&&bounds.width<=360);assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
     await p.screenshot({path:path.join(OUT,width+'.png')});
@@ -50,9 +64,9 @@ fs.mkdirSync(OUT,{recursive:true});
     await p.locator('#detail-inventory-loan').fill('20000000');assert.equal(await interest.inputValue(),'23,014');await p.locator('#detail-inventory-lender').selectOption('JB우리금융');assert.equal(await interest.inputValue(),'46,027');assert.equal(await p.locator('#detail-interest-basis').textContent(),'연 12%');
     await p.locator('#detail-inventory-loan').fill('10000000');await p.locator('#detail-inventory-lender').selectOption('KB캐피탈');
     await p.evaluate(async()=>{const c=cars[0];await closeVehicle({discard:true,animate:false});c.status='판매완료';c.soldAt=SnoteInventoryInterest.today();c.inventoryInterestSnapshot=SnoteInventoryInterest.snapshot(c,ACC44_LENDER_LIMITS);ACC44_LENDER_LIMITS=[['KB캐피탈',150000,12],['JB우리금융',150000,12]];openVehicle(c.id);});
-    assert.equal(await trigger.isDisabled(),true);assert.equal(await p.locator('#detail-interest-basis').textContent(),'연 6%');assert.equal(await p.evaluate(()=>normalizeCosts(cars[0]).inventoryInterest),11507);
+    assert.equal(await trigger.isDisabled(),true);assert.equal(await loanTrigger.isDisabled(),true);assert.equal(await p.locator('#detail-interest-basis').textContent(),'연 6%');assert.equal(await p.evaluate(()=>normalizeCosts(cars[0]).inventoryInterest),11507);
     await p.evaluate(()=>{const S=window.__encarFixtureState;S.members[0].role='accountant';currentUser={...currentUser,role:'accountant'};renderVehicle();SnoteInventoryStartDate.open();});
-    assert.equal(await p.evaluate(()=>snoteInventoryStartBridge.context()),null);assert.equal(await dialog.isVisible(),false);
+    assert.equal(await p.evaluate(()=>snoteInventoryStartBridge.context()),null);assert.equal(await loanTrigger.isDisabled(),true);assert.equal(await dialog.isVisible(),false);
     assert.deepEqual(f.errors,[]);assert.deepEqual(f.unexpectedDialogs,[]);
     results.push({width,rateAndStartTooltip:true,actualHoverBubble:true,dialogFits:true,dateOnlyDatabaseSave:true,dirtyMemoAndExtraPreserved:true,cancelNoWrite:true,loanAndLenderRecalculation:true,soldDateEditDisabled:true,soldSnapshotFrozen:true,readOnlyDateEditDenied:true,overflow:false});
     console.log('PASS '+width+' inventory date popup, exact rate, date-only CAS, preserved drafts, cancel, recalculation and sold snapshot');
