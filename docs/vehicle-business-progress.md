@@ -58,3 +58,5 @@ DB 적용 후에는 메타데이터로 7표 RLS/직접 ACL, public INVOKER wrapp
 5. 경리의 업무 첫 화면·재고금융 관리, 관리자 내 업무/상사 전체 선택을 확인한다. 원래 견적서·계약서·인수증 인쇄도 확인한다.
 
 최종 격리 증적: `/workspace/work/vehicle-business-v2181/`, `/workspace/work/business-integration-browser/`, `/workspace/work/business-today-v2181/`, `/workspace/work/business-finance-list-v2181/`. 실제 파일 업로드·운영 배포 영수증으로 대신 표기하지 않는다.
+
+검토 PR: https://github.com/spooky1121/s-note/pull/74 (draft). 구현 커밋 `cf37287c649b8fdd4a0756a9cf55c9402f3fbcd0`, 코드 트리 `264875f78f6b9c69da1be254d864c543cf048735`. 기본 브랜치는 v2.180 기준 커밋 그대로다. PR 미리보기 빌드와 운영 DB/운영 배포는 별개이며 DB 적용 확인 없이 병합하지 않는다.
