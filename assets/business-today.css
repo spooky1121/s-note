@@ -1,0 +1,56 @@
+/* Scoped business work list; existing financial dashboard and printed forms are untouched. */
+.snote-business-today{min-width:0;max-width:100%;margin:0 0 20px;padding:22px;border:1px solid #e0e7f0;border-radius:16px;background:#fff;color:#2b3b52;font-family:inherit;font-size:14px;line-height:1.5}
+.snote-business-today[hidden],.snote-business-today [hidden]{display:none!important}
+.snote-business-today *,.snote-business-today-dialog *{box-sizing:border-box}
+.snote-business-today :is(h2,p),.snote-business-today-dialog :is(h2,p){margin:0}
+.snote-business-today h2,.snote-business-today-dialog h2{color:#293b55;font-size:18px;font-weight:650;letter-spacing:-.3px;line-height:1.45}
+.snote-business-today :is(button,input,select),.snote-business-today-dialog :is(button,input){font-family:inherit;font-size:14px}
+.snote-business-today button,.snote-business-today-dialog button{min-height:44px;padding:9px 13px;border:1px solid #dce5f0;border-radius:9px;background:#fff;box-shadow:none;color:#43617f;font-weight:550;line-height:1.45;cursor:pointer;translate:none!important;transform:none!important}
+.snote-business-today button:hover,.snote-business-today-dialog button:hover{background:#f5f8fd}
+.snote-business-today button:disabled,.snote-business-today-dialog button:disabled{opacity:.6;cursor:wait}
+.snote-business-today :is(button,input,select):focus-visible,.snote-business-today-dialog :is(button,input):focus-visible{outline:3px solid #9dbcf1;outline-offset:3px}
+.snote-business-today-head{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-bottom:16px}
+.snote-business-today-subtitle{margin-top:5px!important;color:#71829a;font-size:12px}
+.snote-business-today-actions{display:flex;flex-wrap:wrap;gap:8px}
+.snote-business-today-scopes{display:inline-flex;max-width:100%;gap:4px;margin-bottom:16px;padding:4px;border-radius:11px;background:#edf3fb}
+.snote-business-today-scopes button{min-width:102px;border:0;background:transparent;color:#697e98}
+.snote-business-today-scopes button[aria-pressed=true]{background:#fff;color:#2861ac;box-shadow:0 1px 3px #24395712}
+.snote-business-today-toolbar{display:grid;grid-template-columns:minmax(160px,1fr) auto minmax(210px,1fr);align-items:end;gap:10px;margin:0 0 16px}
+.snote-business-today-toolbar label,.snote-business-today-dialog label{display:flex;flex-direction:column;gap:6px;min-width:0;color:#61758f;font-size:12px;font-weight:550}
+.snote-business-today-toolbar :is(input,select),.snote-business-today-dialog input{width:100%;min-width:0;min-height:44px;padding:10px 12px;border:1px solid #dbe4ef;border-radius:9px;background:#fff;color:#2d415e;line-height:1.4}
+.snote-business-today-categories{display:flex;flex-wrap:wrap;gap:7px;max-width:100%;min-width:0;margin-bottom:14px}
+.snote-business-today-categories button{min-height:38px;padding:8px 11px;font-size:12px;white-space:nowrap}
+.snote-business-today-categories button[aria-pressed=true]{border-color:#bed2f0;background:#eef5ff;color:#2e65b5}
+.snote-business-today-feedback,.snote-business-today-state{color:#75849a;font-size:12px;line-height:1.6;word-break:keep-all;overflow-wrap:anywhere}
+.snote-business-today-state{margin-top:10px!important;font-size:14px}
+.snote-business-today-feedback[data-error=true]{color:#b34451}
+.snote-business-today-warning{margin-top:8px!important;padding:10px 12px;border-radius:8px;background:#fbf7ee;color:#856931;font-size:12px;line-height:1.6;word-break:keep-all;overflow-wrap:anywhere}
+.snote-business-today-list{display:flex;flex-direction:column;gap:0;min-width:0;margin-top:12px}
+.snote-business-today button.snote-business-today-task{display:flex;align-items:center;justify-content:space-between;gap:18px;width:100%;min-width:0;min-height:88px;padding:16px 0;border:0;border-top:1px solid #e9eef5;border-radius:0;text-align:left;box-shadow:none;color:inherit}
+.snote-business-today-task-info{display:flex;flex:1;flex-direction:column;gap:4px;min-width:0}
+.snote-business-today-task-info>strong{color:#314a6a;font-size:14px;font-weight:600;word-break:keep-all;overflow-wrap:anywhere}
+.snote-business-today-task-info>span{color:#647a95;font-size:12px;overflow-wrap:anywhere}
+.snote-business-today-task-info>small{color:#7a889b;font-size:12px;font-weight:400;word-break:keep-all;overflow-wrap:anywhere}
+.snote-business-today-task-meta{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex:none;max-width:45%;min-width:0;font-variant-numeric:tabular-nums}
+.snote-business-today-task-meta>span{color:#697f98;font-size:12px;font-weight:500}
+.snote-business-today-task-meta>strong{color:#2d619b;font-size:16px;font-weight:650;overflow-wrap:anywhere;text-align:right}
+.snote-business-today-task-meta>small{color:#788aa1;font-size:12px;font-weight:400}
+.snote-business-today-task-meta>.is-overdue{color:#b54e48}
+.snote-business-today-empty{padding:25px 0 12px;color:#6d8099;font-size:14px;line-height:1.7;word-break:keep-all;overflow-wrap:anywhere}
+.snote-business-today button.snote-business-today-more{display:block;margin:14px auto 0;min-width:180px;border-color:#cbdcf3;background:#f6f9ff;color:#3168ad}
+.snote-business-today-dialog{width:min(460px,calc(100vw - 32px));max-width:none;max-height:calc(100dvh - 32px);margin:auto;padding:24px;border:1px solid #d6e1ef;border-radius:16px;background:#fff;color:#2b3d55;box-shadow:0 20px 70px #182d4a26;font-family:inherit;font-size:14px;line-height:1.5;overflow:auto}
+.snote-business-today-dialog::backdrop{background:#172b4d66}
+.snote-business-today-dialog form{display:flex;flex-direction:column;gap:14px}
+.snote-business-today-dialog form>p{color:#71839c;font-size:12px;word-break:keep-all;overflow-wrap:anywhere}
+.snote-business-today-dialog .snote-business-today-actions{justify-content:flex-end;margin-top:4px}
+@media(max-width:640px){.snote-business-today{margin-bottom:14px;padding:16px;border-radius:14px}.snote-business-today h2{font-size:16px}.snote-business-today-head{gap:12px}.snote-business-today-head>.snote-business-today-actions{gap:6px}.snote-business-today-head button{padding:9px 11px;font-size:12px}.snote-business-today-toolbar{grid-template-columns:minmax(0,1fr) auto}.snote-business-today-toolbar>label:last-child{grid-column:1/-1}.snote-business-today-categories{flex-wrap:nowrap;overflow-x:auto;padding:2px 1px 7px;scrollbar-width:thin}.snote-business-today-categories button{flex:none;min-height:44px}.snote-business-today button.snote-business-today-task{align-items:flex-start;flex-direction:column;gap:10px;padding:15px 0}.snote-business-today-task-meta{flex-direction:row;align-items:center;flex-wrap:wrap;gap:5px 12px;max-width:100%;width:100%}.snote-business-today-task-meta>strong{font-size:15px}.snote-business-today-task-meta>small{margin-left:auto}.snote-business-today-dialog{padding:20px}}
+@media(prefers-reduced-motion:reduce){.snote-business-today *,.snote-business-today-dialog *{transition:none!important}}
+@media print{.snote-business-today,.snote-business-today-dialog{display:none!important}}
+.snote-business-today-totals{margin-top:14px;padding:13px 14px;border:1px solid #e4ebf4;border-radius:10px;background:#f9fbfe}
+.snote-business-today-totals summary{min-height:30px;color:#425c7c;font-size:14px;font-weight:600;cursor:pointer}
+.snote-business-today-totals dl{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px 12px;margin:16px 0}
+.snote-business-today-totals dl>div{min-width:0}
+.snote-business-today-totals dt{color:#71829b;font-size:12px;line-height:1.5}
+.snote-business-today-totals dd{margin:5px 0 0;color:#375e8a;font-size:17px;font-weight:650;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.snote-business-today-totals dd.is-negative{color:#b34451}
+@media(max-width:760px){.snote-business-today-totals dl{grid-template-columns:repeat(2,minmax(0,1fr))}.snote-business-today-totals dd{font-size:16px}}
