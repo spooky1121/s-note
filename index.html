@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.167">
+<html lang="ko" data-snote-release="2.168">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -3187,7 +3187,7 @@ button, input, select, textarea { font-family: inherit; }
 <script src="assets/custom-cost-model.js?v=2.85"></script>
 <script src="assets/inventory-interest.js?v=2.112"></script>
 <script src="assets/list-pagination.js?v=2.135"></script>
-<script src="assets/popup-controls.js?v=2.59" defer></script>
+<script src="assets/popup-controls.js?v=2.168" defer></script>
 <link rel="stylesheet" href="assets/list-style.css?v=2.37">
 <script src="assets/customer-list.js?v=2.102" defer></script>
 <link rel="stylesheet" href="assets/vehicle-detail-compact.css?v=2.85">
@@ -3492,7 +3492,16 @@ button, input, select, textarea { font-family: inherit; }
   <div id="contract-print-pages" class="contract-print-pages" aria-hidden="true"></div>
  </div>
 </div>
-<div class="overlay zoom-overlay" id="zoom-overlay" onclick="if(event.target===this)closeZoom()" aria-hidden="true"><div class="zoom-toolbar"><button onclick="downloadZoom()">원본 저장 ↓</button><button onclick="closeZoom()">닫기 ×</button></div><img id="zoom-image" alt="선택한 차량 이미지 크게 보기" /><div class="zoom-caption" id="zoom-caption"></div></div>
+<div class="overlay zoom-overlay" id="zoom-overlay" data-snote-image-viewer role="dialog" aria-modal="true" aria-label="이미지 확대" onclick="if(event.target===this)closeZoom()" aria-hidden="true">
+ <div class="vehicle-image-frame" id="zoom-image-frame">
+  <img id="zoom-image" alt="선택한 차량 이미지 크게 보기" hidden />
+  <p id="zoom-status" role="status" aria-live="polite" hidden></p>
+  <div class="vehicle-image-actions" role="group" aria-label="이미지 작업">
+   <button id="zoom-download" type="button" aria-label="이미지 다운로드" onclick="window.SnoteVehicleImageViewer?.download()" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 16v4h14v-4"/></svg></button>
+   <button id="zoom-close" class="snote-popup-close" type="button" aria-label="이미지 닫기" onclick="closeZoom()">×</button>
+  </div>
+ </div>
+</div>
 
 <div class="overlay" id="status-overlay" role="presentation" aria-hidden="true"><section class="modal status-confirm-card" role="dialog" aria-modal="true" aria-labelledby="status-dialog-title"><div class="modal-top"><div><p class="confirm-eyebrow">STATUS CHANGE · 변경 확인</p><h2 id="status-dialog-title">차량 상태를 변경할까요?</h2></div><button class="close" aria-label="취소" type="button" onclick="closeStatusModal()">×</button></div><div id="status-confirm-car" class="confirm-car"></div><div id="status-confirm-copy" class="confirm-copy"></div><div class="confirm-compare"><span id="status-current"></span><span class="arrow">→</span><span id="status-target"></span></div><div class="confirm-sale-fields" id="confirm-sale-fields" style="display:none"><label>판매 완료 날짜 *<input id="confirm-sold-date" type="date" /></label><label>실제 판매가 (원) *<input id="confirm-sold-price" type="text" class="detail-money-input" min="0.1" step="1" inputmode="numeric" placeholder="실제 판매금액" /></label></div><div class="confirm-warning" id="status-confirm-warning"></div><div class="modal-actions"><button class="btn-ghost" type="button" id="status-confirm-no" onclick="closeStatusModal()">취소</button><button class="btn-primary" type="button" id="status-confirm-submit" onclick="confirmStatusChange()">변경 확인</button></div></section></div>
 <div class="overlay" id="ps-confirm-overlay" aria-hidden="true" role="presentation">
@@ -7259,20 +7268,20 @@ function closeVehicle({discard=false,animate=!discard}={}){
 function triggerMediaInput(type){if(window.SnoteSharedVehicleDetail?.active())return;if(!fileDB){toast('이미지 저장 기능을 사용할 수 없는 브라우저입니다.');return}const id=type==='photos'?'photo-input':type+'-input';$(id).click()}
 let activeDocTab='registration';
 function showDocTab(which){if(window.SnoteSharedVehicleDetail?.active())return window.SnoteSharedVehicleDetail.showDocTab(which);if(!['registration','inspection'].includes(which))return;activeDocTab=which;renderDocTab()}
-function snoteVehicleMediaClick(action,id){return esc(action+'('+JSON.stringify(String(id))+')')}
+function snoteVehicleMediaClick(action,id){return esc(action+'('+JSON.stringify(String(id))+(action==='openZoom'?',this':'')+')')}
 function renderVehiclePhotos(car){
  const photos=carPhotos(car.id),featured=coverPhoto(car);
  $('photo-count').textContent=`${photos.length} / 5`;$('photo-add').disabled=photos.length>=5;
  const tiles=photos.map((item,index)=>{
   const name=`실차 사진 ${index+1}`,cover=item.id===featured?.id;
-  return `<div class="photo-tile"><button type="button" class="photo-thumb" aria-label="${name} 확대 보기" title="${esc(item.filename||name)}" onclick="${snoteVehicleMediaClick('openZoom',item.id)}"><img src="${esc(item.url)}" alt="${esc(item.filename||name)}" loading="lazy" /></button>${cover?'<span class="cover-badge">대표</span>':''}<div class="tile-controls"><button type="button" onclick="${snoteVehicleMediaClick('setCoverPhoto',item.id)}" ${cover?'disabled':''} aria-label="${name} 대표 사진으로 지정">${cover?'대표 ✓':'대표 지정'}</button><button type="button" class="delete snote-detail-icon is-delete" onclick="${snoteVehicleMediaClick('removeMedia',item.id)}" aria-label="${name} 삭제" title="${name} 삭제">${snote238VehicleIcon('delete')}</button></div></div>`;
+  return `<div class="photo-tile snote-media-photo"><button type="button" class="photo-thumb" data-snote-media-id="${esc(item.id)}" aria-label="${name} 확대 보기" onclick="${snoteVehicleMediaClick('openZoom',item.id)}"><img src="${esc(item.url)}" alt="${name}" loading="lazy" /></button>${cover?'<span class="cover-badge">대표</span>':''}<div class="tile-controls"><button type="button" onclick="${snoteVehicleMediaClick('setCoverPhoto',item.id)}" ${cover?'disabled':''} aria-label="${name} 대표 사진으로 지정">${cover?'대표 ✓':'대표 지정'}</button><button type="button" class="delete snote-detail-icon is-delete" onclick="${snoteVehicleMediaClick('removeMedia',item.id)}" aria-label="${name} 삭제" title="${name} 삭제">${snote238VehicleIcon('delete')}</button></div></div>`;
  }).join('');
  $('photo-grid').innerHTML=tiles+(photos.length<5?`<button type="button" class="photo-tile add-tile snote-detail-icon is-add" onclick="triggerMediaInput('photos')" aria-label="실차 사진 ${photos.length?'추가':'등록'}">${snote238VehicleIcon('add')}</button>`:'');
  $('zc-reference-hint').textContent='';
 }
 function renderDocTab(){if(!activeCarId)return;const all=carFiles(activeCarId);for(const kind of ['registration','inspection']){const el=$('doc-tab-'+kind);el.classList.toggle('active',activeDocTab===kind);el.setAttribute('aria-selected',activeDocTab===kind?'true':'false')}
  const entries=activeDocTab==='registration'?[['registration','자동차등록증']]:[['inspection1','성능·상태점검기록부 · 1페이지'],['inspection2','성능·상태점검기록부 · 2페이지']];
- $('doc-grid').innerHTML=entries.map(([group,title])=>{const item=all.find(x=>x.group===group);return `<article class="doc-card"><div class="doc-title">${title}</div><div class="doc-body">${item?`<button type="button" class="doc-thumb" aria-label="${title} 확대 보기" title="${esc(item.filename||title)}" onclick="${snoteVehicleMediaClick('openZoom',item.id)}"><img src="${esc(item.url)}" alt="${title}" loading="lazy" /></button>`:`<div class="doc-placeholder" aria-hidden="true">${ico('clipboard')}</div>`}</div><div class="doc-footer"><button type="button" class="small-action primary snote-detail-icon ${item?'is-replace':'is-add'}" onclick="triggerMediaInput('${group}')" aria-label="${title} ${item?'이미지 교체':'사진 등록'}" title="${title} ${item?'이미지 교체':'사진 등록'}">${snote238VehicleIcon(item?'replace':'add')}</button>${item?`<button type="button" class="small-action danger snote-detail-icon is-delete" onclick="${snoteVehicleMediaClick('removeMedia',item.id)}" aria-label="${title} 삭제" title="${title} 삭제">${snote238VehicleIcon('delete')}</button>`:''}</div></article>`}).join('');
+ $('doc-grid').innerHTML=entries.map(([group,title])=>{const item=all.find(x=>x.group===group);return `<article class="doc-card${item?' snote-media-document':''}"><div class="doc-title">${title}</div><div class="doc-body">${item?`<button type="button" class="doc-thumb" data-snote-media-id="${esc(item.id)}" aria-label="${title} 확대 보기" onclick="${snoteVehicleMediaClick('openZoom',item.id)}"><img src="${esc(item.url)}" alt="${title}" loading="lazy" /></button>`:`<div class="doc-placeholder" aria-hidden="true">${ico('clipboard')}</div>`}</div><div class="doc-footer"><button type="button" class="small-action primary snote-detail-icon ${item?'is-replace':'is-add'}" onclick="triggerMediaInput('${group}')" aria-label="${title} ${item?'이미지 교체':'사진 등록'}" title="${title} ${item?'이미지 교체':'사진 등록'}">${snote238VehicleIcon(item?'replace':'add')}</button>${item?`<button type="button" class="small-action danger snote-detail-icon is-delete" onclick="${snoteVehicleMediaClick('removeMedia',item.id)}" aria-label="${title} 삭제" title="${title} 삭제">${snote238VehicleIcon('delete')}</button>`:''}</div></article>`}).join('');
  updateVinOcrTab();
 }
 function openDateInputCalendar(input){
@@ -7332,6 +7341,7 @@ function renderAccountantVehicle(c){
 /* v1.62 · 등록증 파일은 담당 딜러 차량 ID/ownerId에 저장한다. 경리는 다른 사진/서류에 접근하지 않는다. */
 let acctRegistrationUrl=null, acctRegistrationLoadToken=0;
 function clearAccountantRegistrationPreview(){
+ if(typeof zoomRecordId==='string'&&zoomRecordId.startsWith('snote-accounting:'))closeZoom();
  acctRegistrationLoadToken++;
  if(acctRegistrationUrl){URL.revokeObjectURL(acctRegistrationUrl);acctRegistrationUrl=null;}
 }
@@ -7359,6 +7369,7 @@ async function loadAccountingRegistrationPreview(car){
   if(record?.blob){
    acctRegistrationUrl=URL.createObjectURL(record.blob);
    host.innerHTML=`<img src="${acctRegistrationUrl}" alt="등록된 자동차등록증" /><div><strong>등록된 자동차등록증</strong><small>${esc(record.filename||'등록증 사진')} · 담당 ${esc(dealerLabel(car))}</small></div>`;
+   const image=host.querySelector('img');image.tabIndex=0;image.setAttribute('role','button');image.setAttribute('aria-label','자동차등록증 확대 보기');image.onclick=()=>snote168OpenAccountingImage(car,record,image,token);image.onkeydown=event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();image.click();}};
    const btn=$('acct-registration-button');snote238SetVehicleButton(btn,'replace','등록증 사진 교체');
   }else{
    host.innerHTML='<div class="acct-registration-empty">▧</div><div><strong>등록된 자동차등록증이 없습니다.</strong><small>업로드하면 담당 딜러 차량 서류에 함께 저장됩니다.</small></div>';
@@ -7367,6 +7378,12 @@ async function loadAccountingRegistrationPreview(car){
  }catch(err){
   if(token===acctRegistrationLoadToken&&activeCarId===carId)host.innerHTML='<span>등록증을 불러오지 못했습니다. 브라우저 저장소를 확인해주세요.</span>';
  }
+}
+function snote168OpenAccountingImage(car,record,source,token){
+ const view=snoteVehicleViewContext(),url=acctRegistrationUrl,viewer=window.SnoteVehicleImageViewer;
+ const valid=()=>!!view&&snoteVehicleSameView(view)&&isAccountant()&&canManageCar(car)&&acctRegistrationLoadToken===token&&acctRegistrationUrl===url;
+ if(!viewer||!url||!valid())return;zoomRecordId='snote-accounting:'+record.id;
+ viewer.open({src:url,origin:source,alt:'자동차등록증 확대',isCurrent:()=>zoomRecordId==='snote-accounting:'+record.id&&valid(),download:()=>{if(!valid())return;const link=document.createElement('a');link.href=url;link.download=record.filename||'자동차등록증';document.body.append(link);link.click();link.remove();}});
 }
 function openAccountantRegistrationPicker(){
  if(!isAccountant()||!activeCarId||!canManageCar(cars.find(c=>c.id===activeCarId)))return;
@@ -7478,8 +7495,8 @@ async function handleMediaFiles(event,group){if(window.SnoteSharedVehicleDetail?
  toast(group==='photos'?`실차 사진 ${chosen.length}장을 저장했습니다.`:'차량 서류를 저장했습니다.')}catch(err){toast(err?.userMessage||'이미지를 저장하지 못했습니다. 연결 상태와 저장공간을 확인해 주세요.');console.warn('차량 첨부 저장 실패',err?.code||'NETWORK')}}
 function setCoverPhoto(id){const item=carFiles(activeCarId).find(f=>f.id===id&&f.group==='photos');if(!item)return;covers[activeCarId]=id;saveCover();renderVehicle();renderCars();toast('대표 사진을 변경했습니다.')}
 async function removeMedia(id){const item=carFiles(activeCarId).find(f=>f.id===id);if(!item)return;if(!confirm(`${item.group==='photos'?'실차 사진':'차량 서류'}를 휴지통으로 이동할까요?`))return;try{await updateDB([],[id]);if(covers[activeCarId]===id){delete covers[activeCarId];saveCover()}if(zoomRecordId===id)closeZoom();await refreshMedia();if(item.group==='registration')showVinOcrState('info','등록증이 삭제되었습니다. 차대번호는 자동으로 삭제되지 않습니다.');toast('사진·서류를 휴지통으로 이동했습니다.')}catch(err){toast('삭제하지 못했습니다.')}}
-function openZoom(id){if(!activeCarId)return;const item=carFiles(activeCarId).find(f=>f.id===id);if(!item)return;zoomRecordId=id;$('zoom-image').src=item.url;$('zoom-caption').textContent=item.filename;$('zoom-overlay').classList.add('open');$('zoom-overlay').setAttribute('aria-hidden','false')}
-function closeZoom(){zoomRecordId=null;$('zoom-overlay').classList.remove('open');$('zoom-overlay').setAttribute('aria-hidden','true');$('zoom-image').removeAttribute('src')}
+function openZoom(id,source){if(!activeCarId)return;const item=carFiles(activeCarId).find(f=>f.id===id),view=snoteVehicleViewContext(),viewer=window.SnoteVehicleImageViewer;if(!item||!view)return;if(!viewer){toast('이미지 뷰어를 불러오지 못했습니다. 새로고침해 주세요.');return;}zoomRecordId=id;viewer.open({src:item.url,origin:source,isCurrent:()=>zoomRecordId===id&&snoteVehicleSameView(view)&&canManageCar(view.car)&&carFiles(view.id).some(file=>file.id===id&&file.url===item.url),download:()=>downloadZoom()});}
+function closeZoom(){zoomRecordId=null;if(window.SnoteVehicleImageViewer)window.SnoteVehicleImageViewer.close();else{$('zoom-overlay').classList.remove('open');$('zoom-overlay').setAttribute('aria-hidden','true');$('zoom-image').removeAttribute('src');}}
 function downloadZoom(){if(window.SnoteSharedVehicleDetail?.active())return window.SnoteSharedVehicleDetail.downloadZoom();if(!zoomRecordId||!activeCarId)return;const item=carFiles(activeCarId).find(f=>f.id===zoomRecordId);if(!item)return;const a=document.createElement('a');a.href=item.url;a.download=item.filename||'image';document.body.appendChild(a);a.click();a.remove()}
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){if($('vin-select-overlay').classList.contains('open')){closeVinAreaPicker();return;}if($('contract-overlay').classList.contains('open')){closeContractPreview();return;}if($('quote-overlay').classList.contains('open')){closeQuotePreview();return;}if(document.querySelector('.color-picker.expanded')){closeColorPickers();return;}if(pendingStatusChange)closeStatusModal();else if(zoomRecordId)closeZoom();else if(activeCarId)closeVehicle();else closeAdd({animate:true})}});
 window.addEventListener('beforeprint',()=>{if($('contract-overlay')?.classList.contains('open'))buildContractPrintPages();});
@@ -11335,7 +11352,7 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 <link rel="stylesheet" href="assets/workspace-reorder.css?v=2.136">
 <script src="assets/workspace-order-store.js?v=2.135" defer></script>
 <script src="assets/workspace-reorder.js?v=2.136" defer></script>
-<script src="assets/release-info.js?v=2.167" defer></script>
+<script src="assets/release-info.js?v=2.168" defer></script>
 <link rel="stylesheet" href="assets/encar-id.css?v=2.162">
 <script src="assets/encar-id.js?v=2.162" defer></script>
 <script src="assets/company-purchase.js?v=2.130" defer></script>
@@ -11381,7 +11398,10 @@ window.addEventListener('snote:payment-accounts-changed',()=>{if(typeof contract
 <link rel="stylesheet" href="assets/document-viewport.css?v=2.165">
 <script src="assets/document-viewport.js?v=2.165" defer></script>
 <link rel="stylesheet" href="assets/shared-vehicle-detail.css?v=2.166">
-<script src="assets/shared-vehicle-detail.js?v=2.166" defer></script>
+<script src="assets/shared-vehicle-detail.js?v=2.168" defer></script>
 <link rel="stylesheet" href="assets/contract-layout-v2167.css?v=2.167">
+<link rel="stylesheet" href="assets/vehicle-media.css?v=2.168">
+<link rel="stylesheet" href="assets/vehicle-image-viewer.css?v=2.168">
+<script src="assets/vehicle-image-viewer.js?v=2.168" defer></script>
 </body>
 </html>
