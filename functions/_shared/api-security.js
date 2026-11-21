@@ -2,7 +2,6 @@
 // burst brake, NOT a distributed quota or a replacement for Cloudflare WAF.
 export const API_POLICIES = Object.freeze({
   '/api/weather': { methods: ['GET'], limit: 60, maximum: 0 },
-  '/api/weather-forecast': { methods: ['GET'], limit: 60, maximum: 0 },
   '/api/ocr': { methods: ['GET', 'POST'], limit: 30, maximum: 6 * 1024 * 1024, image: true },
   '/api/encar': { methods: ['POST'], limit: 60, maximum: 4096 },
   '/api/encar-id': { methods: ['GET', 'POST'], limit: null, maximum: 1024, publicNavigationGet: true },

@@ -16,7 +16,6 @@
  function mark(el){
   if(!(el instanceof Element)||el.closest('#snote-message-dialog .snote-message-actions'))return;
   if(inLeftNavigation(el)){clearMenuHelp(el);return;}
-  if(el.matches('#snote-weather[data-weather-forecast-trigger]')){for(const attr of ['title','data-tooltip','data-snote-icon-help','data-snote-icon-title'])el.removeAttribute(attr);el.classList.remove('snote-icon-interactive');const ids=(el.getAttribute('aria-describedby')||'').split(/\s+/).filter(id=>id&&id!=='snote-icon-tooltip');if(ids.length)el.setAttribute('aria-describedby',ids.join(' '));else el.removeAttribute('aria-describedby');return;}
   if(el.matches('canvas,video,iframe')||!el.matches(selector)||el.closest('.snote-icon-tooltip'))return;
   const text=clean(el.textContent),icon=el.hasAttribute('data-tooltip')||el.querySelector('svg,img,i')||/icon|weather/i.test(el.className)||el.getAttribute('role')==='img'||(!text&&el.hasAttribute('aria-label'))||/^[+＋×✕✖−\-↻↺⋮…⚙☰↑↓←→✓✔⌄]+$/u.test(text);
   if(!icon)return;
@@ -48,5 +47,5 @@
  document.addEventListener('focusout',event=>{if(active?.contains(event.target))hide();});
  document.addEventListener('pointerdown',hide,true);document.addEventListener('scroll',hide,true);addEventListener('resize',hide);addEventListener('pagehide',hide);
  document.addEventListener('keydown',event=>{if(event.key==='Escape')hide();});
- new MutationObserver(records=>{for(const record of records){if(record.type==='attributes'){if(['title','aria-label','data-tooltip'].includes(record.attributeName))mark(record.target);}else{mark(record.target.closest?.(selector));for(const node of record.addedNodes)scan(node);}}if(active&&(!active.isConnected||!active.getClientRects().length||inLeftNavigation(active)||active.matches('#snote-weather[data-weather-forecast-trigger]')))hide();}).observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['title','aria-label','data-tooltip','class','hidden','open']});
+ new MutationObserver(records=>{for(const record of records){if(record.type==='attributes'){if(['title','aria-label','data-tooltip'].includes(record.attributeName))mark(record.target);}else{mark(record.target.closest?.(selector));for(const node of record.addedNodes)scan(node);}}if(active&&(!active.isConnected||!active.getClientRects().length||inLeftNavigation(active)))hide();}).observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['title','aria-label','data-tooltip','class','hidden','open']});
 })();
