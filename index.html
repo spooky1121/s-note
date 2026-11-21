@@ -8450,7 +8450,11 @@ document.addEventListener('click',async event=>{
    <p class="snote-login-footer">© 2026 S-NOTE. All rights reserved.<span class="snote-login-footer-tools"><span data-snote-version>버전 확인 중</span><a class="snote-operator-login" href="operator.html">운영자 로그인</a></span></p>
   </div>
   <aside class="snote-login-visual">
-   <img class="snote-login-photo" src="assets/login-garage-clear.png?v=2.112" alt="" decoding="async">
+   <picture>
+    <source media="(max-width: 860px)" srcset="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNgYGBgAAAABQABeqhXUAAAAABJRU5ErkJggg==">
+    <source type="image/webp" srcset="assets/login-garage-clear.webp">
+    <img class="snote-login-photo" src="assets/login-garage-clear.png?v=2.112" alt="" decoding="async">
+   </picture>
    <div class="snote-auth-hero">
     <h2 class="snote-auth-hero-title">좋은 거래의 시작,<br><strong>정돈된 업무에서.</strong></h2>
     <p>차량 한 대의 매입부터 판매와 정산까지.<br>매일의 업무가 자연스럽게 이어지는 공간, S-NOTE.</p>
