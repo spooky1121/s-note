@@ -36,7 +36,7 @@
   const converted=window.SnoteMoney?.car(raw);if(!converted||typeof converted!=='object')return null;
   const id=idFor(item),previous=entries.get(id);const clean={...converted};delete clean.car;delete clean.entry;delete clean.carId;
   const car=Object.freeze({...clean,id,ownerId:'cld_'+item.ownerId.replaceAll('-','').slice(0,18),km:clean.km??clean.mileage??'',model:raw.model.slice(0,200),plate:typeof raw.plate==='string'?raw.plate.slice(0,30):''});
-  return{item:{...item},car,access:cap,url:previous?.url||null,photoAt:previous?.photoAt||0,readAt:Date.now(),photoJob:null,documentCount:null};
+  return{item:{...item},car,access:cap,url:previous?.url||null,photoAt:previous?.photoAt||0,readAt:Date.now(),photoJob:null,documentGroups:null};
  }
  function incomingItems(result){
   if(!Array.isArray(result)||result.length>1000)throw Error('INVALID_RESPONSE');
@@ -74,7 +74,7 @@
     if(!currentRun(c,run)||run.blocked)return;progress();if(!sameGrant(item,run.accepted.get(id)))continue;
     if(entry)entry.item={...run.accepted.get(id)};
     let changed=false;
-    if(entry){const previous=entries.get(id),sameCar=previous&&JSON.stringify(previous.car)===JSON.stringify(entry.car);changed=!previous||!sameCar||!sameGrant(previous.item,entry.item)||previous.item.ownerName!==entry.item.ownerName||!visible.has(id);if(previous&&sameGrant(previous.item,entry.item)){const photoState={url:previous.url,photoAt:previous.photoAt,photoJob:previous.photoJob,documentCount:previous.documentCount,car:sameCar?previous.car:entry.car};Object.assign(previous,entry,photoState);entry=previous;}entries.set(id,entry);visible.add(id);}else{changed=entries.has(id)||visible.has(id);revoke(entries.get(id));entries.delete(id);visible.delete(id);}if(changed)repaint();
+    if(entry){const previous=entries.get(id),sameCar=previous&&JSON.stringify(previous.car)===JSON.stringify(entry.car);changed=!previous||!sameCar||!sameGrant(previous.item,entry.item)||previous.item.ownerName!==entry.item.ownerName||!visible.has(id);if(previous&&sameGrant(previous.item,entry.item)){const photoState={url:previous.url,photoAt:previous.photoAt,photoJob:previous.photoJob,documentGroups:previous.documentGroups,car:sameCar?previous.car:entry.car};Object.assign(previous,entry,photoState);entry=previous;}entries.set(id,entry);visible.add(id);}else{changed=entries.has(id)||visible.has(id);revoke(entries.get(id));entries.delete(id);visible.delete(id);}if(changed)repaint();
    }};
    do{await Promise.all(Array.from({length:Math.min(6,items.length-cursor)},worker));if(run.revalidation)await run.revalidation;}while(currentRun(c,run)&&!run.blocked&&cursor<items.length);
    if(currentRun(c,run)&&!run.blocked){last=Date.now();if(listRoute())scan();}
@@ -88,7 +88,7 @@
  async function photo(entry){const now=Date.now();if(!live()||!visible.has(entry.car.id)||entries.get(entry.car.id)!==entry||entry.photoJob||now-entry.photoAt<(entry.url?30000:15000))return;const c=context(),version=epoch;entry.photoAt=now;
   const current=()=>version===epoch&&sameAccount(c)&&live()&&visible.has(entry.car.id)&&entries.get(entry.car.id)===entry;
   let candidate=null;entry.photoJob=(async()=>{try{const result=await bridge().rpc(c,args(entry,'media'));if(!current()||!Array.isArray(result))return;
-   const count=new Set(result.filter(row=>['registration','inspection1','inspection2'].includes(row?.group)).map(row=>row.group)).size;if(entry.documentCount!==count){entry.documentCount=count;repaint();}
+   const groups=['registration','inspection1','inspection2'].filter(group=>result.some(row=>row?.group===group));if(JSON.stringify(entry.documentGroups)!==JSON.stringify(groups)){entry.documentGroups=groups;repaint();}
    const first=result.find(row=>row?.group==='photos'&&typeof row.path==='string');if(!first){revoke(entry);entry.photoAt=Date.now();paintPhoto(entry);return;}
    const blob=await bridge().file(c,first.path);if(!current()||!(blob instanceof Blob)||!/^image\/(jpeg|png|webp)$/.test(blob.type))return;
    candidate=URL.createObjectURL(blob);photoCandidates.set(candidate,entry);const preview=new Image();preview.src=candidate;await preview.decode();if(!current()||!photoCandidates.has(candidate)||!preview.naturalWidth)return;
@@ -106,7 +106,7 @@
   leftGrants.set(grant.invitationId,Math.max(grant.version,leftGrants.get(grant.invitationId)||0));if(matches(job?.accepted?.get(id)))job.accepted.delete(id);
   const entry=entries.get(id);if(!matches(entry?.item))return false;revoke(entry);entries.delete(id);visible.delete(id);repaint();return true;
  }
- window.SnoteReceivedVehicleList=Object.freeze({rows,has,car:id=>live()&&visible.has(String(id))?entries.get(String(id))?.car||null:null,ownerLabel:car=>has(car)?String(entries.get(car.id).item.ownerName||'공유 딜러'):'',permission:car=>has(car)?entries.get(car.id).access.label:'',documentCount:car=>has(car)?entries.get(car.id).documentCount:null,thumbnail,open,forget,refresh:()=>refresh(true)});
+ window.SnoteReceivedVehicleList=Object.freeze({rows,has,car:id=>live()&&visible.has(String(id))?entries.get(String(id))?.car||null:null,ownerLabel:car=>has(car)?String(entries.get(car.id).item.ownerName||'공유 딜러'):'',permission:car=>has(car)?entries.get(car.id).access.label:'',documentGroups:car=>has(car)?entries.get(car.id).documentGroups?.slice()??null:null,documentCount:car=>has(car)?entries.get(car.id).documentGroups?.length??null:null,thumbnail,open,forget,refresh:()=>refresh(true)});
  new MutationObserver(scan).observe(document.getElementById('list-screen')||document.body,{subtree:true,childList:true});
  window.addEventListener('snote:route-changed',()=>{visible.clear();repaint();if(listRoute())void refresh(false,{urgent:true});else ready();});
  window.addEventListener('snote:sales-data-changed',ready);
