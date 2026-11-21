@@ -6602,7 +6602,7 @@ function snote95UpdateDocumentCompany(){
   // Wait for that replacement too, without changing a newer image's handler.
   for(let attempt=0;attempt<2;attempt++){
    const source=image.getAttribute('src');if(!source||image.hidden)return;
-   try{await image.decode();}catch{if(image.getAttribute('src')===source)image.onerror?.();}
+   try{await image.decode();}catch{if(request===snote95DocumentLogoRequest&&snote128DocumentCurrent(scope)&&image.getAttribute('src')===source)image.onerror?.();}
    if(image.getAttribute('src')===source)return;
   }
  })));
