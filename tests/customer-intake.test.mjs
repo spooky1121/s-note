@@ -8,7 +8,7 @@ const ENV = {
   SUPABASE_URL: 'https://intake-test.supabase.co', SUPABASE_PUBLISHABLE_KEY: 'test-publishable',
   SUPABASE_SERVICE_ROLE_KEY: 'test-service-role', CUSTOMER_INTAKE_PUBLIC_ORIGIN: 'https://s-note.example',
   SOLAPI_API_KEY: 'test-solapi-api-key', SOLAPI_API_SECRET: 'test-solapi-api-secret',
-  CUSTOMER_INTAKE_OTP_SECRET: 'test-only-otp-secret-at-least-32-characters', SOLAPI_SENDER: '02-1234-5678'
+  CUSTOMER_INTAKE_OTP_SECRET: 'test-only-otp-secret-at-least-32-characters'
 };
 const ID = '12345678-1234-4234-8234-123456789abc';
 const JWT = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIn0.c2lnbmF0dXJl';
@@ -47,7 +47,7 @@ test('GET exposes fixed configuration diagnostics only; missing setup prevents e
   const get = await call(undefined, { method: 'GET', env: {} });
   assert.deepEqual(get.body, {
     service: 'snote-customer-intake', configured: false, originMatches: null,
-    configurationIssues: ['SUPABASE_URL', 'SUPABASE_PUBLISHABLE_KEY', 'SUPABASE_SERVICE_ROLE_KEY', 'CUSTOMER_INTAKE_PUBLIC_ORIGIN', 'SOLAPI_API_KEY', 'SOLAPI_API_SECRET', 'SOLAPI_SENDER', 'CUSTOMER_INTAKE_OTP_SECRET'].map(name => ({ name, reason: '값이 설정되지 않았습니다.' })),
+    configurationIssues: ['SUPABASE_URL', 'SUPABASE_PUBLISHABLE_KEY', 'SUPABASE_SERVICE_ROLE_KEY', 'CUSTOMER_INTAKE_PUBLIC_ORIGIN', 'SOLAPI_API_KEY', 'SOLAPI_API_SECRET', 'CUSTOMER_INTAKE_OTP_SECRET'].map(name => ({ name, reason: '값이 설정되지 않았습니다.' })),
     rrnConfigured: false, rrnConfigurationIssues: [{ name: 'CUSTOMER_INTAKE_OTP_SECRET', reason: '기본 서버 키 설정을 확인해야 주민번호 암호화를 사용할 수 있습니다.' }], rrnKeyMode: null, flowVersion: 'wizard-v1'
   });
   for (const key of Object.keys(ENV)) {
@@ -66,7 +66,6 @@ test('configuration diagnostics never expose values and invalid settings remain 
     ['SUPABASE_URL', 'https://private-user:private-password@private-project.supabase.co'],
     ['CUSTOMER_INTAKE_PUBLIC_ORIGIN', 'http://private-host.example'],
     ['CUSTOMER_INTAKE_PUBLIC_ORIGIN', 'https://private-host.example/customer.html'],
-    ['SOLAPI_SENDER', '+8201012345678'], ['SOLAPI_SENDER', 'private-invalid-sender'],
     ['CUSTOMER_INTAKE_OTP_SECRET', 'private-short-value'],
     ...['SUPABASE_PUBLISHABLE_KEY', 'SUPABASE_SERVICE_ROLE_KEY', 'SOLAPI_API_KEY', 'SOLAPI_API_SECRET', 'CUSTOMER_INTAKE_OTP_SECRET'].map(name => [name, 'private-first-line\nprivate-second-line-very-long-value'])
   ];
@@ -275,12 +274,57 @@ test('create stores a token hash, authenticates as dealer, and only accepts SOLA
   assert.equal(calls[0].options.headers.apikey, ENV.SUPABASE_PUBLISHABLE_KEY);
   assert.equal(calls[0].options.headers.Authorization, `Bearer ${JWT}`);
   const sms = calls[1]; assert.equal(sms.body.message.type, 'LMS'); assert.equal(sms.body.message.subject, '고객정보 입력 안내');
-  assert.equal(sms.body.message.from, '0212345678'); assert.match(sms.body.message.text, /customer\.html#[a-f0-9]{64}/);
+  assert.equal(sms.body.message.from, '01096669997'); assert.match(sms.body.message.text, /customer\.html#[a-f0-9]{64}/);
   const auth = /^HMAC-SHA256 apiKey=(.*), date=(.*), salt=(.*), signature=(.*)$/.exec(sms.options.headers.Authorization);
   assert.ok(auth); assert.equal(auth[1], ENV.SOLAPI_API_KEY);
   assert.equal(auth[4], createHmac('sha256', ENV.SOLAPI_API_SECRET).update(auth[2] + auth[3]).digest('hex'));
   assert.deepEqual(calls[2].body, { p_id: ID, p_kind: 'invitation', p_challenge_id: null, p_status: 'sent' });
   assert.equal(calls[2].options.headers.apikey, ENV.SUPABASE_SERVICE_ROLE_KEY);
+});
+
+test('every dealer invitation and OTP uses the registered common sender regardless of legacy sender settings', async t => {
+  const otherJwt = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJvdGhlci11c2VyIn0.b3RoZXItc2lnbmF0dXJl';
+  const dealers = [{ jwt: JWT, phone: '01012345678', carId: 'first-dealer-car' },
+    { jwt: otherJwt, phone: '01098765432', carId: 'other-dealer-car' }];
+  const calls = mock(t, call => {
+    if (call.url.endsWith('/snote_intake_create')) return response({ ok: true, id: ID, car: CAR });
+    if (call.url.endsWith('/snote_intake_challenge')) return response({ ok: true, id: ID, phone: '01045678901', challengeId: call.body.p_challenge_id });
+    if (call.url.startsWith('https://api.solapi.com/')) return response({ statusCode: '2000', messageId: 'M4V_test_message' });
+    if (call.url.endsWith('/snote_intake_delivery')) return response({ ok: true });
+    throw new Error('unexpected request');
+  });
+  for (const legacySender of [undefined, '', '02-1234-5678', '01077778888', 'private-invalid\r\nvalue']) {
+    const env = { ...ENV, ...(legacySender === undefined ? {} : { SOLAPI_SENDER: legacySender }) };
+    const status = await call(undefined, { method: 'GET', env });
+    assert.equal(status.body.configured, true); assert.deepEqual(status.body.configurationIssues, []);
+    assert.equal(JSON.stringify(status.body).includes('01096669997'), false, 'Public diagnostics must not expose the sender value');
+    for (const dealer of dealers) {
+      const offset = calls.length;
+      const result = await call({ action: 'create', carId: dealer.carId, phone: dealer.phone }, { env, authorization: 'Bearer ' + dealer.jwt });
+      assert.equal(result.body.request.deliveryStatus, 'sent');
+      assert.equal(calls[offset].options.headers.Authorization, 'Bearer ' + dealer.jwt, 'The original actor must still authorize their own vehicle');
+      assert.equal(calls[offset].body.p_car_id, dealer.carId); assert.equal(calls[offset].body.p_phone, dealer.phone);
+      const message = calls[offset + 1].body.message;
+      assert.equal(message.from, '01096669997'); assert.equal(message.to, dealer.phone); assert.equal(message.type, 'LMS');
+    }
+    const offset = calls.length;
+    const otp = await call({ action: 'send-code', token: TOKEN }, { env });
+    assert.equal(otp.body.ok, true);
+    const message = calls[offset + 1].body.message;
+    assert.equal(message.from, '01096669997'); assert.equal(message.to, '01045678901'); assert.equal(message.type, 'SMS');
+  }
+  assert.equal(calls.filter(call => call.url.startsWith('https://api.solapi.com/')).length, 15, 'Each explicit request sends at most once');
+});
+
+test('client sender overrides stay invalid for dealer invitations and public OTP requests', async t => {
+  const calls = mock(t, () => { throw new Error('sender override must not reach the provider'); });
+  for (const action of ['create', 'send-code']) for (const field of ['from', 'sender', 'senderPhone', 'dealerPhone', 'SOLAPI_SENDER']) {
+    const payload = action === 'create' ? { action, carId: 'car-1', phone: '01012345678' } : { action, token: TOKEN };
+    payload[field] = '01077778888';
+    const result = await call(payload, { authorization: action === 'create' ? 'Bearer ' + JWT : undefined });
+    assert.equal(result.result.status, 400); assert.equal(result.body.code, 'VALIDATION_ERROR');
+  }
+  assert.equal(calls.length, 0);
 });
 
 test('invitation provider failure or uncertain reception is honest and never automatically resends', async t => {
@@ -313,7 +357,7 @@ test('OTP goes only to private RPC phone, is salted by challenge, and raw code n
   });
   const result = await call({ action: 'send-code', token: TOKEN });
   assert.deepEqual(result.body, { ok: true, challengeId, expiresAt: '2026-11-01T00:05:00Z', retryAfter: 60 });
-  const sms = calls[1].body.message; assert.equal(sms.to, '01012345678'); assert.equal(sms.type, 'SMS');
+  const sms = calls[1].body.message; assert.equal(sms.to, '01012345678'); assert.equal(sms.from, '01096669997'); assert.equal(sms.type, 'SMS');
   const code = /인증번호: (\d{6})/.exec(sms.text)[1];
   assert.equal(calls[0].body.p_otp_hash, createHmac('sha256', ENV.CUSTOMER_INTAKE_OTP_SECRET).update(`${challengeId}:${code}`).digest('hex'));
   assert.equal(calls[0].body.p_token_hash, hash(TOKEN));

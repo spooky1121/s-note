@@ -140,6 +140,7 @@ async function scenario(kind) {
       assert.equal(result.ok, true);
       assert.deepEqual(calls.map(call => call.kind), ['create', 'sms', 'delivery']);
       assert.equal(calls[1].body.message.type, 'LMS');
+      assert.equal(calls[1].body.message.from, '01096669997', 'The actual runtime must ignore the legacy sender binding');
       assert.match(outbound[1].authorization, /^HMAC-SHA256 apiKey=/);
       assert.equal(outbound[2].apikey, ENV.SUPABASE_SERVICE_ROLE_KEY);
       assert.equal(outbound[2].authorization, 'Bearer ' + ENV.SUPABASE_SERVICE_ROLE_KEY);

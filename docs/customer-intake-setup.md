@@ -51,8 +51,9 @@ v2.15의 단계별 입력·주민번호·동의 서명·자동 반영은 [새 �
 | `CUSTOMER_INTAKE_PUBLIC_ORIGIN` | 변수 | 고객이 실제 접속할 운영 HTTPS 주소. 경로나 `#` 없이 입력. 예: `https://s-note.pages.dev` |
 | `SOLAPI_API_KEY` | 암호화된 Secret | SOLAPI API Key |
 | `SOLAPI_API_SECRET` | 암호화된 Secret | SOLAPI API Secret |
-| `SOLAPI_SENDER` | 변수 | 승인된 발신번호, 숫자만 입력 |
 | `CUSTOMER_INTAKE_OTP_SECRET` | 암호화된 Secret | 인증번호 해시용, 충분히 긴 무작위 문자열(32자 이상) |
+
+고객 입력 링크와 인증번호는 모든 딜러 계정에서 운영자의 SOLAPI 등록 발신번호 **01096669997**로 발송합니다. 이 번호는 서버 코드에서 고정하며 딜러 프로필 전화번호나 요청 본문으로 변경할 수 없습니다. 기존 `SOLAPI_SENDER` 환경변수는 이 고객접수 API에서 사용하지 않으므로 누락되거나 다른 값이어도 발신번호는 동일합니다. 위 SOLAPI API Key·Secret은 이 번호의 발신 권한이 있는 계정의 값을 유지합니다.
 
 Supabase 서버 키는 **Settings → API Keys**에서 해당 프로젝트의 `service_role` JWT 키를 확인합니다. 공개 publishable/anon key와 다른 키입니다. 서버 키와 문자 API Secret은 `index.html`, 고객 페이지, GitHub 또는 채팅에 붙여 넣지 말고 Cloudflare Secret 입력란에 저장합니다.
 
