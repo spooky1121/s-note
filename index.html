@@ -5048,22 +5048,6 @@ function lenderText(c){return inventoryLoanOf(c)<=0?'현금차량':INVENTORY_LEN
 function lenderBadge(c){const t=lenderText(c);return `<span class="${inventoryLoanOf(c)<=0?'zc-cash-badge':'zc-finance-label'}" data-lender="${esc(t)}">${esc(t)}</span>`}
 function saveInventoryLender(event,id){event?.stopPropagation();toast('경리 계정은 차량의 재고금융사를 변경할 수 없습니다.');}
 
-const PRESTOCK_LEDGER_SAMPLE=[
- {date:'2026.10.07',model:'모빌Y',plate:'27머9689',dealer:'서영민',amount:''},
- {date:'2026.10.08',model:'모델3',plate:'34나5066',dealer:'서영민',amount:''},
- {date:'2026.10.08',model:'9월 소득세납부',plate:'',dealer:'',amount:'' ,type:'tax'},
- {date:'2026.10.08',model:'카니발',plate:'18오1458',dealer:'김성환',amount:''},
- {date:'2026.10.12',model:'캐스퍼',plate:'219버7991',dealer:'김성환',amount:''},
- {date:'2026.10.12',model:'포터2',plate:'89도5329',dealer:'김성환',amount:''},
- {date:'2026.10.13',model:'코나',plate:'171도5292',dealer:'김성환',amount:16000000},
- {date:'2026.10.13',model:'캐스퍼',plate:'159로3580',dealer:'김성환',amount:''},
- {date:'2026.10.15',model:'봉고3',plate:'95도8318',dealer:'김성환',amount:5000000},
- {date:'2026.10.15',model:'셀토스',plate:'398저1171',dealer:'김성환',amount:''},
- {date:'2026.10.15',model:'모빌Y',plate:'34무1217',dealer:'서영민',amount:''},
- {date:'2026.10.16',model:'모빌Y',plate:'38다6738',dealer:'서영민',amount:50000000},
- {date:'2026.10.16',model:'봉고3',plate:'95도7031',dealer:'김성환',amount:9000000},
- {date:'2026.10.16',model:'모닝',plate:'153조5823',dealer:'김성환',amount:17000000}
-];
 function fmtWon(v){return Number(v||0).toLocaleString('ko-KR')}
 /* v1.93: 선재고 지급액/잔액은 입력·표시·검증 모두 원(₩) 단위.
    기존 PRESTOCK_V148_KEY의 amount 필드 자체가 원 단위 정수이므로 절대로 마이그레이션하거나 10000배 변환하지 않는다. */
@@ -5083,8 +5067,6 @@ function formatPrestockWon(el){
 /* v1.48 — 선재고 장부: v1.47 내역 자동 이전, 확인 후 상환·수정·삭제, 브라우저 저장 */
 const PRESTOCK_STORAGE_KEY='zerocar-office-v147-prestock-entries'; // 이전 버전 데이터 보존
 const PRESTOCK_V148_KEY='zerocar-office-v148-prestock-ledger';
-const PRESTOCK_BANK_TOTAL=208248902; // 첨부 이미지 기준 샘플 원화 잔액
-const PRESTOCK_BANK_LABEL='우리은행 1005404896688';
 let psEditingId=null,psMenuId=null,psPendingAction=null;
 let psExpanded=false; // 최초 7건, 더보기 이후 10줄 높이에서 내부 스크롤
 
@@ -5162,7 +5144,8 @@ function prestockLegacyRows(){
  }catch(_){return []}
 }
 function prestockDefaults(){
- return PRESTOCK_LEDGER_SAMPLE.map((r,i)=>({...r,id:'sample-'+i,sample:true,amount:Number(r.amount)||0,date:r.date.replaceAll('.','-'),repaid:false})).concat(prestockLegacyRows().map(r=>({...r,repaid:false})));
+ // No bundled sample rows. Keep support for actual entries saved by earlier versions.
+ return prestockLegacyRows().map(r=>({...r,repaid:false}));
 }
 function prestockAllRows(){
  try{
