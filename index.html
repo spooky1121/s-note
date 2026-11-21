@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.174">
+<html lang="ko" data-snote-release="2.175">
 <head>
 <meta charset="utf-8" />
 <link rel="stylesheet" href="assets/message-popup.css?v=2.172">
@@ -4902,7 +4902,7 @@ function snote135IncomeComplete(car){
  return !!record&&record.type==='snote-income-settlement'&&record.version===1&&record.templateVersion==='snote-income-20261102-v1'&&typeof record.sourceVersion==='string'&&/^[a-f0-9]{64}$/i.test(record.sourceVersion)&&typeof record.writeId==='string'&&record.writeId.length>0&&typeof record.updatedAt==='string'&&Number.isFinite(Date.parse(record.updatedAt))&&document?.type===record.type&&document.version===1&&document.templateVersion===record.templateVersion&&!!document.cells&&typeof document.cells==='object'&&!Array.isArray(document.cells)&&!document.cells.H50;
 }
 function snote221IncomeButton(c){const done=snote135IncomeComplete(c);return '<button type="button" class="snote221-income-button'+(done?' is-settled':'')+'" data-income-car="'+esc(c.id)+'" onclick="snote221OpenIncomeSettlement(event,this.dataset.incomeCar)" onkeydown="event.stopPropagation()">'+(done?'정산완료':'소득정산')+'</button>';}
-async function snote221OpenIncomeSettlement(event,carId){event?.stopPropagation();const context=window.snoteIncomeSettlementBridge?.context(carId);if(!context)return;try{await import('./assets/income-settlement-parent.js?v=2.174');if(route!=='sell'||!window.snoteIncomeSettlementBridge.current(context))return;await window.snoteIncomeOpenForCar(carId);}catch(error){toast(error?.message||'소득정산 화면을 열지 못했습니다.');}}
+async function snote221OpenIncomeSettlement(event,carId){event?.stopPropagation();const context=window.snoteIncomeSettlementBridge?.context(carId);if(!context)return;try{await import('./assets/income-settlement-parent.js?v=2.175');if(route!=='sell'||!window.snoteIncomeSettlementBridge.current(context))return;await window.snoteIncomeOpenForCar(carId);}catch(error){toast(error?.message||'소득정산 화면을 열지 못했습니다.');}}
 function snote161ContractingClass(car){return isPurchaseListRoute()&&car?.status==='계약중'?' snote-contracting-vehicle':'';}
 function accountantCarTable(rows){
  if(!rows.length)return '<div class="empty">표시할 차량이 없습니다.</div>';
@@ -11550,7 +11550,7 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 <script type="module" src="assets/quick-calculator.js?v=2.85"></script>
 <script type="module" src="assets/vehicle-taxonomy-ui.js?v=2.172"></script>
 <script src="assets/vehicle-taxonomy-probe.js?v=2.172" defer></script>
-<script type="module" src="assets/income-settlement-parent.js?v=2.174"></script>
+<script type="module" src="assets/income-settlement-parent.js?v=2.175"></script>
 <script src="assets/vehicle-sharing.js?v=2.174" defer></script>
 <script src="assets/shared-vehicle-markers.js?v=2.170" defer></script>
 <link rel="stylesheet" href="assets/received-share-list.css?v=2.174">
@@ -11558,7 +11558,7 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 <link rel="stylesheet" href="assets/workspace-reorder.css?v=2.136">
 <script src="assets/workspace-order-store.js?v=2.135" defer></script>
 <script src="assets/workspace-reorder.js?v=2.172" defer></script>
-<script src="assets/release-info.js?v=2.174" defer></script>
+<script src="assets/release-info.js?v=2.175" defer></script>
 <link rel="stylesheet" href="assets/encar-id.css?v=2.162">
 <script src="assets/encar-id.js?v=2.174" defer></script>
 <script src="assets/company-purchase.js?v=2.172" defer></script>

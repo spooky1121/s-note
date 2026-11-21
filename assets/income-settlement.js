@@ -1,7 +1,7 @@
 import {formatNumberInput} from './number-format.js?v=2.49';
 if(window.parent!==window)document.documentElement.dataset.embedded='true';
 import {TEMPLATE,createDocument,normalizeDocument,calculate,parseMoney,draftDocument,invoiceCostSuggestions} from './income-settlement-model.js?v=2.174';
-import {buildForm} from './income-settlement-view.js?v=2.174';
+import {buildForm} from './income-settlement-view.js?v=2.175';
 import {buildPrintSnapshot} from './income-settlement-print.js?v=2.174';
 
 const $=id=>document.getElementById(id);
