@@ -1,5 +1,11 @@
 # 상사정보 저장 기능 적용
 
+v2.181 차량 통합 업무는 [추가 스키마](migrations/20261121171218_vehicle_business_workspace.sql)를 사용합니다. 기존 `zc_datasets`, 고객, 서류, 금액을 일괄 변환하거나 지우지 않습니다. `snote_business_private`의 차량 범위·거래 cycle·원장·감사·요청 중복 방지·개인 운영 기준·비공개 증빙 lease와 authenticated 전용 RPC 5개를 추가합니다. 운영 반영 상태와 검증 결과는 [진행 기록](../docs/vehicle-business-progress.md)을 확인하세요.
+
+증빙은 최초 실제 첨부 시 `/api/business-evidence-setup`이 기존 서버 환경 변수 `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SERVICE_ROLE_KEY`를 사용해 전용 `snote-business-private` 버킷을 Storage API로 준비합니다. private, 10MiB, PNG/JPEG/WEBP/PDF 제한을 검증하며 기존 버킷의 공개 설정을 변경하지 않습니다. 사용자가 예약한 차량·업무 파일만 사용자 JWT와 Storage RLS로 업로드·조회합니다. 서비스 키를 브라우저나 신규 환경 변수에 넣지 않습니다.
+
+화면을 되돌릴 때는 이전 프런트 배포로 복구하고 새 원장은 보존합니다. 실제 업무 자료가 저장된 이후에는 스키마·증빙 버킷을 삭제하는 방식으로 되돌리지 않습니다. 기존 소득정산 A4 수식과 새 관리손익은 구분합니다.
+
 v2.133 **서류 업무**의 매입·매도 구분에는 [문서 종류 SQL](migrations/20261118134644_transfer_document_kinds.sql)을 추가 적용합니다. 운영 DB 적용과 권한·저장·롤백 검증을 완료했습니다. 기존 39개 입력값은 유지하고 문서 종류만 별도 메타데이터로 저장합니다. [서류 업무 안내](../docs/document-office.md)를 확인하세요.
 
 v2.130 경리의 상사 전체 차량 조회·계약서 업무와 대표 관리자 직원 로그인 ID 표시는 [경리 업무·직원 ID 안내](../docs/accountant-workspace.md)의 두 마이그레이션을 사용합니다. 연결된 운영 DB에 적용하고, 실제 역할별 조회·저장·권한 검증과 검증 자료 롤백을 완료했습니다. Cloudflare Pages 배포만으로 다른 DB에 자동 적용되지는 않습니다.

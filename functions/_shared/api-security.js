@@ -10,6 +10,7 @@ export const API_POLICIES = Object.freeze({
   '/api/customer-intake': { methods: ['GET', 'POST'], limit: 120, maximum: 64 * 1024, publicPost: true },
   '/api/customer-identity': { methods: ['GET', 'POST'], limit: 240, maximum: 32 * 1024 },
   '/api/income-settlement': { methods: ['GET', 'POST'], limit: 240, maximum: 64 * 1024 },
+  '/api/business-evidence-setup': { methods: ['POST'], limit: 120, maximum: 2048 },
   '/api/profile-phone': { methods: ['POST'], limit: 60, maximum: 4096 },
   '/api/document-mms': { methods: ['POST'], limit: 60, maximum: 300000 },
   '/api/operator': { methods: ['POST'], limit: 240, maximum: 1024 * 1024 },
