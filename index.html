@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.174">
+<html lang="ko" data-snote-release="2.175">
 <head>
 <meta charset="utf-8" />
 <link rel="stylesheet" href="assets/message-popup.css?v=2.172">
@@ -4708,17 +4708,25 @@ function snote163ContractStamp(c){return isPurchaseListRoute()&&c?.status==='계
 function thumbHtml(c){const received=window.SnoteReceivedVehicleList?.thumbnail?.(c);if(received!=null)return received+snote163ContractStamp(c);const stamp=snote163ContractStamp(c),photo=coverPhoto(c);if(photo)return `<img src="${esc(photo.url)}" alt="${esc(c.model)} 실차 사진" />${stamp}`;const visual=fallbackImage(c);return `<img src="${esc(visual.src)}" alt="${esc(c.model)} ${esc(visual.label)}"/><span class="zc-ref-label">${esc(visual.label)}</span>${stamp}`}
 // Three document slots: registration and the two inspection pages. Photos never count.
 const SNOTE174_DOCUMENT_GROUPS=new Set(['registration','inspection1','inspection2']);
+const SNOTE175_DOCUMENT_LABELS=Object.freeze({registration:'자동차등록증',inspection1:'성능·상태점검기록부1',inspection2:'성능·상태점검기록부2'});
 let snote174VehicleDocumentSnapshot=null;
-function snote174DocumentCount(c){
- if(window.SnoteReceivedVehicleList?.has?.(c))return window.SnoteReceivedVehicleList.documentCount?.(c)??null;
+function snote175DocumentGroups(c){
+ if(window.SnoteReceivedVehicleList?.has?.(c))return window.SnoteReceivedVehicleList.documentGroups?.(c)??null;
  const snapshot=snote174VehicleDocumentSnapshot;
- if(snapshot&&!snapshot.current()){snapshot.counts.clear();snapshot.current=()=>false;return null;}
+ if(snapshot&&!snapshot.current()){snapshot.groups.clear();snapshot.current=()=>false;return null;}
  if(!c||!snotePurchaseCarVisible(c))return null;
  const key=String(c.ownerId)+'\u0000'+String(c.id);
- if(snapshot)return snapshot.counts.get(key)||0;
- return new Set(carFiles(c.id).filter(file=>file.ownerId===c.ownerId&&String(file.carId)===String(c.id)&&SNOTE174_DOCUMENT_GROUPS.has(file.group)).map(file=>file.group)).size;
+ if(snapshot)return snapshot.groups.get(key)?.slice()||[];
+ const present=new Set(carFiles(c.id).filter(file=>file.ownerId===c.ownerId&&String(file.carId)===String(c.id)&&SNOTE174_DOCUMENT_GROUPS.has(file.group)).map(file=>file.group));
+ return [...SNOTE174_DOCUMENT_GROUPS].filter(group=>present.has(group));
 }
-function snote174DocumentCountHtml(c){const count=snote174DocumentCount(c);return count===null?'<span class="snote-document-count is-pending" aria-label="서류 확인 중">확인 중</span>':'<span class="snote-document-count" aria-label="서류 3개 중 '+count+'개"><strong>'+count+'</strong><span aria-hidden="true">/3</span></span>';}
+function snote174DocumentCount(c){return snote175DocumentGroups(c)?.length??null;}
+function snote174DocumentCountHtml(c){
+ const groups=snote175DocumentGroups(c);
+ if(groups===null)return '<span class="snote-document-count is-pending" tabindex="0" data-snote-icon-help="서류를 확인하고 있습니다." aria-label="서류 확인 중">확인 중</span>';
+ const help=groups.length?'등록된 서류: '+groups.map(group=>SNOTE175_DOCUMENT_LABELS[group]).join(', '):'등록된 서류가 없습니다.';
+ return '<span class="snote-document-count" tabindex="0" data-snote-icon-help="'+esc(help)+'" aria-label="'+esc('서류 3개 중 '+groups.length+'개 · '+help)+'"><strong>'+groups.length+'</strong><span aria-hidden="true">/3</span></span>';
+}
 function statusClass(s){return s==='판매완료'?'done':s==='계약중'?'contract':s==='수리중'?'pending':'onsale'}
 function statusSelect(c){
  if(window.SnoteReceivedVehicleList?.has?.(c))return `<span class="snote-received-status"><span class="status ${statusClass(c.status)}">${esc(c.status)}</span><small class="snote-received-permission">공유 · ${esc(window.SnoteReceivedVehicleList.permission(c))}</small></span>`;
@@ -4902,7 +4910,7 @@ function snote135IncomeComplete(car){
  return !!record&&record.type==='snote-income-settlement'&&record.version===1&&record.templateVersion==='snote-income-20261102-v1'&&typeof record.sourceVersion==='string'&&/^[a-f0-9]{64}$/i.test(record.sourceVersion)&&typeof record.writeId==='string'&&record.writeId.length>0&&typeof record.updatedAt==='string'&&Number.isFinite(Date.parse(record.updatedAt))&&document?.type===record.type&&document.version===1&&document.templateVersion===record.templateVersion&&!!document.cells&&typeof document.cells==='object'&&!Array.isArray(document.cells)&&!document.cells.H50;
 }
 function snote221IncomeButton(c){const done=snote135IncomeComplete(c);return '<button type="button" class="snote221-income-button'+(done?' is-settled':'')+'" data-income-car="'+esc(c.id)+'" onclick="snote221OpenIncomeSettlement(event,this.dataset.incomeCar)" onkeydown="event.stopPropagation()">'+(done?'정산완료':'소득정산')+'</button>';}
-async function snote221OpenIncomeSettlement(event,carId){event?.stopPropagation();const context=window.snoteIncomeSettlementBridge?.context(carId);if(!context)return;try{await import('./assets/income-settlement-parent.js?v=2.174');if(route!=='sell'||!window.snoteIncomeSettlementBridge.current(context))return;await window.snoteIncomeOpenForCar(carId);}catch(error){toast(error?.message||'소득정산 화면을 열지 못했습니다.');}}
+async function snote221OpenIncomeSettlement(event,carId){event?.stopPropagation();const context=window.snoteIncomeSettlementBridge?.context(carId);if(!context)return;try{await import('./assets/income-settlement-parent.js?v=2.175');if(route!=='sell'||!window.snoteIncomeSettlementBridge.current(context))return;await window.snoteIncomeOpenForCar(carId);}catch(error){toast(error?.message||'소득정산 화면을 열지 못했습니다.');}}
 function snote161ContractingClass(car){return isPurchaseListRoute()&&car?.status==='계약중'?' snote-contracting-vehicle':'';}
 function accountantCarTable(rows){
  if(!rows.length)return '<div class="empty">표시할 차량이 없습니다.</div>';
@@ -9393,7 +9401,7 @@ async function serverMediaRefresh(){
   await Promise.all(Array.from({length:Math.min(5,all.length)},()=>worker()));if(!current())throw snoteMediaScopeError();
   if(typeof refreshModelPhotos==='function')await refreshModelPhotos();if(!current())throw snoteMediaScopeError();
   for(const url of mediaObjectUrls)try{URL.revokeObjectURL(url)}catch{};
-  mediaObjectUrls=urls;mediaByCar=next;snote174VehicleDocumentSnapshot={current:()=>snoteMediaCurrent(base),counts:new Map([...documentSlots].map(([key,groups])=>[key,groups.size]))};committed=true;renderCars();if(activeCarId)renderVehicle();
+  mediaObjectUrls=urls;mediaByCar=next;snote174VehicleDocumentSnapshot={current:()=>snoteMediaCurrent(base),groups:new Map([...documentSlots].map(([key,present])=>[key,[...SNOTE174_DOCUMENT_GROUPS].filter(group=>present.has(group))]))};committed=true;renderCars();if(activeCarId)renderVehicle();
  }finally{if(!committed)for(const url of urls)try{URL.revokeObjectURL(url)}catch{}}
 }
 refreshMedia=async function(){if(!S.ready&&!S.user)return prevRefresh();try{await serverMediaRefresh()}catch(e){if(e?.code!=='CONTEXT_CHANGED')fail(e,'사진 조회')}};
@@ -11550,15 +11558,15 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 <script type="module" src="assets/quick-calculator.js?v=2.85"></script>
 <script type="module" src="assets/vehicle-taxonomy-ui.js?v=2.172"></script>
 <script src="assets/vehicle-taxonomy-probe.js?v=2.172" defer></script>
-<script type="module" src="assets/income-settlement-parent.js?v=2.174"></script>
+<script type="module" src="assets/income-settlement-parent.js?v=2.175"></script>
 <script src="assets/vehicle-sharing.js?v=2.174" defer></script>
 <script src="assets/shared-vehicle-markers.js?v=2.170" defer></script>
 <link rel="stylesheet" href="assets/received-share-list.css?v=2.174">
-<script src="assets/received-share-list.js?v=2.174" defer></script>
+<script src="assets/received-share-list.js?v=2.175" defer></script>
 <link rel="stylesheet" href="assets/workspace-reorder.css?v=2.136">
 <script src="assets/workspace-order-store.js?v=2.135" defer></script>
 <script src="assets/workspace-reorder.js?v=2.172" defer></script>
-<script src="assets/release-info.js?v=2.174" defer></script>
+<script src="assets/release-info.js?v=2.175" defer></script>
 <link rel="stylesheet" href="assets/encar-id.css?v=2.162">
 <script src="assets/encar-id.js?v=2.174" defer></script>
 <script src="assets/company-purchase.js?v=2.172" defer></script>
