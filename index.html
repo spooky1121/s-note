@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.166">
+<html lang="ko" data-snote-release="2.167">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -3209,7 +3209,7 @@ button, input, select, textarea { font-family: inherit; }
 <link rel="stylesheet" href="assets/mobile-workspace.css?v=2.67">
 <link rel="stylesheet" href="assets/screen-refinement.css?v=2.59">
 <link rel="stylesheet" href="assets/vehicle-sharing.css?v=2.107">
-<link rel="stylesheet" href="assets/shared-vehicle-markers.css?v=2.165">
+<link rel="stylesheet" href="assets/shared-vehicle-markers.css?v=2.167">
 <link rel="stylesheet" href="assets/encar-wordmark.css?v=2.74">
 <link rel="stylesheet" href="assets/settings-refinement.css?v=2.84">
 <script src="assets/settings-refinement.js?v=2.61" defer></script>
@@ -3451,8 +3451,9 @@ button, input, select, textarea { font-family: inherit; }
       <div class="contract-toggle" role="group" aria-label="계약 구분"><button type="button" id="contract-sale-mode" class="active" onclick="setContractMode('sale')">매도 계약</button><button type="button" id="contract-purchase-mode" onclick="setContractMode('purchase')">매수 계약</button></div>
       <span class="ct-mode-chip" id="ct-mode-label">자동차 매도 계약</span>
       <h1 id="contract-modal-title">중고차 매매계약서</h1>
-      <div class="ct-doc-meta-line"><p>차량 매매조건과 거래 당사자의 권리 의무를 확인하기 위한 계약문서입니다</p><div class="ct-doc-date-inline"><label>계약서 작성일자</label><input type="text" id="ct-contract-date" placeholder="YYYY-MM-DD" maxlength="10" /></div></div>
     </div>
+    <div class="ct-copy-heading"><div class="ct-copy-label">매매업자 보관용</div><div class="ct-copy-dealer-details">자동차매매 <b id="ct-company-name"></b> 담당자 <b id="ct-agent-name"></b></div></div>
+    <div class="ct-doc-meta-line"><p>차량 매매조건과 거래 당사자의 권리 의무를 확인하기 위한 계약문서입니다</p><div class="ct-doc-date-inline"><label>계약서 작성일자</label><input type="text" id="ct-contract-date" placeholder="YYYY-MM-DD" maxlength="10" /></div></div>
    </header>
 <section class="ct-section"><div class="ct-heading"><span>01</span>차량 정보<small>VEHICLE DETAILS</small></div>
      <div class="ct-vehicle-main"><label>차량명 / 등급</label><input id="ct-model" aria-label="차량명과 등급" maxlength="100" /></div>
@@ -3479,13 +3480,12 @@ button, input, select, textarea { font-family: inherit; }
 <div class="ct-term"><b>제10조 (할부승계특약)</b> &quot;갑&quot;이 자동차를 할부로 구입하여 할부금을 완납하지 않은 상태에서 &quot;을&quot;에게 양도하는 경우에는 잔여할부금을 &quot;을&quot;이 승계하여 부담 할 것인지의 여부를 특약사항란에 기재하여야 한다.</div>
 <div class="ct-term"><b>제11조 (계약서)</b> 계약서는 당사자와 등록절차를 대행하는 매매업자가 각자의 필요에 따라 작성·보관한다.</div></div>
    </section>
-   <section class="ct-section"><div class="ct-heading"><span>04</span>특약사항<small>SPECIAL AGREEMENT</small></div><div class="ct-special"><textarea id="ct-special" rows="6" oninput="fitContractSpecial(this)" placeholder="차량 상태, 인도 조건, 할부 승계 등 필요한 특약사항을 작성하세요."></textarea></div></section>
+   <section class="ct-section"><div class="ct-heading"><span>04</span>특약사항<small>SPECIAL AGREEMENT</small></div><div class="ct-special"><textarea id="ct-special" rows="5" oninput="fitContractSpecial(this)" placeholder="차량 상태, 인도 조건, 할부 승계 등 필요한 특약사항을 작성하세요."></textarea></div></section>
    <section class="ct-section ct-parties-section"><div class="ct-heading"><span>05</span>거래 당사자 및 확인<small>PARTIES & SIGNATURES</small></div>
      <div class="ct-parties">
-      <div class="ct-party"><div class="ct-party-head"><strong>갑 · 매도인</strong><em id="ct-seller-tag">매매업자</em></div><div class="ct-party-row name-row"><label>성명 / 상호</label><div class="ct-stamp-line"><input id="ct-seller-name" maxlength="40" /><span class="ct-seal-slot"><span class="stamp-mark">(인)</span><img id="ct-seller-stamp" class="ct-stamp-image" data-snote-company-asset="companyStamp" hidden alt="법인 도장" /></span></div></div><div class="ct-party-row"><label>주민번호 / 사업자번호</label><input id="ct-seller-id" maxlength="30" placeholder="필요 시 기재" autocomplete="off" /></div><div class="ct-party-row"><label>전화번호</label><input id="ct-seller-phone" maxlength="24" /></div><div class="ct-party-row address-row"><label>주소</label><textarea id="ct-seller-address" rows="2" maxlength="120"></textarea></div></div>
-      <div class="ct-party"><div class="ct-party-head"><strong>을 · 매수인</strong><em id="ct-buyer-tag">구매 고객</em></div><div class="ct-party-row name-row"><label>성명 / 상호</label><div class="ct-stamp-line"><input id="ct-buyer-name" maxlength="40" /><span class="ct-seal-slot"><span class="stamp-mark">(인)</span><img id="ct-buyer-stamp" class="ct-stamp-image" data-snote-company-asset="companyStamp" hidden alt="법인 도장" /></span></div></div><div class="ct-party-row"><label>주민번호 / 사업자번호</label><input id="ct-buyer-id" maxlength="30" placeholder="필요 시 기재" autocomplete="off" /></div><div class="ct-party-row"><label>전화번호</label><input id="ct-buyer-phone" maxlength="24" /></div><div class="ct-party-row address-row"><label>주소</label><textarea id="ct-buyer-address" rows="2" maxlength="120"></textarea></div></div>
+      <div class="ct-party"><div class="ct-party-head"><strong>갑 · 매도인</strong><em id="ct-seller-tag">매매업자</em></div><div class="ct-party-row name-row"><label>성명 / 상호</label><div class="ct-stamp-line"><input id="ct-seller-name" maxlength="40" /><span class="ct-seal-slot"><span class="stamp-mark">(인)</span><img id="ct-seller-stamp" class="ct-stamp-image" data-snote-company-asset="companyStamp" hidden alt="법인 도장" /></span></div></div><div class="ct-party-row"><label>주민번호 / 사업자번호</label><input id="ct-seller-id" maxlength="30" placeholder="필요 시 기재" autocomplete="off" /></div><div class="ct-party-row"><label>전화번호</label><input id="ct-seller-phone" maxlength="24" /></div><div class="ct-party-row address-row"><label>주소</label><textarea id="ct-seller-address" rows="3" maxlength="120"></textarea></div></div>
+      <div class="ct-party"><div class="ct-party-head"><strong>을 · 매수인</strong><em id="ct-buyer-tag">구매 고객</em></div><div class="ct-party-row name-row"><label>성명 / 상호</label><div class="ct-stamp-line"><input id="ct-buyer-name" maxlength="40" /><span class="ct-seal-slot"><span class="stamp-mark">(인)</span><img id="ct-buyer-stamp" class="ct-stamp-image" data-snote-company-asset="companyStamp" hidden alt="법인 도장" /></span></div></div><div class="ct-party-row"><label>주민번호 / 사업자번호</label><input id="ct-buyer-id" maxlength="30" placeholder="필요 시 기재" autocomplete="off" /></div><div class="ct-party-row"><label>전화번호</label><input id="ct-buyer-phone" maxlength="24" /></div><div class="ct-party-row address-row"><label>주소</label><textarea id="ct-buyer-address" rows="3" maxlength="120"></textarea></div></div>
      </div>
-     <div class="ct-confirm"><span>자동차매매업자 <b id="ct-company-name">상사명 입력</b> · 담당자 <b id="ct-agent-name">-</b></span><span>본 계약 내용을 확인하고 이에 동의합니다.</span></div>
    </section>
    <div class="ct-footer"><span class="snote-document-brand"><img src="assets/snote-logo.png" alt="에스노트" /></span><span class="snote-document-logo"><img class="zc-footer-emblem" data-snote-company-asset="companyLogo" alt="상사 로고" hidden /></span><strong class="snote95-footer-company"></strong></div>
   </article>
@@ -6695,7 +6695,37 @@ function fitContractSpecial(el=$('ct-special')){
  el.title=fits?'':'내용이 길어 A4 인쇄 영역을 초과합니다. 특약사항을 줄여 주세요.';
  return fits;
 }
+function snote167ContractDealerDetails(){
+ const car=cars.find(item=>item.id===contractCarId&&canManageCar(item));
+ if(!car||window.SnoteReceivedVehicleList?.has?.(car)===true)return {company:'',dealer:''};
+ const cloud=window.zc86Cloud,own=car.ownerId===currentUser?.username;
+ if(cloud?.ready){
+  // A manager may open a colleague's car. Its current-company scope must be
+  // verified before using the registered company, and its owner names the dealer.
+  const sameCompany=own||window.snoteCompanyPurchaseBridge?.carAllowed?.(car)===true;
+  if(!sameCompany)return {company:'',dealer:''};
+  return {company:String(cloud.companyProfile?.name||cloud.company||'').trim(),dealer:dealerLabel(car)};
+ }
+ const owner=dealerAccounts.find(account=>account.username===car.ownerId);
+ return {company:String(owner?.company||(own?currentUser?.company:'')||'').trim(),dealer:dealerLabel(car)};
+}
+function snote167SyncContractDealerDetails(){
+ const details=snote167ContractDealerDetails();
+ const company=$('ct-company-name'),dealer=$('ct-agent-name');
+ if(company)company.textContent=details.company;if(dealer)dealer.textContent=details.dealer;
+ const group=company?.closest('.ct-copy-dealer-details');if(group)group.hidden=!details.company&&!details.dealer;
+}
+function snote167FitContractAddresses(){
+ for(const side of ['seller','buyer']){
+  const field=$('ct-'+side+'-address');if(!field||!field.getBoundingClientRect().width)continue;
+  const style=getComputedStyle(field),line=parseFloat(style.lineHeight)||15.18,padding=(parseFloat(style.paddingTop)||0)+(parseFloat(style.paddingBottom)||0),border=(parseFloat(style.borderTopWidth)||0)+(parseFloat(style.borderBottomWidth)||0);
+  const minimum=Math.ceil(3*line+padding+border);
+  field.style.height='auto';const height=Math.max(minimum,field.scrollHeight+border);
+  field.style.height=Math.ceil(height)+'px';
+ }
+}
 function buildContractPrintPages(){
+ snote167SyncContractDealerDetails();snote167FitContractAddresses();
  window.snote222ContractSignature?.sync();
  const host=$('contract-print-pages'),source=$('contract-paper');
  if(!host||!source)return;
@@ -6717,10 +6747,9 @@ function buildContractPrintPages(){
   });
   // 인쇄 복사본에는 중복 id를 두지 않습니다. 편집 입력란은 원본만 사용합니다.
   clone.querySelectorAll('[id]').forEach(el=>el.removeAttribute('id'));
-  const badge=document.createElement('div');
-  badge.className='ct-copy-label';
+  let badge=clone.querySelector('.ct-copy-label');
+  if(!badge){badge=document.createElement('div');badge.className='ct-copy-label';(clone.querySelector('.ct-copy-heading')||clone).prepend(badge);}
   badge.textContent=label;
-  clone.prepend(badge);
   host.appendChild(clone);
  });
 }
@@ -6752,7 +6781,7 @@ function openContractPreview({loadCustomer=true}={}){snote251ContractCustomerTas
  $('ct-model').value=model;$('ct-plate').value=c.plate||'';$('ct-category').value=c.vehicleType||'승용';$('ct-year').value=String(c.year||'');$('ct-km').value=(formatKm($('detail-km').value||c.km||0))+' km';$('ct-vin').value=$('detail-vin').value.trim()||c.vin||'';$('ct-color').value=$('detail-color').value||c.color||'';
  $('ct-contract-date').value=todayLocal();$('ct-delivery').value='';$('ct-registration-cost').value='';$('ct-deposit').value='0';$('ct-interim').value='0';$('ct-deposit-date').value=todayLocal();$('ct-interim-date').value='';$('ct-balance-date').value='';$('ct-special').value=$('detail-extra').value||'';
  fitContractSpecial();
- $('ct-agent-name').textContent=currentUser.name||currentUser.username||'-';$('ct-company-name').textContent=ctCompanyParty().name||'상사명 입력';
+ snote167SyncContractDealerDetails();
  setContractMode(c.status==='판매완료'?'sale':'sale');
  $('vehicle-overlay').classList.remove('open');$('vehicle-overlay').setAttribute('aria-hidden','true');
  $('contract-overlay').classList.add('open');$('contract-overlay').setAttribute('aria-hidden','false');
@@ -6805,7 +6834,7 @@ async function closeContractPreview(options={}){
  else if(activeCarId){$('vehicle-overlay').classList.add('open');$('vehicle-overlay').setAttribute('aria-hidden','false')}
  return true;
 }
-function resizeContractPreview(){const paper=$('contract-paper');if(!$('contract-overlay').classList.contains('open')||!paper)return;const width=paper.closest('.snote-popup-card')?.clientWidth||window.innerWidth-68;paper.style.setProperty('--contract-scale',Math.max(.1,Math.min(1,width/794)));}
+function resizeContractPreview(){snote167FitContractAddresses();const paper=$('contract-paper');if(!$('contract-overlay').classList.contains('open')||!paper)return;const width=paper.closest('.snote-popup-card')?.clientWidth||window.innerWidth-68;paper.style.setProperty('--contract-scale',Math.max(.1,Math.min(1,width/794)));}
 window.addEventListener('resize',resizeContractPreview);
 async function printContract(){if(!snote165ContractViewCurrent(currentUser,contractCarId,snote214ContractView))return;const loadingActor=currentUser,loadingCar=contractCarId,loadingView=snote214ContractView;if(!await snote165ContractCustomerReady(loadingActor,loadingCar,loadingView))return;await document.fonts?.ready;if(!snote165ContractViewCurrent(loadingActor,loadingCar,loadingView))return;if(!ctCompanyFieldsFit())return;if(ctReadMoney('ct-deposit')+ctReadMoney('ct-interim')>ctReadMoney('ct-total-price')){toast('계약금과 중도금의 합계가 매매금액을 초과합니다.');return}if(!$('ct-contract-date').value||!$('ct-plate').value.trim()||!$('ct-seller-name').value.trim()){toast('계약일·차량번호·매도인을 입력해주세요.');return}if(!fitContractSpecial()){toast('특약사항이 A4 출력 공간을 초과합니다. 내용을 조금 줄여주세요.');$('ct-special').focus();return}const printDraftKey=snote165ContractDraftKey();const actor=currentUser,car=contractCarId,view=snote214ContractView,scope=snote128DocumentScope();const [,stampReady,accountsReady]=await Promise.all([snote95UpdateDocumentCompany(),snote128RefreshContractStamp(),contractMode==='sale'?(window.SnotePaymentAccounts?.loadDocument(()=>currentUser===actor&&contractCarId===car&&snote214ContractView===view&&contractMode==='sale'&&$('contract-overlay').classList.contains('open'))??Promise.resolve(false)):Promise.resolve(true)]);if(!accountsReady){toast('입금계좌를 확인하지 못했습니다. 다시 불러온 뒤 인쇄해 주세요.');return;}if(!snote128DocumentCurrent(scope))return;if(!snote165ContractViewCurrent(actor,car,view))return;if(!stampReady||snote128StampState.status==='error'){toast('상사 도장을 불러오지 못했습니다. 설정의 등록 이미지를 확인한 뒤 다시 인쇄해 주세요.');return;}if(window.snote222ContractSignature&&!await window.snote222ContractSignature.ready()){toast('고객 서명 표시를 확인한 뒤 다시 인쇄해 주세요.');return}if(!snote165ContractViewCurrent(actor,car,view)||!snote128DocumentCurrent(scope))return;if(printDraftKey!==snote165ContractDraftKey()){toast('인쇄 준비 중 입력 내용이 변경되었습니다. 현재 내용을 확인한 뒤 다시 인쇄해 주세요.');return;}buildContractPrintPages();if(typeof zc75ScheduleContractSave==='function')zc75ScheduleContractSave(true);window.print()}
 
@@ -8195,6 +8224,7 @@ function zc75ScheduleContractSave(immediate=false){
  if(immediate)save();else zc75ContractDebounce=setTimeout(save,450);
 }
 document.getElementById('contract-paper')?.addEventListener('input',e=>{
+ if(e.target.matches('#ct-seller-address,#ct-buyer-address'))snote167FitContractAddresses();
  if(e.target.id==='ct-buyer-name')window.snote222ContractSignature?.sync();
  if(e.target.matches('input,textarea')&&e.target.id!=='ct-buyer-id'&&e.target.id!=='ct-seller-id')zc75ScheduleContractSave();
 });
@@ -11299,13 +11329,13 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 <script src="assets/vehicle-taxonomy-probe.js?v=2.80" defer></script>
 <script type="module" src="assets/income-settlement-parent.js?v=2.112"></script>
 <script src="assets/vehicle-sharing.js?v=2.165" defer></script>
-<script src="assets/shared-vehicle-markers.js?v=2.165" defer></script>
-<link rel="stylesheet" href="assets/received-share-list.css?v=2.166">
+<script src="assets/shared-vehicle-markers.js?v=2.167" defer></script>
+<link rel="stylesheet" href="assets/received-share-list.css?v=2.167">
 <script src="assets/received-share-list.js?v=2.166" defer></script>
 <link rel="stylesheet" href="assets/workspace-reorder.css?v=2.136">
 <script src="assets/workspace-order-store.js?v=2.135" defer></script>
 <script src="assets/workspace-reorder.js?v=2.136" defer></script>
-<script src="assets/release-info.js?v=2.166" defer></script>
+<script src="assets/release-info.js?v=2.167" defer></script>
 <link rel="stylesheet" href="assets/encar-id.css?v=2.162">
 <script src="assets/encar-id.js?v=2.162" defer></script>
 <script src="assets/company-purchase.js?v=2.130" defer></script>
@@ -11347,10 +11377,11 @@ window.addEventListener('snote:payment-accounts-changed',()=>{if(typeof contract
 <link rel="stylesheet" href="assets/contracting-vehicles.css?v=2.161">
 <link rel="stylesheet" href="assets/action-icons.css?v=2.162">
 <link rel="stylesheet" href="assets/login-refinement.css?v=2.162">
-<link rel="stylesheet" href="assets/vehicle-viewport.css?v=2.163">
+<link rel="stylesheet" href="assets/vehicle-viewport.css?v=2.167">
 <link rel="stylesheet" href="assets/document-viewport.css?v=2.165">
 <script src="assets/document-viewport.js?v=2.165" defer></script>
 <link rel="stylesheet" href="assets/shared-vehicle-detail.css?v=2.166">
 <script src="assets/shared-vehicle-detail.js?v=2.166" defer></script>
+<link rel="stylesheet" href="assets/contract-layout-v2167.css?v=2.167">
 </body>
 </html>
