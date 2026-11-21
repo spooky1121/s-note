@@ -48,18 +48,19 @@
   for(const section of document.querySelectorAll('[data-snote-payment-section]'))section.hidden=!kinds.some(kind=>value[kind]);
   changed();
  }
- let documentVersion=0;
- function clearDocument(){++documentVersion;paint(empty());}
+ let documentVersion=0,documentReady=false,documentContext=null;
+ function documentState(){return {version:documentVersion,ready:documentReady&&(documentContext?isCurrent(documentContext):contextNow()===null)};}
+ function clearDocument(){++documentVersion;documentReady=false;documentContext=null;paint(empty());}
  async function loadDocument(current=()=>true){
   // Establishing the first authenticated profile scope may reset document state.
   const context=contextNow();clearDocument();const version=documentVersion;
-  if(!context)return true;
+  if(!context){documentReady=true;return true;}
   const live=()=>{try{return version===documentVersion&&isCurrent(context)&&current()===true;}catch{return false;}};
   if(!live())return false;
   try{
    const result=receipt(context,await bridge().read(context));
    if(!live())return false;
-   paint(result.accounts);return true;
+   documentContext=context;documentReady=true;paint(result.accounts);return true;
   }catch{if(live())paint(empty());return false;}
  }
 
@@ -197,13 +198,13 @@
   try{
    const result=receipt(context,await bridge().save(context,baseline.revision,value));
    if(!profileLive(version))return false;
-   fill(result);++documentVersion;paint(result.accounts);status('저장되었습니다.','success');reloadButton.hidden=true;return true;
+   fill(result);++documentVersion;documentContext=context;documentReady=true;paint(result.accounts);status('저장되었습니다.','success');reloadButton.hidden=true;return true;
   }catch(error){if(profileLive(version)){status(errorMessage(error,'입금계좌를 저장하지 못했습니다. 입력 내용은 유지됩니다.'),'error');reloadButton.hidden=false;}return false;
   }finally{if(version===profileVersion){saving=false;controls();}}
  }
  function reset(){clearEditor();clearDocument();}
  mount();
- window.SnotePaymentAccounts=Object.freeze({openProfile,closeProfile,profileDirty,profileBusy,mountSettings,focusSettings,prepareRouteChange,ensureQuoteAccounts,clearDocument,loadDocument,reset});
+ window.SnotePaymentAccounts=Object.freeze({openProfile,closeProfile,profileDirty,profileBusy,mountSettings,focusSettings,prepareRouteChange,ensureQuoteAccounts,clearDocument,loadDocument,documentState,reset});
  window.addEventListener('snote:route-changed',event=>{
   if(event.detail?.page==='settings'){const host=settingsElement();if(host)void mountSettings(host);}
   else if(presentation==='settings')clearEditor();

@@ -18,6 +18,7 @@ async function setup(width=1440,state=server(),actor=ACTOR){
  async function rpc({name,args={},jwt}){
   const id=Object.keys(TOKENS).find(id=>TOKENS[id]===jwt),role=state.roles[id];state.calls.push({name,args:copy(args),actor:id});
   if(!id||!role)return{data:null,error:{code:'42501',message:'FORBIDDEN'}};
+  if(name==='snote_payment_accounts_read')return{data:{user_id:id,company_id:args.p_company,revision:0,accounts:{vehicle:null,transfer:null}},error:null};
   const prior=copy(state.rows[id]||{enabled:role==='dealer',revision:0});
   if(name==='snote_finance_lock_get'){
    await pause(state,'load:'+id);if(state.failLoad)return{data:null,error:{code:'NETWORK',message:'Synthetic read unavailable'}};
@@ -54,8 +55,8 @@ async function setup(width=1440,state=server(),actor=ACTOR){
 }
 async function settings(p){await p.evaluate(()=>navigate('settings'));await control(p).waitFor();}
 async function toggle(p,enabled){await settings(p);if(await control(p).isChecked()!==enabled)await control(p).click();await p.waitForFunction(enabled=>window.SnoteFinanceLock.enabled()===enabled&&!document.getElementById('snote-finance-lock-toggle').disabled,enabled);assert.equal(await control(p).isChecked(),enabled);}
-async function enter(p,locked){await p.evaluate(()=>navigate('finance'));if(locked){await gate(p).waitFor({state:'visible'});assert.notEqual(await p.evaluate(()=>route),'finance');}else{await p.waitForFunction(()=>route==='finance');assert.equal(await gate(p).isHidden(),true);}}
-async function password(p,value=PASSWORD,valid=true){await p.locator('#zc-dashboard-gate-password').fill(value);await p.locator('#zc-dashboard-gate-submit').click();if(valid){await p.waitForFunction(()=>route==='finance');assert.equal(await gate(p).isHidden(),true);}else{await p.waitForFunction(()=>document.getElementById('zc-dashboard-gate-error').textContent.length>0);assert.equal(await gate(p).isVisible(),true);assert.notEqual(await p.evaluate(()=>route),'finance');}}
+async function enter(p,locked){await p.evaluate(()=>navigate('finance'));if(locked){await gate(p).waitFor({state:'visible'});assert.notEqual(await p.evaluate(()=>route),'finance');assert.equal(await p.locator('#zc-dashboard-gate-user').textContent(),await p.evaluate(()=>currentUser.name+' · '+__encarFixtureState.user.email));assert.equal(await p.locator('#zc-dashboard-gate-submit').textContent(),'잠금해제');}else{await p.waitForFunction(()=>route==='finance');assert.equal(await gate(p).isHidden(),true);}}
+async function password(p,value=PASSWORD,valid=true){await p.locator('#zc-dashboard-gate-password').fill(value);await p.locator('#zc-dashboard-gate-submit').click();if(valid){await p.waitForFunction(()=>route==='finance');assert.equal(await gate(p).isHidden(),true);}else{await p.waitForFunction(()=>document.getElementById('zc-dashboard-gate-error').textContent.length>0);assert.equal(await gate(p).isVisible(),true);assert.notEqual(await p.evaluate(()=>route),'finance');assert.equal(await p.locator('#zc-dashboard-gate-submit').textContent(),'잠금해제');}}
 async function close(f){assert.deepEqual(f.state.violations,[]);assert.equal(await f.page.evaluate(()=>__financeAuthTest.mainLogins),0);await finish(f);}
 async function switchActor(p,id=OTHER){await p.evaluate(async({id,other})=>{const S=__encarFixtureState;S.user={id,email:id===other?'second@example.invalid':'first@example.invalid'};await enterWorkspace({...currentUser,username:'cld_'+id.replaceAll('-','').slice(0,18),role:'dealer',name:'전환한 합성 사용자'},{restoreHistory:false});navigate('settings');},{id,other:OTHER});}
 
