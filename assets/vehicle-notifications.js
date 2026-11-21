@@ -10,6 +10,7 @@
  const node=(tag,text,cls)=>{const e=document.createElement(tag);e.textContent=text??'';if(cls)e.className=cls;return e;};
  const current=c=>!!c&&bridge()?.current(c);
  const visible=(c,version)=>opened===c&&dialog.open&&viewVersion===version&&current(c);
+ function failure(c,version,text,generation=listVersion){const valid=()=>visible(c,version)&&listVersion===generation;if(valid())window.snoteNotify(text,{tone:'error',isCurrent:valid});}
  function badge(count){
   unread=Number.isSafeInteger(Number(count))?Math.max(0,Number(count)):0;
   const profile=document.getElementById('snote-profile-trigger'),menu=document.getElementById('snote-profile-notifications');
@@ -66,10 +67,10 @@
       const text=replyMessage(error);
       // A lost reply or stale version cannot grant access optimistically.
       // Only a fresh list from the server may show the resulting decision.
-      try{
+      const generation=listVersion+1;try{
        const data=await load(c,version);
-       if(data&&visible(c,version)){status.textContent=text;const latest=data.items?.find(entry=>entry.invitation?.id===invite.id)?.invitation;if(invitation(latest)&&latest.state!=='pending')sharingChanged(c);}
-      }catch{if(visible(c,version)){message.textContent=text;message.classList.add('is-error');accept.disabled=!access;reject.disabled=false;}}
+       if(data&&visible(c,version)&&listVersion===generation){failure(c,version,text,generation);const latest=data.items?.find(entry=>entry.invitation?.id===invite.id)?.invitation;if(invitation(latest)&&latest.state!=='pending')sharingChanged(c);}
+      }catch{if(visible(c,version)&&listVersion===generation){if(row.isConnected){message.textContent=access?access.description:'공유 권한을 확인하지 못했습니다. 알림을 다시 열어 확인해 주세요.';accept.disabled=!access;reject.disabled=false;}failure(c,version,text,generation);}}
      }
     }finally{row.dataset.replyPending='false';}
    };
@@ -95,7 +96,7 @@
  }
  window.snoteOpenNotifications=async()=>{
   const c=bridge()?.context();if(!c)return;if(scope!==c.key){scope=c.key;++badgeEpoch;badge(0);}const version=++viewVersion;opened=c;list.replaceChildren();status.textContent='알림을 불러오는 중…';if(!dialog.open)dialog.showModal();
-  try{await load(c,version);}catch{if(visible(c,version))status.textContent='알림을 불러오지 못했습니다. 잠시 후 다시 열어주세요.';}
+  const generation=listVersion+1;try{await load(c,version);}catch{if(visible(c,version)&&listVersion===generation){status.textContent='';failure(c,version,'알림을 불러오지 못했습니다. 잠시 후 다시 열어주세요.',generation);}}
  };
  badge(0);setInterval(()=>{const key=bridge()?.context()?.key||null;if(key!==scope){scope=null;badge(0);if(dialog.open)close();void poll();}},1000);setInterval(poll,30000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)void poll();});window.addEventListener('snote-vehicle-changed',poll);setTimeout(poll,1500);window.addEventListener('pagehide',close);
 })();

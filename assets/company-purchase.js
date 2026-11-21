@@ -10,7 +10,7 @@
  window.snoteWaitCompanyPurchase=async()=>{if(window.snoteEnsureCompanyPurchase())return true;const s=state,c=context();if(s?.task)await s.task;if(state===s&&s?.ready&&bridge()?.current?.(c)===true)return true;throw Object.assign(Error(s?.error||message('NETWORK')),{code:s?.code||'NOT_READY'});};
  window.snoteCompanyPurchaseMessage=()=>state?.error||'상사 매물을 불러오는 중…';
  window.snoteCompanyPurchaseIsReady=()=>{const c=context();return !!c?.ready&&state?.key===c.key&&state.ready===true;};
- window.snoteRefreshCompanyPurchase=()=>{if(!active()||state?.loading)return;reset();renderCars();if(route==='inventoryFinance')buildAlt();};window.snoteResetCompanyPurchase=reset;
+ window.snoteRefreshCompanyPurchase=()=>{if(!active()||state?.loading)return;reset();renderCars();const s=state,c=context();if(s?.task)void s.task.then(ok=>{if(!ok&&state===s&&s.error&&bridge()?.current?.(c)===true)window.snoteNotify?.(s.error,{tone:'error',key:'company-vehicles',isCurrent:()=>state===s&&bridge()?.current?.(c)===true});});if(route==='inventoryFinance')buildAlt();};window.snoteResetCompanyPurchase=reset;
  setInterval(()=>{const c=context(),signature=(c?.key||'')+':'+String(c?.ready);if(signature!==lastScope){lastScope=signature;if(active())reset();if(typeof isPurchaseListRoute==='function'&&isPurchaseListRoute()||typeof isAccountant==='function'&&isAccountant())renderCars();}if(active()&&c?.ready)window.snoteEnsureCompanyPurchase();if(!active()&&state)reset();},300);
  window.addEventListener('pagehide',reset);if(active())renderCars();
 })();

@@ -5,6 +5,7 @@ const assert=require('node:assert/strict');
 const {chromium}=require('./encar/node_modules/playwright');
 const {fixture,setBrowser,finish}=require('./encar/browser-smoke.cjs');
 
+async function notification(f,pattern){for(let attempt=0;attempt<200;attempt++){const note=f.notifications.find(note=>pattern.test(note.message));if(note){await f.page.locator('#snote-message-dialog[open]').waitFor({state:'hidden'});return note;}await new Promise(resolve=>setTimeout(resolve,25));}assert.fail('Expected common notification: '+pattern);}
 async function setup(page,{holdRead=false}={}){
  await page.evaluate(holdRead=>{
   closeVehicle({discard:true});
@@ -32,7 +33,7 @@ async function setup(page,{holdRead=false}={}){
  await page.locator('#snote-profile-trigger.snote-has-notifications').waitFor();
 }
 
-async function permissionVersionRace(page,width){
+async function permissionVersionRace(page,width,f){
  await page.evaluate(()=>{
   closeVehicle({discard:true});
   const id='88888888-8888-4888-8888-888888888888';
@@ -61,13 +62,15 @@ async function permissionVersionRace(page,width){
  await row.getByRole('button',{name:'차량 공유 초대 수락'}).click();await page.waitForFunction(()=>__permissionNotice.waiting);
  await page.evaluate(()=>{__permissionNotice.permission='read';__permissionNotice.version=2;__permissionNotice.hold=false;__permissionNotice.release();});
  await page.waitForFunction(()=>document.querySelector('[data-invitation-id="88888888-8888-4888-8888-888888888888"]')?.dataset.sharePermission==='read');
- assert.equal(await row.getAttribute('data-invitation-state'),'pending');assert.match(await modal.locator('[role=status]').textContent(),/이미 처리되었거나 변경된 초대/);assert.equal(await page.evaluate(()=>__permissionNotice.events),0,'A stale acceptance cannot publish any sharing grant');
+ assert.equal(await row.getAttribute('data-invitation-state'),'pending');await notification(f,/이미 처리되었거나 변경된 초대/);assert.doesNotMatch(await modal.locator('[role=status]').textContent(),/이미 처리되었거나 변경된 초대/);assert.equal(await page.evaluate(()=>__permissionNotice.events),0,'A stale acceptance cannot publish any sharing grant');
  assert.doesNotMatch(await row.locator('.notification-invitation-status').textContent(),/수정|삭제|휴지통/);
  await row.getByRole('button',{name:'차량 공유 초대 수락'}).click();await page.waitForFunction(()=>document.querySelector('[data-invitation-id="88888888-8888-4888-8888-888888888888"]')?.dataset.invitationState==='accepted');
  assert.equal(await row.getAttribute('data-share-permission'),'read');assert.match(await row.textContent(),/공유 권한: 읽기/);
  assert.deepEqual(await page.evaluate(()=>__permissionNotice.calls.map(call=>call.p_expected)),[1,2]);assert.equal(await page.evaluate(()=>__permissionNotice.events),1);
  console.log('PASS',width,'permission changes invalidate an old invitation version and display only confirmed current access before acceptance');
 }
+
+async function loadFailurePopups(f){const page=f.page;await page.evaluate(()=>{const state=window.__notificationFailure={account:'load-failure-a',hold:false,returned:false};window.snoteVehicleShareBridge={context:()=>({key:state.account}),current:c=>c?.key===state.account,notification:async(c,args)=>{if(args.p_action==='summary')return{unread:0};if(args.p_action==='list'){if(state.hold){state.waiting=true;await new Promise(resolve=>state.release=resolve);}state.returned=true;throw Error('SYNTHETIC_LIST_FAILED');}throw Error('UNEXPECTED');}};window.dispatchEvent(new Event('snote-vehicle-changed'));void snoteOpenNotifications();});const first=await notification(f,/알림을 불러오지 못했습니다/);assert.equal(first.tone,'error');assert.equal(await page.locator('#snote-notifications-dialog [role=status]').textContent(),'','A direct load failure is shown only in the common popup');await page.getByRole('button',{name:'알림 닫기',exact:true}).click();const before=f.notifications.length;await page.evaluate(()=>{__notificationFailure.hold=true;__notificationFailure.returned=false;void snoteOpenNotifications();});await page.waitForFunction(()=>__notificationFailure.waiting);await page.evaluate(()=>{__notificationFailure.account='load-failure-b';window.dispatchEvent(new Event('snote-vehicle-changed'));});await page.locator('#snote-notifications-dialog').waitFor({state:'hidden'});await page.evaluate(()=>__notificationFailure.release());await page.waitForFunction(()=>__notificationFailure.returned);await settle(page);assert.equal(f.notifications.length,before,'A former account load failure cannot show a popup in the new account');}
 
 async function settle(page){await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));}
 async function badge(page,{unread}){
@@ -117,7 +120,10 @@ async function badge(page,{unread}){
     await finish(f);console.log('PASS',width,'a previous-account read acknowledgement cannot change the newly selected account badges');
    }
    {
-    const f=await fixture(width);await permissionVersionRace(f.page,width);await finish(f);
+    const f=await fixture(width);await permissionVersionRace(f.page,width,f);await finish(f);
+   }
+   {
+    const f=await fixture(width);await loadFailurePopups(f);await finish(f);console.log('PASS',width,'direct notification load errors use one popup and stale account failures stay silent');
    }
   }
  }finally{await browser.close();}

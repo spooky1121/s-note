@@ -34,10 +34,15 @@
   function message(text, tone, focus) {
     const box = $('status-message');
     box.textContent = text || '';
-    box.hidden = !text;
+    const popup = typeof window.snoteNotify === 'function';
+    box.hidden = !text || popup;
     box.dataset.tone = tone || 'info';
     box.setAttribute('role', tone === 'error' ? 'alert' : 'status');
-    if (text && focus) box.focus({preventScroll: false});
+    if (text && popup) {
+      const epoch = pageEpoch, requestToken = token, requestSession = session, previousFocus = document.activeElement;
+      window.snoteNotify(text, {tone: tone || 'info', key: 'customer-message', isCurrent: () => !disposed && pageEpoch === epoch && token === requestToken && session === requestSession, returnFocus: () => form.querySelector('[aria-invalid="true"]') || previousFocus});
+    } else if (!text) window.SnoteMessages?.dismiss('customer-message');
+    else if (focus) box.focus({preventScroll: false});
   }
 
   function writeHistory(mode) {
@@ -331,8 +336,8 @@
       invalidateAttestation();
       syncMailing();
       closeAddressSearch(false);
-      message('주소를 입력했습니다. 상세주소를 확인해 주세요.', 'info', false);
       $(target.detail).focus();
+      message('주소를 입력했습니다. 상세주소를 확인해 주세요.', 'info', false);
     }
   });
 
@@ -367,7 +372,7 @@
     field.setAttribute('aria-invalid', 'true');
     message(text, 'error', false);
     field.focus();
-    if (field.reportValidity) field.reportValidity();
+    if (!window.snoteNotify && field.reportValidity) field.reportValidity();
     return false;
   }
   function validateStep(which) {
@@ -529,8 +534,8 @@
       challengeId = result.challengeId; challengePhone = phone;
       challengeExpiresAt = Date.parse(result.expiresAt) || 0;
       cooldownUntil = Date.now() + (Number(result.retryAfter) > 0 ? Math.min(Number(result.retryAfter), 86400) : 60) * 1000;
-      message('인증번호를 요청했습니다. 휴대전화에서 문자를 확인해 주세요.', 'info', false);
       setBusy(''); $('verification-code').focus();
+      message('인증번호를 요청했습니다. 휴대전화에서 문자를 확인해 주세요.', 'info', false);
     } catch (error) { if (epoch === pageEpoch) handleError(error, 'send-code'); }
     finally { if (epoch === pageEpoch) setBusy(''); }
   });

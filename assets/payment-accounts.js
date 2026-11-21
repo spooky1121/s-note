@@ -65,7 +65,7 @@
  }
 
  let section,form,saveButton,reloadButton,message,profileContext=null,baseline=null,profileVersion=0,loading=false,saving=false;
- let presentation=null,settingsHost=null,readTask=null;
+ let presentation=null,settingsHost=null,readTask=null,editVersion=0;
  const fields={};
  function mount(){
   if(section)return true;
@@ -93,10 +93,13 @@
   message=document.createElement('p');message.id='snote-payment-message';message.className='snote-profile-message';message.setAttribute('role','status');message.setAttribute('aria-live','polite');section.append(message);
   reloadButton=document.createElement('button');reloadButton.id='snote-payment-reload';reloadButton.type='button';reloadButton.className='snote-profile-text-button';reloadButton.textContent='다시 불러오기';reloadButton.hidden=true;section.append(reloadButton);
   const first=body.querySelector(':scope > .snote-profile-section');if(first)first.after(section);else body.append(section);
-  form.addEventListener('submit',saveProfile);form.addEventListener('input',controls);reloadButton.addEventListener('click',()=>void startRead(true));
+  form.addEventListener('submit',saveProfile);form.addEventListener('input',()=>{++editVersion;controls();});reloadButton.addEventListener('click',()=>void startRead(true));
   controls();return true;
  }
- function status(text,tone='info'){if(!message)return;message.textContent=text;message.dataset.tone=tone;}
+ function status(text,tone='info'){
+  if(!message)return;message.textContent=text;message.dataset.tone=tone;message.hidden=!!text&&['error','success'].includes(tone);
+  if(text&&['error','success'].includes(tone)){const version=profileVersion,context=profileContext;window.snoteNotify(text,{tone,key:'payment-accounts',isCurrent:()=>profileContext===context&&profileLive(version)});}
+ }
  const rawFields=()=>Object.fromEntries(kinds.map(kind=>[kind,Object.fromEntries(['bank','number','holder'].map(key=>[key,fields[kind]?.[key]?.value||'']))]));
  function fieldSignature(value){return JSON.stringify(value);}
  function baselineFields(){return Object.fromEntries(kinds.map(kind=>[kind,baseline?.accounts[kind]||{bank:'',number:'',holder:''}]));}
@@ -108,6 +111,11 @@
  const sameEditor=context=>!!context&&!!profileContext&&profileContext.key===context.key&&profileContext.client===context.client&&profileContext.role===context.role;
  const profileLive=version=>version===profileVersion&&!!profileContext&&isCurrent(profileContext)&&!!section&&section.isConnected&&!section.hidden&&
   (presentation==='profile'?dialog?.hidden===false&&dialog.contains(section):presentation==='settings'&&settingsRoute()&&settingsHost?.isConnected&&section.parentElement===settingsHost);
+ function discardScope(){
+  // Recheck the exact editor and draft after an asynchronous discard decision.
+  const version=profileVersion,context=profileContext,snapshot=baseline,edit=editVersion,draft=fieldSignature(rawFields());
+  return ()=>profileContext===context&&baseline===snapshot&&editVersion===edit&&profileLive(version)&&!loading&&!saving&&editorDirty()&&fieldSignature(rawFields())===draft;
+ }
  function controls(){
   if(!section)return;const ready=!!baseline&&profileLive(profileVersion)&&!loading&&!saving;
   for(const input of section.querySelectorAll('input'))input.disabled=!ready;
@@ -122,11 +130,12 @@
   return fallback;
  }
  async function readProfile(confirmDirty=false){
-  if(!profileContext||!isCurrent(profileContext)||saving)return false;
-  if(confirmDirty&&editorDirty()&&!window.confirm('입력한 입금계좌를 버리고 다시 불러올까요?'))return false;
+  if(!profileContext||!profileLive(profileVersion)||loading||saving)return false;
+  if(confirmDirty&&editorDirty()){const live=discardScope();if(!await window.snoteConfirm('입력한 입금계좌를 버리고 다시 불러올까요?',{isCurrent:live})||!live())return false;}
+  const context=profileContext;
   const version=++profileVersion;loading=true;baseline=null;for(const kind of kinds)for(const input of Object.values(fields[kind]))input.value='';controls();status('입금계좌를 불러오는 중…');reloadButton.hidden=true;
   try{
-   const result=receipt(profileContext,await bridge().read(profileContext));
+   const result=receipt(context,await bridge().read(context));
    if(!profileLive(version))return false;
    fill(result);status('');return true;
   }catch(error){
@@ -172,7 +181,8 @@
   if(presentation!=='settings')return true;
   if(!profileContext||!isCurrent(profileContext))return true;
   if(saving){status('입금계좌 저장이 끝난 후 이동해 주세요.');return false;}
-  return !editorDirty()||window.confirm('저장하지 않은 입금계좌 변경사항을 버리고 이동할까요?');
+  if(!editorDirty())return true;
+  const live=discardScope();return window.snoteConfirm('저장하지 않은 입금계좌 변경사항을 버리고 이동할까요?',{isCurrent:live}).then(confirmed=>confirmed===true&&live());
  }
  async function focusSettings(){
   const host=settingsElement();if(!host)return false;

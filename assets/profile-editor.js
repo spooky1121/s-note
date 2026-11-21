@@ -8,15 +8,23 @@
  byId('save').innerHTML=disk;for(const symbol of root.querySelectorAll('.snote-profile-disk'))symbol.innerHTML=disk;
  let context=null,baseline=null,request=0,closing=false,saveBusy=false,passwordBusy=false,phoneBusy=false,avatarBusy=false,returnFocus=null,previousOverflow='',closeTimer=null,sessionTimer=null;
  let challenge=null,resendAt=0,sendRequestId=null,avatar=null,avatarURL='',previewURL=null,committedPreviewURL=null;
- let logoRequest=0,logoImageRequest=0,logoProbe=null;
+ let logoRequest=0,logoImageRequest=0,logoProbe=null,editVersion=0,closeTask=null;
  let presentation='drawer',bodyLocked=false,settingsHost=null,settingsDetails=null,settingsSummary=null,settingsClick=null,settingsToggle=null;
  const bridge=()=>window.snoteProfileBridge,phoneValue=()=>byId('phone').value.replace(/\D/g,''),busy=()=>saveBusy||passwordBusy||phoneBusy||avatarBusy||!!window.SnotePaymentAccounts?.profileBusy();
  const current=(version=request)=>root.isConnected&&!root.hidden&&!closing&&version===request&&context&&bridge()?.current(context)&&(presentation!=='settings'||settingsHost?.isConnected&&root.parentElement===settingsHost);
- function status(id,text,tone='info'){const el=byId(id);el.textContent=text;el.dataset.tone=tone;}
+ function status(id,text,tone='info'){
+  const el=byId(id);el.textContent=text;el.dataset.tone=tone;el.hidden=!!text&&['error','success'].includes(tone);
+  if(text&&['error','success'].includes(tone)){const version=request,session=context;window.snoteNotify(text,{tone,key:'profile-'+id,isCurrent:()=>context===session&&current(version),returnFocus:id==='phone-message'?()=>challenge?byId('phone-code'):byId('phone'):undefined});}
+ }
  function values(){return {display_name:byId('name').value.trim(),company_name:byId('company').value.trim(),phone:String(baseline?.phone||''),address:String(baseline?.address||'')};}
  function personalDirty(){return !!baseline&&(byId('name').value.trim()!==String(baseline.display_name||'')||byId('company').value.trim()!==String(baseline.company_name||''));}
  function passwordDirty(){return ['password-current','password-new','password-confirm'].some(id=>byId(id).value.length>0);}
  function dirty(){return personalDirty()||passwordDirty()||!!baseline&&phoneValue()!==String(baseline.phone||'')||!!window.SnotePaymentAccounts?.profileDirty();}
+ function discardScope(){
+  // A popup decision may outlive this draft, a save, or the mounted account editor.
+  const version=request,session=context,snapshot=baseline,edit=editVersion,draft=JSON.stringify([...root.querySelectorAll('input,textarea')].map(input=>input.value));
+  return ()=>context===session&&baseline===snapshot&&editVersion===edit&&current(version)&&!busy()&&dirty()&&JSON.stringify([...root.querySelectorAll('input,textarea')].map(input=>input.value))===draft;
+ }
  function clearPasswords(){for(const id of ['password-current','password-new','password-confirm'])byId(id).value='';}
  function expected(withPhone=false){const value={user_id:baseline.user_id,company_id:baseline.company_id,display_name:baseline.display_name,company_name:baseline.company_name,revision:baseline.revision};if(withPhone)value.phone=String(baseline.phone||'');return value;}
  function resetChallenge(){challenge=null;byId('phone-code').value='';byId('phone-code-row').hidden=true;byId('phone-countdown').textContent='';}
@@ -79,7 +87,8 @@
   byId('company-note').hidden=profile.role==='admin';byId('role-label').textContent=profile.role==='admin'?'관리자 · 내 계정':profile.role==='accountant'?'경리 · 내 계정':'딜러 · 내 계정';if(result.user)showAuth(result.user);visuals(result,{logoVersion});controls();
  }
  async function load(){
-  if(!current()||busy())return;if(dirty()&&!window.confirm('입력한 내용을 버리고 프로필을 다시 불러올까요?'))return;
+  if(!current()||busy())return;
+  if(dirty()){const live=discardScope();if(!await window.snoteConfirm('입력한 내용을 버리고 프로필을 다시 불러올까요?',{isCurrent:live})||!live())return;}
   baseline=null;clearPasswords();resetChallenge();resendAt=0;sendRequestId=null;controls();const version=++request,logoVersion=logoRequest;status('message','프로필을 불러오는 중…');byId('reload').hidden=true;
   try{const result=await bridge().read(context);if(!current(version))return;fill(result,{logoVersion});status('message','');}
   catch(error){if(!current(version))return;status('message',message(error,'프로필을 불러오지 못했습니다. 다시 시도해 주세요.'),'error');byId('reload').hidden=false;controls();}
@@ -178,8 +187,16 @@
  }
  function close({force=false,immediate=false}={}){
   if(root.hidden||closing)return true;if(!force&&busy()){status('message','진행 중인 저장이 끝난 후 닫아 주세요.');return false;}
-  if(!force&&dirty()&&!window.confirm('저장하지 않은 변경사항을 버리고 닫을까요?'))return false;
-  ++request;closing=true;clearPasswords();root.classList.remove('is-open');if(force)returnFocus=null;
+  if(!force&&closeTask)return closeTask;
+  if(!force&&dirty()){
+   const live=discardScope();
+   const task=window.snoteConfirm('저장하지 않은 변경사항을 버리고 닫을까요?',{isCurrent:live}).then(confirmed=>confirmed&&live()?completeClose({force,immediate}):false).finally(()=>{if(closeTask===task)closeTask=null;});
+   closeTask=task;return task;
+  }
+  return completeClose({force,immediate});
+ }
+ function completeClose({force,immediate}){
+  closeTask=null;++request;closing=true;clearPasswords();root.classList.remove('is-open');if(force)returnFocus=null;
   if(immediate||presentation==='settings'){finishClose();return true;}
   const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;closeTimer=setTimeout(finishClose,reduced?0:290);return true;
  }
@@ -197,7 +214,7 @@
    if(mode!==presentation||mode==='settings'&&root.parentElement!==host){showPresentation(mode,host);if(mode==='drawer'){void panel.offsetWidth;requestAnimationFrame(()=>{if(!root.hidden&&!closing){root.classList.add('is-open');panel.focus({preventScroll:true});}});}}
    return true;
   }
-  context=bridge()?.context();if(!context){window.alert('온라인 계정에 로그인한 뒤 프로필을 설정해 주세요.');if(mode==='settings')settingsOpen(false);return false;}
+  context=bridge()?.context();if(!context){const version=request;void window.snoteAlert('온라인 계정에 로그인한 뒤 프로필을 설정해 주세요.',{isCurrent:()=>request===version&&!bridge()?.context()});if(mode==='settings')settingsOpen(false);return false;}
   baseline=null;saveBusy=false;passwordBusy=false;phoneBusy=false;avatarBusy=false;showPresentation(mode,host);root.hidden=false;clearPasswords();
   for(const id of ['message','password-message','phone-message','avatar-message'])status(id,'');root.querySelector('details').open=false;
   if(mode==='drawer')requestAnimationFrame(()=>{if(!root.hidden&&!closing){root.classList.add('is-open');panel.focus({preventScroll:true});}});
@@ -210,24 +227,24 @@
   if(!(host instanceof Element)||!host.isConnected)return false;const details=host.closest('details'),summary=details?.querySelector(':scope > summary');if(!details||!summary)return false;
   if(settingsHost===host){if(details.open&&root.hidden)void begin('settings',host);return true;}
   const authorized=!!context&&bridge()?.current(context)===true,carryInline=presentation==='settings'&&!root.hidden&&!closing&&!settingsHost?.isConnected&&authorized;
-  if(presentation==='settings'&&!root.hidden&&!carryInline&&!close({force:!authorized,immediate:true}))return false;
+  if(presentation==='settings'&&!root.hidden&&!carryInline){const closed=close({force:!authorized,immediate:true});if(closed&&typeof closed.then==='function')return closed.then(ok=>ok&&host.isConnected?mountSettings(host):false);if(!closed)return false;}
   if(settingsSummary&&settingsClick)settingsSummary.removeEventListener('click',settingsClick);if(settingsDetails&&settingsToggle)settingsDetails.removeEventListener('toggle',settingsToggle);
   settingsHost=host;settingsDetails=details;settingsSummary=summary;details.classList.add('snote-profile-settings-disclosure');
   if(!summary.querySelector('[data-profile-settings-action]')){const action=document.createElement('span');action.dataset.profileSettingsAction='';action.textContent=details.open?'숨기기':'펼치기';summary.append(action);}
-  settingsClick=event=>{event.preventDefault();if(details.open){if(presentation!=='settings'||root.hidden||close({immediate:true}))settingsOpen(false);}else void begin('settings',host);};
-  settingsToggle=()=>{summary.setAttribute('aria-expanded',String(details.open));const action=summary.querySelector('[data-profile-settings-action]');if(action)action.textContent=details.open?'숨기기':'펼치기';if(details.open){if(presentation!=='settings'||root.parentElement!==host||root.hidden)void begin('settings',host);}else if(presentation==='settings'&&!root.hidden&&root.parentElement===host&&!close({immediate:true}))settingsOpen(true);};
+  settingsClick=async event=>{event.preventDefault();if(details.open){if(presentation!=='settings'||root.hidden||await close({immediate:true})){if(settingsDetails===details&&host.isConnected)settingsOpen(false);}}else void begin('settings',host);};
+  settingsToggle=()=>{summary.setAttribute('aria-expanded',String(details.open));const action=summary.querySelector('[data-profile-settings-action]');if(action)action.textContent=details.open?'숨기기':'펼치기';if(details.open){if(presentation!=='settings'||root.parentElement!==host||root.hidden)void begin('settings',host);}else if(presentation==='settings'&&!root.hidden&&root.parentElement===host){const closed=close({immediate:true});if(closed&&typeof closed.then==='function'){settingsOpen(true);void closed;}else if(!closed)settingsOpen(true);}};
   summary.addEventListener('click',settingsClick);details.addEventListener('toggle',settingsToggle);summary.setAttribute('aria-expanded',String(details.open));if(carryInline)showPresentation('settings',host);else if(details.open)void begin('settings',host);return true;
  }
  window.addEventListener('snote:route-changed',event=>{if(event.detail?.page!=='settings'&&presentation==='settings'&&!root.hidden)close({force:true,immediate:true});});
  window.addEventListener('snote:company-assets-changed',event=>{if(event.detail?.kind==='companyLogo')void refreshCompanyLogo(event.detail);});
  new MutationObserver(()=>{let settings=false;try{settings=typeof route==='string'&&route==='settings';}catch{}const host=settings?document.getElementById('snote-settings-profile-body'):null;if(host&&host!==settingsHost)mountSettings(host);if(presentation==='settings'&&!root.hidden&&(!settingsHost?.isConnected||!settingsDetails?.isConnected||root.parentElement!==settingsHost))close({force:true,immediate:true});}).observe(document.body,{childList:true,subtree:true});
  const initialHost=document.getElementById('snote-settings-profile-body');if(initialHost)mountSettings(initialHost);
- root.addEventListener('input',event=>{if(event.target===byId('phone')){if(challenge&&phoneValue()!==challenge.phone)resetChallenge();sendRequestId=null;}if(event.target===byId('phone-code'))byId('phone-code').value=byId('phone-code').value.replace(/\D/g,'').slice(0,6);controls();});
+ root.addEventListener('input',event=>{++editVersion;if(event.target===byId('phone')){if(challenge&&phoneValue()!==challenge.phone)resetChallenge();sendRequestId=null;}if(event.target===byId('phone-code'))byId('phone-code').value=byId('phone-code').value.replace(/\D/g,'').slice(0,6);controls();});
  byId('form').addEventListener('submit',save);byId('phone-form').addEventListener('submit',phoneConfirm);byId('phone-send').addEventListener('click',phoneSend);byId('password-form').addEventListener('submit',passwordSave);
  byId('avatar-pick').addEventListener('click',()=>byId('avatar-file').click());byId('avatar-file').addEventListener('change',avatarChange);byId('avatar').addEventListener('error',()=>{byId('avatar').hidden=true;byId('avatar-placeholder').hidden=false;});
  byId('close').addEventListener('click',()=>close());byId('reload').addEventListener('click',load);
  document.addEventListener('keydown',event=>{
-  if(root.hidden||closing||presentation==='settings')return;if(event.key==='Escape'){event.preventDefault();event.stopImmediatePropagation();return;}
+  if(root.hidden||closing||presentation==='settings'||window.SnoteMessages?.active())return;if(event.key==='Escape'){event.preventDefault();event.stopImmediatePropagation();return;}
   if(event.key==='Tab'){const elements=[...root.querySelectorAll('button,input,textarea,summary,[tabindex="0"]')].filter(el=>!el.disabled&&el.getClientRects().length),first=elements[0],last=elements[elements.length-1];if(!first)return;if(event.shiftKey&&(document.activeElement===first||!root.contains(document.activeElement))){event.preventDefault();last.focus();}else if(!event.shiftKey&&(document.activeElement===last||!root.contains(document.activeElement))){event.preventDefault();first.focus();}}
  },true);
  window.addEventListener('beforeunload',event=>{if(!root.hidden&&dirty()){event.preventDefault();event.returnValue='';}});window.snoteProfileEditor=Object.freeze({open,close,mountSettings,prepareRouteChange});

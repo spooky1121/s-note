@@ -40,7 +40,7 @@
    warningCodes:Array.isArray(value.warnings)?value.warnings.slice(0,8).map(row=>text(row?.code,60)).filter(code=>/^[A-Z0-9_]+$/.test(code)):[],importEnabled:false};
  }
  function errorMessage(error){const code=Object.hasOwn(ERRORS,error?.code)?error.code:'NETWORK';return {code,message:ERRORS[code],providerRequestCount:number(error?.providerRequestCount,2),retryAfter:number(error?.retryAfter,86400)};}
- function message(state,value,tone='info'){state.message.textContent=value;state.message.dataset.tone=tone;}
+ function message(state,value,tone='info'){const popup=!!value&&['error','success'].includes(tone)&&typeof window.snoteNotify==='function';state.message.textContent=value;state.message.dataset.tone=tone;state.message.hidden=popup;if(popup)window.snoteNotify(value,{tone,key:'taxonomy-probe:'+state.version,isCurrent:()=>valid(state)});}
  function badge(state,value,tone='info'){state.badge.textContent=value;state.badge.dataset.tone=tone;}
  function controls(state){const busy=state.statusBusy||state.probeBusy;state.select.disabled=busy;state.probe.disabled=busy||!state.configured;state.retry.disabled=busy;state.copy.disabled=busy||(!state.report&&!state.failure);state.card.setAttribute('aria-busy',String(busy));}
  function clearResult(state){state.report=null;state.failure=null;state.results.replaceChildren();state.results.hidden=true;state.fallback.hidden=true;state.fallback.value='';}
@@ -76,7 +76,7 @@
   if(!valid(state)||state.statusBusy||state.probeBusy||(!state.report&&!state.failure))return;
   const diagnostic=state.report||{provider:'encar-api.com',checkedAt:new Date().toISOString(),error:{code:state.failure.code,providerRequestCount:state.failure.providerRequestCount,retryAfter:state.failure.retryAfter},importEnabled:false};
   const value=JSON.stringify(diagnostic,null,2);
-  try{if(!navigator.clipboard?.writeText)throw Error('NO_CLIPBOARD');await navigator.clipboard.writeText(value);if(valid(state))message(state,'확인 결과를 복사했습니다.');}
+  try{if(!navigator.clipboard?.writeText)throw Error('NO_CLIPBOARD');await navigator.clipboard.writeText(value);if(valid(state))message(state,'확인 결과를 복사했습니다.','success');}
   catch{if(!valid(state))return;state.fallback.value=value;state.fallback.hidden=false;state.fallback.focus();state.fallback.select();message(state,'아래 내용을 선택해 복사해 주세요.');}
  }
  function destroy(){epoch++;if(active){active.results.replaceChildren();active.fallback.value='';active.card.remove();}active=null;}

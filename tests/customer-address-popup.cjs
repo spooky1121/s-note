@@ -12,7 +12,7 @@ const assert = require('node:assert/strict');
 const {chromium} = require('playwright');
 const root = path.resolve(__dirname, '..');
 const token = 'a'.repeat(64), session = 'b'.repeat(64);
-const info = {ok:true,rrnEnabled:true,car:{model:'현대 그랜저 2.5',plate:'123가4567',year:2024,km:18200,color:'흰색',sell:2390},companyName:'테스트 자동차',phoneMasked:'010-****-5678',expiresAt:'2026-11-02T09:00:00Z',status:'pending'};
+const info = {ok:true,flowVersion:'wizard-v1',rrnEnabled:true,car:{model:'현대 그랜저 2.5',plate:'123가4567',year:2024,km:18200,color:'흰색',sell:2390},companyName:'테스트 자동차',phoneMasked:'010-****-5678',expiresAt:'2026-11-02T09:00:00Z',status:'pending'};
 const challenge = {ok:true,challengeId:'11111111-1111-4111-8111-111111111111',expiresAt:'2026-11-01T09:05:00Z',retryAfter:60};
 const verified = {ok:true,session,sessionExpiresAt:'2026-11-01T09:30:00Z'};
 
@@ -32,9 +32,11 @@ const providerScript=`(async()=>{window.fixtureProbe={origin:globalThis.origin,p
 let browser;
 async function fixture(custom, hash=token, width=320){
  const context=await browser.newContext({viewport:{width,height:900}});
- const page=await context.newPage(), calls=[], external=[], errors=[];
- context.on('page', tab=>tab.on('pageerror',e=>errors.push(e.message)));
- page.on('pageerror',e=>errors.push(e.message));
+ const page=await context.newPage(), calls=[], external=[], errors=[], notifications=[];
+ await context.exposeBinding('__addressFixtureMessage',async({page:owner},detail)=>{notifications.push(detail);if(detail.kind==='confirm')throw Error('Address flow must not ask for an unrelated confirmation');await owner.evaluate(id=>{const dialog=document.querySelector('#snote-message-dialog');if(dialog?.open&&dialog.dataset.messageId===String(id))dialog.querySelector('[data-message-accept]').click();},detail.id);});
+ await context.addInitScript(()=>window.addEventListener('snote:message-open',event=>{void window.__addressFixtureMessage(event.detail);}));
+ context.on('page', tab=>{tab.on('pageerror',e=>errors.push(e.message));tab.on('dialog',dialog=>{errors.push('Unexpected native dialog '+dialog.type());void dialog.dismiss();});});
+ page.on('pageerror',e=>errors.push(e.message));page.on('dialog',dialog=>{errors.push('Unexpected native dialog '+dialog.type());void dialog.dismiss();});
  await page.addInitScript(()=>{const actualOpen=window.open;window.fixturePopupRefs=[];window.fixturePopupUrls=[];window.open=function(...args){const result=actualOpen.apply(this,args);fixturePopupRefs.push(result);fixturePopupUrls.push(args[0]);return result;}});
  await page.clock.install({time:new Date('2026-11-01T09:00:00Z')});
  await context.route('**/*',async route=>{
@@ -55,17 +57,17 @@ async function fixture(custom, hash=token, width=320){
    const answer=result||{body:body.action==='info'?info:body.action==='send-code'?challenge:body.action==='verify'?verified:{ok:true,submittedAt:'2026-11-01T09:01:00Z'}};
    return route.fulfill({status:answer.status||200,contentType:'application/json',body:JSON.stringify(answer.body)});
   }
-  const files={'/customer.html':'customer.html','/assets/customer-intake.js':'assets/customer-intake.js','/assets/customer-intake.css':'assets/customer-intake.css','/assets/snote-logo.png':'assets/snote-logo.png','/address-search.html':'address-search.html','/assets/address-search.js':'assets/address-search.js','/assets/address-search.css':'assets/address-search.css'};
+  const files={'/assets/message-popup.js':'assets/message-popup.js','/assets/message-popup.css':'assets/message-popup.css','/customer.html':'customer.html','/assets/customer-intake.js':'assets/customer-intake.js','/assets/customer-intake.css':'assets/customer-intake.css','/assets/snote-logo.png':'assets/snote-logo.png','/address-search.html':'address-search.html','/assets/address-search.js':'assets/address-search.js','/assets/address-search.css':'assets/address-search.css'};
   if(!files[url.pathname])return route.abort();
   const types={'.html':'text/html','.js':'application/javascript','.css':'text/css','.png':'image/png'};
   return route.fulfill({contentType:types[path.extname(url.pathname)],body:fs.readFileSync(path.join(root,files[url.pathname])),headers:{'Content-Security-Policy':cspFor(url.pathname),'Referrer-Policy':'no-referrer'}});
  });
  await page.goto('https://customer.test/customer.html'+(hash?'#'+hash:''),{waitUntil:'networkidle'});
- return {context,page,calls,external,errors};
+ return {context,page,calls,external,errors,notifications};
 }
 async function layout(page){assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);}
-async function begin(page){await page.locator('#stage-car').waitFor({state:'visible'});await page.locator('#vehicle-confirmed').check();await page.locator('#vehicle-next').click();await page.locator('#request-code').click();await page.locator('#verification-code').fill('000123');await page.locator('#verify-button').click();await page.locator('#stage-details').waitFor({state:'visible'});}
-async function fill(page){await page.locator('#customer-name').fill('김테스트');await page.locator('#address-base').fill('서울특별시 강남구 테스트로 10');await page.locator('#address-detail').fill('101동 202호');await page.locator('#required-consent').check();}
+async function begin(page){await page.locator('#stage-car').waitFor({state:'visible'});await page.locator('#vehicle-confirmed').check();await page.locator('#vehicle-next').click();await page.locator('#customer-name').fill('김테스트');await page.locator('#wizard-next').click();await page.locator('#rrn-front').fill('900101');await page.locator('#rrn-back').fill('1234567');await page.locator('#wizard-next').click();await page.locator('[data-wizard-step=address]').waitFor({state:'visible'});}
+async function fill(page){await page.locator('#address-base').fill('서울특별시 강남구 테스트로 10');await page.locator('#address-detail').fill('101동 202호');}
 async function finishFixture(f){assert.deepEqual(f.external,[]);assert.deepEqual(f.errors,[]);await f.context.close();}
 
 async function popup(f,target='residence'){
@@ -77,7 +79,7 @@ async function assertParentAddress(p,value){assert.equal(await p.locator('#addre
  browser=await chromium.launch({headless:true,...(process.env.CHROMIUM_PATH?{executablePath:process.env.CHROMIUM_PATH}:{})});
  try{
   {
-   const f=await fixture(),p=f.page;await begin(p);await fill(p);await p.locator('#rrn-front').fill('900101');await p.locator('#rrn-back').fill('1234567');
+   const f=await fixture(),p=f.page;await begin(p);await fill(p);
    assert.equal(await p.locator('iframe,dialog').count(),0);assert.equal(await p.locator('[data-address-search="mailing"]').isDisabled(),true);
    let child=await popup(f);
    assert.deepEqual(await child.evaluate(()=>fixtureSdkProbe),{origin:'https://customer.test',protocol:'https:',hashCleared:true,openerNull:true});
@@ -89,17 +91,17 @@ async function assertParentAddress(p,value){assert.equal(await p.locator('#addre
    const probe=await provider.evaluate(()=>fixtureProbe);assert.equal(probe.origin,'https://postcode.map.kakao.com');assert.equal(probe.protocol,'https:');assert.equal(probe.fetchOk,true);
    await p.evaluate(nonce=>{for(const [origin,source,n]of [['https://wrong.test',fixturePopupRefs[0],nonce],[location.origin,window,nonce],[location.origin,fixturePopupRefs[0],'0'.repeat(32)]])dispatchEvent(new MessageEvent('message',{origin,source,data:{type:'SNOTE_CUSTOMER_ADDRESS',nonce:n,kind:'selected',address:'잘못된 주소'}}));},nonce);
    await assertParentAddress(p,'서울특별시 강남구 테스트로 10');
-   await child.locator('#mock-select').click();await closed(child);await p.locator('#address-search-status').waitFor({state:'hidden'});
+   await child.locator('#mock-select').click();await closed(child);await p.waitForFunction(()=>!window.SnoteMessages.active());await p.locator('#address-search-status').waitFor({state:'hidden'});
    await assertParentAddress(p,'서울특별시 중구 세종대로 110');assert.equal(await p.locator('#mailing-base').inputValue(),'서울특별시 중구 세종대로 110');assert.equal(await p.locator('#address-detail').inputValue(),'');assert.equal(await p.locator('#rrn-back').inputValue(),'1234567');assert.equal(await p.evaluate(()=>document.activeElement.id),'address-detail');
    await p.locator('#same-address').uncheck();child=await popup(f,'mailing');
-   await child.locator('#mock-select').click();await closed(child);assert.equal(await p.evaluate(()=>document.activeElement.id),'mailing-detail');
+   await child.locator('#mock-select').click();await closed(child);await p.waitForFunction(()=>!window.SnoteMessages.active());assert.equal(await p.evaluate(()=>document.activeElement.id),'mailing-detail');
    await assertParentAddress(p,'서울특별시 중구 세종대로 110');
    child=await popup(f);const old=child;const next=await popup(f,'mailing');await closed(old);
    const newNonce=await p.evaluate(()=>new URL(fixturePopupUrls.at(-1)).hash.slice(1));
    await p.evaluate(nonce=>dispatchEvent(new MessageEvent('message',{origin:location.origin,source:fixturePopupRefs.at(-2),data:{type:'SNOTE_CUSTOMER_ADDRESS',nonce,kind:'selected',address:'이전 창 주소'}})),newNonce);
    assert.equal(await p.locator('#mailing-base').inputValue(),'서울특별시 중구 세종대로 110');
    await p.locator('#address-search-cancel').click();await closed(next);await p.locator('#address-search-status').waitFor({state:'hidden'});
-   child=await popup(f);await child.locator('#close-search').click();await closed(child);await p.locator('#address-search-status').waitFor({state:'hidden'});
+   child=await popup(f);await child.locator('#close-search').click().catch(error=>{if(!child.isClosed())throw error;});await closed(child);await p.locator('#address-search-status').waitFor({state:'hidden'});
    child=await popup(f);await child.keyboard.press('Escape').catch(error=>{if(!child.isClosed())throw error;});await closed(child);await p.locator('#address-search-status').waitFor({state:'hidden'});
    child=await popup(f);await child.close();await p.clock.fastForward(600);await p.locator('#address-search-status').waitFor({state:'hidden'});
    await layout(p);if(process.env.SNOTE_TEST_SCREENSHOT)await p.screenshot({path:process.env.SNOTE_TEST_SCREENSHOT,fullPage:true});
@@ -107,13 +109,13 @@ async function assertParentAddress(p,value){assert.equal(await p.locator('#addre
    console.log('PASS real HTTPS popup, SDK opener null/fragment cleared, about:blank wrapper + HTTPS provider nested iframe same-origin fetch, origin/source/nonce/stale rejection, residence/mailing/detail focus, cancel/Escape/window close, 320px, RRN preserved');
   }
   {
-   const f=await fixture(),p=f.page;await begin(p);await fill(p);await p.evaluate(()=>window.open=()=>null);await p.locator('[data-address-search="residence"]').click();await p.getByText(/주소 검색창이 차단되었습니다/).waitFor();assert.equal(f.context.pages().length,1);await assertParentAddress(p,'서울특별시 강남구 테스트로 10');assert.equal(await p.locator('#address-base').isEnabled(),true);await finishFixture(f);console.log('PASS blocked popup shows recovery and preserves editable form');
+   const f=await fixture(),p=f.page;await begin(p);await fill(p);await p.evaluate(()=>window.open=()=>null);await p.locator('[data-address-search="residence"]').click();await p.waitForFunction(()=>document.querySelector('#status-message').textContent.includes('주소 검색창이 차단되었습니다'));assert(f.notifications.some(message=>message.tone==='error'&&message.text.includes('주소 검색창이 차단되었습니다')));assert.equal(f.context.pages().length,1);await assertParentAddress(p,'서울특별시 강남구 테스트로 10');assert.equal(await p.locator('#address-base').isEnabled(),true);await finishFixture(f);console.log('PASS blocked popup shows recovery and preserves editable form');
   }
   {
-   sdkFail=true;const f=await fixture(),p=f.page;await begin(p);await fill(p);const pending=f.context.waitForEvent('page');await p.locator('[data-address-search="residence"]').click();const child=await pending;await child.locator('#search-status[data-tone="error"]').waitFor();await p.locator('#address-search-status[data-tone="error"]').waitFor();await p.locator('#address-search-cancel').click();await closed(child);await assertParentAddress(p,'서울특별시 강남구 테스트로 10');assert.equal(await p.locator('#address-base').isEnabled(),true);await finishFixture(f);sdkFail=false;console.log('PASS SDK load failure preserves editable address and cancel');
+   sdkFail=true;const f=await fixture(),p=f.page;await begin(p);await fill(p);const pending=f.context.waitForEvent('page');await p.locator('[data-address-search="residence"]').click();const child=await pending;await child.waitForFunction(()=>document.querySelector('#search-status').dataset.tone==='error');assert(f.notifications.some(message=>message.tone==='error'&&message.text.includes('주소 검색을 불러오지 못했습니다')));await p.locator('#address-search-status[data-tone="error"]').waitFor();await p.locator('#address-search-cancel').click();await closed(child);await assertParentAddress(p,'서울특별시 강남구 테스트로 10');assert.equal(await p.locator('#address-base').isEnabled(),true);await finishFixture(f);sdkFail=false;console.log('PASS SDK load failure preserves editable address and cancel');
   }
   {
-   const context=await browser.newContext();let sdkRequests=0;await context.route('**/*',async route=>{const url=new URL(route.request().url());if(url.hostname==='t1.kakaocdn.net'){sdkRequests++;return route.abort();}const file=url.pathname==='/address-search.html'?'address-search.html':url.pathname.slice(1);if(!fs.existsSync(root+'/'+file))return route.abort();return route.fulfill({contentType:path.extname(file)==='.html'?'text/html':path.extname(file)==='.js'?'application/javascript':'text/css',body:fs.readFileSync(root+'/'+file)});});const p=await context.newPage();await p.goto('https://customer.test/address-search.html?parentOrigin=https%3A%2F%2Fcustomer.test#'+'1'.repeat(32));await p.getByText('고객정보 입력 화면의 주소 검색 버튼으로 열어 주세요.').waitFor();assert.equal(sdkRequests,0);await context.close();console.log('PASS direct helper without trusted opener rejects before SDK load');
+   const context=await browser.newContext();let sdkRequests=0;await context.route('**/*',async route=>{const url=new URL(route.request().url());if(url.hostname==='t1.kakaocdn.net'){sdkRequests++;return route.abort();}const file=url.pathname==='/address-search.html'?'address-search.html':url.pathname.slice(1);if(!fs.existsSync(root+'/'+file))return route.abort();return route.fulfill({contentType:path.extname(file)==='.html'?'text/html':path.extname(file)==='.js'?'application/javascript':'text/css',body:fs.readFileSync(root+'/'+file)});});const p=await context.newPage();await p.goto('https://customer.test/address-search.html?parentOrigin=https%3A%2F%2Fcustomer.test#'+'1'.repeat(32));await p.locator('#snote-message-copy').getByText('고객정보 입력 화면의 주소 검색 버튼으로 열어 주세요.',{exact:true}).waitFor();assert.equal(sdkRequests,0);await context.close();console.log('PASS direct helper without trusted opener rejects before SDK load');
   }
   console.log('ALL V2.13 ADDRESS POPUP FIXTURE CHECKS PASSED');
  }finally{await browser.close();}

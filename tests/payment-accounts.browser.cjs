@@ -132,6 +132,12 @@ async function settingsAndQuoteGate(width){const f=await setup(width),p=f.page;t
  assert.equal(await p.evaluate(()=>SnotePaymentAccounts.ensureQuoteAccounts(()=>true)),'missing','Unsaved settings input cannot count as registered account');
  await p.evaluate(()=>navigate('settings'));await directSettings(p);assert.equal(await p.locator('#snote-payment-vehicle-number').inputValue(),ACCOUNTS.vehicle.number,'Same-account settings rerender must preserve an unsaved account draft');
  f.answerConfirm(false,/입금계좌|저장하지 않은/);assert.equal(await p.evaluate(()=>navigate('buy')),false);assert.equal(await p.evaluate(()=>route),'settings');assert.equal(await p.locator('#snote-payment-vehicle-number').inputValue(),ACCOUNTS.vehicle.number);
+ await p.evaluate(()=>{window.__paymentConfirm=window.snoteConfirm;window.snoteConfirm=(text,options)=>new Promise(resolve=>{window.__paymentPendingConfirm={text,options,resolve};});window.__paymentRouteGuard=SnotePaymentAccounts.prepareRouteChange();});
+ assert.equal(await p.evaluate(()=>typeof __paymentRouteGuard.then),'function','Dirty account navigation must return an awaited decision');
+ await fields(p,'vehicle',{...ACCOUNTS.vehicle,holder:'확인 중 새 예금주'});assert.equal(await p.evaluate(()=>__paymentPendingConfirm.options.isCurrent()),false);
+ await p.evaluate(()=>__paymentPendingConfirm.resolve(true));assert.equal(await p.evaluate(()=>__paymentRouteGuard),false,'A stale accepted decision cannot discard newer receiving details');
+ assert.equal(await p.evaluate(()=>route),'settings');assert.equal(await p.locator('#snote-payment-vehicle-holder').inputValue(),'확인 중 새 예금주');
+ await p.evaluate(()=>{window.snoteConfirm=window.__paymentConfirm;});await fields(p,'vehicle',ACCOUNTS.vehicle);
  f.bank.conflict=true;await p.locator('#snote-payment-save').click();await p.waitForFunction(()=>document.getElementById('snote-payment-message').dataset.tone==='error');assert.equal(await p.locator('#snote-payment-vehicle-number').inputValue(),ACCOUNTS.vehicle.number);assert.equal(await p.evaluate(()=>SnotePaymentAccounts.ensureQuoteAccounts(()=>true)),'missing','A failed account save must not unlock quotations');f.bank.conflict=false;
  await save(p);await p.evaluate(()=>navigate('buy'));await quote(p);await assertAccounts(p,'#quote-paper',{vehicle:ACCOUNTS.vehicle,transfer:null});
  await p.evaluate(()=>{closeQuotePreview();navigate('settings');});await directSettings(p);assert.equal(await p.locator('#snote-payment-vehicle-number').inputValue(),ACCOUNTS.vehicle.number);

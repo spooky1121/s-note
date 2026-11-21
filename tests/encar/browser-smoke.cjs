@@ -54,9 +54,9 @@ async function releaseLifecycle(page,version){
  console.log('PASS actual HTML canonical release synchronizes all three original badges, late added markers/subtrees, and duplicate-script refresh without changing app state');
 }
 
-async function fixture(width=1440,savedCars=null,{primaryColor=null,weather=null,sessionToken=TOKEN,encarLogoUnavailable=false,lookupUnavailable=false,paymentAccountsRegistered=false}={}){
+async function fixture(width=1440,savedCars=null,{primaryColor=null,weather=null,sessionToken=TOKEN,encarLogoUnavailable=false,lookupUnavailable=false,paymentAccountsRegistered=false,manualMessages=false}={}){
  const context=await browser.newContext({viewport:{width,height:950}}),page=await context.newPage();
- const f={context,page,requests:[],autoPriceRequests:[],logouts:[],navigations:[],external:[],unexpected:[],errors:[],responses:[],dialogs:[],dialogAnswers:[],unexpectedDialogs:[]};
+ const f={context,page,requests:[],autoPriceRequests:[],logouts:[],navigations:[],external:[],unexpected:[],errors:[],responses:[],dialogs:[],dialogAnswers:[],unexpectedDialogs:[],notifications:[],manualMessages:false};
  const answerDialog=async dialog=>{
   const type=dialog.type(),message=dialog.message(),expected=f.dialogAnswers.shift();
   const answer=expected?.answer??(type!=='confirm');
@@ -67,6 +67,16 @@ async function fixture(width=1440,savedCars=null,{primaryColor=null,weather=null
  };
  f.answerConfirm=(answer,message=/^변경사항을 저장하시겠습니까\?\n확인: 저장 후 닫기 · 취소: 저장하지 않고 닫기$/)=>f.dialogAnswers.push({type:'confirm',message,answer});
  f.answerAlert=(message)=>f.dialogAnswers.push({type:'alert',message,answer:true});
+ await context.exposeBinding('__snoteFixtureMessage',async({page:opened},detail)=>{
+  if(f.manualMessages)return;
+  const type=detail.kind==='confirm'?'confirm':'alert',expected=f.dialogAnswers[0];
+  const consume=detail.kind!=='notify'||expected?.type==='alert'&&expected.message.test(detail.text);
+  const answer=consume?(f.dialogAnswers.shift()?.answer??type!=='confirm'):true;
+  if(consume){f.dialogs.push({type,message:detail.text,answer});if(!expected||expected.type!==type||!expected.message.test(detail.text))f.unexpectedDialogs.push({type,message:detail.text});}
+  else f.notifications.push({message:detail.text,tone:detail.tone});
+  await opened.evaluate(({id,answer})=>{const box=document.querySelector('#snote-message-dialog[open]');if(box?.dataset.messageId===String(id))box.querySelector(answer?'[data-message-accept]':'[data-message-cancel]')?.click();},{id:detail.id,answer});
+ });
+ await context.addInitScript(()=>{window.__snoteFixtureManualMessages=false;window.addEventListener('snote:message-open',event=>{if(event.detail.kind==='notify'&&!window.__snoteFixtureManualMessages)document.querySelector('#snote-message-dialog[data-message-id="'+event.detail.id+'"] [data-message-accept]')?.click();void window.__snoteFixtureMessage(event.detail);});});
  context.on('page',opened=>{opened.on('pageerror',error=>f.errors.push(error.message));opened.on('dialog',answerDialog);});
  page.on('pageerror',error=>f.errors.push(error.message));page.on('dialog',answerDialog);page.setDefaultTimeout(15000);
  await context.route('**/*',async route=>{
@@ -164,7 +174,7 @@ async function fixture(width=1440,savedCars=null,{primaryColor=null,weather=null
  await page.locator(BUTTON).waitFor({state:'visible'});assert.equal(await page.locator(BUTTON).isDisabled(),true,'Local/demo login must not enable an online lookup');
  await assertEncarLogo(page);
  await page.evaluate(async()=>{window.__encarFixtureState.ready=true;document.getElementById('zc86-topbar').hidden=false;if(window.SnoteDealerFinanceRates&&!await SnoteDealerFinanceRates.refresh({force:true}))throw Error('Synthetic rate profile did not load');});if(!lookupUnavailable)await page.locator(BUTTON+':not([disabled])').waitFor();
- await page.locator('#vehicle-overlay .vehicle-detail-frame').evaluate(async e=>{await Promise.all(e.getAnimations().map(a=>a.finished.catch(()=>{})))});f.reply=(body,status=200)=>f.responses.push({body,status});return f;
+ await page.locator('#vehicle-overlay .vehicle-detail-frame').evaluate(async e=>{await Promise.all(e.getAnimations().map(a=>a.finished.catch(()=>{})))});f.reply=(body,status=200)=>f.responses.push({body,status});await page.evaluate(value=>window.__snoteFixtureManualMessages=value,manualMessages);f.manualMessages=manualMessages;return f;
 }
 async function assertEncarLogo(page){
  const glyph=page.locator(BUTTON+' svg.snote-encar-glyph[data-snote-action-icon="encar"]');

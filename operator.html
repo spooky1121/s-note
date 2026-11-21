@@ -8,14 +8,16 @@
   <title>Snote · 운영자</title>
   <link rel="icon" href="assets/snote-logo.png">
   <link rel="stylesheet" href="assets/operator-console.css?v=2.144">
+  <link rel="stylesheet" href="assets/message-popup.css?v=2.172">
+  <script src="assets/message-popup.js?v=2.172" defer></script>
   <link rel="stylesheet" href="assets/close-controls.css?v=2.166">
   <script src="assets/close-controls.js?v=2.166" defer></script>
   <link rel="stylesheet" href="assets/workspace-reorder.css?v=2.136">
   <script src="assets/workspace-order-store.js?v=2.135" defer></script>
-  <script src="assets/workspace-reorder.js?v=2.136" defer></script>
+  <script src="assets/workspace-reorder.js?v=2.172" defer></script>
   <script src="assets/money.js?v=2.85" defer></script>
   <script src="assets/access-tracker.js?v=2.85" defer></script>
-  <script src="assets/operator-console.js?v=2.144" defer></script>
+  <script src="assets/operator-console.js?v=2.172" defer></script>
 </head>
 <body>
   <section id="operator-login" class="login-shell" aria-labelledby="login-title">
@@ -71,7 +73,6 @@
   <div id="operator-drawer" class="drawer-overlay" role="dialog" aria-modal="true" aria-labelledby="operator-drawer-title" hidden>
     <section class="drawer-panel" tabindex="-1"><header class="drawer-header"><button class="icon-button close-button" id="operator-drawer-close" type="button" aria-label="상세 닫기" data-tooltip="닫기" data-icon="close"></button><div><span class="eyebrow" id="operator-drawer-kicker"></span><h2 id="operator-drawer-title">상세 정보</h2></div><div id="operator-drawer-actions" class="drawer-actions"></div></header><div id="operator-drawer-body" class="drawer-body"></div><p id="operator-drawer-message" class="message drawer-message" role="status" aria-live="polite"></p></section>
   </div>
-  <div id="operator-confirm" class="confirm-overlay" role="alertdialog" aria-modal="true" aria-labelledby="operator-confirm-title" aria-describedby="operator-confirm-copy" hidden><section class="confirm-panel"><h2 id="operator-confirm-title"></h2><p id="operator-confirm-copy"></p><div><button type="button" id="operator-confirm-cancel" class="secondary">취소</button><button type="button" id="operator-confirm-accept" class="primary">확인</button></div></section></div>
   <div id="operator-tooltip" role="tooltip" hidden></div>
 </body>
 </html>

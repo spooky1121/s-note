@@ -4,14 +4,19 @@
  const doc=document,MAX_WON=1000000000000;
  const node=(tag,text,className)=>{const el=doc.createElement(tag);if(text!=null)el.textContent=text;if(className)el.className=className;return el;};
  const by=id=>doc.getElementById(id);
- let root,form,body,panels=[],progress=[],previous,next,complete,message,counter,step=1,saving=false,pending=false,closeJob=null;
+ let root,form,body,panels=[],progress=[],previous,next,complete,message,counter,step=1,saving=false,pending=false,closeJob=null,messageVersion=0,invalidControl=null;
  const disabledBefore=new Map();
  const labels=['차량 정보','금액·비용','재고 설정'];
  function control(field){const select=by('new-'+field);return select?.value==='__manual__'?by('snote98-'+field+'-input'):select;}
  function choice(field){try{if(typeof snote98Choice==='function')return snote98Choice(field);}catch{}const el=control(field);return String(el?.value||'').trim();}
  function ocrTitle(){try{return typeof snote98UsingOcrTitle==='function'&&snote98UsingOcrTitle();}catch{return false;}}
- function clearMessage(){if(message){message.textContent='';message.hidden=true;}}
- function reportError(text,which=step,field){showStep(which,{focus:false});message.textContent=String(text||'입력 내용을 확인해 주세요.');message.hidden=false;const el=typeof field==='string'?by(field):field;if(el&&!el.disabled)el.focus({preventScroll:true});else message.focus({preventScroll:true});return false;}
+ function clearMessage(){++messageVersion;if(invalidControl){invalidControl.removeAttribute('aria-invalid');invalidControl=null;}if(message){message.textContent='';message.hidden=true;}}
+ function reportError(text,which=step,field){
+  showStep(which,{focus:false});const version=++messageVersion,atStep=step,el=typeof field==='string'?by(field):field;
+  message.textContent=String(text||'입력 내용을 확인해 주세요.');message.dataset.tone='error';message.hidden=true;
+  if(el){invalidControl=el;el.setAttribute('aria-invalid','true');}
+  window.snoteNotify(message.textContent,{tone:'error',key:'purchase-registration',isCurrent:()=>version===messageVersion&&root.isConnected&&root.classList.contains('open')&&form.isConnected&&step===atStep&&!saving,returnFocus:()=>el?.isConnected&&!el.disabled?el:next});return false;
+ }
  function providedValid(el){
   if(!el||el.disabled)return true;
   const value=String(el.value||'').trim(),max=Number(el.getAttribute('maxlength'));
@@ -177,7 +182,7 @@
   form.addEventListener('submit',event=>{if(step<3){event.preventDefault();event.stopImmediatePropagation();if(!saving&&!pending&&validateStep(step))showStep(step+1);}},true);
   form.addEventListener('input',()=>{if(!saving&&!pending){clearMessage();applyRequired();synchronizeSummary();}});
   form.addEventListener('change',()=>{if(!saving&&!pending){clearMessage();applyRequired();synchronizeSummary();}});
-  root.addEventListener('keydown',event=>{if(event.key!=='Tab'||!root.classList.contains('open'))return;const controls=visibleControls();if(!controls.length)return;const first=controls[0],last=controls.at(-1);if(event.shiftKey&&doc.activeElement===first){event.preventDefault();last.focus();}else if(!event.shiftKey&&doc.activeElement===last){event.preventDefault();first.focus();}});
+  root.addEventListener('keydown',event=>{if(window.SnoteMessages?.active()||event.key!=='Tab'||!root.classList.contains('open'))return;const controls=visibleControls();if(!controls.length)return;const first=controls[0],last=controls.at(-1);if(event.shiftKey&&doc.activeElement===first){event.preventDefault();last.focus();}else if(!event.shiftKey&&doc.activeElement===last){event.preventDefault();first.focus();}});
   new MutationObserver(applyRequired).observe(form,{subtree:true,attributes:true,attributeFilter:['required']});
   new MutationObserver(()=>root.setAttribute('aria-hidden',String(!root.classList.contains('open')))).observe(root,{attributes:true,attributeFilter:['class']});
   ensureDialog();applyRequired();populateLenders();showStep(1,{focus:false});return true;

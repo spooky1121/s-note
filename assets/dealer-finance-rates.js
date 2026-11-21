@@ -55,6 +55,7 @@
  function draft(s){const result=new Map(Object.entries(s.own?.rates||{}));for(const name of s.touched){const value=String(s.raw[name]??'').trim();if(!value)result.delete(name);else result.set(lenderName(name),rate(value,{text:true}));}return rates(Object.fromEntries(result));}
  function dirty(s){if(!s?.own)return false;try{return !equal(draft(s),s.own.rates);}catch{return true;}}
  function notify(source){if(doc?.dispatchEvent&&typeof global.CustomEvent==='function')doc.dispatchEvent(new global.CustomEvent('snote:dealer-finance-rates-changed',{detail:{source,contextKey:state?.key||null,ready:ready()}}));}
+ function popupFeedback(s,tone,operation=s.operation){if(typeof global.snoteNotify!=='function'||!current(s)||s.operation!==operation||!s.message)return;s.popupMessage=s.message;global.snoteNotify(s.message,{tone,key:'dealer-finance-rates:'+tone,isCurrent:()=>current(s)&&s.operation===operation,returnFocus:false});}
  function timeout(promise){let timer;const expired=new Promise((_,reject)=>{timer=global.setTimeout(()=>reject(Error('RATE_TIMEOUT')),TIMEOUT);});return Promise.race([Promise.resolve(promise),expired]).finally(()=>global.clearTimeout(timer));}
  const icon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3h12l4 4v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2ZM7 3v6h9V3M7 21v-7h10v7M13 5v2"/></svg>';
  function markup(){const ctx=context();if(!ctx?.canWrite)return '';return '<section class="snote90-panel snote-dealer-rate-panel" id="snote-dealer-finance-rates" aria-labelledby="snote-dealer-rates-title"><header><div><h3 id="snote-dealer-rates-title">내 재고금융 이율</h3><p>비워두면 상사 기본 이율을 사용합니다.</p></div><button id="snote-dealer-rates-save" type="button" aria-label="내 재고금융 이율 저장" data-tooltip="이율 저장" disabled>'+icon+'</button></header><div id="snote-dealer-rates-list"></div><div class="snote-dealer-rates-feedback"><p id="snote-dealer-rates-status" role="status" aria-live="polite"></p><button id="snote-dealer-rates-retry" type="button" hidden>다시 불러오기</button></div></section>';}
@@ -70,7 +71,7 @@
   for(const input of list?.querySelectorAll('input[data-dealer-rate]')||[]){const name=input.dataset.dealerRate,raw=s?.touched.has(name)?s.raw[name]:valid&&Object.hasOwn(s.own?.rates||{},name)?String(s.own.rates[name]):'';if(input.value!==raw)input.value=raw;const fallback=valid&&Object.hasOwn(s.own?.fallbackRates||{},name)?s.own.fallbackRates[name]:null;input.placeholder=fallback==null?'미설정':String(fallback);input.disabled=!valid||!s.loaded||busy(s)||!ctx.canWrite;}
   if(saveButton)saveButton.disabled=!valid||!s.loaded||busy(s)||s.needsReload||!ctx.canWrite;
   const text=!valid?'설정을 불러오는 중…':s.status==='loading'?'이율을 불러오는 중…':s.status==='saving'?'이율을 저장하는 중…':s.message||(!catalog.length&&s.loaded?'등록된 재고금융사가 없습니다.':'');
-  if(status){status.textContent=text;status.hidden=!text;status.dataset.error=String(valid&&['load-error','save-error'].includes(s.status));}
+  if(status){status.textContent=text;status.hidden=!text||typeof global.snoteNotify==='function'&&s?.popupMessage===text;status.dataset.error=String(valid&&['load-error','save-error'].includes(s.status));}
   if(retry){retry.hidden=!valid||!['load-error','save-error'].includes(s.status);retry.disabled=valid&&busy(s);}
  }
  function apply(s,result){
@@ -83,22 +84,22 @@
   const operation=++s.operation;s.status='loading';s.message='';paint();
   const job=Promise.resolve().then(async()=>{
    try{if(typeof s.bridge?.load!=='function')throw Error('RATE_SETUP');const result=await timeout(s.bridge.load(s.context));if(!current(s)||s.operation!==operation)return false;apply(s,result);paint();notify('load');return true;}
-   catch(error){if(!current(s)||s.operation!==operation)return false;s.loaded=false;s.status='load-error';s.message='이율을 불러오지 못했습니다. 다시 시도해 주세요.';paint();notify('load-error');return false;}
+   catch(error){if(!current(s)||s.operation!==operation)return false;s.loaded=false;s.status='load-error';s.message='이율을 불러오지 못했습니다. 다시 시도해 주세요.';popupFeedback(s,'error',operation);paint();notify('load-error');return false;}
    finally{if(s.operation===operation)s.pending=null;}
   });s.pending=job;return job;
  }
  function save(values){
   const {ctx,s}=ensure();if(!ctx?.canWrite||!s?.loaded||busy(s)||s.pending||s.needsReload||!current(s))return Promise.resolve(false);
-  let submitted;try{submitted=values===undefined?draft(s):rates(values);}catch(error){s.message=error.message;paint();return Promise.resolve(false);}
-  if(equal(submitted,s.own.rates)){s.message='저장 되었습니다.';paint();return Promise.resolve(true);}
+  let submitted;try{submitted=values===undefined?draft(s):rates(values);}catch(error){s.message=error.message;popupFeedback(s,'error');paint();return Promise.resolve(false);}
+  if(equal(submitted,s.own.rates)){s.message='저장 되었습니다.';popupFeedback(s,'success');paint();return Promise.resolve(true);}
   const expected=s.own.revision,operation=++s.operation;s.status='saving';s.message='';paint();
   const job=Promise.resolve().then(async()=>{
    try{
     if(typeof s.bridge?.save!=='function')throw Error('RATE_SETUP');const result=await timeout(s.bridge.save(s.context,clone(submitted),expected));
     if(!current(s)||s.operation!==operation)return false;
     if(!object(result)||result.companyId!==ctx.companyId||result.userId!==ctx.userId||!Number.isSafeInteger(result.revision)||result.revision<=expected||!equal(rates(result.rates),submitted))throw Error('RATE_ACK');
-    s.own={...s.own,rates:clone(submitted),revision:result.revision};s.profiles=s.profiles.map(row=>row.ownerId===ctx.userId&&row.companyId===ctx.companyId?s.own:row);s.raw={};s.touched.clear();s.status='ready';s.message='저장 되었습니다.';s.needsReload=false;paint();notify('save');return true;
-   }catch(error){if(!current(s)||s.operation!==operation)return false;s.status='save-error';s.needsReload=true;s.message=error?.code==='CONFLICT'||error?.code==='40001'?'다른 화면에서 이율이 변경되었습니다. 다시 불러온 뒤 저장해 주세요.':'이율 저장을 확인하지 못했습니다. 입력을 유지하고 다시 불러와 주세요.';paint();return false;}
+    s.own={...s.own,rates:clone(submitted),revision:result.revision};s.profiles=s.profiles.map(row=>row.ownerId===ctx.userId&&row.companyId===ctx.companyId?s.own:row);s.raw={};s.touched.clear();s.status='ready';s.message='저장 되었습니다.';s.needsReload=false;popupFeedback(s,'success',operation);paint();notify('save');return true;
+   }catch(error){if(!current(s)||s.operation!==operation)return false;s.status='save-error';s.needsReload=true;s.message=error?.code==='CONFLICT'||error?.code==='40001'?'다른 화면에서 이율이 변경되었습니다. 다시 불러온 뒤 저장해 주세요.':'이율 저장을 확인하지 못했습니다. 입력을 유지하고 다시 불러와 주세요.';popupFeedback(s,'error',operation);paint();return false;}
    finally{if(s.operation===operation)s.pending=null;}
   });s.pending=job;return job;
  }
