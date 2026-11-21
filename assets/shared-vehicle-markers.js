@@ -8,9 +8,9 @@
  let account=null,epoch=0,shared=new Set(),job=null,queued=false,last=0,scheduled=false;
  const key=(owner,id)=>owner+'\n'+id;
  function mark(target,on,kind){if(!target)return;let marker=target.querySelector(':scope > .snote-shared-vehicle-marker');if(!on){marker?.remove();return;}if(marker)return;marker=document.createElement('span');marker.className='snote-shared-vehicle-marker snote-shared-vehicle-marker--'+kind;marker.setAttribute('role','img');marker.setAttribute('aria-label','공유 차량');marker.dataset.tooltip='공유 차량';marker.innerHTML=symbol;target.append(marker);}
- function carFor(id){if(typeof cars==='undefined'||!id)return null;const matches=cars.filter(car=>String(car.id)===id);return matches.length===1?matches[0]:null;}
- function isShared(car){if(!car)return false;const owner=bridge()?.owner?.(car);return !!owner&&shared.has(key(owner,String(car.id)));}
- function rowId(row){const value=(row.getAttribute('onclick')||'').trim();const match=/^openVehicle\((['"])([^'"\\]+)\1\);?$/.exec(value);return match?.[2]||null;}
+ function carFor(id){if(!id)return null;const received=window.SnoteReceivedVehicleList?.car?.(id);if(received)return received;if(typeof cars==='undefined')return null;const matches=cars.filter(car=>String(car.id)===id);return matches.length===1?matches[0]:null;}
+ function isShared(car){if(!car)return false;if(window.SnoteReceivedVehicleList?.has?.(car))return true;const owner=bridge()?.owner?.(car);return !!owner&&shared.has(key(owner,String(car.id)));}
+ function rowId(row){if(row.dataset.registrationCarId)return row.dataset.registrationCarId;const value=(row.getAttribute('onclick')||'').trim();const match=/^openVehicle\((['"])([^'"\\]+)\1\);?$/.exec(value);return match?.[2]||null;}
  function render(){scheduled=false;const c=context(),valid=current(c)&&account===c?.key,showIcons=!inSales();for(const row of document.querySelectorAll('#list-table tr.vehicle-clickable,#list-mobile .vehicle-card,#list-mobile .acct-mobile-card')){const on=valid&&isShared(carFor(rowId(row)));row.classList.toggle('is-shared-vehicle',on);mark(row.querySelector('.car-thumb'),showIcons&&on,'photo');}
  mark(document.getElementById('vehicle-title'),showIcons&&valid&&isShared(carFor(typeof activeCarId==='undefined'?null:String(activeCarId))),'title');
  }

@@ -8,6 +8,17 @@
   const usableContext = context => Boolean(context?.open && context.actor && context.ownerId &&
     context.carId !== null && context.carId !== undefined);
 
+  function signatureCaption(value) {
+    const date = typeof value === 'string' && value.trim() ? new Date(value) : null;
+    if (!date || !Number.isFinite(date.getTime())) return '고객 서명;';
+    const parts = Object.fromEntries(new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Asia/Seoul', year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23'
+    }).formatToParts(date).map(part => [part.type, part.value]));
+    return `고객 서명; ${parts.year}.${parts.month}.${parts.day} ${parts.hour}:${parts.minute}:${parts.second}`;
+  }
+  global.snoteCustomerSignatureCaption = signatureCaption;
+
   // A source is attached only by an existing, authenticated saved-customer flow.
   // No name-based database lookup or signature URL supplied by a record is used.
   function createCustomerContractSignature(options) {
@@ -57,9 +68,7 @@
         if (known.size >= 128) known.delete(known.keys().next().value);
         known.set(key, name);
       }
-      const date = new Date(customer.customerSignatureSignedAt || '');
-      source = { context: { ...context }, name, image,
-        caption: '고객 원제출 서명' + (Number.isFinite(date.getTime()) ? ' · ' + date.toLocaleDateString('ko-KR') : '') };
+      source = { context: { ...context }, name, image, caption: signatureCaption(customer.customerSignatureSignedAt) };
       sync();
       return true;
     }
@@ -95,38 +104,34 @@
         image = document.createElement('img');
         image.className = 'ct-customer-signature-image';
         image.dataset.customerContractSignatureImage = side;
-        image.alt = '고객 원제출 서명'; image.hidden = true;
+        image.alt = '고객 서명'; image.hidden = true;
         slot.appendChild(image);
       }
-      nodes.push({ side, slot, image });
+      let caption = slot.querySelector('[data-customer-contract-signature-caption]');
+      if (side === 'buyer' && !caption) {
+        caption = document.createElement('small');
+        caption.className = 'ct-customer-signature-caption';
+        caption.dataset.customerContractSignatureCaption = '';
+        caption.hidden = true; slot.appendChild(caption);
+      }
+      nodes.push({ side, slot, image, caption });
     }
     return nodes;
   }
   function render(value) {
-    for (const { side, slot, image } of signatureNodes()) {
+    for (const { side, slot, image, caption } of signatureNodes()) {
       const visible = side === 'buyer' && value.visible;
       slot.classList.toggle('has-customer-signature', visible);
       image.hidden = !visible;
       if (visible) {
         if (image.getAttribute('src') !== value.image) image.src = value.image;
-        image.title = value.caption + '. 원래 제출한 정보의 서명이며, 이후 수정한 내용의 새 서명이 아닙니다.';
+        image.title = value.caption;
       } else {
         image.removeAttribute('src'); image.removeAttribute('title');
       }
+      if (caption) {caption.hidden = !visible; caption.textContent = visible ? value.caption : '';}
     }
-    let note = byId('snote222-contract-signature-note');
-    const paper = byId('contract-paper');
-    if (!note && paper?.parentNode) {
-      note = document.createElement('p');
-      note.id = 'snote222-contract-signature-note';
-      note.className = 'ct-small-note ct-customer-signature-note';
-      paper.insertAdjacentElement('afterend', note);
-    }
-    if (note) {
-      note.hidden = !value.visible;
-      note.dataset.customerContractSignatureCaption = '';
-      note.textContent = value.visible ? value.caption + ' · 원래 제출한 정보의 서명입니다. 이후 수정한 내용의 새 서명이 아닙니다.' : '';
-    }
+    byId('snote222-contract-signature-note')?.remove();
   }
   global.snote222ContractSignature = createCustomerContractSignature({
     currentContext: () => global.snote222ContractSignatureContext?.(),
@@ -140,6 +145,10 @@
     }
   });
   function receiptNodes() {
+    const slot=byId('snote215-receipt-signature')?.closest('.zc76-sign-slot');
+    let caption=byId('snote215-receipt-signature-caption');
+    if(slot&&!caption){caption=document.createElement('small');caption.id='snote215-receipt-signature-caption';caption.className='snote-receipt-signature-caption';caption.hidden=true;slot.appendChild(caption);}
+    else if(slot&&caption?.parentElement!==slot){caption.className='snote-receipt-signature-caption';slot.appendChild(caption);}
     return {host:byId('snote215-receipt-signature'),image:byId('snote215-receipt-signature-image'),caption:byId('snote215-receipt-signature-caption')};
   }
   global.snote250ReceiptSignature = createCustomerContractSignature({
@@ -150,7 +159,7 @@
       host.hidden=!value.visible;host.closest('.zc76-sign-slot')?.classList.toggle('has-customer-signature',value.visible);
       if(value.visible){if(image.getAttribute('src')!==value.image)image.src=value.image;image.title=value.caption;}
       else{image.removeAttribute('src');image.removeAttribute('title');}
-      if(caption){caption.hidden=!value.visible;caption.textContent=value.visible?value.caption+' · 원래 제출한 정보의 서명입니다. 이후 수정한 내용의 새 서명이 아닙니다.':'';}
+      if(caption){caption.hidden=!value.visible;caption.textContent=value.visible?value.caption:'';}
     },
     imageReady: async () => {const {image,host}=receiptNodes();if(!image||host?.hidden)return;if(typeof image.decode==='function')await image.decode();else if(!image.complete||!image.naturalWidth)throw Error('SIGNATURE_IMAGE_NOT_READY');}
   });

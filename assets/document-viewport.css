@@ -1,0 +1,11 @@
+/* Screen-only whole-sheet previews. Native A4 sizes and print copies stay unchanged. */
+@media screen{
+ :is(#contract-overlay,#zc76-receipt-overlay).snote-popup-overlay{padding:12px!important;overflow:hidden!important;align-items:center!important;justify-content:center!important}
+ :is(#contract-overlay,#zc76-receipt-overlay).snote-popup-overlay>.snote-popup-frame{width:var(--snote-document-frame-width, min(838px,100%))!important;max-width:100%!important;height:var(--snote-document-height,auto);padding:0 44px 0 0!important;box-sizing:border-box;overflow:visible}
+ :is(#contract-overlay,#zc76-receipt-overlay) .snote-popup-frame>.snote-popup-card{display:block!important;position:relative;width:var(--snote-document-width,100%)!important;min-width:0!important;max-width:none!important;height:var(--snote-document-height,auto)!important;min-height:0!important;max-height:none!important;margin:0!important;padding:0!important;overflow:visible!important;animation:none!important;transform:none!important}
+ :is(#contract-overlay,#zc76-receipt-overlay) .snote-document-controls{right:0;top:0;width:36px;gap:7px}
+ #contract-overlay #contract-paper{zoom:var(--snote-document-scale,1)!important;padding-right:14mm!important}
+ #contract-overlay #contract-paper .ct-field{display:flex;flex-direction:column;justify-content:center;gap:1px;height:auto;min-height:10.65mm}
+ #zc76-receipt-overlay #zc76-receipt-paper{zoom:var(--snote-document-scale,1)!important;padding-right:12mm!important}
+ :is(#contract-overlay,#zc76-receipt-overlay) :is(#contract-paper,#zc76-receipt-paper){width:210mm!important;min-width:210mm!important;max-width:210mm!important;height:auto!important;min-height:297mm;max-height:none!important;flex:none!important;margin:0!important;transform:none!important;transform-origin:top left!important;box-sizing:border-box;overflow:visible!important}
+}

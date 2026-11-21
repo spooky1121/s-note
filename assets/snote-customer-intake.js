@@ -157,14 +157,12 @@
     s.signature.replaceChildren();
     const signature = s.signatureCleared ? null : signatureValue(value);
     s.signature.hidden = false;
-    if (!signature) { s.signature.append(node('strong', '', '고객 원제출 서명'), node('p', 'snote-sale-signature-empty', '접수된 서명이 없습니다.')); return; }
+    if (!signature) { s.signature.append(node('p', 'snote-sale-signature-empty', '접수된 서명이 없습니다.')); return; }
     const canvas = node('canvas', 'snote-intake-signature-canvas');
     canvas.width = 640; canvas.height = 240;
-    canvas.setAttribute('role', 'img'); canvas.setAttribute('aria-label', '고객 원제출 서명');
+    canvas.setAttribute('role', 'img'); canvas.setAttribute('aria-label', '고객 서명');
     drawSignature(canvas, signature);
-    const date = timestamp(signedAt);
-    s.signature.append(node('strong', '', '고객 원제출 서명'), canvas,
-      node('p', 'snote-intake-meta', date ? '서명 접수 ' + date : '고객이 휴대폰에서 제출한 서명'));
+    s.signature.append(canvas, node('p', 'snote-intake-meta', window.snoteCustomerSignatureCaption?.(signedAt) || '고객 서명;'));
   }
 
   function arrival(s, item) {
@@ -188,7 +186,7 @@
     byId('snote-sale-receipt-details')?.remove();
     byId('snote-intake-panel')?.replaceChildren();
     const signature = byId('snote-sale-signature');
-    if (signature) signature.replaceChildren(node('strong', '', '고객 원제출 서명'), node('p', 'snote-sale-signature-empty', '접수된 서명이 없습니다.'));
+    if (signature) signature.replaceChildren(node('p', 'snote-sale-signature-empty', '접수된 서명이 없습니다.'));
   }
 
   function message(s, content, kind = '') {
@@ -594,7 +592,7 @@
     s.list.setAttribute('aria-label', '고객 입력 요청 내역');
     s.signature = byId('snote-sale-signature');
     if (!s.signature) return;
-    s.signature.setAttribute('aria-label', '고객 원제출 서명');
+    s.signature.setAttribute('aria-label', '고객 서명');
     panel.append(head, line, s.message, s.list);
     if (!s.canCreate) message(s, '판매완료 차량은 새 링크를 보낼 수 없습니다. 기존 요청 내역만 확인할 수 있습니다.');
     renderRequests(s);
@@ -620,7 +618,7 @@
       if(state&&isCurrent(state)){state.unsavedImport=true;state.signatureCleared=true;state.selectedSubmission=null;renderSignature(state,null);}
       fitSaleAddresses(true);
       const details=byId('snote-sale-receipt-details');if(details){details.replaceChildren();details.hidden=true;}
-      const panel=byId('snote-sale-signature');if(panel)panel.replaceChildren(node('strong','','고객 원제출 서명'),node('p','snote-sale-signature-empty','접수된 서명이 없습니다.'));
+      const panel=byId('snote-sale-signature');if(panel)panel.replaceChildren(node('p','snote-sale-signature-empty','접수된 서명이 없습니다.'));
       window.snote222ContractSignature?.clear();window.snote250ReceiptSignature?.clear();
     }
   });

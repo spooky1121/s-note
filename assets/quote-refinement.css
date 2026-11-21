@@ -7,8 +7,8 @@
 #quote-paper #quote-customer{width:90px;min-width:70px;text-align:center}
 #quote-paper .q8-recipient-note{display:flex;justify-content:flex-end;align-items:baseline;flex-wrap:wrap;gap:4px 8px;max-width:76mm;min-width:0;overflow-wrap:anywhere;font-size:10.5px;line-height:1.4;letter-spacing:0}
 #quote-paper #quote-dealer{max-width:39mm;overflow-wrap:anywhere}
-#quote-paper #quote-dealer-phone{flex:none;width:116px;min-width:0;max-width:100%;padding:2px 0;border-bottom:1px dotted #b8cadc;text-align:right;font-size:10.5px;font-weight:650}
-#quote-paper #quote-dealer-phone::placeholder{color:#8a9bad;opacity:1}
+#quote-paper #quote-dealer-phone{display:inline;flex:none;margin:0;padding:0;border:0;color:inherit;font-size:10.5px;font-weight:650;line-height:1.4;white-space:nowrap}
+#quote-paper #quote-dealer-phone:empty{display:none}
 #quote-paper .q8-section{margin-top:3.5mm;padding:3.5mm;border:1px solid #dce7f0;border-radius:11px;background:#fff;break-inside:avoid;box-shadow:0 1px 4px #263f5910}
 #quote-paper .q8-section-title{margin:0 0 2.5mm;padding:0 0 2mm;border-bottom:1px solid #e8eef4}
 #quote-paper .q8-section-title h2{font-size:13px;font-weight:800}
@@ -35,5 +35,4 @@
 @media print{
  #quote-paper .q8-section{box-shadow:none;print-color-adjust:exact;-webkit-print-color-adjust:exact}
  #quote-paper #quote-customer{text-align:center!important}
- #quote-paper #quote-dealer-phone::placeholder{color:transparent!important}
 }

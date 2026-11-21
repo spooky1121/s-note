@@ -20,7 +20,7 @@ function fixture(role='dealer'){
   snoteProfileCheck(ctx,profile){assert.equal(profile.user_id,ctx.userId);assert.equal(profile.company_id,ctx.companyId);},
   snoteProfilePaintAvatar(){},snote95UpdateDocumentCompany(){}};
  vm.createContext(sandbox);vm.runInContext(apply+'\n'+prefill,sandbox);
- return{S,accounts,actor,context,get,apply(phone){sandbox.snoteProfileApply(context,{user_id:context.userId,company_id:context.companyId,company_name:'합성 상사',display_name:'새 합성 담당자',role,phone});},prefill(ownerId){sandbox.prefill({ownerId});return get('quote-dealer-phone').value;}};
+ return{S,accounts,actor,context,get,apply(phone){sandbox.snoteProfileApply(context,{user_id:context.userId,company_id:context.companyId,company_name:'합성 상사',display_name:'새 합성 담당자',role,phone});},prefill(ownerId){sandbox.prefill({ownerId});return get('quote-dealer-phone').textContent;}};
 }
 test('a verified own profile contact is immediately used by a new quote without a reload',()=>{
  const f=fixture();assert.equal(f.prefill('own'),'010-1111-2222');f.apply('01055556666');
@@ -31,9 +31,9 @@ test('an administrator quote uses the selected owner contact and never the admin
  const f=fixture('admin');f.apply('01055556666');assert.equal(f.prefill('other'),'010-3333-4444');assert.equal(f.prefill('missing'),'');
  f.accounts[1].phone='0212345678';assert.equal(f.prefill('other'),'','A corporate landline is not a registered mobile contact');
 });
-test('contact refresh does not overwrite a phone manually entered into the open quotation',()=>{
- const f=fixture();f.prefill('own');f.get('quote-dealer-phone').value='010-7777-8888';f.apply('01055556666');
- assert.equal(f.get('quote-dealer-phone').value,'010-7777-8888');assert.equal(f.prefill('own'),'010-5555-6666');
+test('a rendered quotation keeps its registered contact snapshot until its next opening',()=>{
+ const f=fixture();f.prefill('own');f.apply('01055556666');
+ assert.equal(f.get('quote-dealer-phone').textContent,'010-1111-2222');assert.equal(f.prefill('own'),'010-5555-6666');
 });
 test('an explicit empty registered contact clears stale cache while missing profile fields preserve it',()=>{
  const f=fixture();f.apply(undefined);assert.equal(f.prefill('own'),'010-1111-2222');f.apply('');assert.equal(f.prefill('own'),'');

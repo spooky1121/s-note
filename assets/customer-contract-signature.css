@@ -2,9 +2,10 @@
 .contract-paper .ct-seal-slot .ct-customer-signature-image[hidden]{display:none}
 .contract-paper .ct-stamp-line .ct-seal-slot.has-customer-signature{flex-basis:88px;width:88px}
 .contract-paper .ct-seal-slot.has-customer-signature .stamp-mark{visibility:hidden}
-.ct-customer-signature-note{max-width:794px;margin:8px auto 0;line-height:1.5}
-.ct-customer-signature-note[hidden]{display:none}
-@media print{.ct-customer-signature-note{display:none!important}.contract-print-copy .ct-customer-signature-image{print-color-adjust:exact;-webkit-print-color-adjust:exact}}
+.contract-paper .ct-customer-signature-caption{position:absolute;top:calc(50% + 18px);left:50%;transform:translateX(-50%);width:160px;color:#657487;font:400 7px/1.3 var(--snote-font-family,sans-serif);letter-spacing:0;white-space:nowrap;text-align:center}
+.contract-paper .ct-customer-signature-caption[hidden]{display:none}
+.contract-paper .ct-party-row.name-row:has(.has-customer-signature){padding-bottom:11px}
+@media print{.contract-print-copy .ct-customer-signature-image{print-color-adjust:exact;-webkit-print-color-adjust:exact}}
 
 /* The PNG contains only submitted strokes; both document signature slots stay transparent. */
 .ct-customer-signature-image,#snote215-receipt-signature-image{background:transparent!important;border:0!important;box-shadow:none!important}
@@ -13,4 +14,5 @@
 #zc76-receipt-paper .snote215-receipt-signature{position:absolute;inset:0;display:flex;width:96px;height:36px;align-items:center;justify-content:center}
 #zc76-receipt-paper .snote215-receipt-signature[hidden]{display:none}
 #zc76-receipt-paper .snote215-receipt-signature img{width:96px;height:36px;object-fit:contain;pointer-events:none}
-#snote215-receipt-signature-caption{font-size:11px;color:#8992a2}
+#zc76-receipt-paper #snote215-receipt-signature-caption{position:absolute;top:38px;left:50%;transform:translateX(-50%);display:block;width:160px;margin:0;color:#657487;font:400 7px/1.3 var(--snote-font-family,sans-serif);letter-spacing:0;white-space:nowrap;text-align:center}
+#zc76-receipt-paper #snote215-receipt-signature-caption[hidden]{display:none}

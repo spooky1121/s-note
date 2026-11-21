@@ -1,4 +1,4 @@
-/* Shared action sizing: 20px drawings, 16px close X, 13px add/remove; repair only 6.5px. */
+/* Shared action sizing: 20px drawings, shared close image, 13px add/remove; repair only 6.5px. */
 (()=>{'use strict';
  if(window.SnoteIconSizing)return;
  const glyphSize=20,hosts='button,a,label,[role="button"]';
@@ -111,7 +111,7 @@
   // Close presentation is shared with close-controls.css, including dynamic popups.
   if(host.matches(closeControls)){
    if(host.classList.contains('snote-flat-icon-control'))host.classList.remove('snote-flat-icon-control');
-   for(const[k,v]of[['background','var(--snote-close-background, #dc4c5c)'],['border','0px solid transparent'],['border-radius','var(--snote-close-radius, 8px)'],['box-shadow','none'],['color','var(--snote-close-color, #fff)'],['width','30px'],['height','30px'],['min-width','30px'],['min-height','30px'],['padding','0px'],['margin','0px'],['box-sizing','border-box']])if(host.style.getPropertyValue(k)!==v||host.style.getPropertyPriority(k)!=='important')host.style.setProperty(k,v,'important');
+   for(const[k,v]of[['background','transparent'],['border','0px solid transparent'],['border-radius','50%'],['box-shadow','none'],['color','#fff'],['width','30px'],['height','30px'],['min-width','30px'],['min-height','30px'],['padding','0px'],['margin','0px'],['box-sizing','border-box']])if(host.style.getPropertyValue(k)!==v||host.style.getPropertyPriority(k)!=='important')host.style.setProperty(k,v,'important');
    return;
   }
   const step=stepKind(host);if(step){compactStep(host,step);return;}clearStep(host);
@@ -123,6 +123,7 @@
  }
  function fit(host){
   if(!host.isConnected)return;
+  if(host.matches(closeControls)){reset(host);flat(host,false,false);return;}
   if(!host.matches(hosts)||host.closest(excluded)&&!(host.matches('.add-tile')&&stepKind(host))||host.querySelector('input:not([type="file"]):not([type="hidden"]),select,textarea')){reset(host);return;}
   const step=stepKind(host);if(step)fitStepText(host,step);else clearStepText(host);
   const svgs=[...host.querySelectorAll('svg')].filter(svg=>svg.closest(hosts)===host&&!svg.hasAttribute('data-snote-direction-glyph'));

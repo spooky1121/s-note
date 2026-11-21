@@ -92,7 +92,7 @@ async function finish(f){assert.deepEqual(f.external,[],'No external network may
    const f=await fixture(),p=f.page;
    await saleContract(p);const first=await assertShown(p);
    assert.equal(await p.locator('#ct-buyer-name').inputValue(),'모바일 서명 고객');
-   assert.match(await p.locator('[data-customer-contract-signature-caption]').textContent(),/원제출/);
+   assert.equal(await p.locator('#contract-paper [data-customer-contract-signature-caption]').textContent(),'고객 서명; 2026.11.01 09:00:00');
    await p.evaluate(()=>buildContractPrintPages());
    const copies=await images(p,'#contract-print-pages');assert.equal(copies.filter(image=>image.active&&image.src===first).length,2,'Both customer and dealer print copies must retain the same signature');
    assert.equal(await p.locator('#contract-print-pages [id]').count(),0,'Print copies must not retain duplicate IDs');
