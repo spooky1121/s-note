@@ -18,7 +18,21 @@
  #snote-purchase-columns .snote-purchase-column-note{margin:15px 0 0;font-size:10px;line-height:1.6;color:#9aa4b3}
  #snote-purchase-columns .snote-purchase-column-status{margin:7px 0 0;font-size:10px;line-height:1.6;color:#8492a7}
  #snote-purchase-columns input:focus-visible{outline:2px solid #8eacf1;outline-offset:3px}
- #list-screen[data-purchase-columns-active=true][data-purchase-hidden-columns]:not([data-purchase-hidden-columns=""]) #list-table .inventory-table{min-width:0}
+ #list-screen:not([data-purchase-columns-active=true]) [data-purchase-added]{display:none!important}
+ #list-screen[data-purchase-columns-active=true] .snote-purchase-extra-fields{display:flex;flex-wrap:wrap;gap:7px 16px;margin-top:8px}
+ #list-screen[data-purchase-columns-active=true] .snote-purchase-extra-fields>div{display:flex;align-items:baseline;gap:7px;min-width:0;font-size:11px;color:#596c85}
+ #list-screen[data-purchase-columns-active=true] .snote-purchase-extra-fields label{margin:0;color:#8795a9;font-size:10px;font-weight:500}
+ #list-screen[data-purchase-columns-active=true] .snote-purchase-extra-fields strong{font-size:11px;font-weight:600}
+ #snote-app #list-screen[data-purchase-columns-active=true][data-vehicle-view=cards] #list-mobile .snote-purchase-extra-fields{grid-column:1/-1;grid-row:8;padding:7px 0;border-top:1px solid #edf0f4}
+ #snote-app #list-screen[data-purchase-columns-active=true][data-vehicle-view=cards] #list-mobile .snote-purchase-extra-fields>div{flex:1 1 180px;justify-content:space-between}
+ #snote-app #list-screen[data-purchase-columns-active=true][data-vehicle-view=cards][data-purchase-no-extra-fields=false] #list-mobile .vehicle-card>.vehicle-right{grid-row:9}
+ #list-screen[data-purchase-columns-active=true] .snote-purchase-vin{overflow-wrap:anywhere}
+ #list-screen[data-purchase-columns-active=true] th[data-purchase-column=advertising]{min-width:62px;white-space:nowrap}
+ #list-screen[data-purchase-columns-active=true] .snote-purchase-quote{display:inline-grid;place-items:center;width:32px;height:32px;min-width:32px;min-height:32px;margin:0;padding:6px;border:0;border-radius:0;background:transparent;color:#3168e9;box-shadow:none;cursor:pointer;vertical-align:middle}
+ #list-screen[data-purchase-columns-active=true] .snote-purchase-quote>svg{display:block;width:20px;height:20px;pointer-events:none}
+ #list-screen[data-purchase-columns-active=true] .snote-purchase-quote:focus-visible{outline:2px solid #8eacf1;outline-offset:2px}
+ #list-screen[data-purchase-columns-active=true] .snote-purchase-quote-unavailable{color:#98a3b2}
+ #list-screen[data-purchase-columns-active=true][data-purchase-hidden-existing=true] #list-table .inventory-table{min-width:0}
  #list-screen[data-purchase-columns-active=true][data-purchase-hidden-columns~=owner] [data-purchase-column=owner],
  #list-screen[data-purchase-columns-active=true][data-purchase-hidden-columns~=color] [data-purchase-column=color],
  #list-screen[data-purchase-columns-active=true][data-purchase-hidden-columns~=year] [data-purchase-column=year],
@@ -26,7 +40,13 @@
  #list-screen[data-purchase-columns-active=true][data-purchase-hidden-columns~=purchaseDate] [data-purchase-column=purchaseDate],
  #list-screen[data-purchase-columns-active=true][data-purchase-hidden-columns~=buyPrice] [data-purchase-column=buyPrice],
  #list-screen[data-purchase-columns-active=true][data-purchase-hidden-columns~=expectedSellPrice] [data-purchase-column=expectedSellPrice],
+ #list-screen[data-purchase-columns-active=true][data-purchase-hidden-columns~=expectedProfit] [data-purchase-column=expectedProfit],
+ #list-screen[data-purchase-columns-active=true][data-purchase-hidden-columns~=totalInvestment] [data-purchase-column=totalInvestment],
+ #list-screen[data-purchase-columns-active=true][data-purchase-hidden-columns~=additionalCosts] [data-purchase-column=additionalCosts],
  #list-screen[data-purchase-columns-active=true][data-purchase-hidden-columns~=inventoryLoan] [data-purchase-column=inventoryLoan],
+ #list-screen[data-purchase-columns-active=true][data-purchase-hidden-columns~=inventoryInterest] [data-purchase-column=inventoryInterest],
+ #list-screen[data-purchase-columns-active=true][data-purchase-hidden-columns~=vin] [data-purchase-column=vin],
+ #list-screen[data-purchase-columns-active=true][data-purchase-hidden-columns~=quote] [data-purchase-column=quote],
  #list-screen[data-purchase-columns-active=true][data-purchase-hidden-columns~=finance] [data-purchase-column=finance],
  #list-screen[data-purchase-columns-active=true][data-purchase-hidden-columns~=lender] [data-purchase-column=lender],
  #list-screen[data-purchase-columns-active=true][data-purchase-hidden-columns~=documents] [data-purchase-column=documents],
@@ -37,6 +57,7 @@
  #list-screen[data-purchase-columns-active=true][data-purchase-no-dealer-footer=true] .vehicle-card>.vehicle-right,
  #list-screen[data-purchase-columns-active=true][data-purchase-no-accountant-footer=true] .acct-mobile-card .snote-mobile-encar-actions,
  #list-screen[data-purchase-columns-active=true][data-purchase-no-accountant-fields=true] .acct-mobile-fields{display:none!important}
+ #list-screen[data-purchase-columns-active=true][data-purchase-no-extra-fields=true] .snote-purchase-extra-fields{display:none!important}
  @media(max-width:760px){#snote-app #snote-vehicle-view-toolbar>.snote-purchase-columns-trigger{width:44px;height:44px;min-width:44px;min-height:44px;padding:12px}}
  @media(max-width:380px){#snote-purchase-columns>.snote-popup-native-body{padding:19px 15px}#snote-purchase-columns .snote-purchase-column-options{grid-template-columns:1fr}}
 }
