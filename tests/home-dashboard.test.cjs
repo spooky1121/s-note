@@ -128,3 +128,22 @@ test('invalid report inputs and unsafe cost totals fail explicitly',()=>{
  assert.throws(()=>M.summarize([{inventoryLoan:Number.MAX_SAFE_INTEGER},{inventoryLoan:1}],'2027-03'));
  assert.throws(()=>M.summarize([{inventoryCost:-Number.MAX_SAFE_INTEGER,inventoryLoan:2}],'2027-03'),'An unsafe derived cash value must not be rounded or displayed');
 });
+
+test('daily work counts only current inventory at least 90 calendar days old without inferring unavailable workflow states',()=>{
+ const rows=frozen([
+  {id:'ninety',model:'검증 90일',plate:'가상1',status:'판매중',purchaseAt:'2026-12-15'},
+  {id:'older',status:'수리중',purchaseAt:'2026-12-01'},
+  {id:'recent',status:'판매중',purchaseAt:'2026-12-16'},
+  {id:'sold',status:'판매완료',purchaseAt:'2026-01-01'},
+  {id:'future',status:'판매중',purchaseAt:'2027-04-01'},
+  {id:'invalid',status:'판매중',purchaseAt:'2027-02-30'},
+  {id:'undated',status:'판매중'}
+ ]),before=JSON.stringify(rows),tasks=M.inventoryTasks(rows,'2027-03-15');
+ assert.equal(tasks.asOf,'2027-03-15');assert.equal(tasks.count,2);assert.deepEqual(tasks.rows.map(row=>[row.id,row.days]),[['older',104],['ninety',90]]);assert.equal(JSON.stringify(rows),before);
+ assert.deepEqual(Object.keys(tasks).sort(),['asOf','count','rows']);assert.deepEqual(M.inventoryTasks([],'2027-03-15').rows,[]);assert.throws(()=>M.inventoryTasks(rows,'2027-02-30'));
+});
+
+test('daily inventory tasks follow the Korean calendar across a UTC midnight boundary',()=>{
+ assert.equal(M.currentDay(new Date('2027-03-14T14:59:59.999Z')),'2027-03-14');assert.equal(M.currentDay(new Date('2027-03-14T15:00:00.000Z')),'2027-03-15');
+ const rows=frozen([{id:'boundary',status:'판매중',purchaseAt:'2026-12-15'}]);assert.equal(M.inventoryTasks(rows,'2027-03-14').count,0);assert.equal(M.inventoryTasks(rows,'2027-03-15').count,1);
+});

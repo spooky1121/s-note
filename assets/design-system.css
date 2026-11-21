@@ -1,0 +1,56 @@
+/* Screen-only workspace foundations. Document templates and print metrics stay independent. */
+@media screen {
+ :root {
+  --snote-surface:#fff;--snote-canvas:#f5f5f7;--snote-ink:#1d1d1f;--snote-secondary:#626973;
+  --snote-accent:#007aff;--snote-divider:#e5e5ea;--snote-focus:#007aff55;
+  --snote-type-body:14px;--snote-type-caption:12px;--snote-type-title:20px;
+  --ink:var(--snote-ink);--muted:var(--snote-secondary);--line:var(--snote-divider);
+  --blue:var(--snote-accent);--bg:var(--snote-canvas);--radius:14px;
+ }
+ #snote-app {color:var(--snote-ink);font-family:-apple-system,BlinkMacSystemFont,'Noto Sans KR','Segoe UI',sans-serif;font-size:var(--snote-type-body)}
+ #snote-app .sidebar {background:#fafafa;border-color:var(--snote-divider)}
+ #snote-app .nav button {color:#484b53;font-size:14px;font-weight:500;border-radius:10px;min-height:42px}
+ #snote-app .nav button.active {color:#0066d6;background:#e8f2ff;font-weight:650}
+ #snote-app .branddesc,#snote-app .support .sd {color:#737780;font-size:12px;line-height:1.6}
+ #snote-app .support {background:transparent;border-color:var(--snote-divider)}
+ #snote-app .main {background:var(--snote-canvas)}
+ #snote-app .topbar {background:var(--snote-surface);border-color:var(--snote-divider)}
+ #snote-app .topbar #eyebrow {display:none}
+ #snote-app #screen-title {color:var(--snote-ink);font-size:22px;font-weight:650;letter-spacing:-.6px;line-height:1.4;margin:0}
+ #snote-app :is(#list-screen,#alt-screen)>.panel {border-color:var(--snote-divider);border-radius:14px;box-shadow:none}
+ #snote-app #list-screen :is(#list-table,#list-mobile) {color:#292c33}
+ #snote-app #list-table table {font-size:14px;line-height:1.5}
+ #snote-app #list-table th {font-size:12px;font-weight:550;color:var(--snote-secondary);background:#fafafa}
+ #snote-app #list-table td {font-size:14px;color:#343840;line-height:1.5}
+ #snote-app #list-table :is(.car-name,.acct-car-cell strong) {font-size:14px;font-weight:600;color:var(--snote-ink)}
+ #snote-app #list-table :is(.car-sub,.acct-car-cell small) {font-size:12px;color:var(--snote-secondary)}
+ #snote-app #list-table :is(.price,.acct-price) {font-size:14px;font-weight:600;font-variant-numeric:tabular-nums;color:#292c33}
+ #snote-app #list-mobile :is(.vehicle-title,.acct-mobile-heading strong) {font-size:15px;font-weight:600;color:var(--snote-ink)}
+ #snote-app #list-mobile :is(.vehicle-meta,.vehicle-purchase-date,.acct-mobile-sub) {font-size:12px;line-height:1.5;color:var(--snote-secondary)}
+ #snote-app #list-mobile :is(.vehicle-price,.acct-price) {font-variant-numeric:tabular-nums;font-weight:650}
+ #snote-app #list-screen :is(input.search,.filter,.snote-mobile-sort select) {background:#fff;border-color:#d9dce2;color:var(--snote-ink);box-shadow:none}
+ #snote-app #list-screen :is(input.search,.filter)::placeholder {color:#747985;opacity:1}
+ #snote-app :is(.btn-primary,.btn-ghost) {border-radius:10px;box-shadow:none;font-weight:600}
+ #snote-app .btn-primary {background:var(--snote-accent)}
+ #snote-app :is(button,a,input,select,textarea):focus-visible {outline:3px solid var(--snote-focus);outline-offset:2px}
+ #snote-app :is(.status-select,.status) {font-weight:550}
+ #snote-app :is(.value,.price,.acct-price,.sum-cell strong) {font-variant-numeric:tabular-nums}
+ #snote-chatbot-launcher {width:48px;height:48px;min-width:48px;min-height:48px}
+ #snote-chatbot-launcher>svg {width:44px!important;height:44px!important;filter:drop-shadow(0 2px 4px #152c5014)}
+ #snote-chatbot-panel {bottom:60px}
+ #snote-chatbot .snote-chat-unread-dot {animation-iteration-count:3}
+}
+@media screen and (max-width:760px) {
+ #snote-app #screen-title {font-size:22px}
+ #snote-app #list-screen :is(.search,input,select):not([type=checkbox]):not([type=radio]) {font-size:16px}
+ #snote-app #list-screen :is(.snote-list-action,.snote-mobile-sort>button) {min-width:44px;min-height:44px}
+ #snote-app #list-mobile :is(.vehicle-card,.acct-mobile-card) {border-color:var(--snote-divider);border-radius:14px;box-shadow:none}
+ #snote-app #list-mobile .vehicle-title {font-size:15px;line-height:1.4}
+ #snote-app #list-mobile .vehicle-price {font-size:16px}
+ #snote-app .content {padding-bottom:88px}
+ #snote-chatbot-launcher {width:44px;height:44px;min-width:44px;min-height:44px}
+ #snote-chatbot-launcher>svg {width:40px!important;height:40px!important}
+}
+@media(prefers-reduced-motion:reduce) {
+ #snote-chatbot-launcher,#snote-chatbot .snote-chat-unread-dot {animation:none;transition:none}
+}

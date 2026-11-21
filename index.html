@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.178">
+<html lang="ko" data-snote-release="2.179">
 <head>
 <meta charset="utf-8" />
 <link rel="stylesheet" href="assets/message-popup.css?v=2.172">
@@ -3167,8 +3167,8 @@ button, input, select, textarea { font-family: inherit; }
 <link rel="stylesheet" href="assets/sales-overview.css?v=2.100">
 <script src="assets/sales-overview.js?v=2.90" defer></script>
 <script src="assets/purchase-overview.js?v=2.100" defer></script>
-<link rel="stylesheet" href="assets/home-dashboard.css?v=2.101">
-<script src="assets/home-dashboard.js?v=2.161" defer></script>
+<link rel="stylesheet" href="assets/home-dashboard.css?v=2.179" data-snote-type-scale>
+<script src="assets/home-dashboard.js?v=2.179" defer></script>
 <script src="assets/access-tracker.js?v=2.85"></script>
 <link rel="stylesheet" href="assets/finance-lock-settings.css?v=2.87">
 <script src="assets/finance-lock-settings.js?v=2.172"></script>
@@ -3207,7 +3207,7 @@ button, input, select, textarea { font-family: inherit; }
 <link rel="stylesheet" href="assets/icon-sizing.css?v=2.86">
 <script src="assets/icon-sizing.js?v=2.166" defer></script>
 <script src="assets/action-controls.js?v=2.172" defer></script>
-<script src="assets/readable-type.js?v=2.59" defer></script>
+<script src="assets/readable-type.js?v=2.179" defer></script>
 <link rel="stylesheet" href="assets/mobile-shell.css?v=2.59">
 <link rel="stylesheet" href="assets/mobile-workspace.css?v=2.67">
 <link rel="stylesheet" href="assets/screen-refinement.css?v=2.59">
@@ -3229,7 +3229,7 @@ button, input, select, textarea { font-family: inherit; }
 <link rel="stylesheet" href="assets/snote-tutorial.css?v=2.94">
 <link rel="stylesheet" href="assets/vehicle-cost-settings.css?v=2.121">
 <link rel="stylesheet" href="assets/vehicle-list-view.css?v=2.174">
-<link rel="stylesheet" href="assets/purchase-columns.css?v=2.177">
+<link rel="stylesheet" href="assets/purchase-columns.css?v=2.179">
 <link rel="stylesheet" href="assets/customer-list-view.css?v=2.102">
 <link rel="stylesheet" href="assets/vehicle-memo.css?v=2.92">
 <link rel="stylesheet" href="assets/sidebar-hover.css?v=2.92">
@@ -6602,7 +6602,7 @@ function snote95UpdateDocumentCompany(){
   // Wait for that replacement too, without changing a newer image's handler.
   for(let attempt=0;attempt<2;attempt++){
    const source=image.getAttribute('src');if(!source||image.hidden)return;
-   try{await image.decode();}catch{if(image.getAttribute('src')===source)image.onerror?.();}
+   try{await image.decode();}catch{if(request===snote95DocumentLogoRequest&&snote128DocumentCurrent(scope)&&image.getAttribute('src')===source)image.onerror?.();}
    if(image.getAttribute('src')===source)return;
   }
  })));
@@ -11599,14 +11599,14 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 <link rel="stylesheet" href="assets/workspace-reorder.css?v=2.136">
 <script src="assets/workspace-order-store.js?v=2.135" defer></script>
 <script src="assets/workspace-reorder.js?v=2.172" defer></script>
-<script src="assets/release-info.js?v=2.178" defer></script>
+<script src="assets/release-info.js?v=2.179" defer></script>
 <link rel="stylesheet" href="assets/encar-id.css?v=2.162">
 <script src="assets/encar-id.js?v=2.174" defer></script>
 <script src="assets/company-purchase.js?v=2.172" defer></script>
 <script src="assets/transfer-document-layout.js?v=2.143" defer></script>
 <script src="assets/transfer-name-seal.js?v=2.143" defer></script>
 <script src="assets/transfer-company-seal.js?v=2.143" defer></script>
-<script src="assets/contract-office.js?v=2.172" defer></script>
+<script src="assets/contract-office.js?v=2.179" defer></script>
 <script src="assets/recycle-bin.js?v=2.172" defer></script>
 <script src="assets/company-assets.js?v=2.128" defer></script>
 <script src="assets/profile-editor.js?v=2.174" defer></script>
@@ -11617,7 +11617,7 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 <script src="assets/workspace-polish.js?v=2.77" defer></script>
 <script src="assets/list-sort.js?v=2.177" defer></script>
 <script src="assets/vehicle-list-view.js?v=2.174" defer></script>
-<script src="assets/purchase-columns.js?v=2.177" defer></script>
+<script src="assets/purchase-columns.js?v=2.179" defer></script>
 <link rel="stylesheet" href="assets/dealer-finance-rates.css?v=2.122">
 <script src="assets/dealer-finance-rates.js?v=2.172" defer></script>
 <script src="assets/workspace-refine.js?v=2.178" defer></script>
@@ -11639,7 +11639,7 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 window.addEventListener('snote:payment-accounts-changed',()=>{if(typeof contractMode!=='undefined'&&contractMode==='purchase')document.querySelector('#contract-paper [data-snote-payment-section]')?.setAttribute('hidden','');if(document.getElementById('contract-overlay')?.classList.contains('open'))buildContractPrintPages();});
 </script>
 
-<link rel="stylesheet" href="assets/contracting-vehicles.css?v=2.161">
+<link rel="stylesheet" href="assets/contracting-vehicles.css?v=2.179">
 <link rel="stylesheet" href="assets/action-icons.css?v=2.162">
 <link rel="stylesheet" href="assets/login-refinement.css?v=2.162">
 <link rel="stylesheet" href="assets/vehicle-viewport.css?v=2.167">
@@ -11651,5 +11651,14 @@ window.addEventListener('snote:payment-accounts-changed',()=>{if(typeof contract
 <link rel="stylesheet" href="assets/vehicle-media.css?v=2.168">
 <link rel="stylesheet" href="assets/vehicle-image-viewer.css?v=2.169">
 <script src="assets/vehicle-image-viewer.js?v=2.169" defer></script>
+
+<!-- Explicit screen typography; new feature sheets are not enlarged a second time. -->
+<link rel="stylesheet" href="assets/design-system.css?v=2.179" data-snote-type-scale>
+<link rel="stylesheet" href="assets/design-purchase.css?v=2.179" data-snote-type-scale>
+<link rel="stylesheet" href="assets/design-vehicle.css?v=2.179" data-snote-type-scale>
+<link rel="stylesheet" href="assets/design-settings-office.css?v=2.179" data-snote-type-scale>
+<script src="assets/design-purchase.js?v=2.179" defer></script>
+<script src="assets/design-vehicle.js?v=2.179" defer></script>
+<script src="assets/design-settings-office.js?v=2.179" defer></script>
 </body>
 </html>
