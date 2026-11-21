@@ -90,8 +90,7 @@
  }
  function populateLenders(){
   const select=by('new-inventory-lender');if(!select)return;const old=select.value;
-  let values=[];try{if(typeof INVENTORY_LENDERS!=='undefined'&&Array.isArray(INVENTORY_LENDERS))values=INVENTORY_LENDERS;}catch{}
-  if(!values.length)values=[...by('detail-inventory-lender')?.options||[]].map(option=>option.value).filter(Boolean);
+  let values=[];try{if(typeof snote169CompanyLenderNames==='function')values=snote169CompanyLenderNames();else if(typeof INVENTORY_LENDERS!=='undefined'&&Array.isArray(INVENTORY_LENDERS))values=INVENTORY_LENDERS;}catch{}
   select.replaceChildren(new Option('선택 안 함',''),...[...new Set(values)].map(value=>new Option(String(value),String(value))));
   if(values.includes(old))select.value=old;
  }
