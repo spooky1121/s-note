@@ -1,0 +1,29 @@
+/* Registration uses the existing login surface and field scale. */
+@media screen {
+ #zc-cloud-gate .snote-registration-choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+ #zc-cloud-gate .snote-registration-choices .zc-btn{margin:0;min-width:0;padding-inline:8px}
+ #zc-cloud-gate:is([data-auth-mode="admin"],[data-auth-mode="dealer"]) .zc-cloud-card{width:min(560px,100%);padding:26px 0}
+ #zc-cloud-gate:is([data-auth-mode="admin"],[data-auth-mode="dealer"]) .snote-login-panel{padding-inline:clamp(28px,4vw,66px)}
+ #zc-cloud-gate #snote-registration-form .snote-auth-grid{column-gap:14px;row-gap:0}
+ #zc-cloud-gate #snote-registration-form .zc-field{margin-bottom:16px}
+ #zc-cloud-gate #snote-registration-form input{margin-top:8px;height:46px}
+ #zc-cloud-gate .snote-registration-company-row{display:flex;align-items:stretch;gap:9px;margin-top:8px}
+ #zc-cloud-gate .snote-registration-company-row input{flex:1;min-width:0;margin-top:0!important}
+ #zc-cloud-gate #snote-registration-company-check{flex:none;min-width:64px;min-height:46px;padding:0 16px;border:1px solid #d7e3f2;border-radius:10px;background:#f2f7ff;color:#2462b7;font:inherit;font-size:13px;font-weight:650}
+ #zc-cloud-gate #snote-registration-company-check:disabled{opacity:.6}
+ #zc-cloud-gate #snote-registration-company-status{display:flex;align-items:center;gap:5px;margin-top:8px;color:#16734d;font-size:11px;font-weight:600}
+ #zc-cloud-gate #snote-registration-company-status[hidden]{display:none}
+ #zc-cloud-gate #snote-registration-company-status svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+ #zc-cloud-gate .snote-registration-attachment{min-width:0}
+ #zc-cloud-gate #snote-registration-form input[type="file"]{height:auto;min-height:46px;width:100%;padding:7px 8px;font-size:11px;line-height:28px;overflow:hidden}
+ #zc-cloud-gate #snote-registration-form input[type="file"]::file-selector-button{margin-right:8px;padding:5px 8px;border:0;border-radius:6px;background:#eaf1fc;color:#2f5a95;font:inherit;line-height:20px}
+ #zc-cloud-gate .snote-registration-attachment small{display:block;margin-top:5px;color:#6e7e94;font-size:10px;font-weight:400}
+ #zc-cloud-gate #snote-registration-submit{margin-top:7px}
+ #zc-cloud-gate #snote-registration-form [disabled]{cursor:wait}
+ @media(max-width:680px){
+  #zc-cloud-gate:is([data-auth-mode="admin"],[data-auth-mode="dealer"]) .snote-login-panel{padding:24px 24px 28px;min-height:100svh}
+  #zc-cloud-gate:is([data-auth-mode="admin"],[data-auth-mode="dealer"]) .zc-cloud-card{width:100%;padding:24px 0 10px}
+  #zc-cloud-gate #snote-registration-form .snote-auth-grid{grid-template-columns:1fr}
+  #zc-cloud-gate #snote-registration-form .snote-auth-wide{grid-column:auto}
+ }
+}
