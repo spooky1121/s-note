@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.186">
+<html lang="ko" data-snote-release="2.187">
 <head>
 <meta charset="utf-8" />
 <link rel="stylesheet" href="assets/message-popup.css?v=2.172">
@@ -4691,10 +4691,7 @@ function illustrativeCarSvg(c){
 }
 /* v1.40: one identical placeholder for every car without real photos.
    Previously imported model photos remain in local storage but are no longer displayed. */
-const ZEROCAR_DEFAULT_IMAGE=(()=>{
- const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="640" height="400" viewBox="0 0 640 400"><defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#e9f5fe"/><stop offset="1" stop-color="#f8fbff"/></linearGradient><linearGradient id="car" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#93b4d1"/><stop offset="1" stop-color="#6485a8"/></linearGradient></defs><rect width="640" height="400" fill="url(#bg)"/><circle cx="517" cy="77" r="98" fill="#cde8fa" opacity=".46"/><path d="M66 291H576" stroke="#cbddea" stroke-width="3"/><path d="M113 222L155 185Q174 153 223 153H346Q379 153 412 192L475 208Q507 216 512 239L510 268H111V242Q111 230 113 222Z" fill="url(#car)" stroke="#506f8f" stroke-width="5" stroke-linejoin="round"/><path d="M189 191Q207 169 229 169H345Q368 169 395 197H172Z" fill="#dceef9" stroke="#99b9d0" stroke-width="4"/><circle cx="188" cy="267" r="35" fill="#324a62"/><circle cx="188" cy="267" r="18" fill="#dceaf4"/><circle cx="433" cy="267" r="35" fill="#324a62"/><circle cx="433" cy="267" r="18" fill="#dceaf4"/><text x="320" y="345" font-family="Arial,sans-serif" text-anchor="middle" font-weight="800" font-size="22" letter-spacing="3" fill="#395c7b">S-NOTE</text><text x="320" y="371" font-family="sans-serif" text-anchor="middle" font-size="14" fill="#8099ad">기본 이미지 · 실차 사진 없음</text></svg>`;
- return 'data:image/svg+xml;charset=UTF-8,'+encodeURIComponent(svg);
-})();
+const ZEROCAR_DEFAULT_IMAGE='assets/vehicle-placeholder.webp?v=2.187';
 function fallbackImage(c){return {src:ZEROCAR_DEFAULT_IMAGE,licensed:false,label:'기본 이미지'};}
 async function refreshModelPhotos(){
  modelPhotoUrls.forEach(url=>URL.revokeObjectURL(url));modelPhotoUrls=[];modelPhotos=[];
@@ -4739,7 +4736,7 @@ function updateNewCarPreview(){const target=$('new-visual-preview');if(!target)r
 }
 function coverPhoto(c){const photos=carPhotos(c.id).filter(photo=>photo.ownerId===c.ownerId);return photos.find(p=>p.id===covers[c.id])||photos[0]||null}
 function snote163ContractStamp(c){return isPurchaseListRoute()&&c?.status==='계약중'?'<span class="snote-contract-stamp" role="img" aria-label="계약중">계약중</span>':'';}
-function thumbHtml(c){const received=window.SnoteReceivedVehicleList?.thumbnail?.(c);if(received!=null)return received+snote163ContractStamp(c);const stamp=snote163ContractStamp(c),photo=coverPhoto(c);if(photo)return `<img src="${esc(photo.url)}" alt="${esc(c.model)} 실차 사진" />${stamp}`;const visual=fallbackImage(c);return `<img src="${esc(visual.src)}" alt="${esc(c.model)} ${esc(visual.label)}"/><span class="zc-ref-label">${esc(visual.label)}</span>${stamp}`}
+function thumbHtml(c){const received=window.SnoteReceivedVehicleList?.thumbnail?.(c);if(received!=null)return received+snote163ContractStamp(c);const stamp=snote163ContractStamp(c),photo=coverPhoto(c);if(photo)return `<img src="${esc(photo.url)}" alt="${esc(c.model)} 실차 사진" />${stamp}`;const visual=fallbackImage(c);return `<img src="${esc(visual.src)}" alt="${esc(c.model)} ${esc(visual.label)}"/>${stamp}`}
 function snoteListPhotoThumb(c){return `<div class="car-thumb">${thumbHtml(c)}<button type="button" class="snote-list-photo" data-snote-list-photo="${esc(c.id)}" aria-label="${esc(c.model)} 메인 사진 확대 보기" onclick="snoteOpenListPhoto(event,this)" onkeydown="event.stopPropagation()"></button></div>`;}
 function snoteOpenListPhoto(event,button){
  event?.preventDefault();event?.stopPropagation();
@@ -11962,7 +11959,7 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 <link rel="stylesheet" href="assets/workspace-reorder.css?v=2.136">
 <script src="assets/workspace-order-store.js?v=2.135" defer></script>
 <script src="assets/workspace-reorder.js?v=2.172" defer></script>
-<script src="assets/release-info.js?v=2.186" defer></script>
+<script src="assets/release-info.js?v=2.187" defer></script>
 <link rel="stylesheet" href="assets/encar-id.css?v=2.162">
 <script src="assets/encar-id.js?v=2.184" defer></script>
 <script src="assets/company-purchase.js?v=2.172" defer></script>
@@ -12008,7 +12005,7 @@ window.addEventListener('snote:payment-accounts-changed',()=>{if(typeof contract
 <link rel="stylesheet" href="assets/shared-vehicle-detail.css?v=2.174">
 <script src="assets/shared-vehicle-detail.js?v=2.174" defer></script>
 <link rel="stylesheet" href="assets/contract-layout-v2167.css?v=2.170">
-<link rel="stylesheet" href="assets/vehicle-media.css?v=2.168">
+<link rel="stylesheet" href="assets/vehicle-media.css?v=2.187">
 <link rel="stylesheet" href="assets/vehicle-image-viewer.css?v=2.186">
 <script src="assets/vehicle-image-viewer.js?v=2.186" defer></script>
 
