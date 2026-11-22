@@ -27,7 +27,7 @@
   for(const selector of ['#quote-overlay','#contract-overlay','#zc76-receipt-overlay']){
    const root=document.querySelector(selector),frame=root?.querySelector('.snote-popup-frame');if(!frame||frame.querySelector('.snote-document-controls'))continue;
    const close=frame.querySelector('button.snote-popup-close'),print=frame.querySelector('[data-document-print]');if(!close||!print)continue;
-   const rail=document.createElement('div');rail.className='snote-document-controls';rail.setAttribute('role','group');rail.setAttribute('aria-label','문서 작업');if(selector==='#quote-overlay')rail.append(close,print);else rail.append(print,close);frame.prepend(rail);
+   const rail=document.createElement('div');rail.className='snote-document-controls';rail.setAttribute('role','group');rail.setAttribute('aria-label','문서 작업');rail.append(close,print);frame.prepend(rail);
   }
   for(const selector of ['#vehicle-overlay .detail-close','#zc72-sale-modal .zc72-close','.mobile-drawer-close']){const button=document.querySelector(selector);if(button&&!button.classList.contains('snote-popup-close'))mark(button);}
   for(const dialog of document.querySelectorAll('dialog')){
