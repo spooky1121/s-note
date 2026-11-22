@@ -11,7 +11,7 @@
   const COMPANY_EXISTS = '등록되어 있는 상사입니다. 채팅으로 문의 부탁드립니다';
   const CONTACT_EXISTS = '가입된 이메일 또는 휴대번 입니다.';
   const UNKNOWN = '가입 요청의 처리 상태를 확인하지 못했습니다. 인증 메일을 확인하거나 로그인해 주세요. 가입 요청을 반복해서 보내지 마세요.';
-  const fields = ['company', 'business', 'owner', 'address', 'name', 'phone', 'email'];
+  const fields = ['company', 'business', 'owner', 'address', 'address-detail', 'name', 'phone', 'email'];
   let mode = null, generation = 0, checked = '', checking = null, sending = null, addressRevision = 0;
   let addressSession = null;
   const company = () => input('company').value.trim();
@@ -59,10 +59,11 @@
     if (data.kind === 'closed') { closeAddress(); return; }
     if (data.kind === 'error') { const context = session.context; closeAddress(); void alert('주소 검색을 불러오지 못했습니다. 다시 시도하거나 주소를 직접 입력해 주세요.', () => addressCurrent(context)); return; }
     if (data.kind !== 'selected' || typeof data.address !== 'string' || !data.address.trim() || data.address.length > 200 || /[\u0000-\u001f\u007f]/.test(data.address) || data.postcode && (typeof data.postcode !== 'string' || !/^\d{5}$/.test(data.postcode))) return;
-    const context = session.context, field = context.element; closeAddress();
+    const context = session.context, field = context.element, detail = input('address-detail'); closeAddress();
     field.value = data.address.trim(); field.dataset.postcode = data.postcode || '';
+    detail.value = ''; detail.dispatchEvent(new Event('input', { bubbles: true }));
     field.dispatchEvent(new Event('input', { bubbles: true })); field.dispatchEvent(new Event('change', { bubbles: true }));
-    const now = addressContext(); if (now?.generation === context.generation && now.element === field) { field.focus({ preventScroll: true }); field.setSelectionRange(field.value.length, field.value.length); }
+    const now = addressContext(); if (now?.generation === context.generation && now.element === field) { detail.focus(); detail.setSelectionRange(0, 0); }
   });
   const digits = value => String(value || '').replace(/\D/g, '');
   function formattedNumber(value, kind) {
@@ -127,11 +128,17 @@
   function matchPassword() {
     input('password-confirm').setCustomValidity(input('password-confirm').value && input('password').value !== input('password-confirm').value ? '비밀번호가 일치하지 않습니다.' : '');
   }
+  function businessAddress() {
+    return [input('address').value, input('address-detail').value].map(value => value.normalize('NFC').trim()).filter(Boolean).join(' ');
+  }
+  function matchAddress() {
+    input('address-detail').setCustomValidity([...businessAddress()].length > 300 ? '사업장 주소와 상세주소를 합쳐 300자 이내로 입력해 주세요.' : '');
+  }
   function show(kind) {
     const next = ['representative', 'dealer'].includes(kind) ? kind : null;
     ++generation; invalidateAddress(); clearCheck(); mode = next;
     // Leaving a form or switching registration type never retains passwords or selected documents.
-    form.reset(); matchPassword();
+    form.reset(); matchPassword(); matchAddress();
     form.querySelector('[data-registration-name-label]').textContent = next === 'dealer' ? '딜러 성명' : '관리자 성명';
     form.querySelector('[data-registration-phone-label]').textContent = next === 'dealer' ? '딜러 휴대전화' : '관리자 휴대전화';
     input('name').placeholder = next === 'dealer' ? '딜러 성명' : '관리자 성명';
@@ -172,11 +179,11 @@
   async function register(event) {
     event.preventDefault();
     if (!mode || sending) return;
-    matchPassword(); if (!form.reportValidity()) return;
+    matchPassword(); matchAddress(); if (!form.reportValidity()) return;
     const kind = mode, version = generation, currentView = () => live(kind, version);
     if (!checked || checked !== company()) { await alert('상사명 옆 확인 버튼을 먼저 눌러 주세요.', currentView); return; }
     const values = Object.fromEntries(fields.map(name => [name, input(name).value.trim()]));
-    const profile = { kind, companyName: values.company, businessNumber: values.business.replace(/\D/g, ''), representativeName: values.owner, businessAddress: values.address, displayName: values.name, phone: values.phone.replace(/\D/g, ''), email: values.email.toLowerCase() };
+    const profile = { kind, companyName: values.company, businessNumber: values.business.replace(/\D/g, ''), representativeName: values.owner, businessAddress: businessAddress(), displayName: values.name, phone: values.phone.replace(/\D/g, ''), email: values.email.toLowerCase() };
     let certificate, license;
     try { certificate = file('business-certificate'); license = file('dealer-license'); } catch (error) { await alert(error.message, currentView); return; }
     const password = input('password').value, operation = { controller: new AbortController(), authority: null }; sending = operation; busy(true); invalidateAddress();
@@ -209,10 +216,11 @@
   }
   input('company').addEventListener('input', clearCheck);
   numericInput(input('business'), 'business'); numericInput(input('phone'), 'phone');
+  for (const name of ['address', 'address-detail']) for (const event of ['input', 'change']) input(name).addEventListener(event, matchAddress);
   for (const event of ['input', 'change', 'reset']) form.addEventListener(event, invalidateAddress);
   checkButton.addEventListener('click', checkCompany); form.addEventListener('submit', register);
   for (const name of ['password', 'password-confirm']) input(name).addEventListener('input', matchPassword);
-  function authChanged() { ++generation; invalidateAddress(); clearCheck(); form.reset(); matchPassword(); if (sending) sending.controller.abort(); }
+  function authChanged() { ++generation; invalidateAddress(); clearCheck(); form.reset(); matchPassword(); matchAddress(); if (sending) sending.controller.abort(); }
   window.addEventListener('pagehide', () => { authChanged(); form.reset(); });
   window.SnoteRegistration = Object.freeze({ show, authChanged, addressContext, addressCurrent, openAddress });
   show(gate.dataset.authMode === 'admin' ? 'representative' : gate.dataset.authMode === 'dealer' ? 'dealer' : null);

@@ -101,12 +101,12 @@ async function assertParentAddress(p,value){assert.equal(await p.locator('#addre
    await p.evaluate(nonce=>dispatchEvent(new MessageEvent('message',{origin:location.origin,source:fixturePopupRefs.at(-2),data:{type:'SNOTE_CUSTOMER_ADDRESS',nonce,kind:'selected',address:'이전 창 주소'}})),newNonce);
    assert.equal(await p.locator('#mailing-base').inputValue(),'서울특별시 중구 세종대로 110');
    await p.locator('#address-search-cancel').click();await closed(next);await p.locator('#address-search-status').waitFor({state:'hidden'});
-   child=await popup(f);await child.locator('#close-search').click().catch(error=>{if(!child.isClosed())throw error;});await closed(child);await p.locator('#address-search-status').waitFor({state:'hidden'});
+   child=await popup(f);assert.equal(await child.locator('#close-search,.search-header button').count(),0,'Address search has no in-page close icon');await child.close();await closed(child);await p.locator('#address-search-status').waitFor({state:'hidden'});
    child=await popup(f);await child.keyboard.press('Escape').catch(error=>{if(!child.isClosed())throw error;});await closed(child);await p.locator('#address-search-status').waitFor({state:'hidden'});
    child=await popup(f);await child.close();await p.clock.fastForward(600);await p.locator('#address-search-status').waitFor({state:'hidden'});
    await layout(p);if(process.env.SNOTE_TEST_SCREENSHOT)await p.screenshot({path:process.env.SNOTE_TEST_SCREENSHOT,fullPage:true});
    assert.equal(await p.locator('#rrn-back').inputValue(),'1234567');await finishFixture(f);
-   console.log('PASS real HTTPS popup, SDK opener null/fragment cleared, about:blank wrapper + HTTPS provider nested iframe same-origin fetch, origin/source/nonce/stale rejection, residence/mailing/detail focus, cancel/Escape/window close, 320px, RRN preserved');
+   console.log('PASS real HTTPS popup, SDK opener null/fragment cleared, about:blank wrapper + HTTPS provider nested iframe same-origin fetch, origin/source/nonce/stale rejection, residence/mailing/detail focus, no in-page close icon, cancel/Escape/browser window close, 320px, RRN preserved');
   }
   {
    const f=await fixture(),p=f.page;await begin(p);await fill(p);await p.evaluate(()=>window.open=()=>null);await p.locator('[data-address-search="residence"]').click();await p.waitForFunction(()=>document.querySelector('#status-message').textContent.includes('주소 검색창이 차단되었습니다'));assert(f.notifications.some(message=>message.tone==='error'&&message.text.includes('주소 검색창이 차단되었습니다')));assert.equal(f.context.pages().length,1);await assertParentAddress(p,'서울특별시 강남구 테스트로 10');assert.equal(await p.locator('#address-base').isEnabled(),true);await finishFixture(f);console.log('PASS blocked popup shows recovery and preserves editable form');

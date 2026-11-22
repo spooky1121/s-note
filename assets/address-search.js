@@ -29,7 +29,6 @@
     notify('closed');
     window.close();
   }
-  document.getElementById('close-search').addEventListener('click', closeSearch);
   window.addEventListener('pagehide', () => notify('closed'));
   window.addEventListener('keydown', event => {
     if (event.key === 'Escape' && !window.SnoteMessages?.active()) { event.preventDefault(); closeSearch(); }

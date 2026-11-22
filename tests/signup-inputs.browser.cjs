@@ -8,7 +8,7 @@ const { chromium } = require('./encar/node_modules/playwright');
 const { setup, open, fill, companyCheck, constants } = require('./signup-registration.browser.cjs');
 const { constants: login } = require('./normal-login.browser.cjs');
 const ROOT = path.resolve(__dirname, '..');
-const OUT = process.env.SNOTE_SIGNUP_INPUTS_ARTIFACT_DIR || '/workspace/work/signup-inputs-v2190';
+const OUT = process.env.SNOTE_SIGNUP_INPUTS_ARTIFACT_DIR || '/workspace/work/signup-address-v2191/focused';
 const WIDTHS = (process.env.SNOTE_SIGNUP_INPUTS_WIDTHS || '1440,360,390,430').split(',').map(Number);
 const PREFIX = constants.PREFIX;
 const KAKAO = 'https://t1.kakaocdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
@@ -27,7 +27,7 @@ async function safeFixture(browser, width, callback) {
 async function geometry(p) {
   return p.evaluate(() => {
     const gate=document.getElementById('zc-cloud-gate'), form=document.getElementById('snote-registration-form'), origin=document.getElementById('snote-registration-company').getBoundingClientRect().top;
-    return { fields:Object.fromEntries(['business','owner','address','name','phone','email','password','business-certificate','dealer-license','submit'].map(name=>{const r=document.getElementById('snote-registration-'+name).getBoundingClientRect();return[name,{top:r.top-origin,left:r.left,width:r.width,height:r.height}];})),formHeight:form.getBoundingClientRect().height,scrollHeight:gate.scrollHeight,scrollTop:gate.scrollTop,pageWidth:document.documentElement.scrollWidth,viewport:innerWidth };
+    return { fields:Object.fromEntries(['business','owner','address','address-detail','name','phone','email','password','business-certificate','dealer-license','submit'].map(name=>{const r=document.getElementById('snote-registration-'+name).getBoundingClientRect();return[name,{top:r.top-origin,left:r.left,width:r.width,height:r.height}];})),formHeight:form.getBoundingClientRect().height,scrollHeight:gate.scrollHeight,scrollTop:gate.scrollTop,pageWidth:document.documentElement.scrollWidth,viewport:innerWidth };
   });
 }
 function sameGeometry(a,b,label,{scroll=true}={}) {
@@ -98,7 +98,27 @@ async function filesRequired(browser) {
     results.push({name:'both evidence fields required for representative/dealer, either or both missing blocks the API',passed:true}); console.log('PASS required attachment UI');
   });
 }
-const POSTCODE_STUB = `window.daum={Postcode:function(options){window.__syntheticPostcode=options;this.embed=function(root){const button=document.createElement('button');button.id='synthetic-select-address';button.textContent='합성 주소 선택';button.onclick=()=>options.oncomplete({roadAddress:'합성시 합성구 새주소로 190',address:'합성시 합성구 새주소로 190',zonecode:'12345',userSelectedType:'R'});root.append(button);};}};`;
+async function addressDetailValidation(browser) {
+  await safeFixture(browser,390,async({f,p,signup})=>{
+    for(const kind of ['representative','dealer']) {
+      if(await p.locator('#snote-registration-form').isVisible())await p.locator('#snote-auth-back').click();
+      await open(p,kind);await fill(p);const detail=p.locator(PREFIX+'address-detail');assert.equal(await detail.evaluate(el=>el.required),true);assert.equal(await detail.evaluate(el=>el.maxLength),100);
+      for(const value of ['', '   ']){await detail.fill(value);const count=signup.posts.length;await p.locator(PREFIX+'submit').click();await p.locator('#snote-message-dialog[open]').waitFor();assert.equal(signup.posts.length,count,'Empty or whitespace-only address detail cannot reach the API');await popupDismiss(p);}
+      await p.locator(PREFIX+'address').fill('  '+constants.ADDRESS.normalize(kind==='representative'?'NFD':'NFC')+'  ');await detail.fill('  '+constants.ADDRESS_DETAIL.normalize(kind==='representative'?'NFD':'NFC')+'  ');await p.locator(PREFIX+'submit').click();await p.locator('#snote-signup-complete').waitFor({state:'visible'});assert.equal(signup.posts.at(-1).profile.businessAddress,constants.BUSINESS_ADDRESS);assert.equal(signup.posts.at(-1).profile.kind,kind);assert.equal(Object.hasOwn(signup.posts.at(-1).profile,'businessAddressDetail'),false,'The current server schema remains one combined NFC businessAddress string');await p.locator('#snote-signup-login').click();
+    }
+    receipts.push({businessAddresses:signup.posts.map(post=>({kind:post.profile.kind,businessAddress:post.profile.businessAddress}))});
+    results.push({name:'required base/detail fields trim and combine into the existing businessAddress for both signup kinds',passed:true});console.log('PASS required address detail and combined payload');
+  });
+}
+async function addressLengthBoundary(browser) {
+  await safeFixture(browser,390,async({f,p,signup})=>{
+    await open(p);await fill(p);const base='가'.repeat(200),detail='나'.repeat(99),combined=base+' '+detail;assert.equal(combined.length,300);
+    await p.locator(PREFIX+'address').fill(base+'가');await p.locator(PREFIX+'address-detail').fill(detail);await p.locator(PREFIX+'submit').click();await p.locator('#snote-message-dialog[open]').waitFor();assert.equal(signup.posts.length,0,'A combined 301-character address cannot reach the API');assert.match(await p.locator('#snote-message-copy').textContent(),/300/);await popupDismiss(p);
+    await p.locator(PREFIX+'address').fill(base);signup.expectedBusinessAddress=combined;await p.locator(PREFIX+'submit').click();await p.locator('#snote-signup-complete').waitFor({state:'visible'});assert.equal(signup.posts.length,1);assert.equal(signup.posts[0].profile.businessAddress,combined);receipts.push({businessAddressBoundary:{acceptedCharacters:signup.posts[0].profile.businessAddress.length,rejectedCharacters:301}});
+    results.push({name:'base plus detail plus one separating space accepts 300 characters and rejects 301 before the API',passed:true});console.log('PASS combined address 300-character boundary');
+  });
+}
+const POSTCODE_STUB = `window.daum={Postcode:function(options){window.__syntheticPostcode=options;this.embed=function(root){const button=document.createElement('button');button.id='synthetic-select-address';button.textContent='합성 주소 선택';button.onclick=()=>options.oncomplete(window.__syntheticAddress||{roadAddress:'합성시 합성구 새주소로 190',address:'합성시 합성구 새주소로 190',zonecode:'12345',userSelectedType:'R'});root.append(button);};}};`;
 async function addressPopup(browser) {
   await safeFixture(browser,390,async({f,p,signup})=>{
     const external=[],kakaoRequests=[],childErrors=[];
@@ -123,6 +143,7 @@ async function addressPopup(browser) {
       const wait=f.context.waitForEvent('page'); await button.click(); const popup=await wait; await popup.locator('#synthetic-select-address').waitFor({timeout:10000});
       const current=await p.evaluate(()=>({url:window.__signupAddressURLs.at(-1),index:window.__signupAddressRefs.length-1})),url=new URL(current.url);
       assert.equal(url.origin,login.ORIGIN);assert.equal(url.pathname,'/address-search.html');assert.deepEqual([...url.searchParams.keys()],['parentOrigin']);assert.equal(url.searchParams.get('parentOrigin'),login.ORIGIN);assert.match(url.hash,/^#[a-f0-9]{32}$/);
+      assert.equal(await popup.locator('#close-search').count(),0,'The address helper has no in-page close icon');assert.equal(await popup.locator('.search-header button').count(),0);
       const child=await popup.evaluate(()=>({openerNull:window.opener===null,hash:location.hash,origin:location.origin}));assert.deepEqual(child,{openerNull:true,hash:'',origin:login.ORIGIN});
       return{popup,index:current.index,nonce:url.hash.slice(1)};
     }
@@ -133,13 +154,17 @@ async function addressPopup(browser) {
     for(const patch of [{origin:'https://foreign.invalid'},{self:true},{nonce:'0'.repeat(32)}]) {await send(active,patch);assert.equal(await p.locator(PREFIX+'address').inputValue(),'원래 합성 주소','Wrong origin/source/nonce cannot update the signup address');}
     await active.popup.locator('#synthetic-select-address').click(); await p.waitForFunction(()=>document.getElementById('snote-registration-address').value.includes('새주소로 190')); await closed(active);
     assert.equal(await p.locator(PREFIX+'address').getAttribute('data-postcode'),'12345');await popupDismiss(p);
-    assert.equal(await p.evaluate(()=>document.activeElement.id),'snote-registration-address');const caret=await p.locator(PREFIX+'address').evaluate(el=>({start:el.selectionStart,length:el.value.length}));assert.equal(caret.start,caret.length,'Selected address leaves the caret ready for a detailed address');
+    assert.equal(await p.evaluate(()=>document.activeElement.id),'snote-registration-address-detail');assert.equal(await p.locator(PREFIX+'address-detail').inputValue(),'','Selecting a base address starts with an empty dedicated detail field');
+    await p.locator(PREFIX+'address-detail').fill('이전 합성동 101호');const reselected=await launch();assert.equal(await p.locator(PREFIX+'address-detail').inputValue(),'이전 합성동 101호');
+    await reselected.popup.evaluate(()=>{window.__syntheticAddress={roadAddress:'합성시 합성구 다른주소로 191',address:'합성시 합성구 다른주소로 191',zonecode:'54321',userSelectedType:'R'};});await reselected.popup.locator('#synthetic-select-address').click();await closed(reselected);
+    assert.equal(await p.locator(PREFIX+'address').inputValue(),'합성시 합성구 다른주소로 191');assert.equal(await p.locator(PREFIX+'address-detail').inputValue(),'','Reselecting an address clears the former building/unit details');assert.equal(await p.locator(PREFIX+'address').getAttribute('data-postcode'),'54321');assert.equal(await p.evaluate(()=>document.activeElement.id),'snote-registration-address-detail');
     const edited=await launch();await p.locator(PREFIX+'address').fill('직접 수정한 합성 주소');await closed(edited);await send(edited,{address:'편집 전 검색의 합성 주소'});assert.equal(await p.locator(PREFIX+'address').inputValue(),'직접 수정한 합성 주소','An exact old-source callback cannot overwrite a manually edited address');
+    const detailEdited=await launch();await p.locator(PREFIX+'address-detail').fill('직접 수정한 합성동 202호');await closed(detailEdited);await send(detailEdited,{address:'상세주소 편집 전 검색주소'});assert.equal(await p.locator(PREFIX+'address-detail').inputValue(),'직접 수정한 합성동 202호');assert.equal(await p.locator(PREFIX+'address').inputValue(),'직접 수정한 합성 주소','Detail editing also invalidates an older popup callback');
     const stale=await launch();await p.locator('#snote-auth-back').click();await closed(stale);await open(p,'representative');await send(stale,{address:'지난 가입의 합성 주소'});assert.equal(await p.locator(PREFIX+'address').inputValue(),'','Previous signup mode cannot populate the new signup');
     const changed=await launch();await p.evaluate(()=>window.SnoteRegistration.authChanged());await closed(changed);await send(changed,{address:'다른 인증세대의 합성 주소'});assert.equal(await p.locator(PREFIX+'address').inputValue(),'','Auth invalidation rejects an exact old nonce and WindowProxy');
-    assert.equal(signup.posts.length,0);assert.equal(kakaoRequests.length,4,'Each real new window must request the actual HTTPS SDK URL and execute its synthetic widget');assert.deepEqual(external,[]);assert.deepEqual(childErrors,[]);
+    assert.equal(signup.posts.length,0);assert.equal(kakaoRequests.length,6,'Each real new window must request the actual HTTPS SDK URL and execute its synthetic widget');assert.deepEqual(external,[]);assert.deepEqual(childErrors,[]);
     await p.screenshot({path:path.join(OUT,'signup-kakao-popup-390.png'),fullPage:true});receipts.push({addressPopup:{buttonGeometry,kakaoRequests,sourceOrigin:login.ORIGIN,firstPartyHosted:true,manualCallbackOnly:false}});
-    results.push({name:'real hosted Kakao new window executes HTTPS SDK fixture; origin/source/nonce/address-edit/mode/Auth guards',passed:true});console.log('PASS signup Kakao popup callback guards');
+    results.push({name:'real hosted Kakao new window executes HTTPS SDK fixture; origin/source/nonce/base-detail-edit/mode/Auth guards; selection clears details and focuses the detail field',passed:true});console.log('PASS signup Kakao popup callback guards');
   });
 }
-(async()=>{const before=hashes();let browser;try{browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium'});const focus=process.env.SNOTE_SIGNUP_INPUTS_FOCUS;if(!focus||focus==='geometry')for(const width of WIDTHS)await fixedStatusGeometry(browser,width);if(!focus||focus==='format')await formatting(browser);if(!focus||focus==='files')await filesRequired(browser);if(!focus||focus==='address')await addressPopup(browser);assert.deepEqual(hashes(),before,'Product source hashes changed during verification');}finally{await browser?.close();fs.writeFileSync(path.join(OUT,'verification.json'),JSON.stringify({syntheticOnly:true,productionReads:0,productionWrites:0,sourceHashes:before,results,receipts},null,2)+'\n');}})().catch(error=>{console.error(error.stack);process.exitCode=1;});
+(async()=>{const before=hashes();let browser;try{browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium'});const focus=process.env.SNOTE_SIGNUP_INPUTS_FOCUS;if(!focus||focus==='geometry')for(const width of WIDTHS)await fixedStatusGeometry(browser,width);if(!focus||focus==='format')await formatting(browser);if(!focus||focus==='files')await filesRequired(browser);if(!focus||focus==='details'){await addressDetailValidation(browser);await addressLengthBoundary(browser);}if(!focus||focus==='address')await addressPopup(browser);assert.deepEqual(hashes(),before,'Product source hashes changed during verification');}finally{await browser?.close();fs.writeFileSync(path.join(OUT,'verification.json'),JSON.stringify({syntheticOnly:true,productionReads:0,productionWrites:0,sourceHashes:before,results,receipts},null,2)+'\n');}})().catch(error=>{console.error(error.stack);process.exitCode=1;});

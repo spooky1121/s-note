@@ -11,6 +11,7 @@ const OUT=process.env.SNOTE_SIGNUP_ARTIFACT_DIR||'/workspace/work/signup-v2189';
 const WIDTHS=(process.env.SNOTE_SIGNUP_WIDTHS||'1440,390').split(',').map(Number);
 const PASSWORD='SyntheticSignup!123';
 const COMPANY='합성 신규 상사', PHONE='01011223344', EMAIL='new-account@example.invalid';
+const ADDRESS='가상시 가상구 가상로 1', ADDRESS_DETAIL='합성동 101호', BUSINESS_ADDRESS=ADDRESS+' '+ADDRESS_DETAIL;
 const COMPANY_DUPLICATE='등록되어 있는 상사입니다. 채팅으로 문의 부탁드립니다';
 const CONTACT_DUPLICATE='가입된 이메일 또는 휴대번 입니다.';
 const PREFIX='#snote-registration-';
@@ -23,7 +24,7 @@ async function checkPopup(p,text){const dialog=p.locator('#snote-message-dialog[
 async function setup(browser,width=1440){
   const state=backend();state.user.email=EMAIL;const originalAuth=state.auth;state.auth=(label,input)=>originalAuth(label,{...input,password:input.password===PASSWORD?constants.PASSWORD:input.password});
   const ordinaryFrom=state.from,ordinaryRpc=state.rpc;
-  const signup={checks:[],posts:[],setSessions:[],authSignups:0,status:'pending',checkAvailable:true,holdCheck:null,member:false,kind:'dealer',completeCalls:0,profile:null};
+  const signup={checks:[],posts:[],setSessions:[],authSignups:0,status:'pending',checkAvailable:true,holdCheck:null,member:false,kind:'dealer',completeCalls:0,profile:null,expectedBusinessAddress:BUSINESS_ADDRESS};
   state.from=(label,input)=>{
     if(input.table==='zc_members'&&!signup.member){state.reads.push({label,table:input.table,filters:input.filters});return{data:input.single?null:[],error:null};}
     const result=ordinaryFrom(label,input);
@@ -58,7 +59,7 @@ async function setup(browser,width=1440){
     assert.deepEqual([...form.keys()].sort(),['businessCertificate','dealerLicense','password','profile']);
     const profile=JSON.parse(form.get('profile'));assert.equal(form.get('password'),PASSWORD);
     assert.deepEqual(Object.keys(profile).sort(),['businessAddress','businessNumber','companyName','displayName','email','kind','phone','representativeName']);
-    assert.equal(profile.companyName,COMPANY);assert.equal(profile.businessNumber,'1234567890');assert.equal(profile.representativeName,'합성 대표');assert.equal(profile.businessAddress,'가상시 가상구 가상로 1');assert.equal(profile.displayName,'합성 가입자');assert.equal(profile.phone,PHONE);assert.equal(profile.email,EMAIL);assert(['representative','dealer'].includes(profile.kind));
+    assert.equal(profile.companyName,COMPANY);assert.equal(profile.businessNumber,'1234567890');assert.equal(profile.representativeName,'합성 대표');assert.equal(profile.businessAddress,signup.expectedBusinessAddress,'The API receives the trimmed base address and detail as one businessAddress');assert.equal(profile.displayName,'합성 가입자');assert.equal(profile.phone,PHONE);assert.equal(profile.email,EMAIL);assert(['representative','dealer'].includes(profile.kind));
     for(const field of ['businessCertificate','dealerLicense']){const file=form.get(field);assert(file instanceof File);assert.equal(file.type,'image/png');assert(file.size>0&&file.size<=5*1024*1024);assert.deepEqual(Buffer.from(await file.arrayBuffer()),PNG);}
     signup.posts.push({profile,files:['businessCertificate','dealerLicense']});signup.kind=profile.kind;signup.profile=profile;
     if(signup.holdRegister){const held=signup.holdRegister;held.arrive?.();await held.promise;}
@@ -75,7 +76,7 @@ async function open(p,kind='dealer'){
 }
 async function companyCheck(p){await p.locator(PREFIX+'company-check').click();await p.waitForFunction(()=>{const el=document.getElementById('snote-registration-company-status');return el&&/사용|가능|확인/.test(el.textContent)&&!document.getElementById('snote-registration-company-check').disabled;});}
 async function fill(p,{files=true,check=true}={}){
-  for(const [field,value]of[['company',COMPANY],['business','123-45-67890'],['owner','합성 대표'],['address','가상시 가상구 가상로 1'],['name','합성 가입자'],['phone','010-1122-3344'],['email',EMAIL],['password',PASSWORD],['password-confirm',PASSWORD]])await p.locator(PREFIX+field).fill(value);
+  for(const [field,value]of[['company',COMPANY],['business','123-45-67890'],['owner','합성 대표'],['address',ADDRESS],['address-detail',ADDRESS_DETAIL],['name','합성 가입자'],['phone','010-1122-3344'],['email',EMAIL],['password',PASSWORD],['password-confirm',PASSWORD]])await p.locator(PREFIX+field).fill(value);
   if(files)for(const field of ['business-certificate','dealer-license'])await p.locator(PREFIX+field).setInputFiles({name:'synthetic-'+field+'.png',mimeType:'image/png',buffer:PNG});
   if(check){await companyCheck(p);assert.equal(await p.locator(PREFIX+'company-status').getAttribute('data-state'),'available');assert(await p.locator(PREFIX+'company-status svg').count()>0,'Availability is shown with the requested inline checkmark');}
 }
@@ -209,4 +210,4 @@ async function immediate(browser,kind){
 if(require.main===module){
 (async()=>{const before=hashes(),browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium'});try{const focus=process.env.SNOTE_SIGNUP_FOCUS;if(!focus||focus==='initial-auth')await unknownInitialSession(browser);if(!focus){for(const width of WIDTHS)await layoutAndPending(browser,width);await validation(browser);await attachmentLimits(browser);await staleAndUnknown(browser);await metadataCannotBootstrap(browser);await immediate(browser,'representative');await immediate(browser,'dealer');}if(!focus||focus==='races'){await lateRegistration(browser,'navigation');await lateRegistration(browser,'other-tab-auth');}if(!focus||focus==='completion')await completionDuplicates(browser);if(!focus||focus==='immediate-errors')await immediateCompletionErrors(browser);if(focus==='screenshots')for(const width of WIDTHS)await layoutAndPending(browser,width);assert.deepEqual(hashes(),before,'Product sources must remain frozen during this verification');}finally{await browser.close();fs.writeFileSync(path.join(OUT,'verification.json'),JSON.stringify({syntheticOnly:true,productionReads:0,productionWrites:0,sourceHashes:before,results},null,2)+'\n');}})().catch(error=>{console.error(error.stack);process.exitCode=1;});
 }
-module.exports={setup,open,fill,companyCheck,constants:{PREFIX,PNG,PASSWORD,COMPANY,PHONE,EMAIL}};
+module.exports={setup,open,fill,companyCheck,constants:{PREFIX,PNG,PASSWORD,COMPANY,PHONE,EMAIL,ADDRESS,ADDRESS_DETAIL,BUSINESS_ADDRESS}};

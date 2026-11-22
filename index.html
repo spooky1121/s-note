@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.190">
+<html lang="ko" data-snote-release="2.191">
 <head>
 <meta charset="utf-8" />
 <link rel="stylesheet" href="assets/message-popup.css?v=2.172">
@@ -8891,7 +8891,7 @@ document.addEventListener('click',async event=>{
       <div class="zc-field snote-auth-wide"><label for="snote-registration-company">상사명</label><div class="snote-registration-company-row"><input id="snote-registration-company" name="companyName" required minlength="2" maxlength="100" autocomplete="organization" placeholder="상사 이름을 입력해 주세요"><button type="button" id="snote-registration-company-check">확인</button></div><div class="snote-registration-status-slot"><span id="snote-registration-company-status" role="status" aria-live="polite" hidden></span></div></div>
       <label class="zc-field" for="snote-registration-business">사업자등록번호<input id="snote-registration-business" name="businessNumber" required maxlength="12" pattern="(?:[0-9]{10}|[0-9]{3}-[0-9]{2}-[0-9]{5})" inputmode="numeric" autocomplete="off" placeholder="123-45-67890" title="사업자등록번호 10자리를 입력해 주세요."></label>
       <label class="zc-field" for="snote-registration-owner">대표자명<input id="snote-registration-owner" name="representativeName" required maxlength="100" pattern=".*\S.*" autocomplete="off" placeholder="사업자등록증의 대표자 성명"></label>
-      <div class="zc-field snote-auth-wide"><label for="snote-registration-address">사업장 주소</label><div class="snote-registration-address-row"><input id="snote-registration-address" name="businessAddress" required maxlength="300" pattern=".*\S.*" autocomplete="street-address" placeholder="주소 검색 후 상세주소를 입력해 주세요"><button type="button" id="snote-registration-address-search" onclick="zc73OpenPostcode('snote-registration-address')">주소 검색</button></div></div>
+      <div class="zc-field snote-auth-wide"><label for="snote-registration-address">사업장 주소</label><div class="snote-registration-address-row"><input id="snote-registration-address" name="businessAddress" required maxlength="300" pattern=".*\S.*" autocomplete="address-line1" placeholder="주소를 검색하거나 직접 입력해 주세요"><button type="button" id="snote-registration-address-search" onclick="zc73OpenPostcode('snote-registration-address')">주소 검색</button></div><label class="snote-registration-address-detail-label" for="snote-registration-address-detail">상세주소</label><input id="snote-registration-address-detail" name="businessAddressDetail" required maxlength="100" pattern=".*\S.*" autocomplete="address-line2" placeholder="동·호수 등 상세주소를 입력해 주세요"></div>
       <label class="zc-field" for="snote-registration-name"><span data-registration-name-label>관리자 성명</span><input id="snote-registration-name" name="displayName" required maxlength="40" pattern=".*\S.*" autocomplete="name" placeholder="관리자 성명"></label>
       <label class="zc-field" for="snote-registration-phone"><span data-registration-phone-label>관리자 휴대전화</span><input type="tel" id="snote-registration-phone" name="phone" required minlength="10" maxlength="16" pattern="(?:01[016789][0-9]{7,8}|01[016789]-[0-9]{3,4}-[0-9]{4})" inputmode="tel" autocomplete="tel" placeholder="010-1234-5678"></label>
       <label class="zc-field snote-auth-wide" for="snote-registration-email">이메일<input type="email" id="snote-registration-email" name="email" required maxlength="254" autocomplete="email" autocapitalize="none" spellcheck="false" placeholder="로그인과 인증 메일에 사용할 주소"></label>
@@ -11995,7 +11995,7 @@ window.zc86Cloud={getAccessToken:async()=>{const client=S.client,user=S.user,com
 <link rel="stylesheet" href="assets/workspace-reorder.css?v=2.136">
 <script src="assets/workspace-order-store.js?v=2.135" defer></script>
 <script src="assets/workspace-reorder.js?v=2.172" defer></script>
-<script src="assets/release-info.js?v=2.190" defer></script>
+<script src="assets/release-info.js?v=2.191" defer></script>
 <link rel="stylesheet" href="assets/encar-id.css?v=2.162">
 <script src="assets/encar-id.js?v=2.184" defer></script>
 <script src="assets/company-purchase.js?v=2.172" defer></script>
@@ -12054,7 +12054,7 @@ window.addEventListener('snote:payment-accounts-changed',()=>{if(typeof contract
 <script src="assets/design-purchase.js?v=2.184" defer></script>
 <script src="assets/design-vehicle.js?v=2.179" defer></script>
 <script src="assets/design-settings-office.js?v=2.189" defer></script>
-<link rel="stylesheet" href="assets/signup-registration.css?v=2.190">
-<script src="assets/signup-registration.js?v=2.190" defer></script>
+<link rel="stylesheet" href="assets/signup-registration.css?v=2.191">
+<script src="assets/signup-registration.js?v=2.191" defer></script>
 </body>
 </html>
