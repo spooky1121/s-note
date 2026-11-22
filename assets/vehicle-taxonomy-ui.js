@@ -1,4 +1,6 @@
-import {createVehicleTaxonomyStore,normalizeTaxonomyEntry,taxonomyEntryFromCar,taxonomyIdentity} from './vehicle-taxonomy-store.js?v=2.20';
+// Use the same retryable module promise as the vehicle ACK verifier. Initial
+// loads retain the canonical v2.20 URL; only a failed store fetch gets a retry URL.
+const {createVehicleTaxonomyStore,normalizeTaxonomyEntry,taxonomyEntryFromCar,taxonomyIdentity}=await (window.SnoteFeatures?.module?window.SnoteFeatures.module('taxonomyStore'):import('./vehicle-taxonomy-store.js?v=2.20'));
 
 const bridge=()=>window.snoteVehicleTaxonomyBridge;
 let scope=null,store=null,entries=[],pending=[],loading=null,busy=false,activeSaves=0,activeRetries=0,epoch=0,status='',feedback=null,feedbackVersion=0;

@@ -1,0 +1,2764 @@
+{
+  "syntheticOnly": true,
+  "operatingLatencyMeasured": false,
+  "baselineRoot": "/workspace/s-note-perf-baseline",
+  "afterRoot": "/workspace/s-note",
+  "changedProductFiles": [
+    "assets/dashboard-display-settings.js",
+    "assets/feature-loader.js",
+    "assets/monthly-workbook-cloud.js",
+    "assets/vehicle-catalog.js",
+    "assets/vehicle-taxonomy-ui.js",
+    "index.html",
+    "monthly.html"
+  ],
+  "harnessSha256": "1c2753a55e5c5859175344e5221cadc374f99e7d18dbf6e90fa530b1dcd745d9",
+  "fixtureHashes": {
+    "backend": "eb58ea051dac8617b6ae7cffc12e90c03cf70e69cc3f79aef8dda8d552f06730",
+    "sdkSource": "d4ced5112d7ded3d10e571865ff96a7b458b203ea1a1a1c821242a23cff98248"
+  },
+  "runsPerVersion": 36,
+  "iterationsPerCombination": 3,
+  "fixedBackendDelayMs": 150,
+  "networkMeasurement": "Chromium CDP loadingFinished.encodedDataLength from actual loopback HTTP gzip responses; cached responses contribute observed encoded bytes. Synthetic SDK Auth/DB calls use browser bindings, so their logical calls are reported separately and their wire bytes are not measured.",
+  "cachePolicy": "Controlled local HTTP: HTML no-store; static assets public,max-age=3600. No Playwright routing, cache not disabled. Each pair shares one browser context; localStorage (including Auth state) is cleared between cold/warm while HTTP cache and IndexedDB remain. Cold uses a fresh browser context; it does not mean a cold OS file cache. This is not an observed production cache policy.",
+  "groups": [
+    {
+      "role": "dealer",
+      "width": 1440,
+      "cache": "cold",
+      "before": {
+        "firstContentfulPaintMs": {
+          "median": 524,
+          "min": 436,
+          "max": 724
+        },
+        "loginVisibleMs": {
+          "median": 704.8,
+          "min": 652.9,
+          "max": 961.4
+        },
+        "stages": {
+          "auth_ack": {
+            "median": 170.3,
+            "min": 169.3,
+            "max": 177.8
+          },
+          "company_ack": {
+            "median": 482.9,
+            "min": 482.6,
+            "max": 491.5
+          },
+          "essential_data_ack": {
+            "median": 725,
+            "min": 720.6,
+            "max": 729.4
+          },
+          "workspace_policy_ack": {
+            "median": 948.3,
+            "min": 944.1,
+            "max": 957.6
+          },
+          "dashboard_interactive": {
+            "median": 992.6,
+            "min": 987.7,
+            "max": 996.7
+          }
+        },
+        "firstUse": {
+          "kind": "catalog",
+          "milliseconds": {
+            "median": 554.9,
+            "min": 548.3,
+            "max": 722.6
+          }
+        },
+        "initialAssets": {
+          "requests": {
+            "median": 177,
+            "min": 177,
+            "max": 178
+          },
+          "networkResponses": {
+            "median": 164,
+            "min": 164,
+            "max": 164
+          },
+          "cacheHits": {
+            "median": 13,
+            "min": 13,
+            "max": 14
+          },
+          "encodedBytes": {
+            "median": 4977736,
+            "min": 4977736,
+            "max": 4977736
+          }
+        },
+        "initialCatalogJsonRequests": [
+          0,
+          0,
+          0
+        ],
+        "initialMonthlyDocumentRequests": [
+          1,
+          1,
+          1
+        ],
+        "logicalCompanyReadsBeforeFeatures": [
+          1,
+          1,
+          1
+        ],
+        "logicalCompanyReadsScenarioTotal": [
+          1,
+          1,
+          1
+        ],
+        "backendLogicalCalls": {
+          "auth": {
+            "median": 1,
+            "min": 1,
+            "max": 1
+          },
+          "getUser": {
+            "median": 5,
+            "min": 5,
+            "max": 5
+          },
+          "reads": {
+            "median": 6,
+            "min": 6,
+            "max": 6
+          }
+        }
+      },
+      "after": {
+        "firstContentfulPaintMs": {
+          "median": 476,
+          "min": 468,
+          "max": 700
+        },
+        "loginVisibleMs": {
+          "median": 706.5,
+          "min": 669.6,
+          "max": 927.9
+        },
+        "stages": {
+          "auth_ack": {
+            "median": 170.4,
+            "min": 169.1,
+            "max": 178.8
+          },
+          "company_ack": {
+            "median": 483.7,
+            "min": 483.6,
+            "max": 495.4
+          },
+          "essential_data_ack": {
+            "median": 725.9,
+            "min": 712.2,
+            "max": 729.5
+          },
+          "workspace_policy_ack": {
+            "median": 954.7,
+            "min": 940.6,
+            "max": 980.4
+          },
+          "dashboard_interactive": {
+            "median": 1021.4,
+            "min": 1000.4,
+            "max": 1021.8
+          }
+        },
+        "firstUse": {
+          "kind": "catalog",
+          "milliseconds": {
+            "median": 515.4,
+            "min": 442.8,
+            "max": 782.3
+          }
+        },
+        "initialAssets": {
+          "requests": {
+            "median": 155,
+            "min": 155,
+            "max": 155
+          },
+          "networkResponses": {
+            "median": 155,
+            "min": 155,
+            "max": 155
+          },
+          "cacheHits": {
+            "median": 0,
+            "min": 0,
+            "max": 0
+          },
+          "encodedBytes": {
+            "median": 4936418,
+            "min": 4936418,
+            "max": 4936418
+          }
+        },
+        "initialCatalogJsonRequests": [
+          0,
+          0,
+          0
+        ],
+        "initialMonthlyDocumentRequests": [
+          0,
+          0,
+          0
+        ],
+        "logicalCompanyReadsBeforeFeatures": [
+          1,
+          1,
+          1
+        ],
+        "logicalCompanyReadsScenarioTotal": [
+          1,
+          1,
+          1
+        ],
+        "backendLogicalCalls": {
+          "auth": {
+            "median": 1,
+            "min": 1,
+            "max": 1
+          },
+          "getUser": {
+            "median": 5,
+            "min": 5,
+            "max": 5
+          },
+          "reads": {
+            "median": 6,
+            "min": 6,
+            "max": 6
+          }
+        }
+      },
+      "medianDeltaAfterMinusBefore": {
+        "loginVisibleMs": 1.7,
+        "interactiveMs": 28.8,
+        "firstUseMs": -39.5,
+        "initialAssetResourceRequestEvents": -22,
+        "initialAssetWireResponses": -9,
+        "initialAssetEncodedBytes": -41318
+      }
+    },
+    {
+      "role": "dealer",
+      "width": 1440,
+      "cache": "warm",
+      "before": {
+        "firstContentfulPaintMs": {
+          "median": 460,
+          "min": 404,
+          "max": 600
+        },
+        "loginVisibleMs": {
+          "median": 630,
+          "min": 560.9,
+          "max": 833.8
+        },
+        "stages": {
+          "auth_ack": {
+            "median": 164.4,
+            "min": 164.2,
+            "max": 176.4
+          },
+          "company_ack": {
+            "median": 476.6,
+            "min": 476.3,
+            "max": 495.8
+          },
+          "essential_data_ack": {
+            "median": 713.1,
+            "min": 701.5,
+            "max": 732.6
+          },
+          "workspace_policy_ack": {
+            "median": 962.3,
+            "min": 899,
+            "max": 976.4
+          },
+          "dashboard_interactive": {
+            "median": 1006.2,
+            "min": 936.4,
+            "max": 1036.6
+          }
+        },
+        "firstUse": {
+          "kind": "catalog",
+          "milliseconds": {
+            "median": 534.9,
+            "min": 472.1,
+            "max": 540.6
+          }
+        },
+        "initialAssets": {
+          "requests": {
+            "median": 178,
+            "min": 177,
+            "max": 178
+          },
+          "networkResponses": {
+            "median": 2,
+            "min": 2,
+            "max": 2
+          },
+          "cacheHits": {
+            "median": 176,
+            "min": 175,
+            "max": 176
+          },
+          "encodedBytes": {
+            "median": 321146,
+            "min": 321146,
+            "max": 321146
+          }
+        },
+        "initialCatalogJsonRequests": [
+          0,
+          0,
+          0
+        ],
+        "initialMonthlyDocumentRequests": [
+          1,
+          1,
+          1
+        ],
+        "logicalCompanyReadsBeforeFeatures": [
+          1,
+          1,
+          1
+        ],
+        "logicalCompanyReadsScenarioTotal": [
+          1,
+          1,
+          1
+        ],
+        "backendLogicalCalls": {
+          "auth": {
+            "median": 1,
+            "min": 1,
+            "max": 1
+          },
+          "getUser": {
+            "median": 5,
+            "min": 5,
+            "max": 5
+          },
+          "reads": {
+            "median": 6,
+            "min": 6,
+            "max": 6
+          }
+        }
+      },
+      "after": {
+        "firstContentfulPaintMs": {
+          "median": 412,
+          "min": 388,
+          "max": 464
+        },
+        "loginVisibleMs": {
+          "median": 566.9,
+          "min": 553.3,
+          "max": 625.3
+        },
+        "stages": {
+          "auth_ack": {
+            "median": 165,
+            "min": 165,
+            "max": 168.9
+          },
+          "company_ack": {
+            "median": 483.9,
+            "min": 479.6,
+            "max": 489.5
+          },
+          "essential_data_ack": {
+            "median": 719.3,
+            "min": 716.4,
+            "max": 724.9
+          },
+          "workspace_policy_ack": {
+            "median": 952.3,
+            "min": 915.9,
+            "max": 985.1
+          },
+          "dashboard_interactive": {
+            "median": 993.6,
+            "min": 956.1,
+            "max": 1030
+          }
+        },
+        "firstUse": {
+          "kind": "catalog",
+          "milliseconds": {
+            "median": 464.7,
+            "min": 462.5,
+            "max": 520.8
+          }
+        },
+        "initialAssets": {
+          "requests": {
+            "median": 155,
+            "min": 155,
+            "max": 155
+          },
+          "networkResponses": {
+            "median": 1,
+            "min": 1,
+            "max": 1
+          },
+          "cacheHits": {
+            "median": 154,
+            "min": 154,
+            "max": 154
+          },
+          "encodedBytes": {
+            "median": 318550,
+            "min": 318550,
+            "max": 318550
+          }
+        },
+        "initialCatalogJsonRequests": [
+          0,
+          0,
+          0
+        ],
+        "initialMonthlyDocumentRequests": [
+          0,
+          0,
+          0
+        ],
+        "logicalCompanyReadsBeforeFeatures": [
+          1,
+          1,
+          1
+        ],
+        "logicalCompanyReadsScenarioTotal": [
+          1,
+          1,
+          1
+        ],
+        "backendLogicalCalls": {
+          "auth": {
+            "median": 1,
+            "min": 1,
+            "max": 1
+          },
+          "getUser": {
+            "median": 5,
+            "min": 5,
+            "max": 5
+          },
+          "reads": {
+            "median": 6,
+            "min": 6,
+            "max": 6
+          }
+        }
+      },
+      "medianDeltaAfterMinusBefore": {
+        "loginVisibleMs": -63.1,
+        "interactiveMs": -12.6,
+        "firstUseMs": -70.2,
+        "initialAssetResourceRequestEvents": -23,
+        "initialAssetWireResponses": -1,
+        "initialAssetEncodedBytes": -2596
+      }
+    },
+    {
+      "role": "dealer",
+      "width": 390,
+      "cache": "cold",
+      "before": {
+        "firstContentfulPaintMs": {
+          "median": 424,
+          "min": 376,
+          "max": 536
+        },
+        "loginVisibleMs": {
+          "median": 717.5,
+          "min": 591.8,
+          "max": 730.9
+        },
+        "stages": {
+          "auth_ack": {
+            "median": 171.8,
+            "min": 169.3,
+            "max": 174.3
+          },
+          "company_ack": {
+            "median": 484.2,
+            "min": 484,
+            "max": 492.5
+          },
+          "essential_data_ack": {
+            "median": 728,
+            "min": 709.1,
+            "max": 794.6
+          },
+          "workspace_policy_ack": {
+            "median": 976,
+            "min": 956,
+            "max": 1006.7
+          },
+          "dashboard_interactive": {
+            "median": 1016.6,
+            "min": 993.2,
+            "max": 1049
+          }
+        },
+        "firstUse": {
+          "kind": "catalog",
+          "milliseconds": {
+            "median": 516.7,
+            "min": 514.9,
+            "max": 585.1
+          }
+        },
+        "initialAssets": {
+          "requests": {
+            "median": 175,
+            "min": 174,
+            "max": 175
+          },
+          "networkResponses": {
+            "median": 162,
+            "min": 162,
+            "max": 162
+          },
+          "cacheHits": {
+            "median": 13,
+            "min": 12,
+            "max": 13
+          },
+          "encodedBytes": {
+            "median": 3007648,
+            "min": 3007648,
+            "max": 3007648
+          }
+        },
+        "initialCatalogJsonRequests": [
+          0,
+          0,
+          0
+        ],
+        "initialMonthlyDocumentRequests": [
+          1,
+          1,
+          1
+        ],
+        "logicalCompanyReadsBeforeFeatures": [
+          1,
+          1,
+          1
+        ],
+        "logicalCompanyReadsScenarioTotal": [
+          1,
+          1,
+          1
+        ],
+        "backendLogicalCalls": {
+          "auth": {
+            "median": 1,
+            "min": 1,
+            "max": 1
+          },
+          "getUser": {
+            "median": 5,
+            "min": 5,
+            "max": 5
+          },
+          "reads": {
+            "median": 6,
+            "min": 6,
+            "max": 6
+          }
+        }
+      },
+      "after": {
+        "firstContentfulPaintMs": {
+          "median": 468,
+          "min": 360,
+          "max": 648
+        },
+        "loginVisibleMs": {
+          "median": 759.2,
+          "min": 529,
+          "max": 857
+        },
+        "stages": {
+          "auth_ack": {
+            "median": 180.1,
+            "min": 172,
+            "max": 180.6
+          },
+          "company_ack": {
+            "median": 495.2,
+            "min": 483.9,
+            "max": 512.1
+          },
+          "essential_data_ack": {
+            "median": 731.5,
+            "min": 710.5,
+            "max": 746
+          },
+          "workspace_policy_ack": {
+            "median": 987.8,
+            "min": 928.5,
+            "max": 996.5
+          },
+          "dashboard_interactive": {
+            "median": 1031.2,
+            "min": 968.3,
+            "max": 1039.9
+          }
+        },
+        "firstUse": {
+          "kind": "catalog",
+          "milliseconds": {
+            "median": 525.2,
+            "min": 500.9,
+            "max": 600
+          }
+        },
+        "initialAssets": {
+          "requests": {
+            "median": 153,
+            "min": 153,
+            "max": 153
+          },
+          "networkResponses": {
+            "median": 153,
+            "min": 153,
+            "max": 153
+          },
+          "cacheHits": {
+            "median": 0,
+            "min": 0,
+            "max": 0
+          },
+          "encodedBytes": {
+            "median": 2966330,
+            "min": 2966330,
+            "max": 2966330
+          }
+        },
+        "initialCatalogJsonRequests": [
+          0,
+          0,
+          0
+        ],
+        "initialMonthlyDocumentRequests": [
+          0,
+          0,
+          0
+        ],
+        "logicalCompanyReadsBeforeFeatures": [
+          1,
+          1,
+          1
+        ],
+        "logicalCompanyReadsScenarioTotal": [
+          1,
+          1,
+          1
+        ],
+        "backendLogicalCalls": {
+          "auth": {
+            "median": 1,
+            "min": 1,
+            "max": 1
+          },
+          "getUser": {
+            "median": 5,
+            "min": 5,
+            "max": 5
+          },
+          "reads": {
+            "median": 6,
+            "min": 6,
+            "max": 6
+          }
+        }
+      },
+      "medianDeltaAfterMinusBefore": {
+        "loginVisibleMs": 41.7,
+        "interactiveMs": 14.6,
+        "firstUseMs": 8.5,
+        "initialAssetResourceRequestEvents": -22,
+        "initialAssetWireResponses": -9,
+        "initialAssetEncodedBytes": -41318
+      }
+    },
+    {
+      "role": "dealer",
+      "width": 390,
+      "cache": "warm",
+      "before": {
+        "firstContentfulPaintMs": {
+          "median": 408,
+          "min": 392,
+          "max": 424
+        },
+        "loginVisibleMs": {
+          "median": 565.3,
+          "min": 545.6,
+          "max": 566
+        },
+        "stages": {
+          "auth_ack": {
+            "median": 169.5,
+            "min": 165.9,
+            "max": 170.3
+          },
+          "company_ack": {
+            "median": 482.8,
+            "min": 478.7,
+            "max": 485.1
+          },
+          "essential_data_ack": {
+            "median": 714,
+            "min": 706.1,
+            "max": 715.3
+          },
+          "workspace_policy_ack": {
+            "median": 977.5,
+            "min": 970.2,
+            "max": 989.7
+          },
+          "dashboard_interactive": {
+            "median": 1017.7,
+            "min": 1013,
+            "max": 1034.2
+          }
+        },
+        "firstUse": {
+          "kind": "catalog",
+          "milliseconds": {
+            "median": 525.4,
+            "min": 483.5,
+            "max": 653.5
+          }
+        },
+        "initialAssets": {
+          "requests": {
+            "median": 175,
+            "min": 175,
+            "max": 175
+          },
+          "networkResponses": {
+            "median": 2,
+            "min": 2,
+            "max": 2
+          },
+          "cacheHits": {
+            "median": 173,
+            "min": 173,
+            "max": 173
+          },
+          "encodedBytes": {
+            "median": 321146,
+            "min": 321146,
+            "max": 321146
+          }
+        },
+        "initialCatalogJsonRequests": [
+          0,
+          0,
+          0
+        ],
+        "initialMonthlyDocumentRequests": [
+          1,
+          1,
+          1
+        ],
+        "logicalCompanyReadsBeforeFeatures": [
+          1,
+          1,
+          1
+        ],
+        "logicalCompanyReadsScenarioTotal": [
+          1,
+          1,
+          1
+        ],
+        "backendLogicalCalls": {
+          "auth": {
+            "median": 1,
+            "min": 1,
+            "max": 1
+          },
+          "getUser": {
+            "median": 5,
+            "min": 5,
+            "max": 5
+          },
+          "reads": {
+            "median": 6,
+            "min": 6,
+            "max": 6
+          }
+        }
+      },
+      "after": {
+        "firstContentfulPaintMs": {
+          "median": 404,
+          "min": 364,
+          "max": 424
+        },
+        "loginVisibleMs": {
+          "median": 536,
+          "min": 499.9,
+          "max": 560.9
+        },
+        "stages": {
+          "auth_ack": {
+            "median": 166,
+            "min": 165.1,
+            "max": 199.2
+          },
+          "company_ack": {
+            "median": 479,
+            "min": 478.6,
+            "max": 523.1
+          },
+          "essential_data_ack": {
+            "median": 712.6,
+            "min": 709.4,
+            "max": 763.8
+          },
+          "workspace_policy_ack": {
+            "median": 1031.3,
+            "min": 971.6,
+            "max": 1036.7
+          },
+          "dashboard_interactive": {
+            "median": 1079.8,
+            "min": 1010.2,
+            "max": 1082.8
+          }
+        },
+        "firstUse": {
+          "kind": "catalog",
+          "milliseconds": {
+            "median": 610.8,
+            "min": 491.9,
+            "max": 631.2
+          }
+        },
+        "initialAssets": {
+          "requests": {
+            "median": 153,
+            "min": 153,
+            "max": 153
+          },
+          "networkResponses": {
+            "median": 1,
+            "min": 1,
+            "max": 1
+          },
+          "cacheHits": {
+            "median": 152,
+            "min": 152,
+            "max": 152
+          },
+          "encodedBytes": {
+            "median": 318550,
+            "min": 318550,
+            "max": 318550
+          }
+        },
+        "initialCatalogJsonRequests": [
+          0,
+          0,
+          0
+        ],
+        "initialMonthlyDocumentRequests": [
+          0,
+          0,
+          0
+        ],
+        "logicalCompanyReadsBeforeFeatures": [
+          1,
+          1,
+          1
+        ],
+        "logicalCompanyReadsScenarioTotal": [
+          1,
+          1,
+          1
+        ],
+        "backendLogicalCalls": {
+          "auth": {
+            "median": 1,
+            "min": 1,
+            "max": 1
+          },
+          "getUser": {
+            "median": 5,
+            "min": 5,
+            "max": 5
+          },
+          "reads": {
+            "median": 6,
+            "min": 6,
+            "max": 6
+          }
+        }
+      },
+      "medianDeltaAfterMinusBefore": {
+        "loginVisibleMs": -29.3,
+        "interactiveMs": 62.1,
+        "firstUseMs": 85.4,
+        "initialAssetResourceRequestEvents": -22,
+        "initialAssetWireResponses": -1,
+        "initialAssetEncodedBytes": -2596
+      }
+    },
+    {
+      "role": "admin",
+      "width": 1440,
+      "cache": "cold",
+      "before": {
+        "firstContentfulPaintMs": {
+          "median": 480,
+          "min": 460,
+          "max": 488
+        },
+        "loginVisibleMs": {
+          "median": 677.9,
+          "min": 666.6,
+          "max": 694
+        },
+        "stages": {
+          "auth_ack": {
+            "median": 172.2,
+            "min": 170,
+            "max": 172.8
+          },
+          "company_ack": {
+            "median": 485.2,
+            "min": 483.8,
+            "max": 487.5
+          },
+          "essential_data_ack": {
+            "median": 869.5,
+            "min": 867.5,
+            "max": 869.7
+          },
+          "workspace_policy_ack": {
+            "median": 1080.5,
+            "min": 1076.3,
+            "max": 1110.6
+          },
+          "dashboard_interactive": {
+            "median": 1126.7,
+            "min": 1120.8,
+            "max": 1154.4
+          }
+        },
+        "firstUse": {
+          "kind": "monthly",
+          "milliseconds": {
+            "median": 251.9,
+            "min": 233.4,
+            "max": 278.8
+          }
+        },
+        "initialAssets": {
+          "requests": {
+            "median": 179,
+            "min": 179,
+            "max": 179
+          },
+          "networkResponses": {
+            "median": 165,
+            "min": 165,
+            "max": 165
+          },
+          "cacheHits": {
+            "median": 14,
+            "min": 14,
+            "max": 14
+          },
+          "encodedBytes": {
+            "median": 4980454,
+            "min": 4980454,
+            "max": 4980454
+          }
+        },
+        "initialCatalogJsonRequests": [
+          0,
+          0,
+          0
+        ],
+        "initialMonthlyDocumentRequests": [
+          1,
+          1,
+          1
+        ],
+        "logicalCompanyReadsBeforeFeatures": [
+          1,
+          1,
+          1
+        ],
+        "logicalCompanyReadsScenarioTotal": [
+          1,
+          1,
+          1
+        ],
+        "backendLogicalCalls": {
+          "auth": {
+            "median": 1,
+            "min": 1,
+            "max": 1
+          },
+          "getUser": {
+            "median": 5,
+            "min": 5,
+            "max": 5
+          },
+          "reads": {
+            "median": 10,
+            "min": 10,
+            "max": 10
+          }
+        }
+      },
+      "after": {
+        "firstContentfulPaintMs": {
+          "median": 452,
+          "min": 444,
+          "max": 468
+        },
+        "loginVisibleMs": {
+          "median": 656.3,
+          "min": 595.9,
+          "max": 658.9
+        },
+        "stages": {
+          "auth_ack": {
+            "median": 171,
+            "min": 170.5,
+            "max": 183.9
+          },
+          "company_ack": {
+            "median": 486.1,
+            "min": 485.6,
+            "max": 500.6
+          },
+          "essential_data_ack": {
+            "median": 869.7,
+            "min": 869.1,
+            "max": 883.3
+          },
+          "workspace_policy_ack": {
+            "median": 1110.9,
+            "min": 1084.2,
+            "max": 1169.1
+          },
+          "dashboard_interactive": {
+            "median": 1151.7,
+            "min": 1122,
+            "max": 1214
+          }
+        },
+        "firstUse": {
+          "kind": "monthly",
+          "milliseconds": {
+            "median": 553,
+            "min": 479.5,
+            "max": 559.9
+          }
+        },
+        "initialAssets": {
+          "requests": {
+            "median": 155,
+            "min": 155,
+            "max": 155
+          },
+          "networkResponses": {
+            "median": 155,
+            "min": 155,
+            "max": 155
+          },
+          "cacheHits": {
+            "median": 0,
+            "min": 0,
+            "max": 0
+          },
+          "encodedBytes": {
+            "median": 4936418,
+            "min": 4936418,
+            "max": 4936418
+          }
+        },
+        "initialCatalogJsonRequests": [
+          0,
+          0,
+          0
+        ],
+        "initialMonthlyDocumentRequests": [
+          0,
+          0,
+          0
+        ],
+        "logicalCompanyReadsBeforeFeatures": [
+          1,
+          1,
+          1
+        ],
+        "logicalCompanyReadsScenarioTotal": [
+          1,
+          1,
+          1
+        ],
+        "backendLogicalCalls": {
+          "auth": {
+            "median": 1,
+            "min": 1,
+            "max": 1
+          },
+          "getUser": {
+            "median": 5,
+            "min": 5,
+            "max": 5
+          },
+          "reads": {
+            "median": 10,
+            "min": 10,
+            "max": 10
+          }
+        }
+      },
+      "medianDeltaAfterMinusBefore": {
+        "loginVisibleMs": -21.6,
+        "interactiveMs": 25.0,
+        "firstUseMs": 301.1,
+        "initialAssetResourceRequestEvents": -24,
+        "initialAssetWireResponses": -10,
+        "initialAssetEncodedBytes": -44036
+      }
+    },
+    {
+      "role": "admin",
+      "width": 1440,
+      "cache": "warm",
+      "before": {
+        "firstContentfulPaintMs": {
+          "median": 440,
+          "min": 432,
+          "max": 464
+        },
+        "loginVisibleMs": {
+          "median": 640.8,
+          "min": 611.2,
+          "max": 675.8
+        },
+        "stages": {
+          "auth_ack": {
+            "median": 165.8,
+            "min": 164.6,
+            "max": 169.3
+          },
+          "company_ack": {
+            "median": 477.5,
+            "min": 477,
+            "max": 480.5
+          },
+          "essential_data_ack": {
+            "median": 860.3,
+            "min": 859.7,
+            "max": 867.1
+          },
+          "workspace_policy_ack": {
+            "median": 1115.3,
+            "min": 1105.8,
+            "max": 1127.6
+          },
+          "dashboard_interactive": {
+            "median": 1169.1,
+            "min": 1143.1,
+            "max": 1169.3
+          }
+        },
+        "firstUse": {
+          "kind": "monthly",
+          "milliseconds": {
+            "median": 248.1,
+            "min": 231.4,
+            "max": 252.2
+          }
+        },
+        "initialAssets": {
+          "requests": {
+            "median": 180,
+            "min": 179,
+            "max": 180
+          },
+          "networkResponses": {
+            "median": 2,
+            "min": 2,
+            "max": 2
+          },
+          "cacheHits": {
+            "median": 178,
+            "min": 177,
+            "max": 178
+          },
+          "encodedBytes": {
+            "median": 321146,
+            "min": 321146,
+            "max": 321146
+          }
+        },
+        "initialCatalogJsonRequests": [
+          0,
+          0,
+          0
+        ],
+        "initialMonthlyDocumentRequests": [
+          1,
+          1,
+          1
+        ],
+        "logicalCompanyReadsBeforeFeatures": [
+          1,
+          1,
+          1
+        ],
+        "logicalCompanyReadsScenarioTotal": [
+          1,
+          1,
+          1
+        ],
+        "backendLogicalCalls": {
+          "auth": {
+            "median": 1,
+            "min": 1,
+            "max": 1
+          },
+          "getUser": {
+            "median": 5,
+            "min": 5,
+            "max": 5
+          },
+          "reads": {
+            "median": 10,
+            "min": 10,
+            "max": 10
+          }
+        }
+      },
+      "after": {
+        "firstContentfulPaintMs": {
+          "median": 476,
+          "min": 380,
+          "max": 508
+        },
+        "loginVisibleMs": {
+          "median": 649.6,
+          "min": 625.5,
+          "max": 663.4
+        },
+        "stages": {
+          "auth_ack": {
+            "median": 166.3,
+            "min": 165.9,
+            "max": 167.2
+          },
+          "company_ack": {
+            "median": 480.9,
+            "min": 480,
+            "max": 543.1
+          },
+          "essential_data_ack": {
+            "median": 891.6,
+            "min": 864.5,
+            "max": 932.9
+          },
+          "workspace_policy_ack": {
+            "median": 1131.4,
+            "min": 1067.1,
+            "max": 1189.1
+          },
+          "dashboard_interactive": {
+            "median": 1172.2,
+            "min": 1116,
+            "max": 1244.4
+          }
+        },
+        "firstUse": {
+          "kind": "monthly",
+          "milliseconds": {
+            "median": 518.8,
+            "min": 508.8,
+            "max": 648
+          }
+        },
+        "initialAssets": {
+          "requests": {
+            "median": 155,
+            "min": 155,
+            "max": 155
+          },
+          "networkResponses": {
+            "median": 1,
+            "min": 1,
+            "max": 1
+          },
+          "cacheHits": {
+            "median": 154,
+            "min": 154,
+            "max": 154
+          },
+          "encodedBytes": {
+            "median": 318550,
+            "min": 318550,
+            "max": 318550
+          }
+        },
+        "initialCatalogJsonRequests": [
+          0,
+          0,
+          0
+        ],
+        "initialMonthlyDocumentRequests": [
+          0,
+          0,
+          0
+        ],
+        "logicalCompanyReadsBeforeFeatures": [
+          1,
+          1,
+          1
+        ],
+        "logicalCompanyReadsScenarioTotal": [
+          1,
+          1,
+          1
+        ],
+        "backendLogicalCalls": {
+          "auth": {
+            "median": 1,
+            "min": 1,
+            "max": 1
+          },
+          "getUser": {
+            "median": 5,
+            "min": 5,
+            "max": 5
+          },
+          "reads": {
+            "median": 10,
+            "min": 10,
+            "max": 10
+          }
+        }
+      },
+      "medianDeltaAfterMinusBefore": {
+        "loginVisibleMs": 8.8,
+        "interactiveMs": 3.1,
+        "firstUseMs": 270.7,
+        "initialAssetResourceRequestEvents": -25,
+        "initialAssetWireResponses": -1,
+        "initialAssetEncodedBytes": -2596
+      }
+    },
+    {
+      "role": "admin",
+      "width": 390,
+      "cache": "cold",
+      "before": {
+        "firstContentfulPaintMs": {
+          "median": 408,
+          "min": 400,
+          "max": 416
+        },
+        "loginVisibleMs": {
+          "median": 579.4,
+          "min": 567.1,
+          "max": 604.6
+        },
+        "stages": {
+          "auth_ack": {
+            "median": 170.4,
+            "min": 169,
+            "max": 173.4
+          },
+          "company_ack": {
+            "median": 483.8,
+            "min": 483.4,
+            "max": 488.7
+          },
+          "essential_data_ack": {
+            "median": 881,
+            "min": 868,
+            "max": 883
+          },
+          "workspace_policy_ack": {
+            "median": 1208.3,
+            "min": 1201.6,
+            "max": 1212.3
+          },
+          "dashboard_interactive": {
+            "median": 1256.5,
+            "min": 1253.2,
+            "max": 1278.4
+          }
+        },
+        "firstUse": {
+          "kind": "monthly",
+          "milliseconds": {
+            "median": 279.9,
+            "min": 269.5,
+            "max": 286.9
+          }
+        },
+        "initialAssets": {
+          "requests": {
+            "median": 177,
+            "min": 177,
+            "max": 177
+          },
+          "networkResponses": {
+            "median": 163,
+            "min": 163,
+            "max": 163
+          },
+          "cacheHits": {
+            "median": 14,
+            "min": 14,
+            "max": 14
+          },
+          "encodedBytes": {
+            "median": 3010366,
+            "min": 3010366,
+            "max": 3010366
+          }
+        },
+        "initialCatalogJsonRequests": [
+          0,
+          0,
+          0
+        ],
+        "initialMonthlyDocumentRequests": [
+          1,
+          1,
+          1
+        ],
+        "logicalCompanyReadsBeforeFeatures": [
+          1,
+          1,
+          1
+        ],
+        "logicalCompanyReadsScenarioTotal": [
+          1,
+          1,
+          1
+        ],
+        "backendLogicalCalls": {
+          "auth": {
+            "median": 1,
+            "min": 1,
+            "max": 1
+          },
+          "getUser": {
+            "median": 5,
+            "min": 5,
+            "max": 5
+          },
+          "reads": {
+            "median": 10,
+            "min": 10,
+            "max": 10
+          }
+        }
+      },
+      "after": {
+        "firstContentfulPaintMs": {
+          "median": 488,
+          "min": 420,
+          "max": 492
+        },
+        "loginVisibleMs": {
+          "median": 657,
+          "min": 621.3,
+          "max": 685.2
+        },
+        "stages": {
+          "auth_ack": {
+            "median": 172.2,
+            "min": 168.6,
+            "max": 175.2
+          },
+          "company_ack": {
+            "median": 487.4,
+            "min": 480.1,
+            "max": 489.4
+          },
+          "essential_data_ack": {
+            "median": 873.5,
+            "min": 870.2,
+            "max": 903.8
+          },
+          "workspace_policy_ack": {
+            "median": 1153.9,
+            "min": 1151.9,
+            "max": 1182.2
+          },
+          "dashboard_interactive": {
+            "median": 1206.9,
+            "min": 1193.6,
+            "max": 1224.1
+          }
+        },
+        "firstUse": {
+          "kind": "monthly",
+          "milliseconds": {
+            "median": 594.6,
+            "min": 590,
+            "max": 667.9
+          }
+        },
+        "initialAssets": {
+          "requests": {
+            "median": 153,
+            "min": 153,
+            "max": 153
+          },
+          "networkResponses": {
+            "median": 153,
+            "min": 153,
+            "max": 153
+          },
+          "cacheHits": {
+            "median": 0,
+            "min": 0,
+            "max": 0
+          },
+          "encodedBytes": {
+            "median": 2966330,
+            "min": 2966330,
+            "max": 2966330
+          }
+        },
+        "initialCatalogJsonRequests": [
+          0,
+          0,
+          0
+        ],
+        "initialMonthlyDocumentRequests": [
+          0,
+          0,
+          0
+        ],
+        "logicalCompanyReadsBeforeFeatures": [
+          1,
+          1,
+          1
+        ],
+        "logicalCompanyReadsScenarioTotal": [
+          1,
+          1,
+          1
+        ],
+        "backendLogicalCalls": {
+          "auth": {
+            "median": 1,
+            "min": 1,
+            "max": 1
+          },
+          "getUser": {
+            "median": 5,
+            "min": 5,
+            "max": 5
+          },
+          "reads": {
+            "median": 10,
+            "min": 10,
+            "max": 10
+          }
+        }
+      },
+      "medianDeltaAfterMinusBefore": {
+        "loginVisibleMs": 77.6,
+        "interactiveMs": -49.6,
+        "firstUseMs": 314.7,
+        "initialAssetResourceRequestEvents": -24,
+        "initialAssetWireResponses": -10,
+        "initialAssetEncodedBytes": -44036
+      }
+    },
+    {
+      "role": "admin",
+      "width": 390,
+      "cache": "warm",
+      "before": {
+        "firstContentfulPaintMs": {
+          "median": 444,
+          "min": 416,
+          "max": 500
+        },
+        "loginVisibleMs": {
+          "median": 592.7,
+          "min": 582.3,
+          "max": 694.5
+        },
+        "stages": {
+          "auth_ack": {
+            "median": 165.2,
+            "min": 165.1,
+            "max": 166.4
+          },
+          "company_ack": {
+            "median": 481.4,
+            "min": 478.1,
+            "max": 482.9
+          },
+          "essential_data_ack": {
+            "median": 867.1,
+            "min": 860,
+            "max": 876.1
+          },
+          "workspace_policy_ack": {
+            "median": 1153.7,
+            "min": 1143.7,
+            "max": 1179.8
+          },
+          "dashboard_interactive": {
+            "median": 1200.5,
+            "min": 1188.2,
+            "max": 1227.8
+          }
+        },
+        "firstUse": {
+          "kind": "monthly",
+          "milliseconds": {
+            "median": 314.2,
+            "min": 258.6,
+            "max": 316.6
+          }
+        },
+        "initialAssets": {
+          "requests": {
+            "median": 177,
+            "min": 177,
+            "max": 177
+          },
+          "networkResponses": {
+            "median": 2,
+            "min": 2,
+            "max": 2
+          },
+          "cacheHits": {
+            "median": 175,
+            "min": 175,
+            "max": 175
+          },
+          "encodedBytes": {
+            "median": 321146,
+            "min": 321146,
+            "max": 321146
+          }
+        },
+        "initialCatalogJsonRequests": [
+          0,
+          0,
+          0
+        ],
+        "initialMonthlyDocumentRequests": [
+          1,
+          1,
+          1
+        ],
+        "logicalCompanyReadsBeforeFeatures": [
+          1,
+          1,
+          1
+        ],
+        "logicalCompanyReadsScenarioTotal": [
+          1,
+          1,
+          1
+        ],
+        "backendLogicalCalls": {
+          "auth": {
+            "median": 1,
+            "min": 1,
+            "max": 1
+          },
+          "getUser": {
+            "median": 5,
+            "min": 5,
+            "max": 5
+          },
+          "reads": {
+            "median": 10,
+            "min": 10,
+            "max": 10
+          }
+        }
+      },
+      "after": {
+        "firstContentfulPaintMs": {
+          "median": 432,
+          "min": 392,
+          "max": 432
+        },
+        "loginVisibleMs": {
+          "median": 569.1,
+          "min": 548.1,
+          "max": 572.2
+        },
+        "stages": {
+          "auth_ack": {
+            "median": 168.1,
+            "min": 164.8,
+            "max": 168.5
+          },
+          "company_ack": {
+            "median": 481.6,
+            "min": 477.6,
+            "max": 484
+          },
+          "essential_data_ack": {
+            "median": 874.5,
+            "min": 863,
+            "max": 875.1
+          },
+          "workspace_policy_ack": {
+            "median": 1153.8,
+            "min": 1149.6,
+            "max": 1183.2
+          },
+          "dashboard_interactive": {
+            "median": 1197.1,
+            "min": 1194.1,
+            "max": 1234
+          }
+        },
+        "firstUse": {
+          "kind": "monthly",
+          "milliseconds": {
+            "median": 544.4,
+            "min": 504.9,
+            "max": 566.2
+          }
+        },
+        "initialAssets": {
+          "requests": {
+            "median": 153,
+            "min": 153,
+            "max": 153
+          },
+          "networkResponses": {
+            "median": 1,
+            "min": 1,
+            "max": 1
+          },
+          "cacheHits": {
+            "median": 152,
+            "min": 152,
+            "max": 152
+          },
+          "encodedBytes": {
+            "median": 318550,
+            "min": 318550,
+            "max": 318550
+          }
+        },
+        "initialCatalogJsonRequests": [
+          0,
+          0,
+          0
+        ],
+        "initialMonthlyDocumentRequests": [
+          0,
+          0,
+          0
+        ],
+        "logicalCompanyReadsBeforeFeatures": [
+          1,
+          1,
+          1
+        ],
+        "logicalCompanyReadsScenarioTotal": [
+          1,
+          1,
+          1
+        ],
+        "backendLogicalCalls": {
+          "auth": {
+            "median": 1,
+            "min": 1,
+            "max": 1
+          },
+          "getUser": {
+            "median": 5,
+            "min": 5,
+            "max": 5
+          },
+          "reads": {
+            "median": 10,
+            "min": 10,
+            "max": 10
+          }
+        }
+      },
+      "medianDeltaAfterMinusBefore": {
+        "loginVisibleMs": -23.6,
+        "interactiveMs": -3.4,
+        "firstUseMs": 230.2,
+        "initialAssetResourceRequestEvents": -24,
+        "initialAssetWireResponses": -1,
+        "initialAssetEncodedBytes": -2596
+      }
+    },
+    {
+      "role": "accountant",
+      "width": 1440,
+      "cache": "cold",
+      "before": {
+        "firstContentfulPaintMs": {
+          "median": 492,
+          "min": 464,
+          "max": 508
+        },
+        "loginVisibleMs": {
+          "median": 692.3,
+          "min": 656.7,
+          "max": 698.2
+        },
+        "stages": {
+          "auth_ack": {
+            "median": 170,
+            "min": 167.9,
+            "max": 174.3
+          },
+          "company_ack": {
+            "median": 486.6,
+            "min": 481.5,
+            "max": 493.4
+          },
+          "essential_data_ack": {
+            "median": 871.9,
+            "min": 868.2,
+            "max": 875.1
+          },
+          "workspace_policy_ack": {
+            "median": 1065.4,
+            "min": 1063.5,
+            "max": 1065.5
+          },
+          "dashboard_interactive": {
+            "median": 1317.9,
+            "min": 1310.9,
+            "max": 1320.6
+          }
+        },
+        "firstUse": {
+          "kind": "monthly",
+          "milliseconds": {
+            "median": 222,
+            "min": 199.2,
+            "max": 223
+          }
+        },
+        "initialAssets": {
+          "requests": {
+            "median": 184,
+            "min": 184,
+            "max": 185
+          },
+          "networkResponses": {
+            "median": 170,
+            "min": 170,
+            "max": 170
+          },
+          "cacheHits": {
+            "median": 14,
+            "min": 14,
+            "max": 15
+          },
+          "encodedBytes": {
+            "median": 5008184,
+            "min": 5008184,
+            "max": 5008184
+          }
+        },
+        "initialCatalogJsonRequests": [
+          0,
+          0,
+          0
+        ],
+        "initialMonthlyDocumentRequests": [
+          1,
+          1,
+          1
+        ],
+        "logicalCompanyReadsBeforeFeatures": [
+          2,
+          2,
+          2
+        ],
+        "logicalCompanyReadsScenarioTotal": [
+          2,
+          2,
+          2
+        ],
+        "backendLogicalCalls": {
+          "auth": {
+            "median": 1,
+            "min": 1,
+            "max": 1
+          },
+          "getUser": {
+            "median": 8,
+            "min": 8,
+            "max": 8
+          },
+          "reads": {
+            "median": 11,
+            "min": 11,
+            "max": 11
+          }
+        }
+      },
+      "after": {
+        "firstContentfulPaintMs": {
+          "median": 460,
+          "min": 452,
+          "max": 464
+        },
+        "loginVisibleMs": {
+          "median": 622.7,
+          "min": 609,
+          "max": 663.7
+        },
+        "stages": {
+          "auth_ack": {
+            "median": 170.2,
+            "min": 170,
+            "max": 170.8
+          },
+          "company_ack": {
+            "median": 484.3,
+            "min": 484.2,
+            "max": 485.2
+          },
+          "essential_data_ack": {
+            "median": 866.1,
+            "min": 865.6,
+            "max": 873.1
+          },
+          "workspace_policy_ack": {
+            "median": 1058.7,
+            "min": 1057.6,
+            "max": 1103.4
+          },
+          "dashboard_interactive": {
+            "median": 1303.4,
+            "min": 1298.9,
+            "max": 1338.8
+          }
+        },
+        "firstUse": {
+          "kind": "monthly",
+          "milliseconds": {
+            "median": 513.3,
+            "min": 483,
+            "max": 525.2
+          }
+        },
+        "initialAssets": {
+          "requests": {
+            "median": 160,
+            "min": 160,
+            "max": 160
+          },
+          "networkResponses": {
+            "median": 160,
+            "min": 160,
+            "max": 160
+          },
+          "cacheHits": {
+            "median": 0,
+            "min": 0,
+            "max": 0
+          },
+          "encodedBytes": {
+            "median": 4964148,
+            "min": 4964148,
+            "max": 4964148
+          }
+        },
+        "initialCatalogJsonRequests": [
+          0,
+          0,
+          0
+        ],
+        "initialMonthlyDocumentRequests": [
+          0,
+          0,
+          0
+        ],
+        "logicalCompanyReadsBeforeFeatures": [
+          2,
+          2,
+          2
+        ],
+        "logicalCompanyReadsScenarioTotal": [
+          2,
+          2,
+          2
+        ],
+        "backendLogicalCalls": {
+          "auth": {
+            "median": 1,
+            "min": 1,
+            "max": 1
+          },
+          "getUser": {
+            "median": 8,
+            "min": 8,
+            "max": 8
+          },
+          "reads": {
+            "median": 11,
+            "min": 11,
+            "max": 11
+          }
+        }
+      },
+      "medianDeltaAfterMinusBefore": {
+        "loginVisibleMs": -69.6,
+        "interactiveMs": -14.5,
+        "firstUseMs": 291.3,
+        "initialAssetResourceRequestEvents": -24,
+        "initialAssetWireResponses": -10,
+        "initialAssetEncodedBytes": -44036
+      }
+    },
+    {
+      "role": "accountant",
+      "width": 1440,
+      "cache": "warm",
+      "before": {
+        "firstContentfulPaintMs": {
+          "median": 504,
+          "min": 392,
+          "max": 700
+        },
+        "loginVisibleMs": {
+          "median": 665.7,
+          "min": 580.4,
+          "max": 866.8
+        },
+        "stages": {
+          "auth_ack": {
+            "median": 166.5,
+            "min": 164.9,
+            "max": 171.3
+          },
+          "company_ack": {
+            "median": 485.1,
+            "min": 477.5,
+            "max": 486.1
+          },
+          "essential_data_ack": {
+            "median": 867.8,
+            "min": 860.4,
+            "max": 871.1
+          },
+          "workspace_policy_ack": {
+            "median": 1059.1,
+            "min": 1055,
+            "max": 1065.8
+          },
+          "dashboard_interactive": {
+            "median": 1331.5,
+            "min": 1293.7,
+            "max": 1332.8
+          }
+        },
+        "firstUse": {
+          "kind": "monthly",
+          "milliseconds": {
+            "median": 214.7,
+            "min": 196.2,
+            "max": 443.1
+          }
+        },
+        "initialAssets": {
+          "requests": {
+            "median": 185,
+            "min": 184,
+            "max": 185
+          },
+          "networkResponses": {
+            "median": 2,
+            "min": 2,
+            "max": 2
+          },
+          "cacheHits": {
+            "median": 183,
+            "min": 182,
+            "max": 183
+          },
+          "encodedBytes": {
+            "median": 321146,
+            "min": 321146,
+            "max": 321146
+          }
+        },
+        "initialCatalogJsonRequests": [
+          0,
+          0,
+          0
+        ],
+        "initialMonthlyDocumentRequests": [
+          1,
+          1,
+          1
+        ],
+        "logicalCompanyReadsBeforeFeatures": [
+          2,
+          2,
+          2
+        ],
+        "logicalCompanyReadsScenarioTotal": [
+          2,
+          2,
+          2
+        ],
+        "backendLogicalCalls": {
+          "auth": {
+            "median": 1,
+            "min": 1,
+            "max": 1
+          },
+          "getUser": {
+            "median": 8,
+            "min": 8,
+            "max": 8
+          },
+          "reads": {
+            "median": 11,
+            "min": 11,
+            "max": 11
+          }
+        }
+      },
+      "after": {
+        "firstContentfulPaintMs": {
+          "median": 472,
+          "min": 424,
+          "max": 532
+        },
+        "loginVisibleMs": {
+          "median": 612.3,
+          "min": 599,
+          "max": 699.3
+        },
+        "stages": {
+          "auth_ack": {
+            "median": 167.2,
+            "min": 166.5,
+            "max": 169.5
+          },
+          "company_ack": {
+            "median": 481.5,
+            "min": 481.1,
+            "max": 484.2
+          },
+          "essential_data_ack": {
+            "median": 871.1,
+            "min": 867.4,
+            "max": 913.7
+          },
+          "workspace_policy_ack": {
+            "median": 1061.3,
+            "min": 1056.2,
+            "max": 1098.8
+          },
+          "dashboard_interactive": {
+            "median": 1306.1,
+            "min": 1295.4,
+            "max": 1335.4
+          }
+        },
+        "firstUse": {
+          "kind": "monthly",
+          "milliseconds": {
+            "median": 474.2,
+            "min": 470.9,
+            "max": 477.2
+          }
+        },
+        "initialAssets": {
+          "requests": {
+            "median": 160,
+            "min": 160,
+            "max": 160
+          },
+          "networkResponses": {
+            "median": 1,
+            "min": 1,
+            "max": 1
+          },
+          "cacheHits": {
+            "median": 159,
+            "min": 159,
+            "max": 159
+          },
+          "encodedBytes": {
+            "median": 318550,
+            "min": 318550,
+            "max": 318550
+          }
+        },
+        "initialCatalogJsonRequests": [
+          0,
+          0,
+          0
+        ],
+        "initialMonthlyDocumentRequests": [
+          0,
+          0,
+          0
+        ],
+        "logicalCompanyReadsBeforeFeatures": [
+          2,
+          2,
+          2
+        ],
+        "logicalCompanyReadsScenarioTotal": [
+          2,
+          2,
+          2
+        ],
+        "backendLogicalCalls": {
+          "auth": {
+            "median": 1,
+            "min": 1,
+            "max": 1
+          },
+          "getUser": {
+            "median": 8,
+            "min": 8,
+            "max": 8
+          },
+          "reads": {
+            "median": 11,
+            "min": 11,
+            "max": 11
+          }
+        }
+      },
+      "medianDeltaAfterMinusBefore": {
+        "loginVisibleMs": -53.4,
+        "interactiveMs": -25.4,
+        "firstUseMs": 259.5,
+        "initialAssetResourceRequestEvents": -25,
+        "initialAssetWireResponses": -1,
+        "initialAssetEncodedBytes": -2596
+      }
+    },
+    {
+      "role": "accountant",
+      "width": 390,
+      "cache": "cold",
+      "before": {
+        "firstContentfulPaintMs": {
+          "median": 472,
+          "min": 472,
+          "max": 504
+        },
+        "loginVisibleMs": {
+          "median": 668.5,
+          "min": 647.7,
+          "max": 678.8
+        },
+        "stages": {
+          "auth_ack": {
+            "median": 169.9,
+            "min": 165.8,
+            "max": 170.1
+          },
+          "company_ack": {
+            "median": 482.9,
+            "min": 477.8,
+            "max": 497.3
+          },
+          "essential_data_ack": {
+            "median": 885.7,
+            "min": 875.1,
+            "max": 885.7
+          },
+          "workspace_policy_ack": {
+            "median": 1079.6,
+            "min": 1073.7,
+            "max": 1089.3
+          },
+          "dashboard_interactive": {
+            "median": 1375.1,
+            "min": 1361.3,
+            "max": 1403
+          }
+        },
+        "firstUse": {
+          "kind": "monthly",
+          "milliseconds": {
+            "median": 236.6,
+            "min": 230.3,
+            "max": 256.9
+          }
+        },
+        "initialAssets": {
+          "requests": {
+            "median": 182,
+            "min": 182,
+            "max": 182
+          },
+          "networkResponses": {
+            "median": 168,
+            "min": 168,
+            "max": 168
+          },
+          "cacheHits": {
+            "median": 14,
+            "min": 14,
+            "max": 14
+          },
+          "encodedBytes": {
+            "median": 3038096,
+            "min": 3038096,
+            "max": 3038096
+          }
+        },
+        "initialCatalogJsonRequests": [
+          0,
+          0,
+          0
+        ],
+        "initialMonthlyDocumentRequests": [
+          1,
+          1,
+          1
+        ],
+        "logicalCompanyReadsBeforeFeatures": [
+          2,
+          2,
+          2
+        ],
+        "logicalCompanyReadsScenarioTotal": [
+          2,
+          2,
+          2
+        ],
+        "backendLogicalCalls": {
+          "auth": {
+            "median": 1,
+            "min": 1,
+            "max": 1
+          },
+          "getUser": {
+            "median": 8,
+            "min": 8,
+            "max": 8
+          },
+          "reads": {
+            "median": 11,
+            "min": 11,
+            "max": 11
+          }
+        }
+      },
+      "after": {
+        "firstContentfulPaintMs": {
+          "median": 508,
+          "min": 424,
+          "max": 512
+        },
+        "loginVisibleMs": {
+          "median": 663,
+          "min": 599.8,
+          "max": 679.8
+        },
+        "stages": {
+          "auth_ack": {
+            "median": 168,
+            "min": 167,
+            "max": 168.6
+          },
+          "company_ack": {
+            "median": 481.7,
+            "min": 481.6,
+            "max": 483.2
+          },
+          "essential_data_ack": {
+            "median": 863.4,
+            "min": 862.7,
+            "max": 869.9
+          },
+          "workspace_policy_ack": {
+            "median": 1059.3,
+            "min": 1056.5,
+            "max": 1062.7
+          },
+          "dashboard_interactive": {
+            "median": 1337.1,
+            "min": 1327.8,
+            "max": 1351.5
+          }
+        },
+        "firstUse": {
+          "kind": "monthly",
+          "milliseconds": {
+            "median": 460.2,
+            "min": 458.9,
+            "max": 503.4
+          }
+        },
+        "initialAssets": {
+          "requests": {
+            "median": 158,
+            "min": 158,
+            "max": 158
+          },
+          "networkResponses": {
+            "median": 158,
+            "min": 158,
+            "max": 158
+          },
+          "cacheHits": {
+            "median": 0,
+            "min": 0,
+            "max": 0
+          },
+          "encodedBytes": {
+            "median": 2994060,
+            "min": 2994060,
+            "max": 2994060
+          }
+        },
+        "initialCatalogJsonRequests": [
+          0,
+          0,
+          0
+        ],
+        "initialMonthlyDocumentRequests": [
+          0,
+          0,
+          0
+        ],
+        "logicalCompanyReadsBeforeFeatures": [
+          2,
+          2,
+          2
+        ],
+        "logicalCompanyReadsScenarioTotal": [
+          2,
+          2,
+          2
+        ],
+        "backendLogicalCalls": {
+          "auth": {
+            "median": 1,
+            "min": 1,
+            "max": 1
+          },
+          "getUser": {
+            "median": 8,
+            "min": 8,
+            "max": 8
+          },
+          "reads": {
+            "median": 11,
+            "min": 11,
+            "max": 11
+          }
+        }
+      },
+      "medianDeltaAfterMinusBefore": {
+        "loginVisibleMs": -5.5,
+        "interactiveMs": -38.0,
+        "firstUseMs": 223.6,
+        "initialAssetResourceRequestEvents": -24,
+        "initialAssetWireResponses": -10,
+        "initialAssetEncodedBytes": -44036
+      }
+    },
+    {
+      "role": "accountant",
+      "width": 390,
+      "cache": "warm",
+      "before": {
+        "firstContentfulPaintMs": {
+          "median": 420,
+          "min": 380,
+          "max": 476
+        },
+        "loginVisibleMs": {
+          "median": 596,
+          "min": 587.4,
+          "max": 630.8
+        },
+        "stages": {
+          "auth_ack": {
+            "median": 166.1,
+            "min": 165.2,
+            "max": 166.1
+          },
+          "company_ack": {
+            "median": 478.2,
+            "min": 478.1,
+            "max": 478.3
+          },
+          "essential_data_ack": {
+            "median": 861.8,
+            "min": 856.5,
+            "max": 867.7
+          },
+          "workspace_policy_ack": {
+            "median": 1052.5,
+            "min": 1048.7,
+            "max": 1062.7
+          },
+          "dashboard_interactive": {
+            "median": 1339.5,
+            "min": 1315.2,
+            "max": 1361.8
+          }
+        },
+        "firstUse": {
+          "kind": "monthly",
+          "milliseconds": {
+            "median": 204.8,
+            "min": 203.8,
+            "max": 214
+          }
+        },
+        "initialAssets": {
+          "requests": {
+            "median": 182,
+            "min": 182,
+            "max": 182
+          },
+          "networkResponses": {
+            "median": 2,
+            "min": 2,
+            "max": 2
+          },
+          "cacheHits": {
+            "median": 180,
+            "min": 180,
+            "max": 180
+          },
+          "encodedBytes": {
+            "median": 321146,
+            "min": 321146,
+            "max": 321146
+          }
+        },
+        "initialCatalogJsonRequests": [
+          0,
+          0,
+          0
+        ],
+        "initialMonthlyDocumentRequests": [
+          1,
+          1,
+          1
+        ],
+        "logicalCompanyReadsBeforeFeatures": [
+          2,
+          2,
+          2
+        ],
+        "logicalCompanyReadsScenarioTotal": [
+          2,
+          2,
+          2
+        ],
+        "backendLogicalCalls": {
+          "auth": {
+            "median": 1,
+            "min": 1,
+            "max": 1
+          },
+          "getUser": {
+            "median": 8,
+            "min": 8,
+            "max": 8
+          },
+          "reads": {
+            "median": 11,
+            "min": 11,
+            "max": 11
+          }
+        }
+      },
+      "after": {
+        "firstContentfulPaintMs": {
+          "median": 436,
+          "min": 396,
+          "max": 448
+        },
+        "loginVisibleMs": {
+          "median": 576.8,
+          "min": 550.9,
+          "max": 580.4
+        },
+        "stages": {
+          "auth_ack": {
+            "median": 165.9,
+            "min": 164.3,
+            "max": 167.2
+          },
+          "company_ack": {
+            "median": 478.5,
+            "min": 476.7,
+            "max": 479.7
+          },
+          "essential_data_ack": {
+            "median": 863.2,
+            "min": 862.1,
+            "max": 872.4
+          },
+          "workspace_policy_ack": {
+            "median": 1057.2,
+            "min": 1051.8,
+            "max": 1071.3
+          },
+          "dashboard_interactive": {
+            "median": 1330,
+            "min": 1321,
+            "max": 1365
+          }
+        },
+        "firstUse": {
+          "kind": "monthly",
+          "milliseconds": {
+            "median": 491.6,
+            "min": 474.2,
+            "max": 558.1
+          }
+        },
+        "initialAssets": {
+          "requests": {
+            "median": 158,
+            "min": 158,
+            "max": 158
+          },
+          "networkResponses": {
+            "median": 1,
+            "min": 1,
+            "max": 1
+          },
+          "cacheHits": {
+            "median": 157,
+            "min": 157,
+            "max": 157
+          },
+          "encodedBytes": {
+            "median": 318550,
+            "min": 318550,
+            "max": 318550
+          }
+        },
+        "initialCatalogJsonRequests": [
+          0,
+          0,
+          0
+        ],
+        "initialMonthlyDocumentRequests": [
+          0,
+          0,
+          0
+        ],
+        "logicalCompanyReadsBeforeFeatures": [
+          2,
+          2,
+          2
+        ],
+        "logicalCompanyReadsScenarioTotal": [
+          2,
+          2,
+          2
+        ],
+        "backendLogicalCalls": {
+          "auth": {
+            "median": 1,
+            "min": 1,
+            "max": 1
+          },
+          "getUser": {
+            "median": 8,
+            "min": 8,
+            "max": 8
+          },
+          "reads": {
+            "median": 11,
+            "min": 11,
+            "max": 11
+          }
+        }
+      },
+      "medianDeltaAfterMinusBefore": {
+        "loginVisibleMs": -19.2,
+        "interactiveMs": -9.5,
+        "firstUseMs": 286.8,
+        "initialAssetResourceRequestEvents": -24,
+        "initialAssetWireResponses": -1,
+        "initialAssetEncodedBytes": -2596
+      }
+    }
+  ],
+  "limits": [
+    "All timings are local synthetic measurements, not production latency.",
+    "Backend logical calls use fixed delay/browser bindings; backend wire bytes and real Supabase SDK download/parse cost are not measured.",
+    "Shared host CPU can vary; compare medians and ranges, not a guaranteed improvement.",
+    "Click-to-interactive starts after networkidle plus150ms; this isolates settled-page login rather than the earliest possible user click.",
+    "Initial requests/bytes are observed350ms after business readiness. Login-visible is a DOM layout/enabled predicate; FCP is recorded separately.",
+    "Cold means an empty browser context HTTP cache, not a cold operating-system file cache.",
+    "The same synthetic one-car account is used; real customer/account scale is not measured.",
+    "LogicalBackendBeforeFeatures covers navigation through350ms after business readiness; LogicalBackend scenario totals also include first feature use.",
+    "CDP encoded bytes are actual instrumented localhost responses, not predicted Internet transfer or production CDN bytes.",
+    "Warm revisits remove Auth localStorage; remembered-session auto-login latency is not measured."
+  ],
+  "sourceVerification": {
+    "baselineCommit": "8835e793dc666ca6f725048fd8e8ffde6150537d",
+    "afterCommit": "39b00ef3f6fd005cc37df170bd0e944aa0a76273",
+    "afterProductHashes": {
+      "assets/dashboard-display-settings.js": "281c52425547d524dd29215aaad1c039a235a4378d3ef9c74ec460b63f9a4f69",
+      "assets/feature-loader.js": "987ac6ab233ab363dc0899a26e7dbd57502edc6f727cf2e348cb311df7754bf6",
+      "assets/monthly-workbook-cloud.js": "127d4066eec844755177fbe26689c5f0f2e6f056d62d1ab98b023ee9562421a1",
+      "assets/vehicle-catalog.js": "596fd65bc6ad757e73528a06516fdbb307388fc9af510f0ef92e1fcbce9da535",
+      "assets/vehicle-taxonomy-ui.js": "bda1d9b572288c9ce7a7ccc979dfa76da3f5ce8d2a213e99cdb348a672a167c1",
+      "index.html": "3454344c5a2043ec9265d504eb5317adcde597dbc00221387a3b7437ab54c106",
+      "monthly.html": "9ac2a308e58a0e958a16506263b793d7d0bd3baad83b612588ac631b0b5ed6b1"
+    },
+    "sourceUnchangedDuringEachVersion": true,
+    "sameHarnessAndBackend": true,
+    "wireCountsMatchServerAccessLogForAll72Runs": true,
+    "browserClosedAfterBothRunners": true
+  },
+  "baselineCommit": "8835e793dc666ca6f725048fd8e8ffde6150537d",
+  "productCommit": "39b00ef3f6fd005cc37df170bd0e944aa0a76273",
+  "wireCountChecks": {
+    "checked": 72,
+    "allMatched": true
+  },
+  "backendWireBytes": null,
+  "backendWireBytesReason": "Synthetic Auth/DB bindings do not have observed HTTP wire bytes."
+}

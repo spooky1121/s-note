@@ -54,7 +54,7 @@
    }finally{if(s.operation===operation){s.pending=null;if(state===s)paint();}}
   });s.pending=job;return job;
  }
- function load(account){
+ function load(account,{defer=false}={}){
   if(!account||typeof account.username!=='string'){reset();return Promise.resolve(true);}
   const api=bridge(),ctx=context(api),isCloud=cloud(account,ctx),snapshot={username:account.username,role:account.role||'dealer'};
   if(state?.pending&&state.account.username===snapshot.username&&state.account.role===snapshot.role&&state.key===(isCloud?ctx?.key:'local:'+snapshot.username)&&current(state))return state.pending;
@@ -62,6 +62,7 @@
   const s=state;
   if(!supported(snapshot.role)){s.mode='unsupported';s.status='ready';paint();notify('unsupported');return Promise.resolve(true);}
   if(isCloud&&(!ctx||typeof ctx.key!=='string'||!ctx.key||ctx.username!==snapshot.username||ctx.role!==snapshot.role||typeof ctx.companyId!=='string'||!ctx.companyId||typeof ctx.userId!=='string'||!ctx.userId||typeof api?.load!=='function'||typeof api?.current!=='function')){s.status='load-error';s.message='표시 설정을 불러오지 못했습니다. 로그인 상태를 확인해 주세요.';paint();notify('load-error');return Promise.resolve(true);}
+  if(defer){paint();notify('loading');return Promise.resolve(true);}
   return read(s);
  }
  function save(desired){
@@ -83,5 +84,5 @@
  }
  doc?.addEventListener?.('change',event=>{if(event.target?.id!=='snote-dashboard-margin-toggle')return;const desired=event.target.checked;paint();void save(desired);});
  doc?.addEventListener?.('click',event=>{if(event.target?.closest?.('#snote-dashboard-margin-retry')&&state){const s=state;void(current(s)?read(s):load(s.account));}});
- global.SnoteDashboardDisplay=Object.freeze({load,reset,hidden,markup,render:paint});
+ global.SnoteDashboardDisplay=Object.freeze({load,prepare:account=>load(account,{defer:true}),reset,hidden,markup,render:paint});
 })(typeof window!=='undefined'?window:globalThis);

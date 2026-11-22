@@ -7,7 +7,7 @@
  const reduced=()=>window.matchMedia('(prefers-reduced-motion: reduce)').matches;
  function current(s){try{return session===s&&s.isCurrent()===true;}catch{return false;}}
  function sourceBox(source){const el=source instanceof Element?(source.matches('img')?source:source.querySelector('img')||source):null;if(!el)return null;const r=el.getBoundingClientRect();return r.width>0&&r.height>0&&r.right>0&&r.bottom>0&&r.left<innerWidth&&r.top<innerHeight?{left:r.left,top:r.top,width:r.width,height:r.height}:null;}
- function originNode(s){if(s.origin?.isConnected&&sourceBox(s.origin))return s.origin;if(s.mediaId)for(const el of document.querySelectorAll('#vehicle-overlay [data-snote-media-id]'))if(el.dataset.snoteMediaId===s.mediaId&&sourceBox(el))return el;return null;}
+ function originNode(s){if(s.origin?.isConnected&&sourceBox(s.origin))return s.origin;try{const origin=s.resolveOrigin?.();if(origin?.isConnected&&sourceBox(origin))return origin;}catch{}if(s.mediaId)for(const el of document.querySelectorAll('#vehicle-overlay [data-snote-media-id]'))if(el.dataset.snoteMediaId===s.mediaId&&sourceBox(el))return el;return null;}
  function canShare(s){try{return !!s.ready&&!s.closing&&current(s)&&typeof s.share?.open==='function'&&s.share.current()===true;}catch{return false;}}
  function shareControl(s){const available=canShare(s);if(shareButton.hidden===available)shareButton.hidden=!available;shareButton.disabled=!available;}
  function fit(s){if(session!==s)return;const css=getComputedStyle(overlay),width=Math.max(1,overlay.clientWidth-parseFloat(css.paddingLeft)-parseFloat(css.paddingRight)),height=Math.max(1,overlay.clientHeight-parseFloat(css.paddingTop)-parseFloat(css.paddingBottom));
@@ -33,10 +33,10 @@
   s.animation.finished.then(()=>{if(session!==s)return;if(!current(s)){invalidate(s);return;}dispose(s,{restoreFocus},true);},()=>{if(session===s)dispose(s,{restoreFocus});});
   return s.closeTask;
  }
- function open({src,origin=null,isCurrent,download,share=null,alt='선택한 차량 이미지 크게 보기'}={}){
+ function open({src,origin=null,resolveOrigin=null,isCurrent,download,share=null,alt='선택한 차량 이미지 크게 보기'}={}){
   const returning=origin instanceof HTMLElement?origin:document.activeElement,from=sourceBox(origin||document.activeElement);close({restoreFocus:false});
   if(typeof src!=='string'||!src||typeof isCurrent!=='function')return Promise.resolve(false);
-  const original=origin instanceof Element?origin:document.activeElement,s={src,isCurrent,download,share,from,origin:original,mediaId:original?.closest?.('[data-snote-media-id]')?.dataset.snoteMediaId,returnFocus:returning,ready:false,animation:null,drawer:document.getElementById('vehicle-overlay')};session=s;
+  const original=origin instanceof Element?origin:document.activeElement,s={src,isCurrent,download,share,from,origin:original,resolveOrigin,mediaId:original?.closest?.('[data-snote-media-id]')?.dataset.snoteMediaId,returnFocus:returning,ready:false,animation:null,drawer:document.getElementById('vehicle-overlay')};session=s;
   s.wasInert=!!s.drawer?.inert;if(!current(s)){close({restoreFocus:false});return Promise.resolve(false);}if(s.drawer)s.drawer.inert=true;
   overlay.classList.add('open');overlay.setAttribute('aria-hidden','false');overlay.setAttribute('aria-busy','true');overlay.dataset.imageState='loading';picture.alt=alt;picture.hidden=true;status.hidden=false;status.textContent='이미지를 불러오는 중입니다.';downloadButton.disabled=true;shareControl(s);fit(s);closeButton.focus({preventScroll:true});
   s.guard=setInterval(()=>{if(session!==s)return;if(!current(s))invalidate(s);else if(!s.closing)shareControl(s);},200);

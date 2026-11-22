@@ -118,13 +118,20 @@
   if(keyed&&(typeof contextKey!=='string'||!contextKey))return Promise.reject(invalid('CATALOG_INVALID_CONTEXT'));
   const key=keyed?contextKey:readFn,pending=keyed?pendingKeys:pendingFunctions,verified=keyed?verifiedKeys:verifiedFunctions;
   if(verified.has(key))return Promise.resolve(verified.get(key));if(pending.has(key))return pending.get(key);
-  const task=ready.then(async()=>checkServer(await readFn()));pending.set(key,task);
+  const task=ensureReady().then(async()=>checkServer(await readFn()));pending.set(key,task);
   task.then(result=>{pending.delete(key);verified.set(key,result);if(keyed&&verifiedKeys.size>32)verifiedKeys.delete(verifiedKeys.keys().next().value);},()=>pending.delete(key));
   return task;
  }
- const api={rows:()=>list.slice(),get:record,record,version:()=>datasetVersion,manifestSha256:()=>manifestHash,choiceLabel:value=>{const row=record(value);return row?labels.get(row.id):'';},reference,refreshFromServer};
- const ready=load();api.ready=ready;root.SnoteVehicleCatalog=Object.freeze(api);
- // Consumers can await the original rejecting promise without an early global
- // unhandled-rejection event while the remaining deferred scripts initialize.
- ready.catch(()=>{});
+ let ready=null,loadFailed=false;
+ function ensureReady(){
+  if(ready&&!loadFailed)return ready;
+  loadFailed=false;
+  const task=load().catch(error=>{if(ready===task)loadFailed=true;throw error;});
+  ready=task;task.catch(()=>{});return task;
+ }
+ const api={rows:()=>list.slice(),get:record,record,version:()=>datasetVersion,manifestSha256:()=>manifestHash,choiceLabel:value=>{const row=record(value);return row?labels.get(row.id):'';},reference,refreshFromServer,load:ensureReady};
+ // Reading ready keeps the result of that attempt. A new first-use action can
+ // explicitly retry load(); concurrent callers still share one validated fetch.
+ Object.defineProperty(api,'ready',{enumerable:true,get:()=>ready});
+ root.SnoteVehicleCatalog=Object.freeze(api);ensureReady();
 })(typeof window!=='undefined'?window:globalThis);

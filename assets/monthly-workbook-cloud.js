@@ -1,4 +1,8 @@
-import { TYPE, VERSION, validateBook, listBooks, mergeMonth, fingerprint } from './monthly-workbook-model.js?v=2.135';
+// A failed ESM dependency is cached for this browsing context as well as its entry module.
+// Explicit parent retries use a fresh dependency URL; ordinary imports keep the stable cache URL.
+const retry=new URL(import.meta.url).searchParams.get('retry');
+const modelSource='./monthly-workbook-model.js?v=2.135'+(/^\d+$/.test(retry||'')?'&retry='+retry:'');
+const { TYPE, VERSION, validateBook, listBooks, mergeMonth, fingerprint }=await import(modelSource);
 
 const MAX_ATTEMPTS = 3;
 const MESSAGES = {
