@@ -7,11 +7,13 @@
  #zc-cloud-gate #snote-registration-form .snote-auth-grid{column-gap:14px;row-gap:0}
  #zc-cloud-gate #snote-registration-form .zc-field{margin-bottom:16px}
  #zc-cloud-gate #snote-registration-form input{margin-top:8px;height:46px}
- #zc-cloud-gate .snote-registration-company-row{display:flex;align-items:stretch;gap:9px;margin-top:8px}
- #zc-cloud-gate .snote-registration-company-row input{flex:1;min-width:0;margin-top:0!important}
- #zc-cloud-gate #snote-registration-company-check{flex:none;min-width:64px;min-height:46px;padding:0 16px;border:1px solid #d7e3f2;border-radius:10px;background:#f2f7ff;color:#2462b7;font:inherit;font-size:13px;font-weight:650}
+ #zc-cloud-gate :is(.snote-registration-company-row,.snote-registration-address-row){display:flex;align-items:stretch;gap:9px;margin-top:8px}
+ #zc-cloud-gate :is(.snote-registration-company-row,.snote-registration-address-row) input{flex:1;min-width:0;margin-top:0!important}
+ #zc-cloud-gate :is(#snote-registration-company-check,#snote-registration-address-search){flex:0 0 76px;width:76px;min-width:76px;min-height:46px;padding:0 10px;white-space:nowrap;border:1px solid #d7e3f2;border-radius:10px;background:#f2f7ff;color:#2462b7;font:inherit;font-size:13px;font-weight:650}
+ #zc-cloud-gate #snote-registration-address-search{flex-basis:96px;width:96px;min-width:96px}
  #zc-cloud-gate #snote-registration-company-check:disabled{opacity:.6}
- #zc-cloud-gate #snote-registration-company-status{display:flex;align-items:center;gap:5px;margin-top:8px;color:#16734d;font-size:11px;font-weight:600}
+ #zc-cloud-gate .snote-registration-status-slot{height:26px;min-height:26px;overflow:hidden}
+ #zc-cloud-gate #snote-registration-company-status{display:flex;line-height:17px;white-space:nowrap;align-items:center;gap:5px;margin-top:8px;color:#16734d;font-size:11px;font-weight:600}
  #zc-cloud-gate #snote-registration-company-status[hidden]{display:none}
  #zc-cloud-gate #snote-registration-company-status svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
  #zc-cloud-gate .snote-registration-attachment{min-width:0}

@@ -173,7 +173,7 @@ test('redirects never forward secret headers; redirects after Auth are uncertain
 });
 test('invalid fields, metadata overrides and duplicated multipart fields fail before prepare', async t => {
   const state = fixture(t);
-  const bad = [form({ profile: { ...PROFILE, kind: 'admin' } }), form({ profile: { ...PROFILE, role: 'admin' } }), form({ profile: { ...PROFILE, email: 'not-an-email' } }), form({ password: 'too-short' }), form({ extra: [['password', PASSWORD]] }), form({ extra: [['emailRedirectTo', 'https://foreign.invalid']] }), form({ dealer: null })];
+  const bad = [form({ profile: { ...PROFILE, kind: 'admin' } }), form({ profile: { ...PROFILE, role: 'admin' } }), form({ profile: { ...PROFILE, email: 'not-an-email' } }), form({ password: 'too-short' }), form({ extra: [['password', PASSWORD]] }), form({ extra: [['emailRedirectTo', 'https://foreign.invalid']] }), form({ business: null }), form({ dealer: null }), form({ business: null, dealer: null })];
   for (const body of bad) { const result = await call(body); assert.equal(result.status, 400); assert.equal(result.body.code, 'INVALID_REQUEST'); assertPrivate(result); }
   assert.equal(state.prepared, null); assert.equal(state.uploads.length, 0); assert.equal(state.authCalls.length, 0);
 });

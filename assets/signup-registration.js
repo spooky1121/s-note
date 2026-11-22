@@ -12,10 +12,103 @@
   const CONTACT_EXISTS = '가입된 이메일 또는 휴대번 입니다.';
   const UNKNOWN = '가입 요청의 처리 상태를 확인하지 못했습니다. 인증 메일을 확인하거나 로그인해 주세요. 가입 요청을 반복해서 보내지 마세요.';
   const fields = ['company', 'business', 'owner', 'address', 'name', 'phone', 'email'];
-  let mode = null, generation = 0, checked = '', checking = null, sending = null;
+  let mode = null, generation = 0, checked = '', checking = null, sending = null, addressRevision = 0;
+  let addressSession = null;
   const company = () => input('company').value.trim();
   const live = (kind, version) => mode === kind && generation === version && !gate.hidden && !form.hidden && gate.dataset.authMode === (kind === 'representative' ? 'admin' : 'dealer');
   const alert = (message, current = () => true) => window.snoteAlert(message, { tone: 'error', key: 'registration-error', isCurrent: current });
+  function invalidateAddress() {
+    ++addressRevision;
+    closeAddress();
+  }
+  function addressContext() {
+    if (!mode || sending || typeof currentUser === 'undefined' || currentUser !== null || window.zc86Cloud?.ready === true || !live(mode, generation)) return null;
+    return Object.freeze({ kind: mode, generation, revision: addressRevision, element: input('address'), actor: currentUser });
+  }
+  function addressCurrent(context) {
+    const now = addressContext();
+    return !!context && !!now && ['kind', 'generation', 'revision', 'element', 'actor'].every(key => context[key] === now[key]);
+  }
+  function closeAddress() {
+    const previous = addressSession; addressSession = null;
+    if (!previous) return;
+    clearTimeout(previous.timer); clearInterval(previous.watch);
+    try { previous.popup.close(); } catch (_) {}
+  }
+  function openAddress() {
+    const context = addressContext(); if (!context) return false;
+    closeAddress(); let nonce;
+    try { nonce = Array.from(crypto.getRandomValues(new Uint8Array(16)), value => value.toString(16).padStart(2, '0')).join(''); }
+    catch (_) { void alert('주소 검색을 열지 못했습니다. 주소를 직접 입력해 주세요.', () => addressCurrent(context)); return false; }
+    const url = new URL('/address-search.html', location.origin); url.searchParams.set('parentOrigin', location.origin); url.hash = nonce;
+    let popup;
+    try { popup = window.open(url.toString(), 'snote_signup_address_' + nonce, 'width=560,height=750,resizable=yes,scrollbars=yes'); } catch (_) {}
+    if (!popup) { void alert('주소 검색창이 차단되었습니다. 브라우저에서 팝업을 허용한 뒤 다시 눌러 주세요. 주소를 직접 입력할 수도 있습니다.', () => addressCurrent(context)); return false; }
+    const session = { context, nonce, popup, timer: null, watch: null }; addressSession = session;
+    const fail = () => { if (addressSession !== session || !addressCurrent(context)) return; closeAddress(); void alert('주소 검색을 불러오지 못했습니다. 다시 시도하거나 주소를 직접 입력해 주세요.', () => addressCurrent(context)); };
+    session.timer = setTimeout(fail, 15000);
+    session.watch = setInterval(() => { if (addressSession !== session) return; try { if (!addressCurrent(context) || popup.closed) closeAddress(); } catch (_) { closeAddress(); } }, 500);
+    try { popup.focus(); } catch (_) {}
+    return true;
+  }
+  window.addEventListener('message', event => {
+    const session = addressSession, data = event.data;
+    if (!session || event.origin !== location.origin || event.source !== session.popup || !data || typeof data !== 'object' || Array.isArray(data) || data.type !== 'SNOTE_CUSTOMER_ADDRESS' || data.nonce !== session.nonce) return;
+    if (!addressCurrent(session.context)) { closeAddress(); return; }
+    if (data.kind === 'ready') { clearTimeout(session.timer); return; }
+    if (data.kind === 'closed') { closeAddress(); return; }
+    if (data.kind === 'error') { const context = session.context; closeAddress(); void alert('주소 검색을 불러오지 못했습니다. 다시 시도하거나 주소를 직접 입력해 주세요.', () => addressCurrent(context)); return; }
+    if (data.kind !== 'selected' || typeof data.address !== 'string' || !data.address.trim() || data.address.length > 200 || /[\u0000-\u001f\u007f]/.test(data.address) || data.postcode && (typeof data.postcode !== 'string' || !/^\d{5}$/.test(data.postcode))) return;
+    const context = session.context, field = context.element; closeAddress();
+    field.value = data.address.trim(); field.dataset.postcode = data.postcode || '';
+    field.dispatchEvent(new Event('input', { bubbles: true })); field.dispatchEvent(new Event('change', { bubbles: true }));
+    const now = addressContext(); if (now?.generation === context.generation && now.element === field) { field.focus({ preventScroll: true }); field.setSelectionRange(field.value.length, field.value.length); }
+  });
+  const digits = value => String(value || '').replace(/\D/g, '');
+  function formattedNumber(value, kind) {
+    const normalized = kind === 'phone' ? String(value).replace(/^\s*\+82[\s()-]*/, '0') : String(value);
+    const number = digits(normalized).slice(0, kind === 'business' ? 10 : 11);
+    const middle = kind === 'business' ? 2 : number.startsWith('010') || number.length === 11 ? 4 : 3;
+    return number.length <= 3 ? number : number.length <= 3 + middle ? number.slice(0, 3) + '-' + number.slice(3) : number.slice(0, 3) + '-' + number.slice(3, 3 + middle) + '-' + number.slice(3 + middle);
+  }
+  function caretForDigits(value, ordinal) {
+    if (!ordinal) return 0;
+    let count = 0;
+    for (let index = 0; index < value.length; index++) if (/\d/.test(value[index]) && ++count === ordinal) return index + 1;
+    return value.length;
+  }
+  function numericInput(element, kind) {
+    let composing = false;
+    function apply(value, start, end = start) {
+      const next = formattedNumber(value, kind);
+      if (next === value) return;
+      const count = position => digits(kind === 'phone' ? value.slice(0, position).replace(/^\s*\+82[\s()-]*/, '0') : value.slice(0, position)).length;
+      element.value = next;
+      element.setSelectionRange(caretForDigits(next, count(start)), caretForDigits(next, count(end)));
+    }
+    element.addEventListener('beforeinput', event => {
+      if (composing || !['deleteContentBackward', 'deleteContentForward'].includes(event.inputType)) return;
+      const start = element.selectionStart, end = element.selectionEnd, value = element.value;
+      if (start !== end || value[event.inputType === 'deleteContentBackward' ? start - 1 : start] !== '-') return;
+      const ordinal = digits(value.slice(0, start)).length, remove = event.inputType === 'deleteContentBackward' ? ordinal - 1 : ordinal;
+      const number = digits(value); if (remove < 0 || remove >= number.length) return;
+      // A separator is formatting: deleting beside it removes the adjacent digit once.
+      event.preventDefault(); element.value = formattedNumber(number.slice(0, remove) + number.slice(remove + 1), kind);
+      const caret = caretForDigits(element.value, event.inputType === 'deleteContentBackward' ? ordinal - 1 : ordinal);
+      element.setSelectionRange(caret, caret); element.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+    element.addEventListener('paste', event => {
+      const text = event.clipboardData?.getData('text/plain'); if (typeof text !== 'string') return;
+      event.preventDefault(); const start = element.selectionStart, end = element.selectionEnd;
+      const value = element.value.slice(0, start) + text + element.value.slice(end), caret = start + text.length;
+      element.value = value; element.setSelectionRange(caret, caret); apply(value, caret);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+    element.addEventListener('compositionstart', () => { composing = true; });
+    element.addEventListener('compositionend', () => { composing = false; apply(element.value, element.selectionStart, element.selectionEnd); });
+    element.addEventListener('input', () => { if (!composing) apply(element.value, element.selectionStart, element.selectionEnd); });
+    element.addEventListener('change', () => apply(element.value, element.selectionStart, element.selectionEnd));
+  }
   function clearCheck() {
     checked = ''; status.textContent = ''; status.hidden = true; delete status.dataset.state;
     if (checking) { checking.controller.abort(); checking = null; }
@@ -36,7 +129,7 @@
   }
   function show(kind) {
     const next = ['representative', 'dealer'].includes(kind) ? kind : null;
-    ++generation; clearCheck(); mode = next;
+    ++generation; invalidateAddress(); clearCheck(); mode = next;
     // Leaving a form or switching registration type never retains passwords or selected documents.
     form.reset(); matchPassword();
     form.querySelector('[data-registration-name-label]').textContent = next === 'dealer' ? '딜러 성명' : '관리자 성명';
@@ -86,7 +179,7 @@
     const profile = { kind, companyName: values.company, businessNumber: values.business.replace(/\D/g, ''), representativeName: values.owner, businessAddress: values.address, displayName: values.name, phone: values.phone.replace(/\D/g, ''), email: values.email.toLowerCase() };
     let certificate, license;
     try { certificate = file('business-certificate'); license = file('dealer-license'); } catch (error) { await alert(error.message, currentView); return; }
-    const password = input('password').value, operation = { controller: new AbortController(), authority: null }; sending = operation; busy(true);
+    const password = input('password').value, operation = { controller: new AbortController(), authority: null }; sending = operation; busy(true); invalidateAddress();
     const bridge = window.snoteRegistrationBridge;
     let timer;
     try {
@@ -115,10 +208,12 @@
     }
   }
   input('company').addEventListener('input', clearCheck);
+  numericInput(input('business'), 'business'); numericInput(input('phone'), 'phone');
+  for (const event of ['input', 'change', 'reset']) form.addEventListener(event, invalidateAddress);
   checkButton.addEventListener('click', checkCompany); form.addEventListener('submit', register);
   for (const name of ['password', 'password-confirm']) input(name).addEventListener('input', matchPassword);
-  function authChanged() { ++generation; clearCheck(); form.reset(); matchPassword(); if (sending) sending.controller.abort(); }
+  function authChanged() { ++generation; invalidateAddress(); clearCheck(); form.reset(); matchPassword(); if (sending) sending.controller.abort(); }
   window.addEventListener('pagehide', () => { authChanged(); form.reset(); });
-  window.SnoteRegistration = Object.freeze({ show, authChanged });
+  window.SnoteRegistration = Object.freeze({ show, authChanged, addressContext, addressCurrent, openAddress });
   show(gate.dataset.authMode === 'admin' ? 'representative' : gate.dataset.authMode === 'dealer' ? 'dealer' : null);
 })();

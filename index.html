@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.189">
+<html lang="ko" data-snote-release="2.190">
 <head>
 <meta charset="utf-8" />
 <link rel="stylesheet" href="assets/message-popup.css?v=2.172">
@@ -8485,6 +8485,7 @@ function zc85ClosePostcode(){
  zc91Popup=null;zc91AddressSession=null;zc85ActiveTarget=null;zc85PostcodeInstance=null;
 }
 function zc73OpenPostcode(targetId){
+ if(targetId==='snote-registration-address'){window.SnoteRegistration?.openAddress();return;}
  // S-NOTE v1.92: the standard address button opens the already-tested POPUP path.
  // window.open must occur synchronously in the originating click to avoid popup blocking.
  const companyTarget=targetId==='snote90-company-address';
@@ -8887,10 +8888,10 @@ document.addEventListener('click',async event=>{
 
     <form id="snote-registration-form" method="post" onsubmit="return false" hidden>
      <div class="snote-auth-grid">
-      <div class="zc-field snote-auth-wide"><label for="snote-registration-company">상사명</label><div class="snote-registration-company-row"><input id="snote-registration-company" name="companyName" required minlength="2" maxlength="100" autocomplete="organization" placeholder="상사 이름을 입력해 주세요"><button type="button" id="snote-registration-company-check">확인</button></div><span id="snote-registration-company-status" role="status" aria-live="polite" hidden></span></div>
+      <div class="zc-field snote-auth-wide"><label for="snote-registration-company">상사명</label><div class="snote-registration-company-row"><input id="snote-registration-company" name="companyName" required minlength="2" maxlength="100" autocomplete="organization" placeholder="상사 이름을 입력해 주세요"><button type="button" id="snote-registration-company-check">확인</button></div><div class="snote-registration-status-slot"><span id="snote-registration-company-status" role="status" aria-live="polite" hidden></span></div></div>
       <label class="zc-field" for="snote-registration-business">사업자등록번호<input id="snote-registration-business" name="businessNumber" required maxlength="12" pattern="(?:[0-9]{10}|[0-9]{3}-[0-9]{2}-[0-9]{5})" inputmode="numeric" autocomplete="off" placeholder="123-45-67890" title="사업자등록번호 10자리를 입력해 주세요."></label>
       <label class="zc-field" for="snote-registration-owner">대표자명<input id="snote-registration-owner" name="representativeName" required maxlength="100" pattern=".*\S.*" autocomplete="off" placeholder="사업자등록증의 대표자 성명"></label>
-      <label class="zc-field snote-auth-wide" for="snote-registration-address">사업장 주소<input id="snote-registration-address" name="businessAddress" required maxlength="300" pattern=".*\S.*" autocomplete="street-address" placeholder="사업장 주소와 상세주소를 입력해 주세요"></label>
+      <div class="zc-field snote-auth-wide"><label for="snote-registration-address">사업장 주소</label><div class="snote-registration-address-row"><input id="snote-registration-address" name="businessAddress" required maxlength="300" pattern=".*\S.*" autocomplete="street-address" placeholder="주소 검색 후 상세주소를 입력해 주세요"><button type="button" id="snote-registration-address-search" onclick="zc73OpenPostcode('snote-registration-address')">주소 검색</button></div></div>
       <label class="zc-field" for="snote-registration-name"><span data-registration-name-label>관리자 성명</span><input id="snote-registration-name" name="displayName" required maxlength="40" pattern=".*\S.*" autocomplete="name" placeholder="관리자 성명"></label>
       <label class="zc-field" for="snote-registration-phone"><span data-registration-phone-label>관리자 휴대전화</span><input type="tel" id="snote-registration-phone" name="phone" required minlength="10" maxlength="16" pattern="(?:01[016789][0-9]{7,8}|01[016789]-[0-9]{3,4}-[0-9]{4})" inputmode="tel" autocomplete="tel" placeholder="010-1234-5678"></label>
       <label class="zc-field snote-auth-wide" for="snote-registration-email">이메일<input type="email" id="snote-registration-email" name="email" required maxlength="254" autocomplete="email" autocapitalize="none" spellcheck="false" placeholder="로그인과 인증 메일에 사용할 주소"></label>
@@ -8957,7 +8958,7 @@ document.addEventListener('click',async event=>{
   </header>
   <div class="snote-auth-features" id="snote-auth-features">
    <article class="snote-auth-feature"><div class="snote-auth-feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m5 9 2-5h10l2 5M3 10h18v8H3zM6 18v2m12-2v2M6 13h2m8 0h2"/></svg></div><h3>차량 · 재고 관리</h3><p>매입부터 판매완료까지 차량의 흐름과 비용을 한곳에서.</p></article>
-   <article class="snote-auth-feature"><div class="snote-auth-feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6zM14 3v5h5M9 12h7m-7 4h5"/></svg></div><h3>계약 · 고객 관리</h3><p>계약서, 견적서, 인수증과 고객별 진행 현황 관리.</p></article>
+   <article class="snote-auth-feature"><div class="snote-auth-feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6zM14 3v5h5M9 12h7m-7 4h5"/></svg></div><h3>모바일 계약 · 고객 관리</h3><p>모바일 고객 인증·정보 입력·서명으로 비대면 계약도 간편하고 신뢰 있게.</p></article>
    <article class="snote-auth-feature"><div class="snote-auth-feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 4v16h16M8 14l4-4 3 3 5-7m-5 0h5v5"/></svg></div><h3>수익 · 월정산</h3><p>예상수익, 매출·지출, 월별 경영 흐름을 보기 쉽게.</p></article>
    <article class="snote-auth-feature"><div class="snote-auth-feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m3 8 9-5 9 5H3zm2 3v7m7-7v7m7-7v7M3 21h18M3 18h18"/></svg></div><h3>재고금융 · 선재고</h3><p>금융사 한도와 재고 대출, 선재고 장부를 별도로 관리.</p></article>
   </div>
@@ -11994,7 +11995,7 @@ window.zc86Cloud={getAccessToken:async()=>{const client=S.client,user=S.user,com
 <link rel="stylesheet" href="assets/workspace-reorder.css?v=2.136">
 <script src="assets/workspace-order-store.js?v=2.135" defer></script>
 <script src="assets/workspace-reorder.js?v=2.172" defer></script>
-<script src="assets/release-info.js?v=2.189" defer></script>
+<script src="assets/release-info.js?v=2.190" defer></script>
 <link rel="stylesheet" href="assets/encar-id.css?v=2.162">
 <script src="assets/encar-id.js?v=2.184" defer></script>
 <script src="assets/company-purchase.js?v=2.172" defer></script>
@@ -12053,7 +12054,7 @@ window.addEventListener('snote:payment-accounts-changed',()=>{if(typeof contract
 <script src="assets/design-purchase.js?v=2.184" defer></script>
 <script src="assets/design-vehicle.js?v=2.179" defer></script>
 <script src="assets/design-settings-office.js?v=2.189" defer></script>
-<link rel="stylesheet" href="assets/signup-registration.css?v=2.189">
-<script src="assets/signup-registration.js?v=2.189" defer></script>
+<link rel="stylesheet" href="assets/signup-registration.css?v=2.190">
+<script src="assets/signup-registration.js?v=2.190" defer></script>
 </body>
 </html>
