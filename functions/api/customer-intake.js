@@ -31,6 +31,7 @@ const MESSAGES = {
   SESSION_EXPIRED: [401, '휴대전화 확인이 만료되었습니다. 다시 인증하세요.'],
   VALIDATION_ERROR: [400, '입력 내용을 확인해 주세요.'],
   FORBIDDEN: [403, '이 작업을 수행할 권한이 없습니다.'],
+  ORIGIN_NOT_ALLOWED: [403, '접속 주소와 고객 입력 서비스의 운영 주소 설정을 확인해 주세요.'],
   UNAUTHORIZED: [401, '로그인이 필요합니다.'],
   INVALID_REQUEST: [400, '요청 형식을 확인해 주세요.'],
   UNSUPPORTED_MEDIA_TYPE: [415, 'JSON 요청만 사용할 수 있습니다.'],
@@ -140,8 +141,8 @@ function invitationOrigin(request, config) {
 }
 function sameOrigin(request, config) {
   const origin = request.headers.get('Origin');
-  if (origin !== null && (origin !== new URL(request.url).origin || (config && !publicOriginMatches(config, origin)))) fail('FORBIDDEN');
-  if (request.headers.get('Sec-Fetch-Site') === 'cross-site') fail('FORBIDDEN');
+  if (origin !== null && (origin !== new URL(request.url).origin || (config && !publicOriginMatches(config, origin)))) fail('ORIGIN_NOT_ALLOWED');
+  if (request.headers.get('Sec-Fetch-Site') === 'cross-site') fail('ORIGIN_NOT_ALLOWED');
 }
 function object(value) { return value !== null && typeof value === 'object' && !Array.isArray(value); }
 function whitelist(value, keys) {
@@ -326,7 +327,7 @@ function auth(request) {
 function car(value) {
   if (!object(value)) fail('UPSTREAM_ERROR');
   const safe = Object.fromEntries(['model', 'plate', 'year', 'km', 'color', 'sell'].map(key => [key, ['string', 'number'].includes(typeof value[key]) ? value[key] : '']));
-  const amount = globalThis.SnoteMoney.toWon(safe.sell);
+  const amount = value.moneyUnit === 'KRW' ? Number(safe.sell) : globalThis.SnoteMoney.toWon(safe.sell);
   return { ...safe, sellWon: Number.isSafeInteger(amount) && amount >= 0 ? amount : null };
 }
 function safeInfo(data, rrnAvailable = false) {

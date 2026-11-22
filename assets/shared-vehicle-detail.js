@@ -9,7 +9,7 @@
  const projection=item=>'snote-shared:'+item.companyId+':'+item.ownerId+':'+encodeURIComponent(item.carId).replaceAll("'",'%27');
  const actor=()=>typeof currentUser==='undefined'?null:currentUser;
  const active=()=>session!==null;
- const current=s=>!!s&&session===s&&actor()===s.actor&&activeCarId===s.id&&root()?.classList.contains('open')&&typeof route==='string'&&route==='buy'&&bridge()?.current?.(s.context)===true;
+ const current=s=>!!s&&session===s&&actor()===s.actor&&activeCarId===s.id&&(root()?.classList.contains('open')||!!s.contractId)&&typeof route==='string'&&route==='buy'&&bridge()?.current?.(s.context)===true;
  function capabilities(value){const p=presets[value?.permission],native=value?.nativeAccess===true&&value.permission==='all'&&value.invitationId===null&&value.version===null;
   if(value?.apiVersion!==2||value.canRead!==true||!p||value.canEdit!==p.edit||value.canDelete!==p.delete||!native&&!(value.nativeAccess===false&&UUID.test(value.invitationId||'')&&Number.isSafeInteger(value.version)&&value.version>0))return null;
   return{...p,permission:value.permission,access:native?null:{invitationId:value.invitationId,version:value.version}};
@@ -25,7 +25,7 @@
  function leaveButton(){let button=byId('vehicle-header-received-leave');if(button)return button;button=document.createElement('button');button.id='vehicle-header-received-leave';button.className='vehicle-header-action';button.type='button';button.hidden=true;button.setAttribute('aria-label','공유 취소');button.dataset.tooltip='공유 취소';button.innerHTML=byId('vehicle-header-share')?.innerHTML||'';button.onclick=leave;byId('vehicle-header-save').after(button);return button;}
  function policy(s){if(!current(s))return;const overlay=root();
   for(const el of overlay.querySelectorAll('input,select,textarea')){remember(s,el);const can=s.cap.edit&&editable.has(el.id);if(el.tagName==='SELECT'||el.type==='file')el.disabled=!can;else el.readOnly=!can;}
-  for(const el of overlay.querySelectorAll('#vehicle-header-actions>button'))if(!['vehicle-header-save','vehicle-header-delete','vehicle-header-received-leave'].includes(el.id))hide(s,el);
+  for(const el of overlay.querySelectorAll('#vehicle-header-actions>button'))if(el.getAttribute('onclick')?.includes('openSaleProgress')){remember(s,el);el.hidden=!s.cap.edit||!s.cap.access;el.disabled=!s.cap.edit||!s.cap.access||!!s.saving||!!s.deleting||!!s.leaving;}else if(!['vehicle-header-save','vehicle-header-delete','vehicle-header-received-leave'].includes(el.id))hide(s,el);
   for(const selector of ['#snote-encar-advertisement','#snote-cost-settings-trigger','#photo-add','#vehicle-document-share','.detail-repair .repair-top button','.detail-repair .repair-remove','.vehicle-document-actions','.doc-footer'])for(const el of overlay.querySelectorAll(selector))hide(s,el);
   const save=byId('vehicle-header-save'),remove=byId('vehicle-header-delete'),leave=leaveButton();for(const el of [save,remove,leave])remember(s,el);save.hidden=!s.cap.edit;remove.hidden=!s.cap.delete;leave.hidden=!s.cap.access;leave.disabled=!!s.saving||!!s.deleting||!!s.leaving;save.disabled=remove.disabled=leave.disabled||!!s.leaveRequest;
   for(const [id,label] of [['detail-inventory-start-trigger','재고이자'],['detail-inventory-loan-start-trigger','재고대출금']]){const interest=byId(id);if(!interest)continue;remember(s,interest);interest.disabled=true;interest.dataset.tooltip='공유 차량의 '+label+' (조회 전용)';interest.setAttribute('aria-label',label+' · 공유 차량 조회 전용');}
@@ -66,7 +66,7 @@
    s.timer=setInterval(()=>{if(session!==s)return;if(!current(s)){cleanup(s);return;}if(!s.saving&&!s.deleting&&!s.leaving&&!s.leaveRequest)void check(s);},15000);
    s.scopeTimer=setInterval(()=>{if(session===s&&!current(s))cleanup(s);},250);void loadMedia(s);return true;
   }catch(error){if(session?.opening===opening)cleanup(session);if(valid())toast(errorMessage(error));return false;}}
- function cleanup(s){if(session!==s)return true;session=null;clearInterval(s.timer);clearInterval(s.scopeTimer);s.mediaSerial++;for(const url of s.urls)URL.revokeObjectURL(url);s.urls=[];
+ function cleanup(s){if(session!==s)return true;window.SnoteContractWork?.clearView(s.id);session=null;clearInterval(s.timer);clearInterval(s.scopeTimer);s.mediaSerial++;for(const url of s.urls)URL.revokeObjectURL(url);s.urls=[];
   for(const[el,before]of s.restore){if(!el?.isConnected)continue;el.hidden=before.hidden;for(const[attr,value]of [['data-tooltip',before.tooltip],['aria-label',before.ariaLabel]]){if(value===null)el.removeAttribute(attr);else el.setAttribute(attr,value);}if('disabled'in el)el.disabled=before.disabled;if('readOnly'in el)el.readOnly=before.readOnly;el.style.display=before.display;if(before.options!==null){el.innerHTML=before.options;el.value=before.value;}if('maxLength'in el&&typeof before.maxLength==='number'){if(before.maxLength>=0)el.maxLength=before.maxLength;else el.removeAttribute('maxlength');}}
   delete root().dataset.snoteSharedDetail;byId('snote-shared-detail-status')?.remove();snoteVehicleCloseNow();return true;}
  function actionGuard(s){const revision=s.revision,permission=s.cap.permission,access=s.cap.access,inputs=values();return()=>current(s)&&s.revision===revision&&s.cap.permission===permission&&sameAccess(s.cap.access,access)&&!s.saving&&!s.deleting&&!s.leaving&&values()===inputs;}
@@ -127,5 +127,9 @@
  new MutationObserver(()=>{if(current(session))policy(session);}).observe(root(),{subtree:true,childList:true});
  window.addEventListener('snote-vehicle-sharing-updated',()=>{if(current(session)&&!session.saving&&!session.deleting&&!session.leaving&&!session.leaveRequest)void check(session);});
  window.addEventListener('snote:route-changed',()=>{++serial;if(session&&typeof route==='string'&&route!=='buy')cleanup(session);});window.addEventListener('pagehide',()=>{++serial;if(session)cleanup(session);});
- window.SnoteSharedVehicleDetail=Object.freeze({active,open,openOwn,render:()=>render(),save,remove,close,summary,showDocTab,openZoom,downloadZoom,cancelPending:()=>{serial++;}});
+ function contractSource(){const s=session;if(!current(s)||!s.cap.edit||!s.cap.access||s.saving||s.deleting||s.leaving)return null;return {viewId:s.id,opening:s.opening,actor:s.actor,item:{companyId:s.item.companyId,ownerId:s.item.ownerId,carId:s.item.carId},access:{...s.cap.access}};}
+ function contractCurrent(value){const s=session;return !!value&&current(s)&&s.cap.edit&&s.id===value.viewId&&s.opening===value.opening&&s.actor===value.actor&&sameAccess(s.cap.access,value.access);}
+ async function prepareContract(){const s=session;if(!current(s)||!s.cap.edit)return null;if(dirty(s)&&!await save({closeAfterSave:false,notifySuccess:false}))return null;return contractSource();}
+ function attachContract(value,id){if(!contractCurrent(value)||!/^sc:[a-f0-9-]{36}$/i.test(id))return false;session.contractId=id;return true;}
+ window.SnoteSharedVehicleDetail=Object.freeze({active,open,openOwn,render:()=>render(),save,remove,close,summary,showDocTab,openZoom,downloadZoom,contractSource,contractCurrent,prepareContract,attachContract,cancelPending:()=>{serial++;}});
 })();

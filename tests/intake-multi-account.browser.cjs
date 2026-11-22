@@ -52,7 +52,7 @@ async function failureAndOwnership(){
   assert.match(await p.locator('.snote-intake-message').innerText(),/서버의 Supabase 연결 설정/);
   const before=calls.length;
   await p.evaluate(()=>{window.snoteIntakeClose();cars[0].ownerId='cld_foreign-dealer';window.snoteIntakeOpen();});
-  assert.match(await p.locator('#snote-intake-panel').innerText(),/본인 담당 차량만/);assert.equal(calls.length,before);
+  assert.match(await p.locator('#snote-intake-panel').innerText(),/고객 입력 권한을 확인할 수 없습니다/);assert.equal(calls.length,before);
   results.push({kind:'setup-failure mapping and foreign vehicle denial',passed:true});await p.evaluate(()=>closeSaleProgress());await finish(f);console.log('PASS configuration failure and foreign owner guard');
  }catch(error){await f.context.close().catch(()=>{});throw error;}
 }
