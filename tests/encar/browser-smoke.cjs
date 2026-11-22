@@ -141,6 +141,7 @@ async function fixture(width=1440,savedCars=null,{primaryColor=null,weather=null
      const rows=[{company_id:company,dataset:'cars',owner_id:actor,payload:structuredClone(window.__encarFixtureCars),revision:window.__encarFixtureRevision},{company_id:company,dataset:'covers',owner_id:actor,payload:{},revision:1}].filter(row=>Object.entries(filters).every(([key,value])=>row[key]===value));
      return Promise.resolve({data:single?(rows[0]??null):rows,error:null}).then(resolve,reject);
     }
+    if(table==='zc_companies')return Promise.resolve({data:{id:S.company.id,name:S.company.name,business_number:'1234567890',corporate_number:'1234567890123',representative_name:'가상 대표',business_phone:'0212345678',business_postcode:'12345',business_address:'가상 상사 주소',business_address_detail:'가상 상세주소'},error:null}).then(resolve,reject);
     if(table==='zc_media')return Promise.resolve({data:[],error:null}).then(resolve,reject);
     if(table==='zc_customers')return Promise.resolve({data:null,error:null}).then(resolve,reject);
     return Promise.reject(Error('Unexpected browser fixture table '+table)).then(resolve,reject);

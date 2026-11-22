@@ -1,0 +1,21 @@
+/* The mobile task surface never changes document/print templates. */
+#snote-accountant-today[hidden]{display:none!important}
+@media screen and (max-width:760px){
+ #snote-accountant-today{box-sizing:border-box;width:100%;max-width:1180px;margin:0 auto 16px;color:#28354b;font-size:14px;line-height:1.5}
+ #snote-accountant-today *{box-sizing:border-box}
+ #snote-accountant-today :is(h2,h3,p){margin:0}
+ #snote-accountant-today .snote-office-today-card{padding:16px;border:1px solid #e1e7ef;border-radius:14px;background:#fff}
+ #snote-accountant-today h2{font-size:16px;font-weight:650;letter-spacing:-.3px;line-height:1.45}
+ #snote-accountant-today .snote-office-today-list{display:grid;gap:14px;margin-top:14px}
+ #snote-accountant-today .snote-office-task+.snote-office-task{padding-top:14px;border-top:1px solid #e5edf6}
+ #snote-accountant-today .snote-office-task-head{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:24px}
+ #snote-accountant-today h3{font-size:14px;font-weight:600}
+ #snote-accountant-today .snote-office-task-count{color:#315eb1;font-size:16px;font-weight:650;font-variant-numeric:tabular-nums}
+ #snote-accountant-today .snote-office-task-unknown{color:#63748b;font-size:12px}
+ #snote-accountant-today p{margin-top:4px;color:#63748b;font-size:12px;line-height:1.6}
+ #snote-accountant-today .snote-office-task-empty{display:block;margin-top:8px;color:#63748b;font-size:12px;line-height:1.6}
+ #snote-accountant-today button.snote-office-task-open{display:inline-flex;align-items:center;justify-content:center;min-height:44px;margin-top:10px;padding:9px 14px;border:1px solid #ccdaf2;border-radius:9px;background:#f2f6ff;color:#2859a0;font-family:inherit;font-size:13px;font-weight:600;line-height:1.5;cursor:pointer;box-shadow:none;translate:none!important}
+ #snote-accountant-today button.snote-office-task-open:hover{background:#e8f0ff}
+ #snote-accountant-today button.snote-office-task-open:focus-visible{outline:3px solid #8eacf1;outline-offset:2px}
+}
+@media screen and (min-width:761px),print{#snote-accountant-today{display:none!important}}

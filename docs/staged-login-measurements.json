@@ -1,0 +1,293 @@
+{
+  "syntheticOnly": true,
+  "productionLatencyMeasured": false,
+  "baseCommit": "6a569c5b45f3239ec82898871f66cbd8a2526b08",
+  "afterCommit": "26b5b84844262d14e6ec7fa6cb139c011a473b98",
+  "fixedDelayMs": 150,
+  "trialsPerWidth": 3,
+  "before": {
+    "1440": {
+      "auth_ack": {
+        "median": 186.3,
+        "trials": [
+          186.3,
+          179.4,
+          187.6
+        ],
+        "min": 179.4,
+        "max": 187.6
+      },
+      "company_ack": {
+        "median": 512.2,
+        "trials": [
+          513.1,
+          496.6,
+          512.2
+        ],
+        "min": 496.6,
+        "max": 513.1
+      },
+      "essential_data_ack": {
+        "median": 755.8,
+        "trials": [
+          780.2,
+          754.2,
+          755.8
+        ],
+        "min": 754.2,
+        "max": 780.2
+      },
+      "workspace_policy_ack": {
+        "median": 1005.8,
+        "trials": [
+          1047.7,
+          961.9,
+          1005.8
+        ],
+        "min": 961.9,
+        "max": 1047.7
+      },
+      "dashboard_interactive": {
+        "median": 1084,
+        "trials": [
+          1093.5,
+          1015.4,
+          1084
+        ],
+        "min": 1015.4,
+        "max": 1093.5
+      }
+    },
+    "390": {
+      "auth_ack": {
+        "median": 166.2,
+        "trials": [
+          165.6,
+          166.2,
+          564.5
+        ],
+        "min": 165.6,
+        "max": 564.5
+      },
+      "company_ack": {
+        "median": 488.2,
+        "trials": [
+          481.5,
+          488.2,
+          2160.2
+        ],
+        "min": 481.5,
+        "max": 2160.2
+      },
+      "essential_data_ack": {
+        "median": 727.7,
+        "trials": [
+          718.6,
+          727.7,
+          3202.1
+        ],
+        "min": 718.6,
+        "max": 3202.1
+      },
+      "workspace_policy_ack": {
+        "median": 972.9,
+        "trials": [
+          972.9,
+          941.9,
+          4031.7
+        ],
+        "min": 941.9,
+        "max": 4031.7
+      },
+      "dashboard_interactive": {
+        "median": 1111.4,
+        "trials": [
+          1111.4,
+          1083.4,
+          4288.8
+        ],
+        "min": 1083.4,
+        "max": 4288.8
+      }
+    }
+  },
+  "after": {
+    "1440": {
+      "auth_ack": {
+        "median": 180,
+        "trials": [
+          195.2,
+          177.9,
+          180
+        ],
+        "min": 177.9,
+        "max": 195.2
+      },
+      "company_ack": {
+        "median": 515.1,
+        "trials": [
+          527.6,
+          502.6,
+          515.1
+        ],
+        "min": 502.6,
+        "max": 527.6
+      },
+      "essential_data_ack": {
+        "median": 793.2,
+        "trials": [
+          793.2,
+          745.9,
+          911.1
+        ],
+        "min": 745.9,
+        "max": 911.1
+      },
+      "workspace_policy_ack": {
+        "median": 1058,
+        "trials": [
+          1058,
+          982.7,
+          1158.8
+        ],
+        "min": 982.7,
+        "max": 1158.8
+      },
+      "dashboard_interactive": {
+        "median": 1114.6,
+        "trials": [
+          1114.6,
+          1074.4,
+          1216.5
+        ],
+        "min": 1074.4,
+        "max": 1216.5
+      }
+    },
+    "390": {
+      "auth_ack": {
+        "median": 171.8,
+        "trials": [
+          167.4,
+          205.4,
+          171.8
+        ],
+        "min": 167.4,
+        "max": 205.4
+      },
+      "company_ack": {
+        "median": 501.5,
+        "trials": [
+          482.6,
+          527.8,
+          501.5
+        ],
+        "min": 482.6,
+        "max": 527.8
+      },
+      "essential_data_ack": {
+        "median": 815.4,
+        "trials": [
+          727.1,
+          815.4,
+          859.9
+        ],
+        "min": 727.1,
+        "max": 859.9
+      },
+      "workspace_policy_ack": {
+        "median": 1147.2,
+        "trials": [
+          1079.4,
+          1224.3,
+          1147.2
+        ],
+        "min": 1079.4,
+        "max": 1224.3
+      },
+      "dashboard_interactive": {
+        "median": 1311.8,
+        "trials": [
+          1217.7,
+          1429.1,
+          1311.8
+        ],
+        "min": 1217.7,
+        "max": 1429.1
+      }
+    }
+  },
+  "assetCounts": {
+    "before": {
+      "catalog": 7,
+      "ocrEngine": 0,
+      "documentPrinting": 15
+    },
+    "after": {
+      "catalog": 3,
+      "ocrEngine": 0,
+      "documentPrinting": 8
+    }
+  },
+  "financialReads": {
+    "before": {
+      "syntheticOnly": true,
+      "productionLatencyMeasured": false,
+      "ratesBefore": 1,
+      "ratesAfter": 2,
+      "companyPurchaseReads": 1
+    },
+    "after": {
+      "syntheticOnly": true,
+      "productionLatencyMeasured": false,
+      "ratesBefore": 1,
+      "ratesAfter": 1,
+      "companyPurchaseReads": 1
+    }
+  },
+  "sourceHashes": {
+    "before": {
+      "index.html": "504a8da006ea6e1e31883912455be043249e4537e0b1e6a05ad4e131e0ea9558",
+      "assets/idle-auth-storage.js": "98717b43e8892c65e08c9d258b25647d4462ac17abbde77762b3e533eae1c747",
+      "assets/idle-session.js": "58ed5e425fbc67553961b05f0725c6565c01eda69c5a8d5325ed1b8d4830625f",
+      "assets/idle-recovery.js": "2756f2a55c0335fe82dd97785dbaabed6c1f717afb886a45997e9b533e167590"
+    },
+    "after": {
+      "index.html": "9c46218f1c80c9d8d3dcd62da856caafcbdf4165a54871e90d9eb6116f3638ca",
+      "assets/idle-auth-storage.js": "98717b43e8892c65e08c9d258b25647d4462ac17abbde77762b3e533eae1c747",
+      "assets/idle-session.js": "58ed5e425fbc67553961b05f0725c6565c01eda69c5a8d5325ed1b8d4830625f",
+      "assets/idle-recovery.js": "2756f2a55c0335fe82dd97785dbaabed6c1f717afb886a45997e9b533e167590"
+    }
+  },
+  "protectedPolicyFrames": {
+    "before": [
+      57,
+      56,
+      53,
+      54,
+      54,
+      144
+    ],
+    "after": [
+      55,
+      55,
+      57,
+      54,
+      45,
+      62
+    ]
+  },
+  "realExternalRequests": 0,
+  "testGroupCounts": {
+    "normalLogin": 10,
+    "firstUse": 9,
+    "registration": 16,
+    "paymentAccounts": 8,
+    "companyAssets": 6,
+    "profileLogo": 6,
+    "documentActions": 4,
+    "A4ViewportPDFs": 4,
+    "archivedCustomerPrint": 4,
+    "twoTabFinanceScopes": 2
+  }
+}

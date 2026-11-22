@@ -16,8 +16,8 @@ async function setup(p,{blankPlate=false,explicit=true}={}){return p.evaluate(as
  },{blankPlate,explicit});}
 const interest=p=>p.locator('#detail-inventory-interest');
 const totals=p=>p.locator('#detail-cost-summary .sum-cell strong').allTextContents();
-async function amount(p,expected){assert.equal(await interest(p).inputValue(),expected);assert.equal((await totals(p))[0],expected+'원');}
-async function openDate(p){await p.locator('#detail-inventory-start-trigger').click();await p.locator('#snote-inventory-start-dialog').waitFor({state:'visible'});}
+async function amount(p,expected){const tab=p.locator('#design-vehicle-tab-money');if(await tab.isVisible()&&await tab.getAttribute('aria-selected')!=='true')await tab.click();assert.equal(await interest(p).inputValue(),expected);assert.equal((await totals(p))[0],expected+'원');}
+async function openDate(p){const tab=p.locator('#design-vehicle-tab-money');if(await tab.isVisible()&&await tab.getAttribute('aria-selected')!=='true')await tab.click();await p.locator('#detail-inventory-start-trigger').click();await p.locator('#snote-inventory-start-dialog').waitFor({state:'visible'});}
 async function closeDate(p){await p.locator('#snote-inventory-start-dialog .snote-popup-close').click();await p.locator('#snote-inventory-start-dialog').waitFor({state:'hidden'});}
 async function clean(f){assert.deepEqual(f.errors,[]);assert.deepEqual(f.unexpectedDialogs,[]);assert.deepEqual(f.external,[]);await f.context.close();}
 (async()=>{const before=hashes(),browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium'});setBrowser(browser);const results=[];
@@ -28,7 +28,7 @@ async function clean(f){assert.deepEqual(f.errors,[]);assert.deepEqual(f.unexpec
    await p.evaluate(()=>{const input=document.getElementById('detail-inventory-loan');input.value='30000000';input.dispatchEvent(new Event('change',{bubbles:true}));});await amount(p,'49,315');
    await p.locator('#detail-inventory-lender').selectOption('JB우리금융');await amount(p,'98,630');
    await p.locator('#detail-inventory-loan').fill('20000000');await p.locator('#detail-inventory-lender').selectOption('KB캐피탈');await amount(p,'32,877');
-   await p.locator('#detail-memo').fill('날짜만 저장해도 유지할 미저장 메모');await openDate(p);await p.locator('#snote-inventory-start-date').fill(dates.seven);await amount(p,'23,014');
+   const basicTab=p.locator('#design-vehicle-tab-basic');if(await basicTab.isVisible())await basicTab.click();await p.locator('#detail-memo').fill('날짜만 저장해도 유지할 미저장 메모');const moneyTab=p.locator('#design-vehicle-tab-money');if(await moneyTab.isVisible())await moneyTab.click();await openDate(p);await p.locator('#snote-inventory-start-date').fill(dates.seven);await amount(p,'23,014');
    assert.match(await p.locator('.snote-inventory-start-status').textContent(),/23,014원/);assert.equal(await p.evaluate(()=>cars[0].inventoryStartedAt),dates.ten);assert.equal(await p.evaluate(()=>__encarFixtureWrites.length),dates.writes);
    await closeDate(p);await amount(p,'32,877');assert.equal(await p.evaluate(()=>__encarFixtureWrites.length),dates.writes);
    await openDate(p);await p.evaluate(date=>{const input=document.getElementById('snote-inventory-start-date');input.value=date;input.dispatchEvent(new Event('change',{bubbles:true}));},dates.four);await amount(p,'13,151');

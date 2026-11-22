@@ -5,6 +5,9 @@ const recovery=require('../assets/idle-recovery.js');
 const html=fs.readFileSync(path.resolve(__dirname,'../index.html'),'utf8');
 const source=html.slice(html.indexOf('function snoteIdleRecoveryScope(){'),html.indexOf('async function prepareLegacyAccount('));
 const scrub=html.slice(html.indexOf('function scrub(o){'),html.indexOf('function cleanCustomer('));
+const financeScopes=html.slice(html.indexOf('// Read company settings from the authenticated dataset snapshot'),html.indexOf('function snoteCompanyActor(){'));
+const datasetRaw=html.match(/^function snote184DatasetRaw\(dataset,owner\)\{[\s\S]*?^}/m)?.[0];
+assert(datasetRaw,'Actual scoped financial payload reader must be available');
 const USER='11111111-1111-4111-8111-111111111111',OTHER='22222222-2222-4222-8222-222222222222',COMPANY='33333333-3333-4333-8333-333333333333',NIL='00000000-0000-0000-0000-000000000000';
 const PROJECT='https://fixture.supabase.co';
 const LEGACY={finance:'zerocar-office-v182-inventory-finance-ledger',finance_limits:'zerocar-office-v157-finance-companies',prestock:'zerocar-office-v148-prestock-ledger',monthly:'zerocar-office-v165-monthly-ledger',categories:'zerocar-office-v170-monthly-category-settings'};
@@ -16,15 +19,16 @@ function fixture({dataset='cars',owner=USER,revision=7,cached=[{id:'a',memo:'unf
  storage.setItem(cacheKey,JSON.stringify(cached));
  let readError=null,readHook=null;
  const rows=server===null?[]:[{company_id:COMPANY,dataset,owner_id:ownerId,payload:clone(server),revision}];
- const client={from(name){assert.equal(name,'zc_datasets');return {select(){return this;},eq(){return this;},async limit(){if(readHook)await readHook();return {data:clone(rows),error:readError};}};}};
+ const client={from(name){assert.equal(name,'zc_datasets');const filters={};const result=()=>rows.filter(row=>Object.entries(filters).every(([key,value])=>row[key]===value));return {select(){return this;},eq(key,value){filters[key]=value;return this;},async limit(){if(readHook)await readHook();return {data:clone(result()),error:readError};},async maybeSingle(){if(readHook)await readHook();const found=result();assert(found.length<=1,'Exact shared-row key must identify at most one synthetic row');return {data:clone(found[0]??null),error:readError};}};}};
  const S={client,user:{id:USER},company:{id:COMPANY},rpcConfig:{url:PROJECT},members:[{user_id:USER,company_id:COMPANY}],revisions:new Map([[key,revision]]),companyOwners:new Map(),queue:new Set([key]),ready:false,loading:false,conflict:false};
  const bound={...recovery,read:s=>recovery.read(s,storage),write:(s,e)=>recovery.write(s,e,storage),remove:s=>recovery.remove(s,storage)};
- const context={window:{SnoteIdleRecovery:bound},S,NIL,LEGACY,localStorage:storage,Storage,originalSet:Storage.prototype.setItem,cloudWriteEpoch:1,cloudPendingWrites:new Map(),snote220CatalogEpoch:1,snoteOwnershipAllowed:()=>true,
+ const context={window:{SnoteIdleRecovery:bound},S,SNOTE203_META:'_snote203_meta',NIL,LEGACY,localStorage:storage,Storage,originalSet:Storage.prototype.setItem,cloudWriteEpoch:1,cloudPendingWrites:new Map(),snote220CatalogEpoch:1,snoteOwnershipAllowed:()=>true,parsePayload:raw=>{try{return JSON.parse(raw);}catch{return null;}},
+  snoteCompanyPurchaseContext:()=>({companyId:S.company?.id,ready:S.ready&&!S.loading,role,canRead:['admin','accountant'].includes(role)}),
   ownerAlias:alias,isShared:ds=>!['cars','covers'].includes(ds),cloudKey:(ds,owner)=>ds+':'+(!['cars','covers'].includes(ds)?NIL:owner),
   storageKey:(ds,owner)=>['cars','covers'].includes(ds)?'zerocar-office-v12-'+ds+'-'+owner:LEGACY[ds],defaultBody:ds=>ds==='covers'?'{}':ds==='categories'?'null':'[]',
   snote221ResetIncome(){},snote220InvalidateCatalog(){context.snote220CatalogEpoch++;},snote216ResetMonthly(){},snote216InitMonthly(){},snoteCompanyActor:()=>({role,user_id:USER}),snoteCompanyOwnerRows:()=>[{user_id:USER},{user_id:OTHER}]
  };
- vm.createContext(context);vm.runInContext(scrub+source,context);
+ vm.createContext(context);vm.runInContext(financeScopes+'\n'+datasetRaw+'\n'+scrub+source,context);
  return {S,context,rows,storage,cacheKey,key,scope,bound,cached:()=>JSON.parse(storage.getItem(cacheKey)),marker:()=>recovery.read(scope,storage),capture:()=>context.snoteIdleCaptureRecovery({client:S.client,user:S.user,company:COMPANY,epoch:context.cloudWriteEpoch}),restore:options=>context.restoreDatasets(options),setReadError:error=>readError=error,setReadHook:hook=>readHook=hook};
 }
 test('capture retains original cache and records metadata hashes without customer payloads',async()=>{

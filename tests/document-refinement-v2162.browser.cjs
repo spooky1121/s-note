@@ -39,7 +39,7 @@ async function openDocument(p,kind){
   openVehicle(cars[0].id);const car=cars[0];const person={ownerId:currentUser.username,carId:car.id,name:'합성 인쇄 고객',phone:'01012345678',address:'경기도 고양시 일산동구 합성로 123번길 45 합성아파트 101동 1001호',mailing:'서울특별시 강남구 합성대로 123-45 합성빌딩 12층',refundBank:'합성은행',refundAccount:'0001234567890',refundHolder:'합성 고객',customerSignature:signature,customerSignatureSignedAt:'2026-11-17T00:00:00Z',receiptDetails:detail};
   if(kind==='quote'){await openQuotePreview();return;}
   if(kind==='receipt'){await zc76OpenReceipt(person,car);return;}
-  openContractPreview({loadCustomer:false});document.getElementById('ct-buyer-name').value=person.name;document.getElementById('ct-buyer-phone').value=person.phone;document.getElementById('ct-buyer-address').value=person.address;document.getElementById('ct-special').value='차량 상태와 성능점검 기록을 확인하고 인도합니다.\n이전등록 비용을 정산한 뒤 차액을 환급합니다.';fitContractSpecial();snote222ContractSignature.set(person);
+  await openContractPreview({loadCustomer:false});document.getElementById('ct-buyer-name').value=person.name;document.getElementById('ct-buyer-phone').value=person.phone;document.getElementById('ct-buyer-address').value=person.address;document.getElementById('ct-special').value='차량 상태와 성능점검 기록을 확인하고 인도합니다.\n이전등록 비용을 정산한 뒤 차액을 환급합니다.';fitContractSpecial();snote222ContractSignature.set(person);
  },{kind,signature:SIGNATURE,detail:DETAIL});
 }
 async function paperMetrics(p,selector){

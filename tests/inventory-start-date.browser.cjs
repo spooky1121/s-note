@@ -21,6 +21,7 @@ fs.mkdirSync(OUT,{recursive:true});
      if(!persistCars(c.ownerId))throw Error('SETUP_PERSIST_FAILED');const saved=await zc86Cloud.flush();if(saved?.ok!==true)throw Error('SETUP_ACK_FAILED');renderVehicle();snoteVehicleRememberDraft();
      return{today,purchase:ago(31),chosen:ago(7),other:ago(8),memo:c.vehicleMemo||'',extra:c.extra||''};
     });
+    const moneyTab=p.locator('#design-vehicle-tab-money');if(await moneyTab.isVisible())await moneyTab.click();
     await p.locator('#car-cost-section').scrollIntoViewIfNeeded();
     const interest=p.locator('#detail-inventory-interest'),trigger=p.locator('#detail-inventory-start-trigger');
     const loanTrigger=p.locator('#detail-inventory-loan-start-trigger'),dialog=p.locator('#snote-inventory-start-dialog');
@@ -41,8 +42,9 @@ fs.mkdirSync(OUT,{recursive:true});
     await trigger.scrollIntoViewIfNeeded();await p.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
     for(let attempt=0;attempt<3;attempt++){await p.mouse.move(1,1);await trigger.hover();try{await p.locator('#snote-icon-tooltip').waitFor({state:'visible',timeout:1000});break;}catch(error){if(attempt===2)throw error;}}
     assert.match(await p.locator('#snote-icon-tooltip').textContent(),new RegExp(setup.purchase));
+    const basicTab=p.locator('#design-vehicle-tab-basic');if(await basicTab.isVisible())await basicTab.click();
     await p.locator('#detail-memo').fill('미저장 메모 '+width);await p.locator('#detail-extra').fill('미저장 비고 '+width);
-    await trigger.click();await dialog.waitFor({state:'visible'});
+    if(await moneyTab.isVisible())await moneyTab.click();await trigger.click();await dialog.waitFor({state:'visible'});
     const save=p.locator('.snote-inventory-start-save');await save.locator('svg').waitFor({state:'visible'});assert.equal((await save.textContent()).trim(),'');assert.equal(await save.getAttribute('aria-label'),'저장');
     assert.equal(await p.locator('#snote-inventory-start-date').inputValue(),setup.purchase);assert.equal(await p.locator('#snote-inventory-start-date').getAttribute('max'),setup.today);
     const bounds=await dialog.boundingBox();assert(bounds.x>=0&&bounds.x+bounds.width<=width+1&&bounds.width<=360);assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
