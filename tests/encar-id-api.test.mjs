@@ -41,7 +41,7 @@ test('production refuses missing Browser Run credentials after authorization wit
 test('GLOAR-only lookup receives the originating Pages waitUntil with its proper context',async t=>{
  const s=fixture(t),held=[];let context;const handler=createEncarIdHandler({lookup:async args=>{assert.equal(args.env,ENV);args.waitUntil(Promise.resolve('synthetic metadata'));return s.lookup(args);}});
  context={request:request(),env:ENV,waitUntil(promise){assert.equal(this,context);held.push(promise);}};
- const response=await handler(context);assert.equal(response.status,200);assert.deepEqual(await Promise.all(held),['synthetic metadata']);assert.deepEqual(s.providers,['gloar']);
+ const response=await handler(context);assert.equal(response.status,200);assert.deepEqual((await Promise.all(held)).filter(value=>value!==undefined),['synthetic metadata']);assert.equal(held.length,2,'Both provider cleanup and pending plain-result work retain the originating context');assert.deepEqual(s.providers,['gloar']);
 });
 test('an unauthorized request never starts GLOAR or any other provider',async t=>{
  const s=fixture(t,{members:[]}),r=await run(createEncarIdHandler({lookup:s.lookup}));assert.equal(r.status,403);assert.deepEqual(s.providers,[]);

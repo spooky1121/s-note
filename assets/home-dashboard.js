@@ -9,6 +9,7 @@
  root.SnoteHomeDashboardModel=model;
  const host=document.getElementById('snote-dashboard-home');if(!host)return;
  const bridge=()=>root.snoteHomeDashboardBridge;
+ const mobile=matchMedia('(max-width:760px)');
  let active=false,paintedKey=null,signature='',scheduled=false,selectedChart='purchases';
  const number=value=>Number(value).toLocaleString('ko-KR');
  const won=value=>value==null?'—':number(value)+'원';
@@ -100,7 +101,7 @@
   card.append(list);return card;
  }
  function work(data,key){
-  const card=node('section',null,'snote-home-work-card');card.append(header('오늘 확인할 업무',null,'buy',key));
+  const card=node('section',null,'snote-home-work-card');card.append(header('오늘 처리할 일',null,'buy',key));
   const summary=node('div',null,'snote-home-work-summary');summary.append(node('strong','장기 재고'),node('span',number(data.tasks.count)+'대','snote-home-work-count'));card.append(summary,node('p','현재 보유 차량 · 매입일로부터 90일 이상','snote-home-work-caption'));
   const list=node('div',null,'snote-home-task-list');
   if(!data.tasks.rows.length)list.append(node('p','90일 이상 보유한 차량이 없습니다.','snote-home-task-empty'));
@@ -108,7 +109,18 @@
    const button=node('button',null,'snote-home-task-row');button.type='button';button.dataset.vehicleId=String(row.id);button.setAttribute('aria-label',String(row.model||'차량')+' · '+row.days+'일 보유 · 상세 보기');button.onclick=()=>action('openVehicle',row.id,key);
    const info=node('span',null,'snote-home-task-info');info.append(node('strong',row.model||'차량 정보 없음'),node('small',row.plate||'차량번호 미입력'));button.append(info,node('span',number(row.days)+'일 보유','snote-home-task-age'),icon('arrow'));list.append(button);
   }
-  card.append(list);return card;
+  card.append(list);
+  if(mobile.matches){
+   const progress=node('div',null,'snote-home-sale-progress');progress.dataset.taskKind='sale-progress';
+   const heading=node('div',null,'snote-home-work-summary');heading.append(node('strong','판매 진행'),node('span',number(data.saleTasks.count)+'대','snote-home-progress-count'));progress.append(heading,node('p','계약중인 내 차량','snote-home-work-caption'));
+   if(!data.saleTasks.rows.length)progress.append(node('p','진행 중인 계약이 없습니다.','snote-home-task-empty'));
+   for(const row of data.saleTasks.rows.slice(0,3)){
+    const button=node('button',null,'snote-home-progress-row');button.type='button';button.dataset.vehicleId=String(row.id);button.setAttribute('aria-label',String(row.model||'차량')+' · 계약중 · 상세 보기');button.onclick=()=>action('openVehicle',row.id,key);
+    const info=node('span',null,'snote-home-task-info');info.append(node('strong',row.model||'차량 정보 없음'),node('small',row.plate||'차량번호 미입력'));button.append(info,node('span','계약중','snote-home-progress-state'),icon('arrow'));progress.append(button);
+   }
+   card.append(progress);
+  }
+  return card;
  }
  function shortcuts(data,key){
   const card=node('nav',null,'snote-home-shortcuts');card.setAttribute('aria-label','자주 쓰는 업무');card.append(node('h2','업무 바로가기'));
@@ -124,7 +136,8 @@
   const secondary=node('div',null,'snote-home-secondary-kpis');secondary.setAttribute('role','group');secondary.setAttribute('aria-label','보조 실적');secondary.append(kpi('이번 달 매입',data.monthPurchaseCount,{kind:'purchase',unit:'대',detail:Number(data.month.slice(5))+'월 매입 기준'}),kpi('이번 달 판매',data.monthSaleCount,{kind:'sale',unit:'대',detail:Number(data.month.slice(5))+'월 판매 완료 기준'}),kpi('올해 수익',data.yearMargin,{kind:'year',detail:data.month.slice(0,4)+'년 판매 완료 기준',masked:hideMargin}));
   const workspace=node('div',null,'snote-home-workspace');workspace.append(work(data,key),shortcuts(data,key));
   const cards=node('div',null,'snote-home-details');cards.append(listCard('보유 차량',data.inventoryRecent,data.inventoryCount,'buy',key),listCard('판매 완료',data.soldRecent,data.soldCount,'sell',key,true));
-  const graphs=node('div',null,'snote-home-graphs');graphs.append(charts(data,key),settlement(data,key,hideMargin));host.append(kpis,secondary,workspace,cards,graphs);
+  const graphs=node('div',null,'snote-home-graphs');graphs.append(charts(data,key),settlement(data,key,hideMargin));
+  if(mobile.matches)host.append(workspace,kpis,secondary,cards,graphs);else host.append(kpis,secondary,workspace,cards,graphs);
  }
  function refresh(){
   scheduled=false;if(!active){clear();return;}host.hidden=false;
@@ -133,8 +146,8 @@
   if(snapshot.key!==paintedKey){host.replaceChildren();signature='';paintedKey=snapshot.key;}
   if(snapshot.loading){state('대시보드를 불러오는 중…',{loading:true});return;}
   if(snapshot.locked){state('금액 요약과 수익 정보를 보려면 잠금을 해제해 주세요.',{locked:true,key:snapshot.key});return;}
-  let data;try{data=model.summarize(snapshot.rows,snapshot.month);data.tasks=model.inventoryTasks(snapshot.rows);}catch{state('대시보드 금액을 확인할 수 없습니다.');return;}
-  const hideMargin=snapshot.hideMargin!==false,next=JSON.stringify([snapshot.key,hideMargin,data]);if(signature===next)return;signature=next;render(data,snapshot.key,hideMargin);
+  let data;try{data=model.summarize(snapshot.rows,snapshot.month);data.tasks=model.inventoryTasks(snapshot.rows);data.saleTasks=model.saleProgress(snapshot.rows);}catch{state('대시보드 금액을 확인할 수 없습니다.');return;}
+  const hideMargin=snapshot.hideMargin!==false,next=JSON.stringify([snapshot.key,hideMargin,mobile.matches,data]);if(signature===next)return;signature=next;render(data,snapshot.key,hideMargin);
  }
  function schedule(){if(!scheduled){scheduled=true;queueMicrotask(refresh);}}
  root.addEventListener('snote:route-changed',event=>{active=event.detail?.page==='dashboard';refresh();});
@@ -142,6 +155,7 @@
  document.addEventListener('snote:finance-lock-changed',schedule);
  document.addEventListener('snote:dashboard-display-changed',schedule);
  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&active)schedule();});
+ mobile.addEventListener('change',schedule);
  // Identity, gate and day rollover checks are cheap; amounts are recalculated only when their scope changes.
  setInterval(()=>{if(!active)return;try{if(!paintedKey||bridge()?.current?.(paintedKey)!==true)refresh();}catch{refresh();}},1000);
  try{active=typeof route==='string'&&route==='dashboard';}catch{active=false;}refresh();
@@ -164,6 +178,11 @@
   }
   tasks.sort((a,b)=>b.days-a.days||String(a.id||'').localeCompare(String(b.id||'')));return{asOf:dateKey(asOf),count:tasks.length,rows:tasks};
  }
+ function saleProgress(rows){
+  if(!Array.isArray(rows))throw Error('INVALID_DASHBOARD_TASK_ROWS');
+  const pending=rows.filter(row=>row&&row.status==='계약중').map(row=>({id:row.id,model:row.model,plate:row.plate}));
+  return {count:pending.length,rows:pending};
+ }
  const recent=(rows,field)=>rows.slice().sort((a,b)=>dateKey(b[field]).localeCompare(dateKey(a[field]))||String(a.id||'').localeCompare(String(b.id||''))).slice(0,4);
  function summarize(rows,month=currentMonth()){
   if(!Array.isArray(rows)||!isMonth(month)||rows.some(row=>!row||typeof row!=='object'||Array.isArray(row)))throw Error('INVALID_DASHBOARD_DATA');
@@ -172,5 +191,5 @@
   const totalInvestment=sum(inventory,row=>row.inventoryCost),cash=money(totalInvestment-inventoryCapital),series=Array.from({length:3},(_,i)=>shiftMonth(month,i-2)).filter(Boolean).map(key=>{const purchases=rows.filter(row=>inMonth(row,'purchaseAt',key)),sales=sold.filter(row=>inMonth(row,'soldAt',key));return{month:key,purchases:purchases.length,sales:sales.length,margin:sum(sales,row=>row.margin)};});
   return{month,inventoryCapital,cash,totalInvestment,monthPurchaseCount:monthPurchases.length,monthSaleCount:monthSales.length,monthMargin:sum(monthSales,row=>row.margin),yearMargin:sum(yearSales,row=>row.margin),inventoryMargin,inventoryCount:inventory.length,soldCount:sold.length,series,inventoryRecent:recent(inventory,'purchaseAt'),soldRecent:recent(sold,'soldAt')};
  }
- return Object.freeze({isMonth,currentMonth,monthOf,dateKey,currentDay,inventoryTasks,summarize});
+ return Object.freeze({isMonth,currentMonth,monthOf,dateKey,currentDay,inventoryTasks,saleProgress,summarize});
 });

@@ -1,0 +1,13 @@
+'use strict';
+const assert=require('node:assert/strict'),v=require('../assets/sale-validation.js');
+const sale={id:'synthetic-sale',status:'판매완료',purchaseAt:'2026-11-10',soldAt:'2026-11-22',soldPrice:25000000};
+for(const soldAt of ['',null,'2026-02-29','2026-04-31','0000-01-01','2026-11-09','2026-11-22T00:00:00'])assert.throws(()=>v.validate({...sale,soldAt}));
+for(const soldPrice of [undefined,null,'25000000',0,-1,1.5,1000000000001,NaN,Infinity])assert.throws(()=>v.validate({...sale,soldPrice}));
+assert(v.validate(sale));assert(v.validate({...sale,purchaseAt:'',soldAt:'2024-02-29'}));assert(v.validate({...sale,purchaseAt:'unknown'}));
+assert.throws(()=>v.changes([{...sale,status:'계약중'}],[{...sale,soldAt:'2026-11-09'}]));
+assert.throws(()=>v.changes([{...sale,status:'판매중',soldPrice:50000000}],[{...sale,soldPrice:undefined}]));
+const historical={...sale,soldAt:'2026-02-30',soldPrice:0};
+assert(v.changes([historical],[{...historical,vehicleMemo:'Keep original history'}]));
+assert.throws(()=>v.changes([historical],[{...historical,soldPrice:20000000}]));
+assert(v.changes([sale],[{...sale,costs:{repair:100}}]));
+console.log('PASS strict sale calendar/order/actual-price checks and unchanged historical transaction preservation');

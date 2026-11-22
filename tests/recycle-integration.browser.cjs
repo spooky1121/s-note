@@ -7,12 +7,13 @@ const ZERO='00000000-0000-0000-0000-000000000000';
 const NEXT='33333333-3333-4333-8333-333333333333';
 let browser;
 
-async function setup(width=1440){
- const f=await fixture(width),p=f.page;
+async function setup(width=1440,{manualMessages=false}={}){
+ const f=await fixture(width,null,{manualMessages}),p=f.page;
  await f.context.route('**/api/customer-intake',route=>route.fulfill({contentType:'application/json',body:JSON.stringify({ok:true,requests:[]})}));
  await p.evaluate(()=>{
   const S=window.__encarFixtureState,originalRpc=S.client.rpc.bind(S.client),originalFrom=S.client.from.bind(S.client);
   S.client.supabaseUrl='https://recycle-fixture.supabase.co';S.client.supabaseKey='synthetic-public-key';
+  S.rpcConfig={client:S.client,url:S.client.supabaseUrl,key:S.client.supabaseKey};
   const owner=S.user.id,company=S.company.id,alias=currentUser.username,carId='encar-car-1';
   window.__recycle={owner,company,alias,carId,coversRevision:0,mode:'ok',calls:[],removed:[],uploads:[],archives:[],receipts:new Map(),clock:0,media:[],customer:{payload:{id:alias+':'+carId,ownerId:alias,carId,name:'합성 고객',phone:'01012345678',address:'합성 주소',refundAccount:'1234567890123'},has_rrn:false,updated_at:'2026-11-06T00:00:00.000Z',restore_generation:'00000000-0000-0000-0000-000000000000'}};
   const t=window.__recycle;t.coverState={};t.archivedMedia=[];S.ready=false;covers={};localStorage.setItem('zerocar-office-v12-covers-'+alias,'{}');S.ready=true;
@@ -68,11 +69,11 @@ async function setup(width=1440){
   function assertArgs(args){if(args.p_owner!==owner||args.p_company!==company||args.p_expected!==window.__encarFixtureRevision||args.p_expected_covers!==t.coversRevision)throw Error('Synthetic canonical CAS mismatch');}
   t.addMedia=()=>{const row={company_id:company,owner_id:owner,id:'old-file',car_id:carId,file_path:company+'/'+owner+'/'+carId+'/old-file.png',original_name:'old.png',mime_type:'image/png',file_size:1,group_name:'registration',meta:{},created_at:'2026-11-06T00:00:00Z'};t.media=[row];mediaByCar={[carId]:[{id:row.id,carId,ownerId:alias,cloudOwnerId:owner,filePath:row.file_path,group:row.group_name,filename:row.original_name,blob:new Blob(['x'],{type:'image/png'})}]};};
  });
- f.rpcRequests=[];
+ f.rpcRequests=[];const expectedToken=await p.evaluate(()=>window.__encarFixtureSession.access_token);
  await f.context.route('https://recycle-fixture.supabase.co/rest/v1/rpc/snote_*',async route=>{
   const request=route.request(),headers={'access-control-allow-origin':'*','access-control-allow-methods':'POST, OPTIONS','access-control-allow-headers':'authorization, apikey, content-type'};
   if(request.method()==='OPTIONS')return route.fulfill({status:204,headers});
-  assert.equal(request.method(),'POST');assert.equal(request.headers().apikey,'synthetic-public-key');assert.equal(request.headers().authorization,'Bearer synthetic-local-encar-session');
+  assert.equal(request.method(),'POST');assert.equal(request.headers().apikey,'synthetic-public-key');assert.equal(request.headers().authorization==='Bearer '+expectedToken,true,'Pinned recycle RPC must use the fixture session captured before action');
   const name=decodeURIComponent(new URL(request.url()).pathname.split('/').pop()),args=JSON.parse(request.postData());f.rpcRequests.push({name,args,authorization:request.headers().authorization});
   const result=await p.evaluate(({name,args})=>__encarFixtureState.client.rpc(name,args),{name,args});
   return route.fulfill({status:result.error?(result.error.code?400:503):200,headers,contentType:'application/json',body:JSON.stringify(result.error||result.data)});
@@ -202,4 +203,6 @@ async function roundTrips(){
  }
 }
 
-(async()=>{browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium'});setBrowser(browser);try{await settingsAccess();for(const width of[1440,390])await happy(width);await media();await customers();await views();await lateMedia();await pendingChanges();await pinnedActor();await roundTrips();}finally{await browser.close();}})().catch(error=>{console.error(error.stack);process.exitCode=1;});
+async function main(){browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium'});setBrowser(browser);try{await settingsAccess();for(const width of[1440,390])await happy(width);await media();await customers();await views();await lateMedia();await pendingChanges();await pinnedActor();await roundTrips();}finally{await browser.close();}}
+module.exports={setup,finish,customers,views,pinnedActor,pendingChanges,roundTrips,setTestBrowser(value){browser=value;setBrowser(value);}};
+if(require.main===module)main().catch(error=>{console.error(error.stack);process.exitCode=1;});

@@ -13,8 +13,8 @@ async function currentStep(p,n){for(let i=1;i<=3;i++)assert.equal(await p.locato
 async function setup(width=1440){
  const f=await fixture(width),p=f.page;
  await p.waitForFunction(()=>!!window.SnotePurchaseRegistration&&!!document.getElementById('purchase-registration-step-1'));
- await p.evaluate(()=>{
-  closeVehicle({discard:true});navigate('buy');
+ await p.evaluate(async()=>{
+  await closeVehicle({discard:true,animate:false});await navigate('buy');
   const client=window.__encarFixtureState.client,rpc=client.rpc.bind(client);
   window.__registrationTaxonomyWrites=[];window.__registrationTaxonomyMode='ok';
   client.rpc=async(name,args)=>{
@@ -31,7 +31,7 @@ async function setup(width=1440){
   window.__registrationSuccessCount=0;
   window.__registrationEntryDecorations=[];new MutationObserver(records=>{for(const record of records){const row=record.target;if(row.matches?.('[data-registration-car-id]')&&[row.className,record.oldValue||''].some(value=>String(value).split(/\s+/).includes('snote-registration-created'))&&row.getClientRects().length)window.__registrationEntryDecorations.push(row.dataset.registrationCarId);}}).observe(document.body,{subtree:true,attributes:true,attributeFilter:['class'],attributeOldValue:true});
   new MutationObserver(records=>{for(const record of records)for(const n of record.addedNodes)if(n.nodeType===1&&(n.id==='snote-purchase-registration-success'||n.querySelector?.('#snote-purchase-registration-success')))window.__registrationSuccessCount++;}).observe(document.body,{childList:true,subtree:true});
-  openAdd();
+  await openAdd();
  });
  await p.locator(OVERLAY+'.open').waitFor();await currentStep(p,1);await tick(p);
  return f;

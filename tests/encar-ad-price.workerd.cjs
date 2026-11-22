@@ -21,6 +21,7 @@ export default { async fetch(request) {
  }
  if(request.url!=='https://fem.encar.com/cars/detail/${ID}?listAdvType=share&adnm=mo_detail_url')throw Error('Only the fixed native Encar listing is allowed');
  if(request.headers.has('Authorization')||request.headers.has('Cookie'))throw Error('No caller credential or cookie may leave to Encar');
+ if(mode==='slow_found')await new Promise(resolve=>setTimeout(resolve,40));
  if(mode==='rate')return new Response('PRIVATE_UPSTREAM',{status:429});
  if(mode==='blocked')return new Response('PRIVATE_CHALLENGE',{status:403});
  const base={vehicleId:${ID},vehicleNo:mode==='mismatch'?'12가3456':'${PLATE}',manage:{dummy:mode==='dummy'},advertisement:{status:mode==='sold'?'SOLD':'ADVERTISE',price:5490}};
@@ -29,7 +30,7 @@ export default { async fetch(request) {
 } };`;
 (async () => {
   const entry = `import {onRequest} from './functions/api/encar-ad-price.js';export default{fetch(request,env,ctx){return onRequest({request,env,waitUntil:promise=>ctx.waitUntil(promise)});}};`;
-  const filenames = ['functions/api/encar-ad-price.js', ...['api-security.js', 'encar-ad-price.mjs', 'encar-price-ocr.mjs', 'encar-page-price.mjs', 'encar-id-browser.mjs', 'encar-id-browser-session.mjs', 'encar-id-browser-limits.mjs'].map(name => 'functions/_shared/' + name)];
+  const filenames = ['functions/api/encar-ad-price.js', ...['api-security.js', 'encar-request-state.mjs', 'encar-ad-price.mjs', 'encar-price-ocr.mjs', 'encar-page-price.mjs', 'encar-id-browser.mjs', 'encar-id-browser-session.mjs', 'encar-id-browser-limits.mjs'].map(name => 'functions/_shared/' + name)];
   const modules = process.argv[2] ? [{ type: 'ESModule', path: '/native-price/compiled.mjs', contents: fs.readFileSync(process.argv[2], 'utf8') }] : [{ type: 'ESModule', path: '/native-price/entry.mjs', contents: entry }, ...filenames.map(filename => ({ type: 'ESModule', path: '/native-price/' + filename, contents: fs.readFileSync(path.join(root, filename), 'utf8') }))];
   let outbound = 0;
   const options = { workers: [
@@ -52,6 +53,7 @@ export default { async fetch(request) {
       else { assert.equal(body.code, code); assert(!('priceWon' in body)); assert(!JSON.stringify(body).includes('PRIVATE')); }
       assert.equal(requests.length, mode === 'denied' ? 2 : 3); assert(requests.every(item => item.method === 'GET')); reports.push({ mode, status, requestCount: requests.length });
     }
+    await reset('slow_found');{const concurrent=await Promise.all([call(),call()]);const bodies=await Promise.all(concurrent.map(response=>response.json()));const requests=await calls();assert(concurrent.every(response=>response.status===200));assert(bodies.every(body=>body.priceWon===54900000));assert.equal(requests.length,5,'Two Auth/membership checks share one native price read');reports.push({mode:'concurrent-same-scope',requestCount:requests.length});}
     assert.equal(outbound, 0); console.log('PASS native Workers Encar price endpoint: live-member auth, same-origin/POST-only, native HTMLRewriter 만원-to-WON quote, exact ID/full plate/status/dummy verification, no secret leakage, no vehicle writes. Synthetic only; actual outbound=0.'); console.log(JSON.stringify({ reports, outbound }));
   } finally { await runtime.dispose(); }
 })().catch(error => { console.error(error); process.exitCode = 1; });

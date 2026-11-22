@@ -120,5 +120,14 @@ test('network, unreadable and unknown failures remain unconfirmed and never echo
 test('diagnostics are cleared for a fresh lookup, normal absence, success and reset',async()=>{
  const response=deferred();let calls=0;const f=fixture({fetchResponse:()=>++calls===1?Promise.resolve(new Response('{"ok":false,"code":"GLOAR_INPUT_UNCONFIRMED"}',{status:502,headers:{'Content-Type':'application/json'}})):response.promise});
  await settled(f.start());assert.equal(f.diagnostics.hidden,false);f.api.reset();const fresh=f.start();await flush();assert.equal(f.diagnostics.hidden,true);assert.equal(f.diagnostic('stage'),'');response.resolve(success());assert.equal(await settled(fresh),true);assert.equal(f.diagnostics.hidden,true);assert.equal(f.diagnostic('source'),'');f.api.reset();
- const empty=fixture({fetchResponse:()=>Promise.resolve(new Response('{"ok":false,"code":"NOT_FOUND"}',{headers:{'Content-Type':'application/json'}}))});assert.equal(await settled(empty.start()),false);assert.equal(empty.diagnostics.hidden,true);empty.api.reset();
+ const empty=fixture({fetchResponse:()=>Promise.resolve(new Response('{"ok":false,"status":"not_found","code":"NOT_FOUND"}',{headers:{'Content-Type':'application/json'}}))});assert.equal(await settled(empty.start()),false);assert.equal(empty.diagnostics.hidden,true);empty.api.reset();
+});
+
+test('a 503 response can never become a no-match and trusted diagnostics are bounded and cleared',async()=>{
+ const headers={'Content-Type':'application/json','X-Snote-Request-Id':'a1111111-1111-4111-8111-111111111111','X-Snote-Lookup-Stage':'lookup','X-Snote-Duration-Ms':'1234'};
+ for(const raw of['{"ok":false,"status":"not_found","code":"NOT_FOUND"}','PRIVATE_NON_JSON_BODY']){
+  const f=fixture({fetchResponse:()=>Promise.resolve(new Response(raw,{status:503,headers}))});assert.equal(await settled(f.start()),false);assert.equal(f.diagnostics.hidden,false);assert.equal(f.diagnostic('http'),'S-NOTE 응답: HTTP 503');assert.match(f.diagnostic('request'),/a1111111-1111-4111-8111-111111111111/);assert.equal(f.diagnostic('stage'),'확인 단계: 외부 광고 조회');assert.equal(f.diagnostic('duration'),'소요 시간: 1.23초');assert(!f.notifications.at(-1)?.message.includes('찾지 못했습니다'));assert(!f.diagnostics.children.map(e=>e.textContent).join(' ').includes('PRIVATE'));f.api.reset();assert.equal(f.diagnostic('request'),'');assert.equal(f.diagnostic('duration'),'');
+ }
+ const privateHeaders={...headers,'X-Snote-Request-Id':'PRIVATE_REQUEST','X-Snote-Lookup-Stage':'PRIVATE_PROVIDER_PATH','X-Snote-Duration-Ms':'Infinity'};
+ const f=fixture({fetchResponse:()=>Promise.resolve(new Response('{"ok":false,"code":"GLOAR_UNAVAILABLE"}',{status:503,headers:privateHeaders}))});assert.equal(await settled(f.start()),false);assert.equal(f.diagnostic('request'),'');assert.equal(f.diagnostic('duration'),'');assert(!f.diagnostics.children.map(e=>e.textContent).join(' ').includes('PRIVATE'));f.api.reset();
 });

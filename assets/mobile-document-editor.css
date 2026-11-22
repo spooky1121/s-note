@@ -1,0 +1,46 @@
+/* A screen companion form; physical A4 nodes and print copies keep their original geometry. */
+.snote-mobile-doc-editor{display:none}
+@media screen{[data-mobile-document-invalid] .snote-popup-card,[data-mobile-document-invalid] [data-document-print]{visibility:hidden!important;pointer-events:none!important}}
+@media screen and (max-width:760px){
+ :is(#contract-overlay,#zc76-receipt-overlay):is([data-mobile-document-editor=true],[data-mobile-document-loading],[data-mobile-document-invalid]).snote-popup-overlay{box-sizing:border-box;padding:8px!important;align-items:flex-start!important;top:0!important;height:100dvh!important;bottom:0!important;overflow:hidden!important}
+ :is(#contract-overlay,#zc76-receipt-overlay):is([data-mobile-document-editor=true],[data-mobile-document-loading],[data-mobile-document-invalid])>.snote-popup-frame{box-sizing:border-box;width:100%!important;max-width:600px!important;height:var(--snote-mobile-doc-height,calc(100dvh - 16px))!important;margin:var(--snote-mobile-doc-top,0px) 0 0!important;padding:0!important;border-radius:16px;background:#fff;box-shadow:0 14px 46px #243e5a25;overflow:hidden}
+ :is(#contract-overlay,#zc76-receipt-overlay):is([data-mobile-document-editor=true],[data-mobile-document-loading],[data-mobile-document-invalid]) .snote-popup-frame>.snote-popup-card{display:block!important;position:fixed!important;left:-10000px!important;top:0!important;width:210mm!important;height:auto!important;max-height:none!important;visibility:hidden!important;pointer-events:none!important}
+ :is(#contract-overlay,#zc76-receipt-overlay)[data-mobile-document-editor=true] :is(#contract-paper,#zc76-receipt-paper){zoom:1!important}
+ :is(#contract-overlay,#zc76-receipt-overlay):is([data-mobile-document-editor=true],[data-mobile-document-loading],[data-mobile-document-invalid]) .snote-document-controls{top:7px;right:8px;width:44px;gap:10px}
+ :is(#contract-overlay,#zc76-receipt-overlay):is([data-mobile-document-editor=true],[data-mobile-document-loading],[data-mobile-document-invalid]) .snote-document-controls button[data-document-print]{width:44px!important;min-width:44px!important;height:44px!important;min-height:44px!important;padding:10px!important}
+ :is(#contract-overlay,#zc76-receipt-overlay):is([data-mobile-document-editor=true],[data-mobile-document-loading],[data-mobile-document-invalid]) .snote-document-controls button.snote-popup-close::before{position:absolute;inset:-7px;content:"";pointer-events:auto}
+ :is(#contract-overlay,#zc76-receipt-overlay):is([data-mobile-document-editor=true],[data-mobile-document-loading],[data-mobile-document-invalid]) .snote-document-controls button.snote-popup-close .snote-close-image{width:24px!important;height:24px!important}
+ :is(#contract-overlay,#zc76-receipt-overlay)[data-mobile-document-loading]>.snote-popup-frame::after{position:absolute;top:120px;left:18px;right:18px;content:'문서를 준비하고 있습니다.';color:#526c82;font:400 15px/1.6 sans-serif;pointer-events:none}
+ :is(#contract-overlay,#zc76-receipt-overlay)[data-mobile-document-invalid]>.snote-popup-frame::after{position:absolute;top:120px;left:18px;right:18px;content:'문서가 변경되었습니다. 닫고 다시 열어 주세요.';color:#526c82;font:400 15px/1.6 sans-serif;pointer-events:none}
+ :is(#contract-overlay,#zc76-receipt-overlay)[data-mobile-document-invalid] .snote-document-controls [data-document-print]{visibility:hidden;pointer-events:none}
+ .snote-mobile-doc-editor{display:flex;flex-direction:column;box-sizing:border-box;width:100%;height:100%;min-height:0;background:#fff;color:#24384e;font:400 16px/1.6 -apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Noto Sans KR',sans-serif}
+ .snote-mobile-doc-editor *{box-sizing:border-box}
+ .snote-mobile-doc-head{flex:none;min-height:105px;padding:17px 65px 14px 18px;border-bottom:1px solid #e4edf5;background:#f7fbff}
+ .snote-mobile-doc-head h2{margin:0;color:#214c73;font-size:19px;font-weight:700;line-height:1.4;letter-spacing:-.4px}
+ .snote-mobile-doc-body{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:16px;scroll-padding:16px;background:#f1f8fd}
+ .snote-mobile-doc-section{display:grid;gap:14px;min-width:0;margin:0 0 16px;padding:16px;border:1px solid #dce8f2;border-radius:13px;background:#fff}
+ .snote-mobile-doc-section legend{max-width:100%;padding:0 5px;color:#355675;font-size:15px;font-weight:650;line-height:1.5}
+ .snote-mobile-doc-field{display:flex;flex-direction:column;gap:6px;min-width:0;color:#52687e;font-size:13px;line-height:1.5}
+ .snote-mobile-doc-field :is(input,textarea,select){display:block;box-sizing:border-box;width:100%;min-width:0;min-height:44px;margin:0;padding:10px 11px;border:1px solid #c9d9e7;border-radius:9px;background:#fff;color:#253c52;font:inherit;font-size:16px;line-height:1.5;font-weight:400;box-shadow:none;letter-spacing:0}
+ .snote-mobile-doc-field textarea{min-height:92px;resize:vertical;white-space:pre-wrap;overflow-wrap:anywhere}
+ .snote-mobile-doc-field :is(input,textarea,select):focus{outline:2px solid #3472b7;outline-offset:1px;border-color:#3472b7}
+ .snote-mobile-doc-field :is(input,textarea)[readonly]{background:#edf3f8;color:#445d74}
+ .snote-mobile-doc-field :is(input,textarea,select):disabled{background:#edf1f5;color:#68798a;cursor:not-allowed}
+ .snote-mobile-doc-warning{color:#a13f32;font-size:12px;line-height:1.5}
+ .snote-mobile-doc-choices{display:grid;gap:8px}
+ .snote-mobile-doc-choice{display:flex;align-items:center;gap:10px;min-height:44px;min-width:0;margin:0;padding:7px 0;color:#334d66;font-size:15px;line-height:1.5}
+ .snote-mobile-doc-choice input{flex:none;width:22px;height:22px;margin:0;accent-color:#245b9a}
+ .snote-mobile-doc-modes{display:flex;gap:8px;margin-bottom:16px}
+ .snote-mobile-doc-modes button{flex:1;min-height:44px;margin:0;padding:10px;border:1px solid #c8dceb;border-radius:10px;background:#fff;color:#335a7a;font:inherit;font-size:14px;line-height:1.5;font-weight:600;box-shadow:none}
+ .snote-mobile-doc-modes button[aria-pressed=true]{background:#245b9a;border-color:#245b9a;color:#fff}
+ .snote-mobile-doc-legal{margin:0 0 14px;padding:0 14px;border:1px solid #d6e5f1;border-radius:12px;background:#fff;overflow-wrap:anywhere;word-break:keep-all}
+ .snote-mobile-doc-legal summary{min-height:48px;padding:12px 0;color:#285275;font-size:15px;font-weight:650;line-height:1.55;cursor:pointer}
+ .snote-mobile-doc-legal p{margin:0 0 14px;color:#3c5369;font-size:14px;line-height:1.75;white-space:pre-line}
+ .snote-mobile-doc-accounts{margin:0 0 14px;padding:14px;border:1px solid #d6e5f1;border-radius:12px;background:#fff;color:#36536e;font-size:14px;line-height:1.7;white-space:pre-line;overflow-wrap:anywhere}
+ .snote-mobile-doc-signatures{display:grid;gap:12px;margin:0 0 8px;padding:14px;border:1px solid #d6e5f1;border-radius:12px;background:#fff}
+ .snote-mobile-doc-signature{display:flex;flex-wrap:wrap;align-items:center;gap:10px;color:#415d75;font-size:14px}
+ .snote-mobile-doc-signature img{display:block;width:110px;height:52px;object-fit:contain;background:transparent}
+ .snote-mobile-doc-signature small{width:100%;font-size:12px;line-height:1.5}
+ .snote-mobile-doc-editor [hidden]{display:none!important}
+}
+@media print{.snote-mobile-doc-editor{display:none!important}}

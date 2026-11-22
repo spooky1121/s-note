@@ -9,7 +9,7 @@
   const viewport=window.visualViewport,width=Math.min(innerWidth,viewport?.width||innerWidth),height=Math.min(innerHeight,viewport?.height||innerHeight);
   for(const [rootId,paperId]of specs){
    const root=document.getElementById(rootId),paper=document.getElementById(paperId),holder=root?.querySelector('.snote-popup-frame');
-   if(!root||!paper||!holder||root.hidden||getComputedStyle(root).display==='none')continue;
+   if(!root||!paper||!holder||root.hidden||root.dataset.mobileDocumentEditor==='true'||root.hasAttribute('data-mobile-document-loading')||getComputedStyle(root).display==='none')continue;
    // Measuring an already zoomed auto-height sheet can round its height by a
    // pixel differently at each scale. Measure at 1 in the same animation frame
    // and restore before painting, so the action rail and sheet stay still.

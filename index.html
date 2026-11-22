@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.183">
+<html lang="ko" data-snote-release="2.184">
 <head>
 <meta charset="utf-8" />
 <link rel="stylesheet" href="assets/message-popup.css?v=2.172">
@@ -3167,8 +3167,10 @@ button, input, select, textarea { font-family: inherit; }
 <link rel="stylesheet" href="assets/sales-overview.css?v=2.100">
 <script src="assets/sales-overview.js?v=2.90" defer></script>
 <script src="assets/purchase-overview.js?v=2.100" defer></script>
-<link rel="stylesheet" href="assets/home-dashboard.css?v=2.179" data-snote-type-scale>
-<script src="assets/home-dashboard.js?v=2.179" defer></script>
+<link rel="stylesheet" href="assets/home-dashboard.css?v=2.184" data-snote-type-scale>
+<script src="assets/home-dashboard.js?v=2.184" defer></script>
+<link rel="stylesheet" href="assets/mobile-office-tasks.css?v=2.184">
+<script src="assets/mobile-office-tasks.js?v=2.184" defer></script>
 <script src="assets/access-tracker.js?v=2.85"></script>
 <link rel="stylesheet" href="assets/finance-lock-settings.css?v=2.87">
 <script src="assets/finance-lock-settings.js?v=2.172"></script>
@@ -3180,19 +3182,20 @@ button, input, select, textarea { font-family: inherit; }
 <script src="assets/idle-recovery.js?v=2.104"></script>
 <script src="assets/idle-session.js?v=2.172"></script>
 <link rel="stylesheet" href="assets/profile-settings.css?v=2.102">
-<script src="assets/vehicle-catalog.js?v=2.82"></script>
+<script src="assets/feature-loader.js?v=2.184"></script>
 <script src="assets/vehicle-colors.js?v=2.23"></script>
 <link rel="stylesheet" href="assets/customer-contract-signature.css?v=2.165">
 <script src="assets/customer-contract-signature.js?v=2.165"></script>
 <link rel="stylesheet" href="assets/sales-popup.css?v=2.35">
 <link rel="stylesheet" href="assets/popup-controls.css?v=2.36">
 <script src="assets/money.js?v=2.76"></script>
+<script src="assets/sale-validation.js?v=2.184"></script>
 <script src="assets/custom-cost-model.js?v=2.85"></script>
 <script src="assets/inventory-interest.js?v=2.112"></script>
 <script src="assets/list-pagination.js?v=2.173"></script>
 <script src="assets/popup-controls.js?v=2.183" defer></script>
 <link rel="stylesheet" href="assets/list-style.css?v=2.37">
-<script src="assets/customer-list.js?v=2.102" defer></script>
+<script src="assets/customer-list.js?v=2.184-customer-trash" defer></script>
 <link rel="stylesheet" href="assets/vehicle-detail-compact.css?v=2.85">
 <link rel="stylesheet" href="assets/vehicle-finance.css?v=2.84">
 <link rel="stylesheet" href="assets/vehicle-detail-layout.css?v=2.40">
@@ -3228,7 +3231,7 @@ button, input, select, textarea { font-family: inherit; }
 <link rel="stylesheet" href="assets/snote-chatbot.css?v=2.94">
 <link rel="stylesheet" href="assets/snote-tutorial.css?v=2.94">
 <link rel="stylesheet" href="assets/vehicle-cost-settings.css?v=2.121">
-<link rel="stylesheet" href="assets/vehicle-list-view.css?v=2.174">
+<link rel="stylesheet" href="assets/vehicle-list-view.css?v=2.184-sales-inset">
 <link rel="stylesheet" href="assets/purchase-columns.css?v=2.179">
 <link rel="stylesheet" href="assets/customer-list-view.css?v=2.102">
 <link rel="stylesheet" href="assets/vehicle-memo.css?v=2.92">
@@ -3307,6 +3310,7 @@ button, input, select, textarea { font-family: inherit; }
  </section>
       <section id="monthly-screen" style="display:none;width:100%;min-width:0" aria-label="월정산 결산표"><iframe id="monthly-ledger-frame" title="S-NOTE 월정산 결산표" src="monthly.html?v=2.135" scrolling="no" style="width:100%;height:1280px;border:0;display:block;background:transparent"></iframe></section>
 <section id="snote-dashboard-home" aria-label="대시보드" hidden></section>
+<section id="snote-accountant-today" aria-label="오늘 처리할 일" hidden></section>
 <section id="snote-purchase-overview" aria-label="매입 현황" hidden></section>
 <section id="snote-sales-overview" aria-label="판매 현황" hidden></section>
 <div class="list-screen" id="list-screen"><section class="panel"><div class="panel-head"><div class="list-heading"><div class="list-title-line"><h2 id="list-title">전체 차량 목록</h2><span id="buy-search-host" hidden></span></div><p id="list-desc">차량별 상태와 금액을 확인할 수 있습니다.</p></div><span id="snote-vehicle-count" role="status" aria-live="polite" aria-label="차량 대수" hidden></span><div class="zc-list-actions"><button id="zc80-buy-scan" type="button" class="zc80-buy-scan" aria-label="등록증으로 자동 등록" title="등록증으로 자동 등록" onclick="openAutoRegistration()" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3H5v18h14V9l-6-6ZM13 3v6h6M8 15h8M12 11v8"/></svg></button><button id="snote92-buy-manual" type="button" onclick="openAdd()" aria-label="신규 등록" title="신규 등록" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M12 5v14"/></svg></button><input id="zc-import-model-photos" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden onchange="importModelPhotoBundle(event)" /></div></div><div id="snote-sales-month-filter" class="snote-sales-month-filter" hidden>
@@ -3643,7 +3647,7 @@ let snotePurchaseNavigationScope=null;
 window.snoteResetPurchaseScope=()=>{snotePurchaseNavigationScope=null;window.snoteResetCompanyPurchase?.();if(isPurchaseListRoute()){for(const id of ['list-table','list-mobile','list-pagination'])$(id)?.replaceChildren();}};
 function canManageCar(c){return !!currentUser&&!!c&&(isSnoteAdmin()?true:isAccountant()?window.snoteCompanyPurchaseBridge?.carAllowed?.(c)===true:c.ownerId===currentUser.username)}
 function carsStoreKey(username=currentUser?.username||'unauthenticated'){return ZC_CARS_PREFIX+username}
-function normalizedCars(records,owner){return records.map(c=>SnoteMoney.car(c)).map(c=>({...c,ownerId:c.ownerId||owner,status:(c.status==='매입진행'||c.status==='수리중')?'판매중':c.status,repairItems:normalizeRepairItems(c),inventoryLoan:Number.isFinite(Number(c.inventoryLoan))&&Number(c.inventoryLoan)>=0?Number(c.inventoryLoan):0,inventoryLender:typeof c.inventoryLender==='string'&&c.inventoryLender.length<=45?c.inventoryLender:''}))}
+function normalizedCars(records,owner){return records.map(c=>SnoteMoney.car(c)).map(c=>({...c,ownerId:c.ownerId||owner,status:(c.status==='매입진행'||c.status==='수리중')?'판매중':c.status,repairItems:normalizeRepairItems(c),...(Object.hasOwn(c,'inventoryLoan')?{inventoryLoan:Number.isFinite(Number(c.inventoryLoan))&&Number(c.inventoryLoan)>=0?Number(c.inventoryLoan):0}:{}),inventoryLender:typeof c.inventoryLender==='string'&&c.inventoryLender.length<=45?c.inventoryLender:''}))}
 function dealerCars(username){try{if(window.zc86Cloud?.ready&&window.zc86Cloud?.readOwnerCars)return window.zc86Cloud.readOwnerCars(username);const raw=localStorage.getItem(carsStoreKey(username));const parsed=raw===null?null:JSON.parse(raw);return normalizedCars((Array.isArray(parsed)?parsed:(username==='demo'?seedCars.map(x=>({...x})):[])).map(c=>c&&typeof c==='object'?{...c,ownerId:username}:c),username)}catch(_){return username==='demo'?normalizedCars(seedCars.map(x=>({...x})),'demo'):[]}}
 function loadCarsForUser(){
  if(!currentUser){cars=[];return}
@@ -3655,13 +3659,24 @@ function loadCarsForUser(){
  if(isSnoteAdmin())owners.add(currentUser.username);
  cars=[...owners].flatMap(owner=>dealerCars(owner));zc182OverlayFinance();
 }
-function persistCars(ownerId=null){
+// Only an existing unacknowledged detail write can restore its exact original sale facts.
+const snote184SaleRestores=new WeakMap();
+function snote184SaleFacts(car){return JSON.stringify([String(car.id),car.status,car.purchaseAt,car.soldAt,car.soldPrice]);}
+function persistCars(ownerId=null,restore=null){
  if(!currentUser||isAccountant())return false;
  try{
   // An admin may edit another dealer's vehicle. Persist ONLY the selected owner's record,
   // rather than replacing every dealer's snapshot (which would erase other dealers' work).
   const owner=isSnoteAdmin()?(ownerId||currentUser.username):currentUser.username;
-  localStorage.setItem(carsStoreKey(owner),JSON.stringify((isSnoteAdmin()?cars.filter(c=>c.ownerId===owner):cars).map(SnoteMoney.storeCar)));
+  const rows=isSnoteAdmin()?cars.filter(c=>c.ownerId===owner):cars;
+  const previous=JSON.parse(localStorage.getItem(carsStoreKey(owner))||'[]');
+  let baseline=Array.isArray(previous)?previous.map(SnoteMoney.car):[];
+  const rollback=restore&&snote184SaleRestores.get(restore);
+  if(rollback&&restore===snoteVehicleUnconfirmedWrite&&snoteVehicleSameView(restore.context)&&rows.includes(restore.context.car)&&snote184SaleFacts(restore.context.car)===rollback.facts){
+   baseline=baseline.map(row=>String(row.id)===String(rollback.original.id)?rollback.original:row);
+  }
+  SnoteSaleValidation.changes(baseline,rows);
+  localStorage.setItem(carsStoreKey(owner),JSON.stringify(rows.map(SnoteMoney.storeCar)));
   return true;
  }catch(_){return false}
 }
@@ -3895,6 +3910,7 @@ function snoteWriteAuthHistory(mode,method='push'){
 }
 function snoteResetWorkspaceNavigation(){
  window.SnoteMobilePopupHistory?.reset();
+ window.SnoteMobileOfficeTasks?.reset();
  snoteHomeDashboardGrantKey=null;
  snoteWorkspaceSalesReady=false;snoteRefreshSalesOverview();
  snoteWorkspaceActive=false;snoteNavigationSession=null;snotePendingPage=null;snotePendingFinanceHistory=false;
@@ -4054,12 +4070,13 @@ function taxonomyOpen(){return new Promise((resolve,reject)=>{try{const req=inde
 function taxonomyKey(row){const key=[row.make,row.group,row.model,row.grade].map(x=>String(x||'').trim()).join('||');return row.subgrade?key+'||SUB:'+String(row.subgrade).trim():key}
 function readTaxonomy(){return new Promise((resolve,reject)=>{const tx=taxonomyDB.transaction('entries','readonly'),req=tx.objectStore('entries').getAll();req.onsuccess=()=>resolve(req.result||[]);req.onerror=()=>reject(req.error)})}
 async function initTaxonomy(){
+ const actor=currentUser;
  try{taxonomyDB=await taxonomyOpen();vehicleTaxonomy=await readTaxonomy();}catch(e){console.warn('직접 입력 차종 저장소를 열지 못했습니다.');}
- try{await window.SnoteVehicleCatalog.ready;refreshTaxonomyWidget();
+ try{await window.SnoteVehicleCatalog.ready;if(currentUser!==actor)return;refreshTaxonomyWidget();
   if($('overlay').classList.contains('open')&&SNOTE98_FIELDS.every(f=>!snote98RawChoice(f)&&!$('snote98-'+f+'-input').value.trim()))fillVehicleSelect('make');
   if($('vehicle-overlay').classList.contains('open')&&snote282DetailInitial===snote282DetailState()&&!snoteVehicleHasChanges()){const car=cars.find(c=>c.id===activeCarId);if(car){initDetailCatalog(car);snoteVehicleRememberDraft();}}
   if(currentUser)buildStats();
- }catch(e){toast('새 차량정보 목록을 불러오지 못했습니다. 새로고침 후 다시 확인해 주세요.');}
+ }catch(e){throw e;}
 }
 function uniqueSorted(v){return [...new Set(v)].filter(Boolean).sort((a,b)=>a.localeCompare(b,'ko'))}
 function selectOptions(element,values,placeholder,old){element.innerHTML='<option value="">'+esc(placeholder)+'</option>'+values.map(s=>`<option value="${esc(s)}">${esc(s)}</option>`).join('')+'<option value="__manual__">＋ 목록에 없는 차량 직접 입력</option>';if(values.includes(old))element.value=old}
@@ -4080,7 +4097,11 @@ function fillVerifiedGrades(el,make,group,model,previous=''){
  if(previous&&rows.some(r=>(r.id||r.key)===previous))el.value=previous;
  if(!rows.length&&model&&model!=='__manual__')el.value='__manual__';
 }
-let snote220TaxonomyUI=null,snote220RegistrationSession=0;
+let snote220TaxonomyUI=null,snote220RegistrationSession=0,snote2184CatalogTask=null,snote2184CatalogReady=false,snote2184AddIntent=0;
+function snote2184EnsureCatalog(){
+ if(!snote2184CatalogTask)snote2184CatalogTask=window.SnoteFeatures.load('catalog').then(()=>initTaxonomy()).then(()=>{snote2184CatalogReady=true;}).catch(error=>{snote2184CatalogTask=null;throw error;});
+ return snote2184CatalogTask;
+}
 function domesticTaxonomy(){
  // Legacy bundled, IndexedDB, CSV and saved-vehicle-derived choices are backup only.
  const context=window.snoteVehicleTaxonomyBridge?.context(),online=window.snoteVehicleTaxonomyBridge?.hasSession()||!currentUser;
@@ -4088,9 +4109,10 @@ function domesticTaxonomy(){
  const imported=online&&context?vehicleTaxonomy.filter(r=>r.company_id===context.company_id):[];
  return [...(window.SnoteVehicleCatalog?.rows()||[]),...custom,...imported];
 }
-function snote220EnsureTaxonomyUI(){if(!snote220TaxonomyUI)snote220TaxonomyUI=import('./assets/vehicle-taxonomy-ui.js?v=2.172').catch(error=>{snote220TaxonomyUI=null;throw error;});return snote220TaxonomyUI;}
+function snote220EnsureTaxonomyUI(){if(!snote220TaxonomyUI)snote220TaxonomyUI=import('./assets/vehicle-taxonomy-ui.js?v=2.184').catch(error=>{snote220TaxonomyUI=null;throw error;});return snote220TaxonomyUI;}
 async function snote220RefreshTaxonomy(){
- await window.SnoteVehicleCatalog.ready;await snote220EnsureTaxonomyUI();
+ const actor=currentUser,page=route,registration=snote220RegistrationSession,current=()=>currentUser===actor&&route===page&&snote220RegistrationSession===registration;
+ await snote2184EnsureCatalog();if(!current())return;await window.SnoteVehicleCatalog.ready;await snote220EnsureTaxonomyUI();if(!current())return;
  const bridge=window.snoteVehicleTaxonomyBridge,context=bridge?.context();
  if(context){const result=await Promise.allSettled([window.snoteLoadVehicleTaxonomy(),window.SnoteVehicleCatalog.refreshFromServer(()=>bridge.research(context),context.key)]);
   const failure=result.find(r=>r.status==='rejected');if(failure)console.warn('차량정보 서버 확인:',failure.reason?.code||'NETWORK');return result;
@@ -4387,7 +4409,7 @@ document.addEventListener('focusout',event=>{
  el.dataset.lastValidMoney=el.value;
 },true);
 
-function renderDetailIdentity(c){initDetailCatalog(c);$('detail-vin').value=c.vin||'';$('detail-km').value=c.km==null||String(c.km).trim()===''?'':formatKm(c.km);$('detail-purchase-date').value=c.purchaseAt||'';$('detail-extra').value=c.extra||'';$('detail-memo').value=typeof c.vehicleMemo==='string'?c.vehicleMemo:'';$('detail-memo').readOnly=false;setupColorSelect('detail',c.color||'');const sold=c.status==='판매완료';$('sold-info-section').style.display=sold?'block':'none';$('detail-sold-date').value=c.soldAt||'';$('detail-sold-price').value=sold?detailMoneyValue(salePrice(c)):'';}
+function renderDetailIdentity(c){initDetailCatalog(c);$('detail-vin').value=c.vin||'';$('detail-km').value=c.km==null||String(c.km).trim()===''?'':formatKm(c.km);$('detail-purchase-date').value=c.purchaseAt||'';$('detail-extra').value=c.extra||'';$('detail-memo').value=typeof c.vehicleMemo==='string'?c.vehicleMemo:'';$('detail-memo').readOnly=false;setupColorSelect('detail',c.color||'');const sold=c.status==='판매완료';$('sold-info-section').style.display=sold?'block':'none';$('detail-sold-date').value=c.soldAt||'';$('detail-sold-price').value=sold&&c.soldPrice!=null&&c.soldPrice!==''?detailMoneyValue(c.soldPrice):'';}
 function renderDetailCosts(c){syncLenderPicker(c.inventoryLender);$('detail-buy').value=detailMoneyValue(c.buy);$('detail-sell').value=detailMoneyValue(c.sell);$('detail-inventory-loan').value=detailMoneyValue(inventoryLoanOf(c));const costs=normalizeCosts(c);$('detail-inventory-interest').value=detailMoneyValue(costs.inventoryInterest);delete $('detail-inventory-interest').dataset.snoteInterestAutomatic;$('detail-cost-fields').innerHTML=COST_FIELDS.map(([key,label])=>`<label>${label}<input class="detail-money-input" type="text" id="detail-${key}" value="${detailMoneyValue(costs[key])}" placeholder="-" autocomplete="off" spellcheck="false" inputmode="decimal" oninput="updateDetailSummary()" /></label>`).join('');renderRepairRows('detail',normalizeRepairItems(c));window.SnoteVehicleCostSettings?.renderCustomCostFields(c,{preserveDraft:false});void window.SnoteVehicleCostSettings?.refresh();updateDetailSummary()}
 for(const id of ['detail-inventory-loan','detail-inventory-lender','detail-purchase-date','detail-sold-date'])for(const type of ['input','change'])document.getElementById(id)?.addEventListener(type,()=>{if(activeCarId)updateDetailSummary();});
 function updateDetailSummary(){if(window.SnoteSharedVehicleDetail?.active())return window.SnoteSharedVehicleDetail.summary();try{snote239DetailInterest();const costs=costInputs('detail');const buy=readDetailMoney($('detail-buy').value);$('detail-cost-summary').innerHTML=summaryHTML(buy,readDetailMoney($('sold-info-section').style.display==='block'&&$('detail-sold-price').value?$('detail-sold-price').value:$('detail-sell').value),costs);const invested=buy+totals(buy,0,costs).direct-Number(costs.incomeTax||0),loan=cleanLoanInput('detail-inventory-loan'),cash=invested-loan;const metric=$('vehicle-cash-investment');if(metric){metric.textContent=num(cash)+'원';metric.classList.toggle('equity-negative',cash<0);}}catch(e){$('detail-cost-summary').textContent=e.message;const metric=$('vehicle-cash-investment');if(metric)metric.textContent='입력 확인';}}
@@ -4424,21 +4446,28 @@ function saveVehicleCosts({closeAfterSave=true}={}){
  job.promise=(async()=>{const c=context.car;try{
  if(context.cloud){const ready=await window.zc86Cloud.flush();if(!snoteVehicleCurrent(context))return false;if(ready?.ok!==true||window.zc86Cloud.conflict)throw Error('기존 서버 저장 상태를 먼저 확인해 주세요.');snoteVehicleAcknowledgePending(context);}
  const vehicleMemo=$('detail-memo').value.replace(/\r\n?/g,'\n');if(vehicleMemo.length>2000||/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/.test(vehicleMemo))throw Error('메모는 2,000자 이내로 입력해 주세요.');
- const identity=getDetailModel(),kmRaw=$('detail-km').value,km=parseMileage(kmRaw),color=$('detail-color').value,purchaseAt=$('detail-purchase-date').value;
+ const identity=getDetailModel(),kmRaw=$('detail-km').value,km=parseMileage(kmRaw),color=$('detail-color').value,purchaseDateInput=$('detail-purchase-date').value;
+ const purchaseAt=purchaseDateInput===''&&c.purchaseAt&&!SnoteSaleValidation.date(c.purchaseAt)?c.purchaseAt:purchaseDateInput;
  const keepMileageBlank=kmRaw===''&&(c.km==null||String(c.km).trim()==='');
- if(!keepMileageBlank&&(kmRaw===''||!Number.isInteger(km)||km<0||km>9999999))throw Error('주행거리는 0 이상의 정수로 입력해주세요.');if(purchaseAt&&!/^\d{4}-\d{2}-\d{2}$/.test(purchaseAt))throw Error('매입 날짜를 확인해주세요.');
+ if(!keepMileageBlank&&(kmRaw===''||!Number.isInteger(km)||km<0||km>9999999))throw Error('주행거리는 0 이상의 정수로 입력해주세요.');if(purchaseAt&&purchaseAt!==c.purchaseAt&&!SnoteSaleValidation.date(purchaseAt))throw Error('매입 날짜를 확인해주세요.');
  snote239DetailInterest();
  const buy=readDetailMoney($('detail-buy').value),sell=readDetailMoney($('detail-sell').value),costs=costInputs('detail'),repairItems=getRepairItems('detail'),inventoryLoan=cleanLoanInput('detail-inventory-loan');
  if(!Number.isSafeInteger(buy)||!Number.isSafeInteger(sell)||buy<0||sell<0||buy>1000000000000||sell>1000000000000)throw Error('매입가와 판매예정가를 확인하세요.');
  let soldAt=c.soldAt||'',soldPrice=c.soldPrice;
  if(c.status==='판매완료'){
-  soldAt=$('detail-sold-date').value;soldPrice=readDetailMoney($('detail-sold-price').value);
-  if(!soldAt||!/^\d{4}-\d{2}-\d{2}$/.test(soldAt)||!Number.isSafeInteger(soldPrice)||soldPrice<=0||soldPrice>1000000000000)throw Error('판매완료 날짜와 실제 판매가를 입력해주세요.');
+  const saleDateInput=$('detail-sold-date').value,priceInput=$('detail-sold-price').value;
+  soldAt=saleDateInput===(SnoteSaleValidation.date(c.soldAt)?c.soldAt:'')?c.soldAt:saleDateInput;
+  soldPrice=priceInput===(c.soldPrice!=null&&c.soldPrice!==''?detailMoneyValue(c.soldPrice):'')?c.soldPrice:readDetailMoney(priceInput);
+  const saleDraft={...c,purchaseAt,soldAt,soldPrice};
+  if(SnoteSaleValidation.changed(c,saleDraft)){
+   SnoteSaleValidation.validate(saleDraft);
+   if(soldPrice!==c.soldPrice){const stamp=snoteVehicleDraftSignature();if(!await window.snoteConfirm('실제 판매가 '+num(soldPrice)+'원으로 저장하시겠습니까?',{isCurrent:()=>snoteVehicleCurrent(context)&&snoteVehicleDraftSignature()===stamp})||!snoteVehicleCurrent(context)||snoteVehicleDraftSignature()!==stamp)return false;}
+  }
  }
  const customCosts=globalThis.SnoteCustomCosts.normalize(costs.customCosts,{strict:true});delete costs.customCosts;const customCostLabels={...globalThis.SnoteCustomCosts.labels(c.customCostLabels),...Object.fromEntries((window.SnoteVehicleCostSettings?.getConfig()?.customFields||[]).map(f=>[f.id,f.label]))};const inventoryLender=$('detail-inventory-lender').value;if(!snote169LenderAllowed(inventoryLender,c.inventoryLender))throw Error('재고금융사를 확인해주세요.');const submitted=snoteVehicleDraftSignature(),backup={...c},patch={...identity,km:keepMileageBlank?'':formatKm(km),color,purchaseAt,vehicleMemo,extra:$('detail-extra').value.trim(),vin:$('detail-vin').value.trim().toUpperCase(),buy,sell,costs,customCosts,customCostLabels,repairItems,inventoryLoan,inventoryLender,soldAt,soldPrice};const interestSnapshot=globalThis.SnoteInventoryInterest?.snapshot({...c,...patch},snoteInventoryLendersFor({...c,...patch}));if(interestSnapshot)patch.inventoryInterestSnapshot=interestSnapshot;Object.assign(c,patch);
  if(!persistCars(c.ownerId)){for(const key of Object.keys(patch))if(!Object.hasOwn(backup,key))delete c[key];Object.assign(c,backup);throw Error('브라우저 저장에 실패했습니다.')}
  zc182SyncFinanceFromCar(c);
- const pending={context,submitted,revision:window.snoteVehicleWriteState?.(context.id)?.revision,undo(){const before={...c};for(const key of Object.keys(patch)){if(JSON.stringify(c[key])!==JSON.stringify(patch[key]))continue;if(Object.hasOwn(backup,key))c[key]=backup[key];else delete c[key];}if(!persistCars(c.ownerId)){Object.assign(c,before);return false;}zc182SyncFinanceFromCar(c);return true;}};snoteVehicleUnconfirmedWrite=pending;
+ const pending={context,submitted,revision:window.snoteVehicleWriteState?.(context.id)?.revision,undo(){const before={...c};for(const key of Object.keys(patch)){if(JSON.stringify(c[key])!==JSON.stringify(patch[key]))continue;if(Object.hasOwn(backup,key))c[key]=backup[key];else delete c[key];}if(!persistCars(c.ownerId,pending)){Object.assign(c,before);return false;}zc182SyncFinanceFromCar(c);return true;}};snote184SaleRestores.set(pending,{original:structuredClone(backup),facts:snote184SaleFacts(backup)});snoteVehicleUnconfirmedWrite=pending;
  if(context.cloud){const result=await window.zc86Cloud.flush();if(!snoteVehicleCurrent(context))return false;if(result?.ok!==true||window.zc86Cloud.conflict)throw Error('서버 저장을 확인하지 못했습니다. 입력 내용을 유지하고 다시 시도해 주세요.');}
  if(snoteVehicleUnconfirmedWrite===pending)snoteVehicleUnconfirmedWrite=null;
  if(!snoteVehicleCurrent(context))return false;
@@ -4762,7 +4791,9 @@ function changeVehicleStatus(event,id,options={}){event?.stopPropagation();if(!c
  $('status-current').innerHTML=`<span class="status ${statusClass(old)}">${esc(old)}</span>`;
  $('status-target').innerHTML=cancel?`<span class="status cancel-pill">${next==='매입취소'?'차량 삭제':'매입 관리 복귀'}</span>`:`<span class="status ${statusClass(next)}">${esc(next)}</span>`;
  const sale=next==='판매완료';$('confirm-sale-fields').style.display=sale?'grid':'none';
- $('confirm-sold-date').value=c.soldAt||todayLocal();$('confirm-sold-price').value=detailMoneyValue(c.soldPrice??c.sell);
+ $('confirm-sold-date').value=todayLocal();$('confirm-sold-price').value='';
+ $('confirm-sold-date').min=SnoteSaleValidation.date(c.purchaseAt)?c.purchaseAt:'';
+ const suggested=Number(c.sell)>0?c.sell:c.soldPrice;$('confirm-sold-price').placeholder=Number(suggested)>0?'참고 '+num(suggested)+'원':'실제 판매금액';
  $('status-confirm-copy').textContent=next==='매입취소'?'선택한 차량을 휴지통으로 이동합니다. 계속하시겠습니까?':next==='판매취소'?'판매완료 처리를 취소하고 이 차량을 매입 관리로 되돌리시겠습니까?':sale?'판매를 완료하려면 판매 날짜와 실제 판매 금액을 입력한 뒤 확인해주세요.':next==='계약중'?'계약중으로 표시하고 매입관리 목록에 그대로 유지합니다.':'차량 상태를 변경하시겠습니까?';
  $('status-confirm-warning').textContent=next==='매입취소'?'차량 정보, 비용, 사진·서류와 연결된 고객정보를 휴지통에 보관합니다. 휴지통에서 복원할 수 있습니다.':next==='판매취소'?'차량과 첨부 사진·서류는 유지됩니다. 판매완료 날짜와 실제 판매가 기록은 삭제되고, 재고 및 매입관리 목록으로 이동합니다.':sale?'확인하면 차량이 판매 완료 페이지로 이동하고, 재고 및 매입관리 목록에서는 제외됩니다.':old==='판매완료'?'확인하면 차량이 재고 관리와 매입관리 목록으로 돌아갑니다. 기존 판매 날짜·금액은 기록으로 남지만 활성 재고의 수익 계산에는 사용되지 않습니다.':'상태 변경 후에도 차량정보와 등록한 사진·비용 내역은 유지됩니다.';
  if(isAccountant()){
@@ -4828,8 +4859,7 @@ async function confirmStatusChange(){
  let soldAt=c.soldAt,soldPrice=c.soldPrice;
  if(req.next==='판매완료'){
   soldAt=$('confirm-sold-date').value;soldPrice=readDetailMoney($('confirm-sold-price').value);
-  if(!soldAt||!/^\d{4}-\d{2}-\d{2}$/.test(soldAt)){toast('판매 완료 날짜를 입력해주세요.');return}
-  if($('confirm-sold-price').value===''||!Number.isSafeInteger(soldPrice)||soldPrice<=0||soldPrice>1000000000000){toast('실제 판매 금액을 입력해주세요.');return}
+  try{SnoteSaleValidation.validate({...c,soldAt,soldPrice});}catch(error){toast(error.message);return;}
  }
  if(req.next==='판매완료'){
   const button=$('status-confirm-submit'),actor=currentUser,initialRoute=route,opening=snote224VehicleOpen,initialCar=activeCarId;
@@ -4847,6 +4877,8 @@ async function confirmStatusChange(){
     if(!await saleProgressContract({preventDefault(){}},'save'))throw Error('고객정보 저장을 확인해 주세요.');
    }
    if(!current())return;
+   // Recheck the current purchase date after pending detail/customer saves.
+   SnoteSaleValidation.validate({...c,soldAt,soldPrice});
    const backup={...c};c.status=req.next;c.soldAt=soldAt;c.soldPrice=soldPrice;
    const interest=snote239Interest(c);if(interest.ready){c.costs={...c.costs,inventoryInterest:interest.amountWon};c.inventoryInterestSnapshot=globalThis.SnoteInventoryInterest.snapshot(c,snoteInventoryLendersFor(c));}
    if(!persistCars(c.ownerId)){Object.assign(c,backup);throw Error('상태를 저장하지 못했습니다.');}
@@ -5021,9 +5053,9 @@ function renderCars(){
  snote226RenderSalesMonth(all.length);
  window.SnotePurchaseRegistrationSuccess?.rendered();
 }
-/* v1.42 — 경리 전용 재고금융 목록. 원금은 수익 비용이 아니며, 실제 대출이 있는 보유 차량만 표시. */
+/* Finance debt survives a sale; only a zero remaining principal settles it. */
 let INVENTORY_LENDERS=['KB캐피탈','JB우리금융','메리츠','현대캐피탈'];
-function financeCarRows({allDealers=false}={}){if(!snote135FinanceCompanyReady())return [];return cars.filter(c=>window.snoteCompanyPurchaseBridge?.carAllowed?.(c)===true&&c.status!=='판매완료'&&(allDealers||accountantFilter()==='all'||c.ownerId===accountantFilter()));}
+function financeCarRows({allDealers=false}={}){if(!snote135FinanceCompanyReady())return [];return cars.filter(c=>window.snoteCompanyPurchaseBridge?.carAllowed?.(c)===true&&(allDealers||accountantFilter()==='all'||c.ownerId===accountantFilter()));}
 /* One verified company aggregate; list filters never change these totals. */
 let snote135FinanceCompanyState=null;
 function snote135FinanceContext(){
@@ -5052,7 +5084,7 @@ function snote135EnsureFinanceCompany(){
 window.snoteEnsureInventoryFinanceAggregate=snote135EnsureFinanceCompany;
 window.snoteInventoryFinanceAggregate=()=>{
  const context=snote135FinanceContext(),empty={key:context?.key||'',ready:false,companyId:context?.companyId||null,limit:0,used:0,remaining:0};
- if(!context?.ready||!snote135FinanceCompanyReady())return empty;
+ if(!context?.ready||!snote135FinanceCompanyReady()||!Array.isArray(window.snoteInventoryFinanceLedgerBridge?.rows?.())||!Array.isArray(window.snotePrestockSettingsBridge?.rows?.()))return empty;
  const stat=zc182Usage({allDealers:true}),limit=ACC44_LENDER_LIMITS.reduce((sum,row)=>sum+Number(row[1]||0),0),used=stat.rows.reduce((sum,car)=>sum+inventoryLoanOf(car),0)+stat.unmatched.reduce((sum,row)=>sum+row.loan,0),remaining=limit-used;
  return Number.isSafeInteger(limit)&&limit>=0&&Number.isSafeInteger(used)&&used>=0&&Number.isSafeInteger(remaining)?{key:context.key,ready:true,companyId:context.companyId,limit,used,remaining}:empty;
 };
@@ -5066,20 +5098,18 @@ const ZC157_FINANCE_KEY='zerocar-office-v157-finance-companies';
  * avoiding breaking schema migrations. The final record is metadata, not a lender. */
 const SNOTE203_META='_snote203_meta';
 function snote203Meta(){
- try{const rows=JSON.parse(localStorage.getItem(ZC157_FINANCE_KEY)||'[]');
- return Array.isArray(rows)?(rows.find(x=>x&&typeof x==='object'&&!Array.isArray(x)&&x[SNOTE203_META])?.[SNOTE203_META]||{}):{};}
- catch(_){return {}}
+ return window.snotePrestockSettingsBridge?.meta?.()||{};
 }
 function snote203PrestockConfig(){
  const cfg=snote203Meta().prestock||{};
- return {total:Number.isSafeInteger(cfg.total)&&cfg.total>=0?cfg.total:208248902,
- bank:String(cfg.bank||'우리은행').slice(0,35),
- account:String(cfg.account||'1005404896688').slice(0,45),
- holder:String(cfg.holder||'소득세(선재고)').slice(0,45)};
+ return {total:Number.isSafeInteger(cfg.total)&&cfg.total>=0?cfg.total:null,
+ bank:String(cfg.bank||'').slice(0,35),
+ account:String(cfg.account||'').slice(0,45),
+ holder:String(cfg.holder||'').slice(0,45)};
 }
 function snote203WriteMeta(patch){
- if(!isSnoteAdmin()||!window.zc86Cloud?.ready)return false;
- const rows=JSON.parse(localStorage.getItem(ZC157_FINANCE_KEY)||'[]');
+ if(!isSnoteAdmin()||window.snotePrestockSettingsBridge?.canWrite?.()!==true)return false;
+ const rows=window.snotePrestockSettingsBridge.rows();
  const lenders=Array.isArray(rows)?rows.filter(Array.isArray):ACC44_LENDER_LIMITS.map(x=>[x[0],SnoteMoney.legacy(x[1]),x[2]]);
  const meta={...snote203Meta(),...patch};
  try{localStorage.setItem(ZC157_FINANCE_KEY,JSON.stringify([...lenders,{[SNOTE203_META]:meta}]));return true}
@@ -5100,9 +5130,9 @@ function snote203SaveLender(name,amount,rate){
  return persistFinanceCompanies(next);
 }
 
-function restoreFinanceCompanies(){
+function restoreFinanceCompanies(verifiedRows){
  try{
-  const saved=JSON.parse(localStorage.getItem(ZC157_FINANCE_KEY)||'null');
+  const saved=Array.isArray(verifiedRows)?verifiedRows:window.snotePrestockSettingsBridge?.rows?.();
   if(!Array.isArray(saved))return;
   const clean=[];const used=new Set();
   for(const item of saved){if(!Array.isArray(item))continue;const name=String(item[0]||'').trim(),limit=Number(SnoteMoney.toWon(item[1]));if(name&&name.length<=45&&!used.has(name)&&Number.isFinite(limit)&&limit>=0&&limit<=1000000000000){clean.push([name,limit,item[2]!=null&&String(item[2]).trim()!==''&&Number.isFinite(Number(item[2]))&&Number(item[2])>=0&&Number(item[2])<=100?Number(item[2]):null]);used.add(name)}}
@@ -5110,6 +5140,7 @@ function restoreFinanceCompanies(){
  }catch(e){console.warn('금융사 설정 불러오기 실패',e)}
 }
 function persistFinanceCompanies(next){
+ if(!Array.isArray(window.snotePrestockSettingsBridge?.rows?.())){toast('소속 상사의 금융사 설정을 먼저 확인해 주세요.');return false;}
  if(!isFinanceManager()||!Array.isArray(next)||next.some(x=>!Array.isArray(x)||!Number.isSafeInteger(x[1])||x[1]<0||x[1]>1000000000000))return false;
  try{const extra=snote203Meta();const prepared=next.map(x=>[x[0],x[1],x[2]!=null&&String(x[2]).trim()!==''&&Number.isFinite(Number(x[2]))?Number(x[2]):(ACC44_LENDER_LIMITS.find(y=>y[0]===x[0])?.[2]??null)]);localStorage.setItem(ZC157_FINANCE_KEY,JSON.stringify([...prepared.map(x=>[x[0],SnoteMoney.legacy(x[1]),x[2]]),{[SNOTE203_META]:extra}]));ACC44_LENDER_LIMITS=prepared;INVENTORY_LENDERS=prepared.map(x=>x[0]);return true}
  catch(e){toast('금융사 설정 저장에 실패했습니다.');return false}
@@ -5228,7 +5259,7 @@ let psEditingId=null,psMenuId=null,psPendingAction=null;
 let psExpanded=false; // 최초 7건, 더보기 이후 10줄 높이에서 내부 스크롤
 
 const snote136PrestockDrafts=new Map();let snote136PrestockView=0,snote136PrestockJob=null,snote136PrestockScope='';
-function snote136PrestockContext(){const context=snote135FinanceContext();return context?.ready&&window.zc86Cloud?.ready&&['admin','accountant'].includes(context.role)?context:null;}
+function snote136PrestockContext(){const context=snote135FinanceContext();return context?.ready&&window.zc86Cloud?.ready&&window.snotePrestockLedgerBridge?.canWrite?.()===true&&['admin','accountant'].includes(context.role)?context:null;}
 function snote136PrestockCurrent(job,view=true){const now=snote136PrestockContext();return !!job&&!!now&&now.key===job.context.key&&now.authority.client===job.context.authority.client&&currentUser===job.actor&&(!view||route==='prestock'&&snote136PrestockView===job.view);}
 function snote136PrestockValues(row){return {date:String(row.date||'').replaceAll('-','.'),model:String(row.model||''),plate:String(row.plate||''),dealer:String(row.dealer||''),amount:prestockFormatWon(row.amount)};}
 function snote136PrestockDraft(row){const context=snote136PrestockContext(),draft=snote136PrestockDrafts.get(row.id);return context&&draft?.key===context.key?draft:null;}
@@ -5276,7 +5307,7 @@ function snote136SavePrestock(id){
  const job={context,actor:currentUser,view:snote136PrestockView,draft,submitted:JSON.stringify(draft.values)};snote136PrestockJob=job;snote136PrestockBusy(true);snote136PrestockMessage('변경사항을 저장하고 있습니다…');
  job.promise=(async()=>{try{
   const preflight=await snote136PrestockFlush();if(!snote136PrestockCurrent(job))return false;if(preflight?.ok!==true||window.zc86Cloud.conflict)throw Error(preflight?.error||'서버 저장 상태를 먼저 확인해 주세요.');
-  const raw=localStorage.getItem(PRESTOCK_V148_KEY),rows=JSON.parse(raw||'null');if(!Array.isArray(rows))throw Error('선재고 원장을 다시 불러온 뒤 수정해 주세요.');
+  const rows=prestockStoredRows();if(!Array.isArray(rows))throw Error('선재고 원장을 다시 불러온 뒤 수정해 주세요.');
   const matches=rows.map((row,index)=>({row,index})).filter(item=>item.row?.id===id);if(matches.length!==1||matches[0].row.type==='adjustment')throw Error('변경할 내역을 다시 확인해 주세요. 조정 내역은 차량 상세에서 수정합니다.');
   const {row,index}=matches[0],baseline=JSON.stringify(row);
   if(draft.attempt){if(baseline!==draft.attempt.rowAfter)throw Error('저장 확인 중 원본 내역이 변경되었습니다. 서버 자료를 다시 불러와 주세요.');draft.baseline=baseline;draft.attempt=null;}
@@ -5285,7 +5316,7 @@ function snote136SavePrestock(id){
   const changed=Object.entries(patch).some(([key,value])=>value!==(key==='plate'||key==='dealer'?String(row[key]||''):row[key]));
   if(changed){const next=[...rows];next[index]={...row,...patch};if(!savePrestockRows(next,job))throw Error('변경사항을 저장하지 못했습니다. 입력은 유지됩니다.');draft.attempt={rowAfter:JSON.stringify(next[index])};
    const saved=await snote136PrestockFlush();if(!snote136PrestockCurrent(job))return false;if(saved?.ok!==true||window.zc86Cloud.conflict)throw Error(saved?.error||'서버 저장을 확인하지 못했습니다. 입력은 유지됩니다.');
-   const latest=JSON.parse(localStorage.getItem(PRESTOCK_V148_KEY)||'null'),target=Array.isArray(latest)?latest.filter(item=>item?.id===id):[];if(target.length!==1||JSON.stringify(target[0])!==draft.attempt.rowAfter)throw Error('저장 중 내역이 변경되었습니다. 서버 자료를 다시 확인해 주세요.');
+   const latest=prestockStoredRows(),target=Array.isArray(latest)?latest.filter(item=>item?.id===id):[];if(target.length!==1||JSON.stringify(target[0])!==draft.attempt.rowAfter)throw Error('저장 중 내역이 변경되었습니다. 서버 자료를 다시 확인해 주세요.');
   }
   if(!snote136PrestockCurrent(job)||JSON.stringify(draft.values)!==job.submitted)return false;
   snote136PrestockDrafts.delete(id);psEditingId=null;if(snote136PrestockJob===job){snote136PrestockJob=null;snote136PrestockBusy(false);}refreshPrestockDisplay();refreshLinkedPrestockViews();snote136PrestockMessage('변경사항을 저장했습니다.','success');return true;
@@ -5294,33 +5325,41 @@ function snote136SavePrestock(id){
  })();return job.promise;
 }
 
+function prestockStoredRows(){
+ const bridge=typeof window==='object'?window.snotePrestockLedgerBridge:null;
+ if(bridge)return bridge.rows();
+ if(typeof currentUser!=='undefined'&&String(currentUser?.username||'').startsWith('cld_'))return null;
+ try{const rows=JSON.parse(localStorage.getItem(PRESTOCK_V148_KEY)||'null');return Array.isArray(rows)?rows:null;}catch(_){return null;}
+}
+function prestockLedgerReady(){
+ const bridge=typeof window==='object'?window.snotePrestockLedgerBridge:null;
+ return bridge?bridge.ready()===true:!(typeof currentUser!=='undefined'&&String(currentUser?.username||'').startsWith('cld_'));
+}
 function prestockLegacyRows(){
+ // Old browser rows have no authenticated company provenance. Keep their bytes,
+ // but never import them into an online company's confirmed ledger.
+ if(typeof window==='object'&&window.snotePrestockLedgerBridge||typeof currentUser!=='undefined'&&String(currentUser?.username||'').startsWith('cld_'))return [];
  try{
   const parsed=JSON.parse(localStorage.getItem(PRESTOCK_STORAGE_KEY)||'[]');
   return Array.isArray(parsed)?parsed.filter(r=>r&&typeof r==='object'&&typeof r.id==='string'&&/^ps-[a-z0-9-]+$/i.test(r.id)&&/^\d{4}-\d{2}-\d{2}$/.test(r.date)&&Number.isSafeInteger(r.amount)&&r.amount>=0).slice(0,2000):[];
  }catch(_){return []}
 }
 function prestockDefaults(){
- // No bundled sample rows. Keep support for actual entries saved by earlier versions.
  return prestockLegacyRows().map(r=>({...r,repaid:false}));
 }
 function prestockAllRows(){
- try{
-  const data=localStorage.getItem(PRESTOCK_V148_KEY);
-  if(data!==null){
-   const parsed=JSON.parse(data);
-   if(Array.isArray(parsed))return parsed.filter(r=>r&&typeof r==='object'&&typeof r.id==='string'&&/^(sample-\d+|ps-[a-z0-9-]+)$/i.test(r.id)&&isValidPrestockDate(r.date)&&Number.isSafeInteger(r.amount)&&(r.amount>=0||(r.type==='adjustment'&&r.amount<0))&&typeof r.model==='string').slice(0,2200);
-  }
- }catch(err){console.warn('선재고 저장 데이터를 불러올 수 없습니다.',err)}
+ const parsed=prestockStoredRows();
+ if(Array.isArray(parsed))return parsed.filter(r=>r&&typeof r==='object'&&typeof r.id==='string'&&/^(sample-\d+|ps-[a-z0-9-]+)$/i.test(r.id)&&isValidPrestockDate(r.date)&&Number.isSafeInteger(r.amount)&&(r.amount>=0||(r.type==='adjustment'&&r.amount<0))&&typeof r.model==='string').slice(0,2200);
  return prestockDefaults();
 }
 function savePrestockRows(rows,transaction=null){
+ if(window.snotePrestockLedgerBridge?.canWrite?.()!==true||!Array.isArray(rows)){toast('소속 상사의 선재고 자료를 먼저 확인해 주세요.');return false;}
  if(snote136PrestockJob&&snote136PrestockCurrent(snote136PrestockJob,false)&&snote136PrestockJob!==transaction){toast('선재고 저장 결과를 확인한 뒤 다시 시도해 주세요.');return false;}
  try{localStorage.setItem(PRESTOCK_V148_KEY,JSON.stringify(rows));return true}
  catch(_){toast('저장 공간 문제로 변경사항을 저장하지 못했습니다.');return false}
 }
 function prestockSums(){
- const rows=prestockAllRows(),byPlate=new Map();
+ const rows=prestockAllRows(),ready=prestockLedgerReady(),settingsReady=typeof window!=='object'||!window.snotePrestockSettingsBridge||Array.isArray(window.snotePrestockSettingsBridge.rows?.()),byPlate=new Map();
  let noPlateTotal=0;
  for(const r of rows){
   if(r.repaid)continue;
@@ -5331,7 +5370,7 @@ function prestockSums(){
  // 금액 조정 후 원 지급 내역이 상환되어도 차량별 미상환금액이 음수가 되지 않도록 한다.
  const total=noPlateTotal+[...byPlate.values()].reduce((sum,v)=>sum+Math.max(0,v),0);
  const repaid=rows.filter(r=>r.repaid).length;
- return {rows,total,repaid,balance:snote203PrestockConfig().total-total};
+ return {rows,ready,settingsReady,total:ready?total:null,repaid,balance:!ready||!settingsReady||snote203PrestockConfig().total===null?null:snote203PrestockConfig().total-total};
 }
 
 /* v1.56: 경리 선재고 원장과 차량번호 자동 매칭. 전액 상환/삭제 시 표시 금액 0. 차량 자체의 원가나 수익 데이터는 수정하지 않음. */
@@ -5358,18 +5397,19 @@ function prestockForCar(c,amountIndex){
  return plate?(amountIndex||prestockOutstandingIndex()).get(plate)||0:0;
 }
 function prestockValueMarkup(c,amountIndex){
+ if(!prestockLedgerReady())return '<span class="prestock-cell is-empty" title="선재고 장부 확인 필요">'+(c?.isPrestock?'선재고':'-')+'</span>';
  const outstanding=prestockForCar(c,amountIndex);
  return outstanding?`<span class="prestock-cell">${prestockFormatWon(outstanding)}원</span>`:'<span class="prestock-cell is-empty">-</span>';
 }
 function prestockDetailMetric(c,amountIndex){
  const v=prestockForCar(c,amountIndex);
- return `<div class="vehicle-metric linked-prestock"><label>선재고 · 미상환</label><strong class="prestock-linked-value" data-plate="${esc(c.plate||'')}">${v?prestockFormatWon(v)+'원':'-'}</strong></div>`;
+ return `<div class="vehicle-metric linked-prestock"><label>선재고 · 미상환</label><strong class="prestock-linked-value" data-plate="${esc(c.plate||'')}">${!prestockLedgerReady()?'미확인':v?prestockFormatWon(v)+'원':'-'}</strong></div>`;
 }
 /* v1.62 · 경리 차량 상세 상단 선재고 인라인 편집 */
 function accountantPrestockEditMetric(car){
  const v=prestockForCar(car);
- const val=v?prestockFormatWon(v):'';
- return `<div class="vehicle-metric linked-prestock acct-prestock-inline"><label for="acct-edit-prestock">선재고 · 미상환 (원) <span class="acct-pencil" aria-hidden="true">✎</span></label><input id="acct-edit-prestock" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" value="${esc(val)}" placeholder="-" aria-label="선재고 미상환 금액 (원), 클릭하여 수정" title="클릭하여 수정 · 저장 버튼을 눌러 반영" /><small>클릭하여 수정 · 아래 저장 버튼 적용</small></div>`;
+ const val=v?prestockFormatWon(v):'',ready=prestockLedgerReady();
+ return `<div class="vehicle-metric linked-prestock acct-prestock-inline"><label for="acct-edit-prestock">선재고 · 미상환 (원) <span class="acct-pencil" aria-hidden="true">✎</span></label><input id="acct-edit-prestock" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" value="${esc(val)}" placeholder="${ready?'-':'자료 확인 필요'}" ${ready?'':'disabled'} aria-label="선재고 미상환 금액 (원), 클릭하여 수정" title="클릭하여 수정 · 저장 버튼을 눌러 반영" /><small>클릭하여 수정 · 아래 저장 버튼 적용</small></div>`;
 }
 function refreshLinkedPrestockViews(){
  if(!currentUser)return;
@@ -5378,7 +5418,7 @@ function refreshLinkedPrestockViews(){
  document.querySelectorAll('.prestock-linked-value').forEach(el=>{
   const plate=normalizePrestockPlate(el.dataset.plate||'');
   const v=plate?amounts.get(plate)||0:0;
-  el.textContent=v?prestockFormatWon(v)+'원':'-';
+  el.textContent=!prestockLedgerReady()?'미확인':v?prestockFormatWon(v)+'원':'-';
  });
  renderCars();
  if(isAccountant()&&route==='finance')buildAlt();
@@ -5496,17 +5536,17 @@ function prestockMobileRow(r){
 }
 function prestockVisibleEdit(){return [...document.querySelectorAll('[data-ps-row="'+psEditingId+'"][data-ps-field="amount"]')].find(input=>input.getClientRects().length)||null;}
 function prestockSection(){
- const {rows,total,balance,repaid}=prestockSums();
+ const {rows,ready,settingsReady,total,balance,repaid}=prestockSums();
  const now=todayLocal();
  const displayRows=prestockDisplayRows(rows);
  return `<section class="ps-card" id="prestock-card">
   <div class="ps-stats" aria-label="선재고 잔액 요약">
-   <div class="ps-stat"><span>선재고 통장 총액</span><strong><button type="button" id="ps-bank-account" aria-label="선재고 연결 계좌 보기" title="연결 계좌 보기" onclick="window.snoteOpenPrestockAccount?.()">${prestockFormatWon(snote203PrestockConfig().total)}<small>원</small></button></strong><p>수동 설정 금액 · 은행 연동 없음</p></div>
-   <div class="ps-stat"><span>미상환 선재고 합계</span><strong id="ps-total">${prestockFormatWon(total)}<small>원</small></strong><p>상환완료 금액은 합산 제외</p></div>
-   <div class="ps-stat ps-balance ${balance<0?'ps-negative':''}"><span>선재고 현재 잔액</span><strong id="ps-balance">${prestockFormatWon(balance)}<small>원</small></strong><p>통장 총액 − 미상환 합계</p></div>
+   <div class="ps-stat"><span>선재고 통장 총액</span><strong><button type="button" id="ps-bank-account" aria-label="선재고 연결 계좌 보기" title="연결 계좌 보기" onclick="window.snoteOpenPrestockAccount?.()">${!settingsReady?'미확인':snote203PrestockConfig().total===null?'미설정':prestockFormatWon(snote203PrestockConfig().total)+'<small>원</small>'}</button></strong><p>수동 설정 금액 · 은행 연동 없음</p></div>
+   <div class="ps-stat"><span>미상환 선재고 합계</span><strong id="ps-total">${total===null?'미확인':prestockFormatWon(total)+'<small>원</small>'}</strong><p>상환완료 금액은 합산 제외</p></div>
+   <div class="ps-stat ps-balance ${balance<0?'ps-negative':''}"><span>선재고 현재 잔액</span><strong id="ps-balance">${!ready||!settingsReady?'미확인':balance===null?'미설정':prestockFormatWon(balance)+'<small>원</small>'}</strong><p>통장 총액 − 미상환 합계</p></div>
   </div>
-  <div class="ps-ledger-head"><div><h4>선재고 거래 내역</h4><p>항목을 수정한 뒤 Enter를 누르면 저장됩니다.</p></div><span class="ps-row-count" id="ps-row-count">미상환 ${rows.filter(r=>!r.repaid).length}건</span></div>
-  <div class="ps-scroll" id="ps-scroll"><table class="ps-table"><thead><tr><th>일자</th><th>차명 / 내용</th><th>차량번호</th><th>담당자</th><th class="ps-money">지급액 (원) ▾</th></tr></thead><tbody id="ps-tbody">${displayRows.map(prestockTableRow).join('')}</tbody><tfoot><tr><td colspan="4">미상환 지급 합계</td><td id="ps-table-total" class="ps-money">${prestockFormatWon(total)}</td></tr></tfoot></table></div><div class="ps-mobile-list" id="ps-mobile-list">${displayRows.map(prestockMobileRow).join('')}</div><div class="ps-list-controls" id="ps-list-controls">${prestockMoreMarkup(rows.length)}</div><p id="ps-inline-status" class="ps-inline-status" role="status" aria-live="polite" hidden></p>
+  <div class="ps-ledger-head"><div><h4>선재고 거래 내역</h4><p>항목을 수정한 뒤 Enter를 누르면 저장됩니다.</p></div><span class="ps-row-count" id="ps-row-count">${ready?'미상환 '+rows.filter(r=>!r.repaid).length+'건':'선재고 자료 확인 필요'}</span></div>
+  <div class="ps-scroll" id="ps-scroll"><table class="ps-table"><thead><tr><th>일자</th><th>차명 / 내용</th><th>차량번호</th><th>담당자</th><th class="ps-money">지급액 (원) ▾</th></tr></thead><tbody id="ps-tbody">${displayRows.map(prestockTableRow).join('')}</tbody><tfoot><tr><td colspan="4">미상환 지급 합계</td><td id="ps-table-total" class="ps-money">${total===null?'미확인':prestockFormatWon(total)}</td></tr></tfoot></table></div><div class="ps-mobile-list" id="ps-mobile-list">${displayRows.map(prestockMobileRow).join('')}</div><div class="ps-list-controls" id="ps-list-controls">${prestockMoreMarkup(rows.length)}</div><p id="ps-inline-status" class="ps-inline-status" role="status" aria-live="polite" hidden></p>
   <div id="ps-action-menu" class="ps-action-pop" role="menu" aria-label="선재고 지급액 작업"><button type="button" role="menuitem" onclick="choosePrestockAction('repay')">선재고상환</button><button type="button" role="menuitem" onclick="choosePrestockAction('edit')">금액수정</button><button type="button" class="ps-danger" role="menuitem" onclick="choosePrestockAction('delete')">취소</button></div>
   <form class="ps-entry-form" id="ps-entry-form" autocomplete="off" onsubmit="addPrestockEntry(event)"><div class="ps-form-title"><div class="ps-form-heading"><strong>선재고 내역 추가</strong><button class="ps-entry-submit" type="submit" aria-label="선재고 내역 추가" data-tooltip="선재고 내역 추가"><img src="assets/prestock-add-arrow.webp?v=2.136" alt="" width="32" height="24" /></button></div><span>입력 후 추가 버튼을 누르면 목록과 잔액에 바로 반영됩니다.</span></div><div class="ps-fields">
    <label>일자 <input id="ps-date" type="date" value="${now}" onclick="openDateInputCalendar(this)" required aria-label="선재고 일자" /></label><label>차명 / 내용 <input id="ps-model" type="text" maxlength="65" placeholder="예: 코나 / 세금 납부" required aria-label="차명 또는 내용" /></label><label>차량번호 <input id="ps-plate" type="text" maxlength="22" placeholder="선택 입력" aria-label="선재고 차량번호" /></label><label>담당자 <input id="ps-dealer" type="text" maxlength="35" placeholder="선택 입력" aria-label="선재고 담당자" /></label><label>지급액 (원) <input id="ps-amount" type="text" inputmode="numeric" placeholder="예: 15,000,000" maxlength="20" oninput="formatPrestockWon(this)" aria-label="선재고 지급액 (원)" /></label>
@@ -5548,7 +5588,8 @@ function confirmPrestockEdit(id){return snote136SavePrestock(id);}
 function openPrestockConfirmation(type,id,amount){
  if(!isFinanceManager())return;
  const row=prestockAllRows().find(r=>r.id===id);if(!row)return;
- psPendingAction={type,id,amount};
+ const context=snote136PrestockContext();if(!context)return;
+ psPendingAction={type,id,amount,context,actor:currentUser,view:snote136PrestockView,baseline:JSON.stringify(row)};
  const titles={repay:'선재고 상환 하시겠습니까?',edit:'수정 하시겠습니까?',delete:'삭제 하시겠습니까?'};
  $('ps-confirm-title').textContent=titles[type];
  const content=`${row.model||'-'} · ${row.plate||'차량번호 없음'} · ${prestockFormatWon(row.amount)}원`;
@@ -5560,8 +5601,11 @@ function openPrestockConfirmation(type,id,amount){
 function closePrestockConfirmation(){psPendingAction=null;$('ps-confirm-overlay')?.classList.remove('open');$('ps-confirm-overlay')?.setAttribute('aria-hidden','true')}
 function applyPrestockAction(){
  if(!psPendingAction||!isFinanceManager())return;
- const {type,id,amount}=psPendingAction;
- const rows=prestockAllRows(),index=rows.findIndex(r=>r.id===id);if(index<0){closePrestockConfirmation();toast('내역을 찾지 못했습니다.');return}
+ if(!snote136PrestockCurrent(psPendingAction)){closePrestockConfirmation();return;}
+ const {type,id,amount,baseline}=psPendingAction;
+ const rows=prestockStoredRows();if(!Array.isArray(rows)){closePrestockConfirmation();return;}
+ const index=rows.findIndex(r=>r?.id===id);
+ if(index>=0&&JSON.stringify(rows[index])!==baseline){closePrestockConfirmation();toast('원본 내역이 변경되었습니다. 다시 확인해 주세요.');return;}if(index<0){closePrestockConfirmation();toast('내역을 찾지 못했습니다.');return}
  if(type==='repay'){if(rows[index].repaid){closePrestockConfirmation();return}rows[index]={...rows[index],repaid:true,repaidAt:todayLocal()}}
  else if(type==='edit'){if(!Number.isSafeInteger(amount)||amount<0){toast('수정 금액이 올바르지 않습니다.');return}rows[index]={...rows[index],amount};}
  else if(type==='delete'){rows.splice(index,1)}else return;
@@ -5570,7 +5614,7 @@ function applyPrestockAction(){
  toast(type==='repay'?'선재고 상환 완료 처리했습니다.':type==='edit'?'금액을 수정했습니다.':'내역을 삭제했습니다.');
 }
 function refreshPrestockDisplay(options={}){
- closePrestockMenu();const {rows,total,balance,repaid}=prestockSums();
+ closePrestockMenu();const {rows,ready,settingsReady,total,balance,repaid}=prestockSums();
  const body=$('ps-tbody');if(!body)return;
  const scroll=$('ps-scroll'),mobile=$('ps-mobile-list');
  const tableTop=options.resetScroll?0:scroll?.scrollTop||0;
@@ -5579,11 +5623,12 @@ function refreshPrestockDisplay(options={}){
  const displayRows=prestockDisplayRows(rows);
  body.innerHTML=displayRows.map(prestockTableRow).join('');
  if(mobile)mobile.innerHTML=displayRows.map(prestockMobileRow).join('');
- $('ps-total').innerHTML=prestockFormatWon(total)+'<small>원</small>';
- $('ps-balance').innerHTML=prestockFormatWon(balance)+'<small>원</small>';
+ const configuredTotal=snote203PrestockConfig().total;if($('ps-bank-account'))$('ps-bank-account').innerHTML=!settingsReady?'미확인':configuredTotal===null?'미설정':prestockFormatWon(configuredTotal)+'<small>원</small>';
+ $('ps-total').innerHTML=total===null?'미확인':prestockFormatWon(total)+'<small>원</small>';
+ $('ps-balance').innerHTML=!ready||!settingsReady?'미확인':balance===null?'미설정':prestockFormatWon(balance)+'<small>원</small>';
  $('ps-balance').closest('.ps-stat').classList.toggle('ps-negative',balance<0);
- $('ps-table-total').textContent=prestockFormatWon(total);
- $('ps-row-count').textContent='미상환 '+rows.filter(r=>!r.repaid).length+'건';
+ $('ps-table-total').textContent=total===null?'미확인':prestockFormatWon(total);
+ $('ps-row-count').textContent=ready?'미상환 '+rows.filter(r=>!r.repaid).length+'건':'선재고 자료 확인 필요';
  if($('ps-list-controls'))$('ps-list-controls').innerHTML=prestockMoreMarkup(rows.length);
  prestockUpdateViewport();
  if(scroll)scroll.scrollTop=tableTop;
@@ -5596,7 +5641,7 @@ function addPrestockEntry(event){
  if(!model){toast('차명 또는 내용을 입력해주세요.');$('ps-model')?.focus();return}
  const amount=raw?prestockParseWon(raw):0;if(!Number.isFinite(amount)){toast('원 단위 정수로 금액을 입력해주세요.');$('ps-amount')?.focus();return}
  if(!Number.isSafeInteger(amount)||amount<0){toast('지급액을 확인해주세요.');return}
- const current=prestockAllRows();if(current.length>=2200){toast('저장 한도에 도달했습니다.');return}
+ const current=prestockStoredRows();if(!Array.isArray(current)){toast('소속 상사의 선재고 자료를 먼저 확인해 주세요.');return;}if(current.length>=2200){toast('저장 한도에 도달했습니다.');return}
  const entry={id:'ps-'+Date.now()+'-'+Math.random().toString(36).slice(2,10),date,model,plate,dealer,amount,repaid:false};
  if(!savePrestockRows([...current,entry]))return;
  refreshPrestockDisplay();
@@ -5630,16 +5675,29 @@ function buildPrestockManagement(){
 const ZC182_FINANCE_KEY='zerocar-office-v182-inventory-finance-ledger';
 function zc182Plate(value){return String(value||'').normalize('NFKC').replace(/[\s\-·._]/g,'').trim();}
 function zc182FinEntries(){
- try{const a=JSON.parse(localStorage.getItem(ZC182_FINANCE_KEY)||'[]');return Array.isArray(a)?a.filter(r=>r&&typeof r==='object'&&typeof r.plate==='string'&&typeof r.dealerId==='string'&&Number.isFinite(r.loan)&&r.loan>=0).slice(0,5000).map(SnoteMoney.finance):[]}
+ try{const a=window.snoteInventoryFinanceLedgerBridge?.rows?.();return Array.isArray(a)?a.filter(r=>r&&typeof r==='object'&&typeof r.plate==='string'&&typeof r.dealerId==='string'&&Number.isFinite(r.loan)&&r.loan>=0).slice(0,5000).map(SnoteMoney.finance):[]}
  catch(_){return []}
 }
 function zc182WriteFinance(a){
+ if(window.snoteInventoryFinanceLedgerBridge?.canWrite?.()!==true){toast('소속 상사의 재고금융 자료를 먼저 확인해 주세요.');return false;}
  try{localStorage.setItem(ZC182_FINANCE_KEY,JSON.stringify(a.map(SnoteMoney.storeFinance)));return true}catch(_){toast('재고금융 장부 저장에 실패했습니다. 저장 공간을 확인하세요.');return false}
 }
-function zc182MatchVehicle(plate,dealerId){return cars.filter(c=>zc182Plate(c.plate)===zc182Plate(plate)&&(!dealerId||c.ownerId===dealerId));}
+function snote184FinanceEntryAllowed(entry,context=snotePurchaseContext()){
+ if(!context||!entry||entry.companyId&&entry.companyId!==context.companyId)return false;
+ // Legacy rows inherit their verified company owner, never an arbitrary cached alias.
+ return entry.companyId===context.companyId||window.snoteCompanyPurchaseBridge?.financeLedgerCompany?.()===context.companyId||entry.dealerId===context.ownerAlias||window.snoteCompanyPurchaseBridge?.ownerAllowed?.(entry.dealerId)===true;
+}
+function snote184FinanceMatch(entry,rows){
+ const owned=rows.filter(car=>car.ownerId===entry.dealerId);
+ if(entry.carId)return owned.find(car=>String(car.id)===String(entry.carId))||null;
+ const samePlate=owned.filter(car=>zc182Plate(car.plate)===zc182Plate(entry.plate));
+ return samePlate.length===1?samePlate[0]:null;
+}
+function zc182MatchVehicle(plate,dealerId){return cars.filter(c=>window.snoteCompanyPurchaseBridge?.carAllowed?.(c)===true&&zc182Plate(c.plate)===zc182Plate(plate)&&(!dealerId||c.ownerId===dealerId));}
 function zc182ActiveStandalone({allDealers=false}={}){
  const context=snote135FinanceContext();if(!context?.ready||!snote135FinanceCompanyReady())return [];
- return zc182FinEntries().filter(r=>(!r.companyId||r.companyId===context.companyId)&&!cars.some(c=>window.snoteCompanyPurchaseBridge?.carAllowed?.(c)===true&&zc182Plate(c.plate)===zc182Plate(r.plate)&&c.ownerId===r.dealerId)&&(allDealers||accountantFilter()==='all'||r.dealerId===accountantFilter()));
+ const scoped=cars.filter(car=>window.snoteCompanyPurchaseBridge?.carAllowed?.(car)===true);
+ return zc182FinEntries().filter(r=>snote184FinanceEntryAllowed(r,context)&&!snote184FinanceMatch(r,scoped)&&(allDealers||accountantFilter()==='all'||r.dealerId===accountantFilter()));
 }
 function zc182Usage(options={}){
  const rows=financeCarRows(options).filter(c=>inventoryLoanOf(c)>0);
@@ -5676,41 +5734,52 @@ function zc182CheckMatch(){
 }
 async function zc182SubmitFinance(e){
  e.preventDefault();if(!isFinanceManager())return;
+ const context=snote135FinanceContext();if(!context?.ready||!snote135FinanceCompanyReady()){toast('소속 상사의 재고금융 자료를 먼저 확인해 주세요.');return;}
+ const financeCurrent=()=>{const now=snote135FinanceContext();return !!now?.ready&&now.key===context.key&&now.authority.client===context.authority.client&&snote135FinanceCompanyReady()&&window.snoteInventoryFinanceLedgerBridge?.canWrite?.()===true;};
  const model=$('zc182-model').value.trim(),plate=$('zc182-plate').value.trim(),norm=zc182Plate(plate),lender=$('zc182-lender').value,dealerId=$('zc182-dealer').value;
  const raw=$('zc182-loan').value.replace(/,/g,'').trim(),won=Number(raw),loan=won;
  if(!model||model.length>100||!norm||norm.length<6||norm.length>22||!dealerId||!INVENTORY_LENDERS.includes(lender)||!/^(?:\d{1,13})$/.test(raw)||!Number.isSafeInteger(won)||won<0||loan>1000000000000){toast('차명, 차량번호, 대출금액(원), 금융사, 담당딜러를 확인하세요.');return}
  const matches=zc182MatchVehicle(norm,dealerId);
  if(matches.length>1){toast('동일 딜러의 차량번호가 중복됩니다. 매입원장을 확인해 주세요.');return}
  if(matches.length===0&&cars.some(c=>zc182Plate(c.plate)===norm&&c.ownerId!==dealerId)){
-  const current=snote253MessageCurrent(()=>isFinanceManager()&&!$('zc182-finance-overlay').hidden&&$('zc182-plate').value.trim()===plate&&$('zc182-model').value.trim()===model&&$('zc182-lender').value===lender&&$('zc182-dealer').value===dealerId&&$('zc182-loan').value.replace(/,/g,'').trim()===raw&&zc182MatchVehicle(norm,dealerId).length===0);
+  const current=snote253MessageCurrent(()=>financeCurrent()&&isFinanceManager()&&!$('zc182-finance-overlay').hidden&&$('zc182-plate').value.trim()===plate&&$('zc182-model').value.trim()===model&&$('zc182-lender').value===lender&&$('zc182-dealer').value===dealerId&&$('zc182-loan').value.replace(/,/g,'').trim()===raw&&zc182MatchVehicle(norm,dealerId).length===0);
   if(!await window.snoteConfirm('다른 딜러의 매입 차량에 같은 차량번호가 있습니다. 현재 선택한 딜러의 독립 금융 내역으로만 저장할까요?',{isCurrent:current})||!current())return;
  }
  const c=matches[0]||null;
- const all=zc182FinEntries();const old=all.find(r=>zc182Plate(r.plate)===norm&&r.dealerId===dealerId);
- const entry={moneyUnit:'KRW',id:old?.id||'fin-'+Date.now()+'-'+Math.random().toString(36).slice(2,8),plate,model: c?.model||model,loan,lender,dealerId,carId:c?.id||'',updatedAt:Date.now()};
- const next=all.filter(r=>!(zc182Plate(r.plate)===norm&&r.dealerId===dealerId));next.push(entry);
+ const all=zc182FinEntries();const old=all.find(r=>snote184FinanceEntryAllowed(r,context)&&zc182Plate(r.plate)===norm&&r.dealerId===dealerId);
+ const entry={moneyUnit:'KRW',companyId:context.companyId,id:old?.id||'fin-'+Date.now()+'-'+Math.random().toString(36).slice(2,8),plate,model: c?.model||model,loan,lender,dealerId,carId:c?.id||'',updatedAt:Date.now()};
+ const next=all.filter(r=>!(snote184FinanceEntryAllowed(r,context)&&zc182Plate(r.plate)===norm&&r.dealerId===dealerId));next.push(entry);
  if(next.length>5000){toast('재고금융 장부가 가득 찼습니다.');return}
- const oldLedger=localStorage.getItem(ZC182_FINANCE_KEY),oldCarData=c?localStorage.getItem(carsStoreKey(c.ownerId)):null;
+ const previousRows=window.snoteInventoryFinanceLedgerBridge?.rows?.();if(!financeCurrent()||!Array.isArray(previousRows))return;
+ // Preserve the verified original wire payload; a shared raw key may now belong to another tab.
+ const oldLedger=JSON.stringify(previousRows),oldCarData=c?localStorage.getItem(carsStoreKey(c.ownerId)):null;
  if(!zc182WriteFinance(next))return;
  try{
   if(c){if(!persistAccountantFinancing(c,loan,lender))throw Error('매입 차량 원장 수정에 실패했습니다.');c.inventoryLoan=loan;c.inventoryLender=lender;}
  }catch(err){
-  try{oldLedger===null?localStorage.removeItem(ZC182_FINANCE_KEY):localStorage.setItem(ZC182_FINANCE_KEY,oldLedger)}catch(_){}
-  if(c)try{oldCarData===null?localStorage.removeItem(carsStoreKey(c.ownerId)):localStorage.setItem(carsStoreKey(c.ownerId),oldCarData)}catch(_){}
-  toast(err.message||'저장 실패');return;
+  if(financeCurrent()){
+   try{localStorage.setItem(ZC182_FINANCE_KEY,oldLedger)}catch(_){}
+   if(c)try{oldCarData===null?localStorage.removeItem(carsStoreKey(c.ownerId)):localStorage.setItem(carsStoreKey(c.ownerId),oldCarData)}catch(_){}
+   toast(err.message||'저장 실패');
+  }
+  return;
  }
  zc182CloseFinance();buildStats();renderCars();buildAlt();toast(c?'기존 차량의 금융정보를 수정하고 독립 장부에도 저장했습니다.':'일치하는 매입차량이 없어 재고금융 전용 장부에만 저장했습니다.');
 }
 function zc182SyncFinanceFromCar(c){
  if(!c||!c.ownerId||!zc182Plate(c.plate))return;
- const all=zc182FinEntries();const idx=all.findIndex(r=>zc182Plate(r.plate)===zc182Plate(c.plate)&&r.dealerId===c.ownerId);
- if(idx<0)return;all[idx]={...all[idx],model:c.model,plate:c.plate,loan:inventoryLoanOf(c),lender:c.inventoryLender||'',carId:c.id,updatedAt:Date.now()};zc182WriteFinance(all);
+ const context=snotePurchaseContext(),all=zc182FinEntries();const idx=all.findIndex(r=>snote184FinanceEntryAllowed(r,context)&&snote184FinanceMatch(r,cars)===c);
+ if(idx<0)return;all[idx]={...all[idx],companyId:context.companyId,model:c.model,plate:c.plate,loan:inventoryLoanOf(c),lender:c.inventoryLender||'',carId:c.id,updatedAt:Date.now()};zc182WriteFinance(all);
 }
 function zc182OverlayFinance(){
- // Previously unmatched entries can connect when a dealership later registers the vehicle.
- const ledger=zc182FinEntries();
- for(const c of cars){const entry=ledger.find(r=>r.dealerId===c.ownerId&&zc182Plate(r.plate)===zc182Plate(c.plate));
-  if(entry&&INVENTORY_LENDERS.includes(entry.lender)){c.inventoryLoan=entry.loan;c.inventoryLender=entry.lender;}
+ // A linked vehicle snapshot is authoritative, including an explicit zero after repayment.
+ // Only a legacy/newly connected vehicle with no principal field may inherit its own ledger.
+ const context=snotePurchaseContext();if(!context)return;
+ const scoped=cars.filter(car=>(!car.companyId||car.companyId===context.companyId)&&(car.ownerId===context.ownerAlias||window.snoteCompanyPurchaseBridge?.ownerAllowed?.(car.ownerId)===true));
+ const ledger=zc182FinEntries().filter(entry=>snote184FinanceEntryAllowed(entry,context));
+ for(const c of scoped){if(Object.hasOwn(c,'inventoryLoan'))continue;
+  const entry=ledger.find(row=>snote184FinanceMatch(row,scoped)===c);
+  if(entry){c.inventoryLoan=entry.loan;c.inventoryLender=entry.lender||'';}
  }
 }
 function buildInventoryFinance(){
@@ -5775,7 +5844,8 @@ function buildAccountantPurchaseSummary(){
  const visible=snote236Paginate(holding,'accountant-summary',JSON.stringify([currentUser?.username,accountantFilter()]),'acct-finance-pagination',()=>buildAccountantPurchaseSummary());
  $('acct-finance-table').innerHTML=accountantCarTable(visible);$('acct-finance-mobile').innerHTML=accountantCarMobile(visible);
 }
-function buildAlt(){snoteRenderSettingsSections();if(['contractOffice','contractArchive'].includes(route)){$('alt-title').style.display='none';$('alt-copy').style.display='none';if(window.SnoteContractOffice)window.SnoteContractOffice[route==='contractArchive'?'mountArchive':'mount']($('alt-content'));else $('alt-content').textContent='서류 업무를 준비하고 있습니다.';return;}if(route==='recycle'){$('alt-title').style.display='none';$('alt-copy').style.display='none';if(window.snoteRenderRecycleBin)window.snoteRenderRecycleBin();else $('alt-content').textContent='휴지통을 준비하고 있습니다.';return;}if(route==='users'&&!isAccountant()){buildCustomerManagement();return;}if(route==='settings'){if(isSnoteAdmin())snoteRenderAdminSettings();else snoteRenderDealerSettings();window.snoteProfileEditor?.mountSettings?.($('snote-settings-profile-body'));window.SnoteDealerFinanceRates?.mount();return;}if((isAccountant()&&route==='finance')||(isSnoteAdmin()&&route==='acctFinance')){buildAccountantPurchaseSummary();return;}let title='',copy='',content='';if(route==='prestock'&&isFinanceManager()){buildPrestockManagement();return}if(route==='inventoryFinance'&&isFinanceManager()){buildInventoryFinance();return}if(route==='finance'){title='';copy='';content=`<div class="panel" style="margin-top:21px;box-shadow:none"><div class="panel-head"><div><h2>차량별 예상 매출이익</h2><p>모든 비용 반영 · 수리비 내역 합산</p></div></div><div class="tablewrap snote222-profit-scroll"><table class="snote-profit-table"><thead><tr><th>차량</th><th class="snote222-color-column">색상</th>${isAccountant()?'<th>담당 딜러</th>':''}<th>매입가</th><th>부대비용</th><th>총 투입원가</th><th>판매예정가 / 판매가</th><th>예상 수익</th></tr></thead><tbody>${cars.filter(c=>c.status!=='판매완료'&&(accountantFilter()==='all'||c.ownerId===accountantFilter())).map(c=>{const t=totals(c.buy,salePrice(c),normalizeCosts(c));return `<tr class="vehicle-clickable" tabindex="0" role="button" onclick="openVehicle('${c.id}')" onkeydown="if(event.key==='Enter')openVehicle('${c.id}')"><td class="price">${esc(c.model)}</td><td class="snote222-color-column">${snote222VehicleColor(c)}</td>${isAccountant()?`<td>${esc(dealerLabel(c))}</td>`:''}<td>${num(c.buy)}원</td><td>${num(t.direct)}원</td><td>${num(t.landed)}원</td><td>${num(salePrice(c))}원${c.status==='판매완료'?' (판매)':''}</td><td class="price" style="color:${t.margin<0?'#c34859':'#16936f'}">${num(t.margin)}원</td></tr>`}).join('')}</tbody></table></div></div>`}else if(route==='users'){title='고객관리 메뉴';copy='고객명, 연락처, 매입·판매 이력, 담당 직원 등은 권한에 따라 열람할 수 있도록 설계합니다.';content='<p class="note">고객 개인정보는 실제 개발 시 암호화, 접근 권한, 처리 목적에 맞춘 보관 정책을 적용합니다.</p>'}else{title='직원 및 차량 모델 데이터 관리';copy='직원 계정과 모델 분류의 관리 기능을 확장할 예정입니다. 등록된 차량 모델 분류를 확인할 수 있습니다.';content=`<div class="catalog-manage"><strong>차량 모델 목록 (로컬 DB)</strong><p id="catalog-counter"></p><p>기존 차량 모델 DB를 확인하고 내보낼 수 있습니다.</p><div class="buttons"><button class="btn-ghost" type="button" onclick="exportVehicleCatalog()">모델 목록 JSON 다운로드</button></div></div><p class="note">※ 이 데이터는 제조사 공식 가격표 확인 등급(연식별 표시), 이전 참고 등급, 세부등급 검증 대기 모델을 구분합니다. 엔카 공식 원본 DB나 국내 전체 출시 트림 확정 목록이 아닙니다. 검증된 자료는 CSV로 추가할 수 있습니다.</p><div class="world-panel"><div class="world-head"><div><strong>🌍 해외 공식 트림 검색 · 국내 등록과 분리</strong><p>미국·캐나다·영국·호주·일본의 공식 판매 트림만 표시합니다. 동일 차명이라도 국내 등급으로 자동 적용되지 않습니다.</p></div></div><div class="world-filters"><select id="world-market" aria-label="국가 선택" onchange="renderWorldTrims()"><option value="all">전체 국가</option><option value="US">미국 (US)</option><option value="CA">캐나다 (CA)</option><option value="GB">영국 (GB)</option><option value="AU">호주 (AU)</option><option value="JP">일본 (JP)</option></select><input id="world-search" type="search" placeholder="제조사, 차명, 등급 검색 (영어·일본어 가능)" oninput="renderWorldTrims()" /></div><div id="world-count" style="font-size:11px;color:#8191a5;margin-bottom:9px"></div><div class="world-results" id="world-results"></div><div class="world-credit">공식 트림명 출처: 각 국가 제조사 사이트 · 시장 구분 필수 · 전체 세계 차량의 전수조사 결과가 아닙니다.<br>일반 모델명 오픈데이터 참고: <a href="https://vehiclesdb.com" target="_blank" rel="noopener">Vehicle data by VehiclesDB</a> (CC BY 4.0, 데이터 자체는 별도 수입 필요)</div></div>`}if(route==='settings'){
+let snote2184OfficeIntent=0;
+function buildAlt(){snoteRenderSettingsSections();if(['contractOffice','contractArchive'].includes(route)){$('alt-title').style.display='none';$('alt-copy').style.display='none';if(window.SnoteContractOffice&&window.snoteDocumentCompanyReady?.()!==false)window.SnoteContractOffice[route==='contractArchive'?'mountArchive':'mount']($('alt-content'));else {const actor=currentUser,page=route,host=$('alt-content'),intent=++snote2184OfficeIntent;host.textContent='서류 업무를 준비하고 있습니다.';void window.SnoteFeatures.load('office').then(()=>intent===snote2184OfficeIntent&&currentUser===actor&&route===page&&$('alt-content')===host?window.snoteEnsureDocumentCompany?.():false).then(()=>{if(intent===snote2184OfficeIntent&&currentUser===actor&&route===page&&$('alt-content')===host)buildAlt();}).catch(()=>{if(intent===snote2184OfficeIntent&&currentUser===actor&&route===page&&$('alt-content')===host)host.textContent='서류 업무를 불러오지 못했습니다. 메뉴를 다시 선택해 주세요.';});}return;}if(route==='recycle'){$('alt-title').style.display='none';$('alt-copy').style.display='none';if(window.snoteRenderRecycleBin)window.snoteRenderRecycleBin();else $('alt-content').textContent='휴지통을 준비하고 있습니다.';return;}if(route==='users'&&!isAccountant()){buildCustomerManagement();return;}if(route==='settings'){if(isSnoteAdmin())snoteRenderAdminSettings();else snoteRenderDealerSettings();window.snoteProfileEditor?.mountSettings?.($('snote-settings-profile-body'));window.SnoteDealerFinanceRates?.mount();return;}if((isAccountant()&&route==='finance')||(isSnoteAdmin()&&route==='acctFinance')){buildAccountantPurchaseSummary();return;}let title='',copy='',content='';if(route==='prestock'&&isFinanceManager()){buildPrestockManagement();return}if(route==='inventoryFinance'&&isFinanceManager()){buildInventoryFinance();return}if(route==='finance'){title='';copy='';content=`<div class="panel" style="margin-top:21px;box-shadow:none"><div class="panel-head"><div><h2>차량별 예상 매출이익</h2><p>모든 비용 반영 · 수리비 내역 합산</p></div></div><div class="tablewrap snote222-profit-scroll"><table class="snote-profit-table"><thead><tr><th>차량</th><th class="snote222-color-column">색상</th>${isAccountant()?'<th>담당 딜러</th>':''}<th>매입가</th><th>부대비용</th><th>총 투입원가</th><th>판매예정가 / 판매가</th><th>예상 수익</th></tr></thead><tbody>${cars.filter(c=>c.status!=='판매완료'&&(accountantFilter()==='all'||c.ownerId===accountantFilter())).map(c=>{const t=totals(c.buy,salePrice(c),normalizeCosts(c));return `<tr class="vehicle-clickable" tabindex="0" role="button" onclick="openVehicle('${c.id}')" onkeydown="if(event.key==='Enter')openVehicle('${c.id}')"><td class="price">${esc(c.model)}</td><td class="snote222-color-column">${snote222VehicleColor(c)}</td>${isAccountant()?`<td>${esc(dealerLabel(c))}</td>`:''}<td>${num(c.buy)}원</td><td>${num(t.direct)}원</td><td>${num(t.landed)}원</td><td>${num(salePrice(c))}원${c.status==='판매완료'?' (판매)':''}</td><td class="price" style="color:${t.margin<0?'#c34859':'#16936f'}">${num(t.margin)}원</td></tr>`}).join('')}</tbody></table></div></div>`}else if(route==='users'){title='고객관리 메뉴';copy='고객명, 연락처, 매입·판매 이력, 담당 직원 등은 권한에 따라 열람할 수 있도록 설계합니다.';content='<p class="note">고객 개인정보는 실제 개발 시 암호화, 접근 권한, 처리 목적에 맞춘 보관 정책을 적용합니다.</p>'}else{title='직원 및 차량 모델 데이터 관리';copy='직원 계정과 모델 분류의 관리 기능을 확장할 예정입니다. 등록된 차량 모델 분류를 확인할 수 있습니다.';content=`<div class="catalog-manage"><strong>차량 모델 목록 (로컬 DB)</strong><p id="catalog-counter"></p><p>기존 차량 모델 DB를 확인하고 내보낼 수 있습니다.</p><div class="buttons"><button class="btn-ghost" type="button" onclick="exportVehicleCatalog()">모델 목록 JSON 다운로드</button></div></div><p class="note">※ 이 데이터는 제조사 공식 가격표 확인 등급(연식별 표시), 이전 참고 등급, 세부등급 검증 대기 모델을 구분합니다. 엔카 공식 원본 DB나 국내 전체 출시 트림 확정 목록이 아닙니다. 검증된 자료는 CSV로 추가할 수 있습니다.</p><div class="world-panel"><div class="world-head"><div><strong>🌍 해외 공식 트림 검색 · 국내 등록과 분리</strong><p>미국·캐나다·영국·호주·일본의 공식 판매 트림만 표시합니다. 동일 차명이라도 국내 등급으로 자동 적용되지 않습니다.</p></div></div><div class="world-filters"><select id="world-market" aria-label="국가 선택" onchange="renderWorldTrims()"><option value="all">전체 국가</option><option value="US">미국 (US)</option><option value="CA">캐나다 (CA)</option><option value="GB">영국 (GB)</option><option value="AU">호주 (AU)</option><option value="JP">일본 (JP)</option></select><input id="world-search" type="search" placeholder="제조사, 차명, 등급 검색 (영어·일본어 가능)" oninput="renderWorldTrims()" /></div><div id="world-count" style="font-size:11px;color:#8191a5;margin-bottom:9px"></div><div class="world-results" id="world-results"></div><div class="world-credit">공식 트림명 출처: 각 국가 제조사 사이트 · 시장 구분 필수 · 전체 세계 차량의 전수조사 결과가 아닙니다.<br>일반 모델명 오픈데이터 참고: <a href="https://vehiclesdb.com" target="_blank" rel="noopener">Vehicle data by VehiclesDB</a> (CC BY 4.0, 데이터 자체는 별도 수입 필요)</div></div>`}if(route==='settings'){
 content+=`<div class="catalog-source-panel"><strong>4단계 차량분류 · 기존 5단계 CSV 호환</strong><p>차량 등록은 제조사 → 모델명 → 세부모델 → 트림 4단계입니다. 세부등급과 연식·엔진 조건을 함께 확인해 선택합니다. 새 조사 자료를 적용하며 해외 자료는 해외 참고로 표시합니다. 업로드한 자료는 <b>출처 확인 대기</b>로 표시하며, 국내 제조사 공식 확인 등급을 임의로 덮어쓰지 않습니다.</p><div class="catalog-manage"><b>필수 열:</b> make,group,model,grade　<b>선택 열:</b> subgrade,model_year,source,source_url,market<br/><small>엔카·다나와·KB차차차·당근의 실제 수집 자료는 이용/재사용 허가를 확보한 뒤 CSV로 가져오세요.</small></div><div class="buttons"><button type="button" class="btn-ghost" onclick="exportVehicleCatalog()">전체 DB 내보내기</button></div></div>`;
 }
 $('alt-title').style.display='';$('alt-copy').style.display='';$('alt-title').textContent=title;$('alt-copy').textContent=copy;$('alt-content').innerHTML=content;if(route==='finance'){const tbody=$('alt-content').querySelector('.snote-profit-table tbody');if(tbody){const pager=document.createElement('nav');pager.id='profit-pagination';pager.className='snote-pagination';pager.setAttribute('aria-label','수익 정산 차량 목록 페이지');tbody.closest('.panel').append(pager);const visible=snote236Paginate([...tbody.children],'profit',JSON.stringify([currentUser?.username,accountantFilter()]),pager.id,()=>buildAlt());tbody.replaceChildren(...visible);}}if(route==='settings'&&!isAccountant()){refreshTaxonomyWidget();renderWorldTrims()}}
@@ -6411,7 +6481,7 @@ async function continueAutoRegistration(){
  const actor=currentUser,targetRoute=route,registration=snote220RegistrationSession,file=zcAutoRegFile;
  const closing=closeAutoRegistration({animate:true}),serial=zc77OcrSerial;
  if(!await closing||currentUser!==actor||route!==targetRoute||snote220RegistrationSession!==registration||zc77OcrSerial!==serial||isAccountant())return;
- zcAutoRegPendingFile=file;if(openAdd()===false)return;
+ zcAutoRegPendingFile=file;if(await openAdd()===false||currentUser!==actor||route!==targetRoute)return;
  if(plate)$('new-plate').value=plate;
  if(year){$('new-year').value=year;newYearTouched=true}
  if(vin)$('new-vin').value=vin;
@@ -6442,6 +6512,10 @@ function snotePurchaseAttemptCurrent(attempt){
   (!attempt.staged||cars.filter(row=>row.id===attempt.row.id&&row.ownerId===attempt.actor.username).length===1);
 }
 function openAdd(){
+ if(!snote2184CatalogReady){
+  const valid=snote253MessageCurrent(),intent=++snote2184AddIntent,current=()=>intent===snote2184AddIntent&&valid(),actor=currentUser;if(!actor||isAccountant())return false;
+  return snote2184EnsureCatalog().then(()=>current()?openAdd():false).catch(()=>{if(current())toast('차량정보 목록을 불러오지 못했습니다. 다시 시도해 주세요.');return false;});
+ }
  const root=$('overlay');if(!currentUser||isAccountant()){toast(isAccountant()?'경리 화면에서는 각 딜러가 등록한 차량을 관리합니다.':'로그인 후 차량을 등록해 주세요.');return false;}
  window.snoteDrawerMotion?.cancel(root);window.SnotePurchaseRegistration?.cancelClose();snotePurchaseCloseTask=null;
  const session=++snote220RegistrationSession,attempt=snotePurchaseRegistrationAttempt;
@@ -6493,7 +6567,7 @@ async function saveCar(e){
    if(plate&&cars.some(car=>car.plate===plate))throw Error('이미 등록된 차량번호입니다.');
    const kmRaw=$('new-km').value.trim(),km=parseMileage(kmRaw),color=$('new-color').value,purchaseAt=$('new-purchase-date').value;
    if(!Number.isInteger(km)||km<0||km>9999999)throw Error('주행거리를 올바르게 입력해주세요.');
-   if(purchaseAt&&!/^\d{4}-\d{2}-\d{2}$/.test(purchaseAt))throw Error('매입 날짜를 확인해주세요.');
+   if(purchaseAt&&!SnoteSaleValidation.date(purchaseAt))throw Error('매입 날짜를 확인해주세요.');
    const {draft}=snoteNewCarFinancialDraft(),cloud=!!window.snoteVehicleTaxonomyBridge?.hasSession(),cloudContext=window.snoteVehicleTaxonomyBridge?.context();
    if(cloud&&!cloudContext)throw Error('서버 연결을 확인한 뒤 차량을 등록해 주세요.');
    const id='vehicle-'+actor.username+'-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8);
@@ -6643,6 +6717,7 @@ async function openQuotePreview(){
   return false;
  }
  if(state!=='registered'){toast('입금계좌를 확인하지 못했습니다. 연결 상태를 확인한 뒤 다시 시도해 주세요.');return false;}
+ try{await window.snoteEnsureDocumentCompany?.();}catch(_){if(current())toast('상사 정보를 불러오지 못했습니다. 다시 시도해 주세요.');return false;}if(!current())return false;
  delete $('quote-overlay').dataset.snoteHistoryDirty;
  snote95UpdateDocumentCompany();
  if(!currentUser||!activeCarId)return;
@@ -6959,7 +7034,13 @@ function setContractMode(mode){if(!['sale','purchase'].includes(mode))return;if(
  const c=cars.find(x=>x.id===contractCarId);if(c){const edited=mode==='sale'?(c.status==='판매완료'&&$('detail-sold-price')?.value!==''?readDetailMoney($('detail-sold-price').value):readDetailMoney($('detail-sell').value)):readDetailMoney($('detail-buy').value);const fallback=mode==='sale'?(c.status==='판매완료'?salePrice(c):c.sell):c.buy;const price=Number.isFinite(edited)&&edited>=0?edited:fallback;$('ct-total-price').value=Math.round(price).toLocaleString('ko-KR')} ctUpdateMoney();
  buildContractPrintPages();
 }
-function openContractPreview({loadCustomer=true}={}){snote170ResetContractPrint();snote251ContractCustomerTask=Promise.resolve(true);snote165ContractCustomerRetry=null;snote235SaleReturn=null;delete $('contract-overlay').dataset.snoteHistoryDirty;
+let snote2184ContractIntent=0;
+function openContractPreview({loadCustomer=true}={}){
+ if(window.snoteDocumentCompanyReady?.()===false){
+  const actor=currentUser,car=activeCarId,page=route,version=snote214ContractView,intent=++snote2184ContractIntent,current=()=>currentUser===actor&&activeCarId===car&&route===page&&snote214ContractView===version&&intent===snote2184ContractIntent&&$('vehicle-overlay').classList.contains('open');
+  return window.snoteEnsureDocumentCompany().then(()=>current()?openContractPreview({loadCustomer}):false).catch(()=>{if(current())toast('상사 정보를 불러오지 못했습니다. 다시 시도해 주세요.');return false;});
+ }
+snote170ResetContractPrint();snote251ContractCustomerTask=Promise.resolve(true);snote165ContractCustomerRetry=null;snote235SaleReturn=null;delete $('contract-overlay').dataset.snoteHistoryDirty;
  snote183PrintDrafts.contract=null;
  window.snote222ContractSignature?.clear();
  zc75ResetContractTracking();
@@ -6974,11 +7055,13 @@ function openContractPreview({loadCustomer=true}={}){snote170ResetContractPrint(
  snote167SyncContractDealerDetails();
  setContractMode(c.status==='판매완료'?'sale':'sale');
  $('vehicle-overlay').classList.remove('open');$('vehicle-overlay').setAttribute('aria-hidden','true');
+ $('contract-overlay').dataset.mobileDocumentReadyView=String(snote214ContractView);
  $('contract-overlay').classList.add('open');$('contract-overlay').setAttribute('aria-hidden','false');
  snote170ContractPreparedResources();
  snote214ContractIdentityBaseline=zc72Digits($('ct-buyer-id').value);
  requestAnimationFrame(resizeContractPreview);
  if(loadCustomer)snote251ContractCustomerTask=snote251LoadContractCustomer();
+ window.SnoteMobileDocumentBoot?.ready('contract');
 }
 async function snote251LoadContractCustomer({preserveDraft=false}={}){
  const actor=currentUser,carId=contractCarId,view=snote214ContractView,ownerId=currentUser?.username;
@@ -7468,6 +7551,7 @@ function snoteVehicleSaveFinished(context,submitted,{closeAfterSave=true}={}){
  renderVehicle();snoteVehicleRememberDraft();showVehicleSaveSuccess({closeAfterSave});return true;
 }
 function openVehicle(id){
+ const catalogActor=currentUser;void snote2184EnsureCatalog().then(()=>{if(currentUser===catalogActor&&activeCarId===id&&$('vehicle-overlay').classList.contains('open')&&snote282DetailInitial===snote282DetailState()&&!snoteVehicleHasChanges()){const car=cars.find(c=>c.id===id);if(car){initDetailCatalog(car);snoteVehicleRememberDraft();}}}).catch(()=>{if(currentUser===catalogActor&&activeCarId===id&&$('vehicle-overlay').classList.contains('open'))toast('차량정보 목록을 불러오지 못했습니다. 다시 시도해 주세요.');});
  if(window.SnoteSharedVehicleDetail?.active())return window.SnoteSharedVehicleDetail.openOwn(id);window.SnoteSharedVehicleDetail?.cancelPending();
  const overlay=$('vehicle-overlay');delete overlay.dataset.snoteHistoryDirty;hideVehicleSaveSuccess();snoteVehicleDraftBase=null;
  if(!currentUser)return;const car=cars.find(x=>x.id===id);if(!car||(isAccountant()?!snotePurchaseCarVisible(car):isPurchaseListRoute()&&(route==='companyBuy'?!snotePurchaseCarVisible(car):car.ownerId!==snotePurchaseContext()?.ownerAlias)))return;window.snoteDrawerMotion?.cancel(overlay);
@@ -7652,13 +7736,14 @@ function persistAccountantFinancing(c,loan,lender){
 }
 function accountantPrestockAdjustment(car,desired){
  const plate=normalizePrestockPlate(car.plate);
- const existing=prestockAllRows();
- const related=existing.filter(r=>normalizePrestockPlate(r.plate)===plate&&!r.repaid);
+ const existing=prestockStoredRows();if(!Array.isArray(existing))throw Error('소속 상사의 선재고 자료를 먼저 확인해 주세요.');
+ const valid=prestockAllRows(),known=new Set(valid.map(row=>row.id));
+ const related=valid.filter(r=>normalizePrestockPlate(r.plate)===plate&&!r.repaid);
  const base=related.filter(r=>r.type!=='adjustment').reduce((sum,r)=>sum+Number(r.amount||0),0);
  const adjustment=desired-base;
  if(!Number.isSafeInteger(adjustment))throw Error('선재고 금액을 확인해주세요.');
  // 과거 지급 및 상환 내역을 보존하고 차액 조정행만 교체한다.
- const rows=existing.filter(r=>!(r.type==='adjustment'&&normalizePrestockPlate(r.plate)===plate));
+ const rows=existing.filter(r=>!(r&&known.has(r.id)&&r.type==='adjustment'&&normalizePrestockPlate(r.plate)===plate));
  if(adjustment!==0){
   if(rows.length>=2200)throw Error('선재고 저장 건수 한도에 도달했습니다.');
   rows.push({id:'ps-'+Date.now()+'-'+Math.random().toString(36).slice(2,10),date:todayLocal(),model:(car.model||'차량')+' · 선재고 금액 조정',plate:car.plate,dealer:dealerLabel(car),amount:adjustment,repaid:false,type:'adjustment'});
@@ -7688,7 +7773,7 @@ function saveAccountantVehicle({closeAfterSave=true}={}){
   const prestockChanged=desired!==current;
   const oldCarsKey=carsStoreKey(c.ownerId),oldCars=localStorage.getItem(oldCarsKey);
   const oldLoan=inventoryLoanOf(c),oldLender=c.inventoryLender||'';
-  const oldLedger=localStorage.getItem(PRESTOCK_V148_KEY);
+  const oldLedger=prestockChanged?prestockStoredRows():null;if(prestockChanged&&!Array.isArray(oldLedger))throw Error('소속 상사의 선재고 자료를 먼저 확인해 주세요.');
   const rows=prestockChanged?accountantPrestockAdjustment(c,desired):null;
   if(!persistAccountantFinancing(c,loan,lender))throw Error('딜러 차량 데이터 저장에 실패했습니다.');
   if(prestockChanged){
@@ -7698,8 +7783,8 @@ function saveAccountantVehicle({closeAfterSave=true}={}){
    }
   }
   c.inventoryLoan=loan;c.inventoryLender=lender;zc182SyncFinanceFromCar(c);
-  const stagedLedger=localStorage.getItem(PRESTOCK_V148_KEY);
-  const pending={context,submitted,revision:window.snoteVehicleWriteState?.(context.id)?.revision,undo(){if(c.inventoryLoan===loan&&c.inventoryLender===lender){if(!persistAccountantFinancing(c,oldLoan,oldLender))return false;c.inventoryLoan=oldLoan;c.inventoryLender=oldLender;zc182SyncFinanceFromCar(c);}if(prestockChanged&&localStorage.getItem(PRESTOCK_V148_KEY)===stagedLedger){try{localStorage.setItem(PRESTOCK_V148_KEY,oldLedger||'[]');}catch(_){return false;}}return true;}};snoteVehicleUnconfirmedWrite=pending;
+  const stagedLedger=prestockChanged?JSON.stringify(prestockStoredRows()):null;
+  const pending={context,submitted,revision:window.snoteVehicleWriteState?.(context.id)?.revision,undo(){if(!snoteVehicleCurrent(context))return false;if(c.inventoryLoan===loan&&c.inventoryLender===lender){if(!persistAccountantFinancing(c,oldLoan,oldLender))return false;c.inventoryLoan=oldLoan;c.inventoryLender=oldLender;zc182SyncFinanceFromCar(c);}if(prestockChanged&&JSON.stringify(prestockStoredRows())===stagedLedger){if(!savePrestockRows(oldLedger))return false;}return true;}};snoteVehicleUnconfirmedWrite=pending;
   buildStats();renderCars();
   if(['finance','inventoryFinance','prestock'].includes(route))buildAlt();
   if(context.cloud){const saved=await window.zc86Cloud.flush();if(!snoteVehicleCurrent(context))return false;if(saved?.ok!==true||window.zc86Cloud.conflict)throw Error('서버 저장을 확인하지 못했습니다. 입력 내용을 유지하고 다시 시도해 주세요.');}
@@ -7742,7 +7827,7 @@ dbReady=openFileDB().then(snoteFileDatabaseReady).catch(e=>{console.warn('Indexe
 window.snoteMessageContext=()=>{let key='';try{key=window.snoteVehicleShareBridge?.badgeContext?.()?.key||'';}catch{}return{actor:currentUser,key:key||currentUser?.username||'',route:typeof route==='string'?route:'',vehicle:typeof activeCarId==='undefined'?null:activeCarId};};
 let toastTimer;function toast(msg){clearTimeout(toastTimer);$('toast').textContent=msg;$('toast').style.display='block';if(window.snoteNotify)window.snoteNotify(msg,{key:'toast'});toastTimer=setTimeout(()=>{$('toast').style.display='none';window.SnoteMessages?.dismiss('toast');},3000)}
 new MutationObserver(()=>{if($('toast').style.display==='none')window.SnoteMessages?.dismiss('toast');}).observe($('toast'),{attributes:true,attributeFilter:['style']});
-$('addicon').innerHTML=ico('plus');document.querySelectorAll('.search-icon').forEach(el=>el.innerHTML=ico('search'));document.querySelectorAll('.arrow-right').forEach(el=>el.innerHTML=ico('arrow'));buildStats();navigate('buy');initTaxonomy();
+$('addicon').innerHTML=ico('plus');document.querySelectorAll('.search-icon').forEach(el=>el.innerHTML=ico('search'));document.querySelectorAll('.arrow-right').forEach(el=>el.innerHTML=ico('arrow'));buildStats();navigate('buy');
 
 /* v1.2 Demo identity. This is intentionally a local design prototype, not production authentication.
    Passwords are not stored as plaintext; RRN inputs are never read, collected or persisted. */
@@ -8210,7 +8295,8 @@ async function saleProgressContract(event,documentType='contract'){
    return;
   }
   closeSaleProgress();
-  openContractPreview({loadCustomer:false});
+  await openContractPreview({loadCustomer:false});
+  if(currentUser!==actor||activeCarId!==carId||contractCarId!==carId||!$('contract-overlay').classList.contains('open'))return;
   snote235SaleReturn={kind:'contract',actor,car:carId,view:snote214ContractView,route,printDraft:printOnly?{...record,rrn}:null};
   if(printOnly)snote183PrintDrafts.contract={actor,car:carId,view:snote214ContractView};
   // 기존 계약서의 을(매수인) 영역에 사용자 입력을 반영.
@@ -8250,17 +8336,18 @@ window.zc72EraseContractPersonal=function(){
  if(typeof contractOwner!=='undefined')contractOwner={};
 };
 function snote237CustomerIcon(kind){return snote161ActionIcon(kind);}
+const snoteCustomerDeleteRequests=new Map();
 async function buildCustomerManagement(){
  if(!currentUser||isAccountant())return;
  window.SnoteCustomerList?.clear();
- const ownerId=currentUser.username,actor=currentUser,view=++snote214CustomerView;
- const current=()=>currentUser===actor&&currentUser.username===ownerId&&!isAccountant()&&view===snote214CustomerView&&route==='users';
+ const ownerId=currentUser.username,actor=currentUser,view=++snote214CustomerView,scope=window.snoteRecycleBinBridge?.context();
+ const current=()=>currentUser===actor&&currentUser.username===ownerId&&!isAccountant()&&view===snote214CustomerView&&route==='users'&&(!scope||window.snoteRecycleBinBridge?.current(scope)===true);
  $('alt-title').textContent='고객 관리';$('alt-copy').textContent='고객과 차량 정보를 한곳에서 확인하세요.';
  const host=$('alt-content');host.innerHTML='<div class="empty">고객 정보를 불러오는 중…</div>';
  try{
   const records=(await zc72ReadOwner(ownerId)).sort((a,b)=>Number(b.updatedAt||0)-Number(a.updatedAt||0));
   if(!current())return;
-  await window.SnoteCustomerList.mount({host,records,isCurrent:current,readIdentities:records=>window.snote214ReadCustomerIdentities(records),
+  await window.SnoteCustomerList.mount({host,records,ownerId,isCurrent:current,readIdentities:records=>window.snote214ReadCustomerIdentities(records),
    carFor:r=>{const linked=cars.filter(c=>String(c.id)===String(r.carId)&&c.ownerId===ownerId);return linked.length===1?linked[0]:null;},
    renderRow:(r,identity,car)=>{
     const status=car?.status==='판매완료'?'판매완료':car?.status==='계약중'?'계약중':'판매중';
@@ -8276,14 +8363,17 @@ document.addEventListener('click',async event=>{
  const carId=(open||del||carButton).getAttribute(open?'data-customer-open':del?'data-customer-delete':'data-customer-car');
   if(carButton){const car=cars.find(c=>c.id===carId&&canManageCar(c));if(!car){toast('연결된 차량 정보가 없습니다.');return;}openVehicle(carId);return;}
  if(open){const car=cars.find(c=>c.id===carId&&canManageCar(c));if(!car)return toast('연결된 차량을 찾을 수 없습니다.');openVehicle(carId);await openSaleProgress();}
- if(del){const actor=currentUser,current=snote253MessageCurrent(()=>del.isConnected&&!isAccountant());if(!await window.snoteConfirm('이 고객의 저장된 정보를 휴지통으로 이동하시겠습니까? 휴지통에서 복원할 수 있습니다.',{isCurrent:current})||!current())return;
-  const owner=actor.username,options={};
+ if(del){const actor=currentUser,owner=actor.username,key=JSON.stringify([owner,carId]),selection=window.SnoteCustomerList?.capture(owner,carId);
+  if(!selection||snoteCustomerDeleteRequests.get(key)?.actor===actor)return;
+  const operation={actor},options={},current=snote253MessageCurrent(()=>!isAccountant()&&window.SnoteCustomerList?.current(selection)===true),present=()=>current()&&window.SnoteCustomerList?.contains(selection)===true;
   if(del.dataset.customerGeneration)options.expectedRestoreGeneration=del.dataset.customerGeneration;
   if(del.dataset.customerUpdatedAt)options.expectedUpdatedAt=del.dataset.customerUpdatedAt;
-  del.disabled=true;
-  try{await zc72Delete(owner,carId,options);if(currentUser===actor){toast('고객정보를 휴지통으로 이동했습니다.');if(route==='users')buildCustomerManagement();}}
-  catch(e){if(currentUser===actor)toast(e?.userMessage||'고객정보를 휴지통으로 이동하지 못했습니다.');}
-  finally{if(currentUser===actor&&del.isConnected)del.disabled=false;}}
+  options.customerListSelection=selection;
+  snoteCustomerDeleteRequests.set(key,operation);window.SnoteCustomerList.setPending(selection,true);
+  try{if(!await window.snoteConfirm('이 고객의 저장된 정보를 휴지통으로 이동하시겠습니까? 휴지통에서 복원할 수 있습니다.',{isCurrent:present})||!present())return;
+   await zc72Delete(owner,carId,options);if(current())toast('고객정보를 휴지통으로 이동했습니다.');}
+  catch(e){if(current())toast(e?.userMessage||'고객정보를 휴지통으로 이동하지 못했습니다.');}
+  finally{if(snoteCustomerDeleteRequests.get(key)===operation)snoteCustomerDeleteRequests.delete(key);window.SnoteCustomerList?.setPending(selection,false);}}
 });
 document.addEventListener('keydown',e=>{if(window.SnoteMessages?.active())return;
  if(e.key==='Escape'&&!$('zc72-sale-modal').hidden){e.stopImmediatePropagation();closeSaleProgress();}
@@ -8518,7 +8608,8 @@ async function zc75OpenSavedContract(carId){
  if(!r||currentUser!==actor||requestView!==snote214ContractView||route!=='users')return;
  openVehicle(carId);
  zc80ContractFromCustomer=true;
- openContractPreview({loadCustomer:false});
+ await openContractPreview({loadCustomer:false});
+ if(currentUser!==actor||activeCarId!==carId||contractCarId!==carId||!$('contract-overlay').classList.contains('open'))return;
  const view=snote214ContractView;
  zc75TrackContract(ownerId,carId,r);
  const hasSnapshot=zc75RestoreContract(r.contractData);
@@ -8624,7 +8715,7 @@ async function zc76OpenReceipt(person,car){
  const actor=currentUser,view=++snote214ReceiptView,routeAtStart=route,activeAtStart=activeCarId;
  snote214ReceiptRestoreGeneration=window.snoteCustomerRestoreGeneration?.(person)||'00000000-0000-0000-0000-000000000000';
  snote215ReceiptSignature(null);
- const account=await getAccount(currentUser.username).catch(()=>null);
+ let account;try{[account]=await Promise.all([getAccount(actor.username).catch(()=>null),window.snoteEnsureDocumentCompany?.()]);}catch(_){if(currentUser===actor&&view===snote214ReceiptView&&route===routeAtStart&&activeCarId===activeAtStart)toast('상사 정보를 불러오지 못했습니다. 다시 시도해 주세요.');return;}
  if(currentUser!==actor||view!==snote214ReceiptView||route!==routeAtStart||activeCarId!==activeAtStart)return;
  zc76SelectReset();
   const receiptDetails=window.snote160ReceiptDetails?.(person.receiptDetails);
@@ -8661,11 +8752,12 @@ async function zc76OpenReceipt(person,car){
   zc76Value('zc76-doc-date',receiptNow.year+'-'+receiptNow.month+'-'+receiptNow.day);
   zc76Value('zc76-delivery-at',receiptNow.year+'년 '+receiptNow.month+'월 '+receiptNow.day+'일 '+receiptNow.hour+'시 '+receiptNow.minute+'분');
  zc76Value('zc76-sign-name',person.name||'');
- const overlay=document.getElementById('zc76-receipt-overlay');overlay.hidden=false;zc76ReceiptOpen=true;
+ const overlay=document.getElementById('zc76-receipt-overlay');overlay.dataset.mobileDocumentReadyView=String(view);overlay.hidden=false;zc76ReceiptOpen=true;
  snote215ReceiptSignature(person);
  // 민감정보는 페이지 메모리에서만 유지. 다른 고객을 열면 항상 초기화함.
  snote95UpdateDocumentCompany();
  zc76FitReceipt();overlay.scrollTop=0;
+ window.SnoteMobileDocumentBoot?.ready('receipt');
 }
 async function zc76CloseReceipt(options={}){
  const overlay=document.getElementById('zc76-receipt-overlay');if(!overlay||overlay.hidden){++snote214ReceiptView;return true;}
@@ -8878,6 +8970,52 @@ const SNOTE_PUBLIC_CONFIG={url:'https://rmlycycleuscfqywbihj.supabase.co',key:'s
 const publicDefault=validConfig(SNOTE_PUBLIC_CONFIG);
 const LEGACY={finance:'zerocar-office-v182-inventory-finance-ledger',finance_limits:'zerocar-office-v157-finance-companies',prestock:'zerocar-office-v148-prestock-ledger',monthly:'zerocar-office-v165-monthly-ledger',categories:'zerocar-office-v170-monthly-category-settings'};
 const ownerAlias=uid=>'cld_'+uid.replace(/-/g,'').slice(0,18);
+// Read company settings from the authenticated dataset snapshot, never another
+// tab's shared legacy cache. Existing finance_limits payloads stay unchanged.
+let snote184FinanceSettingsState=null;
+function snote184FinanceSettingsCurrent(write=false){
+ const context=snoteCompanyPurchaseContext(),state=snote184FinanceSettingsState;
+ return !!context?.ready&&context.canRead&&!!state&&state.companyId===context.companyId&&state.user===S.user&&state.client===S.client&&state.epoch===snote220CatalogEpoch&&(!write||context.role==='admin');
+}
+function snote184CaptureFinanceSettings(rows){
+ snote184FinanceSettingsState={companyId:S.company?.id,user:S.user,client:S.client,epoch:snote220CatalogEpoch,rows:JSON.parse(JSON.stringify(Array.isArray(rows)?rows:[]))};
+}
+window.snotePrestockSettingsBridge=Object.freeze({
+ meta(){if(!snote184FinanceSettingsCurrent())return {};const rows=snote184FinanceSettingsState.rows;return JSON.parse(JSON.stringify(rows.find(row=>row&&typeof row==='object'&&!Array.isArray(row)&&row[SNOTE203_META])?.[SNOTE203_META]||{}));},
+ rows(){return snote184FinanceSettingsCurrent()?JSON.parse(JSON.stringify(snote184FinanceSettingsState.rows)):null;},
+ canWrite:()=>snote184FinanceSettingsCurrent(true)
+});
+
+// Finance rows use the verified hydration body, not the shared cross-tab cache.
+let snote184FinanceLedgerState=null;
+function snote184FinanceLedgerCurrent(){
+ const context=snoteCompanyPurchaseContext(),state=snote184FinanceLedgerState;
+ return !!context?.ready&&context.canRead&&!!state&&state.companyId===context.companyId&&state.user===S.user&&state.client===S.client&&state.epoch===snote220CatalogEpoch;
+}
+function snote184CaptureFinanceLedger(rows){
+ snote184FinanceLedgerState={companyId:S.company?.id,user:S.user,client:S.client,epoch:snote220CatalogEpoch,rows:JSON.parse(JSON.stringify(Array.isArray(rows)?rows:[]))};
+}
+window.snoteInventoryFinanceLedgerBridge=Object.freeze({
+ rows(){return snote184FinanceLedgerCurrent()?JSON.parse(JSON.stringify(snote184FinanceLedgerState.rows)):null;},
+ company(){return snote184FinanceLedgerCurrent()?snote184FinanceLedgerState.companyId:null;},
+ canWrite:()=>snote184FinanceLedgerCurrent()
+});
+
+// Prestock has the same company-bound body and epoch as the finance datasets.
+let snote184PrestockLedgerState=null;
+function snote184PrestockLedgerCurrent(){
+ const context=snoteCompanyPurchaseContext(),state=snote184PrestockLedgerState;
+ return !!context?.ready&&context.canRead&&!!state&&Array.isArray(state.rows)&&state.companyId===context.companyId&&state.user===S.user&&state.client===S.client&&state.epoch===snote220CatalogEpoch;
+}
+function snote184CapturePrestockLedger(rows){
+ snote184PrestockLedgerState={companyId:S.company?.id,user:S.user,client:S.client,epoch:snote220CatalogEpoch,rows:Array.isArray(rows)?JSON.parse(JSON.stringify(rows)):null};
+}
+window.snotePrestockLedgerBridge=Object.freeze({
+ rows(){return snote184PrestockLedgerCurrent()?JSON.parse(JSON.stringify(snote184PrestockLedgerState.rows)):null;},
+ ready:()=>snote184PrestockLedgerCurrent(),
+ canWrite:()=>snote184PrestockLedgerCurrent()
+});
+
 function snoteCompanyActor(){return S.user&&S.company?S.members.find(m=>m.user_id===S.user.id&&m.company_id===S.company.id&&m.active===true&&['admin','dealer','accountant'].includes(m.role))||null:null;}
 function snoteCompanyOwnerRows(){
  const company=S.company?.id,rows=new Map(S.members.filter(m=>m.company_id===company).map(m=>[m.user_id,m]));
@@ -8899,7 +9037,15 @@ function snoteCompanyPurchaseContext(){
 }
 function snoteCompanyPurchaseCurrent(context){const now=snoteCompanyPurchaseContext();return !!context&&!!now&&context.key===now.key;}
 function snoteCompanyPurchaseError(code){return Object.assign(Error(code),{code});}
-async function snoteCompanyPurchaseLoad(context){
+let snote2184CompanyPurchasePending=null;
+function snoteCompanyPurchaseLoad(context){
+ if(!snoteCompanyPurchaseCurrent(context)||!context.canRead||!snoteCompanyPurchaseContext()?.ready)return Promise.reject(snoteCompanyPurchaseError('FORBIDDEN'));
+ const client=S.client,pending=snote2184CompanyPurchasePending;
+ if(pending?.key===context.key&&pending.client===client)return pending.task;
+ const entry={key:context.key,client,task:null};snote2184CompanyPurchasePending=entry;
+ entry.task=snote2184CompanyPurchaseRead(context).finally(()=>{if(snote2184CompanyPurchasePending===entry)snote2184CompanyPurchasePending=null;});return entry.task;
+}
+async function snote2184CompanyPurchaseRead(context){
  if(!snoteCompanyPurchaseCurrent(context)||!context.canRead||!snoteCompanyPurchaseContext()?.ready)throw snoteCompanyPurchaseError('FORBIDDEN');
  if(typeof snoteVehicleHasChanges==='function'&&snoteVehicleHasChanges())throw snoteCompanyPurchaseError('DIRTY_VEHICLE');
  const acknowledged=await flush();if(!snoteCompanyPurchaseCurrent(context)||acknowledged?.ok!==true||S.conflict)throw snoteCompanyPurchaseError('CONFLICT');
@@ -8909,7 +9055,7 @@ async function snoteCompanyPurchaseLoad(context){
  if(!snoteCompanyPurchaseCurrent(context)||client!==S.client||!snoteCompanyPurchaseContext()?.ready)throw snoteCompanyPurchaseError('CONTEXT_CHANGED');
  if(result.error)throw snoteCompanyPurchaseError(result.error.code==='42501'?'FORBIDDEN':['PGRST202','42883'].includes(result.error.code)?'SETUP_REQUIRED':'NETWORK');
  const data=result.data;if(!data||data.companyId!==context.companyId||!Array.isArray(data.datasets)||!Array.isArray(data.owners))throw snoteCompanyPurchaseError('INVALID_RESPONSE');
- await snoteLoadDealerRates({force:true});if(!snoteCompanyPurchaseCurrent(context)||client!==S.client)throw snoteCompanyPurchaseError('CONTEXT_CHANGED');
+ await snoteLoadDealerRates();if(!snoteCompanyPurchaseCurrent(context)||client!==S.client)throw snoteCompanyPurchaseError('CONTEXT_CHANGED');
  const uuid=value=>typeof value==='string'&&/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value)&&value!==NIL,rows=new Map(),ids=new Set();
  for(const row of data.datasets){if(!row||!['cars','covers'].includes(row.dataset)||!uuid(row.ownerId)||!Number.isSafeInteger(row.revision)||row.revision<0||(row.dataset==='cars'?!Array.isArray(row.payload):!row.payload||typeof row.payload!=='object'||Array.isArray(row.payload)))throw snoteCompanyPurchaseError('INVALID_RESPONSE');const key=cloudKey(row.dataset,row.ownerId);if(rows.has(key))throw snoteCompanyPurchaseError('INVALID_RESPONSE');rows.set(key,row);ids.add(row.ownerId);}
  const ownerRows=new Map();for(const owner of data.owners){if(!owner||!uuid(owner.id)||!ids.has(owner.id)||ownerRows.has(owner.id))throw snoteCompanyPurchaseError('INVALID_RESPONSE');ownerRows.set(owner.id,{user_id:owner.id,company_id:context.companyId,display_name:String(owner.name||'').slice(0,120),active:owner.active===true,former:owner.memberExists===false});}
@@ -8923,7 +9069,7 @@ async function snoteCompanyPurchaseLoad(context){
  }catch(error){S.companyOwners.clear();for(const[uid,member]of ownersBefore)S.companyOwners.set(uid,member);S.revisions.clear();for(const[key,revision]of revisions)S.revisions.set(key,revision);for(const uid of affected)for(const ds of ['cars','covers']){const storage=storageKey(ds,ownerAlias(uid)),before=raw.get(storage);if(before==null)localStorage.removeItem(storage);else originalSet.call(localStorage,storage,before);}throw snoteCompanyPurchaseError('LOCAL_CACHE_ERROR');}
  loadCarsForUser();loadCovers();buildStats();renderCars();return {count:[...rows.values()].filter(row=>row.dataset==='cars').reduce((sum,row)=>sum+row.payload.length,0)};
 }
-window.snoteCompanyPurchaseBridge=Object.freeze({context:snoteCompanyPurchaseContext,current:snoteCompanyPurchaseCurrent,load:snoteCompanyPurchaseLoad,carAllowed:snoteCompanyCarAllowed,ownerAllowed(alias){const c=snoteCompanyPurchaseContext();return !!c?.canRead&&snoteCompanyOwnerRows().some(m=>ownerAlias(m.user_id)===alias);}});
+window.snoteCompanyPurchaseBridge=Object.freeze({context:snoteCompanyPurchaseContext,current:snoteCompanyPurchaseCurrent,load:snoteCompanyPurchaseLoad,carAllowed:snoteCompanyCarAllowed,financeLedgerCompany(){return window.snoteInventoryFinanceLedgerBridge.company();},ownerAllowed(alias){const c=snoteCompanyPurchaseContext();return !!c?.canRead&&snoteCompanyOwnerRows().some(m=>ownerAlias(m.user_id)===alias);}});
 let snote130OfficeIdentity=null,snote130OfficeEpoch=0;
 function snote130OfficeContext(){
  const member=snoteCompanyActor();
@@ -8934,6 +9080,45 @@ function snote130OfficeContext(){
 }
 function snote130OfficeCurrent(context){const now=snote130OfficeContext();return !!now&&!!context&&now.key===context.key&&now.client===context.client&&now.actor===context.actor;}
 function snote130OfficeAssert(context){if(!snote130OfficeCurrent(context)||!snote130OfficeContext()?.ready)throw Object.assign(Error('로그인 또는 상사 연결을 확인해 주세요.'),{code:'CONTEXT_CHANGED'});}
+// Mobile task counts use existing verified projections; no new reads or writes.
+function snote184OfficeTaskContext(){
+ if(route!=='contractOffice')return null;
+ const office=snote130OfficeContext(),purchase=snotePurchaseContext();
+ if(!office||!purchase||purchase.role!=='accountant'||!purchase.canRead||office.companyId!==purchase.companyId||office.userId!==purchase.userId)return null;
+ return {key:JSON.stringify([office.key,purchase.key,snoteNavigationSession]),companyId:office.companyId,ready:office.ready&&purchase.ready&&window.snoteCompanyPurchaseIsReady?.()===true};
+}
+function snote184OfficeTaskSnapshot(){
+ const context=snote184OfficeTaskContext();if(!context)return null;
+ const settled=context.ready&&!S.conflict&&!S.saving&&!S.queue.size&&!cloudPendingWrites.size;
+ let documents=null,finance=null;
+ if(settled){
+  const rows=cars.filter(car=>window.snoteCompanyPurchaseBridge?.carAllowed?.(car)===true);
+  const source=snote174VehicleDocumentSnapshot;
+  if(source?.complete===true&&source.requestEpoch===snoteServerMediaEpoch&&source.current()===true){
+   const missing=[];for(const car of rows){if(car.status==='판매완료')continue;const groups=snote175DocumentGroups(car);if(groups!==null&&groups.length<SNOTE174_DOCUMENT_GROUPS.size)missing.push({id:String(car.id),ownerId:String(car.ownerId),model:String(car.model||''),registered:groups.length});}
+   documents={count:missing.length,rows:missing.slice(0,3)};
+  }
+  const aggregate=window.snoteInventoryFinanceAggregate?.();
+  if(aggregate?.ready===true&&aggregate.companyId===context.companyId&&window.snoteInventoryFinanceLedgerBridge?.company?.()===context.companyId){const usage=zc182Usage({allDealers:true});finance={count:usage.rows.length+usage.unmatched.length};}
+ }
+ return {...context,settled,documents,finance};
+}
+window.snoteMobileOfficeTasksBridge=Object.freeze({
+ snapshot:snote184OfficeTaskSnapshot,
+ current(key){return snote184OfficeTaskContext()?.key===key;},
+ open(kind,key){
+  const value=snote184OfficeTaskSnapshot();if(!value?.settled||value.key!==key)return false;
+  if(kind==='finance'&&value.finance?.count>0)return navigate('inventoryFinance')===true;
+  if(kind==='documents'&&value.documents?.count>0){
+   const target=value.documents.rows[0],car=cars.find(car=>String(car.id)===target.id&&String(car.ownerId)===target.ownerId&&window.snoteCompanyPurchaseBridge?.carAllowed?.(car)===true);
+   if(!car)return false;
+   // The existing drawer accepts only an ID. Do not let an ambiguous legacy ID
+   // open another dealer's row; the scoped purchase list remains a safe target.
+   if(cars.find(row=>String(row.id)===target.id)!==car)return navigate('buy')===true;
+   openVehicle(car.id);return true;
+  }return false;
+ }
+});
 function snote130OfficeRecord(record){
  const uuid=value=>typeof value==='string'&&/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(value);
  if(!record||!['purchase','sale'].includes(record.documentKind)||!uuid(record.id)||!Number.isSafeInteger(record.revision)||record.revision<1||!record.payload||typeof record.payload!=='object'||Array.isArray(record.payload)||JSON.stringify(record.payload).length>24576||record.carOwnerId!==null&&!uuid(record.carOwnerId)||record.carId!==null&&(typeof record.carId!=='string'||record.carId.length>200)||typeof record.updatedAt!=='string'||!Number.isFinite(Date.parse(record.updatedAt)))throw Object.assign(Error('계약서 서버 응답을 확인하지 못했습니다.'),{code:'INVALID_RESPONSE'});
@@ -9004,7 +9189,15 @@ function toEntry(k){
  }}return null;
 }
 const originalSet=Storage.prototype.setItem;
-Storage.prototype.setItem=function(k,v){originalSet.call(this,k,v);if(this===localStorage&&S.ready&&!S.loading){const entry=toEntry(k);if(entry)enqueue(entry.ds,entry.owner)}};
+Storage.prototype.setItem=function(k,v){originalSet.call(this,k,v);if(this===localStorage&&S.ready&&!S.loading){const entry=toEntry(k);if(entry){if(entry.ds==='finance'){if(!snote184FinanceLedgerCurrent())return;snote184CaptureFinanceLedger(parsePayload(v));}if(entry.ds==='prestock'){if(!snote184PrestockLedgerCurrent())return;snote184CapturePrestockLedger(parsePayload(v));}if(entry.ds==='finance_limits'&&snote184FinanceSettingsCurrent())snote184CaptureFinanceSettings(parsePayload(v));enqueue(entry.ds,entry.owner)}}};
+function snote184DatasetRaw(dataset,owner){
+ if(dataset==='finance'||dataset==='finance_limits'||dataset==='prestock'){
+  const rows=dataset==='finance'?window.snoteInventoryFinanceLedgerBridge.rows():dataset==='prestock'?window.snotePrestockLedgerBridge.rows():window.snotePrestockSettingsBridge.rows();
+  if(!Array.isArray(rows))throw Error('CONTEXT_CHANGED');
+  return JSON.stringify(rows);
+ }
+ return localStorage.getItem(isShared(dataset)?LEGACY[dataset]:storageKey(dataset,ownerAlias(owner)));
+}
 function enqueue(ds,owner){if(S.conflict)return;S.queue.add(cloudKey(ds,owner));showStatus('● 서버 저장 대기 중','busy');clearTimeout(S.timer);S.timer=setTimeout(flush,600)}
 let cloudFlushTask=null,cloudWriteEpoch=0;
 // Keep the exact in-flight payload until its revision is acknowledged. A lost
@@ -9045,7 +9238,7 @@ async function flush(){
    };
    if(pending){recovered=await reconcile(pending);if(recovered)pending=null;}
    // Read after reconciliation so edits made while the read was pending survive.
-   const raw=localStorage.getItem(isShared(dataset)?LEGACY[dataset]:storageKey(dataset,ownerAlias(owner)));
+   const raw=snote184DatasetRaw(dataset,owner);
    S.queue.delete(key); // This snapshot includes any edit queued during reconciliation.
    const parsed=parsePayload(raw??defaultBody(dataset));
    if(dataset==='monthly'&&!Array.isArray(parsed))throw Error('월정산 자료 형식이 올바르지 않아 저장하지 않았습니다. 기존 자료를 확인해 주세요.');
@@ -9063,7 +9256,7 @@ async function flush(){
     // Recover only one of this session's exact sent snapshots, never a merge.
     const confirmed=await reconcile(pending);
     if(!confirmed)throw Error('서버 저장 결과를 아직 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.');
-    const latestRaw=localStorage.getItem(isShared(dataset)?LEGACY[dataset]:storageKey(dataset,ownerAlias(owner)));
+    const latestRaw=snote184DatasetRaw(dataset,owner);
     const latestParsed=parsePayload(latestRaw??defaultBody(dataset));
     const latest=dataset==='monthly'?latestParsed:scrub(latestParsed);
     S.queue.delete(key);if(!cloudSamePayload(latest,confirmed.payload))S.queue.add(key);
@@ -9112,8 +9305,24 @@ async function requireAuthClient(){
  }
  return authInitPromise;
 }
+// Optional document identity is never borrowed from another actor or hydration.
+let snote2184ProfileEpoch=0,snote2184ProfileState=null;
+function snote2184ProfileContext(){
+ const member=snoteCompanyActor();if(!S.ready||S.loading||!member||!currentUser||currentUser.username!==ownerAlias(S.user.id)||currentUser.role!==member.role)return null;
+ return {client:S.client,user:S.user,companyId:S.company.id,actor:currentUser,epoch:snote2184ProfileEpoch};
+}
+function snote2184ProfileCurrent(context){const now=snote2184ProfileContext();return !!context&&!!now&&['client','user','companyId','actor','epoch'].every(key=>now[key]===context[key]);}
+window.snoteDocumentCompanyReady=()=>!S.user&&!S.company?true:!!snote2184ProfileState?.ready&&snote2184ProfileCurrent(snote2184ProfileState.context);
+window.snoteEnsureDocumentCompany=()=>{
+ if(!S.user&&!S.company)return Promise.resolve(true);
+ const context=snote2184ProfileContext();if(!context)return Promise.reject(Error('CONTEXT_CHANGED'));
+ let state=snote2184ProfileState;
+ if(!state||!snote2184ProfileCurrent(state.context)){state={context,ready:false,task:null};snote2184ProfileState=state;}
+ if(state.ready)return Promise.resolve(true);if(state.task)return state.task;
+ state.task=(async()=>{const result=await snoteReadCompanyProfile(context.companyId,context.client);if(!snote2184ProfileCurrent(context)||snote2184ProfileState!==state)throw Error('CONTEXT_CHANGED');if(result.error)throw result.error;if(result.data?.id!==context.companyId)throw Error('INVALID_COMPANY_PROFILE');S.company={...S.company,...result.data};state.ready=true;return true;})().finally(()=>{state.task=null;});return state.task;
+};
 async function readCompany(){
- S.companyOwners.clear();
+ snote2184ProfileEpoch++;snote2184ProfileState=null;S.companyOwners.clear();
  const client=S.client,user=S.user,userId=user?.id;
  const current=()=>S.client===client&&S.user===user&&S.user?.id===userId;
  const checkCurrent=()=>{if(!current())throw Error('CONTEXT_CHANGED');};
@@ -9133,18 +9342,9 @@ async function readCompany(){
   if(['42703','PGRST204','42501'].includes(result.error?.code))result=await client.from('zc_members').select(memberFields).eq('company_id',companyId).eq('active',true);
   if(result.error)throw result.error;return result.data||[];
  })();
- const profileTask=(async()=>{
-  try{
-   const fields='id,name,business_number,corporate_number,representative_name,business_postcode,business_address,business_address_detail';
-   let result=await client.from('zc_companies').select(fields+',business_phone').eq('id',companyId).single();
-   checkCurrent();
-   if(['42703','PGRST204'].includes(result.error?.code))result=await client.from('zc_companies').select(fields).eq('id',companyId).single();
-   if(result.error)throw result.error;return result.data;
-  }catch(error){if(!current())throw error;console.warn('상사 문서정보 조회 실패',error?.code||'request failed');return null;}
- })();
- const [company,members,profile]=await Promise.all([companyTask,membersTask,profileTask]);
+ const [company,members]=await Promise.all([companyTask,membersTask]);
  checkCurrent();
- S.company=profile?{...company,...profile}:company;S.members=members;
+ S.company=company;S.members=members;
  S.alias=ownerAlias(userId);return true;
 }
 // Idle recovery stores only scoped revisions and hashes. Business payloads stay in
@@ -9153,6 +9353,26 @@ function snoteIdleRecoveryScope(){
  const project=S.rpcConfig?.url;
  if(!project||!S.user?.id||!S.company?.id)return null;
  return {project,userId:S.user.id,companyId:S.company.id};
+}
+async function snote184CompleteFinancialRows(scope,rows,current){
+ if(!['admin','accountant'].includes(snoteCompanyActor()?.role))return rows;
+ const datasets=['finance','finance_limits','prestock'],seen=new Set();
+ for(const row of rows)if(datasets.includes(row.dataset)){
+  if(row.owner_id!==NIL||row.company_id!==scope.company||!Array.isArray(row.payload)||!Number.isSafeInteger(row.revision)||row.revision<0||seen.has(row.dataset))throw Error('SHARED_FINANCE_RESPONSE_INVALID');
+  seen.add(row.dataset);
+ }
+ const missing=datasets.filter(dataset=>!rows.some(row=>row.dataset===dataset&&row.owner_id===NIL&&row.company_id===scope.company));
+ const confirmed=await Promise.all(missing.map(async dataset=>{
+  // A unique shared row cannot be hidden by the bulk read's server row cap.
+  const result=await scope.client.from('zc_datasets').select('company_id,dataset,owner_id,payload,revision').eq('company_id',scope.company).eq('dataset',dataset).eq('owner_id',NIL).maybeSingle();
+  if(!current())throw Error('CONTEXT_CHANGED');
+  if(result.error)throw result.error;
+  const row=result.data;if(row===null)return null;
+  if(!row||row.company_id!==scope.company||row.dataset!==dataset||row.owner_id!==NIL||!Array.isArray(row.payload)||!Number.isSafeInteger(row.revision)||row.revision<0)throw Error('SHARED_FINANCE_RESPONSE_INVALID');
+  return row;
+ }));
+ if(!current())throw Error('CONTEXT_CHANGED');
+ return [...rows,...confirmed.filter(Boolean)];
 }
 function snoteIdleCanonical(value){
  if(Array.isArray(value))return '['+value.map(snoteIdleCanonical).join(',')+']';
@@ -9173,15 +9393,15 @@ async function snoteIdleAcknowledgeRecovery(scope){
  if(!marker)return true;
  const retained=[],snapshots=[];
  for(const entry of marker.entries){
-  const key=cloudKey(entry.dataset,entry.ownerId),revision=S.revisions.get(key),raw=localStorage.getItem(entry.storageKey);
+  const key=cloudKey(entry.dataset,entry.ownerId),revision=S.revisions.get(key),raw=snote184DatasetRaw(entry.dataset,entry.ownerId);
   const cached=await snoteIdleRecoveryHash(entry.dataset,raw);
   if(!current())return false;
-  snapshots.push([entry.storageKey,raw]);
+  snapshots.push([entry.dataset,entry.ownerId,raw]);
   // A successful CAS must have advanced this marker's base. Equal/unknown
   // revisions cannot prove that a previously uncertain payload was committed.
   if(!cached.valid||raw===null||!Number.isSafeInteger(revision)||revision<=entry.revision)retained.push(entry);
  }
- if(!current()||localStorage.getItem(markerKey)!==rawMarker||snapshots.some(([key,raw])=>localStorage.getItem(key)!==raw))return false;
+ if(!current()||localStorage.getItem(markerKey)!==rawMarker||snapshots.some(([dataset,owner,raw])=>snote184DatasetRaw(dataset,owner)!==raw))return false;
  if(retained.length)recovery.write(markerScope,retained);else recovery.remove(markerScope);
  return retained.length===0;
 }
@@ -9198,9 +9418,9 @@ async function snoteIdleCaptureRecovery(scope){
   const cacheKey=isShared(dataset)?LEGACY[dataset]:storageKey(dataset,ownerAlias(ownerId));
   let raw,result;
   for(let attempt=0;attempt<4;attempt++){
-   raw=localStorage.getItem(cacheKey);result=await snoteIdleRecoveryHash(dataset,raw);
+   raw=snote184DatasetRaw(dataset,ownerId);result=await snoteIdleRecoveryHash(dataset,raw);
    if(!current())throw Error('CONTEXT_CHANGED');
-   if(localStorage.getItem(cacheKey)===raw)break;
+   if(snote184DatasetRaw(dataset,ownerId)===raw)break;
    if(attempt===3)throw Error('변경 중인 자료의 저장 복구를 확인하지 못했습니다.');
   }
   const pending=cloudPendingWrites.get(key),revision=S.revisions.get(key)??pending?.expected??0;
@@ -9214,6 +9434,8 @@ async function snoteIdleCaptureRecovery(scope){
 }
 async function restoreDatasets(){
  const {discardIdleRecovery=false}=arguments[0]||{};
+ const financeBefore={settings:snote184FinanceSettingsState,ledger:snote184FinanceLedgerState,prestock:snote184PrestockLedgerState,epoch:snote220CatalogEpoch};
+ snote184FinanceSettingsState=null;snote184FinanceLedgerState=null;snote184PrestockLedgerState=null;let financeSettings=[],financeLedger=[],prestockLedger=[];
  snote221ResetIncome();snote220InvalidateCatalog();snote216ResetMonthly();
  const scope={client:S.client,user:S.user,company:S.company?.id,epoch:snote220CatalogEpoch},current=()=>S.client===scope.client&&S.user===scope.user&&S.company?.id===scope.company&&snote220CatalogEpoch===scope.epoch;
  const recovery=window.SnoteIdleRecovery,markerScope=recovery?snoteIdleRecoveryScope():null;
@@ -9224,40 +9446,59 @@ async function restoreDatasets(){
  try{
  const {data,error}=await scope.client.from('zc_datasets').select('company_id,dataset,owner_id,payload,revision').eq('company_id',scope.company).limit(2000);if(error)throw error;
  if(!current())throw Error('CONTEXT_CHANGED');
- const rows=(data||[]).filter(d=>d.company_id==null||d.company_id===scope.company),map=new Map(rows.map(d=>[cloudKey(d.dataset,d.owner_id),d]));
+ const rows=await snote184CompleteFinancialRows(scope,(data||[]).filter(d=>d.company_id==null||d.company_id===scope.company),current),map=new Map(rows.map(d=>[cloudKey(d.dataset,d.owner_id),d]));
  const decisions=new Map(),retained=[];let retry=false,conflict=false;
+ const financial=dataset=>dataset==='finance'||dataset==='finance_limits'||dataset==='prestock';
+ const previousFinanceRaw=dataset=>{
+  const state=dataset==='finance'?financeBefore.ledger:dataset==='prestock'?financeBefore.prestock:financeBefore.settings,context=snoteCompanyPurchaseContext();
+  if(!context?.canRead||!state||state.companyId!==scope.company||state.user!==scope.user||state.client!==scope.client||state.epoch!==financeBefore.epoch)return null;
+  return JSON.stringify(state.rows);
+ };
  for(const entry of marker?.entries||[]){
-  const key=cloudKey(entry.dataset,entry.ownerId),row=map.get(key),raw=localStorage.getItem(entry.storageKey);
+  const key=cloudKey(entry.dataset,entry.ownerId),row=map.get(key),ownedRaw=financial(entry.dataset)?previousFinanceRaw(entry.dataset):null,raw=financial(entry.dataset)?ownedRaw:localStorage.getItem(entry.storageKey);
   if(row&&(!Number.isSafeInteger(row.revision)||row.revision<0))throw Error('저장 복구의 서버 버전을 확인하지 못했습니다.');
   const cached=await snoteIdleRecoveryHash(entry.dataset,raw);
   const serverHash=row?await recovery.hash(snoteIdleCanonical(entry.dataset==='monthly'?row.payload:scrub(row.payload))):null;
   if(!current())throw Error('CONTEXT_CHANGED');
   let decision=recovery.reconcile(entry,{cacheHash:cached.hash,serverRevision:row?.revision??0,serverHash,serverExists:!!row});
+  // A legacy hash marker cannot prove ownership of a shared raw browser key.
+  // With no bound in-memory body, acknowledge only an exact authorized server row.
+  const serverAck=financial(entry.dataset)&&!!row&&serverHash===entry.hash&&row.revision>=entry.revision;
   const actor=snoteCompanyActor(),writable=!!actor&&(isShared(entry.dataset)||entry.ownerId===scope.user.id);
-  if(!cached.valid||raw===null||!writable)decision='conflict';
-  decisions.set(key,{entry,decision});
+  if(serverAck)decision='acknowledged';
+  else if(!cached.valid||raw===null)decision='conflict';
+  if(!writable)decision='conflict';
+  decisions.set(key,{entry,decision,ownedRaw});
   if(decision!=='acknowledged'){
    retained.push(entry);
    if(decision==='retry')retry=true;else conflict=true;
   }
  }
  // Hashing is asynchronous; do not adopt a decision about a cache changed meanwhile.
- for(const {entry,decision}of decisions.values())if(decision==='retry'||decision==='acknowledged'){
-  const latest=await snoteIdleRecoveryHash(entry.dataset,localStorage.getItem(entry.storageKey));
+ for(const {entry,decision,ownedRaw}of decisions.values())if(decision==='retry'||decision==='acknowledged'){
+  if(financial(entry.dataset)&&decision==='acknowledged'&&ownedRaw===null)continue;
+  const latest=await snoteIdleRecoveryHash(entry.dataset,financial(entry.dataset)?ownedRaw:localStorage.getItem(entry.storageKey));
   if(!current())throw Error('CONTEXT_CHANGED');
-  if(latest.hash!==entry.hash){decisions.set(cloudKey(entry.dataset,entry.ownerId),{entry,decision:'cache-changed'});if(!retained.includes(entry))retained.push(entry);conflict=true;}
+  if(latest.hash!==entry.hash){decisions.set(cloudKey(entry.dataset,entry.ownerId),{entry,decision:'cache-changed',ownedRaw});if(!retained.includes(entry))retained.push(entry);conflict=true;}
  }
  if(!discardIdleRecovery&&recovery&&markerScope&&localStorage.getItem(recovery.key(markerScope))!==markerRaw)throw Error('다른 창에서 저장 복구 정보가 변경되었습니다. 다시 로그인해 주세요.');
  cloudWriteEpoch++;cloudPendingWrites.clear();S.revisions.clear();S.companyOwners.clear();S.queue.clear();
  if(['admin','accountant'].includes(snoteCompanyActor()?.role))for(const row of rows)if(['cars','covers'].includes(row.dataset)&&/^[0-9a-f-]{36}$/i.test(row.owner_id)&&row.owner_id!==NIL&&!S.members.some(m=>m.user_id===row.owner_id&&m.company_id===scope.company))S.companyOwners.set(row.owner_id,{user_id:row.owner_id,company_id:scope.company,display_name:'',active:false,former:true});
  const apply=(dataset,owner)=>{
   const key=cloudKey(dataset,owner),row=map.get(key),pending=decisions.get(key);
+  // Only a hash-confirmed retry cache belongs to this actor/company. A conflicting
+  // shared cache remains preserved for recovery, but is never adopted as company data.
+  if(dataset==='finance_limits')financeSettings=pending&&pending.decision!=='acknowledged'&&pending.ownedRaw!==null?parsePayload(pending.ownedRaw):row?.payload||[];
+  if(dataset==='finance')financeLedger=pending&&pending.decision!=='acknowledged'&&pending.ownedRaw!==null?parsePayload(pending.ownedRaw):row?.payload||[];
+  if(dataset==='prestock')prestockLedger=pending&&pending.decision!=='acknowledged'&&pending.ownedRaw!==null?parsePayload(pending.ownedRaw):row?row.payload:[];
   if(pending&&pending.decision!=='acknowledged'){
    S.revisions.set(key,pending.entry.revision);
    if(pending.decision==='retry')S.queue.add(key);
    return;
   }
   if(row)S.revisions.set(key,row.revision);
+  // No server row does not confer ownership of a legacy browser cache.
+  if(dataset==='prestock'&&!row)return;
   originalSet.call(localStorage,storageKey(dataset,ownerAlias(owner)),row?JSON.stringify(row.payload):defaultBody(dataset));
  };
  for(const m of snoteCompanyOwnerRows())for(const ds of ['cars','covers'])apply(ds,m.user_id);
@@ -9267,9 +9508,10 @@ async function restoreDatasets(){
   if(discardIdleRecovery)localStorage.removeItem(recovery.key(markerScope));
   else if(marker){if(retained.length)recovery.write(markerScope,retained);else recovery.remove(markerScope);}
  }
- if(typeof restoreFinanceCompanies==='function')restoreFinanceCompanies();
+ if(typeof restoreFinanceCompanies==='function')restoreFinanceCompanies(financeSettings);
 S.conflict=conflict;S.idleRecoveryRetry=retry&&!conflict;
  S.idleRecoveryNotice=conflict?'● 미저장 변경사항을 보관했습니다 · 서버 자료와 비교가 필요합니다':retry?'● 이전 작업의 미저장 변경사항을 복구했습니다 · 서버 저장 대기 중':'';
+ snote184CaptureFinanceSettings(financeSettings);snote184CaptureFinanceLedger(financeLedger);snote184CapturePrestockLedger(prestockLedger);
  }finally{if(current()){S.loading=false;if(S.ready)snote216InitMonthly();}}
 }
 async function prepareLegacyAccount(pass){
@@ -9331,8 +9573,8 @@ async function hydrateWorkspace(pass){
  byId('zc86-admin-tools').hidden=!S.members.some(m=>m.user_id===S.user.id&&m.role==='admin');
  byId('zc72-rrn').placeholder='000000-0000000 또는 000-00-00000';
  byId('zc86-rrn-mode').textContent='고객 식별번호 서버 암호화 저장 · 목록과 문서에 전체 표시';
- showStatus(S.idleRecoveryNotice||'● 서버 연결 및 저장 준비 완료');
- void snote220RefreshTaxonomy().catch(()=>{});snote216InitMonthly();void snoteProfileRefreshAvatar();
+ showStatus(S.idleRecoveryNotice||'● 서버 연결 및 저장 준비 완료');if(['contractOffice','contractArchive'].includes(route))buildAlt();
+ snote216InitMonthly();void snoteProfileRefreshAvatar();
  void refreshMedia();
 }
 async function doSignIn(e){e?.preventDefault?.();if(S.busy)return;S.busy=true;const button=byId('zc-cloud-submit');button.disabled=true;
@@ -9457,7 +9699,8 @@ async function serverMediaRefresh(){
  const current=()=>snoteMediaCurrent(base)&&request===snoteServerMediaEpoch;
  try{
   if(!current())throw snoteMediaScopeError();
-  const r=await base.client.from('zc_media').select('*').eq('company_id',base.companyId).limit(3000);if(!current())throw snoteMediaScopeError();if(r.error)throw r.error;
+  const countDocuments=base.actor.role==='accountant'&&snoteCompanyActor()?.role==='accountant';
+  const r=await base.client.from('zc_media').select('*',countDocuments?{count:'exact'}:undefined).eq('company_id',base.companyId).limit(3000);if(!current())throw snoteMediaScopeError();if(r.error)throw r.error;
   const all=(r.data||[]).filter(m=>!['modelPhoto','companyStamp','companyLogo'].includes(m.group_name)),documentSlots=new Map();let cursor=0;
   for(const row of all)if(row.company_id===base.companyId&&typeof row.owner_id==='string'&&typeof row.car_id==='string'&&SNOTE174_DOCUMENT_GROUPS.has(row.group_name)){const key=ownerAlias(row.owner_id)+'\u0000'+row.car_id;if(!documentSlots.has(key))documentSlots.set(key,new Set());documentSlots.get(key).add(row.group_name);}
   async function worker(){while(cursor<all.length&&current()){const m=all[cursor++];try{
@@ -9468,7 +9711,7 @@ async function serverMediaRefresh(){
   await Promise.all(Array.from({length:Math.min(5,all.length)},()=>worker()));if(!current())throw snoteMediaScopeError();
   if(typeof refreshModelPhotos==='function')await refreshModelPhotos();if(!current())throw snoteMediaScopeError();
   for(const url of mediaObjectUrls)try{URL.revokeObjectURL(url)}catch{};
-  mediaObjectUrls=urls;mediaByCar=next;snote174VehicleDocumentSnapshot={current:()=>snoteMediaCurrent(base),groups:new Map([...documentSlots].map(([key,present])=>[key,[...SNOTE174_DOCUMENT_GROUPS].filter(group=>present.has(group))]))};committed=true;renderCars();if(activeCarId)renderVehicle();
+  mediaObjectUrls=urls;mediaByCar=next;snote174VehicleDocumentSnapshot={current:()=>snoteMediaCurrent(base),requestEpoch:request,complete:countDocuments&&Array.isArray(r.data)&&Number.isSafeInteger(r.count)&&r.count===r.data.length&&r.data.every(row=>row.company_id===base.companyId),groups:new Map([...documentSlots].map(([key,present])=>[key,[...SNOTE174_DOCUMENT_GROUPS].filter(group=>present.has(group))]))};committed=true;renderCars();window.dispatchEvent(new Event('snote:vehicle-documents-ready'));if(activeCarId)renderVehicle();
  }finally{if(!committed)for(const url of urls)try{URL.revokeObjectURL(url)}catch{}}
 }
 refreshMedia=async function(){if(!S.ready&&!S.user)return prevRefresh();try{await serverMediaRefresh()}catch(e){if(e?.code!=='CONTEXT_CHANGED')fail(e,'사진 조회')}};
@@ -10598,7 +10841,7 @@ async function reload(){if(!S.ready)return;
  const before={client:S.client,user:S.user,company:S.company?.id,epoch:cloudWriteEpoch,queue:[...S.queue],conflict:S.conflict};
  const current=()=>S.client===before.client&&S.user===before.user&&S.company?.id===before.company;
  snote216ResetMonthly();snoteEncarLinksReset();S.ready=false;snoteRefreshSalesOverview();clearTimeout(S.timer);S.queue.clear();
- try{if(cloudFlushTask)await cloudFlushTask;S.queue.clear();S.conflict=false;await Promise.all([restoreDatasets({discardIdleRecovery:true}),snoteLoadDealerRates({force:true})]);loadCarsForUser();loadCovers();await refreshMedia();await Promise.all([window.SnoteFinanceLock?.load(currentUser),window.SnoteDashboardDisplay?.load(currentUser)]);buildStats();navigate(route);S.ready=true;if(route==='prestock'&&byId('prestock-card')){snote136PrestockScope=snote136PrestockContext()?.key||'';refreshPrestockDisplay();}snoteRefreshSalesOverview();snoteStartAccessTracking();showStatus('● 서버 자료 다시 불러옴');void snote220RefreshTaxonomy().catch(()=>{});snote216InitMonthly();}
+ try{if(cloudFlushTask)await cloudFlushTask;S.queue.clear();S.conflict=false;await Promise.all([restoreDatasets({discardIdleRecovery:true}),snoteLoadDealerRates({force:true})]);loadCarsForUser();loadCovers();await refreshMedia();await Promise.all([window.SnoteFinanceLock?.load(currentUser),window.SnoteDashboardDisplay?.load(currentUser)]);buildStats();navigate(route);S.ready=true;if(route==='prestock'&&byId('prestock-card')){snote136PrestockScope=snote136PrestockContext()?.key||'';refreshPrestockDisplay();}snoteRefreshSalesOverview();snoteStartAccessTracking();showStatus('● 서버 자료 다시 불러옴');snote216InitMonthly();}
  catch(e){if(current()){
   // A failed read did not replace the local data. Keep both queued edits and
   // uncertain requests recoverable instead of reporting an empty save queue.
@@ -10657,12 +10900,12 @@ function snoteCompanyProfileStatus(text,kind='info'){
 function snoteCompanyProfileNeedsSetup(error){
  return ['42703','PGRST202','PGRST204'].includes(error?.code);
 }
-async function snoteReadCompanyProfile(companyId){
+async function snoteReadCompanyProfile(companyId,client=S.client){
  const fields='id,name,business_number,corporate_number,representative_name,business_postcode,business_address,business_address_detail';
- let result=await S.client.from('zc_companies').select(fields+',business_phone').eq('id',companyId).single();
+ let result=await client.from('zc_companies').select(fields+',business_phone').eq('id',companyId).single();
  if(!result.error)return {...result,phoneSupported:true};
  if(!['42703','PGRST204'].includes(result.error.code))return {...result,phoneSupported:false};
- result=await S.client.from('zc_companies').select(fields).eq('id',companyId).single();
+ result=await client.from('zc_companies').select(fields).eq('id',companyId).single();
  return {...result,phoneSupported:false};
 }
 function snoteCompanyPhoneAvailability(form,supported){
@@ -10707,7 +10950,7 @@ async function snoteLoadCompanyProfile(){
   if(byId('snote90-company-form')!==form||S.company?.id!==companyId||S.user?.id!==userId)return;
   if(company.error)throw company.error;if(admin.error)throw admin.error;
   if(!company.data||!admin.data)throw Error('상사 또는 관리자 정보를 확인하지 못했습니다.');
-  S.company={...S.company,...company.data};
+  S.company={...S.company,...company.data};snote2184ProfileState=null;
   if(form.dataset.dirty!=='true')snoteFillCompanyProfile(company.data,admin.data);
   form.dataset.serverReady='true';byId('snote90-company-save').disabled=false;
   snoteCompanyProfileStatus(form.dataset.dirty==='true'?'서버 연결을 확인했습니다. 입력한 내용을 저장할 수 있습니다.':'상사정보를 불러왔습니다.');
@@ -10747,7 +10990,7 @@ async function snoteSaveCompanyProfile(event){
   if(!data?.company||data.company.id!==companyId||!data.admin)throw Error('저장 결과를 확인하지 못했습니다.');
   if(Object.hasOwn(profile,'business_phone')&&data.company.business_phone!==profile.business_phone)throw Object.assign(Error('사업자 전화번호 저장을 확인하지 못했습니다. DB 전화번호 저장 함수를 적용한 뒤 다시 저장해 주세요.'),{code:'SNOTE_PHONE_SAVE_MISMATCH'});
   if(data.company.corporate_number!==profile.corporate_number)throw Error('법인등록번호 저장 결과를 확인하지 못했습니다.');
-  S.company={...S.company,...data.company};
+  S.company={...S.company,...data.company};snote2184ProfileState=null;
   const member=S.members.find(m=>m.user_id===userId);if(member)Object.assign(member,data.admin);
   if(currentUser){currentUser.company=S.company.name;currentUser.name=data.admin.display_name;currentUser.phone=data.admin.phone;}
   for(const account of dealerAccounts){account.company=S.company.name;if(account.username===ownerAlias(userId)){account.name=data.admin.display_name;account.phone=data.admin.phone;}}
@@ -10794,7 +11037,7 @@ function snoteRenderAdminSettings(){
  <section class="snote90-panel"><h3>재고금융사 및 한도 관리</h3><p>상사 공통 금융사·한도와 기본 연이율을 관리합니다. 개인 이율은 내 재고금융 이율에서 설정합니다.</p>
  <div id="snote90-lenders"></div><div class="snote90-inline"><label>신규 금융사<input id="snote90-lender-name" maxlength="45" placeholder="금융사 이름"></label><label>한도 (원)<input id="snote90-lender-limit" class="detail-money-input" inputmode="numeric" placeholder="예: 1000000000"></label><button type="button" class="btn-primary" id="snote90-lender-add">금융사 추가</button></div></section>
  <section class="snote90-panel snote203-bank-card"><h3>선재고 설정</h3><p>선재고 통장 총액 및 연결 계좌 정보를 관리합니다. 실제 은행 계좌와 자동 연동되지 않습니다.</p>
- <div class="snote203-bank-fields"><label>선재고 총액 (원)<input id="snote203-bank-total" type="text" inputmode="numeric" placeholder="0" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\\B(?=(\\d{3})+(?!\\d))/g,',')"></label><label>은행명<input id="snote203-bank-name" maxlength="35" placeholder="우리은행"></label><label>계좌번호<input id="snote203-bank-account" maxlength="45" placeholder="계좌번호"></label><label>계좌명 / 예금주<input id="snote203-bank-holder" maxlength="45" placeholder="예금주 또는 계좌명"></label></div><div class="snote203-bank-actions"><button class="btn-primary" type="button" onclick="snote203SavePrestockSettings()">선재고 설정 저장</button></div>
+ <div class="snote203-bank-fields"><label>선재고 총액 (원)<input id="snote203-bank-total" type="text" inputmode="numeric" placeholder="0" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\\B(?=(\\d{3})+(?!\\d))/g,',')"></label><label>은행명<input id="snote203-bank-name" maxlength="35" placeholder="은행명"></label><label>계좌번호<input id="snote203-bank-account" maxlength="45" placeholder="계좌번호"></label><label>계좌명 / 예금주<input id="snote203-bank-holder" maxlength="45" placeholder="예금주 또는 계좌명"></label></div><div class="snote203-bank-actions"><button class="btn-primary" type="button" onclick="snote203SavePrestockSettings()">선재고 설정 저장</button></div>
  </section></div>`;
  snoteFillCompanyProfile(S.company,{display_name:S.members.find(m=>m.user_id===S.user.id)?.display_name,phone:''});
  byId('snote90-company-form').addEventListener('submit',snoteSaveCompanyProfile);
@@ -10837,11 +11080,10 @@ function snote90RenderLenders(){
 function snote203FillBank(){
  const cfg=snote203PrestockConfig();
  const total=$('snote203-bank-total');if(!total)return;
- total.value=cfg.total.toLocaleString('ko-KR');$('snote203-bank-name').value=cfg.bank;
+ total.value=cfg.total===null?'':cfg.total.toLocaleString('ko-KR');$('snote203-bank-name').value=cfg.bank;
  $('snote203-bank-account').value=cfg.account;$('snote203-bank-holder').value=cfg.holder;
 }
 let snote203AssetLoad=0,snote128CompanyAssets=null;
-const snote128AssetModuleReady=new Promise(resolve=>{if(document.readyState==='complete')resolve();else document.addEventListener('DOMContentLoaded',resolve,{once:true});});
 const snote203AssetBusy=new Set();
 window.snoteCompanyAssetScope=()=>{
  const member=S.members.find(row=>row.user_id===S.user?.id&&row.company_id===S.company?.id&&row.active===true&&['admin','dealer','accountant'].includes(row.role));
@@ -10869,10 +11111,10 @@ function snote128AssetStore(){
   onClear:snote128ClearCompanyConsumers
  });return snote128CompanyAssets;
 }
-async function snote128LoadCompanyAsset(kind){if(!window.SnoteCompanyAssets)await snote128AssetModuleReady;return snote128AssetStore().load(kind);}
+async function snote128LoadCompanyAsset(kind){const context=window.snoteCompanyAssetScope();if(!context)return null;if(!window.SnoteCompanyAssets)await window.SnoteFeatures.load('companyAssets');const now=window.snoteCompanyAssetScope();if(!now||['companyId','userId','client','actor'].some(key=>now[key]!==context[key]))throw Error('CONTEXT_CHANGED');return snote128AssetStore().load(kind);}
 window.snoteLoadDocumentLogo=()=>snote128LoadCompanyAsset('companyLogo');
 window.snoteLoadDocumentStamp=()=>snote128LoadCompanyAsset('companyStamp');
-window.snoteCompanyAssetState=kind=>snote128AssetStore().snapshot(kind);
+window.snoteCompanyAssetState=kind=>snote128CompanyAssets?snote128CompanyAssets.snapshot(kind):{status:'idle',url:null,path:null,companyId:window.snoteCompanyAssetScope()?.companyId||null,userId:window.snoteCompanyAssetScope()?.userId||null};
 async function snote203AssetRecords(kind,context=window.snoteCompanyAssetScope()){
  if(!context)return [];
  const result=await context.client.from('zc_media').select('*').eq('company_id',context.companyId).eq('group_name',kind).order('created_at',{ascending:false}).limit(40);
@@ -10893,7 +11135,7 @@ async function snote203LoadAssets(){
 }
 function snote203InvalidateDocumentLogo(kind){
  if(!['companyLogo','companyStamp'].includes(kind))return;
- snote128AssetStore().invalidate(kind);
+ snote128CompanyAssets?.invalidate(kind);
  if(kind==='companyLogo')snote95UpdateDocumentCompany();
  if(kind==='companyStamp'&&$('contract-overlay').classList.contains('open'))snote128RefreshContractStamp();
  window.dispatchEvent(new CustomEvent('snote:company-assets-changed',{detail:{kind}}));
@@ -11227,7 +11469,7 @@ function snoteProfilePaintAvatar(context){
 function snoteProfileApply(context,profile){
  snoteProfileAssert(context);snoteProfileCheck(context,profile);
  const member=S.members.find(m=>m.user_id===context.userId);if(member){member.display_name=profile.display_name;if(typeof profile.phone==='string')member.phone=profile.phone;}
- S.company.name=profile.company_name;
+ S.company.name=profile.company_name;snote2184ProfileState=null;
  if(currentUser){currentUser.name=profile.display_name;currentUser.company=profile.company_name;if(typeof profile.phone==='string')currentUser.phone=profile.phone;}
  const companyAccounts=new Set(S.members.filter(member=>member.company_id===context.companyId).map(member=>ownerAlias(member.user_id)));
  for(const account of dealerAccounts){if(companyAccounts.has(account.username))account.company=profile.company_name;if(account.username===ownerAlias(context.userId)){account.name=profile.display_name;if(typeof profile.phone==='string')account.phone=profile.phone;}}
@@ -11473,13 +11715,17 @@ async function snoteRecyclePrepare(base,allowAccountant=false){
  return snapshots;
 }
 function snoteRecycleCanonicalConflict(){S.conflict=true;showStatus('● 서버 휴지통 처리 완료 · 최신 자료 다시 불러오기 필요','bad');return snoteRecycleError('RECYCLE_RELOAD_REQUIRED','서버에서 처리했습니다. 최신 정보를 불러온 뒤 다시 확인해 주세요.');}
-async function snoteRecycleApply(base,data,snapshots,allowAccountant=false){
+async function snoteRecycleApply(base,data,snapshots,allowAccountant=false,customerAction=null){
  snoteRecycleCheck(base,allowAccountant);
  const owner=data?.ownerId,carId=data?.carId,carsState=data?.cars,coversState=data?.covers;
  if(data?.companyId!=null&&data.companyId!==base.companyId)throw snoteRecycleCanonicalConflict();
  if(data?.ok===true&&data.kind==='customer'){
   if((owner!==base.userId&&base.role!=='admin')||typeof owner!=='string'||!/^[a-f0-9-]{36}$/i.test(owner)||typeof carId!=='string'||carsState!==null||coversState!==null)throw snoteRecycleCanonicalConflict();
-  ++snote214CustomerView;window.snote222ContractSignature?.invalidate?.();return data;
+  if(customerAction?.type==='trash'){
+   // A late deletion response must not remove a restored record from a newer list.
+   if(customerAction.view===snote214CustomerView){if(window.SnoteCustomerList?.current(customerAction.selection))window.SnoteCustomerList.remove(ownerAlias(owner),carId,customerAction.selection);else ++snote214CustomerView;}
+  }else ++snote214CustomerView;
+  window.snote222ContractSignature?.invalidate?.();return data;
  }
  if(data?.ok!==true||typeof owner!=='string'||!/^[a-f0-9-]{36}$/i.test(owner)||typeof carId!=='string'||!Array.isArray(carsState?.payload)||!Number.isSafeInteger(carsState?.revision)||!coversState?.payload||Array.isArray(coversState.payload)||typeof coversState.payload!=='object'||!Number.isSafeInteger(coversState?.revision))throw snoteRecycleCanonicalConflict();
  const alias=ownerAlias(owner),carsKey=cloudKey('cars',owner),coversKey=cloudKey('covers',owner),carsStorage=storageKey('cars',alias),coversStorage=storageKey('covers',alias);
@@ -11510,13 +11756,14 @@ async function snoteRecycleTrashVehicle(car){
 }
 async function snoteRecycleTrashCustomer(owner,car,options={}){
  const base=snoteRecycleContext();if(!base)throw snoteRecycleError('RECYCLE_ONLINE_REQUIRED','고객 삭제는 온라인 로그인 후 이용해 주세요.');
- const ctx=snote214CustomerContext(owner),snapshots=await snoteRecyclePrepare(base);
+ const customerAction={type:'trash',view:snote214CustomerView,selection:options.customerListSelection||window.SnoteCustomerList?.capture(owner,car)},ctx=snote214CustomerContext(owner),snapshots=await snoteRecyclePrepare(base);
  return snote214QueueCustomer(ctx,car,async()=>{
   const latest=await snote214ReadCustomerRow(ctx,car);snoteRecycleCheck(base);if(!latest)throw snoteRecycleError('RECYCLE_NOT_FOUND','고객정보가 이미 변경되었거나 휴지통으로 이동했습니다.');
   const generation=Object.hasOwn(options,'expectedRestoreGeneration')?options.expectedRestoreGeneration:latest.restore_generation||SNOTE_RECYCLE_ZERO;
   const expectedAt=Object.hasOwn(options,'expectedUpdatedAt')?options.expectedUpdatedAt:latest.updated_at;
   const data=await snoteRecycleRpc(base,'snote_recycle_trash_customer',{p_company:base.companyId,p_owner:ctx.uid,p_car_id:String(car),p_expected_updated_at:expectedAt,p_expected_generation:generation},false,true);
-  await snoteRecycleApply(base,data,snapshots);return {ok:true};
+  if(data?.kind!=='customer'||data.ownerId!==ctx.uid||data.carId!==String(car))throw snoteRecycleCanonicalConflict();
+  await snoteRecycleApply(base,data,snapshots,false,customerAction);window.dispatchEvent(new Event('snote-recycle-updated'));return {ok:true};
  });
 }
 async function snoteRecycleWriteMedia(records,removeIds,assertCurrent=()=>{}){
@@ -11623,9 +11870,7 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 </script>
 <script src="assets/snote-customer-intake.js?v=2.172" defer></script>
 <script type="module" src="assets/quick-calculator.js?v=2.85"></script>
-<script type="module" src="assets/vehicle-taxonomy-ui.js?v=2.172"></script>
 <script src="assets/vehicle-taxonomy-probe.js?v=2.172" defer></script>
-<script type="module" src="assets/income-settlement-parent.js?v=2.175"></script>
 <script src="assets/vehicle-sharing.js?v=2.174" defer></script>
 <script src="assets/shared-vehicle-markers.js?v=2.170" defer></script>
 <link rel="stylesheet" href="assets/received-share-list.css?v=2.174">
@@ -11633,23 +11878,18 @@ window.zc86Cloud={getAccessToken:async()=>{if(!S.ready||!S.client)return null;co
 <link rel="stylesheet" href="assets/workspace-reorder.css?v=2.136">
 <script src="assets/workspace-order-store.js?v=2.135" defer></script>
 <script src="assets/workspace-reorder.js?v=2.172" defer></script>
-<script src="assets/release-info.js?v=2.183" defer></script>
+<script src="assets/release-info.js?v=2.184" defer></script>
 <link rel="stylesheet" href="assets/encar-id.css?v=2.162">
-<script src="assets/encar-id.js?v=2.174" defer></script>
+<script src="assets/encar-id.js?v=2.184" defer></script>
 <script src="assets/company-purchase.js?v=2.172" defer></script>
-<script src="assets/transfer-document-layout.js?v=2.143" defer></script>
-<script src="assets/transfer-name-seal.js?v=2.143" defer></script>
-<script src="assets/transfer-company-seal.js?v=2.143" defer></script>
-<script src="assets/contract-office.js?v=2.179" defer></script>
 <script src="assets/recycle-bin.js?v=2.172" defer></script>
-<script src="assets/company-assets.js?v=2.128" defer></script>
 <script src="assets/profile-editor.js?v=2.174" defer></script>
 <link rel="stylesheet" href="assets/payment-accounts.css?v=2.158">
 <script src="assets/payment-accounts.js?v=2.174" defer></script>
 <link rel="stylesheet" href="assets/quote-refinement.css?v=2.165">
 <script src="assets/document-mms.js?v=2.172" defer></script>
-<script src="assets/workspace-polish.js?v=2.77" defer></script>
-<script src="assets/list-sort.js?v=2.177" defer></script>
+<script src="assets/workspace-polish.js?v=2.184" defer></script>
+<script src="assets/list-sort.js?v=2.184" defer></script>
 <script src="assets/vehicle-list-view.js?v=2.174" defer></script>
 <script src="assets/purchase-columns.js?v=2.179" defer></script>
 <link rel="stylesheet" href="assets/dealer-finance-rates.css?v=2.122">
@@ -11678,7 +11918,9 @@ window.addEventListener('snote:payment-accounts-changed',()=>{if(typeof contract
 <link rel="stylesheet" href="assets/login-refinement.css?v=2.162">
 <link rel="stylesheet" href="assets/vehicle-viewport.css?v=2.167">
 <link rel="stylesheet" href="assets/document-viewport.css?v=2.183">
-<script src="assets/document-viewport.js?v=2.183" defer></script>
+<script src="assets/document-viewport.js?v=2.184" defer></script>
+<link rel="stylesheet" href="assets/mobile-document-editor.css?v=2.184">
+<script src="assets/mobile-document-bootstrap.js?v=2.184" defer></script>
 <link rel="stylesheet" href="assets/shared-vehicle-detail.css?v=2.174">
 <script src="assets/shared-vehicle-detail.js?v=2.174" defer></script>
 <link rel="stylesheet" href="assets/contract-layout-v2167.css?v=2.170">
@@ -11687,11 +11929,11 @@ window.addEventListener('snote:payment-accounts-changed',()=>{if(typeof contract
 <script src="assets/vehicle-image-viewer.js?v=2.169" defer></script>
 
 <!-- Explicit screen typography; new feature sheets are not enlarged a second time. -->
-<link rel="stylesheet" href="assets/design-system.css?v=2.179" data-snote-type-scale>
-<link rel="stylesheet" href="assets/design-purchase.css?v=2.180" data-snote-type-scale>
+<link rel="stylesheet" href="assets/design-system.css?v=2.184" data-snote-type-scale>
+<link rel="stylesheet" href="assets/design-purchase.css?v=2.184" data-snote-type-scale>
 <link rel="stylesheet" href="assets/design-vehicle.css?v=2.179" data-snote-type-scale>
 <link rel="stylesheet" href="assets/design-settings-office.css?v=2.179" data-snote-type-scale>
-<script src="assets/design-purchase.js?v=2.180" defer></script>
+<script src="assets/design-purchase.js?v=2.184" defer></script>
 <script src="assets/design-vehicle.js?v=2.179" defer></script>
 <script src="assets/design-settings-office.js?v=2.179" defer></script>
 </body>

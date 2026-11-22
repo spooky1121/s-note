@@ -1,0 +1,10 @@
+'use strict';
+const assert=require('node:assert/strict'),model=require('../assets/home-dashboard.js');
+const rows=[{id:'old',status:'판매중',purchaseAt:'2026-08-24'},{id:'edge',status:'계약중',purchaseAt:'2026-08-24'},{id:'recent',status:'계약중',purchaseAt:'2026-11-01'},{id:'sold',status:'판매완료',purchaseAt:'2026-01-01'},{id:'unknown',status:'계약중',purchaseAt:'not-a-date'}];
+assert.deepEqual(model.inventoryTasks(rows,'2026-11-22').rows.map(row=>row.id),['edge','old']);
+assert.deepEqual(model.saleProgress(rows).rows.map(row=>row.id),['edge','recent','unknown']);
+assert.equal(model.saleProgress(rows).count,3);
+assert.equal(model.saleProgress([{id:'none',status:'판매중'},{id:'done',status:'판매완료'}]).count,0);
+assert.throws(()=>model.saleProgress(null),/INVALID_DASHBOARD_TASK_ROWS/);
+assert.equal(model.inventoryTasks([{id:'future',status:'계약중',purchaseAt:'2026-11-23'}],'2026-11-22').count,0);
+console.log('PASS mobile daily model keeps exact 90-day criteria and derives sale progress only from explicit contracted status');

@@ -71,3 +71,22 @@ test('header remount keeps the title and rejects stale identity or disposed cont
  oldToggle.click();finish({values:new Map([['1','900101-1234567']]),failed:new Set()});await old;assert.equal(activeView(f),'cards');assert.equal(f.host.querySelector('tbody tr'),row);assert.equal(doc.getElementById('snote-customer-search'),newInput);assert.match(f.host.textContent,/복귀 후 새 고객/);assert.match(f.host.textContent,/910202-\*{7}/);assert(!/홍길동|9001011234567|900101-1234567|910202-2345678/.test(doc.body.innerHTML));assert.equal(f.w.localStorage.getItem(VIEW_KEY),'cards');assert.equal(f.w.localStorage.length,1);
  f.w.SnoteCustomerList.clear();assert.equal(slot.children.length,0);assert.equal(doc.getElementById('alt-title'),title);f.dom.window.close();
 });
+
+function actionList(f,readIdentities=async()=>({values:new Map(),failed:new Set()})){
+ f.w.HTMLElement.prototype.scrollIntoView=()=>{};
+ return f.w.SnoteCustomerList.mount({host:f.host,records:f.records,ownerId:'synthetic-owner',isCurrent:()=>true,carFor:()=>null,readIdentities,renderRow:(row,identity)=>'<tr><td>'+row.name+'</td><td>'+identity+'</td><td><button data-customer-delete="'+row.carId+'">삭제</button></td></tr>'});
+}
+test('an acknowledged removal survives pending identities and rerendering without losing search or controls',async()=>{
+ const f=fixture(),list=f.w.SnoteCustomerList;let release;const mounted=actionList(f,()=>new Promise(resolve=>release=resolve));
+ const selection=list.capture('synthetic-owner','1'),oldButton=f.host.querySelector('[data-customer-delete="1"]');assert(selection);list.setPending(selection,true);f.query('홍길동');assert(!oldButton.isConnected);assert(list.current(selection));assert(list.contains(selection));assert(f.host.querySelector('button[data-customer-delete="1"]').disabled);
+ assert.equal(list.remove('other-owner','1',selection),false);assert.equal(list.remove('synthetic-owner','1',selection),true);assert(list.current(selection));assert(!list.contains(selection));assert.equal(f.host.querySelectorAll('tbody tr').length,0);assert.equal(f.host.querySelector('#snote-customer-search').value,'홍길동');
+ release({values:new Map([['1','900101-1234567'],['2','987-65-43210']]),failed:new Set()});await mounted;assert.equal(f.query('1234567'),0);assert.equal(f.query(''),1);assert.match(f.host.textContent,/김가상/);assert.match(f.host.querySelector('#snote-customer-count').textContent,/1명/);assert(!f.host.innerHTML.includes('900101'));
+ f.w.SnoteCustomerList.clear();assert(!list.current(selection));assert.equal(list.remove('synthetic-owner','2'),false);f.dom.window.close();
+});
+test('removing the last customer of the last page clamps pagination and keeps the chosen view',async()=>{
+ const f=fixture();f.records=Array.from({length:21},(_,i)=>({carId:String(i+1),name:'가상 고객 '+(i+1)}));await actionList(f);const list=f.w.SnoteCustomerList;
+ f.host.querySelector('[data-customer-view-choice="cards"]').click();f.host.querySelector('[aria-label="2페이지"]').click();assert.equal(f.host.querySelectorAll('tbody tr').length,1);
+ const selection=list.capture('synthetic-owner','21');list.setPending(selection,true);list.setPending(selection,false);assert.equal(f.host.querySelectorAll('tbody tr').length,1,'Cancel or failure does not remove a customer');assert.equal(f.host.querySelector('[data-customer-delete="21"]').disabled,false);
+ assert(list.remove('synthetic-owner','21',selection));assert.equal(f.host.querySelectorAll('tbody tr').length,20);assert.equal(f.host.querySelector('#customer-pagination').hidden,true);assert.equal(f.host.querySelector('#snote-customer-view').dataset.customerView,'cards');assert.equal(f.host.querySelector('#snote-customer-count').textContent,'20명');
+ await actionList(f);assert(!list.current(selection));list.setPending(selection,true);assert.equal(list.remove('synthetic-owner','21',selection),false,'An old deletion response cannot remove a customer from a new view');f.host.querySelector('[aria-label="2페이지"]').click();assert(!f.host.querySelector('[data-customer-delete="21"]').disabled,'An old view cannot disable a new view');f.dom.window.close();
+});

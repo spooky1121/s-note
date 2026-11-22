@@ -136,4 +136,5 @@ window.snoteSaveVehicleTaxonomyForCar=saveCar;
 window.snotePrepareVehicleTaxonomyCar=taxonomyEntryFromCar;
 window.snoteRetryVehicleTaxonomy=retryPending;
 window.snoteVehicleTaxonomyOnOpen=()=>{if(bridge()?.context())void load().catch(()=>{});else render();};
-if(bridge()?.context())void load().catch(()=>{});else render();
+// The owning first-use action performs the scoped read after its view guard.
+render();

@@ -1,7 +1,7 @@
 /* Screen-only workspace foundations. Document templates and print metrics stay independent. */
 @media screen {
  :root {
-  --snote-surface:#fff;--snote-canvas:#f5f5f7;--snote-ink:#1d1d1f;--snote-secondary:#626973;
+  --snote-surface:#fff;--snote-canvas:#f3f8fd;--snote-ink:#1d1d1f;--snote-secondary:#626973;
   --snote-accent:#007aff;--snote-divider:#e5e5ea;--snote-focus:#007aff55;
   --snote-type-body:14px;--snote-type-caption:12px;--snote-type-title:20px;
   --ink:var(--snote-ink);--muted:var(--snote-secondary);--line:var(--snote-divider);
@@ -32,6 +32,12 @@
  #snote-app #list-screen :is(input.search,.filter)::placeholder {color:#747985;opacity:1}
  #snote-app :is(.btn-primary,.btn-ghost) {border-radius:10px;box-shadow:none;font-weight:600}
  #snote-app .btn-primary {background:var(--snote-accent)}
+ /* These registration controls live outside #snote-app, so use the same
+    passing white-on-blue treatment as the existing application buttons. */
+ #zc-auto-reg-overlay .zc71-choose,
+ #zc-auto-reg-overlay #zc-auto-reg-next{background:#4455ed;color:#fff}
+ #zc-auto-reg-overlay :is(.zc71-upload-area:hover,.zc71-upload-area:focus-within) .zc71-choose,
+ #zc-auto-reg-overlay #zc-auto-reg-next:is(:hover:enabled,:focus-visible){background:#3445d5}
  #snote-app :is(button,a,input,select,textarea):focus-visible {outline:3px solid var(--snote-focus);outline-offset:2px}
  #snote-app :is(.status-select,.status) {font-weight:550}
  #snote-app :is(.value,.price,.acct-price,.sum-cell strong) {font-variant-numeric:tabular-nums}

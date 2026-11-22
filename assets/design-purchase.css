@@ -74,5 +74,33 @@
  #snote-app #list-screen[data-design-purchase=true]>.panel>.snote-mobile-sort{gap:4px}
  #snote-app #list-screen[data-design-purchase=true] #snote-vehicle-view-toolbar{gap:4px}
 }
+/* Mobile keeps one clear registration action; the original secondary controls
+   live in an accessible disclosure and return to their desktop positions. */
+@media screen and (max-width:760px){
+ #snote-app #list-screen[data-mobile-purchase-tools]>.panel{grid-template-columns:minmax(0,1fr) auto auto;gap:8px}
+ #snote-app #list-screen[data-mobile-purchase-tools] .snote-purchase-primary-row{display:contents}
+ #snote-app #list-screen[data-mobile-purchase-tools] .snote-vehicle-title-with-count{grid-column:1;grid-row:1;max-width:none;min-width:0;gap:6px}
+ #snote-app #list-screen[data-mobile-purchase-tools] #list-title{font-size:14px;white-space:nowrap}
+ #snote-app #list-screen[data-mobile-purchase-tools] .snote-vehicle-add-slot{grid-column:2;grid-row:1;display:flex;flex:none;width:auto;min-width:0;height:44px}
+ #snote-app #list-screen[data-mobile-purchase-tools] .snote-vehicle-add-slot>#snote92-buy-manual{display:inline-flex!important;align-items:center;justify-content:center;gap:6px;flex:none!important;width:auto!important;min-width:116px!important;height:44px!important;min-height:44px!important;margin:0;padding:10px 12px!important;border:1px solid #4455ed!important;border-radius:10px!important;background:#4455ed!important;color:#fff!important;font-size:14px;font-weight:650;line-height:1.4;box-shadow:none!important}
+ #snote-app #list-screen[data-mobile-purchase-tools] .snote-vehicle-add-slot>#snote92-buy-manual:hover:enabled{background:#3445d5!important;border-color:#3445d5!important}
+ #snote-app #list-screen[data-mobile-purchase-tools] #snote92-buy-manual[hidden]{display:none!important}
+ #snote-app #list-screen[data-mobile-purchase-tools] #snote92-buy-manual .snote-step-glyph-ring{width:20px!important;min-width:20px!important;height:20px!important;min-height:20px!important;background:transparent!important;color:inherit!important}
+ #snote-app #list-screen[data-mobile-purchase-tools] .snote-purchase-primary-label{display:inline;white-space:nowrap}
+ #snote-app #list-screen[data-mobile-purchase-tools] .snote-purchase-tools-toggle{grid-column:3;grid-row:1;display:inline-grid;place-items:center;box-sizing:border-box;flex:none;width:44px;min-width:44px;height:44px;min-height:44px;margin:0;padding:11px;border:1px solid #dce6f2;border-radius:10px;background:#fff;color:#4455ed;box-shadow:none;cursor:pointer}
+ #snote-app #list-screen[data-mobile-purchase-tools] .snote-purchase-tools-toggle:hover{background:#f3f8fd}
+ #snote-app #list-screen[data-mobile-purchase-tools] .snote-purchase-tools-toggle[aria-expanded=true]{background:#edf3ff;border-color:#b6c7ed}
+ #snote-app #list-screen[data-mobile-purchase-tools] .snote-purchase-tools-toggle svg{display:block;width:20px;height:20px}
+ #snote-app #list-screen[data-mobile-purchase-tools] #buy-search-host{grid-column:1/-1;grid-row:2}
+ #snote-app #list-screen[data-mobile-purchase-tools] .snote-purchase-tools{grid-column:1/-1;grid-row:3;display:grid;gap:8px;min-width:0;padding:10px;border:1px solid #e1e8f2;border-radius:10px;background:#f7faff}
+ #snote-app #list-screen[data-mobile-purchase-tools] :is(.snote-purchase-tools,.snote-purchase-primary-row)[hidden]{display:none!important}
+ #snote-app #list-screen[data-mobile-purchase-tools] .snote-purchase-tools-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;min-width:0}
+ #snote-app #list-screen[data-mobile-purchase-tools] .snote-purchase-tools-row .zc-list-actions.snote-vehicle-actions{display:flex;align-items:center;justify-content:flex-start;gap:8px;min-width:0;min-height:44px;margin:0}
+ #snote-app #list-screen[data-mobile-purchase-tools] .snote-purchase-tools-row #snote-vehicle-view-toolbar{display:flex;align-items:center;justify-content:flex-end;gap:8px;min-width:0;margin:0}
+ #snote-app #list-screen[data-mobile-purchase-tools] .snote-purchase-tools>.snote-mobile-sort{display:flex;align-items:center;gap:8px;width:100%;min-width:0;margin:0}
+ #snote-app #list-screen[data-mobile-purchase-tools] .snote-purchase-tools>.snote-mobile-sort label{display:flex;align-items:center;flex:1;min-width:0;font-size:0}
+ #snote-app #list-screen[data-mobile-purchase-tools] .snote-purchase-tools>.snote-mobile-sort select{box-sizing:border-box;width:100%;min-width:0;height:44px;min-height:44px;margin:0;padding:7px 9px;border-radius:9px;font-size:16px;line-height:1.4}
+ #snote-app #list-screen[data-mobile-purchase-tools] .snote-purchase-tools>.snote-mobile-sort>button{display:inline-grid;place-items:center;box-sizing:border-box;flex:none;width:44px;min-width:44px;height:44px;min-height:44px;margin:0;padding:12px;border:0;background:transparent}
+}
 @media(prefers-reduced-motion:reduce){#snote-purchase-overview .snote-purchase-overview-toggle svg{transition:none}}
 @media print{#snote-purchase-overview .snote-purchase-brief,#snote-purchase-overview .snote-purchase-overview-toggle{display:none!important}}
