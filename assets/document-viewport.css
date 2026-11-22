@@ -1,9 +1,12 @@
 /* Screen-only whole-sheet previews. Native A4 sizes and print copies stay unchanged. */
 @media screen{
  :is(#contract-overlay,#zc76-receipt-overlay).snote-popup-overlay{padding:12px!important;overflow:hidden!important;align-items:center!important;justify-content:center!important}
- :is(#contract-overlay,#zc76-receipt-overlay).snote-popup-overlay>.snote-popup-frame{width:var(--snote-document-frame-width, min(794px,100%))!important;max-width:100%!important;height:calc(var(--snote-document-height,0px) + var(--snote-document-controls-space,56px));padding:var(--snote-document-controls-space,56px) 0 0!important;box-sizing:border-box;overflow:visible}
+ :is(#contract-overlay,#zc76-receipt-overlay).snote-popup-overlay>.snote-popup-frame{width:var(--snote-document-frame-width, min(794px,100%))!important;max-width:100%!important;height:var(--snote-document-height,auto);padding:0!important;box-sizing:border-box;overflow:visible}
  :is(#contract-overlay,#zc76-receipt-overlay) .snote-popup-frame>.snote-popup-card{display:block!important;position:relative;width:var(--snote-document-width,100%)!important;min-width:0!important;max-width:none!important;height:var(--snote-document-height,auto)!important;min-height:0!important;max-height:none!important;margin:0!important;padding:0!important;overflow:visible!important;animation:none!important;transform:none!important}
- :is(#contract-overlay,#zc76-receipt-overlay) .snote-document-controls{right:0;top:0;width:auto;max-width:100%;height:44px;box-sizing:border-box;flex-direction:row;align-items:center;gap:6px;padding:3px;border:1px solid #e0e4ec;border-radius:10px;background:#fff;box-shadow:0 2px 8px #15233a12}
+ :is(#contract-overlay,#zc76-receipt-overlay) .snote-document-controls{right:2px;top:2px;width:36px;height:auto;box-sizing:border-box;flex-direction:column;align-items:center;gap:8px;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none}
+ :is(#contract-overlay,#zc76-receipt-overlay) .snote-document-controls button.snote-popup-close>.snote-close-image{align-self:center;justify-self:center}
+ /* Reserve only the screen header corner; the A4 body keeps its full width. */
+ :is(#contract-paper .ct-doc-head,#zc76-receipt-paper>h1){box-sizing:border-box;padding-right:max(0px,calc(46px / var(--snote-document-scale,1) - var(--snote-document-padding-right,0px)))!important;min-height:max(0px,calc(84px / var(--snote-document-scale,1) - var(--snote-document-padding-top,0px)))!important}
  #contract-overlay #contract-paper{zoom:var(--snote-document-scale,1)!important;padding-right:14mm!important}
  #contract-overlay #contract-paper .ct-field{display:flex;flex-direction:column;justify-content:center;gap:1px;height:auto;min-height:10.65mm}
  #zc76-receipt-overlay #zc76-receipt-paper{zoom:var(--snote-document-scale,1)!important;padding-right:12mm!important}
