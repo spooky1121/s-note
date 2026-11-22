@@ -64,8 +64,8 @@ async function landing(p){
    const f=await fixture(390),p=f.page;
    try{
     await p.evaluate(()=>{closeVehicle({discard:true});currentUser.role='accountant';__encarFixtureState.members[0].role='accountant';snoteResetWorkspaceNavigation();snoteWorkspaceSalesReady=true;snoteEnterWorkspaceRoute();});
-    assert.equal(await p.evaluate(()=>route),'buy');assert.equal(await p.evaluate(()=>snotePageAllowed('dashboard')),false);clean(p);
-    results.push({accountantPermissionsPreserved:true,accountantLanding:'buy'});await finish(f);console.log('PASS accountant keeps its authorized landing and cannot enter the dealer financial dashboard');
+    assert.equal(await p.evaluate(()=>route),'contractOffice');assert.equal(await p.evaluate(()=>snotePageAllowed('dashboard')),false);clean(p);
+    results.push({accountantPermissionsPreserved:true,accountantLanding:'contractOffice'});await finish(f);console.log('PASS accountant keeps its document-office landing and cannot enter the dealer financial dashboard');
    }catch(error){await f.context.close();throw error;}
   }
   assert.deepEqual(hashes(),before,'Product source changed during navigation verification');fs.writeFileSync(path.join(OUT,'receipt.json'),JSON.stringify({ok:true,at:new Date().toISOString(),sourceHashes:before,results,syntheticOnly:true},null,2)+'\n');

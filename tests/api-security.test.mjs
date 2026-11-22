@@ -48,6 +48,24 @@ test('method, auth, length, encoding and media type are checked before providers
   assert.equal(inspectAPIRequest(request('/api/customer-intake', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' })).response, undefined);
   assert.equal(inspectAPIRequest(request('/api/vehicle-taxonomy-probe?companyId=example')).response.status, 401);
 });
+test('registration dispatch permits its public JSON and two-image multipart flow without weakening other routes', async () => {
+  for (const contentType of ['application/json', 'multipart/form-data; boundary=synthetic-registration']) {
+    let called = false;
+    const response = await onRequest({ request: request('/api/registration', {
+      method: 'POST', headers: { Origin: ORIGIN, 'Content-Type': contentType }, body: 'synthetic'
+    }), next: () => { called = true; return Response.json({ ok: true }); } });
+    assert.equal(called, true);
+    assert.equal(response.status, 200);
+    assert.match(response.headers.get('Cache-Control'), /no-store/);
+  }
+  const candidate = headers => request('/api/registration', { method: 'POST', headers: { Origin: ORIGIN, 'Content-Type': 'multipart/form-data; boundary=synthetic', ...headers }, body: 'synthetic' });
+  assert.equal(inspectAPIRequest(candidate({ Origin: 'https://foreign.example' })).response.status, 403);
+  assert.equal(inspectAPIRequest(candidate({ 'Content-Length': String(12 * 1024 * 1024 + 1) })).response.status, 413);
+  assert.equal(inspectAPIRequest(candidate({ 'Content-Encoding': 'gzip' })).response.status, 415);
+  assert.equal(inspectAPIRequest(candidate({ 'Content-Type': 'text/plain' })).response.status, 415);
+  assert.equal(inspectAPIRequest(request('/api/customer-intake', { method: 'POST', headers: { 'Content-Type': 'multipart/form-data; boundary=synthetic' }, body: 'synthetic' })).response.status, 415);
+  assert.equal(inspectAPIRequest(request('/api/customer-identity', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' })).response.status, 401);
+});
 test('limited byte reader stops chunked oversize without trusting Content-Length', async () => {
   let cancelled = false;
   const stream = new ReadableStream({ start(c) { c.enqueue(new Uint8Array(4)); c.enqueue(new Uint8Array(4)); }, cancel() { cancelled = true; } });

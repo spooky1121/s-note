@@ -9,6 +9,7 @@ export const API_POLICIES = Object.freeze({
   '/api/encar-auto-price': { methods: ['GET', 'POST'], limit: 30, maximum: 2048, publicNavigationGet: true },
   '/api/customer-intake': { methods: ['GET', 'POST'], limit: 120, maximum: 64 * 1024, publicPost: true },
   '/api/customer-identity': { methods: ['GET', 'POST'], limit: 240, maximum: 32 * 1024 },
+  '/api/registration': { methods: ['GET', 'POST'], limit: 120, maximum: 12 * 1024 * 1024, publicPost: true, contentTypes: ['application/json', 'multipart/form-data'] },
   '/api/income-settlement': { methods: ['GET', 'POST'], limit: 240, maximum: 64 * 1024 },
   '/api/profile-phone': { methods: ['POST'], limit: 60, maximum: 4096 },
   '/api/document-mms': { methods: ['POST'], limit: 60, maximum: 300000 },
@@ -75,7 +76,7 @@ export function inspectAPIRequest(request) {
     if (length !== null && (!/^\d+$/.test(length) || Number(length) > policy.maximum)) return { response: securityResponse('PAYLOAD_TOO_LARGE') };
     if (request.headers.has('Content-Encoding') && request.headers.get('Content-Encoding') !== 'identity') return { response: securityResponse('UNSUPPORTED_MEDIA_TYPE') };
     const type = (request.headers.get('Content-Type') || '').split(';')[0].trim().toLowerCase();
-    if (!(policy.image ? ['image/jpeg', 'image/png', 'image/webp'].includes(type) : type === 'application/json')) return { response: securityResponse('UNSUPPORTED_MEDIA_TYPE') };
+    if (!(policy.contentTypes ? policy.contentTypes.includes(type) : policy.image ? ['image/jpeg', 'image/png', 'image/webp'].includes(type) : type === 'application/json')) return { response: securityResponse('UNSUPPORTED_MEDIA_TYPE') };
   }
   return { policy, path: url.pathname };
 }
