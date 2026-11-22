@@ -34,7 +34,7 @@ async function bounds(p,kind){return p.evaluate(kind=>{
  },kind);}
 function contained(m){
  for(const [name,b]of [['paper',m.paper],['controls',m.controls],...m.buttons.map((b,i)=>['button'+i,b])])assert(b.x>=-.6&&b.y>=-.6&&b.right<=m.width+.6&&b.bottom<=m.height+.6,name+' must stay within viewport '+JSON.stringify(m));
- assert.equal(m.docOverflow,0);assert(m.rootScroll<=1,'Overlay must not need vertical scrolling');assert(m.cardScroll<=1,'Editable sheet must not need card scrolling '+JSON.stringify(m));assert(m.paper.right<=m.controls.x+.6,'External actions must not cover the paper');assert(m.scale>0&&m.scale<=1);
+ assert.equal(m.docOverflow,0);assert(m.rootScroll<=1,'Overlay must not need vertical scrolling');assert(m.cardScroll<=1,'Editable sheet must not need card scrolling '+JSON.stringify(m));assert(m.controls.bottom+8<=m.paper.y,'Document actions must sit above the paper with a clear gap');assert(m.controls.x>=m.paper.x-.6&&m.controls.right<=m.paper.right+1.1,'Actions must align with the paper width '+JSON.stringify(m));assert.equal(m.buttons.length,2);assert(m.buttons[0].right<=m.buttons[1].x+.6,'Print and close must form a horizontal row');assert(m.scale>0&&m.scale<=1);
 }
 async function nativePrint(f,kind,width,height){
  const p=f.page,root=kind==='contract'?'#contract-overlay':'#zc76-receipt-overlay',before=await p.evaluate(()=>__docViewport.prints);

@@ -19,7 +19,9 @@
    try{naturalWidth=Math.max(paper.offsetWidth,paper.scrollWidth);naturalHeight=Math.max(paper.offsetHeight,paper.scrollHeight);}
    finally{if(previousZoom)paper.style.setProperty('zoom',previousZoom,priority);else paper.style.removeProperty('zoom');}
    if(!(naturalWidth>0&&naturalHeight>0))continue;
-   const availableWidth=Math.max(1,width-68),availableHeight=Math.max(1,height-28);
+   const controls=holder.querySelector('.snote-document-controls'),controlsSpace=Math.ceil(controls?.getBoundingClientRect().height||44)+12;
+   property(root,'--snote-document-controls-space',controlsSpace+'px');
+   const availableWidth=Math.max(1,width-24),availableHeight=Math.max(1,height-28-controlsSpace);
    let scale=Math.max(.03,Math.min(1,availableWidth/naturalWidth,availableHeight/naturalHeight)),box;
    // Auto-sized rows and browser font hinting can grow a few pixels under zoom.
    // Resolve that rounding in this frame, rather than chasing it frame to frame.
@@ -33,7 +35,7 @@
    const scaledWidth=Math.ceil(box.width),scaledHeight=Math.ceil(box.height)+2;
    property(root,'--snote-document-width',scaledWidth+'px');
    property(root,'--snote-document-height',scaledHeight+'px');
-   property(root,'--snote-document-frame-width',(scaledWidth+44)+'px');
+   property(root,'--snote-document-frame-width',scaledWidth+'px');
   }
  }
  function queue(){if(!frame)frame=requestAnimationFrame(fit);}
