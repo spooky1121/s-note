@@ -102,6 +102,30 @@ test('invalid or old static catalogs reject readiness and never expose legacy/pa
  const insecure=fixture(raw,{crypto:{}});await assert.rejects(insecure.api.ready,{code:'CATALOG_INTEGRITY_UNAVAILABLE'});assert.equal(insecure.api.rows().length,0);
 });
 
+test('a failed first-use JSON attempt can be retried once without publishing partial rows or duplicate fetches',async()=>{
+ let attempts=0;const gate=deferred(),f=fixture(raw,{fetch:()=>{attempts++;if(attempts===1)throw Error('synthetic offline');return gate.promise;}});
+ const first=f.api.ready;await assert.rejects(first,{code:'CATALOG_LOAD_FAILED'});
+ assert.equal(f.api.ready,first,'Reading a failed result must not silently refetch');assert.equal(attempts,1);assert.equal(f.api.rows().length,0);assert.deepEqual(f.events,[]);
+ const retry=f.api.load();assert.notEqual(retry,first);assert.equal(f.api.load(),retry);assert.equal(f.api.ready,retry);assert.equal(attempts,2);
+ assert.equal(f.api.rows().length,0);gate.resolve({ok:true,text:async()=>raw});assert.equal(await retry,f.api);
+ assert.equal(f.api.load(),retry);assert.equal(attempts,2);assert.equal(f.api.rows().length,3128);assert.equal(f.events.length,1);
+});
+
+test('retry after invalid JSON remains fail-closed until a complete valid catalogue is verified',async()=>{
+ let attempts=0;const invalid=json(data);invalid.records.pop();
+ const f=fixture(raw,{fetch:async()=>({ok:true,text:async()=>++attempts<3?JSON.stringify(invalid):raw})});
+ await assert.rejects(f.api.ready);await assert.rejects(f.api.load());assert.equal(f.api.rows().length,0);assert.equal(f.api.version(),null);assert.equal(f.api.manifestSha256(),null);assert.deepEqual(f.events,[]);
+ await f.api.load();assert.equal(attempts,3);assert.equal(f.api.rows().length,3128);assert.equal(f.events.length,1);
+});
+
+test('server verification can retry catalogue readiness while sharing the same context and static fetch',async()=>{
+ let attempts=0;const f=fixture(raw,{fetch:async()=>{if(++attempts===1)throw Error('synthetic offline');return{ok:true,text:async()=>raw};}});
+ await assert.rejects(f.api.ready);let reads=0;
+ const first=f.api.refreshFromServer(async()=>{reads++;return remote();},'synthetic-scope');
+ const duplicate=f.api.refreshFromServer(async()=>{throw Error('duplicate');},'synthetic-scope');assert.equal(first,duplicate);
+ await first;assert.equal(attempts,2);assert.equal(reads,1);assert.equal(f.api.rows().length,3128);
+});
+
 test('server acceptance requires current version, raw-document hash and exact ID/payload set',async()=>{
  const {api}=fixture();await api.ready;const before=json(api.rows());
  const valid=remote();valid.entries.reverse();valid.entries=valid.entries.map(row=>Object.fromEntries(Object.entries(row).reverse()));

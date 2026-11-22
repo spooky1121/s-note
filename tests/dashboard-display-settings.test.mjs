@@ -21,6 +21,18 @@ test('head initialization is immediate, safely hidden before a confirmed read an
  const h=harness();assert.equal(h.api.hidden(),true);assert.equal(h.api.markup(),'');assert.equal(typeof h.api.render,'function');vm.runInNewContext(source,h.g);assert.equal(h.handlers.change.length,1);assert.equal(h.handlers.click.length,1);
 });
 
+test('preparing the first workspace exposes a disabled setting without reading optional metadata',async()=>{
+ const h=harness(),c=h.cloud();await h.api.prepare(c.account);
+ assert.equal(c.loads,0);assert.equal(h.api.hidden(),true);assert.match(h.api.markup(),/data-state="loading"/);assert.match(h.api.markup(),/role="switch"[^>]*disabled/);assert(h.events.every(event=>event.detail.hidden===true));
+ await h.api.load(c.account);assert.equal(c.loads,1);assert.equal(h.api.hidden(),false);assert.equal(h.reads,0);assert.equal(h.writes,0);
+});
+
+test('replacing an unstarted prepared account never reads or displays its preference',async()=>{
+ const h=harness(),a=h.cloud();await h.api.prepare(a.account);
+ const b=h.cloud({username:'cld_other',role:'admin'});await h.api.prepare(b.account);assert.equal(a.loads,0);assert.equal(b.loads,0);assert.equal(h.api.hidden(),true);
+ await h.api.load(b.account);assert.equal(a.loads,0);assert.equal(b.loads,1);assert.equal(h.api.hidden(),false);
+});
+
 test('a new local preference defaults OFF, survives reload per account and emits no finance-lock event',async()=>{
  const h=harness();await h.load({username:'demo-A',role:'dealer'});assert.equal(h.api.hidden(),false);assert.match(h.api.markup(),/대시보드 수익 숨기기/);assert.match(h.api.markup(),/role="switch"/);await h.change(true);assert.equal(h.api.hidden(),true);assert.deepEqual(JSON.parse(h.storage.get(h.key('demo-A'))),{schemaVersion:1,hidden:true});
  const restored=harness();restored.storage.set(restored.key('demo-A'),h.storage.get(h.key('demo-A')));await restored.load({username:'demo-A',role:'dealer'});assert.equal(restored.api.hidden(),true);await restored.load({username:'demo-B',role:'admin'});assert.equal(restored.api.hidden(),false);assert(h.events.every(event=>event.type==='snote:dashboard-display-changed'));assert(h.events.some(event=>event.detail.source==='save'));

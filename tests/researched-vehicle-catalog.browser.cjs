@@ -73,8 +73,10 @@ async function register(page,row,index){
  await openAdd(page);await choose(page,'new',row);
  const plate='91가'+String(index).padStart(4,'0');
  await page.locator('#new-plate').fill(plate);await page.locator('#new-year').fill('2025');
- await page.locator('#new-km').fill('1000');await page.locator('#new-buy').fill('1000000');await page.locator('#new-sell').fill('1500000');
- await page.locator('#new-purchase-date').fill('2026-11-01');
+ await page.locator('#new-km').fill('1000');await page.locator('#new-purchase-date').fill('2026-11-01');
+ await page.locator('#purchase-registration-next').click();
+ await page.locator('#new-buy').fill('1000000');await page.locator('#new-sell').fill('1500000');
+ await page.locator('#purchase-registration-next').click();
  const preview=await page.locator('#new-visual-preview').textContent();
  assert(!/research-[a-f0-9]{24}/.test(preview),'Preview must resolve the selected leaf to its real labels');
  const previewAlt=await page.locator('#new-visual-preview img').getAttribute('alt');
@@ -83,6 +85,8 @@ async function register(page,row,index){
  await page.locator('#overlay [type=submit]').click();
  await page.waitForFunction(plate=>__encarFixtureCars.some(car=>car.plate===plate),plate);
  await page.locator('#overlay.open').waitFor({state:'hidden'});
+ await page.locator('#snote-purchase-registration-success').waitFor({state:'visible'});
+ await page.locator('#snote-purchase-registration-success').waitFor({state:'hidden'});
  const saved=await page.evaluate(plate=>SnoteMoney.car(__encarFixtureCars.find(car=>car.plate===plate)),plate);
  assert.equal(saved.make,row.make);assert.equal(saved.group,row.group);assert.equal(saved.generation,row.model);
  assert.equal(saved.grade,row.grade);assert.equal(saved.subgrade,row.subgrade);
@@ -185,7 +189,7 @@ async function delayedInitialCatalogue(f){
  const gate=new Promise(resolve=>release=resolve);
  await p.route('**/assets/vehicle-catalog.json*',async route=>{requested=true;await gate;return route.fulfill({contentType:'application/json',body:fs.readFileSync(path.join(ROOT,'assets/vehicle-catalog.json'))});});
  await p.goto(ORIGIN,{waitUntil:'domcontentloaded'});
- await p.waitForFunction(()=>!!window.SnoteVehicleCatalog&&!!window.__encarFixtureAuth);await p.evaluate(()=>window.__encarFixtureAuth);
+ await p.waitForFunction(()=>!!window.__encarFixtureAuth);await p.evaluate(()=>window.__encarFixtureAuth);
  await p.evaluate(async alias=>{await enterWorkspace({username:alias,name:'지연 로딩 검증 딜러',company:'합성 상사',role:'dealer',employeeNo:'TEST',union:''});document.getElementById('zc-cloud-gate').hidden=true;openAdd();},ALIAS);
  await p.waitForTimeout(100);assert.equal(requested,true);
  const before=await p.locator('#new-make option').evaluateAll(options=>options.map(option=>option.value));
@@ -204,7 +208,7 @@ async function coldDetailCatalogue(f,edit='none'){
  let release,requested=false;const gate=new Promise(resolve=>release=resolve);
  await p.route('**/assets/vehicle-catalog.json*',async route=>{requested=true;await gate;return route.fulfill({contentType:'application/json',body:fs.readFileSync(path.join(ROOT,'assets/vehicle-catalog.json'))});});
  await p.goto(ORIGIN,{waitUntil:'domcontentloaded'});
- await p.waitForFunction(()=>!!window.SnoteVehicleCatalog&&!!window.__encarFixtureAuth);await p.evaluate(()=>window.__encarFixtureAuth);
+ await p.waitForFunction(()=>!!window.__encarFixtureAuth);await p.evaluate(()=>window.__encarFixtureAuth);
  await p.evaluate(async({alias,car,actor,company})=>{
   await enterWorkspace({username:alias,name:'지연 상세 검증 딜러',company:'합성 상사',role:'dealer',employeeNo:'TEST',union:''});
   cars=normalizedCars([SnoteMoney.storeCar(car)],alias);
@@ -218,7 +222,7 @@ async function coldDetailCatalogue(f,edit='none'){
    }
   };S.ready=true;document.getElementById('zc-cloud-gate').hidden=true;openVehicle(car.id);
  },{alias:ALIAS,car:saved,actor:ACTOR,company:COMPANY});
- await p.locator('#vehicle-overlay.open').waitFor();assert.equal(requested,true);
+ await p.locator('#vehicle-overlay.open').waitFor();await p.waitForFunction(()=>!!window.SnoteVehicleCatalog);assert.equal(requested,true);
  assert.equal(await p.evaluate(()=>window.SnoteVehicleCatalog.rows().length),0);
  const initial=await p.evaluate(()=>({identity:getDetailModel(),classification:snote282DetailState(),dirty:snoteVehicleHasChanges()}));
  for(const key of IDENTITY)assert.equal(initial.identity[key],saved[key]);
