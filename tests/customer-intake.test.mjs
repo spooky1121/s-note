@@ -158,7 +158,7 @@ test('production aliases do not permit cross-origin requests, lookalikes, HTTP, 
     const env = { ...ENV, CUSTOMER_INTAKE_PUBLIC_ORIGIN: canonical };
     for (const requestOrigin of foreign) for (const method of ['GET', 'POST']) {
       const { result, body } = await call({ action: 'info', token: TOKEN }, { env, method, requestOrigin, origin: requestOrigin });
-      assert.equal(result.status, 403, canonical + ' / ' + requestOrigin); assert.equal(body.code, 'FORBIDDEN');
+      assert.equal(result.status, 403, canonical + ' / ' + requestOrigin); assert.equal(body.code, 'ORIGIN_NOT_ALLOWED');
     }
     for (const requestOrigin of PRODUCTION_ORIGINS) {
       for (const origin of PRODUCTION_ORIGINS.filter(value => value !== requestOrigin)) {
@@ -836,4 +836,22 @@ test('authenticated intake lists expose only validated receipt snapshots and kee
   receipt = undefined; const old = await list(); assert.equal(Object.hasOwn(old.body.requests[0].submission, 'receiptDetails'), false);
   receipt = { ...RECEIPT, arbitraryHtml: '<script>PRIVATE_SCRIPT</script>' }; const malformed = await list(); assert.equal(malformed.body.code, 'UPSTREAM_ERROR'); assert.equal(JSON.stringify(malformed.body).includes('PRIVATE_SCRIPT'), false);
   receipt = RECEIPT; unsigned = true; assert.equal((await list()).body.code, 'UPSTREAM_ERROR', 'Receipt claims without their original signature cannot become signed confirmation');
+});
+
+test('shared KRW and legacy intake snapshots keep the same advertised amount without a second conversion', async t => {
+  let snapshot = CAR;
+  const calls = mock(t, entry => {
+    assert.ok(entry.url.endsWith('/snote_intake_view_v2'));
+    return response({ ok: true, status: 'pending', car: snapshot });
+  });
+  for (const [fields, expected] of [
+    [{ sell: 5490 }, 54900000], [{ moneyUnit: 'KRW', sell: 54900000 }, 54900000],
+    [{ moneyUnit: 'KRW', sell: '54900000' }, 54900000], [{ moneyUnit: 'KRW', sell: 1.5 }, null],
+    [{ moneyUnit: 'KRW', sell: -1 }, null], [{ sell: '5490.1234' }, 54901234]
+  ]) {
+    snapshot = { ...CAR, ...fields };
+    const result = await call({ action: 'info', token: TOKEN });
+    assert.equal(result.result.status, 200); assert.equal(result.body.car.sellWon, expected);
+  }
+  assert.equal(calls.length, 6);
 });

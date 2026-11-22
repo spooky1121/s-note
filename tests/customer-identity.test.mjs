@@ -171,3 +171,87 @@ test('lost or missing crypto configuration fails clearly while a newly added ded
   assert.equal(missing.body.code, 'RRN_SETUP_REQUIRED');
   assert.ok(calls.every(c => c.options.method === 'GET'));
 });
+
+const SHARED_IDS = ['sc:aaaaaaaa-0000-4000-8000-000000000001', 'sc:aaaaaaaa-0000-4000-8000-000000000002'];
+function sharedContext(id) {
+  return { ok: true, carId: id, companyId: COMPANY, ownerId: USER, car: { id },
+    source: { companyId: OTHER, ownerId: OTHER, carId: 'foreign-original' },
+    access: { invitationId: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', version: 2 } };
+}
+function sharedMock(t, { contexts = null, rows = [], denied = false } = {}) {
+  const previous = globalThis.fetch, calls = [];
+  globalThis.fetch = async (url, options) => {
+    const u = new URL(url); calls.push({ url: u, options });
+    assert.equal(options.headers.Authorization, `Bearer ${JWT}`);
+    assert.equal(options.headers.apikey, ENV.SUPABASE_PUBLISHABLE_KEY);
+    assert.equal(options.redirect, 'manual');
+    if (u.pathname.startsWith('/rest/v1/rpc/')) {
+      assert.equal(options.method, 'POST');
+      const body = JSON.parse(options.body);
+      if (denied) return answer({ code: '42501' }, 403);
+      if (u.pathname.endsWith('/snote_shared_contract_access_many')) {
+        assert.deepEqual(body, { p_car_ids: SHARED_IDS });
+        return answer(contexts || SHARED_IDS.map(sharedContext));
+      }
+      assert.equal(u.pathname, '/rest/v1/rpc/snote_shared_contract_access');
+      assert.deepEqual(body, { p_car_id: SHARED_IDS[0] });
+      return answer(contexts || sharedContext(SHARED_IDS[0]));
+    }
+    assert.equal(options.method, 'GET');
+    if (u.pathname === '/auth/v1/user') return answer({ id: USER });
+    if (u.pathname === '/rest/v1/zc_members') return answer([member]);
+    assert.equal(u.pathname, '/rest/v1/zc_customers', 'Shared identity never requests the source owner dataset');
+    assert.equal(u.searchParams.get('company_id'), `eq.${COMPANY}`);
+    assert.equal(u.searchParams.get('owner_id'), `eq.${USER}`);
+    return answer(rows);
+  };
+  t.after(() => { globalThis.fetch = previous; }); return calls;
+}
+
+test('shared contract identity encrypts only after current grant RPC and binds ciphertext to recipient + virtual ID', async t => {
+  const calls = sharedMock(t);
+  const result = await call({ action: 'encrypt', carId: SHARED_IDS[0], value: VALUE });
+  assert.equal(result.result.status, 200);
+  const [, iv, ciphertext] = result.body.identityCipher.split('.'), bytes = Buffer.from(ciphertext, 'hex');
+  const decipher = createDecipheriv('aes-256-gcm', KEY, Buffer.from(iv, 'hex'));
+  decipher.setAAD(Buffer.from('snote-manual-identity:v1:' + JSON.stringify([COMPANY, USER, SHARED_IDS[0]])));
+  decipher.setAuthTag(bytes.subarray(-16));
+  assert.equal(Buffer.concat([decipher.update(bytes.subarray(0, -16)), decipher.final()]).toString(), VALUE);
+  assert.equal(calls.filter(c => c.url.pathname.startsWith('/rest/v1/rpc/')).length, 1);
+  assert.equal(calls.some(c => c.url.pathname === '/rest/v1/zc_customers'), false);
+  assert.equal(JSON.stringify(result.body).includes(VALUE), false);
+});
+
+test('mixed owned/shared identity reads coalesce grant checks and read only recipient private rows', async t => {
+  const rows = [...SHARED_IDS.map(car_id => ({ car_id, identity: envelope(VALUE, { carId: car_id }) })), { car_id: 'owned', identity: envelope('1234567890', { carId: 'owned' }) }];
+  const calls = sharedMock(t, { rows });
+  const result = await call({ action: 'read-many', carIds: [...SHARED_IDS, 'owned', SHARED_IDS[0]] });
+  assert.equal(result.result.status, 200);
+  assert.deepEqual(result.body.identities, [...SHARED_IDS.map(carId => ({ carId, value: VALUE })), { carId: 'owned', value: '1234567890' }]);
+  assert.equal(calls.filter(c => c.url.pathname.startsWith('/rest/v1/rpc/')).length, 1);
+  assert.equal(calls.filter(c => c.url.pathname === '/rest/v1/zc_customers').length, 1);
+});
+
+test('shared revoke/downgrade denies both encrypt and read before private customer access', async t => {
+  const calls = sharedMock(t, { denied: true });
+  for (const body of [{ action: 'encrypt', carId: SHARED_IDS[0], value: VALUE }, { action: 'read', carId: SHARED_IDS[0] }, { action: 'read-many', carIds: SHARED_IDS }]) {
+    const result = await call(body); assert.equal(result.result.status, 403); assert.equal(result.body.code, 'FORBIDDEN');
+    assert.equal(JSON.stringify(result.body).includes(VALUE), false);
+  }
+  assert.equal(calls.some(c => c.url.pathname === '/rest/v1/zc_customers'), false);
+});
+
+test('shared identity rejects wrong recipient, company, ID and malformed reserved identifiers', async t => {
+  let context = sharedContext(SHARED_IDS[0]); const prior = globalThis.fetch;
+  // A getter lets each response be checked without issuing a different account request.
+  const source = { get ok() { return context.ok; }, get carId() { return context.carId; }, get companyId() { return context.companyId; }, get ownerId() { return context.ownerId; }, get car() { return context.car; }, get source() { return context.source; }, get access() { return context.access; } };
+  const calls = sharedMock(t, { contexts: source });
+  for (const patch of [{ ownerId: OTHER }, { companyId: OTHER }, { carId: SHARED_IDS[1] }, { car: { id: SHARED_IDS[1] } }, { access: { invitationId: 'invalid', version: 2 } }]) {
+    context = { ...sharedContext(SHARED_IDS[0]), ...patch };
+    assert.equal((await call({ action: 'read', carId: SHARED_IDS[0] })).result.status, 403);
+  }
+  for (const id of ['SC:aaaaaaaa-0000-4000-8000-000000000001', 'sc:not-a-context'])
+    assert.equal((await call({ action: 'read', carId: id })).result.status, 400);
+  assert.equal(calls.some(c => c.url.pathname === '/rest/v1/zc_customers'), false);
+  assert.notEqual(globalThis.fetch, prior);
+});

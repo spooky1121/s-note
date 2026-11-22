@@ -29,8 +29,10 @@
   function currentContext() {
     const user = typeof currentUser !== 'undefined' ? currentUser : null;
     const carId = typeof zc72SaleCarId !== 'undefined' ? zc72SaleCarId : null;
-    const activeId = typeof activeCarId !== 'undefined' ? activeCarId : null;
-    const car = typeof cars !== 'undefined' && Array.isArray(cars) ? cars.find(item => item.id === carId) : null;
+    const activeId = window.snoteWorkActiveId?.() ?? (typeof activeCarId !== 'undefined' ? activeCarId : null);
+    const work = window.SnoteContractWork?.context?.(carId);
+    const available = !work || window.SnoteContractWork?.current?.(work) === true;
+    const car = available ? window.snoteWorkCar?.(carId) || (typeof cars !== 'undefined' && Array.isArray(cars) ? cars.find(item => item.id === carId) : null) : null;
     return { user, carId, activeId, car, cloud: window.zc86Cloud };
   }
 
@@ -191,7 +193,7 @@
 
   function message(s, content, kind = '', notify = true, returnFocus) {
     if (!isCurrent(s)) return;
-    const popup = !!content && ['error', 'success'].includes(kind) && typeof window.snoteNotify === 'function';
+    const popup = notify && !!content && ['error', 'success'].includes(kind) && typeof window.snoteNotify === 'function';
     s.message.textContent = content;
     s.message.className = 'snote-intake-message' + (kind ? ' is-' + kind : '');
     s.message.hidden = popup;
@@ -199,6 +201,8 @@
   }
 
   function failure(error, action) {
+    if (error?.code === 'ORIGIN_NOT_ALLOWED')
+      return '접속 주소와 고객 입력 서비스의 운영 주소가 일치하지 않습니다. 접속 주소 설정을 확인해 주세요.';
     if (error?.status === 401 || ['UNAUTHORIZED', 'AUTH_REQUIRED', 'INVALID_JWT'].includes(error?.code))
       return '로그인이 만료되었습니다. 다시 로그인한 뒤 이용해 주세요.';
     if (error?.code === 'RRN_SETUP_REQUIRED')
@@ -215,7 +219,7 @@
       return '문자 접수 여부를 확인하지 못했습니다. 다시 보내기 전에 요청 상태와 고객 수신 여부를 확인해 주세요.';
     if (error?.status === 503)
       return '고객 입력 서비스에 일시적으로 연결할 수 없습니다. 입력한 번호는 유지됩니다. 잠시 후 새로고침해 주세요.';
-    if (error?.code === 'FORBIDDEN') return '본인 담당 차량만 이용할 수 있습니다. 담당 딜러와 차량 상태를 확인해 주세요.';
+    if (error?.code === 'FORBIDDEN') return '고객 입력 권한을 확인하지 못했습니다. 차량 저장 상태와 이용 권한을 확인한 뒤 다시 확인해 주세요.';
     if (error?.code === 'RATE_LIMITED') {
       const seconds = Number(error.retryAfter);
       return Number.isFinite(seconds) && seconds > 0
@@ -267,6 +271,8 @@
     s.create.disabled = s.busy || s.reading || s.blocked || !s.canCreate;
     s.phone.disabled = s.busy || !s.canCreate;
     s.copy.disabled = s.busy || !s.link;
+    s.retry.hidden = !s.listError && !s.blocked;
+    s.retry.disabled = s.busy || s.reading;
     s.create.textContent = s.busy ? '처리 중…' : '입력 링크 문자 보내기';
     for (const item of s.list.querySelectorAll('button')) item.disabled = s.busy || s.reading;
   }
@@ -325,16 +331,17 @@
 
   function schedule(s) {
     clearTimeout(s.timer);
-    if (!isCurrent(s) || document.hidden || s.blocked) return;
+    if (!isCurrent(s) || document.hidden || s.blocked || s.listError) return;
     s.timer = setTimeout(() => refresh(s, false), 10000);
   }
 
   async function refresh(s, manual) {
-    if (!isCurrent(s) || document.hidden || s.reading || s.busy || window.SnoteMessages?.active()) { schedule(s); return; }
+    if (!isCurrent(s) || document.hidden || s.reading || s.busy || window.SnoteMessages?.active()) { schedule(s); return false; }
+    if (!manual && (s.blocked || s.listError)) return false;
     s.reading = true;
     controls(s);
     if (manual) message(s, '요청 내역을 확인하는 중입니다.');
-    let candidate = null;
+    let candidate = null, loaded = false;
     try {
       const result = await request(s, 'list', { carId: s.carId });
       if (!isCurrent(s)) return;
@@ -344,6 +351,7 @@
       s.blocked = false;
       s.listError = '';
       s.loaded = true;
+      loaded = true;
       if (s.link && !s.requests.some(item => item.id === s.link.id && !item.revokedAt &&
           item.status !== 'revoked' && item.status !== 'expired' &&
           !(item.expiresAt && new Date(item.expiresAt).getTime() <= Date.now()))) s.link = null;
@@ -353,10 +361,12 @@
         .sort((a, b) => (new Date(b.submittedAt).getTime() || 0) - (new Date(a.submittedAt).getTime() || 0))[0] || null;
     } catch (error) {
       if (!isCurrent(s)) return;
-      if ([401, 403, 503].includes(error?.status)) s.blocked = true;
+      s.blocked = [401, 503].includes(error?.status);
       const content = failure(error, 'list');
-      message(s, content, 'error', manual || s.listError !== content);
+      s.loaded = false;
+      if ([401, 403].includes(error?.status)) { s.requests = []; s.link = null; renderRequests(s); }
       s.listError = content;
+      message(s, content, 'error', false);
     } finally {
       if (isCurrent(s)) { s.reading = false; controls(s); schedule(s); }
     }
@@ -365,6 +375,30 @@
           (typeof zc72SaleLoading !== 'undefined' && zc72SaleLoading)) arrival(s, candidate);
       else await loadSubmission(s, candidate, { automatic: true });
     }
+    return loaded && isCurrent(s);
+  }
+
+  async function retry(s) {
+    if (!isCurrent(s) || s.busy || s.reading) return false;
+    s.busy = true;
+    clearTimeout(s.timer);
+    controls(s);
+    message(s, '차량 저장 상태와 고객 입력 권한을 다시 확인하고 있습니다.');
+    let synced = false;
+    try {
+      const saved = await s.cloud.flush();
+      if (!isCurrent(s)) return false;
+      if (saved?.ok !== true || s.cloud.conflict) throw {};
+      synced = true;
+    } catch (_) {
+      if (isCurrent(s)) {
+        s.listError = '차량의 서버 저장 상태를 확인하지 못했습니다. 저장 상태를 확인한 뒤 다시 확인해 주세요.';
+        message(s, s.listError, 'error', false);
+      }
+    } finally {
+      if (isCurrent(s)) { s.busy = false; controls(s); }
+    }
+    return synced && isCurrent(s) ? refresh(s, true) : false;
   }
 
   async function create(s) {
@@ -375,6 +409,9 @@
       s.phone.focus();
       return;
     }
+    // A failed background read may race the vehicle's server acknowledgement.
+    // Retry the scoped read after saving; never send while its permission is unknown.
+    if ((!s.loaded || s.listError) && (!await retry(s) || !isCurrent(s) || digits(s.phone.value) !== phone)) return;
     const pending = () => JSON.stringify(s.requests.filter(item => requestStatus(item)[1] === 'pending').map(item => [item.id, item.status, item.expiresAt, item.revokedAt]));
     const previous = pending();
     const valid = () => isCurrent(s) && !s.busy && !s.reading && !s.blocked && s.canCreate &&
@@ -549,7 +586,7 @@
       if (automatic && item.canonicalApplied === true) delete byId('zc72-sale-modal').dataset.snoteHistoryDirty;
       message(s, automatic ? '고객이 제출한 정보를 판매 입력칸에 자동으로 채웠습니다.' : '판매 입력칸에 불러왔습니다. 내용을 확인한 뒤 고객정보 저장 또는 기존 문서 절차로 저장해 주세요.', 'success');
     } catch (error) {
-      if (isCurrent(s)) { if (automatic) s.manualOnly.add(submissionKey(item)); message(s, failure(error, 'read-rrn'), 'error'); }
+      if (isCurrent(s)) { if (automatic) s.manualOnly.add(submissionKey(item)); message(s, failure(error, 'read-rrn'), 'error', !automatic); }
     } finally {
       rrn = '';
       if (isCurrent(s)) { s.busy = false; controls(s); schedule(s); }
@@ -576,7 +613,7 @@
       return;
     }
     if (context.car.ownerId !== context.user.username) {
-      unavailable(panel, '본인 담당 차량만 링크를 보낼 수 있습니다. 이 차량의 담당 딜러에게 요청해 주세요.');
+      unavailable(panel, '이 차량의 고객 입력 권한을 확인할 수 없습니다. 담당자 또는 공유 권한을 확인해 주세요.');
       return;
     }
     const s = {
@@ -590,6 +627,9 @@
     state = s;
     const head = node('div', 'snote-intake-head');
     head.append(node('h3', 'snote-intake-heading', '고객 직접 입력'));
+    s.retry = button('다시 확인', 'snote-intake-button is-quiet', () => retry(s));
+    s.retry.id = 'snote-intake-retry';
+    head.append(s.retry);
     const line = node('div', 'snote-intake-compose');
     const label = node('label', 'snote-intake-phone-label', '문자 받을 휴대전화');
     label.htmlFor = 'snote-intake-phone';
@@ -632,7 +672,7 @@
     if (!s) return;
     clearTimeout(s.timer);
     if (!isCurrent(s)) { close(); return; }
-    if (!document.hidden) refresh(s, false);
+    if (!document.hidden && !s.blocked && !s.listError) refresh(s, false);
   });
   document.addEventListener('reset', event => {
     if (event.target?.id === 'zc72-sale-form') {
@@ -665,8 +705,13 @@
   window.snoteResolveDocumentCustomer = async function(customer, current = () => true) {
     if (!customer || signatureValue(customer.customerSignature)) return customer;
     const actor = typeof currentUser !== 'undefined' ? currentUser : null, cloud = window.zc86Cloud;
-    const owned = () => current() && actor && currentUser === actor && cloud === window.zc86Cloud && cloud?.ready === true &&
-      customer.ownerId === actor.username && typeof cars !== 'undefined' && cars.some(car => String(car.id) === String(customer.carId) && car.ownerId === actor.username);
+    const work = window.SnoteContractWork?.context?.(customer.carId);
+    const owned = () => {
+      if (!current() || !actor || currentUser !== actor || cloud !== window.zc86Cloud || cloud?.ready !== true || customer.ownerId !== actor.username) return false;
+      if (/^sc:/i.test(String(customer.carId))) return !!work && window.SnoteContractWork?.current?.(work) === true && work.car?.ownerId === actor.username;
+      const car = window.snoteWorkCar?.(customer.carId) || (typeof cars !== 'undefined' ? cars.find(item => String(item.id) === String(customer.carId)) : null);
+      return car?.ownerId === actor.username;
+    };
     if (!cloud?.ready || !actor || customer.ownerId !== actor.username) return customer;
     if (!owned()) throw Error('문서의 고객이나 차량이 변경되었습니다.');
     const token = await cloud.getAccessToken();

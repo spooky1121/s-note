@@ -7,7 +7,7 @@ const UUID = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i;
 const DIGITS = /^(?:\d{10}|\d{13})$/;
 const ERRORS = {
   UNAUTHORIZED: [401, '로그인이 필요합니다. 다시 로그인해 주세요.'],
-  FORBIDDEN: [403, '본인 소속과 담당 고객·차량의 정보만 이용할 수 있습니다.'],
+  FORBIDDEN: [403, '고객·차량 정보를 이용할 권한을 확인하지 못했습니다.'],
   VALIDATION_ERROR: [400, '요청 형식과 입력 내용을 확인해 주세요.'],
   PAYLOAD_TOO_LARGE: [413, '요청 크기가 허용 범위를 초과했습니다.'],
   UNSUPPORTED_MEDIA_TYPE: [415, 'JSON 요청만 사용할 수 있습니다.'],
@@ -79,13 +79,13 @@ async function bodyJson(request) {
     return await Promise.race([read(), new Promise((_, reject) => { timer = setTimeout(() => { void reader.cancel().catch(() => {}); reject(new IdentityError('VALIDATION_ERROR')); }, 5000); })]);
   } finally { clearTimeout(timer); }
 }
-async function get(config, jwt, path, query, maxBytes = 2 * 1024 * 1024) {
+async function queryAPI(config, jwt, path, query, maxBytes = 2 * 1024 * 1024, payload = null) {
   const url = new URL(config.supabase + path);
   for (const [name, value] of Object.entries(query || {})) url.searchParams.set(name, value);
   if (url.href.length > 16000) fail('VALIDATION_ERROR');
   const controller = new AbortController(); const timer = setTimeout(() => controller.abort(), 15000);
   try {
-    const result = await fetch(url.href, { method: 'GET', headers: { apikey: config.publishable, Authorization: `Bearer ${jwt}`, Accept: 'application/json' }, signal: controller.signal, redirect: 'manual' });
+    const result = await fetch(url.href, { method: payload === null ? 'GET' : 'POST', headers: { apikey: config.publishable, Authorization: `Bearer ${jwt}`, Accept: 'application/json', ...(payload === null ? {} : { 'Content-Type': 'application/json' }) }, ...(payload === null ? {} : { body: JSON.stringify(payload) }), signal: controller.signal, redirect: 'manual' });
     if (result.status >= 300 && result.status < 400) { void result.body?.cancel().catch(() => {}); fail('UPSTREAM_ERROR'); }
     if (result.status === 401) { void result.body?.cancel().catch(() => {}); fail('UNAUTHORIZED'); }
     if (result.status === 403) { void result.body?.cancel().catch(() => {}); fail('FORBIDDEN'); }
@@ -99,9 +99,9 @@ async function get(config, jwt, path, query, maxBytes = 2 * 1024 * 1024) {
   finally { clearTimeout(timer); }
 }
 async function authenticate(config, jwt) {
-  const user = await get(config, jwt, '/auth/v1/user', null, 64 * 1024);
+  const user = await queryAPI(config, jwt, '/auth/v1/user', null, 64 * 1024);
   if (!object(user) || !UUID.test(user.id || '')) fail('UNAUTHORIZED');
-  const members = await get(config, jwt, '/rest/v1/zc_members', { select: 'user_id,company_id,role,active', user_id: `eq.${user.id}`, active: 'eq.true', limit: '2' }, 64 * 1024);
+  const members = await queryAPI(config, jwt, '/rest/v1/zc_members', { select: 'user_id,company_id,role,active', user_id: `eq.${user.id}`, active: 'eq.true', limit: '2' }, 64 * 1024);
   if (!Array.isArray(members)) fail('UPSTREAM_ERROR');
   if (members.length !== 1) fail('FORBIDDEN');
   const member = members[0];
@@ -109,11 +109,30 @@ async function authenticate(config, jwt) {
   return { owner: user.id, company: member.company_id };
 }
 function own(context) { return { company_id: `eq.${context.company}`, owner_id: `eq.${context.owner}` }; }
+function sharedCar(id) {
+  if (!/^sc:/i.test(id)) return false;
+  if (!/^sc:[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/.test(id)) fail('VALIDATION_ERROR');
+  return true;
+}
+async function confirmSharedCars(config, jwt, context, ids) {
+  const shared = ids.filter(sharedCar); if (!shared.length) return;
+  const many = shared.length > 1, result = await queryAPI(config, jwt, '/rest/v1/rpc/snote_shared_contract_access' + (many ? '_many' : ''), null, 512 * 1024,
+    many ? { p_car_ids: shared } : { p_car_id: shared[0] });
+  const rows = many ? result : [result], seen = new Set();
+  if (!Array.isArray(rows) || rows.length !== shared.length) fail('FORBIDDEN');
+  for (const row of rows) {
+    if (!object(row) || row.ok !== true || row.companyId !== context.company || row.ownerId !== context.owner ||
+        !shared.includes(row.carId) || seen.has(row.carId) || row.car?.id !== row.carId || typeof row.source?.carId !== 'string' || !row.source.carId || row.source.carId.length > 200 || !UUID.test(row.source?.companyId || '') ||
+        !UUID.test(row.source?.ownerId || '') || !UUID.test(row.access?.invitationId || '') || !Number.isSafeInteger(row.access?.version) || row.access.version < 1) fail('FORBIDDEN');
+    seen.add(row.carId);
+  }
+}
 async function confirmCar(config, jwt, context, id) {
-  const existing = await get(config, jwt, '/rest/v1/zc_customers', { select: 'car_id', ...own(context), car_id: `eq.${id}`, limit: '1' }, 32 * 1024);
+  if (sharedCar(id)) { await confirmSharedCars(config, jwt, context, [id]); return; }
+  const existing = await queryAPI(config, jwt, '/rest/v1/zc_customers', { select: 'car_id', ...own(context), car_id: `eq.${id}`, limit: '1' }, 32 * 1024);
   if (!Array.isArray(existing)) fail('UPSTREAM_ERROR');
   if (existing.some(row => object(row) && row.car_id === id)) return;
-  const datasets = await get(config, jwt, '/rest/v1/zc_datasets', { select: 'payload', ...own(context), dataset: 'eq.cars', limit: '1' });
+  const datasets = await queryAPI(config, jwt, '/rest/v1/zc_datasets', { select: 'payload', ...own(context), dataset: 'eq.cars', limit: '1' });
   if (!Array.isArray(datasets)) fail('UPSTREAM_ERROR');
   if (!datasets.some(row => Array.isArray(row?.payload) && row.payload.some(car => object(car) && String(car.id) === id))) fail('FORBIDDEN');
 }
@@ -126,7 +145,8 @@ async function decrypt(keys, context, id, envelope) {
 }
 function inFilter(ids) { return `in.(${ids.map(id => '"' + id.replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"').join(',')})`; }
 async function read(config, jwt, context, ids, keys) {
-  const rows = await get(config, jwt, '/rest/v1/zc_customers', { select: 'car_id,identity:payload->identityCipher', ...own(context), car_id: ids.length === 1 ? `eq.${ids[0]}` : inFilter(ids), limit: String(ids.length) });
+  await confirmSharedCars(config, jwt, context, ids);
+  const rows = await queryAPI(config, jwt, '/rest/v1/zc_customers', { select: 'car_id,identity:payload->identityCipher', ...own(context), car_id: ids.length === 1 ? `eq.${ids[0]}` : inFilter(ids), limit: String(ids.length) });
   if (!Array.isArray(rows)) fail('UPSTREAM_ERROR');
   const requested = new Set(ids); const byId = new Map();
   for (const row of rows) {
