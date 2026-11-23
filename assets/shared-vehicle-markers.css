@@ -2,10 +2,10 @@
  .snote-shared-vehicle-marker{display:inline-flex;align-items:center;justify-content:center;flex:none;line-height:1;vertical-align:middle;color:#315cf5}
  .snote-shared-vehicle-marker>svg{display:block;width:100%;height:100%;max-width:100%;fill:none;stroke:currentColor;pointer-events:none}
  #snote-app #list-screen .car-thumb{position:relative}
- #snote-app #list-screen .car-thumb>.snote-shared-vehicle-marker--photo{position:absolute;top:0;right:auto;left:0;z-index:4;width:53.3333%;height:auto;aspect-ratio:1;box-sizing:border-box;margin:0;padding:4px;border:0;border-radius:0;background:transparent;box-shadow:none;color:#1d4ed8;opacity:.78;cursor:inherit;pointer-events:none}
+ #snote-app #list-screen .car-thumb>.snote-shared-vehicle-marker--photo{position:absolute;top:0;right:auto;left:0;z-index:4;width:66.6667%;height:auto;aspect-ratio:1;box-sizing:border-box;margin:0;padding:4px;border:0;border-radius:0;background:transparent;box-shadow:none;color:#1d4ed8;opacity:.78;cursor:inherit;pointer-events:none}
  #snote-app #list-screen .car-thumb>.snote-shared-vehicle-marker--photo>svg{stroke-width:2.4}
- #snote-app #list-screen .snote-shared-vehicle-marker--list-title{width:14px;height:14px;margin:0 0 0 5px;vertical-align:-2px;pointer-events:none}
- #vehicle-title>.snote-shared-vehicle-marker--title{width:20px;height:20px;margin:0;align-self:center}
+ #snote-app #list-screen .snote-shared-vehicle-marker--list-title,#vehicle-title>.snote-shared-vehicle-marker--title{width:auto;height:auto;margin:0 6px 2px 0;padding:2px 6px;border:1px solid #7dd3fc;border-radius:5px;background:#e0f2fe;color:#075985;font-size:12px;font-weight:650;line-height:1.35;letter-spacing:0;vertical-align:1px;white-space:nowrap;pointer-events:none}
+ #vehicle-title>.snote-shared-vehicle-marker--title{margin:0;align-self:center}
  #vehicle-title:has(>.snote-shared-vehicle-marker--title){display:inline-flex;align-items:center;column-gap:8px;vertical-align:middle}
  #vehicle-title:has(>.snote-shared-vehicle-marker--title)>.snote-shared-vehicle-marker--title{margin-left:0}
  #snote-app #list-table tr.is-shared-vehicle>td{background:#f3fae9!important}
