@@ -107,8 +107,20 @@ test('multipart reserves duplicates first, uploads two immutable private files, 
     assert.match(document.path, new RegExp('^' + prepared.p_id + '/' + slot + '/[a-f0-9-]{36}\\.(png|webp)$')); assert.equal(Object.hasOwn(document, 'url'), false);
     const upload = state.uploads[index]; assert.equal(upload.headers.get('x-upsert'), 'false'); assert.equal(upload.headers.get('Content-Type'), mime); assert.deepEqual(Buffer.from(upload.body), bytes);
   }
-  const auth = state.authCalls[0]; assert.equal(auth.url.searchParams.get('redirect_to'), ORIGIN + '/'); assert.equal(auth.body.password, PASSWORD); assert.deepEqual(auth.body.data, { snote_registration: { version: 2, request_id: prepared.p_id } });
+  const auth = state.authCalls[0]; assert.equal(auth.url.searchParams.get('redirect_to'), 'https://s-note.kr/'); assert.equal(auth.body.password, PASSWORD); assert.deepEqual(auth.body.data, { snote_registration: { version: 2, request_id: prepared.p_id } });
   assert.deepEqual(Object.keys(auth.body).sort(), ['data', 'email', 'password']); assert.equal(state.deletes.length, 0); assert(!JSON.stringify(result.body).includes(prepared.p_id));
+});
+test('legacy, Pages and production signup confirmations always return to the canonical app', async t => {
+  const state = fixture(t);
+  const origins = ['https://zerocar-office.pages.dev', 'https://s-note.pages.dev', 'https://s-note.kr', 'https://www.s-note.kr', 'https://signup-test.s-note.pages.dev'];
+  for (const origin of origins) for (const kind of ['representative', 'dealer']) {
+    const result = await call(form({ profile: { ...PROFILE, kind } }), { origin, requestOrigin: origin });
+    assert.equal(result.status, 200); assertPrivate(result);
+    assert.equal(state.prepared.p_profile.kind, kind, 'Canonical navigation cannot alter the selected registration role');
+    const auth = state.authCalls.at(-1); assert.equal(auth.url.searchParams.get('redirect_to'), 'https://s-note.kr/');
+    assert.equal(auth.url.searchParams.size, 1, 'Only the fixed return URL is sent; no legacy path or caller URL is propagated');
+  }
+  assert.equal(state.authCalls.length, origins.length * 2);
 });
 test('JPEG evidence and dealer profiles follow the same private flow', async t => {
   const state = fixture(t); const result = await call(form({ profile: { ...PROFILE, kind: 'dealer' }, business: { bytes: JPEG, type: 'image/jpeg', name: 'business-camera.jpg' } }));
@@ -173,7 +185,7 @@ test('redirects never forward secret headers; redirects after Auth are uncertain
 });
 test('invalid fields, metadata overrides and duplicated multipart fields fail before prepare', async t => {
   const state = fixture(t);
-  const bad = [form({ profile: { ...PROFILE, kind: 'admin' } }), form({ profile: { ...PROFILE, role: 'admin' } }), form({ profile: { ...PROFILE, email: 'not-an-email' } }), form({ password: 'too-short' }), form({ extra: [['password', PASSWORD]] }), form({ extra: [['emailRedirectTo', 'https://foreign.invalid']] }), form({ business: null }), form({ dealer: null }), form({ business: null, dealer: null })];
+  const bad = [form({ profile: { ...PROFILE, kind: 'admin' } }), form({ profile: { ...PROFILE, role: 'admin' } }), form({ profile: { ...PROFILE, email: 'not-an-email' } }), form({ password: 'too-short' }), form({ extra: [['password', PASSWORD]] }), ...['emailRedirectTo', 'redirectTo', 'redirect_to'].map(key => form({ extra: [[key, 'https://foreign.invalid']] })), form({ business: null }), form({ dealer: null }), form({ business: null, dealer: null })];
   for (const body of bad) { const result = await call(body); assert.equal(result.status, 400); assert.equal(result.body.code, 'INVALID_REQUEST'); assertPrivate(result); }
   assert.equal(state.prepared, null); assert.equal(state.uploads.length, 0); assert.equal(state.authCalls.length, 0);
 });

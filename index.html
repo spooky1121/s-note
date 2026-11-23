@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.196">
+<html lang="ko" data-snote-release="2.197">
 <head>
 <meta charset="utf-8" />
 <link rel="stylesheet" href="assets/message-popup.css?v=2.172">
@@ -8920,6 +8920,7 @@ document.addEventListener('click',async event=>{
      <div class="snote-auth-complete-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></svg></div>
      <h3>가입 안내</h3>
      <p id="snote-signup-complete-message" aria-live="polite" aria-atomic="true"></p>
+     <p>공식 접속 주소: <a id="snote-signup-access-url" href="https://s-note.kr/">https://s-note.kr/</a></p>
      <button type="button" class="zc-btn" id="snote-signup-login">로그인으로</button>
     </section>
 
@@ -8991,6 +8992,7 @@ document.addEventListener('click',async event=>{
 const S={client:null,user:null,company:null,members:[],alias:null,ready:false,busy:false,loading:false,
  revisions:new Map(),companyOwners:new Map(),carScopes:new WeakMap(),queue:new Set(),timer:null,saving:false,conflict:false,authPassword:null};
 const NIL='00000000-0000-0000-0000-000000000000';
+const SNOTE_SIGNUP_URL='https://s-note.kr/';
 const BUCKET='zc-vehicle-private';
 const byId=id=>document.getElementById(id);
 const gate=byId('zc-cloud-gate'),setup=byId('zc-cloud-setup'),login=byId('zc-cloud-login'),info=byId('zc-cloud-message'),status=byId('zc-cloud-status');
@@ -9726,7 +9728,7 @@ async function registerAccount(kind){
  S.busy=true;button.disabled=true;button.textContent='가입 처리 중…';snoteSetAuthNavigationBusy(true);msg('');
  try{
   const client=await requireAuthClient();
-  const {data,error}=await client.auth.signUp({email,password,options:{emailRedirectTo:location.origin+location.pathname,data:{snote_registration:profile}}});
+  const {data,error}=await client.auth.signUp({email,password,options:{emailRedirectTo:SNOTE_SIGNUP_URL,data:{snote_registration:profile}}});
   if(error)throw error;
   if(!data?.user||Array.isArray(data.user.identities)&&data.user.identities.length===0){
    throw Error('이미 등록된 이메일일 수 있습니다. 기존 계정으로 로그인하거나 인증 메일을 확인해 주세요.');
@@ -11398,7 +11400,7 @@ byId('zc86-invite-create').addEventListener('click',async()=>{
   const {data,error}=await client.rpc('zc_issue_invite',{p_email:email,p_role:role});if(!current())return;if(error)throw error;
   const code=typeof data==='string'?data:data?.code||data?.token;
   if(!code||!/^[A-Za-z0-9_-]{16,200}$/.test(code))throw Error('발급된 초대코드를 확인하지 못했습니다.');
-  const url=new URL(location.origin+location.pathname);url.hash=new URLSearchParams({invite:code}).toString();
+  const url=new URL(SNOTE_SIGNUP_URL);url.hash=new URLSearchParams({invite:code}).toString();
   result.replaceChildren();
   const text=document.createElement('span');text.textContent=email+' · '+(role==='dealer'?'딜러':'경리')+' 초대 (48시간 유효)';
   const link=document.createElement('input');link.type='text';link.readOnly=true;link.value=url.toString();link.setAttribute('aria-label','직원 가입 초대 링크');
@@ -11455,7 +11457,8 @@ function snoteShowAuth(mode,writeURL=true,replaceURL=false){
 byId('zc86-register').addEventListener('click',()=>snoteShowAuth('admin'));
 byId('snote-dealer-register').addEventListener('click',()=>snoteShowAuth('dealer'));
 byId('snote-invite-open').addEventListener('click',()=>snoteShowAuth('staff'));
-for(const id of ['snote-auth-back','snote-signup-login'])byId(id).addEventListener('click',()=>snoteShowAuth('login'));
+byId('snote-auth-back').addEventListener('click',()=>snoteShowAuth('login'));
+byId('snote-signup-login').addEventListener('click',()=>{if(S.busy)return;if(location.origin===new URL(SNOTE_SIGNUP_URL).origin)snoteShowAuth('login');else location.assign(SNOTE_SIGNUP_URL);});
 for(const kind of ['staff']){
  byId('snote-'+kind+'-signup').addEventListener('submit',e=>{e.preventDefault();registerAccount('invite');});
  const confirmation=byId('snote-'+kind+'-password-confirm');
@@ -12012,7 +12015,7 @@ window.zc86Cloud={getAccessToken:async()=>{const client=S.client,user=S.user,com
 <link rel="stylesheet" href="assets/workspace-reorder.css?v=2.136">
 <script src="assets/workspace-order-store.js?v=2.135" defer></script>
 <script src="assets/workspace-reorder.js?v=2.172" defer></script>
-<script src="assets/release-info.js?v=2.196" defer></script>
+<script src="assets/release-info.js?v=2.197" defer></script>
 <link rel="stylesheet" href="assets/encar-id.css?v=2.162">
 <script src="assets/encar-id.js?v=2.184" defer></script>
 <script src="assets/company-purchase.js?v=2.172" defer></script>

@@ -42,7 +42,7 @@ const profile = { kind: 'dealer', companyName: '가상 신규 상사', businessN
           for (const doc of body.p_documents) { assert(doc.path.startsWith(body.p_id + '/' + doc.slot + '/')); assert.match(doc.sha256, /^[a-f0-9]{64}$/); assert.equal(doc.size, PNG.length); }
           return WorkerResponse.json({ ok: true, id: body.p_id });
         }
-        if (rpc === 'snote_registration_ready') { assert.equal(body.p_id, prepared.p_id); assert.equal(calls.filter(p => p.startsWith('/storage/v1/object/')).length, 2); return WorkerResponse.json({ ok: true }); }
+        if (rpc === 'snote_registration_ready') { assert.equal(body.p_id, prepared.p_id); assert.equal(calls.filter(p => p.startsWith('/storage/v1/object/snote-registration-documents/' + prepared.p_id + '/')).length, 2); return WorkerResponse.json({ ok: true }); }
         throw Error('Unexpected RPC: ' + rpc);
       }
       if (url.pathname.startsWith('/storage/v1/object/snote-registration-documents/')) {
@@ -57,16 +57,16 @@ const profile = { kind: 'dealer', companyName: '가상 신규 상사', businessN
       assert(!request.headers.get('Authorization')?.includes(ENV.SUPABASE_SERVICE_ROLE_KEY));
       const body = await request.json(); assert.equal(body.email, EMAIL); assert.equal(body.password, PASSWORD);
       assert.equal(body.data.snote_registration.request_id, prepared.p_id);
-      assert.equal(url.searchParams.get('redirect_to'), ORIGIN + '/');
+      assert.equal(url.searchParams.get('redirect_to'), 'https://s-note.kr/');
       return WorkerResponse.json({ id: USER, email: EMAIL, identities: [{ id: USER, provider: 'email' }] });
     }
   };
   // Miniflare supports both v4 and v5; convert only where that API exists.
   const runtime = new Miniflare(typeof convertV4MiniflareOptions === 'function' ? { ...convertV4MiniflareOptions(options), telemetry: { enabled: false } } : options);
-  const send = async (body, headers = {}) => {
+  const send = async (body, headers = {}, origin = ORIGIN) => {
     // Encode with the browser-compatible client Request first. The test tool's
     // Undici and Node have different FormData brands; the Worker receives HTTP bytes.
-    const request = new Request(ORIGIN + '/api/registration', { method: 'POST', headers: { Origin: ORIGIN, 'CF-Connecting-IP': '192.0.2.189', ...headers }, body });
+    const request = new Request(origin + '/api/registration', { method: 'POST', headers: { Origin: origin, 'CF-Connecting-IP': '192.0.2.189', ...headers }, body });
     return runtime.dispatchFetch(request.url, { method: request.method, headers: request.headers, body: await request.arrayBuffer() });
   };
   const form = () => { const data = new FormData(); data.set('profile', JSON.stringify(profile)); data.set('password', PASSWORD); data.set('businessCertificate', new Blob([PNG], { type: 'image/png' }), 'business.png'); data.set('dealerLicense', new Blob([PNG], { type: 'image/png' }), 'dealer.png'); return data; };
@@ -79,10 +79,16 @@ const profile = { kind: 'dealer', companyName: '가상 신규 상사', businessN
     assert.equal(result.status, 200, JSON.stringify(value)); assert.equal(value.confirmationRequired, true); assert.equal(value.session, null);
     assert(!JSON.stringify(value).includes(PASSWORD)); assert(!JSON.stringify(value).includes(ENV.SUPABASE_SERVICE_ROLE_KEY)); assert(!JSON.stringify(value).includes('snote-registration-documents'));
     assert.equal(calls.filter(path => path === '/auth/v1/signup').length, 1);
+    for (const origin of ['https://zerocar-office.pages.dev', 'https://s-note.pages.dev', 'https://s-note.kr']) {
+      const response = await send(form(), {}, origin), pending = await response.json();
+      assert.equal(response.status, 200); assert.equal(pending.confirmationRequired, true);
+    }
+    assert.equal(calls.filter(path => path === '/auth/v1/signup').length, 4, 'All same-origin signup hosts send the same canonical confirmation return URL');
+    assert.equal(calls.filter(path => path.startsWith('/storage/v1/object/')).length, 8, 'Every signup reserves and uploads both private documents before Auth');
     rejectCompany = true; const before = calls.length, duplicate = await send(form());
     assert.equal(duplicate.status, 409); assert.equal((await duplicate.json()).error, '등록되어 있는 상사입니다. 채팅으로 문의 부탁드립니다');
     assert(!calls.slice(before).some(path => path.startsWith('/storage/') || path.startsWith('/auth/')), 'A duplicate cannot upload or create Auth');
     const foreign = await send(JSON.stringify({ action: 'check-company', companyName: profile.companyName }), { Origin: 'https://foreign.invalid', 'Content-Type': 'application/json' }); assert.equal(foreign.status, 403);
-    console.log('PASS actual Pages/workerd registration: public route, JSON availability, native multipart images, private Storage, public-key Auth, confirmation pending, duplicate-before-write, secret isolation and origin refusal; synthetic network only.');
+    console.log('PASS actual Pages/workerd registration: public route, JSON availability, native multipart images, private Storage, public-key Auth, canonical confirmation return from legacy/Pages/production hosts, duplicate-before-write, secret isolation and origin refusal; synthetic network only.');
   } finally { await runtime.dispose(); }
 })().catch(error => { console.error(error); process.exitCode = 1; });
