@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.198">
+<html lang="ko" data-snote-release="2.199">
 <head>
 <meta charset="utf-8" />
 <link rel="stylesheet" href="assets/message-popup.css?v=2.172">
@@ -3221,7 +3221,7 @@ button, input, select, textarea { font-family: inherit; }
 <script src="assets/settings-refinement.js?v=2.61" defer></script>
 <link rel="stylesheet" href="assets/profile-notification-badge.css?v=2.165">
 <script src="assets/profile-notification-badge.js?v=2.165" defer></script>
-<script src="assets/vehicle-notifications.js?v=2.172" defer></script>
+<script src="assets/vehicle-notifications.js?v=2.199" defer></script>
 <link rel="stylesheet" href="assets/close-controls.css?v=2.166">
 <script src="assets/close-controls.js?v=2.166" defer></script>
 <link rel="stylesheet" href="assets/recycle-bin.css?v=2.77">
@@ -3341,7 +3341,7 @@ button, input, select, textarea { font-family: inherit; }
 <div class="zc-register-visual" id="new-visual-preview" aria-live="polite"></div>
 <div id="new-grade-custom-wrapper" hidden><input id="new-grade-custom" type="hidden"></div>
 <div class="formitem wide" id="manual-model-wrapper" style="display:none"><label for="new-model">등록증에 표시된 차량명 *</label><input id="new-model" oninput="updateNewCarPreview()" placeholder="예: 제조사 모델명 세대 등급" maxlength="100" /></div>
-<div class="formitem"><label for="new-plate">차량번호</label><input id="new-plate" placeholder="예: 123가4567" maxlength="15" /></div><div class="formitem"><label for="new-vin">차대번호 (선택)</label><input id="new-vin" type="text" maxlength="25" autocomplete="off" autocapitalize="characters" placeholder="자동등록 기능 확장 예정" /></div><div class="formitem"><label for="new-year">연식</label><input id="new-year" type="number" placeholder="2026" min="1970" max="2035" oninput="newYearTouched=true" /></div><div class="formitem"><label for="new-color-trigger">차량 색상</label><div class="color-picker" id="new-color-picker"><button id="new-color-trigger" class="color-trigger" type="button" aria-haspopup="listbox" aria-expanded="false" onclick="toggleColorPicker('new')"><span class="color-bar" id="new-color-swatch"></span><span id="new-color-caption" class="color-caption">색상 선택</span><span class="color-caret">⌄</span></button><div id="new-color-menu" class="color-menu" role="listbox" aria-label="차량 색상 목록"></div><select id="new-color" aria-hidden="true" tabindex="-1" hidden></select></div></div><div class="formitem"><label for="new-km">주행거리 (km)</label><input id="new-km" type="text" inputmode="numeric" maxlength="9" pattern="[0-9,]*" placeholder="예: 43,200" value="" oninput="formatMileageInput(this)" /></div><div class="formitem"><label for="new-purchase-date">매입 날짜</label><input id="new-purchase-date" type="date" onclick="openDateInputCalendar(this)" /></div><div class="formitem"><label for="new-buy">매입가 (원) *</label><input id="new-buy" type="text" class="detail-money-input" inputmode="numeric" placeholder="25,000,000" min="0" step="1" required oninput="updateAddSummary()" /></div><div class="formitem"><label for="new-sell">판매예정가 (원)</label><input id="new-sell" type="text" class="detail-money-input" inputmode="numeric" placeholder="28,000,000" min="0" step="1" oninput="updateAddSummary()" /></div><div class="add-subtitle">차량 매입 부대비용 </div><div class="cost-fieldgrid"><div class="formitem"><label for="new-bodywork">차량판금비용 (원)</label><input id="new-bodywork" type="text" class="detail-money-input" min="0" max="1000000000000" step="1" value="0" inputmode="numeric" oninput="updateAddSummary()" /></div><div class="formitem"><label for="new-polish">차량광택비용 (원)</label><input id="new-polish" type="text" class="detail-money-input" min="0" max="1000000000000" step="1" value="0" inputmode="numeric" oninput="updateAddSummary()" /></div><div class="formitem"><label for="new-performanceInspection">성능점검비</label><input id="new-performanceInspection" type="text" class="detail-money-input" min="0" max="1000000000000" step="1" value="0" inputmode="numeric" oninput="updateAddSummary()" /></div><div class="formitem"><label for="new-advertising">광고비용 (원)</label><input id="new-advertising" type="text" class="detail-money-input" min="0" max="1000000000000" step="1" value="0" inputmode="numeric" oninput="updateAddSummary()" /></div><div class="formitem"><label for="new-purchaseFee">매입수수료 (원)</label><input id="new-purchaseFee" type="text" class="detail-money-input" min="0" max="1000000000000" step="1" value="0" inputmode="numeric" oninput="updateAddSummary()" /></div><div class="formitem"><label for="new-purchaseOther">매입비 (원)</label><input id="new-purchaseOther" type="text" class="detail-money-input" min="0" max="1000000000000" step="1" value="0" inputmode="numeric" oninput="updateAddSummary()" /></div><div class="formitem"><label for="new-acquisitionTax">취득세 (원)</label><input id="new-acquisitionTax" type="text" class="detail-money-input" min="0" max="1000000000000" step="1" value="0" inputmode="numeric" oninput="updateAddSummary()" /></div><div class="formitem"><label for="new-incomeTax">소득세 (원)</label><input id="new-incomeTax" type="text" class="detail-money-input" min="0" max="1000000000000" step="1" value="0" inputmode="numeric" oninput="updateAddSummary()" /></div></div><div class="repair-group"><div class="repair-top"><div><strong>추가비용</strong><span>수리 항목별 메모와 금액을 입력하세요.</span></div><button class="section-button" type="button" onclick="addRepairRow('new')">＋ 수리 항목 추가</button></div><div class="repair-rows" id="new-repair-items"></div><div class="repair-total">수리비 합계 <strong id="new-repair-total">0원</strong></div></div>
+<div class="formitem"><label for="new-plate">차량번호</label><input id="new-plate" placeholder="예: 123가4567" maxlength="15" /></div><div class="formitem"><label for="new-vin">차대번호 (선택)</label><input id="new-vin" type="text" maxlength="25" autocomplete="off" autocapitalize="characters" placeholder="자동등록 기능 확장 예정" /></div><div class="formitem"><label for="new-year">연식</label><input id="new-year" type="number" placeholder="2026" min="1970" max="2035" oninput="newYearTouched=true" /></div><div class="formitem"><label for="new-color-trigger">차량 색상</label><div class="color-picker" id="new-color-picker"><button id="new-color-trigger" class="color-trigger" type="button" aria-haspopup="listbox" aria-expanded="false" onclick="toggleColorPicker('new')"><span class="color-bar" id="new-color-swatch"></span><span id="new-color-caption" class="color-caption">색상 선택</span><span class="color-caret">⌄</span></button><div id="new-color-menu" class="color-menu" role="listbox" aria-label="차량 색상 목록"></div><select id="new-color" aria-hidden="true" tabindex="-1" hidden></select></div></div><div class="formitem"><label for="new-km">주행거리 (km)</label><input id="new-km" type="text" inputmode="numeric" maxlength="9" pattern="[0-9,]*" placeholder="예: 43,200" value="" oninput="formatMileageInput(this)" /></div><div class="formitem"><label for="new-purchase-date">매입 날짜</label><input id="new-purchase-date" type="date" onclick="openDateInputCalendar(this)" /></div><div class="formitem"><label for="new-buy">매입가 (원) *</label><input id="new-buy" type="text" class="detail-money-input" inputmode="numeric" placeholder="25,000,000" min="0" step="1" required oninput="updateAddSummary()" /></div><div class="formitem"><label for="new-sell">판매예정가 (원)</label><input id="new-sell" type="text" class="detail-money-input" inputmode="numeric" placeholder="28,000,000" min="0" step="1" oninput="updateAddSummary()" /></div><div class="add-subtitle">차량 매입 부대비용 </div><div class="cost-fieldgrid"><div class="formitem"><label for="new-bodywork">차량판금비용 (원)</label><input id="new-bodywork" type="text" class="detail-money-input" min="0" max="1000000000000" step="1" value="0" inputmode="numeric" oninput="updateAddSummary()" /></div><div class="formitem"><label for="new-polish">차량광택비용 (원)</label><input id="new-polish" type="text" class="detail-money-input" min="0" max="1000000000000" step="1" value="0" inputmode="numeric" oninput="updateAddSummary()" /></div><div class="formitem"><label for="new-performanceInspection">성능보증보험료</label><input id="new-performanceInspection" type="text" class="detail-money-input" min="0" max="1000000000000" step="1" value="0" inputmode="numeric" oninput="updateAddSummary()" /></div><div class="formitem"><label for="new-advertising">광고비용 (원)</label><input id="new-advertising" type="text" class="detail-money-input" min="0" max="1000000000000" step="1" value="0" inputmode="numeric" oninput="updateAddSummary()" /></div><div class="formitem"><label for="new-purchaseFee">매입수수료 (원)</label><input id="new-purchaseFee" type="text" class="detail-money-input" min="0" max="1000000000000" step="1" value="0" inputmode="numeric" oninput="updateAddSummary()" /></div><div class="formitem"><label for="new-purchaseOther">매입비 (원)</label><input id="new-purchaseOther" type="text" class="detail-money-input" min="0" max="1000000000000" step="1" value="0" inputmode="numeric" oninput="updateAddSummary()" /></div><div class="formitem"><label for="new-acquisitionTax">취득세 (원)</label><input id="new-acquisitionTax" type="text" class="detail-money-input" min="0" max="1000000000000" step="1" value="0" inputmode="numeric" oninput="updateAddSummary()" /></div><div class="formitem"><label for="new-incomeTax">소득세 (원)</label><input id="new-incomeTax" type="text" class="detail-money-input" min="0" max="1000000000000" step="1" value="0" inputmode="numeric" oninput="updateAddSummary()" /></div></div><div class="repair-group"><div class="repair-top"><div><strong>추가비용</strong><span>수리 항목별 메모와 금액을 입력하세요.</span></div><button class="section-button" type="button" onclick="addRepairRow('new')">＋ 수리 항목 추가</button></div><div class="repair-rows" id="new-repair-items"></div><div class="repair-total">수리비 합계 <strong id="new-repair-total">0원</strong></div></div>
 <div class="cost-summary" id="add-cost-summary"></div><p class="cost-policy">※ 예상 수익은 매입가와 입력한 모든 부대비용(소득세 포함)을 차감한 단순 추정치입니다. 실제 세무상 이익과는 다를 수 있습니다.</p></div><p class="formtip">* 체험용 시안: 차량 정보·비용·사진은 현재 브라우저에만 저장됩니다. 다른 기기와 공유되지 않습니다.</p><div class="modal-actions"><button class="btn-ghost" type="button" onclick="closeAdd({animate:true})">취소</button><button type="submit" class="btn-primary">차량 등록하기</button></div></form></div>
 
 <!-- 차량별 사진과 서류 관리: 모든 이미지가 차량 고유 ID에 연결됩니다. -->
@@ -3427,8 +3427,8 @@ button, input, select, textarea { font-family: inherit; }
      <tr><td>취득세</td><td>7% 기준 예상액 · 차량별 상이</td><td id="quote-acquisition">0</td></tr>
      <tr><td>공채 할인비</td><td>원본 견적 방식의 참고 금액</td><td id="quote-bond">0</td></tr>
      <tr><td>증지대</td><td>이전 등록 수수료</td><td><input id="quote-stamp" inputmode="numeric" aria-label="증지대" placeholder="0" oninput="updateQuoteTotals()" /></td></tr>
-     <tr><td>보증보험료</td><td>필요 시 입력</td><td><input id="quote-insurance" inputmode="numeric" aria-label="보증보험료" value="0" oninput="updateQuoteTotals()" /></td></tr>
-     <tr><td>번호판 교체비</td><td>교체 시 발생</td><td><input id="quote-platefee" inputmode="numeric" aria-label="번호판 교체비" placeholder="0" oninput="updateQuoteTotals()" /></td></tr>
+     <tr><td>성능보증보험료</td><td>차량 부대비용 반영</td><td><input id="quote-insurance" inputmode="numeric" aria-label="성능보증보험료" value="0" oninput="updateQuoteTotals()" /></td></tr>
+     <tr><td>번호판 교체비</td><td>교체 시 발생</td><td><input id="quote-platefee" type="text" inputmode="text" maxlength="18" aria-label="번호판 교체비" placeholder="0" oninput="updateQuoteTotals()" /></td></tr>
      <tr><td>매도비</td><td>예시 금액 · 수정 가능</td><td><input id="quote-sellingfee" inputmode="numeric" aria-label="매도비" value="440,000" oninput="updateQuoteTotals()" /></td></tr>
      <tr><td>수수료</td><td>발생 시 입력</td><td><input id="quote-fee" inputmode="numeric" aria-label="수수료" placeholder="0" oninput="updateQuoteTotals()" /></td></tr>
      <tr class="q8-subtotal"><td>이전비용 소계</td><td></td><td id="quote-transfer-subtotal">0</td></tr>
@@ -4063,7 +4063,7 @@ function num(n){return Number(n).toLocaleString('ko-KR',{maximumFractionDigits:0
 
 /* v2.82: versioned research catalog. Previous selection arrays are archived in
    research/vehicle-taxonomy/runtime-integration/legacy-bundled-backup.json. */
-const COST_FIELDS=[["bodywork", "차량판금비용"], ["polish", "차량광택비용"], ["performanceInspection", "성능점검비"], ["advertising", "광고비용"], ["purchaseFee", "매입수수료"], ["purchaseOther", "매입비"], ["acquisitionTax", "취득세"], ["incomeTax", "소득세"]];
+const COST_FIELDS=[["bodywork", "차량판금비용"], ["polish", "차량광택비용"], ["performanceInspection", "성능보증보험료"], ["advertising", "광고비용"], ["purchaseFee", "매입수수료"], ["purchaseOther", "매입비"], ["acquisitionTax", "취득세"], ["incomeTax", "소득세"]];
 const DIRECT_COST_KEYS=['bodywork','polish','performanceInspection','repair','advertising','purchaseFee','purchaseOther','acquisitionTax','incomeTax','inventoryInterest'];
 let taxonomyDB=null, vehicleTaxonomy=[];
 function taxonomyOpen(){return new Promise((resolve,reject)=>{try{const req=indexedDB.open('snote-research-20261107-custom-taxonomy',1);req.onupgradeneeded=()=>{const db=req.result;if(!db.objectStoreNames.contains('entries'))db.createObjectStore('entries',{keyPath:'key'})};req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)}catch(e){reject(e)}})}
@@ -6649,9 +6649,14 @@ function updateDB(records,removeIds=[]){return new Promise((resolve,reject)=>{if
 /* v1.8: original S-NOTE premium A4 quotation; preserve v1.7 amount-calculation semantics. */
 let quoteCarId=null;
 let quoteVehiclePrice=0; // KRW; sell and soldPrice in app stored as 원
-function quoteComma(n){return Math.round(Number(n)||0).toLocaleString('ko-KR')}
+function quoteComma(n){return (Math.round(Number(n)||0)||0).toLocaleString('ko-KR')}
 function quoteReadInput(id){return Number(String($(id).value||'').replace(/[^0-9.-]/g,''))||0}
-function quoteFormatFields(){for(const id of ['quote-stamp','quote-insurance','quote-platefee','quote-sellingfee','quote-fee']){const el=$(id);if(!el)continue;const digits=el.value.replace(/\D/g,'').slice(0,13);if(!digits){el.value='';continue}el.value=Number(digits).toLocaleString('ko-KR')}}
+function quoteFormatFields(){for(const id of ['quote-stamp','quote-insurance','quote-platefee','quote-sellingfee','quote-fee']){
+ const el=$(id);if(!el)continue;
+ const negative=id==='quote-platefee'&&/^[-−]/u.test(el.value.trimStart()),digits=el.value.replace(/\D/g,'').slice(0,13);
+ if(!digits){el.value=negative?'-':'';continue;}
+ const amount=Number(digits);el.value=(negative?'-':'')+amount.toLocaleString('ko-KR');
+}}
 function updateQuoteTotals(){quoteFormatFields();const amount=quoteVehiclePrice;
  // 원본 엑셀: G9=B8*0.07, G10=(B8+700000)/1.1*12%*10%, G16=SUM(G9:G15)
  const acquisition=amount*0.07;const bond=(amount+700000)/1.1*0.12*0.10;
@@ -6751,13 +6756,14 @@ async function openQuotePreview(){
  $('quote-color').value=$('detail-color').value||c.color||'';
  const selling=c.status==='판매완료'?readDetailMoney($('detail-sold-price').value):readDetailMoney($('detail-sell').value);
  quoteVehiclePrice=Math.round((Number.isFinite(selling)&&selling>=0?selling:(c.status==='판매완료'?salePrice(c):c.sell)));
+ const insuranceField=$('detail-performanceInspection'),insurance=insuranceField?readDetailMoney(insuranceField.value):normalizeCosts(c).performanceInspection;
  $('quote-customer').value='VIP';
  const today=new Date();$('quote-date').value=[today.getFullYear(),String(today.getMonth()+1).padStart(2,'0'),String(today.getDate()).padStart(2,'0')].join('-');
  $('quote-dealer').textContent='담당자: '+dealerLabel(c);
  const quoteDealerAccount=dealerAccounts.find(account=>account.username===c.ownerId);
  const quoteDealerMobile=String((c.ownerId===currentUser.username?currentUser.phone:'')||quoteDealerAccount?.phone||'').replace(/\D/g,'');
  $('quote-dealer-phone').textContent=/^01[016789]\d{7,8}$/.test(quoteDealerMobile)?quoteDealerMobile.replace(/^(01\d)(\d{3,4})(\d{4})$/,'$1-$2-$3'):'';
- $('quote-stamp').value='';$('quote-insurance').value='0';$('quote-platefee').value='';$('quote-sellingfee').value='440,000';$('quote-fee').value='';
+ $('quote-stamp').value='';$('quote-insurance').value=quoteComma(Number.isFinite(insurance)&&insurance>=0?insurance:0);$('quote-platefee').value='';$('quote-sellingfee').value='440,000';$('quote-fee').value='';
  updateQuoteTotals();
  $('vehicle-overlay').classList.remove('open');$('vehicle-overlay').setAttribute('aria-hidden','true');
  $('quote-overlay').classList.add('open');$('quote-overlay').setAttribute('aria-hidden','false');
@@ -12036,7 +12042,7 @@ window.zc86Cloud={getAccessToken:async()=>{const client=S.client,user=S.user,com
 <link rel="stylesheet" href="assets/workspace-reorder.css?v=2.136">
 <script src="assets/workspace-order-store.js?v=2.135" defer></script>
 <script src="assets/workspace-reorder.js?v=2.172" defer></script>
-<script src="assets/release-info.js?v=2.198" defer></script>
+<script src="assets/release-info.js?v=2.199" defer></script>
 <link rel="stylesheet" href="assets/encar-id.css?v=2.162">
 <script src="assets/encar-id.js?v=2.184" defer></script>
 <script src="assets/company-purchase.js?v=2.172" defer></script>
@@ -12055,7 +12061,7 @@ window.zc86Cloud={getAccessToken:async()=>{const client=S.client,user=S.user,com
 <script src="assets/workspace-refine.js?v=2.178" defer></script>
 <script src="assets/snote-tutorial.js?v=2.96" defer></script>
 <script src="assets/snote-chatbot.js?v=2.165" defer></script>
-<script src="assets/vehicle-cost-settings.js?v=2.172" defer></script>
+<script src="assets/vehicle-cost-settings.js?v=2.199" defer></script>
 <link rel="stylesheet" href="assets/inventory-start-date.css?v=2.174">
 <script src="assets/inventory-start-date.js?v=2.174" defer></script>
 <script src="assets/drawer-motion.js?v=2.48" defer></script>
@@ -12075,8 +12081,8 @@ window.addEventListener('snote:payment-accounts-changed',()=>{if(typeof contract
 <link rel="stylesheet" href="assets/action-icons.css?v=2.162">
 <link rel="stylesheet" href="assets/login-refinement.css?v=2.162">
 <link rel="stylesheet" href="assets/vehicle-viewport.css?v=2.167">
-<link rel="stylesheet" href="assets/document-viewport.css?v=2.183">
-<script src="assets/document-viewport.js?v=2.184" defer></script>
+<link rel="stylesheet" href="assets/document-viewport.css?v=2.199">
+<script src="assets/document-viewport.js?v=2.199" defer></script>
 <link rel="stylesheet" href="assets/mobile-document-editor.css?v=2.184">
 <script src="assets/mobile-document-bootstrap.js?v=2.184" defer></script>
 <link rel="stylesheet" href="assets/shared-vehicle-detail.css?v=2.174">
