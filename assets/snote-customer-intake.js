@@ -591,8 +591,13 @@
     const before = formValues();
     if (automatic && (before !== s.baseline || s.unsavedImport)) { arrival(s, item); return; }
     const existingRrn = Boolean(byId('zc72-rrn')?.value), signature = submissionKey(item), source = item.submission;
-    const available = () => isCurrent(s) && s.requests.includes(item) && item.submission === source &&
-      submissionKey(item) === signature && !(typeof zc72SaleLoading !== 'undefined' && zc72SaleLoading);
+    const captured = currentContext(), resetEpoch = s.customerResetEpoch;
+    const available = () => {
+      const context = currentContext();
+      return isCurrent(s) && context.user === captured.user && context.car === captured.car && context.cloud === captured.cloud &&
+        s.customerResetEpoch === resetEpoch && s.requests.includes(item) && item.submission === source &&
+        submissionKey(item) === signature && !(typeof zc72SaleLoading !== 'undefined' && zc72SaleLoading);
+    };
     const unchanged = () => available() && !s.busy && !s.reading && formValues() === before;
     if (!automatic && readRrn && existingRrn) {
       if (!await window.snoteConfirm?.('판매 정보와 현재 입력된 주민번호를 고객이 제출한 정보로 바꾸시겠습니까?', { isCurrent: unchanged }) || !unchanged()) return;
@@ -638,6 +643,10 @@
         bank.append(option);
       }
       // The general customer mapper never receives a resident number.
+      // A new import must not retain an earlier request's signature while its
+      // canonical version is checked asynchronously, even for the same name.
+      s.selectedSubmission = null;
+      renderSignature(s, null);
       zc74LoadCustomer(values);
       renderReceiptDetails(s,values.receiptDetails);
       for (const id of FIELDS.filter(id => id !== 'zc72-rrn')) byId(id)?.dispatchEvent(new Event('input', { bubbles: true }));
@@ -647,8 +656,23 @@
         field.dispatchEvent(new Event('input', { bubbles: true }));
         field.dispatchEvent(new Event('change', { bubbles: true }));
       }
+      const imported = formValues();
+      const importedCurrent = () => available() && s.busy && !s.reading && formValues() === imported;
+      if (!importedCurrent()) return;
+      if (item.canonicalApplied === true && typeof window.snoteIntakeAdoptCustomerVersion === 'function') {
+        let adopted = false;
+        try { adopted = await window.snoteIntakeAdoptCustomerVersion({ car: captured.car, requestId: item.id, isCurrent: importedCurrent }); }
+        catch (_) { /* A failed authoritative read cannot unlock an old draft. */ }
+        if (!importedCurrent() || adopted !== true) {
+          if (isCurrent(s)) {
+            s.manualOnly.add(signature); s.unsavedImport = true;
+            message(s, '서버의 최신 고객 입력 상태를 확인하지 못했습니다. 현재 입력을 확인한 뒤 입력정보를 다시 불러와 주세요.', 'error', !automatic);
+          }
+          return;
+        }
+      }
       // Existing sale actions save customer records; this action only fills the current form.
-      s.baseline = formValues();
+      s.baseline = imported;
       s.applied.add(submissionKey(item)); s.appliedIds.add(item.id);
       s.unsavedImport = item.canonicalApplied !== true;
       s.signatureCleared = false;
@@ -694,7 +718,7 @@
     const s = {
       id: sequence, actor: context.user, username: context.user.username, role: context.user.role, carId: context.carId,
       cloud: context.cloud, canCreate: context.car.status !== '판매완료', controllers: new Set(),
-      requests: [], link: null, busy: false, reading: false, blocked: false, loaded: false, timer: null, setupDiagnosticsJob: null,
+      requests: [], link: null, busy: false, reading: false, blocked: false, loaded: false, timer: null, setupDiagnosticsJob: null, customerResetEpoch: 0,
       baseline: formValues(), applied: new Set(), appliedIds: new Set(), manualOnly: new Set(), selectedSubmission: null,
       unsavedImport: byId('zc72-sale-modal')?.dataset.snoteHistoryDirty === '1' || byId('zc72-sale-form')?.dataset.snote196ManualReset === '1'
     };
@@ -751,7 +775,7 @@
   });
   document.addEventListener('reset', event => {
     if (event.target?.id === 'zc72-sale-form') {
-      if(state&&isCurrent(state)){state.unsavedImport=true;state.signatureCleared=true;state.selectedSubmission=null;renderSignature(state,null);}
+      if(state&&isCurrent(state)){state.customerResetEpoch++;state.unsavedImport=true;state.signatureCleared=true;state.selectedSubmission=null;renderSignature(state,null);}
       fitSaleAddresses(true);
       const details=byId('snote-sale-receipt-details');if(details){details.replaceChildren();details.hidden=true;}
       const panel=byId('snote-sale-signature');if(panel)panel.replaceChildren(node('p','snote-sale-signature-empty','접수된 서명이 없습니다.'));
