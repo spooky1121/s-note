@@ -1,7 +1,7 @@
 /* Fit the complete editable sheet to both viewport axes without changing print geometry. */
 (()=>{'use strict';
  if(window.SnoteDocumentViewport)return;
- const specs=[['contract-overlay','contract-paper'],['zc76-receipt-overlay','zc76-receipt-paper']];
+ const specs=[['quote-overlay','quote-paper'],['contract-overlay','contract-paper'],['zc76-receipt-overlay','zc76-receipt-paper']];
  let frame=0;
  const property=(element,name,value)=>{if(element.style.getPropertyValue(name)!==value)element.style.setProperty(name,value);};
  function fit(){
@@ -10,6 +10,8 @@
   for(const [rootId,paperId]of specs){
    const root=document.getElementById(rootId),paper=document.getElementById(paperId),holder=root?.querySelector('.snote-popup-frame');
    if(!root||!paper||!holder||root.hidden||root.dataset.mobileDocumentEditor==='true'||root.hasAttribute('data-mobile-document-loading')||getComputedStyle(root).display==='none')continue;
+   // Quotations remain whole-sheet previews on mobile, including above an open keyboard.
+   if(rootId==='quote-overlay'){property(root,'--snote-document-viewport-height',height+'px');property(root,'--snote-document-viewport-top',(viewport?.offsetTop||0)+'px');}
    // Measuring an already zoomed auto-height sheet can round its height by a
    // pixel differently at each scale. Measure at 1 in the same animation frame
    // and restore before painting, so the action rail and sheet stay still.
@@ -40,13 +42,13 @@
   }
  }
  function queue(){if(!frame)frame=requestAnimationFrame(fit);}
- for(const name of ['resizeContractPreview','zc76FitReceipt']){const prior=window[name];if(typeof prior==='function')window[name]=function(...args){const value=prior.apply(this,args);queue();return value;};}
+ for(const name of ['resizeQuotePreview','resizeContractPreview','zc76FitReceipt']){const prior=window[name];if(typeof prior==='function')window[name]=function(...args){const value=prior.apply(this,args);queue();return value;};}
  const observer=new ResizeObserver(queue);
  for(const [,paperId]of specs){const paper=document.getElementById(paperId);if(paper)observer.observe(paper);}
  new MutationObserver(records=>{if(records.some(record=>specs.some(([id])=>{const root=document.getElementById(id);return root&&(record.target===root||root.contains(record.target));})))queue();}).observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['class','hidden','src']});
  window.addEventListener('resize',queue);window.addEventListener('afterprint',queue);
- window.visualViewport?.addEventListener('resize',queue);
- document.addEventListener('input',event=>{if(event.target.closest?.('#contract-paper,#zc76-receipt-paper'))queue();});
+ window.visualViewport?.addEventListener('resize',queue);window.visualViewport?.addEventListener('scroll',queue);
+ document.addEventListener('input',event=>{if(event.target.closest?.('#quote-paper,#contract-paper,#zc76-receipt-paper'))queue();});
  document.fonts?.ready.then(queue);document.fonts?.addEventListener('loadingdone',queue);
  window.SnoteDocumentViewport=Object.freeze({refresh:queue});queue();
 })();

@@ -1,21 +1,23 @@
 /* Personal cost-field visibility never changes vehicle amounts or accounting totals. */
 (function(global){'use strict';
  const UUID=/^custom-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i,MAX_FIELDS=32,MAX_WON=1000000000000;
- const FALLBACK=[['bodywork','차량판금비용'],['polish','차량광택비용'],['performanceInspection','성능점검비'],['advertising','광고비용'],['purchaseFee','매입수수료'],['purchaseOther','매입비'],['acquisitionTax','취득세'],['incomeTax','소득세']];
+ const FALLBACK=[['bodywork','차량판금비용'],['polish','차량광택비용'],['performanceInspection','성능보증보험료'],['advertising','광고비용'],['purchaseFee','매입수수료'],['purchaseOther','매입비'],['acquisitionTax','취득세'],['incomeTax','소득세']];
  const clone=value=>JSON.parse(JSON.stringify(value));
- // Keep canonical labels stable for existing custom-name validation; the editor maps display labels separately.
- function fields(){const costs=typeof COST_FIELDS!=='undefined'&&Array.isArray(COST_FIELDS)?COST_FIELDS:FALLBACK;return [['inventoryLoan','재고대출금'],['inventoryInterest','재고 이자'],['inventoryLender','재고금융사'],...costs.map(([id,label])=>[id,label]),['repair','수리비용 상세 내역']];}
+ // Stored settings contain field IDs and custom names, not built-in label overrides.
+ function fields(){const costs=typeof COST_FIELDS!=='undefined'&&Array.isArray(COST_FIELDS)?COST_FIELDS:FALLBACK;return [['inventoryLoan','재고대출금'],['inventoryInterest','재고 이자'],['inventoryLender','재고금융사'],...costs.map(([id,label])=>[id,id==='performanceInspection'?'성능보증보험료':label]),['repair','수리비용 상세 내역']];}
  function label(value){if(typeof value!=='string')throw Error('항목 이름을 입력해 주세요.');const result=value.trim().replace(/\s+/g,' ');if(!result||Array.from(result).length>24||/[\u0000-\u001f\u007f]/.test(result))throw Error('항목 이름은 24자 이내로 입력해 주세요.');return result;}
  const comparison=value=>value.normalize('NFKC').replace(/\s/g,'').toLocaleLowerCase('ko-KR');
  function normalize(config,base=fields()){
   if(config==null)return {schemaVersion:1,visible:base.map(([id])=>id),customFields:[]};
   if(typeof config!=='object'||Array.isArray(config)||config.schemaVersion!==1||!Array.isArray(config.visible)||!Array.isArray(config.customFields)||config.customFields.length>MAX_FIELDS)throw Error('비용 설정 형식을 확인할 수 없습니다. 다시 불러와 주세요.');
-  const ids=new Set(base.map(([id])=>id)),names=new Set(base.map(([,text])=>comparison(text))),customFields=[];
+  // A dealer could already have a custom field with the new display name.
+  // Preserve the previous reserved name when reading saved configurations.
+  const ids=new Set(base.map(([id])=>id)),names=new Set(base.map(([id,text])=>comparison(id==='performanceInspection'?'성능점검비':text))),customFields=[];
   for(const item of config.customFields){if(!item||typeof item!=='object'||!UUID.test(item.id)||ids.has(item.id))throw Error('추가 항목의 식별자를 확인해 주세요.');const text=label(item.label),name=comparison(text);if(names.has(name))throw Error('같은 이름의 비용 항목이 있습니다.');ids.add(item.id);names.add(name);customFields.push({id:item.id,label:text});}
   const visible=new Set();for(const id of config.visible){if(typeof id!=='string'||!ids.has(id)||visible.has(id))throw Error('표시할 비용 항목을 확인해 주세요.');visible.add(id);}
   return {schemaVersion:1,visible:[...base.map(([id])=>id),...customFields.map(item=>item.id)].filter(id=>visible.has(id)),customFields};
  }
- function add(config,text,id,base=fields()){const current=normalize(config,base);if(current.customFields.length>=MAX_FIELDS)throw Error('추가 항목은 최대 32개까지 등록할 수 있습니다.');return normalize({...current,visible:[...current.visible,id],customFields:[...current.customFields,{id,label:text}]},base);}
+ function add(config,text,id,base=fields()){const current=normalize(config,base);if(current.customFields.length>=MAX_FIELDS)throw Error('추가 항목은 최대 32개까지 등록할 수 있습니다.');const incoming=label(text);if(base.some(([,name])=>comparison(name)===comparison(incoming)))throw Error('같은 이름의 비용 항목이 있습니다.');return normalize({...current,visible:[...current.visible,id],customFields:[...current.customFields,{id,label:incoming}]},base);}
  function equal(a,b,base=fields()){return JSON.stringify(normalize(a,base))===JSON.stringify(normalize(b,base));}
  function won(value){if(value===''||value==null)return 0;if(typeof value==='string'){const raw=value.trim();if(!raw)return 0;if(!/^(?:\d+|\d{1,3}(?:,\d{3})+)$/.test(raw))throw Error('추가 비용은 0 이상 원 단위 정수로 입력해 주세요.');value=Number(raw.replace(/,/g,''));}if(!Number.isSafeInteger(value)||value<0||value>MAX_WON)throw Error('추가 비용은 0원부터 1조원까지 입력할 수 있습니다.');return value;}
  function values(input){if(input==null)return {};if(typeof input!=='object'||Array.isArray(input))throw Error('추가 비용 정보를 확인해 주세요.');const result={};for(const [id,value]of Object.entries(input)){if(!UUID.test(id))throw Error('추가 비용 항목을 확인해 주세요.');result[id]=won(value);}return result;}

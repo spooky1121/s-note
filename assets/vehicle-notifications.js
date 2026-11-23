@@ -4,7 +4,7 @@
  let scope=null,unread=0,working=false,pollAgain=false,opened=null,badgeEpoch=0,viewVersion=0,listVersion=0,readVersion=0;
  const dialog=document.createElement('dialog');dialog.id='snote-notifications-dialog';dialog.setAttribute('aria-labelledby','snote-notifications-title');dialog.innerHTML='<button type="button" aria-label="알림 닫기">×</button><h2 id="snote-notifications-title">알림</h2><p class="notification-status" role="status"></p><div class="notification-list"></div>';document.body.append(dialog);
  const status=dialog.querySelector('[role=status]'),list=dialog.querySelector('.notification-list');
- const field={model:'차명',plate:'차량번호',make:'제조사',year:'연식',vin:'차대번호',mileage:'주행거리',color:'색상',purchaseAt:'매입일',buy:'매입가',sell:'판매예정가',status:'차량 상태',inventoryLoan:'재고대출금',inventoryLender:'재고금융사',vehicleMemo:'차량 메모',sharePermission:'공유 권한','costs.performanceInspection':'성능점검비'};
+ const field={model:'차명',plate:'차량번호',make:'제조사',year:'연식',vin:'차대번호',mileage:'주행거리',color:'색상',purchaseAt:'매입일',buy:'매입가',sell:'판매예정가',status:'차량 상태',inventoryLoan:'재고대출금',inventoryLender:'재고금융사',vehicleMemo:'차량 메모',sharePermission:'공유 권한','costs.performanceInspection':'성능보증보험료'};
  const permissions=Object.freeze({read:{label:'읽기',description:'수락하면 차량 정보와 사진·서류를 조회할 수 있습니다.'},edit:{label:'수정',description:'수락하면 차량 정보를 조회·수정하고 사진·서류를 볼 수 있습니다.'},delete:{label:'삭제',description:'수락하면 차량 정보를 조회하고 차량을 휴지통으로 이동할 수 있습니다.'},all:{label:'모든 권한',description:'수락하면 차량 정보를 조회·수정하고 차량을 휴지통으로 이동할 수 있습니다.'}});
  const permission=value=>typeof value==='string'&&Object.hasOwn(permissions,value)?permissions[value]:null;
  const node=(tag,text,cls)=>{const e=document.createElement(tag);e.textContent=text??'';if(cls)e.className=cls;return e;};
