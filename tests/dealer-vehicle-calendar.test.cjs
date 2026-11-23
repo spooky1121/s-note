@@ -41,3 +41,14 @@ test('server counts survive the personal 500-record bound without inventing load
  assert.equal(vehicles.length,8);assert.equal(s.total,628);assert.equal(s.remaining,626);assert.equal(s.shown.length,2);assert.equal(personal.length,500);
  const unloaded=M.daySummary([],vehicles,620);assert.equal(unloaded.total,628);assert.equal(unloaded.remaining,626);assert(unloaded.shown.every(entry=>entry.personal===false));
 });
+
+test('mobile three/four slots keep personal and vehicle entries and exact hidden totals',()=>{
+ const personal=Array.from({length:5},(_,i)=>({id:'mobile-personal-'+i})),vehicles=M.vehicleEvents([row('a'),row('b'),row('c')]),before=JSON.stringify({personal,vehicles});
+ for(const capacity of[3,4]){const s=M.daySummary(personal,vehicles,5,capacity);assert.equal(s.shown.length,capacity);assert(s.shown.some(entry=>entry.personal)&&s.shown.some(entry=>!entry.personal));assert.equal(new Set(s.shown.map(entry=>entry.item.id)).size,capacity);assert.equal(s.total,8);assert.equal(s.remaining,8-capacity);}
+ assert.equal(JSON.stringify({personal,vehicles}),before,'Choosing visible mobile rows does not modify or invent records');
+});
+test('mobile more counts preserve server-truncated personal totals and use only loaded entries',()=>{
+ const personal=[{id:'one-loaded'}],vehicles=M.vehicleEvents([row('a'),row('b'),row('c')]);
+ for(const capacity of[3,4]){const s=M.daySummary(personal,vehicles,620,capacity);assert.equal(s.total,623);assert.equal(s.remaining,623-capacity);assert.equal(s.shown.length,capacity);assert.equal(s.shown.filter(entry=>entry.personal).length,1);}
+ const unloaded=M.daySummary([],vehicles,620,4);assert.equal(unloaded.shown.length,3);assert(unloaded.shown.every(entry=>!entry.personal));assert.equal(unloaded.total,623);assert.equal(unloaded.remaining,620);
+});
