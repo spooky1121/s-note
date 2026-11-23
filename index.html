@@ -1,12 +1,15 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.202">
+<html lang="ko" data-snote-release="2.203">
 <head>
 <meta charset="utf-8" />
   <script src="assets/service-location.js?v=2.200"></script>
+  <script src="assets/account-recovery-entry.js?v=2.203"></script>
+  <link rel="stylesheet" href="assets/account-recovery.css?v=2.203">
+  <script src="assets/account-recovery.js?v=2.203" defer></script>
   <script src="assets/snote-storage-compat.js?v=2.201"></script>
   <script src="assets/snote-idb-compat.js?v=2.201"></script>
-<link rel="stylesheet" href="assets/message-popup.css?v=2.172">
-<script src="assets/message-popup.js?v=2.174" defer></script>
+<link rel="stylesheet" href="assets/message-popup.css?v=2.203">
+<script src="assets/message-popup.js?v=2.203" defer></script>
 <script src="assets/mobile-popup-history.js?v=2.174" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#f4f9ff" />
@@ -3311,7 +3314,7 @@ button, input, select, textarea { font-family: inherit; }
  <div class="acct-controls"><label for="accountant-dealer-filter">담당 딜러</label><select id="accountant-dealer-filter" aria-label="담당 딜러 필터" onchange="handleAccountantDealerFilter()"><option value="all">전체 딜러</option></select><button type="button" class="btn-ghost" onclick="refreshAccountantWorkspace()">새로고침</button></div>
  <div id="accountant-overview" class="acct-overview"></div>
  </section>
-      <section id="monthly-screen" style="display:none;width:100%;min-width:0" aria-label="월정산 결산표"><iframe id="monthly-ledger-frame" title="S-NOTE 월정산 결산표" data-src="monthly.html?v=2.201" scrolling="no" style="width:100%;height:1280px;border:0;display:none;background:transparent"></iframe>
+      <section id="monthly-screen" style="display:none;width:100%;min-width:0" aria-label="월정산 결산표"><iframe id="monthly-ledger-frame" title="S-NOTE 월정산 결산표" data-src="monthly.html?v=2.203" scrolling="no" style="width:100%;height:1280px;border:0;display:none;background:transparent"></iframe>
  <div id="monthly-frame-status" role="status" hidden style="padding:24px;text-align:center"><p id="monthly-frame-message"></p><button id="monthly-frame-retry" type="button" class="btn" hidden>다시 불러오기</button></div></section>
 <section id="snote-dashboard-home" aria-label="대시보드" hidden></section>
 <section id="snote-accountant-today" aria-label="오늘 처리할 일" hidden></section>
@@ -7894,6 +7897,7 @@ function snote201EnsureLocalAuth(){
 }
 function snote201StorageMessage(error,fallback){return typeof error?.code==='string'&&error.code.startsWith('IDB_')?error.message:fallback;}
 async function snote201RestoreLocalSession(){
+ if(window.SnoteRecoveryRedirecting)return;
  // Online Auth gets the first opportunity to restore its verified session.
  // A hosted cache alias is never a local authentication credential.
  if(!snote201CanUseLocal()||currentUser||!snote201SessionStorage)return;
@@ -7929,7 +7933,7 @@ async function checkUsername(){clearAuthError('signup');const id=$('signup-id').
 async function registerAccount(event){event.preventDefault();if(!isAccountant()){showAuthError('signup','딜러 계정은 경리 담당자가 설정 메뉴에서 추가합니다.');return;}clearAuthError('signup');const id=$('signup-id').value.trim().toLowerCase(),pass=$('signup-pw').value,name=$('signup-name').value.trim(),phone=$('signup-phone').value.trim(),emp=$('signup-employee').value.trim(),company=orgValue('company'),union=orgValue('union');
  if(id!==validatedId)return showAuthError('signup','먼저 아이디 중복 확인을 완료해 주세요.');if(pass.length<8)return showAuthError('signup','비밀번호는 8자 이상으로 입력해 주세요.');if(pass!==$('signup-pw2').value)return showAuthError('signup','비밀번호 확인이 일치하지 않습니다.');if(!/^0[0-9\- ]{8,13}$/.test(phone))return showAuthError('signup','휴대전화 번호를 확인해 주세요.');if(!name||!emp||!company||!union)return showAuthError('signup','필수 항목을 모두 입력해 주세요.');
  const btn=$('signup-submit');btn.disabled=true;btn.textContent='계정 생성 중…';try{await snote201EnsureLocalAuth();const salt=bytesHex(crypto.getRandomValues(new Uint8Array(16))),passwordHash=await hashPassword(pass,salt);const userRrn=$('signup-rrn-birth').value.trim()+$('signup-rrn-back').value.trim();let rrnCipher=null;if(userRrn){if(!/^\d{13}$/.test(userRrn))throw new Error('주민번호는 앞 6자리와 뒤 7자리를 모두 입력해 주세요.');rrnCipher=await zc80EncryptAccountRrn(pass,{username:id,salt},userRrn)}await createAccount({username:id,passwordHash,salt,name,phone,employeeNo:emp,company,union,role:'dealer',rrnCipher,createdAt:Date.now()});saveOrg('company',company);saveOrg('union',union);validatedId='';event.target.reset();$('signup-rrn-birth').value='';$('signup-rrn-back').value='';showAuthMode('login');$('login-id').value=id;$('login-success').style.display='block'}catch(e){showAuthError('signup',e?.name==='ConstraintError'?'이미 사용 중인 아이디입니다. 다시 확인해 주세요.':snote201StorageMessage(e,'등록에 실패했습니다. 브라우저 저장 설정을 확인하세요.'));clearIdCheck()}finally{btn.disabled=false;btn.textContent='회원가입 완료'}}
-async function loginAccount(event){event.preventDefault();clearAuthError('login');const id=$('login-id').value.trim().toLowerCase(),pass=$('login-pw').value;const btn=$('login-submit');btn.disabled=true;btn.textContent='확인 중…';try{await snote201EnsureLocalAuth();const account=await getAccount(id);const hash=account?await hashPassword(pass,account.salt):null;if(!account||hash!==account.passwordHash){showAuthError('login','아이디 또는 비밀번호가 일치하지 않습니다.');return}await zc80RememberLogin(pass,account);await enterWorkspace(account)}catch(e){showAuthError('login',snote201StorageMessage(e,'로그인 중 문제가 발생했습니다. 브라우저 설정을 확인해 주세요.'))}finally{btn.disabled=false;btn.textContent='로그인';$('login-pw').value=''}}
+async function loginAccount(event){event.preventDefault();clearAuthError('login');const id=$('login-id').value.trim().toLowerCase(),pass=$('login-pw').value;const btn=$('login-submit');btn.disabled=true;btn.textContent='확인 중…';try{await snote201EnsureLocalAuth();const account=await getAccount(id);const hash=account?await hashPassword(pass,account.salt):null;if(!account||hash!==account.passwordHash){showAuthError('login','계정 ID 또는 비밀번호를 확인해주세요.');return}await zc80RememberLogin(pass,account);await enterWorkspace(account)}catch(e){showAuthError('login',snote201StorageMessage(e,'로그인 중 문제가 발생했습니다. 브라우저 설정을 확인해 주세요.'))}finally{btn.disabled=false;btn.textContent='로그인';$('login-pw').value=''}}
 async function loginAccountingDemo(){$('login-id').value='accounting';$('login-pw').value='account1234';await loginAccount({preventDefault(){}})}
 async function loginDemo(){try{await snote201EnsureLocalAuth();const account=await getAccount('demo');if(account){await zc80RememberLogin('demo1234',account);await enterWorkspace(account);} else showAuthError('login','테스트 계정이 준비되지 않았습니다.')}catch(error){showAuthError('login',snote201StorageMessage(error,'체험 계정에 로그인할 수 없습니다.'))}}
 function snote185LoadDashboardDisplay(account){
@@ -8974,6 +8978,7 @@ document.addEventListener('click',async event=>{
      <div class="zc-field"><label for="zc-cloud-password">비밀번호</label><div class="snote-login-password"><input type="password" id="zc-cloud-password" required autocomplete="current-password" minlength="8" placeholder="비밀번호를 입력해 주세요"><button type="button" id="snote-login-password-toggle" aria-label="비밀번호 표시" aria-controls="zc-cloud-password" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/><path class="snote-login-eye-slash" d="m3 3 18 18"/></svg></button></div></div>
      <div class="snote-login-options"><label class="snote95-remember"><input type="checkbox" id="snote95-remember" autocomplete="off"><span>자동 로그인 유지</span></label><span class="snote-login-shared-hint">공용 PC에서는 해제해 주세요</span></div>
      <button type="submit" class="zc-btn" id="zc-cloud-submit">로그인</button>
+     <div class="snote-login-recovery"><button type="button" data-account-recovery="id">아이디 찾기</button><span aria-hidden="true">·</span><button type="button" data-account-recovery="password">비밀번호 찾기</button></div>
      <div class="snote-registration-choices"><button type="button" class="zc-btn snote-auth-secondary" id="zc86-register">상사대표 가입</button><button type="button" class="zc-btn snote-auth-secondary" id="snote-dealer-register">일반딜러 가입</button></div>
      <p class="snote-auth-invite"><span>관리자에게 초대를 받으셨나요?</span><button type="button" class="zc-link" id="snote-invite-open">초대받은 직원 가입</button></p>
      <button type="button" class="zc-link" id="zc-cloud-config-change">연결 설정 변경</button>
@@ -9032,11 +9037,10 @@ document.addEventListener('click',async event=>{
    </div>
    <p class="snote-login-footer">© 2026 S-NOTE. All rights reserved.<span class="snote-login-footer-tools"><span data-snote-version>버전 확인 중</span><a class="snote-operator-login" href="operator.html">운영자 로그인</a></span></p>
   </div>
-  <aside class="snote-login-visual">
+  <aside class="snote-login-visual" aria-label="S-NOTE 업무공간 소개">
    <picture>
-    <source media="(max-width: 860px)" srcset="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNgYGBgAAAABQABeqhXUAAAAABJRU5ErkJggg==">
     <source type="image/webp" srcset="assets/login-garage-clear.webp">
-    <img class="snote-login-photo" src="assets/login-garage-clear.png?v=2.112" alt="" decoding="async">
+    <img class="snote-login-photo" src="assets/login-garage-clear.png?v=2.112" width="1086" height="1448" alt="노을이 비치는 차고와 차량" decoding="async" fetchpriority="high">
    </picture>
    <div class="snote-auth-hero">
     <h2 class="snote-auth-hero-title">좋은 거래의 시작,<br><strong>정돈된 업무에서.</strong></h2>
@@ -9046,15 +9050,34 @@ document.addEventListener('click',async event=>{
   </aside>
  </div>
  <section class="snote-login-info" aria-labelledby="snote-login-info-title">
-  <header>
-   <h2 id="snote-login-info-title">매입에서 정산까지, 업무의 흐름이 한곳에.</h2>
+  <header data-login-reveal>
+   <p class="snote-landing-kicker">매일 쓰는 네 가지 업무</p>
+   <h2 id="snote-login-info-title">매입에서 정산까지,<br>업무의 흐름이 한곳에.</h2>
    <p>중고차 매매업무에 필요한 기능을 하나의 업무공간에서 이용하세요.</p>
   </header>
   <div class="snote-auth-features" id="snote-auth-features">
-   <article class="snote-auth-feature"><div class="snote-auth-feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m5 9 2-5h10l2 5M3 10h18v8H3zM6 18v2m12-2v2M6 13h2m8 0h2"/></svg></div><h3>차량 · 재고 관리</h3><p>매입부터 판매완료까지 차량의 흐름과 비용을 한곳에서.</p></article>
-   <article class="snote-auth-feature"><div class="snote-auth-feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6zM14 3v5h5M9 12h7m-7 4h5"/></svg></div><h3>모바일 계약 · 고객 관리</h3><p>모바일 고객 인증·정보 입력·서명으로 비대면 계약도 간편하고 신뢰 있게.</p></article>
-   <article class="snote-auth-feature"><div class="snote-auth-feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 4v16h16M8 14l4-4 3 3 5-7m-5 0h5v5"/></svg></div><h3>수익 · 월정산</h3><p>예상수익, 매출·지출, 월별 경영 흐름을 보기 쉽게.</p></article>
-   <article class="snote-auth-feature"><div class="snote-auth-feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m3 8 9-5 9 5H3zm2 3v7m7-7v7m7-7v7M3 21h18M3 18h18"/></svg></div><h3>재고금융 · 선재고</h3><p>금융사 한도와 재고 대출, 선재고 장부를 별도로 관리.</p></article>
+   <article class="snote-auth-feature" data-login-reveal><div class="snote-auth-feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m5 9 2-5h10l2 5M3 10h18v8H3zM6 18v2m12-2v2M6 13h2m8 0h2"/></svg></div><h3>차량 · 재고 관리</h3><p>매입부터 판매완료까지 차량의 흐름과 비용을 한곳에서.</p></article>
+   <article class="snote-auth-feature" data-login-reveal><div class="snote-auth-feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6zM14 3v5h5M9 12h7m-7 4h5"/></svg></div><h3>모바일 계약 · 고객 관리</h3><p>모바일 고객 인증·정보 입력·서명으로 비대면 계약도 간편하고 신뢰 있게.</p></article>
+   <article class="snote-auth-feature" data-login-reveal><div class="snote-auth-feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 4v16h16M8 14l4-4 3 3 5-7m-5 0h5v5"/></svg></div><h3>수익 · 월정산</h3><p>예상수익, 매출·지출, 월별 경영 흐름을 보기 쉽게.</p></article>
+   <article class="snote-auth-feature" data-login-reveal><div class="snote-auth-feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m3 8 9-5 9 5H3zm2 3v7m7-7v7m7-7v7M3 21h18M3 18h18"/></svg></div><h3>재고금융 · 선재고</h3><p>금융사 한도와 재고 대출, 선재고 장부를 별도로 관리.</p></article>
+  </div>
+  <div class="snote-showcases">
+   <article class="snote-showcase" id="snote-showcase-inventory" data-login-reveal>
+    <div class="snote-showcase-copy"><p class="snote-landing-kicker">차량 · 재고 관리</p><h3>차량 정보와 재고 상태를,<br>한눈에.</h3><p>사진과 등록 서류, 매입 비용을 차량별로 정리하고 필요한 정보를 빠르게 찾아보세요.</p><ul><li>차량번호·차명으로 재고 검색</li><li>계약중·판매완료 상태 구분</li><li>등록 서류와 부대비용 함께 확인</li></ul></div>
+    <figure><img src="assets/login-showcase-inventory.webp?v=2.203" width="1202" height="556" alt="예시 데이터로 구성한 매입 차량 목록 실제 화면" loading="lazy" decoding="async"><figcaption>예시 데이터로 구성한 실제 S-NOTE 화면 · 매입 차량 목록</figcaption></figure>
+   </article>
+   <article class="snote-showcase" id="snote-showcase-contracts" data-login-reveal>
+    <div class="snote-showcase-copy"><p class="snote-landing-kicker">모바일 계약 · 고객 관리</p><h3>고객이 직접 입력하고,<br>확인한 내용으로 계약하세요.</h3><p>휴대폰 입력 링크로 고객정보와 서명을 받고, 접수된 내용을 계약서와 인수증 업무에 연결합니다.</p><ul><li>문자 링크로 고객정보 입력 요청</li><li>고객 제출 내용과 서명 확인</li><li>계약서·인수증 미리보기와 출력</li></ul></div>
+    <figure><img src="assets/login-showcase-contracts.webp?v=2.203" width="820" height="804" alt="예시 데이터로 구성한 판매 진행과 고객 직접 입력 실제 화면" loading="lazy" decoding="async"><figcaption>예시 데이터로 구성한 실제 S-NOTE 화면 · 판매 진행과 고객 직접 입력</figcaption></figure>
+   </article>
+   <article class="snote-showcase" id="snote-showcase-profit" data-login-reveal>
+    <div class="snote-showcase-copy"><p class="snote-landing-kicker">수익 · 월정산</p><h3>판매 결과부터 월별 흐름까지,<br>정산을 더 명확하게.</h3><p>차량별 비용과 수익, 판매대수의 변화를 살펴보고 월정산을 이어서 관리하세요.</p><ul><li>차량별 비용과 수익 확인</li><li>월별 수익·판매대수 함께 비교</li><li>월정산 작성·저장·인쇄</li></ul></div>
+    <figure><img src="assets/login-showcase-profit.webp?v=2.203" width="1202" height="582" alt="예시 데이터로 구성한 월별 수익과 판매대수 그래프 실제 화면" loading="lazy" decoding="async"><figcaption>예시 데이터로 구성한 실제 S-NOTE 화면 · 월별 수익과 판매대수 그래프</figcaption></figure>
+   </article>
+   <article class="snote-showcase" id="snote-showcase-finance" data-login-reveal>
+    <div class="snote-showcase-copy"><p class="snote-landing-kicker">재고금융 · 선재고</p><h3>재고에 들어간 자금도,<br>구분해서 관리하세요.</h3><p>재고금융의 사용액과 잔여한도를 확인하고, 선재고 거래는 별도 장부에서 기록합니다.</p><ul><li>금융사별 한도·사용액·잔여한도 확인</li><li>차량에 연결된 대출금 관리</li><li>선재고 거래 내역을 별도로 기록</li></ul></div>
+    <figure><img src="assets/login-showcase-finance.webp?v=2.203" width="1202" height="760" alt="예시 데이터로 구성한 재고금융 관리 실제 화면" loading="lazy" decoding="async"><figcaption>예시 데이터로 구성한 실제 S-NOTE 화면 · 재고금융 관리</figcaption></figure>
+   </article>
   </div>
   <ul class="snote-auth-trust" aria-label="이용 안내">
    <li><span aria-hidden="true">✓</span>인증된 직원 로그인</li>
@@ -9092,6 +9115,7 @@ const gate=byId('zc-cloud-gate'),setup=byId('zc-cloud-setup'),login=byId('zc-clo
 const keyConfig='zc86-supabase-public-config';
 const snote95RememberKey='snote95-remember-login';
 const snote95Remember=()=>localStorage.getItem(snote95RememberKey)==='1';
+window.snoteRecoveryAvailable=()=>!window.SnoteRecoveryRedirecting&&!S.user&&!S.ready&&!S.busy&&!gate.hidden&&gate.dataset.authMode==='login'&&!currentUser;
 const snote95AuthStore={
  getItem:key=>(snote95Remember()?localStorage:sessionStorage).getItem(key),
  setItem:(key,value)=>{const store=snote95Remember()?localStorage:sessionStorage;store.setItem(key,value);(store===localStorage?sessionStorage:localStorage).removeItem(key)},
@@ -9448,6 +9472,7 @@ async function ensureConnection(conf){
 // Recreate the client on demand for BOTH registration and sign-in. Reuse concurrent requests.
 let authInitPromise=null,snoteRegistrationOperation=null,snoteRegistrationAuthEpoch=0,snoteRegistrationInstalling=null;
 async function requireAuthClient(){
+ if(window.SnoteRecoveryRedirecting)throw Error('RECOVERY_NAVIGATION');
  if(S.client)return S.client;
  if(!authInitPromise){
   const conf=publicDefault||validConfig(parsePayload(localStorage.getItem(keyConfig))||{});
@@ -9745,6 +9770,7 @@ function snoteStartAccessTracking(){
  window.SnoteAccessTracker?.start({rpc:()=>client.rpc('snote_access_ping'),current:()=>S.ready&&S.client===client&&S.user?.id===actorId});
 }
 async function hydrateWorkspace(pass,registrationCurrent=null){
+ window.SnoteAccountRecovery?.close?.({restoreFocus:false});
  const check=()=>{if(registrationCurrent&&registrationCurrent()!==true)throw Error('REGISTRATION_CONTEXT_CHANGED');};check();
  window.SnoteIdleSession?.reset();
  window.SnoteAccessTracker?.stop();
@@ -9776,7 +9802,7 @@ async function hydrateWorkspace(pass,registrationCurrent=null){
  snote216InitMonthly();void snoteProfileRefreshAvatar();
  void refreshMedia();
 }
-async function doSignIn(e){e?.preventDefault?.();if(S.busy)return;S.busy=true;const button=byId('zc-cloud-submit');button.disabled=true;
+async function doSignIn(e){e?.preventDefault?.();if(S.busy||window.SnoteRecoveryRedirecting)return;window.SnoteAccountRecovery?.close?.({restoreFocus:false});S.busy=true;const button=byId('zc-cloud-submit');button.disabled=true;
  const email=byId('zc-cloud-email').value.trim(),pass=byId('zc-cloud-password').value;
   try{
   localStorage.setItem(snote95RememberKey,byId('snote95-remember').checked?'1':'0');
@@ -9785,7 +9811,7 @@ async function doSignIn(e){e?.preventDefault?.();if(S.busy)return;S.busy=true;co
  S.user=data.user;S.authPassword=pass;
  await hydrateWorkspace(pass);
  msg(S.company?'':'회사 정보가 없으면 상사 생성 또는 초대 코드를 입력하세요.');
- }catch(e){if(['COMPANY_EXISTS','CONTACT_EXISTS'].includes(e?.code))msg(errMsg(e),'error');else fail(e,'로그인');}
+ }catch(e){if(['invalid_credentials','invalid_grant'].includes(e?.code)||/invalid login credentials/i.test(e?.message||''))msg('계정 ID 또는 비밀번호를 확인해주세요.','error');else if(['COMPANY_EXISTS','CONTACT_EXISTS'].includes(e?.code))msg(errMsg(e),'error');else fail(e,'로그인');}
  finally{S.busy=false;button.disabled=false;byId('zc-cloud-password').value='';snoteSetPasswordVisibility(false);}
 }
 async function afterOnboard(kind){
@@ -11582,6 +11608,7 @@ function snoteAuthModeFromLocation(){
  return 'login';
 }
 function snoteShowAuth(mode,writeURL=true,replaceURL=false){
+ window.SnoteAccountRecovery?.close?.({restoreFocus:false});
  if(S.ready)return;
  const current=['admin','dealer','staff','complete'].includes(mode)?mode:'login';
  gate.hidden=false;gate.dataset.authMode=current;snoteSetPasswordVisibility(false);
@@ -11625,6 +11652,7 @@ byId('zc-cloud-connect').addEventListener('click',async()=>{
 });
 byId('zc-cloud-config-change').addEventListener('click',()=>{S.client=null;setup.hidden=false;login.hidden=true;byId('zc86-onboard').hidden=true;msg('')});
 async function snote95AutoRestore(){
+ if(window.SnoteRecoveryRedirecting)return;
  if(!snote95Remember()||!config||S.ready||S.busy)return;
  S.busy=true;
  try{
@@ -12169,7 +12197,7 @@ window.zc86Cloud={getAccessToken:async()=>{const client=S.client,user=S.user,com
 <link rel="stylesheet" href="assets/workspace-reorder.css?v=2.136">
 <script src="assets/workspace-order-store.js?v=2.135" defer></script>
 <script src="assets/workspace-reorder.js?v=2.202" defer></script>
-<script src="assets/release-info.js?v=2.202" defer></script>
+<script src="assets/release-info.js?v=2.203" defer></script>
 <link rel="stylesheet" href="assets/encar-id.css?v=2.162">
 <script src="assets/encar-id.js?v=2.184" defer></script>
 <script src="assets/company-purchase.js?v=2.172" defer></script>
@@ -12207,6 +12235,8 @@ window.addEventListener('snote:payment-accounts-changed',()=>{if(typeof contract
 <link rel="stylesheet" href="assets/contracting-vehicles.css?v=2.180" data-snote-type-scale>
 <link rel="stylesheet" href="assets/action-icons.css?v=2.162">
 <link rel="stylesheet" href="assets/login-refinement.css?v=2.162">
+<link rel="stylesheet" href="assets/login-landing.css?v=2.203">
+<script src="assets/login-landing.js?v=2.203" defer></script>
 <link rel="stylesheet" href="assets/vehicle-viewport.css?v=2.167">
 <link rel="stylesheet" href="assets/document-viewport.css?v=2.199">
 <script src="assets/document-viewport.js?v=2.199" defer></script>

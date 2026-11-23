@@ -10,12 +10,16 @@ export const API_POLICIES = Object.freeze({
   '/api/customer-intake': { methods: ['GET', 'POST'], limit: 120, maximum: 64 * 1024, publicPost: true },
   '/api/customer-identity': { methods: ['GET', 'POST'], limit: 240, maximum: 32 * 1024 },
   '/api/registration': { methods: ['GET', 'POST'], limit: 120, maximum: 12 * 1024 * 1024, publicPost: true, contentTypes: ['application/json', 'multipart/form-data'] },
+  '/api/account-recovery': { methods: ['POST'], limit: 60, maximum: 4096, publicPost: true },
   '/api/income-settlement': { methods: ['GET', 'POST'], limit: 240, maximum: 64 * 1024 },
   '/api/profile-phone': { methods: ['POST'], limit: 60, maximum: 4096 },
   '/api/document-mms': { methods: ['POST'], limit: 60, maximum: 300000 },
   '/api/operator': { methods: ['POST'], limit: 240, maximum: 1024 * 1024 },
   '/api/vehicle-taxonomy-probe': { methods: ['GET', 'POST'], limit: 30, maximum: 2048, authenticatedGet: true }
 });
+// Credential recovery is a public business API, but never an observed endpoint.
+// Keep logging policy separate from request authorization and payload limits.
+export const API_OBSERVATION_PATHS = Object.freeze(Object.keys(API_POLICIES).filter(path => path !== '/api/account-recovery'));
 const MESSAGES = {
   FORBIDDEN: [403, '허용되지 않은 요청입니다. S-NOTE에서 다시 시도해 주세요.'],
   UNAUTHORIZED: [401, '로그인이 필요합니다. 다시 로그인해 주세요.'],

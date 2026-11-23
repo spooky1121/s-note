@@ -4,6 +4,8 @@
  #snote-message-dialog[open]{animation:snote-message-enter .18s ease-out}
  #snote-message-dialog .snote-message-body{box-sizing:border-box;max-height:calc(100dvh - 34px);overflow:auto;padding:28px 24px 22px;border-radius:inherit;text-align:center}
  #snote-message-dialog>.snote-popup-close{position:absolute;top:4px;right:4px;z-index:1;width:30px;height:30px}
+ /* The reusable dialog has an X only when it offers a cancellable decision. */
+ #snote-message-dialog:not([data-message-kind=confirm])>[data-message-close]{display:none!important}
  #snote-message-dialog .snote-message-icon{display:grid;place-items:center;width:44px;height:44px;margin:0 auto 14px;color:#315cf5;background:#eef3ff;border-radius:50%}
  #snote-message-dialog .snote-message-icon svg{width:28px;height:28px}
  #snote-message-dialog[data-tone=success] .snote-message-icon{color:#16956b;background:#eaf8f1}

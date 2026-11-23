@@ -21,6 +21,10 @@ test('configuration, platform context, and unknown paths retain original respons
  for(const f of [setup({environment:{}}),setup({url:'https://s-note.example/api/unknown'})]){const r=new Response('unchanged');assert.equal(observeAPIResponse(f.context,r,Date.now(),{write:f.write}),r);assert.equal(f.jobs.length,0);assert.equal(await r.text(),'unchanged');}
  const f=setup();delete f.context.waitUntil;const r=new Response('same');assert.equal(observeAPIResponse(f.context,r,Date.now(),{write:f.write}),r);
 });
+test('credential recovery is excluded before observing bytes, consuming budget or registering background work',async()=>{
+ const f=setup({url:'https://s-note.example/api/account-recovery?token=synthetic-private'}),r=new Response('{"resetToken":"synthetic-private"}');let admitted=0;
+ assert.equal(observeAPIResponse(f.context,r,Date.now(),{write:f.write,admit:()=>{admitted++;return true;}}),r);assert.equal(r.body.locked,false);assert.equal(f.jobs.length,0);assert.equal(f.events.length,0);assert.equal(admitted,0);assert.equal(await r.text(),'{"resetToken":"synthetic-private"}');
+});
 test('cancelling a download counts only observed chunks and records one incomplete response',async()=>{
  const f=setup(),r=new Response(new ReadableStream({pull(c){c.enqueue(new Uint8Array(5));}}));const out=observeAPIResponse(f.context,r,Date.now(),{write:f.write});const reader=out.body.getReader();await reader.read();await reader.cancel();await Promise.all(f.jobs);assert.equal(f.events.length,1);assert.equal(f.events[0].ok,false);assert.equal(f.events[0].stage,'exception');assert(f.events[0].responseBytes>=5);
 });

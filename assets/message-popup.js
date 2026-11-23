@@ -22,7 +22,7 @@
   own.SnoteMessages=api;own.snoteConfirm=api.confirm;own.snoteAlert=api.alert;own.snoteNotify=api.notify;
   installValidation(api);own.addEventListener('pagehide',api.clear);return;
  }
- let dialog,title,copy,accept,cancel,icon,active=null,queue=[],serial=0,timer=null,scopeTimer=null,closing=false;
+ let dialog,title,copy,accept,cancel,closeButton,icon,active=null,queue=[],serial=0,timer=null,scopeTimer=null,closing=false;
  const textOf=value=>String(value??'').trim();
  function snapshot(){try{return own.snoteMessageContext?.()??{page:location.pathname};}catch{return null;}}
  function same(a,b){if(a===b)return true;if(!a||!b)return false;const keys=Object.keys(a);return keys.length===Object.keys(b).length&&keys.every(key=>a[key]===b[key]);}
@@ -55,9 +55,9 @@
  function mount(){
   if(dialog)return true;if(!doc.body)return false;
   dialog=doc.createElement('dialog');dialog.id='snote-message-dialog';dialog.className='snote-popup-native';dialog.setAttribute('role','alertdialog');dialog.setAttribute('aria-modal','true');dialog.setAttribute('aria-labelledby','snote-message-title');dialog.setAttribute('aria-describedby','snote-message-copy');
-  dialog.innerHTML='<button type="button" class="snote-popup-close" aria-label="메시지 닫기" data-message-close>×</button><div class="snote-message-body"><div class="snote-message-icon" aria-hidden="true"></div><h2 id="snote-message-title"></h2><p id="snote-message-copy"></p><div class="snote-message-actions"><button type="button" data-message-cancel>취소</button><button type="button" data-message-accept>확인</button></div></div>';
-  doc.body.append(dialog);title=dialog.querySelector('h2');copy=dialog.querySelector('p');icon=dialog.querySelector('.snote-message-icon');accept=dialog.querySelector('[data-message-accept]');cancel=dialog.querySelector('[data-message-cancel]');
-  accept.addEventListener('click',()=>finish(true));cancel.addEventListener('click',()=>finish(false));dialog.querySelector('[data-message-close]').addEventListener('click',()=>finish(false));
+  dialog.innerHTML='<button type="button" class="snote-popup-close" aria-label="메시지 닫기" data-message-close hidden>×</button><div class="snote-message-body"><div class="snote-message-icon" aria-hidden="true"></div><h2 id="snote-message-title"></h2><p id="snote-message-copy"></p><div class="snote-message-actions"><button type="button" data-message-cancel>취소</button><button type="button" data-message-accept>확인</button></div></div>';
+  doc.body.append(dialog);title=dialog.querySelector('h2');copy=dialog.querySelector('p');icon=dialog.querySelector('.snote-message-icon');accept=dialog.querySelector('[data-message-accept]');cancel=dialog.querySelector('[data-message-cancel]');closeButton=dialog.querySelector('[data-message-close]');
+  accept.addEventListener('click',()=>finish(true));cancel.addEventListener('click',()=>finish(false));closeButton.addEventListener('click',()=>finish(false));
   dialog.addEventListener('cancel',event=>{event.preventDefault();event.stopImmediatePropagation();finish(false);});
   dialog.addEventListener('close',()=>{if(active&&!closing&&!dialog.open)finish(false,{aborted:true});});
   dialog.addEventListener('click',event=>{if(event.target===dialog&&active?.kind==='notify'){const r=dialog.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)finish(false);}});
@@ -66,6 +66,7 @@
  const glyph=tone=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/>'+(tone==='success'?'<path d="m8 12 2.6 2.6L16 9"/>':tone==='error'?'<path d="M12 7v6m0 3h.01"/>':'<path d="M12 11v6m0-10h.01"/>')+'</svg>';
  function paint(item){
   dialog.dataset.messageId=String(item.id);dialog.dataset.messageKind=item.kind;dialog.dataset.tone=item.options.tone||'info';dialog.dataset.messageKey=item.options.key||'';
+  closeButton.hidden=item.kind!=='confirm';
   title.textContent=textOf(item.options.title)||(item.kind==='confirm'?'확인':item.options.tone==='error'?'확인해 주세요':item.options.tone==='success'?'완료':'알림');
   for(const button of[accept,cancel]){for(const attr of['aria-label','data-tooltip','data-snote-icon-help','data-snote-icon-title','aria-describedby'])button.removeAttribute(attr);button.classList.remove('snote-save-control','snote-print-control','snote-document-control','snote-action-icon-only','snote-icon-interactive');}
   copy.textContent=item.text;icon.innerHTML=glyph(item.options.tone);cancel.hidden=item.kind!=='confirm';cancel.textContent=item.options.cancelText||'취소';accept.textContent=item.options.acceptText||item.options.confirmText||'확인';accept.dataset.danger=String(item.options.danger===true);

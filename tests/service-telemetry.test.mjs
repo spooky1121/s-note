@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createServiceTelemetry, writeHttpTelemetry, SERVICE_TELEMETRY_TIMEOUT_MS } from '../functions/_shared/service-telemetry.mjs';
-import { API_POLICIES } from '../functions/_shared/api-security.js';
+import { API_POLICIES, API_OBSERVATION_PATHS } from '../functions/_shared/api-security.js';
 import { createEncarIdHandler } from '../functions/api/encar-id.js';
 import { onRequestPost as ocr } from '../functions/api/ocr.js';
 
@@ -120,13 +120,14 @@ test('anonymous HTTP recorder emits only aggregate fields and drops identities, 
   }});
   assert.deepEqual(event,httpEvent());assert.equal(event.userId,null);assert.equal(event.adId,null);assert(!JSON.stringify(event).includes(JWT));assert(!JSON.stringify(event).includes('PRIVATE_OCR'));assert(!JSON.stringify(event).includes(COMPANY));
 });
-test('HTTP endpoint whitelist shares all current API policy paths and accepts bounded standard methods', async () => {
-  const observed=[];for(const endpoint of Object.keys(API_POLICIES))await writeHttpTelemetry(ENV,httpEvent({endpoint}),{fetchImpl:async(input,options)=>{observed.push(JSON.parse(options.body).p_event.endpoint);return new Response(null,{status:204});}});
-  assert.deepEqual(observed,Object.keys(API_POLICIES));for(const method of ['GET','HEAD','POST','PUT','PATCH','DELETE','OPTIONS']){let calls=0;await writeHttpTelemetry(ENV,httpEvent({method,httpStatus:405,ok:false}),{fetchImpl:async()=>{calls++;return new Response(null,{status:204});}});assert.equal(calls,1);}
+test('HTTP endpoint whitelist shares the observation registry and excludes public credential recovery', async () => {
+  assert(Object.isFrozen(API_OBSERVATION_PATHS));assert.equal(API_OBSERVATION_PATHS.length,14);assert.equal(API_OBSERVATION_PATHS.includes('/api/account-recovery'),false);assert.equal(API_POLICIES['/api/account-recovery'].publicPost,true);
+  const observed=[];for(const endpoint of API_OBSERVATION_PATHS)await writeHttpTelemetry(ENV,httpEvent({endpoint}),{fetchImpl:async(input,options)=>{observed.push(JSON.parse(options.body).p_event.endpoint);return new Response(null,{status:204});}});
+  assert.deepEqual(observed,API_OBSERVATION_PATHS);for(const method of ['GET','HEAD','POST','PUT','PATCH','DELETE','OPTIONS']){let calls=0;await writeHttpTelemetry(ENV,httpEvent({method,httpStatus:405,ok:false}),{fetchImpl:async()=>{calls++;return new Response(null,{status:204});}});assert.equal(calls,1);}
 });
 test('HTTP raw queries, arbitrary URLs, claimed identities and malformed observations never reach the RPC', async () => {
   let calls=0;const fetchImpl=async()=>{calls++;return new Response(null,{status:204});};
-  for(const invalid of [{endpoint:'/api/weather?token=PRIVATE'},{endpoint:'https://secret.invalid/api/weather'},{endpoint:'/api/unknown'},{method:'TRACE PRIVATE'},{userId:USER},{adId:AD},{service:'encar'},{requestId:'forged'},{startedAt:'not-time'},{elapsedMs:-1},{httpStatus:999},{ok:'true'},{stage:'lookup'}])await writeHttpTelemetry(ENV,httpEvent(invalid),{fetchImpl});
+  for(const invalid of [{endpoint:'/api/weather?token=PRIVATE'},{endpoint:'https://secret.invalid/api/weather'},{endpoint:'/api/unknown'},{endpoint:'/api/account-recovery'},{method:'TRACE PRIVATE'},{userId:USER},{adId:AD},{service:'encar'},{requestId:'forged'},{startedAt:'not-time'},{elapsedMs:-1},{httpStatus:999},{ok:'true'},{stage:'lookup'}])await writeHttpTelemetry(ENV,httpEvent(invalid),{fetchImpl});
   assert.equal(calls,0);
 });
 test('HTTP recording skips missing configuration and swallows missing RPC, transport and body failures', async () => {
