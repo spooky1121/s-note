@@ -134,6 +134,31 @@
  .snote-scheduler-more{position:static;min-height:20px;width:100%;padding:1px 2px;font-size:10px}
 }
 @media screen and (max-width:760px){
+ #snote-app #snote-dealer-scheduler .snote-scheduler-layout{--snote-schedule-cell:72px}
+ #snote-app #snote-dealer-scheduler .snote-scheduler-calendar{padding:10px 6px 6px;border-color:#edf0f3;border-radius:13px}
+ #snote-app #snote-dealer-scheduler .snote-scheduler-month-nav{gap:6px 9px;margin:0 5px 10px}
+ #snote-app #snote-dealer-scheduler .snote-scheduler-month-nav h3{font-size:16px;line-height:24px;letter-spacing:-.3px}
+ #snote-app #snote-dealer-scheduler .snote-scheduler-month-actions{gap:2px}
+ #snote-app #snote-dealer-scheduler .snote-scheduler-month-actions button{min-width:32px;height:32px;padding:6px;border-color:transparent;border-radius:8px;font-size:10px}
+ #snote-app #snote-dealer-scheduler .snote-scheduler-month-actions svg{width:17px;height:17px}
+ #snote-app #snote-dealer-scheduler .snote-scheduler-month-actions .snote-scheduler-today{min-width:40px;padding-inline:7px;border-color:#edf0f3}
+ #snote-app #snote-dealer-scheduler .snote-scheduler-vehicle-legend{gap:9px;font-size:10px;line-height:14px}
+ #snote-app #snote-dealer-scheduler .snote-scheduler-vehicle-legend>span{gap:4px}
+ #snote-app #snote-dealer-scheduler .snote-scheduler-vehicle-legend>span::before{width:5px;height:5px}
+ #snote-app #snote-dealer-scheduler .snote-scheduler-grid{flex:none;border-color:#edf0f3;border-radius:8px}
+ #snote-app #snote-dealer-scheduler .snote-scheduler-week{background:#fcfdfe;border-color:#edf0f3}
+ #snote-app #snote-dealer-scheduler .snote-scheduler-week span{padding:5px 0;font-size:10px;line-height:15px}
+ #snote-app #snote-dealer-scheduler .snote-scheduler-calendar-row{flex:none}
+ #snote-app #snote-dealer-scheduler .snote-scheduler-calendar-row+.snote-scheduler-calendar-row,#snote-app #snote-dealer-scheduler .snote-scheduler-day+.snote-scheduler-day{border-color:#f1f3f6}
+ #snote-app #snote-dealer-scheduler .snote-scheduler-day{padding:2px 1px}
+ #snote-app #snote-dealer-scheduler .snote-scheduler-date{width:20px;height:20px;margin:0 0 1px;font-size:10px;line-height:16px}
+ #snote-app #snote-dealer-scheduler .snote-scheduler-calendar-row>.snote-scheduler-day:first-child:not(.is-outside):not(.is-today) .snote-scheduler-date{color:#b75a65}
+ #snote-app #snote-dealer-scheduler .snote-scheduler-calendar-row>.snote-scheduler-day:last-child:not(.is-outside):not(.is-today) .snote-scheduler-date{color:#006bb5}
+ #snote-app #snote-dealer-scheduler :is(.snote-scheduler-event,.snote-scheduler-vehicle-event.is-compact){align-items:flex-start;gap:0;min-height:11px;height:auto;max-height:22px;margin:1px 0;padding:0 2px;border-left-width:1.5px;border-radius:3px;font-size:9.5px;line-height:11px}
+ #snote-app #snote-dealer-scheduler :is(.snote-scheduler-event .snote-scheduler-event-title,.snote-scheduler-vehicle-event.is-compact .snote-scheduler-vehicle-title){display:-webkit-box;flex:1;min-width:0;max-height:22px;overflow:hidden;overflow-wrap:anywhere;text-overflow:clip;white-space:normal;-webkit-box-orient:vertical;-webkit-line-clamp:2}
+ #snote-app #snote-dealer-scheduler .snote-scheduler-event time{display:none}
+ #snote-app #snote-dealer-scheduler .snote-scheduler-vehicle-event.is-compact .snote-scheduler-vehicle-kind{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+ #snote-app #snote-dealer-scheduler .snote-scheduler-more{display:block;position:static;width:100%;min-height:12px;height:12px;margin:1px 0 0;padding:0 2px;font-size:9px;line-height:12px}
  .snote-scheduler-dialog{width:calc(100vw - 28px);max-width:calc(100vw - 28px);max-height:calc(100dvh - 28px)}
  .snote-scheduler-dialog-body{padding:22px 18px!important;max-height:calc(100dvh - 58px)}
  .snote-scheduler-dialog :is(input:not([type=checkbox]),textarea){font-size:16px}
@@ -141,6 +166,7 @@
  .snote-scheduler-form-row{gap:9px}
  .snote-scheduler-dialog footer button{min-height:44px;padding:10px 14px}
 }
+@media screen and (max-width:359px){#snote-app #snote-dealer-scheduler .snote-scheduler-layout{--snote-schedule-cell:66px}}
 @media screen and (max-width:430px){.snote-scheduler-form-row{grid-template-columns:minmax(0,1fr)}}
 @media(prefers-reduced-motion:reduce){.snote-dealer-scheduler *,#snote-dealer-scheduler-dialog *{transition:none!important;scroll-behavior:auto!important}}
 @media print{.snote-dealer-scheduler,#snote-dealer-scheduler-dialog{display:none!important}}

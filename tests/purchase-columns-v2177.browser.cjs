@@ -14,11 +14,12 @@ async function setup(browser,width=1440,storageState){
  setBrowser({newContext:options=>browser.newContext({...options,...(storageState?{storageState}:{})})});
  const f=await fixture(width,null,{lookupUnavailable:true,paymentAccountsRegistered:true}),p=f.page;
  await p.evaluate(()=>{closeVehicle({discard:true});navigate('buy');SnotePurchaseColumns.refresh();});
+ const tools=p.locator('#snote-purchase-tools-toggle');if(await tools.isVisible()&&await tools.getAttribute('aria-expanded')!=='true')await tools.click();
  await p.locator('#snote-purchase-columns-trigger').waitFor({state:'visible'});
  await p.evaluate(()=>{const S=__encarFixtureState,rpc=S.client.rpc.bind(S.client),from=S.client.from.bind(S.client);window.__fieldsDataCalls=[];S.client.rpc=(name,...args)=>{if(['snote_company_purchase_rows','zc_write_dataset'].includes(name))__fieldsDataCalls.push(name);return rpc(name,...args);};S.client.from=(name,...args)=>{if(['zc_datasets','zc_media'].includes(name))__fieldsDataCalls.push(name);return from(name,...args);};});
  return f;
 }
-async function open(p){await p.locator('#snote-purchase-columns-trigger').click();await dialog(p).waitFor({state:'visible'});}
+async function open(p){const tools=p.locator('#snote-purchase-tools-toggle');if(await tools.isVisible()&&await tools.getAttribute('aria-expanded')!=='true')await tools.click();await p.locator('#snote-purchase-columns-trigger').click();await dialog(p).waitFor({state:'visible'});}
 async function close(p){await p.keyboard.press('Escape');await dialog(p).waitFor({state:'hidden'});}
 async function view(p,mode){if(await p.locator('#list-screen').getAttribute('data-vehicle-view')!==mode)await p.locator('#snote-vehicle-view-switch').click();}
 async function key(p){return p.evaluate(prefix=>{const S=__encarFixtureState;return prefix+encodeURIComponent(JSON.stringify([S.company.id,S.user.id,currentUser.role]));},PREFIX);}
