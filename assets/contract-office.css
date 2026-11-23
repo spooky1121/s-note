@@ -84,9 +84,8 @@
 .co-print-company-name-stacked{flex-direction:column;align-items:flex-start;justify-content:center;gap:1px}.co-print-company-name-stacked span{display:block;line-height:1}
 .co-print-field[data-field=encumbrance]{white-space:pre}
 .co-print-field.co-print-number{justify-content:flex-end;text-align:right}.co-print-field.co-print-multiline{display:block;white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere;line-height:1.05;padding-top:3px}
-/* Keep the source form and every overlay coordinate in the same uniformly
-   scaled frame so the established A4 print margins and field sizes stay stable. */
-.co-paper>img,.co-paper>.co-overlay{transform:scale(.93);transform-origin:top center}
+/* Use the full A4 coordinate frame for both vector artwork and overlays.
+   The form itself leaves about 5 mm after the final printed ink. */
 @media print{
  @page{size:A4 portrait;margin:0}
  body:has(#contract-office-dialog[open]){margin:0!important;padding:0!important;width:210mm!important;background:#fff!important;overflow:visible!important}

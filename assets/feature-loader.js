@@ -8,7 +8,7 @@
   taxonomyStore:['vehicle-taxonomy-store.js?v=2.20'],
   companyAssets:['company-assets.js?v=2.192'],
   mobileDocument:['mobile-document-editor.js?v=2.184'],
-  office:['transfer-document-layout.js?v=2.192','transfer-name-seal.js?v=2.192','transfer-company-seal.js?v=2.192','company-assets.js?v=2.192','contract-office.js?v=2.192']
+  office:['transfer-document-layout.js?v=2.193','transfer-name-seal.js?v=2.192','transfer-company-seal.js?v=2.192','company-assets.js?v=2.192','contract-office.js?v=2.193']
  });
  function loadFile(file){
   const url=new URL(file,base),key=url.href;
