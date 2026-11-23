@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.201">
+<html lang="ko" data-snote-release="2.202">
 <head>
 <meta charset="utf-8" />
   <script src="assets/service-location.js?v=2.200"></script>
@@ -3174,7 +3174,7 @@ button, input, select, textarea { font-family: inherit; }
 <script src="assets/home-dashboard.js?v=2.184" defer></script>
 <link rel="stylesheet" href="assets/mobile-office-tasks.css?v=2.184">
 <script src="assets/mobile-office-tasks.js?v=2.184" defer></script>
-<script src="assets/access-tracker.js?v=2.85"></script>
+<script src="assets/access-tracker.js?v=2.202"></script>
 <link rel="stylesheet" href="assets/finance-lock-settings.css?v=2.87">
 <script src="assets/finance-lock-settings.js?v=2.172"></script>
 <link rel="stylesheet" href="assets/dashboard-display-settings.css?v=2.102">
@@ -11131,7 +11131,7 @@ window.addEventListener('online',()=>{if(S.ready&&!S.conflict)flush()});
 window.addEventListener('offline',()=>{if(S.ready)showStatus('● 인터넷 연결 끊김 · 저장 불가','bad')});
 
 async function signOut(){const client=S.client,user=S.user,company=S.company?.id,current=snote253MessageCurrent(()=>S.client===client&&S.user===user&&S.company?.id===company);if(!await window.snoteConfirm('온라인 계정에서 로그아웃할까요?',{isCurrent:current})||!current())return;
- await flush();if(!current())return;if(S.queue.size||S.saving||S.conflict){void window.snoteAlert('서버에 아직 저장하지 못한 변경사항이 있어 로그아웃을 중단했습니다. 연결 상태를 확인하세요.',{isCurrent:current});return;}window.SnoteMessages?.clear();window.SnoteIdleSession?.reset();window.SnoteAccessTracker?.stop();snote221ResetIncome();snote216ResetMonthly();snote220InvalidateCatalog();window.snoteResetCalculator?.();S.ready=false;snoteRefreshSalesOverview();snoteFinanceLockEpoch++;closeDashboardGate();zcDashboardGateGranted=false;zcDashboardUnlocked=false;window.SnoteFinanceLock?.reset();window.SnoteDashboardDisplay?.reset();window.SnoteVehicleCostSettings?.reset?.();snoteResetDealerRates();window.snoteProfileEditor?.close({force:true});snoteProfileResetAssets();S.authPassword=null;await S.client.auth.signOut({scope:'local'});localStorage.removeItem(snote95RememberKey);byId('snote95-remember').checked=false;S.user=null;S.company=null;S.members=[];
+ await flush();if(!current())return;if(S.queue.size||S.saving||S.conflict){void window.snoteAlert('서버에 아직 저장하지 못한 변경사항이 있어 로그아웃을 중단했습니다. 연결 상태를 확인하세요.',{isCurrent:current});return;}const confirmSignOut=await window.SnoteAccessTracker?.prepareSignOut?.({client,url:S.rpcConfig?.url||config?.url,anonKey:S.rpcConfig?.key||config?.key,userId:user?.id,current});if(!current())return;window.SnoteMessages?.clear();window.SnoteIdleSession?.reset();window.SnoteAccessTracker?.stop();snote221ResetIncome();snote216ResetMonthly();snote220InvalidateCatalog();window.snoteResetCalculator?.();S.ready=false;snoteRefreshSalesOverview();snoteFinanceLockEpoch++;closeDashboardGate();zcDashboardGateGranted=false;zcDashboardUnlocked=false;window.SnoteFinanceLock?.reset();window.SnoteDashboardDisplay?.reset();window.SnoteVehicleCostSettings?.reset?.();snoteResetDealerRates();window.snoteProfileEditor?.close({force:true});snoteProfileResetAssets();S.authPassword=null;const logoutResult=await client.auth.signOut({scope:'local'});if(!logoutResult?.error&&confirmSignOut)void confirmSignOut();localStorage.removeItem(snote95RememberKey);byId('snote95-remember').checked=false;S.user=null;S.company=null;S.members=[];
  if(currentUser){zc80SensitiveLock();currentUser=null;cars=[];covers={};}
  sessionStorage.removeItem('s-note-office-v12-session');snoteResetWorkspaceNavigation();
  byId('zc86-topbar').hidden=true;status.hidden=true;snoteShowAuth('login',true,true);msg('로그아웃되었습니다.');
@@ -12168,8 +12168,8 @@ window.zc86Cloud={getAccessToken:async()=>{const client=S.client,user=S.user,com
 <script src="assets/received-share-list.js?v=2.175" defer></script>
 <link rel="stylesheet" href="assets/workspace-reorder.css?v=2.136">
 <script src="assets/workspace-order-store.js?v=2.135" defer></script>
-<script src="assets/workspace-reorder.js?v=2.172" defer></script>
-<script src="assets/release-info.js?v=2.201" defer></script>
+<script src="assets/workspace-reorder.js?v=2.202" defer></script>
+<script src="assets/release-info.js?v=2.202" defer></script>
 <link rel="stylesheet" href="assets/encar-id.css?v=2.162">
 <script src="assets/encar-id.js?v=2.184" defer></script>
 <script src="assets/company-purchase.js?v=2.172" defer></script>

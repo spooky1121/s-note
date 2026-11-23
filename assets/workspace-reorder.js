@@ -146,7 +146,7 @@
   mounted.set(container,controller);controllers.add(controller);refresh();return controller;
  }
  function menuId(element){const attr=element.dataset.page||element.dataset.workspaceId||element.dataset.reorderId,match=element.getAttribute('onclick')?.match(/^navigate\('([a-zA-Z]+)'\)$/);const id=attr||match?.[1];return ROUTES.has(id)?id:null;}
- function scan(){scanQueued=false;for(const[id,section,getId]of[['desktop-nav','sidebar',menuId],['mobile-drawer-nav','sidebar',menuId],['operator-navigation','operator-sidebar',e=>['vehicles','accounts','access','support'].includes(e.dataset.view)?e.dataset.view:null]]){
+ function scan(){scanQueued=false;for(const[id,section,getId]of[['desktop-nav','sidebar',menuId],['mobile-drawer-nav','sidebar',menuId],['operator-navigation','operator-sidebar',e=>['vehicles','accounts','access','support','sms','encar','vision','server'].includes(e.dataset.view)?e.dataset.view:null]]){
   const element=document.getElementById(id),prior=automatic.get(id);if(prior&&(!element||prior.element!==element)){prior.controller.destroy();automatic.delete(id);}if(!element)continue;
   if(!automatic.has(id)){const controller=mount({container:element,itemSelector:':scope > button',id:getId,section,mode:'sidebar'});automatic.set(id,{element,controller});}else automatic.get(id).controller.refresh();
  }}

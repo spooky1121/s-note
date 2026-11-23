@@ -1,6 +1,7 @@
 import { createEncarRequestDiagnostics, createEncarPendingLookup, encarLookupScopeKey } from '../_shared/encar-request-state.mjs';
 import { inspectAPIRequest, hardenAPIResponse, readBoundedBytes } from '../_shared/api-security.js';
 import { findGloarAdvertisement } from '../_shared/encar-id-gloar.mjs';
+import { createServiceTelemetry } from '../_shared/service-telemetry.mjs';
 
 // Search GLOAR's actual header field in a server-owned browser. Only a plate
 // enters this route; only a verified original Encar ID leaves it.
@@ -52,23 +53,23 @@ function verifiedResult(result,plate){
 export function createEncarIdHandler({lookup=findGloarAdvertisement,logger,now}={}){
  const join=createEncarPendingLookup();
  return async function onRequest(context){
-  const {request,env={}}=context,diagnostic=createEncarRequestDiagnostics({logger,now});
-  const finish=response=>diagnostic.finish(response);
+  const {request,env={}}=context,diagnostic=createEncarRequestDiagnostics({logger,now}),telemetry=createServiceTelemetry(context,{service:'encar',now});
+  const finish=(response,details)=>telemetry.finish(diagnostic.finish(response),details);
   const checked=inspectAPIRequest(request);if(checked.response)return finish(checked.response);
   // Presence only: no secret values, Auth traffic, browser launch or vehicle data.
   if(request.method==='GET')return json({ok:true,configured:browserConfigured(env),provider:'gloar',release:'2.151'});
   const scope=abortScope(request.signal,45000);
   try{
-   const bytes=await readBoundedBytes(request,1024,{timeoutMs:5000});let body;try{body=JSON.parse(new TextDecoder().decode(bytes));}catch{throw fail('INVALID_REQUEST',400);}
+   const bytes=await readBoundedBytes(request,1024,{timeoutMs:5000});telemetry.bytes({requestBytes:bytes.byteLength});let body;try{body=JSON.parse(new TextDecoder().decode(bytes));}catch{throw fail('INVALID_REQUEST',400);}
    if(!body||typeof body!=='object'||Array.isArray(body)||Object.keys(body).length!==1||typeof body.plate!=='string'||body.plate.length>40)throw fail('INVALID_REQUEST',400);
    const plate=body.plate.normalize('NFKC').replace(/[\s-]+/g,'');if(!PLATE.test(plate))throw fail('INVALID_REQUEST',400);
-   diagnostic.stage('auth');const actor=await authorize(request,env,scope.signal,diagnostic);
+   diagnostic.stage('auth');const actor=await authorize(request,env,scope.signal,diagnostic);telemetry.authorized(actor);
    diagnostic.stage('lookup');const key=await encarLookupScopeKey({actor,env,parameters:{plate}}),waitUntil=typeof context.waitUntil==='function'?promise=>context.waitUntil(promise):undefined;
    const result=await join({key,signal:scope.signal,waitUntil,operation:signal=>lookup({plate,env,signal,waitUntil})});
    diagnostic.stage('verification');
    if(scope.signal.aborted)throw fail('REQUEST_ABORTED',408);
-   if(verifiedResult(result,plate)){diagnostic.stage('complete');return finish(json({ok:true,status:'found',plate,id:result.id,provider:'gloar'}));}
-   if(result?.status==='not_found'&&result.plate===plate&&result.code==='NOT_FOUND'){diagnostic.stage('complete');return finish(error('NOT_FOUND',200));}
+   if(verifiedResult(result,plate)){diagnostic.stage('complete');return finish(json({ok:true,status:'found',plate,id:result.id,provider:'gloar'}),{ok:true,adId:result.id});}
+   if(result?.status==='not_found'&&result.plate===plate&&result.code==='NOT_FOUND'){diagnostic.stage('complete');return finish(error('NOT_FOUND',200),{ok:false,stage:'not_found'});}
    return finish(error('GLOAR_ID_UNVERIFIED',502));
   }catch(e){if(scope.signal.aborted)return finish(error(request.signal.aborted?'REQUEST_ABORTED':'REQUEST_TIMEOUT',request.signal.aborted?408:504));if(e?.code==='PAYLOAD_TOO_LARGE')return finish(error('INVALID_REQUEST',413));const code=Object.hasOwn(MESSAGES,e?.code)&&e.code!=='NOT_FOUND'?e.code:'PROVIDERS_UNAVAILABLE';return finish(error(code,e?.status===503?503:STATUS[code]||502,e?.retryAfter));}finally{scope.dispose();}
  };
