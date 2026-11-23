@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.191">
+<html lang="ko" data-snote-release="2.192">
 <head>
 <meta charset="utf-8" />
 <link rel="stylesheet" href="assets/message-popup.css?v=2.172">
@@ -3182,7 +3182,7 @@ button, input, select, textarea { font-family: inherit; }
 <script src="assets/idle-recovery.js?v=2.104"></script>
 <script src="assets/idle-session.js?v=2.172"></script>
 <link rel="stylesheet" href="assets/profile-settings.css?v=2.102">
-<script src="assets/feature-loader.js?v=2.185"></script>
+<script src="assets/feature-loader.js?v=2.192"></script>
 <script src="assets/vehicle-colors.js?v=2.23"></script>
 <link rel="stylesheet" href="assets/customer-contract-signature.css?v=2.165">
 <script src="assets/customer-contract-signature.js?v=2.165"></script>
@@ -3237,7 +3237,7 @@ button, input, select, textarea { font-family: inherit; }
 <link rel="stylesheet" href="assets/vehicle-memo.css?v=2.92">
 <link rel="stylesheet" href="assets/sidebar-hover.css?v=2.92">
 <link rel="stylesheet" href="assets/accountant-workspace.css?v=2.130">
-<link rel="stylesheet" href="assets/contract-office.css?v=2.160">
+<link rel="stylesheet" href="assets/contract-office.css?v=2.192">
 <link rel="stylesheet" href="assets/workspace-ledgers.css?v=2.136">
 </head>
 <body class="snote-typography">
@@ -5858,7 +5858,7 @@ function buildAccountantPurchaseSummary(){
  $('acct-finance-table').innerHTML=accountantCarTable(visible);$('acct-finance-mobile').innerHTML=accountantCarMobile(visible);
 }
 let snote2184OfficeIntent=0;
-function buildAlt(){snoteRenderSettingsSections();if(['contractOffice','contractArchive'].includes(route)){$('alt-title').style.display='none';$('alt-copy').style.display='none';if(window.SnoteContractOffice&&window.snoteDocumentCompanyReady?.()!==false)window.SnoteContractOffice[route==='contractArchive'?'mountArchive':'mount']($('alt-content'));else {const actor=currentUser,page=route,host=$('alt-content'),intent=++snote2184OfficeIntent;host.textContent='서류 업무를 준비하고 있습니다.';void window.SnoteFeatures.load('office').then(()=>intent===snote2184OfficeIntent&&currentUser===actor&&route===page&&$('alt-content')===host?window.snoteEnsureDocumentCompany?.():false).then(()=>{if(intent===snote2184OfficeIntent&&currentUser===actor&&route===page&&$('alt-content')===host)buildAlt();}).catch(()=>{if(intent===snote2184OfficeIntent&&currentUser===actor&&route===page&&$('alt-content')===host)host.textContent='서류 업무를 불러오지 못했습니다. 메뉴를 다시 선택해 주세요.';});}return;}if(route==='recycle'){$('alt-title').style.display='none';$('alt-copy').style.display='none';if(window.snoteRenderRecycleBin)window.snoteRenderRecycleBin();else $('alt-content').textContent='휴지통을 준비하고 있습니다.';return;}if(route==='users'&&!isAccountant()){buildCustomerManagement();return;}if(route==='settings'){if(isSnoteAdmin())snoteRenderAdminSettings();else snoteRenderDealerSettings();window.snoteProfileEditor?.mountSettings?.($('snote-settings-profile-body'));window.SnoteDealerFinanceRates?.mount();return;}if((isAccountant()&&route==='finance')||(isSnoteAdmin()&&route==='acctFinance')){buildAccountantPurchaseSummary();return;}let title='',copy='',content='';if(route==='prestock'&&isFinanceManager()){buildPrestockManagement();return}if(route==='inventoryFinance'&&isFinanceManager()){buildInventoryFinance();return}if(route==='finance'){title='';copy='';content=`<div class="panel" style="margin-top:21px;box-shadow:none"><div class="panel-head"><div><h2>차량별 예상 매출이익</h2><p>모든 비용 반영 · 수리비 내역 합산</p></div></div><div class="tablewrap snote222-profit-scroll"><table class="snote-profit-table"><thead><tr><th>차량</th><th class="snote222-color-column">색상</th>${isAccountant()?'<th>담당 딜러</th>':''}<th>매입가</th><th>부대비용</th><th>총 투입원가</th><th>판매예정가 / 판매가</th><th>예상 수익</th></tr></thead><tbody>${cars.filter(c=>c.status!=='판매완료'&&(accountantFilter()==='all'||c.ownerId===accountantFilter())).map(c=>{const t=totals(c.buy,salePrice(c),normalizeCosts(c));return `<tr class="vehicle-clickable" tabindex="0" role="button" onclick="openVehicle('${c.id}')" onkeydown="if(event.key==='Enter')openVehicle('${c.id}')"><td class="price">${esc(c.model)}</td><td class="snote222-color-column">${snote222VehicleColor(c)}</td>${isAccountant()?`<td>${esc(dealerLabel(c))}</td>`:''}<td>${num(c.buy)}원</td><td>${num(t.direct)}원</td><td>${num(t.landed)}원</td><td>${num(salePrice(c))}원${c.status==='판매완료'?' (판매)':''}</td><td class="price" style="color:${t.margin<0?'#c34859':'#16936f'}">${num(t.margin)}원</td></tr>`}).join('')}</tbody></table></div></div>`}else if(route==='users'){title='고객관리 메뉴';copy='고객명, 연락처, 매입·판매 이력, 담당 직원 등은 권한에 따라 열람할 수 있도록 설계합니다.';content='<p class="note">고객 개인정보는 실제 개발 시 암호화, 접근 권한, 처리 목적에 맞춘 보관 정책을 적용합니다.</p>'}else{title='직원 및 차량 모델 데이터 관리';copy='직원 계정과 모델 분류의 관리 기능을 확장할 예정입니다. 등록된 차량 모델 분류를 확인할 수 있습니다.';content=`<div class="catalog-manage"><strong>차량 모델 목록 (로컬 DB)</strong><p id="catalog-counter"></p><p>기존 차량 모델 DB를 확인하고 내보낼 수 있습니다.</p><div class="buttons"><button class="btn-ghost" type="button" onclick="exportVehicleCatalog()">모델 목록 JSON 다운로드</button></div></div><p class="note">※ 이 데이터는 제조사 공식 가격표 확인 등급(연식별 표시), 이전 참고 등급, 세부등급 검증 대기 모델을 구분합니다. 엔카 공식 원본 DB나 국내 전체 출시 트림 확정 목록이 아닙니다. 검증된 자료는 CSV로 추가할 수 있습니다.</p><div class="world-panel"><div class="world-head"><div><strong>🌍 해외 공식 트림 검색 · 국내 등록과 분리</strong><p>미국·캐나다·영국·호주·일본의 공식 판매 트림만 표시합니다. 동일 차명이라도 국내 등급으로 자동 적용되지 않습니다.</p></div></div><div class="world-filters"><select id="world-market" aria-label="국가 선택" onchange="renderWorldTrims()"><option value="all">전체 국가</option><option value="US">미국 (US)</option><option value="CA">캐나다 (CA)</option><option value="GB">영국 (GB)</option><option value="AU">호주 (AU)</option><option value="JP">일본 (JP)</option></select><input id="world-search" type="search" placeholder="제조사, 차명, 등급 검색 (영어·일본어 가능)" oninput="renderWorldTrims()" /></div><div id="world-count" style="font-size:11px;color:#8191a5;margin-bottom:9px"></div><div class="world-results" id="world-results"></div><div class="world-credit">공식 트림명 출처: 각 국가 제조사 사이트 · 시장 구분 필수 · 전체 세계 차량의 전수조사 결과가 아닙니다.<br>일반 모델명 오픈데이터 참고: <a href="https://vehiclesdb.com" target="_blank" rel="noopener">Vehicle data by VehiclesDB</a> (CC BY 4.0, 데이터 자체는 별도 수입 필요)</div></div>`}if(route==='settings'){
+function buildAlt(){snoteRenderSettingsSections();if(['contractOffice','contractArchive'].includes(route)){$('alt-title').style.display='none';$('alt-copy').style.display='none';if(window.SnoteContractOffice&&(window.snoteDocumentCompanyReady?.()!==false||$('alt-content').querySelector('#snote-contract-office')))window.SnoteContractOffice[route==='contractArchive'?'mountArchive':'mount']($('alt-content'));else {const actor=currentUser,page=route,host=$('alt-content'),intent=++snote2184OfficeIntent;host.textContent='서류 업무를 준비하고 있습니다.';void window.SnoteFeatures.load('office').then(()=>intent===snote2184OfficeIntent&&currentUser===actor&&route===page&&$('alt-content')===host?window.snoteEnsureDocumentCompany?.():false).then(()=>{if(intent===snote2184OfficeIntent&&currentUser===actor&&route===page&&$('alt-content')===host)buildAlt();}).catch(()=>{if(intent===snote2184OfficeIntent&&currentUser===actor&&route===page&&$('alt-content')===host)host.textContent='서류 업무를 불러오지 못했습니다. 메뉴를 다시 선택해 주세요.';});}return;}if(route==='recycle'){$('alt-title').style.display='none';$('alt-copy').style.display='none';if(window.snoteRenderRecycleBin)window.snoteRenderRecycleBin();else $('alt-content').textContent='휴지통을 준비하고 있습니다.';return;}if(route==='users'&&!isAccountant()){buildCustomerManagement();return;}if(route==='settings'){if(isSnoteAdmin())snoteRenderAdminSettings();else snoteRenderDealerSettings();window.snoteProfileEditor?.mountSettings?.($('snote-settings-profile-body'));window.SnoteDealerFinanceRates?.mount();return;}if((isAccountant()&&route==='finance')||(isSnoteAdmin()&&route==='acctFinance')){buildAccountantPurchaseSummary();return;}let title='',copy='',content='';if(route==='prestock'&&isFinanceManager()){buildPrestockManagement();return}if(route==='inventoryFinance'&&isFinanceManager()){buildInventoryFinance();return}if(route==='finance'){title='';copy='';content=`<div class="panel" style="margin-top:21px;box-shadow:none"><div class="panel-head"><div><h2>차량별 예상 매출이익</h2><p>모든 비용 반영 · 수리비 내역 합산</p></div></div><div class="tablewrap snote222-profit-scroll"><table class="snote-profit-table"><thead><tr><th>차량</th><th class="snote222-color-column">색상</th>${isAccountant()?'<th>담당 딜러</th>':''}<th>매입가</th><th>부대비용</th><th>총 투입원가</th><th>판매예정가 / 판매가</th><th>예상 수익</th></tr></thead><tbody>${cars.filter(c=>c.status!=='판매완료'&&(accountantFilter()==='all'||c.ownerId===accountantFilter())).map(c=>{const t=totals(c.buy,salePrice(c),normalizeCosts(c));return `<tr class="vehicle-clickable" tabindex="0" role="button" onclick="openVehicle('${c.id}')" onkeydown="if(event.key==='Enter')openVehicle('${c.id}')"><td class="price">${esc(c.model)}</td><td class="snote222-color-column">${snote222VehicleColor(c)}</td>${isAccountant()?`<td>${esc(dealerLabel(c))}</td>`:''}<td>${num(c.buy)}원</td><td>${num(t.direct)}원</td><td>${num(t.landed)}원</td><td>${num(salePrice(c))}원${c.status==='판매완료'?' (판매)':''}</td><td class="price" style="color:${t.margin<0?'#c34859':'#16936f'}">${num(t.margin)}원</td></tr>`}).join('')}</tbody></table></div></div>`}else if(route==='users'){title='고객관리 메뉴';copy='고객명, 연락처, 매입·판매 이력, 담당 직원 등은 권한에 따라 열람할 수 있도록 설계합니다.';content='<p class="note">고객 개인정보는 실제 개발 시 암호화, 접근 권한, 처리 목적에 맞춘 보관 정책을 적용합니다.</p>'}else{title='직원 및 차량 모델 데이터 관리';copy='직원 계정과 모델 분류의 관리 기능을 확장할 예정입니다. 등록된 차량 모델 분류를 확인할 수 있습니다.';content=`<div class="catalog-manage"><strong>차량 모델 목록 (로컬 DB)</strong><p id="catalog-counter"></p><p>기존 차량 모델 DB를 확인하고 내보낼 수 있습니다.</p><div class="buttons"><button class="btn-ghost" type="button" onclick="exportVehicleCatalog()">모델 목록 JSON 다운로드</button></div></div><p class="note">※ 이 데이터는 제조사 공식 가격표 확인 등급(연식별 표시), 이전 참고 등급, 세부등급 검증 대기 모델을 구분합니다. 엔카 공식 원본 DB나 국내 전체 출시 트림 확정 목록이 아닙니다. 검증된 자료는 CSV로 추가할 수 있습니다.</p><div class="world-panel"><div class="world-head"><div><strong>🌍 해외 공식 트림 검색 · 국내 등록과 분리</strong><p>미국·캐나다·영국·호주·일본의 공식 판매 트림만 표시합니다. 동일 차명이라도 국내 등급으로 자동 적용되지 않습니다.</p></div></div><div class="world-filters"><select id="world-market" aria-label="국가 선택" onchange="renderWorldTrims()"><option value="all">전체 국가</option><option value="US">미국 (US)</option><option value="CA">캐나다 (CA)</option><option value="GB">영국 (GB)</option><option value="AU">호주 (AU)</option><option value="JP">일본 (JP)</option></select><input id="world-search" type="search" placeholder="제조사, 차명, 등급 검색 (영어·일본어 가능)" oninput="renderWorldTrims()" /></div><div id="world-count" style="font-size:11px;color:#8191a5;margin-bottom:9px"></div><div class="world-results" id="world-results"></div><div class="world-credit">공식 트림명 출처: 각 국가 제조사 사이트 · 시장 구분 필수 · 전체 세계 차량의 전수조사 결과가 아닙니다.<br>일반 모델명 오픈데이터 참고: <a href="https://vehiclesdb.com" target="_blank" rel="noopener">Vehicle data by VehiclesDB</a> (CC BY 4.0, 데이터 자체는 별도 수입 필요)</div></div>`}if(route==='settings'){
 content+=`<div class="catalog-source-panel"><strong>4단계 차량분류 · 기존 5단계 CSV 호환</strong><p>차량 등록은 제조사 → 모델명 → 세부모델 → 트림 4단계입니다. 세부등급과 연식·엔진 조건을 함께 확인해 선택합니다. 새 조사 자료를 적용하며 해외 자료는 해외 참고로 표시합니다. 업로드한 자료는 <b>출처 확인 대기</b>로 표시하며, 국내 제조사 공식 확인 등급을 임의로 덮어쓰지 않습니다.</p><div class="catalog-manage"><b>필수 열:</b> make,group,model,grade　<b>선택 열:</b> subgrade,model_year,source,source_url,market<br/><small>엔카·다나와·KB차차차·당근의 실제 수집 자료는 이용/재사용 허가를 확보한 뒤 CSV로 가져오세요.</small></div><div class="buttons"><button type="button" class="btn-ghost" onclick="exportVehicleCatalog()">전체 DB 내보내기</button></div></div>`;
 }
 $('alt-title').style.display='';$('alt-copy').style.display='';$('alt-title').textContent=title;$('alt-copy').textContent=copy;$('alt-content').innerHTML=content;if(route==='finance'){const tbody=$('alt-content').querySelector('.snote-profit-table tbody');if(tbody){const pager=document.createElement('nav');pager.id='profit-pagination';pager.className='snote-pagination';pager.setAttribute('aria-label','수익 정산 차량 목록 페이지');tbody.closest('.panel').append(pager);const visible=snote236Paginate([...tbody.children],'profit',JSON.stringify([currentUser?.username,accountantFilter()]),pager.id,()=>buildAlt());tbody.replaceChildren(...visible);}}if(route==='settings'&&!isAccountant()){refreshTaxonomyWidget();renderWorldTrims()}}
@@ -9191,6 +9191,20 @@ window.snoteContractOfficeBridge=Object.freeze({
   const state=snote128AssetStore().snapshot('companyStamp');if(state.companyId!==context.companyId||state.userId!==context.userId)return false;
   return stamp?.status==='missing'?state.status==='missing'&&state.url===null:stamp?.status==='ready'&&state.status==='ready'&&typeof stamp.url==='string'&&stamp.url.startsWith('blob:')&&state.url===stamp.url;
  },
+ async officeStamp(context){
+  snote130OfficeAssert(context);let url;
+  try{url=await snote128LoadCompanyAsset('companyOfficeStamp');}catch(_){snote130OfficeAssert(context);throw Object.assign(Error('등록된 법인직인을 불러오지 못했습니다. 다시 확인해 주세요.'),{code:'COMPANY_OFFICE_STAMP_UNAVAILABLE'});}
+  snote130OfficeAssert(context);const state=snote128AssetStore().snapshot('companyOfficeStamp');
+  if(state.companyId!==context.companyId||state.userId!==context.userId)throw Object.assign(Error('법인직인의 상사 연결을 다시 확인해 주세요.'),{code:'CONTEXT_CHANGED'});
+  if(state.status==='missing'&&!url&&state.url===null)return {status:'missing',url:null};
+  if(state.status==='ready'&&typeof url==='string'&&url.startsWith('blob:')&&state.url===url)return {status:'ready',url};
+  throw Object.assign(Error('등록된 법인직인 상태를 확인하지 못했습니다.'),{code:'COMPANY_OFFICE_STAMP_UNAVAILABLE'});
+ },
+ officeStampCurrent(context,stamp){
+  if(!snote130OfficeCurrent(context)||!snote130OfficeContext()?.ready)return false;
+  const state=snote128AssetStore().snapshot('companyOfficeStamp');if(state.companyId!==context.companyId||state.userId!==context.userId)return false;
+  return stamp?.status==='missing'?state.status==='missing'&&state.url===null:stamp?.status==='ready'&&state.status==='ready'&&typeof stamp.url==='string'&&stamp.url.startsWith('blob:')&&state.url===stamp.url;
+ },
  company(context){snote130OfficeAssert(context);return {name:S.company.name||'',business_number:S.company.business_number||'',corporate_number:S.company.corporate_number||'',representative_name:S.company.representative_name||'',business_phone:S.company.business_phone||'',address:[S.company.business_address,S.company.business_address_detail].filter(Boolean).join(' '),agentName:currentUser.name||''};}
 });
 const getOwnUuid=owner=>snoteCompanyOwnerRows().find(m=>ownerAlias(m.user_id)===owner)?.user_id||null;
@@ -9751,7 +9765,7 @@ async function serverMediaRefresh(){
   if(!current())throw snoteMediaScopeError();
   const countDocuments=base.actor.role==='accountant'&&snoteCompanyActor()?.role==='accountant';
   const r=await base.client.from('zc_media').select('*',countDocuments?{count:'exact'}:undefined).eq('company_id',base.companyId).limit(3000);if(!current())throw snoteMediaScopeError();if(r.error)throw r.error;
-  const all=(r.data||[]).filter(m=>!['modelPhoto','companyStamp','companyLogo'].includes(m.group_name)),documentSlots=new Map();let cursor=0;
+  const all=(r.data||[]).filter(m=>!['modelPhoto','companyStamp','companyLogo','companyOfficeStamp'].includes(m.group_name)),documentSlots=new Map();let cursor=0;
   for(const row of all)if(row.company_id===base.companyId&&typeof row.owner_id==='string'&&typeof row.car_id==='string'&&SNOTE174_DOCUMENT_GROUPS.has(row.group_name)){const key=ownerAlias(row.owner_id)+'\u0000'+row.car_id;if(!documentSlots.has(key))documentSlots.set(key,new Set());documentSlots.get(key).add(row.group_name);}
   async function worker(){while(cursor<all.length&&current()){const m=all[cursor++];try{
    const download=await base.client.storage.from(BUCKET).download(m.file_path);if(!current())return;if(download.error)throw download.error;
@@ -11139,7 +11153,7 @@ function snoteRenderAdminSettings(){
  <div class="snote-company-actions"><button type="submit" class="btn-primary" id="snote90-company-save" disabled>상사정보 저장</button><button type="button" id="snote90-company-retry" hidden>연결 다시 확인</button></div>
  <p id="snote90-company-message" class="snote-company-message" role="status" aria-live="polite" aria-atomic="true">상사정보를 불러오는 중…</p>
  </form>
- <div class="snote203-assets"><div class="snote203-asset"><strong>상사 도장 이미지</strong><small>계약서에 사용할 PNG·JPG·WEBP</small><div id="snote203-stamp-preview" class="snote203-asset-preview">등록된 이미지 없음</div><input type="file" id="snote203-stamp-file" accept="image/png,image/jpeg,image/webp" hidden><div class="snote203-asset-actions"><button type="button" onclick="document.getElementById('snote203-stamp-file').click()">이미지 등록 / 변경</button><button type="button" class="snote203-muted" id="snote203-stamp-delete">삭제</button></div></div><div class="snote203-asset"><strong>상사 로고 이미지</strong><small>PNG·JPG·WEBP 이미지 파일</small><div id="snote203-logo-preview" class="snote203-asset-preview">등록된 이미지 없음</div><input type="file" id="snote203-logo-file" accept="image/png,image/jpeg,image/webp" hidden><div class="snote203-asset-actions"><button type="button" onclick="document.getElementById('snote203-logo-file').click()">이미지 등록 / 변경</button><button type="button" class="snote203-muted" id="snote203-logo-delete">삭제</button></div></div></div>
+ <div class="snote203-assets"><div class="snote203-asset"><strong>상사 도장 이미지</strong><small>계약서에 사용할 PNG·JPG·WEBP</small><div id="snote203-stamp-preview" class="snote203-asset-preview">등록된 이미지 없음</div><input type="file" id="snote203-stamp-file" accept="image/png,image/jpeg,image/webp" hidden><div class="snote203-asset-actions"><button type="button" onclick="document.getElementById('snote203-stamp-file').click()">이미지 등록 / 변경</button><button type="button" class="snote203-muted" id="snote203-stamp-delete">삭제</button></div></div><div class="snote203-asset"><strong>법인직인 이미지</strong><small>매매업자 옆에 날인할 PNG·JPG·WEBP</small><div id="snote203-office-stamp-preview" class="snote203-asset-preview">등록된 이미지 없음</div><input type="file" id="snote203-office-stamp-file" accept="image/png,image/jpeg,image/webp" hidden><div class="snote203-asset-actions"><button type="button" onclick="document.getElementById('snote203-office-stamp-file').click()">이미지 등록 / 변경</button><button type="button" class="snote203-muted" id="snote203-office-stamp-delete">삭제</button></div></div><div class="snote203-asset"><strong>상사 로고 이미지</strong><small>PNG·JPG·WEBP 이미지 파일</small><div id="snote203-logo-preview" class="snote203-asset-preview">등록된 이미지 없음</div><input type="file" id="snote203-logo-file" accept="image/png,image/jpeg,image/webp" hidden><div class="snote203-asset-actions"><button type="button" onclick="document.getElementById('snote203-logo-file').click()">이미지 등록 / 변경</button><button type="button" class="snote203-muted" id="snote203-logo-delete">삭제</button></div></div></div>
  </section><section class="snote90-panel"><h3>직원 관리</h3><p>직원의 표시 이름과 역할을 관리합니다. 화면에는 내부 식별자를 표시하지 않습니다.</p>
  <div id="snote90-members">직원 목록 불러오는 중...</div></section>
  <section class="snote90-panel"><h3>직원 초대</h3><p>딜러·경리 권한을 선택해 초대 링크를 만드세요. 생성된 링크를 직원에게 전달하면 초대받은 이메일로 가입할 수 있습니다.</p><div id="snote90-invite-mount"></div></section>
@@ -11151,7 +11165,7 @@ function snoteRenderAdminSettings(){
  snoteFillCompanyProfile(S.company,{display_name:S.members.find(m=>m.user_id===S.user.id)?.display_name,phone:''});
  byId('snote90-company-form').addEventListener('submit',snoteSaveCompanyProfile);
  byId('snote90-company-retry').addEventListener('click',snoteLoadCompanyProfile);
- for(const [kind,prefix] of [['companyStamp','snote203-stamp'],['companyLogo','snote203-logo']]){
+ for(const [kind,{prefix}] of Object.entries(snote203AssetKinds)){
   byId(prefix+'-file').addEventListener('change',event=>snote203UploadAsset(kind,event.currentTarget));
   byId(prefix+'-delete').addEventListener('click',()=>snote203DeleteAsset(kind));
  }
@@ -11194,6 +11208,7 @@ function snote203FillBank(){
 }
 let snote203AssetLoad=0,snote128CompanyAssets=null;
 const snote203AssetBusy=new Set();
+const snote203AssetKinds=Object.freeze({companyStamp:{prefix:'snote203-stamp',label:'상사 도장'},companyLogo:{prefix:'snote203-logo',label:'상사 로고'},companyOfficeStamp:{prefix:'snote203-office-stamp',label:'법인직인'}});
 window.snoteCompanyAssetScope=()=>{
  const member=S.members.find(row=>row.user_id===S.user?.id&&row.company_id===S.company?.id&&row.active===true&&['admin','dealer','accountant'].includes(row.role));
  if(!S.ready||!S.client||!S.company?.id||!S.user?.id||!currentUser||!member)return null;
@@ -11202,6 +11217,7 @@ window.snoteCompanyAssetScope=()=>{
 function snote128ClearCompanyConsumers(kind,oldURL){
  if(kind==='companyStamp'&&(!oldURL||snote128StampState.url===oldURL))snote128StampState={status:'idle',url:null};
  if(kind==='companyStamp'){const preview=document.getElementById('contract-office-dialog');if(preview?.__coStampArtwork&&(!oldURL||preview.__coStampArtwork.source===oldURL))preview.__coStampArtwork=null;}
+ if(kind==='companyOfficeStamp'){const preview=document.getElementById('contract-office-dialog');if(preview?.__coOfficeStampArtwork&&(!oldURL||preview.__coOfficeStampArtwork.source===oldURL))preview.__coOfficeStampArtwork=null;}
  for(const image of document.querySelectorAll('img')){
   if(oldURL?image.getAttribute('src')!==oldURL&&image.dataset.snoteCompanySource!==oldURL:image.dataset.snoteCompanyAsset!==kind)continue;
   if(kind==='companyLogo'&&image.classList.contains('zc-footer-emblem')){image.closest('.snote-document-logo')?.classList.remove('is-company-logo');snote128BindCompanyImage(image,null,kind,'상사 로고','');}
@@ -11223,6 +11239,7 @@ function snote128AssetStore(){
 async function snote128LoadCompanyAsset(kind){const context=window.snoteCompanyAssetScope();if(!context)return null;if(!window.SnoteCompanyAssets)await window.SnoteFeatures.load('companyAssets');const now=window.snoteCompanyAssetScope();if(!now||['companyId','userId','client','actor'].some(key=>now[key]!==context[key]))throw Error('CONTEXT_CHANGED');return snote128AssetStore().load(kind);}
 window.snoteLoadDocumentLogo=()=>snote128LoadCompanyAsset('companyLogo');
 window.snoteLoadDocumentStamp=()=>snote128LoadCompanyAsset('companyStamp');
+window.snoteLoadDocumentOfficeStamp=()=>snote128LoadCompanyAsset('companyOfficeStamp');
 window.snoteCompanyAssetState=kind=>snote128CompanyAssets?snote128CompanyAssets.snapshot(kind):{status:'idle',url:null,path:null,companyId:window.snoteCompanyAssetScope()?.companyId||null,userId:window.snoteCompanyAssetScope()?.userId||null};
 async function snote203AssetRecords(kind,context=window.snoteCompanyAssetScope()){
  if(!context)return [];
@@ -11232,18 +11249,18 @@ async function snote203AssetRecords(kind,context=window.snoteCompanyAssetScope()
 }
 async function snote203LoadAssets(){
  const request=++snote203AssetLoad,scope=snote128DocumentScope();
- await Promise.all([['companyStamp','snote203-stamp-preview'],['companyLogo','snote203-logo-preview']].map(async([kind,target])=>{
-  const box=byId(target);if(!box)return;
+ await Promise.all(Object.entries(snote203AssetKinds).map(async([kind,{prefix,label}])=>{
+  const box=byId(prefix+'-preview');if(!box)return;
   const current=()=>box.isConnected&&request===snote203AssetLoad&&snote128DocumentCurrent(scope);
   try{const url=await snote128LoadCompanyAsset(kind);if(!current())return;
    if(!url){box.textContent='등록된 이미지 없음';return;}
-   const image=document.createElement('img');snote128BindCompanyImage(image,url,kind,kind==='companyStamp'?'등록한 상사 도장':'등록한 상사 로고');
+   const image=document.createElement('img');snote128BindCompanyImage(image,url,kind,'등록한 '+label);
    image.addEventListener('error',()=>{if(current()&&image.parentElement===box)box.textContent='이미지를 불러오지 못했습니다.';},{once:true});box.replaceChildren(image);
   }catch(_){if(current())box.textContent='이미지를 불러오지 못했습니다.';}
  }));
 }
 function snote203InvalidateDocumentLogo(kind){
- if(!['companyLogo','companyStamp'].includes(kind))return;
+ if(!Object.hasOwn(snote203AssetKinds,kind))return;
  snote128CompanyAssets?.invalidate(kind);
  if(kind==='companyLogo')snote95UpdateDocumentCompany();
  if(kind==='companyStamp'&&$('contract-overlay').classList.contains('open'))snote128RefreshContractStamp();
@@ -11253,16 +11270,16 @@ window.snoteInvalidateCompanyAssets=snote203InvalidateDocumentLogo;
 function snote128ResetCompanyAssets(){
  ++snote203AssetLoad;++snote95DocumentLogoRequest;snote95DocumentLogoReady=Promise.resolve();
  snote128CompanyAssets?.reset();snote128ResetContractStamp();
- for(const target of ['snote203-stamp-preview','snote203-logo-preview']){const box=byId(target);if(box)box.textContent='등록된 이미지 없음';}
+ for(const {prefix} of Object.values(snote203AssetKinds)){const box=byId(prefix+'-preview');if(box)box.textContent='등록된 이미지 없음';}
  window.dispatchEvent(new CustomEvent('snote:company-assets-changed',{detail:{kind:'companyLogo',reset:true}}));
 }
 function snote203AssetContext(kind){
- if(!['companyStamp','companyLogo'].includes(kind)||!isSnoteAdmin()||!S.ready||!S.client||!S.company||!S.user)return null;
- if(!S.members.some(member=>member.user_id===S.user.id&&member.active&&member.role==='admin'))return null;
- return {client:S.client,companyId:S.company.id,userId:S.user.id};
+ if(!Object.hasOwn(snote203AssetKinds,kind)||!isSnoteAdmin()||!S.ready||!S.client||!S.company||!S.user)return null;
+ if(!S.members.some(member=>member.user_id===S.user.id&&member.company_id===S.company.id&&member.active&&member.role==='admin'))return null;
+ return {client:S.client,companyId:S.company.id,userId:S.user.id,actor:currentUser};
 }
 function snote203LockAsset(kind){
- const prefix=kind==='companyStamp'?'snote203-stamp':'snote203-logo';
+ const prefix=snote203AssetKinds[kind]?.prefix;
  const card=byId(prefix+'-file')?.closest('.snote203-asset');
  const controls=[...(card?.querySelectorAll('button,input')||[])].map(element=>[element,element.disabled]);
  for(const [element] of controls)element.disabled=true;
@@ -11277,10 +11294,10 @@ function snote203AssetFailure(stage,error){
 async function snote203UploadAsset(kind,input){
  const file=input.files?.[0];input.value='';const context=snote203AssetContext(kind);if(!file||!context)return;
  if(!['image/png','image/jpeg','image/webp'].includes(file.type)||!file.size||file.size>3*1024*1024){toast('PNG/JPG/WEBP 형식, 3MB 이하 이미지를 선택해주세요.');return}
- const {client,companyId,userId}=context,key=companyId+':'+kind;
+ const {client,companyId,userId,actor}=context,key=companyId+':'+kind;
  if(snote203AssetBusy.has(key))return;
  snote203AssetBusy.add(key);const unlock=snote203LockAsset(kind);
- const isCurrent=()=>S.ready&&S.company?.id===companyId&&S.user?.id===userId;
+ const isCurrent=()=>S.ready&&S.client===client&&S.company?.id===companyId&&S.user?.id===userId&&currentUser===actor&&!!snote203AssetContext(kind);
  let stage='기존 이미지 조회',uploadedPath=null,metadataSaved=false;
  try{
   const previous=await snote203AssetRecords(kind);
@@ -11307,7 +11324,7 @@ async function snote203UploadAsset(kind,input){
   }
   if(!isCurrent())return;
   snote203InvalidateDocumentLogo(kind);await snote203LoadAssets();
-  if(isCurrent())toast(cleanupFailed?'새 이미지는 저장됐지만 이전 파일 정리가 일부 완료되지 않았습니다.':(kind==='companyStamp'?'상사 도장':'상사 로고')+' 이미지를 저장했습니다.');
+  if(isCurrent())toast(cleanupFailed?'새 이미지는 저장됐지만 이전 파일 정리가 일부 완료되지 않았습니다.':snote203AssetKinds[kind].label+' 이미지를 저장했습니다.');
  }catch(error){if(isCurrent())toast(snote203AssetFailure(stage,error));}
  finally{
   if(uploadedPath&&!metadataSaved)try{await client.storage.from('zc-vehicle-private').remove([uploadedPath]);}catch(_){}
@@ -11318,7 +11335,7 @@ async function snote203DeleteAsset(kind){
  const context=snote203AssetContext(kind);if(!context)return;
  const {client,companyId,userId}=context,key=companyId+':'+kind;if(snote203AssetBusy.has(key))return;
  const isCurrent=snote253MessageCurrent(()=>S.ready&&S.client===client&&S.company?.id===companyId&&S.user?.id===userId&&!!snote203AssetContext(kind));
- if(!await window.snoteConfirm((kind==='companyStamp'?'상사 도장':'상사 로고')+' 이미지를 삭제할까요?',{isCurrent})||!isCurrent()||snote203AssetBusy.has(key))return;
+ if(!await window.snoteConfirm(snote203AssetKinds[kind].label+' 이미지를 삭제할까요?',{isCurrent})||!isCurrent()||snote203AssetBusy.has(key))return;
  snote203AssetBusy.add(key);const unlock=snote203LockAsset(kind);
  let stage='기존 이미지 조회';
  try{const previous=await snote203AssetRecords(kind);
@@ -11995,7 +12012,7 @@ window.zc86Cloud={getAccessToken:async()=>{const client=S.client,user=S.user,com
 <link rel="stylesheet" href="assets/workspace-reorder.css?v=2.136">
 <script src="assets/workspace-order-store.js?v=2.135" defer></script>
 <script src="assets/workspace-reorder.js?v=2.172" defer></script>
-<script src="assets/release-info.js?v=2.191" defer></script>
+<script src="assets/release-info.js?v=2.192" defer></script>
 <link rel="stylesheet" href="assets/encar-id.css?v=2.162">
 <script src="assets/encar-id.js?v=2.184" defer></script>
 <script src="assets/company-purchase.js?v=2.172" defer></script>

@@ -1,7 +1,7 @@
 /* Decoded private company branding, isolated by account, company and client. */
 (function(global){
  'use strict';
- const KINDS=Object.freeze(['companyStamp','companyLogo']);
+ const KINDS=Object.freeze(['companyStamp','companyLogo','companyOfficeStamp']);
  const MIME=new Set(['image/png','image/jpeg','image/webp']),MAX_BYTES=3*1024*1024;
  const validKind=kind=>KINDS.includes(kind);
  const issue=code=>Object.assign(new Error(code),{code});
