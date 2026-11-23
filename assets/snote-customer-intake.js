@@ -200,6 +200,76 @@
     if (popup && notify) window.snoteNotify(content, { tone: kind, key: 'customer-intake:' + s.id, isCurrent: () => isCurrent(s), returnFocus });
   }
 
+  const SETUP_CODES = new Set(['NOT_CONFIGURED', 'SERVICE_UNAVAILABLE', 'SETUP_REQUIRED']);
+  const SETUP_LABELS = Object.freeze({
+    SUPABASE_URL: '서버 연결 주소', SUPABASE_PUBLISHABLE_KEY: '서버 공개 연결 키',
+    SUPABASE_SERVICE_ROLE_KEY: '서버 전용 연결 키', CUSTOMER_INTAKE_PUBLIC_ORIGIN: '운영 접속 주소',
+    SOLAPI_API_KEY: '문자 API 키', SOLAPI_API_SECRET: '문자 API 비밀키',
+    CUSTOMER_INTAKE_OTP_SECRET: '문자 인증용 서버 키'
+  });
+  function setupRay(response) {
+    const value = response?.headers.get('CF-Ray') || '';
+    return /^[a-f0-9]{8,32}(?:-[a-z]{3})?$/i.test(value) ? value : '';
+  }
+  async function setupJson(response) {
+    if (!response.ok || (response.headers.get('Content-Type') || '').split(';')[0].trim().toLowerCase() !== 'application/json') throw Error();
+    const length = response.headers.get('Content-Length');
+    if (length !== null && (!/^\d+$/.test(length) || Number(length) > 32768)) throw Error();
+    const reader = response.body?.getReader(); if (!reader) throw Error();
+    const chunks = []; let size = 0, complete = false;
+    try {
+      while (true) {
+        const value = await reader.read(); if (value.done) break;
+        size += value.value.byteLength; if (size > 32768) throw Error();
+        chunks.push(value.value);
+      }
+      const bytes = new Uint8Array(size); let offset = 0;
+      for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.byteLength; }
+      complete = true; return JSON.parse(new TextDecoder().decode(bytes));
+    } finally { if (!complete) void reader.cancel().catch(() => {}); reader.releaseLock(); }
+  }
+  function setupProbe(s) {
+    if (!isCurrent(s)) return Promise.resolve(null);
+    if (s.setupDiagnosticsJob) return s.setupDiagnosticsJob.promise;
+    const controller = new AbortController(), job = { promise: null }; let timer, response = null;
+    s.setupDiagnosticsJob = job; s.controllers.add(controller);
+    job.promise = (async () => {
+      const unavailable = () => ({ status: response?.status || null, ray: setupRay(response), kind: 'unavailable', names: [] });
+      try {
+        const work = (async () => {
+          response = await fetch(API, { method: 'GET', cache: 'no-store', credentials: 'same-origin', redirect: 'error', referrerPolicy: 'no-referrer', signal: controller.signal, headers: { Accept: 'application/json' } });
+          if (!isCurrent(s)) return null;
+          const value = await setupJson(response);
+          if (!isCurrent(s)) return null;
+          if (value?.service !== 'snote-customer-intake' || typeof value.configured !== 'boolean' || !Array.isArray(value.configurationIssues)) return unavailable();
+          const names = [...new Set(value.configurationIssues.slice(0, 32).map(item => item?.name).filter(name => typeof name === 'string' && Object.hasOwn(SETUP_LABELS, name)))];
+          return { status: response.status, ray: setupRay(response), kind: value.configured ? 'inconsistent' : 'setup', names, originMismatch: value.originMatches === false };
+        })().catch(unavailable);
+        const deadline = new Promise(resolve => { timer = setTimeout(() => { controller.abort(); resolve(unavailable()); }, 5000); });
+        const result = await Promise.race([work, deadline]);
+        return isCurrent(s) ? result : null;
+      } finally {
+        clearTimeout(timer); controller.abort(); s.controllers.delete(controller);
+        if (s.setupDiagnosticsJob === job) s.setupDiagnosticsJob = null;
+      }
+    })();
+    return job.promise;
+  }
+  function setupDetail(info, response, code) {
+    const version = document.documentElement.getAttribute('data-snote-release') || '';
+    const release = version.length <= 32 && /^\d+\.\d+(?:\.\d+)?$/.test(version) ? 'v' + version : '확인 불가';
+    const parts = ['접속 주소: ' + location.origin, '화면 버전: ' + release, '문자 요청: HTTP ' + response.status + (SETUP_CODES.has(code) ? ' (' + code + ')' : ''),
+      '설정 진단: ' + (info?.status ? 'HTTP ' + info.status : '응답 없음')];
+    if (info?.kind === 'setup') {
+      parts.push(info.names.length ? '확인할 서버 설정: ' + info.names.map(name => SETUP_LABELS[name] + '(' + name + ')').join(', ') : '서버 설정 오류이며 세부 항목은 확인하지 못했습니다.');
+    } else if (info?.kind === 'inconsistent') parts.push('진단 시점에는 설정이 확인됐으나 원래 요청은 실패했습니다. 발송 성공을 확인한 상태가 아닙니다.');
+    else parts.push('설정 진단을 불러오지 못했습니다. IP나 컴퓨터 차단 여부는 확인되지 않았습니다.');
+    if (info?.originMismatch) parts.push('운영 접속 주소 설정이 현재 주소와 일치하지 않습니다.');
+    const ray = setupRay(response); if (ray) parts.push('문자 요청 ID: ' + ray);
+    if (info?.ray) parts.push('진단 요청 ID: ' + info.ray);
+    return '\n' + parts.join(' · ');
+  }
+
   function failure(error, action) {
     if (error?.code === 'ORIGIN_NOT_ALLOWED')
       return '접속 주소와 고객 입력 서비스의 운영 주소가 일치하지 않습니다. 접속 주소 설정을 확인해 주세요.';
@@ -213,8 +283,8 @@
       return '고객 입력용 DB 설정을 확인해 주세요. Supabase에서 고객 접수·인증 SQL 전체를 적용한 뒤 새로고침해 주세요.';
     if (error?.code === 'SERVER_SETUP_REQUIRED')
       return '서버의 Supabase 연결 설정을 확인해 주세요. Cloudflare 운영 환경의 서버 키를 확인하고 재배포한 뒤 새로고침해 주세요.';
-    if (['NOT_CONFIGURED', 'SERVICE_UNAVAILABLE', 'SETUP_REQUIRED'].includes(error?.code))
-      return '문자 발송 설정 확인이 필요합니다. 전화번호는 미리 입력할 수 있습니다. Cloudflare 운영 환경 설정을 저장·재배포한 뒤 새로고침해 주세요.';
+    if (SETUP_CODES.has(error?.code))
+      return '문자 발송 설정 확인이 필요합니다. 전화번호는 미리 입력할 수 있습니다. Cloudflare 운영 환경 설정을 저장·재배포한 뒤 새로고침해 주세요.' + (error.setupDetail || '');
     if (error?.code === 'SMS_SEND_UNKNOWN')
       return '문자 접수 여부를 확인하지 못했습니다. 다시 보내기 전에 요청 상태와 고객 수신 여부를 확인해 주세요.';
     if (error?.status === 503)
@@ -256,9 +326,14 @@
       let result;
       try { result = await response.json(); } catch (_) { result = null; }
       if (!isCurrent(s)) throw { code: 'STALE' };
-      if (!response.ok || result?.ok !== true) throw {
-        status: response.status, code: text(result?.code), retryAfter: result?.retryAfter
-      };
+      if (!response.ok || result?.ok !== true) {
+        const error = { status: response.status, code: text(result?.code), retryAfter: result?.retryAfter };
+        if (response.status === 503 && SETUP_CODES.has(error.code)) {
+          const info = await setupProbe(s); if (!isCurrent(s)) throw { code: 'STALE' };
+          error.setupDetail = setupDetail(info, response, error.code);
+        }
+        throw error;
+      }
       return result;
     } finally {
       clearTimeout(timeout);
@@ -619,7 +694,7 @@
     const s = {
       id: sequence, actor: context.user, username: context.user.username, role: context.user.role, carId: context.carId,
       cloud: context.cloud, canCreate: context.car.status !== '판매완료', controllers: new Set(),
-      requests: [], link: null, busy: false, reading: false, blocked: false, loaded: false, timer: null,
+      requests: [], link: null, busy: false, reading: false, blocked: false, loaded: false, timer: null, setupDiagnosticsJob: null,
       baseline: formValues(), applied: new Set(), appliedIds: new Set(), manualOnly: new Set(), selectedSubmission: null,
       unsavedImport: byId('zc72-sale-modal')?.dataset.snoteHistoryDirty === '1' || byId('zc72-sale-form')?.dataset.snote196ManualReset === '1'
     };
