@@ -16,7 +16,7 @@ async function setup(width=1440,{manualMessages=false}={}){
   S.rpcConfig={client:S.client,url:S.client.supabaseUrl,key:S.client.supabaseKey};
   const owner=S.user.id,company=S.company.id,alias=currentUser.username,carId='encar-car-1';
   window.__recycle={owner,company,alias,carId,coversRevision:0,mode:'ok',calls:[],removed:[],uploads:[],archives:[],receipts:new Map(),clock:0,media:[],customer:{payload:{id:alias+':'+carId,ownerId:alias,carId,name:'합성 고객',phone:'01012345678',address:'합성 주소',refundAccount:'1234567890123'},has_rrn:false,updated_at:'2026-11-06T00:00:00.000Z',restore_generation:'00000000-0000-0000-0000-000000000000'}};
-  const t=window.__recycle;t.coverState={};t.archivedMedia=[];S.ready=false;covers={};localStorage.setItem('zerocar-office-v12-covers-'+alias,'{}');S.ready=true;
+  const t=window.__recycle;t.coverState={};t.archivedMedia=[];S.ready=false;covers={};localStorage.setItem('s-note-office-v12-covers-'+alias,'{}');S.ready=true;
   const clone=x=>x==null?x:structuredClone(x);
   const ack=(kind,customerChanged=false,mediaChanged=false)=>({ok:true,id:'44444444-4444-4444-8444-444444444444',ids:[],kind,ownerId:owner,carId,cars:kind==='customer'?null:{payload:clone(window.__encarFixtureCars),revision:window.__encarFixtureRevision},covers:kind==='customer'?null:{payload:clone(t.coverState),revision:t.coversRevision},customerChanged,mediaChanged});
   t.ack=ack;
@@ -190,7 +190,7 @@ async function pinnedActor(){
 async function roundTrips(){
  for(const kind of['vehicle','media']){
   const f=await setup(),p=f.page;
-  const state=await p.evaluate(async kind=>{const t=__recycle,S=__encarFixtureState;t.addMedia();t.restoreKind=kind;t.coverState[t.carId]='old-file';S.ready=false;covers[t.carId]='old-file';localStorage.setItem('zerocar-office-v12-covers-'+t.alias,JSON.stringify(covers));S.ready=true;
+  const state=await p.evaluate(async kind=>{const t=__recycle,S=__encarFixtureState;t.addMedia();t.restoreKind=kind;t.coverState[t.carId]='old-file';S.ready=false;covers[t.carId]='old-file';localStorage.setItem('s-note-office-v12-covers-'+t.alias,JSON.stringify(covers));S.ready=true;
    const before=structuredClone(__encarFixtureCars),customer=structuredClone(t.customer.payload);
    if(kind==='vehicle')await snoteRecycleBinBridge.trashVehicle(cars.find(car=>car.id===t.carId));else await updateDB([],['old-file']);
    const trashed={cars:cars.map(car=>car.id),media:t.media.length,cover:covers[t.carId]??null};

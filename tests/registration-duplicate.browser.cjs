@@ -13,7 +13,7 @@ async function setup(width=1440){
  await p.evaluate(async()=>{
   await closeVehicle({discard:true});navigate('buy');const S=__encarFixtureState,from=S.client.from.bind(S.client),owner=S.user.id,company=S.company.id,alias=currentUser.username;
   S.revisions.set('cars:'+owner,__encarFixtureRevision);S.revisions.set('covers:'+owner,0);
-  S.ready=false;localStorage.setItem('zerocar-office-v12-covers-'+alias,'{}');S.ready=true;
+  S.ready=false;localStorage.setItem('s-note-office-v12-covers-'+alias,'{}');S.ready=true;
   const t=window.__duplicateFixture={owner,company,alias,mode:'ok',uploads:[],removed:[],calls:[],archives:[],media:[],ocrCount:0,ocrPlate:'12가3456',receipts:new Map(),covers:{},coversRevision:0};
   t.old={company_id:company,owner_id:owner,id:'old-registration',car_id:'encar-car-1',file_path:company+'/'+owner+'/encar-car-1/old-registration.png',original_name:'original-registration.png',mime_type:'image/png',file_size:1,group_name:'registration',meta:{},created_at:'2026-11-06T00:00:00Z'};
   t.other={...t.old,id:'inspection-keep',file_path:company+'/'+owner+'/encar-car-1/inspection-keep.png',group_name:'inspection1',original_name:'inspection-keep.png'};t.media=[t.old,t.other];

@@ -4,6 +4,7 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),vm=require('node:vm');
 const {readFileSync}=require('node:fs'),{resolve}=require('node:path');
 const recovery=require('../assets/idle-recovery.js');
+const compat=require('../assets/snote-storage-compat.js');
 const html=readFileSync(resolve(__dirname,'../index.html'),'utf8');
 const helpers=html.slice(html.indexOf('// Read company settings from the authenticated dataset snapshot'),html.indexOf('function snoteCompanyActor(){'));
 const actor=html.match(/^function snoteCompanyActor\(\).*$/m)[0];
@@ -14,7 +15,7 @@ const shipped=html.slice(html.indexOf('function snoteIdleRecoveryScope(){'),html
 const USER='11111111-1111-4111-8111-111111111111',OTHER='22222222-2222-4222-8222-222222222222';
 const COMPANY='33333333-3333-4333-8333-333333333333',OTHER_COMPANY='44444444-4444-4444-8444-444444444444';
 const NIL='00000000-0000-0000-0000-000000000000',PROJECT='https://fixture.supabase.co';
-const LEGACY={finance:'zerocar-office-v182-inventory-finance-ledger',finance_limits:'zerocar-office-v157-finance-companies',prestock:'zerocar-office-v148-prestock-ledger',monthly:'zerocar-office-v165-monthly-ledger',categories:'zerocar-office-v170-monthly-category-settings'};
+const LEGACY={finance:'s-note-office-v182-inventory-finance-ledger',finance_limits:'s-note-office-v157-finance-companies',prestock:'s-note-office-v148-prestock-ledger',monthly:'s-note-office-v165-monthly-ledger',categories:'s-note-office-v170-monthly-category-settings'};
 const alias=id=>'cld_'+id.replace(/-/g,'').slice(0,18),copy=value=>JSON.parse(JSON.stringify(value));
 const OWN=[{id:'synthetic-own-finance',loan:3500000}],FOREIGN=[{id:'synthetic-other-finance',loan:9000000}],SERVER=[{id:'synthetic-own-server-base',loan:4000000}];
 function fixture({dataset='finance',role='admin',revision=7,owned=OWN,server=SERVER}={}){
@@ -26,10 +27,10 @@ function fixture({dataset='finance',role='admin',revision=7,owned=OWN,server=SER
  const S={client,user:{id:USER},company:{id:COMPANY},rpcConfig:{url:PROJECT},members:[{user_id:USER,company_id:COMPANY,role,active:true}],revisions:new Map([[key,revision]]),companyOwners:new Map(),queue:new Set([key]),ready:true,loading:false,conflict:false};
  const currentUser={username:alias(USER),role};
  const bound={...recovery,read:s=>recovery.read(s,storage),write:(s,e)=>recovery.write(s,e,storage),remove:s=>recovery.remove(s,storage)};
- const context={window:{SnoteIdleRecovery:bound},S,currentUser,SNOTE203_META:'_snote203_meta',NIL,LEGACY,localStorage:storage,Storage,originalSet:Storage.prototype.setItem,
+ const context={window:{SnoteIdleRecovery:bound,SnoteStorageCompat:compat},SnoteStorageCompat:compat,S,currentUser,SNOTE203_META:'_snote203_meta',NIL,LEGACY,localStorage:storage,Storage,originalSet:Storage.prototype.setItem,
   snote220CatalogEpoch:1,cloudWriteEpoch:1,cloudPendingWrites:new Map(),ownerAlias:alias,
   parsePayload:raw=>{try{return JSON.parse(raw);}catch{return null;}},isShared:ds=>!['cars','covers'].includes(ds),
-  cloudKey:(ds,owner)=>ds+':'+(!['cars','covers'].includes(ds)?NIL:owner),storageKey:(ds,owner)=>['cars','covers'].includes(ds)?'zerocar-office-v12-'+ds+'-'+owner:LEGACY[ds],
+  cloudKey:(ds,owner)=>ds+':'+(!['cars','covers'].includes(ds)?NIL:owner),storageKey:(ds,owner)=>['cars','covers'].includes(ds)?'s-note-office-v12-'+ds+'-'+owner:LEGACY[ds],
   defaultBody:ds=>ds==='covers'?'{}':ds==='categories'?'null':'[]',snote221ResetIncome(){},snote220InvalidateCatalog(){context.snote220CatalogEpoch++;},snote216ResetMonthly(){},snote216InitMonthly(){},snoteCompanyOwnerRows:()=>[{user_id:USER}]
  };
  vm.createContext(context);vm.runInContext(helpers+'\n'+actor+'\n'+purchaseContext+'\n'+datasetRaw+'\n'+scrub+shipped,context);
@@ -111,3 +112,26 @@ for(const dataset of ['finance','finance_limits','prestock']){
 for(const dataset of ['finance','finance_limits','prestock'])test(dataset+': catalog epoch invalidates an otherwise identical authenticated snapshot',()=>{
  const f=fixture({dataset});f.context.snote220CatalogEpoch++;assert.equal(f.bridge().rows(),null);assert.throws(()=>f.raw(),/CONTEXT_CHANGED/);
 });
+
+for(const dataset of ['finance','finance_limits','prestock']){
+ test(dataset+': previous-format metadata retries bound memory without reading or copying an unscoped alias',async()=>{
+  const f=fixture({dataset}),previous=compat.legacyKey(f.cacheKey),entry={dataset,ownerId:NIL,storageKey:previous,revision:7,hash:await recovery.hash(f.context.snoteIdleCanonical(OWN))};
+  f.bound.write(f.scope,[entry]);f.storage.setItem(previous,JSON.stringify(FOREIGN));f.overwriteRaw();
+  const get=f.storage.getItem.bind(f.storage);f.storage.getItem=key=>{assert.notEqual(key,previous,'Previous raw finance is never recovery authority');return get(key);};
+  await f.restore();assert.equal(f.S.conflict,false);assert.equal(f.S.queue.has(f.key),true);assert.deepEqual(JSON.parse(f.raw()),OWN);
+  assert.deepEqual(JSON.parse(f.storage.data.get(previous)),FOREIGN);assert.deepEqual(JSON.parse(f.storage.getItem(f.cacheKey)),FOREIGN);assert.equal(f.marker().entries[0].storageKey,previous);
+ });
+ test(dataset+': an exact authorized server ACK does not inspect an unscoped previous alias',async()=>{
+  const f=fixture({dataset,owned:null,server:OWN,revision:8}),previous=compat.legacyKey(f.cacheKey);
+  f.bound.write(f.scope,[{dataset,ownerId:NIL,storageKey:previous,revision:7,hash:await recovery.hash(f.context.snoteIdleCanonical(OWN))}]);
+  f.storage.setItem(previous,JSON.stringify(FOREIGN));const get=f.storage.getItem.bind(f.storage);f.storage.getItem=key=>{assert.notEqual(key,previous);return get(key);};
+  await f.restore();assert.equal(f.S.conflict,false);assert.equal(f.S.queue.size,0);assert.equal(f.marker(),null);assert.deepEqual(JSON.parse(f.raw()),OWN);assert.deepEqual(JSON.parse(f.storage.data.get(previous)),FOREIGN);
+ });
+ test(dataset+': primary deletion vetoes an old alias ACK without adopting or queueing any raw financial data',async()=>{
+  const f=fixture({dataset,owned:null,server:OWN,revision:8}),previous=compat.legacyKey(f.cacheKey);
+  f.bound.write(f.scope,[{dataset,ownerId:NIL,storageKey:previous,revision:7,hash:await recovery.hash(f.context.snoteIdleCanonical(OWN))}]);
+  f.storage.removeItem(f.cacheKey);f.storage.setItem(compat.markerKey(f.cacheKey),'1');f.storage.setItem(previous,JSON.stringify(FOREIGN));
+  const get=f.storage.getItem.bind(f.storage);f.storage.getItem=key=>{assert.notEqual(key,previous);return get(key);};
+  await f.restore();assert.equal(f.S.conflict,true);assert.equal(f.S.queue.size,0);assert.equal(f.storage.getItem(f.cacheKey),null);assert.equal(f.marker().entries[0].storageKey,previous);assert.deepEqual(JSON.parse(f.storage.data.get(previous)),FOREIGN);
+ });
+}

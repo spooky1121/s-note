@@ -2,6 +2,7 @@
 // Run the shipped capture/restore paths against synthetic storage and a CAS read.
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const recovery=require('../assets/idle-recovery.js');
+const compat=require('../assets/snote-storage-compat.js');
 const html=fs.readFileSync(path.resolve(__dirname,'../index.html'),'utf8');
 const source=html.slice(html.indexOf('function snoteIdleRecoveryScope(){'),html.indexOf('async function prepareLegacyAccount('));
 const scrub=html.slice(html.indexOf('function scrub(o){'),html.indexOf('function cleanCustomer('));
@@ -10,22 +11,22 @@ const datasetRaw=html.match(/^function snote184DatasetRaw\(dataset,owner\)\{[\s\
 assert(datasetRaw,'Actual scoped financial payload reader must be available');
 const USER='11111111-1111-4111-8111-111111111111',OTHER='22222222-2222-4222-8222-222222222222',COMPANY='33333333-3333-4333-8333-333333333333',NIL='00000000-0000-0000-0000-000000000000';
 const PROJECT='https://fixture.supabase.co';
-const LEGACY={finance:'zerocar-office-v182-inventory-finance-ledger',finance_limits:'zerocar-office-v157-finance-companies',prestock:'zerocar-office-v148-prestock-ledger',monthly:'zerocar-office-v165-monthly-ledger',categories:'zerocar-office-v170-monthly-category-settings'};
+const LEGACY={finance:'s-note-office-v182-inventory-finance-ledger',finance_limits:'s-note-office-v157-finance-companies',prestock:'s-note-office-v148-prestock-ledger',monthly:'s-note-office-v165-monthly-ledger',categories:'s-note-office-v170-monthly-category-settings'};
 const clone=value=>JSON.parse(JSON.stringify(value)),alias=id=>'cld_'+id.replace(/-/g,'').slice(0,18);
 function fixture({dataset='cars',owner=USER,revision=7,cached=[{id:'a',memo:'unfinished'}],server=[{id:'a',memo:'old'}],role='dealer'}={}){
  class Storage{constructor(){this.data=new Map();}getItem(key){return this.data.get(key)??null;}setItem(key,value){this.data.set(key,String(value));}removeItem(key){this.data.delete(key);}}
  const storage=new Storage(),shared=!['cars','covers'].includes(dataset),ownerId=shared?NIL:owner,key=dataset+':'+ownerId;
- const cacheKey=shared?LEGACY[dataset]:'zerocar-office-v12-'+dataset+'-'+alias(ownerId),scope={project:PROJECT,userId:USER,companyId:COMPANY};
+ const cacheKey=shared?LEGACY[dataset]:'s-note-office-v12-'+dataset+'-'+alias(ownerId),scope={project:PROJECT,userId:USER,companyId:COMPANY};
  storage.setItem(cacheKey,JSON.stringify(cached));
  let readError=null,readHook=null;
  const rows=server===null?[]:[{company_id:COMPANY,dataset,owner_id:ownerId,payload:clone(server),revision}];
  const client={from(name){assert.equal(name,'zc_datasets');const filters={};const result=()=>rows.filter(row=>Object.entries(filters).every(([key,value])=>row[key]===value));return {select(){return this;},eq(key,value){filters[key]=value;return this;},async limit(){if(readHook)await readHook();return {data:clone(result()),error:readError};},async maybeSingle(){if(readHook)await readHook();const found=result();assert(found.length<=1,'Exact shared-row key must identify at most one synthetic row');return {data:clone(found[0]??null),error:readError};}};}};
  const S={client,user:{id:USER},company:{id:COMPANY},rpcConfig:{url:PROJECT},members:[{user_id:USER,company_id:COMPANY}],revisions:new Map([[key,revision]]),companyOwners:new Map(),queue:new Set([key]),ready:false,loading:false,conflict:false};
  const bound={...recovery,read:s=>recovery.read(s,storage),write:(s,e)=>recovery.write(s,e,storage),remove:s=>recovery.remove(s,storage)};
- const context={window:{SnoteIdleRecovery:bound},S,SNOTE203_META:'_snote203_meta',NIL,LEGACY,localStorage:storage,Storage,originalSet:Storage.prototype.setItem,cloudWriteEpoch:1,cloudPendingWrites:new Map(),snote220CatalogEpoch:1,snoteOwnershipAllowed:()=>true,parsePayload:raw=>{try{return JSON.parse(raw);}catch{return null;}},
+ const context={window:{SnoteIdleRecovery:bound,SnoteStorageCompat:compat},SnoteStorageCompat:compat,S,SNOTE203_META:'_snote203_meta',NIL,LEGACY,localStorage:storage,Storage,originalSet:Storage.prototype.setItem,cloudWriteEpoch:1,cloudPendingWrites:new Map(),snote220CatalogEpoch:1,snoteOwnershipAllowed:()=>true,parsePayload:raw=>{try{return JSON.parse(raw);}catch{return null;}},
   snoteCompanyPurchaseContext:()=>({companyId:S.company?.id,ready:S.ready&&!S.loading,role,canRead:['admin','accountant'].includes(role)}),
   ownerAlias:alias,isShared:ds=>!['cars','covers'].includes(ds),cloudKey:(ds,owner)=>ds+':'+(!['cars','covers'].includes(ds)?NIL:owner),
-  storageKey:(ds,owner)=>['cars','covers'].includes(ds)?'zerocar-office-v12-'+ds+'-'+owner:LEGACY[ds],defaultBody:ds=>ds==='covers'?'{}':ds==='categories'?'null':'[]',
+  storageKey:(ds,owner)=>['cars','covers'].includes(ds)?'s-note-office-v12-'+ds+'-'+owner:LEGACY[ds],defaultBody:ds=>ds==='covers'?'{}':ds==='categories'?'null':'[]',
   snote221ResetIncome(){},snote220InvalidateCatalog(){context.snote220CatalogEpoch++;},snote216ResetMonthly(){},snote216InitMonthly(){},snoteCompanyActor:()=>({role,user_id:USER}),snoteCompanyOwnerRows:()=>[{user_id:USER},{user_id:OTHER}]
  };
  vm.createContext(context);vm.runInContext(financeScopes+'\n'+datasetRaw+'\n'+scrub+source,context);
@@ -93,4 +94,57 @@ test('detached old flush completion cannot clear the new session saving state',a
  f.S.ready=true;f.S.client.rpc=()=>oldRpc;const first=c.flush();assert.equal(f.S.saving,true);
  c.cloudWriteEpoch++;c.cloudFlushTask=null;c.cloudPendingWrites.clear();f.S.queue.add(f.key);f.S.client={rpc:()=>newRpc};f.S.user={id:USER};const second=c.flush();
  oldResolve({data:8,error:null});assert.equal((await first).ok,false);assert.equal(f.S.saving,true);newResolve({data:8,error:null});assert.equal((await second).ok,true);assert.equal(f.S.saving,false);
+});
+
+async function previousMarker(f,dataset='cars'){
+ const raw=f.storage.getItem(f.cacheKey),previous=compat.legacyKey(f.cacheKey),cached=await f.context.snoteIdleRecoveryHash(dataset,raw);
+ assert(cached.valid);assert(previous);f.storage.setItem(previous,raw);f.storage.removeItem(f.cacheKey);
+ const entry={dataset,ownerId:f.key.slice(dataset.length+1),storageKey:previous,revision:f.S.revisions.get(f.key),hash:cached.hash};
+ f.bound.write(f.scope,[entry]);return{raw,previous,entry};
+}
+for(const dataset of ['cars','monthly'])test(dataset+': verified previous-format retry hydrates only an absent primary and retains its exact source marker',async()=>{
+ const payload=[{id:'previous-owned',memo:'unsubmitted owned work',retained:{source:'synthetic'},...(dataset==='monthly'?{rrn:'synthetic-existing-field'}:{})}],f=fixture({dataset,cached:payload});
+ const saved=await previousMarker(f,dataset);await f.restore();
+ assert.equal(f.storage.getItem(f.cacheKey),saved.raw);assert.equal(f.storage.getItem(saved.previous),saved.raw);
+ assert.equal(f.S.conflict,false);assert.equal(f.S.queue.has(f.key),true);assert.equal(f.S.revisions.get(f.key),7);
+ assert.equal(f.marker().entries[0].storageKey,saved.previous);assert.equal(f.marker().entries[0].hash,saved.entry.hash);
+});
+test('a differing primary always survives an old marker, even if the server acknowledges the old bytes',async()=>{
+ for(const acknowledged of [false,true]){
+  const f=fixture(),saved=await previousMarker(f),newer=JSON.stringify([{id:'current-primary',memo:'new work'}]);
+  f.storage.setItem(f.cacheKey,newer);if(acknowledged){f.rows[0].payload=JSON.parse(saved.raw);f.rows[0].revision=8;}
+  await f.restore();assert.equal(f.storage.getItem(f.cacheKey),newer);assert.equal(f.storage.getItem(saved.previous),saved.raw);
+  assert.equal(f.S.conflict,true);assert.equal(f.S.queue.size,0);assert.equal(f.S.revisions.get(f.key),7);assert.equal(f.marker().entries[0].storageKey,saved.previous);
+ }
+});
+test('an explicit primary deletion vetoes an acknowledged old marker and cannot recreate the deleted namespace',async()=>{
+ const f=fixture(),saved=await previousMarker(f);f.storage.setItem(compat.markerKey(f.cacheKey),'1');
+ f.rows[0].payload=JSON.parse(saved.raw);f.rows[0].revision=8;await f.restore();
+ assert.equal(f.storage.getItem(f.cacheKey),null);assert.equal(f.storage.getItem(saved.previous),saved.raw);
+ assert.equal(f.S.conflict,true);assert.equal(f.S.queue.size,0);assert.equal(f.marker().entries[0].storageKey,saved.previous);
+});
+test('late source or primary changes during a hash preserve both versions without a recovered write',async()=>{
+ for(const destination of ['source','primary']){
+  const f=fixture(),saved=await previousMarker(f),hash=f.bound.hash,newer=JSON.stringify([{id:'late-current',memo:destination}]);let changed=false;
+  f.bound.hash=async value=>{const result=await hash(value);if(!changed){changed=true;f.storage.setItem(destination==='source'?saved.previous:f.cacheKey,newer);}return result;};
+  await f.restore();assert(changed);assert.equal(f.storage.getItem(destination==='source'?saved.previous:f.cacheKey),newer);
+  assert.equal(f.storage.getItem(destination==='source'?f.cacheKey:saved.previous),destination==='source'?null:saved.raw);
+  assert.equal(f.S.conflict,true);assert.equal(f.S.queue.size,0);assert.ok(f.marker());
+ }
+});
+test('a later record hash cannot authorize overwriting another record changed after its own check',async()=>{
+ const f=fixture(),first=await previousMarker(f),monthlyKey=compat.primaryKey('monthly'),previousMonthly=compat.legacyKey(monthlyKey),monthlyRaw=JSON.stringify([{id:'pending-monthly',memo:'retained month'}]);
+ f.storage.setItem(previousMonthly,monthlyRaw);const monthlyHash=await f.context.snoteIdleRecoveryHash('monthly',monthlyRaw);
+ const second={dataset:'monthly',ownerId:NIL,storageKey:previousMonthly,revision:7,hash:monthlyHash.hash};f.bound.write(f.scope,[first.entry,second]);
+ f.rows.push({company_id:COMPANY,dataset:'monthly',owner_id:NIL,payload:[{id:'server-monthly'}],revision:7});
+ const serialized=f.context.snoteIdleCanonical(JSON.parse(monthlyRaw)),hash=f.bound.hash,newer=JSON.stringify([{id:'late-other-primary'}]);let seen=0;
+ f.bound.hash=async value=>{const result=await hash(value);if(value===serialized&&++seen===2)f.storage.setItem(f.cacheKey,newer);return result;};
+ await f.restore();assert(seen>=2);assert.equal(f.storage.getItem(f.cacheKey),newer);assert.equal(f.S.queue.has(f.key),false);assert.equal(f.S.conflict,true);
+ assert.equal(f.storage.getItem(first.previous),first.raw);assert.equal(f.storage.getItem(previousMonthly),monthlyRaw);
+});
+test('company changes and foreign-owner markers cannot hydrate a previous alias into the active namespace',async()=>{
+ const f=fixture(),saved=await previousMarker(f);f.setReadHook(async()=>{f.S.company={id:'44444444-4444-4444-8444-444444444444'};});
+ await assert.rejects(f.restore(),/CONTEXT_CHANGED/);assert.equal(f.storage.getItem(f.cacheKey),null);assert.equal(f.storage.getItem(saved.previous),saved.raw);
+ const foreign=fixture({owner:OTHER}),other=await previousMarker(foreign);await foreign.restore();
+ assert.equal(foreign.storage.getItem(foreign.cacheKey),null);assert.equal(foreign.storage.getItem(other.previous),other.raw);assert.equal(foreign.S.queue.size,0);assert.equal(foreign.S.conflict,true);assert.ok(foreign.marker());
 });

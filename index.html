@@ -1,8 +1,10 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.200">
+<html lang="ko" data-snote-release="2.201">
 <head>
 <meta charset="utf-8" />
   <script src="assets/service-location.js?v=2.200"></script>
+  <script src="assets/snote-storage-compat.js?v=2.201"></script>
+  <script src="assets/snote-idb-compat.js?v=2.201"></script>
 <link rel="stylesheet" href="assets/message-popup.css?v=2.172">
 <script src="assets/message-popup.js?v=2.174" defer></script>
 <script src="assets/mobile-popup-history.js?v=2.174" defer></script>
@@ -3180,7 +3182,7 @@ button, input, select, textarea { font-family: inherit; }
 <script src="assets/dashboard-display-settings.js?v=2.185"></script>
 <link rel="stylesheet" href="assets/idle-session.css?v=2.104">
 <script src="assets/idle-auth-storage.js?v=2.118"></script>
-<script src="assets/idle-recovery.js?v=2.104"></script>
+<script src="assets/idle-recovery.js?v=2.201"></script>
 <script src="assets/idle-session.js?v=2.172"></script>
 <link rel="stylesheet" href="assets/profile-settings.css?v=2.102">
 <script src="assets/feature-loader.js?v=2.194"></script>
@@ -3309,7 +3311,7 @@ button, input, select, textarea { font-family: inherit; }
  <div class="acct-controls"><label for="accountant-dealer-filter">담당 딜러</label><select id="accountant-dealer-filter" aria-label="담당 딜러 필터" onchange="handleAccountantDealerFilter()"><option value="all">전체 딜러</option></select><button type="button" class="btn-ghost" onclick="refreshAccountantWorkspace()">새로고침</button></div>
  <div id="accountant-overview" class="acct-overview"></div>
  </section>
-      <section id="monthly-screen" style="display:none;width:100%;min-width:0" aria-label="월정산 결산표"><iframe id="monthly-ledger-frame" title="S-NOTE 월정산 결산표" data-src="monthly.html?v=2.200" scrolling="no" style="width:100%;height:1280px;border:0;display:none;background:transparent"></iframe>
+      <section id="monthly-screen" style="display:none;width:100%;min-width:0" aria-label="월정산 결산표"><iframe id="monthly-ledger-frame" title="S-NOTE 월정산 결산표" data-src="monthly.html?v=2.201" scrolling="no" style="width:100%;height:1280px;border:0;display:none;background:transparent"></iframe>
  <div id="monthly-frame-status" role="status" hidden style="padding:24px;text-align:center"><p id="monthly-frame-message"></p><button id="monthly-frame-retry" type="button" class="btn" hidden>다시 불러오기</button></div></section>
 <section id="snote-dashboard-home" aria-label="대시보드" hidden></section>
 <section id="snote-accountant-today" aria-label="오늘 처리할 일" hidden></section>
@@ -3635,8 +3637,20 @@ let cars=[
 const seedCars=cars.map((c,i)=>({...c,id:'sample-demo-'+(i+1),ownerId:'demo',inventoryLender:c.inventoryLoan?({0:'KB캐피탈',1:'JB우리금융',3:'메리츠'}[i]||''):''}));
 let currentUser=null;
 cars=[];
-const ZC_CARS_PREFIX='zerocar-office-v12-cars-';
-const ZC_COVER_PREFIX='zerocar-office-v12-covers-';
+// New writes use the current namespace; only explicit local reads inspect aliases.
+let snote201LocalStorage=null,snote201SessionStorage=null;
+try{
+ snote201LocalStorage=window.SnoteStorageCompat.createAdapter(localStorage);
+ snote201SessionStorage=window.SnoteStorageCompat.createAdapter(sessionStorage);
+ window.SnoteStorageCompat.installRemovalGuard({StorageClass:Storage,localStorage,sessionStorage});
+}catch(_){/* The existing storage error paths remain responsible for unavailable storage. */}
+function snote201CanUseLocal(){const cloud=window.zc86Cloud;return !cloud?.ready&&!cloud?.hasUser&&!cloud?.busy;}
+function snote201ReadLocal(key,owner,validate){
+ if(!snote201LocalStorage||!snote201CanUseLocal())return localStorage.getItem(key);
+ return snote201LocalStorage.readLocal(key,{mode:'local',owner,validate});
+}
+const ZC_CARS_PREFIX='s-note-office-v12-cars-';
+const ZC_COVER_PREFIX='s-note-office-v12-covers-';
 let dealerAccounts=[];
 function isAccountant(){return currentUser?.role==='accountant'}
 function isSnoteAdmin(){return currentUser?.role==='admin'}
@@ -3650,14 +3664,14 @@ window.snoteResetPurchaseScope=()=>{snotePurchaseNavigationScope=null;window.sno
 function canManageCar(c){return !!currentUser&&!!c&&(isSnoteAdmin()?true:isAccountant()?window.snoteCompanyPurchaseBridge?.carAllowed?.(c)===true:c.ownerId===currentUser.username)}
 function carsStoreKey(username=currentUser?.username||'unauthenticated'){return ZC_CARS_PREFIX+username}
 function normalizedCars(records,owner){return records.map(c=>SnoteMoney.car(c)).map(c=>({...c,ownerId:c.ownerId||owner,status:(c.status==='매입진행'||c.status==='수리중')?'판매중':c.status,repairItems:normalizeRepairItems(c),...(Object.hasOwn(c,'inventoryLoan')?{inventoryLoan:Number.isFinite(Number(c.inventoryLoan))&&Number(c.inventoryLoan)>=0?Number(c.inventoryLoan):0}:{}),inventoryLender:typeof c.inventoryLender==='string'&&c.inventoryLender.length<=45?c.inventoryLender:''}))}
-function dealerCars(username){try{if(window.zc86Cloud?.ready&&window.zc86Cloud?.readOwnerCars)return window.zc86Cloud.readOwnerCars(username);const raw=localStorage.getItem(carsStoreKey(username));const parsed=raw===null?null:JSON.parse(raw);return normalizedCars((Array.isArray(parsed)?parsed:(username==='demo'?seedCars.map(x=>({...x})):[])).map(c=>c&&typeof c==='object'?{...c,ownerId:username}:c),username)}catch(_){return username==='demo'?normalizedCars(seedCars.map(x=>({...x})),'demo'):[]}}
+function dealerCars(username){try{if(window.zc86Cloud?.ready&&window.zc86Cloud?.readOwnerCars)return window.zc86Cloud.readOwnerCars(username);const raw=snote201ReadLocal(carsStoreKey(username),username,value=>Array.isArray(JSON.parse(value)));const parsed=raw===null?null:JSON.parse(raw);return normalizedCars((Array.isArray(parsed)?parsed:(username==='demo'?seedCars.map(x=>({...x})):[])).map(c=>c&&typeof c==='object'?{...c,ownerId:username}:c),username)}catch(_){return username==='demo'?normalizedCars(seedCars.map(x=>({...x})),'demo'):[]}}
 function loadCarsForUser(){
  if(!currentUser){cars=[];return}
  if(!isFinanceManager()){cars=dealerCars(currentUser.username);zc182OverlayFinance();return}
  // The hosted app must never mix sample/demo keys with live dealership data.
  const cloudMembers=(typeof window.zc86Cloud!=='undefined' && window.zc86Cloud?.membersAliases?.())||null;
  const owners=new Set(cloudMembers||dealerAccounts.filter(a=>a.role!=='accountant').map(a=>a.username));
- if(!cloudMembers){for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i)||'';if(key.startsWith(ZC_CARS_PREFIX))owners.add(key.slice(ZC_CARS_PREFIX.length))}owners.add('demo');}
+ if(!cloudMembers&&snote201CanUseLocal()){for(let i=0;i<localStorage.length;i++){const item=window.SnoteStorageCompat.describe(localStorage.key(i));if(item?.kind==='personal'&&item.dataset==='cars')owners.add(item.owner);}owners.add('demo');}
  if(isSnoteAdmin())owners.add(currentUser.username);
  cars=[...owners].flatMap(owner=>dealerCars(owner));zc182OverlayFinance();
 }
@@ -3671,7 +3685,7 @@ function persistCars(ownerId=null,restore=null){
   // rather than replacing every dealer's snapshot (which would erase other dealers' work).
   const owner=isSnoteAdmin()?(ownerId||currentUser.username):currentUser.username;
   const rows=isSnoteAdmin()?cars.filter(c=>c.ownerId===owner):cars;
-  const previous=JSON.parse(localStorage.getItem(carsStoreKey(owner))||'[]');
+  const previous=JSON.parse(snote201ReadLocal(carsStoreKey(owner),owner,value=>Array.isArray(JSON.parse(value)))||'[]');
   let baseline=Array.isArray(previous)?previous.map(SnoteMoney.car):[];
   const rollback=restore&&snote184SaleRestores.get(restore);
   if(rollback&&restore===snoteVehicleUnconfirmedWrite&&snoteVehicleSameView(restore.context)&&rows.includes(restore.context.car)&&snote184SaleFacts(restore.context.car)===rollback.facts){
@@ -5107,7 +5121,7 @@ window.addEventListener('snote-vehicle-changed',snote135NotifyFinance);
 function snote135RetryFinance(){snote135FinanceCompanyState=null;window.snoteRefreshCompanyPurchase?.();buildInventoryFinance();}
 
 
-const ZC157_FINANCE_KEY='zerocar-office-v157-finance-companies';
+const ZC157_FINANCE_KEY='s-note-office-v157-finance-companies';
 /* v2.03: shared supplemental settings live in the existing finance_limits cloud dataset,
  * avoiding breaking schema migrations. The final record is metadata, not a lender. */
 const SNOTE203_META='_snote203_meta';
@@ -5267,8 +5281,8 @@ function formatPrestockWon(el){
  el.value=digits?Number(digits).toLocaleString('ko-KR'):'';
 }
 /* v1.48 — 선재고 장부: v1.47 내역 자동 이전, 확인 후 상환·수정·삭제, 브라우저 저장 */
-const PRESTOCK_STORAGE_KEY='zerocar-office-v147-prestock-entries'; // 이전 버전 데이터 보존
-const PRESTOCK_V148_KEY='zerocar-office-v148-prestock-ledger';
+const PRESTOCK_STORAGE_KEY='s-note-office-v147-prestock-entries'; // 이전 버전 데이터 보존
+const PRESTOCK_V148_KEY='s-note-office-v148-prestock-ledger';
 let psEditingId=null,psMenuId=null,psPendingAction=null;
 let psExpanded=false; // 최초 7건, 더보기 이후 10줄 높이에서 내부 스크롤
 
@@ -5686,7 +5700,7 @@ function buildPrestockManagement(){
 }
 
 /* v1.82 — 독립 재고금융 원장. 선재고(PRESTOCK_V148_KEY)와 저장소 분리 */
-const ZC182_FINANCE_KEY='zerocar-office-v182-inventory-finance-ledger';
+const ZC182_FINANCE_KEY='s-note-office-v182-inventory-finance-ledger';
 function zc182Plate(value){return String(value||'').normalize('NFKC').replace(/[\s\-·._]/g,'').trim();}
 function zc182FinEntries(){
  try{const a=window.snoteInventoryFinanceLedgerBridge?.rows?.();return Array.isArray(a)?a.filter(r=>r&&typeof r==='object'&&typeof r.plate==='string'&&typeof r.dealerId==='string'&&Number.isFinite(r.loan)&&r.loan>=0).slice(0,5000).map(SnoteMoney.finance):[]}
@@ -6638,12 +6652,12 @@ async function saveCar(e){
 
 // 미디어 구조: { id, carId, group, filename, createdAt, blob }; document buckets are isolated.
 let fileDB=null, mediaByCar={}, activeCarId=null, zoomRecordId=null, mediaObjectUrls=[];
-let covers={};function loadCovers(){try{if(isAccountant()){covers={};const owners=new Set(cars.map(c=>c.ownerId));for(const owner of owners)Object.assign(covers,JSON.parse(localStorage.getItem(ZC_COVER_PREFIX+owner)||'{}')||{});}else covers=JSON.parse(localStorage.getItem(ZC_COVER_PREFIX+currentUser.username)||'{}')||{}}catch(_){covers={}}}
+let covers={};function loadCovers(){try{if(isAccountant()){covers={};const owners=new Set(cars.map(c=>c.ownerId));for(const owner of owners)Object.assign(covers,JSON.parse(snote201ReadLocal(ZC_COVER_PREFIX+owner,owner,value=>{const map=JSON.parse(value);return !!map&&typeof map==='object'&&!Array.isArray(map);})||'{}')||{});}else covers=JSON.parse(snote201ReadLocal(ZC_COVER_PREFIX+currentUser.username,currentUser.username,value=>{const map=JSON.parse(value);return !!map&&typeof map==='object'&&!Array.isArray(map);})||'{}')||{}}catch(_){covers={}}}
 let dbReady,snoteMediaStartupDeferred=false;
-function openFileDB(){return new Promise((resolve,reject)=>{try{const req=indexedDB.open('zerocar-office-v12-files',2);req.onupgradeneeded=()=>{const db=req.result;if(!db.objectStoreNames.contains('media')){const store=db.createObjectStore('media',{keyPath:'id'});store.createIndex('carId','carId',{unique:false})}if(!db.objectStoreNames.contains('modelPhotos'))db.createObjectStore('modelPhotos',{keyPath:'key'});};req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)}catch(e){reject(e)}})}
+function openFileDB(options={migrate:true}){return window.SnoteIdbCompat.open('files',options);}
 function carFiles(id){return mediaByCar[id]||[]}
 function carPhotos(id){return carFiles(id).filter(x=>x.group==='photos').sort((a,b)=>a.createdAt-b.createdAt)}
-function saveCover(){if(isAccountant())return;try{if(isSnoteAdmin()){const c=cars.find(c=>c.id===activeCarId)||cars.find(c=>covers[c.id]);const owner=c?.ownerId||pendingStatusChange?.ownerId;if(!owner)return;const storage=JSON.parse(localStorage.getItem(ZC_COVER_PREFIX+owner)||'{}')||{};for(const row of cars.filter(x=>x.ownerId===owner)){if(covers[row.id])storage[row.id]=covers[row.id];else delete storage[row.id]}localStorage.setItem(ZC_COVER_PREFIX+owner,JSON.stringify(storage));}else localStorage.setItem(ZC_COVER_PREFIX+currentUser.username,JSON.stringify(covers))}catch(_){}}
+function saveCover(){if(isAccountant())return;try{if(isSnoteAdmin()){const c=cars.find(c=>c.id===activeCarId)||cars.find(c=>covers[c.id]);const owner=c?.ownerId||pendingStatusChange?.ownerId;if(!owner)return;const storage=JSON.parse(snote201ReadLocal(ZC_COVER_PREFIX+owner,owner,value=>{const map=JSON.parse(value);return !!map&&typeof map==='object'&&!Array.isArray(map);})||'{}')||{};for(const row of cars.filter(x=>x.ownerId===owner)){if(covers[row.id])storage[row.id]=covers[row.id];else delete storage[row.id]}localStorage.setItem(ZC_COVER_PREFIX+owner,JSON.stringify(storage));}else localStorage.setItem(ZC_COVER_PREFIX+currentUser.username,JSON.stringify(covers))}catch(_){}}
 async function refreshMedia(){if(isAccountant()){mediaObjectUrls.forEach(u=>URL.revokeObjectURL(u));mediaObjectUrls=[];mediaByCar={};modelPhotoUrls.forEach(u=>URL.revokeObjectURL(u));modelPhotoUrls=[];modelPhotos=[];renderCars();return;}if(!fileDB)return;if(!currentUser){mediaByCar={};return}const records=await new Promise((resolve,reject)=>{const tx=fileDB.transaction('media','readonly');const r=tx.objectStore('media').getAll();r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)});mediaObjectUrls.forEach(url=>URL.revokeObjectURL(url));mediaObjectUrls=[];mediaByCar={};for(const record of records.filter(r=>currentUser&&(isAccountant()||r.ownerId===currentUser.username))){record.url=URL.createObjectURL(record.blob);mediaObjectUrls.push(record.url);(mediaByCar[record.carId]||(mediaByCar[record.carId]=[])).push(record)}await refreshModelPhotos();renderCars();if(activeCarId)renderVehicle()}
 function updateDB(records,removeIds=[]){return new Promise((resolve,reject)=>{if(!fileDB){reject(new Error('현재 브라우저에서 이미지 저장 기능을 사용할 수 없습니다.'));return}const tx=fileDB.transaction('media','readwrite'),store=tx.objectStore('media');for(const id of removeIds)store.delete(id);for(const record of records)store.put(record);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error||new Error('저장 중 오류'));tx.onabort=()=>reject(tx.error||new Error('저장이 취소되었습니다.'))})}
 
@@ -7858,7 +7872,7 @@ function downloadZoom(){if(window.SnoteSharedVehicleDetail?.active())return wind
 document.addEventListener('keydown',e=>{if(window.SnoteMessages?.active())return;if(e.key==='Escape'){if($('vin-select-overlay').classList.contains('open')){closeVinAreaPicker();return;}if($('contract-overlay').classList.contains('open')){closeContractPreview();return;}if($('quote-overlay').classList.contains('open')){closeQuotePreview();return;}if(document.querySelector('.color-picker.expanded')){closeColorPickers();return;}if(pendingStatusChange)closeStatusModal();else if(zoomRecordId)closeZoom();else if(activeCarId)closeVehicle();else closeAdd({animate:true})}});
 window.addEventListener('beforeprint',()=>{if($('contract-overlay')?.classList.contains('open'))buildContractPrintPages();});
 async function snoteFileDatabaseReady(db){fileDB=db;if(!snoteMediaStartupDeferred)await refreshMedia();}
-dbReady=openFileDB().then(snoteFileDatabaseReady).catch(e=>{console.warn('IndexedDB unavailable',e);fileDB=null;toast('현재 브라우저에서는 사진 저장을 지원하지 않을 수 있습니다.')});
+dbReady=openFileDB({migrate:false}).then(snoteFileDatabaseReady).catch(e=>{console.warn('IndexedDB unavailable',e);fileDB=null;toast('현재 브라우저에서는 사진 저장을 지원하지 않을 수 있습니다.')});
 
 window.snoteMessageContext=()=>{let key='';try{key=window.snoteVehicleShareBridge?.badgeContext?.()?.key||'';}catch{}return{actor:currentUser,key:key||currentUser?.username||'',route:typeof route==='string'?route:'',vehicle:typeof activeCarId==='undefined'?null:activeCarId};};
 let toastTimer;function toast(msg){clearTimeout(toastTimer);$('toast').textContent=msg;$('toast').style.display='block';if(window.snoteNotify)window.snoteNotify(msg,{key:'toast'});toastTimer=setTimeout(()=>{$('toast').style.display='none';window.SnoteMessages?.dismiss('toast');},3000)}
@@ -7868,7 +7882,33 @@ $('addicon').innerHTML=ico('plus');document.querySelectorAll('.search-icon').for
 /* v1.2 Demo identity. This is intentionally a local design prototype, not production authentication.
    Passwords are not stored as plaintext; RRN inputs are never read, collected or persisted. */
 let accountDB=null;let validatedId='';
-function openAccountDB(){return new Promise((resolve,reject)=>{const req=indexedDB.open('zerocar-office-v12-accounts',1);req.onupgradeneeded=()=>{if(!req.result.objectStoreNames.contains('users'))req.result.createObjectStore('users',{keyPath:'username'})};req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)})}
+let snote201LocalAuthTask=null,snote201AccountCacheTask=null;
+function snote201PrimeAccountCache(){
+ if(!snote201AccountCacheTask)snote201AccountCacheTask=openAccountDB({migrate:false}).then(db=>{if(!accountDB)accountDB=db;return db;}).catch(error=>{snote201AccountCacheTask=null;throw error;});
+ return snote201AccountCacheTask;
+}
+function snote201EnsureLocalAuth(){
+ if(!snote201CanUseLocal())return Promise.reject(Error('온라인 계정은 서버 로그인으로 이용해 주세요.'));
+ if(!snote201LocalAuthTask)snote201LocalAuthTask=snote201PrimeAccountCache().then(()=>initializeAuth()).catch(error=>{snote201LocalAuthTask=null;throw error;});
+ return snote201LocalAuthTask;
+}
+function snote201StorageMessage(error,fallback){return typeof error?.code==='string'&&error.code.startsWith('IDB_')?error.message:fallback;}
+async function snote201RestoreLocalSession(){
+ // Online Auth gets the first opportunity to restore its verified session.
+ // A hosted cache alias is never a local authentication credential.
+ if(!snote201CanUseLocal()||currentUser||!snote201SessionStorage)return;
+ const key=window.SnoteStorageCompat.keys.session;
+ const hint=()=>snote201SessionStorage.readLocal(key,{mode:'local',validate:value=>/^[a-z][a-z0-9_]{3,19}$/.test(value)&&!value.startsWith('cld_')});
+ const sid=hint();if(!sid||!/^[a-z][a-z0-9_]{3,19}$/.test(sid)||sid.startsWith('cld_'))return;
+ const cloud=window.zc86Cloud,current=()=>snote201CanUseLocal()&&!currentUser&&window.zc86Cloud===cloud&&hint()===sid;
+ try{
+  await snote201EnsureLocalAuth();if(!current())return;
+  const account=await getAccount(sid);if(!current())return;
+  if(account)await enterWorkspace(account,{isCurrent:()=>snote201CanUseLocal()&&window.zc86Cloud===cloud&&hint()===sid&&(!currentUser||currentUser.username===sid)});
+  else snote201SessionStorage.clearSession();
+ }catch(error){if(current())showAuthError('login',snote201StorageMessage(error,'저장된 체험 계정을 확인하지 못했습니다. 다시 로그인해 주세요.'));}
+}
+function openAccountDB(options={migrate:true}){return window.SnoteIdbCompat.open('accounts',options);}
 function getAccount(username){return new Promise((resolve,reject)=>{if(!accountDB)return reject(new Error('계정 데이터베이스가 열리지 않았습니다.'));let r=accountDB.transaction('users','readonly').objectStore('users').get(username);r.onsuccess=()=>resolve(r.result||null);r.onerror=()=>reject(r.error)})}
 function getAllAccounts(){return new Promise((resolve,reject)=>{if(!accountDB)return resolve([]);const r=accountDB.transaction('users','readonly').objectStore('users').getAll();r.onsuccess=()=>resolve((r.result||[]).map(x=>({username:x.username,name:x.name,company:x.company,role:x.role||'dealer'})));r.onerror=()=>reject(r.error)})}
 function createAccount(record){return new Promise((resolve,reject)=>{let tx=accountDB.transaction('users','readwrite'),req=tx.objectStore('users').add(record);tx.oncomplete=()=>resolve();tx.onabort=()=>reject(tx.error||req.error);tx.onerror=()=>reject(tx.error||req.error)})}
@@ -7879,19 +7919,19 @@ function showAuthError(which,message){const el=$(which+'-error');el.classList.ad
 function clearAuthError(which){$(which+'-error').classList.remove('visible')}
 function showAuthMode(mode){const sign=mode==='signup';$('auth-content').classList.toggle('signup-mode',sign);$('login-tab').classList.toggle('active',!sign);$('signup-tab').classList.toggle('active',sign);$('auth-heading').textContent=sign?'새 계정 만들기':'다시 만나서 반가워요';$('auth-description').textContent=sign?'딜러 정보 입력 후 내 업무 공간을 생성하세요.':'로그인하고 내 차량 재고를 확인하세요.';$('login-form').style.display=sign?'none':'grid';$('signup-form').style.display=sign?'grid':'none';clearAuthError('login');clearAuthError('signup');$('login-success').style.display='none';if(sign)populateOrgs()}
 const initialCompanies=['S-NOTE (데모)','새빛자동차매매 (샘플)'];const initialUnions=['수도권 자동차매매조합 (샘플)','기타 조합 (샘플)'];
-function getOrgs(kind){const key='zerocar-office-v12-'+kind+'-options';try{let old=JSON.parse(localStorage.getItem(key)||'null');return Array.isArray(old)&&old.length?old:(kind==='company'?initialCompanies:initialUnions)}catch(_){return kind==='company'?initialCompanies:initialUnions}}
+function getOrgs(kind){const key='s-note-office-v12-'+kind+'-options';try{let old=JSON.parse(snote201ReadLocal(key,undefined,value=>Array.isArray(JSON.parse(value)))||'null');return Array.isArray(old)&&old.length?old:(kind==='company'?initialCompanies:initialUnions)}catch(_){return kind==='company'?initialCompanies:initialUnions}}
 function populateOrgs(){for(const kind of ['company','union']){const select=$('signup-'+kind),value=select.value;select.innerHTML='<option value="">선택해주세요</option>'+getOrgs(kind).map(name=>`<option value="${esc(name)}">${esc(name)}</option>`).join('')+'<option value="__new__">＋ 목록에 없는 '+(kind==='company'?'상사':'조합')+' 신규 추가</option>';if([...select.options].some(o=>o.value===value))select.value=value;showNewOrg(kind)}}
 function showNewOrg(kind){const show=$('signup-'+kind).value==='__new__';$(kind+'-new').classList.toggle('show',show);$('signup-'+kind+'-new').required=show}
 function orgValue(kind){return $('signup-'+kind).value==='__new__'?$('signup-'+kind+'-new').value.trim():$('signup-'+kind).value}
-function saveOrg(kind,name){if(!name)return;const values=getOrgs(kind);if(!values.includes(name)){values.push(name);try{localStorage.setItem('zerocar-office-v12-'+kind+'-options',JSON.stringify(values))}catch(_){}}}
+function saveOrg(kind,name){if(!name)return;const values=getOrgs(kind);if(!values.includes(name)){values.push(name);try{localStorage.setItem('s-note-office-v12-'+kind+'-options',JSON.stringify(values))}catch(_){}}}
 function clearIdCheck(){validatedId='';const el=$('id-help');el.textContent='아이디 중복 확인을 진행해 주세요.';el.className='auth-help'}
-async function checkUsername(){clearAuthError('signup');const id=$('signup-id').value.trim().toLowerCase();const help=$('id-help');validatedId='';if(!/^[a-z][a-z0-9_]{3,19}$/.test(id)){help.className='auth-help err';help.textContent='영문으로 시작하는 영문·숫자·밑줄 4~20자로 입력하세요.';return}try{const item=await getAccount(id);help.className='auth-help '+(item?'err':'ok');help.textContent=item?'이미 사용 중인 아이디입니다.':'사용 가능한 아이디입니다. ✓';if(!item)validatedId=id}catch(_){help.className='auth-help err';help.textContent='중복 확인 기능이 현재 브라우저에서 작동하지 않습니다.'}}
+async function checkUsername(){clearAuthError('signup');const id=$('signup-id').value.trim().toLowerCase();const help=$('id-help');validatedId='';if(!/^[a-z][a-z0-9_]{3,19}$/.test(id)){help.className='auth-help err';help.textContent='영문으로 시작하는 영문·숫자·밑줄 4~20자로 입력하세요.';return}try{await snote201EnsureLocalAuth();const item=await getAccount(id);help.className='auth-help '+(item?'err':'ok');help.textContent=item?'이미 사용 중인 아이디입니다.':'사용 가능한 아이디입니다. ✓';if(!item)validatedId=id}catch(error){help.className='auth-help err';help.textContent=snote201StorageMessage(error,'중복 확인 기능이 현재 브라우저에서 작동하지 않습니다.');}}
 async function registerAccount(event){event.preventDefault();if(!isAccountant()){showAuthError('signup','딜러 계정은 경리 담당자가 설정 메뉴에서 추가합니다.');return;}clearAuthError('signup');const id=$('signup-id').value.trim().toLowerCase(),pass=$('signup-pw').value,name=$('signup-name').value.trim(),phone=$('signup-phone').value.trim(),emp=$('signup-employee').value.trim(),company=orgValue('company'),union=orgValue('union');
  if(id!==validatedId)return showAuthError('signup','먼저 아이디 중복 확인을 완료해 주세요.');if(pass.length<8)return showAuthError('signup','비밀번호는 8자 이상으로 입력해 주세요.');if(pass!==$('signup-pw2').value)return showAuthError('signup','비밀번호 확인이 일치하지 않습니다.');if(!/^0[0-9\- ]{8,13}$/.test(phone))return showAuthError('signup','휴대전화 번호를 확인해 주세요.');if(!name||!emp||!company||!union)return showAuthError('signup','필수 항목을 모두 입력해 주세요.');
- const btn=$('signup-submit');btn.disabled=true;btn.textContent='계정 생성 중…';try{const salt=bytesHex(crypto.getRandomValues(new Uint8Array(16))),passwordHash=await hashPassword(pass,salt);const userRrn=$('signup-rrn-birth').value.trim()+$('signup-rrn-back').value.trim();let rrnCipher=null;if(userRrn){if(!/^\d{13}$/.test(userRrn))throw new Error('주민번호는 앞 6자리와 뒤 7자리를 모두 입력해 주세요.');rrnCipher=await zc80EncryptAccountRrn(pass,{username:id,salt},userRrn)}await createAccount({username:id,passwordHash,salt,name,phone,employeeNo:emp,company,union,role:'dealer',rrnCipher,createdAt:Date.now()});saveOrg('company',company);saveOrg('union',union);validatedId='';event.target.reset();$('signup-rrn-birth').value='';$('signup-rrn-back').value='';showAuthMode('login');$('login-id').value=id;$('login-success').style.display='block'}catch(e){showAuthError('signup',e?.name==='ConstraintError'?'이미 사용 중인 아이디입니다. 다시 확인해 주세요.':'등록에 실패했습니다. 브라우저 저장 설정을 확인하세요.');clearIdCheck()}finally{btn.disabled=false;btn.textContent='회원가입 완료'}}
-async function loginAccount(event){event.preventDefault();clearAuthError('login');const id=$('login-id').value.trim().toLowerCase(),pass=$('login-pw').value;const btn=$('login-submit');btn.disabled=true;btn.textContent='확인 중…';try{const account=await getAccount(id);const hash=account?await hashPassword(pass,account.salt):null;if(!account||hash!==account.passwordHash){showAuthError('login','아이디 또는 비밀번호가 일치하지 않습니다.');return}await zc80RememberLogin(pass,account);await enterWorkspace(account)}catch(e){showAuthError('login','로그인 중 문제가 발생했습니다. 브라우저 설정을 확인해 주세요.')}finally{btn.disabled=false;btn.textContent='로그인';$('login-pw').value=''}}
+ const btn=$('signup-submit');btn.disabled=true;btn.textContent='계정 생성 중…';try{await snote201EnsureLocalAuth();const salt=bytesHex(crypto.getRandomValues(new Uint8Array(16))),passwordHash=await hashPassword(pass,salt);const userRrn=$('signup-rrn-birth').value.trim()+$('signup-rrn-back').value.trim();let rrnCipher=null;if(userRrn){if(!/^\d{13}$/.test(userRrn))throw new Error('주민번호는 앞 6자리와 뒤 7자리를 모두 입력해 주세요.');rrnCipher=await zc80EncryptAccountRrn(pass,{username:id,salt},userRrn)}await createAccount({username:id,passwordHash,salt,name,phone,employeeNo:emp,company,union,role:'dealer',rrnCipher,createdAt:Date.now()});saveOrg('company',company);saveOrg('union',union);validatedId='';event.target.reset();$('signup-rrn-birth').value='';$('signup-rrn-back').value='';showAuthMode('login');$('login-id').value=id;$('login-success').style.display='block'}catch(e){showAuthError('signup',e?.name==='ConstraintError'?'이미 사용 중인 아이디입니다. 다시 확인해 주세요.':snote201StorageMessage(e,'등록에 실패했습니다. 브라우저 저장 설정을 확인하세요.'));clearIdCheck()}finally{btn.disabled=false;btn.textContent='회원가입 완료'}}
+async function loginAccount(event){event.preventDefault();clearAuthError('login');const id=$('login-id').value.trim().toLowerCase(),pass=$('login-pw').value;const btn=$('login-submit');btn.disabled=true;btn.textContent='확인 중…';try{await snote201EnsureLocalAuth();const account=await getAccount(id);const hash=account?await hashPassword(pass,account.salt):null;if(!account||hash!==account.passwordHash){showAuthError('login','아이디 또는 비밀번호가 일치하지 않습니다.');return}await zc80RememberLogin(pass,account);await enterWorkspace(account)}catch(e){showAuthError('login',snote201StorageMessage(e,'로그인 중 문제가 발생했습니다. 브라우저 설정을 확인해 주세요.'))}finally{btn.disabled=false;btn.textContent='로그인';$('login-pw').value=''}}
 async function loginAccountingDemo(){$('login-id').value='accounting';$('login-pw').value='account1234';await loginAccount({preventDefault(){}})}
-async function loginDemo(){try{const account=await getAccount('demo');if(account){await zc80RememberLogin('demo1234',account);await enterWorkspace(account);} else showAuthError('login','테스트 계정이 준비되지 않았습니다.')}catch(_){showAuthError('login','체험 계정에 로그인할 수 없습니다.')}}
+async function loginDemo(){try{await snote201EnsureLocalAuth();const account=await getAccount('demo');if(account){await zc80RememberLogin('demo1234',account);await enterWorkspace(account);} else showAuthError('login','테스트 계정이 준비되지 않았습니다.')}catch(error){showAuthError('login',snote201StorageMessage(error,'체험 계정에 로그인할 수 없습니다.'))}}
 function snote185LoadDashboardDisplay(account){
  const actor=currentUser,api=window.snoteDashboardDisplayBridge;let scope;try{scope=api?.context?.();}catch{return;}
  const current=()=>{try{return currentUser===actor&&actor?.username===account.username&&snoteWorkspaceVisible()&&(scope?window.snoteDashboardDisplayBridge===api&&api.current(scope)===true:!window.snoteDashboardDisplayBridge?.context?.());}catch{return false;}};
@@ -7899,7 +7939,17 @@ function snote185LoadDashboardDisplay(account){
  requestAnimationFrame(()=>requestAnimationFrame(()=>{if(current())void Promise.resolve().then(()=>{if(current())return window.SnoteDashboardDisplay?.load(account);}).catch(()=>{});}));
 }
 async function enterWorkspace(account,options={}){
- const check=()=>{if(options.isCurrent&&options.isCurrent()!==true)throw Error('REGISTRATION_CONTEXT_CHANGED');};check();
+ const localEntry=!options.deferMedia&&!String(account.username).startsWith('cld_'),localCloud=window.zc86Cloud;
+ let localActor=currentUser;
+ const check=()=>{
+  if(options.isCurrent&&options.isCurrent()!==true)throw Error('REGISTRATION_CONTEXT_CHANGED');
+  if(localEntry&&(!snote201CanUseLocal()||currentUser!==localActor||window.zc86Cloud!==localCloud))throw Error('로그인 정보가 변경되었습니다.');
+ };check();
+ if(localEntry){
+  await snote201EnsureLocalAuth();check();
+  const localFiles=await openFileDB({migrate:true});check();
+  fileDB=localFiles;
+ }
  window.SnoteMessages?.clear();
  window.SnoteContractOffice?.reset();
  snoteMediaStartupDeferred=!!options.deferMedia;
@@ -7907,46 +7957,78 @@ async function enterWorkspace(account,options={}){
  snoteWorkspaceSalesReady=false;snoteRefreshSalesOverview();window.snote236ResetPagination?.();snote226ResetSalesMonth();snote222ResetContractSession();window.snoteResetWorkspaceUi?.();window.snoteResetDocumentMms?.();window.snoteResetIncomeSettlement?.();window.snoteResetVehicleTaxonomy?.();window.snoteResetCalculator?.();closeDashboardGate();zcDashboardGateGranted=false;zcDashboardUnlocked=false;
  if(zc80SensitiveUser!==account.username)zc80SensitiveLock();
  currentUser={username:account.username,name:account.name,company:account.company,union:account.union,employeeNo:account.employeeNo,role:account.role||'dealer'};
+ if(localEntry)localActor=currentUser;
  window.SnoteDashboardDisplay?.reset();
  window.SnoteDashboardDisplay?.prepare?.(account);
  await Promise.all([window.SnoteFinanceLock?.load(account),window.SnoteIdleSession?.load(account)]);check();
- const accounts=await getAllAccounts();check();dealerAccounts=accounts;sessionStorage.setItem('zerocar-office-v12-session',account.username);loadCarsForUser();loadCovers();snoteWorkspaceSalesReady=true;
+ const accounts=await getAllAccounts();check();dealerAccounts=accounts;sessionStorage.setItem('s-note-office-v12-session',account.username);loadCarsForUser();loadCovers();snoteWorkspaceSalesReady=true;
  $('auth-shell').classList.add('hidden');$('profile-name').textContent=account.name+(isAccountant()?' · 경리':isSnoteAdmin()?' · 관리자':' · 딜러');$('profile-role').textContent=isAccountant()?'재고금융 및 월정산 관리':isSnoteAdmin()?'상사 관리자 · 전체 업무':account.company;$('profile-avatar').textContent=account.name.slice(0,1);
- if(!options.deferMedia){if(fileDB)await refreshMedia();else {mediaByCar={};modelPhotos=[];}}
+ if(!options.deferMedia){if(fileDB){await refreshMedia();check();}else {mediaByCar={};modelPhotos=[];}}
  buildStats();snoteEnterWorkspaceRoute();window.snoteMonthlyWorkbookRefresh?.();snote185LoadDashboardDisplay(account);
 }
-async function logout(){if(window.zc86Cloud?.ready)return window.zc86Cloud.signOut();if(!currentUser)return;const current=snote253MessageCurrent();if(!await window.snoteConfirm('로그아웃하시겠습니까?',{isCurrent:current})||!current())return;window.SnoteMessages?.clear();sessionStorage.removeItem('snote-idle:v1:local-session:'+encodeURIComponent(currentUser.username));window.SnoteIdleSession?.reset();window.snoteProfileEditor?.close({force:true});window.snoteResetProfileAssets?.();snote222ResetContractSession();window.snoteResetWorkspaceUi?.();window.snoteResetDocumentMms?.();window.snoteResetIncomeSettlement?.();window.snoteResetCalculator?.();window.snoteResetVehicleTaxonomy?.();window.snoteMonthlyWorkbookReset?.();zc80DismissUnlock(false);zc80SensitiveLock();closeDashboardGate();window.SnoteFinanceLock?.reset();window.SnoteDashboardDisplay?.reset();closeAutoRegistration();zcDashboardGateGranted=false;zcDashboardUnlocked=false;closeMobileDrawer();document.body.classList.remove('accountant-mode');sessionStorage.removeItem('zerocar-office-v12-session');currentUser=null;cars=[];covers={};mediaByCar={};modelPhotos=[];modelPhotoUrls.forEach(u=>URL.revokeObjectURL(u));modelPhotoUrls=[];mediaObjectUrls.forEach(u=>URL.revokeObjectURL(u));mediaObjectUrls=[];closeVehicle();closeAdd();$('auth-shell').classList.remove('hidden');$('login-id').value='';$('login-pw').value='';showAuthMode('login');$('login-id').focus();snoteResetWorkspaceNavigation();snoteWriteAuthHistory('login','replace')}
+async function logout(){if(window.zc86Cloud?.ready)return window.zc86Cloud.signOut();if(!currentUser)return;const current=snote253MessageCurrent();if(!await window.snoteConfirm('로그아웃하시겠습니까?',{isCurrent:current})||!current())return;window.SnoteMessages?.clear();sessionStorage.removeItem('snote-idle:v1:local-session:'+encodeURIComponent(currentUser.username));window.SnoteIdleSession?.reset();window.snoteProfileEditor?.close({force:true});window.snoteResetProfileAssets?.();snote222ResetContractSession();window.snoteResetWorkspaceUi?.();window.snoteResetDocumentMms?.();window.snoteResetIncomeSettlement?.();window.snoteResetCalculator?.();window.snoteResetVehicleTaxonomy?.();window.snoteMonthlyWorkbookReset?.();zc80DismissUnlock(false);zc80SensitiveLock();closeDashboardGate();window.SnoteFinanceLock?.reset();window.SnoteDashboardDisplay?.reset();closeAutoRegistration();zcDashboardGateGranted=false;zcDashboardUnlocked=false;closeMobileDrawer();document.body.classList.remove('accountant-mode');sessionStorage.removeItem('s-note-office-v12-session');currentUser=null;cars=[];covers={};mediaByCar={};modelPhotos=[];modelPhotoUrls.forEach(u=>URL.revokeObjectURL(u));modelPhotoUrls=[];mediaObjectUrls.forEach(u=>URL.revokeObjectURL(u));mediaObjectUrls=[];closeVehicle();closeAdd();$('auth-shell').classList.remove('hidden');$('login-id').value='';$('login-pw').value='';showAuthMode('login');$('login-id').focus();snoteResetWorkspaceNavigation();snoteWriteAuthHistory('login','replace')}
 async function seedSampleAccount(username,password,name,role,employeeNo){
  if(await getAccount(username))return;
  const salt=bytesHex(crypto.getRandomValues(new Uint8Array(16)));
  await createAccount({username,passwordHash:await hashPassword(password,salt),salt,name,role,phone:'',employeeNo,company:'S-NOTE (샘플)',union:initialUnions[0],createdAt:Date.now()});
 }
-async function initializeAuth(){try{restoreFinanceCompanies();accountDB=await openAccountDB();
+async function initializeAuth(){try{restoreFinanceCompanies();const actor=currentUser,cloud=window.zc86Cloud;const db=await openAccountDB();
+ if(!snote201CanUseLocal()||currentUser!==actor||window.zc86Cloud!==cloud)throw Error('로그인 정보가 변경되었습니다.');
+ accountDB=db;
  await seedSampleAccount('demo','demo1234','관리자','dealer','DEMO-01');
  await seedSampleAccount('dealer2','dealer1234','샘플 딜러 2','dealer','DEMO-02');
  await seedSampleAccount('accounting','account1234','경리 직원(샘플)','accountant','OFFICE-01');
  // Sample vehicles are created only on first visit; never overwrite existing dealer data.
- if(localStorage.getItem(carsStoreKey('dealer2'))===null){
+ if(snote201ReadLocal(carsStoreKey('dealer2'),'dealer2',value=>Array.isArray(JSON.parse(value)))===null){
   localStorage.setItem(carsStoreKey('dealer2'),JSON.stringify([
    {id:'sample-dealer2-1',ownerId:'dealer2',model:'기아 K5 2.0 프레스티지 (샘플)',plate:'789가1234',year:2024,km:'18,200',purchaseAt:'2026-10-08',buy:2100,sell:2390,status:'판매중',inventoryLoan:1200,inventoryLender:'현대캐피탈',emoji:'🚘'},
    {id:'sample-dealer2-2',ownerId:'dealer2',model:'현대 투싼 NX4 하이브리드 (샘플)',plate:'321나9876',year:2023,km:'39,600',purchaseAt:'2026-09-14',buy:2520,sell:2940,soldPrice:2850,soldAt:'2026-10-11',status:'판매완료',emoji:'🚙'}]));
  }
- const sid=sessionStorage.getItem('zerocar-office-v12-session');if(sid){const user=await getAccount(sid);if(user)await enterWorkspace(user,{restoreHistory:false});else sessionStorage.removeItem('zerocar-office-v12-session')}}catch(e){showAuthError('login','브라우저에서 체험용 계정 저장 기능을 사용할 수 없습니다. Chrome 또는 Edge를 사용해 주세요.');console.error('Demo auth init failed',e)}}
+ }catch(error){throw error;}}
 
 /* v1.80 encrypted customer identification: password-derived AES-256-GCM. Resident numbers
    are NOT stored in plaintext and are never sent to the address bridge. This demo is not
    a production 개인정보처리시스템; legal basis and server authorization are needed in production. */
 let zc80SensitiveKey=null,zc80SensitiveUser=null,zc80UnlockResolve=null;
-function zc80SensitiveLock(){zc80SensitiveKey=null;zc80SensitiveUser=null;}
-async function zc80DeriveKey(pass,account){
- const material=await crypto.subtle.importKey('raw',new TextEncoder().encode(pass),'PBKDF2',false,['deriveKey']);
- const salt=new TextEncoder().encode('ZEROCAR-RRN-v180:'+account.username+':'+account.salt);
- return crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:220000,hash:'SHA-256'},material,{name:'AES-GCM',length:256},false,['encrypt','decrypt']);
+let snote201SensitiveMaterial=null,snote201LegacyKey=null,snote201LegacyKeyTask=null,snote201SensitiveEpoch=0;
+function zc80SensitiveLock(){++snote201SensitiveEpoch;zc80SensitiveKey=null;zc80SensitiveUser=null;snote201SensitiveMaterial=null;snote201LegacyKey=null;snote201LegacyKeyTask=null;}
+function snote201CipherSalt(account,version){
+ if(version!==1&&version!==2)throw Error('지원하지 않는 식별번호 암호화 형식입니다.');
+ const prefix=version===1?window.SnoteStorageCompat.legacyCryptoSaltPrefix:'s-note-rrn-v2:';
+ return new TextEncoder().encode(prefix+account.username+':'+account.salt);
 }
-async function zc80RememberLogin(pass,account){
- zc80SensitiveLock();zc80SensitiveKey=await zc80DeriveKey(pass,account);zc80SensitiveUser=account.username;
+function snote201DeriveMaterial(material,account,version){return crypto.subtle.deriveKey({name:'PBKDF2',salt:snote201CipherSalt(account,version),iterations:220000,hash:'SHA-256'},material,{name:'AES-GCM',length:256},false,['encrypt','decrypt']);}
+async function zc80DeriveKey(pass,account,version=2){
+ const material=await crypto.subtle.importKey('raw',new TextEncoder().encode(pass),'PBKDF2',false,['deriveKey']);
+ return snote201DeriveMaterial(material,account,version);
+}
+async function zc80RememberLogin(pass,account,isCurrent=()=>true){
+ zc80SensitiveLock();const epoch=snote201SensitiveEpoch;
+ const material=await crypto.subtle.importKey('raw',new TextEncoder().encode(pass),'PBKDF2',false,['deriveKey']);
+ const key=await snote201DeriveMaterial(material,account,2);
+ if(epoch!==snote201SensitiveEpoch||!isCurrent())throw Error('로그인 정보가 변경되었습니다. 다시 확인해 주세요.');
+ // Retain only a non-extractable CryptoKey, never the password. Derive the old
+ // read key on demand, so normal hosted login pays for one derivation only.
+ snote201SensitiveMaterial={material,account:{username:account.username,salt:account.salt}};
+ zc80SensitiveKey=key;zc80SensitiveUser=account.username;
+}
+async function snote201KeyForCipher(version){
+ if(version===2)return zc80SensitiveKey;
+ if(version!==1||!snote201SensitiveMaterial)throw Error('식별번호 잠금을 다시 해제해 주세요.');
+ if(snote201LegacyKey)return snote201LegacyKey;
+ if(!snote201LegacyKeyTask){
+  const epoch=snote201SensitiveEpoch,snapshot=snote201SensitiveMaterial;
+  const task=snote201DeriveMaterial(snapshot.material,snapshot.account,1).then(key=>{
+   if(epoch!==snote201SensitiveEpoch||snote201SensitiveMaterial!==snapshot)throw Error('로그인 정보가 변경되었습니다.');
+   snote201LegacyKey=key;return key;
+  });
+  snote201LegacyKeyTask=task;
+  task.finally(()=>{if(snote201LegacyKeyTask===task)snote201LegacyKeyTask=null;}).catch(()=>{});
+ }
+ return snote201LegacyKeyTask;
 }
 function zc80DismissUnlock(result=false){
+ if(!result)zc80SensitiveLock();
  const el=document.getElementById('zc80-unlock');if(el)el.hidden=true;
  const pass=document.getElementById('zc80-pass');if(pass)pass.value='';
  const done=zc80UnlockResolve;zc80UnlockResolve=null;if(done)done(result);
@@ -7960,8 +8042,8 @@ async function zc80SubmitUnlock(event){
   const a=actor&&await getAccount(actor.username);if(!current())return;
   const verified=!!a&&(window.zc86Cloud?.ready?await window.zc86Cloud.verifyPassword(pass):(await hashPassword(pass,a.salt))===a.passwordHash);if(!current())return;
   if(!verified){snote253Feedback(err,'현재 로그인 계정의 비밀번호가 일치하지 않습니다.','error',document.getElementById('zc80-pass'));return;}
-  const key=await zc80DeriveKey(pass,a);if(!current())return;
-  zc80SensitiveKey=key;zc80SensitiveUser=a.username;zc80DismissUnlock(true);
+  await zc80RememberLogin(pass,a,current);if(!current())return;
+  zc80DismissUnlock(true);
  }catch(e){if(current())snote253Feedback(err,'암호화 키를 사용할 수 없습니다. HTTPS 또는 보안 컨텍스트에서 실행해 주세요.');}
 }
 async function zc80RequireKey(){
@@ -7981,20 +8063,26 @@ async function zc80EncryptAccountRrn(password,account,digits){
  const key=await zc80DeriveKey(password,account);
  const iv=crypto.getRandomValues(new Uint8Array(12));
  const ciphertext=await crypto.subtle.encrypt({name:'AES-GCM',iv},key,new TextEncoder().encode(digits));
- return {alg:'AES-256-GCM',v:1,iv:zc80B64(iv),data:zc80B64(ciphertext)};
+ return {alg:'AES-256-GCM',v:2,iv:zc80B64(iv),data:zc80B64(ciphertext)};
 }
 async function zc80EncryptRrn(raw){
  const digits=zc72Digits(raw);
  if(!/^(?:\d{10}|\d{13})$/.test(digits))return null;
+ const actor=currentUser;
  if(!await zc80RequireKey())throw new Error('주민번호 보관을 취소했습니다.');
+ if(currentUser!==actor||zc80SensitiveUser!==actor?.username)throw Error('로그인 정보가 변경되었습니다.');
+ const epoch=snote201SensitiveEpoch,key=zc80SensitiveKey;
  const iv=crypto.getRandomValues(new Uint8Array(12));
- const cipher=await crypto.subtle.encrypt({name:'AES-GCM',iv},zc80SensitiveKey,new TextEncoder().encode(digits));
- return {alg:'AES-256-GCM',v:1,iv:zc80B64(iv),data:zc80B64(cipher)};
+ const cipher=await crypto.subtle.encrypt({name:'AES-GCM',iv},key,new TextEncoder().encode(digits));
+ if(epoch!==snote201SensitiveEpoch||currentUser!==actor)throw Error('로그인 정보가 변경되었습니다.');
+ return {alg:'AES-256-GCM',v:2,iv:zc80B64(iv),data:zc80B64(cipher)};
 }
 async function zc80DecryptRrn(record){
  if(!record?.rrnCipher)return '';
+ const actor=currentUser;
  if(!await zc80RequireKey())throw new Error('주민번호 잠금 해제 취소');
- try{const plain=await crypto.subtle.decrypt({name:'AES-GCM',iv:zc80UnB64(record.rrnCipher.iv)},zc80SensitiveKey,zc80UnB64(record.rrnCipher.data));return zc72RrnDisplay(new TextDecoder().decode(plain));}
+ const epoch=snote201SensitiveEpoch;
+ try{const key=await snote201KeyForCipher(record.rrnCipher.v??1);const plain=await crypto.subtle.decrypt({name:'AES-GCM',iv:zc80UnB64(record.rrnCipher.iv)},key,zc80UnB64(record.rrnCipher.data));if(epoch!==snote201SensitiveEpoch||currentUser!==actor||zc80SensitiveUser!==actor?.username)throw Error('CONTEXT_CHANGED');return zc72RrnDisplay(new TextDecoder().decode(plain));}
  catch(e){throw new Error('주민번호 복호화에 실패했습니다. 계정 비밀번호 또는 저장된 자료를 확인해 주세요.');}
 }
 async function zc80SaveRrnField(ownerId,carId,raw){
@@ -8047,7 +8135,9 @@ window.addEventListener('DOMContentLoaded',()=>document.getElementById('zc76-rrn
  catch(e){if(current())toast(e.message||'주민번호 저장 실패')}
 }));
 
-initializeAuth();
+// Hosted startup opens only the new cache. Local accounts/photos are migrated
+// after an explicit local sign-in, before seeding or displaying any local rows.
+void snote201PrimeAccountCache().catch(()=>{});
 
 // International lookup: contains only hand-verified market-specific trims, never merged into KR vehicle picker.
 const V121_WORLD_TRIMS=[{"market":"JP","make":"Toyota","group":"Prius","model":"Prius 5th gen (2026-07 JP)","model_year":"2026","grade":"Z PHEV","verification":"official_market_release","source":"manufacturer_official","source_url":"https://toyota.jp/function-guide/prius/","review_note":"2026-07 일본 토요타 공식 기능/등급 표기. 일본 시장 전용"},{"market":"JP","make":"Toyota","group":"Prius","model":"Prius 5th gen (2026-07 JP)","model_year":"2026","grade":"G PHEV","verification":"official_market_release","source":"manufacturer_official","source_url":"https://toyota.jp/function-guide/prius/","review_note":"2026-07 일본 토요타 공식 기능/등급 표기. 일본 시장 전용"},{"market":"JP","make":"Toyota","group":"Prius","model":"Prius 5th gen (2026-07 JP)","model_year":"2026","grade":"Z HEV","verification":"official_market_release","source":"manufacturer_official","source_url":"https://toyota.jp/function-guide/prius/","review_note":"2026-07 일본 토요타 공식 기능/등급 표기. 일본 시장 전용"},{"market":"JP","make":"Toyota","group":"Prius","model":"Prius 5th gen (2026-07 JP)","model_year":"2026","grade":"G HEV","verification":"official_market_release","source":"manufacturer_official","source_url":"https://toyota.jp/function-guide/prius/","review_note":"2026-07 일본 토요타 공식 기능/등급 표기. 일본 시장 전용"},{"market":"JP","make":"Toyota","group":"Prius","model":"Prius 5th gen (2026-07 JP)","model_year":"2026","grade":"U HEV","verification":"official_market_release","source":"manufacturer_official","source_url":"https://toyota.jp/function-guide/prius/","review_note":"2026-07 일본 토요타 공식 기능/등급 표기. 일본 시장 전용"},{"market":"JP","make":"Toyota","group":"Crown Sedan","model":"Crown Sedan (2023 JP)","model_year":"2023","grade":"Z HEV","verification":"official_market_release","source":"manufacturer_official","source_url":"https://global.toyota/en/newsroom/toyota/39935774.html","review_note":"해당 국가 제조사 공식 출시/가격자료 확인. 국내 판매 트림과 다름"},{"market":"JP","make":"Toyota","group":"Crown Sedan","model":"Crown Sedan (2023 JP)","model_year":"2023","grade":"Z FCEV","verification":"official_market_release","source":"manufacturer_official","source_url":"https://global.toyota/en/newsroom/toyota/39935774.html","review_note":"해당 국가 제조사 공식 출시/가격자료 확인. 국내 판매 트림과 다름"},{"market":"JP","make":"Toyota","group":"Crown Estate","model":"Crown Estate (2025 JP)","model_year":"2025","grade":"ESTATE RS PHEV","verification":"official_market_release","source":"manufacturer_official","source_url":"https://global.toyota/en/newsroom/toyota/42369120.html","review_note":"해당 국가 제조사 공식 출시/가격자료 확인. 국내 판매 트림과 다름"},{"market":"JP","make":"Toyota","group":"Crown Estate","model":"Crown Estate (2025 JP)","model_year":"2025","grade":"ESTATE Z HEV","verification":"official_market_release","source":"manufacturer_official","source_url":"https://global.toyota/en/newsroom/toyota/42369120.html","review_note":"해당 국가 제조사 공식 출시/가격자료 확인. 국내 판매 트림과 다름"},{"market":"US","make":"Toyota","group":"Camry","model":"Camry XV80 Hybrid (2026 US)","model_year":"2026","grade":"LE","verification":"official_market_release","source":"manufacturer_official","source_url":"https://pressroom.toyota.com/toyota-camry-brings-bold-new-nightshade-edition-to-lineup-in-2026/","review_note":"해당 국가 제조사 공식 출시/가격자료 확인. 국내 판매 트림과 다름"},{"market":"US","make":"Toyota","group":"Camry","model":"Camry XV80 Hybrid (2026 US)","model_year":"2026","grade":"SE","verification":"official_market_release","source":"manufacturer_official","source_url":"https://pressroom.toyota.com/toyota-camry-brings-bold-new-nightshade-edition-to-lineup-in-2026/","review_note":"해당 국가 제조사 공식 출시/가격자료 확인. 국내 판매 트림과 다름"},{"market":"US","make":"Toyota","group":"Camry","model":"Camry XV80 Hybrid (2026 US)","model_year":"2026","grade":"Nightshade","verification":"official_market_release","source":"manufacturer_official","source_url":"https://pressroom.toyota.com/toyota-camry-brings-bold-new-nightshade-edition-to-lineup-in-2026/","review_note":"해당 국가 제조사 공식 출시/가격자료 확인. 국내 판매 트림과 다름"},{"market":"US","make":"Toyota","group":"Camry","model":"Camry XV80 Hybrid (2026 US)","model_year":"2026","grade":"XLE","verification":"official_market_release","source":"manufacturer_official","source_url":"https://pressroom.toyota.com/toyota-camry-brings-bold-new-nightshade-edition-to-lineup-in-2026/","review_note":"해당 국가 제조사 공식 출시/가격자료 확인. 국내 판매 트림과 다름"},{"market":"US","make":"Toyota","group":"Camry","model":"Camry XV80 Hybrid (2026 US)","model_year":"2026","grade":"XSE","verification":"official_market_release","source":"manufacturer_official","source_url":"https://pressroom.toyota.com/toyota-camry-brings-bold-new-nightshade-edition-to-lineup-in-2026/","review_note":"해당 국가 제조사 공식 출시/가격자료 확인. 국내 판매 트림과 다름"},{"market":"US","make":"Toyota","group":"RAV4","model":"RAV4 6th gen (2026 US)","model_year":"2026","grade":"LE HEV","verification":"official_market_release","source":"manufacturer_official","source_url":"https://pressroom.toyota.com/the-next-adventure-begins-2026-rav4-arrives-this-winter/","review_note":"신형 RAV4 등급; AWD/FWD는 등급별 상이, PHEV GR SPORT만 조합 확인"},{"market":"US","make":"Toyota","group":"RAV4","model":"RAV4 6th gen (2026 US)","model_year":"2026","grade":"XLE Premium HEV","verification":"official_market_release","source":"manufacturer_official","source_url":"https://pressroom.toyota.com/the-next-adventure-begins-2026-rav4-arrives-this-winter/","review_note":"신형 RAV4 등급; AWD/FWD는 등급별 상이, PHEV GR SPORT만 조합 확인"},{"market":"US","make":"Toyota","group":"RAV4","model":"RAV4 6th gen (2026 US)","model_year":"2026","grade":"Limited HEV","verification":"official_market_release","source":"manufacturer_official","source_url":"https://pressroom.toyota.com/the-next-adventure-begins-2026-rav4-arrives-this-winter/","review_note":"신형 RAV4 등급; AWD/FWD는 등급별 상이, PHEV GR SPORT만 조합 확인"},{"market":"US","make":"Toyota","group":"RAV4","model":"RAV4 6th gen (2026 US)","model_year":"2026","grade":"Woodland HEV","verification":"official_market_release","source":"manufacturer_official","source_url":"https://pressroom.toyota.com/the-next-adventure-begins-2026-rav4-arrives-this-winter/","review_note":"신형 RAV4 등급; AWD/FWD는 등급별 상이, PHEV GR SPORT만 조합 확인"},{"market":"US","make":"Toyota","group":"RAV4","model":"RAV4 6th gen (2026 US)","model_year":"2026","grade":"SE HEV","verification":"official_market_release","source":"manufacturer_official","source_url":"https://pressroom.toyota.com/the-next-adventure-begins-2026-rav4-arrives-this-winter/","review_note":"신형 RAV4 등급; AWD/FWD는 등급별 상이, PHEV GR SPORT만 조합 확인"},{"market":"US","make":"Toyota","group":"RAV4","model":"RAV4 6th gen (2026 US)","model_year":"2026","grade":"XSE HEV","verification":"official_market_release","source":"manufacturer_official","source_url":"https://pressroom.toyota.com/the-next-adventure-begins-2026-rav4-arrives-this-winter/","review_note":"신형 RAV4 등급; AWD/FWD는 등급별 상이, PHEV GR SPORT만 조합 확인"},{"market":"US","make":"Toyota","group":"RAV4","model":"RAV4 6th gen (2026 US)","model_year":"2026","grade":"GR SPORT PHEV","verification":"official_market_release","source":"manufacturer_official","source_url":"https://pressroom.toyota.com/the-next-adventure-begins-2026-rav4-arrives-this-winter/","review_note":"신형 RAV4 등급; AWD/FWD는 등급별 상이, PHEV GR SPORT만 조합 확인"},{"market":"US","make":"Honda","group":"Civic Sedan","model":"Civic Sedan (2026 US)","model_year":"2026","grade":"LX","verification":"official_market_release","source":"manufacturer_official","source_url":"https://automobiles.honda.com/civic-sedan/specs-features-trim-comparison","review_note":"해당 국가 제조사 공식 출시/가격자료 확인. 국내 판매 트림과 다름"},{"market":"US","make":"Honda","group":"Civic Sedan","model":"Civic Sedan (2026 US)","model_year":"2026","grade":"Sport","verification":"official_market_release","source":"manufacturer_official","source_url":"https://automobiles.honda.com/civic-sedan/specs-features-trim-comparison","review_note":"해당 국가 제조사 공식 출시/가격자료 확인. 국내 판매 트림과 다름"},{"market":"US","make":"Honda","group":"Civic Sedan","model":"Civic Sedan (2026 US)","model_year":"2026","grade":"Sport Hybrid","verification":"official_market_release","source":"manufacturer_official","source_url":"https://automobiles.honda.com/civic-sedan/specs-features-trim-comparison","review_note":"해당 국가 제조사 공식 출시/가격자료 확인. 국내 판매 트림과 다름"},{"market":"US","make":"Honda","group":"Civic Sedan","model":"Civic Sedan (2026 US)","model_year":"2026","grade":"Sport Touring Hybrid","verification":"official_market_release","source":"manufacturer_official","source_url":"https://automobiles.honda.com/civic-sedan/specs-features-trim-comparison","review_note":"해당 국가 제조사 공식 출시/가격자료 확인. 국내 판매 트림과 다름"},{"market":"US","make":"Kia","group":"Sportage","model":"Sportage (2026 US 2.5L)","model_year":"2026","grade":"LX FWD","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.kiamedia.com/us/en/models/sportage/2026/pricing","review_note":"Kia America 2026 2.5L MSRP표: 구동방식과 등급 조합 검증"},{"market":"US","make":"Kia","group":"Sportage","model":"Sportage (2026 US 2.5L)","model_year":"2026","grade":"LX AWD","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.kiamedia.com/us/en/models/sportage/2026/pricing","review_note":"Kia America 2026 2.5L MSRP표: 구동방식과 등급 조합 검증"},{"market":"US","make":"Kia","group":"Sportage","model":"Sportage (2026 US 2.5L)","model_year":"2026","grade":"EX FWD","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.kiamedia.com/us/en/models/sportage/2026/pricing","review_note":"Kia America 2026 2.5L MSRP표: 구동방식과 등급 조합 검증"},{"market":"US","make":"Kia","group":"Sportage","model":"Sportage (2026 US 2.5L)","model_year":"2026","grade":"EX AWD","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.kiamedia.com/us/en/models/sportage/2026/pricing","review_note":"Kia America 2026 2.5L MSRP표: 구동방식과 등급 조합 검증"},{"market":"US","make":"Kia","group":"Sportage","model":"Sportage (2026 US 2.5L)","model_year":"2026","grade":"SX FWD","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.kiamedia.com/us/en/models/sportage/2026/pricing","review_note":"Kia America 2026 2.5L MSRP표: 구동방식과 등급 조합 검증"},{"market":"US","make":"Kia","group":"Sportage","model":"Sportage (2026 US 2.5L)","model_year":"2026","grade":"SX-Prestige FWD","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.kiamedia.com/us/en/models/sportage/2026/pricing","review_note":"Kia America 2026 2.5L MSRP표: 구동방식과 등급 조합 검증"},{"market":"US","make":"Kia","group":"Sportage","model":"Sportage (2026 US 2.5L)","model_year":"2026","grade":"SX-Prestige AWD","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.kiamedia.com/us/en/models/sportage/2026/pricing","review_note":"Kia America 2026 2.5L MSRP표: 구동방식과 등급 조합 검증"},{"market":"US","make":"Kia","group":"Sportage","model":"Sportage (2026 US 2.5L)","model_year":"2026","grade":"X-Line AWD","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.kiamedia.com/us/en/models/sportage/2026/pricing","review_note":"Kia America 2026 2.5L MSRP표: 구동방식과 등급 조합 검증"},{"market":"US","make":"Kia","group":"Sportage","model":"Sportage (2026 US 2.5L)","model_year":"2026","grade":"X-Pro Prestige AWD","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.kiamedia.com/us/en/models/sportage/2026/pricing","review_note":"Kia America 2026 2.5L MSRP표: 구동방식과 등급 조합 검증"},{"market":"US","make":"Kia","group":"Sorento","model":"Sorento (2026 US ICE)","model_year":"2026","grade":"LX FWD","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.kiamedia.com/us/en/models/sorento/2026/pricing","review_note":"Kia America 공식 2026 ICE 가격표의 세부 조합"},{"market":"US","make":"Kia","group":"Sorento","model":"Sorento (2026 US ICE)","model_year":"2026","grade":"S FWD","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.kiamedia.com/us/en/models/sorento/2026/pricing","review_note":"Kia America 공식 2026 ICE 가격표의 세부 조합"},{"market":"US","make":"Kia","group":"Sorento","model":"Sorento (2026 US ICE)","model_year":"2026","grade":"EX FWD","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.kiamedia.com/us/en/models/sorento/2026/pricing","review_note":"Kia America 공식 2026 ICE 가격표의 세부 조합"},{"market":"US","make":"Kia","group":"Sorento","model":"Sorento (2026 US ICE)","model_year":"2026","grade":"SX FWD","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.kiamedia.com/us/en/models/sorento/2026/pricing","review_note":"Kia America 공식 2026 ICE 가격표의 세부 조합"},{"market":"US","make":"Kia","group":"Sorento","model":"Sorento (2026 US ICE)","model_year":"2026","grade":"S AWD","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.kiamedia.com/us/en/models/sorento/2026/pricing","review_note":"Kia America 공식 2026 ICE 가격표의 세부 조합"},{"market":"US","make":"Kia","group":"Sorento","model":"Sorento (2026 US ICE)","model_year":"2026","grade":"EX AWD","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.kiamedia.com/us/en/models/sorento/2026/pricing","review_note":"Kia America 공식 2026 ICE 가격표의 세부 조합"},{"market":"US","make":"Kia","group":"Sorento","model":"Sorento (2026 US ICE)","model_year":"2026","grade":"X-Line EX AWD","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.kiamedia.com/us/en/models/sorento/2026/pricing","review_note":"Kia America 공식 2026 ICE 가격표의 세부 조합"},{"market":"US","make":"Kia","group":"Sorento","model":"Sorento (2026 US ICE)","model_year":"2026","grade":"X-Line SX AWD","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.kiamedia.com/us/en/models/sorento/2026/pricing","review_note":"Kia America 공식 2026 ICE 가격표의 세부 조합"},{"market":"US","make":"Kia","group":"Sorento","model":"Sorento (2026 US ICE)","model_year":"2026","grade":"X-Line SX-P AWD","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.kiamedia.com/us/en/models/sorento/2026/pricing","review_note":"Kia America 공식 2026 ICE 가격표의 세부 조합"},{"market":"US","make":"Kia","group":"Sorento","model":"Sorento (2026 US ICE)","model_year":"2026","grade":"X-Pro SX-P AWD","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.kiamedia.com/us/en/models/sorento/2026/pricing","review_note":"Kia America 공식 2026 ICE 가격표의 세부 조합"},{"market":"US","make":"Subaru","group":"Outback","model":"Outback (2026 US)","model_year":"2026","grade":"Premium","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.subaru.com/vehicles/outback/specs-trim.html","review_note":"해당 국가 제조사 공식 출시/가격자료 확인. 국내 판매 트림과 다름"},{"market":"US","make":"Subaru","group":"Outback","model":"Outback (2026 US)","model_year":"2026","grade":"Limited","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.subaru.com/vehicles/outback/specs-trim.html","review_note":"해당 국가 제조사 공식 출시/가격자료 확인. 국내 판매 트림과 다름"},{"market":"US","make":"Subaru","group":"Outback","model":"Outback (2026 US)","model_year":"2026","grade":"Touring","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.subaru.com/vehicles/outback/specs-trim.html","review_note":"해당 국가 제조사 공식 출시/가격자료 확인. 국내 판매 트림과 다름"},{"market":"US","make":"Subaru","group":"Outback","model":"Outback (2026 US)","model_year":"2026","grade":"Wilderness","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.subaru.com/vehicles/outback/specs-trim.html","review_note":"해당 국가 제조사 공식 출시/가격자료 확인. 국내 판매 트림과 다름"},{"market":"US","make":"Subaru","group":"Outback","model":"Outback (2026 US)","model_year":"2026","grade":"Limited XT","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.subaru.com/vehicles/outback/specs-trim.html","review_note":"해당 국가 제조사 공식 출시/가격자료 확인. 국내 판매 트림과 다름"},{"market":"US","make":"Subaru","group":"Outback","model":"Outback (2026 US)","model_year":"2026","grade":"Touring XT","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.subaru.com/vehicles/outback/specs-trim.html","review_note":"해당 국가 제조사 공식 출시/가격자료 확인. 국내 판매 트림과 다름"},{"market":"US","make":"Ford","group":"Bronco","model":"Bronco (2026 US)","model_year":"2026","grade":"Base","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.ford.com/suvs/bronco/","review_note":"해당 국가 제조사 공식 출시/가격자료 확인. 국내 판매 트림과 다름"},{"market":"US","make":"Ford","group":"Bronco","model":"Bronco (2026 US)","model_year":"2026","grade":"Big Bend","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.ford.com/suvs/bronco/","review_note":"해당 국가 제조사 공식 출시/가격자료 확인. 국내 판매 트림과 다름"},{"market":"US","make":"Ford","group":"Bronco","model":"Bronco (2026 US)","model_year":"2026","grade":"Outer Banks","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.ford.com/suvs/bronco/","review_note":"해당 국가 제조사 공식 출시/가격자료 확인. 국내 판매 트림과 다름"},{"market":"US","make":"Ford","group":"Bronco","model":"Bronco (2026 US)","model_year":"2026","grade":"Badlands","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.ford.com/suvs/bronco/","review_note":"해당 국가 제조사 공식 출시/가격자료 확인. 국내 판매 트림과 다름"},{"market":"US","make":"Ford","group":"Bronco","model":"Bronco (2026 US)","model_year":"2026","grade":"Heritage Edition","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.ford.com/suvs/bronco/","review_note":"해당 국가 제조사 공식 출시/가격자료 확인. 국내 판매 트림과 다름"},{"market":"US","make":"Ford","group":"Bronco","model":"Bronco (2026 US)","model_year":"2026","grade":"Stroppe Edition","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.ford.com/suvs/bronco/","review_note":"해당 국가 제조사 공식 출시/가격자료 확인. 국내 판매 트림과 다름"},{"market":"US","make":"Ford","group":"Bronco","model":"Bronco (2026 US)","model_year":"2026","grade":"Raptor","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.ford.com/suvs/bronco/","review_note":"해당 국가 제조사 공식 출시/가격자료 확인. 국내 판매 트림과 다름"},{"market":"CA","make":"Toyota","group":"Corolla","model":"Corolla Sedan (2026 CA)","model_year":"2026","grade":"L","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.toyota.ca/en/discover/news/2025/what-s-new--the-2026-toyota-corolla/","review_note":"해당 국가 제조사 공식 출시/가격자료 확인. 국내 판매 트림과 다름"},{"market":"CA","make":"Toyota","group":"Corolla","model":"Corolla Sedan (2026 CA)","model_year":"2026","grade":"LE","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.toyota.ca/en/discover/news/2025/what-s-new--the-2026-toyota-corolla/","review_note":"해당 국가 제조사 공식 출시/가격자료 확인. 국내 판매 트림과 다름"},{"market":"CA","make":"Toyota","group":"Corolla","model":"Corolla Sedan (2026 CA)","model_year":"2026","grade":"LE Upgrade","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.toyota.ca/en/discover/news/2025/what-s-new--the-2026-toyota-corolla/","review_note":"해당 국가 제조사 공식 출시/가격자료 확인. 국내 판매 트림과 다름"},{"market":"CA","make":"Toyota","group":"Corolla","model":"Corolla Sedan (2026 CA)","model_year":"2026","grade":"SE","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.toyota.ca/en/discover/news/2025/what-s-new--the-2026-toyota-corolla/","review_note":"해당 국가 제조사 공식 출시/가격자료 확인. 국내 판매 트림과 다름"},{"market":"CA","make":"Toyota","group":"Corolla","model":"Corolla Sedan (2026 CA)","model_year":"2026","grade":"SE Upgrade","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.toyota.ca/en/discover/news/2025/what-s-new--the-2026-toyota-corolla/","review_note":"해당 국가 제조사 공식 출시/가격자료 확인. 국내 판매 트림과 다름"},{"market":"CA","make":"Toyota","group":"Corolla","model":"Corolla Sedan (2026 CA)","model_year":"2026","grade":"XSE","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.toyota.ca/en/discover/news/2025/what-s-new--the-2026-toyota-corolla/","review_note":"해당 국가 제조사 공식 출시/가격자료 확인. 국내 판매 트림과 다름"},{"market":"CA","make":"Toyota","group":"Corolla Hybrid","model":"Corolla Hybrid (2026 CA)","model_year":"2026","grade":"LE","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.toyota.ca/en/discover/news/2025/what-s-new--the-2026-toyota-corolla/","review_note":"해당 국가 제조사 공식 출시/가격자료 확인. 국내 판매 트림과 다름"},{"market":"CA","make":"Toyota","group":"Corolla Hybrid","model":"Corolla Hybrid (2026 CA)","model_year":"2026","grade":"LE AWD","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.toyota.ca/en/discover/news/2025/what-s-new--the-2026-toyota-corolla/","review_note":"해당 국가 제조사 공식 출시/가격자료 확인. 국내 판매 트림과 다름"},{"market":"CA","make":"Toyota","group":"Corolla Hybrid","model":"Corolla Hybrid (2026 CA)","model_year":"2026","grade":"SE AWD","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.toyota.ca/en/discover/news/2025/what-s-new--the-2026-toyota-corolla/","review_note":"해당 국가 제조사 공식 출시/가격자료 확인. 국내 판매 트림과 다름"},{"market":"CA","make":"Toyota","group":"Corolla Hybrid","model":"Corolla Hybrid (2026 CA)","model_year":"2026","grade":"XSE AWD","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.toyota.ca/en/discover/news/2025/what-s-new--the-2026-toyota-corolla/","review_note":"해당 국가 제조사 공식 출시/가격자료 확인. 국내 판매 트림과 다름"},{"market":"CA","make":"Mazda","group":"CX-5","model":"CX-5 (2026 CA)","model_year":"2026","grade":"GX","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.mazda.ca/en/vehicles/cx-5/","review_note":"공식 캐나다 출시 트림 GX·GS·GT만 독립 등급으로 분류. GT Premium은 패키지라서 제외"},{"market":"CA","make":"Mazda","group":"CX-5","model":"CX-5 (2026 CA)","model_year":"2026","grade":"GS","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.mazda.ca/en/vehicles/cx-5/","review_note":"공식 캐나다 출시 트림 GX·GS·GT만 독립 등급으로 분류. GT Premium은 패키지라서 제외"},{"market":"CA","make":"Mazda","group":"CX-5","model":"CX-5 (2026 CA)","model_year":"2026","grade":"GT","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.mazda.ca/en/vehicles/cx-5/","review_note":"공식 캐나다 출시 트림 GX·GS·GT만 독립 등급으로 분류. GT Premium은 패키지라서 제외"},{"market":"CA","make":"Hyundai","group":"Tucson","model":"Tucson (2026 CA)","model_year":"2026","grade":"Preferred","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.hyundaicanada.com/en/showroom/tucson/specs","review_note":"캐나다 공식 사양표 명칭; 엔진/HEV/PHEV 의존성별 별도 확인 필요"},{"market":"CA","make":"Hyundai","group":"Tucson","model":"Tucson (2026 CA)","model_year":"2026","grade":"Preferred with Trend Package","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.hyundaicanada.com/en/showroom/tucson/specs","review_note":"캐나다 공식 사양표 명칭; 엔진/HEV/PHEV 의존성별 별도 확인 필요"},{"market":"CA","make":"Hyundai","group":"Tucson","model":"Tucson (2026 CA)","model_year":"2026","grade":"Night Edition","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.hyundaicanada.com/en/showroom/tucson/specs","review_note":"캐나다 공식 사양표 명칭; 엔진/HEV/PHEV 의존성별 별도 확인 필요"},{"market":"CA","make":"Hyundai","group":"Tucson","model":"Tucson (2026 CA)","model_year":"2026","grade":"N Line","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.hyundaicanada.com/en/showroom/tucson/specs","review_note":"캐나다 공식 사양표 명칭; 엔진/HEV/PHEV 의존성별 별도 확인 필요"},{"market":"CA","make":"Hyundai","group":"Tucson","model":"Tucson (2026 CA)","model_year":"2026","grade":"Ultimate","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.hyundaicanada.com/en/showroom/tucson/specs","review_note":"캐나다 공식 사양표 명칭; 엔진/HEV/PHEV 의존성별 별도 확인 필요"},{"market":"GB","make":"Volkswagen","group":"Golf","model":"Golf Mk8.5 (2026 GB)","model_year":"2026","grade":"Life","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.volkswagen.co.uk/en/new/golf.html","review_note":"공식 2026 영국 VW Golf 소개의 트림명. 일부 특별판 공급 시점 별도 확인"},{"market":"GB","make":"Volkswagen","group":"Golf","model":"Golf Mk8.5 (2026 GB)","model_year":"2026","grade":"Match","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.volkswagen.co.uk/en/new/golf.html","review_note":"공식 2026 영국 VW Golf 소개의 트림명. 일부 특별판 공급 시점 별도 확인"},{"market":"GB","make":"Volkswagen","group":"Golf","model":"Golf Mk8.5 (2026 GB)","model_year":"2026","grade":"Style","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.volkswagen.co.uk/en/new/golf.html","review_note":"공식 2026 영국 VW Golf 소개의 트림명. 일부 특별판 공급 시점 별도 확인"},{"market":"GB","make":"Volkswagen","group":"Golf","model":"Golf Mk8.5 (2026 GB)","model_year":"2026","grade":"R-Line","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.volkswagen.co.uk/en/new/golf.html","review_note":"공식 2026 영국 VW Golf 소개의 트림명. 일부 특별판 공급 시점 별도 확인"},{"market":"GB","make":"Volkswagen","group":"Golf","model":"Golf Mk8.5 (2026 GB)","model_year":"2026","grade":"Black Edition","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.volkswagen.co.uk/en/new/golf.html","review_note":"공식 2026 영국 VW Golf 소개의 트림명. 일부 특별판 공급 시점 별도 확인"},{"market":"GB","make":"Volkswagen","group":"Golf","model":"Golf Mk8.5 (2026 GB)","model_year":"2026","grade":"GTE","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.volkswagen.co.uk/en/new/golf.html","review_note":"공식 2026 영국 VW Golf 소개의 트림명. 일부 특별판 공급 시점 별도 확인"},{"market":"GB","make":"Volkswagen","group":"Golf","model":"Golf Mk8.5 (2026 GB)","model_year":"2026","grade":"GTI","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.volkswagen.co.uk/en/new/golf.html","review_note":"공식 2026 영국 VW Golf 소개의 트림명. 일부 특별판 공급 시점 별도 확인"},{"market":"GB","make":"Volkswagen","group":"Golf","model":"Golf Mk8.5 (2026 GB)","model_year":"2026","grade":"GTI Clubsport","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.volkswagen.co.uk/en/new/golf.html","review_note":"공식 2026 영국 VW Golf 소개의 트림명. 일부 특별판 공급 시점 별도 확인"},{"market":"GB","make":"Volkswagen","group":"Golf","model":"Golf Mk8.5 (2026 GB)","model_year":"2026","grade":"GTI Edition 50","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.volkswagen.co.uk/en/new/golf.html","review_note":"공식 2026 영국 VW Golf 소개의 트림명. 일부 특별판 공급 시점 별도 확인"},{"market":"GB","make":"Volkswagen","group":"Golf","model":"Golf Mk8.5 (2026 GB)","model_year":"2026","grade":"R","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.volkswagen.co.uk/en/new/golf.html","review_note":"공식 2026 영국 VW Golf 소개의 트림명. 일부 특별판 공급 시점 별도 확인"},{"market":"GB","make":"Volkswagen","group":"Golf","model":"Golf Mk8.5 (2026 GB)","model_year":"2026","grade":"R Black Edition","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.volkswagen.co.uk/en/new/golf.html","review_note":"공식 2026 영국 VW Golf 소개의 트림명. 일부 특별판 공급 시점 별도 확인"},{"market":"GB","make":"Toyota","group":"Yaris","model":"Yaris (2026 GB)","model_year":"2026","grade":"Icon Hybrid","verification":"official_market_release","source":"manufacturer_official","source_url":"https://media.toyota.co.uk/wp-content/uploads/sites/5/pdf/260601-Toyota-Media-Site-Price-List.pdf","review_note":"Toyota UK 2026-06 공식 가격표; 파워트레인 하이브리드"},{"market":"GB","make":"Toyota","group":"Yaris","model":"Yaris (2026 GB)","model_year":"2026","grade":"Design Hybrid","verification":"official_market_release","source":"manufacturer_official","source_url":"https://media.toyota.co.uk/wp-content/uploads/sites/5/pdf/260601-Toyota-Media-Site-Price-List.pdf","review_note":"Toyota UK 2026-06 공식 가격표; 파워트레인 하이브리드"},{"market":"GB","make":"Toyota","group":"Yaris","model":"Yaris (2026 GB)","model_year":"2026","grade":"Excel Hybrid","verification":"official_market_release","source":"manufacturer_official","source_url":"https://media.toyota.co.uk/wp-content/uploads/sites/5/pdf/260601-Toyota-Media-Site-Price-List.pdf","review_note":"Toyota UK 2026-06 공식 가격표; 파워트레인 하이브리드"},{"market":"GB","make":"Toyota","group":"Yaris","model":"Yaris (2026 GB)","model_year":"2026","grade":"GR SPORT Hybrid","verification":"official_market_release","source":"manufacturer_official","source_url":"https://media.toyota.co.uk/wp-content/uploads/sites/5/pdf/260601-Toyota-Media-Site-Price-List.pdf","review_note":"Toyota UK 2026-06 공식 가격표; 파워트레인 하이브리드"},{"market":"AU","make":"Mazda","group":"Mazda3","model":"Mazda3 (2026 AU)","model_year":"2026","grade":"G20 Pure","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.mazda.com.au/49cd9e/globalassets/brochures/mazda3-digital-brochure.pdf","review_note":"Mazda Australia 공식 제원 브로슈어에서 6개 등급 명시"},{"market":"AU","make":"Mazda","group":"Mazda3","model":"Mazda3 (2026 AU)","model_year":"2026","grade":"G20 Evolve","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.mazda.com.au/49cd9e/globalassets/brochures/mazda3-digital-brochure.pdf","review_note":"Mazda Australia 공식 제원 브로슈어에서 6개 등급 명시"},{"market":"AU","make":"Mazda","group":"Mazda3","model":"Mazda3 (2026 AU)","model_year":"2026","grade":"G20 Touring","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.mazda.com.au/49cd9e/globalassets/brochures/mazda3-digital-brochure.pdf","review_note":"Mazda Australia 공식 제원 브로슈어에서 6개 등급 명시"},{"market":"AU","make":"Mazda","group":"Mazda3","model":"Mazda3 (2026 AU)","model_year":"2026","grade":"G25 Evolve SP","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.mazda.com.au/49cd9e/globalassets/brochures/mazda3-digital-brochure.pdf","review_note":"Mazda Australia 공식 제원 브로슈어에서 6개 등급 명시"},{"market":"AU","make":"Mazda","group":"Mazda3","model":"Mazda3 (2026 AU)","model_year":"2026","grade":"G25 GT","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.mazda.com.au/49cd9e/globalassets/brochures/mazda3-digital-brochure.pdf","review_note":"Mazda Australia 공식 제원 브로슈어에서 6개 등급 명시"},{"market":"AU","make":"Mazda","group":"Mazda3","model":"Mazda3 (2026 AU)","model_year":"2026","grade":"G25 Astina","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.mazda.com.au/49cd9e/globalassets/brochures/mazda3-digital-brochure.pdf","review_note":"Mazda Australia 공식 제원 브로슈어에서 6개 등급 명시"},{"market":"AU","make":"Toyota","group":"Camry","model":"Camry (2026 AU)","model_year":"2026","grade":"Ascent","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.toyota.com.au/-/media/toyota/main-site/vehicle-hubs/camry/files/20260212_camry_spec_table_gtp009597.pdf?rev=44fe897197b84c25a1fdff78eb480563","review_note":"Toyota Australia 2026년 2월 사양표"},{"market":"AU","make":"Toyota","group":"Camry","model":"Camry (2026 AU)","model_year":"2026","grade":"Ascent Sport","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.toyota.com.au/-/media/toyota/main-site/vehicle-hubs/camry/files/20260212_camry_spec_table_gtp009597.pdf?rev=44fe897197b84c25a1fdff78eb480563","review_note":"Toyota Australia 2026년 2월 사양표"},{"market":"AU","make":"Toyota","group":"Camry","model":"Camry (2026 AU)","model_year":"2026","grade":"SL","verification":"official_market_release","source":"manufacturer_official","source_url":"https://www.toyota.com.au/-/media/toyota/main-site/vehicle-hubs/camry/files/20260212_camry_spec_table_gtp009597.pdf?rev=44fe897197b84c25a1fdff78eb480563","review_note":"Toyota Australia 2026년 2월 사양표"}];
@@ -8072,7 +8162,7 @@ function renderWorldTrims(){const table=document.getElementById('world-results')
  }
  window.addEventListener('message',function(event){
   if(event.origin!==location.origin||event.source!==frame()?.contentWindow)return;
-  if(['SNOTE_MONTHLY_HEIGHT','ZEROCAR_MONTHLY_HEIGHT'].includes(event.data?.type)&&Number.isFinite(event.data.height)){
+  if(['SNOTE_MONTHLY_HEIGHT',window.SnoteStorageCompat.legacyMonthlyHeight].includes(event.data?.type)&&Number.isFinite(event.data.height)){
    frame().style.height=Math.max(650,Math.min(25000,event.data.height+16))+'px';
   }else if(event.data?.type==='SNOTE_TYPOGRAPHY_READY')sendTypography();
  });
@@ -8119,21 +8209,17 @@ function renderWorldTrims(){const table=document.getElementById('world-results')
 </div>
 <script>
 /* v1.72: 고객 인적사항은 딜러별 IndexedDB에 보관합니다. 주민번호 전체는 절대로 기록하지 않습니다. */
-const ZC72_DB='zerocar-office-v172-customers';
+const ZC72_DB='s-note-office-v172-customers';
 let zc72DbPromise=null,zc72SaleCarId=null,zc72SaleLoading=false;
 let snote214SaleView=0,snote214CustomerView=0,snote214ContractView=0,snote214ReceiptView=0;
 let snote214SaleRestoreGeneration=null,snote214ReceiptRestoreGeneration=null;
 let snote214ContractIdentityBaseline='',snote214ReceiptIdentityBaseline='',snote214ContractClosing=false,snote214ReceiptClosing=false,snote214ContractIdentityTask=null,snote214ReceiptIdentityTask=null;
 function snote214SaleSignature(){return JSON.stringify(Array.from($('zc72-sale-form').elements).filter(el=>/^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName)).map(el=>el.type==='checkbox'?el.checked:el.value));}
 function zc72OpenDb(){
- if(zc72DbPromise)return zc72DbPromise;
- zc72DbPromise=new Promise((resolve,reject)=>{
-  const req=indexedDB.open(ZC72_DB,1);
-  req.onupgradeneeded=()=>{const db=req.result;if(!db.objectStoreNames.contains('customers')){const st=db.createObjectStore('customers',{keyPath:'id'});st.createIndex('ownerId','ownerId',{unique:false});}};
-  req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);
- }).catch(e=>{zc72DbPromise=null;throw e});
+ if(!zc72DbPromise)zc72DbPromise=window.SnoteIdbCompat.open('customers',{migrate:true}).catch(error=>{zc72DbPromise=null;throw error;});
  return zc72DbPromise;
 }
+
 function zc72ReadCar(ownerId,carId){return zc72OpenDb().then(db=>new Promise((resolve,reject)=>{
  const q=db.transaction('customers','readonly').objectStore('customers').get(ownerId+':'+carId);
  q.onsuccess=()=>resolve(q.result||null);q.onerror=()=>reject(q.error);
@@ -9018,7 +9104,7 @@ const snote95AuthStore={
 // Blank public config means first-time browsers will see the server connection setup. Never embed a secret/service_role key.
 const SNOTE_PUBLIC_CONFIG={url:'https://rmlycycleuscfqywbihj.supabase.co',key:'sb_publishable_sNBW_Qz-1H2vi1rG-ayUJg_aOWD2fHn'};
 const publicDefault=validConfig(SNOTE_PUBLIC_CONFIG);
-const LEGACY={finance:'zerocar-office-v182-inventory-finance-ledger',finance_limits:'zerocar-office-v157-finance-companies',prestock:'zerocar-office-v148-prestock-ledger',monthly:'zerocar-office-v165-monthly-ledger',categories:'zerocar-office-v170-monthly-category-settings'};
+const LEGACY={finance:'s-note-office-v182-inventory-finance-ledger',finance_limits:'s-note-office-v157-finance-companies',prestock:'s-note-office-v148-prestock-ledger',monthly:'s-note-office-v165-monthly-ledger',categories:'s-note-office-v170-monthly-category-settings'};
 const ownerAlias=uid=>'cld_'+uid.replace(/-/g,'').slice(0,18);
 // Read company settings from the authenticated dataset snapshot, never another
 // tab's shared legacy cache. Existing finance_limits payloads stay unchanged.
@@ -9100,7 +9186,7 @@ async function snote2184CompanyPurchaseRead(context){
  if(typeof snoteVehicleHasChanges==='function'&&snoteVehicleHasChanges())throw snoteCompanyPurchaseError('DIRTY_VEHICLE');
  const acknowledged=await flush();if(!snoteCompanyPurchaseCurrent(context)||acknowledged?.ok!==true||S.conflict)throw snoteCompanyPurchaseError('CONFLICT');
  const client=S.client,raw=new Map(),revisions=new Map(S.revisions),ownersBefore=new Map(S.companyOwners);
- for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i);if(key&&(key.startsWith('zerocar-office-v12-cars-')||key.startsWith('zerocar-office-v12-covers-')))raw.set(key,localStorage.getItem(key));}
+ for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i);if(key&&(key.startsWith('s-note-office-v12-cars-')||key.startsWith('s-note-office-v12-covers-')))raw.set(key,localStorage.getItem(key));}
  const result=await client.rpc('snote_company_purchase_rows',{p_company:context.companyId});
  if(!snoteCompanyPurchaseCurrent(context)||client!==S.client||!snoteCompanyPurchaseContext()?.ready)throw snoteCompanyPurchaseError('CONTEXT_CHANGED');
  if(result.error)throw snoteCompanyPurchaseError(result.error.code==='42501'?'FORBIDDEN':['PGRST202','42883'].includes(result.error.code)?'SETUP_REQUIRED':'NETWORK');
@@ -9218,7 +9304,7 @@ window.snoteContractOfficeBridge=Object.freeze({
 });
 const getOwnUuid=owner=>snoteCompanyOwnerRows().find(m=>ownerAlias(m.user_id)===owner)?.user_id||null;
 const isShared=dataset=>!['cars','covers'].includes(dataset);
-const storageKey=(dataset,owner)=>dataset==='cars'?'zerocar-office-v12-cars-'+owner:dataset==='covers'?'zerocar-office-v12-covers-'+owner:LEGACY[dataset];
+const storageKey=(dataset,owner)=>dataset==='cars'?'s-note-office-v12-cars-'+owner:dataset==='covers'?'s-note-office-v12-covers-'+owner:LEGACY[dataset];
 const defaultBody=dataset=>dataset==='covers'?'{}':dataset==='categories'?'null':'[]';
 const kOf=(dataset,owner)=>dataset+':'+owner;
 const msg=(v,tone='')=>{const text=String(v||'');info.textContent=text;info.hidden=false;if(text&&(tone||/실패|오류|만료|확인해|입력해|입력하세요|올바른|다시 로그인|완료하지|HTTPS로|더블클릭|잠갔|로그아웃|저장됨/.test(text)))snote253Feedback(info,text,tone||(/로그아웃|저장됨/.test(text)?'success':'error'));};
@@ -9248,7 +9334,7 @@ function cleanCustomer(rec){
 function cloudKey(dataset,owner){return kOf(dataset,isShared(dataset)?NIL:owner)}
 function toEntry(k){
  for(const [ds,key] of Object.entries(LEGACY))if(key===k)return {ds,owner:NIL};
- for(const ds of ['cars','covers']){const prefix=ds==='cars'?'zerocar-office-v12-cars-':'zerocar-office-v12-covers-';if(k.startsWith(prefix)){
+ for(const ds of ['cars','covers']){const prefix=ds==='cars'?'s-note-office-v12-cars-':'s-note-office-v12-covers-';if(k.startsWith(prefix)){
   let owner=getOwnUuid(k.slice(prefix.length));if(owner)return {ds,owner};
  }}return null;
 }
@@ -9521,6 +9607,9 @@ async function restoreDatasets(){
  // A malformed marker must never turn a normal login into a destructive reload.
  const markerRaw=!discardIdleRecovery&&recovery&&markerScope?localStorage.getItem(recovery.key(markerScope)):null;
  const marker=!discardIdleRecovery&&recovery&&markerScope?recovery.read(markerScope):null;
+ const compatibility=window.SnoteStorageCompat;
+ if(!compatibility||typeof compatibility.createAdapter!=='function')throw Error('저장소 호환 범위를 확인하지 못했습니다.');
+ const namespace=compatibility.createAdapter(localStorage);
  S.loading=true;
  try{
  const {data,error}=await scope.client.from('zc_datasets').select('company_id,dataset,owner_id,payload,revision').eq('company_id',scope.company).limit(2000);if(error)throw error;
@@ -9533,8 +9622,23 @@ async function restoreDatasets(){
   if(!context?.canRead||!state||state.companyId!==scope.company||state.user!==scope.user||state.client!==scope.client||state.epoch!==financeBefore.epoch)return null;
   return JSON.stringify(state.rows);
  };
+ const namespaceSnapshot=entry=>{
+  const primaryKey=compatibility.canonicalKey(entry.storageKey),alias=primaryKey!==entry.storageKey;
+  // Financial cache bytes are unscoped. Never inspect them as recovery authority;
+  // an old alias's explicit deletion can still veto adoption of a server ACK.
+  if(financial(entry.dataset))return {primaryKey,alias,primaryConflict:alias&&localStorage.getItem(compatibility.markerKey(primaryKey))!==null};
+  return {...namespace.readRecovery(entry),alias};
+ };
+ const sameNamespace=(before,after)=>before.primaryKey===after.primaryKey&&before.alias===after.alias&&
+  before.raw===after.raw&&before.primaryRaw===after.primaryRaw&&before.primaryConflict===after.primaryConflict;
+ const writable=entry=>!!snoteCompanyActor()&&(isShared(entry.dataset)||entry.ownerId===scope.user.id);
+ const changed=(key,pending)=>{
+  decisions.set(key,{...pending,decision:'cache-changed'});
+  if(!retained.includes(pending.entry))retained.push(pending.entry);
+  conflict=true;
+ };
  for(const entry of marker?.entries||[]){
-  const key=cloudKey(entry.dataset,entry.ownerId),row=map.get(key),ownedRaw=financial(entry.dataset)?previousFinanceRaw(entry.dataset):null,raw=financial(entry.dataset)?ownedRaw:localStorage.getItem(entry.storageKey);
+  const key=cloudKey(entry.dataset,entry.ownerId),row=map.get(key),snapshot=namespaceSnapshot(entry),ownedRaw=financial(entry.dataset)?previousFinanceRaw(entry.dataset):null,raw=financial(entry.dataset)?ownedRaw:snapshot.raw;
   if(row&&(!Number.isSafeInteger(row.revision)||row.revision<0))throw Error('저장 복구의 서버 버전을 확인하지 못했습니다.');
   const cached=await snoteIdleRecoveryHash(entry.dataset,raw);
   const serverHash=row?await recovery.hash(snoteIdleCanonical(entry.dataset==='monthly'?row.payload:scrub(row.payload))):null;
@@ -9543,28 +9647,37 @@ async function restoreDatasets(){
   // A legacy hash marker cannot prove ownership of a shared raw browser key.
   // With no bound in-memory body, acknowledge only an exact authorized server row.
   const serverAck=financial(entry.dataset)&&!!row&&serverHash===entry.hash&&row.revision>=entry.revision;
-  const actor=snoteCompanyActor(),writable=!!actor&&(isShared(entry.dataset)||entry.ownerId===scope.user.id);
   if(serverAck)decision='acknowledged';
   else if(!cached.valid||raw===null)decision='conflict';
-  if(!writable)decision='conflict';
-  decisions.set(key,{entry,decision,ownedRaw});
+  if(!writable(entry)||snapshot.primaryConflict)decision='conflict';
+  decisions.set(key,{entry,decision,ownedRaw,namespace:snapshot});
   if(decision!=='acknowledged'){
    retained.push(entry);
    if(decision==='retry')retry=true;else conflict=true;
   }
  }
  // Hashing is asynchronous; do not adopt a decision about a cache changed meanwhile.
- for(const {entry,decision,ownedRaw}of decisions.values())if(decision==='retry'||decision==='acknowledged'){
+ for(const [key,pending]of decisions)if(pending.decision==='retry'||pending.decision==='acknowledged'){
+  const {entry,decision,ownedRaw}=pending,before=namespaceSnapshot(entry);
+  if(!writable(entry)||!sameNamespace(pending.namespace,before)){changed(key,pending);continue;}
   if(financial(entry.dataset)&&decision==='acknowledged'&&ownedRaw===null)continue;
-  const latest=await snoteIdleRecoveryHash(entry.dataset,financial(entry.dataset)?ownedRaw:localStorage.getItem(entry.storageKey));
+  const latest=await snoteIdleRecoveryHash(entry.dataset,financial(entry.dataset)?ownedRaw:before.raw);
   if(!current())throw Error('CONTEXT_CHANGED');
-  if(latest.hash!==entry.hash){decisions.set(cloudKey(entry.dataset,entry.ownerId),{entry,decision:'cache-changed',ownedRaw});if(!retained.includes(entry))retained.push(entry);conflict=true;}
+  if(latest.hash!==entry.hash||!writable(entry)||!sameNamespace(before,namespaceSnapshot(entry)))changed(key,pending);
  }
+ // A later entry's async hash may have yielded after an earlier check. Validate
+ // every source and destination again without yielding before applying any row.
+ for(const [key,pending]of decisions)if((pending.decision==='retry'||pending.decision==='acknowledged')&&
+  (!writable(pending.entry)||!sameNamespace(pending.namespace,namespaceSnapshot(pending.entry))))changed(key,pending);
  if(!discardIdleRecovery&&recovery&&markerScope&&localStorage.getItem(recovery.key(markerScope))!==markerRaw)throw Error('다른 창에서 저장 복구 정보가 변경되었습니다. 다시 로그인해 주세요.');
  cloudWriteEpoch++;cloudPendingWrites.clear();S.revisions.clear();S.companyOwners.clear();S.queue.clear();
  if(['admin','accountant'].includes(snoteCompanyActor()?.role))for(const row of rows)if(['cars','covers'].includes(row.dataset)&&/^[0-9a-f-]{36}$/i.test(row.owner_id)&&row.owner_id!==NIL&&!S.members.some(m=>m.user_id===row.owner_id&&m.company_id===scope.company))S.companyOwners.set(row.owner_id,{user_id:row.owner_id,company_id:scope.company,display_name:'',active:false,former:true});
  const apply=(dataset,owner)=>{
-  const key=cloudKey(dataset,owner),row=map.get(key),pending=decisions.get(key);
+  const key=cloudKey(dataset,owner),row=map.get(key);let pending=decisions.get(key);
+  if(pending&&(pending.decision==='retry'||pending.decision==='acknowledged')&&
+   (!writable(pending.entry)||!sameNamespace(pending.namespace,namespaceSnapshot(pending.entry)))){
+   changed(key,pending);pending=decisions.get(key);
+  }
   // Only a hash-confirmed retry cache belongs to this actor/company. A conflicting
   // shared cache remains preserved for recovery, but is never adopted as company data.
   if(dataset==='finance_limits')financeSettings=pending&&pending.decision!=='acknowledged'&&pending.ownedRaw!==null?parsePayload(pending.ownedRaw):row?.payload||[];
@@ -9572,7 +9685,14 @@ async function restoreDatasets(){
   if(dataset==='prestock')prestockLedger=pending&&pending.decision!=='acknowledged'&&pending.ownedRaw!==null?parsePayload(pending.ownedRaw):row?row.payload:[];
   if(pending&&pending.decision!=='acknowledged'){
    S.revisions.set(key,pending.entry.revision);
-   if(pending.decision==='retry')S.queue.add(key);
+   if(pending.decision==='retry'){
+    if(!financial(dataset)&&pending.namespace.alias&&pending.namespace.primaryRaw===null){
+     const target=storageKey(dataset,ownerAlias(owner));
+     if(target!==pending.namespace.primaryKey)throw Error('저장 복구의 대상 범위가 변경되었습니다.');
+     originalSet.call(localStorage,target,pending.namespace.raw);
+    }
+    S.queue.add(key);
+   }
    return;
   }
   if(row)S.revisions.set(key,row.revision);
@@ -9594,8 +9714,7 @@ S.conflict=conflict;S.idleRecoveryRetry=retry&&!conflict;
  }finally{if(current()){S.loading=false;if(S.ready)snote216InitMonthly();}}
 }
 async function prepareLegacyAccount(pass){
- for(let tries=0;!accountDB&&tries<30;tries++)await new Promise(r=>setTimeout(r,100));
- if(!accountDB)accountDB=await openAccountDB();
+ if(!accountDB)accountDB=await openAccountDB({migrate:false});
  let me=null;const all=[];
  for(const member of S.members){
   const alias=ownerAlias(member.user_id),own=member.user_id===S.user.id;
@@ -9992,14 +10111,14 @@ zc72Write=async function(record,options={}){if(!S.ready){if(S.user||String(recor
  return snote214QueueCustomer(ctx,record.carId,async()=>{const saved=await snote214SaveCustomer(ctx,record.carId,incoming,pending,false,requireExisting,expectation);snote214CustomerVersions.set(record,saved);return saved;});
 };
 zc72Delete=async function(owner,car,options={}){if(!S.ready)throw snoteRecycleError('RECYCLE_ONLINE_REQUIRED','고객 삭제는 온라인 로그인 후 휴지통에서 복원할 수 있도록 처리합니다.');return snoteRecycleTrashCustomer(owner,car,options);};
-const prevEncryptRrn=zc80EncryptRrn;
+const prevEncryptRrn=zc80EncryptRrn,prevDecryptRrn=zc80DecryptRrn;
 zc80EncryptRrn=async function(raw){if(!S.user)return prevEncryptRrn(raw);
  if(!S.ready)throw Error('온라인 고객정보 연결을 확인한 뒤 다시 저장해 주세요.');
  const digits=String(raw||'').replace(/\D/g,'');
  if(!/^(?:\d{10}|\d{13})$/.test(digits))return null;
  return {serverPending:digits}; // only ephemeral memory; stripped from ordinary customer JSON.
 };
-zc80DecryptRrn=async function(record){if(!S.ready)return '';
+zc80DecryptRrn=async function(record){if(!S.ready){const local=!!currentUser&&!String(currentUser.username).startsWith('cld_')&&!isAccountant()&&snote201CanUseLocal()&&(record?.ownerId===currentUser.username||record?.username===currentUser.username);return local?prevDecryptRrn(record):'';}
  const ctx=snote214CustomerContext(record.ownerId),car=String(record.carId);
  if(record?.rrnCipher?.serverIdentity||Object.hasOwn(record||{},'identityCipher')){
   const result=await snote214IdentityRequest(ctx,'read',{carId:car});
@@ -10216,7 +10335,7 @@ function snoteIdleClearPrivateUi(){
  call(()=>snoteResetWorkspaceNavigation());call(()=>closeMobileDrawer());
 }
 async function snoteIdleExpire(context,{sessionId,reason,preserveNewSession=false}={}){
- if(!context){if(!currentUser)return;const shield=snoteIdleVeil(null);window.SnoteMessages?.clear();currentUser=null;snoteIdleClearPrivateUi();sessionStorage.removeItem('snote-idle:v1:local-session:'+encodeURIComponent(window.SnoteIdleSession?.inspect()?.contextKey?.replace(/^local:/,'')||''));sessionStorage.removeItem('zerocar-office-v12-session');window.SnoteIdleSession?.reset();byId('auth-shell')?.classList.remove('hidden');byId('login-id').value='';byId('login-pw').value='';showAuthMode('login');if(shield.app){shield.app.inert=true;shield.app.setAttribute('aria-hidden','true');}shield.veil.remove();document.body.classList.remove('snote-idle-locking');return;}
+ if(!context){if(!currentUser)return;const shield=snoteIdleVeil(null);window.SnoteMessages?.clear();currentUser=null;snoteIdleClearPrivateUi();sessionStorage.removeItem('snote-idle:v1:local-session:'+encodeURIComponent(window.SnoteIdleSession?.inspect()?.contextKey?.replace(/^local:/,'')||''));sessionStorage.removeItem('s-note-office-v12-session');window.SnoteIdleSession?.reset();byId('auth-shell')?.classList.remove('hidden');byId('login-id').value='';byId('login-pw').value='';showAuthMode('login');if(shield.app){shield.app.inert=true;shield.app.setAttribute('aria-hidden','true');}shield.veil.remove();document.body.classList.remove('snote-idle-locking');return;}
  if(!snoteIdleCurrent(context)||!S.ready||snoteIdleExpiring)return;
  const cached=snoteIdleVerifiedSessions.get(context.client);if(!cached||cached.userId!==context.userId||cached.sessionId!==sessionId)return;
  const adapter=snoteIdleAuthAdapters.get(context.client)||window.SnoteIdleAuthStorage.create({project:context.project,base:snote95AuthStore,local:localStorage,session:sessionStorage});adapter.beginExpiry?.({userId:context.userId,sessionId});
@@ -10238,7 +10357,7 @@ async function snoteIdleExpire(context,{sessionId,reason,preserveNewSession=fals
   adapter?.revoke({userId:context.userId,sessionId},{preserve:changed});
   if(!changed){try{localStorage.removeItem(snote95RememberKey);}catch(_){}const remember=byId('snote95-remember');if(remember)remember.checked=false;}
   S.client=null;S.rpcConfig=null;authInitPromise=null;cloudFlushTask=null;S.saving=false;S.user=null;S.company=null;S.members=[];S.companyOwners.clear();S.queue.clear();S.revisions.clear();S.conflict=false;cloudPendingWrites.clear();window.SnoteMessages?.clear();currentUser=null;
-  window.SnoteIdleSession?.reset();snoteIdleClearPrivateUi();try{sessionStorage.removeItem('zerocar-office-v12-session');}catch(_){}document.body.classList.remove('zc86-online','accountant-mode');
+  window.SnoteIdleSession?.reset();snoteIdleClearPrivateUi();try{sessionStorage.removeItem('s-note-office-v12-session');}catch(_){}document.body.classList.remove('zc86-online','accountant-mode');
   byId('zc86-topbar').hidden=true;status.hidden=true;snoteShowAuth('login',true,true);byId('zc-cloud-password').value='';
   msg((reason==='session-changed'?'로그인 상태가 변경되어 화면을 잠갔습니다.':'일정 시간 사용하지 않아 자동 로그아웃되었습니다.')+(recovered?' 저장 확인이 필요한 변경사항은 다시 로그인한 뒤 복구합니다.':''));
   // Revoke the pinned old session only. A new login in another tab is never the target.
@@ -11014,7 +11133,7 @@ window.addEventListener('offline',()=>{if(S.ready)showStatus('● 인터넷 연�
 async function signOut(){const client=S.client,user=S.user,company=S.company?.id,current=snote253MessageCurrent(()=>S.client===client&&S.user===user&&S.company?.id===company);if(!await window.snoteConfirm('온라인 계정에서 로그아웃할까요?',{isCurrent:current})||!current())return;
  await flush();if(!current())return;if(S.queue.size||S.saving||S.conflict){void window.snoteAlert('서버에 아직 저장하지 못한 변경사항이 있어 로그아웃을 중단했습니다. 연결 상태를 확인하세요.',{isCurrent:current});return;}window.SnoteMessages?.clear();window.SnoteIdleSession?.reset();window.SnoteAccessTracker?.stop();snote221ResetIncome();snote216ResetMonthly();snote220InvalidateCatalog();window.snoteResetCalculator?.();S.ready=false;snoteRefreshSalesOverview();snoteFinanceLockEpoch++;closeDashboardGate();zcDashboardGateGranted=false;zcDashboardUnlocked=false;window.SnoteFinanceLock?.reset();window.SnoteDashboardDisplay?.reset();window.SnoteVehicleCostSettings?.reset?.();snoteResetDealerRates();window.snoteProfileEditor?.close({force:true});snoteProfileResetAssets();S.authPassword=null;await S.client.auth.signOut({scope:'local'});localStorage.removeItem(snote95RememberKey);byId('snote95-remember').checked=false;S.user=null;S.company=null;S.members=[];
  if(currentUser){zc80SensitiveLock();currentUser=null;cars=[];covers={};}
- sessionStorage.removeItem('zerocar-office-v12-session');snoteResetWorkspaceNavigation();
+ sessionStorage.removeItem('s-note-office-v12-session');snoteResetWorkspaceNavigation();
  byId('zc86-topbar').hidden=true;status.hidden=true;snoteShowAuth('login',true,true);msg('로그아웃되었습니다.');
 }
 byId('zc86-signout').addEventListener('click',signOut);
@@ -12028,8 +12147,15 @@ window.snoteSharedContractBridge={
  bind(context,args){return this.request(context,'snote_shared_contract_bind',args);},
  access(context,id){return this.request(context,'snote_shared_contract_access',{p_car_id:String(id)});}
 };
-window.zc86Cloud={getAccessToken:async()=>{const client=S.client,user=S.user,company=S.company,actor=currentUser;if(!S.ready||!client||!user||!actor||actor.username!==ownerAlias(user.id))return null;const {data,error}=await client.auth.getSession();if(error||!S.ready||S.client!==client||S.user!==user||S.company!==company||currentUser!==actor||data?.session?.user?.id!==user.id)return null;const token=data.session.access_token;if(typeof token!=='string'||!token)return null;try{const value=token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/'),claims=JSON.parse(atob(value.padEnd(Math.ceil(value.length/4)*4,'=')));if(claims.sub!==user.id)return null;}catch{return null;}return token;},verifyPassword:async pass=>{if(!S.client||!S.user?.email)return false;return window.snoteFinanceLockBridge.verifyPassword(pass);},get conflict(){return S.conflict},removeCarMedia:snote90RemoveCarMedia,membersAliases(){return snoteCompanyOwnerRows().map(m=>ownerAlias(m.user_id));},ownerLabel:snoteCompanyOwnerLabel,readOwnerCars:snoteReadCompanyOwnerCars,get isAdmin(){return S.members.some(m=>m.user_id===S.user?.id&&m.active&&m.role==='admin')},get ready(){return S.ready},get loginEmail(){return S.ready&&S.user?.id&&currentUser?.username===ownerAlias(S.user.id)?String(S.user.email||'').trim():''},get rrnEnabled(){return !!S.company?.rrn_enabled},get company(){return S.company?.name||''},get companyProfile(){if(!S.ready||!S.company)return null;return Object.fromEntries(['name','business_number','corporate_number','business_phone','representative_name','business_postcode','business_address','business_address_detail'].map(key=>[key,S.company[key]||'']));},flush,reload,signOut};
- setTimeout(snote95AutoRestore,0);
+window.zc86Cloud={getAccessToken:async()=>{const client=S.client,user=S.user,company=S.company,actor=currentUser;if(!S.ready||!client||!user||!actor||actor.username!==ownerAlias(user.id))return null;const {data,error}=await client.auth.getSession();if(error||!S.ready||S.client!==client||S.user!==user||S.company!==company||currentUser!==actor||data?.session?.user?.id!==user.id)return null;const token=data.session.access_token;if(typeof token!=='string'||!token)return null;try{const value=token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/'),claims=JSON.parse(atob(value.padEnd(Math.ceil(value.length/4)*4,'=')));if(claims.sub!==user.id)return null;}catch{return null;}return token;},verifyPassword:async pass=>{if(!S.client||!S.user?.email)return false;return window.snoteFinanceLockBridge.verifyPassword(pass);},get conflict(){return S.conflict},removeCarMedia:snote90RemoveCarMedia,membersAliases(){return snoteCompanyOwnerRows().map(m=>ownerAlias(m.user_id));},ownerLabel:snoteCompanyOwnerLabel,readOwnerCars:snoteReadCompanyOwnerCars,get isAdmin(){return S.members.some(m=>m.user_id===S.user?.id&&m.active&&m.role==='admin')},get ready(){return S.ready},get hasUser(){return !!S.user},get busy(){return S.busy},get loginEmail(){return S.ready&&S.user?.id&&currentUser?.username===ownerAlias(S.user.id)?String(S.user.email||'').trim():''},get rrnEnabled(){return !!S.company?.rrn_enabled},get company(){return S.company?.name||''},get companyProfile(){if(!S.ready||!S.company)return null;return Object.fromEntries(['name','business_number','corporate_number','business_phone','representative_name','business_postcode','business_address','business_address_detail'].map(key=>[key,S.company[key]||'']));},flush,reload,signOut};
+ window.addEventListener('snote:idb-context-changed',event=>{
+  const kind=event.detail?.kind;
+  if(kind==='files')fileDB=null;
+  if(kind==='customers')zc72DbPromise=null;
+  if(kind==='accounts'){accountDB=null;snote201AccountCacheTask=null;snote201LocalAuthTask=null;zc80SensitiveLock();}
+  if(currentUser)toast('다른 창에서 저장소 연결이 변경되었습니다. 새로고침한 뒤 다시 이용해 주세요.');
+ });
+ setTimeout(async()=>{await snote95AutoRestore();await snote201RestoreLocalSession();},0);
 })();
 
 </script>
@@ -12043,7 +12169,7 @@ window.zc86Cloud={getAccessToken:async()=>{const client=S.client,user=S.user,com
 <link rel="stylesheet" href="assets/workspace-reorder.css?v=2.136">
 <script src="assets/workspace-order-store.js?v=2.135" defer></script>
 <script src="assets/workspace-reorder.js?v=2.172" defer></script>
-<script src="assets/release-info.js?v=2.200" defer></script>
+<script src="assets/release-info.js?v=2.201" defer></script>
 <link rel="stylesheet" href="assets/encar-id.css?v=2.162">
 <script src="assets/encar-id.js?v=2.184" defer></script>
 <script src="assets/company-purchase.js?v=2.172" defer></script>

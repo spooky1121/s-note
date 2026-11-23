@@ -113,8 +113,9 @@ async function fixture(width=1440,savedCars=null,{primaryColor=null,weather=null
   }
   if(url.pathname==='/'){
    let source=fs.readFileSync(path.join(ROOT,'index.html'),'utf8');
-   assert(source.includes('\ninitializeAuth();'));assert(source.includes("const NIL='00000000-0000-0000-0000-000000000000';"));
-   source=source.replace('\ninitializeAuth();','\nwindow.__encarFixtureAuth=initializeAuth();').replace("const NIL='00000000-0000-0000-0000-000000000000';","window.__encarFixtureState=S;\nconst NIL='00000000-0000-0000-0000-000000000000';");
+   const startup='void snote201PrimeAccountCache().catch(()=>{});';
+   assert(source.includes(startup));assert(source.includes("const NIL='00000000-0000-0000-0000-000000000000';"));
+   source=source.replace(startup,'window.__encarFixtureAuth=snote201PrimeAccountCache();').replace("const NIL='00000000-0000-0000-0000-000000000000';","window.__encarFixtureState=S;\nconst NIL='00000000-0000-0000-0000-000000000000';");
    return route.fulfill({contentType:'text/html;charset=utf-8',body:source});
   }
   const relative=url.pathname.slice(1),file=path.resolve(ROOT,relative);

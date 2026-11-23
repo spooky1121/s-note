@@ -27,8 +27,7 @@ RUNTIME = ROOT / 'assets/vehicle-catalog.json'
 BACKUP = INTEGRATION / 'legacy-bundled-backup.json'
 CATALOG_VERSION = 'research-20261107-v1'
 EXPECTED_COUNT = 3128
-CONSTANTS = ('STARTER_TAXONOMY', 'BUNDLED_CATALOG_V118',
-             'HEYDEALER_PUBLIC_REFERENCES', 'ZEROCAR_ADDED_MODELS_V194')
+ARCHIVED_BASE_ARRAYS = ('STARTER_TAXONOMY', 'BUNDLED_CATALOG_V118')
 LEGACY_FIELDS = ('make', 'group', 'model', 'grade', 'subgrade')
 OFFICIAL_MARKS = {'official', 'official_price_page'}
 ALIASES = {
@@ -76,15 +75,24 @@ def read_legacy(commit):
         raise ValueError('A full immutable legacy source commit is required')
     html_bytes = subprocess.check_output(['git', 'show', commit + ':index.html'], cwd=ROOT)
     html = html_bytes.decode('utf-8')
+    # Preserve the archived source's real symbols and append precedence rather
+    # than renaming its provenance. Read the two additions from the immutable
+    # bundle's actual push references; never execute the historical JavaScript.
+    additions = re.findall(
+        re.escape(ARCHIVED_BASE_ARRAYS[1])
+        + r'\s*\.\s*push\s*\(\s*\.\.\.\s*([A-Z][A-Z0-9_]*)\s*\)', html)
+    symbols = (*ARCHIVED_BASE_ARRAYS, *additions)
+    if len(symbols) != 4 or len(set(symbols)) != 4:
+        raise ValueError('Expected two distinct archived selection append arrays')
     decoder = json.JSONDecoder()
     arrays = {}
-    for name in CONSTANTS:
+    for name in symbols:
         marker = re.search(r'const\s+' + re.escape(name) + r'\s*=\s*', html)
         if marker is None:
             raise ValueError('Legacy source array missing: ' + name)
         arrays[name] = decoder.raw_decode(html[marker.end():])[0]
     selected = {}
-    for name in CONSTANTS[1:]:
+    for name in symbols[1:]:
         for row in arrays[name]:
             identity = legacy_identity(row)
             previous = selected.get(identity)

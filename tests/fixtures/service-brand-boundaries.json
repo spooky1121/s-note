@@ -1,0 +1,458 @@
+{
+  "schemaVersion": 1,
+  "searchPattern": "zero[ _-]?car",
+  "scope": {
+    "extensions": [
+      ".html",
+      ".js",
+      ".mjs",
+      ".cjs",
+      ".py",
+      ".css",
+      ".json",
+      ".jsonc",
+      ".csv",
+      ".yml",
+      ".yaml",
+      ".toml",
+      ".sh",
+      ".sql",
+      ".svg",
+      ".txt"
+    ],
+    "policyPath": "tests/fixtures/service-brand-boundaries.json",
+    "documentation": "Markdown histories and actual legal-company names are reported separately; this is a current code/config guard, not a zero-match claim for the repository.",
+    "policyDefinitionReason": "This file explicitly declares legacy inputs and guard fixtures; it is the matcher definition, not runtime product code.",
+    "knownNames": [
+      "_headers",
+      "_redirects",
+      "Dockerfile",
+      ".gitignore",
+      ".gitattributes"
+    ]
+  },
+  "allowed": [
+    {
+      "path": "assets/snote-storage-compat.js",
+      "reason": "Exact former storage names, crypto salt and message alias are required to read existing browser data and open client tabs.",
+      "fragments": [
+        {
+          "source": "'ZEROCAR-RRN-v180:'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'ZEROCAR_MONTHLY_HEIGHT'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'zerocar-office-v12-cars-'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'zerocar-office-v12-company-options'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'zerocar-office-v12-covers-'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'zerocar-office-v12-session'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'zerocar-office-v12-union-options'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'zerocar-office-v147-prestock-entries'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'zerocar-office-v148-prestock-ledger'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'zerocar-office-v157-finance-companies'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'zerocar-office-v165-monthly-ledger'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'zerocar-office-v170-monthly-category-settings'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'zerocar-office-v182-inventory-finance-ledger'",
+          "maximumOccurrences": 1
+        }
+      ]
+    },
+    {
+      "path": "assets/snote-idb-compat.js",
+      "reason": "Exact source database names are needed for a verified copy into the new namespace.",
+      "fragments": [
+        {
+          "source": "'zerocar-office-v12-accounts'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'zerocar-office-v12-files'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'zerocar-office-v172-customers'",
+          "maximumOccurrences": 1
+        }
+      ]
+    },
+    {
+      "path": "assets/service-location.js",
+      "reason": "Explicit previous-host detection; current and actual company hosts must remain unchanged.",
+      "fragments": [
+        {
+          "source": "'zerocar-office.pages.dev'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "/^zerocar-office\\.[a-z0-9-]+\\.workers\\.dev$/",
+          "maximumOccurrences": 1
+        }
+      ]
+    },
+    {
+      "path": "tests/legacy-service-location.test.mjs",
+      "reason": "Deliberate old, spoofed and real company URL inputs test retirement scope.",
+      "fragments": [
+        {
+          "source": "'http://zerocar-office.pages.dev/'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'https://ZEROCAR-OFFICE.PAGES.DEV./'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'https://abc123.zerocar-office.pages.dev/'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'https://company-zerocar.example/'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'https://evil.example/zerocar-office.pages.dev/'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'https://notzerocar-office.pages.dev/'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'https://preview.branch.zerocar-office.pages.dev/'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'https://user:secret@zerocar-office.pages.dev:8443/customer.html?mode=edit&car=1%2F2#synthetic-token-_%2F'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'https://zerocar-office.pages.dev.evil.example/'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'https://zerocar-office.pages.dev/'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'https://zerocar-office.pages.dev//evil.example/customer.html?next=https%3A%2F%2Fevil.example%2F#synthetic'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'https://zerocar-office.pages.dev/customer.html#synthetic'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'https://zerocar-office.synthetic-account.workers.dev.evil.example/'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'https://zerocar-office.synthetic-account.workers.dev/'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'https://zerocar-office.workers.dev/'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'https://zerocar.kr/'",
+          "maximumOccurrences": 1
+        }
+      ]
+    },
+    {
+      "path": "tests/legacy-service-location.browser.cjs",
+      "reason": "Deliberate previous-host browser inputs test routing and preservation of issued customer links.",
+      "fragments": [
+        {
+          "source": "'https://abc123.zerocar-office.pages.dev/customer.html?mode=edit&car=1%2F2#synthetic-token-_%2F'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'https://company-zerocar.example'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'https://company-zerocar.example/'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'https://notzerocar-office.pages.dev/'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'https://zerocar-office.pages.dev'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'https://zerocar-office.pages.dev.evil.example/'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'https://zerocar-office.pages.dev/'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'https://zerocar-office.pages.dev//evil.example/customer.html?next=https%3A%2F%2Fevil.example%2F#synthetic'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'https://zerocar-office.pages.dev/api/synthetic'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'https://zerocar-office.pages.dev/monthly.html?child=1#child-fragment'",
+          "maximumOccurrences": 2
+        },
+        {
+          "source": "'https://zerocar-office.pages.dev/old-open-app.html?month=2026-11#parent-fragment'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'https://zerocar-office.synthetic-account.workers.dev.evil.example/'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'https://zerocar-office.synthetic-account.workers.dev/index.html?from=bookmark#panel'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'https://zerocar.kr/'",
+          "maximumOccurrences": 1
+        }
+      ]
+    },
+    {
+      "path": "tests/signup-access-url.browser.cjs",
+      "reason": "An old browser origin must show only the current public signup URL.",
+      "fragments": [
+        {
+          "source": "'https://zerocar-office.pages.dev'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'zerocar-office.pages.dev'",
+          "maximumOccurrences": 1
+        }
+      ]
+    },
+    {
+      "path": "tests/registration.test.mjs",
+      "reason": "Explicit existing old-origin registration compatibility regression.",
+      "fragments": [
+        {
+          "source": "'https://zerocar-office.pages.dev'",
+          "maximumOccurrences": 1
+        }
+      ]
+    },
+    {
+      "path": "tests/registration.workerd.cjs",
+      "reason": "Explicit existing old-origin registration compatibility regression in the Pages runtime.",
+      "fragments": [
+        {
+          "source": "'https://zerocar-office.pages.dev'",
+          "maximumOccurrences": 1
+        }
+      ]
+    },
+    {
+      "path": "tests/researched-vehicle-catalog.browser.cjs",
+      "reason": "Proves the previous untrusted browser-global taxonomy remains preserved and inactive.",
+      "fragments": [
+        {
+          "source": "'zerocar-office-v13-taxonomy'",
+          "maximumOccurrences": 1
+        }
+      ]
+    },
+    {
+      "path": "tests/idb-namespace-compat-v2201.browser.cjs",
+      "reason": "Explicit native legacy database inputs verify data migration and old-version tab blocking.",
+      "fragments": [
+        {
+          "source": "'zerocar-office-v12-files'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'zerocar-office-v12-accounts'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'zerocar-office-v172-customers'",
+          "maximumOccurrences": 1
+        }
+      ]
+    },
+    {
+      "path": "tests/namespace-migration-integration-v2201.browser.cjs",
+      "reason": "Independently seed the three original databases and produce a golden original-format ciphertext before exercising the current application.",
+      "fragments": [
+        {
+          "source": "'zerocar-office-v12-files'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'zerocar-office-v12-accounts'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'zerocar-office-v172-customers'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'ZEROCAR-RRN-v180:'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'zerocar-office-v12-cars-'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'zerocar-office-v12-covers-'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'zerocar-office-v12-company-options'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'zerocar-office-v12-session'",
+          "maximumOccurrences": 1
+        },
+        {
+          "source": "'zerocar-office-v182-inventory-finance-ledger'",
+          "maximumOccurrences": 1
+        }
+      ]
+    },
+    {
+      "path": "tests/monthly-workbook-ui.browser.cjs",
+      "reason": "An independent golden previous-parent height protocol verifies that the compatibility alias remains usable by already-open older pages.",
+      "fragments": [
+        {
+          "source": "'ZEROCAR_MONTHLY_HEIGHT'",
+          "maximumOccurrences": 5
+        }
+      ]
+    }
+  ],
+  "protected": [
+    {
+      "path": "docs/company-document-assets.md",
+      "sha256": "e748f8f909c8eb254429999082793acc444bcb3da8d127dd4c1ebffc705b5e82",
+      "reason": "actual_legal_company_documentation_preserve"
+    },
+    {
+      "path": "docs/transfer-document-refinement-v2142.md",
+      "sha256": "391a3c516509ee9927679d48e6167f86155597f5773b1034c27e9ea4a02ae966",
+      "reason": "actual_legal_company_documentation_preserve"
+    },
+    {
+      "path": "research/vehicle-taxonomy/baseline/README.md",
+      "sha256": "6e24763daaf2fb67ea27d841482642fdc0833665354f5de9c5dda85db56d395b",
+      "reason": "immutable_research_provenance"
+    },
+    {
+      "path": "research/vehicle-taxonomy/baseline/catalog.csv",
+      "sha256": "4a0f0f33449b2d404644807de70089d518e4eb9d66eaf5ff726493028243383e",
+      "reason": "immutable_research_provenance"
+    },
+    {
+      "path": "research/vehicle-taxonomy/baseline/catalog.json",
+      "sha256": "c3b3d3fc75701cf2354bd05bce7b8393e9efe1eb286670e97091454342b9e4c4",
+      "reason": "immutable_research_provenance"
+    },
+    {
+      "path": "research/vehicle-taxonomy/baseline/coverage.json",
+      "sha256": "3bfb9aeaf490be63b14ffb989f1aadb5ef57fc12261850f87abc6ba122e30a96",
+      "reason": "immutable_research_provenance"
+    },
+    {
+      "path": "research/vehicle-taxonomy/baseline/generate-baseline.py",
+      "sha256": "ed9a72a814e86c446634c0d5b3e69ea713f7c88230c4b04dd1ec11afaa9cda78",
+      "reason": "immutable_research_provenance"
+    },
+    {
+      "path": "research/vehicle-taxonomy/baseline/missing-trims.csv",
+      "sha256": "13de316dffffafc2e2531277772febde75c1db4195c6d54b4acc5ec85af29da1",
+      "reason": "immutable_research_provenance"
+    },
+    {
+      "path": "research/vehicle-taxonomy/baseline/sources.csv",
+      "sha256": "d41d50b7dfe589af481ba7dd07b70b1def0cf9a76dff0a90457d48bf3a24596a",
+      "reason": "immutable_research_provenance"
+    },
+    {
+      "path": "research/vehicle-taxonomy/bulk/government-tax-2026/crosswalk/amended-2026-reviewed/manifest.json",
+      "sha256": "f91b713c1ac08d84691433117cab310b1189ab223e657d7bf3695ed5e4499a5a",
+      "reason": "immutable_research_provenance"
+    },
+    {
+      "path": "research/vehicle-taxonomy/exports/catalog-reference.json",
+      "sha256": "69b58d8bd24447a9c5c24c6123a9041c5234172155973839617674e4844b6991",
+      "reason": "immutable_research_provenance"
+    },
+    {
+      "path": "research/vehicle-taxonomy/runtime-integration/README.md",
+      "sha256": "c34e0186486983f77a473b9dbdd2a0e8cf08094cad4fb6eb534c1d8d060e3ae3",
+      "reason": "immutable_research_provenance"
+    },
+    {
+      "path": "research/vehicle-taxonomy/runtime-integration/legacy-bundled-backup.json",
+      "sha256": "95336224a3cd0d1953b726268f371dfccfdc6390c735d1472c83f06a538f3422",
+      "reason": "immutable_research_provenance"
+    },
+    {
+      "path": "tests/contract-print-recovery-v2165.browser.cjs",
+      "sha256": "583afd59263fc5953917c564b9804621535581693b559aba5bde1090eb652661",
+      "reason": "actual_legal_company_fixture_preserve"
+    },
+    {
+      "path": "assets/vehicle-catalog.json",
+      "sha256": "3d7f84f304c3464f780485d5f1a005270ebfa2341d5d79663aea93f04ff34c3a",
+      "reason": "The current vehicle catalog data, IDs and source evidence must not change during naming cleanup."
+    }
+  ],
+  "fixtures": {
+    "approvedPath": "assets/snote-storage-compat.js",
+    "approvedSource": "const legacyCarsPrefix = 'zerocar-office-v12-cars-';",
+    "ordinaryPath": "assets/current-example.js",
+    "unexpectedSource": "const label = 'ZeroCar';",
+    "archivePath": "research/example.json",
+    "archiveSource": "{\"source\":\"zerocar_expanded_draft_unverified\"}",
+    "legalSource": "const companyName = '(주) 제로카 (상품용)';"
+  }
+}
