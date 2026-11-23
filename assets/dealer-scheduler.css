@@ -1,0 +1,98 @@
+/* Schedule surfaces share S-NOTE's sky-blue palette; document/print styles stay separate. */
+@media screen{
+ .snote-dealer-scheduler{min-width:0;color:#192c41;font-size:14px;line-height:1.5}
+ .snote-dealer-scheduler *,#snote-dealer-scheduler-dialog *{box-sizing:border-box}
+ .snote-dealer-scheduler [hidden],#snote-dealer-scheduler-dialog [hidden]{display:none!important}
+ .snote-scheduler-layout{display:grid;grid-template-columns:minmax(0,2fr) minmax(260px,1fr);gap:16px;align-items:start;min-width:0}
+ .snote-scheduler-calendar,.snote-scheduler-agenda-section{min-width:0;padding:20px;border:1px solid #e7ecf1;border-radius:14px;background:#fff;box-shadow:none}
+ .snote-scheduler-heading,.snote-scheduler-month-nav,.snote-scheduler-agenda-section>header{display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0}
+ .snote-scheduler-heading h2{margin:0;font-size:18px;font-weight:650;color:#192c41}
+ .snote-scheduler-heading p{margin:4px 0 0;color:#727b87;font-size:12px}
+ .snote-dealer-scheduler button{font-family:inherit;cursor:pointer;translate:none!important;box-shadow:none}
+ .snote-dealer-scheduler button:disabled{cursor:default;opacity:.45}
+ .snote-dealer-scheduler button:focus-visible,#snote-dealer-scheduler-dialog :is(button,input,textarea):focus-visible{outline:2px solid #0096fe;outline-offset:3px}
+ .snote-scheduler-add{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:42px;padding:10px 13px;border:1px solid #0096fe;border-radius:10px;background:#0096fe;color:#192c41;font-size:13px;font-weight:650;white-space:nowrap}
+ .snote-scheduler-add svg{width:17px;height:17px;flex:none}
+ .snote-scheduler-add:hover:enabled{background:#079bff;border-color:#079bff}
+ .snote-scheduler-month-nav{margin:22px 0 15px}
+ .snote-scheduler-month-nav h3{margin:0;color:#192c41;font-size:19px;font-weight:650;font-variant-numeric:tabular-nums;white-space:nowrap}
+ .snote-scheduler-month-actions{display:flex;align-items:center;gap:4px;flex:none}
+ .snote-scheduler-month-actions button{display:inline-grid;place-items:center;min-width:38px;height:38px;padding:8px;border:1px solid #e7ecf1;border-radius:9px;background:#fff;color:#496078;font-size:12px}
+ .snote-scheduler-month-actions svg{width:18px;height:18px}
+ .snote-scheduler-month-actions .snote-scheduler-today{min-width:48px;padding-inline:10px}
+ .snote-scheduler-month-actions button:hover:enabled{background:#f4faff;color:#006bb5}
+ .snote-scheduler-status{margin:0 0 12px;padding:10px 12px;border-radius:9px;background:#f4faff;color:#496078;font-size:13px}
+ .snote-scheduler-retry{padding:3px;border:0;background:transparent;color:#006bb5;text-decoration:underline;font-size:inherit}
+ .snote-scheduler-grid{overflow:hidden;border:1px solid #e7ecf1;border-radius:10px}
+ .snote-scheduler-week,.snote-scheduler-calendar-row{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));min-width:0}
+ .snote-scheduler-week{background:#f9fbfd;border-bottom:1px solid #e7ecf1}
+ .snote-scheduler-week span{padding:10px 0;color:#6f7885;font-size:12px;text-align:center}
+ .snote-scheduler-week span:first-child{color:#b75a65}.snote-scheduler-week span:last-child{color:#006bb5}
+ .snote-scheduler-calendar-row+.snote-scheduler-calendar-row{border-top:1px solid #edf0f3}
+ .snote-scheduler-day{min-width:0;min-height:112px;padding:5px;cursor:pointer;background:#fff;overflow:hidden}
+ .snote-scheduler-day+.snote-scheduler-day{border-left:1px solid #edf0f3}
+ .snote-scheduler-day.is-today{background:#f4faff}
+ .snote-scheduler-date{display:grid;place-items:center;width:28px;height:28px;margin:0 0 3px;padding:0;border:0;border-radius:50%;background:transparent;color:#40526a;font-size:12px;font-variant-numeric:tabular-nums}
+ .snote-scheduler-day.is-outside .snote-scheduler-date{color:#adb6c2}
+ .snote-scheduler-day.is-today .snote-scheduler-date{background:#0096fe;color:#192c41;font-weight:700}
+ .snote-scheduler-date:hover:enabled{box-shadow:inset 0 0 0 1px #0096fe}
+ .snote-scheduler-event{display:flex;align-items:center;gap:4px;width:100%;min-width:0;min-height:22px;margin:2px 0;padding:3px 5px;border:0;border-left:2px solid #0096fe;border-radius:4px;background:#eaf6ff;color:#195a87;text-align:left;font-size:11px;line-height:1.4}
+ .snote-scheduler-event time{flex:none;font-variant-numeric:tabular-nums;font-size:10px}
+ .snote-scheduler-event-title{display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ .snote-scheduler-event.is-completed{border-left-color:#b3bdc8;background:#f3f5f7;color:#7a8592}
+ .snote-scheduler-event.is-completed .snote-scheduler-event-title{text-decoration:line-through}
+ .snote-scheduler-more{display:block;width:100%;min-height:22px;padding:2px 4px;border:0;border-radius:4px;background:transparent;color:#6f7885;font-size:11px;text-align:left}
+ .snote-scheduler-more:hover{background:#f4faff;color:#006bb5}
+ .snote-scheduler-sidebar,.snote-scheduler-agenda{display:grid;gap:14px;min-width:0}
+ .snote-scheduler-agenda-section{padding:16px}
+ .snote-scheduler-agenda-section>header{margin:0 0 8px}
+ .snote-scheduler-agenda-section h3{margin:0;color:#192c41;font-size:14px;font-weight:650}
+ .snote-scheduler-agenda-count{display:inline-grid;place-items:center;min-width:22px;min-height:22px;padding:1px 6px;border-radius:6px;background:#eef8ff;color:#006bb5;font-size:12px;font-variant-numeric:tabular-nums}
+ .snote-scheduler-agenda-section[data-agenda=overdue] .snote-scheduler-agenda-count{background:#fff0f3;color:#b34555}
+ .snote-scheduler-empty,.snote-scheduler-agenda-more{margin:8px 0 0;color:#727b87;font-size:12px;line-height:1.7;overflow-wrap:anywhere}
+ .snote-scheduler-agenda-section>button.snote-scheduler-agenda-more{width:100%;min-height:32px;padding:4px;border:0;background:transparent;color:#006bb5;text-align:left;font-family:inherit;font-size:12px}
+ .snote-scheduler-dialog-list{display:grid;gap:8px;min-width:0}
+ .snote-scheduler-dialog-list>.snote-scheduler-add{margin-top:12px}
+ .snote-scheduler-agenda-item{display:flex;align-items:center;gap:9px;width:100%;min-width:0;margin:0;padding:10px 0;border:0;border-top:1px solid #edf0f3;background:transparent;color:#192c41;text-align:left}
+ .snote-scheduler-event-mark{display:grid;place-items:center;flex:none;width:28px;height:28px;border-radius:8px;background:#f4faff;color:#0096fe}
+ .snote-scheduler-event-mark svg{width:16px;height:16px}
+ .snote-scheduler-agenda-copy{display:grid;gap:2px;min-width:0;flex:1}
+ .snote-scheduler-agenda-copy>.snote-scheduler-event-title{font-size:13px;font-weight:550}
+ .snote-scheduler-agenda-copy small{font-size:11px;color:#727b87;font-variant-numeric:tabular-nums}
+ .snote-scheduler-agenda-item.is-completed .snote-scheduler-event-mark{background:#f0f6f3;color:#4b8571}
+ .snote-scheduler-agenda-item.is-completed .snote-scheduler-event-title{color:#7a8592;text-decoration:line-through}
+ .snote-scheduler-dialog{width:min(520px,calc(100vw - 32px));max-width:calc(100vw - 32px);max-height:calc(100dvh - 40px);margin:auto;padding:0;border:1px solid #e7ecf1;border-radius:16px;background:#fff;color:#192c41;font-family:inherit;overflow:visible}
+ .snote-scheduler-dialog::backdrop{background:#192c4140;backdrop-filter:blur(2px)}
+ .snote-scheduler-dialog-body{max-height:calc(100dvh - 40px);overflow-y:auto;overscroll-behavior:contain;padding:26px!important;border-radius:inherit}
+ .snote-scheduler-dialog h2{margin:0 32px 22px 0;font-size:20px;font-weight:650;color:#192c41}
+ .snote-scheduler-dialog form{display:grid;gap:16px;min-width:0}
+ .snote-scheduler-dialog label{display:grid;gap:7px;min-width:0;font-size:13px;font-weight:550;color:#496078}
+ .snote-scheduler-dialog :is(input:not([type=checkbox]),textarea){box-sizing:border-box;width:100%;min-width:0;min-height:44px;margin:0;padding:11px 12px;border:1px solid #dfe7ef;border-radius:10px;background:#fbfcfe;color:#192c41;font-family:inherit;font-size:15px;font-weight:400;line-height:1.5}
+ .snote-scheduler-dialog textarea{resize:vertical;min-height:108px;max-height:240px}
+ .snote-scheduler-dialog :is(input,textarea)::placeholder{color:#9aa7b5}
+ .snote-scheduler-form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;min-width:0}
+ .snote-scheduler-dialog .snote-scheduler-completed-field{display:flex;align-items:center;gap:9px;min-height:28px;color:#496078}
+ .snote-scheduler-completed-field input{width:18px;height:18px;margin:0;accent-color:#0096fe}
+ .snote-scheduler-form-status{margin:0;min-height:20px;color:#727b87;font-size:12px;line-height:1.6}
+ .snote-scheduler-form-status[data-tone=error]{color:#b34555}
+ .snote-scheduler-dialog footer{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-top:8px;border-top:1px solid #edf0f3}
+ .snote-scheduler-form-actions{display:flex;justify-content:flex-end;gap:8px;margin-left:auto}
+ .snote-scheduler-dialog footer button{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-height:42px;padding:10px 16px;border:1px solid #dfe7ef;border-radius:10px;background:#fff;color:#496078;font:inherit;font-size:13px;font-weight:550;cursor:pointer}
+ .snote-scheduler-dialog footer .snote-scheduler-save{border-color:#0096fe;background:#0096fe;color:#192c41}
+ .snote-scheduler-dialog footer .snote-scheduler-delete{padding-inline:8px;border-color:transparent;background:transparent;color:#b34555}
+ .snote-scheduler-delete svg{width:16px;height:16px}
+ .snote-scheduler-dialog button:disabled,.snote-scheduler-dialog :is(input,textarea):disabled{opacity:.55;cursor:default}
+}
+@media screen and (max-width:1100px){.snote-scheduler-layout{grid-template-columns:minmax(0,2fr) minmax(240px,1fr)}.snote-scheduler-calendar{padding:16px}.snote-scheduler-day{padding:4px}.snote-scheduler-event{gap:2px;padding-inline:3px}.snote-scheduler-event time{display:none}}
+@media screen and (max-width:760px){
+ .snote-scheduler-layout{grid-template-columns:minmax(0,1fr);gap:14px}
+ .snote-scheduler-calendar{padding:13px;border-radius:14px}
+ .snote-scheduler-heading h2{font-size:17px}.snote-scheduler-heading p{font-size:11px;max-width:175px}.snote-scheduler-add{min-height:44px;padding:10px 11px;font-size:12px}
+ .snote-scheduler-month-nav{margin-top:18px;margin-bottom:12px;gap:8px}.snote-scheduler-month-nav h3{font-size:18px}.snote-scheduler-month-actions{gap:3px}.snote-scheduler-month-actions button{min-width:40px;height:42px;padding:8px}.snote-scheduler-month-actions .snote-scheduler-today{min-width:45px;padding-inline:7px}
+ .snote-scheduler-week span{padding-block:8px;font-size:11px}.snote-scheduler-day{min-height:98px;padding:3px 2px}.snote-scheduler-date{width:26px;height:26px;font-size:12px}.snote-scheduler-event{font-size:10px;min-height:19px;margin-block:2px;padding:2px;border-left-width:2px;gap:0}.snote-scheduler-event time{display:none}.snote-scheduler-more{font-size:10px;padding-inline:2px}
+ .snote-scheduler-sidebar{gap:14px}.snote-scheduler-agenda-section{padding:16px}.snote-scheduler-agenda-item{min-height:57px}.snote-scheduler-agenda-copy>.snote-scheduler-event-title{font-size:14px}.snote-scheduler-agenda-copy small{font-size:12px}
+ .snote-scheduler-dialog{width:calc(100vw - 28px);max-width:calc(100vw - 28px);max-height:calc(100dvh - 28px)}.snote-scheduler-dialog-body{padding:22px 18px!important;max-height:calc(100dvh - 28px)}.snote-scheduler-dialog :is(input:not([type=checkbox]),textarea){font-size:16px}.snote-scheduler-dialog h2{font-size:19px}.snote-scheduler-form-row{gap:9px}.snote-scheduler-dialog footer button{min-height:44px;padding:10px 14px}
+}
+@media screen and (max-width:360px){.snote-scheduler-calendar{padding:11px}.snote-scheduler-heading p{max-width:160px}.snote-scheduler-month-nav h3{font-size:17px}.snote-scheduler-month-actions button{min-width:36px}.snote-scheduler-month-actions .snote-scheduler-today{min-width:42px}}
+@media(prefers-reduced-motion:reduce){.snote-dealer-scheduler *,#snote-dealer-scheduler-dialog *{transition:none!important;scroll-behavior:auto!important}}
+@media print{.snote-dealer-scheduler,#snote-dealer-scheduler-dialog{display:none!important}}

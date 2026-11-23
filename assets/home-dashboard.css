@@ -1,4 +1,4 @@
-/* Dashboard hierarchy: four capital metrics, daily work, vehicles, then selectable trends. */
+/* Dashboard hierarchy: protected capital metrics, personal schedule, work links and selectable trends. */
 #snote-dashboard-home{display:flex;flex-direction:column;gap:18px;min-width:0;max-width:100%;margin:0 0 24px;color:#28354b;font-family:inherit;font-size:14px;line-height:1.5}
 #snote-dashboard-home[hidden],#snote-dashboard-home [hidden]{display:none!important}
 #snote-dashboard-home *{box-sizing:border-box}
@@ -107,3 +107,12 @@
 @media(max-width:360px){#snote-dashboard-home .snote-home-kpi{padding:12px;min-height:132px}#snote-dashboard-home .snote-home-kpi-value{font-size:18px;letter-spacing:-.6px}#snote-dashboard-home .snote-home-kpi-label>svg{display:none}#snote-dashboard-home .snote-home-work-caption{max-width:210px}#snote-dashboard-home .snote-home-task-age{font-size:12px}#snote-dashboard-home .snote-home-chart-total{font-size:20px}#snote-dashboard-home .snote-home-shortcut strong{font-size:13px}#snote-dashboard-home .snote-home-shortcut small{font-size:12px}}
 @media(prefers-reduced-motion:reduce){#snote-dashboard-home *{transition:none!important}}
 @media print{#snote-dashboard-home{display:none!important}}
+
+/* The schedule owns its calendar and agenda; the existing vehicle tasks remain in its right-hand slot. */
+#snote-dashboard-home .snote-scheduler-work-slot .snote-home-work-card{padding:16px;border-radius:14px}
+#snote-dashboard-home .snote-scheduler-work-slot .snote-home-card-head h2{font-size:14px}
+#snote-dashboard-home .snote-scheduler-work-slot .snote-home-task-row{min-height:56px}
+#snote-dashboard-home>.snote-home-shortcuts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px 20px;padding:16px 20px}
+#snote-dashboard-home>.snote-home-shortcuts>h2{grid-column:1/-1;margin:0}
+#snote-dashboard-home>.snote-home-shortcuts>.snote-home-shortcut{min-height:52px}
+@media(max-width:760px){#snote-dashboard-home>.snote-home-shortcuts{gap:8px;padding:16px}#snote-dashboard-home>.snote-home-shortcuts>.snote-home-shortcut{min-height:84px}}

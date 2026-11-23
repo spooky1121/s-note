@@ -8,6 +8,14 @@ const ROOT=path.resolve(__dirname,'..'),OUT=process.env.SNOTE_NAVIGATION_ARTIFAC
 fs.mkdirSync(OUT,{recursive:true});
 const hashes=()=>Object.fromEntries(['index.html','assets/home-dashboard.js','assets/finance-lock-settings.js'].map(f=>[f,crypto.createHash('sha256').update(fs.readFileSync(path.join(ROOT,f))).digest('hex')]));
 const clean=p=>assert.equal(new URL(p.url()).pathname+new URL(p.url()).search+new URL(p.url()).hash,'/');
+async function navigationFixture(width){
+ const f=await fixture(width),p=f.page;
+ await p.route('**/rest/v1/rpc/snote_schedule_*',async request=>{
+  const req=request.request(),headers={'access-control-allow-origin':'*','access-control-allow-methods':'POST,OPTIONS','access-control-allow-headers':'authorization,apikey,content-type,cache-control,pragma'};if(req.method()==='OPTIONS')return request.fulfill({status:204,headers});assert(req.url().endsWith('/snote_schedule_list'),'Navigation regression must not write schedules');
+  const month=req.postDataJSON().p_month,value=await p.evaluate(month=>{const c=snoteDealerSchedulerBridge.context();if(!c)return null;const days=SnoteDealerSchedulerData.model.calendarGrid(month).filter(Boolean);return{ok:true,companyId:c.companyId,ownerId:c.actorId,month,today:SnoteDealerSchedulerData.model.businessDate(),rangeStart:days[0],rangeEnd:days.at(-1),events:[],todayEvents:[],upcomingEvents:[],overdueEvents:[],counts:{calendar:0,today:0,upcoming:0,overdue:0},truncated:{calendar:false,today:false,upcoming:false,overdue:false},dayCounts:Object.fromEntries(days.map(day=>[day,0]))};},month);return request.fulfill({status:value?200:403,headers,contentType:'application/json',body:JSON.stringify(value||{code:'42501',message:'SCHEDULE_CONTEXT_CHANGED'})});
+ });
+ return f;
+}
 async function landing(p){
  await p.evaluate(()=>{
   closeVehicle({discard:true});
@@ -25,7 +33,7 @@ async function landing(p){
  const before=hashes(),browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium'});setBrowser(browser);const results=[];
  try{
   for(const width of [1440,390,320]){
-   const f=await fixture(width),p=f.page;
+   const f=await navigationFixture(width),p=f.page;
    try{
     await landing(p);
     await p.evaluate(()=>navigate('buy'));await p.waitForFunction(()=>route==='buy');clean(p);
@@ -47,7 +55,7 @@ async function landing(p){
    }catch(error){await f.context.close();throw error;}
   }
   {
-   const f=await fixture(390),p=f.page;
+   const f=await navigationFixture(390),p=f.page;
    try{
     await p.evaluate(()=>{closeVehicle({discard:true});window.__navActor=currentUser;currentUser=null;__encarFixtureState.ready=false;snoteResetWorkspaceNavigation();document.getElementById('zc-cloud-gate').hidden=false;history.replaceState({},'','/?code=synthetic-callback#invite=abcdefghijklmnop');dispatchEvent(new PopStateEvent('popstate',{state:history.state}));});
     await p.waitForFunction(()=>document.getElementById('zc-cloud-gate').dataset.authMode==='staff');
@@ -61,7 +69,7 @@ async function landing(p){
    }catch(error){await f.context.close();throw error;}
   }
   {
-   const f=await fixture(390),p=f.page;
+   const f=await navigationFixture(390),p=f.page;
    try{
     await p.evaluate(()=>{closeVehicle({discard:true});currentUser.role='accountant';__encarFixtureState.members[0].role='accountant';snoteResetWorkspaceNavigation();snoteWorkspaceSalesReady=true;snoteEnterWorkspaceRoute();});
     assert.equal(await p.evaluate(()=>route),'contractOffice');assert.equal(await p.evaluate(()=>snotePageAllowed('dashboard')),false);clean(p);
