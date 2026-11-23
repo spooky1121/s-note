@@ -1,7 +1,8 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.199">
+<html lang="ko" data-snote-release="2.200">
 <head>
 <meta charset="utf-8" />
+  <script src="assets/service-location.js?v=2.200"></script>
 <link rel="stylesheet" href="assets/message-popup.css?v=2.172">
 <script src="assets/message-popup.js?v=2.174" defer></script>
 <script src="assets/mobile-popup-history.js?v=2.174" defer></script>
@@ -3308,7 +3309,7 @@ button, input, select, textarea { font-family: inherit; }
  <div class="acct-controls"><label for="accountant-dealer-filter">담당 딜러</label><select id="accountant-dealer-filter" aria-label="담당 딜러 필터" onchange="handleAccountantDealerFilter()"><option value="all">전체 딜러</option></select><button type="button" class="btn-ghost" onclick="refreshAccountantWorkspace()">새로고침</button></div>
  <div id="accountant-overview" class="acct-overview"></div>
  </section>
-      <section id="monthly-screen" style="display:none;width:100%;min-width:0" aria-label="월정산 결산표"><iframe id="monthly-ledger-frame" title="S-NOTE 월정산 결산표" data-src="monthly.html?v=2.185" scrolling="no" style="width:100%;height:1280px;border:0;display:none;background:transparent"></iframe>
+      <section id="monthly-screen" style="display:none;width:100%;min-width:0" aria-label="월정산 결산표"><iframe id="monthly-ledger-frame" title="S-NOTE 월정산 결산표" data-src="monthly.html?v=2.200" scrolling="no" style="width:100%;height:1280px;border:0;display:none;background:transparent"></iframe>
  <div id="monthly-frame-status" role="status" hidden style="padding:24px;text-align:center"><p id="monthly-frame-message"></p><button id="monthly-frame-retry" type="button" class="btn" hidden>다시 불러오기</button></div></section>
 <section id="snote-dashboard-home" aria-label="대시보드" hidden></section>
 <section id="snote-accountant-today" aria-label="오늘 처리할 일" hidden></section>
@@ -4691,8 +4692,8 @@ function illustrativeCarSvg(c){
 }
 /* v1.40: one identical placeholder for every car without real photos.
    Previously imported model photos remain in local storage but are no longer displayed. */
-const ZEROCAR_DEFAULT_IMAGE='assets/vehicle-placeholder.webp?v=2.187';
-function fallbackImage(c){return {src:ZEROCAR_DEFAULT_IMAGE,licensed:false,label:'기본 이미지'};}
+const SNOTE_DEFAULT_IMAGE='assets/vehicle-placeholder.webp?v=2.187';
+function fallbackImage(c){return {src:SNOTE_DEFAULT_IMAGE,licensed:false,label:'기본 이미지'};}
 async function refreshModelPhotos(){
  modelPhotoUrls.forEach(url=>URL.revokeObjectURL(url));modelPhotoUrls=[];modelPhotos=[];
  if(!fileDB||!currentUser||!fileDB.objectStoreNames.contains('modelPhotos'))return;
@@ -8071,7 +8072,7 @@ function renderWorldTrims(){const table=document.getElementById('world-results')
  }
  window.addEventListener('message',function(event){
   if(event.origin!==location.origin||event.source!==frame()?.contentWindow)return;
-  if(event.data?.type==='ZEROCAR_MONTHLY_HEIGHT'&&Number.isFinite(event.data.height)){
+  if(['SNOTE_MONTHLY_HEIGHT','ZEROCAR_MONTHLY_HEIGHT'].includes(event.data?.type)&&Number.isFinite(event.data.height)){
    frame().style.height=Math.max(650,Math.min(25000,event.data.height+16))+'px';
   }else if(event.data?.type==='SNOTE_TYPOGRAPHY_READY')sendTypography();
  });
@@ -12042,7 +12043,7 @@ window.zc86Cloud={getAccessToken:async()=>{const client=S.client,user=S.user,com
 <link rel="stylesheet" href="assets/workspace-reorder.css?v=2.136">
 <script src="assets/workspace-order-store.js?v=2.135" defer></script>
 <script src="assets/workspace-reorder.js?v=2.172" defer></script>
-<script src="assets/release-info.js?v=2.199" defer></script>
+<script src="assets/release-info.js?v=2.200" defer></script>
 <link rel="stylesheet" href="assets/encar-id.css?v=2.162">
 <script src="assets/encar-id.js?v=2.184" defer></script>
 <script src="assets/company-purchase.js?v=2.172" defer></script>

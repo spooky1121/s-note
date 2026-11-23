@@ -41,8 +41,8 @@ v2.124는 지원되지 않는 번호 검색 폼 뒤에도 공개 카탈로그의
 ## 서비스 운영
 
 - **서비스명:** S-NOTE
-- **새 도메인:** https://s-note.kr (구매 완료, 연결 준비 중)
-- **현재 접속:** https://s-note.pages.dev
+- **공식 접속:** https://s-note.kr/
+- **S-NOTE Pages 주소:** https://s-note.pages.dev/
 - **웹 호스팅:** Cloudflare Pages
 - **데이터베이스:** Supabase PostgreSQL
 - **파일 저장:** Supabase Storage
@@ -59,3 +59,5 @@ v2.124는 지원되지 않는 번호 검색 폼 뒤에도 공개 카탈로그의
 운영자용 전체 DB·Storage 암호화 백업, 파일 누락/변조 검증 및 격리 복구 절차는
 [백업과 재해 복구 안내](docs/backup-recovery.md)를 확인하세요.
 도구 추가만으로 운영 백업·자동 실행·원격 사본이 생성되지는 않습니다.
+
+이전 서비스 주소 정리와 자료 호환 범위는 [이전 웹서비스 정리](docs/legacy-service-retirement.md)를 확인하세요.
