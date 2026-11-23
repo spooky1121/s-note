@@ -1,0 +1,59 @@
+/* Soft workspace, screen only. Preserve navigation, table geometry, controls,
+   authorization gates, disabled states, semantic colors and unread animation. */
+@media screen {
+ :root {--ink:#192c41;--muted:#727984;--line:#edf0f3;--blue:#0096fe;--background:#f8f9fa}
+ body {background:#fff;color:#192c41;-webkit-font-smoothing:antialiased}
+ .operator-app,.workspace,main,.list-panel {background:#fff}
+ .sidebar {background:#f8f9fa;border-right-color:#edf0f3;box-shadow:none}
+ .wordmark {color:#192c41;box-shadow:none}
+ .wordmark>span {color:#0096fe;box-shadow:none}
+ .sidebar-label,.sidebar-back {color:#727984}
+ .sidebar nav button:not(:disabled) {color:#687480;border-radius:10px;box-shadow:none;font-weight:500}
+ .sidebar nav button[aria-current=page] {color:#006bb5;background:#eaf6ff;font-weight:600}
+ .sidebar nav button[aria-current=page] svg {color:#0096fe}
+ .sidebar nav button:hover:not(:disabled) {background:#f0f3f6}
+ .sidebar nav svg,.icon-button svg {stroke-width:1.6}
+ .topbar {background:#fff;border-bottom-color:#edf0f3;box-shadow:none}
+ .topbar h1 {color:#192c41;font-weight:600;letter-spacing:-.55px}
+ .eyebrow,.operator-identity>span,.muted {color:#727984}
+ .tabs {border-color:#edf0f3}
+ .tabs button:not(:disabled) {color:#727984;font-weight:500}
+ .tabs button[aria-selected=true] {color:#006bb5;border-bottom-color:#0096fe;font-weight:600}
+ .search-field {background:#fff;border-color:#e5eaf0;border-radius:10px;box-shadow:none}
+ .search-field input {color:#3c4653}
+ .search-field input::placeholder {color:#929ba6}
+ .search-field>span,.search-field>svg {color:#8e99a5}
+ .icon-button:not(:disabled):not(.delete):not(.danger):not(.close-button) {color:#0096fe;border-radius:10px;box-shadow:none}
+ .icon-button:hover:not(:disabled):not(.delete):not(.danger):not(.close-button) {background:#eef7ff}
+ .filters :is(select,input):not(:disabled) {background:#fff;border-color:#e5eaf0;border-radius:10px;box-shadow:none;color:#526171}
+ .filters label,.list-meta {color:#727984}
+ .table-wrap {border-color:#edf0f3;border-radius:12px;box-shadow:none}
+ table {color:#4d5967}
+ thead {background:#fafbfc;color:#6f7885}
+ th {border-color:#edf0f3;font-weight:500}
+ td {color:#526171;border-bottom-color:#edf0f3}
+ td strong,.vehicle-cell strong {color:#263b50;font-weight:550}
+ td small,.data-caption {color:#727984}
+ tbody tr:hover {background:#fbfcfd}
+ .text-button:not(:disabled) {color:#006bb5}
+ .row-actions .icon-button:not(:disabled):not(.delete):not(.danger) {color:#8494a5}
+ .row-actions .icon-button:hover:not(:disabled):not(.delete):not(.danger) {color:#0096fe;background:#eef7ff}
+ .pagination button:not(:disabled) {border-radius:10px;box-shadow:none;color:#727984}
+ .pagination button[aria-current=page] {background:#0096fe;color:#192c41;border-color:#0096fe}
+ .service-metric {background:#fff;border-color:#edf0f3;border-radius:12px;box-shadow:none}
+ .service-summary-heading h2,.service-provider-history>h3 {color:#192c41;font-weight:550}
+ .service-metric h3 {color:#727984;font-weight:500}
+ .service-metric-value {color:#253b50;font-weight:600}
+ .service-metric[data-metric=balance] .service-metric-value {color:#0079c8}
+ .service-metric small {color:#727984}
+ .service-notes {background:#f8f9fa;border-radius:10px;box-shadow:none}
+ .service-notes p,.service-unavailable,.service-list-title {color:#6f7885}
+ .service-provider-history {border-top-color:#edf0f3}
+ .service-provider-table {border-color:#edf0f3;border-radius:12px;box-shadow:none}
+ .account-avatar {background:#eef7fe;color:#0079c8;box-shadow:none}
+ .account-password .icon-button:not(:disabled) {color:#8494a5}
+ tr.has-support-unread {background:#fbfdff}
+ .service-summary-heading>span {color:#727984}
+ .primary:not(:disabled):not(.danger) {background:#0096fe;border-color:#0096fe;color:#192c41;box-shadow:none;border-radius:10px}
+ :is(button,input,select,textarea,a):focus-visible {outline-color:#0096fe66}
+}

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.203">
+<html lang="ko" data-snote-release="2.204">
 <head>
 <meta charset="utf-8" />
   <script src="assets/service-location.js?v=2.200"></script>
@@ -3314,7 +3314,7 @@ button, input, select, textarea { font-family: inherit; }
  <div class="acct-controls"><label for="accountant-dealer-filter">담당 딜러</label><select id="accountant-dealer-filter" aria-label="담당 딜러 필터" onchange="handleAccountantDealerFilter()"><option value="all">전체 딜러</option></select><button type="button" class="btn-ghost" onclick="refreshAccountantWorkspace()">새로고침</button></div>
  <div id="accountant-overview" class="acct-overview"></div>
  </section>
-      <section id="monthly-screen" style="display:none;width:100%;min-width:0" aria-label="월정산 결산표"><iframe id="monthly-ledger-frame" title="S-NOTE 월정산 결산표" data-src="monthly.html?v=2.203" scrolling="no" style="width:100%;height:1280px;border:0;display:none;background:transparent"></iframe>
+      <section id="monthly-screen" style="display:none;width:100%;min-width:0" aria-label="월정산 결산표"><iframe id="monthly-ledger-frame" title="S-NOTE 월정산 결산표" data-src="monthly.html?v=2.204" scrolling="no" style="width:100%;height:1280px;border:0;display:none;background:transparent"></iframe>
  <div id="monthly-frame-status" role="status" hidden style="padding:24px;text-align:center"><p id="monthly-frame-message"></p><button id="monthly-frame-retry" type="button" class="btn" hidden>다시 불러오기</button></div></section>
 <section id="snote-dashboard-home" aria-label="대시보드" hidden></section>
 <section id="snote-accountant-today" aria-label="오늘 처리할 일" hidden></section>
@@ -12197,7 +12197,7 @@ window.zc86Cloud={getAccessToken:async()=>{const client=S.client,user=S.user,com
 <link rel="stylesheet" href="assets/workspace-reorder.css?v=2.136">
 <script src="assets/workspace-order-store.js?v=2.135" defer></script>
 <script src="assets/workspace-reorder.js?v=2.202" defer></script>
-<script src="assets/release-info.js?v=2.203" defer></script>
+<script src="assets/release-info.js?v=2.204" defer></script>
 <link rel="stylesheet" href="assets/encar-id.css?v=2.162">
 <script src="assets/encar-id.js?v=2.184" defer></script>
 <script src="assets/company-purchase.js?v=2.172" defer></script>
@@ -12260,5 +12260,6 @@ window.addEventListener('snote:payment-accounts-changed',()=>{if(typeof contract
 <script src="assets/design-settings-office.js?v=2.189" defer></script>
 <link rel="stylesheet" href="assets/signup-registration.css?v=2.191">
 <script src="assets/signup-registration.js?v=2.191" defer></script>
+<link rel="stylesheet" href="assets/workspace-soft-theme.css?v=2.204" data-snote-type-scale>
 </body>
 </html>
