@@ -116,3 +116,93 @@
 #snote-dashboard-home>.snote-home-shortcuts>h2{grid-column:1/-1;margin:0}
 #snote-dashboard-home>.snote-home-shortcuts>.snote-home-shortcut{min-height:52px}
 @media(max-width:760px){#snote-dashboard-home>.snote-home-shortcuts{gap:8px;padding:16px}#snote-dashboard-home>.snote-home-shortcuts>.snote-home-shortcut{min-height:84px}}
+
+/* A desktop work surface stays readable at 100% browser zoom. Mobile keeps its normal scrolling layout. */
+@media screen and (min-width:761px){
+ #snote-app .content:has(#snote-dashboard-home:not([hidden])){padding-top:16px;padding-bottom:12px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact]{gap:10px;margin-bottom:0}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-kpis{gap:10px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-kpi{min-height:80px;padding:9px 12px;gap:2px;border-radius:12px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-kpi-label{min-height:17px;line-height:17px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-kpi-label>span{font-size:12px;line-height:17px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-kpi-label>svg{width:15px;height:15px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-kpi-value{font-size:24px;line-height:1.1;letter-spacing:-.55px;gap:2px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-kpi-value small{font-size:11px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-kpi-caption{font-size:11px;line-height:14px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-secondary-kpis .snote-home-kpi{min-height:46px;padding:5px 12px;gap:0 10px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-secondary-kpis .snote-home-kpi-value{font-size:18px;line-height:21px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-secondary-kpis .snote-home-kpi-caption{line-height:13px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-graphs{grid-template-columns:minmax(0,1.35fr) minmax(0,1fr) minmax(0,.85fr);gap:12px;align-items:stretch}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-graphs>:is(.snote-home-chart-group,.snote-home-settlement-card,.snote-home-shortcuts){padding:10px 12px;border-radius:12px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] :is(.snote-home-card-head h2,.snote-home-shortcuts h2,.snote-home-chart-group-head h2){font-size:13px;line-height:18px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-card-head{min-height:28px;margin-bottom:4px;gap:6px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] button.snote-home-card-link{width:32px;height:32px;min-width:32px;padding:8px;border-radius:8px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-card-link svg{width:16px;height:16px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-chart-group-head{gap:8px;margin-bottom:5px;flex-wrap:nowrap;min-height:28px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-chart-tabs{padding:2px;gap:1px;border-radius:8px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] button.snote-home-chart-tab{min-height:28px;min-width:54px;padding:4px 7px;font-size:11px;line-height:16px;border-radius:6px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-chart-card .snote-home-card-head{min-height:20px;margin-bottom:4px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-chart-card .snote-home-card-head>div{display:flex;align-items:baseline;gap:5px;min-width:0}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-period{margin:0;font-size:11px;line-height:16px;white-space:nowrap}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-chart-total{font-size:18px;line-height:20px;letter-spacing:-.4px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-chart-line{height:60px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-chart-marker{height:60px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-chart-dot{top:calc(var(--snote-home-point-y)*.576923px);width:5px;height:5px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-chart-month.is-current .snote-home-chart-dot{width:6px;height:6px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-chart-label{font-size:11px;line-height:16px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-settlement{justify-content:space-between}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-settlement>div{padding:3px 0;gap:0 8px;grid-template-columns:minmax(0,1fr) auto}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-settlement dt{font-size:12px;line-height:17px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-settlement dd{font-size:16px;line-height:18px;text-align:right}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-settlement small{font-size:11px;line-height:13px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-graphs>.snote-home-shortcuts{display:block}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-graphs>.snote-home-shortcuts h2{margin:0 0 5px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-graphs .snote-home-shortcut{min-height:37px;padding:4px 0;gap:8px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-shortcut>svg:first-child{width:17px;height:17px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-shortcut>svg:last-child{width:14px;height:14px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-shortcut strong{font-size:12px;line-height:17px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-shortcut small{font-size:11px;line-height:13px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-scheduler-work-slot .snote-home-work-card{padding:9px 11px;border-radius:12px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-scheduler-work-slot .snote-home-card-head{margin-bottom:2px;min-height:22px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-scheduler-work-slot .snote-home-card-head h2{font-size:13px;line-height:18px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-scheduler-work-slot .snote-home-work-summary{display:inline-flex;margin:0;gap:6px;font-size:12px;line-height:18px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-scheduler-work-slot .snote-home-work-count{padding:0 5px;font-size:11px;line-height:18px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-scheduler-work-slot .snote-home-work-caption{margin:0 0 3px;font-size:11px;line-height:14px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-scheduler-work-slot .snote-home-task-list{margin-top:2px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-scheduler-work-slot .snote-home-task-row{min-height:25px;padding:3px 0;gap:7px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-scheduler-work-slot .snote-home-task-info{flex-direction:row;align-items:baseline;gap:5px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-scheduler-work-slot .snote-home-task-info strong{font-size:12px;line-height:18px;max-width:125px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-scheduler-work-slot .snote-home-task-info small{font-size:11px;line-height:16px;white-space:nowrap}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-scheduler-work-slot .snote-home-task-age{font-size:11px;line-height:18px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-scheduler-work-slot .snote-home-task-row>svg{width:14px;height:14px}
+}
+@media screen and (min-width:761px) and (max-height:780px){
+ #snote-app #snote-dashboard-home[data-home-layout=compact]{gap:8px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-kpi{min-height:68px;padding:7px 10px;gap:1px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-kpi-value{font-size:22px;line-height:24px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-kpi-caption{line-height:13px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-secondary-kpis .snote-home-kpi{min-height:42px;padding:4px 10px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-graphs>:is(.snote-home-chart-group,.snote-home-settlement-card,.snote-home-shortcuts){padding:8px 10px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-chart-line,#snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-chart-marker{height:42px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-chart-dot{top:calc(var(--snote-home-point-y)*.403846px)}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-chart-group-head{margin-bottom:3px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-chart-card .snote-home-card-head{margin-bottom:2px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-settlement>div{padding:1px 0}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-graphs .snote-home-shortcut{min-height:34px;padding:3px 0}
+}
+@media screen and (max-width:760px){#snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-graphs>.snote-home-shortcuts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 8px}#snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-graphs>.snote-home-shortcuts h2{grid-column:1/-1}}
+
+@media screen and (min-width:761px) and (max-height:780px){
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-scheduler-work-slot .snote-home-card-title{gap:7px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-scheduler-work-slot .snote-home-work-summary{font-size:11px;gap:4px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-scheduler-work-slot .snote-home-work-card{padding-top:7px;padding-bottom:7px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-scheduler-work-slot .snote-home-task-row{min-height:22px;padding:1px 0}
+}
+@media screen and (min-width:761px){
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-graphs>.snote-home-shortcuts{padding-right:40px}
+}
+@media screen and (min-width:761px) and (max-height:740px){
+ #snote-app .content:has(#snote-dashboard-home:not([hidden])){padding-top:10px;padding-bottom:10px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact]{gap:6px}
+ #snote-app #snote-dashboard-home[data-home-layout=compact] .snote-home-graphs>:is(.snote-home-chart-group,.snote-home-settlement-card,.snote-home-shortcuts){padding-top:6px;padding-bottom:6px}
+}

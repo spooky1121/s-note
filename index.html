@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.205">
+<html lang="ko" data-snote-release="2.206">
 <head>
 <meta charset="utf-8" />
   <script src="assets/service-location.js?v=2.200"></script>
@@ -3173,11 +3173,11 @@ button, input, select, textarea { font-family: inherit; }
 <link rel="stylesheet" href="assets/sales-overview.css?v=2.100">
 <script src="assets/sales-overview.js?v=2.90" defer></script>
 <script src="assets/purchase-overview.js?v=2.100" defer></script>
-<link rel="stylesheet" href="assets/home-dashboard.css?v=2.205" data-snote-type-scale>
-<link rel="stylesheet" href="assets/dealer-scheduler.css?v=2.205" data-snote-type-scale>
+<link rel="stylesheet" href="assets/home-dashboard.css?v=2.206" data-snote-type-scale>
+<link rel="stylesheet" href="assets/dealer-scheduler.css?v=2.206" data-snote-type-scale>
 <script src="assets/dealer-scheduler-store.js?v=2.205" defer></script>
-<script src="assets/dealer-scheduler.js?v=2.205" defer></script>
-<script src="assets/home-dashboard.js?v=2.205" defer></script>
+<script src="assets/dealer-scheduler.js?v=2.206" defer></script>
+<script src="assets/home-dashboard.js?v=2.206" defer></script>
 <link rel="stylesheet" href="assets/mobile-office-tasks.css?v=2.184">
 <script src="assets/mobile-office-tasks.js?v=2.184" defer></script>
 <script src="assets/access-tracker.js?v=2.202"></script>
@@ -3673,13 +3673,13 @@ function normalizedCars(records,owner){return records.map(c=>SnoteMoney.car(c)).
 function dealerCars(username){try{if(window.zc86Cloud?.ready&&window.zc86Cloud?.readOwnerCars)return window.zc86Cloud.readOwnerCars(username);const raw=snote201ReadLocal(carsStoreKey(username),username,value=>Array.isArray(JSON.parse(value)));const parsed=raw===null?null:JSON.parse(raw);return normalizedCars((Array.isArray(parsed)?parsed:(username==='demo'?seedCars.map(x=>({...x})):[])).map(c=>c&&typeof c==='object'?{...c,ownerId:username}:c),username)}catch(_){return username==='demo'?normalizedCars(seedCars.map(x=>({...x})),'demo'):[]}}
 function loadCarsForUser(){
  if(!currentUser){cars=[];return}
- if(!isFinanceManager()){cars=dealerCars(currentUser.username);zc182OverlayFinance();return}
+ if(!isFinanceManager()){cars=dealerCars(currentUser.username);zc182OverlayFinance();window.snote206VehicleCalendarLoaded?.();return}
  // The hosted app must never mix sample/demo keys with live dealership data.
  const cloudMembers=(typeof window.zc86Cloud!=='undefined' && window.zc86Cloud?.membersAliases?.())||null;
  const owners=new Set(cloudMembers||dealerAccounts.filter(a=>a.role!=='accountant').map(a=>a.username));
  if(!cloudMembers&&snote201CanUseLocal()){for(let i=0;i<localStorage.length;i++){const item=window.SnoteStorageCompat.describe(localStorage.key(i));if(item?.kind==='personal'&&item.dataset==='cars')owners.add(item.owner);}owners.add('demo');}
  if(isSnoteAdmin())owners.add(currentUser.username);
- cars=[...owners].flatMap(owner=>dealerCars(owner));zc182OverlayFinance();
+ cars=[...owners].flatMap(owner=>dealerCars(owner));zc182OverlayFinance();window.snote206VehicleCalendarLoaded?.();
 }
 // Only an existing unacknowledged detail write can restore its exact original sale facts.
 const snote184SaleRestores=new WeakMap();
@@ -10917,7 +10917,7 @@ function snote135GetOrderStore(){
 window.snoteWorkspaceOrderBridge=Object.freeze({context:snote135OrderContext,current:snote135OrderCurrent,read(context,section){const store=snote135GetOrderStore();if(!store)throw Error('메뉴 순서 저장을 준비하고 있습니다.');return store.read(context,section);},save(context,section,ids){const store=snote135GetOrderStore();if(!store)throw Error('메뉴 순서 저장을 준비하고 있습니다.');return store.save(context,section,ids);}});
 
 // Personal schedules use their own verified identity, independent of finance grants.
-let snote205SchedulerEpoch=0,snote205SchedulerIdentity=null,snote205SchedulerAuthInvalid=false;
+let snote205SchedulerEpoch=0,snote205SchedulerIdentity=null,snote205SchedulerAuthInvalid=false,snote206VehicleCalendarLoadedScope=null;
 function snote205SchedulerError(code){
  const messages={CONTEXT_CHANGED:'로그인 또는 상사가 변경되었습니다.',FORBIDDEN:'개인 일정의 이용 권한을 확인해 주세요.',EVENT_UNAVAILABLE:'일정이 변경되었거나 삭제되었습니다. 다시 불러와 주세요.',CONFLICT:'다른 화면에서 일정이 변경되었습니다. 입력한 내용을 확인한 뒤 다시 저장해 주세요.',INVALID_DATA:'일정의 날짜와 입력 내용을 확인해 주세요.',INVALID_RESPONSE:'일정의 서버 응답을 확인하지 못했습니다.',SETUP_REQUIRED:'일정 저장 연결을 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.',NETWORK:'일정 처리 결과를 확인하지 못했습니다. 입력한 내용은 유지됩니다.'};
  return Object.assign(new Error(messages[code]||messages.NETWORK),{code:code==='EVENT_UNAVAILABLE'?'SCHEDULE_EVENT_UNAVAILABLE':code});
@@ -10934,7 +10934,7 @@ function snote205SchedulerContext(){
 function snote205SchedulerCurrent(expected){const now=snote205SchedulerContext();return !!now&&!!expected&&['key','actorId','companyId','role','ready'].every(field=>now[field]===expected[field]);}
 function snote205SchedulerAssert(expected){if(!snote205SchedulerCurrent(expected))throw snote205SchedulerError('CONTEXT_CHANGED');}
 window.snoteResetDealerScheduler=()=>{
- snote205SchedulerEpoch++;snote205SchedulerIdentity=null;
+ snote205SchedulerEpoch++;snote205SchedulerIdentity=null;snote206VehicleCalendarLoadedScope=null;
  window.SnoteDealerSchedulerUI?.reset?.();
 };
 async function snote205SchedulerRpc(expected,name,args){
@@ -10973,6 +10973,37 @@ window.snoteDealerSchedulerBridge=Object.freeze({
  listMonth(expected,month){return snote205SchedulerRpc(expected,'snote_schedule_list',{p_expected_company_id:expected.companyId,p_month:month});},
  save(expected,event,revision){return snote205SchedulerRpc(expected,'snote_schedule_save',{p_expected_company_id:expected.companyId,p_event:event,p_expected_revision:revision});},
  remove(expected,id,revision){return snote205SchedulerRpc(expected,'snote_schedule_delete',{p_expected_company_id:expected.companyId,p_event_id:id,p_expected_revision:revision});}
+});
+
+// Reuse already loaded own vehicles. Calendar dates never include financial values
+// and do not unlock the protected dashboard or perform another server request.
+window.snote206VehicleCalendarLoaded=()=>{
+ const member=S.members.find(row=>row.user_id===S.user?.id&&row.company_id===S.company?.id&&row.active===true&&['admin','dealer'].includes(row.role));
+ snote206VehicleCalendarLoadedScope=member&&S.client&&currentUser?.username===ownerAlias(S.user.id)&&currentUser.role===member.role?
+  {client:S.client,actor:currentUser,userId:S.user.id,companyId:S.company.id,role:member.role,epoch:snote220CatalogEpoch}:null;
+};
+function snote206VehicleCalendarContext(){
+ if(route!=='dashboard')return null;
+ const actor=snote205SchedulerContext(),scope=snotePurchaseContext(),loaded=snote206VehicleCalendarLoadedScope;
+ if(!actor||!scope||typeof scope.key!=='string'||scope.ownerAlias!==currentUser?.username||!loaded||
+  loaded.client!==S.client||loaded.actor!==currentUser||loaded.userId!==actor.actorId||loaded.companyId!==actor.companyId||loaded.role!==actor.role||loaded.epoch!==snote220CatalogEpoch)return null;
+ return {key:JSON.stringify([actor.key,scope.key]),loading:!snoteWorkspaceSalesReady||scope.ready!==true};
+}
+window.snoteDealerVehicleCalendarBridge=Object.freeze({
+ snapshot(){
+  const context=snote206VehicleCalendarContext();if(!context)return null;
+  const value=(input,max)=>typeof input==='string'?input.slice(0,max):'';
+  const rows=context.loading?[]:cars.filter(car=>{
+   if(!car||car.ownerId!==currentUser.username||(car.companyId&&car.companyId!==S.company.id)||(car.company_id&&car.company_id!==S.company.id))return false;
+   const source=S.carScopes.get(car);
+   return !source||(source.companyId===S.company.id&&source.ownerId===S.user.id&&source.carId===String(car.id)&&source.epoch===snote220CatalogEpoch);
+  }).map(car=>({
+    id:value(String(car.id??''),200),model:value(car.model,200),plate:value(car.plate,32),
+    purchaseAt:value(car.purchaseAt,32),soldAt:value(car.soldAt,32),status:car.status==='판매완료'?'판매완료':''
+   }));
+  return {...context,rows};
+ },
+ current(key){const context=snote206VehicleCalendarContext();return !!context&&!context.loading&&context.key===key;}
 });
 window.snoteMountWorkspaceMenus=()=>window.SnoteWorkspaceReorder?.refresh();
 window.addEventListener('snote:workspace-reorder-ready',()=>window.snoteMountWorkspaceMenus());
@@ -12271,7 +12302,7 @@ window.zc86Cloud={getAccessToken:async()=>{const client=S.client,user=S.user,com
 <link rel="stylesheet" href="assets/workspace-reorder.css?v=2.136">
 <script src="assets/workspace-order-store.js?v=2.135" defer></script>
 <script src="assets/workspace-reorder.js?v=2.202" defer></script>
-<script src="assets/release-info.js?v=2.205" defer></script>
+<script src="assets/release-info.js?v=2.206" defer></script>
 <link rel="stylesheet" href="assets/encar-id.css?v=2.162">
 <script src="assets/encar-id.js?v=2.184" defer></script>
 <script src="assets/company-purchase.js?v=2.172" defer></script>
