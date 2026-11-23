@@ -3,6 +3,8 @@ import { hardenAPIResponse, readBoundedBytes, sameOriginRequest } from '../_shar
 // Evidence is reserved and uploaded before Auth sends an email. Only the private
 // application and a subsequently verified user can complete registration.
 const BUCKET = 'snote-registration-documents';
+// A signup started from a legacy or preview host still returns to the live app.
+const SIGNUP_RETURN_URL = 'https://s-note.kr/';
 const MAX_BODY = 12 * 1024 * 1024, MAX_FILE = 5 * 1024 * 1024, MAX_PIXELS = 40000000;
 const UUID = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i;
 const PROFILE_KEYS = ['kind', 'companyName', 'businessNumber', 'representativeName', 'businessAddress', 'displayName', 'phone', 'email'];
@@ -214,10 +216,10 @@ async function budget(c, request, action) {
 }
 const DUPLICATE_AUTH = new Set(['email_exists', 'user_already_exists']);
 function authDuplicate(data) { return object(data) && ([data.code, data.error_code, data.error].some(code => DUPLICATE_AUTH.has(code)) || ['User already registered', 'A user with this email address has already been registered'].includes(data.msg || data.message)); }
-async function signup(c, origin, id, value, pass) {
+async function signup(c, id, value, pass) {
   const controller = new AbortController(), timer = setTimeout(() => controller.abort(), 10000); let status;
   try {
-    const response = await fetch(c.url + '/auth/v1/signup?redirect_to=' + encodeURIComponent(origin + '/'), { method: 'POST', redirect: 'manual', cache: 'no-store', signal: controller.signal,
+    const response = await fetch(c.url + '/auth/v1/signup?redirect_to=' + encodeURIComponent(SIGNUP_RETURN_URL), { method: 'POST', redirect: 'manual', cache: 'no-store', signal: controller.signal,
       headers: { apikey: c.pub, Authorization: 'Bearer ' + c.pub, 'Content-Type': 'application/json', Accept: 'application/json' },
       body: JSON.stringify({ email: value.email, password: pass, data: { snote_registration: { version: 2, request_id: id } } }) });
     status = response.status;
@@ -275,7 +277,7 @@ async function register(c, request) {
     }
     await rpc(c, 'snote_registration_ready', { p_id: id });
     authSent = true;
-    return await signup(c, new URL(request.url).origin, id, value, pass);
+    return await signup(c, id, value, pass);
   } catch (error) {
     if (attemptedPrepare && (!authSent || error instanceof RegistrationError && error.knownAuthFailure) && (prepared || !['COMPANY_EXISTS', 'CONTACT_EXISTS'].includes(error?.code))) await cancel(c, id, uploaded);
     throw error;
