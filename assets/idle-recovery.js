@@ -10,16 +10,15 @@
  const PREFIX='snote-idle-recovery:v1:';
  const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
  const HASH=/^[0-9a-f]{64}$/i;
- const LEGACY=Object.freeze({
-  finance:'zerocar-office-v182-inventory-finance-ledger',
-  finance_limits:'zerocar-office-v157-finance-companies',
-  prestock:'zerocar-office-v148-prestock-ledger',
-  monthly:'zerocar-office-v165-monthly-ledger',
-  categories:'zerocar-office-v170-monthly-category-settings'
- });
+ const DATASETS=Object.freeze(['cars','covers','finance','finance_limits','prestock','monthly','categories']);
+ const registry=root.SnoteStorageCompat||(typeof module==='object'&&module.exports&&typeof require==='function'?require('./snote-storage-compat.js'):null);
  const own=(value,key)=>Object.prototype.hasOwnProperty.call(value,key);
  const object=value=>value!==null&&typeof value==='object'&&!Array.isArray(value)&&Object.prototype.toString.call(value)==='[object Object]';
  const invalid=reason=>{throw new Error('INVALID_IDLE_RECOVERY_'+reason);};
+ function compatible(){
+  if(!registry||typeof registry.acceptsRecoveryKey!=='function'||typeof registry.canonicalKey!=='function')invalid('COMPAT');
+  return registry;
+ }
  const revision=value=>Number.isSafeInteger(value)&&value>=0;
  function uuid(value,allowNil){
   if(typeof value!=='string'||!UUID.test(value))invalid('ID');
@@ -42,14 +41,13 @@
   return {project,userId:uuid(value.userId,false),companyId:uuid(value.companyId,false)};
  }
  function scopeKey(value){return PREFIX+encodeURIComponent(value.project)+':'+value.userId+':'+value.companyId;}
- function key(value){return scopeKey(scope(value));}
+ function key(value){compatible();return scopeKey(scope(value));}
  function entry(value){
   if(!object(value))invalid('ENTRY');
   const dataset=value.dataset,ownerId=uuid(value.ownerId,true),storageKey=value.storageKey;
-  if(typeof dataset!=='string'||!['cars','covers',...Object.keys(LEGACY)].includes(dataset))invalid('DATASET');
+  if(typeof dataset!=='string'||!DATASETS.includes(dataset))invalid('DATASET');
   const personal=dataset==='cars'||dataset==='covers';
-  const expected=personal?'zerocar-office-v12-'+dataset+'-cld_'+ownerId.replace(/-/g,'').slice(0,18):LEGACY[dataset];
-  if((personal&&ownerId===NIL)||(!personal&&ownerId!==NIL)||storageKey!==expected)invalid('STORAGE_KEY');
+  if((personal&&ownerId===NIL)||(!personal&&ownerId!==NIL)||!compatible().acceptsRecoveryKey(dataset,ownerId,storageKey))invalid('STORAGE_KEY');
   if(!revision(value.revision))invalid('REVISION');
   if(typeof value.hash!=='string'||!HASH.test(value.hash))invalid('HASH');
   // Never spread the input: raw values, customers and credentials must not be copied.
@@ -61,9 +59,9 @@
   const storageKeys=new Set(),owners=new Set();
   return value.map(item=>{
    if(strict&&(!object(item)||Object.keys(item).length!==5||Object.keys(item).some(name=>!['dataset','ownerId','storageKey','revision','hash'].includes(name))))invalid('ENTRY');
-   const result=entry(item),owner=result.dataset+':'+result.ownerId;
-   if(storageKeys.has(result.storageKey)||owners.has(owner))invalid('DUPLICATE');
-   storageKeys.add(result.storageKey);owners.add(owner);return result;
+   const result=entry(item),owner=result.dataset+':'+result.ownerId,canonical=compatible().canonicalKey(result.storageKey);
+   if(storageKeys.has(canonical)||owners.has(owner))invalid('DUPLICATE');
+   storageKeys.add(canonical);owners.add(owner);return result;
   });
  }
  function storage(value){
@@ -72,6 +70,7 @@
   return result;
  }
  function read(value,providedStorage){
+  compatible();
   const current=scope(value),store=storage(providedStorage),raw=store.getItem(scopeKey(current));
   if(raw===null)return null;
   if(typeof raw!=='string'||raw.length>1048576)invalid('RECORD');
@@ -82,6 +81,7 @@
   return {v:1,...current,entries:entries(record.entries,true)};
  }
  function write(value,items,providedStorage){
+  compatible();
   const current=scope(value),store=storage(providedStorage);
   const record={v:1,...current,entries:entries(items,false)};
   const serialized=JSON.stringify(record);
@@ -92,6 +92,7 @@
   return record;
  }
  function remove(value,providedStorage){
+  compatible();
   const current=scope(value),store=storage(providedStorage);
   if(read(current,store)!==null)store.removeItem(scopeKey(current));
  }

@@ -1,3 +1,4 @@
+import './snote-storage-compat.js?v=2.201';
 import {formatNumberInput} from './number-format.js?v=2.49';
 import {createBook,normalizeBook,validateBook,calculate,parseNumber,previousMonth,listBooks,legacyRows,mergeMonth,fingerprint,exportCSV,normalizeInventoryFinance} from './monthly-workbook-model.js?v=2.135';
 
@@ -83,7 +84,7 @@ function sendHeight(){const height=Math.ceil($('monthly-shell').getBoundingClien
  lastHeight=height;post({type:'SNOTE_MONTHLY_HEIGHT',height});
  // Open parent tabs may still use the previous protocol. Keep this explicit
  // compatibility alias until those clients have reloaded; it is never a label.
- post({type:'ZEROCAR_MONTHLY_HEIGHT',height});
+ post({type:window.SnoteStorageCompat.legacyMonthlyHeight,height});
 }}
 window.addEventListener('message',event=>{if(event.source!==window.parent||window.parent===window||event.origin!==location.origin||!event.data||typeof event.data!=='object'||Array.isArray(event.data))return;const data=event.data;if(data.type==='SNOTE_TYPOGRAPHY'){const allowed=['font-family','text-page','text-section','text-subheading','text-body','text-label','text-meta','text-control','text-button','text-auth','text-kpi','text-amount','text-unit','line-body','line-heading'].map(name=>'--snote-'+name);for(const [key,value]of Object.entries(data.values||{}))if(allowed.includes(key)&&typeof value==='string'&&value.length<300&&!/[;{}<>]/.test(value))document.documentElement.style.setProperty(key,value);sendHeight();return;}if(data.type==='SNOTE_MONTHLY_WORKBOOK_RESET'){reset(data.message);return;}if(data.type==='SNOTE_MONTHLY_WORKBOOK_INIT'){init(data);return;}if(!scope||data.contextKey!==scope.key)return;if(data.type==='SNOTE_MONTHLY_WORKBOOK_RESULT')resultReceived(data);else if(data.type==='SNOTE_MONTHLY_WORKBOOK_SYNC')syncReceived(data);else if(data.type==='SNOTE_MONTHLY_WORKBOOK_FINANCE')receiveFinance(data.inventoryFinance);});
 function addRow(group){const e=current();if(group==='finance'||!canEdit(e)||e.book[group].length>=LIMITS[group])return;const row=blankRow(group);e.book[group].push(row);renderGroup(group,row.id);controlState();markChanged(e);findInput(keyFor(group,row.id,FIELDS[group][0]))?.focus();}

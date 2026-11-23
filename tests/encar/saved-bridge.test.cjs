@@ -19,7 +19,7 @@ const inventoryStartMath=between('function snoteInventoryLendersFor(car){','func
 // helpers too, so this isolated bridge does not replace that policy with a stub.
 const companyOwners=between('function snoteCompanyActor(){','function snoteCompanyOwnerLabel(');
 const COMPANY='10000000-0000-4000-8000-000000000001',USER='20000000-0000-4000-8000-000000000001',OTHER='30000000-0000-4000-8000-000000000001';
-const alias=id=>'cld_'+id.replaceAll('-','').slice(0,18),key=owner=>'cars:'+owner,store=owner=>'zerocar-office-v12-cars-'+alias(owner);
+const alias=id=>'cld_'+id.replaceAll('-','').slice(0,18),key=owner=>'cars:'+owner,store=owner=>'s-note-office-v12-cars-'+alias(owner);
 const clone=value=>JSON.parse(JSON.stringify(value));
 const deferred=()=>{let resolve;const promise=new Promise(done=>{resolve=done;});return{promise,resolve};};
 const record=(model='검증 차량')=>({version:1,plate:'12가3456',verifiedAt:new Date().toISOString(),listings:[{id:'43000001',model,sellerUrl:'https://fem.encar.com/cars/detail/43000001',trustedId:'43000002',trustedUrl:'https://fem.encar.com/cars/detail/43000002'}]});
@@ -41,8 +41,8 @@ function fixture({role='dealer',owner=USER,server:initial}={}){
   byId:id=>id==='vehicle-overlay'?overlay:id==='detail-sell'?sellInput:null,Event,
   snoteVehicleSaveTask:null,snoteVehicleCloseTask:null,snoteVehicleUnconfirmedWrite:null,
   isAccountant(){return context.currentUser?.role==='accountant';},isSnoteAdmin(){return context.currentUser?.role==='admin';},
-  cloudKey:(dataset,ownerId)=>dataset+':'+ownerId,storageKey:(dataset,ownerId)=>'zerocar-office-v12-cars-'+ownerId,
-  carsStoreKey:ownerId=>'zerocar-office-v12-cars-'+(ownerId||context.currentUser?.username),
+  cloudKey:(dataset,ownerId)=>dataset+':'+ownerId,storageKey:(dataset,ownerId)=>'s-note-office-v12-cars-'+ownerId,
+  carsStoreKey:ownerId=>'s-note-office-v12-cars-'+(ownerId||context.currentUser?.username),
   toEntry:k=>{const ownerId=storageOwner(k);return ownerId?{ds:'cars',owner:ownerId}:null;},isShared:()=>false,
   parsePayload:value=>{try{return JSON.parse(value);}catch{return null;}},defaultBody:()=> '[]',showStatus(){},errMsg:error=>error.message,
   fail(error){events.push('failure');},alert(){},confirm:()=>true,

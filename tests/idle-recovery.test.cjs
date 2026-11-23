@@ -3,6 +3,9 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const recovery = require('../assets/idle-recovery.js');
+const compat = require('../assets/snote-storage-compat.js');
+const vm = require('node:vm');
+const fs = require('node:fs');
 
 const scope = Object.freeze({
   project: 'https://fixture.supabase.co',
@@ -16,7 +19,7 @@ const hashA = 'a'.repeat(64);
 const hashB = 'b'.repeat(64);
 
 function cacheKey(dataset, ownerId) {
-  return `zerocar-office-v12-${dataset}-cld_${ownerId.replaceAll('-', '').slice(0, 18)}`;
+  return `s-note-office-v12-${dataset}-cld_${ownerId.replaceAll('-', '').slice(0, 18)}`;
 }
 
 function entry(overrides = {}) {
@@ -144,11 +147,11 @@ test('duplicates and excessive entries are rejected while shared datasets requir
   assert.equal(storage.values.get(key), original);
 
   const shared = [
-    ['finance', 'zerocar-office-v182-inventory-finance-ledger'],
-    ['finance_limits', 'zerocar-office-v157-finance-companies'],
-    ['prestock', 'zerocar-office-v148-prestock-ledger'],
-    ['monthly', 'zerocar-office-v165-monthly-ledger'],
-    ['categories', 'zerocar-office-v170-monthly-category-settings']
+    ['finance', 's-note-office-v182-inventory-finance-ledger'],
+    ['finance_limits', 's-note-office-v157-finance-companies'],
+    ['prestock', 's-note-office-v148-prestock-ledger'],
+    ['monthly', 's-note-office-v165-monthly-ledger'],
+    ['categories', 's-note-office-v170-monthly-category-settings']
   ].map(([dataset, storageKey]) => entry({ dataset, storageKey, ownerId: nilOwner }));
   recovery.write(scope, [entry(), entry({ dataset: 'covers', storageKey: cacheKey('covers', scope.userId) }), ...shared], storage);
   assert.equal(recovery.read(scope, storage).entries.length, 7);
@@ -252,4 +255,86 @@ test('storage read, write and removal failures propagate without deleting marker
   assert.throws(() => recovery.remove(scope, failedRemove), error => error === failure);
   assert.equal(storage.values.get(key), original);
   assert.equal(storage.values.get(row.storageKey), 'synthetic-existing-cache');
+});
+
+test('a previous-format marker preserves its actual source key, payload hash and cached bytes', async () => {
+  const primary = cacheKey('cars', scope.userId), previous = compat.legacyKey(primary);
+  const source = JSON.stringify([{ id: 'synthetic-unfinished', memo: 'previous-format pending save' }]);
+  const row = entry({ storageKey: previous, hash: await recovery.hash(source) });
+  const serialized = JSON.stringify({ v: 1, ...scope, entries: [row] });
+  const storage = memoryStorage([[previous, source], [recovery.key(scope), serialized]]);
+  const result = recovery.read(scope, storage);
+  assert.deepEqual(result.entries[0], row);
+  assert.equal(result.entries[0].storageKey, previous);
+  assert.notEqual(result.entries[0].storageKey, primary);
+  assert.equal(storage.values.get(primary), undefined);
+  assert.equal(storage.values.get(previous), source);
+  assert.equal(storage.values.get(recovery.key(scope)), serialized);
+  assert(storage.calls.every(([operation]) => operation === 'get'));
+});
+
+test('all retained dataset aliases are validated by exact owner and keep their original spelling', () => {
+  for (const dataset of ['cars', 'covers', 'finance', 'finance_limits', 'prestock', 'monthly', 'categories']) {
+    const personal = dataset === 'cars' || dataset === 'covers';
+    const primary = compat.primaryKey(dataset, personal ? 'cld_' + scope.userId.replaceAll('-', '').slice(0, 18) : null);
+    const row = entry({ dataset, ownerId: personal ? scope.userId : nilOwner, storageKey: compat.legacyKey(primary) });
+    const store = memoryStorage(); recovery.write(scope, [row], store);
+    assert.equal(recovery.read(scope, store).entries[0].storageKey, row.storageKey);
+    assert.throws(() => recovery.write(scope, [row, { ...row, storageKey: primary }], store), /DUPLICATE/);
+  }
+});
+
+test('a previous alias cannot authorize a foreign owner, dataset, scope, or malformed cache key', () => {
+  const primary = cacheKey('cars', scope.userId), previous = compat.legacyKey(primary), store = memoryStorage();
+  recovery.write(scope, [entry({ storageKey: previous })], store);
+  const key = recovery.key(scope), before = store.values.get(key);
+  for (const row of [
+    entry({ storageKey: compat.legacyKey(cacheKey('cars', otherUser)) }),
+    entry({ storageKey: previous + '-extra' }),
+    entry({ dataset: 'covers', storageKey: previous }),
+    entry({ dataset: 'finance', ownerId: nilOwner, storageKey: previous }),
+    entry({ storageKey: previous, hash: 'not-a-hash' }),
+    entry({ storageKey: previous, revision: -1 })
+  ]) {
+    assert.throws(() => recovery.write(scope, [row], store));
+    assert.equal(store.values.get(key), before);
+  }
+  store.values.set(key, JSON.stringify({ ...JSON.parse(before), companyId: otherCompany }));
+  assert.throws(() => recovery.read(scope, store), /SCOPE/);
+});
+
+test('cross-format owner-alias collisions cannot bypass duplicate protection', () => {
+  const collision = '11111111-1111-4111-8111-111111111112';
+  const first = entry({ storageKey: compat.legacyKey(cacheKey('cars', scope.userId)) });
+  const second = entry({ ownerId: collision, storageKey: cacheKey('cars', collision) });
+  assert.notEqual(first.ownerId, second.ownerId);
+  assert.notEqual(first.storageKey, second.storageKey);
+  assert.throws(() => recovery.write(scope, [first, second], memoryStorage()), /DUPLICATE/);
+});
+
+test('previous-format markers retain exact hash and revision reconciliation rules', () => {
+  const row = freeze(entry({ storageKey: compat.legacyKey(cacheKey('cars', scope.userId)) }));
+  for (const [state, expected] of [
+    [{ cacheHash: hashA, serverRevision: 2, serverHash: hashB }, 'retry'],
+    [{ cacheHash: hashA, serverRevision: 3, serverHash: hashA }, 'acknowledged'],
+    [{ cacheHash: hashA, serverRevision: 3, serverHash: hashB }, 'conflict'],
+    [{ cacheHash: hashB, serverRevision: 3, serverHash: hashA }, 'cache-changed']
+  ]) {
+    const before = JSON.stringify(state);
+    assert.equal(recovery.reconcile(row, freeze(state)), expected);
+    assert.equal(JSON.stringify(state), before);
+  }
+});
+
+test('a missing compatibility registry fails closed before reading or replacing recovery storage', () => {
+  const sandbox = { URL, TextEncoder, crypto: globalThis.crypto };
+  vm.createContext(sandbox);
+  vm.runInContext(fs.readFileSync(require.resolve('../assets/idle-recovery.js'), 'utf8'), sandbox);
+  const model = sandbox.SnoteIdleRecovery, store = memoryStorage();
+  for (const operation of [
+    () => model.key(scope), () => model.read(scope, store),
+    () => model.write(scope, [], store), () => model.remove(scope, store),
+    () => model.reconcile(entry(), { cacheHash: hashA, serverRevision: 2 })
+  ]) assert.throws(operation, /COMPAT/);
+  assert.deepEqual(store.calls, []);
 });
