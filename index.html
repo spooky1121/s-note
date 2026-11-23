@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.197">
+<html lang="ko" data-snote-release="2.198">
 <head>
 <meta charset="utf-8" />
 <link rel="stylesheet" href="assets/message-popup.css?v=2.172">
@@ -9951,6 +9951,27 @@ zc72ReadCar=async function(owner,car){if(!S.ready){if(S.user||String(owner).star
  const ctx=snote214CustomerContext(owner),data=await snote214ReadCustomerRow(ctx,car);
  return data?snote214CustomerMarker(data.payload,data.has_rrn,data.updated_at,data.restore_generation):null;
 };
+// Adopt a new customer generation only after importing that exact verified intake.
+// A restored customer, stale form, or late response must never unlock an old draft.
+window.snoteIntakeAdoptCustomerVersion=async function({car,requestId,isCurrent}={}){
+ if(!car||typeof requestId!=='string'||typeof isCurrent!=='function'||!isCurrent()||!currentUser||zc72SaleLoading)return false;
+ const actor=currentUser,view=snote214SaleView,carId=zc72SaleCarId,signature=snote214SaleSignature(),company=S.company;
+ if(String(car.id)!==String(carId)||snoteWorkCar(carId)!==car||snoteWorkActiveId()!==carId||$('zc72-sale-modal').hidden)return false;
+ let ctx;try{ctx=snote214CustomerContext(actor.username);}catch{return false;}
+ const current=()=>isCurrent()&&currentUser===actor&&S.company===company&&snote214SaleView===view&&zc72SaleCarId===carId&&
+  snoteWorkCar(carId)===car&&snoteWorkActiveId()===carId&&!$('zc72-sale-modal').hidden&&!zc72SaleLoading&&snote214SaleSignature()===signature;
+ try{
+  const customer=await zc72ReadCar(actor.username,carId);snote214CheckCustomerContext(ctx);
+  if(!current()||customer?.intakeSource?.requestId!==requestId)return false;
+  const version=snote214CustomerVersions.get(customer);
+  if(!version||typeof version.generation!=='string'||!/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(version.generation)||
+    typeof version.updatedAt!=='string'||!Number.isFinite(Date.parse(version.updatedAt)))return false;
+  const normalized=value=>String(value||'').trim().replace(/\s+/g,' ');
+  if(normalized(customer.name)!==normalized($('zc72-name').value)||zc72Digits(customer.phone)!==zc72Digits($('zc72-phone').value))return false;
+  snote214SaleRestoreGeneration=version.generation;
+  return true;
+ }catch{return false;}
+};
 zc72ReadOwner=async function(owner){if(!S.ready){if(S.user||String(owner).startsWith('cld_'))throw Error('온라인 고객정보 연결을 확인한 뒤 다시 시도해 주세요.');return originalReadOwner(owner);}
  const ctx=snote214CustomerContext(owner);
  const {data,error}=await ctx.client.from('zc_customers').select('payload,has_rrn,updated_at,restore_generation').eq('company_id',ctx.companyId).eq('owner_id',ctx.uid).limit(2000);
@@ -12005,7 +12026,7 @@ window.zc86Cloud={getAccessToken:async()=>{const client=S.client,user=S.user,com
 })();
 
 </script>
-<script src="assets/snote-customer-intake.js?v=2.196" defer></script>
+<script src="assets/snote-customer-intake.js?v=2.198" defer></script>
 <script type="module" src="assets/quick-calculator.js?v=2.85"></script>
 <script src="assets/vehicle-taxonomy-probe.js?v=2.172" defer></script>
 <script src="assets/vehicle-sharing.js?v=2.174" defer></script>
@@ -12015,7 +12036,7 @@ window.zc86Cloud={getAccessToken:async()=>{const client=S.client,user=S.user,com
 <link rel="stylesheet" href="assets/workspace-reorder.css?v=2.136">
 <script src="assets/workspace-order-store.js?v=2.135" defer></script>
 <script src="assets/workspace-reorder.js?v=2.172" defer></script>
-<script src="assets/release-info.js?v=2.197" defer></script>
+<script src="assets/release-info.js?v=2.198" defer></script>
 <link rel="stylesheet" href="assets/encar-id.css?v=2.162">
 <script src="assets/encar-id.js?v=2.184" defer></script>
 <script src="assets/company-purchase.js?v=2.172" defer></script>
