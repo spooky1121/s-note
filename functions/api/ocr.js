@@ -1,5 +1,6 @@
 import { readBoundedBytes, sameOriginRequest, RequestSecurityError, securityResponse } from '../_shared/api-security.js';
 import { parseEncarPrice } from '../_shared/encar-price-ocr.mjs';
+import { createServiceTelemetry } from '../_shared/service-telemetry.mjs';
 
 /**
  * S-NOTE / Cloudflare Pages Function
@@ -620,12 +621,16 @@ export function onRequestGet({ env } = {}) {
   });
 }
 
-export async function onRequestPost({ request, env }) {
+export async function onRequestPost(context) {
+  const { request, env = {} } = context;
+  const telemetry = createServiceTelemetry(context, { service: 'vision' });
+  const respond = (status, body) => telemetry.finish(reply(status, body), { ok: body?.ok === true });
+  telemetry.stage('validation');
   if (!sameOriginRequest(request)) return securityResponse('FORBIDDEN');
   const purposes = new URL(request.url).searchParams.getAll('purpose');
   const purpose = purposes.length === 0 ? 'registration' : purposes[0];
   if (purposes.length > 1 || !['registration', 'encar-price'].includes(purpose)) {
-    return reply(400, { error: '지원하지 않는 이미지 인식 요청입니다.' });
+    return respond(400, { error: '지원하지 않는 이미지 인식 요청입니다.' });
   }
   const googleKey = String(
     env.GOOGLE_VISION_API_KEY || ''
@@ -644,7 +649,7 @@ export async function onRequestPost({ request, env }) {
     !/^https:\/\/[\w-]+\.supabase\.co$/.test(supaUrl) ||
     !supaKey
   ) {
-    return reply(503, {
+    return respond(503, {
       error: 'Cloudflare OCR 환경 변수가 설정되지 않았습니다.'
     });
   }
@@ -652,7 +657,7 @@ export async function onRequestPost({ request, env }) {
   const bearer = request.headers.get('authorization') || '';
 
   if (!/^Bearer\s+[A-Za-z0-9._-]{30,5000}$/i.test(bearer)) {
-    return reply(401, {
+    return respond(401, {
       error: 'S-NOTE 로그인이 필요합니다.'
     });
   }
@@ -665,13 +670,13 @@ export async function onRequestPost({ request, env }) {
   const length = Number(declaredLength || 0);
 
   if (!ALLOWED.has(contentType)) {
-    return reply(415, {
+    return respond(415, {
       error: purpose === 'encar-price' ? 'JPG, PNG 또는 WEBP 캡처 이미지만 전송할 수 있습니다.' : 'JPG, PNG 또는 WEBP 등록증 이미지만 전송할 수 있습니다.'
     });
   }
 
   if ((declaredLength !== null && !/^\d+$/.test(declaredLength)) || length > MAX_IMAGE_BYTES) {
-    return reply(413, {
+    return respond(413, {
       error: purpose === 'encar-price' ? 'Google OCR 캡처 파일은 6MB 이하로 선택해 주세요.' : 'Google OCR 등록증 파일은 6MB 이하로 선택해 주세요.'
     });
   }
@@ -682,6 +687,7 @@ export async function onRequestPost({ request, env }) {
   request.signal?.addEventListener('abort', abort, { once: true });
   if (request.signal?.aborted) abort();
   try {
+    telemetry.stage('auth');
     const h = {
       apikey: supaKey,
       Authorization: bearer
@@ -696,7 +702,7 @@ export async function onRequestPost({ request, env }) {
     );
 
     if (!auth.ok) {
-      return reply(401, {
+      return respond(401, {
         error: '로그인 세션이 만료되었습니다. 다시 로그인하세요.'
       });
     }
@@ -704,7 +710,7 @@ export async function onRequestPost({ request, env }) {
     const user = await upstreamJSON(auth, 64 * 1024);
 
     if (!/^[0-9a-f-]{36}$/i.test(user?.id || '')) {
-      return reply(401, {
+      return respond(401, {
         error: '로그인 사용자 확인에 실패했습니다.'
       });
     }
@@ -718,6 +724,7 @@ export async function onRequestPost({ request, env }) {
     memberURL.searchParams.set('active', 'eq.true');
     memberURL.searchParams.set('limit', '1');
 
+    telemetry.stage('membership');
     const membership = await fetch(
       memberURL.toString(),
       {
@@ -727,7 +734,7 @@ export async function onRequestPost({ request, env }) {
     );
 
     if (!membership.ok) {
-      return reply(403, {
+      return respond(403, {
         error: 'S-NOTE 직원 권한을 확인할 수 없습니다.'
       });
     }
@@ -735,18 +742,21 @@ export async function onRequestPost({ request, env }) {
     const members = await upstreamJSON(membership, 64 * 1024);
 
     if (!Array.isArray(members) || members.length < 1) {
-      return reply(403, {
+      return respond(403, {
         error: '활성화된 S-NOTE 직원만 OCR을 사용할 수 있습니다.'
       });
     }
 
+    telemetry.authorized({ userId: user.id });
+    telemetry.stage('upload');
     const buffer = await readBoundedBytes(request, MAX_IMAGE_BYTES, { timeoutMs: OCR_UPLOAD_TIMEOUT_MS });
+    telemetry.bytes({ requestBytes: buffer.byteLength });
 
     if (
       buffer.byteLength > MAX_IMAGE_BYTES ||
       buffer.byteLength === 0
     ) {
-      return reply(413, {
+      return respond(413, {
         error: '6MB 이하의 이미지 파일을 선택하세요.'
       });
     }
@@ -754,7 +764,7 @@ export async function onRequestPost({ request, env }) {
     const image = new Uint8Array(buffer);
 
     if (!isSupportedImage(contentType, image)) {
-      return reply(415, {
+      return respond(415, {
         error: '이미지 파일의 형식을 확인해 주세요.'
       });
     }
@@ -773,6 +783,7 @@ export async function onRequestPost({ request, env }) {
 
     const base64 = btoa(binary);
 
+    telemetry.stage('provider');
     const google = await fetch(
       'https://vision.googleapis.com/v1/images:annotate?key=' +
       encodeURIComponent(googleKey),
@@ -799,7 +810,7 @@ export async function onRequestPost({ request, env }) {
 
     if (!google.ok) {
       if (google.status === 429) {
-        return reply(429, {
+        return respond(429, {
           error: 'Google OCR 요청 한도를 초과했습니다.'
         });
       }
@@ -809,23 +820,24 @@ export async function onRequestPost({ request, env }) {
         google.status === 400 ||
         google.status === 401
       ) {
-        return reply(502, {
+        return respond(502, {
           error: 'Google Vision API 키, API 제한 및 결제 설정을 확인하세요 (Google HTTP ' +
             google.status + ').'
         });
       }
 
-      return reply(502, {
+      return respond(502, {
         error: 'Google Vision OCR 서버 응답 오류 (' +
           google.status + ').'
       });
     }
 
+    telemetry.stage('parse');
     const data = await upstreamJSON(google, 4 * 1024 * 1024);
     const result = data?.responses?.[0];
 
     if (result?.error) {
-      return reply(502, {
+      return respond(502, {
         error: 'Google Vision이 이미지를 처리하지 못했습니다.'
       });
     }
@@ -834,25 +846,28 @@ export async function onRequestPost({ request, env }) {
       text: result?.textAnnotations?.[0]?.description || ''
     };
     if (purpose === 'encar-price') {
-      return reply(200, {
+      const candidates = parseEncarPrice(annotation);
+      telemetry.stage('complete');
+      return respond(200, {
         ok: true,
         purpose: 'encar-price',
         engine: 'google-vision',
-        candidates: parseEncarPrice(annotation),
+        candidates,
         requiresConfirmation: true
       });
     }
     const fields = parseDocument(annotation);
 
-    return reply(200, {
+    telemetry.stage('complete');
+    return respond(200, {
       ok: true,
       fields,
       engine: 'google-vision'
     });
 
   } catch (error) {
-    if (error instanceof RequestSecurityError) return securityResponse(error.code);
-    return reply(502, {
+    if (error instanceof RequestSecurityError) return telemetry.finish(securityResponse(error.code), { ok: false });
+    return respond(502, {
       error: 'OCR 연결 중 오류가 발생했습니다.'
     });
   } finally {

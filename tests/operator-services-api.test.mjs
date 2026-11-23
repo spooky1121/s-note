@@ -1,0 +1,33 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {onRequest} from '../functions/api/operator.js';
+const A='11111111-1111-4111-8111-111111111111',U='22222222-2222-4222-8222-222222222222',C='33333333-3333-4333-8333-333333333333',S='44444444-4444-4444-8444-444444444444',F='55555555-5555-4555-8555-555555555555';
+const token='eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzeW50aGV0aWMifQ.c2lnbmF0dXJl';
+const ENV={SUPABASE_URL:'https://operator-tests.supabase.co',SUPABASE_PUBLISHABLE_KEY:'synthetic-public',SUPABASE_SERVICE_ROLE_KEY:'synthetic-server-secret'};
+const json=(value,status=200)=>new Response(JSON.stringify(value),{status,headers:{'Content-Type':'application/json'}});
+const png=new Uint8Array([137,80,78,71,13,10,26,10,0,0,1,2]);
+function fixture(t){const previous=globalThis.fetch,calls=[];let checks=0;
+ const state={allowed:true,revokeAt:Infinity,path:`${C}/${U}/${F}.png`,mime:'image/png',image:png,metrics:[],items:[{requestId:F,adId:'43161296',link:'https://fem.encar.com/cars/detail/43161296'}],calls};
+ globalThis.fetch=async(input,options={})=>{
+  const url=new URL(input),body=options.body?JSON.parse(options.body):null;calls.push({url,options,body});assert.equal(url.origin,ENV.SUPABASE_URL);
+  assert.equal(options.redirect,'manual');
+  if(url.pathname==='/auth/v1/user')return json({id:A});
+  if(url.pathname.endsWith('/snote_operator_context')){checks++;return json({allowed:state.allowed&&checks<state.revokeAt,actorId:A,sessionId:S});}
+  if(url.pathname.endsWith('/snote_operator_accounts_list'))return json({items:[{userId:U,email:'synthetic@example.invalid',passwordConfigured:true,password:'never-return',encrypted_password:'never-return',avatarAvailable:true}],page:1,pageSize:20,total:1});
+  if(url.pathname.endsWith('/snote_operator_services'))return json({service:body.p_service,items:state.items,metrics:state.metrics,notes:['합성 서비스 기록'],page:1,pageSize:20,total:state.items.length});
+  if(url.pathname.endsWith('/snote_operator_account_avatar')){assert.deepEqual(body,{p_user_id:U});return json({userId:U,bucket:'snote-profile-photos',path:state.path});}
+  if(url.pathname.startsWith('/storage/v1/object/authenticated/')){assert.equal(options.headers.apikey,ENV.SUPABASE_SERVICE_ROLE_KEY);return new Response(state.image,{headers:{'Content-Type':state.mime}});}
+  throw Error('Unexpected synthetic endpoint '+url.pathname);
+ };
+ t.after(()=>{globalThis.fetch=previous;});return state;
+}
+async function call(body,env=ENV){const r=await onRequest({env,request:new Request('https://s-note.example/api/operator',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token,Origin:'https://s-note.example'},body:JSON.stringify(body)})});return{status:r.status,body:await r.json(),headers:r.headers};}
+test('account configuration boolean survives while credentials remain absent',async t=>{fixture(t);const r=await call({action:'accounts'});assert.equal(r.status,200);assert.equal(r.body.items[0].passwordConfigured,true);assert.equal(r.body.items[0].avatarAvailable,true);assert.equal(r.body.items[0].password,undefined);assert.equal(r.body.items[0].encrypted_password,undefined);assert(!JSON.stringify(r.body).includes('never-return'));});
+test('real app history remains available when provider credentials are not configured',async t=>{fixture(t);const r=await call({action:'services',service:'sms',query:{page:2,query:'synthetic'}});assert.equal(r.status,200);assert.equal(r.body.items[0].adId,'43161296');assert.equal(r.body.metrics.find(x=>x.key==='balance').value,null);assert.deepEqual(r.body.providerItems,[]);assert(r.body.notes.length>1);assert.equal(r.headers.get('Cache-Control'),'no-store, private, max-age=0');});
+test('all read-only service views use the strict RPC and preserve measured zero',async t=>{const f=fixture(t);f.metrics=[{key:'observed',label:'관측',value:0,unit:'건'}];for(const service of ['encar','vision','server']){const r=await call({action:'services',service,query:{page:1}});assert.equal(r.status,200);assert.equal(r.body.service,service);assert.equal(r.body.metrics[0].value,0);}assert(f.calls.filter(x=>x.url.pathname.endsWith('/snote_operator_services')).every(x=>Object.keys(x.body).sort().join(',')==='p_query,p_service'));});
+test('company admins and revoked operators cannot retrieve any new service/avatar data',async t=>{const f=fixture(t);f.allowed=false;for(const body of [{action:'services',service:'server'},{action:'account-avatar',userId:U}])assert.equal((await call(body)).status,403);assert.equal(f.calls.filter(x=>/services|account_avatar|storage/.test(x.url.pathname)).length,0);});
+test('unsupported services and query fields do not forward arbitrary paths',async t=>{const f=fixture(t);for(const body of [{action:'services',service:'https://external.invalid'},{action:'services',service:'sms',query:{url:'https://external.invalid'}},{action:'services',service:'server',query:{page:0}},{action:'account-avatar',userId:U,path:'external'}])assert.equal((await call(body)).status,400);assert.equal(f.calls.filter(x=>/snote_operator_services|account_avatar/.test(x.url.pathname)).length,0);});
+test('avatar response is a bounded validated inline image without a storage credential or URL',async t=>{fixture(t);const r=await call({action:'account-avatar',userId:U});assert.equal(r.status,200);assert.equal(r.body.image,'data:image/png;base64,'+Buffer.from(png).toString('base64'));assert.equal(r.body.userId,U);assert(!JSON.stringify(r.body).includes(ENV.SUPABASE_SERVICE_ROLE_KEY));assert(!JSON.stringify(r.body).includes('storage/v1'));});
+test('no avatar is represented as missing, never a fabricated image',async t=>{const f=fixture(t);f.path=null;const r=await call({action:'account-avatar',userId:U});assert.equal(r.status,200);assert.equal(r.body.image,null);assert.equal(f.calls.filter(x=>x.url.pathname.startsWith('/storage')).length,0);});
+test('avatar path traversal and a different account fail before private Storage access',async t=>{const f=fixture(t);for(const path of ['https://external.invalid/photo.png',`${C}/${A}/${F}.png`,`${C}/${U}/../image.png`]){f.path=path;assert.equal((await call({action:'account-avatar',userId:U})).status,502);}assert.equal(f.calls.filter(x=>x.url.pathname.startsWith('/storage')).length,0);});
+test('invalid image contents and revocation after a private fetch never return its data',async t=>{const f=fixture(t);f.mime='text/html';f.image=new TextEncoder().encode('<script>bad</script>');assert.equal((await call({action:'account-avatar',userId:U})).status,502);f.mime='image/png';f.image=png;f.revokeAt=5;const r=await call({action:'account-avatar',userId:U});assert.equal(r.status,403);assert.equal(r.body.image,undefined);});

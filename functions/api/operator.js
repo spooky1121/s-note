@@ -1,6 +1,7 @@
 import '../../assets/money.js';
 import { readBoundedBytes } from '../_shared/api-security.js';
 import { createTransferRewrapper } from '../_shared/operator-transfer.js';
+import { operatorProviderStatus } from '../_shared/operator-services.js';
 
 // Platform operations are authorized twice: verified Auth user + a live-session
 // database allowlist. Company admin roles and browser-supplied identities confer
@@ -74,7 +75,7 @@ function databaseError(status, data, adminAuth = false) {
   if (adminAuth && (status === 400 || status === 422)) fail('INVALID_REQUEST');
   fail('NETWORK');
 }
-async function upstream(c, jwt, path, { body, method, service = false, binary = false } = {}) {
+async function upstream(c, jwt, path, { body, method, service = false, binary = false, maximum = MAX_FILE } = {}) {
   const controller = new AbortController(), timeout = setTimeout(() => controller.abort(), 18000);
   try {
     const key = service ? c.service : c.pub;
@@ -82,7 +83,7 @@ async function upstream(c, jwt, path, { body, method, service = false, binary = 
       headers: { apikey: key, Authorization: 'Bearer ' + (service ? c.service : jwt), Accept: binary ? 'application/octet-stream' : 'application/json', ...(body === undefined ? {} : { 'Content-Type': 'application/json' }) },
       ...(body === undefined ? {} : { body: JSON.stringify(body) }) });
     if (response.status >= 300 && response.status < 400) fail('NETWORK');
-    if (binary && response.ok) return { data: await bytes(response, MAX_FILE), mime: (response.headers.get('Content-Type') || '').split(';')[0].toLowerCase() };
+    if (binary && response.ok) return { data: await bytes(response, maximum), mime: (response.headers.get('Content-Type') || '').split(';')[0].toLowerCase() };
     let data;
     try { const raw = await bytes(response, MAX_JSON); data = raw.length ? JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(raw)) : null; } catch { fail('NETWORK'); }
     if (!response.ok) databaseError(response.status, data, path.startsWith('/auth/v1/admin/'));
@@ -316,9 +317,51 @@ async function authUpdate(c, jwt, actor, b) {
     ...(object(finalized.account) ? { account: publicValue(finalized.account) } : {}) };
 }
 
+function accountListResult(data) {
+  const result = publicResult(data);
+  if (!Array.isArray(data.items)) fail('NETWORK');
+  // Password hashes and passwords remain excluded by publicValue. This one
+  // explicit boolean describes configuration and cannot carry a credential.
+  result.items = result.items.map((item, index) => ({ ...item,
+    passwordConfigured: typeof data.items[index]?.passwordConfigured === 'boolean' ? data.items[index].passwordConfigured : null }));
+  return result;
+}
+async function accountAvatar(c, jwt, actor, userId) {
+  const target = uuid(userId), record = await rpc(c, jwt, actor, 'account_avatar', { p_user_id: target });
+  if (!object(record) || record.userId !== target) fail('NETWORK');
+  if (record.path === null) return { userId: target, image: null };
+  if (record.bucket !== 'snote-profile-photos' || typeof record.path !== 'string') fail('NETWORK');
+  const parts = record.path.split('/');
+  if (parts.length !== 3 || !UUID.test(parts[0]) || parts[1] !== target || !/^[a-f0-9-]{36}\.(?:jpg|png|webp)$/.test(parts[2]) || !UUID.test(parts[2].split('.')[0])) fail('NETWORK');
+  await recheck(c, jwt, actor);
+  const file = await upstream(c, jwt, '/storage/v1/object/authenticated/snote-profile-photos/' + parts.map(encodeURIComponent).join('/'), { service: true, binary: true, maximum: 5 * 1024 * 1024 });
+  const v = file.data, magic = file.mime === 'image/png' ? v.length >= 8 && [137,80,78,71,13,10,26,10].every((b,i)=>v[i]===b)
+    : file.mime === 'image/jpeg' ? v.length >= 4 && v[0]===255 && v[1]===216 && v.at(-2)===255 && v.at(-1)===217
+      : file.mime === 'image/webp' && v.length >= 12 && [82,73,70,70].every((b,i)=>v[i]===b) && [87,69,66,80].every((b,i)=>v[i+8]===b);
+  if (!magic) fail('NETWORK');
+  await recheck(c, jwt, actor);
+  let raw = '';for(let i=0;i<v.length;i+=8192)raw+=String.fromCharCode(...v.subarray(i,i+8192));
+  return { userId: target, image: 'data:' + file.mime + ';base64,' + btoa(raw) };
+}
+async function serviceStatus(c, jwt, actor, b, env) {
+  fields(b, ['action', 'service', 'query']);
+  if (!['sms','encar','vision','server'].includes(b.service)) fail('INVALID_REQUEST');
+  const query=b.query||{};fields(query,['page','query']);
+  if(query.page!==undefined&&(!Number.isSafeInteger(query.page)||query.page<1||query.page>1000000))fail('INVALID_REQUEST');
+  if(query.query!==undefined)label(query.query,120,true);
+  const data=await rpc(c,jwt,actor,'services',{p_service:b.service,p_query:query});
+  if(!object(data)||data.service!==b.service||!Array.isArray(data.items)||!Array.isArray(data.metrics)||!Array.isArray(data.notes))fail('NETWORK');
+  // Provider failures leave the canonical application history available.
+  const provider=await operatorProviderStatus(env,{service:b.service});
+  await recheck(c,jwt,actor);
+  return {...publicResult(data),status:provider.status,metrics:[...data.metrics,...provider.metrics],notes:[...data.notes,...provider.notes],
+    ...(b.service==='sms'?{providerItems:provider.providerItems||[]}: {})};
+}
 async function perform(c, jwt, actor, b, env) {
   const action = b.action;
   if (action === 'context') { fields(b, ['action']); return actor; }
+  if (action === 'services') return serviceStatus(c,jwt,actor,b,env);
+  if (action === 'account-avatar') { fields(b,['action','userId']);return accountAvatar(c,jwt,actor,b.userId); }
   if (action === 'support-unread') {
     fields(b, ['action']);return supportResult(await rpc(c,jwt,actor,'support_unread'));
   }
@@ -347,7 +390,8 @@ async function perform(c, jwt, actor, b, env) {
     if (query.page !== undefined && (!Number.isSafeInteger(query.page) || query.page < 1 || query.page > 1000000)) fail('INVALID_REQUEST');
     for (const key of ['query', 'sort', 'direction', 'status']) if (query[key] !== undefined) label(query[key], 200, true);
     for (const key of ['companyId', 'ownerId']) if (query[key]) uuid(query[key]);
-    return publicResult(await rpc(c, jwt, actor, action + '_list', { p_query: query }));
+    const data = await rpc(c, jwt, actor, action + '_list', { p_query: query });
+    return action === 'accounts' ? accountListResult(data) : publicResult(data);
   }
   if (['vehicle-detail', 'media-file'].includes(action)) {
     fields(b, ['action', 'companyId', 'ownerId', 'carId', ...(action === 'media-file' ? ['mediaId'] : [])]);
