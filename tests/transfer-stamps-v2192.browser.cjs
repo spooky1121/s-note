@@ -5,7 +5,7 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('n
 const {chromium}=require('./encar/node_modules/playwright');
 const {fixture,setBrowser,finish}=require('./encar/browser-smoke.cjs');
 const {setup,setKind,qa}=require('./contract-office.browser.cjs');
-const OUT=process.env.TRANSFER_STAMPS_ARTIFACT_DIR||'/workspace/work/transfer-stamps-v2192/qa-trader';
+const OUT=process.env.TRANSFER_STAMPS_ARTIFACT_DIR||'/workspace/work/transfer-fill-v2193/qa-trader';
 const widths=(process.env.TRANSFER_STAMPS_TEST_WIDTHS||'1440,390').split(',').map(Number),results=[];
 fs.mkdirSync(OUT,{recursive:true});
 const input=(p,key)=>p.locator('#contract-office-'+key),image=(p,slot)=>p.locator('#contract-office-page-front [data-seal-slot="'+slot+'"]');
@@ -16,6 +16,17 @@ async function holdOffice(p){await p.evaluate(()=>{const m=__contractMock;m.offi
 async function releaseOffice(p){await p.evaluate(async()=>{const m=__contractMock;m.releaseOffice();await m.officeFinished;await new Promise(requestAnimationFrame);await new Promise(requestAnimationFrame);});}
 async function readyAssets(p){await p.evaluate(async()=>{const m=__contractMock;m.officeStampMode='ready';await m.makeStamp(m.C,1);await m.makeOfficeStamp();snoteInvalidateCompanyAssets('companyStamp');snoteInvalidateCompanyAssets('companyOfficeStamp');});}
 async function noStaleImage(p,source){assert.equal(await p.locator('#contract-office-dialog [data-seal-slot]').evaluateAll((images,source)=>images.some(img=>img.getAttribute('src')&&(!source||img.dataset.snoteCompanySource===source)),source),false,'A stale private source cannot remain on any transfer image');}
+async function registeredInkSupport(p,slot){
+ const support=await image(p,slot).evaluate(async target=>{
+  const source=new Image();source.src=target.dataset.snoteCompanySource;await source.decode();
+  const canvas=()=>{const c=document.createElement('canvas');c.width=target.naturalWidth;c.height=target.naturalHeight;return c;},original=canvas(),rendered=canvas(),before=original.getContext('2d',{willReadFrequently:true}),after=rendered.getContext('2d',{willReadFrequently:true});
+  before.imageSmoothingEnabled=true;before.imageSmoothingQuality='high';before.drawImage(source,0,0,original.width,original.height);after.drawImage(target,0,0);
+  const a=before.getImageData(0,0,original.width,original.height).data,b=after.getImageData(0,0,rendered.width,rendered.height).data;let invented=0,lostStrongInk=0,strongSourceInk=0;
+  for(let i=0;i<a.length;i+=4){if(b[i+3]>0&&a[i+3]===0)invented++;if(a[i+3]>128&&Math.min(a[i],a[i+1],a[i+2])<215){strongSourceInk++;if(b[i+3]===0)lostStrongInk++;}}
+  return{width:original.width,height:original.height,invented,lostStrongInk,strongSourceInk};
+ });
+ assert(support.strongSourceInk>100,'The registered synthetic source contains substantial original strokes');assert.equal(support.invented,0,'Upscaling cannot create ink outside the registered image support');assert.equal(support.lostStrongInk,0,'The rendition retains every strong original source stroke');assert(Math.max(support.width,support.height)>=2048&&Math.max(support.width,support.height)<=4096&&support.width*support.height<=8000000,'The print rendition is high resolution and bounded');return support;
+}
 async function run(width,kind){
  setKind(kind);const f=await fixture(width),p=f.page;
  try{
@@ -37,8 +48,9 @@ async function run(width,kind){
   assert.equal(await image(p,'dealer1-corporate').getAttribute('src'),await image(p,base[0]).getAttribute('src'),'The adjoining round impression uses the same verified company image as the party stamps');
   assert.notEqual(await image(p,'dealer1-office').getAttribute('src'),await image(p,'dealer1-corporate').getAttribute('src'),'The separate office stamp cannot reuse a round company graphic');
   for(const slot of ['dealer1-office','dealer1-corporate']){const pixels=await qa.sealPixels(p,'[data-seal-slot="'+slot+'"]');assert(pixels.warm/pixels.visible>.99,'Both private trader stamps render in #dc3722 warm vermilion');assert(pixels.transparent>100&&pixels.red>100);assert(Math.max(pixels.width,pixels.height)>=2048);}
+  const registeredInk={office:await registeredInkSupport(p,'dealer1-office'),corporate:await registeredInkSupport(p,'dealer1-corporate')};
   const dimensions=await p.evaluate(()=>({company:SnoteTransferDocumentLayout.seals.company.sellerTop,generated:SnoteTransferDocumentLayout.seals.generated.buyerTop,office:SnoteTransferDocumentLayout.seals.traderOffice,corporate:SnoteTransferDocumentLayout.seals.traderCorporate}));
-  assert.equal(dimensions.company[3],62.7);assert.equal(dimensions.generated[3],50.16);for(const group of [dimensions.office,dimensions.corporate])for(const box of Object.values(group))assert.deepEqual(box.slice(2),[44,44]);
+  assert.equal(dimensions.company[3],62.7);assert.equal(dimensions.generated[3],50.16);for(const box of Object.values(dimensions.office))assert.deepEqual(box.slice(2),[qa.OFFICE_PHYSICAL_PT,qa.OFFICE_PHYSICAL_PT]);for(const box of Object.values(dimensions.corporate))assert.deepEqual(box.slice(2),[44,44]);
   await p.locator('#contract-office-page-front').screenshot({path:path.join(OUT,'trader-stamps-'+kind+'-'+width+'.png')});
   if(width===1440){await p.emulateMedia({media:'print'});const file=path.join(OUT,'trader-stamps-'+kind+'.pdf');await p.pdf({path:file,format:'A4',preferCSSPageSize:true,printBackground:true});const audit=await qa.auditPdf(file,p);qa.assertPdfSeals(audit,firstSlots);assert.equal(audit.pages,1);assert(Math.abs(audit.sizes[0][0]-595.28)<1&&Math.abs(audit.sizes[0][1]-841.89)<1);fs.writeFileSync(file+'.json',JSON.stringify(audit,null,2));await p.emulateMedia({media:'screen'});}
   await p.evaluate(()=>snoteInvalidateCompanyAssets('companyOfficeStamp'));assert.equal(await p.evaluate(()=>document.getElementById('contract-office-dialog').__coOfficeStampArtwork),null,'Office invalidation releases the preview-local private rendition cache');assert.equal(await image(p,'dealer1-office').getAttribute('src'),null,'Office invalidation immediately removes its displayed private pixels');assert.equal(await image(p,'dealer1-corporate').getAttribute('data-snote-company-source'),sources.company,'Invalidating the separate office image preserves the verified round seal source');
@@ -62,7 +74,7 @@ async function run(width,kind){
   const {reads,companyId}=await p.evaluate(()=>({reads:__contractMock.assetReads,companyId:__contractMock.C}));assert(reads.some(r=>r.group_name==='companyOfficeStamp'));assert(reads.filter(r=>r.group_name==='companyOfficeStamp').every(r=>r.company_id===companyId));
   assert.deepEqual(await p.evaluate(()=>__contractMock.saves),[],'Previewing trader stamps never saves customer or private asset data');assert.equal(await p.evaluate(()=>__encarFixtureWrites.length),0);assert.deepEqual(await p.evaluate(()=>__contractMock.privateReads),[]);assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
   await holdOffice(p);f.answerConfirm(true,/^온라인 계정에서 로그아웃할까요\?$/);await p.evaluate(()=>window.zc86Cloud.signOut());await releaseOffice(p);assert.equal(await p.locator('#contract-office-dialog[open]').count(),0,'Logout cancels a pending office-stamp preparation');await noStaleImage(p);assert.equal(await p.evaluate(()=>__transferStampPrints),0);assert.equal(await p.evaluate(()=>currentUser),null);
-  results.push({kind,width,passed:true,syntheticOnly:true});console.log('PASS transfer stamps v2.192',kind,width,'first matching trader only,private office+round44pt,missing/error/source/logout guards,10% signature scale,warm vermilion,black unchanged-weight1A4,no footer/no writes');
+  results.push({kind,width,passed:true,syntheticOnly:true,registeredInk});console.log('PASS transfer stamps v2.193',kind,width,'first matching trader only,private office69.564pt/physical1.7x+round44pt,missing/error/source/logout guards,full-size signatures/about5mm bottom space,warm vermilion,black unchanged-weight1A4,no footer/no writes');
  }catch(error){await p.screenshot({path:path.join(OUT,'failure-'+kind+'-'+width+'.png'),fullPage:true}).catch(()=>{});throw error;}finally{await finish(f);}
 }
 async function main(){const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium'});setBrowser(browser);try{for(const width of widths)for(const kind of ['purchase','sale'])await run(width,kind);}finally{await browser.close();fs.writeFileSync(path.join(OUT,'results.json'),JSON.stringify({syntheticOnly:true,results},null,2)+'\n');}}
