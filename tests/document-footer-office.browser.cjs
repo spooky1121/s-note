@@ -5,7 +5,7 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('n
 const{chromium}=require('./encar/node_modules/playwright');
 const{fixture,setBrowser,finish}=require('./encar/browser-smoke.cjs');
 const{setup,setKind,qa}=require('./contract-office.browser.cjs');
-const OUT=process.env.DOCUMENT_FOOTER_OFFICE_ARTIFACT_DIR||'/workspace/work/transfer-fill-v2193/office-footer';fs.mkdirSync(OUT,{recursive:true});
+const OUT=process.env.DOCUMENT_FOOTER_OFFICE_ARTIFACT_DIR||'/workspace/work/office-texture-v2194/office-footer';fs.mkdirSync(OUT,{recursive:true});
 const reports=[];
 async function makeLogo(p){await p.evaluate(async()=>{
  const m=__contractMock,canvas=document.createElement('canvas');canvas.width=240;canvas.height=96;const ctx=canvas.getContext('2d');ctx.fillStyle='#226bd5';ctx.fillRect(0,0,240,96);ctx.fillStyle='#fff';ctx.font='bold 28px sans-serif';ctx.fillText('SYNTHETIC',16,60);const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));
