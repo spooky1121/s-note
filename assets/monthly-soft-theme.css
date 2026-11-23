@@ -1,0 +1,31 @@
+/* Screen paint only. Responsive grids, input sizing, disabled/invalid states,
+   calculated sign colors and the A4 print stylesheet remain authoritative. */
+@media screen {
+ :root {color:#192c41;background:#fff}
+ body,.workbook {background:#fff;color:#30363f}
+ .workbook-toolbar {background:#fff}
+ .workbook :is(.panel,.summary-card) {border-color:#edf0f3;border-radius:12px;background:#fff;box-shadow:none}
+ .workbook .summary-card.accent {background:#f5faff;border-color:#e4f2fd}
+ .workbook .summary-card>strong:not(.negative):not(.match) {color:#192c41}
+ .workbook .summary-card.accent>strong:not(.negative):not(.match) {color:#0079c8}
+ .workbook :is(.panel-heading h2,.page-heading h1) {color:#192c41;font-weight:600}
+ .workbook :is(.panel-heading p,.summary-card>small,.summary-card>span,.section-help,.table-help,.save-footer) {color:#727984}
+ .workbook th:not(.negative):not(.match) {color:#6f7885;background:#f8fafc;font-weight:550;border-color:#edf0f3}
+ .workbook :is(td,tfoot td,tfoot th) {border-color:#edf0f3}
+ .workbook .cell-input:not(:disabled):not([aria-invalid=true]),
+ .workbook .cell-output:not(.negative):not(.match) {color:#30363f}
+ .workbook .cell-input:focus:not(:disabled):not([aria-invalid=true]) {border-color:#0096fe;box-shadow:inset 0 0 0 1px #0096fe;background:#f4faff}
+ .workbook :is(.button,.month-control button,.month-control input,.opening-controls input,.opening-controls select):not(:disabled) {border-color:#e5eaf0;border-radius:10px;color:#3a4b5d;background:#fff;box-shadow:none}
+ .workbook .button.primary:not(:disabled),.workbook .button.save:not(:disabled) {background:#0096fe;border-color:#0096fe;color:#192c41}
+ .workbook .add-row:not(:disabled) {color:#006bb5;background:#f5faff;border-color:#e4f2fd;border-radius:10px;box-shadow:none}
+ .workbook tfoot :is(td,th):not(.negative):not(.match),.workbook .strong {background:#f5faff;color:#192c41}
+ .workbook .month-note textarea:not(:disabled) {background:#fff;border-color:#e5eaf0;border-radius:10px;box-shadow:none}
+ .workbook .panel-heading {border-bottom-color:#edf0f3}
+ .workbook :is(button,input,select,textarea,a):focus-visible {outline-color:#0096fe66}
+}
+@media screen and (min-width:761px) {
+ /* Approved desktop type sizes; mobile keeps its existing 18px inputs. The
+    stylesheet link opts out of readable-type's second enlargement pass. */
+ :root {--snote-text-body:12.5px;--snote-text-label:12px;--snote-text-meta:11px;--snote-text-control:12.5px;--snote-text-button:12.5px}
+ .workbook th,.workbook :is(.cell-input,.cell-output) {font-size:12.5px!important}
+}

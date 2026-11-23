@@ -1,0 +1,167 @@
+/* Workspace paint only. Layout, access gates and document/print styles keep their own rules. */
+@media screen {
+ #snote-app {
+  --snote-surface:#fff;--snote-canvas:#fcfdfe;--snote-ink:#252d37;
+  --snote-secondary:#727b87;--snote-accent:#0096fe;--snote-divider:#edf0f3;
+  --snote-focus:#0096fe35;--ink:#252d37;--muted:#727b87;
+  --line:#edf0f3;--blue:#0096fe;--bg:#fcfdfe;--radius:14px;--shadow:none;
+  background:#fcfdfe;color:#252d37;
+ }
+ #snote-app .main,#snote-app .content {background:#fcfdfe!important}
+ #snote-app .sidebar {
+  background:#f8fafb!important;border-right-color:#edf0f3!important;
+  box-shadow:none!important;backdrop-filter:none!important;
+ }
+ #snote-app .brand,#snote-app .brandmark {box-shadow:none!important}
+ #snote-app .snote-wordmark img {mix-blend-mode:multiply}
+ #snote-app .brandname {color:#192c41;font-weight:650}
+ #snote-app :is(.branddesc,.navcaption,.snote-sidebar-version) {color:#88919c!important}
+ #snote-app .nav button {
+  color:#626c79!important;border-radius:10px!important;box-shadow:none!important;
+  font-size:14px;font-weight:500!important;letter-spacing:-.15px;
+ }
+ #snote-app .nav button:is(:hover,:focus-visible) {background:#f0f4f7!important;color:#283341!important}
+ #snote-app .nav button.active {background:#eaf6ff!important;color:#006bb5!important;font-weight:600!important}
+ #snote-app .nav button svg {stroke-width:1.6;filter:none!important}
+ #snote-app .nav button.active svg {color:#0096fe!important}
+ #snote-app .nav .count {background:#eef2f5!important;color:#6f7a87!important;border-radius:6px;box-shadow:none!important}
+ #snote-app .nav button.active .count {background:#e0f0fc!important;color:#006bb5!important}
+ #snote-app .sidebar .support {background:transparent!important;border-color:#edf0f3!important;border-radius:12px!important;box-shadow:none!important}
+ #snote-app .sidebar .support .st {color:#5a6572!important;font-weight:550}
+ #snote-app .sidebar .support .sd {color:#89939f!important}
+ #snote-app .topbar {background:#fff!important;border-bottom-color:#edf0f3!important;box-shadow:none!important;backdrop-filter:none!important}
+ #snote-app #screen-title {color:#252d37!important;font-size:22px!important;font-weight:600!important;letter-spacing:-.6px}
+ #snote-app :is(.crumb,.subtitle,.topbar .pname) {color:#6f7884!important}
+ #snote-app :is(.topbar button,.topbar-profile) {box-shadow:none!important}
+ #snote-app :is(.topbutton,#snote-weather,#snote-calculator-trigger,.snote-profile-chevron) {color:#7a8592!important;background:transparent!important}
+ #snote-app :is(.top-avatar,.avatar) {background:#eef7fd!important;color:#0079c9!important;box-shadow:none!important}
+
+ /* Keep boundaries quiet; distinguish surfaces without adding nested boxes. */
+ #snote-app :is(.panel,.stat,.prestock-card,.snote90-panel,.acct-finance-summary),
+ #snote-app :is(#list-screen,#alt-screen)>.panel {
+  background:#fff!important;border-color:#edf0f3!important;
+  border-radius:14px!important;box-shadow:none!important;
+ }
+ #snote-app :is(.panel-head,.prestock-head) {border-color:#f0f3f6!important}
+ #snote-app :is(.panel-head h2,.prestock-head h3,.stat .label) {color:#303946!important;font-weight:550!important}
+ #snote-app :is(.panel-head p,.stat-note,.note) {color:#7c8795!important}
+ #snote-app :is(.car-sub,.vehicle-meta,.vehicle-purchase-date,.acct-car-cell small,.acct-mobile-sub) {color:#727b87!important}
+ #snote-app :is(#list-screen,.fin-filters,.world-filters,.snote-settings-home,.snote90-settings,.snote-profile-panel) :is(input,select,textarea):not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]):not(.status-select):not(:disabled):not([readonly]):not(:invalid):not(.invalid):not(.is-invalid):not(.zc74-invalid):not([aria-invalid=true]) {
+  background:#fff!important;color:#35404d!important;border-color:#e7ecf1!important;
+  border-radius:10px;box-shadow:none!important;
+ }
+ #snote-app :is(.search,.filter,.snote-mobile-sort select):not(:disabled):not(.invalid):not(.is-invalid):not([aria-invalid=true]) {background:#fff!important;color:#35404d!important;border-color:#e7ecf1!important;border-radius:10px;box-shadow:none!important}
+ #snote-app :is(#list-screen,.fin-filters,.world-filters,.snote-settings-home,.snote90-settings,.snote-profile-panel) :is(input,textarea)::placeholder {color:#929eac!important;opacity:1}
+ #snote-app .search svg {color:#8b98a8!important;stroke-width:1.6}
+ #snote-app :is(.nav,.topbar,#list-screen,.fin-filters,.world-filters,.snote-settings-home,.snote90-settings,.snote-profile-panel) :is(button,input,select,textarea,a):focus-visible {outline:2px solid #0096fe55!important;outline-offset:2px}
+ #snote-app :is(.btn-primary,.btn-ghost) {border-radius:10px!important;box-shadow:none!important;font-weight:550!important}
+ #snote-app .btn-primary:not(:disabled) {background:#0096fe!important;border-color:#0096fe!important;color:#192c41!important}
+ #snote-app .btn-primary:not(:disabled):hover {background:#079bff!important;border-color:#079bff!important}
+ #snote-app .btn-ghost:not(:disabled) {background:#fff!important;border-color:#e7ecf1!important;color:#626f7e!important}
+ #snote-app :is(.snote-list-action,.snote-vehicle-view-toggle>button,.snote-purchase-columns-trigger,.zc-list-actions>button):not(:disabled) {color:#0096fe!important;box-shadow:none!important}
+ #snote-app :is(.zc-list-actions,.snote-vehicle-view-toggle,.snote-vehicle-heading-actions) svg {stroke-width:1.6!important;filter:none!important}
+ #snote-app .snote-vehicle-view-toggle button[aria-pressed=true]:not(:disabled) {background:#eef8ff!important;color:#006bb5!important;border-color:#e0f0fc!important;box-shadow:none!important}
+
+ /* Limit table typography to business lists, away from document sheets. */
+ #snote-app :is(#list-table,.fin-table,.snote-profit-table,.zc72-customers,.prestock-ledger) th {
+  background:#fafcfd!important;color:#6f7885!important;border-color:#edf0f3!important;
+  font-size:12px;font-weight:500!important;letter-spacing:0;
+ }
+ #snote-app :is(#list-table,.fin-table,.snote-profit-table,.zc72-customers,.prestock-ledger) td {
+  border-color:#f0f3f6!important;font-size:14px;
+ }
+ #snote-app :is(#list-table,.fin-table,.snote-profit-table,.zc72-customers,.prestock-ledger) td:not([style*="color"]):not(.is-negative):not(.negative) {color:#4b5664!important}
+ #snote-app :is(tr.vehicle-clickable:hover,.vehicle-card:hover,.acct-mobile-card:hover) {background:#f8fbfd!important}
+ #snote-app #list-table :is(.car-name,.acct-car-cell strong) {color:#2f3946!important;font-size:14px;font-weight:550!important}
+ #snote-app #list-table :is(.car-sub,.acct-car-cell small) {color:#727b87!important;font-size:12px}
+ #snote-app :is(#list-table,#list-mobile) :is(.price,.acct-price,.vehicle-price):not([style*="color"]) {color:#303b49!important;font-weight:600!important;font-variant-numeric:tabular-nums}
+ #snote-app :is(.car-thumb,.snote-home-thumb) {background:#f4f7fa!important;border-radius:10px!important;box-shadow:none!important}
+ #snote-app :is(.status,.status-select) {box-shadow:none!important;border-radius:8px!important}
+ #snote-app .snote-pagination button {border-radius:9px!important;box-shadow:none!important}
+ #snote-app .snote-pagination button[aria-current=page]:not(:disabled) {background:#0096fe!important;border-color:#0096fe!important;color:#192c41!important}
+ #snote-app .stat-icon {background:#f0f8fe!important;color:#0079c9!important;border-radius:10px!important;box-shadow:none!important}
+ #snote-app .stat-icon svg {stroke-width:1.6!important}
+
+ #snote-app :is(#snote-sales-overview,#snote-purchase-overview) {background:#fff!important;border-color:#edf0f3!important;border-radius:14px!important;box-shadow:none!important}
+ #snote-app :is(#snote-sales-overview,#snote-purchase-overview) .sales-overview-line-path {stroke:#0096fe!important}
+ #snote-app :is(#snote-sales-overview,#snote-purchase-overview) .sales-overview-line-area {fill:#0096fe!important;fill-opacity:.035}
+ #snote-app :is(#snote-sales-overview,#snote-purchase-overview) .sales-overview-line-dot {border-color:#0096fe!important}
+ #snote-app :is(#snote-sales-overview,#snote-purchase-overview) .is-current .sales-overview-line-dot {background:#0096fe!important}
+ #snote-app :is(#snote-sales-overview,#snote-purchase-overview) :is(.sales-overview-metric:first-child dd,.sales-overview-metric .is-up,.is-current .sales-overview-plot strong,.is-current .sales-overview-month-label) {color:#006bb5!important}
+
+ #snote-app #snote-dashboard-home {color:#303a47;--snote-home-chart-color:#0096fe}
+ #snote-app #snote-dashboard-home :is(.snote-home-kpi,.snote-home-secondary-kpis,.snote-home-chart-group,.snote-home-list-card,.snote-home-settlement-card,.snote-home-state,.snote-home-work-card,.snote-home-shortcuts) {border-color:#edf0f3!important;border-radius:14px!important;background:#fff!important;box-shadow:none!important}
+ #snote-app #snote-dashboard-home .snote-home-secondary-kpis .snote-home-kpi {border-radius:0!important}
+ #snote-app #snote-dashboard-home .snote-home-secondary-kpis .snote-home-kpi+.snote-home-kpi {border-color:#f0f3f6!important}
+ #snote-app #snote-dashboard-home .snote-home-kpi-label {color:#727d8c!important}
+ #snote-app #snote-dashboard-home .snote-home-kpi-label>span {font-size:14px;font-weight:500!important}
+ #snote-app #snote-dashboard-home .snote-home-kpi-label>svg {color:#8593a5!important;stroke-width:1.5!important}
+ #snote-app #snote-dashboard-home .snote-home-kpi-value {color:#253344!important;font-weight:600!important;letter-spacing:-.65px}
+ #snote-app #snote-dashboard-home :is([data-kpi=profit],[data-kpi=year]) .snote-home-kpi-value {color:#0079c9!important}
+ #snote-app #snote-dashboard-home :is(.snote-home-kpi-caption,.snote-home-work-caption,.snote-home-count,.snote-home-task-info small,.snote-home-period,.snote-home-vehicle-info>small,.snote-home-vehicle-price>small,.snote-home-settlement small) {color:#727b87!important;font-size:12px}
+ #snote-app #snote-dashboard-home :is(.snote-home-card-head h2,.snote-home-state h2,.snote-home-shortcuts h2,.snote-home-chart-group-head h2) {color:#303a47!important;font-weight:550!important;font-size:15px}
+ #snote-app #snote-dashboard-home :is(.snote-home-task-info strong,.snote-home-shortcut strong,.snote-home-vehicle-info>strong,.snote-home-vehicle-price>strong) {color:#455365!important;font-weight:500!important;font-size:14px}
+ #snote-app #snote-dashboard-home :is(.snote-home-card-link,.snote-home-shortcut>svg:first-child,.snote-home-task-row>svg,.snote-home-progress-row>svg) {color:#8697aa!important;border-color:#edf0f3!important;stroke-width:1.5!important;box-shadow:none!important}
+ #snote-app #snote-dashboard-home :is(.snote-home-task-row,.snote-home-progress-row,.snote-home-shortcut,.snote-home-vehicle-row,.snote-home-sale-progress,.snote-home-settlement>div) {border-color:#f0f3f6!important}
+ #snote-app #snote-dashboard-home .snote-home-work-count {background:#edf8ff!important;color:#006bb5!important;font-weight:550!important}
+ #snote-app #snote-dashboard-home .snote-home-chart-tabs {background:#f5f8fa!important;border-radius:10px!important}
+ #snote-app #snote-dashboard-home .snote-home-chart-tab {color:#727d8c!important;border-radius:8px!important;box-shadow:none!important}
+ #snote-app #snote-dashboard-home .snote-home-chart-tab[aria-selected=true]:not(:disabled) {background:#fff!important;color:#006bb5!important;box-shadow:none!important}
+ #snote-app #snote-dashboard-home :is(.snote-home-chart-total,.snote-home-settlement dd) {color:#0079c9!important;font-weight:550!important}
+ #snote-app #snote-dashboard-home .snote-home-line-path {stroke:#0096fe!important;stroke-width:1.8!important}
+ #snote-app #snote-dashboard-home .snote-home-line-area {fill:#0096fe!important;fill-opacity:.035!important}
+ #snote-app #snote-dashboard-home .snote-home-grid-line {stroke:#f0f3f6!important}
+ #snote-app #snote-dashboard-home .snote-home-zero-line {stroke:#e4eaf0!important}
+ #snote-app #snote-dashboard-home .snote-home-chart-dot {border-color:#0096fe!important;box-shadow:none!important}
+ #snote-app #snote-dashboard-home .snote-home-chart-month.is-current .snote-home-chart-dot {background:#0096fe!important}
+ #snote-app #snote-dashboard-home .snote-home-chart-label {color:#7e8a99!important}
+ #snote-app #snote-dashboard-home .snote-home-chart-month.is-current .snote-home-chart-label {color:#006bb5!important}
+ /* A semantic loss stays red at every specificity, including chart totals and dd. */
+ #snote-app #snote-dashboard-home [data-kpi] .snote-home-kpi-value.is-negative,
+ #snote-app #snote-dashboard-home .snote-home-chart-total.is-negative,
+ #snote-app #snote-dashboard-home .snote-home-settlement dd.is-negative {color:#bf4c5a!important}
+
+ #snote-app :is(.dashboard-analytics,.dashboard-chart,.chart-panel,.analytics-card,.profit-chart-card,.profit-compare,.analytics-chart) {border-color:#edf0f3!important;background:#fff!important;border-radius:14px!important;box-shadow:none!important}
+ #snote-app .profit-hero {background:#f4faff!important;border-color:#e7f0f7!important;color:#192c41!important;border-radius:14px;box-shadow:none!important}
+ #snote-app .profit-hero :is(.profit-main-number,.profit-average-value) {color:#192c41!important}
+ #snote-app .profit-hero :is(.profit-hero-label,.profit-subtext,.profit-average-days>span,.profit-average-days>small) {color:#727b87!important}
+ #snote-app .profit-hero .profit-month-tag {color:#006bb5!important;background:#fff!important;border-color:#e7f0f7!important}
+ #snote-app .profit-average-days {border-color:#e7f0f7!important}
+ #snote-app [data-profit-series=sales]>path {stroke:#0096fe!important}
+ #snote-app [data-profit-series=sales]>rect {fill:#0096fe!important}
+ #snote-app :is([data-profit-series=sales]>text,[data-profit-axis=sales]>text,.profit-svg-wrap text[fill="#315efb"]) {fill:#006bb5!important}
+ #snote-app .profit-chart-legend>.profit-legend-sales::before {border-color:#0096fe!important}
+ #snote-app :is(.snote-settings-sections,.snote-design-settings-nav) {background:#fcfdfe!important;border-color:#edf0f3!important;box-shadow:none!important}
+ #snote-app :is(.snote-settings-sections button,.snote-design-settings-nav button) {border-radius:10px!important;box-shadow:none!important}
+ #snote-app :is(.snote-settings-sections button[aria-current=page],.snote-design-settings-nav button[aria-current=location]):not(:disabled) {color:#006bb5!important;background:#eef8ff!important;border-color:#e2f1fc!important}
+
+ /* Existing popup exteriors only. No document-paper, signature or seal selector. */
+ #overlay .modal,#vehicle-overlay .vehicle-modal,#zc72-sale-modal .zc72-dialog,
+ #status-overlay .status-confirm-card,#snote-profile-dialog .snote-profile-panel,
+ #snote-purchase-columns,#snote-vehicle-sharing {
+  border-color:#e7ecf1!important;box-shadow:0 8px 32px #192c410c!important;
+ }
+ #overlay .modal,#zc72-sale-modal .zc72-dialog,#status-overlay .status-confirm-card,
+ #snote-profile-dialog .snote-profile-panel,#snote-purchase-columns,#snote-vehicle-sharing {border-radius:14px!important}
+ #vehicle-overlay .vehicle-modal>.vehicle-header,#overlay .modal>.modal-top,
+ #zc72-sale-modal .zc72-head,#snote-profile-dialog .snote-profile-head {border-color:#edf0f3!important;box-shadow:none!important}
+ #overlay,#vehicle-overlay,#zc-auto-reg-overlay,#status-overlay,#zc72-sale-modal {background-color:#192c4138!important;backdrop-filter:blur(2px)}
+ #snote-purchase-columns::backdrop,#snote-vehicle-sharing::backdrop {background:#192c4138!important;backdrop-filter:blur(2px)}
+ #overlay .btn-primary:not(:disabled),#status-overlay .status-confirm-card:not(.cancel-mode) .btn-primary:not(:disabled) {background:#0096fe!important;border-color:#0096fe!important;color:#192c41!important;border-radius:10px;box-shadow:none!important}
+ #overlay .btn-ghost,#status-overlay .btn-ghost {border-color:#e7ecf1!important;border-radius:10px;box-shadow:none!important}
+ #vehicle-overlay #vehicle-header-actions>#vehicle-header-save:not(:disabled) {background:#0096fe!important;border-color:#0096fe!important;color:#192c41!important}
+ #vehicle-overlay #vehicle-header-actions>#vehicle-header-save:not(:disabled)::before {background:#0096fe!important;border-color:#0096fe!important}
+ #vehicle-overlay #vehicle-header-actions>#vehicle-header-save:not(:disabled)>:is(svg,.design-vehicle-action-label) {color:#192c41!important}
+ #vehicle-overlay #vehicle-header-actions>#vehicle-header-save:not(:disabled) svg.snote-action-symbol {stroke:#192c41!important}
+ #vehicle-overlay #vehicle-header-actions>#vehicle-header-save:not(:disabled):hover::before {background:#079bff!important;border-color:#079bff!important;filter:none!important}
+}
+@media screen and (max-width:760px) {
+ #snote-app #list-screen[data-mobile-purchase-tools] .snote-vehicle-add-slot>#snote92-buy-manual:not(:disabled) {background:#0096fe!important;border-color:#0096fe!important;color:#192c41!important;box-shadow:none!important}
+ #snote-app #list-screen[data-mobile-purchase-tools] .snote-vehicle-add-slot>#snote92-buy-manual:not(:disabled):hover {background:#079bff!important;border-color:#079bff!important}
+ #snote-app #list-screen[data-mobile-purchase-tools] .snote-purchase-tools-toggle:not(:disabled) {background:#fff!important;border-color:#e7ecf1!important;color:#006bb5!important;box-shadow:none!important}
+ #snote-app #list-screen[data-mobile-purchase-tools] .snote-purchase-tools-toggle:not(:disabled)[aria-expanded=true] {background:#eef8ff!important;border-color:#deeffb!important}
+ #snote-app :is(#list-screen,.fin-filters,.world-filters,.snote-settings-home,.snote90-settings,.snote-profile-panel) :is(input,select,textarea):not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]),
+ #overlay :is(input,select,textarea):not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]),
+ #vehicle-overlay :is(input,select,textarea):not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]),
+ #zc72-sale-modal :is(input,select,textarea):not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]) {font-size:16px!important}
+}
