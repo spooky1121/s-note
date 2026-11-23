@@ -1,6 +1,6 @@
 @media screen{
  #snote-app #list-screen .snote-received-status{display:inline-flex;align-items:center;flex-wrap:wrap;gap:4px 7px;min-width:0}
  #snote-app #list-screen .snote-received-permission{font-size:10px;font-weight:500;color:#55719b;white-space:nowrap}
- #snote-app #list-screen[data-vehicle-view] :is(#list-mobile,#list-table) .car-thumb>.snote-shared-vehicle-marker--photo{left:0!important;right:auto!important;top:0!important;width:53.3333%!important;height:auto;aspect-ratio:1}
+ #snote-app #list-screen[data-vehicle-view] :is(#list-mobile,#list-table) .car-thumb>.snote-shared-vehicle-marker--photo{left:0!important;right:auto!important;top:0!important;width:66.6667%!important;height:auto;aspect-ratio:1}
  #snote-app #list-screen[data-vehicle-view] :is(#list-mobile,#list-table) .car-thumb:has(>.snote-shared-vehicle-marker--photo)>.snote-contract-stamp{left:auto;right:6%;top:auto;bottom:10%;z-index:5}
 }
