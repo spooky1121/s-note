@@ -1,0 +1,129 @@
+/* Login presentation only. Workspace, authentication and print styles are unchanged. */
+@media screen {
+ #zc-cloud-gate{--landing-ink:#19354c;--landing-muted:#5a7185;--landing-blue:#0875ad;box-sizing:border-box;padding:36px clamp(18px,3vw,56px) 0;background:linear-gradient(150deg,#edf8fe 0%,#f5faff 42%,#eef5fb 100%);color:var(--landing-ink)}
+ #zc-cloud-gate .snote-login-shell{display:grid;grid-template-columns:minmax(0,.38fr) minmax(0,.62fr);width:min(1540px,100%);min-height:max(790px,calc(100svh - 72px));margin:0 auto;overflow:hidden;border:1px solid #dfedf6;border-radius:32px;background:#fff;box-shadow:0 20px 70px #1b5f8610}
+ #zc-cloud-gate .snote-login-shell .snote-login-panel{order:0;min-height:790px;padding:35px clamp(24px,3.2vw,52px) 25px;background:#fff}
+ #zc-cloud-gate .snote-login-panel .snote204-auth-header{justify-content:flex-start}
+ #zc-cloud-gate .snote-login-panel .snote-wordmark{width:130px;height:38px}
+ #zc-cloud-gate[data-auth-mode=login] .snote-login-panel .zc-cloud-card{width:min(390px,100%);margin:auto;padding:38px 0 28px}
+ #zc-cloud-gate .snote-login-panel #zc-cloud-title{margin:0 0 28px;font-size:32px;font-weight:650;letter-spacing:-1.3px;color:var(--landing-ink);line-height:1.35}
+ #zc-cloud-gate .snote-login-panel .zc-field{font-size:12px;font-weight:550;color:#405b72;margin-bottom:19px}
+ #zc-cloud-gate .snote-login-panel input:not([type=checkbox]):not([type=file]){height:54px;padding:0 16px;border:1px solid #d9e7f0;border-radius:14px;background:#f8fbfe;color:#1c384e;font-size:14px;box-shadow:none}
+ #zc-cloud-gate .snote-login-panel input:not([type=checkbox]):focus{border-color:#42a6d5;background:#fff;box-shadow:0 0 0 4px #2a9ed112}
+ #zc-cloud-gate .snote-login-panel input::placeholder{color:#71889a}
+ #zc-cloud-gate .snote-login-panel :is(button,input,summary):focus-visible{outline-color:#2099ce}
+ #zc-cloud-gate .snote-login-panel .snote-login-password input{padding-right:52px}
+ #zc-cloud-gate .snote-login-panel #snote-login-password-toggle{top:5px;right:5px;border-radius:10px;color:#67859b}
+ #zc-cloud-gate .snote-login-panel #snote-login-password-toggle:hover{background:#edf7fc;color:#0875ad}
+ #zc-cloud-gate .snote-login-panel .snote95-remember input{accent-color:var(--landing-blue)}
+ #zc-cloud-gate .snote-login-panel .zc-btn{min-height:52px;border-radius:13px;background:var(--landing-blue);border-color:var(--landing-blue);font-size:14px;font-weight:600;box-shadow:none}
+ #zc-cloud-gate .snote-login-panel .zc-btn:hover:not(:disabled){background:#075f91;border-color:#075f91;box-shadow:0 5px 18px #0875ad16}
+ #zc-cloud-gate .snote-login-panel .snote-auth-secondary{background:#f8fcff;border:1px solid #dceaf3;color:#355d78;font-size:12px}
+ #zc-cloud-gate .snote-login-panel .snote-auth-secondary:hover:not(:disabled){background:#eef8fe;border-color:#a7d5e9;color:#135f89}
+ #zc-cloud-gate .snote-login-panel .zc-link,#zc-cloud-gate .snote-login-panel .snote-login-recovery button{color:#286a92}
+ #zc-cloud-gate .snote-login-panel .snote-login-shared-hint{font-size:10px;color:#62798c}
+ #zc-cloud-gate .snote-login-panel .snote-login-recovery{display:flex;justify-content:flex-end;align-items:center;gap:10px;margin:12px 0 18px;color:#a0b3c1;font-size:10px}
+ #zc-cloud-gate .snote-login-panel .snote-login-recovery button{min-height:30px;padding:3px 1px;border:0;border-radius:4px;background:transparent;font:inherit;font-size:11px;line-height:1.5;color:#426d88;cursor:pointer}
+ #zc-cloud-gate .snote-login-panel .snote-login-recovery button:hover{color:#0875ad;text-decoration:underline;text-underline-offset:4px}
+ #zc-cloud-gate .snote-login-panel .snote-login-footer{gap:5px;padding-top:15px;font-size:9px;line-height:1.8;color:#687e90}
+ #zc-cloud-gate .snote-login-panel .snote-login-footer .snote-login-footer-tools{width:100%;margin:0;gap:10px;justify-content:space-between;float:none}
+ #zc-cloud-gate .snote-login-panel .snote-login-footer-tools>[data-snote-version],#zc-cloud-gate .snote-login-panel .snote-operator-login{font-size:10px;font-weight:450;color:#687e90}
+ #zc-cloud-gate .snote-login-shell .snote-login-visual{order:1;position:relative;display:flex;flex-direction:column;min-width:0;min-height:790px;margin:12px 12px 12px 0;padding:48px clamp(30px,4vw,60px);overflow:hidden;isolation:isolate;border-radius:23px;background:#193c50}
+ #zc-cloud-gate .snote-login-visual picture{position:absolute;inset:0;z-index:-2;display:block}
+ #zc-cloud-gate .snote-login-visual .snote-login-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:52% 47%;filter:none}
+ #zc-cloud-gate .snote-login-shell .snote-login-visual::after{content:'';position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,#10273680 0%,#16354725 35%,#10273600 57%,#0d263c95 100%);pointer-events:none}
+ #zc-cloud-gate .snote-login-visual .snote-auth-hero{position:relative;z-index:1;padding:0;opacity:1;text-align:left;text-shadow:0 2px 18px #13273550}
+ #zc-cloud-gate .snote-login-visual .snote-auth-hero-title{max-width:600px;margin:0 0 20px;color:#fff;font-size:clamp(36px,3.6vw,58px);font-weight:450;line-height:1.35;letter-spacing:-2.3px;text-align:left;word-break:keep-all}
+ #zc-cloud-gate .snote-login-visual .snote-auth-hero-title strong{font-weight:650;color:#fff}
+ #zc-cloud-gate .snote-login-visual .snote-auth-hero p{max-width:430px;font-size:13px;line-height:1.85;color:#fff}
+ #zc-cloud-gate .snote-login-visual .snote204-hero-bottom{position:relative;z-index:1;margin-top:auto;padding-top:170px;color:#fff}
+ #zc-cloud-gate .snote-login-visual .snote204-hero-bottom>p{margin:0 0 18px;font-size:13px;line-height:1.75;color:#fff}
+ #zc-cloud-gate .snote-login-visual .snote204-hero-tags{gap:8px}
+ #zc-cloud-gate .snote-login-visual .snote204-hero-tags span{padding:7px 12px;border:1px solid #ffffff42;border-radius:20px;background:#193c5057;color:#fff;font-size:10px;backdrop-filter:blur(8px)}
+ #zc-cloud-gate .snote-login-info{box-sizing:border-box;width:min(1400px,100%);margin:0 auto;padding:118px 0 65px;border:0;background:transparent}
+ #zc-cloud-gate .snote-login-info>header{margin:0 0 34px;text-align:center}
+ #zc-cloud-gate .snote-login-info .snote-landing-kicker{margin:0 0 14px;font-size:12px;font-weight:600;letter-spacing:.2px;color:#167aa8}
+ #zc-cloud-gate .snote-login-info h2{margin:0 0 17px;text-align:inherit;font-size:clamp(28px,3vw,40px);line-height:1.45;font-weight:650;letter-spacing:-1.6px;color:var(--landing-ink);word-break:keep-all}
+ #zc-cloud-gate .snote-login-info>header>p:not(.snote-landing-kicker){margin:0;color:var(--landing-muted);font-size:14px;line-height:1.9;word-break:keep-all}
+ #zc-cloud-gate .snote-login-info .snote-auth-features{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:17px;margin:0 0 125px}
+ #zc-cloud-gate .snote-login-info .snote-auth-feature{min-width:0;padding:28px 24px 26px;border:1px solid #ddebf4;border-radius:20px;background:#ffffffd6;box-shadow:0 8px 24px #1a5f8514}
+ #zc-cloud-gate .snote-login-info .snote-auth-feature-icon{float:none;display:grid;place-items:center;width:42px;height:42px;margin:0 0 22px;border:0;border-radius:12px;background:#e6f5fc;color:#1686b8}
+ #zc-cloud-gate .snote-login-info .snote-auth-feature-icon svg{width:23px;height:23px}
+ #zc-cloud-gate .snote-login-info .snote-auth-feature h3{margin:0 0 12px;font-size:15px;font-weight:600;line-height:1.5;color:var(--landing-ink);word-break:keep-all}
+ #zc-cloud-gate .snote-login-info .snote-auth-feature p{clear:none;margin:0;color:var(--landing-muted);font-size:12px;line-height:1.85;word-break:keep-all}
+ #zc-cloud-gate .snote-showcases{display:grid;gap:110px}
+ #zc-cloud-gate .snote-showcase{display:grid;grid-template-columns:minmax(0,.36fr) minmax(0,.64fr);gap:45px;align-items:center;min-width:0}
+ #zc-cloud-gate .snote-showcase:nth-child(even){grid-template-columns:minmax(0,.64fr) minmax(0,.36fr)}
+ #zc-cloud-gate .snote-showcase:nth-child(even) .snote-showcase-copy{order:1}
+ #zc-cloud-gate .snote-showcase-copy{min-width:0;padding:4px}
+ #zc-cloud-gate .snote-showcase-copy h3{margin:0 0 20px;font-size:clamp(25px,2.2vw,34px);font-weight:650;line-height:1.5;letter-spacing:-1.2px;color:var(--landing-ink);word-break:keep-all}
+ #zc-cloud-gate .snote-showcase-copy>p:not(.snote-landing-kicker){margin:0 0 25px;font-size:14px;line-height:1.95;color:var(--landing-muted);word-break:keep-all}
+ #zc-cloud-gate .snote-showcase-copy ul{display:grid;gap:13px;margin:0;padding:0;list-style:none}
+ #zc-cloud-gate .snote-showcase-copy li{position:relative;padding-left:22px;color:#3c5b73;font-size:13px;line-height:1.65;word-break:keep-all}
+ #zc-cloud-gate .snote-showcase-copy li::before{content:'✓';position:absolute;left:0;top:0;color:#1593bd;font-weight:600}
+ #zc-cloud-gate .snote-showcase figure{min-width:0;margin:0;padding:12px;border:1px solid #dce9f2;border-radius:22px;background:#fff;box-shadow:0 18px 48px #1f5d7b10}
+ #zc-cloud-gate .snote-showcase figure img{display:block;width:100%;height:auto;border-radius:12px;background:#f8fbfe}
+ #zc-cloud-gate .snote-showcase figcaption{padding:13px 5px 3px;font-size:10px;line-height:1.65;color:#61778b;text-align:center}
+ #zc-cloud-gate .snote-login-info .snote-auth-trust{display:flex;justify-content:center;flex-wrap:wrap;gap:17px 30px;margin:95px 0 0;padding:27px 10px 0;border-top:1px solid #dceaf3;color:#536c80;font-size:11px;list-style:none}
+ #zc-cloud-gate .snote-login-info .snote-auth-trust span{margin-right:6px;color:#198fba}
+ #zc-cloud-gate.snote-landing-motion [data-login-reveal]{transition:opacity .7s ease,transform .7s cubic-bezier(.2,.65,.3,1);will-change:auto}
+ #zc-cloud-gate.snote-landing-motion [data-login-reveal].is-pending{opacity:0;transform:translateY(30px)}
+ #zc-cloud-gate.snote-landing-motion [data-login-reveal].is-revealed{opacity:1;transform:none}
+ #zc-cloud-gate .snote-auth-features [data-login-reveal]:nth-child(2){transition-delay:45ms}
+ #zc-cloud-gate .snote-auth-features [data-login-reveal]:nth-child(3){transition-delay:90ms}
+ #zc-cloud-gate .snote-auth-features [data-login-reveal]:nth-child(4){transition-delay:135ms}
+ #zc-cloud-gate:not([data-auth-mode=login]) .snote-login-shell{grid-template-columns:minmax(460px,.48fr) minmax(0,.52fr)}
+ #zc-cloud-gate:not([data-auth-mode=login]) .snote-login-shell .snote-login-panel{padding-inline:34px}
+ @media(max-width:1150px){
+  #zc-cloud-gate{padding:24px 20px 0}
+  #zc-cloud-gate .snote-login-shell{grid-template-columns:minmax(0,.4fr) minmax(0,.6fr);min-height:790px;border-radius:26px}
+  #zc-cloud-gate .snote-login-shell .snote-login-panel{padding:29px 27px 23px}
+  #zc-cloud-gate .snote-login-shell .snote-login-visual{min-height:770px;padding:39px 31px;border-radius:19px}
+  #zc-cloud-gate .snote-login-visual .snote-auth-hero-title{font-size:38px;letter-spacing:-1.8px}
+  #zc-cloud-gate .snote-login-visual .snote-auth-hero p{font-size:12px}
+  #zc-cloud-gate .snote-login-info .snote-auth-features{grid-template-columns:repeat(2,minmax(0,1fr));gap:17px;margin-bottom:95px}
+  #zc-cloud-gate .snote-showcase,#zc-cloud-gate .snote-showcase:nth-child(even){grid-template-columns:minmax(0,.4fr) minmax(0,.6fr);gap:28px}
+  #zc-cloud-gate .snote-showcase:nth-child(even) .snote-showcase-copy{order:0}
+  #zc-cloud-gate .snote-showcase-copy h3{font-size:27px}
+ }
+ @media(max-width:760px){
+  #zc-cloud-gate{padding:16px 14px 0;background:#eef8fe}
+  #zc-cloud-gate .snote-login-shell,#zc-cloud-gate:not([data-auth-mode=login]) .snote-login-shell{display:flex;flex-direction:column;width:min(600px,100%);min-height:0;border:1px solid #dcecf5;border-radius:25px}
+  #zc-cloud-gate .snote-login-shell .snote-login-panel,#zc-cloud-gate:not([data-auth-mode=login]) .snote-login-shell .snote-login-panel{min-height:650px;padding:27px 25px 23px}
+  #zc-cloud-gate[data-auth-mode=login] .snote-login-panel .zc-cloud-card{padding:21px 0 15px;margin:17px auto auto}
+  #zc-cloud-gate .snote-login-panel #zc-cloud-title{font-size:30px;margin-bottom:21px}
+  #zc-cloud-gate .snote-login-panel input:not([type=checkbox]):not([type=file]){font-size:16px}
+  #zc-cloud-gate .snote-login-panel .zc-field{margin-bottom:17px}
+  #zc-cloud-gate .snote-login-panel .snote-login-options{margin-bottom:21px}
+  #zc-cloud-gate .snote-login-panel .snote95-security{margin-top:18px}
+  #zc-cloud-gate .snote-login-panel .snote-login-footer{margin-top:10px;padding-top:18px}
+  #zc-cloud-gate .snote-login-shell .snote-login-visual{display:flex;order:1;min-height:480px;margin:0 10px 10px;padding:30px 26px;border-radius:18px}
+  #zc-cloud-gate .snote-login-visual .snote-auth-hero-title{font-size:32px;line-height:1.4;letter-spacing:-1.5px}
+  #zc-cloud-gate .snote-login-visual .snote-auth-hero p{font-size:11px;line-height:1.8}
+  #zc-cloud-gate .snote-login-visual .snote204-hero-bottom{padding-top:150px}
+  #zc-cloud-gate .snote-login-visual .snote204-hero-bottom>p{font-size:11px}
+  #zc-cloud-gate .snote-login-visual .snote204-hero-tags{gap:6px}
+  #zc-cloud-gate .snote-login-visual .snote204-hero-tags span{padding:6px 9px;font-size:9px}
+  #zc-cloud-gate .snote-login-info{width:100%;padding:90px 2px 42px}
+  #zc-cloud-gate .snote-login-info>header{margin-bottom:26px;padding-inline:6px}
+  #zc-cloud-gate .snote-login-info h2{font-size:28px;letter-spacing:-1px}
+  #zc-cloud-gate .snote-login-info>header>p:not(.snote-landing-kicker){font-size:12px}
+  #zc-cloud-gate .snote-login-info .snote-auth-features{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;margin-bottom:85px}
+  #zc-cloud-gate .snote-login-info .snote-auth-feature{padding:21px 16px;border-radius:17px;box-shadow:none}
+  #zc-cloud-gate .snote-login-info .snote-auth-feature-icon{margin-bottom:17px;width:36px;height:36px;border-radius:10px}
+  #zc-cloud-gate .snote-login-info .snote-auth-feature h3{font-size:13px;min-height:40px;margin-bottom:9px}
+  #zc-cloud-gate .snote-login-info .snote-auth-feature p{font-size:11px;line-height:1.85}
+  #zc-cloud-gate .snote-showcases{gap:78px}
+  #zc-cloud-gate .snote-showcase,#zc-cloud-gate .snote-showcase:nth-child(even){display:flex;flex-direction:column;gap:25px;align-items:stretch}
+  #zc-cloud-gate .snote-showcase:nth-child(even) .snote-showcase-copy{order:0}
+  #zc-cloud-gate .snote-showcase-copy{padding:0 7px}
+  #zc-cloud-gate .snote-showcase-copy h3{font-size:27px;letter-spacing:-1px;margin-bottom:17px}
+  #zc-cloud-gate .snote-showcase-copy>p:not(.snote-landing-kicker){font-size:13px;margin-bottom:21px}
+  #zc-cloud-gate .snote-showcase-copy li{font-size:12px}
+  #zc-cloud-gate .snote-showcase figure{padding:8px;border-radius:17px;box-shadow:0 12px 30px #1f5d7b0b}
+  #zc-cloud-gate .snote-showcase figure img{border-radius:9px}
+  #zc-cloud-gate .snote-showcase figcaption{font-size:9px;padding:10px 2px 3px}
+  #zc-cloud-gate .snote-login-info .snote-auth-trust{flex-direction:row;align-items:center;justify-content:center;gap:11px 17px;margin-top:65px;font-size:10px}
+ }
+ @media(prefers-reduced-motion:reduce){#zc-cloud-gate.snote-landing-motion [data-login-reveal]{transition:none;transform:none!important;opacity:1!important}}
+}

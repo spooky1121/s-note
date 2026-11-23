@@ -19,6 +19,13 @@
   Content-Security-Policy: default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data:; connect-src 'self' https://rmlycycleuscfqywbihj.supabase.co wss://rmlycycleuscfqywbihj.supabase.co; frame-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'
   Permissions-Policy: camera=(), microphone=(), geolocation=()
 
+/account-recovery*
+  Cache-Control: no-store, private, max-age=0
+  Referrer-Policy: no-referrer
+  X-Frame-Options: DENY
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self'; img-src 'self' data:; connect-src 'self' https://rmlycycleuscfqywbihj.supabase.co; frame-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+
 /customer*
   Cache-Control: no-store
   Referrer-Policy: no-referrer

@@ -64,9 +64,10 @@ async function test(name,fn){try{await fn();passed++;console.log('PASS',name);}c
    for(const patch of [{endpoint:'/api/ocr?token=hidden'},{endpoint:'https://example.invalid/api/ocr'},{endpoint:'/api/unlisted'},{method:'CONNECT'},{stage:'complete'},{endpoint:null},{method:null}])await deny(()=>record({...validHttp,requestId:randomUUID(),...patch}),['22023']);
    await deny(()=>q('update snote_operator_private.service_events set ok=false'),['55000']);
   });
-  await test('HTTP database endpoint allowlist matches the exact Worker route policy',async()=>{
-   const security=fs.readFileSync(path.join(ROOT,'functions/_shared/api-security.js'),'utf8');const paths=[...security.matchAll(/^\s*'(\/api\/[^']+)':/gm)].map(m=>m[1]);assert.equal(paths.length,14);
+  await test('HTTP database endpoint allowlist matches the observation registry, excluding credential recovery',async()=>{
+   const {API_OBSERVATION_PATHS:paths}=await import('../functions/_shared/api-security.js');assert.equal(paths.length,14);assert.equal(paths.includes('/api/account-recovery'),false);
    for(const endpoint of paths)await record(event({service:'http',userId:null,adId:null,stage:'response',endpoint,method:'GET'}));
+   await deny(()=>record(event({service:'http',userId:null,adId:null,stage:'response',endpoint:'/api/account-recovery',method:'POST'})),['22023']);
   });
   await test('service lists contain real results and safe official links without payload leakage',async()=>{
    await record(event({ok:false,httpStatus:503,stage:'provider',adId:null}));await record(event({service:'vision',stage:'parse',adId:null,requestBytes:4096}));

@@ -19,14 +19,19 @@ function result(service,{page=1,query=''}={}){
   sms:Array.from({length:21},(_,n)=>({at:AT,...account,model:'합성 차량 '+n,destination:'010-****-'+String(1200+n),type:'customer_input',status:n?'pending':'sent',success:true,customerSubmittedAt:n?null:AT})),
   encar:[{at:AT,...account,success:true,elapsedMs:1275,adId:'43123456',link:'https://untrusted.invalid/'},{at:AT,...account,success:false,elapsedMs:0,adId:'<img src=x onerror=alert(1)>'}],
   vision:[{at:AT,...account,success:true,elapsedMs:1850,stage:'document_text',imageBytes:2097152},{at:AT,...account,success:false,elapsedMs:null,stage:'provider_unavailable',imageBytes:0}],
-  server:[{hour:AT,endpoint:'/api/synthetic',method:'POST',count:125,errors:3,bytes:4096,knownResponseCount:100}]
+  server:[{hour:AT,endpoint:'/api/synthetic',method:'POST',count:125,errors:3,bytes:4096,knownRequestBytes:1572864,knownRequestCount:90,knownResponseCount:100}]
  };
  const all=rows[service].filter(row=>!query||JSON.stringify(row).includes(query));
  return{ok:true,service,checkedAt:AT,metrics:[
   {key:'verified',label:service==='sms'?'충전 잔액':'기록된 요청',value:service==='sms'?8765.5:125,unit:service==='sms'?'원':'건',source:service==='sms'?'SOLAPI':'S-NOTE 처리 기록',asOf:AT},
   {key:'zero',label:'추가 차감',value:0,unit:'원',source:'합성 응답',asOf:AT},
-  {key:'unavailable',label:'제공처 잔여 한도',value:null,unit:'건',source:'제공처',asOf:null,unavailableReason:'조회 권한이 없어 확인할 수 없습니다.'}
+  {key:'unavailable',label:'제공처 잔여 한도',value:null,unit:'건',source:'제공처',asOf:null,unavailableReason:'조회 권한이 없어 확인할 수 없습니다.'},
+  ...(service==='server'?[{key:'traffic',label:'확인된 응답 크기',value:1572864,unit:'B',source:'합성 처리 기록',asOf:AT},{key:'capacity',label:'자료 저장량',value:1.5*1024**4,unit:'byte',source:'합성 처리 기록',asOf:AT},{key:'unknown_bytes',label:'미수집 요청량',value:null,unit:'B',source:'합성 처리 기록',asOf:null,unavailableReason:'수집되지 않은 정보입니다.'}]:[])
  ],notes:['수집 시작 이후 확인된 요청만 포함합니다.'],providerItems:service==='sms'?[{messageId:'synthetic-provider-1',at:AT,destination:'01000000000',type:'SMS',status:'성공'},{messageId:'synthetic-provider-2',at:AT,destination:'01000000001',type:'LMS',status:'대기'}]:[],items:all.slice((page-1)*20,page*20),total:all.length,page,pageSize:20};
+}
+async function invalidCredentials(browser){
+ const f=await boot(browser,390),p=f.page;await p.locator('#operator-email').fill('wrong-synthetic@example.invalid');await p.locator('#operator-password').fill('IncorrectSyntheticPassword!');await p.locator('#operator-signin').click();await p.waitForFunction(()=>document.querySelector('#operator-login-message').dataset.tone==='error');
+ assert.equal(await p.locator('#operator-login-message').textContent(),'계정 ID 또는 비밀번호를 확인해주세요.');assert.equal(await p.locator('#operator-password').inputValue(),'');assert.equal(await p.locator('#operator-app').isHidden(),true);assert.equal(f.requests.length,0);await f.finish();console.log('PASS invalid operator credentials use the exact account ID/password message and never request privileged data');
 }
 async function accounts(browser){
  const f=await boot(browser,1440,{resume:true}),p=f.page;await f.ready();
@@ -88,8 +93,8 @@ async function services(browser){
  await p.locator('#operator-pagination').getByRole('button',{name:'다음',exact:true}).click();await idle(p);assert.equal(await p.locator('#operator-table tbody tr').count(),1);assert.equal(f.requests.filter(x=>x.action==='services').at(-1).query.page,2);
  await p.locator('#operator-search').fill('synthetic-services@example.invalid');await p.locator('#operator-search-form').press('Enter');await idle(p);assert.equal(f.requests.filter(x=>x.action==='services').at(-1).query.page,1);
  await select(p,'encar');assert.equal(await p.locator('#operator-table tbody a').count(),1);const link=p.locator('#operator-table tbody a');assert.equal(await link.getAttribute('href'),'https://fem.encar.com/cars/detail/43123456?listAdvType=share&adnm=mo_detail_url');assert.equal(await link.getAttribute('rel'),'noopener noreferrer');assert.equal(await p.locator('#operator-table tbody img').count(),0);assert.match(await p.locator('#operator-table tbody').textContent(),/1,275 ms|실패/);
- await select(p,'vision');assert.match(await p.locator('#operator-table tbody').textContent(),/document_text|2,097,152 B|0 B/);
- await select(p,'server');assert.match(await p.locator('#operator-table tbody').textContent(),/\/api\/synthetic|POST|4,096 B/);assert.match(await p.locator('#operator-table tbody').textContent(),/100\/125건 확인/);await p.screenshot({path:path.join(ART,'services-1440.png')});
+ await select(p,'vision');assert.equal(await p.locator('#operator-table tbody tr').first().locator('td').nth(5).textContent(),'2 MB');assert.equal(await p.locator('#operator-table tbody tr').first().locator('td').nth(5).getAttribute('title'),'2,097,152 B');assert.equal(await p.locator('#operator-table tbody tr').nth(1).locator('td').nth(5).textContent(),'0 B');
+ await select(p,'server');const serverRow=p.locator('#operator-table tbody tr').first();assert.equal(await serverRow.locator('td').nth(3).textContent(),'125');assert.match(await serverRow.locator('td').nth(5).textContent(),/^1\.5 MB90\/125건 확인$/);assert.match(await serverRow.locator('td').nth(6).textContent(),/^4 KB100\/125건 확인$/);assert.equal(await serverRow.locator('td').nth(5).getAttribute('title'),'1,572,864 B');assert.equal(await serverRow.locator('td').nth(6).getAttribute('title'),'4,096 B');assert.equal(await cards.locator('[data-metric=traffic] strong').textContent(),'1.5 MB');assert.equal(await cards.locator('[data-metric=capacity] strong').textContent(),'1.5 TB');assert.equal(await cards.locator('[data-metric=unknown_bytes] strong').textContent(),'확인 불가');assert.equal(await cards.locator('[data-metric=verified] strong').textContent(),'125 건');await p.screenshot({path:path.join(ART,'services-1440.png')});
  await f.finish();console.log('PASS four service menus, lazy provider requests, paginated/searchable real-value cards, distinct unknowns, SMS receipts, safe Encar link, Vision and server records');
 }
 async function fencing(browser){
@@ -127,4 +132,4 @@ async function responsive(browser){for(const width of[320,390,430,1440]){
  await select(p,'accounts');assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);if(width<1000)assert.equal(await p.locator('#operator-table-wrap').evaluate(e=>e.scrollWidth>e.clientWidth),true);await p.screenshot({path:path.join(ART,'accounts-'+width+'.png')});
  await p.locator('#operator-signout').click();await p.locator('#operator-login').waitFor({state:'visible'});assert.equal(await badge.isHidden(),true);assert.equal(await badge.textContent(),'');await f.finish();console.log('PASS',width,'eight-menu responsive services/accounts, actual numeric unread badge, reduced-motion and logout clear');
 }}
-(async()=>{const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium'});try{await accounts(browser);await avatarQueue(browser);await services(browser);await fencing(browser);await logoutConfirmation(browser);await responsive(browser);}finally{await browser.close();}})().catch(error=>{console.error(error.stack);process.exitCode=1;});
+(async()=>{const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium'});try{await invalidCredentials(browser);await accounts(browser);await avatarQueue(browser);await services(browser);await fencing(browser);await logoutConfirmation(browser);await responsive(browser);}finally{await browser.close();}})().catch(error=>{console.error(error.stack);process.exitCode=1;});

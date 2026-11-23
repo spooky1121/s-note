@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="referrer" content="no-referrer">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <script src="/assets/service-location.js?v=2.200"></script>
+  <script src="/assets/account-recovery-entry.js?v=2.203"></script>
+  <title>S-NOTE | 계정 복구</title>
+  <link rel="icon" href="/assets/snote-logo.png">
+  <link rel="stylesheet" href="/assets/message-popup.css?v=2.203">
+  <script src="/assets/message-popup.js?v=2.203" defer></script>
+  <script src="/assets/mobile-popup-history.js?v=2.174"></script>
+  <link rel="stylesheet" href="/assets/close-controls.css?v=2.166">
+  <script src="/assets/close-controls.js?v=2.166" defer></script>
+  <link rel="stylesheet" href="/assets/account-recovery-callback.css?v=2.203">
+  <script src="/assets/account-recovery-callback.js?v=2.203" defer></script>
+</head>
+<body>
+  <main class="snote-email-recovery-shell">
+    <section class="snote-email-recovery-card" aria-labelledby="snote-email-recovery-title">
+      <button type="button" class="snote-popup-close snote-email-recovery-close" id="snote-email-recovery-close" aria-label="계정 복구 닫기">×</button>
+      <img class="snote-email-recovery-logo" src="/assets/snote-logo.png" alt="S-NOTE" width="2172" height="724">
+      <h1 id="snote-email-recovery-title">계정 확인</h1>
+      <p id="snote-email-recovery-status" class="snote-email-recovery-status" role="status" aria-live="polite">이메일 인증 링크를 확인하고 있습니다.</p>
+      <section id="snote-email-recovery-account" hidden aria-label="확인한 계정">
+        <span class="snote-email-recovery-caption">계정 ID</span>
+        <output id="snote-email-recovery-id" class="snote-email-recovery-id"></output>
+      </section>
+      <form id="snote-email-recovery-form" hidden novalidate autocomplete="off">
+        <label class="snote-email-recovery-field" for="snote-email-recovery-password"><span>새 비밀번호</span><input id="snote-email-recovery-password" type="password" autocomplete="new-password" minlength="10" maxlength="128" placeholder="10~128자" required></label>
+        <label class="snote-email-recovery-field" for="snote-email-recovery-confirm"><span>새 비밀번호 확인</span><input id="snote-email-recovery-confirm" type="password" autocomplete="new-password" minlength="10" maxlength="128" placeholder="새 비밀번호를 다시 입력해 주세요" required></label>
+        <button type="submit" id="snote-email-recovery-submit" class="snote-email-recovery-primary">비밀번호 변경</button>
+      </form>
+      <p id="snote-email-recovery-phone-guide" class="snote-email-recovery-guide" hidden>로그인 후 프로필 설정에서 휴대전화 인증을 완료해 주세요.</p>
+      <button type="button" id="snote-email-recovery-login" class="snote-email-recovery-secondary">로그인으로</button>
+      <noscript><p>계정 복구를 진행하려면 자바스크립트를 허용한 뒤 이메일 인증 링크를 다시 열어 주세요.</p></noscript>
+    </section>
+  </main>
+</body>
+</html>

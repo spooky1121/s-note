@@ -1,4 +1,4 @@
-import { API_POLICIES } from './api-security.js';
+import { API_OBSERVATION_PATHS } from './api-security.js';
 import { writeHttpTelemetry } from './service-telemetry.mjs';
 
 // Bound background database work even for public/denied requests. This budget
@@ -19,7 +19,7 @@ export function observeAPIResponse(context, response, startedAt, options = {}) {
   const now = options.now || Date.now, write = options.write || writeHttpTelemetry;
   let endpoint;
   try { endpoint = new URL(context.request.url).pathname; } catch { return response; }
-  if (!Object.hasOwn(API_POLICIES, endpoint) || typeof context.waitUntil !== 'function' ||
+  if (!API_OBSERVATION_PATHS.includes(endpoint) || typeof context.waitUntil !== 'function' ||
       typeof context.env?.SUPABASE_SERVICE_ROLE_KEY !== 'string' || !context.env.SUPABASE_SERVICE_ROLE_KEY) return response;
   if (!(options.admit || admitObservation)(now())) return response;
   const method = context.request.method;

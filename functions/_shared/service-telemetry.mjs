@@ -1,6 +1,6 @@
 // Operator-only service metadata. Never accept request bodies, provider URLs,
 // OCR output, credentials or exception messages at this boundary.
-import { API_POLICIES } from './api-security.js';
+import { API_OBSERVATION_PATHS } from './api-security.js';
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/iu;
 const AD_ID = /^[1-9][0-9]{5,11}$/u;
 const SERVICES = new Set(['encar', 'vision', 'http']);
@@ -41,7 +41,7 @@ export async function writeHttpTelemetry(env, value, { fetchImpl = globalThis.fe
         typeof value.startedAt !== 'string' || value.startedAt.length > 40 || !Number.isFinite(Date.parse(value.startedAt)) ||
         !Number.isSafeInteger(value.elapsedMs) || value.elapsedMs < 0 || value.elapsedMs > MAX_ELAPSED_MS ||
         typeof value.ok !== 'boolean' || !Number.isSafeInteger(value.httpStatus) || value.httpStatus < 100 || value.httpStatus > 599 ||
-        !['response', 'exception'].includes(value.stage) || !Object.hasOwn(API_POLICIES, value.endpoint) || !HTTP_METHODS.has(value.method)) return;
+        !['response', 'exception'].includes(value.stage) || !API_OBSERVATION_PATHS.includes(value.endpoint) || !HTTP_METHODS.has(value.method)) return;
     const event = { userId: null, requestId: value.requestId.toLowerCase(), service: 'http', startedAt: new Date(value.startedAt).toISOString(),
       elapsedMs: value.elapsedMs, ok: value.ok, httpStatus: value.httpStatus, stage: value.stage, adId: null,
       requestBytes: byteCount(value.requestBytes), responseBytes: byteCount(value.responseBytes), endpoint: value.endpoint, method: value.method };
