@@ -30,15 +30,15 @@ async function setup(width){
   URL.revokeObjectURL=url=>{const refs=[...document.images].filter(img=>img.isConnected&&img.getAttribute('src')===url).map(img=>img.id||img.className);if(refs.length)t.revokedLive.push({url,refs});t.revoked.push(url);return nativeRevoke(url);};
   HTMLImageElement.prototype.decode=async function(){if(t.holdDecode&&!this.isConnected&&this.src.startsWith('blob:')){t.holdDecode=false;t.decodeWaiting=true;await new Promise(resolve=>t.releaseDecode=resolve);t.decodeWaiting=false;}return nativeDecode.call(this);};
   async function picture(kind,color,companyId=company,owner=actor,suffix='a',broken=false){
-   const canvas=document.createElement('canvas');canvas.width=kind==='companyStamp'?128:192;canvas.height=kind==='companyStamp'?128:72;const ctx=canvas.getContext('2d');
-   if(kind==='companyStamp'){ctx.strokeStyle=color;ctx.lineWidth=8;ctx.strokeRect(10,10,108,108);ctx.fillStyle=color;ctx.font='bold 24px sans-serif';ctx.fillText('TEST',23,72);}
+   const isStamp=kind!=='companyLogo',canvas=document.createElement('canvas');canvas.width=isStamp?128:192;canvas.height=isStamp?128:72;const ctx=canvas.getContext('2d');
+   if(isStamp){ctx.strokeStyle=color;ctx.lineWidth=8;ctx.strokeRect(10,10,108,108);ctx.fillStyle=color;ctx.font='bold 24px sans-serif';ctx.fillText('TEST',23,72);}
    else{ctx.fillStyle=color;ctx.fillRect(0,0,192,72);ctx.fillStyle='#fff';ctx.font='bold 25px sans-serif';ctx.fillText('SYNTHETIC',13,46);}
-   const mime=kind==='companyStamp'?'image/png':'image/jpeg',blob=broken?new Blob(['not an image'],{type:mime}):await new Promise(resolve=>canvas.toBlob(resolve,mime,.9));
+   const mime=isStamp?'image/png':'image/jpeg',blob=broken?new Blob(['not an image'],{type:mime}):await new Promise(resolve=>canvas.toBlob(resolve,mime,.9));
    const filePath=companyId+'/'+owner+'/branding/'+kind+'-'+suffix+(mime==='image/png'?'.png':'.jpg');
    const row={id:kind+'-'+suffix,company_id:companyId,owner_id:owner,group_name:kind,file_path:filePath,filename:'synthetic-branding',mime_type:mime,file_size:blob.size,created_at:new Date().toISOString()};
    t.rows=t.rows.filter(r=>r.company_id!==companyId||r.group_name!==kind);t.rows.push(row);t.objects.set(filePath,blob);return row;
   }
-  t.picture=picture;await picture('companyStamp','#ce2334');await picture('companyLogo','#226bd5');await picture('companyStamp','#169344',otherCompany,otherActor,'b');await picture('companyLogo','#169344',otherCompany,otherActor,'b');
+  t.picture=picture;await picture('companyStamp','#ce2334');await picture('companyLogo','#226bd5');await picture('companyOfficeStamp','#9325bb');await picture('companyStamp','#169344',otherCompany,otherActor,'b');await picture('companyLogo','#169344',otherCompany,otherActor,'b');await picture('companyOfficeStamp','#169344',otherCompany,otherActor,'b');
   S.client.from=table=>{
    if(!['zc_media','zc_companies','zc_members'].includes(table))return originalFrom(table);
    const filters={};let single=false;
@@ -78,8 +78,10 @@ async function surfaces(width){
  try{
   // The real settings preview, profile bridge, quotation and contract share files.
   await p.evaluate(async()=>{await closeVehicle({discard:true});navigate('settings');});
-  const settingsStamp=await imageReady(p,'#snote203-stamp-preview img'),settingsLogo=await imageReady(p,'#snote203-logo-preview img');
-  assert.match(settingsStamp,/^blob:/);assert.match(settingsLogo,/^blob:/);
+  const settingsStamp=await imageReady(p,'#snote203-stamp-preview img'),settingsLogo=await imageReady(p,'#snote203-logo-preview img'),settingsOffice=await imageReady(p,'#snote203-office-stamp-preview img');
+  assert.match(settingsStamp,/^blob:/);assert.match(settingsLogo,/^blob:/);assert.match(settingsOffice,/^blob:/);assert.notEqual(settingsOffice,settingsStamp);
+  const officeBridge=await p.evaluate(async()=>{const S=__encarFixtureState,member=S.members.find(row=>row.user_id===S.user.id),role=currentUser.role,memberRole=member.role;try{currentUser.role='accountant';member.role='accountant';const bridge=snoteContractOfficeBridge,context=bridge.context(),office=await bridge.officeStamp(context),round=await bridge.stamp(context);return{office,round,officeCurrent:bridge.officeStampCurrent(context,office),roundCurrent:bridge.stampCurrent(context,round),path:snoteCompanyAssetState('companyOfficeStamp').path};}finally{currentUser.role=role;member.role=memberRole;}});
+  assert.deepEqual(officeBridge.office,{status:'ready',url:settingsOffice});assert.deepEqual(officeBridge.round,{status:'ready',url:settingsStamp});assert(officeBridge.officeCurrent&&officeBridge.roundCurrent);assert(officeBridge.path.startsWith(COMPANY+'/'+ACTOR+'/branding/companyOfficeStamp-'));
   const ink=await sealInk(p,'#snote203-stamp-preview img');assert.equal(ink.width,128);assert.equal(ink.height,128);assert(ink.colored>2000&&ink.transparent>2000,'The generated seal must contain visible colored ink and transparent background');
   await p.locator('#snote203-stamp-preview').evaluate(el=>{const parents=[];for(let node=el.parentElement;node;node=node.parentElement)if(node.tagName==='DETAILS')parents.push(node);for(const parent of parents.reverse())if(!parent.open)parent.querySelector(':scope > summary').click();});
   await p.locator('.snote203-assets').screenshot({path:path.join(OUT,'settings-'+width+'.png')});
@@ -104,7 +106,7 @@ async function surfaces(width){
   assert.match(pdfText,/\/SMask/,'The generated seal transparency must survive PDF printing');
   assert.match(pdfText,/\/Width 128\s*\/Height 128/,'Both-copy printing must embed the registered seal bitmap');
   await p.screenshot({path:path.join(OUT,'contract-'+width+'.png')});
-  await p.locator('#contract-paper .ct-parties').screenshot({path:path.join(OUT,'contract-parties-'+width+'.png')});
+  await p.emulateMedia({media:'print'});await p.locator('#contract-print-pages .ct-parties').first().screenshot({path:path.join(OUT,'contract-parties-'+width+'.png')});await p.emulateMedia({media:null});
   await receipt(p);assert.equal(await imageReady(p,'#zc76-receipt-paper .zc-footer-emblem'),settingsLogo,'Receipt must reuse the same private decoded company logo as settings/profile/quotation/contract');assert.equal(await p.locator('#zc76-receipt-paper .snote95-footer-company').textContent(),'합성 이미지 상사');assert.equal(await p.locator('#zc76-receipt-paper .zc-footer-emblem').getAttribute('data-snote-company-asset'),'companyLogo');
   await p.evaluate(()=>zc76PrintReceipt());assert.equal(await p.evaluate(()=>__companyAssetTest.prints),2);const receiptPDF=await p.pdf({format:'A4',printBackground:true,preferCSSPageSize:true,path:path.join(OUT,'receipt-'+width+'.pdf')});assert.equal((receiptPDF.toString('latin1').match(/\/Type\s*\/Page\b/g)||[]).length,1);assert.match(receiptPDF.toString('latin1'),/\/Width 192\s*\/Height 72/,'The receipt PDF must embed the registered private company logo bitmap');await p.screenshot({path:path.join(OUT,'receipt-'+width+'.png')});
   assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);

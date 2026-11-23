@@ -80,25 +80,15 @@
 .co-paper>img{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:fill;pointer-events:none}
 .co-overlay{position:absolute;inset:0;pointer-events:none}
 .co-print-seal{position:absolute;display:block;object-fit:contain;background:transparent;border:0;box-shadow:none;padding:0;max-width:none;max-height:none;pointer-events:none;z-index:3;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-.co-print-field{box-sizing:border-box;position:absolute;display:flex;align-items:center;justify-content:flex-start;color:#111;background:transparent;border:0;padding:0;white-space:nowrap;line-height:1;overflow:visible;font-family:'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif;font-size:calc(var(--co-font,8) * 1px);font-weight:500;letter-spacing:0;text-shadow:none}
+.co-print-field{box-sizing:border-box;position:absolute;display:flex;align-items:center;justify-content:flex-start;color:#000;background:transparent;border:0;padding:0;white-space:nowrap;line-height:1;overflow:visible;font-family:'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif;font-size:calc(var(--co-font,8) * 1px);font-weight:500;letter-spacing:0;text-shadow:none}
 .co-print-company-name-stacked{flex-direction:column;align-items:flex-start;justify-content:center;gap:1px}.co-print-company-name-stacked span{display:block;line-height:1}
 .co-print-field[data-field=encumbrance]{white-space:pre}
 .co-print-field.co-print-number{justify-content:flex-end;text-align:right}.co-print-field.co-print-multiline{display:block;white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere;line-height:1.05;padding-top:3px}
 /* Keep the source form and every overlay coordinate in the same uniformly
-   scaled frame, reserving a separate footer without stretching the artwork. */
+   scaled frame so the established A4 print margins and field sizes stay stable. */
 .co-paper>img,.co-paper>.co-overlay{transform:scale(.93);transform-origin:top center}
-.co-paper{--co-footer-scale:.7496}
-.co-document-footer{position:absolute;left:calc(14mm * var(--co-footer-scale));right:calc(14mm * var(--co-footer-scale));bottom:calc(9mm * var(--co-footer-scale));height:calc(9mm * var(--co-footer-scale));box-sizing:border-box;border-top:1px solid #d9eaf5;padding-top:calc(2mm * var(--co-footer-scale));display:flex;align-items:center;justify-content:flex-end;gap:calc(5px * var(--co-footer-scale));font-family:'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif;letter-spacing:0;text-align:right;color:#243e54}
-.co-document-footer .snote-document-brand{display:flex;align-items:center;justify-content:flex-start;flex:none;width:calc(22mm * var(--co-footer-scale));height:calc(6.5mm * var(--co-footer-scale));margin-right:auto;position:relative;overflow:hidden}
-.co-document-footer .snote-document-brand img{display:block;position:absolute;left:50%;top:50%;width:200%;height:auto;max-width:none;transform:translate(-50%,-50%);object-fit:contain}
-.co-document-footer .snote-document-logo{display:flex;align-items:center;justify-content:center;flex:none;width:calc(11mm * var(--co-footer-scale));height:calc(6.5mm * var(--co-footer-scale))}
-.co-document-footer .snote-document-logo:not(.is-company-logo){display:none}
-.co-document-footer .zc-footer-emblem{display:block;width:100%;height:100%;object-fit:contain}
-.co-document-footer .zc-footer-emblem[hidden]{display:none}
-.co-document-footer .snote95-footer-company{display:block;max-width:calc(120mm * var(--co-footer-scale));font-size:calc(8.5px * var(--co-footer-scale));line-height:1.25;font-weight:800;overflow-wrap:anywhere}
 @media print{
  @page{size:A4 portrait;margin:0}
- #contract-office-dialog .co-paper{--co-footer-scale:1}
  body:has(#contract-office-dialog[open]){margin:0!important;padding:0!important;width:210mm!important;background:#fff!important;overflow:visible!important}
  body:has(#contract-office-dialog[open])>*:not(#contract-office-dialog){display:none!important}
  body:has(#contract-office-dialog[open])>#contract-office-dialog{display:block!important;position:static!important;inset:auto!important;width:210mm!important;max-width:210mm!important;height:auto!important;max-height:none!important;margin:0!important;padding:0!important;overflow:visible!important;border:0!important;border-radius:0!important;background:#fff!important;box-shadow:none!important}
@@ -106,6 +96,6 @@
  #contract-office-dialog .co-preview-viewport{display:block!important;width:210mm!important;height:auto!important;margin:0!important;padding:0!important;overflow:visible!important}
  #contract-office-dialog .co-paper{display:block!important;width:210mm!important;min-width:210mm!important;max-width:210mm!important;height:297mm!important;min-height:297mm!important;max-height:297mm!important;margin:0!important;padding:0!important;zoom:1!important;transform:none!important;box-shadow:none!important;break-inside:avoid!important;break-after:page!important;page-break-after:always!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
  #contract-office-dialog .co-paper:last-child{break-after:auto!important;page-break-after:auto!important}
- #contract-office-dialog .co-print-field{font-size:calc(var(--co-font,8) * 1pt)!important;color:#111!important;outline:0!important;background:transparent!important}
+ #contract-office-dialog .co-print-field{font-size:calc(var(--co-font,8) * 1pt)!important;color:#000!important;outline:0!important;background:transparent!important}
  #contract-office-dialog .co-print-field.co-print-multiline{padding-top:3pt!important}
 }

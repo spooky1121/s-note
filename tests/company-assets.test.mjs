@@ -11,7 +11,7 @@ function harness(){
  const world={};vm.runInNewContext(source,world);let active={companyId:'company-A',userId:'user-A',client:{},actor:{}},number=0;
  const rows=new Map(),events=[],calls={records:0,download:0,decode:0};
  const row=(kind='companyStamp',path='first.png',extra={})=>({company_id:active.companyId,owner_id:'owner-A',group_name:kind,file_path:active.companyId+'/owner-A/branding/'+path,mime_type:'image/png',file_size:12,...extra});
- rows.set('companyStamp',[row()]);rows.set('companyLogo',[row('companyLogo')]);
+ rows.set('companyStamp',[row()]);rows.set('companyLogo',[row('companyLogo')]);rows.set('companyOfficeStamp',[row('companyOfficeStamp','office.png')]);
  const hooks={records:async kind=>{calls.records++;return rows.get(kind);},download:async record=>{calls.download++;return blob(record.mime_type,record.file_size);},decode:async url=>{calls.decode++;events.push(['decode',url]);}};
  const api=world.SnoteCompanyAssets.create({context:()=>active,records:(...args)=>hooks.records(...args),download:(...args)=>hooks.download(...args),decode:(...args)=>hooks.decode(...args),createURL:value=>{const url='blob:test-'+(++number);events.push(['create',url,value.type]);return url;},revokeURL:url=>events.push(['revoke',url]),onClear:(kind,url)=>events.push(['clear',kind,url])});
  return {api,hooks,rows,row,events,calls,get active(){return active;},set active(value){active=value;}};
@@ -79,10 +79,25 @@ test('late decode after scope change revokes its unpublished URL without publish
 test('invalidating one kind cancels only that pending kind and leaves the other decoded URL alive',async()=>{
  const h=harness(),logo=await h.api.load('companyLogo'),hold=deferred();h.hooks.decode=()=>hold.promise;const pending=h.api.load('companyStamp');await tick();h.api.invalidate('companyStamp');hold.resolve();assert.equal(await pending,null);assert.equal(h.api.snapshot('companyStamp').status,'idle');assert.equal(h.api.snapshot('companyLogo').url,logo);assert.equal(h.events.some(x=>x[0]==='revoke'&&x[1]===logo),false);
 });
-test('reset clears both kinds before revocation and an old promise cannot overwrite a new load',async()=>{
- const h=harness(),stamp=await h.api.load('companyStamp'),logo=await h.api.load('companyLogo');h.events.length=0;h.api.reset();assert.deepEqual(h.events,[['clear','companyStamp',stamp],['revoke',stamp],['clear','companyLogo',logo],['revoke',logo]]);
- const hold=deferred();h.hooks.decode=()=>hold.promise;const old=h.api.load('companyLogo');await tick();h.api.reset();h.hooks.decode=async()=>{};const fresh=await h.api.load('companyLogo');hold.resolve();assert.equal(await old,null);assert.equal(h.api.snapshot('companyLogo').url,fresh);assert.notEqual(fresh,'blob:test-3');
+test('reset clears all three kinds before revocation and an old promise cannot overwrite a new load',async()=>{
+ const h=harness(),stamp=await h.api.load('companyStamp'),logo=await h.api.load('companyLogo'),office=await h.api.load('companyOfficeStamp');h.events.length=0;h.api.reset();assert.deepEqual(h.events,[['clear','companyStamp',stamp],['revoke',stamp],['clear','companyLogo',logo],['revoke',logo],['clear','companyOfficeStamp',office],['revoke',office]]);
+ const hold=deferred();h.hooks.decode=()=>hold.promise;const old=h.api.load('companyLogo');await tick();const unpublished=h.events.filter(event=>event[0]==='create').at(-1)[1];h.api.reset();h.hooks.decode=async()=>{};const fresh=await h.api.load('companyLogo');hold.resolve();assert.equal(await old,null);assert.equal(h.api.snapshot('companyLogo').url,fresh);assert.notEqual(fresh,unpublished);
 });
 test('a stale request rejection cannot clear or fail a newly loaded company image',async()=>{
  const h=harness(),hold=deferred();h.hooks.records=()=>hold.promise;const old=h.api.load('companyLogo');await tick();h.active={...h.active,userId:'user-B'};h.hooks.records=async()=>[h.row('companyLogo')];const fresh=await h.api.load('companyLogo');hold.reject(new Error('old secret'));assert.equal(await old,null);assert.equal(h.api.snapshot('companyLogo').url,fresh);assert.equal(h.api.snapshot('companyLogo').status,'ready');
+});
+test('office stamp has an independent private asset and replacement preserves the round seal and logo',async()=>{
+ const h=harness(),stamp=await h.api.load('companyStamp'),logo=await h.api.load('companyLogo'),office=await h.api.load('companyOfficeStamp');
+ assert.equal(h.api.snapshot('companyOfficeStamp').path,'company-A/owner-A/branding/office.png');assert.notEqual(office,stamp);assert.notEqual(office,logo);
+ h.events.length=0;h.rows.set('companyOfficeStamp',[h.row('companyOfficeStamp','office-replacement.png')]);h.api.invalidate('companyOfficeStamp');const replacement=await h.api.load('companyOfficeStamp');
+ assert.notEqual(replacement,office);assert.equal(h.api.snapshot('companyStamp').url,stamp);assert.equal(h.api.snapshot('companyLogo').url,logo);assert.deepEqual(h.events.filter(event=>event[0]==='revoke'),[['revoke',office]]);
+});
+test('missing office stamp stays missing even when a round seal is registered',async()=>{
+ const h=harness(),stamp=await h.api.load('companyStamp');h.rows.set('companyOfficeStamp',[]);assert.equal(await h.api.load('companyOfficeStamp'),null);assert.equal(h.api.snapshot('companyOfficeStamp').status,'missing');assert.equal(h.api.snapshot('companyStamp').url,stamp);assert.equal(h.calls.download,1);
+});
+test('office stamp rejects another company and another branding kind before downloading',async()=>{
+ for(const extra of [{company_id:'company-B'},{group_name:'companyStamp'},{group_name:'companyLogo'}]){const h=harness();h.rows.set('companyOfficeStamp',[h.row('companyOfficeStamp','office.png',extra)]);await assert.rejects(h.api.load('companyOfficeStamp'),/ASSET_METADATA_INVALID/);assert.equal(h.calls.download,0);}
+});
+test('office stamp late decode is revoked after switching company without exposing its image',async()=>{
+ const h=harness(),hold=deferred();h.hooks.decode=()=>hold.promise;const pending=h.api.load('companyOfficeStamp');await tick();h.active={...h.active,companyId:'company-B'};hold.resolve();assert.equal(await pending,null);assert.equal(h.api.snapshot('companyOfficeStamp').companyId,'company-B');assert.equal(h.api.snapshot('companyOfficeStamp').url,null);assert.deepEqual(h.events.filter(event=>event[0]==='revoke'),[['revoke','blob:test-1']]);
 });

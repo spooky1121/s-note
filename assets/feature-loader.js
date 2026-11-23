@@ -6,9 +6,9 @@
   catalog:['vehicle-catalog.js?v=2.185'],
   taxonomyUI:['vehicle-taxonomy-ui.js?v=2.185'],
   taxonomyStore:['vehicle-taxonomy-store.js?v=2.20'],
-  companyAssets:['company-assets.js?v=2.128'],
+  companyAssets:['company-assets.js?v=2.192'],
   mobileDocument:['mobile-document-editor.js?v=2.184'],
-  office:['transfer-document-layout.js?v=2.143','transfer-name-seal.js?v=2.143','transfer-company-seal.js?v=2.143','company-assets.js?v=2.128','contract-office.js?v=2.179']
+  office:['transfer-document-layout.js?v=2.192','transfer-name-seal.js?v=2.192','transfer-company-seal.js?v=2.192','company-assets.js?v=2.192','contract-office.js?v=2.192']
  });
  function loadFile(file){
   const url=new URL(file,base),key=url.href;
