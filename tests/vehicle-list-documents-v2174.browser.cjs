@@ -15,7 +15,7 @@ async function tooltip(p,target,expected,screenshot){
 async function owned(width){const f=await fixture(width),p=f.page;try{
  await p.evaluate(async()=>{await closeVehicle({discard:true});snote174VehicleDocumentSnapshot=null;const owner=currentUser.username,foreign='cld_foreign';
   cars=['none','one','all','collision'].map((suffix,index)=>({id:'docs-'+suffix,ownerId:owner,model:'합성 서류 차량 '+index,plate:'11가100'+index,status:'판매중',purchaseAt:'2026-11-20',buy:10000000,sell:12000000,moneyUnit:'KRW',year:2026,km:10000}));
-  const file=(id,group,ownerId=owner)=>({id:id+'-'+group+'-'+ownerId,carId:id,ownerId,group,url:ZEROCAR_DEFAULT_IMAGE});
+  const file=(id,group,ownerId=owner)=>({id:id+'-'+group+'-'+ownerId,carId:id,ownerId,group,url:SNOTE_DEFAULT_IMAGE});
   mediaByCar={'docs-none':[file('docs-none','photos')],'docs-one':[file('docs-one','registration'),file('docs-one','registration')],'docs-all':['photos','registration','inspection1','inspection1','inspection2'].map(group=>file('docs-all',group)),'docs-collision':[file('docs-collision','registration'),file('docs-collision','inspection1',foreign),file('docs-collision','inspection2',foreign)]};
   window.__docsBefore=JSON.stringify(cars);navigate('buy');
  });

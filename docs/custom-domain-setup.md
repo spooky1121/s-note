@@ -34,7 +34,7 @@ Pages의 도메인 연결과 인증서가 활성화된 뒤 각 HTTPS 주소를 �
 
 ## 4. 이메일 인증 리다이렉트
 
-기존 Supabase 프로젝트의 **Authentication → URL Configuration → Redirect URLs**에 기존 허용 항목을 유지하면서 다음 정확한 주소를 추가한다. 현재 가입 코드는 접속한 `location.origin + location.pathname`을 `emailRedirectTo`로 사용한다.
+기존 Supabase 프로젝트의 **Authentication → URL Configuration → Redirect URLs**에 기존 허용 항목을 유지하면서 다음 정확한 주소를 추가한다. 현재 가입·초대 코드는 공식 주소 `https://s-note.kr/`를 `emailRedirectTo`로 사용한다.
 
 ```text
 https://s-note.kr/
