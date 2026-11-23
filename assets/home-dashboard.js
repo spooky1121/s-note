@@ -7,7 +7,7 @@
  if(typeof module==='object'&&module.exports)module.exports=model;
  if(!root?.document)return;
  root.SnoteHomeDashboardModel=model;
- const host=document.getElementById('snote-dashboard-home');if(!host)return;host.dataset.homeLayout='compact';
+ const host=document.getElementById('snote-dashboard-home');if(!host)return;host.dataset.homeLayout='fluid';
  const bridge=()=>root.snoteHomeDashboardBridge;
  const mobile=matchMedia('(max-width:760px)');
  let active=false,paintedKey=null,signature='',scheduled=false,selectedChart='purchases';
@@ -34,7 +34,7 @@
   const amount=node('strong',null,'snote-home-kpi-value');amount.append(node('span',masked?'-':value==null?'—':number(value),'snote-home-number'));if(!masked&&value!=null)amount.append(node('small',unit));
   if(!masked&&value!=null&&value<0)amount.classList.add('is-negative');
   const caption=masked?'수익 숨김':value==null?empty:detail;
-  card.setAttribute('aria-label',label+' · '+(masked?'숨김':value==null?'아직 연결되지 않음':number(value)+unit)+(caption?' · '+caption:''));card.dataset.tooltip=caption||label;card.append(labelLine,amount,node('p',caption,'snote-home-kpi-caption'));return card;
+  card.setAttribute('aria-label',label+' · '+(masked?'숨김':value==null?'아직 연결되지 않음':number(value)+unit)+(caption?' · '+caption:''));card.dataset.tooltip=caption||label;card.append(labelLine,amount);return card;
  }
  function chart(data,{field,title,color,money=false}){
   const card=node('section',null,'snote-home-chart-card');card.dataset.chart=field;card.style.setProperty('--snote-home-chart-color',color);
@@ -111,21 +111,14 @@
   }
   return card;
  }
- function shortcuts(data,key){
-  const card=node('nav',null,'snote-home-shortcuts');card.setAttribute('aria-label','자주 쓰는 업무');card.append(node('h2','업무 바로가기'));
-  for(const[title,caption,page,name]of [['차량 관리',number(data.inventoryCount)+'대 보유','buy','inventory'],['판매 완료',number(data.soldCount)+'대 판매 완료','sell','sale'],['수익 · 정산','차량별 손익 확인','finance','profit']]){
-   const button=node('button',null,'snote-home-shortcut');button.type='button';const label=node('span');label.append(node('strong',title),node('small',caption));button.append(icon(name),label,icon('arrow'));button.onclick=()=>action('navigate',page,key);card.append(button);
-  }
-  return card;
- }
  function render(data,key,hideMargin){
   host.replaceChildren();host.dataset.state='ready';host.setAttribute('aria-busy','false');
   const kpis=node('div',null,'snote-home-kpis');kpis.setAttribute('role','group');kpis.setAttribute('aria-label','대시보드 요약');
   kpis.append(kpi('총투자금',data.totalInvestment,{kind:'capital',detail:'현재 보유 차량 원가'}),kpi('재고대출금',data.inventoryCapital,{kind:'inventory',detail:'재고금융 등록금액'}),kpi('현금투자금',data.cash,{kind:'cash',detail:'총투자금 − 재고금융'}),kpi('이번 달 수익',data.monthMargin,{kind:'profit',detail:'판매가 − 매입 원가·부대비용',masked:hideMargin}));
-  const secondary=node('div',null,'snote-home-secondary-kpis');secondary.setAttribute('role','group');secondary.setAttribute('aria-label','보조 실적');secondary.append(kpi('이번 달 매입',data.monthPurchaseCount,{kind:'purchase',unit:'대',detail:Number(data.month.slice(5))+'월 매입 기준'}),kpi('이번 달 판매',data.monthSaleCount,{kind:'sale',unit:'대',detail:Number(data.month.slice(5))+'월 판매 완료 기준'}),kpi('올해 수익',data.yearMargin,{kind:'year',detail:data.month.slice(0,4)+'년 판매 완료 기준',masked:hideMargin}));
-  const schedule=scheduler(work(data,key)),links=shortcuts(data,key);
-  const graphs=node('div',null,'snote-home-graphs');graphs.append(charts(data,key),settlement(data,key,hideMargin),links);
-  if(mobile.matches)host.append(schedule,kpis,secondary,graphs);else host.append(kpis,secondary,schedule,graphs);
+  kpis.append(kpi('이번 달 매입',data.monthPurchaseCount,{kind:'purchase',unit:'대',detail:Number(data.month.slice(5))+'월 매입 기준'}),kpi('이번 달 판매',data.monthSaleCount,{kind:'sale',unit:'대',detail:Number(data.month.slice(5))+'월 판매 완료 기준'}),kpi('올해 수익',data.yearMargin,{kind:'year',detail:data.month.slice(0,4)+'년 판매 완료 기준',masked:hideMargin}));
+  const schedule=scheduler(work(data,key));
+  const graphs=node('div',null,'snote-home-graphs');graphs.append(charts(data,key),settlement(data,key,hideMargin));
+  if(mobile.matches)host.append(schedule,kpis,graphs);else host.append(kpis,schedule,graphs);
  }
  function refresh(){
   scheduled=false;if(!active){clear();return;}host.hidden=false;
