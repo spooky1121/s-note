@@ -7,7 +7,7 @@
  if(typeof module==='object'&&module.exports)module.exports=model;
  if(!root?.document)return;
  root.SnoteHomeDashboardModel=model;
- const host=document.getElementById('snote-dashboard-home');if(!host)return;
+ const host=document.getElementById('snote-dashboard-home');if(!host)return;host.dataset.homeLayout='compact';
  const bridge=()=>root.snoteHomeDashboardBridge;
  const mobile=matchMedia('(max-width:760px)');
  let active=false,paintedKey=null,signature='',scheduled=false,selectedChart='purchases';
@@ -90,8 +90,8 @@
   card.append(list);return card;
  }
  function work(data,key){
-  const card=node('section',null,'snote-home-work-card');card.append(header('오늘 처리할 일',null,'buy',key));
-  const summary=node('div',null,'snote-home-work-summary');summary.append(node('strong','장기 재고'),node('span',number(data.tasks.count)+'대','snote-home-work-count'));card.append(summary,node('p','현재 보유 차량 · 매입일로부터 90일 이상','snote-home-work-caption'));
+  const card=node('section',null,'snote-home-work-card'),head=header('오늘 처리할 일',null,'buy',key);card.append(head);
+  const summary=node('div',null,'snote-home-work-summary');summary.append(node('strong','장기 재고'),node('span',number(data.tasks.count)+'대','snote-home-work-count'));head.querySelector('.snote-home-card-title').append(summary);card.append(node('p','현재 보유 차량 · 매입일로부터 90일 이상','snote-home-work-caption'));
   const list=node('div',null,'snote-home-task-list');
   if(!data.tasks.rows.length)list.append(node('p','90일 이상 보유한 차량이 없습니다.','snote-home-task-empty'));
   for(const row of data.tasks.rows.slice(0,3)){
@@ -124,8 +124,8 @@
   kpis.append(kpi('총투자금',data.totalInvestment,{kind:'capital',detail:'현재 보유 차량 원가'}),kpi('재고대출금',data.inventoryCapital,{kind:'inventory',detail:'재고금융 등록금액'}),kpi('현금투자금',data.cash,{kind:'cash',detail:'총투자금 − 재고금융'}),kpi('이번 달 수익',data.monthMargin,{kind:'profit',detail:'판매가 − 매입 원가·부대비용',masked:hideMargin}));
   const secondary=node('div',null,'snote-home-secondary-kpis');secondary.setAttribute('role','group');secondary.setAttribute('aria-label','보조 실적');secondary.append(kpi('이번 달 매입',data.monthPurchaseCount,{kind:'purchase',unit:'대',detail:Number(data.month.slice(5))+'월 매입 기준'}),kpi('이번 달 판매',data.monthSaleCount,{kind:'sale',unit:'대',detail:Number(data.month.slice(5))+'월 판매 완료 기준'}),kpi('올해 수익',data.yearMargin,{kind:'year',detail:data.month.slice(0,4)+'년 판매 완료 기준',masked:hideMargin}));
   const schedule=scheduler(work(data,key)),links=shortcuts(data,key);
-  const graphs=node('div',null,'snote-home-graphs');graphs.append(charts(data,key),settlement(data,key,hideMargin));
-  if(mobile.matches)host.append(schedule,kpis,secondary,links,graphs);else host.append(kpis,secondary,schedule,links,graphs);
+  const graphs=node('div',null,'snote-home-graphs');graphs.append(charts(data,key),settlement(data,key,hideMargin),links);
+  if(mobile.matches)host.append(schedule,kpis,secondary,graphs);else host.append(kpis,secondary,schedule,graphs);
  }
  function refresh(){
   scheduled=false;if(!active){clear();return;}host.hidden=false;

@@ -52,7 +52,7 @@ async function geometry(p,width){
  assert.equal(g.pageOverflow,false,JSON.stringify(g));assert.equal(g.hostOverflow,false,JSON.stringify(g));assert.equal(g.cardOverflow,false,JSON.stringify(g));assert.equal(g.kpis.rows,width>760?1:2,'Four primary metrics must be visible without internal scrolling');assert.equal(g.kpis.scrollWidth,g.kpis.clientWidth);
  if(width>760)assert(Math.abs(g.calendar.y-g.sidebar.y)<1&&g.calendar.width>g.sidebar.width,'Large calendar and agenda must share a desktop row');else assert(g.calendar.bottom<=g.sidebar.y+1,'Mobile agenda must follow the calendar');
  assert(g.scheduler.bottom<=g.graphs[0].y+1,'Personal schedule and daily work must precede charts');
- for(const b of [...g.graphs,g.calendar,g.sidebar])assert(b.x>=0&&b.right<=width+.5,JSON.stringify(g));for(const b of g.headers)assert(b.width>=44&&b.height>=44,'Section links must keep a 44px target');for(const b of g.tabs)assert(b.height>=(width>760?38:44));
+ for(const b of [...g.graphs,g.calendar,g.sidebar])assert(b.x>=0&&b.right<=width+.5,JSON.stringify(g));for(const b of g.headers)assert(b.width>=(width>760?32:44)&&b.height>=(width>760?32:44),'Compact desktop links and mobile links retain their respective touch targets');for(const b of g.tabs)assert(b.height>=(width>760?24:44),'Desktop tabs retain at least a 24px target and mobile tabs retain 44px');
  return g;
 }
 async function tooltipAndCharts(p){
