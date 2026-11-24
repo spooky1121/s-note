@@ -1,0 +1,8 @@
+/* Workspace opacity only: existing geometry, headers and document dialogs are untouched. */
+@media screen{
+ #snote-app main.content[data-route-transition="settling"]{opacity:0;pointer-events:none;transition:none;animation:none}
+ #snote-app main.content[data-route-transition="revealing"]{opacity:1;pointer-events:none;transition:none;animation:snoteRouteReveal .18s ease-out both}
+ @keyframes snoteRouteReveal{from{opacity:0}to{opacity:1}}
+}
+@media screen and (prefers-reduced-motion:reduce){#snote-app main.content[data-route-transition="revealing"]{transition:none;animation:none}}
+@media print{#snote-app main.content[data-route-transition]{opacity:1!important;pointer-events:auto!important;transition:none!important;animation:none!important}}
