@@ -9,6 +9,12 @@ async function back(p){await p.evaluate(()=>history.back());}
 async function current(p,page){assert.equal(await p.evaluate(()=>route),page);assert.equal(await p.evaluate(()=>history.state?.snoteNavigation?.page),page);}
 async function ready(width,withoutNavigation=false){
  const f=await fixture(width,null,{manualMessages:true}),p=f.page;
+ // Dashboard visits are incidental here, but their scheduler reads still need
+ // an explicit synthetic response rather than an attempted external request.
+ await p.route('**/rest/v1/rpc/snote_schedule_*',async request=>{
+  const req=request.request(),headers={'access-control-allow-origin':'*','access-control-allow-methods':'POST,OPTIONS','access-control-allow-headers':'authorization,apikey,content-type,cache-control,pragma'};if(req.method()==='OPTIONS')return request.fulfill({status:204,headers});assert(req.url().endsWith('/snote_schedule_list'),'Popup regression must not write schedules');
+  const month=req.postDataJSON().p_month,value=await p.evaluate(month=>{const c=snoteDealerSchedulerBridge.context();if(!c)return null;const days=SnoteDealerSchedulerData.model.calendarGrid(month).filter(Boolean);return{ok:true,companyId:c.companyId,ownerId:c.actorId,month,today:SnoteDealerSchedulerData.model.businessDate(),rangeStart:days[0],rangeEnd:days.at(-1),events:[],todayEvents:[],upcomingEvents:[],overdueEvents:[],counts:{calendar:0,today:0,upcoming:0,overdue:0},truncated:{calendar:false,today:false,upcoming:false,overdue:false},dayCounts:Object.fromEntries(days.map(day=>[day,0]))};},month);return request.fulfill({status:value?200:403,headers,contentType:'application/json',body:JSON.stringify(value||{code:'42501',message:'SCHEDULE_CONTEXT_CHANGED'})});
+ });
  if(withoutNavigation)await p.evaluate(()=>Object.defineProperty(window,'navigation',{value:undefined,configurable:true}));
  if(!await p.evaluate(()=>!!window.SnoteMobilePopupHistory))await p.addScriptTag({path:path.resolve(__dirname,'../assets/mobile-popup-history.js')});
  await depth(p,1);await back(p);await p.waitForFunction(()=>activeCarId===null);await depth(p,0);
@@ -82,6 +88,8 @@ async function overlayRoots(f){
 }
 async function routeGuard(f){
  const p=f.page;
+ // Office is lazy-loaded now; install its real guard before replacing it.
+ await p.evaluate(()=>SnoteFeatures.load('office'));
  await p.evaluate(()=>navigate('sell'));
  await p.evaluate(()=>{window.__oldOffice=SnoteContractOffice;window.SnoteContractOffice={...SnoteContractOffice,beforeLeave:()=>snoteConfirm('화면 이동 중 보존할 초안')};});
  await back(p);await p.locator(MESSAGE+'[open]').waitFor();await depth(p,0);

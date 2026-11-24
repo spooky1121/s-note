@@ -1,0 +1,84 @@
+/* Shared search chrome; the actual field and its event handlers stay in place. */
+@media screen {
+  :is(#snote-app, #operator-app) :is(label.search, label.recycle-search, .search-field) {
+    min-width: 0;
+    gap: 10px !important;
+    border: 1px solid #e1e6ec !important;
+    border-radius: 13px !important;
+    background: #fff !important;
+    box-shadow: 0 2px 7px #1b304008 !important;
+    padding: 9px 13px !important;
+  }
+  :is(#snote-app, #operator-app) input[type="search"] {
+    min-width: 0;
+    color: #233142 !important;
+    font: inherit;
+    font-size: 13px !important;
+    letter-spacing: -.15px;
+    text-overflow: ellipsis;
+  }
+  :is(#snote-app, #operator-app) :is(label.search, label.recycle-search, .search-field) input[type="search"] {
+    flex: 1 1 auto;
+    width: 100%;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    outline: 0 !important;
+    padding: 2px 0 !important;
+  }
+  :is(#snote-app, #operator-app) input[type="search"]::placeholder { color: #87929e; opacity: 1; }
+  :is(#snote-app, #operator-app) :is(label.search, label.recycle-search, .search-field) > :is(svg, .search-icon, [data-icon="search"]) {
+    flex: 0 0 18px; width: 18px !important; height: 18px !important; color: #7b8793 !important;
+  }
+  :is(#snote-app, #operator-app) :is(.search-icon, [data-icon="search"]) svg { width: 18px !important; height: 18px !important; }
+  .snote-search-frame { display: contents; }
+  .snote-search-frame > input[type="search"] {
+    border: 1px solid #e1e6ec !important; border-radius: 13px !important;
+    background: #fff !important; padding: 11px 13px 11px 37px !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237b8793' stroke-width='1.8'%3E%3Ccircle cx='10.5' cy='10.5' r='6.5'/%3E%3Cpath d='m16 16 4.5 4.5'/%3E%3C/svg%3E") !important;
+    background-size: 18px 18px !important; background-position: 12px center !important; background-repeat: no-repeat !important;
+  }
+  .snote-search-placeholder { visibility: hidden !important; pointer-events: none !important; }
+  /* Popover changes only painting order, never the source input's DOM parent. */
+  html body .snote-search-active:popover-open {
+    position: fixed !important; inset: auto !important;
+    left: var(--snote-search-left) !important; top: var(--snote-search-top) !important;
+    width: var(--snote-search-width) !important; max-width: calc(100vw - 24px) !important;
+    height: auto !important; min-height: 48px !important; max-height: none !important;
+    display: flex !important; align-items: center !important; gap: 10px !important;
+    box-sizing: border-box !important; margin: 0 !important; padding: 11px 13px !important;
+    border: 1px solid #d9e4ed !important; border-radius: 15px !important;
+    background: #fff !important; color: #233142 !important;
+    box-shadow: 0 16px 48px #152a4326, 0 2px 8px #152a430c !important;
+    overflow: visible !important; outline: none !important;
+    animation: snote-search-reveal 140ms ease-out;
+  }
+  html body .snote-search-active:popover-open input[type="search"] {
+    flex: 1 1 0 !important; width: 0 !important; min-width: 0 !important;
+    border: 0 !important; border-radius: 0 !important; box-shadow: none !important;
+    outline: 0 !important; padding: 3px 0 !important; background: transparent !important;
+    font-size: 14px !important; line-height: 22px !important;
+  }
+  /* The floating field supplies the focus boundary, so the inner input has no
+     second rectangular outline from the workspace's general focus rules. */
+  html body :is(#snote-app, #operator-app) .snote-search-active:popover-open :is(input[type="search"], #list-query):focus-visible {
+    outline: none !important; box-shadow: none !important;
+  }
+  .snote-search-active::backdrop {
+    background: #27364730;
+    backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+  }
+  html body :is(#snote-app, #operator-app) .snote-search-dismiss {
+    display: inline-flex !important; align-items: center; justify-content: center;
+    flex: 0 0 28px !important; width: 28px !important; height: 28px !important;
+    min-width: 28px !important; padding: 0 !important; margin: 0 !important;
+    border: 0 !important; border-radius: 7px !important; box-shadow: none !important;
+    background: #f3f5f7 !important; color: #77828e !important; cursor: pointer;
+  }
+  html body .snote-search-dismiss:hover { background: #eaf0f5 !important; color: #344559 !important; }
+  :is(#snote-app, #operator-app) .snote-search-dismiss svg { width: 15px !important; height: 15px !important; pointer-events: none; }
+  .snote-search-active:popover-open > .snote-search-magnifier { width: 18px; height: 18px; flex: 0 0 18px; color: #7b8793; }
+  @keyframes snote-search-reveal { from { opacity: 0; } to { opacity: 1; } }
+}
+@media (prefers-reduced-motion: reduce) { .snote-search-active:popover-open { animation: none !important; } }
+@media print { .snote-search-active, .snote-search-placeholder { display: none !important; } }
