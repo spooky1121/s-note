@@ -111,6 +111,61 @@
  #overlay.snote-registration-wizard .repair-row input{padding:7px!important;font-size:12px!important}
 }
 @keyframes purchase-registration-in{from{opacity:0;transform:translateY(9px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+@media screen{
+ #snote-app #list-screen #snote92-buy-manual[data-registration-mode="sale"]{display:inline-flex!important;align-items:center;justify-content:center;gap:8px;width:auto!important;min-width:96px!important;max-width:none!important;height:44px!important;min-height:44px!important;padding:0 14px!important}
+ #snote-app #list-screen #snote92-buy-manual[data-registration-mode="sale"] .snote-sale-registration-label{display:inline;font-size:13px!important;font-weight:650;line-height:1.3;white-space:nowrap}
+ #overlay.snote-registration-wizard[data-registration-mode="sale"] :is(.cost-fieldgrid,#new-custom-cost-fields,#snote-new-cost-settings-trigger,.purchase-registration-finance-grid,.purchase-registration-summary-title,#add-cost-summary){display:none!important}
+ #overlay.snote-registration-wizard[data-registration-mode="sale"] .sale-registration-date{grid-column:1/-1!important}
+ #overlay.snote-registration-wizard[data-registration-mode="sale"] :is(.add-subtitle,.repair-top strong,.repair-total,.repair-total strong){color:#c14353!important}
+ #overlay.snote-registration-wizard[data-registration-mode="sale"] .repair-group{margin-top:0;padding-top:2px;border-top:0;display:block!important}
+ #overlay.snote-registration-wizard[data-registration-mode="sale"] #new-repair-add{background:#fff0f1!important;color:#c14353!important}
+ #overlay.snote-registration-wizard[data-registration-mode="sale"] .repair-amount{color:#c14353!important}
+ #overlay.snote-registration-wizard .sale-registration-income{margin-top:24px;padding-top:18px;border-top:1px solid #e7edf7;color:#315fbe}
+ #overlay.snote-registration-wizard .sale-registration-income-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+ #overlay.snote-registration-wizard .sale-registration-income-heading h3{margin:0;color:#315fbe;font-size:13px!important;font-weight:650}
+ #overlay.snote-registration-wizard .sale-registration-income-add{display:grid;place-items:center;width:23px;height:23px;min-width:23px;padding:0;border:0;border-radius:50%;background:#e9efff;color:#1747dd;font-size:19px!important;line-height:1}
+ #overlay.snote-registration-wizard .sale-registration-income-fixed{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+ #overlay.snote-registration-wizard .sale-registration-income :is(label,input){color:#315fbe!important}
+ #overlay.snote-registration-wizard .sale-registration-income-items{display:grid;gap:8px;margin-top:12px}
+ #overlay.snote-registration-wizard .sale-registration-income-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(100px,140px) 30px;gap:7px;align-items:center;min-width:0}
+ #overlay.snote-registration-wizard .sale-income-remove{display:grid;place-items:center;width:23px;height:23px;min-width:23px;min-height:23px;padding:0;border:0;border-radius:50%;background:#fff0f1;color:#bc172a;font-size:17px!important}
+ #overlay.snote-registration-wizard .sale-registration-income-total-live{display:flex;justify-content:flex-end;gap:12px;margin:10px 0 0;color:#315fbe;font-size:12px!important}
+ #overlay.snote-registration-wizard .sale-registration-income-total-live strong{font-size:12px!important;font-weight:650}
+ #overlay.snote-registration-wizard .sale-registration-car-price{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px;border:1px solid #e3eaff;border-radius:12px;background:#f6f8ff;color:#435b83}
+ #overlay.snote-registration-wizard .sale-registration-car-price span{font-size:13px!important;font-weight:600}
+ #overlay.snote-registration-wizard .sale-registration-car-price strong{font-size:22px!important;font-weight:700;color:#223b69;overflow-wrap:anywhere;text-align:right}
+ #overlay.snote-registration-wizard .sale-registration-summary-columns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:18px;align-items:start}
+ #overlay.snote-registration-wizard .sale-registration-summary-column{min-width:0;padding:15px;border-radius:11px;border:1px solid #e8eaf0;background:#fff}
+ #overlay.snote-registration-wizard .sale-registration-summary-column.is-expense{border-color:#f3dfe3;background:#fffbfc;color:#bd4051}
+ #overlay.snote-registration-wizard .sale-registration-summary-column.is-income{border-color:#dfe7f7;background:#fbfcff;color:#315fbe}
+ #overlay.snote-registration-wizard .sale-registration-summary-column h3{margin:0 0 14px;font-size:13px!important;font-weight:650;color:inherit}
+ #overlay.snote-registration-wizard .sale-registration-summary-list{display:grid;gap:10px}
+ #overlay.snote-registration-wizard :is(.sale-registration-summary-row,.sale-registration-summary-total){display:flex;justify-content:space-between;align-items:baseline;gap:9px;min-width:0;font-size:12px!important;line-height:1.5}
+ #overlay.snote-registration-wizard .sale-registration-summary-row span{min-width:0;overflow-wrap:anywhere}
+ #overlay.snote-registration-wizard .sale-registration-summary-row strong{flex:none;font-size:12px!important;font-weight:550;white-space:nowrap}
+ #overlay.snote-registration-wizard .sale-registration-summary-total{flex-wrap:wrap;margin-top:17px;padding-top:12px;border-top:1px solid currentColor;font-weight:650}
+ #overlay.snote-registration-wizard .sale-registration-summary-total strong{font-size:15px!important;overflow-wrap:anywhere}
+ #overlay.snote-registration-wizard .sale-registration-summary-net{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-top:20px;padding:18px;border-radius:12px;background:#f0f4ff;color:#253c64}
+ #overlay.snote-registration-wizard .sale-registration-summary-net div{font-size:14px!important;font-weight:650}
+ #overlay.snote-registration-wizard .sale-registration-summary-net strong{font-size:23px!important;font-weight:700;overflow-wrap:anywhere;text-align:right}
+ #overlay.snote-registration-wizard #sale-registration-net[data-tone="income"]{color:#315fbe}
+ #overlay.snote-registration-wizard #sale-registration-net[data-tone="expense"]{color:#bd4051}
+ #overlay.snote-registration-wizard .sale-registration-summary-formula{margin:9px 0 0;text-align:right;color:#8d99ad;font-size:11px!important;line-height:1.6}
+}
+@media screen and (max-width:600px){
+ #overlay.snote-registration-wizard .sale-registration-income-fixed{gap:8px}
+ #overlay.snote-registration-wizard .sale-registration-income-row{grid-template-columns:minmax(0,1fr) 92px 27px;gap:5px}
+ #overlay.snote-registration-wizard .sale-registration-summary-columns{gap:8px;margin-top:12px}
+ #overlay.snote-registration-wizard .sale-registration-summary-column{padding:12px 9px}
+ #overlay.snote-registration-wizard .sale-registration-summary-row{flex-wrap:wrap;gap:2px 7px}
+ #overlay.snote-registration-wizard .sale-registration-summary-row strong{margin-left:auto;max-width:100%;overflow-wrap:anywhere;white-space:normal}
+ #overlay.snote-registration-wizard .sale-registration-summary-total strong{font-size:13px!important}
+ #overlay.snote-registration-wizard .sale-registration-car-price{padding:14px 12px}
+ #overlay.snote-registration-wizard .sale-registration-car-price strong{font-size:19px!important}
+ #overlay.snote-registration-wizard .sale-registration-summary-net{padding:16px 12px}
+ #overlay.snote-registration-wizard .sale-registration-summary-net strong{font-size:20px!important}
+ #overlay.snote-registration-wizard .sale-registration-income input{font-size:16px!important}
+}
 @keyframes purchase-registration-step-in{from{opacity:.4;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
 @keyframes purchase-registration-spin{to{transform:rotate(360deg)}}
 @media(prefers-reduced-motion:reduce){#overlay.snote-registration-wizard *,#overlay.snote-registration-wizard.open>.snote-popup-frame{animation:none!important;transition:none!important}}

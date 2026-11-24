@@ -1,4 +1,4 @@
-/* A confirmed registration is revealed in its owner's purchase view only. */
+/* A confirmed registration is revealed in its owner's purchase or completed-sale view. */
 (() => {
  'use strict';
  if (window.SnotePurchaseRegistrationSuccess) return;
@@ -6,12 +6,13 @@
  const reduced = () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches === true;
  const actorNow = () => typeof currentUser === 'undefined' ? null : currentUser;
  const pageNow = () => typeof route === 'undefined' ? '' : route;
+ const targetPage = entry => entry?.target === 'sell' ? 'sell' : 'buy';
  const frame = callback => typeof requestAnimationFrame === 'function' ? requestAnimationFrame(callback) : setTimeout(callback, 0);
  const stopFrame = handle => typeof cancelAnimationFrame === 'function' ? cancelAnimationFrame(handle) : clearTimeout(handle);
  function permitted(entry) {
   try {
    return !!entry && actorNow() === entry.actor && entry.valid() === true &&
-    typeof cars !== 'undefined' && cars.some(car => String(car.id) === entry.id && car.ownerId === entry.actor.username && car.status !== '판매완료');
+    typeof cars !== 'undefined' && cars.some(car => String(car.id) === entry.id && car.ownerId === entry.actor.username && (targetPage(entry)==='sell'?car.status==='판매완료':car.status!=='판매완료'));
   } catch { return false; }
  }
  function removeNotice(entry) {
@@ -30,18 +31,18 @@
  }
  function prioritize(rows, key) {
   if (!pin || key !== 'vehicles') return rows;
-  if (pageNow() !== 'buy' || !permitted(pin)) { pin = null;return rows; }
+  if (pageNow() !== targetPage(pin) || !permitted(pin)) { pin = null;return rows; }
   const index = rows.findIndex(car => String(car.id) === pin.id);
   if (index <= 0) return rows;
   return [rows[index], ...rows.slice(0,index), ...rows.slice(index+1)];
  }
  function rendered() {
   const entry = pin;
-  if (!entry || entry.animated || entry.scheduled || pageNow() !== 'buy' || !permitted(entry)) return;
+  if (!entry || entry.animated || entry.scheduled || pageNow() !== targetPage(entry) || !permitted(entry)) return;
   entry.scheduled = true;
   frame(() => {
    entry.scheduled = false;
-   if (pin !== entry || entry.animated || pageNow() !== 'buy' || !permitted(entry)) return;
+   if (pin !== entry || entry.animated || pageNow() !== targetPage(entry) || !permitted(entry)) return;
    const matches = [...document.querySelectorAll('#list-table [data-registration-car-id],#list-mobile [data-registration-car-id]')]
     .filter(element => element.dataset.registrationCarId === entry.id && element.getClientRects().length > 0);
    if (!matches.length) return;
@@ -72,8 +73,9 @@
   entry.navigating = true;
   let navigated = false;
   try {
-   navigated = typeof navigate === 'function' && navigate('buy') === true;
-   if (!navigated || !permitted(entry) || pageNow() !== 'buy') { pin = null;settle(entry,false);return; }
+   navigated = typeof navigate === 'function' && navigate(targetPage(entry)) === true;
+   if (!navigated || !permitted(entry) || pageNow() !== targetPage(entry)) { pin = null;settle(entry,false);return; }
+   if(targetPage(entry)==='sell'&&typeof snote226SetSalesMonth==='function'){const car=cars.find(car=>String(car.id)===entry.id);snote226SetSalesMonth(typeof snote226SoldMonth==='function'?snote226SoldMonth(car)||'undated':'current');}
    window.snote236ResetPagination?.('vehicles');
    if (typeof renderCars === 'function') renderCars();
    window.SnoteListSort?.refresh();rendered();
@@ -82,9 +84,9 @@
    pin = null;settle(entry,false);
   }
  }
- function complete({id, actor, valid} = {}) {
+ function complete({id, actor, valid, target='buy'} = {}) {
   cancel();
-  const entry = {id:String(id ?? ''),actor,valid,startPage:pageNow(),settled:false,navigating:false};
+  const entry = {id:String(id ?? ''),actor,valid,target:target==='sell'?'sell':'buy',startPage:pageNow(),settled:false,navigating:false};
   if (!entry.id || entry.id.length > 300 || typeof valid !== 'function' || !permitted(entry)) return Promise.resolve(false);
   const promise = new Promise(resolve => { entry.resolve = resolve; });
   job = entry;
@@ -108,7 +110,7 @@
  document.addEventListener('keydown', event => { if (job && ['Enter',' '].includes(event.key) && event.target.closest?.('[data-registration-car-id]')) settle(job,false); }, true);
  window.addEventListener('snote:route-changed', event => {
   if (job && !job.navigating && event.detail?.page !== job.startPage) settle(job,false);
-  if (event.detail?.page !== 'buy') pin = null;
+  if (event.detail?.page !== targetPage(pin)) pin = null;
  });
  window.addEventListener('pagehide', cancel);
  window.SnotePurchaseRegistrationSuccess = {complete,prioritize,rendered,cancel};

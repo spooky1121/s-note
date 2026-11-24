@@ -1,4 +1,5 @@
 import '../../assets/money.js';
+import '../../assets/sale-registration-model.js';
 import { readBoundedBytes } from '../_shared/api-security.js';
 import { createTransferRewrapper } from '../_shared/operator-transfer.js';
 import { operatorProviderStatus } from '../_shared/operator-services.js';
@@ -405,6 +406,9 @@ async function perform(c, jwt, actor, b, env) {
     const normalized = globalThis.SnoteMoney.car(source.vehicle), vehicle = { ...normalized, ...patch, moneyUnit: 'KRW' };
     for (const map of ['costs', 'customCosts', 'customCostLabels']) if (patch[map]) vehicle[map] = { ...(normalized[map] || {}), ...patch[map] };
     for (const map of ['customCosts', 'customCostLabels']) if (vehicle[map]) vehiclePatch({ [map]: vehicle[map] });
+    const income = globalThis.SnoteSaleRegistrationModel.prepare(normalized, vehicle);
+    if (Object.hasOwn(income, 'saleRegistrationIncome')) vehicle.saleRegistrationIncome = income.saleRegistrationIncome;
+    else if (Object.hasOwn(normalized, 'saleRegistrationIncome')) vehicle.saleRegistrationIncome = null;
     return publicResult(await rpc(c, jwt, actor, 'vehicle_save', { p_company: uuid(b.companyId), p_owner: uuid(b.ownerId), p_car_id: label(b.carId), p_expected: expected, p_vehicle: vehicle, p_request_id: requestId }));
   }
   if (action === 'vehicle-archive') {
