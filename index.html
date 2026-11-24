@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.209">
+<html lang="ko" data-snote-release="2.210">
 <head>
 <meta charset="utf-8" />
   <script src="assets/service-location.js?v=2.200"></script>
@@ -3435,11 +3435,11 @@ button, input, select, textarea { font-family: inherit; }
      <tr class="q8-vehicle-price"><td>차량대금</td><td>차량 판매금액</td><td id="quote-car-price">0</td></tr>
      <tr><td>취득세</td><td>7% 기준 예상액 · 차량별 상이</td><td id="quote-acquisition">0</td></tr>
      <tr><td>공채 할인비</td><td>원본 견적 방식의 참고 금액</td><td id="quote-bond">0</td></tr>
-     <tr><td>증지대</td><td>이전 등록 수수료</td><td><input id="quote-stamp" inputmode="numeric" aria-label="증지대" placeholder="0" oninput="updateQuoteTotals()" /></td></tr>
-     <tr><td>성능보증보험료</td><td>차량 부대비용 반영</td><td><input id="quote-insurance" inputmode="numeric" aria-label="성능보증보험료" value="0" oninput="updateQuoteTotals()" /></td></tr>
+     <tr><td>증지대</td><td>이전 등록 수수료</td><td><input id="quote-stamp" type="text" inputmode="text" maxlength="18" aria-label="증지대" placeholder="0" oninput="updateQuoteTotals()" /></td></tr>
+     <tr><td>성능보증보험료</td><td>차량 부대비용 반영</td><td><input id="quote-insurance" type="text" inputmode="text" maxlength="18" aria-label="성능보증보험료" value="0" oninput="updateQuoteTotals()" /></td></tr>
      <tr><td>번호판 교체비</td><td>교체 시 발생</td><td><input id="quote-platefee" type="text" inputmode="text" maxlength="18" aria-label="번호판 교체비" placeholder="0" oninput="updateQuoteTotals()" /></td></tr>
-     <tr><td>매도비</td><td>예시 금액 · 수정 가능</td><td><input id="quote-sellingfee" inputmode="numeric" aria-label="매도비" value="440,000" oninput="updateQuoteTotals()" /></td></tr>
-     <tr><td>수수료</td><td>발생 시 입력</td><td><input id="quote-fee" inputmode="numeric" aria-label="수수료" placeholder="0" oninput="updateQuoteTotals()" /></td></tr>
+     <tr><td>매도비</td><td>예시 금액 · 수정 가능</td><td><input id="quote-sellingfee" type="text" inputmode="text" maxlength="18" aria-label="매도비" value="440,000" oninput="updateQuoteTotals()" /></td></tr>
+     <tr><td>수수료</td><td>발생 시 입력</td><td><input id="quote-fee" type="text" inputmode="text" maxlength="18" aria-label="수수료" placeholder="0" oninput="updateQuoteTotals()" /></td></tr>
      <tr class="q8-subtotal"><td>이전비용 소계</td><td></td><td id="quote-transfer-subtotal">0</td></tr>
     </tbody></table>
    </section>
@@ -6677,9 +6677,9 @@ function quoteComma(n){return (Math.round(Number(n)||0)||0).toLocaleString('ko-K
 function quoteReadInput(id){return Number(String($(id).value||'').replace(/[^0-9.-]/g,''))||0}
 function quoteFormatFields(){for(const id of ['quote-stamp','quote-insurance','quote-platefee','quote-sellingfee','quote-fee']){
  const el=$(id);if(!el)continue;
- const negative=id==='quote-platefee'&&/^[-−]/u.test(el.value.trimStart()),digits=el.value.replace(/\D/g,'').slice(0,13);
- if(!digits){el.value=negative?'-':'';continue;}
- const amount=Number(digits);el.value=(negative?'-':'')+amount.toLocaleString('ko-KR');
+ const typedNegative=/^[-−]/u.test(el.value.trimStart()),deduction=globalThis.SnoteQuoteCostEditor?.isDeduction?.(id)===true,digits=el.value.replace(/\D/g,'').slice(0,13);
+ if(!digits){el.value=typedNegative?'-':'';continue;}
+ const amount=Number(digits),negative=typedNegative||deduction&&amount!==0;el.value=(negative?'-':'')+amount.toLocaleString('ko-KR');
 }}
 function updateQuoteTotals(){quoteFormatFields();const amount=quoteVehiclePrice;
  // 원본 엑셀: G9=B8*0.07, G10=(B8+700000)/1.1*12%*10%, G16=SUM(G9:G15)
@@ -6788,6 +6788,7 @@ async function openQuotePreview(){
  const quoteDealerMobile=String((c.ownerId===currentUser.username?currentUser.phone:'')||quoteDealerAccount?.phone||'').replace(/\D/g,'');
  $('quote-dealer-phone').textContent=/^01[016789]\d{7,8}$/.test(quoteDealerMobile)?quoteDealerMobile.replace(/^(01\d)(\d{3,4})(\d{4})$/,'$1-$2-$3'):'';
  $('quote-stamp').value='';$('quote-insurance').value=quoteComma(Number.isFinite(insurance)&&insurance>=0?insurance:0);$('quote-platefee').value='';$('quote-sellingfee').value='440,000';$('quote-fee').value='';
+ window.SnoteQuoteCostEditor?.reset?.();
  updateQuoteTotals();
  $('vehicle-overlay').classList.remove('open');$('vehicle-overlay').setAttribute('aria-hidden','true');
  $('quote-overlay').classList.add('open');$('quote-overlay').setAttribute('aria-hidden','false');
@@ -6797,13 +6798,24 @@ async function openQuotePreview(){
 }
 function closeQuotePreview(){
  window.SnotePaymentAccounts?.clearDocument();
+ window.SnoteQuoteCostEditor?.reset?.();
  $('quote-overlay').classList.remove('open');$('quote-overlay').setAttribute('aria-hidden','true');
  quoteCarId=null;
  if(activeCarId){$('vehicle-overlay').classList.add('open');$('vehicle-overlay').setAttribute('aria-hidden','false')}
 }
+function snoteResetQuoteSession(){
+ const host=$('quote-overlay'),paper=$('quote-paper');
+ if(host){host.classList.remove('open');host.setAttribute('aria-hidden','true');delete host.dataset.snoteHistoryDirty;}
+ quoteCarId=null;quoteVehiclePrice=0;
+ window.SnoteQuoteCostEditor?.reset?.();
+ for(const input of paper?.querySelectorAll('input,textarea')||[]){if(!input.closest('.snote-quote-cost-field'))input.value='';}
+ for(const id of ['quote-car-price','quote-acquisition','quote-bond','quote-transfer-subtotal','quote-grand-total','quote-bank-car','quote-bank-transfer']){const field=$(id);if(field)field.textContent='0';}
+ for(const id of ['quote-dealer','quote-dealer-phone']){const field=$(id);if(field)field.textContent='';}
+ window.SnotePaymentAccounts?.clearDocument();
+}
 function resizeQuotePreview(){const paper=$('quote-paper');if(!$('quote-overlay').classList.contains('open')||!paper)return;const width=paper.closest('.snote-popup-card')?.clientWidth||window.innerWidth-68;paper.style.setProperty('--quote-scale',Math.max(.1,Math.min(1,width/794)));}
 window.addEventListener('resize',resizeQuotePreview);
-async function printQuote(){if(!$('quote-overlay').classList.contains('open'))return;const actor=currentUser,car=quoteCarId,scope=snote128DocumentScope();const [,accountsReady]=await Promise.all([snote95UpdateDocumentCompany(),window.SnotePaymentAccounts?.loadDocument(()=>currentUser===actor&&quoteCarId===car&&$('quote-overlay').classList.contains('open'))??Promise.resolve(false)]);if(!accountsReady){toast('입금계좌를 확인하지 못했습니다. 다시 불러온 뒤 인쇄해 주세요.');return;}await document.fonts?.ready;if(currentUser!==actor||quoteCarId!==car||!snote128DocumentCurrent(scope)||!$('quote-overlay').classList.contains('open'))return;window.print()}
+async function printQuote(){if(!$('quote-overlay').classList.contains('open'))return;window.SnoteQuoteCostEditor?.commitAll?.();const actor=currentUser,car=quoteCarId,scope=snote128DocumentScope();const [,accountsReady]=await Promise.all([snote95UpdateDocumentCompany(),window.SnotePaymentAccounts?.loadDocument(()=>currentUser===actor&&quoteCarId===car&&$('quote-overlay').classList.contains('open'))??Promise.resolve(false)]);if(!accountsReady){toast('입금계좌를 확인하지 못했습니다. 다시 불러온 뒤 인쇄해 주세요.');return;}await document.fonts?.ready;if(currentUser!==actor||quoteCarId!==car||!snote128DocumentCurrent(scope)||!$('quote-overlay').classList.contains('open'))return;window.print()}
 
 
 /* v1.9 · Contract preview (client-only draft) */
@@ -6894,6 +6906,7 @@ function snote222ContractSignatureContext(){
  return {actor:currentUser,ownerId:car?.ownerId||'',carId:contractCarId,view:snote214ContractView,mode:contractMode,open:$('contract-overlay').classList.contains('open'),customerName:$('ct-buyer-name').value};
 }
 function snote222ResetContractSession(){
+ snoteResetQuoteSession();
  snote183PrintDrafts.contract=null;snote183PrintDrafts.receipt=null;
  snote165ContractCustomerRetry=null;
  window.SnotePaymentAccounts?.clearDocument();
@@ -12304,7 +12317,7 @@ window.zc86Cloud={getAccessToken:async()=>{const client=S.client,user=S.user,com
 <link rel="stylesheet" href="assets/workspace-reorder.css?v=2.136">
 <script src="assets/workspace-order-store.js?v=2.135" defer></script>
 <script src="assets/workspace-reorder.js?v=2.202" defer></script>
-<script src="assets/release-info.js?v=2.209" defer></script>
+<script src="assets/release-info.js?v=2.210" defer></script>
 <link rel="stylesheet" href="assets/encar-id.css?v=2.162">
 <script src="assets/encar-id.js?v=2.184" defer></script>
 <script src="assets/company-purchase.js?v=2.172" defer></script>
@@ -12347,6 +12360,8 @@ window.addEventListener('snote:payment-accounts-changed',()=>{if(typeof contract
 <link rel="stylesheet" href="assets/vehicle-viewport.css?v=2.167">
 <link rel="stylesheet" href="assets/document-viewport.css?v=2.199">
 <script src="assets/document-viewport.js?v=2.199" defer></script>
+<link rel="stylesheet" href="assets/quote-cost-editor.css?v=2.210" data-snote-type-scale>
+<script src="assets/quote-cost-editor.js?v=2.210" defer></script>
 <link rel="stylesheet" href="assets/mobile-document-editor.css?v=2.184">
 <script src="assets/mobile-document-bootstrap.js?v=2.184" defer></script>
 <link rel="stylesheet" href="assets/shared-vehicle-detail.css?v=2.174">
