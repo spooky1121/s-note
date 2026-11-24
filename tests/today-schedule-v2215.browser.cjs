@@ -31,7 +31,7 @@ async function display(browser){
  const before=record(s),f=await begin(browser,s,1440,'today-agenda-display'),p=f.page,results=[];
  try{
   for(const width of [1440,390]){
-   await p.setViewportSize({width,height:950});await ready(p);const card=await panel(p);assert(card.classes.includes('has-today-events'));assert.equal(card.count,'1');assert.notEqual(card.animation,'none');assert.equal(parseFloat(card.duration),2.8,'Reminder uses the slightly faster 2.8-second cycle');assert(parseFloat(card.duration)<3.6,'Reminder is faster than the prior cycle');assert.equal(card.iterations,'infinite');assert.equal(card.opacity,'1');assert.equal(card.transform,'none');
+   await p.setViewportSize({width,height:950});await ready(p);const card=await panel(p);assert(card.classes.includes('has-today-events'));assert.equal(card.count,'1');assert.notEqual(card.animation,'none');assert.equal(parseFloat(card.duration),2.2,'Reminder uses the slightly faster 2.2-second cycle');assert(parseFloat(card.duration)<2.8,'Reminder is faster than the prior cycle');assert.equal(card.iterations,'infinite');assert.equal(card.opacity,'1');assert.equal(card.transform,'none');
    assert.equal((await panel(p,UPCOMING)).animation,'none','Upcoming card itself does not pulse');
    const tomorrow=await until(p,one.id,1),later=await until(p,three.id,3);
    noDayLabels(await p.locator(TODAY).textContent());noDayLabels(await p.locator(HOST+' .snote-scheduler-grid').textContent());
@@ -39,7 +39,7 @@ async function display(browser){
    const geometry=await layout(p,width);
    await p.emulateMedia({reducedMotion:'reduce'});await frames(p);const reduced=await panel(p);assert.equal(reduced.animation,'none');assert.notEqual(reduced.border,'rgb(231, 236, 241)','Motion reduction retains a colored reminder');assert.equal(reduced.opacity,'1');assert.equal(shadowSpread(reduced.boxShadow),1,'Motion reduction keeps the stronger static inset line');
    await p.emulateMedia({reducedMotion:'no-preference'});await frames(p);
-   const samples=[];for(const time of[0,1400,2800]){const v=await pulseAt(p,time);samples.push({time,...v});if(time!==2800)await p.screenshot({path:path.join(OUT,'today-pulse-'+(time===0?'peak':'trough')+'-'+width+'.png'),fullPage:width<760});}
+   const samples=[];for(const time of[0,1100,2200]){const v=await pulseAt(p,time);samples.push({time,...v});if(time!==2200)await p.screenshot({path:path.join(OUT,'today-pulse-'+(time===0?'peak':'trough')+'-'+width+'.png'),fullPage:width<760});}
    assert.equal(shadowSpread(samples[0].boxShadow),1,'Peak adds one inward pixel to the normal border');assert.equal(shadowSpread(samples[1].boxShadow),0,'Weak phase removes the extra inward pixel');assert.equal(shadowSpread(samples[2].boxShadow),1,'The stronger line returns at the next cycle');assert.notEqual(samples[0].border,samples[1].border);assert.equal(samples[0].border,samples[2].border);
    for(const v of samples){assert.equal(v.opacity,'1');assert.equal(v.transform,'none');assert.equal(v.borderWidth,'1px','Actual border width does not alter card layout');assert.equal(v.padding,samples[0].padding);for(const k of['x','y','width','height']){assert(Math.abs(v.rect[k]-samples[0].rect[k])<.1,'Pulse cannot move the card');for(const child of['header','title'])assert(Math.abs(v.content[child][k]-samples[0].content[child][k])<.1,'Pulse cannot move the card contents');}}
    await p.locator(TODAY).evaluate(e=>{e.getAnimations().find(a=>a.effect?.target===e&&a.animationName==='snoteTodayScheduleBorder')?.play();});
