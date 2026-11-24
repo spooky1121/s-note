@@ -11,7 +11,9 @@ const frames=p=>p.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>re
 async function ready(p){await p.locator(HOST+'[data-state=ready]').waitFor();await p.waitForFunction(()=>!window.SnoteRouteTransition?.pending());await frames(p);}
 async function begin(browser,state,width,label,clock=CLOCK){state.now=clock;const f=await boot(browser,state,width,label,'dealer@example.invalid',clock);await ready(f.page);return f;}
 function record(s){return JSON.stringify([...s.events]);}
-async function panel(p,selector=TODAY){return p.locator(selector).evaluate(e=>{const s=getComputedStyle(e),r=e.getBoundingClientRect();return{classes:[...e.classList],animation:s.animationName,duration:s.animationDuration,iterations:s.animationIterationCount,border:s.borderTopColor,borderWidth:s.borderTopWidth,opacity:s.opacity,transform:s.transform,rect:{x:r.x,y:r.y,width:r.width,height:r.height},count:e.querySelector('.snote-scheduler-agenda-count')?.textContent};});}
+async function panel(p,selector=TODAY){return p.locator(selector).evaluate(e=>{const s=getComputedStyle(e),box=node=>{if(!node)return null;const r=node.getBoundingClientRect();return{x:r.x,y:r.y,width:r.width,height:r.height};};return{classes:[...e.classList],animation:s.animationName,duration:s.animationDuration,iterations:s.animationIterationCount,border:s.borderTopColor,borderWidth:s.borderTopWidth,boxShadow:s.boxShadow,padding:s.padding,opacity:s.opacity,transform:s.transform,rect:box(e),content:{header:box(e.querySelector('header')),title:box(e.querySelector('.snote-scheduler-event-title'))},count:e.querySelector('.snote-scheduler-agenda-count')?.textContent};});}
+const shadowSpread=value=>{if(value==='none')return 0;const lengths=value.replace(/rgba?\([^)]*\)/g,'').match(/-?\d+(?:\.\d+)?px/g)||[];return parseFloat(lengths[3]||'0');};
+async function pulseAt(p,time){await p.locator(TODAY).evaluate((e,time)=>{const animation=e.getAnimations().find(a=>a.effect?.target===e&&a.animationName==='snoteTodayScheduleBorder');if(!animation)throw Error('Today reminder animation is missing');animation.pause();animation.currentTime=time;},time);await frames(p);return panel(p);}
 async function until(p,id,days,root=UPCOMING){
  const button=p.locator(root+' [data-event-id="'+id+'"]');await button.waitFor();
  const badge=button.getByText(days+'일 후',{exact:true});assert.equal(await badge.count(),1,'Upcoming entries show a single exact calendar-day label');
@@ -29,21 +31,24 @@ async function display(browser){
  const before=record(s),f=await begin(browser,s,1440,'today-agenda-display'),p=f.page,results=[];
  try{
   for(const width of [1440,390]){
-   await p.setViewportSize({width,height:950});await ready(p);const card=await panel(p);assert(card.classes.includes('has-today-events'));assert.equal(card.count,'1');assert.notEqual(card.animation,'none');assert(parseFloat(card.duration)>=3,'Reminder blinks slowly');assert.equal(card.iterations,'infinite');assert.equal(card.opacity,'1');assert.equal(card.transform,'none');
+   await p.setViewportSize({width,height:950});await ready(p);const card=await panel(p);assert(card.classes.includes('has-today-events'));assert.equal(card.count,'1');assert.notEqual(card.animation,'none');assert.equal(parseFloat(card.duration),2.8,'Reminder uses the slightly faster 2.8-second cycle');assert(parseFloat(card.duration)<3.6,'Reminder is faster than the prior cycle');assert.equal(card.iterations,'infinite');assert.equal(card.opacity,'1');assert.equal(card.transform,'none');
    assert.equal((await panel(p,UPCOMING)).animation,'none','Upcoming card itself does not pulse');
    const tomorrow=await until(p,one.id,1),later=await until(p,three.id,3);
    noDayLabels(await p.locator(TODAY).textContent());noDayLabels(await p.locator(HOST+' .snote-scheduler-grid').textContent());
    assert.equal(await p.locator(UPCOMING+' [data-event-id="'+seven.id+'"]').count(),0);
-   const geometry=await layout(p,width);results.push({width,card,tomorrow,later,geometry});
+   const geometry=await layout(p,width);
+   await p.emulateMedia({reducedMotion:'reduce'});await frames(p);const reduced=await panel(p);assert.equal(reduced.animation,'none');assert.notEqual(reduced.border,'rgb(231, 236, 241)','Motion reduction retains a colored reminder');assert.equal(reduced.opacity,'1');assert.equal(shadowSpread(reduced.boxShadow),1,'Motion reduction keeps the stronger static inset line');
+   await p.emulateMedia({reducedMotion:'no-preference'});await frames(p);
+   const samples=[];for(const time of[0,1400,2800]){const v=await pulseAt(p,time);samples.push({time,...v});if(time!==2800)await p.screenshot({path:path.join(OUT,'today-pulse-'+(time===0?'peak':'trough')+'-'+width+'.png'),fullPage:width<760});}
+   assert.equal(shadowSpread(samples[0].boxShadow),1,'Peak adds one inward pixel to the normal border');assert.equal(shadowSpread(samples[1].boxShadow),0,'Weak phase removes the extra inward pixel');assert.equal(shadowSpread(samples[2].boxShadow),1,'The stronger line returns at the next cycle');assert.notEqual(samples[0].border,samples[1].border);assert.equal(samples[0].border,samples[2].border);
+   for(const v of samples){assert.equal(v.opacity,'1');assert.equal(v.transform,'none');assert.equal(v.borderWidth,'1px','Actual border width does not alter card layout');assert.equal(v.padding,samples[0].padding);for(const k of['x','y','width','height']){assert(Math.abs(v.rect[k]-samples[0].rect[k])<.1,'Pulse cannot move the card');for(const child of['header','title'])assert(Math.abs(v.content[child][k]-samples[0].content[child][k])<.1,'Pulse cannot move the card contents');}}
+   await p.locator(TODAY).evaluate(e=>{e.getAnimations().find(a=>a.effect?.target===e&&a.animationName==='snoteTodayScheduleBorder')?.play();});
+   results.push({width,card,tomorrow,later,geometry,pulseSamples:samples,reducedMotion:reduced});
    await p.screenshot({path:path.join(OUT,'today-upcoming-'+width+'.png'),fullPage:width<760});
   }
-  const samples=[await panel(p)];for(let i=0;i<2;i++){await p.waitForTimeout(700);samples.push(await panel(p));}
-  assert(new Set(samples.map(x=>x.border)).size>1,'Border color actually changes while text remains visible');
-  for(const v of samples){assert.equal(v.opacity,'1');assert.equal(v.transform,'none');assert.equal(v.borderWidth,samples[0].borderWidth);for(const k of ['x','y','width','height'])assert(Math.abs(v.rect[k]-samples[0].rect[k])<.1,'Pulse cannot move the card');}
-  await p.emulateMedia({reducedMotion:'reduce'});await frames(p);const reduced=await panel(p);assert.equal(reduced.animation,'none');assert.notEqual(reduced.border,'rgb(231, 236, 241)','Motion reduction retains a colored reminder');assert.equal(reduced.opacity,'1');
   await p.locator(UPCOMING+' .snote-scheduler-agenda-more').click();await p.locator(DIALOG+'[open]').waitFor();await until(p,seven.id,7,DIALOG);await p.locator(DIALOG+' .snote-popup-close').click();await p.locator(DIALOG+'[open]').waitFor({state:'hidden'});
   assert.equal(record(s),before,'Presentation does not alter stored event values');assert.equal(s.writes.length,0);
-  return{results,pulseSamples:samples,reducedMotion:reduced,fullUpcomingList:true,syntheticWrites:0};
+  return{results,fullUpcomingList:true,syntheticWrites:0};
  }catch(error){await p.screenshot({path:path.join(OUT,'failure-display.png'),fullPage:true}).catch(()=>{});throw error;}finally{await f.finish();}
 }
 async function lifecycle(browser){
