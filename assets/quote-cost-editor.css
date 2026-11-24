@@ -1,0 +1,19 @@
+/* v2.210: editable fee text has the same measured and printed footprint. */
+#quote-paper .snote-quote-cost-field{position:relative;min-width:0;min-height:16px;line-height:1.45}
+#quote-paper .snote-quote-cost-mirror{display:block;visibility:hidden;min-height:1.45em;overflow-wrap:anywhere;word-break:normal;white-space:pre-wrap}
+#quote-paper .snote-quote-cost-control{position:absolute;inset:0;display:block;box-sizing:border-box;width:100%;height:100%;min-width:0;min-height:16px;margin:0;padding:0;border:0;border-radius:2px;background:transparent;color:inherit;box-shadow:none;outline:0;font:inherit;line-height:1.45;text-align:left;resize:none;overflow:auto}
+#quote-paper .snote-quote-cost-label{font-weight:800;opacity:0}
+#quote-paper .snote-quote-cost-label-cell .snote-quote-cost-mirror{visibility:visible}
+#quote-paper .snote-quote-cost-label-cell .snote-quote-cost-field:focus-within .snote-quote-cost-mirror{visibility:hidden}
+#quote-paper .snote-quote-cost-label:focus{opacity:1}
+#quote-paper .snote-quote-cost-guide{font-size:inherit;font-weight:400}
+#quote-paper .snote-quote-cost-control:focus{background:#edf4ff;outline:1px solid #b5cde9;outline-offset:2px;z-index:2}
+@media screen and (max-width:680px){
+ #quote-paper .snote-quote-cost-control:focus{font-size:calc(16px / var(--snote-document-scale,1));line-height:1.4;min-height:calc(32px / var(--snote-document-scale,1));padding:calc(3px / var(--snote-document-scale,1));box-shadow:0 0 0 1px #7fa9d5;background:#fff}
+}
+@media print{
+ #quote-paper .snote-quote-cost-control{display:none!important}
+ #quote-paper .snote-quote-cost-mirror{visibility:visible!important;overflow:visible!important}
+ #quote-paper :is(.snote-quote-cost-label-cell,.snote-quote-cost-guide-cell){padding-top:1px;padding-bottom:1px;vertical-align:middle}
+ #quote-paper .snote-quote-cost-field{break-inside:avoid}
+}

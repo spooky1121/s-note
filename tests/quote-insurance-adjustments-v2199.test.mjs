@@ -9,9 +9,9 @@ const start=source.indexOf('let quoteCarId=null;'),end=source.indexOf('let snote
 assert(start>=0&&end>start,'Actual quote calculation section must be available');
 const code=source.slice(start,end);
 const fees=['quote-stamp','quote-insurance','quote-platefee','quote-sellingfee','quote-fee'];
-function fixture(price=10000000,values={}){
+function fixture(price=10000000,values={},deductions=[]){
  const nodes=new Map([...fees,...['quote-car-price','quote-acquisition','quote-bond','quote-transfer-subtotal','quote-grand-total','quote-bank-car','quote-bank-transfer']].map(id=>[id,{value:values[id]??'',textContent:''}]));
- const context=vm.createContext({$:id=>nodes.get(id)});vm.runInContext(code+'\nfunction setQuotePrice(value){quoteVehiclePrice=value;}',context);context.setQuotePrice(price);
+ const context=vm.createContext({$:id=>nodes.get(id),SnoteQuoteCostEditor:{isDeduction:id=>deductions.includes(id)}});vm.runInContext(code+'\nfunction setQuotePrice(value){quoteVehiclePrice=value;}',context);context.setQuotePrice(price);
  return{get:id=>nodes.get(id),set:(id,value)=>{nodes.get(id).value=value;},update:()=>context.updateQuoteTotals(),read:id=>context.quoteReadInput(id),format:value=>context.quoteComma(value)};
 }
 test('signed plate adjustment reduces transfer subtotal, total and transfer bank amount together',()=>{
@@ -33,10 +33,16 @@ test('the editable plate field retains lone minus and negative-zero prefixes',()
  f.set('quote-platefee','-0');f.update();assert.equal(f.get('quote-platefee').value,'-0');
  f.set('quote-platefee','-05');f.update();assert.equal(f.get('quote-platefee').value,'-5');assert.equal(f.read('quote-platefee'),-5);
 });
-test('Unicode minus is accepted only for plate adjustments and other fee behavior stays unsigned',()=>{
+test('Unicode minus and explicit deductions are accepted for all five editable manual fees',()=>{
  const f=fixture(10000000,{'quote-platefee':'−1,234','quote-insurance':'-2,000','quote-stamp':'-300','quote-sellingfee':'-400','quote-fee':'-500'});f.update();
  assert.equal(f.get('quote-platefee').value,'-1,234');assert.equal(f.read('quote-platefee'),-1234);
- for(const[id,value]of[['quote-insurance','2,000'],['quote-stamp','300'],['quote-sellingfee','400'],['quote-fee','500']])assert.equal(f.get(id).value,value);
+ for(const[id,value]of[['quote-insurance','-2,000'],['quote-stamp','-300'],['quote-sellingfee','-400'],['quote-fee','-500']])assert.equal(f.get(id).value,value);
+ assert.equal(f.get('quote-transfer-subtotal').textContent,'812,293');assert.equal(f.get('quote-bank-transfer').textContent,'812,293');assert.equal(f.get('quote-grand-total').textContent,'10,812,293');
+});
+test('named discount/remission fees subtract positive input without changing automatic tax or bond formulas',()=>{
+ const f=fixture(10000000,{'quote-insurance':'20000','quote-fee':'30000'},['quote-insurance','quote-fee']);f.update();
+ assert.equal(f.get('quote-insurance').value,'-20,000');assert.equal(f.get('quote-fee').value,'-30,000');assert.equal(f.get('quote-acquisition').textContent,'700,000');assert.equal(f.get('quote-bond').textContent,'116,727');assert.equal(f.get('quote-transfer-subtotal').textContent,'766,727');assert.equal(f.get('quote-grand-total').textContent,'10,766,727');assert.equal(f.get('quote-bank-transfer').textContent,'766,727');
+ for(let i=0;i<5;i++)f.update();assert.equal(f.get('quote-insurance').value,'-20,000');assert.equal(f.get('quote-fee').value,'-30,000');
 });
 test('the supported thirteen-digit plate adjustment and repeated recalculation stay stable',()=>{
  const f=fixture(10000000,{'quote-platefee':'-12345678901234','quote-insurance':'123456'});f.update();
