@@ -6,6 +6,7 @@
  // their dialogs, so they must never install a second history controller.
  try{if(parent!==window&&parent.location.origin===location.origin){parent.SnoteMobilePopupHistory?.refresh();return;}}catch{}
  const KEY='snoteMobilePopup',INDEX='snoteMobileHistoryPosition',media=matchMedia('(max-width: 760px)'),retired=new Map(),documents=new Map(),orders=new WeakMap();
+ const popoverSupported=typeof HTMLElement.prototype.showPopover==='function',layerSelector='dialog'+(popoverSupported?',:popover-open':''),openLayerSelector='dialog[open]'+(popoverSupported?',:popover-open':'');
  let serial=0,token=null,depth=0,stack=[],moving=null,queued=false,resetting=false,last=entry();
  const handled=new WeakMap(),ignoredHashes=new Set();
  function clean(state){const next=state&&typeof state==='object'?{...state}:{};delete next[KEY];return next;}
@@ -16,7 +17,7 @@
  function visible(node){try{if(!node.isConnected||node.hidden||node.closest('[hidden]'))return false;const style=node.ownerDocument.defaultView.getComputedStyle(node);return style.display!=='none'&&style.visibility!=='hidden'&&node.getClientRects().length>0;}catch{return false;}}
  function frameVisible(doc){try{const frame=doc.defaultView.frameElement;return !frame||visible(frame)&&frameVisible(frame.ownerDocument);}catch{return false;}}
  function rank(node){
-  let value=0;for(let p=node;p;p=p.parentElement){if(p.matches('dialog[open]')){value=1e12+(orders.get(p)||0);break;}const z=Number(p.ownerDocument.defaultView.getComputedStyle(p).zIndex);if(Number.isFinite(z))value=Math.max(value,z);}
+  let value=0;for(let p=node;p;p=p.parentElement){if(p.matches(openLayerSelector)){value=1e12+(orders.get(p)||0);break;}const z=Number(p.ownerDocument.defaultView.getComputedStyle(p).zIndex);if(Number.isFinite(z))value=Math.max(value,z);}
   const frame=node.ownerDocument.defaultView.frameElement;
   return frame?rank(frame)+(node.matches('dialog[open]')?1:Math.min(value,999999)/1e6)/1000:value;
  }
@@ -27,13 +28,13 @@
    for(const node of doc.querySelectorAll('dialog[open],.overlay,.snote-popup-overlay,[role="dialog"],[role="alertdialog"],#snote-profile-menu,#ps-action-menu,.color-picker.expanded .color-menu')){
     if(!visible(node)||node.id==='zc-cloud-gate'||node.closest('#mobile-drawer[aria-hidden="true"]'))continue;
     if(node.matches('dialog')&&!node.open)continue;
-    if(!node.matches('dialog')&&node.closest('dialog'))continue;
+    if(!node.matches(layerSelector)&&node.closest('dialog'))continue;
     const menu=node.matches('#snote-profile-menu,#ps-action-menu,.color-menu');
-    const host=node.matches('dialog')||menu?node:node.closest('.overlay,.snote-popup-overlay')||node;
+    const host=node.matches(layerSelector)||menu?node:node.closest('.overlay,.snote-popup-overlay')||node;
     if(found.includes(host)||!visible(host))continue;
     // A dialog's labelled content and its overlay are one layer.
-    if(!menu&&!host.matches('dialog')&&found.some(other=>!other.matches('dialog')&&other.contains(host)))continue;
-    for(let i=found.length-1;i>=0;i--)if(!menu&&!found[i].matches('dialog')&&!found[i].matches('#snote-profile-menu,#ps-action-menu,.color-menu')&&host.contains(found[i]))found.splice(i,1);
+    if(!menu&&!host.matches(layerSelector)&&found.some(other=>!other.matches(layerSelector)&&other.contains(host)))continue;
+    for(let i=found.length-1;i>=0;i--)if(!menu&&!found[i].matches(layerSelector)&&!found[i].matches('#snote-profile-menu,#ps-action-menu,.color-menu')&&host.contains(found[i]))found.splice(i,1);
     if(!orders.has(host))orders.set(host,++serial);found.push(host);
    }
   }
@@ -115,6 +116,7 @@
  function closeTop(node){
   if(!node?.isConnected)return;
   const view=node.ownerDocument.defaultView;
+  if(view.SnoteSearchFocus?.current===node){view.SnoteSearchFocus.close({focus:true});return;}
   if(node.id==='snote-profile-menu'){view.snoteCloseProfileMenu?.(true);return;}
   if(node.id==='ps-action-menu'){view.closePrestockMenu?.();return;}
   if(node.matches('.color-menu')){view.closeColorPickers?.();return;}

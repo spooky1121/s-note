@@ -1,0 +1,42 @@
+/* Outlined state controls and one unclipped, native-select-backed menu. */
+.snote-status-menu{position:fixed;inset:auto;margin:0;left:var(--snote-status-left,10px);top:var(--snote-status-top,10px);width:var(--snote-status-width,184px);max-width:calc(100vw - 20px);max-height:var(--snote-status-max-height,340px);box-sizing:border-box;padding:7px;border:1px solid #e6e9ed;border-radius:17px;background:#fff;color:#26323d;box-shadow:0 12px 38px #172b421c,0 2px 7px #172b420a;overflow:auto;overscroll-behavior:contain;z-index:15000;font-family:inherit;font-size:12px;line-height:1.5;animation:snote-status-arrive .14s ease-out}
+.snote-status-menu[hidden],.snote-status-menu .snote-status-dismiss{display:none!important}
+.snote-status-list{display:grid;gap:4px;outline:none}
+.snote-status-option{display:flex;align-items:center;justify-content:space-between;gap:20px;box-sizing:border-box;min-height:39px;padding:8px 11px;border:1px solid transparent;border-radius:10px;background:transparent;color:#36414b;font-weight:500;white-space:nowrap;cursor:pointer;outline:none;transition:background-color .12s ease,border-color .12s ease}
+.snote-status-option.is-active:not(.is-selected):not(.is-disabled){background:#f2f4f6}
+.snote-status-option.is-selected{border-color:currentColor;background:transparent!important}
+.snote-status-option.is-cancel{color:#b74451}
+.snote-status-option.is-disabled{opacity:.4;cursor:not-allowed}
+.snote-status-option .snote-status-check{width:12px;height:12px;flex:none;box-sizing:border-box;visibility:hidden}
+.snote-status-option.is-selected .snote-status-check{width:6px;height:11px;margin-right:3px;border:solid currentColor;border-width:0 1.5px 1.5px 0;transform:rotate(45deg);visibility:visible}
+.snote-status-option[data-snote-status-tone=onsale].is-selected{color:#168359}
+.snote-status-option[data-snote-status-tone=contract].is-selected,.snote-status-option[data-snote-status-tone=pending].is-selected{color:#c72b45}
+.snote-status-option[data-snote-status-tone=done].is-selected{color:#2658db}
+@keyframes snote-status-arrive{from{opacity:0;translate:0 -3px}to{opacity:1;translate:0 0}}
+@media screen{
+ /* Only the enhanced native control is visually hidden. Its options, form value,
+    disabled state and original change handlers are left in place. */
+ select.snote-status-native{position:absolute!important;width:1px!important;min-width:0!important;max-width:1px!important;height:1px!important;min-height:0!important;padding:0!important;margin:-1px!important;border:0!important;clip-path:inset(50%)!important;overflow:hidden!important;white-space:nowrap!important;pointer-events:none!important}
+ button.snote-status-trigger{display:inline-flex;align-items:center;justify-content:space-between;gap:9px;box-sizing:border-box;width:auto!important;min-width:88px!important;max-width:100%;min-height:30px;height:30px;padding:5px 9px!important;margin:0;border:1px solid #dce2e8;border-radius:9px!important;background:transparent!important;color:#576371;font-family:inherit;font-size:11px;font-weight:550;line-height:1.4;text-align:left;white-space:nowrap;cursor:pointer;vertical-align:middle;box-shadow:none!important;appearance:none;transition:border-color .14s ease,opacity .14s ease}
+ button.snote-status-trigger[hidden]{display:none!important}
+ button.snote-status-trigger:disabled{opacity:.45;cursor:not-allowed}
+ button.snote-status-trigger:focus-visible{outline:2px solid #8acbfa;outline-offset:3px}
+ .snote-status-label{overflow:visible;white-space:nowrap}
+ .snote-status-chevron{flex:none;width:6px;height:6px;margin:0 1px 3px 0;border:solid currentColor;border-width:0 1.3px 1.3px 0;transform:rotate(45deg);opacity:.72}
+ .status.onsale,select.status-select.onsale{--snote-status-color:#168359}
+ .status.contract,.status.pending,select.status-select.contract,select.status-select.pending{--snote-status-color:#c72b45}
+ .status.done,select.status-select.done{--snote-status-color:#2658db}
+ .snote-status-trigger[data-snote-status-tone=onsale]{--snote-status-color:#168359}
+ .snote-status-trigger[data-snote-status-tone=contract],.snote-status-trigger[data-snote-status-tone=pending]{--snote-status-color:#c72b45}
+ .snote-status-trigger[data-snote-status-tone=done]{--snote-status-color:#2658db}
+ .snote-status-trigger[data-snote-status-tone=neutral]{--snote-status-color:#687683}
+ body :is(.status.onsale,.status.contract,.status.pending,.status.done,select.status-select,.snote-status-trigger),
+ body #snote-app #list-screen :is(.status-select,.status,.snote-status-trigger){border:1px solid var(--snote-status-color,#687683)!important;background:transparent!important;color:var(--snote-status-color,#687683)!important}
+ #vehicle-overlay #vehicle-overview button.snote-status-trigger{height:28px;min-height:28px;font-size:11px}
+}
+@media screen and (max-width:760px){
+ button.snote-status-trigger{height:40px;min-height:40px;font-size:13px}
+ .snote-status-option{min-height:44px;font-size:13px}
+}
+@media print{.snote-status-trigger,.snote-status-menu{display:none!important}}
+@media(prefers-reduced-motion:reduce){.snote-status-menu{animation:none}.snote-status-option,.snote-status-trigger{transition:none}}
