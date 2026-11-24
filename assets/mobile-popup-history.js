@@ -6,7 +6,7 @@
  // their dialogs, so they must never install a second history controller.
  try{if(parent!==window&&parent.location.origin===location.origin){parent.SnoteMobilePopupHistory?.refresh();return;}}catch{}
  const KEY='snoteMobilePopup',INDEX='snoteMobileHistoryPosition',media=matchMedia('(max-width: 760px)'),retired=new Map(),documents=new Map(),orders=new WeakMap();
- const popoverSupported=typeof HTMLElement.prototype.showPopover==='function',layerSelector='dialog'+(popoverSupported?',:popover-open':''),openLayerSelector='dialog[open]'+(popoverSupported?',:popover-open':'');
+ const popoverSupported=typeof HTMLElement.prototype.showPopover==='function',layerSelector='dialog,#snote-dropdown-menu'+(popoverSupported?',:popover-open':''),openLayerSelector='dialog[open],#snote-dropdown-menu'+(popoverSupported?',:popover-open':'');
  let serial=0,token=null,depth=0,stack=[],moving=null,queued=false,resetting=false,last=entry();
  const handled=new WeakMap(),ignoredHashes=new Set();
  function clean(state){const next=state&&typeof state==='object'?{...state}:{};delete next[KEY];return next;}

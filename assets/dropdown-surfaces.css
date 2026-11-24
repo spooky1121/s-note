@@ -1,0 +1,30 @@
+/* Existing custom menus keep their dimensions, position, grid and hit areas. */
+@media screen {
+  body #snote-profile-menu,
+  body #ps-action-menu,
+  body #new-color-menu,
+  body #vehicle-overlay #detail-color-menu.detail-color-palette {
+    border-color: #e6e9ed;
+    border-radius: 17px;
+    background: #fff;
+    box-shadow: 0 12px 38px #172b421c, 0 2px 7px #172b420a;
+  }
+  body #snote-profile-menu button,
+  body #ps-action-menu button,
+  body #new-color-menu .color-choice {
+    border-radius: 10px;
+  }
+  body #snote-profile-menu button:hover,
+  body #ps-action-menu button:hover,
+  body #new-color-menu .color-choice:hover,
+  body #vehicle-overlay #detail-color-menu .detail-color-choice:hover {
+    background: #f2f4f6;
+  }
+  body #new-color-menu .color-choice[aria-selected="true"],
+  body #vehicle-overlay #detail-color-menu .detail-color-choice[aria-selected="true"] {
+    background: transparent;
+    color: #007bc4;
+    border-color: #7fbbe0;
+  }
+  body #new-color-menu .color-choice[aria-selected="true"] { box-shadow: inset 0 0 0 1px #7fbbe0; }
+}

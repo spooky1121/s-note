@@ -1,0 +1,22 @@
+/* Closed controls retain every existing measurement and native affordance. */
+@media screen{
+ html body :is(#snote-app,#operator-app) select.snote-dropdown-select:not(:disabled):not(:invalid):not([aria-invalid=true]):not(.invalid):not(.is-invalid),
+ html body select.snote-dropdown-select:not(:disabled):not(:invalid):not([aria-invalid=true]):not(.invalid):not(.is-invalid){border-color:#e1e6ec!important;border-radius:10px!important;background-color:#fff!important}
+}
+.snote-dropdown-menu{position:fixed;inset:auto;left:var(--snote-dropdown-left,10px);top:var(--snote-dropdown-top,10px);width:var(--snote-dropdown-width,184px);max-width:calc(100vw - 20px);max-height:var(--snote-dropdown-height,360px);box-sizing:border-box;margin:0;padding:7px;border:1px solid #e6e9ed;border-radius:17px;background:#fff;color:#26323d;box-shadow:0 12px 38px #172b421c,0 2px 7px #172b420a;overflow:auto;overscroll-behavior:contain;z-index:15001;font-family:inherit;font-size:12px;line-height:1.5;text-align:left;animation:snote-dropdown-arrive .14s ease-out}
+.snote-dropdown-menu[hidden],.snote-dropdown-menu .snote-dropdown-dismiss{display:none!important}
+#snote-dropdown-menu .snote-dropdown-list{display:grid;gap:4px;outline:none!important;box-shadow:none!important}
+.snote-dropdown-group{display:grid;gap:4px;min-width:0}
+.snote-dropdown-group+.snote-dropdown-group{padding-top:5px;margin-top:3px;border-top:1px solid #edf0f3}
+.snote-dropdown-group-label{padding:5px 11px 3px;color:#89939e;font-size:10px;font-weight:550;line-height:1.5;overflow-wrap:anywhere}
+.snote-dropdown-option{display:flex;align-items:center;justify-content:space-between;gap:20px;box-sizing:border-box;min-width:0;min-height:39px;padding:8px 11px;border:1px solid transparent;border-radius:10px;background:transparent;color:#36414b;font-weight:500;line-height:1.5;cursor:pointer;outline:none;transition:background-color .12s ease,border-color .12s ease}
+.snote-dropdown-option>span:first-child{min-width:0;white-space:normal;overflow-wrap:anywhere}
+.snote-dropdown-option.is-active:not(.is-selected):not(.is-disabled){background:#f2f4f6}
+.snote-dropdown-option.is-selected{color:#007dbb;border-color:currentColor;background:transparent!important}
+.snote-dropdown-option.is-disabled{opacity:.4;cursor:not-allowed}
+.snote-dropdown-option .snote-dropdown-check{width:12px;height:12px;flex:none;box-sizing:border-box;visibility:hidden}
+.snote-dropdown-option.is-selected .snote-dropdown-check{width:6px;height:11px;margin-right:3px;border:solid currentColor;border-width:0 1.5px 1.5px 0;transform:rotate(45deg);visibility:visible}
+@keyframes snote-dropdown-arrive{from{opacity:0;translate:0 -3px}to{opacity:1;translate:0 0}}
+@media screen and (max-width:760px){.snote-dropdown-option{min-height:44px;font-size:13px}.snote-dropdown-group-label{font-size:11px}}
+@media print{.snote-dropdown-menu{display:none!important}}
+@media(prefers-reduced-motion:reduce){.snote-dropdown-menu{animation:none}.snote-dropdown-option{transition:none}}

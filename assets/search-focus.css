@@ -27,6 +27,8 @@
     padding: 2px 0 !important;
   }
   :is(#snote-app, #operator-app) input[type="search"]::placeholder { color: #87929e; opacity: 1; }
+  input[type="search"]::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; display: none; }
+  input[type="search"]::-ms-clear { display: none; }
   :is(#snote-app, #operator-app) :is(label.search, label.recycle-search, .search-field) > :is(svg, .search-icon, [data-icon="search"]) {
     flex: 0 0 18px; width: 18px !important; height: 18px !important; color: #7b8793 !important;
   }
@@ -76,7 +78,8 @@
     background: #f3f5f7 !important; color: #77828e !important; cursor: pointer;
   }
   html body .snote-search-dismiss:hover { background: #eaf0f5 !important; color: #344559 !important; }
-  :is(#snote-app, #operator-app) .snote-search-dismiss svg { width: 15px !important; height: 15px !important; pointer-events: none; }
+  /* Keep the shared icon fitter from enlarging the close drawing again. */
+  html body :is(#snote-app, #operator-app) :is(#list-screen, #alt-screen, #users-screen, #operator-search-form, .snote-search-frame, .search, .recycle-search) .snote-search-dismiss svg { width: 18px !important; height: 18px !important; scale: 1 !important; pointer-events: none; }
   .snote-search-active:popover-open > .snote-search-magnifier { width: 18px; height: 18px; flex: 0 0 18px; color: #7b8793; }
   @keyframes snote-search-reveal { from { opacity: 0; } to { opacity: 1; } }
 }
