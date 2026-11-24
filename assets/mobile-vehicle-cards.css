@@ -1,13 +1,15 @@
 /* Secondary card values keep their original desktop grid positions and column permissions. */
 .snote220-card-summary{display:contents}
+.snote221-mobile-price-label{display:none}
 @media screen{#list-mobile .snote209-card-secondary{display:contents}#list-mobile :is(.snote209-price-label,.snote209-price-amount){font:inherit}}
 @media screen and (max-width:760px){
  /* The purchase tools occupy column 3. Declare that track so 1/-1 really spans the whole panel. */
  #snote-app #list-screen[data-vehicle-view][data-design-purchase=true][data-mobile-purchase-tools]>.panel{grid-template-columns:minmax(0,1fr) auto auto}
  #snote-app #list-screen[data-vehicle-view]>.panel>:is(#list-table,#list-mobile,#list-pagination){grid-column:1/-1;min-width:0;width:100%;max-width:100%;box-sizing:border-box;justify-self:stretch}
- #snote-app #list-screen[data-vehicle-view=cards]>.panel{background:#e9f0f7!important}
+ #snote-app #list-screen[data-vehicle-view=cards]{width:auto;max-width:none;margin-inline:-10px}
+ #snote-app #list-screen[data-vehicle-view=cards]>.panel{background:#e9f0f7!important;padding-inline:1px!important}
  #snote-app #list-screen[data-vehicle-view=cards] #list-mobile>:is(.snote209-vehicle-card,.acct-mobile-card):not(.snote-contracting-vehicle):not(.is-shared-vehicle){background:#fff!important;border-color:#c9d8e8!important}
- #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .snote209-vehicle-card .snote220-card-summary{grid-column:1/-1;grid-row:3;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:baseline;gap:4px 8px;min-width:0;width:100%;margin:8px 0 0}
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .snote209-vehicle-card .snote220-card-summary{grid-column:1/-1;grid-row:3;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:baseline;gap:4px 6px;min-width:0;width:100%;margin:8px 0 0}
  #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .snote209-vehicle-card .snote220-card-summary>.vehicle-meta{display:contents}
  #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .snote220-card-plate{grid-column:1;grid-row:1;min-width:0;color:#53667e;font-size:13px;line-height:1.5;white-space:nowrap}
  #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .snote220-card-specs{grid-column:1/-1;grid-row:2;color:#74859a;font-size:12px;line-height:1.5}
@@ -21,8 +23,9 @@
  #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .snote209-vehicle-card .vehicle-inventory-meta{grid-column:2;grid-row:2;display:flex;flex-wrap:wrap;align-content:start;gap:2px 9px;min-width:0;margin:0;font-size:12px;line-height:1.5}
  #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .snote209-vehicle-card .vehicle-inventory-meta>span{min-width:0;max-width:100%;font-size:inherit;line-height:inherit;overflow-wrap:anywhere}
  #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .snote209-vehicle-card .vehicle-inventory-meta>span:last-child{flex-basis:auto}
- #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .snote209-vehicle-card .vehicle-price{grid-column:2;grid-row:1;display:flex;align-items:baseline;justify-content:flex-end;flex-wrap:nowrap;gap:0;min-width:0;width:auto;margin:0;padding:0;color:#1d527f;font-size:clamp(13px,4vw,17px);font-weight:650;line-height:1.4;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .snote209-vehicle-card .vehicle-price{grid-column:2;grid-row:1;display:flex;align-items:baseline;justify-content:flex-end;flex-wrap:nowrap;gap:4px;min-width:0;width:auto;margin:0;padding:0;color:#1d527f;font-size:clamp(13px,4vw,17px);font-weight:650;line-height:1.4;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
  #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .snote209-price-label{display:none}
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .snote221-mobile-price-label{display:inline;flex:none;color:#65758b;font-size:11px;font-weight:400;line-height:1.5;white-space:nowrap}
  #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .snote209-price-amount{min-width:0;margin-left:0;font-size:inherit;font-weight:650;line-height:inherit;text-align:right;white-space:nowrap}
  #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .snote209-card-secondary{grid-column:2;grid-row:4;display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 12px;min-width:0;width:100%;margin:0;padding:3px 0;color:#727b87;font-size:11px;line-height:1.5}
  #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .snote209-card-secondary>:is(.snote-card-buy-price,.snote202-mobile-finance,.snote-mobile-documents,.sale-date-chip,.snote-company-dealer){display:inline-flex;align-items:baseline;justify-content:flex-start;gap:4px;flex:0 1 auto;min-width:0;max-width:100%;margin:0;padding:0;border:0;font-size:11px;line-height:1.5;overflow-wrap:anywhere}
@@ -38,17 +41,17 @@
  #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .snote209-vehicle-card>.vehicle-right .snote221-income-button{flex:0 1 auto;max-width:100%;min-height:44px;margin:0;padding:7px 10px;font-size:13px;line-height:1.5;white-space:normal}
 
  /* Keep the mobile summary lean, including shared/readonly status and optional finance readouts. */
- #snote-app #list-screen[data-vehicle-view=cards] #list-mobile :is([data-purchase-column=buyPrice],[data-purchase-column=finance],[data-purchase-column=lender],[data-purchase-column=inventoryLoan],[data-purchase-column=inventoryInterest],[data-purchase-column=documents],[data-purchase-column=status],[data-purchase-column=age]){display:none!important}
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile :is([data-purchase-column=advertising],[data-purchase-column=buyPrice],[data-purchase-column=finance],[data-purchase-column=lender],[data-purchase-column=inventoryLoan],[data-purchase-column=inventoryInterest],[data-purchase-column=documents],[data-purchase-column=status],[data-purchase-column=age]){display:none!important}
  #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .snote209-card-secondary:not(:has(.sale-date-chip,.snote-company-dealer)),
  #snote-app #list-screen[data-vehicle-view=cards][data-purchase-hidden-columns~=owner] #list-mobile .snote209-card-secondary:not(:has(.sale-date-chip)){display:none!important}
  #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .vehicle-right>[data-purchase-column=quote]:not(:has(.snote-purchase-quote)){display:none!important}
  /* No separator or empty action row when all remaining actions are absent or unchecked. */
- #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .vehicle-right:not(:has(.snote-list-encar,.snote-purchase-quote,.snote221-income-button)),
- #snote-app #list-screen[data-vehicle-view=cards][data-purchase-hidden-columns~=quote] #list-mobile .vehicle-right:not(:has(.snote-list-encar,.snote221-income-button)),
- #snote-app #list-screen[data-vehicle-view=cards][data-purchase-hidden-columns~=advertising] #list-mobile .vehicle-right:not(:has(.snote-purchase-quote,.snote221-income-button)),
- #snote-app #list-screen[data-vehicle-view=cards][data-purchase-hidden-columns~=advertising][data-purchase-hidden-columns~=quote] #list-mobile .vehicle-right:not(:has(.snote221-income-button)),
- #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .snote-mobile-encar-actions:not(:has(.snote-list-encar)),
- #snote-app #list-screen[data-vehicle-view=cards][data-purchase-hidden-columns~=advertising] #list-mobile .snote-mobile-encar-actions{display:none!important}
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .vehicle-right:not(:has(.snote-purchase-quote,.snote221-income-button)),
+ #snote-app #list-screen[data-vehicle-view=cards][data-purchase-hidden-columns~=quote] #list-mobile .vehicle-right:not(:has(.snote221-income-button)),
+ #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .snote-mobile-encar-actions{display:none!important}
  #snote-app #list-screen[data-vehicle-view=cards][data-purchase-hidden-columns~=expectedProfit][data-purchase-hidden-columns~=totalInvestment][data-purchase-hidden-columns~=additionalCosts][data-purchase-hidden-columns~=vin] #list-mobile .snote-purchase-extra-fields,
  #snote-app #list-screen[data-vehicle-view=cards][data-purchase-hidden-columns~=year][data-purchase-hidden-columns~=mileage][data-purchase-hidden-columns~=purchaseDate][data-purchase-hidden-columns~=expectedProfit][data-purchase-hidden-columns~=totalInvestment][data-purchase-hidden-columns~=additionalCosts][data-purchase-hidden-columns~=vin] #list-mobile .acct-mobile-fields{display:none!important}
+}
+@media screen and (max-width:360px){
+ #snote-app #list-screen[data-vehicle-view=cards]{margin-inline:-6px}
 }
