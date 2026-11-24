@@ -21,6 +21,7 @@ const json=(body,status=200)=>new Response(JSON.stringify(body),{status,headers:
 const clone=value=>structuredClone(value),alias=id=>'cld_'+id.replaceAll('-','').slice(0,18);
 const scopeBody={companyId:COMPANY,ownerId:OWNER,carId:SOURCE.carId};
 const planBody=()=>({action:'transfer-plan',source:SOURCE,target:{companyId:DEST,ownerId:RECIPIENT},mode:'copy',requestId:REQUEST});
+const saleIncomeItems=()=>[{id:'commission',label:'수수료',amountWon:300000},{id:'insurance',label:'보험',amountWon:200000},{id:'finance',label:'할부금융',amountWon:100000}];
 async function call(body,{headers={},method='POST',env=ENV,raw}={}) {
  const request=new Request('https://s-note.example/api/operator',{method,headers:{Authorization:'Bearer '+JWT,'Content-Type':'application/json',Origin:'https://s-note.example',...headers},...(method==='GET'?{}:{body:raw??JSON.stringify(body)})});
  const response=await onRequest({request,env});
@@ -288,4 +289,21 @@ test('support requests reject malformed read sets, unbounded paging and injected
 test('a tenant administrator cannot read support messages or unread counts without platform authority',async t=>{
  const s=fixture(t,{allowed:false});for(const action of['support-unread','support-thread','support-reply']){const r=await call({action,conversationId:REQUEST,requestId:NEWCAR,text:'합성'});assert.equal(r.status,403);}
  assert.equal(s.calls.filter(c=>c.url.pathname.includes('/snote_operator_support_')).length,0);assert.equal(s.serviceCalls.length,0);
+});
+
+test('operator status reversal clears optional sale earnings while preserving the SQL-required key',async t=>{
+ const vehicle={id:SOURCE.carId,ownerId:alias(OWNER),model:'합성 판매 차량',status:'판매완료',buy:1000,sell:1500,soldPrice:1500,purchaseAt:'2026-11-01',soldAt:'2026-11-20'};
+ vehicle.saleRegistrationIncome=globalThis.SnoteSaleRegistrationModel.create(globalThis.SnoteMoney.car(vehicle),saleIncomeItems());
+ const original=clone(vehicle),s=fixture(t,{vehicle});
+ const r=await call({action:'vehicle-save',...scopeBody,expected:7,patch:{status:'판매중'},moneyUnit:'KRW',requestId:REQUEST});
+ assert.equal(r.status,200);assert.equal(Object.hasOwn(s.saved.p_vehicle,'saleRegistrationIncome'),true);assert.equal(s.saved.p_vehicle.saleRegistrationIncome,null);
+ assert.equal(globalThis.SnoteSaleRegistrationModel.incomeWon(s.saved.p_vehicle),0);assert.deepEqual(vehicle,original);
+});
+
+test('operator correction of the same completed sale keeps native won earnings bound once',async t=>{
+ const vehicle={id:SOURCE.carId,ownerId:alias(OWNER),model:'합성 판매 차량',status:'판매완료',buy:1000,sell:1500,soldPrice:1500,purchaseAt:'2026-11-01',soldAt:'2026-11-20'};
+ vehicle.saleRegistrationIncome=globalThis.SnoteSaleRegistrationModel.create(globalThis.SnoteMoney.car(vehicle),saleIncomeItems());
+ const s=fixture(t,{vehicle});const r=await call({action:'vehicle-save',...scopeBody,expected:7,patch:{soldPrice:16000000,soldAt:'2026-11-21'},moneyUnit:'KRW',requestId:REQUEST});
+ assert.equal(r.status,200);assert.equal(s.saved.p_vehicle.saleRegistrationIncome.soldPriceWon,16000000);assert.equal(s.saved.p_vehicle.saleRegistrationIncome.soldAt,'2026-11-21');
+ assert.equal(globalThis.SnoteSaleRegistrationModel.incomeWon(s.saved.p_vehicle),600000);assert.deepEqual(s.saved.p_vehicle.saleRegistrationIncome.items,saleIncomeItems());
 });

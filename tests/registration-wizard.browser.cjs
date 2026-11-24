@@ -62,7 +62,8 @@ async function geometry(p,width){
  const g=await p.locator(OVERLAY).evaluate(root=>{const form=root.querySelector('form'),frame=root.querySelector('.snote-popup-frame')||form,r=frame.getBoundingClientRect(),s=getComputedStyle(frame),body=root.querySelector('form');return{x:r.x,y:r.y,width:r.width,height:r.height,right:r.right,bottom:r.bottom,viewportWidth:innerWidth,viewportHeight:innerHeight,centerX:(r.left+r.right)/2,centerY:(r.top+r.bottom)/2,animation:s.animationName,overflow:document.documentElement.scrollWidth>innerWidth||body.scrollWidth>body.clientWidth,role:frame.getAttribute('role')||form.getAttribute('role'),novalidate:form.noValidate};});
  assert.equal(g.viewportWidth,width);assert(Math.abs(g.centerX-width/2)<=2,'Registration dialog is centered horizontally');assert(g.x>=0&&g.right<=width+.5);assert(g.y>=0&&g.bottom<=g.viewportHeight+.5);assert.equal(g.overflow,false);assert.equal(g.novalidate,true);assert(!g.animation.includes('snote-vehicle-slide'),'Manual registration no longer uses a side drawer');return g;
 }
-(async()=>{const before=sourceHashes(),browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium'});setBrowser(browser);const results=[];
+module.exports={setup,identity,stage3,currentStep,writes,noSuccess,completeAndWait,geometry};
+if(require.main===module)(async()=>{const before=sourceHashes(),browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium'});setBrowser(browser);const results=[];
  try{
   if(!process.env.SNOTE_REGISTRATION_DETAIL_ONLY){
   for(const width of[1440,390,320]){
