@@ -26,6 +26,16 @@ html body #snote-app > .sidebar [data-snote-service-brand] > picture > img,
 html body .mobile-drawer [data-snote-service-brand] > img {
   inset:15%!important;width:70%!important;height:70%!important;
 }
+/* A centered, compact brand header without the former service description. */
+html body #snote-app > .sidebar > .brand {
+  align-items:center;justify-content:center;gap:0;padding-bottom:14px;
+}
+html body #snote-app > .sidebar .snote-brand-home,
+html body #mobile-drawer .snote-brand-home {
+  display:grid;place-items:center;min-height:44px;
+}
+html body #mobile-drawer .mobile-drawer-header {padding-right:52px}
+html body #mobile-drawer .mobile-drawer-brand {flex:1;align-items:center;gap:0}
 /* Reserve the box during fetch/decode; failed images show no broken glyph.
    The original button/link retains its accessible name and hit area. */
 html body :is(img[data-snote-service-brand], [data-snote-service-brand] > img, [data-snote-service-brand] > picture > img) {

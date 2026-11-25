@@ -1,4 +1,4 @@
-/* Search only the verified bridge's non-financial projections, on submission. */
+/* Live search uses only the verified bridge's non-financial projections. */
 (function (root, factory) {
   'use strict';
   const model = factory();
@@ -8,13 +8,15 @@
   if (!form || root.SnoteUnifiedSearch) return;
   const input = form.querySelector('input'), results = form.querySelector('[data-unified-results]'), submit = form.querySelector('[type="submit"]');
   const bridge = () => root.snoteUnifiedSearchBridge;
-  let sequence = 0, context = null, items = [], shown = false;
+  let sequence = 0, context = null, items = [], shown = false, pending = null, composing = false;
   const node = (tag, text, cls) => { const e = document.createElement(tag); if (text != null) e.textContent = text; if (cls) e.className = cls; return e; };
+  const cancelPending = () => { clearTimeout(pending); pending = null; };
   function clear({ query = false } = {}) {
+    cancelPending();
     sequence++; context = null; items = []; shown = false;
     results.replaceChildren(); results.hidden = true; results.removeAttribute('aria-busy');
     submit.disabled = false; form.removeAttribute('aria-busy'); input.setAttribute('aria-expanded', 'false');
-    if (query) input.value = '';
+    if (query) { input.value = ''; composing = false; }
   }
   function message(text, busy = false) {
     results.replaceChildren(node('p', text, 'snote-unified-message')); results.hidden = false;
@@ -39,9 +41,11 @@
     if (partial) results.append(node('p', '일부 자료를 불러오지 못했습니다. 돋보기를 눌러 다시 검색해 주세요.', 'snote-unified-message'));
     results.setAttribute('aria-busy', 'false');
   }
-  async function search(event) {
+  async function search(event, { focus = true } = {}) {
     event?.preventDefault();
-    input.focus({ preventScroll: true });
+    if (composing || event?.isComposing) return;
+    if (focus) input.focus({ preventScroll: true });
+    cancelPending();
     const query = input.value.trim(), ticket = ++sequence, ctx = bridge()?.context?.();
     items = []; context = null; shown = true;
     if (!ctx) { message('로그인 상태와 이용 권한을 확인해 주세요.'); return; }
@@ -57,8 +61,36 @@
       if (ticket === sequence) { submit.disabled = false; form.removeAttribute('aria-busy'); results.setAttribute('aria-busy', 'false'); }
     }
   }
+  function schedule() {
+    // Hide the preceding query immediately, including while an IME is active.
+    clear();
+    if (composing || !model.normalize(input.value) || root.SnoteSearchFocus && root.SnoteSearchFocus.current !== form && typeof form.showPopover === 'function') return;
+    const query = input.value, ctx = bridge()?.context?.(), ticket = sequence;
+    if (!ctx) return;
+    context = ctx; shown = true;
+    pending = setTimeout(() => {
+      pending = null;
+      if (ticket !== sequence || composing || query !== input.value || !bridge()?.current?.(ctx)) return;
+      search(undefined, { focus: false });
+    }, 220);
+  }
   form.addEventListener('submit', search);
-  input.addEventListener('input', () => { clear(); });
+  input.addEventListener('input', schedule);
+  input.addEventListener('focus', () => { queueMicrotask(() => { if (document.activeElement === input && results.hidden && model.normalize(input.value)) schedule(); }); });
+  input.addEventListener('pointerdown', () => { if (results.hidden && model.normalize(input.value)) schedule(); });
+  input.addEventListener('compositionstart', () => { composing = true; clear(); });
+  input.addEventListener('compositionend', () => { composing = false; schedule(); });
+  form.addEventListener('keydown', event => {
+    if (event.isComposing || composing || !['ArrowDown', 'ArrowUp'].includes(event.key)) return;
+    const buttons = [...results.querySelectorAll('[data-unified-result]')].filter(button => !button.disabled);
+    if (results.hidden || !buttons.length) return;
+    const target = event.target, index = buttons.indexOf(target);
+    if (target !== input && index < 0) return;
+    event.preventDefault();
+    const next = target === input ? event.key === 'ArrowDown' ? 0 : buttons.length - 1 : index + (event.key === 'ArrowDown' ? 1 : -1);
+    if (next < 0 || next >= buttons.length) input.focus({ preventScroll: true });
+    else buttons[next].focus();
+  });
   results.addEventListener('click', async event => {
     const button = event.target.closest('[data-unified-result]'); if (!button || !results.contains(button)) return;
     const row = items[Number(button.dataset.unifiedResult)], ctx = context;
@@ -70,9 +102,9 @@
       if (opened === false && bridge()?.current?.(ctx)) root.toast?.('자료의 이용 권한이나 현재 상태가 변경되었습니다. 다시 검색해 주세요.');
     } catch { if (bridge()?.current?.(ctx)) root.toast?.('자료를 열지 못했습니다. 다시 검색해 주세요.'); }
   });
-  addEventListener('snote:search-closed', event => { if (event.detail?.inputId === input.id) clear(); });
+  addEventListener('snote:search-closed', event => { if (event.detail?.inputId === input.id) { composing = false; clear(); } });
   for (const name of ['snote:auth-reset', 'pagehide']) addEventListener(name, () => clear({ query: true }));
-  addEventListener('snote:route-changed', () => clear());
+  addEventListener('snote:route-changed', () => { composing = false; clear(); });
   document.addEventListener('visibilitychange', () => { if (document.hidden) { clear({ query: true }); if (root.SnoteSearchFocus?.current === form) root.SnoteSearchFocus.close(); } });
   setInterval(() => { if (shown && context && !bridge()?.current?.(context)) { clear({ query: true }); root.SnoteSearchFocus?.close(); } }, 250);
   root.SnoteUnifiedSearch = Object.freeze({ clear, search });
