@@ -34,14 +34,16 @@
   function expire() {
     if (released) return;
     deadline = true;
-    // A slow HTML response has no usable document yet. Do not expose a partial
-    // legacy form, but do not wait for deferred modules once parsing ends.
-    if (document.readyState === 'loading') return;
-    if (stylesPending()) return;
+    // Body-tail CSS can keep readyState at "loading" even after the real login
+    // controller and its listeners are installed. Presentation must not make
+    // that working login unavailable while an optional stylesheet is pending.
+    const loginReady = !!document.getElementById('zc-cloud-gate') && !!window.zc86Cloud;
+    if (!document.body || document.readyState === 'loading' && !loginReady) {
+      clearTimeout(timer); timer = setTimeout(expire, 100); return;
+    }
     freezeFonts();
     cancelAnimationFrame(raf);
-    if (document.hidden) { reveal(); return; }
-    raf = requestAnimationFrame(() => { raf = requestAnimationFrame(reveal); });
+    reveal();
   }
   function stylesPending() {
     return [...document.querySelectorAll('link[rel="stylesheet"]')].some(link =>
@@ -115,6 +117,9 @@
   addEventListener('resize', () => { stableAt = performance.now(); });
   addEventListener('beforeprint', () => { if (!released) { freezeFonts(); released = true; } finish(); });
   addEventListener('pagehide', () => { released = true; finish(); });
-  document.addEventListener('visibilitychange', () => { if (document.hidden && !released && document.readyState !== 'loading') expire(); });
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) return;
+    if (released) finish(); else expire();
+  });
   if (document.readyState !== 'loading') prepare();
 })();
