@@ -7,9 +7,12 @@
  const tones={'판매중':'onsale','계약중':'contract','판매완료':'done','수리중':'pending'};
  const set=(node,name,value)=>{if(node.getAttribute(name)!==String(value))node.setAttribute(name,String(value));};
  const tone=value=>tones[value]||'neutral';
- function available(select){
-  if(!select.isConnected||select.hidden||select.closest('[hidden],[inert]'))return false;
-  for(let node=select;node;node=node.parentElement){const style=getComputedStyle(node);if(style.display==='none'||style.visibility==='hidden'||style.visibility==='collapse')return false;}
+ function available(select,forDisplay=false){
+  // A loading/fade gate reserves the final control geometry while still
+  // blocking every interaction through the ordinary, strict check below.
+  const reserve=forDisplay&&!!select.closest('#list-screen.snote-received-list-pending,main.content[data-route-transition]');
+  if(!select.isConnected||select.hidden||select.closest('[hidden]')||!reserve&&select.closest('[inert]'))return false;
+  for(let node=select;node;node=node.parentElement){const style=getComputedStyle(node);if(style.display==='none'||!reserve&&(style.visibility==='hidden'||style.visibility==='collapse'))return false;}
   return true;
  }
  function focusTrigger(record){if(record?.button.isConnected&&!record.button.hidden&&!record.button.disabled)record.button.focus({preventScroll:true});}
@@ -35,8 +38,8 @@
   const name=select.getAttribute('aria-label')||[...select.labels||[]].map(node=>node.textContent.trim()).join(' ')||'차량 상태';
   set(button,'aria-label',name+' · '+text);set(button,'title',select.title||name);
   if(button.disabled!==select.disabled)button.disabled=select.disabled;
-  const hidden=!available(select);if(button.hidden!==hidden)button.hidden=hidden;
-  if(active?.record===record&&(hidden||select.disabled||record.signature!==signature(select)))close();
+  const hidden=!available(select,true);if(button.hidden!==hidden)button.hidden=hidden;
+  if(active?.record===record&&(!available(select)||select.disabled||record.signature!==signature(select)))close();
  }
  function signature(select){return JSON.stringify([...select.options].map(option=>[option.value,option.label,option.disabled,option.hidden,option.parentElement?.disabled]));}
  function enhance(select){
@@ -98,7 +101,7 @@
   menu.style.setProperty('--snote-status-left',x+'px');menu.style.setProperty('--snote-status-top',y+'px');
  }
  function open(record,key){
-  sync(record);if(record.button.disabled||record.button.hidden||!record.select.isConnected)return;
+  sync(record);if(record.button.disabled||record.button.hidden||!available(record.select))return;
   if(active?.record===record){if(key==='Home')highlight(active.items.findIndex(item=>!item.disabled));else if(key==='End')highlight(active.items.findLastIndex(item=>!item.disabled));return;}
   close();createMenu();list.replaceChildren();
   record.signature=signature(record.select);const items=[];

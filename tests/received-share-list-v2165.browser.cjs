@@ -28,7 +28,7 @@ async function setup(width){const f=await fixture(width,null,{lookupUnavailable:
     throw Error('Unexpected received share action '+args.p_action);
    },async file(c,filePath){if(!base.current(c))throw failure('CONTEXT_CHANGED');t.downloads.push(filePath);if(t.holdPhoto){t.waitingPhoto=true;await new Promise(resolve=>t.releasePhoto=resolve);t.waitingPhoto=false;}return t.photo;}};
   navigate('buy');await SnoteReceivedVehicleList.refresh();snoteRefreshSharedVehicleMarkers();
- });await p.waitForFunction(()=>SnoteReceivedVehicleList.rows().length===2);await p.locator('#snote-reorder-notice:not([hidden])').waitFor({state:'hidden'});return f;
+ });await p.waitForFunction(()=>SnoteReceivedVehicleList.rows().length===2);await p.locator('#snote-reorder-notice:not([hidden])').waitFor({state:'hidden'});await p.waitForFunction(()=>!window.SnoteRouteTransition?.pending()&&!document.querySelector('#snote-app main.content')?.inert&&!document.getElementById('list-screen').classList.contains('snote-received-list-pending'));return f;
 }
 
 async function view(p,value){if(await p.locator('#list-screen').getAttribute('data-vehicle-view')!==value){const toggle=p.locator('#snote-purchase-tools-toggle');if(!await p.locator('#snote-vehicle-view-switch').isVisible())await toggle.click();await p.locator('#snote-vehicle-view-switch').click();if(await toggle.isVisible()&&await toggle.getAttribute('aria-expanded')==='true')await toggle.click();}await p.waitForFunction(value=>document.getElementById('list-screen').dataset.vehicleView===value,value);await p.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));}
@@ -45,6 +45,7 @@ async function rowsAndRights(width){const f=await setup(width),p=f.page;try{
  assert.equal(await sharedRow(p).locator('select.status-select,a.snote-list-encar').count(),0,'Foreign projections cannot use owner status or Encar actions');
  const scope=await p.evaluate(()=>({own:cars.length,dashboard:getFiltered('dash').length,projections:getFiltered('list').filter(c=>SnoteReceivedVehicleList.has(c)).length,writes:__encarFixtureWrites.length}));assert.deepEqual(scope,{own:2,dashboard:2,projections:2,writes:0});
  await p.locator('#list-query').fill('98나7654');await p.locator('#list-query').dispatchEvent('input');await p.waitForFunction(()=>document.getElementById('snote-vehicle-count').textContent==='1대');assert.equal(await sharedRow(p).count(),1);await p.locator('#list-query').fill('');await p.locator('#list-query').dispatchEvent('input');
+ await p.keyboard.press('Escape');await p.waitForFunction(()=>!window.SnoteSearchFocus?.current&&(innerWidth>760||!history.state?.snoteMobilePopup));
  await p.waitForFunction(()=>document.querySelectorAll('#list-table [data-registration-car-id^="snote-shared:"]').length===2);
  if(width===1440){await p.getByRole('button',{name:'매입가 오름차순 정렬',exact:true}).click();const order=await p.locator('#list-table tbody tr').evaluateAll(es=>es.map(e=>e.dataset.registrationCarId));assert.equal(order[0],'encar-car-1');assert.equal(order.at(-1),'encar-car-2');assert(order[1].includes('33333333-3333-4333-8333-333333333333'));assert(order[2].includes('44444444-4444-4444-8444-444444444444'));}
  await view(p,'cards');
