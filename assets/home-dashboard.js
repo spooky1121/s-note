@@ -51,15 +51,15 @@
   const label=toggle.getAttribute('aria-label');toggle.setAttribute('aria-label',label+' · 요약 카드 '+(kpisExpanded?'접기':'펼치기'));
   function setExpanded(expanded){
    if(!current(key)||!host.contains(grid)||expanded===kpisExpanded)return;
-   const token=++kpiTransition,before=new Map(cards.map(card=>[card,card.hidden?null:card.getBoundingClientRect()])),start=toggle.getBoundingClientRect(),oldHeight=grid.getBoundingClientRect().height;
+   const token=++kpiTransition,before=new Map(cards.map(card=>[card,card.hidden?null:card.getBoundingClientRect()])),start=toggle.getBoundingClientRect();
    cancelAnimations(kpiAnimations);kpisExpanded=expanded;grid.dataset.expanded=String(expanded);grid.classList.toggle('is-collapsed',!expanded);toggle.setAttribute('aria-expanded',String(expanded));toggle.setAttribute('aria-label',label+' · 요약 카드 '+(expanded?'접기':'펼치기'));toggle.dataset.tooltip=expanded?'요약 카드 접기':'요약 카드 펼치기';
    for(const card of cards.slice(1)){card.hidden=false;card.inert=!expanded;card.setAttribute('aria-hidden',String(!expanded));card.tabIndex=expanded?0:-1;}
    fitKpis();
-   const endHeight=grid.getBoundingClientRect().height,pending=[];
-   const height=animate(grid,[{height:oldHeight+'px'},{height:endHeight+'px'}],{duration:360,easing:'cubic-bezier(.22,.75,.2,1)'},kpiAnimations);if(height)pending.push(height.finished.catch(()=>{}));
+   const pending=[];
    for(const[index,card]of cards.entries()){
     const to=card.getBoundingClientRect(),from=before.get(card)||start,dx=from.x-to.x,dy=from.y-to.y;
-    const motion=animate(card,[{transform:'translate('+dx+'px,'+dy+'px) scale('+from.width/to.width+','+from.height/to.height+')',opacity:index?(expanded?0:1):1},{transform:'none',opacity:index&&!expanded?0:1}],{duration:360,delay:expanded?index*22:0,fill:'backwards',easing:'cubic-bezier(.22,.75,.2,1)'},kpiAnimations);
+    const end=index&&!expanded?'translate('+(start.x-to.x)+'px,'+(start.y-to.y)+'px) scale('+start.width/to.width+','+start.height/to.height+')':'none';
+    const motion=animate(card,[{transform:'translate('+dx+'px,'+dy+'px) scale('+from.width/to.width+','+from.height/to.height+')',opacity:index?(expanded?0:1):1},{transform:end,opacity:index&&!expanded?0:1}],{duration:360,delay:expanded?index*22:0,fill:'backwards',easing:'cubic-bezier(.22,.75,.2,1)'},kpiAnimations);
     if(motion)pending.push(motion.finished.catch(()=>{}));
    }
    const finish=()=>{if(token!==kpiTransition||!current(key)||!host.contains(grid))return;if(!expanded)for(const card of cards.slice(1))card.hidden=true;requestKpiFit();};
@@ -154,7 +154,7 @@
   const hideMargin=snapshot.hideMargin!==false,next=JSON.stringify([snapshot.key,hideMargin,mobile.matches,data]);if(signature===next)return;signature=next;render(data,snapshot.key,hideMargin);
  }
  let fitting=false,lastFitWidth=null;
- function fitKpis(){const grid=host.querySelector('.snote-home-kpis');if(!grid||!current(paintedKey))return;grid.classList.remove('has-wide-values');delete grid.dataset.valueColumns;let required=0,overflow=false;for(const card of grid.children){if(card.hidden)continue;const value=card.querySelector('.snote-home-kpi-value'),style=getComputedStyle(card),range=document.createRange();range.selectNodeContents(value);const width=range.getBoundingClientRect().width;required=Math.max(required,Math.ceil(width+parseFloat(style.paddingLeft)+parseFloat(style.paddingRight)+parseFloat(style.borderLeftWidth)+parseFloat(style.borderRightWidth)+4));if(value.scrollWidth>value.clientWidth+1)overflow=true;}grid.style.setProperty('--snote-kpi-stack-width',Math.max(230,required)+'px');if(overflow&&kpisExpanded){const gap=parseFloat(getComputedStyle(grid).columnGap)||0,fit=Math.floor((grid.clientWidth+gap)/(required+gap));grid.dataset.valueColumns=String(fit>=7?7:fit>=4?4:fit>=2?2:1);grid.classList.add('has-wide-values');}}
+ function fitKpis(){const grid=host.querySelector('.snote-home-kpis');if(!grid||!current(paintedKey))return;grid.classList.remove('has-wide-values');delete grid.dataset.valueColumns;let required=0,overflow=false;for(const card of grid.children){const value=card.querySelector('.snote-home-kpi-value'),style=getComputedStyle(card),range=document.createRange();range.selectNodeContents(value);const scale=card.offsetWidth?card.getBoundingClientRect().width/card.offsetWidth:1,width=range.getBoundingClientRect().width/(scale||1);required=Math.max(required,Math.ceil(width+parseFloat(style.paddingLeft)+parseFloat(style.paddingRight)+parseFloat(style.borderLeftWidth)+parseFloat(style.borderRightWidth)+4));if(value.scrollWidth>value.clientWidth+1)overflow=true;}if(overflow){const gap=parseFloat(getComputedStyle(grid).columnGap)||0,fit=Math.floor((grid.clientWidth+gap)/(required+gap));grid.dataset.valueColumns=String(fit>=7?7:fit>=4?4:fit>=2?2:1);grid.classList.add('has-wide-values');}const first=grid.firstElementChild?.getBoundingClientRect();if(first){grid.style.setProperty('--snote-kpi-stack-width',first.width+'px');grid.style.setProperty('--snote-kpi-stack-height',first.height+'px');}}
  function requestKpiFit(){if(fitting)return;fitting=true;requestAnimationFrame(()=>{fitting=false;fitKpis();});}
  if(typeof ResizeObserver==='function')new ResizeObserver(entries=>{const width=entries[0]?.contentRect.width;if(width!==lastFitWidth){lastFitWidth=width;requestKpiFit();}}).observe(host);
  document.fonts?.ready.then(requestKpiFit);root.addEventListener('snote-fonts-enlarged',requestKpiFit);
