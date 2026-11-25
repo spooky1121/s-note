@@ -19,6 +19,13 @@ html body [data-snote-service-brand] > picture > img {
   filter:none!important;mix-blend-mode:normal!important;
   border:0!important;box-shadow:none!important;background:transparent!important;
 }
+/* Keep navigation slots and hit areas; only its artwork is 30% smaller. */
+html body #snote-app > .sidebar .snote-brand-home,
+html body .mobile-drawer .snote-brand-home { align-self:center; }
+html body #snote-app > .sidebar [data-snote-service-brand] > picture > img,
+html body .mobile-drawer [data-snote-service-brand] > img {
+  inset:15%!important;width:70%!important;height:70%!important;
+}
 /* Reserve the box during fetch/decode; failed images show no broken glyph.
    The original button/link retains its accessible name and hit area. */
 html body :is(img[data-snote-service-brand], [data-snote-service-brand] > img, [data-snote-service-brand] > picture > img) {

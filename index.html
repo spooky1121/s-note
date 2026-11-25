@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.230">
+<html lang="ko" data-snote-release="2.231">
 <head>
 <meta charset="utf-8" />
   <link rel="stylesheet" href="assets/startup-presentation.css?v=2.227" data-snote-startup-style>
@@ -3260,7 +3260,7 @@ button, input, select, textarea { font-family: inherit; }
   <link rel="icon" type="image/svg+xml" href="/assets/snote-favicon.svg?v=2.226">
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/snote-apple-touch-icon.png?v=2.226">
   <link rel="manifest" href="/manifest.webmanifest?v=2.226">
-<link rel="stylesheet" href="assets/service-brand.css?v=2.228">
+<link rel="stylesheet" href="assets/service-brand.css?v=2.231">
 <link rel="stylesheet" href="assets/unified-search.css?v=2.228" data-snote-type-scale>
 </head>
 <body class="snote-typography">
@@ -3461,7 +3461,7 @@ button, input, select, textarea { font-family: inherit; }
    <section class="q8-section q8-bank-section" data-snote-payment-section hidden><div class="q8-section-title"><span class="q8-index">03</span><h2>입금 안내</h2></div>
     <div class="q8-bank-grid"><div class="q8-bank-card" data-snote-payment-row="vehicle" hidden><div class="q8-bank-type">01 · 차대금 입금</div><div class="q8-bank-line" data-snote-payment-account="vehicle"></div><div class="q8-bank-money"><span id="quote-bank-car">0</span><small>원</small></div></div><div class="q8-bank-card" data-snote-payment-row="transfer" hidden><div class="q8-bank-type">02 · 이전비 입금</div><div class="q8-bank-line" data-snote-payment-account="transfer"></div><div class="q8-bank-money"><span id="quote-bank-transfer">0</span><small>원</small></div></div></div>
    </section>
-   <footer class="q8-bottom"><span class="snote-document-brand"><img src="assets/snote-brand.png" alt="snote" width="1149" height="301" /></span><span class="snote-document-logo"><img class="zc-footer-emblem" data-snote-company-asset="companyLogo" alt="상사 로고" hidden /></span><strong class="snote95-footer-company"></strong></footer>
+   <footer class="q8-bottom"><span class="snote-document-brand"><img src="assets/snote-brand.png?v=2.231" alt="snote" width="1149" height="301" style="visibility:hidden" /></span><span class="snote-document-logo"><img class="zc-footer-emblem" data-snote-company-asset="companyLogo" alt="상사 로고" hidden /></span><strong class="snote95-footer-company"></strong></footer>
   </article>
  </div>
 </div>
@@ -3519,7 +3519,7 @@ button, input, select, textarea { font-family: inherit; }
       <div class="ct-party"><div class="ct-party-head"><strong>을 · 매수인</strong><em id="ct-buyer-tag">구매 고객</em></div><div class="ct-party-row name-row"><label>성명 / 상호</label><div class="ct-stamp-line"><input id="ct-buyer-name" maxlength="40" /><span class="ct-seal-slot"><span class="stamp-mark">(인)</span><img id="ct-buyer-stamp" class="ct-stamp-image" data-snote-company-asset="companyStamp" hidden alt="법인 도장" /></span></div></div><div class="ct-party-row"><label>주민번호 / 사업자번호</label><input id="ct-buyer-id" maxlength="30" placeholder="필요 시 기재" autocomplete="off" /></div><div class="ct-party-row"><label>전화번호</label><input id="ct-buyer-phone" maxlength="24" /></div><div class="ct-party-row address-row"><label>주소</label><textarea id="ct-buyer-address" rows="3" maxlength="120"></textarea></div></div>
      </div>
    </section>
-   <div class="ct-footer"><span class="snote-document-brand"><img src="assets/snote-brand.png" alt="snote" width="1149" height="301" /></span><span class="snote-document-logo"><img class="zc-footer-emblem" data-snote-company-asset="companyLogo" alt="상사 로고" hidden /></span><strong class="snote95-footer-company"></strong></div>
+   <div class="ct-footer"><span class="snote-document-brand"><img src="assets/snote-brand.png?v=2.231" alt="snote" width="1149" height="301" style="visibility:hidden" /></span><span class="snote-document-logo"><img class="zc-footer-emblem" data-snote-company-asset="companyLogo" alt="상사 로고" hidden /></span><strong class="snote95-footer-company"></strong></div>
   </article>
   <div id="contract-print-pages" class="contract-print-pages" aria-hidden="true"></div>
  </div>
@@ -6798,7 +6798,32 @@ function updateQuoteTotals(){quoteFormatFields();const amount=quoteVehiclePrice;
  $('quote-bank-car').textContent=quoteComma(amount);
  $('quote-bank-transfer').textContent=quoteComma(transfer);
 }
-let snote95DocumentLogoReady=Promise.resolve(),snote95DocumentLogoRequest=0;
+let snote95DocumentLogoReady=Promise.resolve(false),snote95DocumentLogoRequest=0;
+async function snote231PrepareDocumentBrand(image,current,retryKey){
+ const canonical=new URL('assets/snote-brand.png?v=2.231',document.baseURI);
+ let source=image.getAttribute('src')||'';
+ const valid=()=>current()&&image.isConnected&&image.getAttribute('src')===source;
+ if(!valid())return false;
+ const candidate=new URL(source||canonical.href,document.baseURI);
+ if(candidate.origin!==canonical.origin||candidate.pathname!==canonical.pathname||candidate.searchParams.get('v')!=='2.231'){
+  image.style.visibility='hidden';source=canonical.href;image.src=source;
+ }
+ for(let attempt=0;attempt<2;attempt++){
+  if(!valid())return false;
+  let timer;
+  try{
+   await Promise.race([image.decode(),new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('DOCUMENT_BRAND_TIMEOUT')),6000);})]);
+   if(!valid())return false;
+   if(!image.complete||!image.naturalWidth||!image.naturalHeight)throw Error('DOCUMENT_BRAND_UNAVAILABLE');
+   image.style.removeProperty('visibility');return true;
+  }catch{
+   if(!valid())return false;
+   image.style.visibility='hidden';
+   if(attempt===0){const retry=new URL(canonical);retry.searchParams.set('retry',String(retryKey));source=retry.href;image.src=source;}
+  }finally{clearTimeout(timer);}
+ }
+ return false;
+}
 function snote128DocumentScope(){return {...(window.snoteCompanyAssetScope?.()||{actor:currentUser,companyId:null,userId:null,client:null}),workKey:typeof snoteWorkDocumentContext==='function'?snoteWorkDocumentContext()?.key||'':''};}
 function snote128DocumentCurrent(scope){const now=snote128DocumentScope();return ['actor','companyId','userId','client','workKey'].every(key=>scope[key]===now[key]);}
 function snote128BindCompanyImage(image,url,kind,alt,fallback=''){
@@ -6811,6 +6836,10 @@ function snote128BindCompanyImage(image,url,kind,alt,fallback=''){
 function snote95UpdateDocumentCompany(){
  const name=snoteWorkCompanyName(),scope=snote128DocumentScope(),request=++snote95DocumentLogoRequest,allowBranding=snoteWorkDocumentContext()?.crossCompany!==true;
  const footers=[...document.querySelectorAll('.quote-paper .q8-bottom,.contract-paper .ct-footer,#zc76-receipt-paper .snote202-receipt-brand,.co-document-footer')];
+ const current=()=>request===snote95DocumentLogoRequest&&snote128DocumentCurrent(scope);
+ // Public service artwork is independent of private company assets. Reveal it
+ // only after decoding; a later request alone may change the current image.
+ const brandReady=Promise.all(footers.filter(footer=>!footer.closest('.contract-print-copy')).flatMap(footer=>[...footer.querySelectorAll('.snote-document-brand img')].map(image=>snote231PrepareDocumentBrand(image,current,request)))).then(results=>results.every(Boolean));
  const fallback=''; // The independent left brand remains when a company has no logo.
  const apply=url=>{for(const footer of footers){
   let label=footer.querySelector('.snote95-footer-company');if(!label){label=document.createElement('strong');label.className='snote95-footer-company';footer.append(label);}label.textContent=name;
@@ -6818,7 +6847,7 @@ function snote95UpdateDocumentCompany(){
   let frame=logo.closest('.snote-document-logo');if(!frame){frame=document.createElement('span');frame.className='snote-document-logo';logo.before(frame);frame.append(logo);}
   frame.classList.toggle('is-company-logo',!!url);snote128BindCompanyImage(logo,url,'companyLogo',name?name+' 로고':'상사 로고',fallback);
  }};
- const ready=()=>Promise.all(footers.flatMap(footer=>[...footer.querySelectorAll('.zc-footer-emblem,.snote-document-brand img')].map(async image=>{
+ const ready=async()=>{await Promise.all(footers.flatMap(footer=>[...footer.querySelectorAll('.zc-footer-emblem')].map(async image=>{
   // An error can switch the source to the fallback while decode is pending.
   // Wait for that replacement too, without changing a newer image's handler.
   for(let attempt=0;attempt<2;attempt++){
@@ -6826,13 +6855,13 @@ function snote95UpdateDocumentCompany(){
    try{await image.decode();}catch{if(request===snote95DocumentLogoRequest&&snote128DocumentCurrent(scope)&&image.getAttribute('src')===source)image.onerror?.();}
    if(image.getAttribute('src')===source)return;
   }
- })));
+ })));return current()&&await brandReady;};
  apply(null);
  snote95DocumentLogoReady=Promise.resolve().then(()=>allowBranding?window.snoteLoadDocumentLogo?.():null).then(async url=>{
-  if(request!==snote95DocumentLogoRequest||!snote128DocumentCurrent(scope))return;
+  if(!current())return false;
   apply(url);
-  await ready();
- }).catch(async()=>{if(request===snote95DocumentLogoRequest&&snote128DocumentCurrent(scope)){apply(null);await ready();}});
+  return ready();
+ }).catch(async()=>{if(current()){apply(null);return ready();}return false;});
  return snote95DocumentLogoReady;
 }
 let snote128StampRequest=0,snote128StampState={status:'idle',url:null},snote128StampReady=Promise.resolve();
@@ -6919,7 +6948,7 @@ function snoteResetQuoteSession(){
 }
 function resizeQuotePreview(){const paper=$('quote-paper');if(!$('quote-overlay').classList.contains('open')||!paper)return;const width=paper.closest('.snote-popup-card')?.clientWidth||window.innerWidth-68;paper.style.setProperty('--quote-scale',Math.max(.1,Math.min(1,width/794)));}
 window.addEventListener('resize',resizeQuotePreview);
-async function printQuote(){if(!$('quote-overlay').classList.contains('open'))return;window.SnoteQuoteCostEditor?.commitAll?.();const actor=currentUser,car=quoteCarId,scope=snote128DocumentScope();const [,accountsReady]=await Promise.all([snote95UpdateDocumentCompany(),window.SnotePaymentAccounts?.loadDocument(()=>currentUser===actor&&quoteCarId===car&&$('quote-overlay').classList.contains('open'))??Promise.resolve(false)]);if(!accountsReady){toast('입금계좌를 확인하지 못했습니다. 다시 불러온 뒤 인쇄해 주세요.');return;}await document.fonts?.ready;if(currentUser!==actor||quoteCarId!==car||!snote128DocumentCurrent(scope)||!$('quote-overlay').classList.contains('open'))return;window.print()}
+async function printQuote(){if(!$('quote-overlay').classList.contains('open'))return;window.SnoteQuoteCostEditor?.commitAll?.();const actor=currentUser,car=quoteCarId,scope=snote128DocumentScope();const [logoReady,accountsReady]=await Promise.all([snote95UpdateDocumentCompany(),window.SnotePaymentAccounts?.loadDocument(()=>currentUser===actor&&quoteCarId===car&&$('quote-overlay').classList.contains('open'))??Promise.resolve(false)]);if(currentUser!==actor||quoteCarId!==car||!snote128DocumentCurrent(scope)||!$('quote-overlay').classList.contains('open'))return;if(!logoReady){toast('문서 로고를 불러오지 못했습니다. 인쇄 버튼을 다시 눌러 주세요.');return;}if(!accountsReady){toast('입금계좌를 확인하지 못했습니다. 다시 불러온 뒤 인쇄해 주세요.');return;}await document.fonts?.ready;if(currentUser!==actor||quoteCarId!==car||!snote128DocumentCurrent(scope)||!$('quote-overlay').classList.contains('open'))return;window.print()}
 
 
 /* v1.9 · Contract preview (client-only draft) */
@@ -7307,8 +7336,9 @@ function printContract(){
   const printDraftKey=snote165ContractDraftKey(),resource=snote170ContractPreparedResources();
   // A successful preview already has these scoped resources. Only failed loads
   // are retried, so opening the print dialog does not depend on a second RPC.
-  const [,stampReady,accountsReady]=await wait(Promise.all([resource.logo,resource.stamp,resource.accounts]));
+  const [logoReady,stampReady,accountsReady]=await wait(Promise.all([resource.logo,resource.stamp,resource.accounts]));
   if(!current()||!snote170ContractResourceCurrent(resource))return false;
+  if(!logoReady){resource.logo=null;toast('문서 로고를 불러오지 못했습니다. 인쇄 버튼을 다시 눌러 주세요.');return false;}
   const paymentState=contractMode==='sale'?window.SnotePaymentAccounts?.documentState?.():null;
   if(!accountsReady||contractMode==='sale'&&paymentState?.ready!==true){resource.accounts=null;toast('입금계좌를 확인하지 못했습니다. 인쇄 버튼을 다시 눌러 주세요.');return false;}
   if(!stampReady||!['ready','missing'].includes(snote128StampState.status)){resource.stamp=null;toast('상사 도장을 불러오지 못했습니다. 등록 이미지를 확인한 뒤 인쇄 버튼을 다시 눌러 주세요.');return false;}
@@ -8943,7 +8973,7 @@ document.addEventListener('click',e=>{
        <div class="zc76-check-line"><label>동의 , 위임함 <input class="zc76-check" type="checkbox" id="zc76-cash-confirm"></label></div>
       </section>
       <div class="zc76-foot"><div class="date-row"><input type="date" id="zc76-doc-date" aria-label="작성일"></div><div class="zc76-sign"><span>위 내용을 설명 듣고 확인 하였음. / 위임, 동의 확인자 :</span><input type="text" id="zc76-sign-name" aria-label="확인자 이름"> <span class="zc76-sign-slot"><span class="zc76-sign-placeholder">(서명,날인)</span><span id="snote215-receipt-signature" class="snote215-receipt-signature" hidden><img id="snote215-receipt-signature-image" alt="고객 서명"></span></span></div></div>
-     <div class="snote202-receipt-brand"><span class="snote-document-brand"><img src="assets/snote-brand.png" alt="snote" width="1149" height="301" /></span><span class="snote-document-logo"><img class="zc-footer-emblem" data-snote-company-asset="companyLogo" alt="상사 로고" hidden /></span><strong class="snote95-footer-company"></strong></div>
+     <div class="snote202-receipt-brand"><span class="snote-document-brand"><img src="assets/snote-brand.png?v=2.231" alt="snote" width="1149" height="301" style="visibility:hidden" /></span><span class="snote-document-logo"><img class="zc-footer-emblem" data-snote-company-asset="companyLogo" alt="상사 로고" hidden /></span><strong class="snote95-footer-company"></strong></div>
     </article>
   </div>
 </div>
@@ -9047,8 +9077,9 @@ async function zc76PrintReceipt(){
  const actor=currentUser,carId=zc80ReceiptCarId,view=snote214ReceiptView,scope=snote128DocumentScope();
  if(!await snote252ReceiptSignatureTask)return;
  if(window.snote250ReceiptSignature&&!await window.snote250ReceiptSignature.ready()){toast('고객 서명 표시를 확인한 뒤 다시 인쇄해 주세요.');return;}
- await snote95UpdateDocumentCompany();
- await snote95DocumentLogoReady;
+ const logoReady=await snote95UpdateDocumentCompany();
+ if(!zc76ReceiptOpen||currentUser!==actor||zc80ReceiptCarId!==carId||snote214ReceiptView!==view||!snote128DocumentCurrent(scope))return;
+ if(!logoReady){toast('문서 로고를 불러오지 못했습니다. 인쇄 버튼을 다시 눌러 주세요.');return;}
  await document.fonts?.ready;
  if(!zc76ReceiptOpen||currentUser!==actor||zc80ReceiptCarId!==carId||snote214ReceiptView!==view||!snote128DocumentCurrent(scope))return;
  window.print();
@@ -12423,7 +12454,7 @@ window.zc86Cloud={getAccessToken:async()=>{const client=S.client,user=S.user,com
 <link rel="stylesheet" href="assets/workspace-reorder.css?v=2.136">
 <script src="assets/workspace-order-store.js?v=2.135" defer></script>
 <script src="assets/workspace-reorder.js?v=2.202" defer></script>
-<script src="assets/release-info.js?v=2.230" defer></script>
+<script src="assets/release-info.js?v=2.231" defer></script>
 <link rel="stylesheet" href="assets/encar-id.css?v=2.162">
 <script src="assets/encar-id.js?v=2.184" defer></script>
 <script src="assets/company-purchase.js?v=2.172" defer></script>
