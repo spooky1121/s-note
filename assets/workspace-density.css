@@ -1,0 +1,134 @@
+/* A small screen-only type adjustment. Static rules also work on the public
+   pages whose CSP deliberately disallows generated inline styles. No zoom or
+   per-element measurement changes the layout after first presentation. */
+@media screen {
+ :root {--snote-type-body:13px;--snote-type-caption:11px;--snote-type-title:19px}
+ /* The paper preview keeps its old screen metrics; print never uses this pass. */
+ :is(#quote-paper,.contract-paper,#zc76-receipt-paper) {--snote-readable-increase:2px}
+ html body #zc-cloud-gate .snote-login-panel #zc-cloud-title {font-size:31px}
+ html body #zc-cloud-gate .snote-login-panel .zc-field {font-size:11px}
+ html body #zc-cloud-gate .snote-login-panel input:not([type=checkbox]):not([type=file]) {font-size:13px}
+ html body #zc-cloud-gate .snote-login-panel .zc-btn {font-size:13px}
+ html body #zc-cloud-gate .snote-login-panel .snote-auth-secondary {font-size:11px}
+ html body #zc-cloud-gate .snote-login-visual .snote-auth-hero-title {font-size:calc(clamp(36px,3.6vw,58px) - 1px)}
+ html body #zc-cloud-gate .snote-login-visual :is(.snote-auth-hero p,.snote204-hero-bottom>p) {font-size:12px}
+ html body #zc-cloud-gate .snote-login-info h2 {font-size:calc(clamp(28px,3vw,40px) - 1px)}
+ html body #zc-cloud-gate .snote-login-info>header>p:not(.snote-landing-kicker) {font-size:13px}
+ html body #zc-cloud-gate .snote-login-info .snote-auth-feature h3 {font-size:14px}
+ html body #zc-cloud-gate .snote-login-info .snote-auth-feature p {font-size:11px}
+ html body #zc-cloud-gate .snote-showcase-copy h3 {font-size:calc(clamp(25px,2.2vw,34px) - 1px)}
+ html body #zc-cloud-gate .snote-showcase-copy>p:not(.snote-landing-kicker) {font-size:13px}
+ html body #zc-cloud-gate .snote-showcase-copy li {font-size:12px}
+ html body #snote-app .nav button {font-size:13px!important}
+ html body #snote-app #screen-title {font-size:21px!important}
+ html body #snote-app :is(.branddesc,.support .sd) {font-size:11px}
+ html body #snote-app :is(#list-table,.fin-table,.snote-profit-table,.zc72-customers,.prestock-ledger) th {font-size:11px!important}
+ html body #snote-app :is(#list-table,.fin-table,.snote-profit-table,.zc72-customers,.prestock-ledger) td {font-size:13px!important}
+ html body #snote-app #list-table :is(.car-name,.acct-car-cell strong,.price,.acct-price) {font-size:13px!important}
+ html body #snote-app #list-table :is(.car-sub,.acct-car-cell small) {font-size:11px!important}
+ html body #snote-app #list-screen[data-design-purchase=true] #list-title {font-size:15px}
+ html body #snote-app :is(#snote-vehicle-count,.snote-purchase-brief) {font-size:11px}
+ html body #snote-app #list-mobile :is(.vehicle-title,.acct-mobile-heading strong) {font-size:14px}
+ html body #snote-app #list-mobile :is(.vehicle-meta,.vehicle-purchase-date,.acct-mobile-sub) {font-size:11px}
+ html body #snote-app .snote-design-settings-nav button {font-size:12px}
+ html body #snote-app .snote-design-settings-title {font-size:13px}
+ html body #snote-app #alt-content .snote-design-settings .snote90-panel>h3 {font-size:15px}
+ html body #snote-app #alt-content .snote-design-settings .snote90-panel>p {font-size:11px}
+ html body #snote-app #snote-dashboard-home .snote-home-kpi-label>span {font-size:12px!important}
+ html body #snote-app #snote-dashboard-home .snote-home-kpi-value {font-size:clamp(19px,calc(1.55cqw - 1px),25px)}
+ html body #snote-app #snote-dashboard-home :is(.snote-home-card-head h2,.snote-home-state h2,.snote-home-chart-group-head h2,.snote-home-settlement-toggle) {font-size:14px!important}
+ html body #snote-app #snote-dashboard-home :is(.snote-home-task-info strong,.snote-home-vehicle-info>strong,.snote-home-vehicle-price>strong) {font-size:13px!important}
+ html body #snote-app #snote-dashboard-home .snote-home-settlement dt {font-size:13px}
+ html body #snote-app #snote-dashboard-home .snote-home-settlement dd {font-size:17px}
+ html body #snote-app #snote-dealer-scheduler .snote-scheduler-month-nav h3 {font-size:19px}
+ html body #snote-app #snote-dealer-scheduler .snote-scheduler-week span {font-size:13px}
+ html body #snote-app #snote-dealer-scheduler .snote-scheduler-date {font-size:14px}
+ html body #snote-app #snote-dealer-scheduler .snote-scheduler-agenda-section h3 {font-size:14px}
+ html body #snote-app #snote-dealer-scheduler .snote-scheduler-agenda-copy>.snote-scheduler-event-title {font-size:13px}
+ /* Operator pages do not run the generated type pass. */
+ html body :is(#operator-login,#operator-app,#operator-drawer) h1 {font-size:21px}
+ html body :is(#operator-login,#operator-app,#operator-drawer) h2 {font-size:17px}
+ html body :is(#operator-login,#operator-app,#operator-drawer) h3 {font-size:13px}
+ html body :is(#operator-login,#operator-app,#operator-drawer) label {font-size:11px}
+ html body :is(#operator-login,#operator-app,#operator-drawer) :is(.primary,.secondary,.tabs button,.sidebar nav button) {font-size:12px}
+ html body #operator-app :is(.table-wrap table,td,td strong) {font-size:11px}
+ html body #operator-app :is(td small,.sidebar-label,.sidebar-back) {font-size:10px}
+ html body #operator-app :is(.muted,.message,.list-meta>span,.operator-identity>span) {font-size:11px}
+ html body #operator-app .service-metric-value {font-size:21px}
+ html body #operator-app .service-metric h3 {font-size:11px}
+ html body #operator-app .service-summary-heading h2 {font-size:15px}
+ html body #operator-app .service-provider-history>h3 {font-size:12px}
+ /* Public intake uses only external static CSS under its strict CSP. */
+ html body .intake-card .card-header h1 {font-size:16px}
+ html body .intake-card .card-header p {font-size:11px}
+ html body .intake-card .section-heading h2 {font-size:20px}
+ html body .intake-card .section-heading p {font-size:12px}
+ html body .intake-card #car-model {font-size:18px}
+ html body .intake-card .vehicle-grid dd {font-size:12px}
+ html body .intake-card .vehicle-price strong {font-size:18px}
+ html body .intake-card :is(.field,.signature-label,.section-heading p,.completion>p,.terminal>p) {font-size:12px}
+ html body .intake-card :is(.form-section h3,.receipt-details-fields h3,.verified-note strong) {font-size:13px}
+ html body .snote-email-recovery-card h1 {font-size:21px}
+ html body .snote-email-recovery-status {font-size:13px}
+ html body .snote-email-recovery-id {font-size:16px}
+ html body .snote-email-recovery-field {font-size:12px}
+ html body :is(.snote-email-recovery-primary,.snote-email-recovery-secondary) {font-size:13px}
+}
+@media screen and (min-width:761px) {
+ html body #operator-app {grid-template-columns:176px minmax(0,1fr)}
+ html body :is(#operator-login,#operator-app,#operator-drawer) :is(input,select,textarea) {font-size:12px}
+ html body .workbook th,html body .workbook :is(.cell-input,.cell-output) {font-size:11.5px!important}
+}
+@media screen and (min-width:761px) and (max-width:1150px) {
+ html body #zc-cloud-gate .snote-login-visual .snote-auth-hero-title {font-size:37px}
+ html body #zc-cloud-gate .snote-login-visual .snote-auth-hero p {font-size:11px}
+ html body #zc-cloud-gate .snote-showcase-copy h3 {font-size:26px}
+}
+@media screen and (max-width:760px) {
+ html body #zc-cloud-gate .snote-login-panel #zc-cloud-title {font-size:29px}
+ html body #zc-cloud-gate .snote-login-visual .snote-auth-hero-title {font-size:31px}
+ html body #zc-cloud-gate .snote-login-visual :is(.snote-auth-hero p,.snote204-hero-bottom>p) {font-size:10px}
+ html body #zc-cloud-gate .snote-login-info h2 {font-size:27px}
+ html body #zc-cloud-gate .snote-login-info>header>p:not(.snote-landing-kicker) {font-size:11px}
+ html body #zc-cloud-gate .snote-login-info .snote-auth-feature h3 {font-size:12px}
+ html body #zc-cloud-gate .snote-login-info .snote-auth-feature p {font-size:10px}
+ html body #zc-cloud-gate .snote-showcase-copy h3 {font-size:26px}
+ html body #zc-cloud-gate .snote-showcase-copy>p:not(.snote-landing-kicker) {font-size:12px}
+ html body #zc-cloud-gate .snote-showcase-copy li {font-size:11px}
+ html body #snote-app #list-screen[data-mobile-purchase-tools] #list-title {font-size:13px}
+ html body #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .snote209-vehicle-card .vehicle-title {font-size:13px}
+ html body #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .snote220-card-plate {font-size:12px}
+ html body #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .snote220-card-specs {font-size:11px}
+ html body #snote-app #list-screen[data-vehicle-view=cards] #list-mobile .snote209-vehicle-card .vehicle-price {font-size:clamp(12px,calc(4vw - 1px),16px)}
+ html body #snote-app #snote-dashboard-home .snote-home-kpi-value {font-size:19px}
+ /* Keep the already dense calendar annotations legible on small screens. */
+ html body #snote-app #snote-dealer-scheduler .snote-scheduler-month-nav h3 {font-size:15px}
+ html body #snote-app #snote-dealer-scheduler .snote-scheduler-week span {font-size:11px}
+ html body #snote-app #snote-dealer-scheduler .snote-scheduler-date {font-size:11px}
+ html body #operator-app .service-metric-value {font-size:19px}
+ html body #operator-app .service-metric h3 {font-size:10px}
+ html body #operator-app .service-summary-heading h2 {font-size:14px}
+ html body #operator-app .service-provider-history>h3 {font-size:11px}
+ html body #operator-app .service-provider-table td {font-size:10px}
+ /* Text entry remains at least 16px to avoid focus zoom on iOS. No paper
+    fields match these UI roots; document fitting and print stay independent. */
+ html body :is(#snote-app,#zc-cloud-gate,#auth-shell,#operator-login,#operator-app,#main-content,.snote-email-recovery-card,#vehicle-overlay,#overlay,#zc72-sale-modal,#monthly-shell,#income-app,.snote-scheduler-dialog) :is(input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]):not([type=hidden]),select,textarea) {font-size:16px!important}
+ html body .snote-search-active:popover-open input[type=search] {font-size:16px!important}
+}
+@media screen and (max-width:600px) {
+ html body .intake-card .card-header p {font-size:10px}
+ html body .intake-card .section-heading h2 {font-size:19px}
+}
+@media screen and (max-width:359px) {
+ html body .intake-card .section-heading h2 {font-size:18px}
+}
+/* The official document wordmark is separate from the dealer/company logo.
+   A compact fixed box is present in both preview and the A4 output. */
+html body :is(#quote-paper,.contract-paper,#zc76-receipt-paper) .snote-document-brand {
+ display:flex;align-items:center;justify-content:flex-start;flex:none;
+ position:relative;width:18mm;height:5mm;min-width:18mm;margin-right:auto;overflow:hidden;
+}
+html body :is(#quote-paper,.contract-paper,#zc76-receipt-paper) .snote-document-brand img {
+ display:block;position:absolute;inset:0;width:100%;height:100%;max-width:100%;
+ transform:none;object-fit:contain;object-position:left center;filter:none;
+}

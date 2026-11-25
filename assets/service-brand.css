@@ -3,7 +3,7 @@
 [data-snote-service-brand] { position: relative; }
 html body .snote-wordmark[data-snote-service-brand] { display:block;width:160px;height:42px;flex:none }
 html body #zc-cloud-gate .snote-login-panel .snote-wordmark[data-snote-service-brand] { width:130px;height:38px }
-html body .mobile-drawer .snote-wordmark[data-snote-service-brand] { width:126px;height:34px }
+html body .mobile-drawer .snote-wordmark[data-snote-service-brand] { width:116px;height:31px }
 html body .site-header .wordmark[data-snote-service-brand] { width:120px;height:34px;flex:none }
 html body [data-snote-service-brand] > picture {
   display:block!important;position:absolute!important;inset:0!important;
@@ -37,11 +37,11 @@ html body img.snote-email-recovery-logo[data-snote-service-brand] {
 }
 @media (min-width:761px) {
   html body #snote-app > .sidebar .snote-wordmark[data-snote-service-brand] {
-    width:clamp(128px, calc(clamp(180px, calc(12.5vw + 36px), 228px) - 68px), 148px);height:40px;
+    width:clamp(116px, calc(clamp(166px, calc(11.5vw + 33px), 210px) - 62px), 134px);height:36px;
   }
 }
 @media (min-width:761px) and (max-width:1120px) {
-  html body #snote-app > .sidebar .snote-wordmark[data-snote-service-brand] { width:38px;height:40px }
+  html body #snote-app > .sidebar .snote-wordmark[data-snote-service-brand] { width:34px;height:36px }
 }
 @media (max-width:760px) {
   #operator-app > .sidebar > .wordmark[data-snote-service-brand] { height:32px }

@@ -1,0 +1,39 @@
+/* The same search focus/popover supplies the backdrop and keeps its real form. */
+@media screen {
+ #snote-app .topbar {display:grid;grid-template-columns:minmax(100px,1fr) minmax(210px,420px) minmax(160px,1fr);gap:12px;height:auto;min-height:72px;padding-block:10px}
+ #snote-app .topbar-left {min-width:0}
+ #snote-app .topright {justify-self:end;min-width:0;gap:8px}
+ #snote-app .topbar>.subtitle {grid-column:1/-1;margin:0}
+ #snote-app #snote-global-search {display:flex;align-items:center;justify-self:center;gap:8px;width:100%;min-width:0;max-width:420px;margin:0;padding:6px 10px!important}
+ html body #snote-global-search .snote-unified-submit {display:grid;place-items:center;flex:0 0 30px;width:30px;min-width:30px;height:30px;min-height:30px;padding:5px;border:0;border-radius:8px;background:transparent;color:#708394;cursor:pointer}
+ html body #snote-global-search .snote-unified-submit:hover {color:#008bd7;background:#edf8ff}
+ html body #snote-global-search .snote-unified-submit svg {width:18px!important;height:18px!important;scale:1!important}
+ html body #snote-global-search .snote-unified-submit:disabled {opacity:.45;cursor:wait}
+ html body #snote-global-search input {width:100%;min-width:0;font-size:13px!important}
+ html body #snote-global-search.snote-search-active:popover-open {display:grid!important;grid-template-columns:30px minmax(0,1fr) 28px;gap:8px!important;max-height:calc(100dvh - 24px)!important;overflow:hidden!important}
+ html body #snote-global-search.snote-search-active:popover-open input {width:100%!important;grid-column:2;grid-row:1}
+ html body #snote-global-search .snote-search-dismiss {grid-column:3;grid-row:1}
+ #snote-global-search .snote-unified-results {grid-column:1/-1;min-width:0;max-height:min(52dvh,460px);overflow:auto;overscroll-behavior:contain;border-top:1px solid #edf1f5;margin-top:4px;padding-top:8px;text-align:left}
+ #snote-global-search .snote-unified-results[hidden] {display:none!important}
+ #snote-global-search .snote-unified-group {margin:0;padding:4px 0 9px}
+ #snote-global-search .snote-unified-group h2 {margin:3px 8px 7px;color:#7e8b97;font-size:11px;font-weight:550}
+ html body #snote-global-search .snote-unified-result {display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:48px;padding:10px 8px;border:0;border-radius:9px;background:#fff;color:#273749;font:inherit;text-align:left;cursor:pointer}
+ html body #snote-global-search .snote-unified-result:hover,html body #snote-global-search .snote-unified-result:focus-visible {background:#f1f8fd;outline:2px solid #b9e4fb;outline-offset:-2px}
+ #snote-global-search .snote-unified-copy {display:grid;gap:3px;min-width:0}
+ #snote-global-search .snote-unified-copy strong {font-size:13px;font-weight:600;overflow-wrap:anywhere}
+ #snote-global-search .snote-unified-copy small {font-size:11px;line-height:1.5;color:#7f8a98;overflow-wrap:anywhere}
+ #snote-global-search .snote-unified-badge {flex:none;font-size:10px;color:#308ab7;white-space:nowrap}
+ #snote-global-search .snote-unified-message {margin:4px 8px 10px;font-size:12px;line-height:1.6;color:#7f8a98}
+ @media (min-width:761px) and (max-width:1120px) {
+  #snote-app .topbar {grid-template-columns:minmax(150px,1fr) minmax(170px,420px) minmax(150px,1fr);padding-inline:16px;gap:10px}
+  #snote-app .topbar .profile-detail {display:none}
+ }
+ @media (max-width:760px) {
+  #snote-app .topbar {grid-template-columns:44px minmax(0,1fr);gap:5px 8px;min-height:0;padding-block:calc(8px + env(safe-area-inset-top)) 8px}
+  #snote-app #snote-global-search {grid-column:1/-1;grid-row:3;max-width:none;min-height:40px}
+  #snote-app .topbar .crumb {grid-row:2;padding-block:0}
+  html body #snote-global-search input,html body #snote-global-search.snote-search-active:popover-open input {font-size:16px!important}
+  #snote-global-search .snote-unified-results {max-height:42dvh}
+ }
+}
+@media print {#snote-global-search {display:none!important}}

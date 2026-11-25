@@ -43,6 +43,7 @@
     if (document.activeElement === state.input || state.frame.contains(document.activeElement)) document.activeElement.blur();
     if (focus && visible(state.input)) state.input.focus({ preventScroll: true });
     preparing = false; window.SnoteMobilePopupHistory?.refresh();
+    dispatchEvent(new CustomEvent('snote:search-closed', { detail: { inputId: state.input.id } }));
   }
   function open(input) {
     if (preparing || active?.input === input || input.disabled || input.readOnly || !visible(input) || !HTMLElement.prototype.showPopover) return;
@@ -82,12 +83,28 @@
     if (!active && !['Escape', 'Tab'].includes(event.key) && !event.isComposing && event.target.matches?.(SELECTOR)) open(event.target);
     if (!active) return;
     if (event.key === 'Escape' && !event.isComposing) { event.preventDefault(); event.stopImmediatePropagation(); close({ focus: true }); }
-    else if (event.key === 'Tab') { close({ focus: true }); }
+    else if (event.key === 'Tab') {
+      if (!active.frame.hasAttribute('data-snote-unified-search')) { close({ focus: true }); return; }
+      // A manually opened popover has its own sequential-focus scope. Keep the
+      // new results dialog's real controls in that scope instead of letting a
+      // transient body focus dismiss it before a result can receive focus.
+      const controls = [...active.frame.querySelectorAll('input,button,a[href],[tabindex]')].filter(node => !node.disabled && node.tabIndex >= 0 && visible(node));
+      if (controls.length) {
+        event.preventDefault();
+        const at = controls.indexOf(document.activeElement), next = (at + (event.shiftKey ? -1 : 1) + controls.length) % controls.length;
+        controls[next].focus({ preventScroll: true });
+      }
+    }
   }, true);
-  document.addEventListener('focusout', () => queueMicrotask(() => {
+  document.addEventListener('focusout', event => {
+    // Blur and focus are separate native steps: activeElement can temporarily
+    // be BODY while a real result inside this same dialog receives focus.
+    if (active?.frame.hasAttribute('data-snote-unified-search') && event.relatedTarget instanceof Node && active.frame.contains(event.relatedTarget)) return;
+    queueMicrotask(() => {
     if (!preparing && active && !active.frame.contains(document.activeElement)) close();
-  }));
-  document.addEventListener('submit', event => { if (active && event.target.contains(active.input)) close(); }, true);
+    });
+  });
+  document.addEventListener('submit', event => { if (active && event.target.contains(active.input) && !event.target.hasAttribute('data-snote-unified-search')) close(); }, true);
   addEventListener('resize', () => { if (active) position(active); });
   window.visualViewport?.addEventListener('resize', () => { if (active) position(active); });
   window.visualViewport?.addEventListener('scroll', () => { if (active) position(active); });
