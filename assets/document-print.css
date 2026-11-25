@@ -1,8 +1,8 @@
 /* v2.160: a stable S-NOTE mark at left, registered company logo and name at right.
    The company image keeps the existing scoped loader and never replaces the brand. */
 :is(#quote-paper,.contract-paper,#zc76-receipt-paper) :is(.q8-bottom,.ct-footer,.snote202-receipt-brand){display:flex;flex-direction:row;align-items:center;justify-content:flex-end;gap:5px;text-align:right;letter-spacing:0;height:9mm;box-sizing:border-box;padding-top:2mm;border-top:1px solid #d9eaf5}
-:is(#quote-paper,.contract-paper,#zc76-receipt-paper) .snote-document-brand{display:flex;align-items:center;justify-content:flex-start;flex:none;position:relative;width:22mm;height:6.5mm;margin-right:auto;overflow:hidden}
-:is(#quote-paper,.contract-paper,#zc76-receipt-paper) .snote-document-brand img{display:block;position:absolute;left:50%;top:50%;width:200%;height:auto;max-width:none;transform:translate(-50%,-50%);object-fit:contain;filter:none}
+:is(#quote-paper,.contract-paper,#zc76-receipt-paper) .snote-document-brand{display:flex;align-items:center;justify-content:flex-start;flex:none;position:relative;width:18mm;height:5mm;margin-right:auto;overflow:hidden}
+:is(#quote-paper,.contract-paper,#zc76-receipt-paper) .snote-document-brand img{display:block;position:absolute;inset:0;width:100%;height:100%;max-width:100%;transform:none;object-fit:contain;object-position:left center;filter:none}
 :is(#quote-paper,.contract-paper,#zc76-receipt-paper) .snote-document-logo{display:flex;align-items:center;justify-content:center;position:static;overflow:visible;flex:none;width:11mm;height:6.5mm}
 :is(#quote-paper,.contract-paper,#zc76-receipt-paper) .snote-document-logo:not(.is-company-logo){display:none}
 :is(#quote-paper,.contract-paper,#zc76-receipt-paper) .snote-document-logo .zc-footer-emblem{display:block;position:static;inset:auto;width:100%;height:100%;max-width:none;transform:none;object-fit:contain;filter:none}

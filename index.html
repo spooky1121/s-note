@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.227">
+<html lang="ko" data-snote-release="2.228">
 <head>
 <meta charset="utf-8" />
   <link rel="stylesheet" href="assets/startup-presentation.css?v=2.227" data-snote-startup-style>
@@ -3179,12 +3179,12 @@ button, input, select, textarea { font-family: inherit; }
 <script src="assets/purchase-overview.js?v=2.100" defer></script>
 <link rel="stylesheet" href="assets/route-transition.css?v=2.213">
 <script src="assets/route-transition.js?v=2.213" defer></script>
-<link rel="stylesheet" href="assets/home-dashboard.css?v=2.208" data-snote-type-scale>
+<link rel="stylesheet" href="assets/home-dashboard.css?v=2.228" data-snote-type-scale>
 <link rel="stylesheet" href="assets/dealer-scheduler.css?v=2.223" data-snote-type-scale>
 <script src="assets/dealer-scheduler-store.js?v=2.205" defer></script>
 <script src="assets/korean-holidays.js?v=2.212" defer></script>
 <script src="assets/dealer-scheduler.js?v=2.223" defer></script>
-<script src="assets/home-dashboard.js?v=2.208" defer></script>
+<script src="assets/home-dashboard.js?v=2.228" defer></script>
 <link rel="stylesheet" href="assets/mobile-office-tasks.css?v=2.184">
 <script src="assets/mobile-office-tasks.js?v=2.184" defer></script>
 <script src="assets/access-tracker.js?v=2.202"></script>
@@ -3209,7 +3209,7 @@ button, input, select, textarea { font-family: inherit; }
 <script src="assets/sale-validation.js?v=2.184"></script>
 <script src="assets/custom-cost-model.js?v=2.85"></script>
 <script src="assets/inventory-interest.js?v=2.112"></script>
-<script src="assets/list-pagination.js?v=2.173"></script>
+<script src="assets/list-pagination.js?v=2.228"></script>
 <script src="assets/popup-controls.js?v=2.183" defer></script>
 <link rel="stylesheet" href="assets/list-style.css?v=2.37">
 <script src="assets/customer-list.js?v=2.184-customer-trash" defer></script>
@@ -3220,14 +3220,14 @@ button, input, select, textarea { font-family: inherit; }
 <link rel="stylesheet" href="assets/workspace-polish.css?v=2.64">
 <link rel="stylesheet" href="assets/reference-theme.css?v=2.59">
 <link rel="stylesheet" href="assets/document-actions.css?v=2.78">
-<link rel="stylesheet" href="assets/document-print.css?v=2.162">
+<link rel="stylesheet" href="assets/document-print.css?v=2.228">
 <link rel="stylesheet" href="assets/vehicle-drawer.css?v=2.78">
 <link rel="stylesheet" href="assets/workspace-refine.css?v=2.227">
 <script src="assets/icon-feedback.js?v=2.178" defer></script>
 <link rel="stylesheet" href="assets/icon-sizing.css?v=2.86">
 <script src="assets/icon-sizing.js?v=2.166" defer></script>
 <script src="assets/action-controls.js?v=2.172" defer></script>
-<script src="assets/readable-type.js?v=2.227" defer></script>
+<script src="assets/readable-type.js?v=2.228" defer></script>
 <link rel="stylesheet" href="assets/mobile-shell.css?v=2.59">
 <link rel="stylesheet" href="assets/mobile-workspace.css?v=2.67">
 <link rel="stylesheet" href="assets/screen-refinement.css?v=2.59">
@@ -3260,7 +3260,8 @@ button, input, select, textarea { font-family: inherit; }
   <link rel="icon" type="image/svg+xml" href="/assets/snote-favicon.svg?v=2.226">
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/snote-apple-touch-icon.png?v=2.226">
   <link rel="manifest" href="/manifest.webmanifest?v=2.226">
-<link rel="stylesheet" href="assets/service-brand.css?v=2.227">
+<link rel="stylesheet" href="assets/service-brand.css?v=2.228">
+<link rel="stylesheet" href="assets/unified-search.css?v=2.228" data-snote-type-scale>
 </head>
 <body class="snote-typography">
 
@@ -3296,7 +3297,7 @@ button, input, select, textarea { font-family: inherit; }
   <span class="snote-sidebar-version" data-snote-version>버전 확인 중</span>
 </aside>
   <div class="main">
-    <header class="topbar"><div class="topbar-left"><button type="button" class="mobile-menu-trigger" id="mobile-menu-trigger" aria-label="메뉴 열기" aria-controls="mobile-drawer" aria-expanded="false" onclick="toggleMobileDrawer()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><div class="crumb"><span id="breadcrumb" hidden>매입 관리</span><p class="eyebrow" id="eyebrow">OVERVIEW</p><h1 id="screen-title">차량 매입 관리</h1></div></div><div class="topright"><button id="snote-weather" type="button" class="snote-weather" aria-label="날씨 새로고침" title="날씨 새로고침"><span data-weather-icon aria-hidden="true">☁</span><span data-weather-temp>—°</span></button>
+    <header class="topbar"><div class="topbar-left"><button type="button" class="mobile-menu-trigger" id="mobile-menu-trigger" aria-label="메뉴 열기" aria-controls="mobile-drawer" aria-expanded="false" onclick="toggleMobileDrawer()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><div class="crumb"><span id="breadcrumb" hidden>매입 관리</span><p class="eyebrow" id="eyebrow">OVERVIEW</p><h1 id="screen-title">차량 매입 관리</h1></div></div><form id="snote-global-search" class="search-field" role="search" data-snote-unified-search autocomplete="off"><button class="snote-unified-submit" type="submit" aria-label="통합검색 실행" title="통합검색"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg></button><input id="snote-global-query" type="search" aria-label="통합검색" aria-controls="snote-global-results" aria-expanded="false" placeholder="차량 · 고객 · 메뉴 통합검색" maxlength="120" autocomplete="off"><div id="snote-global-results" class="snote-unified-results" data-unified-results role="region" aria-label="통합검색 결과" aria-live="polite" hidden></div></form><div class="topright"><button id="snote-weather" type="button" class="snote-weather" aria-label="날씨 새로고침" title="날씨 새로고침"><span data-weather-icon aria-hidden="true">☁</span><span data-weather-temp>—°</span></button>
       <button type="button" id="snote-calculator-trigger" aria-label="계산기 열기" title="계산기" aria-haspopup="dialog" aria-controls="snote-calculator-panel" aria-expanded="false" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="2.75" width="14" height="18.5" rx="3"/><rect x="8" y="6" width="8" height="3" rx=".6"/><path d="M8.5 12.5h.01m3.49 0h.01m3.49 0h.01m-7.01 3h.01m3.49 0h.01m3.49 0h.01m-7.01 3h3.5m3.5-3v3"/></svg></button>
       <div class="snote-profile-dropdown" id="snote-profile-dropdown">
         <button type="button" class="profile topbar-profile" id="snote-profile-trigger" aria-haspopup="menu" aria-controls="snote-profile-menu" aria-expanded="false" onclick="snoteToggleProfileMenu()"><span id="profile-avatar" aria-hidden="true"></span><span class="profile-detail"><span class="pname" id="profile-name">내 프로필</span><span id="profile-role" hidden></span></span><svg class="snote-profile-chevron" viewBox="0 0 20 20" aria-hidden="true"><path d="m5 8 5 5 5-5"/></svg></button>
@@ -3460,7 +3461,7 @@ button, input, select, textarea { font-family: inherit; }
    <section class="q8-section q8-bank-section" data-snote-payment-section hidden><div class="q8-section-title"><span class="q8-index">03</span><h2>입금 안내</h2></div>
     <div class="q8-bank-grid"><div class="q8-bank-card" data-snote-payment-row="vehicle" hidden><div class="q8-bank-type">01 · 차대금 입금</div><div class="q8-bank-line" data-snote-payment-account="vehicle"></div><div class="q8-bank-money"><span id="quote-bank-car">0</span><small>원</small></div></div><div class="q8-bank-card" data-snote-payment-row="transfer" hidden><div class="q8-bank-type">02 · 이전비 입금</div><div class="q8-bank-line" data-snote-payment-account="transfer"></div><div class="q8-bank-money"><span id="quote-bank-transfer">0</span><small>원</small></div></div></div>
    </section>
-   <footer class="q8-bottom"><span class="snote-document-brand"><img src="assets/snote-logo.png" alt="에스노트" /></span><span class="snote-document-logo"><img class="zc-footer-emblem" data-snote-company-asset="companyLogo" alt="상사 로고" hidden /></span><strong class="snote95-footer-company"></strong></footer>
+   <footer class="q8-bottom"><span class="snote-document-brand"><img src="assets/snote-brand.png" alt="snote" width="1149" height="301" /></span><span class="snote-document-logo"><img class="zc-footer-emblem" data-snote-company-asset="companyLogo" alt="상사 로고" hidden /></span><strong class="snote95-footer-company"></strong></footer>
   </article>
  </div>
 </div>
@@ -3518,7 +3519,7 @@ button, input, select, textarea { font-family: inherit; }
       <div class="ct-party"><div class="ct-party-head"><strong>을 · 매수인</strong><em id="ct-buyer-tag">구매 고객</em></div><div class="ct-party-row name-row"><label>성명 / 상호</label><div class="ct-stamp-line"><input id="ct-buyer-name" maxlength="40" /><span class="ct-seal-slot"><span class="stamp-mark">(인)</span><img id="ct-buyer-stamp" class="ct-stamp-image" data-snote-company-asset="companyStamp" hidden alt="법인 도장" /></span></div></div><div class="ct-party-row"><label>주민번호 / 사업자번호</label><input id="ct-buyer-id" maxlength="30" placeholder="필요 시 기재" autocomplete="off" /></div><div class="ct-party-row"><label>전화번호</label><input id="ct-buyer-phone" maxlength="24" /></div><div class="ct-party-row address-row"><label>주소</label><textarea id="ct-buyer-address" rows="3" maxlength="120"></textarea></div></div>
      </div>
    </section>
-   <div class="ct-footer"><span class="snote-document-brand"><img src="assets/snote-logo.png" alt="에스노트" /></span><span class="snote-document-logo"><img class="zc-footer-emblem" data-snote-company-asset="companyLogo" alt="상사 로고" hidden /></span><strong class="snote95-footer-company"></strong></div>
+   <div class="ct-footer"><span class="snote-document-brand"><img src="assets/snote-brand.png" alt="snote" width="1149" height="301" /></span><span class="snote-document-logo"><img class="zc-footer-emblem" data-snote-company-asset="companyLogo" alt="상사 로고" hidden /></span><strong class="snote95-footer-company"></strong></div>
   </article>
   <div id="contract-print-pages" class="contract-print-pages" aria-hidden="true"></div>
  </div>
@@ -3895,6 +3896,81 @@ window.snoteHomeDashboardBridge={
  openVehicle(id,key){const context=snoteHomeDashboardContext();if(!context||context.loading||context.locked||context.key!==key)return false;const car=cars.find(row=>String(row.id)===String(id)&&row.ownerId===currentUser.username);if(!car)return false;openVehicle(car.id);return true;},
  unlock(key){const context=snoteHomeDashboardContext();if(!context||context.loading||context.key!==key)return false;openDashboardGate(false,'dashboard');return true;}
 };
+
+/* Unified search projects authorized data only; no amount/identity decryption. */
+const snote228SearchContexts=new WeakMap();
+let snote228SearchPending=null;
+function snote228SearchContext(){
+ const scope=snotePurchaseContext();
+ if(!currentUser||!snoteWorkspaceVisible()||!scope?.ready||scope.ownerAlias!==currentUser.username||scope.role!==currentUser.role||window.snoteCompanyPurchaseBridge?.current?.(scope)!==true)return null;
+ const context=Object.freeze({key:JSON.stringify([scope.key,currentUser.username,currentUser.role,snoteNavigationSession])});
+ snote228SearchContexts.set(context,{actor:currentUser,scope,session:snoteNavigationSession});return context;
+}
+function snote228SearchCurrent(context){
+ const saved=context&&snote228SearchContexts.get(context),scope=snotePurchaseContext();
+ return !!saved&&currentUser===saved.actor&&snoteWorkspaceVisible()&&scope?.ready===true&&scope.key===saved.scope.key&&scope.ownerAlias===currentUser.username&&scope.role===currentUser.role&&saved.session===snoteNavigationSession&&window.snoteCompanyPurchaseBridge?.current?.(saved.scope)===true;
+}
+function snote228SearchCars(context){
+ if(!snote228SearchCurrent(context))return [];
+ return cars.filter(car=>!!car&&(car.ownerId===currentUser.username&&!isAccountant()||['admin','accountant'].includes(currentUser.role)&&window.snoteCompanyPurchaseBridge?.carAllowed?.(car)===true));
+}
+function snote228SearchVehicle(car){
+ const text=value=>String(value??'').slice(0,500);
+ return {id:String(car.id),ownerId:text(car.ownerId),model:text(car.model),plate:text(car.plate),vin:text(car.vin),brand:text(car.brand||car.manufacturer),make:text(car.make),year:text(car.year),color:text(car.color),memo:text(car.vehicleMemo||car.memo),status:text(car.status),ownerLabel:text(dealerLabel(car)),shared:false};
+}
+async function snote228SearchSources(context){
+ if(!snote228SearchCurrent(context))throw Error('SEARCH_CONTEXT_CHANGED');
+ if(snote228SearchPending?.key===context.key)return snote228SearchPending.task;
+ const actor=currentUser,job={key:context.key,task:null};snote228SearchPending=job;
+ job.task=(async()=>{
+  let timer;
+  const read=Promise.allSettled([
+   isAccountant()?Promise.resolve([]):zc72ReadOwner(actor.username),
+   isAccountant()?Promise.resolve([]):window.SnoteReceivedVehicleList?.searchRows?.()||Promise.resolve([])
+  ]);
+  const settled=await Promise.race([read,new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('SEARCH_TIMEOUT')),18000);})]).finally(()=>clearTimeout(timer));
+  if(!snote228SearchCurrent(context))throw Error('SEARCH_CONTEXT_CHANGED');
+  const own=snote228SearchCars(context),customers=settled[0].status==='fulfilled'&&Array.isArray(settled[0].value)?settled[0].value:[];
+  const clean=value=>String(value??'').slice(0,500);
+  return {
+   vehicles:[...own.map(snote228SearchVehicle),...(settled[1].status==='fulfilled'&&Array.isArray(settled[1].value)?settled[1].value:[])],
+   customers:customers.filter(record=>record&&record.ownerId===actor.username&&record.carId!=null).map(record=>{
+    const car=own.find(car=>String(car.id)===String(record.carId)&&car.ownerId===actor.username);
+    return {id:String(record.carId),ownerId:actor.username,name:clean(record.name),phone:clean(record.phone),address:clean([record.address,record.addressBase,record.addressDetail].filter(Boolean).join(' ')),carModel:clean(car?.model||record.carModel),plate:clean(car?.plate||record.plate)};
+   }),
+   menus:Object.entries(pages).filter(([page])=>snotePageAllowed(page)).map(([id,page])=>({id,title:page.title,description:page.sub})),
+   partial:settled.some(result=>result.status==='rejected')
+  };
+ })().finally(()=>{if(snote228SearchPending===job)snote228SearchPending=null;});return job.task;
+}
+async function snote228SearchOpen(row,context){
+ if(!snote228SearchCurrent(context)||!row||typeof row.id!=='string')return false;
+ if(row.kind==='menu')return snotePageAllowed(row.id)?navigate(row.id):false;
+ if(row.kind==='vehicle'){
+  if(row.shared)return !isAccountant()&&window.SnoteReceivedVehicleList?.searchOpen?window.SnoteReceivedVehicleList.searchOpen(row.id):false;
+  let car=snote228SearchCars(context).find(car=>String(car.id)===row.id&&car.ownerId===row.ownerId);if(!car)return false;
+  const page=car.status==='판매완료'?'sell':car.ownerId!==currentUser.username&&isSnoteAdmin()?'companyBuy':'buy';
+  if(await navigate(page)!==true||!snote228SearchCurrent(context))return false;
+  car=snote228SearchCars(context).find(car=>String(car.id)===row.id&&car.ownerId===row.ownerId);if(!car)return false;
+  openVehicle(car.id);return true;
+ }
+ if(row.kind!=='customer'||isAccountant()||row.ownerId!==currentUser.username||await navigate('users')!==true||!snote228SearchCurrent(context))return false;
+ return new Promise(resolve=>{
+  let observer,timer;
+  function finish(value){observer?.disconnect();clearTimeout(timer);removeEventListener('snote:auth-reset',cancel);resolve(value);}
+  function cancel(){finish(false);}
+  function apply(){
+   if(!snote228SearchCurrent(context)||route!=='users'){finish(false);return true;}
+   const field=$('snote-customer-search');if(!field)return false;
+   field.value=String(row.query||'').slice(0,120);field.dispatchEvent(new Event('input',{bubbles:true}));finish(true);return true;
+  }
+  observer=new MutationObserver(apply);observer.observe($('alt-content'),{childList:true,subtree:true});
+  timer=setTimeout(()=>finish(false),5000);addEventListener('snote:auth-reset',cancel);apply();
+ });
+}
+window.snoteUnifiedSearchBridge=Object.freeze({context:snote228SearchContext,current:snote228SearchCurrent,sources:snote228SearchSources,open:snote228SearchOpen});
+window.addEventListener('snote:auth-reset',()=>{snote228SearchPending=null;});
+
 
 /* App-screen history is separate from authentication and never grants page access. */
 const SNOTE_NAV_SESSION_KEY='snote-navigation-session';
@@ -8867,7 +8943,7 @@ document.addEventListener('click',e=>{
        <div class="zc76-check-line"><label>동의 , 위임함 <input class="zc76-check" type="checkbox" id="zc76-cash-confirm"></label></div>
       </section>
       <div class="zc76-foot"><div class="date-row"><input type="date" id="zc76-doc-date" aria-label="작성일"></div><div class="zc76-sign"><span>위 내용을 설명 듣고 확인 하였음. / 위임, 동의 확인자 :</span><input type="text" id="zc76-sign-name" aria-label="확인자 이름"> <span class="zc76-sign-slot"><span class="zc76-sign-placeholder">(서명,날인)</span><span id="snote215-receipt-signature" class="snote215-receipt-signature" hidden><img id="snote215-receipt-signature-image" alt="고객 서명"></span></span></div></div>
-     <div class="snote202-receipt-brand"><span class="snote-document-brand"><img src="assets/snote-logo.png" alt="에스노트" /></span><span class="snote-document-logo"><img class="zc-footer-emblem" data-snote-company-asset="companyLogo" alt="상사 로고" hidden /></span><strong class="snote95-footer-company"></strong></div>
+     <div class="snote202-receipt-brand"><span class="snote-document-brand"><img src="assets/snote-brand.png" alt="snote" width="1149" height="301" /></span><span class="snote-document-logo"><img class="zc-footer-emblem" data-snote-company-asset="companyLogo" alt="상사 로고" hidden /></span><strong class="snote95-footer-company"></strong></div>
     </article>
   </div>
 </div>
@@ -12343,11 +12419,11 @@ window.zc86Cloud={getAccessToken:async()=>{const client=S.client,user=S.user,com
 <script src="assets/vehicle-sharing.js?v=2.174" defer></script>
 <script src="assets/shared-vehicle-markers.js?v=2.195" defer></script>
 <link rel="stylesheet" href="assets/received-share-list.css?v=2.195">
-<script src="assets/received-share-list.js?v=2.175" defer></script>
+<script src="assets/received-share-list.js?v=2.228" defer></script>
 <link rel="stylesheet" href="assets/workspace-reorder.css?v=2.136">
 <script src="assets/workspace-order-store.js?v=2.135" defer></script>
 <script src="assets/workspace-reorder.js?v=2.202" defer></script>
-<script src="assets/release-info.js?v=2.227" defer></script>
+<script src="assets/release-info.js?v=2.228" defer></script>
 <link rel="stylesheet" href="assets/encar-id.css?v=2.162">
 <script src="assets/encar-id.js?v=2.184" defer></script>
 <script src="assets/company-purchase.js?v=2.172" defer></script>
@@ -12413,16 +12489,18 @@ window.addEventListener('snote:payment-accounts-changed',()=>{if(typeof contract
 <link rel="stylesheet" href="assets/signup-registration.css?v=2.191">
 <script src="assets/signup-registration.js?v=2.191" defer></script>
 <link rel="stylesheet" href="assets/workspace-soft-theme.css?v=2.204" data-snote-type-scale>
-<link rel="stylesheet" href="assets/workspace-responsive-shell.css?v=2.227" data-snote-type-scale>
+<link rel="stylesheet" href="assets/workspace-responsive-shell.css?v=2.228" data-snote-type-scale>
 <script src="assets/workspace-responsive-shell.js?v=2.207" defer></script>
 <link rel="stylesheet" href="assets/mobile-vehicle-cards.css?v=2.221" data-snote-type-scale>
 <link rel="stylesheet" href="assets/status-menu.css?v=2.224" data-snote-type-scale>
 <script src="assets/status-menu.js?v=2.224" defer></script>
 <link rel="stylesheet" href="assets/search-focus.css?v=2.225" data-snote-type-scale>
-<script src="assets/search-focus.js?v=2.224" defer></script>
+<script src="assets/search-focus.js?v=2.228" defer></script>
 <link rel="stylesheet" href="assets/dropdown-menu.css?v=2.225" data-snote-type-scale>
 <link rel="stylesheet" href="assets/dropdown-surfaces.css?v=2.225">
 <script src="assets/dropdown-menu.js?v=2.225" defer></script>
 <script src="assets/service-brand.js?v=2.227" defer></script>
+<link rel="stylesheet" href="assets/workspace-density.css?v=2.228" data-snote-type-scale>
+<script src="assets/unified-search.js?v=2.228" defer></script>
 </body>
 </html>

@@ -11,6 +11,8 @@
  const bridge=()=>root.snoteHomeDashboardBridge;
  const mobile=matchMedia('(max-width:760px)');
  let active=false,paintedKey=null,signature='',scheduled=false,selectedChart='purchases';
+ let kpisExpanded=false,settlementExpanded=false,kpiTransition=0,settlementTransition=0;
+ const reducedMotion=matchMedia('(prefers-reduced-motion:reduce)'),kpiAnimations=new Set(),settlementAnimations=new Set();
  const number=value=>Number(value).toLocaleString('ko-KR');
  const won=value=>value==null?'—':number(value)+'원';
  const node=(tag,text,cls)=>{const item=document.createElement(tag);if(text!=null)item.textContent=text;if(cls)item.className=cls;return item;};
@@ -22,8 +24,12 @@
  function valid(snapshot){try{return !!snapshot&&typeof snapshot.key==='string'&&snapshot.key.length>0&&model.isMonth(snapshot.month)&&Array.isArray(snapshot.rows)&&typeof snapshot.loading==='boolean'&&typeof snapshot.locked==='boolean'&&bridge()?.current?.(snapshot.key)===true;}catch{return false;}}
  function current(key){try{return active&&paintedKey===key&&bridge()?.current?.(key)===true;}catch{return false;}}
  function action(name,value,key){if(!current(key))return;try{if(name==='unlock')bridge()?.unlock?.(key);else bridge()?.[name]?.(value,key);}catch{refresh();}}
- function clear(){schedulerController?.deactivate?.();host.hidden=true;host.replaceChildren();paintedKey=null;signature='';}
+ function cancelAnimations(bag){for(const animation of bag)animation.cancel();bag.clear();}
+ function resetDisclosures(){kpisExpanded=false;settlementExpanded=false;kpiTransition++;settlementTransition++;cancelAnimations(kpiAnimations);cancelAnimations(settlementAnimations);}
+ function animate(item,frames,options,bag){if(reducedMotion.matches||typeof item.animate!=='function')return null;const animation=item.animate(frames,options);bag.add(animation);animation.finished.then(()=>bag.delete(animation),()=>bag.delete(animation));return animation;}
+ function clear(){resetDisclosures();schedulerController?.deactivate?.();host.hidden=true;host.replaceChildren();paintedKey=null;signature='';}
  function state(text,{loading=false,locked=false,key=null}={}){
+  cancelAnimations(kpiAnimations);cancelAnimations(settlementAnimations);kpiTransition++;settlementTransition++;
   host.replaceChildren();host.dataset.state=locked?'locked':loading?'loading':'unavailable';host.setAttribute('aria-busy',String(loading));signature='';
   const panel=node('section',null,'snote-home-state');panel.append(node('h2','대시보드'),node('p',text));
   if(locked){const button=node('button','잠금 해제','snote-home-unlock');button.type='button';button.prepend(icon('lock'));button.onclick=()=>action('unlock',null,key);panel.append(button);}host.append(panel,scheduler());
@@ -35,6 +41,32 @@
   if(!masked&&value!=null&&value<0)amount.classList.add('is-negative');
   const caption=masked?'수익 숨김':value==null?empty:detail;
   card.setAttribute('aria-label',label+' · '+(masked?'숨김':value==null?'아직 연결되지 않음':number(value)+unit)+(caption?' · '+caption:''));card.dataset.tooltip=caption||label;card.append(labelLine,amount);return card;
+ }
+ function configureKpis(grid,key){
+  const cards=[...grid.children],toggle=cards[0];
+  cards.forEach((card,index)=>{card.id='snote-home-kpi-'+card.dataset.kpi;if(index){card.hidden=!kpisExpanded;card.inert=!kpisExpanded;card.setAttribute('aria-hidden',String(!kpisExpanded));card.tabIndex=kpisExpanded?0:-1;}});
+  grid.classList.toggle('is-collapsed',!kpisExpanded);grid.dataset.expanded=String(kpisExpanded);
+  toggle.setAttribute('role','button');toggle.setAttribute('aria-expanded',String(kpisExpanded));toggle.setAttribute('aria-controls',cards.slice(1).map(card=>card.id).join(' '));
+  toggle.dataset.tooltip=kpisExpanded?'요약 카드 접기':'요약 카드 펼치기';
+  const label=toggle.getAttribute('aria-label');toggle.setAttribute('aria-label',label+' · 요약 카드 '+(kpisExpanded?'접기':'펼치기'));
+  function setExpanded(expanded){
+   if(!current(key)||!host.contains(grid)||expanded===kpisExpanded)return;
+   const token=++kpiTransition,before=new Map(cards.map(card=>[card,card.hidden?null:card.getBoundingClientRect()])),start=toggle.getBoundingClientRect(),oldHeight=grid.getBoundingClientRect().height;
+   cancelAnimations(kpiAnimations);kpisExpanded=expanded;grid.dataset.expanded=String(expanded);grid.classList.toggle('is-collapsed',!expanded);toggle.setAttribute('aria-expanded',String(expanded));toggle.setAttribute('aria-label',label+' · 요약 카드 '+(expanded?'접기':'펼치기'));toggle.dataset.tooltip=expanded?'요약 카드 접기':'요약 카드 펼치기';
+   for(const card of cards.slice(1)){card.hidden=false;card.inert=!expanded;card.setAttribute('aria-hidden',String(!expanded));card.tabIndex=expanded?0:-1;}
+   fitKpis();
+   const endHeight=grid.getBoundingClientRect().height,pending=[];
+   const height=animate(grid,[{height:oldHeight+'px'},{height:endHeight+'px'}],{duration:360,easing:'cubic-bezier(.22,.75,.2,1)'},kpiAnimations);if(height)pending.push(height.finished.catch(()=>{}));
+   for(const[index,card]of cards.entries()){
+    const to=card.getBoundingClientRect(),from=before.get(card)||start,dx=from.x-to.x,dy=from.y-to.y;
+    const motion=animate(card,[{transform:'translate('+dx+'px,'+dy+'px) scale('+from.width/to.width+','+from.height/to.height+')',opacity:index?(expanded?0:1):1},{transform:'none',opacity:index&&!expanded?0:1}],{duration:360,delay:expanded?index*22:0,fill:'backwards',easing:'cubic-bezier(.22,.75,.2,1)'},kpiAnimations);
+    if(motion)pending.push(motion.finished.catch(()=>{}));
+   }
+   const finish=()=>{if(token!==kpiTransition||!current(key)||!host.contains(grid))return;if(!expanded)for(const card of cards.slice(1))card.hidden=true;requestKpiFit();};
+   if(pending.length)Promise.all(pending).then(finish);else finish();
+  }
+  toggle.onclick=()=>setExpanded(!kpisExpanded);
+  toggle.onkeydown=event=>{if(!['Enter',' '].includes(event.key)||event.repeat)return;event.preventDefault();setExpanded(!kpisExpanded);};
  }
  function chart(data,{field,title,color,money=false,masked=false}){
   const card=node('section',null,'snote-home-chart-card');card.dataset.chart=field;card.style.setProperty('--snote-home-chart-color',color);
@@ -83,18 +115,30 @@
   const button=node('button',null,'snote-home-card-link');button.type='button';button.setAttribute('aria-label',title+' 전체 보기');button.dataset.tooltip=title+' 전체 보기';button.append(icon('arrow'));button.onclick=()=>action('navigate',page,key);head.append(heading,button);return head;
  }
  function settlement(data,key,hideMargin){
-  const card=node('section',null,'snote-home-settlement-card');card.append(header('수익 정산',null,'finance',key));
+  const card=node('section',null,'snote-home-settlement-card'),heading=node('h2',null,'snote-home-settlement-heading'),toggle=node('button','수익 정산','snote-home-settlement-toggle'),content=node('div',null,'snote-home-settlement-content');
+  toggle.type='button';toggle.setAttribute('aria-expanded',String(settlementExpanded));toggle.setAttribute('aria-controls','snote-home-settlement-content');content.id='snote-home-settlement-content';content.hidden=!settlementExpanded;content.inert=!settlementExpanded;content.setAttribute('aria-hidden',String(!settlementExpanded));heading.append(toggle);card.append(heading);
   const list=node('dl',null,'snote-home-settlement');
   for(const[label,value,masked]of [['이번 달 수익',data.monthMargin,hideMargin],['올해 수익',data.yearMargin,hideMargin],['재고 예상수익',data.inventoryMargin,false]]){
    const row=node('div');row.dataset.marginHidden=String(masked);row.append(node('dt',label));const amount=node('dd',masked?'-':won(value));amount.classList.toggle('is-negative',!masked&&value<0);row.append(amount);list.append(row);
   }
-  card.append(list);return card;
+  content.append(list);card.append(content);
+  toggle.onclick=()=>{
+   if(!current(key)||!host.contains(card))return;
+   const token=++settlementTransition,before=content.hidden?0:content.getBoundingClientRect().height;
+   cancelAnimations(settlementAnimations);settlementExpanded=!settlementExpanded;const expanded=settlementExpanded;
+   toggle.setAttribute('aria-expanded',String(expanded));content.hidden=false;content.inert=!expanded;content.setAttribute('aria-hidden',String(!expanded));
+   const after=expanded?content.scrollHeight:0,motion=animate(content,[{height:before+'px',opacity:before?1:0,transform:before?'none':'translateY(-5px)'},{height:after+'px',opacity:expanded?1:0,transform:expanded?'none':'translateY(-5px)'}],{duration:260,easing:'cubic-bezier(.22,.75,.2,1)'},settlementAnimations);
+   const finish=()=>{if(token===settlementTransition&&current(key)&&host.contains(card)&&!expanded)content.hidden=true;};if(motion)motion.finished.then(finish,()=>{});else finish();
+  };
+  return card;
  }
  function render(data,key,hideMargin){
+  cancelAnimations(kpiAnimations);cancelAnimations(settlementAnimations);kpiTransition++;settlementTransition++;
   host.replaceChildren();host.dataset.state='ready';host.setAttribute('aria-busy','false');
   const kpis=node('div',null,'snote-home-kpis');kpis.setAttribute('role','group');kpis.setAttribute('aria-label','대시보드 요약');
   kpis.append(kpi('총투자금',data.totalInvestment,{kind:'capital',detail:'현재 보유 차량 원가'}),kpi('재고대출금',data.inventoryCapital,{kind:'inventory',detail:'재고금융 등록금액'}),kpi('현금투자금',data.cash,{kind:'cash',detail:'총투자금 − 재고금융'}),kpi('이번 달 수익',data.monthMargin,{kind:'profit',detail:'판매가 − 매입 원가·부대비용',masked:hideMargin}));
   kpis.append(kpi('이번 달 매입',data.monthPurchaseCount,{kind:'purchase',unit:'대',detail:Number(data.month.slice(5))+'월 매입 기준'}),kpi('이번 달 판매',data.monthSaleCount,{kind:'sale',unit:'대',detail:Number(data.month.slice(5))+'월 판매 완료 기준'}),kpi('올해 수익',data.yearMargin,{kind:'year',detail:data.month.slice(0,4)+'년 판매 완료 기준',masked:hideMargin}));
+  configureKpis(kpis,key);
   const insights=node('div',null,'snote-home-insights');insights.append(charts(data,key,hideMargin),settlement(data,key,hideMargin));
   const schedule=scheduler(insights);
   if(mobile.matches)host.append(schedule,kpis);else host.append(kpis,schedule);requestKpiFit();
@@ -103,14 +147,15 @@
   scheduled=false;if(!active){clear();return;}host.hidden=false;
   let snapshot;try{snapshot=bridge()?.snapshot();}catch{paintedKey=null;state('대시보드를 불러오지 못했습니다.');return;}
   if(!valid(snapshot)){paintedKey=null;state('대시보드를 확인하고 있습니다.',{loading:true});return;}
-  if(snapshot.key!==paintedKey){host.replaceChildren();signature='';paintedKey=snapshot.key;}
+  if(snapshot.key!==paintedKey){resetDisclosures();host.replaceChildren();signature='';paintedKey=snapshot.key;}
   if(snapshot.loading){state('대시보드를 불러오는 중…',{loading:true});return;}
   if(snapshot.locked){state('금액 요약과 수익 정보를 보려면 잠금을 해제해 주세요.',{locked:true,key:snapshot.key});return;}
   let data;try{data=model.summarize(snapshot.rows,snapshot.month);}catch{state('대시보드 금액을 확인할 수 없습니다.');return;}
   const hideMargin=snapshot.hideMargin!==false,next=JSON.stringify([snapshot.key,hideMargin,mobile.matches,data]);if(signature===next)return;signature=next;render(data,snapshot.key,hideMargin);
  }
  let fitting=false,lastFitWidth=null;
- function requestKpiFit(){if(fitting)return;fitting=true;requestAnimationFrame(()=>{fitting=false;const grid=host.querySelector('.snote-home-kpis');if(!grid||!current(paintedKey))return;grid.classList.remove('has-wide-values');delete grid.dataset.valueColumns;let required=0,overflow=false;for(const card of grid.children){const value=card.querySelector('.snote-home-kpi-value'),style=getComputedStyle(card),range=document.createRange();range.selectNodeContents(value);const width=range.getBoundingClientRect().width;required=Math.max(required,Math.ceil(width+parseFloat(style.paddingLeft)+parseFloat(style.paddingRight)+parseFloat(style.borderLeftWidth)+parseFloat(style.borderRightWidth)+4));if(value.scrollWidth>value.clientWidth+1)overflow=true;}if(overflow){const gap=parseFloat(getComputedStyle(grid).columnGap)||0,fit=Math.floor((grid.clientWidth+gap)/(required+gap));grid.dataset.valueColumns=String(fit>=7?7:fit>=4?4:fit>=2?2:1);grid.classList.add('has-wide-values');}});}
+ function fitKpis(){const grid=host.querySelector('.snote-home-kpis');if(!grid||!current(paintedKey))return;grid.classList.remove('has-wide-values');delete grid.dataset.valueColumns;let required=0,overflow=false;for(const card of grid.children){if(card.hidden)continue;const value=card.querySelector('.snote-home-kpi-value'),style=getComputedStyle(card),range=document.createRange();range.selectNodeContents(value);const width=range.getBoundingClientRect().width;required=Math.max(required,Math.ceil(width+parseFloat(style.paddingLeft)+parseFloat(style.paddingRight)+parseFloat(style.borderLeftWidth)+parseFloat(style.borderRightWidth)+4));if(value.scrollWidth>value.clientWidth+1)overflow=true;}grid.style.setProperty('--snote-kpi-stack-width',Math.max(230,required)+'px');if(overflow&&kpisExpanded){const gap=parseFloat(getComputedStyle(grid).columnGap)||0,fit=Math.floor((grid.clientWidth+gap)/(required+gap));grid.dataset.valueColumns=String(fit>=7?7:fit>=4?4:fit>=2?2:1);grid.classList.add('has-wide-values');}}
+ function requestKpiFit(){if(fitting)return;fitting=true;requestAnimationFrame(()=>{fitting=false;fitKpis();});}
  if(typeof ResizeObserver==='function')new ResizeObserver(entries=>{const width=entries[0]?.contentRect.width;if(width!==lastFitWidth){lastFitWidth=width;requestKpiFit();}}).observe(host);
  document.fonts?.ready.then(requestKpiFit);root.addEventListener('snote-fonts-enlarged',requestKpiFit);
  function schedule(){if(!scheduled){scheduled=true;queueMicrotask(refresh);}}
