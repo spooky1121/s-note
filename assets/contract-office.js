@@ -187,7 +187,7 @@
    const e=overlayText(overlay,key,name+(business?'  '+business:''),[box[0],box[1],width,box[3]]);e.classList.add('co-print-company-name');e.style.setProperty('--co-font','9');
    // A wide registered seal leaves a shorter name row. Keep both identifiers
    // legible on two lines without moving the seal or changing stored names.
-   const measure=document.createElement('canvas').getContext('2d');measure.font='500 9px "Noto Sans KR", "Malgun Gothic", sans-serif';
+   const measure=document.createElement('canvas').getContext('2d');measure.font='500 9px "Pretendard Variable", "Malgun Gothic", sans-serif';
    if(business&&measure.measureText(e.textContent).width>width*1.5){e.replaceChildren(node('span',name),node('span',business));e.classList.add('co-print-company-name-stacked');e.style.setProperty('--co-font','7');}
   }
  }

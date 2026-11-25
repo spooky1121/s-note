@@ -1,0 +1,79 @@
+/* Official, locally hosted Pretendard v1.3.9. Existing sizes, weights, line
+   heights and component/paper dimensions remain with their original owners. */
+@font-face {
+  font-family:'Pretendard Variable';
+  font-style:normal;
+  font-weight:45 920;
+  font-display:swap;
+  src:url('fonts/PretendardVariable.woff2?v=2.233') format('woff2-variations');
+  /* Preserve normal line boxes from the former mixed UI stack: Noto's 116%
+     ascent plus Manrope's 30% descent, including spaces in Korean captions. */
+  ascent-override:116%;
+  descent-override:30%;
+  line-gap-override:0%;
+}
+/* Match the original Latin-first Manrope/Noto metrics with the same unmodified
+   Pretendard glyphs. Restrict the first face to the old Manrope code points;
+   all other characters use the Korean face. Both URLs share the font preload. */
+@font-face {
+  font-family:'Pretendard Variable Latin';
+  font-style:normal;
+  font-weight:45 920;
+  font-display:swap;
+  src:url('fonts/PretendardVariable.woff2?v=2.233') format('woff2-variations');
+  unicode-range:U+20-7E,U+A0-FF,U+2011,U+2013-2014,U+2018-201A,U+201C-2022,U+2026,U+2030,U+2039-203A,U+2044,U+2060;
+  ascent-override:106.6%;
+  descent-override:30%;
+  line-gap-override:0%;
+}
+@font-face {
+  font-family:'Pretendard Variable Korean';
+  font-style:normal;
+  font-weight:45 920;
+  font-display:swap;
+  src:url('fonts/PretendardVariable.woff2?v=2.233') format('woff2-variations');
+  ascent-override:116%;
+  descent-override:28.8%;
+  line-gap-override:0%;
+}
+
+/* Important declarations in this named layer take precedence over the old
+   unlayered screen/print families, without changing SVG shapes or image art. */
+@layer snote-typeface {
+  :root {--snote-font-family:'Pretendard Variable Latin','Pretendard Variable Korean',-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic','Segoe UI',sans-serif!important}
+  html,body,
+  body :where(a,abbr,address,article,aside,b,blockquote,button,caption,code,dd,del,details,dfn,dialog,div,dl,dt,em,fieldset,figcaption,figure,footer,form,h1,h2,h3,h4,h5,h6,header,i,input,kbd,label,legend,li,main,mark,nav,ol,optgroup,option,output,p,pre,q,s,samp,section,select,small,span,strong,sub,summary,sup,table,tbody,td,textarea,tfoot,th,thead,time,tr,ul,var),
+  svg :where(text,tspan) {font-family:var(--snote-font-family)!important}
+
+  /* Preserve the existing bounded startup fallback. A slow/failed font must
+     not block login or replace the visible screen's face after its deadline. */
+  @media screen {
+    html[data-snote-startup-fonts='local'],
+    html[data-snote-startup-fonts='local'] body,
+    html[data-snote-startup-fonts='local'] body :where(a,abbr,address,article,aside,b,blockquote,button,caption,code,dd,del,details,dfn,dialog,div,dl,dt,em,fieldset,figcaption,figure,footer,form,h1,h2,h3,h4,h5,h6,header,i,input,kbd,label,legend,li,main,mark,nav,ol,optgroup,option,output,p,pre,q,s,samp,section,select,small,span,strong,sub,summary,sup,table,tbody,td,textarea,tfoot,th,thead,time,tr,ul,var),
+    html[data-snote-startup-fonts='local'] svg :where(text,tspan) {
+      font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic','Segoe UI',Arial,sans-serif!important;
+    }
+  }
+  @media screen and (max-width:760px) {
+    /* The existing mobile workbook used Noto first, including Latin controls. */
+    #monthly-shell {--snote-font-family:'Pretendard Variable Korean',-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic','Segoe UI',sans-serif!important}
+  }
+}
+
+/* These existing short, fixed-copy blocks keep their former line budget when
+   Pretendard's narrower glyphs fit on fewer lines. No print geometry changes. */
+@media screen {
+  html:not([data-snote-startup-fonts='local']) #zc76-receipt-paper .zc76-privacy + .zc76-paragraph {min-block-size:3lh}
+}
+@media screen and (max-width:369px) {
+  html:not([data-snote-startup-fonts='local']) #dealer-finance-overview .profit-chart-legend {flex-direction:column;align-items:flex-start}
+}
+@media screen and (max-width:375px) {
+  html:not([data-snote-startup-fonts='local']) #dealer-finance-overview .profit-compare-grid .profit-compare:nth-child(2) .profit-compare-desc {min-block-size:2lh}
+  /* Existing note padding is 10px top + 13px bottom in this narrow workbook. */
+  html:not([data-snote-startup-fonts='local']) #monthly-shell #bank-description[data-empty-note='true'] {min-block-size:calc(2lh + 23px)}
+}
+@media screen and (max-width:362px) {
+  html:not([data-snote-startup-fonts='local']) #monthly-shell .panel[aria-labelledby='bank-heading'] .panel-heading p {min-block-size:2lh}
+}

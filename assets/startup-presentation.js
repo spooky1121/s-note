@@ -85,8 +85,8 @@
       const fonts = document.fonts;
       if (!fonts) { freezeFonts(); fontsReady = true; }
       else {
-        // These are the already-used local UI faces, not new data dependencies.
-        const requests = ["14px 'Noto Sans KR'", '14px Manrope', '14px OperatorNoto', '14px OperatorManrope'].map(face => fonts.load(face, '가나다 0123456789'));
+        // Wait only for the selected locally hosted UI face.
+        const requests = ["14px 'Pretendard Variable'"].map(face => fonts.load(face, '가나다 0123456789'));
         Promise.allSettled(requests).then(() => fonts.ready).then(() => {
           if (!current()) return;
           if ([...fonts].some(face => face.status === 'error')) freezeFonts();

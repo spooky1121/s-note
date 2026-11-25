@@ -1,11 +1,11 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.232">
+<html lang="ko" data-snote-release="2.233">
 <head>
 <meta charset="utf-8" />
+  <link rel="preload" href="assets/fonts/PretendardVariable.woff2?v=2.233" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/pretendard.css?v=2.233" data-snote-type-scale>
   <link rel="stylesheet" href="assets/startup-presentation.css?v=2.227" data-snote-startup-style>
-  <script src="assets/startup-presentation.js?v=2.229"></script>
-  <link rel="preload" href="assets/fonts/manrope-variable.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="assets/fonts/noto-sans-kr-variable.woff2" as="font" type="font/woff2" crossorigin>
+  <script src="assets/startup-presentation.js?v=2.233"></script>
 
   <script src="assets/service-location.js?v=2.200"></script>
   <script src="assets/account-recovery-entry.js?v=2.203"></script>
@@ -3198,7 +3198,7 @@ button, input, select, textarea { font-family: inherit; }
 <script src="assets/idle-recovery.js?v=2.201"></script>
 <script src="assets/idle-session.js?v=2.172"></script>
 <link rel="stylesheet" href="assets/profile-settings.css?v=2.102">
-<script src="assets/feature-loader.js?v=2.194"></script>
+<script src="assets/feature-loader.js?v=2.233"></script>
 <script src="assets/vehicle-colors.js?v=2.23"></script>
 <link rel="stylesheet" href="assets/customer-contract-signature.css?v=2.165">
 <script src="assets/customer-contract-signature.js?v=2.165"></script>
@@ -3245,8 +3245,8 @@ button, input, select, textarea { font-family: inherit; }
 <link rel="stylesheet" href="assets/profile-editor.css?v=2.82">
 <link rel="stylesheet" href="assets/profile-compact.css?v=2.89">
 <link rel="stylesheet" href="assets/operator-entry.css?v=2.85">
-<link rel="stylesheet" href="assets/snote-chatbot.css?v=2.94">
-<link rel="stylesheet" href="assets/snote-tutorial.css?v=2.94">
+<link rel="stylesheet" href="assets/snote-chatbot.css?v=2.233">
+<link rel="stylesheet" href="assets/snote-tutorial.css?v=2.233">
 <link rel="stylesheet" href="assets/vehicle-cost-settings.css?v=2.121">
 <link rel="stylesheet" href="assets/vehicle-list-view.css?v=2.195">
 <link rel="stylesheet" href="assets/purchase-columns.css?v=2.179">
@@ -8717,7 +8717,9 @@ function zc79ApplyAddress(data,targetId){
 function zc91BridgeHtml(token){
  const origin=location.origin==='null'?'*':location.origin;
  const cfg=JSON.stringify({token:token,origin:origin});
+ const fontStyle=new URL('assets/pretendard.css?v=2.233',location.href).href;
  return '<!doctype html><html lang="ko"><head><meta charset="utf-8">'+
+  '<link rel="stylesheet" href="'+fontStyle+'">'+
   '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">'+
   '<style>html,body{height:100%;margin:0;overflow:hidden;font-family:Manrope,"Noto Sans KR",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:12px;line-height:1.65}'+
   '#postcode-search{width:100%;height:100%;min-height:300px}'+
@@ -12454,7 +12456,7 @@ window.zc86Cloud={getAccessToken:async()=>{const client=S.client,user=S.user,com
 <link rel="stylesheet" href="assets/workspace-reorder.css?v=2.136">
 <script src="assets/workspace-order-store.js?v=2.135" defer></script>
 <script src="assets/workspace-reorder.js?v=2.202" defer></script>
-<script src="assets/release-info.js?v=2.232" defer></script>
+<script src="assets/release-info.js?v=2.233" defer></script>
 <link rel="stylesheet" href="assets/encar-id.css?v=2.162">
 <script src="assets/encar-id.js?v=2.184" defer></script>
 <script src="assets/company-purchase.js?v=2.172" defer></script>
@@ -12471,8 +12473,8 @@ window.zc86Cloud={getAccessToken:async()=>{const client=S.client,user=S.user,com
 <link rel="stylesheet" href="assets/dealer-finance-rates.css?v=2.122">
 <script src="assets/dealer-finance-rates.js?v=2.172" defer></script>
 <script src="assets/workspace-refine.js?v=2.227" defer></script>
-<script src="assets/snote-tutorial.js?v=2.96" defer></script>
-<script src="assets/snote-chatbot.js?v=2.165" defer></script>
+<script src="assets/snote-tutorial.js?v=2.233" defer></script>
+<script src="assets/snote-chatbot.js?v=2.233" defer></script>
 <script src="assets/vehicle-cost-settings.js?v=2.199" defer></script>
 <link rel="stylesheet" href="assets/inventory-start-date.css?v=2.174">
 <script src="assets/inventory-start-date.js?v=2.174" defer></script>

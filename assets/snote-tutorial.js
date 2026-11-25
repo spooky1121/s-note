@@ -2,30 +2,42 @@
 (()=>{'use strict';
  if(window.SnoteTutorial)return;
  const chapters=[
-  {id:'start',title:'화면 익히기',summary:'목록부터 가볍게 둘러봐요',steps:[
-   {title:'내 차량 목록에서 시작해요',image:'start-list.jpg',caption:'매입 관리 · 내 차량 목록',text:'로그인하면 매입 관리에서 내 차량을 확인할 수 있어요. 차명이나 차량 사진을 누르면 차량 상세가 열려요.',items:['왼쪽 메뉴에서 매입 관리를 선택해요.','상사매입은 같은 상사의 차량을 보는 관리자 전용 메뉴예요.'],route:'buy',action:'매입 관리 열기'},
-   {title:'검색과 정렬로 빠르게 찾아요',image:'start-search.jpg',caption:'차량 검색 · 목록 정렬',text:'목록 위 검색창에 찾는 차량 정보를 입력해 보세요. 목록의 열 제목(차명·차량번호 등)을 누르면 오름차순·내림차순으로 정렬할 수 있어요.',items:['차량번호나 차명으로 검색해요.','목록은 한 페이지에 최대 20대씩 보여요.'],route:'buy',action:'매입 관리 열기'},
-   {title:'사진과 핵심 정보를 카드로 봐요',image:'start-cards.jpg?v=2.96',caption:'차량 목록 · 간결한 카드 보기',text:'목록 상단의 목록·격자 아이콘으로 보기 방식을 바꿀 수 있어요. 사진·차명·금액을 카드에 모아 빠르게 확인해 보세요.',items:['검색·정렬·페이지는 보기 방식을 바꿔도 유지돼요.','선택한 보기 방식은 이 브라우저에 기억해요.'],route:'buy',action:'매입 관리 열기'}]},
-  {id:'register',title:'첫 차량 등록',summary:'차종과 금액을 차근차근',steps:[
-   {title:'파란 +로 새 차량을 등록해요',image:'register-manual.jpg',caption:'매입 관리 · 차량 신규 등록',text:'매입 관리 제목 옆 파란 + 아이콘을 누르면 등록 창이 열려요. 등록증 사진이 있다면 문서 + 아이콘으로 등록을 시작할 수도 있어요.',items:['새 차량의 차량번호와 기본 정보를 확인해요.','자동 인식한 내용도 등록 전에 한 번 확인해 주세요.'],route:'buy',action:'매입 관리 열기'},
-   {title:'제조사부터 트림까지 선택해요',image:'register-catalog.jpg',caption:'신규 등록 · 차종 선택',text:'제조사 → 모델명 → 세부모델 → 트림 순서로 선택해요. 선택 목록에 없는 차량은 직접 입력할 수 있어요.',items:['현재 차량과 연식·세부모델이 같은지 확인해요.','직접 입력한 차명도 저장할 수 있어요.'],route:'buy',action:'매입 관리 열기'},
-   {title:'매입가와 부대비용을 확인해요',image:'register-costs.jpg',caption:'차량 등록 · 매입 금액과 비용',text:'매입가와 판매예정가는 원 단위로 입력해요. 입력한 숫자에는 천 단위 콤마가 표시돼요.',items:['입력을 마친 뒤 등록 버튼으로 차량을 저장해요.','재고대출금과 금융사는 등록한 뒤 차량 상세에서 설정해요.'],route:'buy',action:'매입 관리 열기'}]},
-  {id:'detail',title:'차량 정보 관리',summary:'메모·사진·서류를 한곳에서',steps:[
-   {title:'메모를 남기고 함께 저장해요',image:'detail-memo.jpg',caption:'차량 상세 · 정보와 메모',text:'차량 정보 아래 메모에는 확인할 일이나 차량 관련 내용을 자유롭게 남겨 보세요. 상단 파란 디스켓 아이콘으로 차량 정보와 함께 저장해요.',items:['차명·주행거리·매입일과 비용도 같은 화면에서 관리해요.','메모는 견적서의 기타 / 비고와 별도로 보관해요.'],route:'buy',action:'매입 관리 열기'},
-   {title:'사진과 차량 서류를 정리해요',image:'detail-documents.jpg',caption:'차량 상세 · 실차 사진과 차량 서류',text:'실차 사진과 자동차등록증·성능기록부를 차량별로 보관해요. 추가·교체 아이콘으로 필요한 이미지를 등록할 수 있어요.',items:['차량 서류 제목 옆 공유 아이콘은 문자메세지 공유예요.','실제 발송 전 받는 번호와 첨부한 서류를 확인해 주세요.'],route:'buy',action:'매입 관리 열기'},
-   {title:'견적서를 미리 보고 인쇄해요',image:'detail-estimate.jpg',caption:'견적서 · 문서 미리보기',text:'차량 상세 상단 문서 아이콘으로 견적서를 열어요. 내용과 금액을 확인한 뒤 오른쪽 위 빨간 프린터 아이콘을 눌러요.',items:['프린터 아이콘은 브라우저 인쇄 창을 열어요.','X를 누르면 문서를 닫고 차량 화면으로 돌아가요.'],route:'buy',action:'매입 관리 열기'}]},
-  {id:'sale',title:'판매와 문서 출력',summary:'고객 정보부터 판매 완료까지',steps:[
-   {title:'판매 진행 창을 열어요',image:'sale-form.jpg',caption:'차량 상세 · 판매 진행',text:'차량 상세 상단의 차량·원화 모양 판매 진행 아이콘을 눌러요. 판매 금액과 고객 정보를 확인하며 계약을 준비할 수 있어요.',items:['등본상 주소와 등기받을 주소를 구분해 입력해요.','판매 조건과 이전비 환급 계좌도 함께 확인해요.'],route:'buy',action:'매입 관리 열기'},
-   {title:'고객이 직접 작성한 정보를 확인해요',image:'sale-customer.jpg',caption:'판매 진행 · 고객 직접입력과 서명',text:'고객 직접입력 카드에서 고객 휴대전화로 안내를 보내고 제출한 정보를 확인할 수 있어요. 고객 서명도 제출 내용과 함께 확인해 주세요.',items:['문자를 보내기 전 고객 연락처를 확인해요.','고객정보 저장 아이콘으로 변경 내용을 저장해요.'],route:'buy',action:'매입 관리 열기'},
-   {title:'계약서·인수증 확인 후 마무리해요',image:'sale-print.jpg',caption:'계약서·인수증 · 출력 미리보기',text:'판매 진행 상단의 문서 아이콘으로 계약서와 인수증을 열어요. 제출한 고객 서명은 문서의 고객 서명란에 반영돼요.',items:['문서 오른쪽 위 프린터로 출력하고 X로 닫아요.','판매 진행으로 돌아온 뒤 내용을 확인하고 판매완료확정으로 마무리해요.'],route:'buy',action:'매입 관리 열기'}]},
-  {id:'sharing',title:'공유와 고객 관리',summary:'초대를 확인하고 함께 관리해요',steps:[
-   {title:'가입 이메일로 차량을 공유해요',image:'sharing-invite.jpg',caption:'차량 상세 · 딜러와 차량 공유',text:'차량 상세 상단 파란 체인 아이콘을 누르고 함께 볼 딜러의 가입 이메일을 입력해요. 상대방이 수락하면 상대방의 차량 목록에 표시돼요.',items:['공유받은 딜러도 허용된 차량 정보를 수정할 수 있어요.','공유할 상대방 이메일을 확인하고 초대해 주세요.'],route:'buy',action:'매입 관리 열기'},
-   {title:'프로필 알림에서 초대를 확인해요',image:'sharing-notifications.jpg',caption:'프로필 · 공유 초대와 변경 알림',text:'오른쪽 위 프로필을 눌러 알림을 열어요. 공유 초대는 수락·거부를 선택하고, 공유 차량이 바뀌면 수정 내용과 시각을 확인할 수 있어요.',items:['공유 초대를 수락해야 목록에서 차량을 볼 수 있어요.','새 알림은 프로필의 빨간 표시로 알려드려요.'],route:'buy',action:'매입 관리 열기'},
-   {title:'고객을 검색하고 보기 방식을 바꿔요',image:'sharing-customers.jpg?v=2.96',caption:'고객 관리 · 검색과 목록/카드 보기',text:'고객 관리에서 목록·카드 보기를 선택하고 이름·전화번호·차량번호·주소·차명·제조사 등으로 검색해요. 관리 아이콘으로 판매 진행과 계약서·인수증을 열 수 있어요.',items:['주민번호 뒷자리는 두 보기 모두 별표로 표시돼요.','상단 목록·격자 아이콘으로 편한 보기 방식을 선택해요.'],route:'users',action:'고객 관리 열기'}]},
-  {id:'settings',title:'설정과 복원',summary:'내 정보와 삭제 자료를 관리해요',steps:[
-   {title:'프로필에서 내 정보를 관리해요',image:'settings-profile.jpg',caption:'프로필 설정 · 사진과 기본 정보',text:'오른쪽 위 프로필 메뉴에서 프로필 설정을 열어요. 이름·얼굴 사진·비밀번호와 연락처를 관리할 수 있어요.',items:['휴대전화 번호 변경은 전화번호 인증 후 가능해요.','설정을 닫으려면 창 안의 X를 눌러 주세요.'],control:'profile',action:'프로필 설정 열기'},
-   {title:'상사 설정을 한 번 확인해요',image:'settings-company.jpg',caption:'설정 · 상사 정보와 직원 관리',audience:'상사 관리자',text:'상사 관리자는 설정에서 상사 정보·로고·도장·직원과 금융 설정을 관리해요. 각 항목의 파란 디스켓 아이콘으로 변경 내용을 저장해요.',items:['직원 초대는 가입할 직원의 이메일을 확인해 진행해요.','금융사 이율은 재고 이자 계산에 사용되므로 정확히 입력해요.'],route:'settings',requires:'admin',action:'설정 열기'},
-   {title:'잘못 삭제한 자료는 휴지통에서 복원해요',image:'settings-recycle.jpg',caption:'설정 > 휴지통 · 삭제 자료 복원',text:'설정 안의 휴지통에는 삭제한 차량·고객 정보·사진과 서류가 보관돼요. 목록에서 필요한 항목을 확인한 뒤 복원을 선택해요.',items:['연결된 차량도 삭제했다면 차량을 먼저 복원해요.','복원한 자료는 원래 관리 화면에서 다시 확인해요.'],route:'recycle',action:'휴지통 열기'}]}
+  {id:'dashboard',title:'대시보드와 일정',summary:'오늘의 업무를 한눈에',steps:[
+   {title:'요약 카드를 펼쳐 현황을 봐요',image:'dashboard-overview.jpg',caption:'대시보드 · 투자금과 이번 달 실적',text:'총투자금 카드를 누르면 재고대출금·현금투자금과 이번 달 매입·판매·수익 카드가 옆으로 펼쳐져요. 한 번 더 누르면 다시 접혀요.',items:['확인 권한이 필요한 금액은 잠금을 해제한 뒤 볼 수 있어요.','브라우저 너비에 맞춰 카드 배치가 조정돼요.'],route:'dashboard',action:'대시보드 열기'},
+   {title:'날짜를 눌러 내 일정을 저장해요',image:'dashboard-calendar.jpg',caption:'대시보드 달력 · 개인 일정 작성',text:'달력의 날짜를 누르면 일정을 작성할 수 있어요. 제목과 날짜·시간을 확인해 저장하고, 등록한 일정은 다시 열어 수정해요.',items:['일정은 로그인한 딜러 계정별로 관리돼요.','매입·판매 날짜와 공휴일도 달력에서 함께 확인해요.'],route:'dashboard',action:'대시보드 열기'},
+   {title:'다가올 일정과 최근 흐름을 확인해요',image:'dashboard-schedule.jpg',caption:'대시보드 · 일정과 최근 3개월 흐름',text:'오늘 일정과 다가올 일정을 달력 옆에서 확인해요. 다가올 일정에는 남은 날짜가 표시되고, 최근 3개월 흐름은 매입·판매 대수와 수익을 바꿔 볼 수 있어요.',items:['오늘 일정이 있으면 테두리 강조로 알려드려요.','수익 정산 제목을 누르면 접힌 정산 내용을 펼칠 수 있어요.'],route:'dashboard',action:'대시보드 열기'}]},
+  {id:'start',title:'검색과 차량 목록',summary:'필요한 정보를 빠르게 찾아요',steps:[
+   {title:'통합검색에 입력하면 바로 찾아줘요',image:'start-list.jpg',caption:'상단 통합검색 · 실시간 차량·고객·메뉴 결과',text:'상단 하늘색 통합검색창에 차량번호·차명·고객 정보·메뉴명을 입력해 보세요. 검색창 아래에 결과가 바로 나타나며 항목을 누르면 해당 화면으로 이동해요.',items:['방향키와 Enter로도 결과를 선택할 수 있어요.','돋보기로 다시 검색하고, Esc나 바깥 클릭으로 닫아요.'],route:'buy',action:'매입 관리 열기'},
+   {title:'목록에 필요한 항목만 골라요',image:'start-search.jpg',caption:'매입 관리 · 목록 항목 설정과 서류 현황',text:'목록 위 오른쪽 설정 아이콘에서 표시할 항목을 체크해요. 예상수익·총투입원가·재고대출금·서류·견적서·엔카광고 등 필요한 정보를 선택할 수 있어요.',items:['차명과 차량번호는 항상 표시돼요.','서류 숫자에 마우스를 올리면 등록한 서류 종류를 확인해요.'],route:'buy',action:'매입 관리 열기'},
+   {title:'카드와 사진으로 차량을 살펴봐요',image:'start-cards.jpg',caption:'차량 목록 · 카드 보기와 메인 사진 확대',text:'목록·격자 아이콘으로 보기 방식을 바꿔요. 차량 사진만 누르면 메인 사진이 부드럽게 확대되고, 차명을 누르면 차량 상세가 열려요.',items:['계약중·공유 표시는 차명 옆에서 빠르게 구분해요.','사진이 없는 차량은 Snote 기본 자동차 이미지로 표시돼요.'],route:'buy',action:'매입 관리 열기'}]},
+  {id:'register',title:'첫 차량 등록',summary:'차종·금액·재고를 차근차근',steps:[
+   {title:'새 차량의 기본 정보를 입력해요',image:'register-manual.jpg',caption:'매입 관리 · 신규 차량 등록',text:'매입 관리 상단의 차량 등록 버튼을 눌러 차량번호·연식·색상·주행거리와 매입 날짜를 입력해요. 등록증 이미지로 인식한 내용도 저장 전에 확인해 주세요.',items:['기본 정보 → 금액·비용 → 재고설정 순서로 진행해요.','이전 버튼으로 돌아가 입력 내용을 다시 확인할 수 있어요.'],route:'buy',action:'매입 관리 열기'},
+   {title:'제조사부터 트림까지 선택해요',image:'register-catalog.jpg',caption:'신규 등록 · 제조사와 차종 선택',text:'제조사 → 모델명 → 세부모델 → 트림 순서로 선택해요. 선택 목록에 없는 차량은 직접 입력할 수 있어요.',items:['실제 차량의 연식과 세부모델이 맞는지 확인해요.','직접 입력한 차명도 저장할 수 있어요.'],route:'buy',action:'매입 관리 열기'},
+   {title:'금액과 재고 설정을 확인해요',image:'register-costs.jpg',caption:'차량 등록 · 매입 금액·부대비용·재고 설정',text:'매입가·판매예정가와 부대비용을 원 단위로 입력해요. 다음 재고설정에서 재고금융사·대출금·재고 시작일과 등록 요약을 확인한 뒤 완료해요.',items:['추가비용은 항목명과 금액을 함께 입력해요.','금융사와 시작일은 차량 상세에서도 확인·수정할 수 있어요.'],route:'buy',action:'매입 관리 열기'}]},
+  {id:'detail',title:'차량 정보와 견적',summary:'정보·사진·서류를 한곳에서',steps:[
+   {title:'차량 정보와 메모를 함께 저장해요',image:'detail-memo.jpg',caption:'차량 상세 · 기본 정보와 메모',text:'차명·주행거리·매입일과 금액을 차량 상세에서 관리해요. 메모에는 차량 상태나 확인할 일을 적고, 위쪽 파란 디스켓 아이콘으로 저장해요.',items:['엔카 광고 아이콘으로 조회한 광고를 확인할 수 있어요.','공유 차량도 허용된 정보와 계약 진행 기능을 이용해요.'],route:'buy',action:'매입 관리 열기'},
+   {title:'사진과 서류를 확대해 확인해요',image:'detail-documents.jpg',caption:'차량 상세 · 실차 사진과 자동차등록증·성능기록부',text:'실차 사진과 차량 서류를 차량별로 보관해요. 이미지를 누르면 확대되고, 오른쪽 위 다운로드·닫기 아이콘으로 이미지를 저장하거나 돌아갈 수 있어요.',items:['사진 삭제 아이콘은 사진 바깥에 있어요.','등록증 미리보기의 공유 기능은 받는 번호와 서류를 확인해 이용해요.'],route:'buy',action:'매입 관리 열기'},
+   {title:'견적서의 비용과 안내를 수정해요',image:'detail-estimate.jpg',caption:'차량 구매 견적서 · 비용 항목과 안내 편집',text:'견적서에서는 비용 항목명·안내·금액을 수정할 수 있어요. 탁송료·전기차 감면·할인·수리비·정비를 입력하면 준비된 안내 문구를 적용하고 직접 고칠 수도 있어요.',items:['성능보증보험료는 차량 비용에서 가져오며, 음수 금액은 합계에서 차감돼요.','위쪽 프린터로 출력하고 X로 닫아요.'],route:'buy',action:'매입 관리 열기'}]},
+  {id:'sale',title:'계약과 고객 인증',summary:'고객 입력부터 문서 출력까지',steps:[
+   {title:'판매 진행에서 계약을 준비해요',image:'sale-form.jpg',caption:'차량 상세 · 판매 진행과 고객 정보',text:'차량 상세의 판매 진행 아이콘을 눌러 실제 판매 금액과 고객 정보를 확인해요. 등본상 주소·등기받을 주소와 이전비 환급 계좌도 함께 정리해요.',items:['매입일보다 이른 판매일은 사용할 수 없어요.','판매가를 직접 확인한 뒤 판매 완료로 확정해요.'],route:'buy',action:'매입 관리 열기'},
+   {title:'문자 링크로 고객 정보를 받아요',image:'sale-customer.jpg',caption:'판매 진행 · 고객 직접입력과 모바일 인증',text:'고객 직접입력 카드에서 고객 휴대전화로 입력 링크를 보내요. 고객이 모바일에서 인증하고 제출한 정보·서명·동의 내용을 확인해 계약에 반영할 수 있어요.',items:['발송 전 휴대전화 번호를 확인해 주세요.','제출한 자료를 선택한 뒤 고객정보 저장 아이콘으로 저장해요.'],route:'buy',action:'매입 관리 열기'},
+   {title:'계약서와 인수증을 확인해 출력해요',image:'sale-print.jpg',caption:'계약서 · 실제 문서 미리보기',text:'판매 진행 상단에서 계약서·인수증을 열고 고객 정보와 서명·동의 내용을 확인해요. 문서 위쪽의 프린터로 출력하고 X로 닫을 수 있어요.',items:['공유 차량의 계약서는 차량을 공유한 원래 상사 정보를 확인해요.','미리보기에서 내용을 확인한 뒤 판매 진행 화면으로 돌아와 마무리해요.'],route:'buy',action:'매입 관리 열기'}]},
+  {id:'sharing',title:'공유와 고객 관리',summary:'차량 공유와 고객 이력을 관리해요',steps:[
+   {title:'가입 이메일로 차량을 공유해요',image:'sharing-invite.jpg',caption:'차량 상세 · 딜러에게 차량 공유 초대',text:'차량 상세의 체인 아이콘을 누르고 함께 볼 딜러의 가입 이메일을 입력해요. 상대방이 초대를 수락하면 매입 목록에 공유 차량으로 표시돼요.',items:['공유 상대와 이용 권한을 확인하고 초대해 주세요.','공유받은 차량은 상세의 공유 아이콘에서 공유 취소를 선택할 수 있어요.'],route:'buy',action:'매입 관리 열기'},
+   {title:'프로필 알림에서 초대를 확인해요',image:'sharing-notifications.jpg',caption:'프로필 · 공유 초대와 변경 알림',text:'오른쪽 위 프로필 메뉴에서 알림을 열어요. 공유 초대는 수락·거부를 선택하고, 공유 차량이 바뀌면 수정 내용과 시각을 확인할 수 있어요.',items:['초대를 수락해야 공유 차량을 목록에서 볼 수 있어요.','새 알림은 프로필의 빨간 숫자로 알려드려요.'],route:'buy',action:'매입 관리 열기'},
+   {title:'고객을 찾고 삭제 자료를 관리해요',image:'sharing-customers.jpg',caption:'고객 관리 · 검색과 목록·카드 보기',text:'고객 관리에서 이름·전화번호·차량번호·주소·차명으로 검색해요. 목록·카드 보기를 선택하고 고객별 관리 아이콘으로 판매 진행이나 문서를 열 수 있어요.',items:['삭제한 고객은 목록에서 사라지고 휴지통으로 이동해요.','잘못 삭제했다면 휴지통에서 복원해요.'],route:'users',action:'고객 관리 열기'}]},
+  {id:'sold',title:'판매 완료와 등록',summary:'판매 이력과 정산을 정리해요',steps:[
+   {title:'판매 완료 차량을 월별로 확인해요',image:'sold-list.jpg',caption:'판매 완료 · 월별 차량 목록',text:'판매 완료 메뉴에서 월을 바꾸며 판매 차량을 확인해요. 목록의 차량을 열면 기존 차량 상세와 판매 정보를 확인할 수 있어요.',items:['상태 드롭다운에서 현재 차량 상태를 확인해요.','이미 판매한 차량을 새로 입력할 때는 판매등록을 선택해요.'],route:'sell',action:'판매 완료 열기'},
+   {title:'판매등록의 비용과 수익을 나눠 입력해요',image:'sold-costs.jpg',caption:'판매등록 · 금액·비용과 추가수익',text:'판매등록은 기존 차량 등록처럼 3단계로 진행해요. 금액·비용 단계에서 매입가와 실제 판매가를 입력하고 추가비용은 빨강, 수익은 파랑으로 구분해요.',items:['아래로 스크롤하면 수수료·보험·할부금융 수익을 입력할 수 있어요.','필요한 추가비용과 추가수익을 항목별로 넣어 주세요.'],route:'sell',action:'판매 완료 열기'},
+   {title:'정산 요약을 확인하고 등록해요',image:'sold-settlement.jpg',caption:'판매등록 · 비용·수익과 합산 정산',text:'마지막 정산 단계에서 차대금과 왼쪽 비용·오른쪽 수익을 확인해요. 하단 합산 정산은 판매가에서 매입가·추가비용을 빼고 수익을 더해 보여줘요.',items:['판매 날짜와 입력 금액을 다시 확인해요.','완료를 누르기 전 이전 단계로 돌아가 수정할 수 있어요.'],route:'sell',action:'판매 완료 열기'}]},
+  {id:'finance',title:'수익과 재고금융',summary:'실적과 차량별 정산을 확인해요',steps:[
+   {title:'수익과 판매 대수의 흐름을 봐요',image:'finance-overview.jpg',caption:'수익 · 정산 · 월별 실적과 평균 판매기간',text:'수익·정산에서 기간별 수익과 판매 대수를 함께 확인해요. 평균 판매기간은 매입일부터 판매일까지 걸린 기간을 기준으로 보여줘요.',items:['금액 잠금이 설정돼 있다면 먼저 잠금을 해제해요.','차량별 내역과 매입·판매 날짜를 함께 확인해요.'],route:'finance',action:'수익 · 정산 열기'},
+   {title:'차량별 소득정산을 작성해요',image:'finance-income.jpg',caption:'소득정산 · 입력 항목과 저장·인쇄',text:'차량별 소득정산에서 매출·매입 금액과 증빙별 비용을 확인하고 필요한 항목을 입력해요. + 아이콘으로 항목을 추가하고 저장·인쇄 아이콘을 이용해요.',items:['재고금융 이자는 소득정산에 자동 합산하지 않아요.','작성 중인 내용은 저장 상태를 확인한 뒤 닫아 주세요.'],route:'finance',action:'수익 · 정산 열기'},
+   {title:'대출금과 재고이자 기준을 확인해요',image:'finance-inventory.jpg',caption:'재고금융 관리 · 대출금과 금융사별 현황',audience:'이용 권한이 있는 계정',text:'재고금융 관리에서는 금융사와 대출 내역을 확인해요. 차량 상세에서는 재고금융사·재고대출금과 재고이자 기준이 되는 시작일을 관리할 수 있어요.',items:['재고대출금이나 재고이자 제목에서 시작일을 설정해요.','금융사는 상사에 등록된 목록에서 선택하고 기존 차량 값도 확인해요.'],route:'inventoryFinance',action:'재고금융 관리 열기'}]},
+  {id:'settings',title:'설정과 복원',summary:'내 정보와 상사 자료를 정리해요',steps:[
+   {title:'프로필에서 내 정보를 관리해요',image:'settings-profile.jpg',caption:'프로필 설정 · 얼굴 사진과 기본 정보',text:'오른쪽 위 프로필 메뉴에서 프로필 설정을 열어요. 이름·사진·비밀번호와 연락처를 관리할 수 있어요.',items:['휴대전화 번호 변경은 인증 절차를 확인해 진행해요.','입금계좌는 프로필이 아닌 설정 메뉴에서 관리해요.'],control:'profile',action:'프로필 설정 열기'},
+   {title:'문서에 사용할 입금계좌를 설정해요',image:'settings-company.jpg',caption:'설정 · 내 입금계좌 관리',audience:'상사 관리는 관리자 전용',text:'설정에서 차량대금과 이전비의 입금계좌를 따로 입력하고 저장해요. 견적서에 사용할 은행·계좌번호·예금주가 맞는지 확인해 주세요.',items:['입금계좌는 프로필이 아닌 설정에서 관리해요.','상사 관리자는 상사 정보·직원·로고·도장과 금융 설정도 관리할 수 있어요.'],route:'settings',action:'설정 열기'},
+   {title:'잘못 삭제한 자료는 휴지통에서 복원해요',image:'settings-recycle.jpg',caption:'설정 > 휴지통 · 삭제 자료 복원',text:'휴지통에는 삭제한 차량·고객 정보·사진과 서류가 보관돼요. 필요한 항목을 확인한 뒤 복원을 선택하면 원래 관리 화면에서 다시 확인할 수 있어요.',items:['연결된 차량도 삭제했다면 차량을 먼저 복원해요.','복원할 자료가 맞는지 확인하고 진행해 주세요.'],route:'recycle',action:'휴지통 열기'}]}
  ];
  const steps=chapters.flatMap((chapter,chapterIndex)=>chapter.steps.map((step,stepIndex)=>({...step,chapter,chapterIndex,stepIndex})));
  const node=(tag,cls,text)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(text!==undefined)e.textContent=text;return e;};
@@ -42,7 +54,7 @@
  function actionAllowed(step){if(!sameScope()||!workspace())return false;if(step.requires==='admin'&&!admin())return false;try{if(step.route)return window.snotePageAllowed?.(step.route)===true&&typeof window.navigate==='function';if(step.control==='profile')return typeof window.snoteProfileEditor?.open==='function'&&visible(document.getElementById('snote-profile-trigger'));}catch{}return false;}
  function refreshAction(){const step=steps[selected],allowed=actionAllowed(step);action.disabled=!allowed;action.textContent=step.action;actionHint.textContent=!workspace()?'로그인하면 안내한 화면을 바로 열 수 있어요.':step.requires==='admin'&&!admin()?'상사 관리자 계정에서 이용할 수 있어요.':!allowed?'현재 계정에서 사용할 수 있는 메뉴를 확인해 주세요.':'해당 화면에서 안내 순서대로 따라 해 보세요.';}
  function announce(text){status.textContent=text;}
- function alignTopic(){if(!dialog?.open||innerWidth>760)return;const button=nav.querySelector('[aria-current="step"]');if(!button)return;const a=button.getBoundingClientRect(),b=nav.getBoundingClientRect();if(a.left<b.left+12)nav.scrollLeft+=a.left-b.left-12;else if(a.right>b.right-12)nav.scrollLeft+=a.right-b.right+12;}
+ function alignTopic(){if(!dialog?.open)return;const button=nav.querySelector('[aria-current="step"]');if(!button)return;const a=button.getBoundingClientRect(),b=nav.getBoundingClientRect();if(innerWidth>760){if(a.top<b.top+12)nav.scrollTop+=a.top-b.top-12;else if(a.bottom>b.bottom-12)nav.scrollTop+=a.bottom-b.bottom+12;return;}if(a.left<b.left+12)nav.scrollLeft+=a.left-b.left-12;else if(a.right>b.right-12)nav.scrollLeft+=a.right-b.right+12;}
  function render(focus=false){
   const step=steps[selected];zoomed=false;dialog.classList.remove('is-zoom');zoom.hidden=true;body.hidden=false;dialog.querySelector('.snote-tutorial-footer').hidden=false;
   title.textContent=step.title;description.textContent=step.text;points.replaceChildren(...step.items.map(text=>node('li',null,text)));caption.textContent=step.caption;
@@ -52,7 +64,7 @@
   for(const button of nav.querySelectorAll('button')){const active=button.dataset.tutorialTopic===step.chapter.id;button.setAttribute('aria-current',active?'step':'false');}
   previous.disabled=selected===0;next.textContent=selected===steps.length-1?'처음부터 다시 보기':'다음 단계';next.setAttribute('aria-label',selected===steps.length-1?'처음부터 다시 보기':'다음 단계');
   image?.remove();image=node('img');image.id='snote-tutorial-image';image.alt=step.caption+' 예시 화면. '+step.title;image.decoding='async';image.draggable=false;loaded=false;error.hidden=true;imageButton.disabled=true;figure.classList.add('is-loading');
-  const expected=selected,currentImage=image;image.addEventListener('load',()=>{if(expected!==selected||currentImage!==image)return;loaded=true;imageButton.disabled=false;figure.classList.remove('is-loading');});image.addEventListener('error',()=>{if(expected!==selected||currentImage!==image)return;loaded=false;figure.classList.remove('is-loading');error.hidden=false;imageButton.disabled=true;});image.src='assets/tutorial/'+step.image;imageButton.prepend(image);
+  const expected=selected,currentImage=image;image.addEventListener('load',()=>{if(expected!==selected||currentImage!==image)return;loaded=true;imageButton.disabled=false;figure.classList.remove('is-loading');});image.addEventListener('error',()=>{if(expected!==selected||currentImage!==image)return;loaded=false;figure.classList.remove('is-loading');error.hidden=false;imageButton.disabled=true;});image.src='assets/tutorial/v2233/'+step.image;imageButton.prepend(image);
   refreshAction();detail.scrollTop=0;alignTopic();announce(step.chapter.title+' · '+(step.stepIndex+1)+'단계. '+step.title);if(focus)title.focus({preventScroll:true});
  }
  function select(index,focus=true){if(!dialog?.open||!sameScope()){close(false);return;}selected=Math.max(0,Math.min(steps.length-1,index));render(focus);}
@@ -61,6 +73,7 @@
  function scheduleScope(){if(scopeScheduled||!dialog?.open)return;scopeScheduled=true;requestAnimationFrame(()=>{scopeScheduled=false;if(dialog?.open&&!sameScope())close(false);});}
  function close(restore=true,syncChatbot=true){if(!dialog)return false;const wasOpen=dialog.open,focus=returnFocus;clearInterval(scopeTimer);scopeTimer=null;openingScope=null;returnFocus=null;zoomed=false;if(dialog.classList.contains('is-zoom'))dialog.classList.remove('is-zoom');if(wasOpen)dialog.close();if(wasOpen&&syncChatbot)window.SnoteChatbot?.refresh?.();if(restore&&focus?.isConnected)requestAnimationFrame(()=>{if(!dialog.open&&visible(focus))focus.focus({preventScroll:true});});return wasOpen;}
  function open(options={}){
+  if(matchMedia('(max-width:760px)').matches)return false;
   if(!dialog)mount();if(otherPopup())return false;if(dialog.open){if(!sameScope()){close(false);return false;}if(options?.topic){const index=steps.findIndex(step=>step.chapter.id===options.topic);if(index>=0)select(index);}return true;}
   const focus=options?.returnFocus;returnFocus=focus&&typeof focus.focus==='function'?focus:document.activeElement;openingScope=scope();selected=Math.max(0,steps.findIndex(step=>step.chapter.id===options?.topic));window.SnoteChatbot?.close?.(false);
   try{render();dialog.showModal();alignTopic();closeButton.focus({preventScroll:true});scopeTimer=setInterval(()=>{if(dialog.open&&!sameScope())close(false);},500);window.SnoteChatbot?.refresh?.();return true;}catch{openingScope=null;returnFocus=null;return false;}
@@ -80,7 +93,7 @@
   status=node('p','snote-tutorial-sr');status.id='snote-tutorial-status';status.setAttribute('role','status');status.setAttribute('aria-live','polite');dialog.append(header,body,footer,zoom,status);document.body.append(dialog);
   dialog.addEventListener('cancel',event=>{event.preventDefault();if(zoomed)hideZoom();else close(true);});dialog.addEventListener('close',()=>{if(!dialog.open){clearInterval(scopeTimer);scopeTimer=null;}});
   new MutationObserver(records=>{if(dialog.open&&records.some(record=>!dialog.contains(record.target)))scheduleScope();}).observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['class','hidden','aria-hidden']});
-  window.addEventListener('snote:route-changed',scheduleScope);window.addEventListener('resize',alignTopic);window.addEventListener('pagehide',()=>close(false,false));
+  window.addEventListener('snote:route-changed',scheduleScope);window.addEventListener('resize',()=>{if(matchMedia('(max-width:760px)').matches)close(false);else alignTopic();});window.addEventListener('pagehide',()=>close(false,false));
  }
  window.SnoteTutorial=Object.freeze({open,close});
 })();

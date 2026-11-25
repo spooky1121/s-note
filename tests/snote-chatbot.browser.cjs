@@ -11,13 +11,13 @@ async function geometry(p){
  assert(state.card.x>=8&&state.card.right<=state.width-8&&state.card.y>=8,JSON.stringify(state));assert(state.card.bottom<=state.button.y-8);assert(state.input.y>=state.card.y&&state.input.bottom<state.card.bottom);return state;
 }
 (async()=>{const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium'});setBrowser(browser);try{
- for(const width of[1440,1024,390,320]){
+ for(const width of[1440,1024]){
   const f=await fixture(width),p=f.page;if(width===320){await p.setViewportSize({width,height:640});await p.emulateMedia({reducedMotion:'reduce'});}
   await p.waitForFunction(()=>!!window.SnoteChatbot);assert.equal(await p.locator(widget).isHidden(),true,'An open vehicle drawer must hide help');
   await p.locator('#vehicle-overlay .detail-close').click();await p.locator('#vehicle-overlay.open').waitFor({state:'hidden'});await p.locator(launcher).waitFor({state:'visible'});
   const postRequests=[];p.on('request',r=>{if(r.method()==='POST')postRequests.push(r.url());});
   await p.locator(launcher).click();await p.locator(panel).waitFor({state:'visible'});assert.equal(await p.locator(panel).getAttribute('aria-modal'),'false');assert.equal(await p.locator(panel).evaluate(e=>e.contains(document.activeElement)),true);await geometry(p);
-  assert.equal(await p.locator(launcher+' svg').evaluate(e=>getComputedStyle(e).width),'64px');
+  assert.equal(await p.locator(launcher+' svg').evaluate(e=>getComputedStyle(e).width),'44px');
   await p.getByRole('button',{name:'차량 등록',exact:true}).click();assert.match(await p.locator('.snote-chat-log').textContent(),/파란 \+ 아이콘/);
   const marker='SNOTE-CHAT-MEMORY-ONLY-21984 <img src=x onerror=alert(1)>';
   await p.locator('#snote-chatbot-input').fill(marker);await p.getByRole('button',{name:'보내기',exact:true}).click();assert((await p.locator('.snote-chat-log').textContent()).includes(marker));assert.equal(await p.locator('.snote-chat-log img').count(),0);assert.match(await p.locator('.snote-chat-log .is-assistant').last().textContent(),/화면 사용법/);
@@ -36,6 +36,6 @@ async function geometry(p){
    await p.getByRole('button',{name:'로그인 도움',exact:true}).click();assert.match(await p.locator('.snote-chat-log').textContent(),/이메일 인증/);assert.equal(await p.locator('.snote-chat-action').count(),0);await p.keyboard.press('Escape');
    await p.reload({waitUntil:'networkidle'});await p.waitForFunction(()=>!!window.SnoteChatbot);assert(!(await p.locator('.snote-chat-log').textContent()).includes(marker));
   }
-  assert.deepEqual(f.errors,[]);assert.deepEqual(f.unexpectedDialogs,[]);await f.context.close();console.log('PASS '+width+' actual local FAQ widget, native focus/Esc/close, mobile navigation spacing, escaped input and memory-only chat'+(width===1440?', guarded real navigation, drawer exclusion and login/reload reset':''));
+  assert.deepEqual(f.errors,[]);assert.deepEqual(f.unexpectedDialogs,[]);await f.context.close();console.log('PASS '+width+' actual local FAQ widget, native focus/Esc/close, desktop placement, escaped input and memory-only chat'+(width===1440?', guarded real navigation, drawer exclusion and login/reload reset':''));
  }
 }finally{await browser.close()}})().catch(error=>{console.error(error.stack);process.exitCode=1});

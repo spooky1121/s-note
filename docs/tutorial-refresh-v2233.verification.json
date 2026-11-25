@@ -1,0 +1,798 @@
+{
+  "version": "2.233",
+  "baseCommit": "3bb3cb2f2f19fb5c1db5451d6841c48984e0922b",
+  "capture": {
+    "version": "2.233",
+    "captureBaseCommit": "3bb3cb2f2f19fb5c1db5451d6841c48984e0922b",
+    "count": 27,
+    "totalBytes": 1775520,
+    "realProductionData": false,
+    "operatingRequests": 0,
+    "operatingWrites": 0,
+    "captureMethod": "Real Chromium page/locator screenshots with intercepted synthetic accounts and data, captured after loaded official Pretendard FontFace and computed Latin/Korean alias verification without startup local fallback. No reconstructed UI, generated UI, visual edits or resampling. Document panel uses actual browser deviceScaleFactor2. Existing viewports, example values and capture paths retained. Final captures ran sequentially without other Chromium work.",
+    "fontEvidenceFiles": [
+      "main-verification.json",
+      "secondary-manifest.json",
+      "sale-share-manifest.json"
+    ],
+    "prePretendardBaseline": "/workspace/work/tutorial-refresh-v2233/pre-pretendard/",
+    "all27ImagesRecaptured": true,
+    "all27DimensionsUnchanged": true,
+    "naturalDialogHeightChanges": [],
+    "sourceHashes": {
+      "index.html": "f23c65946aecdb88c1f23a0f79d5afb6c4fd7473f4c6c564fa91e5ffa30f1ee8",
+      "assets/pretendard.css": "d2b6cc9cdb1b0676ff79df7d07ee7186658833c8c2e047c49439b1ef3b3852d8",
+      "assets/fonts/PretendardVariable.woff2": "9599f12fd42fc0bce1cd50b47a0c022e108d7aa64dd0d1bb0ed44f3282d900b4",
+      "assets/startup-presentation.js": "a95c926969aa07af84d18cebc44929e3b967942c283a13cc1ae5a7146922560a",
+      "assets/service-brand.css": "1cbbdc66fd997c89f55afca7fb31001044af51f0871f6353dc39072e3fc6c618",
+      "assets/unified-search.js": "a72e22e657e1a38cee3fbddc967550e2cb1c6fdc0960e6cdee9718d1aeb4ddac",
+      "assets/home-dashboard.js": "203fdacb5c354e3e981100ed1e1f3b374b1f49909aad9e5983e31a6e85e05fc1",
+      "assets/home-dashboard.css": "875f06d5336ee6d7ff5bc001f86f7e6b307b299314ce85b5fa8b8af5f5b1e0a6",
+      "assets/purchase-registration.js": "0df25e5b059e00f80d60f12fa5354967013ea775f5a5e7f8991f821ea76bfc24",
+      "assets/vehicle-detail.css": "c93c7cbf5dc62935dd9c361d004596da04893290be2fc89915d5f20f5759d506",
+      "assets/document-print.css": "c85d68614fee88f1c1bac001916ccfa9d4e6de0b9dacb401bce56fe92493072a"
+    },
+    "entries": [
+      {
+        "file": "assets/tutorial/v2233/dashboard-overview.jpg",
+        "title": "요약 카드를 펼쳐 현황을 봐요",
+        "width": 1440,
+        "height": 950,
+        "bytes": 108544,
+        "sha256": "74d7bc220cf881efb07843c6e1701447adb46928761679572783152fbbe3d271",
+        "actualCurrentApplicationScreenshot": true,
+        "syntheticExampleDataOnly": true,
+        "pixelScale": 1,
+        "font": "Pretendard Variable Latin / Pretendard Variable Korean",
+        "fontLoadedBeforeCapture": true,
+        "startupLocalFallback": false,
+        "beforeDimensions": [
+          1440,
+          950
+        ],
+        "sameDimensions": true
+      },
+      {
+        "file": "assets/tutorial/v2233/dashboard-calendar.jpg",
+        "title": "날짜를 눌러 내 일정을 저장해요",
+        "width": 1440,
+        "height": 950,
+        "bytes": 65649,
+        "sha256": "ae0ac7a931a4f673264682a49c8af7e06ca2a0724172cbdbe758ca24923b4d9c",
+        "actualCurrentApplicationScreenshot": true,
+        "syntheticExampleDataOnly": true,
+        "pixelScale": 1,
+        "font": "Pretendard Variable Latin / Pretendard Variable Korean",
+        "fontLoadedBeforeCapture": true,
+        "startupLocalFallback": false,
+        "beforeDimensions": [
+          1440,
+          950
+        ],
+        "sameDimensions": true
+      },
+      {
+        "file": "assets/tutorial/v2233/dashboard-schedule.jpg",
+        "title": "다가올 일정과 최근 흐름을 확인해요",
+        "width": 1440,
+        "height": 950,
+        "bytes": 118324,
+        "sha256": "de82cd50e00962e4f76f4a280f9bea4cfd65af341a3613c637818185a0ec5700",
+        "actualCurrentApplicationScreenshot": true,
+        "syntheticExampleDataOnly": true,
+        "pixelScale": 1,
+        "font": "Pretendard Variable Latin / Pretendard Variable Korean",
+        "fontLoadedBeforeCapture": true,
+        "startupLocalFallback": false,
+        "beforeDimensions": [
+          1440,
+          950
+        ],
+        "sameDimensions": true
+      },
+      {
+        "file": "assets/tutorial/v2233/start-list.jpg",
+        "title": "통합검색에 입력하면 바로 찾아줘요",
+        "width": 1440,
+        "height": 950,
+        "bytes": 48273,
+        "sha256": "60f0ec90c782b41a372ac40245a82df69a8fbcec106e22d2a2496f4c7acab959",
+        "actualCurrentApplicationScreenshot": true,
+        "syntheticExampleDataOnly": true,
+        "pixelScale": 1,
+        "font": "Pretendard Variable Latin / Pretendard Variable Korean",
+        "fontLoadedBeforeCapture": true,
+        "startupLocalFallback": false,
+        "beforeDimensions": [
+          1440,
+          950
+        ],
+        "sameDimensions": true
+      },
+      {
+        "file": "assets/tutorial/v2233/start-search.jpg",
+        "title": "목록에 필요한 항목만 골라요",
+        "width": 420,
+        "height": 726,
+        "bytes": 36791,
+        "sha256": "2dd6cbe996b5ae263d79fb2038af2bf19086ea02f6fb1c93884b0340589db34b",
+        "actualCurrentApplicationScreenshot": true,
+        "syntheticExampleDataOnly": true,
+        "pixelScale": 1,
+        "font": "Pretendard Variable Latin / Pretendard Variable Korean",
+        "fontLoadedBeforeCapture": true,
+        "startupLocalFallback": false,
+        "beforeDimensions": [
+          420,
+          726
+        ],
+        "sameDimensions": true
+      },
+      {
+        "file": "assets/tutorial/v2233/start-cards.jpg",
+        "title": "카드와 사진으로 차량을 살펴봐요",
+        "width": 1440,
+        "height": 950,
+        "bytes": 115442,
+        "sha256": "c08bb9ed104885bf35432d907a1a5855ed8e28fd7d6b804ea3e3874a150e7fda",
+        "actualCurrentApplicationScreenshot": true,
+        "syntheticExampleDataOnly": true,
+        "pixelScale": 1,
+        "font": "Pretendard Variable Latin / Pretendard Variable Korean",
+        "fontLoadedBeforeCapture": true,
+        "startupLocalFallback": false,
+        "beforeDimensions": [
+          1440,
+          950
+        ],
+        "sameDimensions": true
+      },
+      {
+        "file": "assets/tutorial/v2233/register-manual.jpg",
+        "title": "새 차량의 기본 정보를 입력해요",
+        "width": 780,
+        "height": 688,
+        "bytes": 41662,
+        "sha256": "d6c7a8829ad2be01f692fc3ad738803f3a904ef196ae5226ffe3dd7937276035",
+        "actualCurrentApplicationScreenshot": true,
+        "syntheticExampleDataOnly": true,
+        "pixelScale": 1,
+        "font": "Pretendard Variable Latin / Pretendard Variable Korean",
+        "fontLoadedBeforeCapture": true,
+        "startupLocalFallback": false,
+        "beforeDimensions": [
+          780,
+          688
+        ],
+        "sameDimensions": true
+      },
+      {
+        "file": "assets/tutorial/v2233/register-catalog.jpg",
+        "title": "제조사부터 트림까지 선택해요",
+        "width": 780,
+        "height": 688,
+        "bytes": 41007,
+        "sha256": "4eebdab3dc8ede66cc605c3c0628f415190f636ffec16facdbf24eb5fa2d31cd",
+        "actualCurrentApplicationScreenshot": true,
+        "syntheticExampleDataOnly": true,
+        "pixelScale": 1,
+        "font": "Pretendard Variable Latin / Pretendard Variable Korean",
+        "fontLoadedBeforeCapture": true,
+        "startupLocalFallback": false,
+        "beforeDimensions": [
+          780,
+          688
+        ],
+        "sameDimensions": true
+      },
+      {
+        "file": "assets/tutorial/v2233/register-costs.jpg",
+        "title": "금액과 재고 설정을 확인해요",
+        "width": 780,
+        "height": 688,
+        "bytes": 41123,
+        "sha256": "5f742d75d27fedbcade9736e4b4e94f67f93f5791a24138c632adf99164010ae",
+        "actualCurrentApplicationScreenshot": true,
+        "syntheticExampleDataOnly": true,
+        "pixelScale": 1,
+        "font": "Pretendard Variable Latin / Pretendard Variable Korean",
+        "fontLoadedBeforeCapture": true,
+        "startupLocalFallback": false,
+        "beforeDimensions": [
+          780,
+          688
+        ],
+        "sameDimensions": true
+      },
+      {
+        "file": "assets/tutorial/v2233/detail-memo.jpg",
+        "title": "차량 정보와 메모를 함께 저장해요",
+        "width": 1320,
+        "height": 950,
+        "bytes": 108956,
+        "sha256": "81619d4c735bd9db396326ea361b0d80ad60133e35334ef1a35a702beaee3099",
+        "actualCurrentApplicationScreenshot": true,
+        "syntheticExampleDataOnly": true,
+        "pixelScale": 1,
+        "font": "Pretendard Variable Latin / Pretendard Variable Korean",
+        "fontLoadedBeforeCapture": true,
+        "startupLocalFallback": false,
+        "beforeDimensions": [
+          1320,
+          950
+        ],
+        "sameDimensions": true
+      },
+      {
+        "file": "assets/tutorial/v2233/detail-documents.jpg",
+        "title": "사진과 서류를 확대해 확인해요",
+        "width": 672,
+        "height": 862,
+        "bytes": 44200,
+        "sha256": "2da6d31174a7e012d259fb12c35d1217a47cdd1283841ef5488e34bfc34fa4f9",
+        "actualCurrentApplicationScreenshot": true,
+        "syntheticExampleDataOnly": true,
+        "pixelScale": 2,
+        "font": "Pretendard Variable Latin / Pretendard Variable Korean",
+        "fontLoadedBeforeCapture": true,
+        "startupLocalFallback": false,
+        "beforeDimensions": [
+          672,
+          862
+        ],
+        "sameDimensions": true
+      },
+      {
+        "file": "assets/tutorial/v2233/detail-estimate.jpg",
+        "title": "견적서의 비용과 안내를 수정해요",
+        "width": 794,
+        "height": 1126,
+        "bytes": 78190,
+        "sha256": "548f35bb1a91d06e32893b2bf72f56b8b3bcca0bc557e80abcd330ac5d24a538",
+        "actualCurrentApplicationScreenshot": true,
+        "syntheticExampleDataOnly": true,
+        "pixelScale": 1,
+        "font": "Pretendard Variable Latin / Pretendard Variable Korean",
+        "fontLoadedBeforeCapture": true,
+        "startupLocalFallback": false,
+        "beforeDimensions": [
+          794,
+          1126
+        ],
+        "sameDimensions": true
+      },
+      {
+        "file": "assets/tutorial/v2233/sale-form.jpg",
+        "title": "판매 진행에서 계약을 준비해요",
+        "width": 820,
+        "height": 784,
+        "bytes": 62084,
+        "sha256": "18ef00079acbc064227509136d06d4cd1f2a6b4210cfc6f31f612340f4466acc",
+        "actualCurrentApplicationScreenshot": true,
+        "syntheticExampleDataOnly": true,
+        "pixelScale": 1,
+        "font": "Pretendard Variable Latin / Pretendard Variable Korean",
+        "fontLoadedBeforeCapture": true,
+        "startupLocalFallback": false,
+        "beforeDimensions": [
+          820,
+          784
+        ],
+        "sameDimensions": true
+      },
+      {
+        "file": "assets/tutorial/v2233/sale-customer.jpg",
+        "title": "문자 링크로 고객 정보를 받아요",
+        "width": 794,
+        "height": 219,
+        "bytes": 16006,
+        "sha256": "849e6f91326cde8e6c9e97b56367762a104087353ba53a15d8a62ec0c56dc6fe",
+        "actualCurrentApplicationScreenshot": true,
+        "syntheticExampleDataOnly": true,
+        "pixelScale": 1,
+        "font": "Pretendard Variable Latin / Pretendard Variable Korean",
+        "fontLoadedBeforeCapture": true,
+        "startupLocalFallback": false,
+        "beforeDimensions": [
+          794,
+          219
+        ],
+        "sameDimensions": true
+      },
+      {
+        "file": "assets/tutorial/v2233/sale-print.jpg",
+        "title": "계약서와 인수증을 확인해 출력해요",
+        "width": 748,
+        "height": 1174,
+        "bytes": 154848,
+        "sha256": "60c5905490611d06daea9e9d4a951f20f6f5ea4f7d6275690f4976948e07f808",
+        "actualCurrentApplicationScreenshot": true,
+        "syntheticExampleDataOnly": true,
+        "pixelScale": 1,
+        "font": "Pretendard Variable Latin / Pretendard Variable Korean",
+        "fontLoadedBeforeCapture": true,
+        "startupLocalFallback": false,
+        "beforeDimensions": [
+          748,
+          1174
+        ],
+        "sameDimensions": true
+      },
+      {
+        "file": "assets/tutorial/v2233/sharing-invite.jpg",
+        "title": "가입 이메일로 차량을 공유해요",
+        "width": 660,
+        "height": 466,
+        "bytes": 35974,
+        "sha256": "0c36c1878438161e3b9143743168d239476a00da14d4a9c4304e058c360f8d98",
+        "actualCurrentApplicationScreenshot": true,
+        "syntheticExampleDataOnly": true,
+        "pixelScale": 1,
+        "font": "Pretendard Variable Latin / Pretendard Variable Korean",
+        "fontLoadedBeforeCapture": true,
+        "startupLocalFallback": false,
+        "beforeDimensions": [
+          660,
+          466
+        ],
+        "sameDimensions": true
+      },
+      {
+        "file": "assets/tutorial/v2233/sharing-notifications.jpg",
+        "title": "프로필 알림에서 초대를 확인해요",
+        "width": 600,
+        "height": 488,
+        "bytes": 27133,
+        "sha256": "1f659999cd77c6f6ae6608c7bdcf27c81f8eb620d0a2691323af86963fee4112",
+        "actualCurrentApplicationScreenshot": true,
+        "syntheticExampleDataOnly": true,
+        "pixelScale": 1,
+        "font": "Pretendard Variable Latin / Pretendard Variable Korean",
+        "fontLoadedBeforeCapture": true,
+        "startupLocalFallback": false,
+        "beforeDimensions": [
+          600,
+          488
+        ],
+        "sameDimensions": true
+      },
+      {
+        "file": "assets/tutorial/v2233/sharing-customers.jpg",
+        "title": "고객을 찾고 삭제 자료를 관리해요",
+        "width": 1440,
+        "height": 950,
+        "bytes": 64473,
+        "sha256": "f5b4defbaab47996053fb9d75f2918699f3aab212cba47b59ad5e4001ce3374e",
+        "actualCurrentApplicationScreenshot": true,
+        "syntheticExampleDataOnly": true,
+        "pixelScale": 1,
+        "font": "Pretendard Variable Latin / Pretendard Variable Korean",
+        "fontLoadedBeforeCapture": true,
+        "startupLocalFallback": false,
+        "beforeDimensions": [
+          1440,
+          950
+        ],
+        "sameDimensions": true
+      },
+      {
+        "file": "assets/tutorial/v2233/sold-list.jpg",
+        "title": "판매 완료 차량을 월별로 확인해요",
+        "width": 1440,
+        "height": 950,
+        "bytes": 120012,
+        "sha256": "a2a462f0ce07ef797cbbd57ecc48fd7cef75c655532b4656cb256b2501068a74",
+        "actualCurrentApplicationScreenshot": true,
+        "syntheticExampleDataOnly": true,
+        "pixelScale": 1,
+        "font": "Pretendard Variable Latin / Pretendard Variable Korean",
+        "fontLoadedBeforeCapture": true,
+        "startupLocalFallback": false,
+        "beforeDimensions": [
+          1440,
+          950
+        ],
+        "sameDimensions": true
+      },
+      {
+        "file": "assets/tutorial/v2233/sold-costs.jpg",
+        "title": "판매등록의 비용과 수익을 나눠 입력해요",
+        "width": 780,
+        "height": 688,
+        "bytes": 37178,
+        "sha256": "081e04c602c2681adfc0b0ab3e0f09bdfa6bcc8ab704d2b6c8da36b50fac25a6",
+        "actualCurrentApplicationScreenshot": true,
+        "syntheticExampleDataOnly": true,
+        "pixelScale": 1,
+        "font": "Pretendard Variable Latin / Pretendard Variable Korean",
+        "fontLoadedBeforeCapture": true,
+        "startupLocalFallback": false,
+        "beforeDimensions": [
+          780,
+          688
+        ],
+        "sameDimensions": true
+      },
+      {
+        "file": "assets/tutorial/v2233/sold-settlement.jpg",
+        "title": "정산 요약을 확인하고 등록해요",
+        "width": 780,
+        "height": 688,
+        "bytes": 38299,
+        "sha256": "d42612da932505a521f1b2b8afade1d2268cb9ace10a617687024265c43c55e5",
+        "actualCurrentApplicationScreenshot": true,
+        "syntheticExampleDataOnly": true,
+        "pixelScale": 1,
+        "font": "Pretendard Variable Latin / Pretendard Variable Korean",
+        "fontLoadedBeforeCapture": true,
+        "startupLocalFallback": false,
+        "beforeDimensions": [
+          780,
+          688
+        ],
+        "sameDimensions": true
+      },
+      {
+        "file": "assets/tutorial/v2233/finance-overview.jpg",
+        "title": "수익과 판매 대수의 흐름을 봐요",
+        "width": 1440,
+        "height": 992,
+        "bytes": 105166,
+        "sha256": "d0b3d2429d38e4f98cfd1114b9a52fdf5ab288b0fbc490fb40d572065fc65e72",
+        "actualCurrentApplicationScreenshot": true,
+        "syntheticExampleDataOnly": true,
+        "pixelScale": 1,
+        "font": "Pretendard Variable Latin / Pretendard Variable Korean",
+        "fontLoadedBeforeCapture": true,
+        "startupLocalFallback": false,
+        "beforeDimensions": [
+          1440,
+          992
+        ],
+        "sameDimensions": true
+      },
+      {
+        "file": "assets/tutorial/v2233/finance-income.jpg",
+        "title": "차량별 소득정산을 작성해요",
+        "width": 1200,
+        "height": 894,
+        "bytes": 67663,
+        "sha256": "b76d3ee7205076630b79cf0acb12d3166479120914412ba64445ce78885e2963",
+        "actualCurrentApplicationScreenshot": true,
+        "syntheticExampleDataOnly": true,
+        "pixelScale": 1,
+        "font": "Pretendard Variable Latin / Pretendard Variable Korean",
+        "fontLoadedBeforeCapture": true,
+        "startupLocalFallback": false,
+        "beforeDimensions": [
+          1200,
+          894
+        ],
+        "sameDimensions": true
+      },
+      {
+        "file": "assets/tutorial/v2233/finance-inventory.jpg",
+        "title": "대출금과 재고이자 기준을 확인해요",
+        "width": 1320,
+        "height": 950,
+        "bytes": 96984,
+        "sha256": "05007e754bb5167ff4c0ae09d3bb96252084149a88527b3165b4a9a1add3b221",
+        "actualCurrentApplicationScreenshot": true,
+        "syntheticExampleDataOnly": true,
+        "pixelScale": 1,
+        "font": "Pretendard Variable Latin / Pretendard Variable Korean",
+        "fontLoadedBeforeCapture": true,
+        "startupLocalFallback": false,
+        "beforeDimensions": [
+          1320,
+          950
+        ],
+        "sameDimensions": true
+      },
+      {
+        "file": "assets/tutorial/v2233/settings-profile.jpg",
+        "title": "프로필에서 내 정보를 관리해요",
+        "width": 430,
+        "height": 950,
+        "bytes": 29825,
+        "sha256": "e0da49c2c81e3d40e97674ed0650dc296784545e5928841a952211b3dd9f56f0",
+        "actualCurrentApplicationScreenshot": true,
+        "syntheticExampleDataOnly": true,
+        "pixelScale": 1,
+        "font": "Pretendard Variable Latin / Pretendard Variable Korean",
+        "fontLoadedBeforeCapture": true,
+        "startupLocalFallback": false,
+        "beforeDimensions": [
+          430,
+          950
+        ],
+        "sameDimensions": true
+      },
+      {
+        "file": "assets/tutorial/v2233/settings-company.jpg",
+        "title": "문서에 사용할 입금계좌를 설정해요",
+        "width": 875,
+        "height": 321,
+        "bytes": 18997,
+        "sha256": "2bd9dee8c928ef1f2038cab6622eca297e8d23c30ea181abca033505f34285c4",
+        "actualCurrentApplicationScreenshot": true,
+        "syntheticExampleDataOnly": true,
+        "pixelScale": 1,
+        "font": "Pretendard Variable Latin / Pretendard Variable Korean",
+        "fontLoadedBeforeCapture": true,
+        "startupLocalFallback": false,
+        "beforeDimensions": [
+          875,
+          321
+        ],
+        "sameDimensions": true
+      },
+      {
+        "file": "assets/tutorial/v2233/settings-recycle.jpg",
+        "title": "잘못 삭제한 자료는 휴지통에서 복원해요",
+        "width": 1440,
+        "height": 950,
+        "bytes": 52717,
+        "sha256": "7bb6d12944ede07ad04baebb4765d5597da5ec7e53171fa2de18009851e52972",
+        "actualCurrentApplicationScreenshot": true,
+        "syntheticExampleDataOnly": true,
+        "pixelScale": 1,
+        "font": "Pretendard Variable Latin / Pretendard Variable Korean",
+        "fontLoadedBeforeCapture": true,
+        "startupLocalFallback": false,
+        "beforeDimensions": [
+          1440,
+          950
+        ],
+        "sameDimensions": true
+      }
+    ],
+    "reproductionScripts": [
+      "/workspace/work/tutorial-refresh-v2233/capture-main.cjs",
+      "/workspace/work/tutorial-refresh-v2233/capture-secondary.cjs",
+      "/workspace/work/tutorial-refresh-v2233/capture-sale-share.cjs"
+    ]
+  },
+  "validation": {
+    "font": {
+      "ok": true,
+      "records": 105,
+      "sourceHashesMatch": true,
+      "sourceHashes": {
+        "index.html": "f23c65946aecdb88c1f23a0f79d5afb6c4fd7473f4c6c564fa91e5ffa30f1ee8",
+        "monthly.html": "f17a97e4aca6cc916160168fae76197aa6302abb5cb99b688b90f6f24206f9eb",
+        "operator.html": "4f4e71fad2722268c66e8b34047a9928615241652a93dd59351c68c91d359209",
+        "customer.html": "46443eac0ffbb8d1b983ffaf083a53a3b8a8fee379c61c0c3c25e6722da5d87b",
+        "account-recovery.html": "8a26fe73bc9d0a95934b71e0e59875b498f14919f2434db36a5b57df849bd58c",
+        "assets/pretendard.css": "d2b6cc9cdb1b0676ff79df7d07ee7186658833c8c2e047c49439b1ef3b3852d8",
+        "assets/startup-presentation.js": "a95c926969aa07af84d18cebc44929e3b967942c283a13cc1ae5a7146922560a",
+        "assets/contract-office.js": "b5959497d599008e302a1782a7ddd072e999d3c2f10aa9a55e2cfd7edfc79fc3",
+        "assets/readable-type.js": "ad9f9659387dd0141b437a49e225e823d4c0444021ef474d8d4e61f1d0292a04",
+        "assets/workspace-density.css": "eab36844a7af48af9b1dd272775e809d597fc18fe5d1b9bb9e239da330046cb9",
+        "assets/monthly-workbook.js": "8e1ef82283feed59376150cd6630aa78378e2f4017f0e0891021fc6cdb348ad8",
+        "assets/snote-tutorial.js": "afaed9f3a4d8ff5fefb6c382cb259531e28770031ac69b4e9d68655dee97f00f",
+        "assets/snote-chatbot.js": "44fad0214e5bba649a1afe69726014fa5f97309d619a6c6116004c269c08de7c"
+      },
+      "flowChanges": [
+        {
+          "key": "dashboard-1440",
+          "box": "title",
+          "field": "width",
+          "before": 74.890625,
+          "after": 70.203125,
+          "reason": "Intrinsic glyph/status/table width only"
+        },
+        {
+          "key": "buy-1440",
+          "box": "title",
+          "field": "width",
+          "before": 122.890625,
+          "after": 114.09375,
+          "reason": "Intrinsic glyph/status/table width only"
+        },
+        {
+          "key": "sell-1440",
+          "box": "title",
+          "field": "width",
+          "before": 122.890625,
+          "after": 114.09375,
+          "reason": "Intrinsic glyph/status/table width only"
+        },
+        {
+          "key": "finance-1440",
+          "box": "title",
+          "field": "width",
+          "before": 104.171875,
+          "after": 96.546875,
+          "reason": "Intrinsic glyph/status/table width only"
+        },
+        {
+          "key": "users-1440",
+          "box": "title",
+          "field": "width",
+          "before": 80.171875,
+          "after": 74.59375,
+          "reason": "Intrinsic glyph/status/table width only"
+        },
+        {
+          "key": "settings-1440",
+          "box": "title",
+          "field": "width",
+          "before": 37.453125,
+          "after": 35.109375,
+          "reason": "Intrinsic glyph/status/table width only"
+        },
+        {
+          "key": "dashboard-1024",
+          "box": "title",
+          "field": "width",
+          "before": 74.890625,
+          "after": 70.203125,
+          "reason": "Intrinsic glyph/status/table width only"
+        },
+        {
+          "key": "buy-1024",
+          "box": "title",
+          "field": "width",
+          "before": 122.890625,
+          "after": 114.09375,
+          "reason": "Intrinsic glyph/status/table width only"
+        },
+        {
+          "key": "sell-1024",
+          "box": "title",
+          "field": "width",
+          "before": 122.890625,
+          "after": 114.09375,
+          "reason": "Intrinsic glyph/status/table width only"
+        },
+        {
+          "key": "finance-1024",
+          "box": "title",
+          "field": "width",
+          "before": 104.171875,
+          "after": 96.546875,
+          "reason": "Intrinsic glyph/status/table width only"
+        },
+        {
+          "key": "users-1024",
+          "box": "title",
+          "field": "width",
+          "before": 80.171875,
+          "after": 74.59375,
+          "reason": "Intrinsic glyph/status/table width only"
+        },
+        {
+          "key": "settings-1024",
+          "box": "title",
+          "field": "width",
+          "before": 37.453125,
+          "after": 35.109375,
+          "reason": "Intrinsic glyph/status/table width only"
+        },
+        {
+          "key": "dashboard-850",
+          "box": "title",
+          "field": "width",
+          "before": 74.890625,
+          "after": 70.203125,
+          "reason": "Intrinsic glyph/status/table width only"
+        },
+        {
+          "key": "buy-850",
+          "box": "title",
+          "field": "width",
+          "before": 122.890625,
+          "after": 114.09375,
+          "reason": "Intrinsic glyph/status/table width only"
+        },
+        {
+          "key": "sell-850",
+          "box": "title",
+          "field": "width",
+          "before": 122.890625,
+          "after": 114.09375,
+          "reason": "Intrinsic glyph/status/table width only"
+        },
+        {
+          "key": "finance-850",
+          "box": "title",
+          "field": "width",
+          "before": 104.171875,
+          "after": 96.546875,
+          "reason": "Intrinsic glyph/status/table width only"
+        },
+        {
+          "key": "users-850",
+          "box": "title",
+          "field": "width",
+          "before": 80.171875,
+          "after": 74.59375,
+          "reason": "Intrinsic glyph/status/table width only"
+        },
+        {
+          "key": "settings-850",
+          "box": "title",
+          "field": "width",
+          "before": 37.453125,
+          "after": 35.109375,
+          "reason": "Intrinsic glyph/status/table width only"
+        },
+        {
+          "key": "operator-390",
+          "box": "table",
+          "field": "width",
+          "before": 700.46875,
+          "after": 704.71875,
+          "reason": "Intrinsic glyph/status/table width only"
+        },
+        {
+          "key": "monthly-1440",
+          "box": "save",
+          "field": "width",
+          "before": 42.375,
+          "after": 40.53125,
+          "reason": "Intrinsic glyph/status/table width only"
+        },
+        {
+          "key": "monthly-1440",
+          "box": "save",
+          "field": "right",
+          "before": 281.375,
+          "after": 279.53125,
+          "reason": "Inline status glyph flow"
+        },
+        {
+          "key": "monthly-390",
+          "box": "save",
+          "field": "x",
+          "before": 310.109375,
+          "after": 312.28125,
+          "reason": "Intrinsic glyph/status/table width only"
+        },
+        {
+          "key": "monthly-390",
+          "box": "save",
+          "field": "width",
+          "before": 47.890625,
+          "after": 45.71875,
+          "reason": "Intrinsic glyph/status/table width only"
+        }
+      ]
+    },
+    "postFontTutorial": {
+      "ok": true,
+      "visualOnly": true,
+      "syntheticOnly": true,
+      "productionWrites": 0,
+      "sourceChangedDuringRun": false,
+      "preFontModalComparison": [
+        {
+          "width": 1440,
+          "steps": 27,
+          "modalGeometryMaxDifferencePx": 0,
+          "tolerancePx": 1.5,
+          "passed": true
+        },
+        {
+          "width": 850,
+          "steps": 27,
+          "modalGeometryMaxDifferencePx": 0,
+          "tolerancePx": 1.5,
+          "passed": true
+        }
+      ]
+    },
+    "functionalTutorial": "/workspace/work/tutorial-refresh-v2233/tutorial-regression/receipt.json",
+    "mobileChatbot": "/workspace/work/mobile-chatbot-v2233/results.json",
+    "longDocuments": "/workspace/work/pretendard-v2233/documents-long-final/results.json",
+    "incomePrint": "/workspace/work/pretendard-v2233/income-print/print-results.json",
+    "loginAvailability": "/workspace/work/login-availability-v2229/results.json",
+    "featureLoader": "/workspace/work/pretendard-v2233/feature-loader/receipt.json"
+  },
+  "operatingDataWrites": 0,
+  "operatingSettingsChanged": false,
+  "liveBrowserVerified": false,
+  "externalProviderTypeface": "Kakao postcode iframe is controlled by its provider; S-NOTE-owned wrapper uses Pretendard.",
+  "knownPreexistingTestFixture": "sales-popup-return.test.cjs VM lacks snoteWorkActiveId; tested production function unchanged from base."
+}
