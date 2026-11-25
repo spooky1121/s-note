@@ -52,9 +52,11 @@ async function layoutCase(browser,width,reducedMotion=false){const f=await setup
  const before=await geometry(p);assert(before.form.width>150&&before.form.right<=width+1&&before.form.x>=-1);assert(before.document<=width+1,'No horizontal document overflow');
  if(width>=761)assert(Math.abs(before.form.x+before.form.width/2-(before.topbar.x+before.topbar.width/2))<3,'Search is centered in the desktop topbar');
  await p.screenshot({path:path.join(OUT,`closed-${width}${reducedMotion?'-reduced':''}.png`)});
- assert.deepEqual(await p.evaluate(()=>[__searchQA.customerCalls.length,__searchQA.sharedCalls.length]),[0,0],'No customer/shared search read before submission');
- await p.locator(INPUT).focus();await p.locator(INPUT).fill('BMW');await p.waitForTimeout(180);
- assert.deepEqual(await p.evaluate(()=>[__searchQA.customerCalls.length,__searchQA.sharedCalls.length]),[0,0],'Focusing and typing alone never fetches search data');
+ assert.deepEqual(await p.evaluate(()=>[__searchQA.customerCalls.length,__searchQA.sharedCalls.length]),[0,0],'No customer/shared search read before input');
+ await p.locator(INPUT).focus();assert.deepEqual(await p.evaluate(()=>[__searchQA.customerCalls.length,__searchQA.sharedCalls.length]),[0,0],'Focusing an empty field never fetches search data');
+ await p.locator(INPUT).fill('BMW');
+ await p.waitForFunction(()=>!document.querySelector('#snote-global-search').hasAttribute('aria-busy')&&document.querySelector('#snote-global-results').textContent.includes('BMW iX3'));
+ assert.deepEqual(await p.evaluate(()=>[__searchQA.customerCalls.length,__searchQA.sharedCalls.length]),[1,1],'Typing performs one debounced authorized live search');
  const focused=await geometry(p);assert(focused.popover);assert.equal(focused.blur,'blur(4px)');assert(focused.form.x>=11&&focused.form.right<=width-11,'Search popup fits the viewport');
  if(reducedMotion)assert.equal(focused.motion,'none');
  const text=await search(p,'BMW',{enter:true});assert.match(text,/BMW iX3/);assert(!text.includes('타인비공유'));

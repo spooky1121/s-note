@@ -29,6 +29,9 @@
     state.frame.style.setProperty('--snote-search-left', x + 'px');
     state.frame.style.setProperty('--snote-search-top', y + 'px');
     state.frame.style.setProperty('--snote-search-width', width + 'px');
+    if (state.frame.hasAttribute('data-snote-unified-search')) {
+      state.frame.style.setProperty('--snote-unified-available-height', Math.max(74, (view?.height || innerHeight) - (y - top) - 12) + 'px');
+    }
   }
   function close({ focus = false } = {}) {
     const state = active; if (!state) return;
@@ -38,7 +41,7 @@
     for (const [name, value] of Object.entries(state.attrs)) {
       if (value === null) state.frame.removeAttribute(name); else state.frame.setAttribute(name, value);
     }
-    for (const name of ['--snote-search-left', '--snote-search-top', '--snote-search-width']) state.frame.style.removeProperty(name);
+    for (const name of ['--snote-search-left', '--snote-search-top', '--snote-search-width', '--snote-unified-available-height']) state.frame.style.removeProperty(name);
     state.placeholder.remove(); state.close.remove(); state.icon?.remove();
     if (document.activeElement === state.input || state.frame.contains(document.activeElement)) document.activeElement.blur();
     if (focus && visible(state.input)) state.input.focus({ preventScroll: true });

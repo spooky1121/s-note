@@ -5,15 +5,20 @@
  #snote-app .topright {justify-self:end;min-width:0;gap:8px}
  #snote-app .topbar>.subtitle {grid-column:1/-1;margin:0}
  #snote-app #snote-global-search {display:flex;align-items:center;justify-self:center;gap:8px;width:100%;min-width:0;max-width:420px;margin:0;padding:6px 10px!important}
+ html body #snote-app #snote-global-search {border-color:#81ccef!important;background:#f2faff!important;box-shadow:0 0 0 3px #08a8ee0b,0 2px 7px #0878aa0a!important}
+ html body #snote-app #snote-global-search input::placeholder {color:#58768a!important;opacity:1}
+ html body #snote-app #snote-global-search .snote-unified-submit {color:#007cb8;background:#e0f3ff}
+ html body #snote-app #snote-global-search .snote-unified-submit:hover {color:#006ca6;background:#d0edff}
+ html body #snote-app #snote-global-search.snote-search-active:popover-open {border-color:#48b7eb!important;background:#fff!important;box-shadow:0 0 0 3px #1da9eb1c,0 16px 48px #152a4326!important}
  html body #snote-global-search .snote-unified-submit {display:grid;place-items:center;flex:0 0 30px;width:30px;min-width:30px;height:30px;min-height:30px;padding:5px;border:0;border-radius:8px;background:transparent;color:#708394;cursor:pointer}
  html body #snote-global-search .snote-unified-submit:hover {color:#008bd7;background:#edf8ff}
  html body #snote-global-search .snote-unified-submit svg {width:18px!important;height:18px!important;scale:1!important}
  html body #snote-global-search .snote-unified-submit:disabled {opacity:.45;cursor:wait}
  html body #snote-global-search input {width:100%;min-width:0;font-size:13px!important}
- html body #snote-global-search.snote-search-active:popover-open {display:grid!important;grid-template-columns:30px minmax(0,1fr) 28px;gap:8px!important;max-height:calc(100dvh - 24px)!important;overflow:hidden!important}
+ html body #snote-global-search.snote-search-active:popover-open {display:grid!important;grid-template-columns:30px minmax(0,1fr) 28px;gap:8px!important;max-height:min(calc(100dvh - 24px),var(--snote-unified-available-height,100dvh))!important;overflow:hidden!important}
  html body #snote-global-search.snote-search-active:popover-open input {width:100%!important;grid-column:2;grid-row:1}
  html body #snote-global-search .snote-search-dismiss {grid-column:3;grid-row:1}
- #snote-global-search .snote-unified-results {grid-column:1/-1;min-width:0;max-height:min(52dvh,460px);overflow:auto;overscroll-behavior:contain;border-top:1px solid #edf1f5;margin-top:4px;padding-top:8px;text-align:left}
+ #snote-global-search .snote-unified-results {grid-column:1/-1;min-width:0;max-height:min(52dvh,460px,calc(var(--snote-unified-available-height,100dvh) - 76px));overflow:auto;overscroll-behavior:contain;border-top:1px solid #dfeef6;margin-top:4px;padding-top:8px;text-align:left}
  #snote-global-search .snote-unified-results[hidden] {display:none!important}
  #snote-global-search .snote-unified-group {margin:0;padding:4px 0 9px}
  #snote-global-search .snote-unified-group h2 {margin:3px 8px 7px;color:#7e8b97;font-size:11px;font-weight:550}
@@ -33,7 +38,7 @@
   #snote-app #snote-global-search {grid-column:1/-1;grid-row:3;max-width:none;min-height:40px}
   #snote-app .topbar .crumb {grid-row:2;padding-block:0}
   html body #snote-global-search input,html body #snote-global-search.snote-search-active:popover-open input {font-size:16px!important}
-  #snote-global-search .snote-unified-results {max-height:42dvh}
+  #snote-global-search .snote-unified-results {max-height:min(42dvh,calc(var(--snote-unified-available-height,100dvh) - 76px))}
  }
 }
 @media print {#snote-global-search {display:none!important}}
