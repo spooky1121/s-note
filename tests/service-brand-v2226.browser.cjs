@@ -1,0 +1,65 @@
+'use strict';
+// Real service pages with synthetic Auth/data. No operational API is contacted.
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
+const {chromium}=require('./encar/node_modules/playwright');
+const {backend,boot:normalBoot,dashboardReady}=require('./normal-login.browser.cjs');
+const {boot:operatorBoot}=require('./operator-console.browser.cjs');
+const ROOT=path.resolve(__dirname,'..'),ART=process.env.SNOTE_BRAND_ARTIFACT_DIR||'/workspace/work/service-logo-v2226',BASE=path.join(ART,'baseline'),IS_BASE=process.env.SNOTE_BRAND_BASELINE==='1';
+const read=fs.readFileSync;
+if(IS_BASE)fs.readFileSync=function(file,...args){const p=typeof file==='string'?file:'';if(p.startsWith(ROOT+path.sep)){const old=path.join(BASE,'source',path.relative(ROOT,p));if(fs.existsSync(old))return read(old,...args);}return read(file,...args);};
+const OUT=path.join(ART,IS_BASE?'baseline':'qa');fs.mkdirSync(OUT,{recursive:true});
+const baselinePath=path.join(BASE,'browser.json');
+const previous=!IS_BASE&&fs.existsSync(baselinePath)?JSON.parse(read(baselinePath,'utf8')):null;
+const results=[];
+async function overflow(p,key){const value=await p.evaluate(()=>({width:document.documentElement.scrollWidth,viewport:innerWidth}));const old=previous?.results.find(r=>r.key===key)?.value;if(!IS_BASE)assert(value.width<=(old?.width||value.viewport)+1,key+' does not add horizontal overflow');results.push({key,value});return value;}
+async function settled(p){await p.evaluate(()=>document.fonts.ready);await p.evaluate(async()=>{await Promise.all(document.getAnimations().filter(a=>a.effect?.getTiming().iterations!==Infinity).map(a=>a.finished.catch(()=>{})));await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));});}
+async function record(p,key,selector){
+ await p.locator(selector).first().waitFor({state:'visible'});await settled(p);
+ const value=await p.locator(selector).first().evaluate(e=>{const r=e.getBoundingClientRect(),s=getComputedStyle(e);return{rect:{x:r.x,y:r.y,width:r.width,height:r.height},display:s.display,overflow:s.overflow,imgs:[...(e.matches('img')?[e]:[]),...e.querySelectorAll('img')].map(i=>{const b=i.getBoundingClientRect(),c=getComputedStyle(i);return{src:i.getAttribute('src'),currentSrc:i.currentSrc,natural:[i.naturalWidth,i.naturalHeight],rect:{x:b.x,y:b.y,width:b.width,height:b.height},display:c.display,visibility:c.visibility,objectFit:c.objectFit};})};});
+ assert(value.rect.width>0&&value.rect.height>0,key+' is visible');
+ const old=previous?.results.find(r=>r.key===key);if(old)for(const field of ['x','y','width','height'])assert(Math.abs(value.rect[field]-old.value.rect[field])<1.5,key+' preserves '+field+': '+JSON.stringify({old:old.value.rect,now:value.rect}));
+ if(!IS_BASE){
+  const shown=value.imgs.filter(i=>i.display!=='none'&&i.visibility!=='hidden'&&i.rect.width>0&&i.rect.height>0);assert(shown.length>0,key+' uses the official image');
+  for(const i of shown){assert(/snote-(?:brand|symbol)/.test(i.src),key+' uses official brand artwork');assert(i.natural.every(n=>n>0),key+' asset loaded');assert.equal(i.objectFit,'contain',key+' preserves aspect ratio');assert(i.rect.x>=value.rect.x-.6&&i.rect.y>=value.rect.y-.6&&i.rect.x+i.rect.width<=value.rect.x+value.rect.width+.6&&i.rect.y+i.rect.height<=value.rect.y+value.rect.height+.6,key+' image stays inside unchanged logo box');if(/^sidebar-(?:1024|850)$/.test(key))assert(i.currentSrc.includes('snote-symbol.png'),key+' compact sidebar uses S only');}
+ }
+ results.push({key,value});return value;
+}
+async function workspace(browser,width){
+ const f=await normalBoot(browser,backend(),'brand-'+width,{width}),p=f.page;
+ try{
+  await record(p,'login-'+width,'#zc-cloud-gate .snote204-auth-header .snote-wordmark');await p.screenshot({path:path.join(OUT,'login-'+width+'.png')});
+  await p.locator('#zc86-register').click();await p.locator('#snote-registration-form').waitFor({state:'visible'}).catch(()=>{});await record(p,'signup-'+width,'#zc-cloud-gate .snote204-auth-header .snote-wordmark');await p.screenshot({path:path.join(OUT,'signup-'+width+'.png')});await p.locator('#snote-auth-back').click();
+  await f.login();await dashboardReady(f);await settled(p);
+  if(width>760){await record(p,'sidebar-'+width,'#snote-app>.sidebar .snote-wordmark');await p.locator('#snote-app>.sidebar .snote-brand-home').click();await p.waitForFunction(()=>route==='buy');}
+  else{await p.evaluate(()=>openMobileDrawer());await record(p,'mobile-drawer-'+width,'#mobile-drawer .snote-wordmark');await p.locator('#mobile-drawer .snote-brand-home').click();await p.waitForFunction(()=>route==='buy');await p.evaluate(()=>closeMobileDrawer());}
+  await p.waitForFunction(()=>{const e=document.querySelector('#snote-app main.content');return !e.inert&&!e.dataset.routeTransition&&Number(getComputedStyle(e).opacity)===1;});await settled(p);
+  const documents=await p.locator('.snote-document-brand img').evaluateAll(es=>es.map(e=>e.getAttribute('src')));assert(documents.length>=2);assert(documents.every(s=>s==='assets/snote-logo.png'),'Documents retain their existing logo asset');
+  if(!IS_BASE)assert.equal(await p.evaluate(()=>{const img=document.createElement('img');img.dataset.snoteCompanyAsset='companyLogo';img.src='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8"><path fill="red" d="M0 0h8v8H0z"/></svg>';document.body.append(img);const old=img.src;SnoteServiceBrand.refresh();const same=img.src===old&&!img.hasAttribute('data-snote-service-brand');img.remove();return same;}),true,'Registered company artwork is outside the official-service replacement scope');
+  await overflow(p,'workspace-overflow-'+width);await p.screenshot({path:path.join(OUT,'workspace-'+width+'.png')});
+ }finally{await f.finish();}
+}
+async function operator(browser,width){const f=await operatorBoot(browser,width),p=f.page;try{await record(p,'operator-login-'+width,'#operator-login .wordmark');await f.login();await f.ready();await record(p,'operator-sidebar-'+width,'#operator-app .sidebar .wordmark');assert.equal(f.state.mutations.length,0);assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);await p.screenshot({path:path.join(OUT,'operator-'+width+'.png')});}finally{await f.finish();}}
+async function standalone(browser,width,kind){
+ const origin='https://brand-static.example',context=await browser.newContext({viewport:{width,height:950}}),p=await context.newPage(),external=[],errors=[];p.on('pageerror',e=>errors.push(e.message));
+ await context.route('**/*',async route=>{const u=new URL(route.request().url());if(u.origin!==origin){if(u.hostname==='cdn.jsdelivr.net')return route.fulfill({contentType:'application/javascript;charset=utf-8',body:'export const createClient=()=>({auth:{getSession:async()=>({data:{session:null},error:null})}})'});external.push(u.origin+u.pathname);return route.abort();}
+  if(u.pathname==='/api/customer-intake')return route.fulfill({contentType:'application/json',body:JSON.stringify({ok:true,flowVersion:'wizard-v1',rrnEnabled:true,status:'pending',car:{model:'가상 로고 차량',plate:'12가3456',year:2026,km:10000,sellWon:23000000},companyName:'가상 상사',phoneMasked:'010-****-5678',expiresAt:'2099-01-01T00:00:00Z'})});
+  if(u.pathname.startsWith('/api/'))return route.fulfill({status:503,contentType:'application/json',body:'{"ok":false,"code":"SETUP_REQUIRED"}'});
+  const file=path.resolve(ROOT,u.pathname.slice(1));if(!file.startsWith(ROOT+path.sep)||!fs.existsSync(file))return route.fulfill({status:404,body:'Missing fixture asset'});const types={'.html':'text/html;charset=utf-8','.js':'application/javascript;charset=utf-8','.css':'text/css;charset=utf-8','.png':'image/png','.svg':'image/svg+xml','.woff2':'font/woff2','.webmanifest':'application/manifest+json','.json':'application/json'};return route.fulfill({contentType:types[path.extname(file)]||'application/octet-stream',body:fs.readFileSync(file)});
+ });
+ try{const file=kind==='customer'?'customer.html':'account-recovery.html';await p.goto(origin+'/'+file+(kind==='customer'?'#'+'a'.repeat(64):''),{waitUntil:'networkidle'});await record(p,kind+'-'+width,kind==='customer'?'.site-header .wordmark':'.snote-email-recovery-logo');assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);assert.deepEqual(errors,[]);assert.deepEqual(external,[]);await p.screenshot({path:path.join(OUT,kind+'-'+width+'.png')});}finally{await context.close();}
+}
+async function icons(browser){const context=await browser.newContext(),p=await context.newPage();try{
+ const names=['index.html','operator.html','customer.html','account-recovery.html'];for(const name of names){const source=read(path.join(ROOT,name),'utf8');assert(/rel=["']icon["']/.test(source),name+' has a favicon');assert(!/rel=["']icon["'][^>]*snote-logo\.png/.test(source),name+' favicon does not use old full wordmark');}
+ assert.equal(crypto.createHash('sha256').update(read(path.join(ROOT,'assets/snote-logo.png'))).digest('hex'),'79b63ec954e0ddaa34be3832166d907f3f37863e26815c82c69491685dee9a8f','Legacy business document artwork remains byte-identical');
+ const manifest=JSON.parse(read(path.join(ROOT,'manifest.webmanifest'),'utf8'));assert(manifest.icons.some(i=>i.sizes==='192x192'));assert(manifest.icons.some(i=>i.sizes==='512x512'));
+ // Playwright aborts requests ending exactly in /favicon.ico before route
+ // handlers. A query keeps this same local file inside the synthetic route.
+ const urls=['/assets/snote-brand.png','/assets/snote-symbol.png','/assets/snote-favicon.svg','/assets/snote-favicon.png','/favicon.ico?brand-qa=1','/assets/snote-apple-touch-icon.png',...manifest.icons.map(i=>new URL(i.src,'https://brand-icons.test/manifest.webmanifest').pathname)];
+ await context.route('https://brand-icons.test/**',route=>{const url=new URL(route.request().url());if(url.pathname==='/')return route.fulfill({contentType:'text/html;charset=utf-8',body:'<!doctype html><meta charset="utf-8"><title>Virtual icon render</title>'});const file=path.join(ROOT,url.pathname);return route.fulfill({contentType:file.endsWith('.svg')?'image/svg+xml':file.endsWith('.ico')?'image/x-icon':'image/png',body:read(file)});});await p.goto('https://brand-icons.test/');
+ const rendered=await p.evaluate(async urls=>{const out=[];for(const url of [...new Set(urls)]){const im=new Image();await new Promise((resolve,reject)=>{im.onload=resolve;im.onerror=()=>reject(Error('Image load failed: '+url));im.src=url;});try{await im.decode();}catch(e){throw Error('Image decode failed: '+url+' / '+e.message);}const c=document.createElement('canvas');c.width=im.naturalWidth;c.height=im.naturalHeight;c.getContext('2d').drawImage(im,0,0);const d=c.getContext('2d').getImageData(0,0,c.width,c.height).data;let opaque=0,blue=0,dark=0;for(let i=0;i<d.length;i+=4)if(d[i+3]>200){opaque++;if(d[i+2]>150&&d[i+1]>80&&d[i]<100)blue++;if(Math.max(d[i],d[i+1],d[i+2])<100)dark++;}out.push({url,width:im.naturalWidth,height:im.naturalHeight,corners:[d[3],d[(c.width-1)*4+3],d[(c.width*(c.height-1))*4+3],d[d.length-1]],opaque,blue,dark});}return out;},urls);
+ for(const r of rendered){assert(r.blue>0,r.url+' contains the blue S symbol');assert(r.opaque>0);assert(r.corners.every(n=>n===0),r.url+' has transparent outer corners');if(!r.url.includes('snote-brand')){assert.equal(r.width,r.height,r.url+' is a square symbol icon');assert(r.dark<r.opaque*.01,r.url+' does not include the dark wordmark');}}
+ for(const i of manifest.icons){const r=rendered.find(r=>r.url===new URL(i.src,'https://brand-icons.test/manifest.webmanifest').pathname);assert.equal(i.sizes,r.width+'x'+r.height);}
+ results.push({key:'icons',value:{manifest,rendered}});
+ }finally{await context.close();}}
+module.exports={workspace,operator,standalone,record};
+if(require.main===module)(async()=>{const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium'});try{const groups=(process.env.SNOTE_BRAND_CASE||'workspace,operator,standalone').split(',');if(groups.includes('workspace'))for(const width of [1440,1024,850,390,360]){await workspace(browser,width);console.log('PASS brand workspace '+width);}if(groups.includes('operator'))for(const width of [1440,390]){await operator(browser,width);console.log('PASS brand operator '+width);}if(groups.includes('standalone'))for(const kind of ['customer','recovery'])for(const width of [1440,390]){await standalone(browser,width,kind);console.log('PASS brand '+kind+' '+width);}if(!IS_BASE)await icons(browser);const file=path.join(OUT,'browser.json'),existing=fs.existsSync(file)?JSON.parse(read(file,'utf8')).results:[],keys=new Set(results.map(r=>r.key));fs.writeFileSync(file,JSON.stringify({ok:true,baseline:IS_BASE,syntheticOnly:true,operatingWrites:0,results:[...existing.filter(r=>!keys.has(r.key)),...results]},null,2)+'\n');}finally{await browser.close();}})().catch(e=>{console.error(e.stack||e);process.exitCode=1;});

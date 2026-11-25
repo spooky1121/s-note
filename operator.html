@@ -8,7 +8,6 @@
   <meta name="robots" content="noindex,nofollow,noarchive">
   <meta name="referrer" content="no-referrer">
   <title>Snote · 운영자</title>
-  <link rel="icon" href="assets/snote-logo.png">
   <link rel="stylesheet" href="assets/operator-console.css?v=2.203">
   <link rel="stylesheet" href="assets/message-popup.css?v=2.203">
   <script src="assets/message-popup.js?v=2.203" defer></script>
@@ -27,10 +26,16 @@
 <link rel="stylesheet" href="assets/dropdown-menu.css?v=2.225" data-snote-type-scale>
 <link rel="stylesheet" href="assets/dropdown-surfaces.css?v=2.225">
 <script src="assets/dropdown-menu.js?v=2.225" defer></script>
+  <link rel="stylesheet" href="assets/service-brand.css?v=2.226">
+  <script src="assets/service-brand.js?v=2.226" defer></script>
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/snote-favicon.png?v=2.226">
+  <link rel="icon" type="image/svg+xml" href="/assets/snote-favicon.svg?v=2.226">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/snote-apple-touch-icon.png?v=2.226">
+  <link rel="manifest" href="/manifest.webmanifest?v=2.226">
 </head>
 <body>
   <section id="operator-login" class="login-shell" aria-labelledby="login-title">
-    <a class="wordmark" href="./index.html" aria-label="Snote로 돌아가기"><span>S</span> NOTE</a>
+    <a class="wordmark" data-snote-service-brand href="./index.html" aria-label="Snote로 돌아가기"><img src="assets/snote-brand.png" alt="snote" width="1149" height="301"></a>
     <div class="login-card">
       <span class="eyebrow">SNOTE OPERATOR</span>
       <h1 id="login-title">운영자 로그인</h1>
@@ -48,7 +53,7 @@
 
   <div id="operator-app" class="operator-app" hidden>
     <aside class="sidebar">
-      <a class="wordmark" href="./index.html" aria-label="Snote로 돌아가기"><span>S</span> NOTE</a>
+      <a class="wordmark" data-snote-service-brand href="./index.html" aria-label="Snote로 돌아가기"><img src="assets/snote-brand.png" alt="snote" width="1149" height="301"></a>
       <span class="sidebar-label">운영자</span>
       <nav id="operator-navigation" aria-label="운영자 메뉴">
         <button type="button" data-view="vehicles" aria-current="page"><span data-icon="car"></span><span>모든차량DB</span></button>
