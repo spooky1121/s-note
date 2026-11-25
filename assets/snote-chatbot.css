@@ -1,6 +1,8 @@
 /* A local help widget, isolated from document dialogs and application forms. */
 #snote-chatbot{--snote-chatbot-bottom:20px;--snote-chatbot-right:18px;--snote-chatbot-room:580px;position:fixed;inset:auto var(--snote-chatbot-right) var(--snote-chatbot-bottom) auto;z-index:9100;color:#25344c;font-family:var(--snote-font-family,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif);font-size:13px;line-height:1.55}
 #snote-chatbot[hidden],#snote-chatbot [hidden]{display:none!important}
+/* Mobile has no chatbot entry point, including before its controller starts. */
+@media(max-width:760px){#snote-chatbot{display:none!important}}
 #snote-chatbot *{box-sizing:border-box}
 #snote-chatbot button,#snote-chatbot input{font-family:inherit;touch-action:manipulation}
 #snote-chatbot-launcher{display:grid;place-items:center;width:68px;height:68px;min-width:68px;min-height:68px;margin:0;padding:2px;border:0!important;border-radius:50%;background:transparent!important;box-shadow:none!important;cursor:pointer;transition:translate .18s ease}
