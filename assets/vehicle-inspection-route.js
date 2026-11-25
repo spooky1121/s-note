@@ -14,7 +14,7 @@
  function styles(){
   if(styleJob)return styleJob;
   styleJob=new Promise((resolve,reject)=>{
-   const link=document.createElement('link');link.rel='stylesheet';link.href='assets/vehicle-inspection.css?v=2.234';
+   const link=document.createElement('link');link.rel='stylesheet';link.href='assets/vehicle-inspection.css?v=2.235';
    const fail=()=>{clearTimeout(timer);link.remove();styleJob=null;reject(Error('INSPECTION_STYLE_UNAVAILABLE'));},timer=setTimeout(fail,12000);
    link.onload=()=>{clearTimeout(timer);resolve(true);};link.onerror=fail;document.head.append(link);
   });return styleJob;
@@ -41,7 +41,7 @@
   void job.then(()=>{
    if(request!==intent||!current(expected))return;
    if(!window.SnoteVehicleInspection)throw Error('INSPECTION_MODULE_UNAVAILABLE');
-   window.SnoteVehicleInspection.mount(host,{scopeKey:scope(expected),actorLabel:'내 검수 체크',isCurrent:()=>current(expected)});bound=expected;
+   window.SnoteVehicleInspection.mount(host,{scopeKey:scope(expected),actorLabel:'내 검수 체크',isCurrent:()=>current(expected),learningData:window.SnoteVehicleInspectionLearning});bound=expected;
   }).catch(()=>{if(request===intent&&current(expected))message('검수 도우미를 불러오지 못했습니다.',true);}).finally(()=>{clearTimeout(timer);if(request===intent){loading=null;host.removeAttribute('aria-busy');}});
  }
  window.SnoteInspectionRoute=Object.freeze({refresh,reset});
