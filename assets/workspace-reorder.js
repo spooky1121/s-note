@@ -4,7 +4,7 @@
  const controllers=new Set(),mounted=new WeakMap(),models=new Map(),automatic=new Map();
  const UUID=/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i,ID=/^[a-z][a-z0-9-]{0,63}$/i;
  const SECTIONS=new Set(['sidebar','operator-sidebar','document-types','form-types']);
- const ROUTES=new Set(['dashboard','buy','sell','finance','users','companyBuy','prestock','inventoryFinance','monthly','settings','contractOffice','contractArchive']);
+ const ROUTES=new Set(['dashboard','buy','sell','finance','users','companyBuy','prestock','inventoryFinance','monthly','vehicleInspection','settings','contractOffice','contractArchive']);
  let active=null,sequence=0,scanQueued=false,noticeTimer=null;
  const node=(tag,cls,text)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(text)e.textContent=text;return e;};
  function notice(text){if(window.snoteNotify){window.snoteNotify(text,{tone:'error',key:'workspace-order'});return;}let e=document.getElementById('snote-reorder-notice');if(!e){e=node('div','snote-reorder-notice');e.id='snote-reorder-notice';e.setAttribute('role','status');document.body.append(e);}e.textContent=text;e.hidden=false;clearTimeout(noticeTimer);noticeTimer=setTimeout(()=>{e.hidden=true;},4500);}
@@ -60,6 +60,8 @@
   function stopMotion(){for(const animation of motion.values())animation.cancel();motion.clear();}
   function applyIds(order,animate=false){
    const rows=items(),map=new Map(rows.map(row=>[row.id,row.element])),ids=[...order.filter(id=>map.has(id)),...rows.map(row=>row.id).filter(id=>!order.includes(id))];
+   // An older saved order has no guide yet; introduce it beside Settings once.
+   if(options.section==='sidebar'&&!order.includes('vehicleInspection')&&ids.includes('vehicleInspection')&&ids.includes('settings')){ids.splice(ids.indexOf('vehicleInspection'),1);ids.splice(ids.indexOf('settings'),0,'vehicleInspection');}
    if(ids.join('|')===rows.map(row=>row.id).join('|'))return;
    const moving=animate&&!matchMedia('(prefers-reduced-motion: reduce)').matches,before=new Map();
    if(moving)for(const row of rows)for(const child of row.element.children)before.set(child,child.getBoundingClientRect());

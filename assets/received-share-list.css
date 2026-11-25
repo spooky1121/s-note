@@ -1,6 +1,25 @@
 @media screen{
+ #snote-app #list-screen.snote-received-list-pending{position:relative}
+ #snote-app #list-screen.snote-received-list-pending :is(#list-table,#list-mobile){height:var(--snote-received-list-height,180px);min-height:var(--snote-received-list-height,180px);max-height:var(--snote-received-list-height,180px);overflow:hidden}
+ #snote-app #list-screen.snote-received-list-pending :is(#list-table,#list-mobile,#list-pagination),#snote-app #list-screen.snote-received-list-pending :is(#list-table,#list-mobile,#list-pagination) *{visibility:hidden!important;pointer-events:none}
+ #snote-app #list-screen.snote-received-list-pending #snote-vehicle-count{visibility:hidden;inline-size:var(--snote-received-count-width,20px);min-inline-size:var(--snote-received-count-width,20px);max-inline-size:var(--snote-received-count-width,20px)}
+ #snote-app #list-screen .snote-received-list-loading{position:absolute;top:var(--snote-received-list-top,120px);left:0;right:0;display:flex;align-items:center;justify-content:center;gap:9px;color:#788897;font-size:12px;font-weight:400;pointer-events:none}
+ #snote-app #list-screen .snote-received-list-loading[hidden]{display:none}
+ #snote-app #list-screen .snote-received-list-loading::before{content:"";width:14px;height:14px;border:1.5px solid #dce9ef;border-top-color:#0aa8e7;border-radius:50%;animation:snote-received-list-spin .8s linear infinite}
+ #snote-app #list-screen.snote-received-list-enter :is(#list-table,#list-mobile){animation:snote-received-list-enter .18s ease-out both}
+ @keyframes snote-received-list-spin{to{transform:rotate(360deg)}}
+ @keyframes snote-received-list-enter{from{opacity:0}to{opacity:1}}
  #snote-app #list-screen .snote-received-status{display:inline-flex;align-items:center;flex-wrap:wrap;gap:4px 7px;min-width:0}
  #snote-app #list-screen .snote-received-permission{font-size:10px;font-weight:500;color:#55719b;white-space:nowrap}
  #snote-app #list-screen[data-vehicle-view] :is(#list-mobile,#list-table) .car-thumb>.snote-shared-vehicle-marker--photo{left:0!important;right:auto!important;top:0!important;width:66.6667%!important;height:auto;aspect-ratio:1}
  #snote-app #list-screen[data-vehicle-view] :is(#list-mobile,#list-table) .car-thumb:has(>.snote-shared-vehicle-marker--photo)>.snote-contract-stamp{left:auto;right:6%;top:auto;bottom:10%;z-index:5}
+}
+@media screen and (min-width:761px){
+ /* Reserve the existing completed counter's line box (12px × 1.65, or
+    13px × 1.65 with readable type). Its label can keep its smaller type. */
+ #snote-app #list-screen #list-mobile [data-registration-car-id^="snote-shared:"] .snote-document-count.is-pending{line-height:19.8px}
+ html[data-snote-font-increase="1px"] #snote-app #list-screen #list-mobile [data-registration-car-id^="snote-shared:"] .snote-document-count.is-pending{line-height:21.45px}
+}
+@media screen and (prefers-reduced-motion:reduce){
+ #snote-app #list-screen.snote-received-list-enter :is(#list-table,#list-mobile),#snote-app #list-screen .snote-received-list-loading::before{animation:none}
 }

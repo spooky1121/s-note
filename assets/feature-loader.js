@@ -4,6 +4,7 @@
  const base=new URL('.',document.currentScript.src),pending=new Map(),loaded=new Set(),files=new Map(),attempts=new Map();
  const groups=Object.freeze({
   catalog:['vehicle-catalog.js?v=2.185'],
+  inspection:['vehicle-inspection.js?v=2.234'],
   taxonomyUI:['vehicle-taxonomy-ui.js?v=2.185'],
   taxonomyStore:['vehicle-taxonomy-store.js?v=2.20'],
   companyAssets:['company-assets.js?v=2.192'],

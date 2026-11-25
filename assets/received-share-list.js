@@ -2,7 +2,7 @@
 (()=>{'use strict';if(window.SnoteReceivedVehicleList)return;
  const bridge=()=>window.snoteVehicleShareBridge,UUID=/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i;
  const permissions={read:{label:'읽기',edit:false,delete:false},edit:{label:'수정',edit:true,delete:false},delete:{label:'삭제',edit:false,delete:true},all:{label:'모든 권한',edit:true,delete:true}};
- let account=null,accountActor=null,accountRole='',epoch=0,job=null,last=0,initialized=false,renderFrame=0,searchJob=null,searchOpening=null;const entries=new Map(),visible=new Set(),pendingReads=new Map(),photoCandidates=new Map(),leftGrants=new Map();
+ let account=null,accountActor=null,accountRole='',epoch=0,job=null,last=0,initialized=false,renderFrame=0,searchJob=null,searchOpening=null,presentationReady=false;const entries=new Map(),visible=new Set(),pendingReads=new Map(),photoCandidates=new Map(),leftGrants=new Map(),presentationNodes=new Map();
  const actor=()=>typeof currentUser==='undefined'?null:currentUser,eligible=()=>['dealer','admin'].includes(actor()?.role);
  const listRoute=()=>typeof route==='string'&&route==='buy'&&eligible();
  const context=()=>bridge()?.context?.(),valid=c=>!!c&&bridge()?.current?.(c)===true;
@@ -18,7 +18,24 @@
  function revoke(entry){if(entry?.url)URL.revokeObjectURL(entry.url);if(entry){entry.url=null;for(const[url,source]of photoCandidates)if(source.car.id===entry.car.id){URL.revokeObjectURL(url);photoCandidates.delete(url);}}}
  function clearEntries(){for(const entry of entries.values())revoke(entry);for(const url of photoCandidates.keys())URL.revokeObjectURL(url);photoCandidates.clear();entries.clear();visible.clear();repaint();}
  function repaint(){if(renderFrame)return;renderFrame=requestAnimationFrame(()=>{renderFrame=0;if(listRoute()&&typeof renderCars==='function')renderCars();});}
- function reset(next,who=actor()){account=next;accountActor=who;accountRole=who?.role||'';epoch++;job=null;searchJob=null;searchOpening=null;pendingReads.clear();leftGrants.clear();clearEntries();last=0;initialized=false;}
+ // Reads still run concurrently and authorization changes take effect immediately.
+ // Only their presentation waits: never show the own-only list and then insert
+ // each received car above it as its independent read finishes.
+ function prepare(){const screen=document.getElementById('list-screen');if(!screen)return;const c=scope(),pending=!!c&&listRoute()&&!presentationReady;
+  let status=screen.querySelector('.snote-received-list-loading');
+  if(pending&&!screen.classList.contains('snote-received-list-pending')){
+   const host=[document.getElementById('list-mobile'),document.getElementById('list-table')].find(node=>node&&getComputedStyle(node).display!=='none'),box=host?.getBoundingClientRect(),parent=screen.getBoundingClientRect();
+   screen.style.setProperty('--snote-received-list-height',Math.max(180,box?.height||0)+'px');screen.style.setProperty('--snote-received-list-top',Math.max(0,(box?.top||parent.top)-parent.top)+24+'px');screen.style.setProperty('--snote-received-count-width',(document.getElementById('snote-vehicle-count')?.getBoundingClientRect().width||20)+'px');
+   screen.classList.remove('snote-received-list-enter');screen.classList.add('snote-received-list-pending');screen.setAttribute('aria-busy','true');
+   for(const id of['list-table','list-mobile','list-pagination','snote-vehicle-count']){const node=document.getElementById(id);if(!node)continue;presentationNodes.set(node,{inert:node.getAttribute('inert'),hidden:node.getAttribute('aria-hidden'),live:node.getAttribute('aria-live')});node.inert=true;node.setAttribute('aria-hidden','true');if(id==='snote-vehicle-count')node.setAttribute('aria-live','off');}
+   if(!status){status=document.createElement('div');status.className='snote-received-list-loading';status.setAttribute('role','status');status.setAttribute('aria-live','polite');status.textContent='차량 목록을 불러오는 중…';screen.append(status);}
+  }else if(!pending&&screen.classList.contains('snote-received-list-pending')){
+   screen.classList.remove('snote-received-list-pending');screen.removeAttribute('aria-busy');screen.style.removeProperty('--snote-received-list-height');screen.style.removeProperty('--snote-received-list-top');screen.style.removeProperty('--snote-received-count-width');if(listRoute())screen.classList.add('snote-received-list-enter');
+   for(const[node,attributes]of presentationNodes)for(const[name,value]of[['inert',attributes.inert],['aria-hidden',attributes.hidden],['aria-live',attributes.live]])if(value===null)node.removeAttribute(name);else node.setAttribute(name,value);presentationNodes.clear();
+  }
+  if(status)status.hidden=!pending;
+ }
+ function reset(next,who=actor()){account=next;accountActor=who;accountRole=who?.role||'';epoch++;job=null;searchJob=null;searchOpening=null;presentationReady=false;pendingReads.clear();leftGrants.clear();clearEntries();last=0;initialized=false;}
  function scope(){const c=context();if(!eligible()||!valid(c)){if(account!==null||entries.size||job)reset(null,null);return null;}if(c.key!==account||actor()!==accountActor||actor()?.role!==accountRole)reset(c.key,actor());return c;}
  const has=car=>live()&&!!car&&visible.has(String(car.id))&&entries.get(String(car.id))?.car===car;
  function rows(){return live()?[...entries].filter(([id])=>visible.has(id)).map(([,entry])=>entry.car):[];}
@@ -45,6 +62,7 @@
  }
  function accept(items,run){
   const accepted=new Map(items.map(item=>[idFor(item),item]));let changed=false;run.accepted=accepted;
+  if(presentationReady&&items.some(item=>!sameGrant(entries.get(idFor(item))?.item,item))){presentationReady=false;prepare();}
   for(const[id,entry]of entries)if(!accepted.has(id)||!sameGrant(entry.item,accepted.get(id))){revoke(entry);entries.delete(id);visible.delete(id);changed=true;}
   // This incoming ACK verified the same grant. Keep its row while refreshing the data snapshot.
   for(const item of items){const id=idFor(item),old=entries.get(id);if(old){if(old.item.ownerName!==item.ownerName||!visible.has(id))changed=true;old.item={...item};visible.add(id);}else if(visible.delete(id))changed=true;}if(changed)repaint();
@@ -52,9 +70,9 @@
  // A route visit always verifies incoming grants; only a recently read grant can reuse its snapshot.
  function refresh(force=false,{urgent=false,warm=false}={}){const c=scope();if(!c||!listRoute()&&!warm)return Promise.resolve();
   // Coalesce repeated invalidations: hide immediately, finish current transports, then validate once more.
-  if(job&&force&&!urgent){job.recheck=true;job.blocked=true;pendingReads.clear();clearEntries();return job.completion||job.promise;}
+  if(job&&force&&!urgent){job.recheck=true;job.blocked=true;presentationReady=false;prepare();pendingReads.clear();clearEntries();return job.completion||job.promise;}
   if(job&&!force&&!urgent){job.revalidate?.();return job.completion||job.promise;}if(!force&&!urgent&&Date.now()-last<15000)return Promise.resolve();
-  if(job){epoch++;job=null;}if(force)clearEntries();
+  if(job){epoch++;job=null;}if(force){presentationReady=false;prepare();clearEntries();}
   const run={epoch,key:c.key,fresh:force,promise:null};job=run;initialized=true;
   let progress;const timeout=()=>Object.assign(Error('SHARE_REFRESH_TIMEOUT'),{code:'SHARE_REFRESH_TIMEOUT'});
   const deadline=new Promise((_,reject)=>{run.fail=error=>{run.blocked=true;reject(error);};progress=()=>{clearTimeout(run.timer);run.timer=setTimeout(()=>run.fail(timeout()),12000);};progress();});
@@ -74,13 +92,13 @@
     if(!currentRun(c,run)||run.blocked)return;progress();if(!sameGrant(item,run.accepted.get(id)))continue;
     if(entry)entry.item={...run.accepted.get(id)};
     let changed=false;
-    if(entry){const previous=entries.get(id),sameCar=previous&&JSON.stringify(previous.car)===JSON.stringify(entry.car);changed=!previous||!sameCar||!sameGrant(previous.item,entry.item)||previous.item.ownerName!==entry.item.ownerName||!visible.has(id);if(previous&&sameGrant(previous.item,entry.item)){const photoState={url:previous.url,photoAt:previous.photoAt,photoJob:previous.photoJob,documentGroups:previous.documentGroups,car:sameCar?previous.car:entry.car};Object.assign(previous,entry,photoState);entry=previous;}entries.set(id,entry);visible.add(id);}else{changed=entries.has(id)||visible.has(id);revoke(entries.get(id));entries.delete(id);visible.delete(id);}if(changed)repaint();
+    if(entry){const previous=entries.get(id),sameCar=previous&&JSON.stringify(previous.car)===JSON.stringify(entry.car);changed=!previous||!sameCar||!sameGrant(previous.item,entry.item)||previous.item.ownerName!==entry.item.ownerName||!visible.has(id);if(presentationReady&&(!previous||!sameCar)){presentationReady=false;prepare();}if(previous&&sameGrant(previous.item,entry.item)){const photoState={url:previous.url,photoAt:previous.photoAt,photoJob:previous.photoJob,documentGroups:previous.documentGroups,car:sameCar?previous.car:entry.car};Object.assign(previous,entry,photoState);entry=previous;}entries.set(id,entry);visible.add(id);}else{changed=entries.has(id)||visible.has(id);revoke(entries.get(id));entries.delete(id);visible.delete(id);}if(changed)repaint();
    }};
    do{await Promise.all(Array.from({length:Math.min(6,items.length-cursor)},worker));if(run.revalidation)await run.revalidation;}while(currentRun(c,run)&&!run.blocked&&cursor<items.length);
-   if(currentRun(c,run)&&!run.blocked){run.verified=true;last=Date.now();if(listRoute())scan();}
+   if(currentRun(c,run)&&!run.blocked){run.verified=true;last=Date.now();const reveal=!presentationReady;presentationReady=true;if(reveal)repaint();if(listRoute())scan();}
   };
   run.promise=(async()=>{try{await Promise.race([fetchRows(),deadline]);}
-  catch(error){if(currentRun(c,run)){run.blocked=true;if(error?.code==='SHARE_REFRESH_TIMEOUT')for(const ticket of pendingReads.values())ticket.expired=true;for(const entry of entries.values())revoke(entry);entries.clear();visible.clear();last=error?.code==='SHARE_REFRESH_TIMEOUT'?0:Date.now();repaint();}}
+  catch(error){if(currentRun(c,run)){run.blocked=true;if(error?.code==='SHARE_REFRESH_TIMEOUT')for(const ticket of pendingReads.values())ticket.expired=true;for(const entry of entries.values())revoke(entry);entries.clear();visible.clear();last=error?.code==='SHARE_REFRESH_TIMEOUT'?0:Date.now();presentationReady=true;repaint();}}
   finally{clearTimeout(run.timer);if(job===run){job=null;if(run.recheck&&sameAccount(c))run.next=refresh(true,{warm:true});}}})();run.completion=run.promise.then(()=>run.next);return run.completion;
  }
  function ready(){const c=scope();if(c&&!initialized)void refresh(false,{urgent:true,warm:true});}
@@ -147,13 +165,13 @@
   leftGrants.set(grant.invitationId,Math.max(grant.version,leftGrants.get(grant.invitationId)||0));if(matches(job?.accepted?.get(id)))job.accepted.delete(id);
   const entry=entries.get(id);if(!matches(entry?.item))return false;revoke(entry);entries.delete(id);visible.delete(id);repaint();return true;
  }
- window.SnoteReceivedVehicleList=Object.freeze({rows,has,car:id=>live()&&visible.has(String(id))?entries.get(String(id))?.car||null:null,ownerLabel:car=>has(car)?String(entries.get(car.id).item.ownerName||'공유 딜러'):'',permission:car=>has(car)?entries.get(car.id).access.label:'',documentGroups:car=>has(car)?entries.get(car.id).documentGroups?.slice()??null:null,documentCount:car=>has(car)?entries.get(car.id).documentGroups?.length??null:null,thumbnail,open,forget,searchRows,searchOpen,refresh:()=>refresh(true)});
+ window.SnoteReceivedVehicleList=Object.freeze({prepare,rows,has,car:id=>live()&&visible.has(String(id))?entries.get(String(id))?.car||null:null,ownerLabel:car=>has(car)?String(entries.get(car.id).item.ownerName||'공유 딜러'):'',permission:car=>has(car)?entries.get(car.id).access.label:'',documentGroups:car=>has(car)?entries.get(car.id).documentGroups?.slice()??null:null,documentCount:car=>has(car)?entries.get(car.id).documentGroups?.length??null:null,thumbnail,open,forget,searchRows,searchOpen,refresh:()=>refresh(true)});
  new MutationObserver(scan).observe(document.getElementById('list-screen')||document.body,{subtree:true,childList:true});
- window.addEventListener('snote:route-changed',()=>{visible.clear();repaint();if(listRoute())void refresh(false,{urgent:true});else ready();});
+ window.addEventListener('snote:route-changed',()=>{visible.clear();presentationReady=false;prepare();repaint();if(listRoute())void refresh(false,{urgent:true});else ready();});
  window.addEventListener('snote:sales-data-changed',ready);
  window.addEventListener('snote-vehicle-sharing-updated',()=>void refresh(true,{warm:true}));window.addEventListener('snote-vehicle-changed',()=>void refresh(true,{warm:true}));
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)void refresh(true,{warm:true});});
  // Also recover a ready transition when it happened before this deferred bundle was installed.
  setInterval(()=>{ready();if(!document.hidden&&listRoute())scan();},500);setInterval(()=>{if(!document.hidden&&listRoute())void refresh();},15000);
- window.addEventListener('pagehide',()=>{reset(null,null);observer.disconnect();});ready();
+ window.addEventListener('pagehide',()=>{reset(null,null);observer.disconnect();});prepare();ready();
 })();
