@@ -1,0 +1,58 @@
+/* Paint the official artwork inside existing service-logo boxes only.
+   Paper documents and dealer/company-owned images do not carry this marker. */
+[data-snote-service-brand] { position: relative; }
+html body [data-snote-service-brand] > picture {
+  display: block !important;
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+html body [data-snote-service-brand] > img,
+html body [data-snote-service-brand] > picture > img {
+  display: block !important;
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 100% !important;
+  max-height: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  transform: none !important;
+  translate: none !important;
+  scale: none !important;
+  filter: none !important;
+  mix-blend-mode: normal !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+/* Existing text wordmarks use content height, so reserve their old box before
+   replacing the text with an absolutely positioned image. */
+#operator-login > .wordmark[data-snote-service-brand] {
+  width: 88.84375px;
+  height: 46px;
+  flex: none;
+}
+#operator-app > .sidebar > .wordmark[data-snote-service-brand] { height: 46px; flex: none; }
+html body :is(#operator-login, #operator-app) .wordmark[data-snote-service-brand] > img { object-position: left center !important; }
+/* The recovery page previously displayed a 3:1 raster at 130px wide. */
+html body img.snote-email-recovery-logo[data-snote-service-brand] {
+  position: relative !important;
+  width: 130px !important;
+  height: calc(130px / 3) !important;
+  object-fit: contain;
+  object-position: left center;
+  transform: none;
+  filter: none;
+  mix-blend-mode: normal;
+}
+@media (max-width: 760px) {
+  #operator-app > .sidebar > .wordmark[data-snote-service-brand] { height: 32px; }
+}
