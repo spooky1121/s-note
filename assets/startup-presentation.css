@@ -1,0 +1,28 @@
+/* Opacity/visibility only: the page lays out at its final size before paint. */
+@media screen {
+  html[data-snote-startup="pending"] body {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    animation: none !important;
+    transition: none !important;
+  }
+  html[data-snote-startup="revealing"] body {
+    visibility: visible !important;
+    pointer-events: none !important;
+    animation: snoteStartupReveal 160ms ease-out both !important;
+  }
+  /* If a web font misses the initial deadline, retain one local screen face for
+     this document. A later download can still serve the original print rules. */
+  html[data-snote-startup-fonts="local"] :is(#zc-cloud-gate,#auth-shell,#snote-app,#operator-login,#operator-app,#main-content,.site-header,.snote-email-recovery-shell,#vehicle-overlay,#overlay,#zc182-finance-overlay,#monthly-shell,#income-app),
+  html[data-snote-startup-fonts="local"] :is(#zc-cloud-gate,#auth-shell,#snote-app,#operator-login,#operator-app,#main-content,.site-header,.snote-email-recovery-shell,#vehicle-overlay,#overlay,#zc182-finance-overlay,#monthly-shell,#income-app) * {
+    font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "Segoe UI", Arial, sans-serif !important;
+  }
+  @keyframes snoteStartupReveal { from { opacity: 0; } to { opacity: 1; } }
+}
+@media screen and (prefers-reduced-motion: reduce) {
+  html[data-snote-startup="revealing"] body { animation: none !important; }
+}
+@media print {
+  html[data-snote-startup] body { opacity: 1 !important; visibility: visible !important; pointer-events: auto !important; animation: none !important; }
+}

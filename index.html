@@ -1,7 +1,12 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.226">
+<html lang="ko" data-snote-release="2.227">
 <head>
 <meta charset="utf-8" />
+  <link rel="stylesheet" href="assets/startup-presentation.css?v=2.227" data-snote-startup-style>
+  <script src="assets/startup-presentation.js?v=2.227"></script>
+  <link rel="preload" href="assets/fonts/manrope-variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/noto-sans-kr-variable.woff2" as="font" type="font/woff2" crossorigin>
+
   <script src="assets/service-location.js?v=2.200"></script>
   <script src="assets/account-recovery-entry.js?v=2.203"></script>
   <link rel="stylesheet" href="assets/account-recovery.css?v=2.203">
@@ -2404,7 +2409,7 @@ body:has(#monthly-screen[style*="block"]) #accountant-bar{display:none!important
 <style>
 /* One shared wordmark replaces the former icon and repeated product name. */
 .snote-wordmark{display:block;position:relative;overflow:hidden;width:160px;height:42px;flex:none}
-.snote-wordmark img{position:absolute;top:50%;left:50%;width:200%;max-width:none;height:auto;transform:translate(-50%,-50%)}
+.snote-wordmark img{position:absolute;inset:0;width:100%;max-width:100%;height:100%;object-fit:contain;transform:none}
 .snote-brand-home{display:block;flex:none;max-width:100%;padding:0;border:0;border-radius:9px;background:transparent;color:inherit;line-height:0;cursor:pointer}
 .snote-brand-home:focus-visible{outline:2px solid #3477b3;outline-offset:5px}
 .sidebar .brand,.mobile-drawer-brand{flex-direction:column;align-items:flex-start;gap:6px}
@@ -3217,12 +3222,12 @@ button, input, select, textarea { font-family: inherit; }
 <link rel="stylesheet" href="assets/document-actions.css?v=2.78">
 <link rel="stylesheet" href="assets/document-print.css?v=2.162">
 <link rel="stylesheet" href="assets/vehicle-drawer.css?v=2.78">
-<link rel="stylesheet" href="assets/workspace-refine.css?v=2.85">
+<link rel="stylesheet" href="assets/workspace-refine.css?v=2.227">
 <script src="assets/icon-feedback.js?v=2.178" defer></script>
 <link rel="stylesheet" href="assets/icon-sizing.css?v=2.86">
 <script src="assets/icon-sizing.js?v=2.166" defer></script>
 <script src="assets/action-controls.js?v=2.172" defer></script>
-<script src="assets/readable-type.js?v=2.179" defer></script>
+<script src="assets/readable-type.js?v=2.227" defer></script>
 <link rel="stylesheet" href="assets/mobile-shell.css?v=2.59">
 <link rel="stylesheet" href="assets/mobile-workspace.css?v=2.67">
 <link rel="stylesheet" href="assets/screen-refinement.css?v=2.59">
@@ -3255,11 +3260,12 @@ button, input, select, textarea { font-family: inherit; }
   <link rel="icon" type="image/svg+xml" href="/assets/snote-favicon.svg?v=2.226">
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/snote-apple-touch-icon.png?v=2.226">
   <link rel="manifest" href="/manifest.webmanifest?v=2.226">
+<link rel="stylesheet" href="assets/service-brand.css?v=2.227">
 </head>
 <body class="snote-typography">
 
 
-<div class="auth-shell" id="auth-shell" aria-label="계정 로그인 및 회원가입">
+<div class="auth-shell hidden" id="auth-shell" aria-label="계정 로그인 및 회원가입">
   <div class="auth-layout">
     <div class="auth-story">
       <div class="auth-lockup"><span class="snote-wordmark snote-service-brand" data-snote-service-brand><img src="assets/snote-brand.png" alt="snote" width="1149" height="301" decoding="async"></span></div>
@@ -3283,7 +3289,7 @@ button, input, select, textarea { font-family: inherit; }
 </div>
 <div class="app" id="snote-app">
   <aside class="sidebar">
-    <div class="brand"><button type="button" class="snote-brand-home" aria-label="매입 관리로 이동" onclick="navigate('buy')"><span class="snote-wordmark snote-service-brand snote-spaced-logo" data-snote-service-brand><picture><source data-snote-service-symbol media="(min-width: 761px) and (max-width: 1120px)" srcset="assets/snote-symbol.png"><img src="assets/snote-brand.png" alt="snote" width="1149" height="301" decoding="async"></picture></span></button><div class="branddesc">중고차 매매 관리 시스템</div></div>
+    <div class="brand"><button type="button" class="snote-brand-home" aria-label="매입 관리로 이동" onclick="navigate('buy')"><span class="snote-wordmark snote-service-brand snote-service-logo" data-snote-service-brand><picture><source data-snote-service-symbol media="(min-width: 761px) and (max-width: 1120px)" srcset="assets/snote-symbol.png"><img src="assets/snote-brand.png" alt="snote" width="1149" height="301" decoding="async"></picture></span></button><div class="branddesc">중고차 매매 관리 시스템</div></div>
 
     <nav class="nav" id="desktop-nav"></nav>
     <div class="sidebar-end"><div class="support"><p class="st">간편하고 정확하게.</p><p class="sd">재고부터 매입 · 판매 · 정산까지<br>하나의 전산에서 관리하세요.</p></div></div>
@@ -3346,7 +3352,7 @@ button, input, select, textarea { font-family: inherit; }
 <!-- v1.63 · 모바일 전용 슬라이드인 내비게이션 -->
 <div class="mobile-drawer-backdrop" id="mobile-drawer-backdrop" aria-hidden="true" onclick="closeMobileDrawer()"></div>
 <aside class="mobile-drawer" id="mobile-drawer" role="dialog" aria-modal="true" aria-label="S-NOTE 메뉴" aria-hidden="true" inert>
- <div class="mobile-drawer-header"><div class="mobile-drawer-brand"><button type="button" class="snote-brand-home" aria-label="매입 관리로 이동" onclick="navigate('buy')"><span class="snote-wordmark snote-service-brand snote-spaced-logo" data-snote-service-brand><img src="assets/snote-brand.png" alt="snote" width="1149" height="301" decoding="async"></span></button><small>중고차 매매 관리 시스템</small></div><button type="button" class="mobile-drawer-close" aria-label="메뉴 닫기" onclick="closeMobileDrawer()">×</button></div>
+ <div class="mobile-drawer-header"><div class="mobile-drawer-brand"><button type="button" class="snote-brand-home" aria-label="매입 관리로 이동" onclick="navigate('buy')"><span class="snote-wordmark snote-service-brand snote-service-logo" data-snote-service-brand><img src="assets/snote-brand.png" alt="snote" width="1149" height="301" decoding="async"></span></button><small>중고차 매매 관리 시스템</small></div><button type="button" class="mobile-drawer-close" aria-label="메뉴 닫기" onclick="closeMobileDrawer()">×</button></div>
  <div class="mobile-drawer-body"><div class="mobile-drawer-caption">WORKSPACE</div><nav class="nav mobile-drawer-nav" id="mobile-drawer-nav" aria-label="전체 업무 메뉴"></nav></div>
  <div class="mobile-drawer-footer"><div class="mobile-drawer-user"><span class="mobile-drawer-avatar" id="mobile-drawer-avatar">Z</span><span><strong id="mobile-drawer-name">사용자</strong><small id="mobile-drawer-role">계정</small></span></div><button type="button" class="mobile-drawer-logout" onclick="logout()">로그아웃 →</button></div>
  <span class="snote-sidebar-version" data-snote-version>버전 확인 중</span>
@@ -12341,7 +12347,7 @@ window.zc86Cloud={getAccessToken:async()=>{const client=S.client,user=S.user,com
 <link rel="stylesheet" href="assets/workspace-reorder.css?v=2.136">
 <script src="assets/workspace-order-store.js?v=2.135" defer></script>
 <script src="assets/workspace-reorder.js?v=2.202" defer></script>
-<script src="assets/release-info.js?v=2.226" defer></script>
+<script src="assets/release-info.js?v=2.227" defer></script>
 <link rel="stylesheet" href="assets/encar-id.css?v=2.162">
 <script src="assets/encar-id.js?v=2.184" defer></script>
 <script src="assets/company-purchase.js?v=2.172" defer></script>
@@ -12357,7 +12363,7 @@ window.zc86Cloud={getAccessToken:async()=>{const client=S.client,user=S.user,com
 <script src="assets/purchase-columns.js?v=2.179" defer></script>
 <link rel="stylesheet" href="assets/dealer-finance-rates.css?v=2.122">
 <script src="assets/dealer-finance-rates.js?v=2.172" defer></script>
-<script src="assets/workspace-refine.js?v=2.226" defer></script>
+<script src="assets/workspace-refine.js?v=2.227" defer></script>
 <script src="assets/snote-tutorial.js?v=2.96" defer></script>
 <script src="assets/snote-chatbot.js?v=2.165" defer></script>
 <script src="assets/vehicle-cost-settings.js?v=2.199" defer></script>
@@ -12407,7 +12413,7 @@ window.addEventListener('snote:payment-accounts-changed',()=>{if(typeof contract
 <link rel="stylesheet" href="assets/signup-registration.css?v=2.191">
 <script src="assets/signup-registration.js?v=2.191" defer></script>
 <link rel="stylesheet" href="assets/workspace-soft-theme.css?v=2.204" data-snote-type-scale>
-<link rel="stylesheet" href="assets/workspace-responsive-shell.css?v=2.207" data-snote-type-scale>
+<link rel="stylesheet" href="assets/workspace-responsive-shell.css?v=2.227" data-snote-type-scale>
 <script src="assets/workspace-responsive-shell.js?v=2.207" defer></script>
 <link rel="stylesheet" href="assets/mobile-vehicle-cards.css?v=2.221" data-snote-type-scale>
 <link rel="stylesheet" href="assets/status-menu.css?v=2.224" data-snote-type-scale>
@@ -12417,7 +12423,6 @@ window.addEventListener('snote:payment-accounts-changed',()=>{if(typeof contract
 <link rel="stylesheet" href="assets/dropdown-menu.css?v=2.225" data-snote-type-scale>
 <link rel="stylesheet" href="assets/dropdown-surfaces.css?v=2.225">
 <script src="assets/dropdown-menu.js?v=2.225" defer></script>
-<link rel="stylesheet" href="assets/service-brand.css?v=2.226">
-<script src="assets/service-brand.js?v=2.226" defer></script>
+<script src="assets/service-brand.js?v=2.227" defer></script>
 </body>
 </html>

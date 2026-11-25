@@ -24,11 +24,7 @@
  .snote-weather-live{position:absolute;width:1px;height:1px;margin:-1px;padding:0;border:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
  .snote-weather[data-state=unavailable]{color:#aeb3c0}
  #zc-cloud-banner:empty{display:none!important}
- #snote-app .sidebar .snote-spaced-logo,.mobile-drawer .snote-spaced-logo{width:126px;height:34px}
- .snote-spaced-logo>.snote-logo-s,.snote-spaced-logo>.snote-logo-note{position:absolute;top:0;height:34px;overflow:hidden;display:block}
- .snote-spaced-logo>.snote-logo-s{left:0;width:32px}.snote-spaced-logo>.snote-logo-note{left:38px;width:88px}
- .snote-spaced-logo>.snote-logo-s img,.snote-spaced-logo>.snote-logo-note img{position:absolute;width:240px;max-width:none;height:auto;top:50%;transform:translate(-50%,-50%)}
- .snote-spaced-logo>.snote-logo-s img{left:60px}.snote-spaced-logo>.snote-logo-note img{left:28px}
+ #snote-app .sidebar .snote-service-logo,.mobile-drawer .snote-service-logo{width:126px;height:34px}
  #snote-app .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0}
  #snote-app .stats>.stat{display:grid;grid-template-rows:28px 40px minmax(28px,auto);align-content:start;padding:14px 20px!important;min-width:0;min-height:130px;margin:0;border:0;border-right:1px solid #ececf1;border-bottom:1px solid #ececf1}
  #snote-app .stats>.stat:nth-child(3n){border-right:0}#snote-app .stats>.stat:nth-last-child(-n+3){border-bottom:0}
