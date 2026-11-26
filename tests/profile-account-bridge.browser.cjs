@@ -110,7 +110,7 @@ async function assertCompanyCache(p){
 async function profileAndPhoto(width){
  const f=await setup(width),p=f.page,result=await read(f);await assertCompanyCache(p);assert.equal(result.profile.address,f.profile.profile.company_address);assert.equal(result.profile.user_id,ACTOR);assert.equal(result.avatar.avatar_path,null);assert.equal(await p.evaluate(()=>typeof snoteProfileBridge.changeEmail),'undefined');
  const saved=await p.evaluate(async({profile,expected})=>{return await snoteProfileBridge.save(snoteProfileBridge.context(),expected,{display_name:'새 프로필 이름',company_name:profile.company_name,phone:profile.phone,address:profile.address});},{profile:f.profile.profile,expected:expected(f.profile.profile)});
- await assertCompanyCache(p);assert.equal(saved.profile.display_name,'새 프로필 이름');assert.equal(f.profile.profile.phone,'01012345678');assert.equal(await p.locator('#profile-name').textContent(),'새 프로필 이름 · 딜러');
+ await assertCompanyCache(p);assert.equal(saved.profile.display_name,'새 프로필 이름');assert.equal(f.profile.profile.phone,'01012345678');assert.equal(await p.locator('#profile-name').textContent(),'새 프로필 이름');assert.equal(await p.locator('#profile-role').textContent(),'딜러');
  const photo=await upload(f);assert.match(photo.avatarURL,/^blob:/);assert.equal(photo.avatar.avatar_revision,1);assert.equal(f.profile.uploads.length,1);assert.equal(f.profile.deletes.length,0);assert.equal(await p.locator('#profile-avatar img').count(),1);assert.equal(await p.locator('#profile-avatar img').getAttribute('src'),photo.avatarURL);
  await p.locator('#profile-avatar img').waitFor({state:'visible'});
  const avatarLayout=await p.locator('#profile-avatar').evaluate(host=>{
@@ -118,7 +118,7 @@ async function profileAndPhoto(width){
   const radius=parseFloat(css.borderTopLeftRadius)*(css.borderTopLeftRadius.endsWith('%')?rect.width/100:1);
   return{width:rect.width,height:rect.height,radius,clipped:css.overflow==='hidden',imageFit:getComputedStyle(image).objectFit,afterCalculator:rect.left>=calculator.right,beforeName:rect.right<=name.left,centerDifference:Math.abs(rect.top+rect.height/2-calculator.top-calculator.height/2),overflow:document.documentElement.scrollWidth>innerWidth};
  });
- assert.equal(avatarLayout.width,width<=760?36:40,JSON.stringify(avatarLayout));assert.equal(avatarLayout.width,avatarLayout.height);assert(avatarLayout.radius>=avatarLayout.width/2);assert.equal(avatarLayout.clipped,true);assert.equal(avatarLayout.imageFit,'cover');assert.equal(avatarLayout.afterCalculator,true);assert.equal(avatarLayout.beforeName,true);assert(avatarLayout.centerDifference<1);assert.equal(avatarLayout.overflow,false);
+ assert.equal(avatarLayout.width,width<=760?30:32,JSON.stringify(avatarLayout));assert.equal(avatarLayout.width,avatarLayout.height);assert(avatarLayout.radius>=avatarLayout.width/2);assert.equal(avatarLayout.clipped,true);assert.equal(avatarLayout.imageFit,'cover');assert.equal(avatarLayout.afterCalculator,true);assert.equal(avatarLayout.beforeName,true);assert(avatarLayout.centerDifference<1);assert.equal(avatarLayout.overflow,false);
  console.log('PROFILE_AVATAR_LAYOUT',width,JSON.stringify(avatarLayout));
  await p.locator('.topbar').screenshot({path:'/tmp/snote-v281-topbar-avatar-'+width+'.png'});
  await p.locator('#profile-avatar').click();await p.locator('#snote-profile-menu').waitFor({state:'visible'});await p.keyboard.press('Escape');

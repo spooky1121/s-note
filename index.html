@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.236">
+<html lang="ko" data-snote-release="2.237">
 <head>
 <meta charset="utf-8" />
   <link rel="preload" href="assets/fonts/PretendardVariable.woff2?v=2.233" as="font" type="font/woff2" crossorigin>
@@ -3243,7 +3243,7 @@ button, input, select, textarea { font-family: inherit; }
 <script src="assets/close-controls.js?v=2.214" defer></script>
 <link rel="stylesheet" href="assets/recycle-bin.css?v=2.77">
 <link rel="stylesheet" href="assets/profile-editor.css?v=2.82">
-<link rel="stylesheet" href="assets/profile-compact.css?v=2.89">
+<link rel="stylesheet" href="assets/profile-compact.css?v=2.237">
 <link rel="stylesheet" href="assets/operator-entry.css?v=2.85">
 <link rel="stylesheet" href="assets/snote-chatbot.css?v=2.233">
 <link rel="stylesheet" href="assets/snote-tutorial.css?v=2.233">
@@ -3260,8 +3260,8 @@ button, input, select, textarea { font-family: inherit; }
   <link rel="icon" type="image/svg+xml" href="/assets/snote-favicon.svg?v=2.226">
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/snote-apple-touch-icon.png?v=2.226">
   <link rel="manifest" href="/manifest.webmanifest?v=2.226">
-<link rel="stylesheet" href="assets/service-brand.css?v=2.232">
-<link rel="stylesheet" href="assets/unified-search.css?v=2.234" data-snote-type-scale>
+<link rel="stylesheet" href="assets/service-brand.css?v=2.237">
+<link rel="stylesheet" href="assets/unified-search.css?v=2.237" data-snote-type-scale>
 </head>
 <body class="snote-typography">
 
@@ -3297,10 +3297,10 @@ button, input, select, textarea { font-family: inherit; }
   <span class="snote-sidebar-version" data-snote-version>버전 확인 중</span>
 </aside>
   <div class="main">
-    <header class="topbar"><div class="topbar-left"><button type="button" class="mobile-menu-trigger" id="mobile-menu-trigger" aria-label="메뉴 열기" aria-controls="mobile-drawer" aria-expanded="false" onclick="toggleMobileDrawer()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><div class="crumb"><span id="breadcrumb" hidden>매입 관리</span><p class="eyebrow" id="eyebrow">OVERVIEW</p><h1 id="screen-title">차량 매입 관리</h1></div></div><form id="snote-global-search" class="search-field" role="search" data-snote-unified-search autocomplete="off"><button class="snote-unified-submit" type="submit" aria-label="통합검색 실행" title="통합검색"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg></button><input id="snote-global-query" type="search" aria-label="통합검색" aria-controls="snote-global-results" aria-expanded="false" placeholder="차량 · 고객 · 메뉴 통합검색" maxlength="120" autocomplete="off"><div id="snote-global-results" class="snote-unified-results" data-unified-results role="region" aria-label="통합검색 결과" aria-live="polite" hidden></div></form><div class="topright"><button id="snote-weather" type="button" class="snote-weather" aria-label="날씨 새로고침" title="날씨 새로고침"><span data-weather-icon aria-hidden="true">☁</span><span data-weather-temp>—°</span></button>
+    <header class="topbar"><div class="topbar-left"><button type="button" class="mobile-menu-trigger" id="mobile-menu-trigger" aria-label="메뉴 열기" aria-controls="mobile-drawer" aria-expanded="false" onclick="toggleMobileDrawer()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><div class="crumb"><span id="breadcrumb" hidden>매입 관리</span><p class="eyebrow" id="eyebrow">OVERVIEW</p><h1 id="screen-title">차량 매입 관리</h1></div></div><form id="snote-global-search" class="search-field" role="search" data-snote-unified-search autocomplete="off"><input id="snote-global-query" type="search" aria-label="통합검색" aria-controls="snote-global-results" aria-expanded="false" placeholder="차량 · 고객 · 메뉴 통합검색" maxlength="120" autocomplete="off"><button class="snote-unified-submit" type="submit" aria-label="통합검색 실행" title="통합검색"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg></button><div id="snote-global-results" class="snote-unified-results" data-unified-results role="region" aria-label="통합검색 결과" aria-live="polite" hidden></div></form><div class="topright"><button id="snote-weather" type="button" class="snote-weather" aria-label="날씨 새로고침" title="날씨 새로고침"><span data-weather-icon aria-hidden="true">☁</span><span data-weather-temp>—°</span></button>
       <button type="button" id="snote-calculator-trigger" aria-label="계산기 열기" title="계산기" aria-haspopup="dialog" aria-controls="snote-calculator-panel" aria-expanded="false" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="2.75" width="14" height="18.5" rx="3"/><rect x="8" y="6" width="8" height="3" rx=".6"/><path d="M8.5 12.5h.01m3.49 0h.01m3.49 0h.01m-7.01 3h.01m3.49 0h.01m3.49 0h.01m-7.01 3h3.5m3.5-3v3"/></svg></button>
       <div class="snote-profile-dropdown" id="snote-profile-dropdown">
-        <button type="button" class="profile topbar-profile" id="snote-profile-trigger" aria-haspopup="menu" aria-controls="snote-profile-menu" aria-expanded="false" onclick="snoteToggleProfileMenu()"><span id="profile-avatar" aria-hidden="true"></span><span class="profile-detail"><span class="pname" id="profile-name">내 프로필</span><span id="profile-role" hidden></span></span><svg class="snote-profile-chevron" viewBox="0 0 20 20" aria-hidden="true"><path d="m5 8 5 5 5-5"/></svg></button>
+        <button type="button" class="profile topbar-profile" id="snote-profile-trigger" aria-haspopup="menu" aria-controls="snote-profile-menu" aria-expanded="false" onclick="snoteToggleProfileMenu()"><span id="profile-avatar" aria-hidden="true"></span><span class="profile-detail"><span class="pname" id="profile-name">내 프로필</span><span id="profile-role"></span></span><svg class="snote-profile-chevron" viewBox="0 0 20 20" aria-hidden="true"><path d="m5 8 5 5 5-5"/></svg></button>
         <div class="snote-profile-menu" id="snote-profile-menu" role="menu" aria-labelledby="snote-profile-trigger" hidden>
           <button type="button" role="menuitem" tabindex="-1" onclick="snoteOpenProfileSettings()">프로필 설정</button>
           <button type="button" role="menuitem" tabindex="-1" id="snote-profile-notifications" onclick="snoteCloseProfileMenu(true);window.snoteOpenNotifications?.()">알림</button>
@@ -4137,6 +4137,12 @@ addEventListener('hashchange',snoteRestoreNavigation);
 /* v1.81: visual indicator for the current dealer dashboard authorization. */
 let zcDashboardUnlocked=false;
 const $=id=>document.getElementById(id);
+function snotePaintProfileIdentity(name,role){
+ const label=role==='admin'?'관리자':role==='accountant'?'경리':'딜러';
+ const nameElement=$('profile-name'),roleElement=$('profile-role');
+ if(nameElement){nameElement.textContent=name||'내 프로필';nameElement.title=name||'내 프로필';}
+ if(roleElement)roleElement.textContent=label;
+}
 function snoteCloseProfileMenu(restoreFocus=false){
  const trigger=$('snote-profile-trigger'),menu=$('snote-profile-menu');
  if(!trigger||!menu)return;
@@ -8124,7 +8130,7 @@ async function enterWorkspace(account,options={}){
  window.SnoteDashboardDisplay?.prepare?.(account);
  await Promise.all([window.SnoteFinanceLock?.load(account),window.SnoteIdleSession?.load(account)]);check();
  const accounts=await getAllAccounts();check();dealerAccounts=accounts;sessionStorage.setItem('s-note-office-v12-session',account.username);loadCarsForUser();loadCovers();snoteWorkspaceSalesReady=true;
- $('auth-shell').classList.add('hidden');$('profile-name').textContent=account.name+(isAccountant()?' · 경리':isSnoteAdmin()?' · 관리자':' · 딜러');$('profile-role').textContent=isAccountant()?'재고금융 및 월정산 관리':isSnoteAdmin()?'상사 관리자 · 전체 업무':account.company;$('profile-avatar').textContent=account.name.slice(0,1);
+ $('auth-shell').classList.add('hidden');snotePaintProfileIdentity(account.name,isAccountant()?'accountant':isSnoteAdmin()?'admin':'dealer');$('profile-avatar').textContent=account.name.slice(0,1);
  if(!options.deferMedia){if(fileDB){await refreshMedia();check();}else {mediaByCar={};modelPhotos=[];}}
  buildStats();snoteEnterWorkspaceRoute();window.snoteMonthlyWorkbookRefresh?.();snote185LoadDashboardDisplay(account);
 }
@@ -10523,7 +10529,7 @@ function snoteIdleClearPrivateUi(){
  call(()=>window.snote250ReceiptSignature?.clear?.());call(()=>window.snote215ReceiptSignature?.(null));
  for(const id of ['contract-overlay','quote-overlay','zc76-receipt-overlay','zc72-sale-modal','vehicle-overlay','overlay']){const host=byId(id);if(!host)continue;host.classList.remove('open');host.setAttribute('aria-hidden','true');if(id==='zc76-receipt-overlay'||id==='zc72-sale-modal')host.hidden=true;for(const el of host.querySelectorAll('input,textarea')){if(el.type!=='button'&&el.type!=='submit'){el.value='';if(el.type==='checkbox')el.checked=false;}}for(const el of host.querySelectorAll('img'))el.removeAttribute('src');}
  for(const dialog of document.querySelectorAll('dialog[open]'))call(()=>dialog.close());
- for(const id of ['alt-content','list-table','list-mobile','list-pagination','stats','dashboard-analytics'])byId(id)?.replaceChildren();byId('vehicle-title')?.replaceChildren();for(const id of ['profile-name','profile-role','mobile-drawer-name','mobile-drawer-role','zc86-account','zc86-company-name'])byId(id)?.replaceChildren();if(byId('list-query'))byId('list-query').value='';
+ for(const id of ['alt-content','list-table','list-mobile','list-pagination','stats','dashboard-analytics'])byId(id)?.replaceChildren();byId('vehicle-title')?.replaceChildren();for(const id of ['profile-name','profile-role','mobile-drawer-name','mobile-drawer-role','zc86-account','zc86-company-name'])byId(id)?.replaceChildren();byId('profile-name')?.removeAttribute('title');if(byId('list-query'))byId('list-query').value='';
  cars=[];covers={};mediaByCar={};modelPhotos=[];
  call(()=>modelPhotoUrls.forEach(url=>URL.revokeObjectURL(url)));modelPhotoUrls=[];call(()=>mediaObjectUrls.forEach(url=>URL.revokeObjectURL(url)));mediaObjectUrls=[];
  call(()=>zc80DismissUnlock(false));call(()=>zc80SensitiveLock());call(()=>closeDashboardGate());zcDashboardGateGranted=false;zcDashboardUnlocked=false;
@@ -11555,7 +11561,7 @@ async function snoteSaveCompanyProfile(event){
   if(currentUser){currentUser.company=S.company.name;currentUser.name=data.admin.display_name;currentUser.phone=data.admin.phone;}
   for(const account of dealerAccounts){account.company=S.company.name;if(account.username===ownerAlias(userId)){account.name=data.admin.display_name;account.phone=data.admin.phone;}}
   byId('zc86-company-name').textContent=S.company.name;byId('zc86-account').textContent=data.admin.display_name;
-  byId('profile-name').textContent=data.admin.display_name+' · 관리자';byId('profile-avatar').textContent=data.admin.display_name.slice(0,1);
+  snotePaintProfileIdentity(data.admin.display_name,'admin');byId('profile-avatar').textContent=data.admin.display_name.slice(0,1);
   snoteFillCompanyProfile(data.company,data.admin);form.dataset.dirty='false';
   if(typeof snote95UpdateDocumentCompany==='function')snote95UpdateDocumentCompany();
   snoteCompanyProfileStatus('상사정보를 저장했습니다.','success');
@@ -11813,7 +11819,7 @@ async function snote90RefreshMembers(){
    try{const {error}=await client.rpc('snote90_admin_update_name',{p_target:m.user_id,p_display_name:name,p_company_name:null});if(!current())return;if(error)throw error;
     const mm=S.members.find(x=>x.user_id===m.user_id);if(mm)mm.display_name=name;
     const alias=ownerAlias(m.user_id),account=dealerAccounts.find(a=>a.username===alias);if(account)account.name=name;
-    if(m.user_id===S.user.id){currentUser.name=name;byId('zc86-account').textContent=name;byId('profile-name').textContent=name+' · 관리자'}
+    if(m.user_id===S.user.id){currentUser.name=name;byId('zc86-account').textContent=name;snotePaintProfileIdentity(name,'admin')}
     renderCars();renderAccountantBar();window.snoteNotify('직원 이름 저장 완료',{tone:'success',isCurrent:current});
    }catch(e){if(current())window.snoteAlert('이름 변경 실패: '+errMsg(e),{isCurrent:current})}
   });const remove=document.createElement('button');remove.type='button';remove.className='snote90-danger';remove.dataset.settingsSymbol='minus';remove.setAttribute('aria-label','직원 삭제');remove.textContent='−';remove.disabled=m.user_id===S.user.id||m.role==='admin'||!m.active;remove.onclick=async()=>{const client=S.client,user=S.user,company=S.company?.id,current=snote253MessageCurrent(()=>S.ready&&S.client===client&&S.user===user&&S.company?.id===company&&isSnoteAdmin()&&remove.isConnected&&m.user_id!==user?.id&&m.role!=='admin'&&m.active);if(!await window.snoteConfirm((m.display_name||'직원')+'님의 접근을 비활성화할까요? 기존 차량과 기록은 보존합니다.',{isCurrent:current})||!current())return;remove.disabled=true;try{const result=await S.client.rpc('zc_manage_member',{p_target:m.user_id,p_role:m.role,p_active:false});if(result.error)throw result.error;if(!current())return;const member=S.members.find(x=>x.user_id===m.user_id);if(member)member.active=false;await snote90RefreshMembers();}catch(e){if(current()){window.snoteAlert('직원 삭제 실패: '+errMsg(e),{isCurrent:current});remove.disabled=false;}}};row.append(label,role,save,remove);host.appendChild(row);
@@ -12042,9 +12048,7 @@ function snoteProfileApply(context,profile){
  if(currentUser){currentUser.name=profile.display_name;currentUser.company=profile.company_name;if(typeof profile.phone==='string')currentUser.phone=profile.phone;}
  const companyAccounts=new Set(S.members.filter(member=>member.company_id===context.companyId).map(member=>ownerAlias(member.user_id)));
  for(const account of dealerAccounts){if(companyAccounts.has(account.username))account.company=profile.company_name;if(account.username===ownerAlias(context.userId)){account.name=profile.display_name;if(typeof profile.phone==='string')account.phone=profile.phone;}}
- const suffix=profile.role==='admin'?'관리자':profile.role==='accountant'?'경리':'딜러';
- byId('profile-name').textContent=profile.display_name+' · '+suffix;snoteProfilePaintAvatar(context);
- byId('profile-role').textContent=profile.role==='admin'?'상사 관리자 · 전체 업무':profile.role==='accountant'?'재고금융 및 월정산 관리':profile.company_name;
+ snotePaintProfileIdentity(profile.display_name,profile.role);snoteProfilePaintAvatar(context);
  byId('zc86-company-name').textContent=profile.company_name;byId('zc86-account').textContent=profile.display_name;
  if(typeof snote95UpdateDocumentCompany==='function')snote95UpdateDocumentCompany();
 }
@@ -12461,7 +12465,7 @@ window.zc86Cloud={getAccessToken:async()=>{const client=S.client,user=S.user,com
 <script src="assets/workspace-order-store.js?v=2.135" defer></script>
 <script src="assets/workspace-reorder.js?v=2.234" defer></script>
 <script src="assets/vehicle-inspection-route.js?v=2.236" defer></script>
-<script src="assets/release-info.js?v=2.236" defer></script>
+<script src="assets/release-info.js?v=2.237" defer></script>
 <link rel="stylesheet" href="assets/encar-id.css?v=2.162">
 <script src="assets/encar-id.js?v=2.184" defer></script>
 <script src="assets/company-purchase.js?v=2.172" defer></script>
@@ -12527,7 +12531,7 @@ window.addEventListener('snote:payment-accounts-changed',()=>{if(typeof contract
 <link rel="stylesheet" href="assets/signup-registration.css?v=2.191">
 <script src="assets/signup-registration.js?v=2.191" defer></script>
 <link rel="stylesheet" href="assets/workspace-soft-theme.css?v=2.204" data-snote-type-scale>
-<link rel="stylesheet" href="assets/workspace-responsive-shell.css?v=2.228" data-snote-type-scale>
+<link rel="stylesheet" href="assets/workspace-responsive-shell.css?v=2.237" data-snote-type-scale>
 <script src="assets/workspace-responsive-shell.js?v=2.207" defer></script>
 <link rel="stylesheet" href="assets/mobile-vehicle-cards.css?v=2.221" data-snote-type-scale>
 <link rel="stylesheet" href="assets/status-menu.css?v=2.224" data-snote-type-scale>
