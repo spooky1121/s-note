@@ -100,3 +100,40 @@
  .snote-info-table tr[data-info-source=staff] .snote-info-name{color:#426b87}
  .snote-info-readonly{display:inline-flex;align-items:center;min-height:27px;padding:3px 6px;border:1px solid #e6edf3;border-radius:6px;background:#f8fbfd;color:#8a9dad;font-size:10.5px;white-space:nowrap}
 }
+/* Native cells keep their DOM identity through acknowledged background saves. */
+@media screen{
+ #snote-accountant-information .snote-info-table{table-layout:fixed}
+ #snote-accountant-information .snote-info-table td{padding:7px 10px;vertical-align:top}
+ #snote-accountant-information .snote-info-table .snote-info-actions{width:112px}
+ #snote-accountant-information .snote-info-cell{min-width:0;width:100%;border-radius:6px}
+ #snote-accountant-information .snote-info-cell>input,#snote-accountant-information .snote-info-cell>select,#snote-accountant-information .snote-info-cell>textarea{box-sizing:border-box;display:block;width:100%;min-width:0;min-height:34px;margin:0;padding:6px 7px;border:1px solid transparent;border-radius:6px;background:transparent;color:#43576b;font-family:inherit;font-size:12px;line-height:20px;box-shadow:none;transition:border-color .14s,background-color .14s}
+ #snote-accountant-information .snote-info-cell>textarea{max-height:160px;resize:vertical;white-space:pre-wrap}
+ #snote-accountant-information .snote-info-cell>select{padding-right:25px}
+ #snote-accountant-information .snote-info-cell:hover{background:#f8fafc}
+ #snote-accountant-information .snote-info-cell>:focus{outline:2px solid #c1e6fb;outline-offset:0;border-color:#8dcbea;background:#fff}
+ #snote-accountant-information .snote-info-cell>[aria-invalid=true]{border-color:#dc929c;background:#fff9f9}
+ #snote-accountant-information .snote-info-name .snote-info-cell>input{font-weight:550;color:#405a70}
+ #snote-accountant-information [data-info-new-row=true]{animation:snoteInfoRowReveal .2s ease-out both}
+ @keyframes snoteInfoRowReveal{from{opacity:0}to{opacity:1}}
+ #snote-accountant-information .snote-info-actions{white-space:normal;text-align:right}
+ #snote-accountant-information .snote-info-row-status{display:block;min-height:16px;font-size:10px;line-height:16px;white-space:nowrap;color:#8b9ca9}
+ #snote-accountant-information [data-info-save-state=saving] .snote-info-row-status{color:#087cb6}
+ #snote-accountant-information [data-info-save-state=saved] .snote-info-row-status{color:#43846d}
+ #snote-accountant-information :is([data-info-save-state=error],[data-info-save-state=conflict],[data-info-save-state=invalid]) .snote-info-row-status{color:#b75663}
+ #snote-accountant-information :is(.snote-info-inline-retry,.snote-info-inline-cancel){min-width:26px;min-height:27px;margin:0;padding:3px 5px;border:0;border-radius:5px;background:transparent;color:#7592a6;font-family:inherit;font-size:10px;line-height:20px;cursor:pointer}
+ #snote-accountant-information .snote-info-inline-cancel{font-size:18px;color:#94a3af}
+ #snote-accountant-information :is(.snote-info-inline-retry,.snote-info-inline-cancel):hover{background:#f0f6fa}
+ #snote-accountant-information .snote-info-work-note{margin:0 0 12px;color:#8b99a5;font-size:11px;line-height:1.6}
+}
+@media screen and (max-width:600px){
+ #snote-accountant-information .snote-info-table tbody tr{position:relative;grid-template-columns:minmax(0,1fr) 92px;gap:4px 8px;padding:10px}
+ #snote-accountant-information .snote-info-table tbody td{padding:0}
+ #snote-accountant-information .snote-info-table tbody td:not(.snote-info-actions){display:flex;align-items:center;gap:6px}
+ #snote-accountant-information .snote-info-table tbody td::before{flex:none;width:64px;margin:0;font-size:10px}
+ #snote-accountant-information .snote-info-table tbody .snote-info-name::before{display:none}
+ #snote-accountant-information .snote-info-table tbody .snote-info-actions{width:92px;grid-column:2;grid-row:1;padding:0}
+ #snote-accountant-information .snote-info-cell>input,#snote-accountant-information .snote-info-cell>select,#snote-accountant-information .snote-info-cell>textarea{min-height:36px;padding:6px;font-size:16px;line-height:22px}
+ #snote-accountant-information .snote-info-table tbody .snote-info-name{grid-column:1;grid-row:1}
+ #snote-accountant-information .snote-info-work-note{font-size:10.5px}
+}
+@media screen and (prefers-reduced-motion:reduce){#snote-accountant-information [data-info-new-row=true]{animation:none}#snote-accountant-information .snote-info-cell>*{transition:none}}

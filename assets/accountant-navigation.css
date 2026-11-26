@@ -24,6 +24,10 @@
  .snote-acct-page-tabs button.active{border-color:#e5e9ee;background:#fff;color:#20394c;box-shadow:0 1px 3px #233a4b08}
  .snote-acct-page-tabs button:focus-visible,.snote-acct-basic-link:focus-visible{outline:3px solid #a6d8f5;outline-offset:2px}
  .snote-acct-basic-page{min-width:0;padding:0}
+ .snote-acct-lookup-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+ .snote-acct-lookup-panel{display:flex;flex-direction:column;min-width:0;min-height:310px;padding:22px;border:1px solid #e8edf2;border-radius:14px;background:#fff}
+ #snote-app .snote-acct-lookup-description{margin:0;color:#8793a0;font-size:12px;line-height:1.7}
+ #snote-app .snote-acct-lookup-placeholder{display:grid;place-items:center;flex:1;margin:20px 0 0;min-height:160px;border-radius:10px;background:#fafbfc;color:#97a2ad;font-size:12px}
  .snote-acct-basic-head{display:flex;align-items:center;gap:9px;margin:0 0 7px;color:#263f51}
  .snote-acct-basic-head>svg{width:20px;height:20px;flex:none}
  #snote-app .snote-acct-basic-head h2{margin:0;font-size:16px;line-height:1.5;font-weight:650}
@@ -51,6 +55,8 @@
  #snote-app #desktop-nav[data-accountant-navigation=true] .snote-acct-nav-children button.active::before{background:currentColor}
 }
 @media screen and (max-width:760px){
+ .snote-acct-lookup-grid{grid-template-columns:1fr;gap:12px}
+ .snote-acct-lookup-panel{min-height:250px;padding:17px}
  #mobile-drawer-nav[data-accountant-navigation=true] button{min-height:43px;padding:10px 12px;font-size:12px}
  #mobile-drawer-nav[data-accountant-navigation=true] .snote-acct-nav-children{margin-left:20px}
  #mobile-drawer-nav[data-accountant-navigation=true] .snote-acct-nav-children button{min-height:38px;font-size:12px;padding:8px 10px}

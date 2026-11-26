@@ -15,7 +15,7 @@
   inventoryFinance:freeze({label:'재고금융',icon:'wallet'}),
   prestock:freeze({label:'재고금융',icon:'wallet'}),
   acctLookup:freeze({label:'조회',icon:'search'}),
-  acctDealerIncome:freeze({label:'딜러소득',icon:'income'}),
+  acctDealerIncome:freeze({label:'직원 사업소득',icon:'income'}),
   monthly:freeze({label:'운영정산',icon:'calendar'}),
   acctInfo:freeze({label:'정보',icon:'info'}),
   acctAccounts:freeze({label:'계좌',icon:'account'}),
@@ -133,6 +133,15 @@
  function mountPage(host,page,{members,ready=false,navigate}={}){
   if(!(host instanceof Element)||!basicPages.includes(page))return false;
   const info=content[page],section=node('section','snote-acct-basic-page');section.dataset.accountantPage=page;section.setAttribute('aria-label',label(page));
+  if(page==='acctLookup'){
+   const grid=node('div','snote-acct-lookup-grid');
+   for(const [kind,title,description] of [['vehicle','자동차 원부조회','차량의 등록·권리 관계를 확인합니다.'],['business','사업자 등록조회','사업자의 등록 상태를 확인합니다.']]){
+    const panel=node('section','snote-acct-lookup-panel'),heading=node('div','snote-acct-basic-head');panel.dataset.lookupKind=kind;
+    heading.append(icon(kind==='vehicle'?'car':'receipt'),node('h2','',title));
+    panel.append(heading,node('p','snote-acct-lookup-description',description),node('p','snote-acct-lookup-placeholder','조회 연동 준비 중'));grid.append(panel);
+   }
+   section.append(grid);host.replaceChildren(section);return true;
+  }
   if(page==='acctPhones'||page==='acctStaff')memberTable(section,page,ready===true?members:undefined);
   else{const empty=node('div','snote-acct-basic-state');empty.append(icon(definitions[page].icon),node('p','',info.empty));section.append(empty);}
   if(info.page&&typeof navigate==='function'){const link=node('button','snote-acct-basic-link',info.link);link.type='button';link.dataset.accountantLink=info.page;link.append(icon('arrow'));link.addEventListener('click',()=>navigate(info.page));section.append(link);}
