@@ -66,16 +66,28 @@ test('cache eviction bounds the number of retained private months',async t=>{
  const f=fixture(t);for(let i=1;i<=7;i++)await f.store.refresh({month:'2026-'+String(i).padStart(2,'0')});await f.store.refresh({month:'2026-01'});assert.equal(f.reads.length,8);
 });
 test('unavailable, demo, wrong-role and incomplete scopes never send a request or create fake local records',async t=>{
- const f=fixture(t);for(const context of[null,{...f.context,ready:false},{...f.context,role:'accountant'},{...f.context,actorId:'local-demo'},{...f.context,companyId:''}]){
+ const f=fixture(t),base={...f.context};for(const context of[null,{...base,ready:false},{...base,role:'operator'},{...base,actorId:'local-demo'},{...base,companyId:''}]){
   f.context=context;assert.equal((await f.store.refresh()).ok,false);assert.equal(f.store.snapshot().key,null);assert.deepEqual(f.store.snapshot().items,[]);
  }assert.equal(f.reads.length,0);assert.equal(f.saves.length,0);
 });
 test('logout, same-key owner/company changes and inactive routes discard pending private results',async t=>{
- for(const change of['logout','owner','company','route']){
+ for(const change of['logout','owner','company','role','route']){
   const f=fixture(t),gate=deferred(),began=deferred();f.add(stored());f.onRead=async(c,m)=>{const result=f.envelope(c,m);began.resolve();await gate.promise;return result;};const pending=f.store.refresh({month:'2026-11'});await began.promise;
-  if(change==='logout')f.context=null;else if(change==='owner')f.context={...f.context,actorId:OTHER};else if(change==='company')f.context={...f.context,companyId:COMPANY_B};else f.active=false;
+  if(change==='logout')f.context=null;else if(change==='owner')f.context={...f.context,actorId:OTHER};else if(change==='company')f.context={...f.context,companyId:COMPANY_B};else if(change==='role')f.context={...f.context,role:'admin'};else f.active=false;
   assert.deepEqual(f.store.snapshot().items,[]);gate.resolve();assert.equal((await pending).error.code,'SCHEDULE_STALE');assert.deepEqual(f.store.snapshot().items,[]);
  }
+});
+test('verified accountant schedules use acknowledged CRUD and retain owner/company isolation',async t=>{
+ const f=fixture(t);f.context={...f.context,role:'accountant'};
+ assert((await f.store.refresh({month:'2026-11'})).ok);
+ const draft={...API.newEvent({eventDate:'2026-11-23'}),title:'가상 경리 일정'};
+ const saved=await f.store.upsert(draft);assert(saved.ok);assert.equal(saved.event.revision,1);assert.equal(f.saves[0].context.role,'accountant');
+ const changed=await f.store.upsert({...saved.event,completed:true});assert(changed.ok);assert.equal(changed.event.revision,2);assert.equal(f.store.snapshot().items[0].completed,true);
+ f.context={...f.context,actorId:OTHER};assert.deepEqual(f.store.snapshot().items,[]);assert((await f.store.refresh({month:'2026-11'})).ok);assert.deepEqual(f.store.snapshot().items,[]);
+ assert.equal((await f.store.remove({id:draft.id,revision:2})).ok,false,'Another verified accountant cannot delete an event outside its owner scope');
+ f.context={...f.context,actorId:OWNER,companyId:COMPANY_B};assert((await f.store.refresh({month:'2026-11'})).ok);assert.deepEqual(f.store.snapshot().items,[]);
+ f.context={...f.context,companyId:COMPANY};assert((await f.store.refresh({month:'2026-11'})).ok);assert.equal(f.store.snapshot().items[0].id,draft.id);
+ assert((await f.store.remove({id:draft.id,revision:2})).ok);assert.deepEqual(f.store.snapshot().items,[]);
 });
 test('server scope denial latches unavailable/null-key across resets until a fresh verified scope exists',async t=>{
  const f=fixture(t);f.add(stored());await f.store.refresh({month:'2026-11'});f.onRead=async()=>{throw{code:'FORBIDDEN'};};assert.equal((await f.store.refresh({force:true})).error.code,'SCHEDULE_CONTEXT_CHANGED');

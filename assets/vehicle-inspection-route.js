@@ -7,7 +7,7 @@
  function context(){
   if(host.hidden||app.hidden||app.inert||app.getAttribute('aria-hidden')==='true')return null;
   const bridge=window.snoteCompanyPurchaseBridge;
-  try{const value=bridge?.context?.();return value?.ready===true&&['admin','dealer','accountant'].includes(value.role)&&bridge.current(value)===true?value:null;}catch{return null;}
+  try{const value=bridge?.context?.();return value?.ready===true&&value.role==='dealer'&&bridge.current(value)===true?value:null;}catch{return null;}
  }
  const current=expected=>{const now=context();return !!now&&now.key===expected?.key&&now.userId===expected.userId&&now.companyId===expected.companyId&&now.role===expected.role;};
  const scope=value=>JSON.stringify([value.companyId,value.userId,value.role]);

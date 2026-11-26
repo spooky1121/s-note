@@ -1,4 +1,4 @@
-/* Owner-scoped dashboard. The bridge supplies verified amounts; this view never reads or writes storage. */
+/* Scoped dashboard. Owner amounts and accountant workflow counts are separate projections. */
 (function(root,factory){
  'use strict';
  const calendar=typeof module==='object'&&module.exports?require('./sales-overview.js'):root?.SnoteSalesOverviewModel;
@@ -27,7 +27,7 @@
  function cancelAnimations(bag){for(const animation of bag)animation.cancel();bag.clear();}
  function resetDisclosures(){kpisExpanded=false;settlementExpanded=false;kpiTransition++;settlementTransition++;cancelAnimations(kpiAnimations);cancelAnimations(settlementAnimations);}
  function animate(item,frames,options,bag){if(reducedMotion.matches||typeof item.animate!=='function')return null;const animation=item.animate(frames,options);bag.add(animation);animation.finished.then(()=>bag.delete(animation),()=>bag.delete(animation));return animation;}
- function clear(){resetDisclosures();schedulerController?.deactivate?.();host.hidden=true;host.replaceChildren();paintedKey=null;signature='';}
+ function clear(){resetDisclosures();schedulerController?.deactivate?.();host.hidden=true;host.replaceChildren();delete host.dataset.mode;paintedKey=null;signature='';}
  function state(text,{loading=false,locked=false,key=null}={}){
   cancelAnimations(kpiAnimations);cancelAnimations(settlementAnimations);kpiTransition++;settlementTransition++;
   host.replaceChildren();host.dataset.state=locked?'locked':loading?'loading':'unavailable';host.setAttribute('aria-busy',String(loading));signature='';
@@ -143,12 +143,35 @@
   const schedule=scheduler(insights);
   if(mobile.matches)host.append(schedule,kpis);else host.append(kpis,schedule);requestKpiFit();
  }
+ function renderAccountant(data,key){
+  cancelAnimations(kpiAnimations);cancelAnimations(settlementAnimations);kpiTransition++;settlementTransition++;
+  host.replaceChildren();host.dataset.state='ready';host.setAttribute('aria-busy','false');
+  const summary=node('section',null,'snote-accountant-summary');summary.setAttribute('role','group');summary.setAttribute('aria-label','상사 업무 현황');
+  for(const[field,label]of [['totalCount','상사 차량'],['inventoryCount','보유 차량'],['contractCount','계약 진행'],['monthPurchaseCount','이번 달 매입']]){
+   const card=node('article',null,'snote-accountant-count');card.dataset.workCount=field;
+   const value=node('div',null,'snote-accountant-count-value');value.append(node('strong',number(data[field])),node('small','대'));
+   card.append(node('span',label,'snote-accountant-count-label'),value);summary.append(card);
+  }
+  const work=node('section',null,'snote-accountant-work');work.append(node('h2','서류 준비'),node('p','차량별 양수인과 자동차등록증을 확인하세요.'));
+  const actions=node('div',null,'snote-accountant-actions');
+  for(const[page,label]of [['contractArchive','서류함'],['buy','매입 관리']]){
+   const button=node('button',label);button.type='button';button.dataset.accountantPage=page;button.append(icon('arrow'));button.onclick=()=>action('navigate',page,key);actions.append(button);
+  }
+  work.append(actions);const schedule=scheduler(work);
+  if(mobile.matches)host.append(schedule,summary);else host.append(summary,schedule);
+ }
  function refresh(){
   scheduled=false;if(!active){clear();return;}host.hidden=false;
   let snapshot;try{snapshot=bridge()?.snapshot();}catch{paintedKey=null;state('대시보드를 불러오지 못했습니다.');return;}
   if(!valid(snapshot)){paintedKey=null;state('대시보드를 확인하고 있습니다.',{loading:true});return;}
   if(snapshot.key!==paintedKey){resetDisclosures();host.replaceChildren();signature='';paintedKey=snapshot.key;}
+  host.dataset.mode=snapshot.mode==='accountant'?'accountant':'owner';
   if(snapshot.loading){state('대시보드를 불러오는 중…',{loading:true});return;}
+  if(snapshot.mode==='accountant'){
+   if(snapshot.locked){state('상사 업무 현황을 확인하고 있습니다.',{loading:true});return;}
+   let data;try{data=model.accountantSummary(snapshot.workSummary);}catch{state('상사 업무 현황을 확인할 수 없습니다.');return;}
+   const next=JSON.stringify([snapshot.key,'accountant',mobile.matches,data]);if(signature===next)return;signature=next;renderAccountant(data,snapshot.key);return;
+  }
   if(snapshot.locked){state('금액 요약과 수익 정보를 보려면 잠금을 해제해 주세요.',{locked:true,key:snapshot.key});return;}
   let data;try{data=model.summarize(snapshot.rows,snapshot.month);}catch{state('대시보드 금액을 확인할 수 없습니다.');return;}
   const hideMargin=snapshot.hideMargin!==false,next=JSON.stringify([snapshot.key,hideMargin,mobile.matches,data]);if(signature===next)return;signature=next;render(data,snapshot.key,hideMargin);
@@ -193,6 +216,14 @@
   return {count:pending.length,rows:pending};
  }
  const recent=(rows,field)=>rows.slice().sort((a,b)=>dateKey(b[field]).localeCompare(dateKey(a[field]))||String(a.id||'').localeCompare(String(b.id||''))).slice(0,4);
+ function accountantSummary(value){
+  if(!value||typeof value!=='object'||Array.isArray(value))throw Error('INVALID_ACCOUNTANT_WORK_SUMMARY');
+  const result={};for(const field of ['totalCount','inventoryCount','contractCount','monthPurchaseCount']){
+   const count=value[field];if(!Number.isSafeInteger(count)||count<0)throw Error('INVALID_ACCOUNTANT_WORK_SUMMARY');result[field]=count;
+  }
+  if(result.inventoryCount>result.totalCount||result.contractCount>result.inventoryCount||result.monthPurchaseCount>result.totalCount)throw Error('INVALID_ACCOUNTANT_WORK_SUMMARY');
+  return Object.freeze(result);
+ }
  function summarize(rows,month=currentMonth()){
   if(!Array.isArray(rows)||!isMonth(month)||rows.some(row=>!row||typeof row!=='object'||Array.isArray(row)))throw Error('INVALID_DASHBOARD_DATA');
   const inventory=rows.filter(row=>row.status!=='판매완료'),sold=rows.filter(row=>row.status==='판매완료'),inMonth=(row,field,key)=>monthOf(row[field])===key;
@@ -200,5 +231,5 @@
   const totalInvestment=sum(inventory,row=>row.inventoryCost),cash=money(totalInvestment-inventoryCapital),series=Array.from({length:3},(_,i)=>shiftMonth(month,i-2)).filter(Boolean).map(key=>{const purchases=rows.filter(row=>inMonth(row,'purchaseAt',key)),sales=sold.filter(row=>inMonth(row,'soldAt',key));return{month:key,purchases:purchases.length,sales:sales.length,margin:sum(sales,row=>row.margin)};});
   return{month,inventoryCapital,cash,totalInvestment,monthPurchaseCount:monthPurchases.length,monthSaleCount:monthSales.length,monthMargin:sum(monthSales,row=>row.margin),yearMargin:sum(yearSales,row=>row.margin),inventoryMargin,inventoryCount:inventory.length,soldCount:sold.length,series,inventoryRecent:recent(inventory,'purchaseAt'),soldRecent:recent(sold,'soldAt')};
  }
- return Object.freeze({isMonth,currentMonth,monthOf,dateKey,currentDay,inventoryTasks,saleProgress,summarize});
+ return Object.freeze({isMonth,currentMonth,monthOf,dateKey,currentDay,inventoryTasks,saleProgress,accountantSummary,summarize});
 });

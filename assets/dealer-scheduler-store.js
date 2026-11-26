@@ -53,7 +53,7 @@
  const payload=value=>Object.fromEntries(['id','title','notes','eventDate','time','completed'].map(key=>[key,value[key]]));
  const equal=(a,b)=>JSON.stringify(payload(a))===JSON.stringify(payload(b));
  const sameScope=(a,b)=>!!a&&!!b&&['key','actorId','companyId','role','ready'].every(key=>a[key]===b[key]);
- function validContext(value){return object(value)&&typeof value.key==='string'&&value.key.length>0&&value.key.length<=2000&&UUID.test(value.actorId||'')&&UUID.test(value.companyId||'')&&['dealer','admin'].includes(value.role)&&value.ready===true;}
+ function validContext(value){return object(value)&&typeof value.key==='string'&&value.key.length>0&&value.key.length<=2000&&UUID.test(value.actorId||'')&&UUID.test(value.companyId||'')&&['dealer','admin','accountant'].includes(value.role)&&value.ready===true;}
  function scopeAck(result,ctx){if(!object(result)||result.companyId!==ctx.companyId||result.ownerId!==ctx.actorId)fail('SCHEDULE_ACK_INVALID');}
  function listAck(result,ctx,month){
   scopeAck(result,ctx);const range=monthRange(month);

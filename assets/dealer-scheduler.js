@@ -6,7 +6,12 @@
  function normalizeVehicleDate(value){if(typeof value!=='string')return null;const match=/^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})$/.exec(value.trim());if(!match)return null;const y=Number(match[1]),m=Number(match[2]),d=Number(match[3]),last=[31,y%4===0&&(y%100!==0||y%400===0)?29:28,31,30,31,30,31,31,30,31,30,31][m-1];return y>=1&&y<=9999&&m>=1&&m<=12&&d>=1&&d<=last?String(y).padStart(4,'0')+'-'+String(m).padStart(2,'0')+'-'+String(d).padStart(2,'0'):null;}
  function vehicleEvents(rows){
   if(!Array.isArray(rows))return [];const unique=new Map();
-  for(const row of rows){if(!row||typeof row.id!=='string'||!row.id||row.id.length>200)continue;const value={id:row.id,model:typeof row.model==='string'?row.model.slice(0,200):'',plate:typeof row.plate==='string'?row.plate.slice(0,30):'',purchaseAt:normalizeVehicleDate(row.purchaseAt),soldAt:normalizeVehicleDate(row.soldAt),status:row.status==='판매완료'?'판매완료':''};if(unique.has(row.id)){if(JSON.stringify(unique.get(row.id))!==JSON.stringify(value))unique.set(row.id,null);}else unique.set(row.id,value);}
+  for(const row of rows){
+   if(!row||typeof row.id!=='string'||!row.id||row.id.length>200)continue;
+   const scoped=Object.hasOwn(row,'ownerId');if(scoped&&(typeof row.ownerId!=='string'||!/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(row.ownerId)))continue;
+   const id=scoped?row.ownerId.toLowerCase()+':'+row.id:row.id,value={id,model:typeof row.model==='string'?row.model.slice(0,200):'',plate:typeof row.plate==='string'?row.plate.slice(0,30):'',purchaseAt:normalizeVehicleDate(row.purchaseAt),soldAt:normalizeVehicleDate(row.soldAt),status:row.status==='판매완료'?'판매완료':''};
+   if(unique.has(id)){if(JSON.stringify(unique.get(id))!==JSON.stringify(value))unique.set(id,null);}else unique.set(id,value);
+  }
   const events=[];for(const row of unique.values()){if(!row)continue;for(const[kind,day]of[['purchase',row.purchaseAt],['sale',row.status==='판매완료'?row.soldAt:null]])if(day)events.push(Object.freeze({id:kind+':'+row.id+':'+day,vehicleId:row.id,kind,eventDate:day,model:row.model,plate:row.plate,readOnly:true}));}
   return events.sort((a,b)=>a.eventDate.localeCompare(b.eventDate)||(a.kind==='purchase'?0:1)-(b.kind==='purchase'?0:1)||a.model.localeCompare(b.model,'ko')||a.vehicleId.localeCompare(b.vehicleId));
  }
