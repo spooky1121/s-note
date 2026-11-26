@@ -14,7 +14,7 @@
  function styles(){
   if(styleJob)return styleJob;
   styleJob=new Promise((resolve,reject)=>{
-   const link=document.createElement('link');link.rel='stylesheet';link.href='assets/vehicle-inspection.css?v=2.235';
+   const link=document.createElement('link');link.rel='stylesheet';link.href='assets/vehicle-inspection.css?v=2.236';
    const fail=()=>{clearTimeout(timer);link.remove();styleJob=null;reject(Error('INSPECTION_STYLE_UNAVAILABLE'));},timer=setTimeout(fail,12000);
    link.onload=()=>{clearTimeout(timer);resolve(true);};link.onerror=fail;document.head.append(link);
   });return styleJob;
