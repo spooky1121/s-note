@@ -16,6 +16,7 @@
   acctLookup:freeze({label:'조회',icon:'search'}),
   acctDealerIncome:freeze({label:'딜러소득',icon:'income'}),
   monthly:freeze({label:'운영정산',icon:'calendar'}),
+  acctInfo:freeze({label:'정보',icon:'info'}),
   acctAccounts:freeze({label:'계좌',icon:'account'}),
   acctPhones:freeze({label:'전화번호',icon:'phone'}),
   acctStaff:freeze({label:'직원',icon:'people'})
@@ -27,7 +28,7 @@
   freeze({group:'documents',label:'서류함',icon:'folder',children:freeze([leaf('contractArchive'),leaf('contractOffice'),leaf('buy',['sell']),leaf('acctOperations')])}),
   leaf('acctBank'),leaf('acctTax'),leaf('inventoryFinance',['prestock']),leaf('acctLookup'),
   freeze({group:'settlement',label:'정산',icon:'income',children:freeze([leaf('acctDealerIncome'),leaf('monthly')])}),
-  freeze({group:'information',label:'정보',icon:'info',children:freeze([leaf('acctAccounts'),leaf('acctPhones'),leaf('acctStaff')])})
+  leaf('acctInfo',['acctAccounts','acctPhones','acctStaff'])
  ]);
  const paths=freeze({
   home:'M3 10 12 3l9 7M5 9v12h5v-7h4v7h5V9',
@@ -108,8 +109,7 @@
  }
  function mountPage(host,page,{members,ready=false,navigate}={}){
   if(!(host instanceof Element)||!basicPages.includes(page))return false;
-  const info=content[page],section=node('section','snote-acct-basic-page'),head=node('header','snote-acct-basic-head');section.dataset.accountantPage=page;
-  head.append(icon(definitions[page].icon),node('h2','',label(page)));section.append(head,node('p','snote-acct-basic-description',info.description));
+  const info=content[page],section=node('section','snote-acct-basic-page');section.dataset.accountantPage=page;section.setAttribute('aria-label',label(page));
   if(page==='acctPhones'||page==='acctStaff')memberTable(section,page,ready===true?members:undefined);
   else{const empty=node('div','snote-acct-basic-state');empty.append(icon(definitions[page].icon),node('p','',info.empty));section.append(empty);}
   if(info.page&&typeof navigate==='function'){const link=node('button','snote-acct-basic-link',info.link);link.type='button';link.dataset.accountantLink=info.page;link.append(icon('arrow'));link.addEventListener('click',()=>navigate(info.page));section.append(link);}
