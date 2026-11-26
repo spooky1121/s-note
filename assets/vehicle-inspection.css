@@ -127,6 +127,8 @@
 .snote-inspection-photo-observations>.is-focused .snote-inspection-photo-observation>span{border-color:var(--inspection-blue);background:var(--inspection-blue);color:#fff}
 .snote-inspection-photo-observations p{margin:5px 0 0 29px;color:#53677d;font-size:12px;line-height:20px;overflow-wrap:anywhere}
 .snote-inspection-photo-source{margin-top:14px;padding-top:11px;border-top:1px solid #edf1f5;color:var(--inspection-muted);font-size:10px;line-height:17px;overflow-wrap:anywhere}
+.snote-inspection-photo-credit{display:flex;flex-wrap:wrap;align-items:baseline;gap:3px 12px}
+.snote-inspection-photo-source-note{margin:3px 0 0!important;color:var(--inspection-muted);font-size:10px;line-height:17px}
 .snote-inspection-photo-source a{color:var(--inspection-blue);text-decoration:none}
 .snote-inspection-photo-source a:hover{text-decoration:underline}
 .snote-inspection-photo-figure.is-expanded .snote-inspection-photo-image{max-width:none!important}
