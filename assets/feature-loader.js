@@ -10,6 +10,7 @@
   companyAssets:['company-assets.js?v=2.192'],
   information:['accountant-information-store.js?v=2.246','accountant-information.js?v=2.246'],
   accountantBusiness:['office-document-client.js?v=2.246','accountant-business-pages.js?v=2.246'],
+  scanner:['scanner-client.js?v=2.247','scanner.js?v=2.247'],
   mobileDocument:['mobile-document-editor.js?v=2.184'],
   office:['transfer-document-layout.js?v=2.194','transfer-name-seal.js?v=2.192','transfer-company-seal.js?v=2.194','company-assets.js?v=2.192','contract-registration-store.js?v=2.244','contract-office.js?v=2.246']
  });

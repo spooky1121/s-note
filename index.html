@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.246">
+<html lang="ko" data-snote-release="2.247">
 <head>
 <meta charset="utf-8" />
   <link rel="preload" href="assets/fonts/PretendardVariable.woff2?v=2.233" as="font" type="font/woff2" crossorigin>
@@ -3202,7 +3202,7 @@ button, input, select, textarea { font-family: inherit; }
 <script src="assets/idle-recovery.js?v=2.201"></script>
 <script src="assets/idle-session.js?v=2.172"></script>
 <link rel="stylesheet" href="assets/profile-settings.css?v=2.102">
-<script src="assets/feature-loader.js?v=2.246"></script>
+<script src="assets/feature-loader.js?v=2.247"></script>
 <script src="assets/vehicle-colors.js?v=2.23"></script>
 <link rel="stylesheet" href="assets/customer-contract-signature.css?v=2.165">
 <script src="assets/customer-contract-signature.js?v=2.165"></script>
@@ -3261,6 +3261,7 @@ button, input, select, textarea { font-family: inherit; }
 <link rel="stylesheet" href="assets/accountant-navigation.css?v=2.246">
 <link rel="stylesheet" href="assets/accountant-information.css?v=2.246">
 <link rel="stylesheet" href="assets/accountant-business-pages.css?v=2.246">
+<link rel="stylesheet" href="assets/scanner.css?v=2.247">
 <link rel="stylesheet" href="assets/contract-office.css?v=2.246">
 <link rel="stylesheet" href="assets/workspace-ledgers.css?v=2.136">
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/snote-favicon.png?v=2.226">
@@ -3866,7 +3867,7 @@ function salePrice(c){return c.status==='판매완료'&&Number.isFinite(Number(c
 function formatKm(value){return num(Number(String(value??0).replaceAll(',',''))||0)}
 const pages={dashboard:{title:'대시보드',head:'대시보드',sub:'',eyebrow:'OVERVIEW',icon:'home'},contractOffice:{title:'업무',head:'업무',sub:'',eyebrow:'DOCUMENT OFFICE',icon:'document'},contractArchive:{title:'서류함',head:'서류함',sub:'',eyebrow:'DOCUMENT ARCHIVE',icon:'document'},buy:{title:'매입 관리',head:'차량 매입 관리',sub:'',eyebrow:'PURCHASE',icon:'purchase'},sell:{title:'판매 완료',head:'판매 완료 차량',sub:'',eyebrow:'SOLD VEHICLES',icon:'sold'},companyBuy:{title:'상사 매입',head:'상사 매입 관리',sub:'',eyebrow:'COMPANY PURCHASE',icon:'purchase'},prestock:{title:'선재고 관리',head:'선재고 관리',sub:'선재고 지급·상환 내역과 잔액을 관리합니다.',eyebrow:'PRESTOCK LEDGER',icon:'wallet'},inventoryFinance:{title:'재고금융 관리',head:'재고금융 관리',sub:'보유 차량의 재고대출금과 금융사를 통합 조회합니다.',eyebrow:'INVENTORY FINANCE',icon:'loan'},monthly:{title:'월정산',head:'월별 결산표',sub:'딜러별 수수료와 운영비, 통장 잔액·재고금융·미수금을 월별로 정리합니다.',eyebrow:'MONTHLY ACCOUNTING',icon:'calendar'},finance:{title:'수익 · 정산',head:'수익 및 정산',sub:'재고 및 판매 실적, 이번달 수익 리포트와 차량별 손익을 확인합니다.',eyebrow:'FINANCE',icon:'profit'},users:{title:'고객 관리',head:'고객 관리',sub:'매입·판매 고객 이력을 관리합니다.',eyebrow:'CUSTOMERS',icon:'customers'},recycle:{title:'휴지통',head:'휴지통',sub:'',eyebrow:'RECYCLE BIN',icon:'recycle'},vehicleInspection:{title:'차량 검수 도우미',head:'차량 검수 도우미',sub:'',eyebrow:'VEHICLE INSPECTION',icon:'inspection'},settings:{title:'설정',head:'설정',sub:'직원 계정, 차량 모델 데이터, 업무 접근 권한을 관리합니다.',eyebrow:'SETTINGS',icon:'settings'}};
 pages.acctFinance={title:'매입금액 현황',head:'매입금액 현황',sub:'상사 전체 차량의 매입·대출 현황을 조회합니다.',eyebrow:'ACCOUNTING',icon:'loan'};
-const snote239AccountantPages=Object.freeze({acctOperations:['운영 서류함','document'],acctBank:['은행','wallet'],acctTax:['세금','document'],acctLookup:['조회','search'],acctDealerIncome:['직원 사업소득','profit'],acctCustomers:['고객','customers'],acctInfo:['정보','customers'],acctAccounts:['계좌','wallet'],acctPhones:['전화번호','customers'],acctStaff:['직원','customers']});
+const snote239AccountantPages=Object.freeze({acctOperations:['운영 서류함','document'],acctScanner:['스캐너','document'],acctBank:['은행','wallet'],acctTax:['세금','document'],acctLookup:['조회','search'],acctDealerIncome:['직원 사업소득','profit'],acctCustomers:['고객','customers'],acctInfo:['정보','customers'],acctAccounts:['계좌','wallet'],acctPhones:['전화번호','customers'],acctStaff:['직원','customers']});
 for(const [id,[title,icon]] of Object.entries(snote239AccountantPages))pages[id]={title,head:title,sub:'',eyebrow:'ACCOUNTING',icon};
 pages.acctInfo.sub='계좌 · 전화번호 · 직원';
 const snote240InformationTabs=Object.freeze(['accounts','contacts','staff']);
@@ -3890,6 +3891,16 @@ function snote240MountInformation(){
  });
 }
 let snote244BusinessIntent=0;
+let snote247ScannerIntent=0;
+function snote247MountScanner(){
+ const host=$('alt-content'),actor=currentUser,intent=++snote247ScannerIntent;
+ if(window.SnoteScanner){window.SnoteScanner.mount(host,{bridge:window.snoteScannerBridge,confirm:(message,options)=>window.snoteConfirm(message,options)});return;}
+ host.textContent='스캐너 화면을 준비하고 있습니다.';
+ void window.SnoteFeatures.load('scanner').then(()=>{if(intent===snote247ScannerIntent&&currentUser===actor&&route==='acctScanner'&&host===$('alt-content'))snote247MountScanner();}).catch(()=>{
+  if(intent!==snote247ScannerIntent||currentUser!==actor||route!=='acctScanner')return;
+  const message=document.createElement('p'),retry=document.createElement('button');message.textContent='스캐너 화면을 불러오지 못했습니다.';retry.type='button';retry.className='btn-ghost';retry.textContent='다시 시도';retry.onclick=()=>{if(currentUser===actor&&route==='acctScanner')snote247MountScanner();};host.replaceChildren(message,retry);
+ });
+}
 function snote244MountBusiness(){
  const host=$('alt-content'),actor=currentUser,page=route,intent=++snote244BusinessIntent;
  if(window.SnoteAccountantBusinessPages){window.SnoteAccountantBusinessPages.mount(host,{page,bridge:window.snoteAccountantBusinessBridge});return;}
@@ -3910,6 +3921,7 @@ function snote239MountAccountantPage(){
  if(!isAccountant()){$('alt-content').replaceChildren();return false;}
  $('alt-title').style.display='none';$('alt-copy').style.display='none';
  if(route==='acctInfo'){snote240MountInformation();return true;}
+ if(route==='acctScanner'){snote247MountScanner();return true;}
  if(['acctCustomers','acctDealerIncome','acctOperations'].includes(route)){snote244MountBusiness();return true;}
  const directory=window.snoteAccountantDirectoryBridge?.snapshot?.()||{ready:false,members:[]};
  if(window.SnoteAccountantNavigation)window.SnoteAccountantNavigation.mountPage($('alt-content'),route,{members:directory.members,ready:directory.ready,navigate:page=>navigate(page)});
@@ -3917,6 +3929,7 @@ function snote239MountAccountantPage(){
  return true;
 }
 function snote239ResetAccountantWorkspace(){
+ snote247ScannerIntent++;window.SnoteScanner?.reset();
  snote244BusinessIntent++;window.SnoteAccountantBusinessPages?.reset();
  snote240InformationIntent++;snote240InformationTab='accounts';snote240InformationPreparedTab=null;window.snoteResetAccountantInformation?.();
  window.SnoteAccountantInformation?.reset();
@@ -4194,7 +4207,7 @@ function snote253MessageCurrent(check=()=>true){
 }
 function snotePrepareRouteChange(isCurrent=()=>true){
  const actor=currentUser,page=route,current=()=>currentUser===actor&&route===page&&isCurrent();
- const guards=[()=>window.SnoteAccountantInformation?.beforeLeave?.()??true,()=>window.SnoteAccountantBusinessPages?.beforeLeave?.()??true,()=>window.SnoteDealerSchedulerUI?.beforeLeave?.()??true,()=>window.SnoteMobilePopupHistory?.prepareRouteChange()??true,()=>typeof window.SnoteContractOffice?.beforeLeave==='function'?window.SnoteContractOffice.beforeLeave():true,()=>typeof window.SnotePaymentAccounts?.prepareRouteChange==='function'?window.SnotePaymentAccounts.prepareRouteChange():true,()=>typeof window.snoteProfileEditor?.prepareRouteChange==='function'?window.snoteProfileEditor.prepareRouteChange():true,()=>typeof window.snoteIncomePrepareRouteChange==='function'?window.snoteIncomePrepareRouteChange():true];
+ const guards=[()=>window.SnoteScanner?.beforeLeave?.()??true,()=>window.SnoteAccountantInformation?.beforeLeave?.()??true,()=>window.SnoteAccountantBusinessPages?.beforeLeave?.()??true,()=>window.SnoteDealerSchedulerUI?.beforeLeave?.()??true,()=>window.SnoteMobilePopupHistory?.prepareRouteChange()??true,()=>typeof window.SnoteContractOffice?.beforeLeave==='function'?window.SnoteContractOffice.beforeLeave():true,()=>typeof window.SnotePaymentAccounts?.prepareRouteChange==='function'?window.SnotePaymentAccounts.prepareRouteChange():true,()=>typeof window.snoteProfileEditor?.prepareRouteChange==='function'?window.snoteProfileEditor.prepareRouteChange():true,()=>typeof window.snoteIncomePrepareRouteChange==='function'?window.snoteIncomePrepareRouteChange():true];
  function prepare(index=0){
   if(!current())return false;
   for(let i=index;i<guards.length;i++){
@@ -9590,6 +9603,82 @@ window.snoteCreateAccountantInformationStore=({onChange,version=1}={})=>{
  return window.SnoteAccountantInformationData.create({bridge:window.snoteAccountantInformationBridge,onChange,version,isActive:()=>route==='acctInfo'&&isAccountant(),timeoutMs:30000});
 };
 
+// Scanner images use a separate inbox and do not depend on vehicle/catalog loading.
+let snote247ScannerEpoch=0,snote247ScannerIdentity=null,snote247ScannerDenied=null,snote247ScannerClient=null;
+const snote247ScannerContexts=new WeakMap(),snote247ScannerRequests=new Set();
+function snote247ScannerError(code,uncertain=false){return Object.assign(Error('스캐너 요청을 완료하지 못했습니다.'),{code,uncertain});}
+function snote247ScannerContext(){
+ if(route!=='acctScanner'||!isAccountant()||!S.ready||S.loading||!snoteWorkspaceVisible())return null;
+ const office=snote130OfficeContext(),profile=snoteProfileContext(),sessionId=snoteIdleVerifiedSessions.get(S.client)?.sessionId;
+ if(!office?.ready||!profile||profile.companyId!==office.companyId||profile.userId!==office.userId||typeof sessionId!=='string'||!sessionId)return null;
+ const identityKey=JSON.stringify([office.key,profile.key,sessionId,snoteNavigationSession]);if(snote247ScannerDenied===identityKey)return null;
+ if(!snote247ScannerIdentity||snote247ScannerIdentity.key!==identityKey||snote247ScannerIdentity.actor!==currentUser||snote247ScannerIdentity.client!==S.client){
+  snote247ScannerIdentity={key:identityKey,actor:currentUser,client:S.client};snote247ScannerEpoch++;
+ }
+ const context=Object.freeze({ready:true,key:JSON.stringify([identityKey,snote247ScannerEpoch]),companyId:office.companyId,userId:office.userId});
+ snote247ScannerContexts.set(context,{identity:snote247ScannerIdentity,epoch:snote247ScannerEpoch,office,profile,sessionId});return context;
+}
+function snote247ScannerCurrent(context){
+ const saved=context&&snote247ScannerContexts.get(context);if(!saved)return false;const now=snote247ScannerContext();
+ return !!now&&saved.identity===snote247ScannerIdentity&&saved.epoch===snote247ScannerEpoch&&now.key===context.key&&now.companyId===context.companyId&&now.userId===context.userId&&snote130OfficeCurrent(saved.office)&&snoteProfileCurrent(saved.profile);
+}
+function snote247ScannerAssert(context,isCurrent=()=>true){if(!snote247ScannerCurrent(context)||!isCurrent())throw snote247ScannerError('SCANNER_CONTEXT_CHANGED');}
+function snote247ScannerReset({clearDenied=false}={}){
+ snote247ScannerEpoch++;snote247ScannerIdentity=null;if(clearDenied)snote247ScannerDenied=null;
+ for(const controller of snote247ScannerRequests)controller.abort();snote247ScannerRequests.clear();snote247ScannerClient?.reset();snote247ScannerClient=null;
+}
+function snote247ScannerRevoke(context){
+ const saved=snote247ScannerContexts.get(context);if(!saved||saved.identity!==snote247ScannerIdentity)return;
+ snote247ScannerDenied=saved.identity.key;snote247ScannerReset();window.SnoteScanner?.reset();
+ if(route==='acctScanner')$('alt-content').textContent='스캐너 이용 권한을 확인하지 못했습니다. 다시 로그인해 주세요.';
+}
+async function snote247ScannerRequest(context,value,isCurrent=()=>true){
+ snote247ScannerAssert(context,isCurrent);const saved=snote247ScannerContexts.get(context),controller=new AbortController();snote247ScannerRequests.add(controller);
+ const mutation=['upload','delete'].includes(value.action);let sent=false,authTimer,requestTimer;
+ try{
+  const bound=await Promise.race([snoteProfilePinned(saved.profile),new Promise((_,reject)=>{authTimer=setTimeout(()=>reject(snote247ScannerError('NETWORK')),10000);})]);clearTimeout(authTimer);snote247ScannerAssert(context,isCurrent);
+  if(bound.user.id!==context.userId||snoteIdleSessionId(bound.session)!==saved.sessionId)throw snote247ScannerError('SCANNER_CONTEXT_CHANGED');
+  let body;const headers={Authorization:'Bearer '+bound.token,Accept:value.action==='read'?'image/jpeg,image/png,image/webp':'application/json'};
+  if(value.action==='upload'){body=new FormData();body.append('action','upload');body.append('companyId',context.companyId);body.append('requestId',value.requestId);body.append('file',value.file);}
+  else{headers['Content-Type']='application/json';body=JSON.stringify({...value,companyId:context.companyId});}
+  requestTimer=setTimeout(()=>controller.abort(),30000);sent=true;
+  const response=await fetch('/api/scanner',{method:'POST',credentials:'omit',cache:'no-store',redirect:'error',referrerPolicy:'no-referrer',headers,body,signal:controller.signal});snote247ScannerAssert(context,isCurrent);
+  const reader=response.body?.getReader();if(!reader)throw snote247ScannerError('SCANNER_INVALID_RESPONSE',mutation);
+  const chunks=[],limit=value.action==='read'&&response.ok?5*1024*1024:65536;let size=0;
+  try{for(;;){const part=await reader.read();snote247ScannerAssert(context,isCurrent);if(part.done)break;size+=part.value.byteLength;if(size>limit)throw snote247ScannerError('SCANNER_INVALID_RESPONSE',mutation);chunks.push(part.value);}}finally{await reader.cancel().catch(()=>{});}
+  const bytes=new Uint8Array(size);let offset=0;for(const part of chunks){bytes.set(part,offset);offset+=part.byteLength;}snote247ScannerAssert(context,isCurrent);
+  if(value.action==='read'&&response.ok){const type=response.headers.get('Content-Type')?.split(';')[0].trim().toLowerCase();if(!['image/jpeg','image/png','image/webp'].includes(type))throw snote247ScannerError('SCANNER_INVALID_RESPONSE');return new Blob([bytes],{type});}
+  let data;try{data=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes));}catch{throw snote247ScannerError('SCANNER_INVALID_RESPONSE',mutation);}
+  if(!response.ok){
+   const statuses={UNAUTHORIZED:401,FORBIDDEN:403,INVALID_REQUEST:400,CONFLICT:409,BUSY:429,LIMIT:429,PAYLOAD_TOO_LARGE:413,UNSUPPORTED_MEDIA_TYPE:415,SETUP_REQUIRED:503,NETWORK:502,METHOD_NOT_ALLOWED:405};
+   const code=Object.hasOwn(statuses,data?.code)&&statuses[data.code]===response.status?data.code:response.status===401||response.status===403?'FORBIDDEN':response.status===409?'CONFLICT':'NETWORK';
+   if(['UNAUTHORIZED','FORBIDDEN'].includes(code))snote247ScannerRevoke(context);
+   throw snote247ScannerError(code,mutation&&code==='NETWORK');
+  }
+  return data;
+ }catch(error){
+  if(!snote247ScannerCurrent(context)||!isCurrent())throw snote247ScannerError('SCANNER_CONTEXT_CHANGED');
+  if(error?.code==='42501'){snote247ScannerRevoke(context);throw snote247ScannerError('FORBIDDEN');}
+  if(typeof error?.code==='string'&&/^(?:SCANNER_[A-Z_]+|NETWORK|CONFLICT|BUSY|LIMIT|FORBIDDEN|UNAUTHORIZED|INVALID_REQUEST|UNSUPPORTED_MEDIA_TYPE|PAYLOAD_TOO_LARGE|SETUP_REQUIRED|METHOD_NOT_ALLOWED)$/.test(error.code))throw error;
+  throw snote247ScannerError('NETWORK',mutation&&sent);
+ }finally{clearTimeout(authTimer);clearTimeout(requestTimer);controller.abort();snote247ScannerRequests.delete(controller);}
+}
+function snote247Scans(){
+ if(!snote247ScannerClient){if(!window.SnoteScannerClient)throw snote247ScannerError('SETUP_REQUIRED');snote247ScannerClient=window.SnoteScannerClient.create({current:snote247ScannerCurrent,companyId:context=>context.companyId,request:snote247ScannerRequest,
+  openViewer:options=>window.SnoteVehicleImageViewer?.open(options)||false,
+  closeViewer:url=>{if($('zoom-image')?.getAttribute('src')===url)void window.SnoteVehicleImageViewer?.close({restoreFocus:false});}});}
+ return snote247ScannerClient;
+}
+window.snoteScannerBridge=Object.freeze({context:snote247ScannerContext,current:snote247ScannerCurrent,
+ list(context,options,isCurrent){snote247ScannerAssert(context,isCurrent);return snote247Scans().list(context,options,isCurrent);},
+ upload(context,value,isCurrent){snote247ScannerAssert(context,isCurrent);return snote247Scans().upload(context,value,isCurrent);},
+ remove(context,value,isCurrent){snote247ScannerAssert(context,isCurrent);return snote247Scans().remove(context,value,isCurrent);},
+ open(context,value,origin,isCurrent){snote247ScannerAssert(context,isCurrent);return snote247Scans().open(context,value,origin,isCurrent);},
+ download(context,value,isCurrent){snote247ScannerAssert(context,isCurrent);return snote247Scans().download(context,value,isCurrent);}
+});
+window.addEventListener('snote:auth-reset',()=>snote247ScannerReset({clearDenied:true}));window.addEventListener('pagehide',()=>snote247ScannerReset({clearDenied:true}));
+window.addEventListener('snote:route-changed',event=>{if(event.detail?.page!=='acctScanner')snote247ScannerReset();});
+
 // These views receive minimal, live company projections, never resident identities.
 const snote244BusinessContexts=new WeakMap();
 function snote244BusinessContext(page=route){
@@ -12796,7 +12885,7 @@ window.zc86Cloud={getAccessToken:async()=>{const client=S.client,user=S.user,com
 <script src="assets/workspace-order-store.js?v=2.135" defer></script>
 <script src="assets/workspace-reorder.js?v=2.239" defer></script>
 <script src="assets/vehicle-inspection-route.js?v=2.238" defer></script>
-<script src="assets/release-info.js?v=2.246" defer></script>
+<script src="assets/release-info.js?v=2.247" defer></script>
 <link rel="stylesheet" href="assets/encar-id.css?v=2.162">
 <script src="assets/encar-id.js?v=2.184" defer></script>
 <script src="assets/company-purchase.js?v=2.172" defer></script>
@@ -12874,7 +12963,7 @@ window.addEventListener('snote:payment-accounts-changed',()=>{if(typeof contract
 <script src="assets/dropdown-menu.js?v=2.225" defer></script>
 <script src="assets/service-brand.js?v=2.227" defer></script>
 <link rel="stylesheet" href="assets/workspace-density.css?v=2.243" data-snote-type-scale>
-<script src="assets/accountant-navigation.js?v=2.246" defer></script>
+<script src="assets/accountant-navigation.js?v=2.247" defer></script>
 <script src="assets/unified-search.js?v=2.239" defer></script>
 </body>
 </html>

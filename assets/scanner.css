@@ -1,0 +1,79 @@
+/* Scanner inbox stays inside the existing workspace; image bytes open only on demand. */
+@media screen{
+ #snote-scanner{min-width:0;color:#43576b;font-family:inherit;font-size:12px;line-height:1.6}
+ #snote-scanner *,#snote-scanner *::before,#snote-scanner *::after{box-sizing:border-box}
+ #snote-scanner [hidden]{display:none!important}
+ #snote-scanner button,#snote-scanner input{font-family:inherit}
+ #snote-scanner .snote-scanner-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+ #snote-scanner .snote-scanner-button{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:37px;padding:8px 13px;border:1px solid #dfe7ee;border-radius:9px;background:#fff;color:#526b7f;font-size:12px;line-height:20px;font-weight:550;cursor:pointer;transition:background-color .15s,border-color .15s}
+ #snote-scanner .snote-scanner-button>svg{flex:none;width:16px;height:16px;scale:none!important}
+ #snote-scanner .snote-scanner-button.is-primary{background:#087cb6;border-color:#087cb6;color:#fff}
+ #snote-scanner .snote-scanner-button.is-primary:hover:enabled{background:#0872a9;border-color:#0872a9}
+ #snote-scanner .snote-scanner-text-button{min-height:31px;margin:0;padding:5px 7px;border:1px solid transparent;border-radius:6px;background:transparent;color:#6e8799;font-size:11px;line-height:20px;white-space:nowrap;cursor:pointer}
+ #snote-scanner .snote-scanner-text-button:hover:enabled{background:#f1f7fb;color:#317499}
+ #snote-scanner .snote-scanner-text-button.is-danger{color:#b56c77}
+ #snote-scanner .snote-scanner-text-button.is-danger:hover:enabled{background:#fff4f5;color:#a84f5d}
+ #snote-scanner button:disabled{opacity:.45;cursor:default}
+ #snote-scanner button:focus-visible{outline:2px solid #9bd5f5;outline-offset:3px}
+ #snote-scanner .snote-scanner-dropzone{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:122px;padding:18px 16px;border:1px dashed #cbdbe7;border-radius:12px;background:#f8fbfd;color:#8296a7;text-align:center;transition:background-color .16s,border-color .16s}
+ #snote-scanner .snote-scanner-dropzone>svg{width:23px;height:23px;margin-bottom:3px;color:#91aabc;scale:none!important}
+ #snote-scanner .snote-scanner-drop-title{color:#597489;font-size:12px;font-weight:500}
+ #snote-scanner .snote-scanner-dropzone>small{max-width:100%;font-size:10.5px;line-height:17px;color:#8ca0af;word-break:keep-all;overflow-wrap:anywhere}
+ #snote-scanner .snote-scanner-dropzone.is-dragover:not([data-disabled=true]){border-color:#64b8e6;background:#eef8fe}
+ #snote-scanner .snote-scanner-dropzone[data-disabled=true]{color:#a1aeba}
+ #snote-scanner .snote-scanner-status{min-height:20px;margin:10px 0 8px;color:#899aa8;font-size:11px;line-height:20px;overflow-wrap:anywhere}
+ #snote-scanner .snote-scanner-status[data-tone=error]{color:#b65e6a}
+ #snote-scanner .snote-scanner-status[data-tone=success]{color:#42856c}
+ #snote-scanner .snote-scanner-jobs{margin:0 0 13px;padding:3px 12px;border:1px solid #e7edf2;border-radius:10px;background:#fcfdfe}
+ #snote-scanner .snote-scanner-jobs>ul{margin:0;padding:0;list-style:none}
+ #snote-scanner .snote-scanner-job{display:flex;align-items:center;gap:8px;min-height:40px;padding:4px 0}
+ #snote-scanner .snote-scanner-job+.snote-scanner-job{border-top:1px solid #edf1f5}
+ #snote-scanner .snote-scanner-job-name{flex:1;min-width:0;overflow-wrap:anywhere;color:#607a8e;font-size:11.5px}
+ #snote-scanner .snote-scanner-job-status{flex:none;min-width:65px;color:#92a2af;font-size:10px;line-height:17px;text-align:right}
+ #snote-scanner [data-scanner-job-state=uploading] .snote-scanner-job-status{color:#087cb6}
+ #snote-scanner [data-scanner-job-state=saved] .snote-scanner-job-status{color:#42856c}
+ #snote-scanner :is([data-scanner-job-state=error],[data-scanner-job-state=invalid]) .snote-scanner-job-status{color:#b65e6a}
+ #snote-scanner .snote-scanner-icon-button{display:inline-grid;place-items:center;flex:none;width:28px;height:28px;min-width:28px;padding:6px;border:0;border-radius:5px;background:transparent;color:#9aabb8;cursor:pointer}
+ #snote-scanner .snote-scanner-icon-button>svg{width:14px;height:14px;scale:none!important}
+ #snote-scanner .snote-scanner-icon-button:hover:enabled{background:#f1f6fa}
+ #snote-scanner .snote-scanner-table-scroll{max-width:100%;overflow:auto;border:1px solid #e7edf2;border-radius:11px;background:#fff}
+ #snote-scanner .snote-scanner-table{width:100%;border-collapse:collapse;text-align:left;font-size:12px;line-height:20px}
+ #snote-scanner .snote-scanner-table th,#snote-scanner .snote-scanner-table td{padding:10px 13px;border-bottom:1px solid #edf1f5;vertical-align:middle}
+ #snote-scanner .snote-scanner-table th{background:#f8fafc;color:#90a0ac;font-size:10.5px;font-weight:500;white-space:nowrap}
+ #snote-scanner .snote-scanner-table tr:last-child td{border-bottom:0}
+ #snote-scanner .snote-scanner-file{width:100%;color:#4f6b80}
+ #snote-scanner .snote-scanner-file>svg{display:inline-block;flex:none;width:17px;height:17px;margin-right:8px;vertical-align:middle;color:#94a9b8;scale:none!important}
+ #snote-scanner .snote-scanner-filename{overflow-wrap:anywhere}
+ #snote-scanner .snote-scanner-date,#snote-scanner .snote-scanner-size{white-space:nowrap;font-size:11px;color:#91a0ad;font-variant-numeric:tabular-nums}
+ #snote-scanner .snote-scanner-row-actions{display:flex;align-items:center;justify-content:flex-end;gap:2px}
+ #snote-scanner .snote-scanner-empty{display:grid;place-items:center;min-height:142px;margin:0;padding:22px;border:1px solid #edf1f5;border-radius:11px;background:#fcfdfe;color:#9caab5;font-size:12px;text-align:center}
+ #snote-scanner #snote-scanner-load-more{display:flex;margin:13px auto 0;min-height:34px;font-size:11px}
+ #snote-scanner tr.is-added{animation:snoteScannerRowReveal .2s ease-out both}
+ @keyframes snoteScannerRowReveal{from{opacity:0}to{opacity:1}}
+}
+@media screen and (max-width:600px){
+ #snote-scanner .snote-scanner-toolbar{gap:6px}
+ #snote-scanner .snote-scanner-button{min-height:44px;padding:10px 12px;font-size:11.5px}
+ #snote-scanner .snote-scanner-text-button{min-height:44px;padding:9px 7px;font-size:11px}
+ #snote-scanner .snote-scanner-dropzone{min-height:118px;padding:17px 13px}
+ #snote-scanner .snote-scanner-dropzone>small{font-size:10px;line-height:17px}
+ #snote-scanner .snote-scanner-job{flex-wrap:wrap;gap:3px 6px;padding:6px 0}
+ #snote-scanner .snote-scanner-job-name{flex-basis:calc(100% - 36px);order:0;font-size:11px}
+ #snote-scanner .snote-scanner-job-status{order:2;flex:1;text-align:left}
+ #snote-scanner .snote-scanner-job>[data-scanner-job-retry]{order:3;min-height:36px;padding:4px 7px}
+ #snote-scanner .snote-scanner-job>[data-scanner-job-cancel]{order:1;width:32px;height:36px}
+ #snote-scanner .snote-scanner-table-scroll{border:0;border-radius:0;overflow:visible;background:transparent}
+ #snote-scanner .snote-scanner-table,#snote-scanner .snote-scanner-table tbody{display:block;width:100%}
+ #snote-scanner .snote-scanner-table thead{display:none}
+ #snote-scanner .snote-scanner-table tbody{display:grid;gap:9px}
+ #snote-scanner .snote-scanner-table tr{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 10px;padding:12px;border:1px solid #e7edf2;border-radius:10px;background:#fff}
+ #snote-scanner .snote-scanner-table td{min-width:0;padding:0;border:0}
+ #snote-scanner .snote-scanner-file{grid-column:1/-1;font-size:12px}
+ #snote-scanner .snote-scanner-date{grid-column:1;font-size:10.5px}
+ #snote-scanner .snote-scanner-size{grid-column:2;font-size:10.5px}
+ #snote-scanner .snote-scanner-actions{grid-column:1/-1}
+ #snote-scanner .snote-scanner-row-actions{justify-content:flex-end;gap:4px;border-top:1px solid #f0f3f6}
+ #snote-scanner .snote-scanner-row-actions button{flex:1;min-width:0}
+}
+@media screen and (prefers-reduced-motion:reduce){#snote-scanner tr.is-added{animation:none}#snote-scanner *{transition:none!important}}
+@media print{#snote-scanner{display:none!important}}

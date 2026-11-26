@@ -10,6 +10,7 @@
   sell:freeze({label:'매입·매도',icon:'trade'}),
   acctCustomers:freeze({label:'매입·매도',icon:'trade'}),
   acctOperations:freeze({label:'운영 서류함',icon:'folder'}),
+  acctScanner:freeze({label:'스캐너',icon:'scanner'}),
   acctBank:freeze({label:'은행',icon:'bank'}),
   acctTax:freeze({label:'세금',icon:'receipt'}),
   inventoryFinance:freeze({label:'재고금융',icon:'wallet'}),
@@ -27,6 +28,7 @@
  const menu=freeze([
   leaf('dashboard'),
   freeze({group:'documents',label:'서류함',icon:'folder',children:freeze([leaf('contractArchive'),leaf('contractOffice'),leaf('buy',['sell','acctCustomers']),leaf('acctOperations')])}),
+  leaf('acctScanner'),
   leaf('acctBank'),leaf('acctTax'),leaf('inventoryFinance',['prestock']),leaf('acctLookup'),
   freeze({group:'settlement',label:'정산',icon:'income',children:freeze([leaf('acctDealerIncome'),leaf('monthly')])}),
   leaf('acctInfo',['acctAccounts','acctPhones','acctStaff'])
@@ -37,6 +39,7 @@
   form:'M14 3H5v18h14V8zM14 3v5h5M8 12h8m-8 4h6',
   trade:'M4 7h15l-4-4m4 4-4 4M20 17H5l4 4m-4-4 4-4',
   folder:'M3 7V4h7l2 3h9v13H3z',
+  scanner:'M5 9V3h14v6M4 9h16l2 7H2l2-7M2 16v5h20v-5M6 13h1m1 5h8',
   bank:'m3 9 9-6 9 6H3m2 3v6m5-6v6m4-6v6m5-6v6M3 21h18',
   receipt:'M5 3h14v18l-3-2-4 2-4-2-3 2V3m3 5h8m-8 4h8m-8 4h5',
   wallet:'M3 6h17v15H3zM3 6V3h15v3m-3 6h6v5h-6z',
