@@ -19,23 +19,24 @@ html body [data-snote-service-brand] > picture > img {
   filter:none!important;mix-blend-mode:normal!important;
   border:0!important;box-shadow:none!important;background:transparent!important;
 }
-/* Keep navigation slots and hit areas; only its artwork is 30% smaller. */
+/* Keep navigation slots, artwork size and hit areas while aligning the wordmark left. */
 html body #snote-app > .sidebar .snote-brand-home,
-html body .mobile-drawer .snote-brand-home { align-self:center; }
+html body .mobile-drawer .snote-brand-home { align-self:flex-start; }
 html body #snote-app > .sidebar [data-snote-service-brand] > picture > img,
 html body .mobile-drawer [data-snote-service-brand] > img {
-  inset:15%!important;width:70%!important;height:70%!important;
+  inset:15% auto 15% 0!important;width:70%!important;height:70%!important;
+  object-position:left center!important;
 }
-/* A centered, compact brand header without the former service description. */
+/* A compact, left-aligned workspace brand header. */
 html body #snote-app > .sidebar > .brand {
-  align-items:center;justify-content:center;gap:0;padding-bottom:14px;
+  align-items:flex-start;justify-content:flex-start;gap:0;padding-bottom:14px;
 }
 html body #snote-app > .sidebar .snote-brand-home,
 html body #mobile-drawer .snote-brand-home {
   display:grid;place-items:center;min-height:44px;
 }
 html body #mobile-drawer .mobile-drawer-header {padding-right:52px}
-html body #mobile-drawer .mobile-drawer-brand {flex:1;align-items:center;gap:0}
+html body #mobile-drawer .mobile-drawer-brand {flex:1;align-items:flex-start;gap:0}
 /* Reserve the box during fetch/decode; failed images show no broken glyph.
    The original button/link retains its accessible name and hit area. */
 html body :is(img[data-snote-service-brand], [data-snote-service-brand] > img, [data-snote-service-brand] > picture > img) {
@@ -54,11 +55,14 @@ html body img.snote-email-recovery-logo[data-snote-service-brand] {
 }
 @media (min-width:761px) {
   html body #snote-app > .sidebar .snote-wordmark[data-snote-service-brand] {
-    width:clamp(116px, calc(clamp(166px, calc(11.5vw + 33px), 210px) - 62px), 134px);height:36px;
+    width:clamp(116px, calc(11.5vw - 29px), 134px);height:36px;
   }
 }
 @media (min-width:761px) and (max-width:1120px) {
+  html body #snote-app > .sidebar > .brand { align-items:center;justify-content:center }
+  html body #snote-app > .sidebar .snote-brand-home { align-self:center }
   html body #snote-app > .sidebar .snote-wordmark[data-snote-service-brand] { width:34px;height:36px }
+  html body #snote-app > .sidebar [data-snote-service-brand] > picture > img { inset:15%!important;object-position:center!important }
 }
 @media (max-width:760px) {
   #operator-app > .sidebar > .wordmark[data-snote-service-brand] { height:32px }

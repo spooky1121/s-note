@@ -1,23 +1,23 @@
 /* The workspace sidebar alone becomes a rail; mobile drawers and paper layouts retain their rules. */
 @media screen and (min-width:761px) {
- #snote-app {--snote-workspace-gutter:clamp(14px,1.5vw,28px);--snote-sidebar-width:clamp(166px,calc(11.5vw + 33px),210px)}
+ #snote-app {--snote-workspace-gutter:clamp(14px,1.5vw,28px);--snote-sidebar-width:clamp(156px,calc(10.4vw + 30px),190px)}
  #snote-app>.sidebar {
   box-sizing:border-box;flex:0 0 var(--snote-sidebar-width)!important;
   width:var(--snote-sidebar-width)!important;min-width:var(--snote-sidebar-width)!important;
-  max-width:var(--snote-sidebar-width);height:100dvh;padding:12px 11px 14px;
+  max-width:var(--snote-sidebar-width);height:100dvh;padding:12px 9px 14px;
   overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;
   z-index:25;transition:width .18s ease,min-width .18s ease,flex-basis .18s ease;
  }
  #snote-app>.main {flex:1 1 0%;min-width:0}
- #snote-app>.sidebar>.brand {flex:none;min-width:0;padding:0 7px 20px}
+ #snote-app>.sidebar>.brand {flex:none;min-width:0;padding:0 6px 14px}
  #snote-app>.sidebar .snote-brand-home {max-width:100%}
- #snote-app>.sidebar .snote-wordmark {width:clamp(116px,calc(var(--snote-sidebar-width) - 62px),134px);height:36px}
+ #snote-app>.sidebar .snote-wordmark {width:clamp(116px,calc(11.5vw - 29px),134px);height:36px}
  #snote-app>.sidebar #desktop-nav {flex:none;gap:3px;min-width:0}
  #snote-app>.sidebar #desktop-nav>button {
-  position:relative;box-sizing:border-box;min-width:0;width:100%;min-height:44px;
-  padding:9px 7px;gap:8px;white-space:nowrap;line-height:1.4;
+  position:relative;box-sizing:border-box;min-width:0;width:100%;min-height:42px;
+  padding:8px 6px;gap:7px;white-space:nowrap;line-height:1.4;
  }
- #snote-app>.sidebar #desktop-nav>button>svg {flex:0 0 20px;width:20px;height:20px}
+ #snote-app>.sidebar #desktop-nav>button>svg {flex:0 0 18px;width:18px;height:18px}
  #snote-app>.sidebar #desktop-nav>button>.snote-nav-label {
   display:block;flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
  }
@@ -34,8 +34,8 @@
  #snote-app>.sidebar>.snote-shell-nav-tooltip[hidden] {display:none!important}
 }
 @media screen and (min-width:761px) and (max-width:1120px) {
- #snote-app {--snote-sidebar-width:70px}
- #snote-app>.sidebar {padding-inline:8px}
+ #snote-app {--snote-sidebar-width:64px}
+ #snote-app>.sidebar {padding-inline:7px}
  #snote-app>.sidebar>.brand {align-items:center;padding:0 0 18px}
  #snote-app>.sidebar .snote-brand-home {display:grid;place-items:center;width:44px;height:44px;padding:0}
  #snote-app>.sidebar .snote-wordmark {width:34px;height:36px;overflow:hidden}
