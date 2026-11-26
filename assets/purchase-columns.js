@@ -3,11 +3,11 @@
  if(window.SnotePurchaseColumns)return;
  const screen=document.getElementById('list-screen');if(!screen)return;
  const PREFIX='snote:purchase-columns:v1:',fixed=new Set(['model','plate']);
- const definitions=[['model','차명'],['owner','담당 딜러'],['color','색상'],['plate','차량번호'],['year','연식'],['mileage','주행거리'],['purchaseDate','매입일자'],['buyPrice','매입가'],['expectedSellPrice','판매예정가'],['expectedProfit','예상수익'],['totalInvestment','총투입원가'],['additionalCosts','부대비용합계'],['inventoryLoan','재고대출금'],['inventoryInterest','재고이자'],['vin','차대번호'],['finance','재고금융'],['lender','재고금융사'],['documents','서류'],['quote','견적서'],['advertising','엔카광고'],['status','상태'],['age','경과일자']];
+ const definitions=[['model','차명'],['owner','담당 딜러'],['color','색상'],['plate','차량번호'],['year','연식'],['mileage','주행거리'],['purchaseDate','매입일자'],['buyPrice','매입가'],['expectedSellPrice','판매예정가'],['expectedProfit','예상수익'],['totalInvestment','총투입원가'],['additionalCosts','부대비용합계'],['inventoryLoan','재고대출금'],['inventoryInterest','재고이자'],['vin','차대번호'],['lender','재고금융사'],['documents','서류'],['quote','견적서'],['advertising','엔카광고'],['status','상태'],['age','경과일자']];
  const labels=new Map(definitions),optional=new Set(definitions.map(([id])=>id).filter(id=>!fixed.has(id)));
  const presets=[
   ['basic','기본',['model','plate','owner','year','mileage','buyPrice','expectedSellPrice','status','age']],
-  ['finance','금융',['model','plate','owner','buyPrice','expectedSellPrice','expectedProfit','totalInvestment','inventoryLoan','inventoryInterest','finance','lender','status']],
+  ['finance','금융',['model','plate','owner','buyPrice','expectedSellPrice','expectedProfit','totalInvestment','inventoryLoan','inventoryInterest','lender','status']],
   ['documents','서류',['model','plate','owner','documents','quote','advertising','vin','status','age']]
  ];
  const actor=()=>typeof currentUser==='undefined'?null:currentUser,page=()=>typeof route==='string'?route:'';
@@ -27,11 +27,24 @@
  }
  const added=['expectedProfit','totalInvestment','additionalCosts','inventoryInterest','vin','quote'];
  const defaults=role=>[...added,...(role==='accountant'?[]:['inventoryLoan'])];
- function read(key,role){try{const value=JSON.parse(localStorage.getItem(key));if(![1,2].includes(value?.schemaVersion)||!Array.isArray(value.hidden))return new Set(defaults(role));return new Set([...value.hidden.filter(id=>typeof id==='string'&&optional.has(id)),...(value.schemaVersion===1?defaults(role):[])]);}catch{return new Set(defaults(role));}}
+ const canonical=hidden=>[...hidden].filter(id=>optional.has(id)).sort();
+ function read(key,role){
+  const fallback=()=>({hidden:new Set(defaults(role)),needsMigration:false});
+  try{
+   const value=JSON.parse(localStorage.getItem(key));if(![1,2,3].includes(value?.schemaVersion)||!Array.isArray(value.hidden))return fallback();
+   const hidden=new Set([...value.hidden.filter(id=>typeof id==='string'&&optional.has(id)),...(value.schemaVersion===1?defaults(role):[])]);
+   if(value.schemaVersion<3){
+    // Dealers had one finance field; accountants could show either old field.
+    const legacy=new Set(value.hidden),hideLender=legacy.has('finance')&&(role!=='accountant'||legacy.has('lender'));
+    if(hideLender)hidden.add('lender');else hidden.delete('lender');
+   }
+   return {hidden,needsMigration:value.schemaVersion!==3||JSON.stringify(value.hidden)!==JSON.stringify(canonical(hidden))};
+  }catch{return fallback();}
+ }
  function columns(role){
   const actual=[...screen.querySelectorAll('#list-table thead th[data-purchase-column]')].map(node=>node.dataset.purchaseColumn).filter(id=>labels.has(id));
   if(actual.length)return [...new Set(actual)];
-  const ids=role==='accountant'?['model','owner','color','plate','year','mileage','purchaseDate','buyPrice','expectedProfit','totalInvestment','additionalCosts','inventoryLoan','inventoryInterest','vin','finance','lender','documents','advertising','status','age']:['model','color','plate','year','mileage','purchaseDate','buyPrice','expectedSellPrice','expectedProfit','totalInvestment','additionalCosts','inventoryLoan','inventoryInterest','vin','finance','lender','documents','quote','advertising','status','age'];
+  const ids=role==='accountant'?['model','owner','color','plate','year','mileage','purchaseDate','buyPrice','expectedProfit','totalInvestment','additionalCosts','inventoryLoan','inventoryInterest','vin','lender','documents','advertising','status','age']:['model','color','plate','year','mileage','purchaseDate','buyPrice','expectedSellPrice','expectedProfit','totalInvestment','additionalCosts','inventoryLoan','inventoryInterest','vin','lender','documents','quote','advertising','status','age'];
   return ids;
  }
  const set=(name,value)=>{if(screen.dataset[name]!==value)screen.dataset[name]=value;};
@@ -51,19 +64,24 @@
  function refresh(){
   queued=false;mount();const next=scope(),enabled=activeRoute()&&!!next;
   if(opened&&(!enabled||opened.key!==next.key||opened.actor!==next.actor))close({restoreFocus:false});
-  if(!next){state=null;}else if(state?.key!==next.key){state={...next,hidden:read(next.key,next.role)};}else state.actor=next.actor;
+  if(!next){state=null;}else if(state?.key!==next.key){state={...next,...read(next.key,next.role),migrationAttempted:false};}else state.actor=next.actor;
+  if(state?.needsMigration&&!state.migrationAttempted){state.migrationAttempted=true;writePreferences(null,false);}
   available=enabled?columns(next.role):[];
   if(trigger){if(trigger.hidden===enabled)trigger.hidden=!enabled;if(trigger.disabled===enabled)trigger.disabled=!enabled;}
   const ids=state?[...state.hidden].sort():[],signature=JSON.stringify([enabled,state?.key||'',available,ids]);
-  if(signature!==applied){applied=signature;set('purchaseColumnsActive',enabled?'true':'false');set('purchaseHiddenColumns',enabled?ids.join(' '):'');set('purchaseHiddenExisting',String(enabled&&ids.some(id=>!added.includes(id)&&(id!=='inventoryLoan'||next.role==='accountant'))));set('purchaseNoMeta',String(enabled&&['year','mileage','purchaseDate'].every(id=>state.hidden.has(id))));set('purchaseNoDealerFooter',String(enabled&&['status','advertising','age','quote'].every(id=>state.hidden.has(id))));set('purchaseNoAccountantFooter',String(enabled&&['status','advertising'].every(id=>state.hidden.has(id))));set('purchaseNoAccountantFields',String(enabled&&['year','mileage','purchaseDate','buyPrice','inventoryLoan','finance','lender','documents','age',...added.filter(id=>id!=='quote')].every(id=>state.hidden.has(id))));set('purchaseNoExtraFields',String(enabled&&[...added.filter(id=>id!=='quote'),'inventoryLoan'].every(id=>state.hidden.has(id))));window.SnoteListSort?.refresh();}
+  if(signature!==applied){applied=signature;set('purchaseColumnsActive',enabled?'true':'false');set('purchaseHiddenColumns',enabled?ids.join(' '):'');set('purchaseHiddenExisting',String(enabled&&ids.some(id=>!added.includes(id)&&(id!=='inventoryLoan'||next.role==='accountant'))));set('purchaseNoMeta',String(enabled&&['year','mileage','purchaseDate'].every(id=>state.hidden.has(id))));set('purchaseNoDealerFooter',String(enabled&&['status','advertising','age','quote'].every(id=>state.hidden.has(id))));set('purchaseNoAccountantFooter',String(enabled&&['status','advertising'].every(id=>state.hidden.has(id))));set('purchaseNoAccountantFields',String(enabled&&['year','mileage','purchaseDate','buyPrice','inventoryLoan','lender','documents','age',...added.filter(id=>id!=='quote')].every(id=>state.hidden.has(id))));set('purchaseNoExtraFields',String(enabled&&[...added.filter(id=>id!=='quote'),'inventoryLoan'].every(id=>state.hidden.has(id))));window.SnoteListSort?.refresh();}
   paintOptions();
  }
  function queue(){if(!queued){queued=true;queueMicrotask(refresh);}}
  function open(){refresh();const now=scope();if(!activeRoute()||!state||now?.key!==state.key)return false;if(dialog.open)return true;opened={key:now.key,actor:now.actor};status.textContent='선택한 항목이 바로 적용됩니다.';dialog.showModal();trigger.setAttribute('aria-expanded','true');paintOptions();dialog.querySelector('input:not(:disabled)')?.focus({preventScroll:true});window.SnoteMobilePopupHistory?.refresh();return true;}
  function editable(){const now=scope();if(opened&&state&&activeRoute()&&opened.key===now?.key&&opened.actor===now?.actor&&state.key===now.key)return true;close({restoreFocus:false});refresh();return false;}
+ function writePreferences(target,notify=true){
+  const expected=state,now=scope();if(!expected||now?.key!==expected.key||now.actor!==expected.actor)return false;
+  try{localStorage.setItem(expected.key,JSON.stringify({schemaVersion:3,hidden:canonical(expected.hidden)}));expected.needsMigration=false;return true;}
+  catch{if(notify){const key=expected.key,who=expected.actor;window.snoteNotify?.('화면에는 적용했지만 표시 설정을 기억하지 못했습니다. 다시 시도해 주세요.',{tone:'error',key:'purchase-columns-storage',isCurrent:()=>{const current=scope();return dialog.open&&opened?.key===key&&opened.actor===who&&current?.key===key&&current.actor===who;},returnFocus:()=>target});}return false;}
+ }
  function persist(target){
-  try{localStorage.setItem(state.key,JSON.stringify({schemaVersion:2,hidden:[...state.hidden].sort()}));}catch{const key=state.key,who=state.actor;window.snoteNotify?.('화면에는 적용했지만 표시 설정을 기억하지 못했습니다. 다시 시도해 주세요.',{tone:'error',key:'purchase-columns-storage',isCurrent:()=>{const current=scope();return dialog.open&&opened?.key===key&&opened.actor===who&&current?.key===key&&current.actor===who;},returnFocus:()=>target});}
-  refresh();
+  writePreferences(target);refresh();
  }
  options.addEventListener('change',event=>{
   const input=event.target,id=input.dataset?.purchaseColumnChoice;if(!id)return;if(!editable())return;
@@ -80,7 +98,7 @@
   status.textContent=preset[1]+' 보기로 적용했습니다. 항목을 따로 조정할 수도 있습니다.';persist(button);
  });
  dialog.querySelector('.snote-popup-close').addEventListener('click',()=>close());dialog.addEventListener('cancel',event=>{event.preventDefault();close();});dialog.addEventListener('click',event=>{if(event.target===dialog){const rect=dialog.getBoundingClientRect();if(event.clientX<rect.left||event.clientX>rect.right||event.clientY<rect.top||event.clientY>rect.bottom)close();}});
- window.addEventListener('snote:route-changed',()=>{close({restoreFocus:false});refresh();});window.addEventListener('snote:auth-reset',()=>{close({restoreFocus:false});state=null;applied='';refresh();});window.addEventListener('storage',event=>{if(event.key===state?.key){state.hidden=read(state.key,state.role);applied='';refresh();}});window.addEventListener('pagehide',()=>close({restoreFocus:false}));
+ window.addEventListener('snote:route-changed',()=>{close({restoreFocus:false});refresh();});window.addEventListener('snote:auth-reset',()=>{close({restoreFocus:false});state=null;applied='';refresh();});window.addEventListener('storage',event=>{if(event.key===state?.key){Object.assign(state,read(state.key,state.role),{migrationAttempted:false});applied='';refresh();}});window.addEventListener('pagehide',()=>close({restoreFocus:false}));
  new MutationObserver(queue).observe(screen,{childList:true,subtree:true});setInterval(refresh,250);
  window.SnotePurchaseColumns=Object.freeze({open,close,hidden,refresh});refresh();
 })();
