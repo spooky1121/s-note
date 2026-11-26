@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.243">
+<html lang="ko" data-snote-release="2.244">
 <head>
 <meta charset="utf-8" />
   <link rel="preload" href="assets/fonts/PretendardVariable.woff2?v=2.233" as="font" type="font/woff2" crossorigin>
@@ -3181,13 +3181,13 @@ button, input, select, textarea { font-family: inherit; }
 <script src="assets/purchase-overview.js?v=2.100" defer></script>
 <link rel="stylesheet" href="assets/route-transition.css?v=2.213">
 <script src="assets/route-transition.js?v=2.213" defer></script>
-<link rel="stylesheet" href="assets/home-dashboard.css?v=2.243" data-snote-type-scale>
+<link rel="stylesheet" href="assets/home-dashboard.css?v=2.244" data-snote-type-scale>
 <link rel="stylesheet" href="assets/dashboard-news.css?v=2.241" data-snote-type-scale>
-<link rel="stylesheet" href="assets/dealer-scheduler.css?v=2.223" data-snote-type-scale>
-<script src="assets/dealer-scheduler-store.js?v=2.238" defer></script>
+<link rel="stylesheet" href="assets/dealer-scheduler.css?v=2.244" data-snote-type-scale>
+<script src="assets/dealer-scheduler-store.js?v=2.244" defer></script>
 <script src="assets/korean-holidays.js?v=2.212" defer></script>
-<script src="assets/dealer-scheduler.js?v=2.238" defer></script>
-<script src="assets/home-dashboard.js?v=2.243" defer></script>
+<script src="assets/dealer-scheduler.js?v=2.244" defer></script>
+<script src="assets/home-dashboard.js?v=2.244" defer></script>
 <script src="assets/dashboard-news.js?v=2.241" defer></script>
 <link rel="stylesheet" href="assets/mobile-office-tasks.css?v=2.184">
 <script src="assets/mobile-office-tasks.js?v=2.184" defer></script>
@@ -3202,7 +3202,7 @@ button, input, select, textarea { font-family: inherit; }
 <script src="assets/idle-recovery.js?v=2.201"></script>
 <script src="assets/idle-session.js?v=2.172"></script>
 <link rel="stylesheet" href="assets/profile-settings.css?v=2.102">
-<script src="assets/feature-loader.js?v=2.240"></script>
+<script src="assets/feature-loader.js?v=2.244"></script>
 <script src="assets/vehicle-colors.js?v=2.23"></script>
 <link rel="stylesheet" href="assets/customer-contract-signature.css?v=2.165">
 <script src="assets/customer-contract-signature.js?v=2.165"></script>
@@ -3258,9 +3258,10 @@ button, input, select, textarea { font-family: inherit; }
 <link rel="stylesheet" href="assets/vehicle-memo.css?v=2.92">
 <link rel="stylesheet" href="assets/sidebar-hover.css?v=2.92">
 <link rel="stylesheet" href="assets/accountant-workspace.css?v=2.130">
-<link rel="stylesheet" href="assets/accountant-navigation.css?v=2.242">
-<link rel="stylesheet" href="assets/accountant-information.css?v=2.240">
-<link rel="stylesheet" href="assets/contract-office.css?v=2.238">
+<link rel="stylesheet" href="assets/accountant-navigation.css?v=2.244">
+<link rel="stylesheet" href="assets/accountant-information.css?v=2.244">
+<link rel="stylesheet" href="assets/accountant-business-pages.css?v=2.244">
+<link rel="stylesheet" href="assets/contract-office.css?v=2.244">
 <link rel="stylesheet" href="assets/workspace-ledgers.css?v=2.136">
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/snote-favicon.png?v=2.226">
   <link rel="icon" type="image/svg+xml" href="/assets/snote-favicon.svg?v=2.226">
@@ -3865,7 +3866,7 @@ function salePrice(c){return c.status==='판매완료'&&Number.isFinite(Number(c
 function formatKm(value){return num(Number(String(value??0).replaceAll(',',''))||0)}
 const pages={dashboard:{title:'대시보드',head:'대시보드',sub:'',eyebrow:'OVERVIEW',icon:'home'},contractOffice:{title:'업무',head:'업무',sub:'',eyebrow:'DOCUMENT OFFICE',icon:'document'},contractArchive:{title:'서류함',head:'서류함',sub:'',eyebrow:'DOCUMENT ARCHIVE',icon:'document'},buy:{title:'매입 관리',head:'차량 매입 관리',sub:'',eyebrow:'PURCHASE',icon:'purchase'},sell:{title:'판매 완료',head:'판매 완료 차량',sub:'',eyebrow:'SOLD VEHICLES',icon:'sold'},companyBuy:{title:'상사 매입',head:'상사 매입 관리',sub:'',eyebrow:'COMPANY PURCHASE',icon:'purchase'},prestock:{title:'선재고 관리',head:'선재고 관리',sub:'선재고 지급·상환 내역과 잔액을 관리합니다.',eyebrow:'PRESTOCK LEDGER',icon:'wallet'},inventoryFinance:{title:'재고금융 관리',head:'재고금융 관리',sub:'보유 차량의 재고대출금과 금융사를 통합 조회합니다.',eyebrow:'INVENTORY FINANCE',icon:'loan'},monthly:{title:'월정산',head:'월별 결산표',sub:'딜러별 수수료와 운영비, 통장 잔액·재고금융·미수금을 월별로 정리합니다.',eyebrow:'MONTHLY ACCOUNTING',icon:'calendar'},finance:{title:'수익 · 정산',head:'수익 및 정산',sub:'재고 및 판매 실적, 이번달 수익 리포트와 차량별 손익을 확인합니다.',eyebrow:'FINANCE',icon:'profit'},users:{title:'고객 관리',head:'고객 관리',sub:'매입·판매 고객 이력을 관리합니다.',eyebrow:'CUSTOMERS',icon:'customers'},recycle:{title:'휴지통',head:'휴지통',sub:'',eyebrow:'RECYCLE BIN',icon:'recycle'},vehicleInspection:{title:'차량 검수 도우미',head:'차량 검수 도우미',sub:'',eyebrow:'VEHICLE INSPECTION',icon:'inspection'},settings:{title:'설정',head:'설정',sub:'직원 계정, 차량 모델 데이터, 업무 접근 권한을 관리합니다.',eyebrow:'SETTINGS',icon:'settings'}};
 pages.acctFinance={title:'매입금액 현황',head:'매입금액 현황',sub:'상사 전체 차량의 매입·대출 현황을 조회합니다.',eyebrow:'ACCOUNTING',icon:'loan'};
-const snote239AccountantPages=Object.freeze({acctOperations:['운영 서류함','document'],acctBank:['은행','wallet'],acctTax:['세금','document'],acctLookup:['조회','search'],acctDealerIncome:['딜러소득','profit'],acctInfo:['정보','customers'],acctAccounts:['계좌','wallet'],acctPhones:['전화번호','customers'],acctStaff:['직원','customers']});
+const snote239AccountantPages=Object.freeze({acctOperations:['운영 서류함','document'],acctBank:['은행','wallet'],acctTax:['세금','document'],acctLookup:['조회','search'],acctDealerIncome:['딜러소득','profit'],acctCustomers:['고객','customers'],acctInfo:['정보','customers'],acctAccounts:['계좌','wallet'],acctPhones:['전화번호','customers'],acctStaff:['직원','customers']});
 for(const [id,[title,icon]] of Object.entries(snote239AccountantPages))pages[id]={title,head:title,sub:'',eyebrow:'ACCOUNTING',icon};
 pages.acctInfo.sub='계좌 · 전화번호 · 직원';
 const snote240InformationTabs=Object.freeze(['accounts','contacts','staff']);
@@ -3888,7 +3889,17 @@ function snote240MountInformation(){
   const message=document.createElement('p'),retry=document.createElement('button');message.textContent='정보 화면을 불러오지 못했습니다.';retry.type='button';retry.className='btn-ghost';retry.textContent='다시 불러오기';retry.onclick=()=>{if(currentUser===actor&&route==='acctInfo')snote240MountInformation();};host.replaceChildren(message,retry);
  });
 }
-function snote239PageLabel(page){return isAccountant()?({contractArchive:'차량서류',contractOffice:'양식지',buy:'매입·매도',sell:'매입·매도',inventoryFinance:'재고금융',prestock:'재고금융',monthly:'운영정산'}[page]||pages[page]?.title):pages[page]?.title;}
+let snote244BusinessIntent=0;
+function snote244MountBusiness(){
+ const host=$('alt-content'),actor=currentUser,page=route,intent=++snote244BusinessIntent;
+ if(window.SnoteAccountantBusinessPages){window.SnoteAccountantBusinessPages.mount(host,{page,bridge:window.snoteAccountantBusinessBridge});return;}
+ host.textContent='자료를 준비하고 있습니다.';
+ void window.SnoteFeatures.load('accountantBusiness').then(()=>{if(intent===snote244BusinessIntent&&currentUser===actor&&route===page&&host===$('alt-content'))snote244MountBusiness();}).catch(()=>{
+  if(intent!==snote244BusinessIntent||currentUser!==actor||route!==page)return;
+  const message=document.createElement('p'),retry=document.createElement('button');message.textContent='자료를 불러오지 못했습니다.';retry.type='button';retry.textContent='다시 불러오기';retry.className='btn-ghost';retry.onclick=snote244MountBusiness;host.replaceChildren(message,retry);
+ });
+}
+function snote239PageLabel(page){return isAccountant()?({contractArchive:'차량서류',contractOffice:'양식지',buy:'매입·매도',sell:'매입·매도',acctCustomers:'매입·매도',inventoryFinance:'재고금융',prestock:'재고금융',monthly:'운영정산'}[page]||pages[page]?.title):pages[page]?.title;}
 function snote239RenderAccountantTabs(){
  const host=$('snote-accountant-section-tabs');if(!host)return;
  if(!isAccountant()||!window.SnoteAccountantNavigation){host.hidden=true;host.replaceChildren();return;}
@@ -3899,12 +3910,14 @@ function snote239MountAccountantPage(){
  if(!isAccountant()){$('alt-content').replaceChildren();return false;}
  $('alt-title').style.display='none';$('alt-copy').style.display='none';
  if(route==='acctInfo'){snote240MountInformation();return true;}
+ if(['acctCustomers','acctDealerIncome','acctOperations'].includes(route)){snote244MountBusiness();return true;}
  const directory=window.snoteAccountantDirectoryBridge?.snapshot?.()||{ready:false,members:[]};
  if(window.SnoteAccountantNavigation)window.SnoteAccountantNavigation.mountPage($('alt-content'),route,{members:directory.members,ready:directory.ready,navigate:page=>navigate(page)});
  else $('alt-content').textContent='화면을 준비하고 있습니다.';
  return true;
 }
 function snote239ResetAccountantWorkspace(){
+ snote244BusinessIntent++;window.SnoteAccountantBusinessPages?.reset();
  snote240InformationIntent++;snote240InformationTab='accounts';snote240InformationPreparedTab=null;window.snoteResetAccountantInformation?.();
  window.SnoteAccountantInformation?.reset();
  window.SnoteAccountantNavigation?.reset();
@@ -3952,8 +3965,16 @@ window.snoteHomeDashboardBridge={
   const context=snoteHomeDashboardContext();if(!context)return null;
   if(context.mode==='accountant'){
    const rows=context.loading?null:cars.filter(car=>window.snoteCompanyPurchaseBridge?.carAllowed?.(car)===true);
-   const workSummary=rows?{totalCount:rows.length,inventoryCount:rows.filter(car=>car.status!=='판매완료').length,contractCount:rows.filter(car=>car.status==='계약중').length,monthPurchaseCount:rows.filter(car=>snotePurchaseDateSortKey(car.purchaseAt).slice(0,7)===context.month).length}:null;
-   return {...context,rows:[],hideMargin:true,workSummary};
+   const inventory=rows?.filter(car=>car.status!=='판매완료'),sum=values=>{let total=0;for(const value of values){if(!Number.isSafeInteger(value)||value<0||!Number.isSafeInteger(total+value))return null;total+=value;}return total;};
+   const months=[-2,-1,0].map(delta=>window.SnoteSalesOverviewModel?.shiftMonth(context.month,delta));
+   const workSummary=rows?{totalCount:rows.length,inventoryCount:inventory.length,contractCount:rows.filter(car=>car.status==='계약중').length,
+    inventoryBuyAmount:sum(inventory.map(car=>typeof car.buy==='number'?car.buy:typeof car.buy==='string'&&car.buy.trim()?Number(car.buy):null)),monthPurchaseCount:rows.filter(car=>snotePurchaseDateSortKey(car.purchaseAt).slice(0,7)===context.month).length,
+    monthSaleCount:rows.filter(car=>car.status==='판매완료'&&snotePurchaseDateSortKey(car.soldAt).slice(0,7)===context.month).length,
+    series:months.every(Boolean)?months.map(month=>({month,purchases:rows.filter(car=>snotePurchaseDateSortKey(car.purchaseAt).slice(0,7)===month).length,sales:rows.filter(car=>car.status==='판매완료'&&snotePurchaseDateSortKey(car.soldAt).slice(0,7)===month).length})):null}:null;
+   if(rows)window.snoteEnsureInventoryFinanceAggregate?.();
+   const finance=rows?window.snoteInventoryFinanceAggregate?.():null,scope=snotePurchaseContext();
+   const financeSummary=finance?.ready===true&&finance.companyId===scope?.companyId?{limit:finance.limit,used:finance.used}:{limit:null,used:null};
+   return {...context,rows:[],hideMargin:true,workSummary,financeSummary};
   }
   const rows=context.loading||context.locked?[]:cars.filter(car=>car?.ownerId===currentUser.username).map(car=>({id:String(car.id),model:String(car.model||''),plate:String(car.plate||''),photo:snoteHomeDashboardPhoto(car),purchaseAt:car.purchaseAt,soldAt:car.soldAt,status:car.status,inventoryCost:inventoryInvestmentOf(car),inventoryLoan:inventoryLoanOf(car),margin:totals(car.buy,salePrice(car),normalizeCosts(car)).margin,soldPrice:salePrice(car)}));
   return {...context,rows,hideMargin:window.SnoteDashboardDisplay?.hidden()!==false};
@@ -4039,7 +4060,7 @@ window.snoteUnifiedSearchBridge=Object.freeze({context:snote228SearchContext,cur
 // Public news uses the existing verified workspace identity, independent of financial unlocks.
 const snote241NewsContexts=new WeakMap();
 window.snoteDashboardNewsBridge=Object.freeze({
- context(){if(route!=='dashboard')return null;const scope=snote228SearchContext();if(!scope)return null;const context=Object.freeze({ready:true,key:scope.key});snote241NewsContexts.set(context,scope);return context;},
+ context(){if(route!=='dashboard'||isAccountant())return null;const scope=snote228SearchContext();if(!scope)return null;const context=Object.freeze({ready:true,key:scope.key});snote241NewsContexts.set(context,scope);return context;},
  current(context){const scope=context&&snote241NewsContexts.get(context);return route==='dashboard'&&!!scope&&snote228SearchCurrent(scope);}
 });
 window.addEventListener('snote:auth-reset',()=>{snote228SearchPending=null;});
@@ -4762,7 +4783,7 @@ function buildMenus(){
  }
  const items=acct?[['dashboard','홈','home'],['contractArchive','서류','document'],['buy','매입·매도','buy'],['inventoryFinance','재고금융','loan'],['monthly','운영정산','calendar']]:
  [['dashboard','홈','home'],['buy','매입','buy'],['sell','판매','sold'],['finance','정산','profit'],['add','등록','plus']];
- $('bottom-nav').innerHTML=items.map(([id,label,icon])=>`<button aria-label="${label}" class="${id==='add'?'plus-tab ':''}${id===route||acct&&(id==='buy'&&route==='sell'||id==='inventoryFinance'&&route==='prestock'||id==='contractArchive'&&['contractOffice','acctOperations'].includes(route))?'active':''}" onclick="${id==='add'?'openAdd()':`navigate('${id}')`}">${id==='add'?`<span class="mobile-plus">${ico(icon)}</span>`:ico(icon)}<span>${label}</span>${id==='finance'?zc81DashboardLockMark(id):''}</button>`).join('');
+ $('bottom-nav').innerHTML=items.map(([id,label,icon])=>`<button aria-label="${label}" class="${id==='add'?'plus-tab ':''}${id===route||acct&&(id==='buy'&&['sell','acctCustomers'].includes(route)||id==='inventoryFinance'&&route==='prestock'||id==='contractArchive'&&['contractOffice','acctOperations'].includes(route))?'active':''}" onclick="${id==='add'?'openAdd()':`navigate('${id}')`}">${id==='add'?`<span class="mobile-plus">${ico(icon)}</span>`:ico(icon)}<span>${label}</span>${id==='finance'?zc81DashboardLockMark(id):''}</button>`).join('');
  const drawer=$('mobile-drawer-nav');if(drawer){
   if(acct){drawer.dataset.accountantNavigation='true';if(window.SnoteAccountantNavigation)window.SnoteAccountantNavigation.renderMenu(drawer,{route,navigate:page=>navigate(page)});else drawer.replaceChildren();}
   else{delete drawer.dataset.accountantNavigation;drawer.innerHTML=nav.innerHTML+`<button class="mobile-new-car" onclick="closeMobileDrawer();openAdd()">${ico('plus')}<span>차량 신규 등록</span></button>`;}
@@ -9552,6 +9573,47 @@ window.snoteCreateAccountantInformationStore=({onChange}={})=>{
  return window.SnoteAccountantInformationData.create({bridge:window.snoteAccountantInformationBridge,onChange,isActive:()=>route==='acctInfo'&&isAccountant(),timeoutMs:30000});
 };
 
+// These views receive minimal, live company projections, never resident identities.
+const snote244BusinessContexts=new WeakMap();
+function snote244BusinessContext(page=route){
+ if(!['acctCustomers','acctDealerIncome','acctOperations'].includes(page)||route!==page||!isAccountant()||!S.ready||S.loading||!snoteWorkspaceVisible())return null;
+ const office=snote130OfficeContext(),purchase=snoteCompanyPurchaseContext();
+ if(!office?.ready||!purchase?.ready||!purchase.canRead||purchase.role!=='accountant'||!snoteCompanyPurchaseCurrent(purchase))return null;
+ const context=Object.freeze({ready:true,key:JSON.stringify([office.key,purchase.key,page,snoteNavigationSession,snote220CatalogEpoch])});
+ snote244BusinessContexts.set(context,{office,purchase,page,actor:currentUser,navigation:snoteNavigationSession,epoch:snote220CatalogEpoch});return context;
+}
+function snote244BusinessCurrent(context){
+ const saved=context&&snote244BusinessContexts.get(context);
+ return !!saved&&saved.page===route&&saved.actor===currentUser&&saved.navigation===snoteNavigationSession&&saved.epoch===snote220CatalogEpoch&&isAccountant()&&snoteWorkspaceVisible()&&snote130OfficeCurrent(saved.office)&&snoteCompanyPurchaseCurrent(saved.purchase)&&snoteCompanyPurchaseContext()?.ready===true;
+}
+function snote244BusinessAssert(context){if(!snote244BusinessCurrent(context))throw Object.assign(Error('로그인 또는 상사 연결이 변경되었습니다.'),{code:'CONTEXT_CHANGED'});}
+const snote244Clean=(value,max=120)=>String(value??'').replace(/[\u0000-\u001f\u007f]/g,'').slice(0,max);
+const snote244Date=value=>{const day=snotePurchaseDateSortKey(value);return day&&!day.startsWith('0000')?day:'';};
+window.snoteAccountantBusinessBridge=Object.freeze({
+ context:snote244BusinessContext,current:snote244BusinessCurrent,
+ async load(context,page){
+  snote244BusinessAssert(context);const saved=snote244BusinessContexts.get(context);if(page!==saved.page)throw Error('BUSINESS_PAGE_INVALID');
+  if(page==='acctOperations')return {complete:true,documents:['businessRegistration','vehicleBusinessRegistration','shareholders','corporatePassbook','representativeId'].map(kind=>({kind,status:'missing',filename:'',canUpload:false}))};
+  await window.snoteWaitCompanyPurchase();snote244BusinessAssert(context);
+  const soldMap=()=>{const byId=new Map();for(const car of cars.filter(snoteCompanyCarAllowed)){const scope=S.carScopes.get(car),key=JSON.stringify([scope.ownerId,String(car.id)]);if(byId.has(key))byId.set(key,null);else byId.set(key,car);}return byId;};
+  if(page==='acctCustomers'){
+   const result=await saved.office.client.rpc('snote_accountant_sold_customers',{p_expected_company_id:saved.office.companyId});snote244BusinessAssert(context);
+   if(result.error)throw Error('고객 목록을 불러오지 못했습니다.');const data=result.data;
+   if(!data||data.companyId!==saved.office.companyId||data.ownerId!==saved.office.userId||data.complete!==true||!Array.isArray(data.customers)||data.customers.length>5000)throw Error('CUSTOMER_RESPONSE_INVALID');
+   const seen=new Set(),customers=[],byId=soldMap();
+   for(const row of data.customers){
+    if(!row||typeof row.carOwnerId!=='string'||typeof row.carId!=='string'||typeof row.name!=='string'||typeof row.phone!=='string')throw Error('CUSTOMER_RESPONSE_INVALID');
+    const key=JSON.stringify([row.carOwnerId,row.carId]),car=byId.get(key);if(!car||car.status!=='판매완료'||seen.has(key))continue;seen.add(key);
+    customers.push({id:key,name:snote244Clean(row.name),phone:snote244Clean(row.phone,40),plate:snote244Clean(car.plate,32),model:snote244Clean(car.model,200),soldAt:snote244Date(car.soldAt),dealerName:snote244Clean(dealerLabel(car))});
+   }return {complete:true,customers};
+  }
+  const math=await import('./assets/income-settlement-model.js?v=2.174');snote244BusinessAssert(context);
+  const incomes=[];for(const [key,car] of soldMap()){if(!car||car.status!=='판매완료')continue;let amount=null;const record=car.incomeSettlement;
+   if(snote135IncomeComplete(car)){try{const value=math.calculate(math.normalizeDocument(record.document)).totals.purchaseIncome;if(Number.isSafeInteger(value)&&Math.abs(value)<=9999999999999)amount=value;}catch{}}
+   incomes.push({id:key,plate:snote244Clean(car.plate,32),model:snote244Clean(car.model,200),soldAt:snote244Date(car.soldAt),dealerName:snote244Clean(dealerLabel(car)),savedIncomeAmount:amount,reportedAmount:null,reportedDate:null,reportStatus:'unverified'});
+  }return {complete:true,incomes};
+ }
+});
 let snote130OfficeIdentity=null,snote130OfficeEpoch=0;
 function snote130OfficeContext(){
  const member=snoteCompanyActor();
@@ -9612,34 +9674,41 @@ async function snote130OfficeRpc(context,name,args){
  return result.data;
 }
 function snote133OfficeKind(kind){if(!['purchase','sale'].includes(kind))throw Object.assign(Error('문서 종류를 확인해 주세요.'),{code:'INVALID_DATA'});return kind;}
-// Registration previews use a separate metadata cache; the archive never preloads all photos.
+// One scoped metadata request serves the three document slots; bytes stay lazy.
 let snote238RegistrationStore=null,snote238RegistrationEpoch='';
+const snote244DocumentStores=new Map();let snote244DocumentMetadata=null;
 function snote238RegistrationCurrent(context){return route==='contractArchive'&&snote130OfficeCurrent(context)&&snote130OfficeContext()?.ready===true&&window.snoteCompanyPurchaseIsReady?.()===true;}
-function snote238RegistrationReset(){snote238RegistrationStore?.reset();snote238RegistrationStore=null;snote238RegistrationEpoch='';}
+function snote238RegistrationReset(){for(const store of snote244DocumentStores.values())store.reset();snote244DocumentStores.clear();snote238RegistrationStore=null;snote238RegistrationEpoch='';snote244DocumentMetadata=null;}
 function snote238RegistrationResolve(context,target){
  if(!snote238RegistrationCurrent(context)||!target||typeof target.id!=='string'||!target.id||target.id.length>200||typeof target.ownerId!=='string')return null;
  const rows=cars.filter(car=>snoteCompanyCarAllowed(car)&&String(car.id)===target.id),matches=rows.filter(car=>S.carScopes.get(car).ownerId===target.ownerId);
  return matches.length===1?{id:target.id,ownerId:target.ownerId,ambiguous:rows.length!==1}:null;
 }
-function snote238Registrations(){
+async function snote244ReadDocumentMetadata(context){
+ snote130OfficeAssert(context);const key=JSON.stringify([context.key,snote238RegistrationEpoch]);
+ if(snote244DocumentMetadata?.key===key&&snote244DocumentMetadata.client===context.client)return snote244DocumentMetadata.task;
+ const entry={key,client:context.client,task:null};snote244DocumentMetadata=entry;
+ entry.task=(async()=>{
+  const result=await context.client.from('zc_media').select('id,company_id,owner_id,car_id,group_name,file_path,original_name,mime_type,file_size,created_at',{count:'exact'}).eq('company_id',context.companyId).in('group_name',['registration','inspection1','inspection2']).order('created_at',{ascending:false}).order('id',{ascending:false}).limit(3000);
+  snote130OfficeAssert(context);if(snote244DocumentMetadata!==entry||!snote238RegistrationCurrent(context))throw Error('DOCUMENT_METADATA_STALE');
+  if(result.error)throw result.error;if(!Array.isArray(result.data)||result.data.some(row=>row.company_id!==context.companyId||!['registration','inspection1','inspection2'].includes(row.group_name)))throw Error('DOCUMENT_METADATA_INVALID');
+  return {rows:result.data,complete:Number.isSafeInteger(result.count)&&result.count===result.data.length};
+ })().catch(error=>{if(snote244DocumentMetadata===entry)snote244DocumentMetadata=null;throw error;});return entry.task;
+}
+function snote238Registrations(groupName='registration'){
+ if(!['registration','inspection1','inspection2'].includes(groupName))return null;
  const epoch=snoteServerMediaEpoch+':'+snote220CatalogEpoch;
- if(snote238RegistrationStore&&snote238RegistrationEpoch!==epoch)snote238RegistrationReset();
- if(!snote238RegistrationStore&&window.SnoteContractRegistrationStore){
+ if(snote238RegistrationEpoch&&snote238RegistrationEpoch!==epoch)snote238RegistrationReset();
+ if(!snote244DocumentStores.has(groupName)&&window.SnoteContractRegistrationStore){
   snote238RegistrationEpoch=epoch;
-  snote238RegistrationStore=window.SnoteContractRegistrationStore.create({
+  const store=window.SnoteContractRegistrationStore.create({groupName,
    context:()=>snote130OfficeContext(),
-   current:context=>snote238RegistrationEpoch===epoch&&snoteServerMediaEpoch+':'+snote220CatalogEpoch===epoch&&snote238RegistrationCurrent(context),
-   resolveVehicle:snote238RegistrationResolve,
-   async readMetadata(context){
-    snote130OfficeAssert(context);const result=await context.client.from('zc_media').select('id,company_id,owner_id,car_id,group_name,file_path,original_name,mime_type,file_size,created_at',{count:'exact'}).eq('company_id',context.companyId).eq('group_name','registration').order('created_at',{ascending:false}).order('id',{ascending:false}).limit(3000);snote130OfficeAssert(context);
-    if(result.error)throw result.error;if(!Array.isArray(result.data)||result.data.some(row=>row.company_id!==context.companyId||row.group_name!=='registration'))throw Error('REGISTRATION_METADATA_INVALID');
-    return {rows:result.data,complete:Number.isSafeInteger(result.count)&&result.count===result.data.length};
-   },
+   current:context=>snote238RegistrationEpoch===epoch&&snoteServerMediaEpoch+':'+snote220CatalogEpoch===epoch&&snote238RegistrationCurrent(context),resolveVehicle:snote238RegistrationResolve,
+   async readMetadata(context){const result=await snote244ReadDocumentMetadata(context);return {rows:result.rows.filter(row=>row.group_name===groupName),complete:result.complete};},
    async download(context,record){snote130OfficeAssert(context);const result=await context.client.storage.from(BUCKET).download(record.file_path);snote130OfficeAssert(context);if(result.error)throw result.error;return result.data;},
    openViewer(options){if(!window.SnoteVehicleImageViewer)throw Error('IMAGE_VIEWER_UNAVAILABLE');return window.SnoteVehicleImageViewer.open(options);}
-  });
- }
- return snote238RegistrationStore;
+  });snote244DocumentStores.set(groupName,store);if(groupName==='registration')snote238RegistrationStore=store;
+ }return snote244DocumentStores.get(groupName)||null;
 }
 window.addEventListener('snote:auth-reset',snote238RegistrationReset);window.addEventListener('pagehide',snote238RegistrationReset);
 window.addEventListener('snote:route-changed',()=>{if(route!=='contractArchive')snote238RegistrationReset();});
@@ -9649,8 +9718,19 @@ window.snoteContractOfficeBridge=Object.freeze({
  async read(context,id,documentKind){snote130OfficeAssert(context);const kind=snote133OfficeKind(documentKind);if(typeof id!=='string'||!/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(id))throw Error('서류를 다시 선택해 주세요.');const record=snote130OfficeRecord(await snote130OfficeRpc(context,'snote_transfer_document_read',{p_id:id,p_expected_company_id:context.companyId,p_document_kind:kind}));if(record.id!==id||record.documentKind!==kind)throw Object.assign(Error('선택한 서류의 서버 응답이 일치하지 않습니다.'),{code:'INVALID_RESPONSE'});return record;},
  async save(context,value){snote130OfficeAssert(context);const kind=snote133OfficeKind(value.documentKind),record=snote130OfficeRecord(await snote130OfficeRpc(context,'snote_transfer_document_save',{p_expected_company_id:context.companyId,p_id:value.id,p_car_owner_id:value.carOwnerId??null,p_car_id:value.carId??null,p_expected_revision:value.expectedRevision,p_payload:value.payload,p_document_kind:kind}));if(record.documentKind!==kind)throw Object.assign(Error('저장된 서류 종류가 일치하지 않습니다.'),{code:'INVALID_RESPONSE'});return record;},
  async vehicles(context,{force=false}={}){snote130OfficeAssert(context);if(force)window.snoteRefreshCompanyPurchase?.();await window.snoteWaitCompanyPurchase();snote130OfficeAssert(context);return cars.filter(snoteCompanyCarAllowed).map(car=>({id:String(car.id),ownerId:S.carScopes.get(car).ownerId,model:String(car.model||''),plate:String(car.plate||''),year:car.year||'',vin:String(car.vin||''),km:Number(String(car.km??'').replaceAll(',',''))||0,status:car.status,ownerName:dealerLabel(car),purchaseAt:String(car.purchaseAt||''),buy:Number(car.buy)||0,sell:Number(car.sell)||0,soldPrice:car.soldPrice==null?null:Number(car.soldPrice)}));},
+ documentSummary(context,target){
+  const groups=[['registration','자동차등록증'],['inspection1','성능·상태점검기록부 1'],['inspection2','성능·상태점검기록부 2']].map(([key,name])=>{const value=snote238Registrations(key)?.registration(context,target)||{status:'unknown'};return {key,name,status:value.status,registered:['registered','ready'].includes(value.status)};});
+  const ready=groups.every(group=>['missing','registered','ready'].includes(group.status));
+  return {status:ready?'ready':groups.some(group=>group.status==='ambiguous')?'ambiguous':groups.some(group=>group.status==='unavailable')?'unavailable':'unknown',registered:ready?groups.filter(group=>group.registered).length:null,total:3,groups};
+ },
+ async prepareDocuments(context,{force=false}={}){
+  snote130OfficeAssert(context);if(force)snote244DocumentMetadata=null;
+  const targets=cars.filter(snoteCompanyCarAllowed).map(car=>({ownerId:S.carScopes.get(car).ownerId,id:String(car.id)}));
+  return (await Promise.all(['registration','inspection1','inspection2'].map(group=>snote238Registrations(group)?.prepareRegistrations(context,targets,{force})))).every(Boolean);
+ },
+ openDocument(context,target,group,origin,isCurrent){const store=snote238Registrations(group);return store?store.openRegistration(context,target,origin,isCurrent):Promise.resolve(false);},
  registration(context,target){return snote238Registrations()?.registration(context,target)||{status:'unknown'};},
- prepareRegistrations(context,targets,options){const store=snote238Registrations();if(!store)throw Error('REGISTRATION_VIEW_UNAVAILABLE');return store.prepareRegistrations(context,targets,options);},
+ prepareRegistrations(context,targets,options){if(options?.force)snote244DocumentMetadata=null;const store=snote238Registrations();if(!store)throw Error('REGISTRATION_VIEW_UNAVAILABLE');return store.prepareRegistrations(context,targets,options);},
  openRegistration(context,target,origin,isCurrent){const store=snote238Registrations();return store?store.openRegistration(context,target,origin,isCurrent):Promise.resolve(false);},
  async stamp(context){
   snote130OfficeAssert(context);let url;
@@ -11313,7 +11393,7 @@ async function snote205SchedulerRpc(expected,name,args){
   const bytes=new Uint8Array(size);let at=0;for(const chunk of chunks){bytes.set(chunk,at);at+=chunk.length;}
   let data;try{data=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes));}catch(_){throw snote205SchedulerError('INVALID_RESPONSE');}
   if(!response.ok||data?.ok===false){
-   const raw=data?.code,known={SCHEDULE_EVENT_UNAVAILABLE:'EVENT_UNAVAILABLE',SCHEDULE_CONTEXT_CHANGED:'FORBIDDEN',SCHEDULE_CONFLICT:'CONFLICT',SCHEDULE_INVALID_EVENT:'INVALID_DATA',SCHEDULE_INVALID_MONTH:'INVALID_DATA',SCHEDULE_INVALID_REVISION:'INVALID_DATA'};
+   const raw=data?.code,known={SCHEDULE_EVENT_UNAVAILABLE:'EVENT_UNAVAILABLE',SCHEDULE_CONTEXT_CHANGED:'FORBIDDEN',SCHEDULE_CONFLICT:'CONFLICT',SCHEDULE_INVALID_EVENT:'INVALID_DATA',SCHEDULE_INVALID_MONTH:'INVALID_DATA',SCHEDULE_INVALID_REVISION:'INVALID_DATA',SCHEDULE_CLIENT_UPDATE_REQUIRED:'INVALID_DATA'};
    throw snote205SchedulerError(Object.hasOwn(known,data?.message)?known[data.message]:raw==='40001'?'CONFLICT':raw==='42501'||[401,403].includes(response.status)?'FORBIDDEN':raw==='22023'?'INVALID_DATA':['PGRST202','42883','42P01'].includes(raw)?'SETUP_REQUIRED':'NETWORK');
   }
   return data;
@@ -11322,7 +11402,7 @@ async function snote205SchedulerRpc(expected,name,args){
 }
 window.snoteDealerSchedulerBridge=Object.freeze({
  context:snote205SchedulerContext,current:snote205SchedulerCurrent,
- listMonth(expected,month){return snote205SchedulerRpc(expected,'snote_schedule_list',{p_expected_company_id:expected.companyId,p_month:month});},
+ listMonth(expected,month){return snote205SchedulerRpc(expected,'snote_schedule_list_v2',{p_expected_company_id:expected.companyId,p_month:month});},
  save(expected,event,revision){return snote205SchedulerRpc(expected,'snote_schedule_save',{p_expected_company_id:expected.companyId,p_event:event,p_expected_revision:revision});},
  remove(expected,id,revision){return snote205SchedulerRpc(expected,'snote_schedule_delete',{p_expected_company_id:expected.companyId,p_event_id:id,p_expected_revision:revision});}
 });
@@ -12657,7 +12737,7 @@ window.zc86Cloud={getAccessToken:async()=>{const client=S.client,user=S.user,com
 <script src="assets/workspace-order-store.js?v=2.135" defer></script>
 <script src="assets/workspace-reorder.js?v=2.239" defer></script>
 <script src="assets/vehicle-inspection-route.js?v=2.238" defer></script>
-<script src="assets/release-info.js?v=2.243" defer></script>
+<script src="assets/release-info.js?v=2.244" defer></script>
 <link rel="stylesheet" href="assets/encar-id.css?v=2.162">
 <script src="assets/encar-id.js?v=2.184" defer></script>
 <script src="assets/company-purchase.js?v=2.172" defer></script>
@@ -12735,7 +12815,7 @@ window.addEventListener('snote:payment-accounts-changed',()=>{if(typeof contract
 <script src="assets/dropdown-menu.js?v=2.225" defer></script>
 <script src="assets/service-brand.js?v=2.227" defer></script>
 <link rel="stylesheet" href="assets/workspace-density.css?v=2.243" data-snote-type-scale>
-<script src="assets/accountant-navigation.js?v=2.242" defer></script>
+<script src="assets/accountant-navigation.js?v=2.244" defer></script>
 <script src="assets/unified-search.js?v=2.239" defer></script>
 </body>
 </html>

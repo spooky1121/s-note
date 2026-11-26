@@ -45,28 +45,43 @@
 @media(prefers-reduced-motion:reduce){#snote-dashboard-home *{transition:none!important}}
 @media print{#snote-dashboard-home{display:none!important}}
 
-/* Accountant workflow counts remain separate from owner financial summaries. */
+/* Verified company amounts and accountant schedules use their own scoped layout. */
 @media screen{
+ #snote-dashboard-home[data-mode=accountant] .snote-accountant-overview{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;min-width:0;align-items:stretch}
  #snote-dashboard-home[data-mode=accountant] .snote-accountant-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;min-width:0}
- #snote-dashboard-home[data-mode=accountant] .snote-accountant-count{display:grid;align-content:start;gap:7px;min-width:0;min-height:84px;padding:14px 16px;border:1px solid #edf0f3;border-radius:14px;background:#fff;box-shadow:none}
+ #snote-dashboard-home[data-mode=accountant] :is(.snote-accountant-count,.snote-accountant-finance){min-width:0;min-height:100px;padding:14px 16px;border:1px solid #edf0f3;border-radius:14px;background:#fff;box-shadow:none}
+ #snote-dashboard-home[data-mode=accountant] .snote-accountant-count{display:grid;align-content:start;gap:8px}
  #snote-dashboard-home[data-mode=accountant] .snote-accountant-count-label{display:block;min-width:0;color:#727b87;font-size:12px;line-height:18px;font-weight:500;word-break:keep-all;overflow-wrap:anywhere}
- #snote-dashboard-home[data-mode=accountant] .snote-accountant-count-value{display:flex;align-items:baseline;gap:4px;min-width:0;color:#28354b;font-variant-numeric:tabular-nums}
- #snote-dashboard-home[data-mode=accountant] .snote-accountant-count-value>strong{min-width:0;font-size:25px;line-height:30px;font-weight:600;letter-spacing:-.5px;overflow-wrap:anywhere}
+ #snote-dashboard-home[data-mode=accountant] .snote-accountant-count-value{display:flex;align-items:baseline;gap:4px;min-width:0;color:#28354b;font-variant-numeric:tabular-nums;white-space:nowrap}
+ #snote-dashboard-home[data-mode=accountant] .snote-accountant-count-value>strong{min-width:0;font-size:clamp(17px,1.45cqw,23px);line-height:29px;font-weight:600;letter-spacing:-.5px;white-space:nowrap}
  #snote-dashboard-home[data-mode=accountant] .snote-accountant-count-value>small{flex:none;color:#7b8591;font-size:11px;line-height:18px;font-weight:400}
- #snote-dashboard-home[data-mode=accountant] .snote-accountant-work{display:grid;gap:10px;min-width:0;padding:14px;border:1px solid #edf0f3;border-radius:14px;background:#fff;box-shadow:none}
- #snote-dashboard-home[data-mode=accountant] .snote-accountant-work>h2{color:#303a47;font-size:14px;line-height:21px;font-weight:550}
- #snote-dashboard-home[data-mode=accountant] .snote-accountant-work>p{color:#727b87;font-size:12px;line-height:20px;word-break:keep-all;overflow-wrap:anywhere}
- #snote-dashboard-home[data-mode=accountant] .snote-accountant-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;min-width:0;margin-top:2px}
- #snote-dashboard-home[data-mode=accountant] .snote-accountant-actions>button{display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0;min-height:40px;padding:9px 10px;border:1px solid #e3eaf1;border-radius:9px;background:#fff;color:#40566e;font:inherit;font-size:12px;font-weight:500;line-height:20px;text-align:left;cursor:pointer;box-shadow:none;translate:none!important;transform:none!important;transition:background-color .16s ease,border-color .16s ease}
- #snote-dashboard-home[data-mode=accountant] .snote-accountant-actions>button:hover:enabled{border-color:#cddfeb;background:#f5f9fc}
- #snote-dashboard-home[data-mode=accountant] .snote-accountant-actions>button:disabled{opacity:.5;cursor:default}
- #snote-dashboard-home[data-mode=accountant] .snote-accountant-actions>button>svg{flex:0 0 16px;width:16px;height:16px;color:#8395a6}
+ #snote-dashboard-home[data-mode=accountant] .snote-accountant-count-note{color:#7b8591;font-size:11px;line-height:16px;white-space:nowrap;font-variant-numeric:tabular-nums}
+ #snote-dashboard-home[data-mode=accountant] .snote-accountant-finance{display:grid;align-content:start;gap:9px}
+ #snote-dashboard-home[data-mode=accountant] .snote-accountant-finance-title{color:#48576a;font-size:12px;line-height:18px;font-weight:550}
+ #snote-dashboard-home[data-mode=accountant] .snote-accountant-finance-amounts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+ #snote-dashboard-home[data-mode=accountant] .snote-accountant-finance-amounts>div{display:grid;gap:3px;min-width:0}
+ #snote-dashboard-home[data-mode=accountant] .snote-accountant-finance-amounts dt{color:#84909e;font-size:10.5px;line-height:16px;white-space:nowrap}
+ #snote-dashboard-home[data-mode=accountant] .snote-accountant-finance-amounts dd{color:#40566e;font-size:13px;line-height:20px;font-weight:600;letter-spacing:-.2px;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+ #snote-dashboard-home[data-mode=accountant] .snote-accountant-finance-track{height:7px;overflow:hidden;border-radius:5px;background:#eaf1f7}
+ #snote-dashboard-home[data-mode=accountant] .snote-accountant-finance-track.is-unavailable{background:#f0f2f5}
+ #snote-dashboard-home[data-mode=accountant] .snote-accountant-finance-fill{display:block;width:0;height:100%;border-radius:inherit;background:#59b7ee}
+ #snote-dashboard-home[data-mode=accountant] .is-over-limit .snote-accountant-finance-fill{background:#d47680}
+ #snote-dashboard-home[data-mode=accountant] .snote-scheduler-agenda-section{min-height:190px}
+ #snote-dashboard-home[data-mode=accountant] .snote-scheduler-agenda{align-items:stretch}
+ #snote-dashboard-home[data-mode=accountant] .snote-home-chart-group[data-chart-scope=accountant]{--snote-home-plot-height:120px;--snote-home-plot-scale:1.1538461538}
+ #snote-dashboard-home[data-mode=accountant] .has-wide-values .snote-accountant-summary{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@container snote-home (min-width:1100px){
+ #snote-dashboard-home[data-mode=accountant] .snote-accountant-overview{grid-template-columns:minmax(0,3fr) minmax(260px,1fr)}
 }
 @container snote-home (max-width:680px){
  #snote-dashboard-home[data-mode=accountant] .snote-accountant-summary{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 }
+@container snote-home (max-width:480px){
+ #snote-dashboard-home[data-mode=accountant] .has-wide-values .snote-accountant-summary{grid-template-columns:minmax(0,1fr)}
+}
 @media screen and (max-width:760px){
- #snote-dashboard-home[data-mode=accountant] .snote-accountant-count{min-height:78px;padding:13px 14px;gap:5px}
- #snote-dashboard-home[data-mode=accountant] .snote-accountant-count-value>strong{font-size:23px;line-height:28px}
- #snote-dashboard-home[data-mode=accountant] .snote-accountant-actions>button{min-height:44px}
+ #snote-dashboard-home[data-mode=accountant] :is(.snote-accountant-count,.snote-accountant-finance){min-height:88px;padding:13px 14px;gap:6px}
+ #snote-dashboard-home[data-mode=accountant] .snote-accountant-count-value>strong{font-size:20px;line-height:27px}
+ #snote-dashboard-home[data-mode=accountant] .snote-scheduler-agenda-section{min-height:160px}
 }

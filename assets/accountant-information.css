@@ -96,3 +96,7 @@
  .snote-info-empty{min-height:150px;font-size:11.5px}
 }
 @media screen and (prefers-reduced-motion:reduce){.snote-info-tab,.snote-info-button{transition:none}}
+@media screen {
+ .snote-info-table tr[data-info-source=staff] .snote-info-name{color:#426b87}
+ .snote-info-readonly{display:inline-flex;align-items:center;min-height:27px;padding:3px 6px;border:1px solid #e6edf3;border-radius:6px;background:#f8fbfd;color:#8a9dad;font-size:10.5px;white-space:nowrap}
+}

@@ -8,9 +8,10 @@
   taxonomyUI:['vehicle-taxonomy-ui.js?v=2.185'],
   taxonomyStore:['vehicle-taxonomy-store.js?v=2.20'],
   companyAssets:['company-assets.js?v=2.192'],
-  information:['accountant-information-store.js?v=2.240','accountant-information.js?v=2.240'],
+  information:['accountant-information-store.js?v=2.240','accountant-information.js?v=2.244'],
+  accountantBusiness:['accountant-business-pages.js?v=2.244'],
   mobileDocument:['mobile-document-editor.js?v=2.184'],
-  office:['transfer-document-layout.js?v=2.194','transfer-name-seal.js?v=2.192','transfer-company-seal.js?v=2.194','company-assets.js?v=2.192','contract-registration-store.js?v=2.238','contract-office.js?v=2.238']
+  office:['transfer-document-layout.js?v=2.194','transfer-name-seal.js?v=2.192','transfer-company-seal.js?v=2.194','company-assets.js?v=2.192','contract-registration-store.js?v=2.244','contract-office.js?v=2.244']
  });
  function loadFile(file){
   const url=new URL(file,base),key=url.href;
