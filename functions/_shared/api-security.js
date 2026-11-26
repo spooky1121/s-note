@@ -2,6 +2,7 @@
 // burst brake, NOT a distributed quota or a replacement for Cloudflare WAF.
 export const API_POLICIES = Object.freeze({
   '/api/weather': { methods: ['GET'], limit: 60, maximum: 0 },
+  '/api/automotive-columns': { methods: ['GET'], limit: 60, maximum: 0 },
   '/api/ocr': { methods: ['GET', 'POST'], limit: 30, maximum: 6 * 1024 * 1024, image: true },
   '/api/encar': { methods: ['POST'], limit: 60, maximum: 4096 },
   '/api/encar-id': { methods: ['GET', 'POST'], limit: null, maximum: 1024, publicNavigationGet: true },
@@ -17,9 +18,9 @@ export const API_POLICIES = Object.freeze({
   '/api/operator': { methods: ['POST'], limit: 240, maximum: 1024 * 1024 },
   '/api/vehicle-taxonomy-probe': { methods: ['GET', 'POST'], limit: 30, maximum: 2048, authenticatedGet: true }
 });
-// Credential recovery is a public business API, but never an observed endpoint.
+// Public credential recovery and cached news never create observed API events.
 // Keep logging policy separate from request authorization and payload limits.
-export const API_OBSERVATION_PATHS = Object.freeze(Object.keys(API_POLICIES).filter(path => path !== '/api/account-recovery'));
+export const API_OBSERVATION_PATHS = Object.freeze(Object.keys(API_POLICIES).filter(path => !['/api/account-recovery', '/api/automotive-columns'].includes(path)));
 const MESSAGES = {
   FORBIDDEN: [403, '허용되지 않은 요청입니다. S-NOTE에서 다시 시도해 주세요.'],
   UNAUTHORIZED: [401, '로그인이 필요합니다. 다시 로그인해 주세요.'],

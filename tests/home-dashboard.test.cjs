@@ -147,3 +147,35 @@ test('daily inventory tasks follow the Korean calendar across a UTC midnight bou
  assert.equal(M.currentDay(new Date('2027-03-14T14:59:59.999Z')),'2027-03-14');assert.equal(M.currentDay(new Date('2027-03-14T15:00:00.000Z')),'2027-03-15');
  const rows=frozen([{id:'boundary',status:'판매중',purchaseAt:'2026-12-15'}]);assert.equal(M.inventoryTasks(rows,'2027-03-14').count,0);assert.equal(M.inventoryTasks(rows,'2027-03-15').count,1);
 });
+
+test('settlement rows retain all seven relocated figures and the existing inventory forecast without changing report data',()=>{
+ const report=M.summarize(frozen([
+  {id:'stock',status:'판매중',purchaseAt:'2027-03-02',inventoryCost:12345678,inventoryLoan:4000000,margin:-50000},
+  {id:'sold',status:'판매완료',purchaseAt:'2027-02-01',soldAt:'2027-03-05',inventoryCost:9000000,margin:1200000},
+  {id:'earlier',status:'판매완료',purchaseAt:'2027-01-02',soldAt:'2027-02-02',inventoryCost:7000000,margin:800000}
+ ]),'2027-03'),before=JSON.stringify(report),rows=M.settlementRows(report);
+ assert.deepEqual(rows.map(row=>[row.kind,row.value,row.unit]),[
+  ['capital',12345678,'원'],['inventory',4000000,'원'],['cash',8345678,'원'],['profit',1200000,'원'],['purchase',1,'대'],['sale',1,'대'],['year',2000000,'원'],['forecast',-50000,'원']
+ ]);
+ assert.equal(new Set(rows.map(row=>row.kind)).size,8);
+ assert.equal(rows.every(row=>row.masked===false),true);
+ assert(Object.isFrozen(rows)&&rows.every(Object.isFrozen));
+ assert.equal(JSON.stringify(report),before);
+});
+
+test('settlement projection masks only previously hidden month/year profit and does not return their amounts',()=>{
+ const report=M.summarize(frozen([{id:'sold',status:'판매완료',purchaseAt:'2027-03-01',soldAt:'2027-03-04',inventoryCost:100,margin:654321}]),'2027-03');
+ const rows=M.settlementRows(report,{hideMargin:true});
+ for(const kind of ['profit','year']){const row=rows.find(row=>row.kind===kind);assert.equal(row.masked,true);assert.equal(row.value,null);}
+ assert.equal(rows.find(row=>row.kind==='sale').value,1);
+ assert.equal(rows.find(row=>row.kind==='forecast').masked,false);
+ assert(!JSON.stringify(rows).includes('654321'));
+});
+
+test('plain settlement rows preserve safe long and negative won amounts and fail invalid report fields',()=>{
+ const report=M.summarize(frozen([{id:'stock',status:'판매중',inventoryCost:1234567890123,inventoryLoan:1234567890124,margin:-123456789}]),'2027-03');
+ assert.equal(M.settlementRows(report).find(row=>row.kind==='capital').value,1234567890123);
+ assert.equal(M.settlementRows(report).find(row=>row.kind==='cash').value,-1);
+ for(const data of [null,[],{}, {...report,monthSaleCount:-1},{...report,totalInvestment:Infinity},{...report,monthMargin:1.5}])assert.throws(()=>M.settlementRows(data));
+ assert.throws(()=>M.settlementRows(report,{hideMargin:'true'}));
+});

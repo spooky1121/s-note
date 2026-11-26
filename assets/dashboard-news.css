@@ -1,0 +1,28 @@
+/* Compact public headlines share the dashboard's typography and spacing. */
+@media screen{
+ #snote-dashboard-news{min-width:0;max-width:100%}
+ #snote-dashboard-news .snote-dashboard-news-card{min-width:0;min-height:210px;border:1px solid #e7ecf1;border-radius:14px;background:#fff;padding:14px;box-shadow:none}
+ #snote-dashboard-news .snote-news-head{display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:0;margin:0 0 7px}
+ #snote-dashboard-news .snote-news-title{min-width:0;margin:0;color:#33465a;font-family:inherit;font-size:14px;font-weight:600;line-height:1.5;letter-spacing:-.25px}
+ #snote-dashboard-news .snote-news-source{flex:none;color:#087d49;font-size:11px;line-height:1.5;text-decoration:none;white-space:nowrap}
+ #snote-dashboard-news .snote-news-source:hover{text-decoration:underline}
+ #snote-dashboard-news .snote-news-list{margin:0;padding:0;list-style:none;min-width:0}
+ #snote-dashboard-news .snote-news-item{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px;min-width:0;padding:6px 0;border-top:1px solid #edf1f5}
+ #snote-dashboard-news .snote-news-item:first-child{border-top:0}
+ #snote-dashboard-news .snote-news-item:last-child{padding-bottom:0}
+ #snote-dashboard-news .snote-news-link{display:block;min-width:0;color:#3f5369;font-size:12px;font-weight:500;line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:none}
+ #snote-dashboard-news .snote-news-link:hover{color:#006ca5;text-decoration:underline}
+ #snote-dashboard-news .snote-news-meta{display:flex;align-items:center;min-width:0;color:#687787;font-size:10.5px;line-height:1.45}
+ #snote-dashboard-news .snote-news-publisher{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);clip-path:inset(50%);white-space:nowrap;border:0}
+ #snote-dashboard-news .snote-news-date{flex:none;white-space:nowrap;font-variant-numeric:tabular-nums}
+ #snote-dashboard-news .snote-news-state{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:11px;min-height:150px;padding:14px 5px;text-align:center}
+ #snote-dashboard-news .snote-news-message{margin:0;color:#687787;font-size:12px;line-height:1.7}
+ #snote-dashboard-news .snote-news-retry{min-height:34px;border:1px solid #dce6ef;border-radius:8px;padding:6px 10px;background:#fff;color:#526b80;font:inherit;font-size:11px;cursor:pointer;box-shadow:none}
+ #snote-dashboard-news :is(a,button):focus-visible{outline:3px solid #a6d8f5;outline-offset:3px}
+}
+@media screen and (max-width:760px){
+ #snote-dashboard-news .snote-news-title{font-size:14px}
+ #snote-dashboard-news .snote-news-link{font-size:12px}
+ #snote-dashboard-news .snote-news-meta{font-size:11px}
+}
+@media print{#snote-dashboard-news{display:none!important}}

@@ -1,4 +1,4 @@
-/* Width-led dashboard. Every metric is a card; narrow screens scroll at normal text sizes. */
+/* Dashboard amounts use plain rows; graph, settlement and news share the work column. */
 @media screen{#snote-app .content:has(#snote-dashboard-home:not([hidden])){box-sizing:border-box;width:100%;max-width:none;padding:var(--snote-workspace-gutter,clamp(14px,1.5vw,28px))}}
 @media screen{#snote-app:has(#snote-dashboard-home:not([hidden])) .topbar{padding-inline:var(--snote-workspace-gutter,clamp(14px,1.5vw,28px))}}
 #snote-dashboard-home{container-name:snote-home;container-type:inline-size;display:flex;flex-direction:column;gap:clamp(14px,1.2vw,20px);min-width:0;max-width:none;margin:0 0 12px;color:#28354b;font-family:inherit;font-size:14px;line-height:1.5}
@@ -7,28 +7,17 @@
 #snote-dashboard-home :is(h2,p,dl,dd){margin:0}
 #snote-dashboard-home :is(button,[role=img]):focus-visible{outline:3px solid #9cbbf2;outline-offset:3px}
 #snote-dashboard-home button{font-family:inherit}
-#snote-dashboard-home .snote-home-kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(12px,1.1cqw,18px);min-width:0}
-#snote-dashboard-home .snote-home-kpi{display:flex;flex-direction:column;justify-content:flex-start;gap:12px;min-width:0;min-height:clamp(90px,8cqw,112px);padding:clamp(14px,1.15cqw,20px);border:1px solid #e7ecf1;border-radius:14px;background:#fff;box-shadow:none;translate:none!important}
-#snote-dashboard-home .snote-home-kpi:last-child{grid-column:1/-1}
-#snote-dashboard-home .snote-home-kpi-label{display:flex;align-items:center;justify-content:space-between;gap:6px;min-height:21px;color:#65758b}
-#snote-app #snote-dashboard-home[data-home-layout=fluid] .snote-home-kpi-label>span{font-size:13px;line-height:1.5;letter-spacing:-.25px;white-space:nowrap}
-#snote-dashboard-home .snote-home-kpi-label>svg{flex:none;width:16px;height:16px;color:#8395b1}
-#snote-dashboard-home .snote-home-kpi-value{display:block;min-width:0;white-space:nowrap;color:#26364c;font-size:clamp(20px,1.55cqw,26px);font-weight:650;letter-spacing:-.65px;line-height:1.2;font-variant-numeric:tabular-nums}
-#snote-dashboard-home .snote-home-number{white-space:nowrap;overflow-wrap:normal}
-#snote-dashboard-home .snote-home-kpi-value small{display:inline;margin-left:3px;vertical-align:baseline;font-size:12px;color:#748398;font-weight:500;letter-spacing:0;white-space:nowrap}
-#snote-dashboard-home :is(.snote-home-chart-group,.snote-home-settlement-card,.snote-home-state){min-width:0;border:1px solid #e7ecf1;border-radius:14px;background:#fff;box-shadow:none;padding:clamp(16px,1.3cqw,24px)}
-#snote-dashboard-home .snote-home-insights{--snote-home-plot-height:72px;--snote-home-plot-scale:.6923076923;display:grid;gap:14px;min-width:0}
-#snote-dashboard-home .snote-home-card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0;margin-bottom:14px}
-#snote-dashboard-home :is(.snote-home-card-head h2,.snote-home-state h2,.snote-home-chart-group-head h2){color:#2c3a4d;font-size:16px;font-weight:650;line-height:1.45;letter-spacing:-.3px}
-#snote-dashboard-home .snote-home-card-title{display:flex;align-items:center;gap:8px;min-width:0;flex-wrap:wrap}
-#snote-dashboard-home button.snote-home-card-link{display:grid;place-items:center;flex:none;width:44px;height:44px;min-width:44px;margin:0;padding:12px;border:1px solid #e8edf4;border-radius:10px;background:transparent!important;box-shadow:none!important;color:#7085a3;cursor:pointer}
-#snote-dashboard-home .snote-home-card-link svg{display:block;width:18px;height:18px}
-#snote-dashboard-home .snote-home-chart-group-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:10px}
-#snote-dashboard-home .snote-home-chart-tabs{display:flex;max-width:100%;padding:3px;gap:2px;border-radius:10px;background:#f0f4f9}
-#snote-dashboard-home button.snote-home-chart-tab{min-height:34px;min-width:56px;padding:6px 8px;border:0;border-radius:7px;background:transparent;color:#617189;font-size:12px;font-weight:550;line-height:1.4;cursor:pointer;box-shadow:none}
+#snote-dashboard-home :is(.snote-home-chart-group,.snote-home-settlement-card,.snote-home-state){min-width:0;border:1px solid #e7ecf1;border-radius:14px;background:#fff;box-shadow:none;padding:14px}
+#snote-dashboard-home .snote-home-work{container-name:snote-home-work;container-type:inline-size;display:grid;gap:14px;min-width:0}
+#snote-dashboard-home .snote-home-insights{--snote-home-plot-height:96px;--snote-home-plot-scale:.9230769231;display:grid;grid-template-columns:minmax(0,1fr);gap:12px;min-width:0;align-items:stretch}
+#snote-dashboard-home .snote-home-card-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px 10px;min-width:0;margin-bottom:8px}
+#snote-dashboard-home :is(.snote-home-card-head h2,.snote-home-state h2,.snote-home-chart-group-head h2){color:#2c3a4d;font-size:14px;font-weight:600;line-height:1.5;letter-spacing:-.25px}
+#snote-dashboard-home .snote-home-chart-group-head{display:flex;flex-direction:column;align-items:stretch;gap:9px;margin-bottom:10px}
+#snote-dashboard-home .snote-home-chart-tabs{display:flex;max-width:100%;padding:3px;gap:2px;border-radius:8px;background:#f4f6f9}
+#snote-dashboard-home button.snote-home-chart-tab{flex:1 1 0;min-width:0;min-height:29px;padding:5px 3px;border:0;border-radius:6px;background:transparent;color:#617189;font-size:10.5px;font-weight:550;line-height:1.4;white-space:nowrap;cursor:pointer;box-shadow:none}
 #snote-dashboard-home button.snote-home-chart-tab[aria-selected=true]{background:#fff;color:#315f9d;box-shadow:0 1px 3px #273e6114}
 #snote-dashboard-home .snote-home-chart-card{min-width:0;padding:0;border:0;background:transparent}
-#snote-dashboard-home .snote-home-chart-total{min-width:0;color:var(--snote-home-chart-color,#3168d8);font-size:20px;font-weight:650;letter-spacing:-.5px;line-height:1.35;text-align:right;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+#snote-dashboard-home .snote-home-chart-total{min-width:0;margin-left:auto;color:var(--snote-home-chart-color,#3168d8);font-size:17px;font-weight:650;letter-spacing:-.4px;line-height:1.4;text-align:right;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
 #snote-dashboard-home .snote-home-chart{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));min-width:0}
 #snote-dashboard-home .snote-home-chart-line{position:absolute;top:0;left:0;width:100%;height:var(--snote-home-plot-height,104px);overflow:visible;pointer-events:none}
 #snote-dashboard-home .snote-home-grid-line{stroke:#edf1f7;stroke-width:1;vector-effect:non-scaling-stroke}
@@ -39,75 +28,37 @@
 #snote-dashboard-home .snote-home-chart-marker{display:block;position:relative;height:var(--snote-home-plot-height,104px)}
 #snote-dashboard-home .snote-home-chart-dot{position:absolute;left:50%;top:calc(var(--snote-home-point-y)*var(--snote-home-plot-scale,1)*1px);width:7px;height:7px;border:1.5px solid var(--snote-home-chart-color,#3974dc);border-radius:50%;background:#fff;transform:translate(-50%,-50%)}
 #snote-dashboard-home .snote-home-chart-month.is-current .snote-home-chart-dot{width:8px;height:8px}
-#snote-dashboard-home .snote-home-chart-label{font-size:12px;line-height:1.5;text-align:center}
+#snote-dashboard-home .snote-home-chart-label{font-size:11px;line-height:1.5;text-align:center}
+#snote-dashboard-home .snote-home-chart-masked{display:grid;place-items:center;min-height:110px;color:#758297;font-size:12px}
 #snote-dashboard-home .snote-home-settlement-card{display:flex;flex-direction:column}
-#snote-dashboard-home .snote-home-settlement{display:flex;flex:1;flex-direction:column;justify-content:center;min-width:0}
-#snote-dashboard-home .snote-home-settlement>div{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:4px 10px;min-width:0;padding:9px 0;border-top:1px solid #edf0f5}
-#snote-dashboard-home .snote-home-settlement dt{color:#627389;font-size:14px;line-height:1.5}
-#snote-dashboard-home .snote-home-settlement dd{color:#3168d8;font-size:18px;font-weight:650;line-height:1.35;letter-spacing:-.35px;margin-left:auto;white-space:nowrap;text-align:right;font-variant-numeric:tabular-nums}
+#snote-dashboard-home .snote-home-settlement-heading{margin:0;line-height:1}
+#snote-app #snote-dashboard-home .snote-home-settlement-toggle{display:block;width:100%;min-height:29px;padding:0;border:0;border-radius:4px;background:transparent!important;box-shadow:none!important;text-align:left;color:#303a47;font-family:inherit;font-weight:600;font-size:14px;line-height:1.5;cursor:pointer}
+#snote-dashboard-home .snote-home-settlement-content{overflow:hidden;min-width:0}
+#snote-dashboard-home .snote-home-settlement{display:flex;flex-direction:column;min-width:0;padding-top:8px}
+#snote-dashboard-home .snote-home-settlement>div{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:2px 6px;min-width:0;padding:7px 0;border-top:1px solid #edf0f5}
+#snote-dashboard-home .snote-home-settlement dt{color:#6d7c8f;font-size:11.5px;line-height:1.6;white-space:nowrap}
+#snote-dashboard-home .snote-home-settlement dd{max-width:100%;margin-left:auto;color:#3168d8;font-size:13px;font-weight:600;line-height:1.5;letter-spacing:-.2px;white-space:nowrap;text-align:right;font-variant-numeric:tabular-nums}
+#snote-dashboard-home .snote-home-settlement .snote-home-settlement-forecast{margin-top:4px;border-top-color:#dfe7ee}
 #snote-dashboard-home .is-negative{color:#bf4c5a!important}
 #snote-dashboard-home .snote-home-state{min-height:160px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:12px}
 #snote-dashboard-home .snote-home-state p{color:#627389;font-size:14px;line-height:1.6}
 #snote-dashboard-home button.snote-home-unlock{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:10px 14px;border:1px solid #cae5f8;border-radius:10px;background:#f4faff;color:#006bb5;font:inherit;font-size:14px;cursor:pointer}
 #snote-dashboard-home .snote-home-unlock svg{width:18px;height:18px}
-@container snote-home (min-width:680px){
- #snote-dashboard-home .snote-home-kpis{grid-template-columns:repeat(12,minmax(0,1fr))}
- #snote-dashboard-home .snote-home-kpi{grid-column:span 3}
- #snote-dashboard-home .snote-home-kpi:nth-child(n+5){grid-column:span 4}
-}
-@container snote-home (min-width:1160px){
- #snote-dashboard-home .snote-home-kpis{grid-template-columns:repeat(4,minmax(0,1.15fr)) minmax(0,.9fr) minmax(0,.9fr) minmax(0,1.15fr)}
- #snote-dashboard-home .snote-home-kpi,#snote-dashboard-home .snote-home-kpi:nth-child(n+5){grid-column:auto}
-}
+#snote-dashboard-news{min-width:0;max-width:100%}
+@container snote-home-work (min-width:380px){#snote-dashboard-home .snote-home-insights{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:760px){
  #snote-dashboard-home{gap:14px;margin:0 0 12px}
- #snote-dashboard-home .snote-home-kpi{padding:14px}
- #snote-dashboard-home .snote-home-kpi-value{font-size:20px}
- #snote-dashboard-home .snote-home-kpi-label>span{font-size:13px}
- #snote-dashboard-home .snote-home-kpi-label>svg{width:16px;height:16px}
- #snote-dashboard-home .snote-home-chart-tabs{width:100%}
- #snote-dashboard-home .snote-home-chart-tabs button{flex:1;min-width:0;min-height:44px}
- #snote-dashboard-home .snote-home-chart-total{font-size:22px}
+ #snote-dashboard-home .snote-home-work{gap:13px}
+ #snote-dashboard-home .snote-home-chart-tabs button{min-height:38px;font-size:11.5px}
+ #snote-dashboard-home .snote-home-chart-total{font-size:19px}
+ #snote-app #snote-dashboard-home .snote-home-settlement-toggle{min-height:38px}
+ #snote-dashboard-home .snote-home-settlement dt{font-size:12px}
+ #snote-dashboard-home .snote-home-settlement dd{font-size:14px}
 }
-#snote-dashboard-home .snote-home-insights>:is(.snote-home-chart-group,.snote-home-settlement-card){padding:14px}
-#snote-dashboard-home .snote-home-insights .snote-home-card-head{margin-bottom:8px}
-#snote-dashboard-home .snote-home-chart-masked{display:grid;place-items:center;min-height:110px;margin:0;color:#758297;font-size:13px}
-#snote-dashboard-home .snote-home-kpis.has-wide-values{grid-template-columns:repeat(12,minmax(0,1fr))}
-#snote-dashboard-home .snote-home-kpis.has-wide-values>.snote-home-kpi{grid-column:span 3}
-#snote-dashboard-home .snote-home-kpis.has-wide-values>.snote-home-kpi:nth-child(n+5){grid-column:span 4}
-#snote-dashboard-home .snote-home-kpis.has-wide-values[data-value-columns="7"]{grid-template-columns:repeat(7,minmax(0,1fr))}
-#snote-dashboard-home .snote-home-kpis.has-wide-values[data-value-columns="7"]>.snote-home-kpi{grid-column:auto}
-#snote-dashboard-home .snote-home-kpis.has-wide-values[data-value-columns="2"]{grid-template-columns:repeat(2,minmax(0,1fr))}
-#snote-dashboard-home .snote-home-kpis.has-wide-values[data-value-columns="2"]>.snote-home-kpi{grid-column:auto}
-#snote-dashboard-home .snote-home-kpis.has-wide-values[data-value-columns="2"]>.snote-home-kpi:last-child{grid-column:1/-1}
-#snote-dashboard-home .snote-home-kpis.has-wide-values[data-value-columns="1"]{grid-template-columns:minmax(0,1fr)}
-#snote-dashboard-home .snote-home-kpis.has-wide-values[data-value-columns="1"]>.snote-home-kpi{grid-column:auto}
 @media(prefers-reduced-motion:reduce){#snote-dashboard-home *{transition:none!important}}
 @media print{#snote-dashboard-home{display:none!important}}
 
-/* User-controlled card stack: the remaining figures stay inaccessible until
-   expanded. Only empty decorative edges sit behind the total-investment card. */
-#snote-dashboard-home .snote-home-kpis{position:relative;isolation:isolate;align-items:start;padding-bottom:10px}
-/* Hidden metrics keep their final grid cells without being painted or focused.
-   The calendar and insight cards therefore do not move when the stack opens. */
-#snote-dashboard-home .snote-home-kpis>.snote-home-kpi[hidden]{display:flex!important;visibility:hidden;pointer-events:none}
-#snote-dashboard-home .snote-home-kpi{transform-origin:top left}
-#snote-dashboard-home .snote-home-kpi[data-kpi=capital]{position:relative;z-index:3;cursor:pointer;outline-offset:4px}
-#snote-dashboard-home .snote-home-kpi[data-kpi=capital]:focus-visible{outline:3px solid #9cbbf2}
-#snote-dashboard-home .snote-home-kpis::before,#snote-dashboard-home .snote-home-kpis::after{content:'';position:absolute;inset:0 auto auto 0;z-index:-1;width:min(calc(100% - 14px),var(--snote-kpi-stack-width,230px));height:var(--snote-kpi-stack-height,90px);border:1px solid #e3edf4;border-radius:14px;background:#f4faff;pointer-events:none;opacity:0;transition:opacity .18s ease}
-#snote-dashboard-home .snote-home-kpis.is-collapsed::before{opacity:1;transform:translate(7px,4px)}
-#snote-dashboard-home .snote-home-kpis.is-collapsed::after{opacity:1;transform:translate(13px,8px);z-index:-2}
-#snote-dashboard-home .snote-home-kpis.is-collapsed>.snote-home-kpi:not([data-kpi=capital]){opacity:0;pointer-events:none}
-#snote-dashboard-home .snote-home-kpis.is-collapsed>.snote-home-kpi[data-kpi=capital]{border-color:#dcecf7}
-#snote-dashboard-home .snote-home-insights{align-items:start}
-#snote-dashboard-home .snote-home-settlement-heading{margin:0;line-height:1}
-#snote-app #snote-dashboard-home .snote-home-settlement-toggle{display:block;width:100%;min-height:32px;padding:0;border:0;border-radius:4px;background:transparent!important;box-shadow:none!important;text-align:left;color:#303a47;font-family:inherit;font-weight:550;font-size:15px;line-height:1.45;cursor:pointer}
-#snote-dashboard-home .snote-home-settlement-content{overflow:hidden;min-width:0}
-#snote-dashboard-home .snote-home-settlement-content>.snote-home-settlement{padding-top:8px}
-@media(max-width:760px){#snote-app #snote-dashboard-home .snote-home-settlement-toggle{min-height:44px}}
-@media(prefers-reduced-motion:reduce){#snote-dashboard-home .snote-home-kpis::before,#snote-dashboard-home .snote-home-kpis::after{transition:none}}
-
-/* The accountant home has work counts only; owner financial cards keep their layout. */
+/* Accountant workflow counts remain separate from owner financial summaries. */
 @media screen{
  #snote-dashboard-home[data-mode=accountant] .snote-accountant-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;min-width:0}
  #snote-dashboard-home[data-mode=accountant] .snote-accountant-count{display:grid;align-content:start;gap:7px;min-width:0;min-height:84px;padding:14px 16px;border:1px solid #edf0f3;border-radius:14px;background:#fff;box-shadow:none}

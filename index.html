@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.240">
+<html lang="ko" data-snote-release="2.241">
 <head>
 <meta charset="utf-8" />
   <link rel="preload" href="assets/fonts/PretendardVariable.woff2?v=2.233" as="font" type="font/woff2" crossorigin>
@@ -910,6 +910,8 @@ table th.snote-money-column,table td.snote-money-column,.acct-mobile-fields .sno
 @media(max-width:800px){.accountant-bar{grid-template-columns:1fr;padding:14px}.acct-controls{justify-content:flex-start}.acct-controls select{flex:1}.acct-mini{flex:1 1 40%}}
 
 /* v1.42 · 경리 대시보드 / 재고금융사별 매입 보유 관리 */
+/* Accountant calendars contain personal schedules only. */
+body.accountant-mode #snote-dashboard-home .snote-scheduler-vehicle-legend{display:none!important}
 .app.accountant-dashboard #dashboard-screen{grid-template-columns:minmax(0,1fr)!important}
 .app.accountant-dashboard #dashboard-screen>section:last-child{display:none!important}
 .app.accountant-dashboard #stats{grid-template-columns:repeat(4,minmax(0,1fr))}
@@ -3179,12 +3181,14 @@ button, input, select, textarea { font-family: inherit; }
 <script src="assets/purchase-overview.js?v=2.100" defer></script>
 <link rel="stylesheet" href="assets/route-transition.css?v=2.213">
 <script src="assets/route-transition.js?v=2.213" defer></script>
-<link rel="stylesheet" href="assets/home-dashboard.css?v=2.238" data-snote-type-scale>
+<link rel="stylesheet" href="assets/home-dashboard.css?v=2.241" data-snote-type-scale>
+<link rel="stylesheet" href="assets/dashboard-news.css?v=2.241" data-snote-type-scale>
 <link rel="stylesheet" href="assets/dealer-scheduler.css?v=2.223" data-snote-type-scale>
 <script src="assets/dealer-scheduler-store.js?v=2.238" defer></script>
 <script src="assets/korean-holidays.js?v=2.212" defer></script>
 <script src="assets/dealer-scheduler.js?v=2.238" defer></script>
-<script src="assets/home-dashboard.js?v=2.238" defer></script>
+<script src="assets/home-dashboard.js?v=2.241" defer></script>
+<script src="assets/dashboard-news.js?v=2.241" defer></script>
 <link rel="stylesheet" href="assets/mobile-office-tasks.css?v=2.184">
 <script src="assets/mobile-office-tasks.js?v=2.184" defer></script>
 <script src="assets/access-tracker.js?v=2.202"></script>
@@ -4032,6 +4036,12 @@ async function snote228SearchOpen(row,context){
  });
 }
 window.snoteUnifiedSearchBridge=Object.freeze({context:snote228SearchContext,current:snote228SearchCurrent,sources:snote228SearchSources,open:snote228SearchOpen});
+// Public news uses the existing verified workspace identity, independent of financial unlocks.
+const snote241NewsContexts=new WeakMap();
+window.snoteDashboardNewsBridge=Object.freeze({
+ context(){if(route!=='dashboard')return null;const scope=snote228SearchContext();if(!scope)return null;const context=Object.freeze({ready:true,key:scope.key});snote241NewsContexts.set(context,scope);return context;},
+ current(context){const scope=context&&snote241NewsContexts.get(context);return route==='dashboard'&&!!scope&&snote228SearchCurrent(scope);}
+});
 window.addEventListener('snote:auth-reset',()=>{snote228SearchPending=null;});
 
 
@@ -11327,10 +11337,7 @@ window.snote206VehicleCalendarLoaded=()=>{
 function snote206VehicleCalendarContext(){
  if(route!=='dashboard')return null;
  const actor=snote205SchedulerContext(),scope=snotePurchaseContext(),loaded=snote206VehicleCalendarLoadedScope;
- if(actor?.role==='accountant'){
-  if(!scope||scope.role!=='accountant'||!scope.canRead||scope.ownerAlias!==currentUser?.username||window.snoteCompanyPurchaseBridge?.current?.(scope)!==true)return null;
-  return {key:JSON.stringify([actor.key,scope.key,'accountant']),mode:'accountant',loading:!snoteWorkspaceSalesReady||scope.ready!==true||window.snoteCompanyPurchaseIsReady?.()!==true};
- }
+ if(actor?.role==='accountant')return null;
  if(!actor||!scope||typeof scope.key!=='string'||scope.ownerAlias!==currentUser?.username||!loaded||
   loaded.client!==S.client||loaded.actor!==currentUser||loaded.userId!==actor.actorId||loaded.companyId!==actor.companyId||loaded.role!==actor.role||loaded.epoch!==snote220CatalogEpoch)return null;
  return {key:JSON.stringify([actor.key,scope.key]),loading:!snoteWorkspaceSalesReady||scope.ready!==true};
@@ -11340,12 +11347,11 @@ window.snoteDealerVehicleCalendarBridge=Object.freeze({
   const context=snote206VehicleCalendarContext();if(!context)return null;
   const value=(input,max)=>typeof input==='string'?input.slice(0,max):'';
   const rows=context.loading?[]:cars.filter(car=>{
-   if(context.mode==='accountant')return !!car&&window.snoteCompanyPurchaseBridge?.carAllowed?.(car)===true&&String(car.id).length>0&&String(car.id).length<=200;
    if(!car||car.ownerId!==currentUser.username||(car.companyId&&car.companyId!==S.company.id)||(car.company_id&&car.company_id!==S.company.id))return false;
    const source=S.carScopes.get(car);
    return !source||(source.companyId===S.company.id&&source.ownerId===S.user.id&&source.carId===String(car.id)&&source.epoch===snote220CatalogEpoch);
   }).map(car=>({
-    id:value(String(car.id??''),200),...(context.mode==='accountant'?{ownerId:S.carScopes.get(car).ownerId}:{}),model:value(car.model,200),plate:value(car.plate,32),
+    id:value(String(car.id??''),200),model:value(car.model,200),plate:value(car.plate,32),
     purchaseAt:value(car.purchaseAt,32),soldAt:value(car.soldAt,32),status:car.status==='판매완료'?'판매완료':''
    }));
   return {...context,rows};
@@ -12651,7 +12657,7 @@ window.zc86Cloud={getAccessToken:async()=>{const client=S.client,user=S.user,com
 <script src="assets/workspace-order-store.js?v=2.135" defer></script>
 <script src="assets/workspace-reorder.js?v=2.239" defer></script>
 <script src="assets/vehicle-inspection-route.js?v=2.238" defer></script>
-<script src="assets/release-info.js?v=2.240" defer></script>
+<script src="assets/release-info.js?v=2.241" defer></script>
 <link rel="stylesheet" href="assets/encar-id.css?v=2.162">
 <script src="assets/encar-id.js?v=2.184" defer></script>
 <script src="assets/company-purchase.js?v=2.172" defer></script>
