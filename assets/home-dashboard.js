@@ -11,8 +11,6 @@
  const bridge=()=>root.snoteHomeDashboardBridge;
  const mobile=matchMedia('(max-width:760px)');
  let active=false,paintedKey=null,signature='',scheduled=false,selectedChart='purchases';
- let settlementExpanded=false,settlementTransition=0;
- const reducedMotion=matchMedia('(prefers-reduced-motion:reduce)'),settlementAnimations=new Set();
  const number=value=>Number(value).toLocaleString('ko-KR');
  const won=value=>value==null?'—':number(value)+'원';
  const node=(tag,text,cls)=>{const item=document.createElement(tag);if(text!=null)item.textContent=text;if(cls)item.className=cls;return item;};
@@ -21,17 +19,13 @@
  function announced(mode,key){root.dispatchEvent(new CustomEvent('snote:home-dashboard-rendered',{detail:{mode,key}}));}
  function scheduler(workContent=null){if(!schedulerController)schedulerController=root.SnoteDealerSchedulerUI?.mount?.(schedulerHost)||null;schedulerController?.activate?.();schedulerController?.setWork?.(workContent);return schedulerHost;}
  const svgNode=(tag,attributes)=>{const item=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const[key,value]of Object.entries(attributes))item.setAttribute(key,String(value));return item;};
- const icons={arrow:'M5 12h14m-6-6 6 6-6 6',chevron:'m8 10 4 4 4-4',lock:'M6 10h12v11H6zM8 10V7a4 4 0 0 1 8 0v3'};
+ const icons={arrow:'M5 12h14m-6-6 6 6-6 6',lock:'M6 10h12v11H6zM8 10V7a4 4 0 0 1 8 0v3'};
  function icon(name){const svg=svgNode('svg',{viewBox:'0 0 24 24',fill:'none',stroke:'currentColor','stroke-width':1.65,'stroke-linecap':'round','stroke-linejoin':'round','aria-hidden':'true',focusable:'false'});svg.append(svgNode('path',{d:icons[name]||icons.arrow}));return svg;}
  function valid(snapshot){try{return !!snapshot&&typeof snapshot.key==='string'&&snapshot.key.length>0&&model.isMonth(snapshot.month)&&Array.isArray(snapshot.rows)&&typeof snapshot.loading==='boolean'&&typeof snapshot.locked==='boolean'&&bridge()?.current?.(snapshot.key)===true;}catch{return false;}}
  function current(key){try{return active&&paintedKey===key&&bridge()?.current?.(key)===true;}catch{return false;}}
  function action(name,value,key){if(!current(key))return;try{if(name==='unlock')bridge()?.unlock?.(key);else bridge()?.[name]?.(value,key);}catch{refresh();}}
- function cancelAnimations(bag){for(const animation of bag)animation.cancel();bag.clear();}
- function resetDisclosures(){settlementExpanded=false;settlementTransition++;cancelAnimations(settlementAnimations);}
- function animate(item,frames,options,bag){if(reducedMotion.matches||typeof item.animate!=='function')return null;const animation=item.animate(frames,options);bag.add(animation);animation.finished.then(()=>bag.delete(animation),()=>bag.delete(animation));return animation;}
- function clear(){resetDisclosures();schedulerController?.deactivate?.();host.hidden=true;host.replaceChildren();delete host.dataset.mode;paintedKey=null;signature='';}
+ function clear(){schedulerController?.deactivate?.();host.hidden=true;host.replaceChildren();delete host.dataset.mode;paintedKey=null;signature='';}
  function state(text,{loading=false,locked=false,key=null}={}){
-  cancelAnimations(settlementAnimations);settlementTransition++;
   host.replaceChildren();host.dataset.state=locked?'locked':loading?'loading':'unavailable';host.setAttribute('aria-busy',String(loading));signature='';
   const panel=node('section',null,'snote-home-state');panel.append(node('h2','대시보드'),node('p',text));
   if(locked){const button=node('button','잠금 해제','snote-home-unlock');button.type='button';button.prepend(icon('lock'));button.onclick=()=>action('unlock',null,key);panel.append(button);}host.append(panel,scheduler(locked?newsHost:null));if(locked)announced('locked',key);
@@ -78,35 +72,12 @@
   }
   heading.append(tabs);card.append(heading,panels);select(selectedChart);return card;
  }
- function settlement(data,key,hideMargin){
-  const card=node('section',null,'snote-home-settlement-card'),heading=node('h2',null,'snote-home-settlement-heading'),toggle=node('button','수익 정산','snote-home-settlement-toggle'),content=node('div',null,'snote-home-settlement-content');
-  const chevron=icon('chevron');chevron.classList.add('snote-home-settlement-chevron');toggle.append(chevron);
-  toggle.type='button';toggle.setAttribute('aria-expanded',String(settlementExpanded));toggle.setAttribute('aria-controls','snote-home-settlement-content');content.id='snote-home-settlement-content';content.hidden=!settlementExpanded;content.inert=!settlementExpanded;content.setAttribute('aria-hidden',String(!settlementExpanded));heading.append(toggle);card.append(heading);
-  const list=node('dl',null,'snote-home-settlement');
-  for(const metric of model.settlementRows(data,{hideMargin})){
-   const row=node('div');row.dataset.metric=metric.kind;row.dataset.marginHidden=String(metric.masked);if(metric.kind==='forecast')row.classList.add('snote-home-settlement-forecast');
-   row.append(node('dt',metric.label));const amount=node('dd',metric.masked?'-':number(metric.value)+metric.unit);amount.classList.toggle('is-negative',!metric.masked&&metric.value<0);row.append(amount);list.append(row);
-  }
-  content.append(list);card.append(content);
-  toggle.onclick=()=>{
-   if(!current(key)||!host.contains(card))return;
-   const token=++settlementTransition,before=content.hidden?0:content.getBoundingClientRect().height;
-   cancelAnimations(settlementAnimations);settlementExpanded=!settlementExpanded;const expanded=settlementExpanded;
-   toggle.setAttribute('aria-expanded',String(expanded));content.hidden=false;content.inert=!expanded;content.setAttribute('aria-hidden',String(!expanded));
-   const after=expanded?content.scrollHeight:0,motion=animate(content,[{height:before+'px',opacity:before?1:0,transform:before?'none':'translateY(-5px)'},{height:after+'px',opacity:expanded?1:0,transform:expanded?'none':'translateY(-5px)'}],{duration:260,easing:'cubic-bezier(.22,.75,.2,1)'},settlementAnimations);
-   const finish=()=>{if(token===settlementTransition&&current(key)&&host.contains(card)&&!expanded)content.hidden=true;};if(motion)motion.finished.then(finish,()=>{});else finish();
-  };
-  return card;
- }
  function render(data,key,hideMargin){
-  cancelAnimations(settlementAnimations);settlementTransition++;
   host.replaceChildren();host.dataset.state='ready';host.setAttribute('aria-busy','false');
-  const insights=node('div',null,'snote-home-insights');insights.append(charts(data,key,hideMargin),settlement(data,key,hideMargin));
-  const work=node('div',null,'snote-home-work');work.append(insights,newsHost);
+  const work=node('div',null,'snote-home-work');work.append(charts(data,key,hideMargin),newsHost);
   host.append(scheduler(work));announced('owner',key);
  }
  function renderAccountant(data,key){
-  cancelAnimations(settlementAnimations);settlementTransition++;
   host.replaceChildren();host.dataset.state='ready';host.setAttribute('aria-busy','false');
   const summary=node('section',null,'snote-accountant-summary');summary.setAttribute('role','group');summary.setAttribute('aria-label','상사 업무 현황');
   for(const[field,label]of [['totalCount','상사 차량'],['inventoryCount','보유 차량'],['contractCount','계약 진행'],['monthPurchaseCount','이번 달 매입']]){
@@ -126,7 +97,7 @@
   scheduled=false;if(!active){clear();return;}host.hidden=false;
   let snapshot;try{snapshot=bridge()?.snapshot();}catch{paintedKey=null;state('대시보드를 불러오지 못했습니다.');return;}
   if(!valid(snapshot)){paintedKey=null;state('대시보드를 확인하고 있습니다.',{loading:true});return;}
-  if(snapshot.key!==paintedKey){resetDisclosures();host.replaceChildren();signature='';paintedKey=snapshot.key;}
+  if(snapshot.key!==paintedKey){host.replaceChildren();signature='';paintedKey=snapshot.key;}
   host.dataset.mode=snapshot.mode==='accountant'?'accountant':'owner';
   if(snapshot.loading){state('대시보드를 불러오는 중…',{loading:true});return;}
   if(snapshot.mode==='accountant'){

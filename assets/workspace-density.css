@@ -36,10 +36,8 @@
  html body #snote-app #alt-content .snote-design-settings .snote90-panel>p {font-size:11px}
  html body #snote-app #snote-dashboard-home .snote-home-kpi-label>span {font-size:12px!important}
  html body #snote-app #snote-dashboard-home .snote-home-kpi-value {font-size:clamp(19px,calc(1.55cqw - 1px),25px)}
- html body #snote-app #snote-dashboard-home :is(.snote-home-card-head h2,.snote-home-state h2,.snote-home-chart-group-head h2,.snote-home-settlement-toggle) {font-size:14px!important}
+ html body #snote-app #snote-dashboard-home :is(.snote-home-card-head h2,.snote-home-state h2,.snote-home-chart-group-head h2) {font-size:14px!important}
  html body #snote-app #snote-dashboard-home :is(.snote-home-task-info strong,.snote-home-vehicle-info>strong,.snote-home-vehicle-price>strong) {font-size:13px!important}
- html body #snote-app #snote-dashboard-home .snote-home-settlement dt {font-size:13px}
- html body #snote-app #snote-dashboard-home .snote-home-settlement dd {font-size:17px}
  html body #snote-app #snote-dealer-scheduler .snote-scheduler-month-nav h3 {font-size:19px}
  html body #snote-app #snote-dealer-scheduler .snote-scheduler-week span {font-size:13px}
  html body #snote-app #snote-dealer-scheduler .snote-scheduler-date {font-size:14px}
