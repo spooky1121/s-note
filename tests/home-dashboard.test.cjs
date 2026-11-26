@@ -155,7 +155,7 @@ test('settlement rows retain all seven relocated figures and the existing invent
   {id:'earlier',status:'판매완료',purchaseAt:'2027-01-02',soldAt:'2027-02-02',inventoryCost:7000000,margin:800000}
  ]),'2027-03'),before=JSON.stringify(report),rows=M.settlementRows(report);
  assert.deepEqual(rows.map(row=>[row.kind,row.value,row.unit]),[
-  ['capital',12345678,'원'],['inventory',4000000,'원'],['cash',8345678,'원'],['profit',1200000,'원'],['purchase',1,'대'],['sale',1,'대'],['year',2000000,'원'],['forecast',-50000,'원']
+  ['capital',12345678,'원'],['inventory',4000000,'원'],['cash',8345678,'원'],['purchase',1,'대'],['sale',1,'대'],['profit',1200000,'원'],['year',2000000,'원'],['forecast',-50000,'원']
  ]);
  assert.equal(new Set(rows.map(row=>row.kind)).size,8);
  assert.equal(rows.every(row=>row.masked===false),true);
