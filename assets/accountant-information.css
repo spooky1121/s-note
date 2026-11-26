@@ -1,0 +1,98 @@
+/* Information tabs stay inside the existing accountant panel. */
+@media screen {
+ #snote-accountant-information{min-width:0;color:#43576b}
+ #snote-accountant-information [hidden]{display:none!important}
+ .snote-info-tabs{display:flex;align-items:center;gap:5px;width:max-content;max-width:100%;padding:4px;border:1px solid #e6ebf0;border-radius:11px;background:#f5f7f9}
+ #snote-accountant-information button,#snote-accountant-information input,#snote-accountant-information textarea,#snote-accountant-information select{font-family:inherit}
+ .snote-info-tab{appearance:none;min-height:34px;padding:7px 19px;border:1px solid transparent;border-radius:8px;background:transparent;color:#7b8794;font-size:12px;font-weight:550;cursor:pointer;transition:background-color .16s ease,color .16s ease}
+ .snote-info-tab.active{background:#fff;border-color:#e5e9ee;color:#263e51;box-shadow:0 1px 3px #233a4b08}
+ .snote-info-status{min-height:20px;margin:10px 0 8px;font-size:11.5px;line-height:1.6;color:#8794a2;overflow-wrap:anywhere}
+ .snote-info-status[data-tone=error]{color:#be5160}
+ .snote-info-status[data-tone=success]{color:#218465}
+ .snote-info-toolbar{display:flex;align-items:center;gap:8px;min-width:0;margin-bottom:13px}
+ .snote-info-search{display:flex;align-items:center;gap:8px;flex:1 1 260px;max-width:400px;min-width:120px;min-height:37px;padding:0 11px;border:1px solid #e0e7ee;border-radius:9px;background:#fff}
+ .snote-info-search>svg{flex:none;width:16px;height:16px;color:#99a5b1}
+ #snote-accountant-information .snote-info-search>input{width:100%;min-width:0;min-height:35px;margin:0;padding:6px 0;border:0;background:transparent;outline:none;font-size:12px;color:#43576b;box-shadow:none}
+ .snote-info-search>input::placeholder{color:#9ca7b2}
+ .snote-info-search:focus-within{border-color:#a7cfe7;box-shadow:0 0 0 3px #edf7fd}
+ #snote-accountant-information .snote-info-group-filter{width:auto;min-width:120px;max-width:190px;height:37px;min-height:37px;margin:0;padding:7px 30px 7px 11px;border:1px solid #e0e7ee;border-radius:9px;background-color:#fff;color:#52687a;font-size:12px}
+ .snote-info-button{display:inline-flex;align-items:center;justify-content:center;gap:6px;appearance:none;min-height:37px;padding:7px 12px;border:1px solid #e0e7ee;border-radius:9px;background:#fff;color:#5a7083;font-size:12px;font-weight:550;white-space:nowrap;cursor:pointer;transition:background-color .16s ease,border-color .16s ease}
+ .snote-info-button>svg{width:16px;height:16px;flex:none}
+ .snote-info-button:hover,.snote-info-icon-button:hover{background:#f4f8fb;border-color:#cfdde8}
+ .snote-info-button.snote-info-primary{border-color:#087cb6;background:#087cb6;color:#fff}
+ .snote-info-button.snote-info-primary:hover{border-color:#0875ad;background:#0875ad}
+ .snote-info-toolbar>.snote-info-primary{margin-left:auto}
+ .snote-info-icon-button{display:inline-grid;place-items:center;width:31px;min-width:31px;height:31px;padding:6px;appearance:none;border:1px solid transparent;border-radius:8px;background:transparent;color:#8c9cab;cursor:pointer}
+ .snote-info-icon-button>svg{display:block;width:17px;height:17px}
+ .snote-info-icon-button[data-info-delete],.snote-info-icon-button[data-info-group-delete]{color:#b88890}
+ #snote-info-refresh{width:37px;min-width:37px;height:37px;border-color:#e0e7ee;background:#fff}
+ #snote-accountant-information button:disabled,#snote-accountant-information input:disabled,#snote-accountant-information select:disabled,#snote-accountant-information textarea:disabled{cursor:default;opacity:.5}
+ #snote-accountant-information button:focus-visible,#snote-accountant-information summary:focus-visible{outline:3px solid #a6d8f5;outline-offset:2px}
+ .snote-info-group-manager{margin:0 0 13px;border:1px solid #e7edf2;border-radius:10px;background:#fafbfc}
+ .snote-info-group-manager>summary{width:max-content;padding:11px 13px;color:#75889a;font-size:11.5px;cursor:pointer;user-select:none}
+ .snote-info-group-body{padding:0 13px 13px}
+ .snote-info-group-rows{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:7px;margin-bottom:10px}
+ .snote-info-group-row{display:flex;align-items:center;gap:9px;min-width:0;padding:6px 8px 6px 12px;border:1px solid #e4ebf1;border-radius:9px;background:#fff}
+ .snote-info-group-row>span{flex:1;min-width:0;font-size:12px;overflow-wrap:anywhere}
+ .snote-info-group-row>small{min-width:19px;color:#a0acb8;font-size:10px;text-align:right}
+ .snote-info-group-empty{margin:4px 0 0;color:#9aa7b3;font-size:11.5px}
+ .snote-info-editor-host:empty,.snote-info-group-editor-host:empty{display:none}
+ .snote-info-form{margin:0 0 15px;padding:17px;border:1px solid #dce9f2;border-radius:11px;background:#f9fcfe}
+ .snote-info-group-editor-host .snote-info-form{margin:11px 0 0;padding:13px;background:#fff}
+ .snote-info-editor-heading{margin:0 0 13px;font-size:12px;font-weight:600;color:#45637a}
+ .snote-info-form-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+ .snote-info-field{display:flex;flex-direction:column;gap:7px;min-width:0}
+ .snote-info-field>span{font-size:11px;color:#7e91a2}
+ #snote-accountant-information .snote-info-field>input,#snote-accountant-information .snote-info-field>select,#snote-accountant-information .snote-info-field>textarea{box-sizing:border-box;display:block;width:100%;min-width:0;min-height:38px;margin:0;padding:9px 11px;border:1px solid #dfe7ee;border-radius:8px;background:#fff;color:#3c5367;font-size:12px;line-height:1.6;box-shadow:none}
+ #snote-accountant-information .snote-info-field>textarea{min-height:76px;resize:vertical}
+ #snote-accountant-information .snote-info-field>input:focus,#snote-accountant-information .snote-info-field>select:focus,#snote-accountant-information .snote-info-field>textarea:focus{outline:2px solid #b9def3;outline-offset:1px;border-color:#9acbe8}
+ .snote-info-field-wide{grid-column:1/-1}
+ .snote-info-form-actions{display:flex;justify-content:flex-end;align-items:center;gap:7px;margin-top:13px}
+ .snote-info-table-scroll{max-width:100%;overflow:auto;border:1px solid #e7edf2;border-radius:11px;background:#fff}
+ .snote-info-table{width:100%;border-collapse:collapse;text-align:left;font-size:12px;line-height:1.6}
+ .snote-info-table th,.snote-info-table td{padding:12px 14px;border-bottom:1px solid #edf1f5;vertical-align:middle;overflow-wrap:anywhere}
+ .snote-info-table th{background:#f8fafc;color:#8b99a6;font-size:11px;font-weight:550;white-space:nowrap}
+ .snote-info-table tbody tr:last-child td{border-bottom:0}
+ .snote-info-table .snote-info-name{font-weight:600;color:#405a70}
+ .snote-info-table .snote-info-memo{max-width:420px;white-space:pre-wrap;color:#8292a1;font-size:11.5px}
+ .snote-info-table .snote-info-actions{width:78px;padding-inline:8px}
+ .snote-info-row-actions{display:flex;align-items:center;justify-content:flex-end;gap:3px;flex:none}
+ .snote-info-empty{display:grid;place-items:center;min-height:180px;margin:0;padding:26px 17px;border:1px solid #edf1f5;border-radius:11px;background:#fafcfd;color:#94a2af;font-size:12px;text-align:center}
+ .snote-info-pagination{display:flex;align-items:center;justify-content:center;gap:13px;margin-top:13px;color:#93a0ac;font-size:11px}
+ .snote-info-pagination .snote-info-button{min-height:31px;padding:5px 10px;font-size:11px}
+}
+@media screen and (max-width:850px){
+ .snote-info-form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .snote-info-toolbar{flex-wrap:wrap}
+ .snote-info-search{max-width:none}
+}
+@media screen and (max-width:600px){
+ .snote-info-tab{min-height:33px;padding:7px 18px;font-size:11.5px}
+ .snote-info-status{font-size:11px;min-height:18px;margin-top:9px}
+ .snote-info-toolbar{gap:7px;margin-bottom:11px}
+ .snote-info-search{order:0;flex-basis:100%;max-width:100%}
+ .snote-info-toolbar>.snote-info-group-filter{order:1;flex:1;max-width:none}
+ .snote-info-toolbar>#snote-info-refresh{order:2;margin-left:auto}
+ .snote-info-toolbar>.snote-info-primary{order:3;margin-left:0}
+ .snote-info-form{padding:13px}
+ .snote-info-form-grid{grid-template-columns:1fr;gap:11px}
+ .snote-info-form-actions .snote-info-button{flex:1}
+ .snote-info-group-rows{grid-template-columns:1fr}
+ .snote-info-table-scroll{overflow:visible;border:0;border-radius:0;background:transparent}
+ .snote-info-table,.snote-info-table tbody{display:block;width:100%}
+ .snote-info-table thead{display:none}
+ .snote-info-table tbody{display:grid;gap:9px}
+ .snote-info-table tbody tr{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:7px 11px;padding:13px;border:1px solid #e5ecf2;border-radius:11px;background:#fff}
+ .snote-info-table tbody td{display:block;min-width:0;padding:0;border:0;font-size:12px;line-height:1.6}
+ .snote-info-table tbody td:not(.snote-info-actions){grid-column:1/-1}
+ .snote-info-table tbody td::before{display:inline;margin-right:8px;color:#9aa8b5;content:attr(data-label);font-size:10px;font-weight:450}
+ .snote-info-table tbody .snote-info-name{grid-column:1;grid-row:1;align-self:center;font-size:12px}
+ .snote-info-table tbody .snote-info-name::before{content:none}
+ .snote-info-table tbody .snote-info-actions{grid-column:2;grid-row:1;width:auto;padding:0}
+ .snote-info-table tbody .snote-info-actions::before{content:none}
+ .snote-info-table tbody .snote-info-memo{max-width:none;font-size:11px}
+ .snote-info-staff-table tbody tr{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px}
+ .snote-info-staff-table tbody .snote-info-name{flex-basis:100%}
+ .snote-info-empty{min-height:150px;font-size:11.5px}
+}
+@media screen and (prefers-reduced-motion:reduce){.snote-info-tab,.snote-info-button{transition:none}}

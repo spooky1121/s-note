@@ -1,5 +1,6 @@
 /* Accountant hierarchy and route tabs; existing workspace sizes and document layouts stay in control. */
 @media screen {
+ body.accountant-mode #alt-title,body.accountant-mode #alt-copy{display:none!important}
  [data-accountant-navigation=true] .snote-acct-nav-entry,
  [data-accountant-navigation=true] .snote-acct-nav-group{min-width:0;width:100%}
  [data-accountant-navigation=true] .snote-acct-nav-children[hidden]{display:none!important}
