@@ -90,7 +90,7 @@
  #snote-app :is(#snote-sales-overview,#snote-purchase-overview) :is(.sales-overview-metric:first-child dd,.sales-overview-metric .is-up,.is-current .sales-overview-plot strong,.is-current .sales-overview-month-label) {color:#006bb5!important}
 
  #snote-app #snote-dashboard-home {color:#303a47;--snote-home-chart-color:#0096fe}
- #snote-app #snote-dashboard-home :is(.snote-home-kpi,.snote-home-secondary-kpis,.snote-home-chart-group,.snote-home-list-card,.snote-home-settlement-card,.snote-home-state,.snote-home-work-card,.snote-home-shortcuts) {border-color:#edf0f3!important;border-radius:14px!important;background:#fff!important;box-shadow:none!important}
+ #snote-app #snote-dashboard-home :is(.snote-home-kpi,.snote-home-secondary-kpis,.snote-home-chart-group,.snote-home-list-card,.snote-home-state,.snote-home-work-card,.snote-home-shortcuts) {border-color:#edf0f3!important;border-radius:14px!important;background:#fff!important;box-shadow:none!important}
  #snote-app #snote-dashboard-home .snote-home-secondary-kpis .snote-home-kpi {border-radius:0!important}
  #snote-app #snote-dashboard-home .snote-home-secondary-kpis .snote-home-kpi+.snote-home-kpi {border-color:#f0f3f6!important}
  #snote-app #snote-dashboard-home .snote-home-kpi-label {color:#727d8c!important}
@@ -98,16 +98,16 @@
  #snote-app #snote-dashboard-home .snote-home-kpi-label>svg {color:#8593a5!important;stroke-width:1.5!important}
  #snote-app #snote-dashboard-home .snote-home-kpi-value {color:#253344!important;font-weight:600!important;letter-spacing:-.65px}
  #snote-app #snote-dashboard-home :is([data-kpi=profit],[data-kpi=year]) .snote-home-kpi-value {color:#0079c9!important}
- #snote-app #snote-dashboard-home :is(.snote-home-kpi-caption,.snote-home-work-caption,.snote-home-count,.snote-home-task-info small,.snote-home-period,.snote-home-vehicle-info>small,.snote-home-vehicle-price>small,.snote-home-settlement small) {color:#727b87!important;font-size:12px}
+ #snote-app #snote-dashboard-home :is(.snote-home-kpi-caption,.snote-home-work-caption,.snote-home-count,.snote-home-task-info small,.snote-home-period,.snote-home-vehicle-info>small,.snote-home-vehicle-price>small) {color:#727b87!important;font-size:12px}
  #snote-app #snote-dashboard-home :is(.snote-home-card-head h2,.snote-home-state h2,.snote-home-shortcuts h2,.snote-home-chart-group-head h2) {color:#303a47!important;font-weight:550!important;font-size:15px}
  #snote-app #snote-dashboard-home :is(.snote-home-task-info strong,.snote-home-shortcut strong,.snote-home-vehicle-info>strong,.snote-home-vehicle-price>strong) {color:#455365!important;font-weight:500!important;font-size:14px}
  #snote-app #snote-dashboard-home :is(.snote-home-card-link,.snote-home-shortcut>svg:first-child,.snote-home-task-row>svg,.snote-home-progress-row>svg) {color:#8697aa!important;border-color:#edf0f3!important;stroke-width:1.5!important;box-shadow:none!important}
- #snote-app #snote-dashboard-home :is(.snote-home-task-row,.snote-home-progress-row,.snote-home-shortcut,.snote-home-vehicle-row,.snote-home-sale-progress,.snote-home-settlement>div) {border-color:#f0f3f6!important}
+ #snote-app #snote-dashboard-home :is(.snote-home-task-row,.snote-home-progress-row,.snote-home-shortcut,.snote-home-vehicle-row,.snote-home-sale-progress) {border-color:#f0f3f6!important}
  #snote-app #snote-dashboard-home .snote-home-work-count {background:#edf8ff!important;color:#006bb5!important;font-weight:550!important}
  #snote-app #snote-dashboard-home .snote-home-chart-tabs {background:#f5f8fa!important;border-radius:10px!important}
  #snote-app #snote-dashboard-home .snote-home-chart-tab {color:#727d8c!important;border-radius:8px!important;box-shadow:none!important}
  #snote-app #snote-dashboard-home .snote-home-chart-tab[aria-selected=true]:not(:disabled) {background:#fff!important;color:#006bb5!important;box-shadow:none!important}
- #snote-app #snote-dashboard-home :is(.snote-home-chart-total,.snote-home-settlement dd) {color:#0079c9!important;font-weight:550!important}
+ #snote-app #snote-dashboard-home .snote-home-chart-total {color:#0079c9!important;font-weight:550!important}
  #snote-app #snote-dashboard-home .snote-home-line-path {stroke:#0096fe!important;stroke-width:1.8!important}
  #snote-app #snote-dashboard-home .snote-home-line-area {fill:#0096fe!important;fill-opacity:.035!important}
  #snote-app #snote-dashboard-home .snote-home-grid-line {stroke:#f0f3f6!important}
@@ -116,10 +116,9 @@
  #snote-app #snote-dashboard-home .snote-home-chart-month.is-current .snote-home-chart-dot {background:#0096fe!important}
  #snote-app #snote-dashboard-home .snote-home-chart-label {color:#7e8a99!important}
  #snote-app #snote-dashboard-home .snote-home-chart-month.is-current .snote-home-chart-label {color:#006bb5!important}
- /* A semantic loss stays red at every specificity, including chart totals and dd. */
+ /* A semantic loss stays red at every specificity, including chart totals. */
  #snote-app #snote-dashboard-home [data-kpi] .snote-home-kpi-value.is-negative,
- #snote-app #snote-dashboard-home .snote-home-chart-total.is-negative,
- #snote-app #snote-dashboard-home .snote-home-settlement dd.is-negative {color:#bf4c5a!important}
+ #snote-app #snote-dashboard-home .snote-home-chart-total.is-negative {color:#bf4c5a!important}
 
  #snote-app :is(.dashboard-analytics,.dashboard-chart,.chart-panel,.analytics-card,.profit-chart-card,.profit-compare,.analytics-chart) {border-color:#edf0f3!important;background:#fff!important;border-radius:14px!important;box-shadow:none!important}
  #snote-app .profit-hero {background:#f4faff!important;border-color:#e7f0f7!important;color:#192c41!important;border-radius:14px;box-shadow:none!important}
