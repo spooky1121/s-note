@@ -21,7 +21,7 @@
  function announced(mode,key){root.dispatchEvent(new CustomEvent('snote:home-dashboard-rendered',{detail:{mode,key}}));}
  function scheduler(workContent=null){if(!schedulerController)schedulerController=root.SnoteDealerSchedulerUI?.mount?.(schedulerHost)||null;schedulerController?.activate?.();schedulerController?.setWork?.(workContent);return schedulerHost;}
  const svgNode=(tag,attributes)=>{const item=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const[key,value]of Object.entries(attributes))item.setAttribute(key,String(value));return item;};
- const icons={arrow:'M5 12h14m-6-6 6 6-6 6',lock:'M6 10h12v11H6zM8 10V7a4 4 0 0 1 8 0v3'};
+ const icons={arrow:'M5 12h14m-6-6 6 6-6 6',chevron:'m8 10 4 4 4-4',lock:'M6 10h12v11H6zM8 10V7a4 4 0 0 1 8 0v3'};
  function icon(name){const svg=svgNode('svg',{viewBox:'0 0 24 24',fill:'none',stroke:'currentColor','stroke-width':1.65,'stroke-linecap':'round','stroke-linejoin':'round','aria-hidden':'true',focusable:'false'});svg.append(svgNode('path',{d:icons[name]||icons.arrow}));return svg;}
  function valid(snapshot){try{return !!snapshot&&typeof snapshot.key==='string'&&snapshot.key.length>0&&model.isMonth(snapshot.month)&&Array.isArray(snapshot.rows)&&typeof snapshot.loading==='boolean'&&typeof snapshot.locked==='boolean'&&bridge()?.current?.(snapshot.key)===true;}catch{return false;}}
  function current(key){try{return active&&paintedKey===key&&bridge()?.current?.(key)===true;}catch{return false;}}
@@ -80,6 +80,7 @@
  }
  function settlement(data,key,hideMargin){
   const card=node('section',null,'snote-home-settlement-card'),heading=node('h2',null,'snote-home-settlement-heading'),toggle=node('button','수익 정산','snote-home-settlement-toggle'),content=node('div',null,'snote-home-settlement-content');
+  const chevron=icon('chevron');chevron.classList.add('snote-home-settlement-chevron');toggle.append(chevron);
   toggle.type='button';toggle.setAttribute('aria-expanded',String(settlementExpanded));toggle.setAttribute('aria-controls','snote-home-settlement-content');content.id='snote-home-settlement-content';content.hidden=!settlementExpanded;content.inert=!settlementExpanded;content.setAttribute('aria-hidden',String(!settlementExpanded));heading.append(toggle);card.append(heading);
   const list=node('dl',null,'snote-home-settlement');
   for(const metric of model.settlementRows(data,{hideMargin})){
@@ -189,7 +190,7 @@
  }
  function settlementRows(data,{hideMargin=false}={}){
   if(!data||typeof data!=='object'||Array.isArray(data)||typeof hideMargin!=='boolean')throw Error('INVALID_DASHBOARD_DATA');
-  const fields=[['capital','총투자금','totalInvestment','원'],['inventory','재고대출금','inventoryCapital','원'],['cash','현금투자금','cash','원'],['profit','이번 달 수익','monthMargin','원',true],['purchase','이번 달 매입','monthPurchaseCount','대'],['sale','이번 달 판매','monthSaleCount','대'],['year','올해 수익','yearMargin','원',true],['forecast','재고 예상수익','inventoryMargin','원']];
+  const fields=[['capital','총투자금','totalInvestment','원'],['inventory','재고대출금','inventoryCapital','원'],['cash','현금투자금','cash','원'],['purchase','이번 달 매입','monthPurchaseCount','대'],['sale','이번 달 판매','monthSaleCount','대'],['profit','이번 달 수익','monthMargin','원',true],['year','올해 수익','yearMargin','원',true],['forecast','재고 예상수익','inventoryMargin','원']];
   return Object.freeze(fields.map(([kind,label,field,unit,margin])=>{if(!Object.hasOwn(data,field))throw Error('INVALID_DASHBOARD_DATA');const value=money(data[field]);if((kind==='purchase'||kind==='sale')&&value<0)throw Error('INVALID_DASHBOARD_AMOUNT');const masked=margin===true&&hideMargin;return Object.freeze({kind,label,value:masked?null:value,unit,masked});}));
  }
  return Object.freeze({isMonth,currentMonth,monthOf,dateKey,currentDay,inventoryTasks,saleProgress,accountantSummary,summarize,settlementRows});
