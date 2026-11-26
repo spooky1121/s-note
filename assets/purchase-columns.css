@@ -52,7 +52,6 @@
  #list-screen[data-purchase-columns-active=true][data-purchase-hidden-columns~=inventoryInterest] [data-purchase-column=inventoryInterest],
  #list-screen[data-purchase-columns-active=true][data-purchase-hidden-columns~=vin] [data-purchase-column=vin],
  #list-screen[data-purchase-columns-active=true][data-purchase-hidden-columns~=quote] [data-purchase-column=quote],
- #list-screen[data-purchase-columns-active=true][data-purchase-hidden-columns~=finance] [data-purchase-column=finance],
  #list-screen[data-purchase-columns-active=true][data-purchase-hidden-columns~=lender] [data-purchase-column=lender],
  #list-screen[data-purchase-columns-active=true][data-purchase-hidden-columns~=documents] [data-purchase-column=documents],
  #list-screen[data-purchase-columns-active=true][data-purchase-hidden-columns~=advertising] [data-purchase-column=advertising],
