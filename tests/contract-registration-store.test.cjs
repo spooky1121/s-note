@@ -13,7 +13,7 @@ const WEBP=Buffer.from('UklGRjAAAABXRUJQVlA4ICQAAABQAQCdASoBAAEAAUAmJQBOgC6gAP76
 const deferred=()=>{let resolve;const promise=new Promise(done=>{resolve=done;});return{promise,resolve};};
 const target=(extra={})=>({ownerId:OWNER,id:CAR,...extra});
 const media=(extra={})=>({id:MEDIA,company_id:COMPANY,owner_id:UPLOADER,car_id:CAR,group_name:'registration',file_path:[COMPANY,UPLOADER,encodeURIComponent(CAR),encodeURIComponent(MEDIA)+'.png'].join('/'),original_name:'가상 자동차등록증.png',mime_type:'image/png',file_size:PNG.length,created_at:'2026-11-26T01:00:00.000Z',...extra});
-function fixture(t,{timeoutMs=1000,observeViewer=false}={}){
+function fixture(t,{timeoutMs=1000,observeViewer=false,groupName}={}){
  const f={context:{key:'registration-company-user-session',companyId:COMPANY,userId:USER,role:'accountant',ready:true,client:{},actor:{}},allowed:true,rows:[media()],complete:true,reads:[],downloads:[],viewers:[],created:[],revoked:[],anchors:[],closeCalls:0,viewerState:null,onRead:null,onDownload:null,onViewer:null,onResolve:null};
  f.observers=[];f.zoomImage={src:'blob:foreign-current'};
  f.mutateImage=(src,{deliver=true}={})=>{f.zoomImage.src=src;for(const observer of f.observers.filter(item=>item.active)){observer.records.push({type:'attributes',attributeName:'src',target:f.zoomImage});if(deliver)observer.callback(observer.takeRecords(),observer);}};
@@ -22,7 +22,7 @@ function fixture(t,{timeoutMs=1000,observeViewer=false}={}){
  const document={getElementById:id=>observeViewer&&id==='zoom-image'?f.zoomImage:null,body:{append(anchor){anchor.attached=true;}},createElement(tag){assert.equal(tag,'a');const a={href:'',download:'',attached:false,click(){f.anchors.push({href:this.href,download:this.download});},remove(){this.attached=false;}};return a;}};
  const openViewer=async options=>{f.viewers.push(options);f.viewerState={kind:'registration',src:options.src};if(observeViewer)f.mutateImage(options.src);return f.onViewer?f.onViewer(options):true;};
  openViewer.close=()=>{f.closeCalls++;f.viewerState=null;};
- f.store=API.create({context:()=>f.context,current:f.current,resolveVehicle:(c,value)=>f.onResolve?f.onResolve(c,value):value?.ownerId===OWNER&&value?.id===CAR?{...target(),ambiguous:false}:null,
+ f.store=API.create({groupName,context:()=>f.context,current:f.current,resolveVehicle:(c,value)=>f.onResolve?f.onResolve(c,value):value?.ownerId===OWNER&&value?.id===CAR?{...target(),ambiguous:false}:null,
   readMetadata:async c=>{f.reads.push(c);return f.onRead?f.onRead(c):{rows:f.rows,complete:f.complete};},
   download:async(c,row)=>{f.downloads.push({context:c,row});return f.onDownload?f.onDownload(c,row):new Blob([PNG],{type:'image/png'});},openViewer,
   createObjectURL:blob=>{const url='blob:synthetic-registration-'+(f.created.length+1);f.created.push({url,blob});return url;},revokeObjectURL:url=>f.revoked.push(url),document,timeoutMs,
@@ -155,4 +155,13 @@ test('forced metadata refresh removes a deleted registration and releases its ca
 });
 test('a timed-out metadata read can be retried without accepting its eventual stale response',async t=>{
  const f=fixture(t,{timeoutMs:15}),gate=deferred();f.onRead=async()=>{await gate.promise;return{rows:[media({id:MEDIA_B,file_path:[COMPANY,UPLOADER,CAR,MEDIA_B+'.png'].join('/')})],complete:true};};assert.equal(await prepare(f),false);f.onRead=null;assert.equal(await prepare(f),true);gate.resolve();await new Promise(resolve=>setImmediate(resolve));assert.equal(status(f).status,'registered');await f.store.openRegistration(f.context,target(),null);assert.equal(f.downloads[0].row.id,MEDIA);
+});
+
+// The same validated path, MIME and live-scope guards protect both inspection slots.
+test('inspection slots are isolated and use their own explicit viewer label',async t=>{
+ for(const groupName of ['inspection1','inspection2']){const f=fixture(t,{groupName});f.rows=[media({group_name:groupName})];assert.equal(await prepare(f),true);assert.equal(status(f).status,'registered');assert.equal(await f.store.openRegistration(f.context,target(),null),true);assert.match(f.viewers[0].alt,/성능/);assert.equal(f.downloads[0].row.group_name,groupName);}
+});
+test('a different document group cannot masquerade as an inspection slot',async t=>{
+ const f=fixture(t,{groupName:'inspection1'});f.rows=[media()];await prepare(f);assert(!['registered','ready','missing'].includes(status(f).status));assert.equal(await f.store.openRegistration(f.context,target(),null),false);assert.equal(f.downloads.length,0);
+ assert.throws(()=>API.create({groupName:'photo'}),/DOCUMENT_GROUP_INVALID/);
 });

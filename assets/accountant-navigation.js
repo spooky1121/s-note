@@ -8,6 +8,7 @@
   contractOffice:freeze({label:'양식지',icon:'form'}),
   buy:freeze({label:'매입·매도',icon:'trade'}),
   sell:freeze({label:'매입·매도',icon:'trade'}),
+  acctCustomers:freeze({label:'매입·매도',icon:'trade'}),
   acctOperations:freeze({label:'운영 서류함',icon:'folder'}),
   acctBank:freeze({label:'은행',icon:'bank'}),
   acctTax:freeze({label:'세금',icon:'receipt'}),
@@ -25,7 +26,7 @@
  const leaf=(page,aliases=[])=>freeze({page,aliases:freeze(aliases)});
  const menu=freeze([
   leaf('dashboard'),
-  freeze({group:'documents',label:'서류함',icon:'folder',children:freeze([leaf('contractArchive'),leaf('contractOffice'),leaf('buy',['sell']),leaf('acctOperations')])}),
+  freeze({group:'documents',label:'서류함',icon:'folder',children:freeze([leaf('contractArchive'),leaf('contractOffice'),leaf('buy',['sell','acctCustomers']),leaf('acctOperations')])}),
   leaf('acctBank'),leaf('acctTax'),leaf('inventoryFinance',['prestock']),leaf('acctLookup'),
   freeze({group:'settlement',label:'정산',icon:'income',children:freeze([leaf('acctDealerIncome'),leaf('monthly')])}),
   leaf('acctInfo',['acctAccounts','acctPhones','acctStaff'])
@@ -77,8 +78,8 @@
  function renderMenu(host,{route,navigate}={}){
   if(!(host instanceof Element))return false;
   finishMotions(host);
-  let state=hosts.get(host);if(!state){state={id:++sequence,closed:new Set(),route:null};hosts.set(host,state);}
-  const changed=state.route!==route;state.route=route;
+  let state=hosts.get(host);if(!state){state={id:++sequence,closed:new Set(menu.filter(item=>item.group).map(item=>item.group)),route:null};hosts.set(host,state);}
+  const first=state.route===null,changed=state.route!==route;state.route=route;
   const go=typeof navigate==='function'?navigate:()=>false;
   const fragment=document.createDocumentFragment();
   function button(item,child=false){
@@ -90,7 +91,7 @@
   }
   for(const item of menu){
    if(!item.group){const wrap=node('div','snote-acct-nav-entry');wrap.append(button(item));fragment.append(wrap);continue;}
-   const active=item.children.some(child=>selected(child,route));if(changed&&active)state.closed.delete(item.group);
+   const active=item.children.some(child=>selected(child,route));if(!first&&changed&&active)state.closed.delete(item.group);
    const wrap=node('div','snote-acct-nav-group'),trigger=node('button','snote-acct-nav-group-trigger'+(active?' contains-current':'')),children=node('div','snote-acct-nav-children');
    wrap.dataset.accountantGroup=item.group;trigger.type='button';trigger.dataset.accountantGroupToggle=item.group;trigger.dataset.navLabel=item.label;trigger.title=item.label;trigger.setAttribute('aria-label',item.label);
    children.id='snote-acct-nav-'+state.id+'-'+item.group;trigger.setAttribute('aria-controls',children.id);
@@ -103,9 +104,9 @@
  }
  function renderTabs(host,{route,navigate}={}){
   if(!(host instanceof Element))return false;
-  const tabs=['buy','sell'].includes(route)?[['buy','매입 관리'],['sell','판매 완료']]:['inventoryFinance','prestock'].includes(route)?[['inventoryFinance','재고금융 관리'],['prestock','선재고 관리']]:null;
+  const tabs=['buy','sell','acctCustomers'].includes(route)?[['buy','매입 관리'],['sell','판매 완료'],['acctCustomers','고객']]:['inventoryFinance','prestock'].includes(route)?[['inventoryFinance','재고금융 관리'],['prestock','선재고 관리']]:null;
   host.replaceChildren();host.hidden=!tabs;if(!tabs)return false;
-  host.classList.add('snote-acct-page-tabs');host.setAttribute('aria-label',route==='buy'||route==='sell'?'매입·매도 화면':'재고금융 화면');
+  host.classList.add('snote-acct-page-tabs');host.setAttribute('aria-label',['buy','sell','acctCustomers'].includes(route)?'매입·매도 화면':'재고금융 화면');
   for(const[page,text]of tabs){const e=node('button',route===page?'active':'',text);e.type='button';e.dataset.accountantTab=page;e.dataset.page=page;if(route===page)e.setAttribute('aria-current','page');e.addEventListener('click',()=>typeof navigate==='function'&&navigate(page));host.append(e);}return true;
  }
  const content=freeze({

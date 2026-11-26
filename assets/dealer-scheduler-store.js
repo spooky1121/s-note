@@ -27,7 +27,8 @@
  }
  function calendarGrid(month){
   if(!isMonth(month))fail('SCHEDULE_INVALID_MONTH');const first=utc(month+'-01'),start=first.getTime()-first.getUTCDay()*86400000;
-  return Array.from({length:42},(_,i)=>dateKey(new Date(start+i*86400000)));
+  const count=Math.max(35,Math.ceil((first.getUTCDay()+monthDays(first.getUTCFullYear(),first.getUTCMonth()+1))/7)*7);
+  return Array.from({length:count},(_,i)=>dateKey(new Date(start+i*86400000)));
  }
  function monthRange(month){const dates=calendarGrid(month).filter(Boolean);return {rangeStart:dates[0],rangeEnd:dates.at(-1)};}
  function text(value,max,{required=false,multiline=false}={}){
@@ -36,41 +37,98 @@
    (multiline?/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/:/[\u0000-\u001f\u007f]/).test(value))fail('SCHEDULE_INVALID_EVENT');return value;
  }
  function revision(value,{draft=false}={}){if(!Number.isInteger(value)||value<(draft?0:1)||value>MAX_REVISION)fail('SCHEDULE_INVALID_REVISION');return value;}
- function event(value,{stored=false}={}){
+ const RECURRENCES=Object.freeze(['none','daily','weekly','monthly','yearly']),DAY_MS=86400000;
+ const dayNumber=value=>Math.floor(utc(value).getTime()/DAY_MS),daysBetween=(a,b)=>dayNumber(b)-dayNumber(a);
+ function addDays(value,amount){return dateKey(new Date(utc(value).getTime()+amount*DAY_MS));}
+ function monthDays(year,month){return [31,year%4===0&&(year%100!==0||year%400===0)?29:28,31,30,31,30,31,31,30,31,30,31][month-1];}
+ function repeatDate(start,kind,index){
+  if(!Number.isSafeInteger(index)||index<0)return null;
+  if(kind==='none')return index===0?start:null;
+  if(kind==='daily'||kind==='weekly')return addDays(start,index*(kind==='weekly'?7:1));
+  const [year,month,day]=start.split('-').map(Number);
+  const total=kind==='monthly'?(year-1)*12+month-1+index:(year-1+index)*12+month-1;
+  if(total<0||total>=9999*12)return null;const y=Math.floor(total/12)+1,m=total%12+1;
+  return String(y).padStart(4,'0')+'-'+pad(m)+'-'+pad(Math.min(day,monthDays(y,m)));
+ }
+ function validOccurrence(series,start,end){
+  if(!isDate(start)||!isDate(end)||end<start||daysBetween(start,end)!==daysBetween(series.eventDate,series.endDate)||start<series.eventDate)return false;
+  const [sy,sm]=series.eventDate.split('-').map(Number),[y,m]=start.split('-').map(Number);
+  const n=series.recurrence==='none'?0:series.recurrence==='daily'?daysBetween(series.eventDate,start):series.recurrence==='weekly'?daysBetween(series.eventDate,start)/7:series.recurrence==='monthly'?(y-sy)*12+m-sm:y-sy;
+  return repeatDate(series.eventDate,series.recurrence,n)===start;
+ }
+ function projectSeries(series,rangeStart,rangeEnd){
+  if(!isDate(rangeStart)||!isDate(rangeEnd)||rangeEnd<rangeStart)fail('SCHEDULE_INVALID_EVENT');
+  const duration=daysBetween(series.eventDate,series.endDate),earliest=addDays(rangeStart,-duration)||'0001-01-01';let first=0,last=0;
+  if(series.recurrence==='daily'||series.recurrence==='weekly'){
+   const step=series.recurrence==='weekly'?7:1;first=Math.max(0,Math.ceil(daysBetween(series.eventDate,earliest)/step));last=Math.floor(daysBetween(series.eventDate,rangeEnd)/step);
+  }else if(series.recurrence==='monthly'||series.recurrence==='yearly'){
+   const parts=value=>value.split('-').map(Number),[by,bm]=parts(series.eventDate),[ay,am]=parts(earliest),[zy,zm]=parts(rangeEnd);
+   first=Math.max(0,series.recurrence==='monthly'?(ay-by)*12+am-bm:ay-by);last=series.recurrence==='monthly'?(zy-by)*12+zm-bm:zy-by;
+  }
+  const out=[];
+  for(let n=first;n<=last;n++){
+   const start=repeatDate(series.eventDate,series.recurrence,n),end=start&&addDays(start,duration);if(!start||!end||end<rangeStart||start>rangeEnd)continue;
+   out.push({...series,seriesId:series.id,occurrenceId:series.id+'@'+start,occurrenceStartDate:start,occurrenceEndDate:end});
+  }
+  return out;
+ }
+ function occurrences(records,rangeStart,rangeEnd){
+  if(!isDate(rangeStart)||!isDate(rangeEnd)||rangeEnd<rangeStart)fail('SCHEDULE_INVALID_EVENT');
+  const rows=Array.isArray(records)?records:[records],seen=new Set(),out=[];
+  for(const raw of rows){
+   const series=event(raw,{stored:typeof raw?.createdAt==='string'&&typeof raw?.updatedAt==='string',projection:true});
+   const list=series.occurrenceId?[series]:projectSeries(series,rangeStart,rangeEnd);
+   for(const item of list){if(item.occurrenceEndDate<rangeStart||item.occurrenceStartDate>rangeEnd||seen.has(item.occurrenceId))continue;seen.add(item.occurrenceId);out.push(item);}
+  }
+  out.sort((a,b)=>a.occurrenceStartDate.localeCompare(b.occurrenceStartDate)||String(a.time||'99:99').localeCompare(String(b.time||'99:99'))||a.id.localeCompare(b.id));return freeze(out);
+ }
+ function event(value,{stored=false,projection=false}={}){
   if(!object(value)||typeof value.id!=='string'||!UUID.test(value.id)||!isDate(value.eventDate)||typeof value.completed!=='boolean'||
    value.time!==null&&(typeof value.time!=='string'||!/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(value.time)))fail('SCHEDULE_INVALID_EVENT');
-  const out={id:value.id.toLowerCase(),title:text(value.title,100,{required:true}),eventDate:value.eventDate,time:value.time,
+  const endDate=value.endDate??value.eventDate,recurrence=value.recurrence??'none';if(!isDate(endDate)||endDate<value.eventDate||!RECURRENCES.includes(recurrence)||recurrence!=='none'&&daysBetween(value.eventDate,endDate)>365)fail('SCHEDULE_INVALID_EVENT');
+  const out={id:value.id.toLowerCase(),title:text(value.title,100,{required:true}),eventDate:value.eventDate,endDate,recurrence,time:value.time,
    notes:text(value.notes,2000,{multiline:true}),completed:value.completed,revision:revision(value.revision,{draft:!stored})};
   if(stored){for(const name of ['createdAt','updatedAt']){
    const timestamp=value[name];if(typeof timestamp!=='string'||!isDate(timestamp.slice(0,10))||!/^\d{4}-\d\d-\d\dT(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d{1,6})?(?:Z|\+00:00)$/.test(timestamp)||!Number.isFinite(Date.parse(timestamp)))fail('SCHEDULE_ACK_INVALID');out[name]=timestamp;
-  }}return out;
+  }}if(projection&&['seriesId','occurrenceId','occurrenceStartDate','occurrenceEndDate'].some(key=>Object.hasOwn(value,key))){
+   if(value.seriesId!==out.id||value.occurrenceId!==out.id+'@'+value.occurrenceStartDate||!validOccurrence(out,value.occurrenceStartDate,value.occurrenceEndDate))fail('SCHEDULE_ACK_INVALID');
+   for(const key of ['seriesId','occurrenceId','occurrenceStartDate','occurrenceEndDate'])out[key]=value[key];
+  }return out;
  }
  function uuid(){if(typeof root.crypto?.randomUUID==='function')return root.crypto.randomUUID();if(!root.crypto?.getRandomValues)fail('SCHEDULE_UNAVAILABLE');const b=root.crypto.getRandomValues(new Uint8Array(16));b[6]=(b[6]&15)|64;b[8]=(b[8]&63)|128;const h=Array.from(b,x=>x.toString(16).padStart(2,'0')).join('');return h.slice(0,8)+'-'+h.slice(8,12)+'-'+h.slice(12,16)+'-'+h.slice(16,20)+'-'+h.slice(20);}
  function newEvent(values={}){
   if(!object(values))fail('SCHEDULE_INVALID_EVENT');const day=values.eventDate??businessDate();if(!isDate(day))fail('SCHEDULE_INVALID_DATE');
-  return {id:uuid(),title:'',eventDate:day,time:null,notes:'',completed:false,...values,revision:0,updatedAt:null};
+  return {id:uuid(),title:'',eventDate:day,endDate:values.endDate??day,recurrence:values.recurrence??'none',time:null,notes:'',completed:false,...values,revision:0,updatedAt:null};
  }
- const payload=value=>Object.fromEntries(['id','title','notes','eventDate','time','completed'].map(key=>[key,value[key]]));
+ const payload=value=>Object.fromEntries(['id','title','notes','eventDate','endDate','recurrence','time','completed'].map(key=>[key,value[key]]));
  const equal=(a,b)=>JSON.stringify(payload(a))===JSON.stringify(payload(b));
  const sameScope=(a,b)=>!!a&&!!b&&['key','actorId','companyId','role','ready'].every(key=>a[key]===b[key]);
  function validContext(value){return object(value)&&typeof value.key==='string'&&value.key.length>0&&value.key.length<=2000&&UUID.test(value.actorId||'')&&UUID.test(value.companyId||'')&&['dealer','admin','accountant'].includes(value.role)&&value.ready===true;}
  function scopeAck(result,ctx){if(!object(result)||result.companyId!==ctx.companyId||result.ownerId!==ctx.actorId)fail('SCHEDULE_ACK_INVALID');}
  function listAck(result,ctx,month){
-  scopeAck(result,ctx);const range=monthRange(month);
-  if(result.month!==month||!isDate(result.today)||result.rangeStart!==range.rangeStart||result.rangeEnd!==range.rangeEnd||!object(result.counts)||!object(result.truncated)||!object(result.dayCounts))fail('SCHEDULE_ACK_INVALID');
-  const arrays={calendar:result.events,today:result.todayEvents,upcoming:result.upcomingEvents,overdue:result.overdueEvents},seen=new Map();
+  scopeAck(result,ctx);const range=monthRange(month),v2=result.schemaVersion===2;
+  if(result.schemaVersion!==undefined&&!v2||result.month!==month||!isDate(result.today)||result.rangeStart!==range.rangeStart||result.rangeEnd!==range.rangeEnd||!object(result.counts)||!object(result.truncated)||!object(result.dayCounts))fail('SCHEDULE_ACK_INVALID');
+  const arrays={calendar:result.events,today:result.todayEvents,upcoming:result.upcomingEvents,overdue:result.overdueEvents},seen=new Map(),seriesSeen=new Map();
   for(const key of keys){
    const limit=key==='calendar'?MAX_EVENTS:SIDE_LIMIT,count=result.counts[key];if(!Number.isSafeInteger(count)||count<0||typeof result.truncated[key]!=='boolean'||result.truncated[key]!==count>limit||!Array.isArray(arrays[key])||arrays[key].length!==Math.min(count,limit))fail('SCHEDULE_ACK_INVALID');
    const local=new Set();arrays[key]=arrays[key].map(row=>{
-    const item=event(row,{stored:true});if(local.has(item.id))fail('SCHEDULE_ACK_INVALID');local.add(item.id);
-    if(key==='calendar'&&(item.eventDate<range.rangeStart||item.eventDate>range.rangeEnd)||key==='today'&&item.eventDate!==result.today||key==='upcoming'&&(item.eventDate<=result.today||item.completed)||key==='overdue'&&(item.eventDate>=result.today||item.completed))fail('SCHEDULE_ACK_INVALID');
-    if(seen.has(item.id)&&JSON.stringify(seen.get(item.id))!==JSON.stringify(item))fail('SCHEDULE_ACK_INVALID');seen.set(item.id,item);return item;
+    let item=event(row,{stored:true,projection:true});
+    if(v2&&!item.occurrenceId||!v2&&(item.recurrence!=='none'||item.endDate!==item.eventDate))fail('SCHEDULE_ACK_INVALID');
+    if(!item.occurrenceId)item={...item,seriesId:item.id,occurrenceId:item.id+'@'+item.eventDate,occurrenceStartDate:item.eventDate,occurrenceEndDate:item.endDate};
+    if(local.has(item.occurrenceId))fail('SCHEDULE_ACK_INVALID');local.add(item.occurrenceId);
+    const first=item.occurrenceStartDate,last=item.occurrenceEndDate;
+    if(key==='calendar'&&(last<range.rangeStart||first>range.rangeEnd)||key==='today'&&(first>result.today||last<result.today)||key==='upcoming'&&(first<=result.today||item.completed)||key==='overdue'&&(last>=result.today||item.completed))fail('SCHEDULE_ACK_INVALID');
+    const canonical=event(item,{stored:true}),serial=JSON.stringify(canonical);if(seriesSeen.has(item.id)&&seriesSeen.get(item.id)!==serial)fail('SCHEDULE_ACK_INVALID');seriesSeen.set(item.id,serial);
+    if(seen.has(item.occurrenceId)&&JSON.stringify(seen.get(item.occurrenceId))!==JSON.stringify(item))fail('SCHEDULE_ACK_INVALID');seen.set(item.occurrenceId,item);return item;
    });
   }
   const days=calendarGrid(month).filter(Boolean),dayKeys=Object.keys(result.dayCounts);if(dayKeys.length!==days.length||dayKeys.some(day=>!days.includes(day)))fail('SCHEDULE_ACK_INVALID');
-  let total=0;const dayCounts={};for(const day of days){const count=result.dayCounts[day];if(!Number.isSafeInteger(count)||count<0)fail('SCHEDULE_ACK_INVALID');total+=count;if(!Number.isSafeInteger(total))fail('SCHEDULE_ACK_INVALID');dayCounts[day]=count;}
-  if(total!==result.counts.calendar||arrays.calendar.some(row=>dayCounts[row.eventDate]<arrays.calendar.filter(x=>x.eventDate===row.eventDate).length))fail('SCHEDULE_ACK_INVALID');
-  return freeze({month,today:result.today,...range,items:arrays.calendar,agenda:{today:arrays.today,upcoming:arrays.upcoming,overdue:arrays.overdue,counts:copy(result.counts),truncated:copy(result.truncated)},dayCounts});
+  let total=0;const dayCounts={};for(const day of days){
+   const count=result.dayCounts[day],loaded=arrays.calendar.filter(row=>row.occurrenceStartDate<=day&&row.occurrenceEndDate>=day).length;
+   if(!Number.isSafeInteger(count)||count<loaded||count>result.counts.calendar||!result.truncated.calendar&&count!==loaded)fail('SCHEDULE_ACK_INVALID');total+=count;if(!Number.isSafeInteger(total))fail('SCHEDULE_ACK_INVALID');dayCounts[day]=count;
+  }
+  if(v2?(total<result.counts.calendar||total>result.counts.calendar*days.length):total!==result.counts.calendar)fail('SCHEDULE_ACK_INVALID');
+  return freeze({schemaVersion:v2?2:1,month,today:result.today,...range,items:arrays.calendar,agenda:{today:arrays.today,upcoming:arrays.upcoming,overdue:arrays.overdue,counts:copy(result.counts),truncated:copy(result.truncated)},dayCounts});
  }
  function saveAck(result,ctx,desired,expected){scopeAck(result,ctx);if(result.ok!==true||typeof result.duplicate!=='boolean')fail('SCHEDULE_ACK_INVALID');const saved=event(result.event,{stored:true});if(saved.id!==desired.id||saved.revision!==expected+1||!equal(saved,desired))fail('SCHEDULE_ACK_INVALID');return saved;}
  function deleteAck(result,ctx,id,expected){scopeAck(result,ctx);if(result.ok!==true||result.deleted!==true||result.id!==id||result.revision!==expected+1||typeof result.duplicate!=='boolean')fail('SCHEDULE_ACK_INVALID');return {id,revision:result.revision,deleted:true};}
@@ -136,7 +194,7 @@
      if(code==='SCHEDULE_CONTEXT_CHANGED'){deny(s);emit();return errorResult(code);}
      if(uncertain&&kind==='save'){
       const result=await read(s,desired.eventDate.slice(0,7),{force:true,publish:false});if(!valid(s))return errorResult('SCHEDULE_STALE');
-      if(result.ok){verifiedRead=result.data;const matched=[...result.data.items,...result.data.agenda.today,...result.data.agenda.upcoming,...result.data.agenda.overdue].find(row=>row.id===id);if(matched&&matched.revision===expected+1&&equal(matched,desired)){saved=matched;problem=null;uncertain=false;}}
+      if(result.ok){verifiedRead=result.data;const matched=[...result.data.items,...result.data.agenda.today,...result.data.agenda.upcoming,...result.data.agenda.overdue].find(row=>row.id===id);if(matched&&matched.revision===expected+1&&equal(matched,desired)){saved=event(matched,{stored:true});problem=null;uncertain=false;}}
      }
     }
     if(!valid(s))return errorResult('SCHEDULE_STALE');
@@ -144,7 +202,7 @@
     const refreshed=verifiedRead?.month===s.month?{ok:true,data:verifiedRead}:await read(s,s.month,{force:true,publish:false});if(!valid(s))return errorResult('SCHEDULE_STALE');
     if(!refreshed.ok&&refreshed.error.code==='SCHEDULE_CONTEXT_CHANGED'){s.status='error';s.error={code:'SCHEDULE_CONTEXT_CHANGED'};emit();return errorResult('SCHEDULE_CONTEXT_CHANGED');}
     if(refreshed.ok)apply(s,refreshed.data);
-    else if(saved){const items=s.items.filter(row=>row.id!==id);if(s.rangeStart&&saved.eventDate>=s.rangeStart&&saved.eventDate<=s.rangeEnd)items.push(saved);s.items=items;s.agenda=null;s.dayCounts={};}
+    else if(saved){const items=s.items.filter(row=>row.id!==id);if(s.rangeStart&&s.rangeEnd)items.push(...projectSeries(saved,s.rangeStart,s.rangeEnd));s.items=items.slice(0,MAX_EVENTS);s.agenda=null;s.dayCounts={};}
     else if(deleted){s.items=s.items.filter(row=>row.id!==id);s.agenda=null;s.dayCounts={};}
     const ok=!!(saved||deleted);s.status=ok&&refreshed.ok?'ready':'error';s.error=problem?{code:problem,uncertain}:refreshed.ok?null:{code:refreshed.error.code};emit();
     return ok?{ok:true,...(saved?{event:copy(saved)}:{...deleted}),...(refreshed.ok?{}:{refreshError:refreshed.error})}:{ok:false,error:{code:problem||'SCHEDULE_NETWORK'},eventId:id,uncertain};
@@ -155,6 +213,6 @@
   if(typeof root.addEventListener==='function')for(const name of ['snote:auth-reset','pagehide','snote:route-changed']){const listener=event=>{if(name!=='snote:route-changed'||event.detail?.page!=='dashboard')reset();};root.addEventListener(name,listener);watchers.push([name,listener]);}
   return Object.freeze({refresh,snapshot,newEvent,upsert:input=>beginMutation('save',input),remove:input=>beginMutation('remove',input),reset,destroy});
  }
- const model=Object.freeze({businessDate,isDate,isMonth,shiftMonth,calendarGrid,monthRange,event,newEvent,maxRevision:MAX_REVISION});
+ const model=Object.freeze({businessDate,isDate,isMonth,shiftMonth,calendarGrid,monthRange,event,newEvent,occurrences,repeatDate,maxRecurringDays:366,recurrences:RECURRENCES,maxRevision:MAX_REVISION});
  return Object.freeze({create,newEvent,model});
 });

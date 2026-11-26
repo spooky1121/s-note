@@ -10,7 +10,7 @@
  const host=document.getElementById('snote-dashboard-home');if(!host)return;host.dataset.homeLayout='fluid';
  const bridge=()=>root.snoteHomeDashboardBridge;
  const mobile=matchMedia('(max-width:760px)');
- let active=false,paintedKey=null,signature='',scheduled=false,selectedChart='purchases';
+ let active=false,paintedKey=null,signature='',scheduled=false,selectedChart='purchases',selectedAccountantChart='purchases';
  const number=value=>Number(value).toLocaleString('ko-KR');
  const won=value=>value==null?'—':number(value)+'원';
  const node=(tag,text,cls)=>{const item=document.createElement(tag);if(text!=null)item.textContent=text;if(cls)item.className=cls;return item;};
@@ -50,14 +50,15 @@
   }
   card.append(plot);return card;
  }
- function charts(data,key,hideMargin){
-  const card=node('section',null,'snote-home-chart-group');card.setAttribute('aria-label','최근 3개월 실적');
+ function charts(data,key,hideMargin,{accountant=false}={}){
+  const card=node('section',null,'snote-home-chart-group');card.dataset.chartScope=accountant?'accountant':'owner';card.setAttribute('aria-label',accountant?'최근 3개월 매입·매도':'최근 3개월 실적');
   const heading=node('header',null,'snote-home-chart-group-head');heading.append(node('h2','최근 3개월 흐름'));
   const tabs=node('div',null,'snote-home-chart-tabs');tabs.setAttribute('role','tablist');tabs.setAttribute('aria-label','실적 지표 선택');
-  const options=[{field:'purchases',title:'매입',label:'매입 대수',color:'#3974dc'},{field:'sales',title:'판매',label:'판매 대수',color:'#25868b'},{field:'margin',title:'판매수익',label:'판매 수익',color:'#7460b6',money:true}];
+  const options=[{field:'purchases',title:'매입',label:accountant?'매입':'매입 대수',color:'#3974dc'},{field:'sales',title:accountant?'매도':'판매',label:accountant?'매도':'판매 대수',color:'#25868b'}];
+  if(!accountant)options.push({field:'margin',title:'판매수익',label:'판매 수익',color:'#7460b6',money:true});
   const panels=node('div',null,'snote-home-chart-panels'),buttons=[];
   function select(field,focus=false){
-   selectedChart=field;
+   if(accountant)selectedAccountantChart=field;else selectedChart=field;
    for(const[at,option]of options.entries()){
     const chosen=option.field===field,button=buttons[at],panel=panels.children[at];button.setAttribute('aria-selected',String(chosen));button.tabIndex=chosen?0:-1;panel.hidden=!chosen;
     if(chosen&&focus)button.focus();
@@ -70,28 +71,40 @@
    buttons.push(button);tabs.append(button);
    const panel=chart(data,{...option,masked:option.money&&hideMargin});panel.id='snote-home-panel-'+option.field;panel.setAttribute('role','tabpanel');panel.setAttribute('aria-labelledby',button.id);panels.append(panel);
   }
-  heading.append(tabs);card.append(heading,panels);select(selectedChart);return card;
+  heading.append(tabs);card.append(heading,panels);const chosen=accountant?selectedAccountantChart:selectedChart;select(options.some(option=>option.field===chosen)?chosen:options[0].field);return card;
  }
  function render(data,key,hideMargin){
   host.replaceChildren();host.dataset.state='ready';host.setAttribute('aria-busy','false');
   const work=node('div',null,'snote-home-work');work.append(charts(data,key,hideMargin),newsHost);
   host.append(scheduler(work));announced('owner',key);
  }
+ function accountantMetric(label,value,{field,unit='대',note=null}={}){
+  const card=node('article',null,'snote-accountant-count');card.dataset.workCount=field;
+  const amount=node('div',null,'snote-accountant-count-value');amount.append(node('strong',value===null?'—':number(value)));if(value!==null)amount.append(node('small',unit));
+  card.append(node('span',label,'snote-accountant-count-label'),amount);if(note!==null)card.append(node('small',note,'snote-accountant-count-note'));return card;
+ }
+ function accountantFinance(data){
+  const card=node('section',null,'snote-accountant-finance');card.setAttribute('aria-label','재고금융 한도와 현재 사용액');
+  const known=data.limit!==null&&data.used!==null;card.dataset.financeState=known?'ready':data.limit!==null||data.used!==null?'partial':'unavailable';
+  card.append(node('h2','재고금융','snote-accountant-finance-title'));
+  const amounts=node('dl',null,'snote-accountant-finance-amounts');
+  for(const [label,value,field] of [['재고금융 한도',data.limit,'limit'],['현재 사용액',data.used,'used']]){const row=node('div');row.dataset.financeAmount=field;row.append(node('dt',label),node('dd',won(value)));amounts.append(row);}
+  card.append(amounts);
+  const track=node('div',null,'snote-accountant-finance-track'),fill=node('span',null,'snote-accountant-finance-fill');track.append(fill);
+  if(known&&data.limit>0){const ratio=data.used/data.limit*100;track.setAttribute('role','progressbar');track.setAttribute('aria-label','재고금융 사용률');track.setAttribute('aria-valuemin','0');track.setAttribute('aria-valuemax','100');track.setAttribute('aria-valuenow',String(Math.min(100,Math.round(ratio*100)/100)));track.setAttribute('aria-valuetext','한도 '+won(data.limit)+' · 현재 사용 '+won(data.used));fill.style.width=Math.min(100,ratio)+'%';card.classList.toggle('is-over-limit',data.used>data.limit);}
+  else{track.setAttribute('role','img');track.setAttribute('aria-label',known?'재고금융 한도 '+won(data.limit)+' · 현재 사용 '+won(data.used):'재고금융 사용률 확인 필요');track.classList.add('is-unavailable');if(known&&data.used>0){fill.style.width='100%';card.classList.add('is-over-limit');}}
+  card.append(track);return card;
+ }
  function renderAccountant(data,key){
   host.replaceChildren();host.dataset.state='ready';host.setAttribute('aria-busy','false');
-  const summary=node('section',null,'snote-accountant-summary');summary.setAttribute('role','group');summary.setAttribute('aria-label','상사 업무 현황');
-  for(const[field,label]of [['totalCount','상사 차량'],['inventoryCount','보유 차량'],['contractCount','계약 진행'],['monthPurchaseCount','이번 달 매입']]){
-   const card=node('article',null,'snote-accountant-count');card.dataset.workCount=field;
-   const value=node('div',null,'snote-accountant-count-value');value.append(node('strong',number(data[field])),node('small','대'));
-   card.append(node('span',label,'snote-accountant-count-label'),value);summary.append(card);
-  }
-  const work=node('section',null,'snote-accountant-work');work.append(node('h2','서류 준비'),node('p','차량별 양수인과 자동차등록증을 확인하세요.'));
-  const actions=node('div',null,'snote-accountant-actions');
-  for(const[page,label]of [['contractArchive','서류함'],['buy','매입 관리']]){
-   const button=node('button',label);button.type='button';button.dataset.accountantPage=page;button.append(icon('arrow'));button.onclick=()=>action('navigate',page,key);actions.append(button);
-  }
-  work.append(actions);const workspace=node('div',null,'snote-home-work');workspace.append(work,newsHost);const schedule=scheduler(workspace);
-  if(mobile.matches)host.append(schedule,summary);else host.append(summary,schedule);announced('accountant',key);
+  const overview=node('div',null,'snote-accountant-overview'),summary=node('section',null,'snote-accountant-summary');summary.setAttribute('role','group');summary.setAttribute('aria-label','상사 매입·판매 및 재고 현황');
+  summary.append(accountantMetric('현재 총매입',data.inventoryBuyAmount,{field:'inventoryBuyAmount',unit:'원',note:number(data.inventoryCount)+'대'}),accountantMetric('이번달 매입',data.monthPurchaseCount,{field:'monthPurchaseCount'}),accountantMetric('이번달 판매',data.monthSaleCount,{field:'monthSaleCount'}),accountantMetric('총 재고사용',data.financeSummary.used,{field:'stockFinanceUsed',unit:'원'}));
+  if([data.inventoryBuyAmount,data.monthPurchaseCount,data.monthSaleCount,data.financeSummary.used].some(value=>value!==null&&number(value).length>15))overview.classList.add('has-wide-values');
+  overview.append(summary,accountantFinance(data.financeSummary));
+  const work=node('div',null,'snote-home-work');
+  if(data.series===null){const pending=node('section',null,'snote-home-chart-group');pending.dataset.chartScope='accountant';pending.append(node('h2','최근 3개월 흐름'),node('p','매입·매도 자료를 확인하고 있습니다.','snote-home-chart-masked'));work.append(pending);}
+  else work.append(charts(data,key,true,{accountant:true}));
+  host.append(overview,scheduler(work));announced('accountant',key);
  }
  function refresh(){
   scheduled=false;if(!active){clear();return;}host.hidden=false;
@@ -102,7 +115,7 @@
   if(snapshot.loading){state('대시보드를 불러오는 중…',{loading:true});return;}
   if(snapshot.mode==='accountant'){
    if(snapshot.locked){state('상사 업무 현황을 확인하고 있습니다.',{loading:true});return;}
-   let data;try{data=model.accountantSummary(snapshot.workSummary);}catch{state('상사 업무 현황을 확인할 수 없습니다.');return;}
+   let data;try{data=model.accountantDashboard(snapshot.workSummary,snapshot.financeSummary,snapshot.month);}catch{state('상사 업무 현황을 확인할 수 없습니다.');return;}
    const next=JSON.stringify([snapshot.key,'accountant',mobile.matches,data]);if(signature===next)return;signature=next;renderAccountant(data,snapshot.key);return;
   }
   if(snapshot.locked){state('금액 요약과 수익 정보를 보려면 잠금을 해제해 주세요.',{locked:true,key:snapshot.key});return;}
@@ -112,6 +125,7 @@
  function schedule(){if(!scheduled){scheduled=true;queueMicrotask(refresh);}}
  root.addEventListener('snote:route-changed',event=>{active=event.detail?.page==='dashboard';refresh();});
  root.addEventListener('snote:sales-data-changed',schedule);
+ root.addEventListener('snote:inventory-finance-ready',schedule);
  document.addEventListener('snote:finance-lock-changed',schedule);
  document.addEventListener('snote:dashboard-display-changed',schedule);
  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&active)schedule();});
@@ -152,6 +166,21 @@
   if(result.inventoryCount>result.totalCount||result.contractCount>result.inventoryCount||result.monthPurchaseCount>result.totalCount)throw Error('INVALID_ACCOUNTANT_WORK_SUMMARY');
   return Object.freeze(result);
  }
+ function accountantDashboard(work,finance,month){
+  if(!isMonth(month))throw Error('INVALID_ACCOUNTANT_DASHBOARD');
+  const counts=accountantSummary(work),nullable=(value,{count=false}={})=>{if(value===null)return null;if(typeof value!=='number'||!Number.isSafeInteger(value)||value<0)throw Error('INVALID_ACCOUNTANT_DASHBOARD');if(count&&value>counts.totalCount)throw Error('INVALID_ACCOUNTANT_DASHBOARD');return value;};
+  if(!Object.hasOwn(work,'inventoryBuyAmount')||!Object.hasOwn(work,'monthSaleCount')||!Object.hasOwn(work,'series')||!finance||typeof finance!=='object'||Array.isArray(finance)||!Object.hasOwn(finance,'limit')||!Object.hasOwn(finance,'used'))throw Error('INVALID_ACCOUNTANT_DASHBOARD');
+  const inventoryBuyAmount=nullable(work.inventoryBuyAmount),monthSaleCount=nullable(work.monthSaleCount,{count:true}),financeSummary=Object.freeze({limit:nullable(finance.limit),used:nullable(finance.used)});
+  if(monthSaleCount!==null&&monthSaleCount>counts.totalCount-counts.inventoryCount)throw Error('INVALID_ACCOUNTANT_DASHBOARD');
+  let series=null;
+  if(work.series!==null){
+   const months=Array.from({length:3},(_,i)=>shiftMonth(month,i-2));if(months.some(value=>!value)||!Array.isArray(work.series)||work.series.length!==3)throw Error('INVALID_ACCOUNTANT_DASHBOARD');
+   series=Object.freeze(work.series.map((item,index)=>{if(!item||typeof item!=='object'||Array.isArray(item)||item.month!==months[index])throw Error('INVALID_ACCOUNTANT_DASHBOARD');const purchases=nullable(item.purchases,{count:true}),sales=nullable(item.sales,{count:true});if(purchases===null||sales===null)throw Error('INVALID_ACCOUNTANT_DASHBOARD');return Object.freeze({month:item.month,purchases,sales});}));
+   for(const [field,maximum] of [['purchases',counts.totalCount],['sales',counts.totalCount-counts.inventoryCount]]){let count=0;for(const item of series){if(item[field]>maximum-count)throw Error('INVALID_ACCOUNTANT_DASHBOARD');count+=item[field];}}
+   if(series[2].purchases!==counts.monthPurchaseCount||monthSaleCount!==null&&series[2].sales!==monthSaleCount)throw Error('INVALID_ACCOUNTANT_DASHBOARD');
+  }
+  return Object.freeze({...counts,month,inventoryBuyAmount,monthSaleCount,financeSummary,series});
+ }
  function summarize(rows,month=currentMonth()){
   if(!Array.isArray(rows)||!isMonth(month)||rows.some(row=>!row||typeof row!=='object'||Array.isArray(row)))throw Error('INVALID_DASHBOARD_DATA');
   const inventory=rows.filter(row=>row.status!=='판매완료'),sold=rows.filter(row=>row.status==='판매완료'),inMonth=(row,field,key)=>monthOf(row[field])===key;
@@ -164,5 +193,5 @@
   const fields=[['capital','총투자금','totalInvestment','원'],['inventory','재고대출금','inventoryCapital','원'],['cash','현금투자금','cash','원'],['purchase','이번 달 매입','monthPurchaseCount','대'],['sale','이번 달 판매','monthSaleCount','대'],['profit','이번 달 수익','monthMargin','원',true],['year','올해 수익','yearMargin','원',true],['forecast','재고 예상수익','inventoryMargin','원']];
   return Object.freeze(fields.map(([kind,label,field,unit,margin])=>{if(!Object.hasOwn(data,field))throw Error('INVALID_DASHBOARD_DATA');const value=money(data[field]);if((kind==='purchase'||kind==='sale')&&value<0)throw Error('INVALID_DASHBOARD_AMOUNT');const masked=margin===true&&hideMargin;return Object.freeze({kind,label,value:masked?null:value,unit,masked});}));
  }
- return Object.freeze({isMonth,currentMonth,monthOf,dateKey,currentDay,inventoryTasks,saleProgress,accountantSummary,summarize,settlementRows});
+ return Object.freeze({isMonth,currentMonth,monthOf,dateKey,currentDay,inventoryTasks,saleProgress,accountantSummary,accountantDashboard,summarize,settlementRows});
 });

@@ -4,21 +4,27 @@ const assert=require('node:assert/strict'),test=require('node:test'),fs=require(
 const API=require('../assets/dealer-scheduler-store.js'),M=API.model;
 const OWNER='11111111-1111-4111-8111-111111111111',OTHER='22222222-2222-4222-8222-222222222222',COMPANY='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',COMPANY_B='bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
 const clone=value=>JSON.parse(JSON.stringify(value)),deferred=()=>{let resolve;const promise=new Promise(done=>{resolve=done;});return{promise,resolve};};
-const same=(a,b)=>['id','title','notes','eventDate','time','completed'].every(key=>a[key]===b[key]);
+const same=(a,b)=>['id','title','notes','eventDate','endDate','recurrence','time','completed'].every(key=>a[key]===b[key]);
 const stamp='2026-11-23T03:00:00.000Z';
-const stored=(extra={})=>({id:crypto.randomUUID(),title:'합성 일정',notes:'가상 메모',eventDate:'2026-11-23',time:'09:30',completed:false,revision:1,createdAt:stamp,updatedAt:stamp,...extra});
+const stored=(extra={})=>{const result={id:crypto.randomUUID(),title:'합성 일정',notes:'가상 메모',eventDate:'2026-11-23',time:'09:30',completed:false,revision:1,createdAt:stamp,updatedAt:stamp,...extra};return {...result,endDate:extra.endDate??result.eventDate,recurrence:extra.recurrence??'none'};};
 function fixture(t,{factory=API,clock=Date.parse(stamp),isActive=true,onChange,timeoutMs=1000}={}){
  const f={context:{key:'scope-A:session-1',actorId:OWNER,companyId:COMPANY,role:'dealer',ready:true},active:isActive,clock,rows:new Map(),tombstones:new Map(),reads:[],saves:[],removes:[],changes:[],onRead:null,onSave:null,onRemove:null};
  const rows=c=>{const k=c.companyId+':'+c.actorId;if(!f.rows.has(k))f.rows.set(k,new Map());return f.rows.get(k);};f.currentRows=()=>rows(f.context);f.add=row=>{f.currentRows().set(row.id,clone(row));return row;};
  f.envelope=(c,month)=>{
-  const range=M.monthRange(month),today=M.businessDate(f.clock),all=[...rows(c).values()].map(clone).sort((a,b)=>(a.eventDate+(a.time||'99:99')+a.id).localeCompare(b.eventDate+(b.time||'99:99')+b.id));
-  const groups={calendar:all.filter(e=>e.eventDate>=range.rangeStart&&e.eventDate<=range.rangeEnd),today:all.filter(e=>e.eventDate===today),upcoming:all.filter(e=>!e.completed&&e.eventDate>today),overdue:all.filter(e=>!e.completed&&e.eventDate<today)};
+  const range=M.monthRange(month),today=M.businessDate(f.clock),all=[...rows(c).values()].map(x=>M.event(clone(x),{stored:true}));
+  const project=(records,from,to)=>M.occurrences(records,from,to).map(clone),selected=(future)=>all.filter(e=>!e.completed).flatMap(e=>{
+   const duration=Math.round((Date.parse(e.endDate)-Date.parse(e.eventDate))/86400000),shift=(d,n)=>new Date(Date.parse(d)+n*86400000).toISOString().slice(0,10);
+   if(e.recurrence==='none')return future?e.eventDate>today?project([e],e.eventDate,e.endDate):[]:e.endDate<today?project([e],e.eventDate,e.endDate):[];
+   const candidates=future?project([e],e.eventDate>today?e.eventDate:shift(today,1),e.eventDate>today?e.endDate:shift(today,366)):project([e],shift(today,-duration-366),shift(today,-1));
+   const valid=candidates.filter(x=>future?x.occurrenceStartDate>today:x.occurrenceEndDate<today).sort((a,b)=>future?a.occurrenceStartDate.localeCompare(b.occurrenceStartDate):b.occurrenceEndDate.localeCompare(a.occurrenceEndDate));return valid.slice(0,1);
+  });
+  const groups={calendar:project(all,range.rangeStart,range.rangeEnd),today:project(all,today,today),upcoming:selected(true),overdue:selected(false)};
   const counts=Object.fromEntries(Object.entries(groups).map(([k,v])=>[k,v.length])),truncated=Object.fromEntries(Object.entries(groups).map(([k,v])=>[k,v.length>(k==='calendar'?500:50)]));
-  const dayCounts=Object.fromEntries(M.calendarGrid(month).filter(Boolean).map(d=>[d,groups.calendar.filter(e=>e.eventDate===d).length]));
-  return{companyId:c.companyId,ownerId:c.actorId,month,today,...range,events:groups.calendar.slice(0,500),todayEvents:groups.today.slice(0,50),upcomingEvents:groups.upcoming.slice(0,50),overdueEvents:groups.overdue.slice(0,50),counts,truncated,dayCounts};
+  const dayCounts=Object.fromEntries(M.calendarGrid(month).filter(Boolean).map(d=>[d,groups.calendar.filter(e=>e.occurrenceStartDate<=d&&e.occurrenceEndDate>=d).length]));
+  return{schemaVersion:2,companyId:c.companyId,ownerId:c.actorId,month,today,...range,events:groups.calendar.slice(0,500),todayEvents:groups.today.slice(0,50),upcomingEvents:groups.upcoming.slice(0,50),overdueEvents:groups.overdue.slice(0,50),counts,truncated,dayCounts};
  };
  f.commitSave=(c,event,expected)=>{
-  assert.deepEqual(Object.keys(event).sort(),['completed','eventDate','id','notes','time','title']);const data=rows(c),old=data.get(event.id),tomb=f.tombstones.get(c.companyId+':'+c.actorId+':'+event.id);
+  assert.deepEqual(Object.keys(event).sort(),['completed','endDate','eventDate','id','notes','recurrence','time','title']);const data=rows(c),old=data.get(event.id),tomb=f.tombstones.get(c.companyId+':'+c.actorId+':'+event.id);
   if(tomb)throw{code:'SCHEDULE_EVENT_UNAVAILABLE'};
   if(old&&old.revision===expected+1&&same(old,event))return{ok:true,companyId:c.companyId,ownerId:c.actorId,event:clone(old),duplicate:true};
   if(old?old.revision!==expected:expected!==0)throw{code:'SCHEDULE_CONFLICT'};
@@ -36,12 +42,12 @@ function fixture(t,{factory=API,clock=Date.parse(stamp),isActive=true,onChange,t
   remove:async(c,id,expected)=>{f.removes.push({context:clone(c),id,expected});return f.onRemove?f.onRemove(c,id,expected):f.commitRemove(c,id,expected);}};
  f.store=factory.create({bridge:f.bridge,context:()=>f.context,current:c=>f.bridge.current(c),isActive:()=>f.active,now:()=>f.clock,timeoutMs,onChange:s=>{f.changes.push(s);onChange?.(s,f);}});t.after(()=>f.store.destroy());return f;
 }
-test('KST day, strict dates, leap years, safe month arithmetic and bounded Sunday 42-cell grids',()=>{
+test('KST day, strict dates, leap years, safe month arithmetic and five-week Sunday grids with complete six-week months',()=>{
  assert.equal(M.businessDate('2026-12-31T14:59:59Z'),'2026-12-31');assert.equal(M.businessDate('2026-12-31T15:00:00Z'),'2027-01-01');
  for(const day of['0001-01-01','2000-02-29','2024-02-29','9999-12-31'])assert(M.isDate(day));
  for(const day of['0000-01-01','2023-02-29','1900-02-29','2026-04-31','2026-1-01','2026-01-01T00:00:00Z',null,1])assert(!M.isDate(day));
  assert.equal(M.shiftMonth('0001-01',-1),null);assert.equal(M.shiftMonth('9999-12',1),null);assert.equal(M.shiftMonth('2026-12',1),'2027-01');assert.equal(M.shiftMonth('2026-11',Number.MAX_SAFE_INTEGER),null);assert.equal(M.shiftMonth('2026-11',NaN),null);
- const grid=M.calendarGrid('2026-11');assert.equal(grid.length,42);assert.equal(grid[0],'2026-11-01');assert.equal(grid[41],'2026-12-12');assert.equal(M.calendarGrid('0001-01')[0],null);assert.equal(M.monthRange('0001-01').rangeStart,'0001-01-01');assert.equal(M.monthRange('9999-12').rangeEnd,'9999-12-31');
+ const grid=M.calendarGrid('2026-11');assert.equal(grid.length,35);assert.equal(grid[0],'2026-11-01');assert.equal(grid[34],'2026-12-05');assert.equal(M.calendarGrid('2026-08').length,42);assert.equal(M.monthRange('2026-08').rangeEnd,'2026-09-05');assert.equal(M.calendarGrid('0001-01')[0],null);assert.equal(M.monthRange('0001-01').rangeStart,'0001-01-01');assert.equal(M.monthRange('9999-12').rangeEnd,'9999-12-31');
  assert.throws(()=>M.calendarGrid('10000-01'));assert.throws(()=>M.businessDate('invalid'));
 });
 test('new drafts use stable secure UUIDs and validate title, notes, time and revision without changing input',()=>{
@@ -99,11 +105,11 @@ test('wrong-owner ACKs, inconsistent agenda, duplicate IDs and dishonest truncat
   r=>{r.ownerId=OTHER;},r=>{r.events.push(r.events[0]);r.counts.calendar++;},r=>{r.truncated.calendar=true;},r=>{r.dayCounts['2026-11-23']++;},r=>{r.todayEvents[0].title='contradictory copy';},r=>{r.events[0].time='25:00';}
  ]){const f=fixture(t);f.add(stored());f.onRead=async(c,m)=>{const r=clone(f.envelope(c,m));corrupt(r);return r;};assert.equal((await f.store.refresh({month:'2026-11'})).error.code,'SCHEDULE_ACK_INVALID');assert.deepEqual(f.store.snapshot().items,[]);}
 });
-test('bounded calendar and independent agenda preserve exact counts, truncation and 42-day dayCounts',async t=>{
+test('bounded calendar and independent agenda preserve exact counts, truncation and dynamic dayCounts',async t=>{
  const f=fixture(t);for(let i=0;i<510;i++)f.add(stored({eventDate:i<505?'2026-11-23':'2027-01-10',title:'합성 '+i}));
- assert((await f.store.refresh({month:'2026-11'})).ok);const s=f.store.snapshot();assert.equal(s.items.length,500);assert.equal(s.agenda.today.length,50);assert.equal(s.agenda.upcoming.length,5);assert.equal(s.agenda.counts.calendar,505);assert.equal(s.agenda.truncated.calendar,true);assert.equal(s.agenda.truncated.today,true);assert.equal(s.dayCounts['2026-11-23'],505);assert.equal(Object.keys(s.dayCounts).length,42);
+ assert((await f.store.refresh({month:'2026-11'})).ok);const s=f.store.snapshot();assert.equal(s.items.length,500);assert.equal(s.agenda.today.length,50);assert.equal(s.agenda.upcoming.length,5);assert.equal(s.agenda.counts.calendar,505);assert.equal(s.agenda.truncated.calendar,true);assert.equal(s.agenda.truncated.today,true);assert.equal(s.dayCounts['2026-11-23'],505);assert.equal(Object.keys(s.dayCounts).length,35);
 });
-test('save waits for server ACK, emits only six writable fields and deduplicates identical submissions',async t=>{
+test('save waits for server ACK, emits only the eight canonical writable fields and deduplicates identical submissions',async t=>{
  const f=fixture(t),gate=deferred(),began=deferred();await f.store.refresh({month:'2026-11'});const draft=Object.freeze({...API.newEvent({eventDate:'2026-11-23'}),title:'가상 저장'}),before=JSON.stringify(draft);
  f.onSave=async(c,e,n)=>{began.resolve();await gate.promise;return f.commitSave(c,e,n);};const p=f.store.upsert(draft),q=f.store.upsert({...draft});assert.equal(p,q);await began.promise;assert.equal(f.store.snapshot().status,'saving');assert.equal(f.store.snapshot().items.length,0);assert.equal((await f.store.refresh({month:'2026-12'})).error.code,'SCHEDULE_BUSY');
  assert.equal((await f.store.upsert({...draft,title:'다른 쓰기'})).error.code,'SCHEDULE_BUSY');gate.resolve();const result=await p;assert(result.ok);assert.equal(result.event.revision,1);assert.equal(f.saves.length,1);assert.equal(f.store.snapshot().items[0].title,draft.title);assert.equal(JSON.stringify(draft),before);
@@ -162,4 +168,51 @@ test('browser auth/reset, route leave and pagehide invalidate work without touch
  for(const name of['snote:auth-reset','snote:route-changed','pagehide']){
   const f=fixture(t,{factory:api}),gate=deferred(),began=deferred();f.add(stored());f.onRead=async(c,m)=>{const result=f.envelope(c,m);began.resolve();await gate.promise;return result;};const pending=f.store.refresh({month:'2026-11'});await began.promise;const event=new Event(name);if(name==='snote:route-changed')event.detail={page:'buy'};target.dispatchEvent(event);gate.resolve();assert.equal((await pending).error.code,'SCHEDULE_STALE');assert.equal(f.store.snapshot().items.length,0);f.store.destroy();assert.equal((await f.store.refresh()).error.code,'SCHEDULE_DESTROYED');
  }
+});
+
+test('five-week grids expand to six only when required and never omit a day of the requested month',()=>{
+ for(const year of [1,2024,2025,2026,9999])for(let month=1;month<=12;month++){
+  const key=String(year).padStart(4,'0')+'-'+String(month).padStart(2,'0'),grid=M.calendarGrid(key);assert([35,42].includes(grid.length));
+  const last=[31,year%4===0&&(year%100!==0||year%400===0)?29:28,31,30,31,30,31,31,30,31,30,31][month-1],actual=[];for(let d=1;d<=last;d++){const day=key+'-'+String(d).padStart(2,'0');assert.equal(grid.filter(x=>x===day).length,1);actual.push(day);}
+  assert(M.monthRange(key).rangeStart<=actual[0]&&M.monthRange(key).rangeEnd>=actual.at(-1));
+ }
+ assert.equal(M.calendarGrid('2026-08').length,42);assert.equal(M.calendarGrid('2026-11').length,35);
+});
+test('inclusive periods retain source dates and overlap month boundaries without creating fake source records',()=>{
+ const series=stored({eventDate:'2026-01-30',endDate:'2026-02-02'}),before=JSON.stringify(series),list=M.occurrences([series],'2026-02-01','2026-03-07');
+ assert.equal(list.length,1);assert.equal(list[0].eventDate,'2026-01-30');assert.equal(list[0].endDate,'2026-02-02');assert.equal(list[0].occurrenceStartDate,'2026-01-30');assert.equal(list[0].occurrenceEndDate,'2026-02-02');assert.equal(list[0].seriesId,series.id);assert.equal(list[0].occurrenceId,series.id+'@2026-01-30');assert.equal(JSON.stringify(series),before);assert(Object.isFrozen(list)&&Object.isFrozen(list[0]));
+ assert.equal(M.occurrences([stored({eventDate:'2020-01-01',endDate:'2030-12-31'})],'2026-11-01','2026-12-05').length,1);
+});
+test('daily and weekly periods project only bounded intersections while preserving each duration',()=>{
+ const daily=stored({eventDate:'2026-02-26',endDate:'2026-02-27',recurrence:'daily'}),days=M.occurrences([daily],'2026-02-26','2026-03-02');
+ assert.deepEqual(days.map(e=>e.occurrenceStartDate),['2026-02-26','2026-02-27','2026-02-28','2026-03-01','2026-03-02']);assert.equal(new Set(days.map(e=>e.occurrenceId)).size,5);assert(days.every(e=>e.id===daily.id&&Date.parse(e.occurrenceEndDate)-Date.parse(e.occurrenceStartDate)===86400000));
+ const weekly=stored({eventDate:'2026-01-30',endDate:'2026-02-01',recurrence:'weekly'});
+ assert.deepEqual(M.occurrences([weekly],'2026-02-01','2026-03-07').map(e=>e.occurrenceStartDate),['2026-01-30','2026-02-06','2026-02-13','2026-02-20','2026-02-27','2026-03-06']);
+});
+test('month-end and leap-day repeats clamp to the target month end without drifting the source anchor',()=>{
+ const monthly=stored({eventDate:'2026-01-31',endDate:'2026-02-01',recurrence:'monthly'}),rows=M.occurrences([monthly],'2026-02-01','2026-04-30');
+ assert.deepEqual(rows.map(e=>[e.occurrenceStartDate,e.occurrenceEndDate]),[['2026-01-31','2026-02-01'],['2026-02-28','2026-03-01'],['2026-03-31','2026-04-01'],['2026-04-30','2026-05-01']]);
+ const yearly=stored({eventDate:'2024-02-29',endDate:'2024-03-01',recurrence:'yearly'});
+ assert.deepEqual(M.occurrences([yearly],'2025-02-01','2025-03-01').map(e=>[e.occurrenceStartDate,e.occurrenceEndDate]),[['2025-02-28','2025-03-01']]);
+ assert.equal(M.occurrences([yearly],'2028-02-01','2028-03-01')[0].occurrenceStartDate,'2028-02-29');
+});
+test('period and recurrence validation keeps legacy defaults, rejects reversed/invalid ranges and bounds only repeat spans',()=>{
+ const legacy=stored();delete legacy.endDate;delete legacy.recurrence;const normal=M.event(legacy,{stored:true});assert.equal(normal.endDate,normal.eventDate);assert.equal(normal.recurrence,'none');
+ for(const patch of [{endDate:'2026-11-22'},{endDate:'2026-02-30'},{recurrence:'hourly'},{recurrence:1},{eventDate:'2024-01-01',endDate:'2025-01-01',recurrence:'daily'}])assert.throws(()=>M.event(stored(patch),{stored:true}));
+ assert.equal(M.event(stored({eventDate:'2024-01-01',endDate:'2024-12-31',recurrence:'yearly'}),{stored:true}).recurrence,'yearly');assert.equal(M.occurrences([stored({eventDate:'9999-12-30',endDate:'9999-12-31',recurrence:'daily'})],'9999-12-30','9999-12-31').length,1);
+});
+test('projected occurrence ACKs preserve one canonical series and whole-series edits/deletes use its UUID and revision',async t=>{
+ const f=fixture(t),series=f.add(stored({eventDate:'2026-10-31',endDate:'2026-11-01',recurrence:'monthly'}));assert((await f.store.refresh({month:'2026-11'})).ok);const rows=f.store.snapshot().items;assert.equal(rows.length,2);assert(rows.every(e=>e.id===series.id));assert.equal(new Set(rows.map(e=>e.occurrenceId)).size,2);
+ const changed=await f.store.upsert({...rows[1],title:'원본 시리즈 전체 수정'});assert(changed.ok);assert.equal(changed.event.eventDate,'2026-10-31');assert.equal(changed.event.endDate,'2026-11-01');assert(f.store.snapshot().items.every(e=>e.title==='원본 시리즈 전체 수정'&&e.revision===2));assert(!Object.hasOwn(f.saves[0].event,'occurrenceId'));
+ assert((await f.store.remove({id:series.id,revision:2})).ok);assert.equal(f.store.snapshot().items.length,0);assert.equal(f.removes[0].id,series.id);
+});
+test('period day counts may exceed occurrence count but forged spans, duplicate occurrence IDs and contradictory source copies are rejected',async t=>{
+ const f=fixture(t),series=f.add(stored({eventDate:'2026-11-20',endDate:'2026-11-25'}));assert((await f.store.refresh({month:'2026-11'})).ok);let view=f.store.snapshot();assert.equal(view.agenda.counts.calendar,1);assert.equal(Object.values(view.dayCounts).reduce((a,b)=>a+b,0),6);assert.equal(view.agenda.today[0].occurrenceStartDate,'2026-11-20');
+ for(const mutate of [r=>{r.events[0].occurrenceEndDate='2026-11-26';},r=>{r.events[0].seriesId=OTHER;},r=>{r.events[0].occurrenceId=series.id+'@2026-11-21';},r=>{r.dayCounts['2026-11-25']=0;},r=>{r.todayEvents[0].revision++;}]){
+  f.onRead=(c,m)=>{const raw=f.envelope(c,m);mutate(raw);return raw;};assert.equal((await f.store.refresh({month:'2026-11',force:true})).error.code,'SCHEDULE_ACK_INVALID');
+ }
+});
+test('a lost recurring save ACK reconciles the canonical source rather than creating occurrence rows',async t=>{
+ const f=fixture(t);await f.store.refresh({month:'2026-11'});f.onSave=(c,row,expected)=>{f.commitSave(c,row,expected);throw Error('Synthetic lost series response');};
+ const desired={...API.newEvent({eventDate:'2025-01-31',endDate:'2025-02-01',recurrence:'monthly'}),title:'응답 유실 반복 원본'};const saved=await f.store.upsert(desired);assert(saved.ok);assert.equal(saved.event.id,desired.id);assert.equal(saved.event.revision,1);assert.equal(f.saves.length,1);assert.equal(f.currentRows().size,1);assert(f.store.snapshot().items.some(e=>e.occurrenceStartDate==='2026-11-30'));
 });

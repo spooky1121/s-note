@@ -183,3 +183,54 @@
 @media screen and (max-width:430px){.snote-scheduler-form-row{grid-template-columns:minmax(0,1fr)}}
 @media(prefers-reduced-motion:reduce){.snote-scheduler-agenda-section.has-today-events{animation:none;border-color:#0096fe;box-shadow:inset 0 0 0 1px #0096fe}.snote-dealer-scheduler *,#snote-dealer-scheduler-dialog *{transition:none!important;scroll-behavior:auto!important}}
 @media print{.snote-dealer-scheduler,#snote-dealer-scheduler-dialog{display:none!important}}
+
+/* Date ranges share stable lanes across a week; the month heading never slides. */
+@media screen{
+ #snote-dealer-scheduler .snote-scheduler-calendar{overflow:hidden}
+ #snote-dealer-scheduler .snote-scheduler-grid-viewport{position:relative;display:flex;flex:1;min-width:0;max-width:100%;overflow:hidden;border-radius:10px}
+ #snote-dealer-scheduler .snote-scheduler-grid-viewport>.snote-scheduler-grid{width:100%;min-width:0}
+ #snote-app #snote-dealer-scheduler .snote-scheduler-month-nav{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:6px 8px}
+ #snote-dealer-scheduler .snote-scheduler-month-tools{grid-column:1;justify-self:start;min-width:0}
+ #snote-app #snote-dealer-scheduler .snote-scheduler-month-actions{grid-column:2;justify-self:center;display:flex;align-items:center;gap:5px;min-width:0}
+ #snote-app #snote-dealer-scheduler .snote-scheduler-month-actions h3{margin:0;text-align:center;white-space:nowrap}
+ #snote-app #snote-dealer-scheduler .snote-scheduler-month-actions .snote-scheduler-month-step{min-width:28px;width:28px;height:30px;margin:0;padding:5px;border-color:transparent;background:transparent}
+ #snote-app #snote-dealer-scheduler .snote-scheduler-month-step svg{width:16px;height:16px;scale:none!important}
+ #snote-dealer-scheduler .snote-scheduler-month-tools .snote-scheduler-today{appearance:none;min-width:42px;min-height:32px;margin:0;padding:5px 9px;border:1px solid #e6ecf2;border-radius:8px;background:#fff;color:#496078;font-family:inherit;font-size:11px;line-height:20px}
+ #snote-dealer-scheduler .snote-scheduler-month-tools .snote-scheduler-today:hover:enabled{background:#f4faff;color:#006bb5}
+ #snote-app #snote-dealer-scheduler .snote-scheduler-vehicle-legend{grid-column:3;justify-self:end;order:0;flex-basis:auto;min-width:0;gap:7px;font-size:10px}
+ #snote-dealer-scheduler .snote-scheduler-holiday-note{grid-column:1/-1}
+ #snote-dealer-scheduler .snote-scheduler-calendar-row{position:relative;--snote-day-head:32px;--snote-day-pad:4px;--snote-lane-height:18px;--snote-lane-gap:2px}
+ #snote-dealer-scheduler .snote-scheduler-calendar-row.has-holidays{--snote-day-head:60px}
+ #snote-dealer-scheduler .snote-scheduler-day-head{height:var(--snote-day-head);min-width:0;overflow:hidden}
+ #snote-dealer-scheduler .snote-scheduler-personal-space{height:calc(var(--snote-personal-lanes,0)*(var(--snote-lane-height) + var(--snote-lane-gap)));min-width:0;pointer-events:none}
+ #snote-dealer-scheduler .snote-scheduler-week-events{position:absolute;top:calc(var(--snote-day-head) + var(--snote-day-pad));left:0;right:0;z-index:2;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));grid-auto-rows:var(--snote-lane-height);row-gap:var(--snote-lane-gap);pointer-events:none}
+ #snote-app #snote-dealer-scheduler .snote-scheduler-range-bar{align-items:center;min-width:0;min-height:var(--snote-lane-height);height:var(--snote-lane-height);max-height:var(--snote-lane-height);margin:0 2px;padding:0 4px;border-radius:4px;line-height:var(--snote-lane-height);pointer-events:auto;overflow:hidden}
+ #snote-app #snote-dealer-scheduler .snote-scheduler-range-bar .snote-scheduler-event-title{display:block;min-width:0;max-height:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:inherit}
+ #snote-dealer-scheduler .snote-scheduler-range-bar.continues-before{border-top-left-radius:0;border-bottom-left-radius:0;border-left-color:transparent}
+ #snote-dealer-scheduler .snote-scheduler-range-bar.continues-after{border-top-right-radius:0;border-bottom-right-radius:0}
+ #snote-app #snote-dealer-scheduler .snote-scheduler-day.is-outside .snote-scheduler-date{color:#c2c9d1}
+ #snote-app #snote-dealer-scheduler .snote-scheduler-day.is-outside:is(.is-sunday,.is-holiday) .snote-scheduler-date{color:#d9afb6}
+ #snote-app #snote-dealer-scheduler .snote-scheduler-day.is-outside .snote-scheduler-holiday-name{color:#d9b9be}
+ #snote-app #snote-dealer-scheduler .snote-scheduler-day.is-outside.is-today .snote-scheduler-date{background:#eaf5fc;color:#8dabbc}
+ #snote-app #snote-dealer-scheduler .snote-scheduler-day.is-outside.is-today:is(.is-sunday,.is-holiday) .snote-scheduler-date{background:#fff5f6;color:#c59ba3}
+ #snote-dealer-scheduler-dialog .snote-scheduler-repeat-field{display:flex;align-items:flex-end;gap:8px;min-width:0;padding-bottom:1px}
+ #snote-dealer-scheduler-dialog .snote-scheduler-repeat-toggle{position:relative;display:flex;align-items:center;flex:none;gap:7px;min-height:44px;padding:9px 10px;border:1px solid #dfe7ef;border-radius:10px;background:#fbfcfe;color:#496078;font-size:13px;cursor:pointer}
+ #snote-dealer-scheduler-dialog .snote-scheduler-repeat-toggle input{appearance:none;display:block;flex:none;width:18px;height:18px;margin:0;border:1px solid #b9c9d8;border-radius:5px;background:#fff;cursor:pointer}
+ #snote-dealer-scheduler-dialog .snote-scheduler-repeat-toggle input:checked{border-color:#0096fe;background:#0096fe}
+ #snote-dealer-scheduler-dialog .snote-scheduler-repeat-toggle input:checked::after{content:'';display:block;width:5px;height:9px;margin:2px 0 0 5px;border:solid #192c41;border-width:0 2px 2px 0;transform:rotate(45deg)}
+ #snote-dealer-scheduler-dialog .snote-scheduler-repeat-field select{width:100%;min-width:0;min-height:44px;margin:0;padding:9px 11px;border:1px solid #dfe7ef;border-radius:10px;background:#fbfcfe;color:#192c41;font-family:inherit;font-size:14px;line-height:1.5}
+ #snote-dealer-scheduler-dialog .snote-scheduler-repeat-field select:disabled{opacity:.5;cursor:default}
+ #snote-dealer-scheduler-dialog .snote-scheduler-series-note{margin:-7px 0 0;color:#697a8c;font-size:11.5px;line-height:1.6}
+ #snote-dealer-scheduler-dialog select:focus-visible{outline:2px solid #0096fe;outline-offset:3px}
+}
+@media screen and (max-width:760px){
+ #snote-app #snote-dealer-scheduler .snote-scheduler-month-nav{gap:5px;margin-inline:2px}
+ #snote-app #snote-dealer-scheduler .snote-scheduler-month-actions{gap:2px}
+ #snote-app #snote-dealer-scheduler .snote-scheduler-month-actions .snote-scheduler-month-step{min-width:24px;width:24px;height:30px;padding:4px}
+ #snote-app #snote-dealer-scheduler .snote-scheduler-month-tools .snote-scheduler-today{min-width:35px;min-height:30px;padding:4px 6px;font-size:10px}
+ #snote-app #snote-dealer-scheduler .snote-scheduler-vehicle-legend{gap:5px;font-size:9px}
+ #snote-dealer-scheduler .snote-scheduler-calendar-row{--snote-day-head:22px;--snote-day-pad:2px;--snote-lane-height:14px;--snote-lane-gap:1px}
+ #snote-dealer-scheduler .snote-scheduler-calendar-row.has-holidays{--snote-day-head:46px}
+ #snote-app #snote-dealer-scheduler .snote-scheduler-range-bar{margin-inline:1px;padding-inline:2px;font-size:9.5px}
+ #snote-dealer-scheduler-dialog .snote-scheduler-repeat-field select{font-size:16px}
+}

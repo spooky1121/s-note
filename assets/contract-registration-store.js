@@ -14,8 +14,8 @@
   const original=typeof row.original_name==='string'?row.original_name:'',name=Array.from(original.replace(/[\\/\u0000-\u001f\u007f]/g,'_').trim()).slice(0,180).join('')||'자동차등록증';
   return /\.(?:jpe?g|png|webp)$/i.test(name)?name:name+'.'+TYPES[row.mime_type][0];
  }
- function metadata(row,companyId){
-  if(!object(row)||row.company_id!==companyId||!UUID.test(row.owner_id||'')||!id(row.id)||!id(row.car_id)||row.group_name!=='registration'||!Object.hasOwn(TYPES,row.mime_type)||!Number.isSafeInteger(row.file_size)||row.file_size<1||row.file_size>MAX_BYTES||typeof row.created_at!=='string'||row.created_at.length>64||!Number.isFinite(Date.parse(row.created_at))||typeof row.file_path!=='string'||row.file_path.length>1800)return null;
+ function metadata(row,companyId,groupName){
+  if(!object(row)||row.company_id!==companyId||!UUID.test(row.owner_id||'')||!id(row.id)||!id(row.car_id)||row.group_name!==groupName||!Object.hasOwn(TYPES,row.mime_type)||!Number.isSafeInteger(row.file_size)||row.file_size<1||row.file_size>MAX_BYTES||typeof row.created_at!=='string'||row.created_at.length>64||!Number.isFinite(Date.parse(row.created_at))||typeof row.file_path!=='string'||row.file_path.length>1800)return null;
   let head;try{head=[companyId,row.owner_id,encodeURIComponent(row.car_id),encodeURIComponent(row.id)+'.'];}catch{return null;}
   if(!TYPES[row.mime_type].some(ext=>row.file_path===head.slice(0,3).join('/')+'/'+head[3]+ext))return null;
   return Object.freeze({id:row.id,company_id:row.company_id,owner_id:row.owner_id,car_id:row.car_id,group_name:row.group_name,file_path:row.file_path,original_name:typeof row.original_name==='string'?row.original_name.slice(0,1000):'',mime_type:row.mime_type,file_size:row.file_size,created_at:row.created_at});
@@ -29,6 +29,8 @@
   return bytes.length>=12&&String.fromCharCode(...bytes.slice(0,4))==='RIFF'&&String.fromCharCode(...bytes.slice(8,12))==='WEBP';
  }
  function create(options={}){
+  const groupName=options.groupName||'registration';
+  if(!['registration','inspection1','inspection2'].includes(groupName))throw Error('DOCUMENT_GROUP_INVALID');
   let state=null,epoch=0,lease=null;
   const duration=Number.isFinite(options.timeoutMs)?Math.max(1,Math.min(30000,options.timeoutMs)):15000;
   const makeURL=options.createObjectURL||((blob)=>root.URL.createObjectURL(blob)),revokeURL=options.revokeObjectURL||((url)=>root.URL.revokeObjectURL(url));
@@ -71,7 +73,7 @@
     if(!live(s)||s.version!==version)return false;
     if(!object(result)||!Array.isArray(result.rows)||result.rows.length>MAX_ROWS||typeof result.complete!=='boolean')throw Error('REGISTRATION_METADATA_INVALID');
     const seen=new Map();for(const source of result.rows){
-     const row=metadata(source,s.context.companyId);
+     const row=metadata(source,s.context.companyId,groupName);
      if(!row){s.uncertain.add(id(source?.car_id)?source.car_id:'*');continue;}
      const unique=JSON.stringify([row.company_id,row.owner_id,row.id]),previous=seen.get(unique);
      if(previous){if(rowKey(previous)!==rowKey(row)||previous.car_id!==row.car_id){s.uncertain.add(previous.car_id);s.uncertain.add(row.car_id);}continue;}
@@ -120,7 +122,7 @@
     if(!pendingCurrent(value))return false;const currentIdentity=resolve(s,identity);if(!currentIdentity||currentIdentity.ambiguous||s.uncertain.has(identity.id)||s.uncertain.has('*'))return false;
     value.row=newest(s,identity);value.version=s.version;if(!value.row)return false;
     const ready=await asset(s,value.row,()=>currentLease(value));if(!ready||!currentLease(value)||!releaseWatch(value))return false;value.asset=ready;
-    let opened;try{const task=options.openViewer?.({src:ready.url,origin,isCurrent:()=>currentLease(value),download:()=>saveFile(value),alt:'자동차등록증 확대'});watch(value);opened=await timed(()=>task);}catch{opened=false;}
+    let opened;try{const task=options.openViewer?.({src:ready.url,origin,isCurrent:()=>currentLease(value),download:()=>saveFile(value),alt:({registration:'자동차등록증',inspection1:'성능·상태점검기록부 1',inspection2:'성능·상태점검기록부 2'})[groupName]+' 확대'});watch(value);opened=await timed(()=>task);}catch{opened=false;}
     if(!opened||!currentLease(value)){
      if(lease===value){releaseWatch(value);lease=null;}
      if(s.assets.get(rowKey(value.row))===ready){s.assets.delete(rowKey(value.row));revoke(ready);}return false;
