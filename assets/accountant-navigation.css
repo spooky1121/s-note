@@ -1,0 +1,62 @@
+/* Accountant hierarchy and route tabs; existing workspace sizes and document layouts stay in control. */
+@media screen {
+ [data-accountant-navigation=true] .snote-acct-nav-entry,
+ [data-accountant-navigation=true] .snote-acct-nav-group{min-width:0;width:100%}
+ [data-accountant-navigation=true] .snote-acct-nav-children[hidden]{display:none!important}
+ #snote-app #desktop-nav[data-accountant-navigation=true] button,
+ #mobile-drawer-nav[data-accountant-navigation=true] button{position:relative;box-sizing:border-box;min-width:0;width:100%;min-height:36px;padding:8px 7px;gap:8px;border-radius:9px;line-height:1.4;white-space:nowrap}
+ #snote-app #desktop-nav[data-accountant-navigation=true] button>svg,
+ #mobile-drawer-nav[data-accountant-navigation=true] button>svg{flex:0 0 17px;width:17px;height:17px}
+ [data-accountant-navigation=true] button>.snote-nav-label{display:block;flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ [data-accountant-navigation=true] .snote-acct-nav-chevron{margin-left:auto;transition:transform .18s ease}
+ [data-accountant-navigation=true] button[aria-expanded=true]>.snote-acct-nav-chevron{transform:rotate(180deg)}
+ [data-accountant-navigation=true] .snote-acct-nav-children{display:grid;gap:2px;margin:2px 0 4px 16px;padding-left:7px;border-left:1px solid #e8edf2}
+ #snote-app #desktop-nav[data-accountant-navigation=true] .snote-acct-nav-children button,
+ #mobile-drawer-nav[data-accountant-navigation=true] .snote-acct-nav-children button{min-height:32px;font-size:11.5px;padding-block:6px}
+ #snote-app #desktop-nav[data-accountant-navigation=true] .snote-acct-nav-group-trigger.contains-current,
+ #mobile-drawer-nav[data-accountant-navigation=true] .snote-acct-nav-group-trigger.contains-current{color:#263f51}
+ .snote-acct-page-tabs[hidden]{display:none!important}
+ .snote-acct-page-tabs{display:flex;align-items:center;gap:5px;max-width:100%;margin:0 0 16px;padding:4px;width:max-content;border:1px solid #e7ebf0;border-radius:11px;background:#f5f7f9}
+ .snote-acct-page-tabs button{appearance:none;border:1px solid transparent;border-radius:8px;background:transparent;padding:8px 14px;min-height:34px;color:#778491;font:inherit;font-size:12px;font-weight:550;white-space:nowrap;cursor:pointer;transition:background-color .16s ease,color .16s ease}
+ .snote-acct-page-tabs button:hover{color:#263f51}
+ .snote-acct-page-tabs button.active{border-color:#e5e9ee;background:#fff;color:#20394c;box-shadow:0 1px 3px #233a4b08}
+ .snote-acct-page-tabs button:focus-visible,.snote-acct-basic-link:focus-visible{outline:3px solid #a6d8f5;outline-offset:2px}
+ .snote-acct-basic-page{min-width:0;padding:0}
+ .snote-acct-basic-head{display:flex;align-items:center;gap:9px;margin:0 0 7px;color:#263f51}
+ .snote-acct-basic-head>svg{width:20px;height:20px;flex:none}
+ #snote-app .snote-acct-basic-head h2{margin:0;font-size:16px;line-height:1.5;font-weight:650}
+ #snote-app .snote-acct-basic-description{margin:0 0 22px;color:#8793a0;font-size:12px;line-height:1.7}
+ .snote-acct-basic-state{display:grid;place-items:center;align-content:center;gap:10px;min-height:180px;padding:28px 20px;border:1px solid #edf0f4;border-radius:12px;background:#fafbfc;text-align:center}
+ .snote-acct-basic-state>svg{width:27px;height:27px;color:#a7b3bd}
+ #snote-app .snote-acct-basic-state>p{margin:0;font-size:12px;color:#8c98a4}
+ #snote-app .snote-acct-basic-empty{padding:25px 12px;color:#8c98a4;font-size:12px;text-align:center}
+ .snote-acct-basic-link{display:inline-flex;align-items:center;gap:8px;min-height:37px;margin-top:16px;border:1px solid #e2e8ee;border-radius:9px;padding:8px 11px;background:#fff;color:#506c80;font:inherit;font-size:12px;cursor:pointer}
+ .snote-acct-basic-link>svg{width:15px;height:15px}
+ .snote-acct-info-scroll{max-width:100%;overflow:auto;border:1px solid #e8edf2;border-radius:11px}
+ .snote-acct-info-table{width:100%;border-collapse:collapse;text-align:left;font-size:12px}
+ .snote-acct-info-table th,.snote-acct-info-table td{padding:12px 15px;border-bottom:1px solid #edf0f4;line-height:1.6;overflow-wrap:anywhere}
+ .snote-acct-info-table th{background:#f8fafb;color:#85909c;font-size:11px;font-weight:550;white-space:nowrap}
+ .snote-acct-info-table td{color:#506274}
+ .snote-acct-info-table tbody tr:last-child td{border-bottom:0}
+}
+@media screen and (min-width:761px) and (max-width:1120px){
+ #snote-app #desktop-nav[data-accountant-navigation=true] button{justify-content:center;min-height:39px;padding:9px 0;gap:0}
+ #snote-app #desktop-nav[data-accountant-navigation=true] button>.snote-nav-label{position:absolute!important;width:1px!important;height:1px!important;min-width:0!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0);clip-path:inset(50%);white-space:nowrap!important;border:0!important}
+ #snote-app #desktop-nav[data-accountant-navigation=true] .snote-acct-nav-chevron{position:absolute;right:0;bottom:1px;width:10px;height:10px;opacity:.6}
+ #snote-app #desktop-nav[data-accountant-navigation=true] .snote-acct-nav-children{margin:2px 0 5px;padding:0;border:0;gap:2px}
+ #snote-app #desktop-nav[data-accountant-navigation=true] .snote-acct-nav-children button{min-height:35px;padding:8px 0;font-size:11px}
+ #snote-app #desktop-nav[data-accountant-navigation=true] .snote-acct-nav-children button::before{content:'';position:absolute;left:1px;top:calc(50% - 2px);width:3px;height:3px;border-radius:50%;background:#d1dbe3}
+ #snote-app #desktop-nav[data-accountant-navigation=true] .snote-acct-nav-children button.active::before{background:currentColor}
+}
+@media screen and (max-width:760px){
+ #mobile-drawer-nav[data-accountant-navigation=true] button{min-height:43px;padding:10px 12px;font-size:12px}
+ #mobile-drawer-nav[data-accountant-navigation=true] .snote-acct-nav-children{margin-left:20px}
+ #mobile-drawer-nav[data-accountant-navigation=true] .snote-acct-nav-children button{min-height:38px;font-size:12px;padding:8px 10px}
+ .snote-acct-page-tabs{margin-bottom:13px}
+ .snote-acct-page-tabs button{padding:8px 12px;font-size:11.5px}
+ .snote-acct-info-table th,.snote-acct-info-table td{padding:11px}
+ #snote-app .snote-acct-basic-head h2{font-size:15px}
+}
+@media screen and (prefers-reduced-motion:reduce){
+ [data-accountant-navigation=true] .snote-acct-nav-chevron,.snote-acct-page-tabs button{transition:none}
+}

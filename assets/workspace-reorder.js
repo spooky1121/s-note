@@ -6,12 +6,14 @@
  const SECTIONS=new Set(['sidebar','operator-sidebar','document-types','form-types']);
  const ROUTES=new Set(['dashboard','buy','sell','finance','users','companyBuy','prestock','inventoryFinance','monthly','vehicleInspection','settings','contractOffice','contractArchive']);
  let active=null,sequence=0,scanQueued=false,noticeTimer=null;
+ const fixedAccountantSidebar=(container,section,raw)=>section==='sidebar'&&container?.dataset.accountantNavigation==='true'&&raw?.role==='accountant';
  const node=(tag,cls,text)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(text)e.textContent=text;return e;};
  function notice(text){if(window.snoteNotify){window.snoteNotify(text,{tone:'error',key:'workspace-order'});return;}let e=document.getElementById('snote-reorder-notice');if(!e){e=node('div','snote-reorder-notice');e.id='snote-reorder-notice';e.setAttribute('role','status');document.body.append(e);}e.textContent=text;e.hidden=false;clearTimeout(noticeTimer);noticeTimer=setTimeout(()=>{e.hidden=true;},4500);}
  function cleanIds(value){if(!Array.isArray(value)||value.length>32||value.some(id=>typeof id!=='string'||!ID.test(id)))throw Error('ORDER_FORMAT_INVALID');return [...new Set(value)];}
  function context(options){
   try{
    const bridge=window.snoteWorkspaceOrderBridge,raw=typeof options.context==='function'?options.context():bridge?.context?.()||window.snoteOperatorWorkspaceOrderContext?.();
+   if(fixedAccountantSidebar(options.container,options.section,raw))return null;
    const actorId=raw?.actorId||raw?.userId,companyId=raw?.companyId??null,role=raw?.role;
    if(raw?.ready!==true||!UUID.test(actorId||'')||!['admin','dealer','accountant','operator'].includes(role)||role==='operator'&&companyId!==null||role!=='operator'&&!UUID.test(companyId||'')||(role==='operator')!==(options.section==='operator-sidebar'))return null;
    if(typeof options.current==='function'&&options.current()!==true||bridge?.current&&bridge.current(raw)!==true)return null;
@@ -149,7 +151,9 @@
  }
  function menuId(element){const attr=element.dataset.page||element.dataset.workspaceId||element.dataset.reorderId,match=element.getAttribute('onclick')?.match(/^navigate\('([a-zA-Z]+)'\)$/);const id=attr||match?.[1];return ROUTES.has(id)?id:null;}
  function scan(){scanQueued=false;for(const[id,section,getId]of[['desktop-nav','sidebar',menuId],['mobile-drawer-nav','sidebar',menuId],['operator-navigation','operator-sidebar',e=>['vehicles','accounts','access','support','sms','encar','vision','server'].includes(e.dataset.view)?e.dataset.view:null]]){
-  const element=document.getElementById(id),prior=automatic.get(id);if(prior&&(!element||prior.element!==element)){prior.controller.destroy();automatic.delete(id);}if(!element)continue;
+  const element=document.getElementById(id),prior=automatic.get(id);let fixed=false;try{fixed=fixedAccountantSidebar(element,section,window.snoteWorkspaceOrderBridge?.context?.());}catch{}
+  // The accountant hierarchy has a fixed parent/child order. Keep its saved preferences dormant.
+  if(prior&&(!element||prior.element!==element||fixed)){prior.controller.destroy();automatic.delete(id);}if(!element||fixed)continue;
   if(!automatic.has(id)){const controller=mount({container:element,itemSelector:':scope > button',id:getId,section,mode:'sidebar'});automatic.set(id,{element,controller});}else automatic.get(id).controller.refresh();
  }}
  function schedule(){if(scanQueued)return;scanQueued=true;requestAnimationFrame(scan);}
@@ -157,7 +161,7 @@
  window.addEventListener('keydown',event=>{if(active&&event.key==='Escape'){event.preventDefault();event.stopImmediatePropagation();active.exit(true);}},true);
  document.addEventListener('visibilitychange',()=>{if(document.hidden)active?.exit(true);});window.addEventListener('pagehide',()=>{active?.exit(true);for(const c of controllers)c.destroy();automatic.clear();});
  for(const name of['snote:workspace-order-context','snote:route-changed','snote:company-cars-ready','pageshow'])window.addEventListener(name,schedule);
- new MutationObserver(schedule).observe(document.documentElement,{subtree:true,childList:true});
+ new MutationObserver(schedule).observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['data-accountant-navigation']});
  window.SnoteWorkspaceReorder=Object.freeze({mount,refresh:schedule,exit:()=>active?.exit()});
  schedule();window.dispatchEvent(new Event('snote:workspace-reorder-ready'));
 })();
