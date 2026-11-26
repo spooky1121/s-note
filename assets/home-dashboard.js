@@ -85,22 +85,29 @@
  }
  function accountantFinance(data){
   const card=node('section',null,'snote-accountant-finance');card.setAttribute('aria-label','재고금융 한도와 현재 사용액');
+  const name=data.name===null?'금융사 미지정':data.name;card.dataset.financeLender=data.name??'';card.dataset.financeRegistered=String(data.registered);card.setAttribute('aria-label',name+' 재고금융 한도와 현재 사용액');
   const known=data.limit!==null&&data.used!==null;card.dataset.financeState=known?'ready':data.limit!==null||data.used!==null?'partial':'unavailable';
-  card.append(node('h2','재고금융','snote-accountant-finance-title'));
+  const title=node('h2',name,'snote-accountant-finance-title');title.title=name;card.append(title);
   const amounts=node('dl',null,'snote-accountant-finance-amounts');
-  for(const [label,value,field] of [['재고금융 한도',data.limit,'limit'],['현재 사용액',data.used,'used']]){const row=node('div');row.dataset.financeAmount=field;row.append(node('dt',label),node('dd',won(value)));amounts.append(row);}
+  for(const [label,value,field] of [['총 한도',data.limit,'limit'],['현재 사용액',data.used,'used']]){const row=node('div');row.dataset.financeAmount=field;row.append(node('dt',label),node('dd',won(value)));amounts.append(row);}
   card.append(amounts);
   const track=node('div',null,'snote-accountant-finance-track'),fill=node('span',null,'snote-accountant-finance-fill');track.append(fill);
-  if(known&&data.limit>0){const ratio=data.used/data.limit*100;track.setAttribute('role','progressbar');track.setAttribute('aria-label','재고금융 사용률');track.setAttribute('aria-valuemin','0');track.setAttribute('aria-valuemax','100');track.setAttribute('aria-valuenow',String(Math.min(100,Math.round(ratio*100)/100)));track.setAttribute('aria-valuetext','한도 '+won(data.limit)+' · 현재 사용 '+won(data.used));fill.style.width=Math.min(100,ratio)+'%';card.classList.toggle('is-over-limit',data.used>data.limit);}
-  else{track.setAttribute('role','img');track.setAttribute('aria-label',known?'재고금융 한도 '+won(data.limit)+' · 현재 사용 '+won(data.used):'재고금융 사용률 확인 필요');track.classList.add('is-unavailable');if(known&&data.used>0){fill.style.width='100%';card.classList.add('is-over-limit');}}
+  if(known&&data.limit>0){const ratio=data.used/data.limit*100;track.setAttribute('role','progressbar');track.setAttribute('aria-label',name+' 재고금융 사용률');track.setAttribute('aria-valuemin','0');track.setAttribute('aria-valuemax','100');track.setAttribute('aria-valuenow',String(Math.min(100,Math.round(ratio*100)/100)));track.setAttribute('aria-valuetext','한도 '+won(data.limit)+' · 현재 사용 '+won(data.used));fill.style.width=Math.min(100,ratio)+'%';card.classList.toggle('is-over-limit',data.used>data.limit);}
+  else{track.setAttribute('role','img');track.setAttribute('aria-label',name+' · '+(known?'재고금융 한도 '+won(data.limit)+' · 현재 사용 '+won(data.used):'한도 미설정 · 현재 사용 '+won(data.used)));track.classList.add('is-unavailable');if(known&&data.used>0){fill.style.width='100%';card.classList.add('is-over-limit');}}
   card.append(track);return card;
+ }
+ function accountantFinances(data){
+  const group=node('section',null,'snote-accountant-finance-list');group.setAttribute('role','region');group.setAttribute('aria-label','금융사별 재고금융');
+  if(data.lenders===null||!data.lenders.length){const empty=node('div',null,'snote-accountant-finance-empty');empty.dataset.financeState=data.lenders===null?'unavailable':'empty';empty.append(node('h2','재고금융','snote-accountant-finance-title'),node('p',data.lenders===null?'금융사별 한도와 사용액을 확인하고 있습니다.':'등록된 금융사와 사용 내역이 없습니다.'));group.append(empty);}
+  else{group.tabIndex=0;for(const lender of data.lenders)group.append(accountantFinance(lender));}
+  return group;
  }
  function renderAccountant(data,key){
   host.replaceChildren();host.dataset.state='ready';host.setAttribute('aria-busy','false');
   const overview=node('div',null,'snote-accountant-overview'),summary=node('section',null,'snote-accountant-summary');summary.setAttribute('role','group');summary.setAttribute('aria-label','상사 매입·판매 및 재고 현황');
-  summary.append(accountantMetric('현재 총매입',data.inventoryBuyAmount,{field:'inventoryBuyAmount',unit:'원',note:number(data.inventoryCount)+'대'}),accountantMetric('이번달 매입',data.monthPurchaseCount,{field:'monthPurchaseCount'}),accountantMetric('이번달 판매',data.monthSaleCount,{field:'monthSaleCount'}),accountantMetric('총 재고사용',data.financeSummary.used,{field:'stockFinanceUsed',unit:'원'}));
-  if([data.inventoryBuyAmount,data.monthPurchaseCount,data.monthSaleCount,data.financeSummary.used].some(value=>value!==null&&number(value).length>15))overview.classList.add('has-wide-values');
-  overview.append(summary,accountantFinance(data.financeSummary));
+  summary.append(accountantMetric('현재 총매입',data.inventoryBuyAmount,{field:'inventoryBuyAmount',unit:'원',note:number(data.inventoryCount)+'대'}),accountantMetric('총 매입대수',data.totalCount,{field:'totalCount'}),accountantMetric('이번달 매입',data.monthPurchaseCount,{field:'monthPurchaseCount'}),accountantMetric('이번달 판매',data.monthSaleCount,{field:'monthSaleCount'}),accountantMetric('총 재고사용',data.financeSummary.used,{field:'stockFinanceUsed',unit:'원'}));
+  if([data.inventoryBuyAmount,data.totalCount,data.monthPurchaseCount,data.monthSaleCount,data.financeSummary.used].some(value=>value!==null&&number(value).length>15))overview.classList.add('has-wide-values');
+  overview.append(summary,accountantFinances(data.financeSummary));
   const work=node('div',null,'snote-home-work');
   if(data.series===null){const pending=node('section',null,'snote-home-chart-group');pending.dataset.chartScope='accountant';pending.append(node('h2','최근 3개월 흐름'),node('p','매입·매도 자료를 확인하고 있습니다.','snote-home-chart-masked'));work.append(pending);}
   else work.append(charts(data,key,true,{accountant:true}));
@@ -169,8 +176,21 @@
  function accountantDashboard(work,finance,month){
   if(!isMonth(month))throw Error('INVALID_ACCOUNTANT_DASHBOARD');
   const counts=accountantSummary(work),nullable=(value,{count=false}={})=>{if(value===null)return null;if(typeof value!=='number'||!Number.isSafeInteger(value)||value<0)throw Error('INVALID_ACCOUNTANT_DASHBOARD');if(count&&value>counts.totalCount)throw Error('INVALID_ACCOUNTANT_DASHBOARD');return value;};
-  if(!Object.hasOwn(work,'inventoryBuyAmount')||!Object.hasOwn(work,'monthSaleCount')||!Object.hasOwn(work,'series')||!finance||typeof finance!=='object'||Array.isArray(finance)||!Object.hasOwn(finance,'limit')||!Object.hasOwn(finance,'used'))throw Error('INVALID_ACCOUNTANT_DASHBOARD');
-  const inventoryBuyAmount=nullable(work.inventoryBuyAmount),monthSaleCount=nullable(work.monthSaleCount,{count:true}),financeSummary=Object.freeze({limit:nullable(finance.limit),used:nullable(finance.used)});
+  if(!Object.hasOwn(work,'inventoryBuyAmount')||!Object.hasOwn(work,'monthSaleCount')||!Object.hasOwn(work,'series')||!finance||typeof finance!=='object'||Array.isArray(finance)||!Object.hasOwn(finance,'limit')||!Object.hasOwn(finance,'used')||!Object.hasOwn(finance,'lenders'))throw Error('INVALID_ACCOUNTANT_DASHBOARD');
+  const inventoryBuyAmount=nullable(work.inventoryBuyAmount),monthSaleCount=nullable(work.monthSaleCount,{count:true}),limit=nullable(finance.limit),used=nullable(finance.used);
+  let lenders=null;
+  if(finance.lenders!==null){
+   if(limit===null||used===null||!Array.isArray(finance.lenders)||finance.lenders.length>5000)throw Error('INVALID_ACCOUNTANT_DASHBOARD');
+   const names=new Set();let totalLimit=0,totalUsed=0;
+   lenders=Object.freeze(finance.lenders.map(row=>{
+    if(!row||typeof row!=='object'||Array.isArray(row)||typeof row.registered!=='boolean'||row.name!==null&&(typeof row.name!=='string'||!row.name.trim()||row.name.length>120||/[\u0000-\u001f\u007f]/.test(row.name))||names.has(row.name))throw Error('INVALID_ACCOUNTANT_DASHBOARD');
+    const amount=nullable(row.used),ceiling=nullable(row.limit);if(amount===null||row.registered&&(row.name===null||ceiling===null)||!row.registered&&ceiling!==null)throw Error('INVALID_ACCOUNTANT_DASHBOARD');
+    names.add(row.name);if(amount>used-totalUsed||ceiling!==null&&ceiling>limit-totalLimit)throw Error('INVALID_ACCOUNTANT_DASHBOARD');totalUsed+=amount;if(ceiling!==null)totalLimit+=ceiling;
+    return Object.freeze({name:row.name,registered:row.registered,limit:ceiling,used:amount});
+   }));
+   if(totalLimit!==limit||totalUsed!==used)throw Error('INVALID_ACCOUNTANT_DASHBOARD');
+  }
+  const financeSummary=Object.freeze({limit,used,lenders});
   if(monthSaleCount!==null&&monthSaleCount>counts.totalCount-counts.inventoryCount)throw Error('INVALID_ACCOUNTANT_DASHBOARD');
   let series=null;
   if(work.series!==null){

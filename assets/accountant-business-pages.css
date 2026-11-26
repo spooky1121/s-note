@@ -1,4 +1,4 @@
-/* Read-only company business lists and the five operating-document slots. */
+/* Scoped company business lists and the five private operating-document slots. */
 @media screen{
  #snote-accountant-business-page{min-width:0;color:#43576b}
  #snote-accountant-business-page .snote-business-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0}
@@ -11,6 +11,7 @@
  #snote-accountant-business-page button:focus-visible{outline:3px solid #a6d8f5;outline-offset:2px}
  #snote-accountant-business-page .snote-business-status{min-height:21px;margin:8px 0;color:#7b8a99;font-size:11.5px;line-height:1.7}
  #snote-accountant-business-page .snote-business-status[data-tone=error]{color:#b94a59}
+ #snote-accountant-business-page .snote-business-status[data-tone=success]{color:#27856c}
  #snote-accountant-business-page .snote-business-empty{margin:0;padding:35px 15px;border:1px solid #edf0f4;border-radius:12px;background:#fafbfc;color:#82909e;font-size:12px;line-height:1.7;text-align:center}
  #snote-accountant-business-page .snote-business-table-scroll{max-width:100%;overflow:auto;border:1px solid #e7edf2;border-radius:11px}
  #snote-accountant-business-page .snote-business-table{width:100%;border-collapse:collapse;text-align:left;font-size:12px}
@@ -28,6 +29,12 @@
  #snote-accountant-business-page .snote-business-document-state{display:block;margin-top:8px;color:#929daa;font-size:11px;line-height:1.5}
  #snote-accountant-business-page [data-document-ready=true]+.snote-business-document-state{color:#27856c}
  #snote-accountant-business-page .snote-business-document-filename{display:block;width:100%;max-width:100%;margin-top:5px;overflow:hidden;color:#9aa4ae;font-size:10.5px;text-overflow:ellipsis;white-space:nowrap}
+ #snote-accountant-business-page .snote-business-document-actions{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:7px;width:100%;margin-top:auto;padding-top:13px}
+ #snote-accountant-business-page .snote-business-document-actions .snote-business-button{min-height:30px;padding:5px 9px;font-size:11px}
+ #snote-accountant-business-page .snote-business-document-delete{display:inline-grid;place-items:center;width:24px;min-width:24px;height:24px;min-height:24px;padding:0;border:0;background:transparent;color:#9f0716;cursor:pointer}
+ #snote-accountant-business-page .snote-business-document-delete>svg{display:block;width:20px;height:20px}
+ #snote-accountant-business-page [data-business-document-retry]{flex-basis:100%;border-color:#edccd0;color:#aa4b58}
+ #snote-accountant-business-page [data-business-load-retry]{display:block;margin:12px auto 0}
 }
 @media screen and (max-width:1050px){#snote-accountant-business-page .snote-business-documents{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media screen and (max-width:760px){

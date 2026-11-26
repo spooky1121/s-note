@@ -56,4 +56,27 @@ test('document metadata exposes neither private storage paths nor arbitrary uplo
  const row={...documents('ready')[0],filename:'가상 사업자등록증.png',path:'PRIVATE_STORAGE_PATH',signedUrl:'PRIVATE_SIGNED_URL',canUpload:true};
  const result=M.normalize('acctOperations',{complete:true,documents:[row,...documents('missing').slice(1)]});
  assert.equal(result.documents[0].filename,'가상 사업자등록증.png');assert.equal(result.documents[0].status,'ready');assert(!JSON.stringify(result).includes('PRIVATE_'));
+ assert.equal(result.documents[0].mutable,false,'A legacy display-only response cannot grant upload/delete permissions');
+});
+
+const photo=(overrides={})=>({kind:'businessRegistration',status:'ready',revision:1,fileId:'44444444-4444-4444-8444-444444444444',filename:'가상 사업자등록증.png',mimeType:'image/png',size:68,updatedAt:'2026-11-26T00:00:00.000Z',canUpload:true,...overrides});
+test('only complete canonical photo metadata enables changes and storage paths never reach the UI model',()=>{
+ const raw=photo({path:'PRIVATE_PATH',token:'PRIVATE_TOKEN'}),before=JSON.stringify(raw),row=M.document(raw);assert.equal(row.mutable,true);assert.equal(row.revision,1);assert.equal(row.fileId,raw.fileId);assert.equal(row.filename,raw.filename);assert.equal(JSON.stringify(raw),before);assert(!JSON.stringify(row).includes('PRIVATE_'));assert(Object.isFrozen(row));
+ assert.equal(M.document(photo({canUpload:false})).mutable,false);
+ for(const change of[{revision:-1},{revision:0},{fileId:null},{fileId:'unsafe-file-id'},{mimeType:'image/svg+xml'},{size:0},{size:M.photoBytes+1},{updatedAt:null},{filename:''}])assert.throws(()=>M.document(photo(change)));
+});
+test('initial missing and deleted tombstone revisions stay distinct and never claim a registered file',()=>{
+ const missing=photo({status:'missing',revision:0,fileId:null,filename:'',mimeType:null,size:0,updatedAt:null}),initial=M.document(missing),deleted=M.document({...missing,revision:2,updatedAt:'2026-11-26T01:00:00.000Z'});assert.equal(initial.mutable,true);assert.equal(initial.status,'missing');assert.equal(initial.revision,0);assert.equal(initial.fileId,null);assert.equal(deleted.status,'missing');assert.equal(deleted.revision,2);assert.equal(deleted.fileId,null);
+ for(const patch of[{fileId:photo().fileId},{size:1},{mimeType:'image/png'},{filename:'deleted.png'}])assert.throws(()=>M.document({...missing,...patch}));
+});
+test('photo validation rejects unsupported, empty and oversized input while allowing the exact five MiB limit',()=>{
+ const file={name:'가상 사진.png',type:'image/png',size:68};assert.equal(M.validatePhoto(file),true);assert.equal(M.validatePhoto({...file,size:M.photoBytes}),true);assert.throws(()=>M.validatePhoto({...file,size:M.photoBytes+1}),error=>error.code==='OFFICE_FILE_TOO_LARGE');for(const patch of[{type:'image/svg+xml'},{type:'application/pdf'},{size:0},{size:-1},{name:''},{name:'a'.repeat(256)}])assert.throws(()=>M.validatePhoto({...file,...patch}),error=>error.code==='OFFICE_FILE_INVALID');
+});
+test('photo filenames use the same 180-codepoint boundary and path/control rejection as the server',()=>{
+ const file={name:'가상 사진.png',type:'image/png',size:68};for(const name of['a'.repeat(180),'🚗'.repeat(180)])assert.equal(M.validatePhoto({...file,name}),true);for(const name of['a'.repeat(181),'🚗'.repeat(181),' ','folder/photo.png','folder\\photo.png','photo\n.png','photo\u007f.png'])assert.throws(()=>M.validatePhoto({...file,name}),error=>error.code==='OFFICE_FILE_INVALID');
+ for(const filename of['a'.repeat(181),'folder/photo.png','folder\\photo.png'])assert.throws(()=>M.document(photo({filename})));
+});
+test('definite server rejection releases the pending file while an uncertain result retains its idempotent retry',()=>{
+ for(const code of['INVALID_REQUEST','OFFICE_INVALID_REQUEST','UNSUPPORTED_MEDIA_TYPE','PAYLOAD_TOO_LARGE','SETUP_REQUIRED','FORBIDDEN','OFFICE_CONTEXT_CHANGED','CONFLICT'])assert.equal(M.definitePhotoFailure({code}),true,code);
+ for(const code of['NETWORK','OFFICE_NETWORK','UNKNOWN','OFFICE_INVALID_RESPONSE','OFFICE_ACK_INVALID','BUSY'])assert.equal(M.definitePhotoFailure({code}),false,code);
 });

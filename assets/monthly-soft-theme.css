@@ -39,3 +39,13 @@
  .workbook .panel-heading {padding:13px 15px;gap:11px}
  .workbook .panel-heading p {margin-top:4px}
 }
+
+/* Compact row actions are screen controls; the print snapshot has no buttons. */
+@media screen {
+ .workbook .add-row {display:inline-grid;place-items:center;width:28px;min-width:28px;height:28px;min-height:28px;padding:0}
+ .workbook .add-row>svg {display:block;width:20px;height:20px}
+ .workbook .delete-row {display:inline-grid;place-items:center;width:24px;min-width:24px;height:24px;min-height:24px;margin:0 auto;padding:0;border:0;background:transparent;color:#9f0716;vertical-align:middle}
+ .workbook .delete-row>svg {display:block;width:20px;height:20px}
+ .workbook .delete-row:hover:not(:disabled) {background:transparent;color:#b31526}
+ .workbook .delete-row:disabled {opacity:.4}
+}
