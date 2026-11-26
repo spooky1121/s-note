@@ -24,8 +24,8 @@ test('duplicate records cannot inflate counts and conflicting duplicate identiti
  assert.equal(M.vehicleEvents([row(''),row(1),null]).length,0);
 });
 test('projection is readonly, leaves inputs intact and carries no money, customer or editable schedule fields',()=>{
- const original=Object.freeze(row('safe',{model:'<img src=x>',plate:'12가3456',buy:999,sell:999,inventoryLoan:999,notes:'must not copy',title:'must not copy',ownerId:'hidden-owner',customer:{name:'must not copy'}})),before=JSON.stringify(original),events=M.vehicleEvents([original]);
- assert.equal(JSON.stringify(original),before);assert.equal(events[0].readOnly,true);assert(Object.isFrozen(events[0]));assert.equal(events[0].model,'<img src=x>');assert.deepEqual(Object.keys(events[0]).sort(),['eventDate','id','kind','model','plate','readOnly','vehicleId']);assert(!JSON.stringify(events).includes('must not copy'));assert(!JSON.stringify(events).includes('hidden-owner'));
+ const original=Object.freeze(row('safe',{model:'<img src=x>',plate:'12가3456',buy:999,sell:999,inventoryLoan:999,notes:'must not copy',title:'must not copy',role:'must not copy',customer:{name:'must not copy'}})),before=JSON.stringify(original),events=M.vehicleEvents([original]);
+ assert.equal(JSON.stringify(original),before);assert.equal(events[0].readOnly,true);assert(Object.isFrozen(events[0]));assert.equal(events[0].model,'<img src=x>');assert.deepEqual(Object.keys(events[0]).sort(),['eventDate','id','kind','model','plate','readOnly','vehicleId']);assert(!JSON.stringify(events).includes('must not copy'));
 });
 test('deterministic ordering distinguishes purchase and sale even on the same date',()=>{
  const events=M.vehicleEvents([row('z',{model:'B',status:'판매완료',soldAt:'2026-11-23'}),row('a',{model:'A',status:'판매완료',soldAt:'2026-11-23'})]);
@@ -51,4 +51,22 @@ test('mobile more counts preserve server-truncated personal totals and use only 
  const personal=[{id:'one-loaded'}],vehicles=M.vehicleEvents([row('a'),row('b'),row('c')]);
  for(const capacity of[3,4]){const s=M.daySummary(personal,vehicles,620,capacity);assert.equal(s.total,623);assert.equal(s.remaining,623-capacity);assert.equal(s.shown.length,capacity);assert.equal(s.shown.filter(entry=>entry.personal).length,1);}
  const unloaded=M.daySummary([],vehicles,620,4);assert.equal(unloaded.shown.length,3);assert(unloaded.shown.every(entry=>!entry.personal));assert.equal(unloaded.total,623);assert.equal(unloaded.remaining,620);
+});
+
+test('same raw IDs from two verified owner projections remain distinct and scoped duplicates do not inflate the calendar',()=>{
+ const first='a1111111-1111-4111-8111-111111111111',second='b2222222-2222-4222-8222-222222222222',a=row('same-raw-id',{ownerId:first,status:'판매완료',soldAt:'2026-11-24'}),b=row('same-raw-id',{ownerId:second,status:'판매완료',soldAt:'2026-11-24'});
+ const events=M.vehicleEvents([a,b,{...a,ownerId:first.toUpperCase()}]);
+ assert.equal(events.length,4);assert.equal(new Set(events.map(e=>e.id)).size,4);assert.deepEqual(plain(events.filter(e=>e.kind==='purchase').map(e=>e.vehicleId)).sort(),[first+':same-raw-id',second+':same-raw-id']);
+ const conflict=M.vehicleEvents([a,{...a,model:'같은 owner의 다른 payload'},b]);assert.equal(conflict.length,2);assert(conflict.every(e=>e.vehicleId===second+':same-raw-id'));
+});
+test('a legal 200-character raw vehicle ID survives the owner prefix without truncation or lost purchase/sale dates',()=>{
+ const first='11111111-1111-4111-8111-111111111111',second='22222222-2222-4222-8222-222222222222',raw='가'.repeat(200),input=[row(raw,{ownerId:first,status:'판매완료',soldAt:'2026-11-24'}),row(raw,{ownerId:second,status:'판매완료',soldAt:'2026-11-24'})],before=JSON.stringify(input),events=M.vehicleEvents(input);
+ assert.equal(events.length,4);assert.equal(new Set(events.map(e=>e.id)).size,4);assert(events.every(e=>e.vehicleId.length===237&&e.vehicleId.endsWith(':'+raw)));assert.deepEqual(plain(events.map(e=>e.eventDate)),['2026-11-23','2026-11-23','2026-11-24','2026-11-24']);assert.equal(JSON.stringify(input),before);
+ const unscoped=M.vehicleEvents([row(raw)]);assert.equal(unscoped.length,1);assert.equal(unscoped[0].vehicleId,raw);assert.equal(unscoped[0].id,'purchase:'+raw+':2026-11-23');
+});
+test('explicit invalid owner IDs and oversized raw IDs fail closed without accepting role metadata as authority',()=>{
+ const valid='11111111-1111-4111-8111-111111111111';
+ for(const ownerId of[undefined,null,'',1,{},'hidden-owner',valid+'x','https://outside.example.invalid/owner'])assert.equal(M.vehicleEvents([row('bad-owner',{ownerId,role:'accountant',companyId:'forged-company'})]).length,0,String(ownerId));
+ assert.equal(M.vehicleEvents([row('x'.repeat(201))]).length,0);assert.equal(M.vehicleEvents([row('x'.repeat(201),{ownerId:valid,role:'admin'})]).length,0);
+ const own=M.vehicleEvents([row('legacy-own',{role:'accountant',companyId:'forged-company'})]);assert.equal(own.length,1);assert.equal(own[0].vehicleId,'legacy-own');assert.equal(own[0].id,'purchase:legacy-own:2026-11-23');assert.deepEqual(Object.keys(own[0]).sort(),['eventDate','id','kind','model','plate','readOnly','vehicleId']);
 });

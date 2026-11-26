@@ -120,7 +120,7 @@ async function roles(browser){for(const role of ['accountant','admin']){const f=
  const data=await p.evaluate(async()=>{const ctx=snoteUnifiedSearchBridge.context();return{sources:await snoteUnifiedSearchBridge.sources(ctx),allowed:Object.keys(pages).filter(snotePageAllowed)};});
  assert.deepEqual(data.sources.menus.map(m=>m.id).sort(),data.allowed.sort());
  if(role==='accountant'){
-  assert.deepEqual(await p.evaluate(()=>[__searchQA.customerCalls.length,__searchQA.sharedCalls.length]),[0,0]);assert.deepEqual(data.sources.customers,[]);assert(!data.sources.menus.some(m=>['users','dashboard','settings'].includes(m.id)));
+  assert.deepEqual(await p.evaluate(()=>[__searchQA.customerCalls.length,__searchQA.sharedCalls.length]),[0,0]);assert.deepEqual(data.sources.customers,[]);assert(data.sources.menus.some(m=>m.id==='dashboard'));assert(!data.sources.menus.some(m=>['users','settings','vehicleInspection'].includes(m.id)));
   await search(p,'김고객');assert.deepEqual(await p.evaluate(()=>[__searchQA.customerCalls.length,__searchQA.sharedCalls.length]),[0,0]);
  }else assert(data.sources.menus.some(m=>m.id==='monthly')&&data.sources.menus.some(m=>m.id==='companyBuy'));
  record(`${role} search respects verified membership permissions${role==='accountant'?' with zero customer/shared requests':''}`);await f.close();

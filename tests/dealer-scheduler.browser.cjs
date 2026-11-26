@@ -48,8 +48,9 @@ function backend(){
   if(name==='snote_finance_lock_get')return{data:{enabled:state.lock,revision:1},error:null};
   if(name==='snote_dealer_finance_rates_list')return{data:{companyId:a.companyId,userId:a.id,profiles:[{companyId:a.companyId,ownerId:a.id,rates:{},fallbackRates:{},lenderNames:[],revision:0}]},error:null};
   if(name==='snote_access_ping')return{data:{ok:true},error:null};
+  if(name==='snote_company_purchase_rows'){if(!['admin','accountant'].includes(a.role)||args.p_company!==a.companyId)return unavailable();const rows=state.from(label,{table:'zc_datasets',filters:{company_id:a.companyId,owner_id:a.id},single:false,token}).data||[];return{data:{companyId:a.companyId,datasets:rows.map(row=>({dataset:row.dataset,ownerId:row.owner_id,payload:row.payload,revision:row.revision})),owners:[{id:a.id,name:a.name,active:a.active!==false,memberExists:true}]},error:null};}
   if(!name.startsWith('snote_schedule_'))return{data:null,error:{code:'PGRST202',message:'Optional synthetic RPC unavailable'}};
-  if(!['dealer','admin'].includes(a.role)||a.active===false||args.p_expected_company_id!==a.companyId)return unavailable();
+  if(!['dealer','admin','accountant'].includes(a.role)||a.active===false||args.p_expected_company_id!==a.companyId)return unavailable();
   if(state.hold?.name===name){const held=state.hold;held.started.resolve();await held.release.promise;}
   const own=[...state.events.values()].filter(x=>x.ownerId===a.id&&x.companyId===a.companyId&&!x.deleted),today=date(state.now);
   if(name==='snote_schedule_list'){
@@ -114,15 +115,15 @@ async function crud(browser){
  }finally{await f.finish();}
 }
 async function scopeAndLock(browser){
- const s=backend();s.lock=true;for(const [id,title]of[[A,'A 전용 일정'],[B,'B 전용 일정'],[C,'C 전용 일정'],[ADMIN,'대표 전용 일정']])s.seed(id,{title});const results=[];
+ const s=backend();s.lock=true;for(const [id,title]of[[A,'A 전용 일정'],[B,'B 전용 일정'],[C,'C 전용 일정'],[ADMIN,'대표 전용 일정'],[ACCOUNTANT,'경리 전용 일정']])s.seed(id,{title});const results=[];
  for(const [id,email]of[[A,'dealer@example.invalid'],[B,'dealer-b@example.invalid'],[C,'dealer-c@example.invalid'],[ADMIN,'admin@example.invalid'],[ACCOUNTANT,'accountant@example.invalid']]){
   const f=await boot(browser,s,1440,'scope-'+id,email),p=f.page;try{
-   if(id===ACCOUNTANT){assert.equal(await p.evaluate(()=>snoteDealerSchedulerBridge.context()),null);assert.equal(await p.evaluate(()=>snotePageAllowed('dashboard')),false);assert.equal(await p.locator(HOST).count(),0);assert.equal(s.rpcCalls.filter(x=>x.label==='scope-'+id&&x.name.startsWith('snote_schedule_')).length,0);results.push('경리 접근 제외');continue;}
+   if(id===ACCOUNTANT){await p.evaluate(()=>navigate('dashboard'));await ready(f);assert.equal(await p.evaluate(()=>snoteDealerSchedulerBridge.context()?.role),'accountant');assert.equal(await p.evaluate(()=>snotePageAllowed('dashboard')),true);assert.equal(await p.locator('#snote-dashboard-home').getAttribute('data-mode'),'accountant');assert.equal(await p.locator('#snote-dashboard-home .snote-home-number,#snote-dashboard-home .snote-home-kpis,#snote-dashboard-home .snote-home-settlement-card').count(),0);const ownTitle=[...s.events.values()].find(e=>e.ownerId===ACCOUNTANT).title,view=await p.locator(HOST).innerText();assert(view.includes(ownTitle));for(const e of s.events.values())if(e.ownerId!==ACCOUNTANT)assert(!view.includes(e.title));await openDay(f);await fill(f,{title:'경리 본인 개인 일정'});await save(f);assert([...s.events.values()].some(e=>e.ownerId===ACCOUNTANT&&e.title==='경리 본인 개인 일정'));results.push('경리 본인 일정과 비금융 대시보드');continue;}
    await ready(f);const text=await p.locator(HOST).textContent(),title=[...s.events.values()].find(x=>x.ownerId===id).title;assert(text.includes(title));for(const e of s.events.values())if(e.ownerId!==id)assert(!text.includes(e.title));assert.equal(await p.locator('#snote-dashboard-home').getAttribute('data-state'),'locked');assert.deepEqual(await p.evaluate(()=>snoteHomeDashboardBridge.snapshot().rows),[]);assert.equal(await p.locator('#snote-dashboard-home .snote-home-number').count(),0);assert.equal(await p.locator('#snote-dashboard-home .snote-home-task-row').count(),0);
    await openDay(f);await fill(f,{title:'금융 잠금 중 개인 일정 '+id.slice(0,1)});await save(f);assert([...s.events.values()].some(e=>e.title.startsWith('금융 잠금 중 개인 일정')&&e.ownerId===id));await p.evaluate(()=>navigate('buy'));await p.evaluate(()=>navigate('dashboard'));await ready(f);assert.equal(await p.locator('#zc-dashboard-gate').isVisible(),false);await p.evaluate(()=>navigate('finance'));await p.locator('#zc-dashboard-gate').waitFor();assert.equal(await p.evaluate(()=>route),'dashboard');assert.match(await p.locator('#zc-dashboard-gate-title').textContent(),/수익/);await p.keyboard.press('Escape');await ready(f);results.push(id===ADMIN?'대표 본인 일정만':'딜러·상사별 분리');
   }finally{await f.finish();}
  }
- return{name:'actual Auth identities, same-company/different-company separation, admin own-only, accountant denial and finance lock independence',checks:results};
+ return{name:'actual Auth identities, same-company/different-company separation, admin own-only, accountant own-only calendar and finance lock independence',checks:results};
 }
 async function mobile(browser,width){
  const s=backend();s.seed(A,{title:'모바일 고객 방문',time:'10:00'});const f=await boot(browser,s,width,'mobile-'+width),p=f.page;try{
@@ -144,13 +145,13 @@ async function midnight(browser){const s=backend();s.now='2027-03-15T14:59:40.00
 
 async function lifecycle(browser){
  const checks=[];
- for(const mode of['role','company','idle']){const s=backend();s.seed(A,{title:'전환 전 개인 일정 '+mode,notes:'전환 전 메모'});const f=await boot(browser,s,1440,'lifecycle-'+mode),p=f.page;try{
+ for(const mode of['inactive','company','idle']){const s=backend();s.seed(A,{title:'전환 전 개인 일정 '+mode,notes:'전환 전 메모'});const f=await boot(browser,s,1440,'lifecycle-'+mode),p=f.page;try{
   await ready(f);await openDay(f);await fill(f,{title:'전환 시 제거할 초안 '+mode,notes:'이전 계정에서만 보이는 가상 초안'});
   if(mode==='idle'){await p.clock.fastForward(31*60000);await p.waitForFunction(()=>!__normalState.ready&&currentUser===null);assert.equal(await p.locator('#zc-cloud-login').isVisible(),true);assert.equal(s.logouts.length,1);}
-  else{await p.evaluate(mode=>{if(mode==='role'){currentUser.role='accountant';__normalState.members.find(m=>m.user_id===__normalState.user.id).role='accountant';}else{__normalState.company={...__normalState.company,id:'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb'};__normalState.members=__normalState.members.map(m=>({...m,company_id:__normalState.company.id}));}window.dispatchEvent(new Event('snote:sales-data-changed'));},mode);await p.clock.runFor(1100);}
+  else{await p.evaluate(mode=>{if(mode==='inactive'){__normalState.members.find(m=>m.user_id===__normalState.user.id).active=false;}else{__normalState.company={...__normalState.company,id:'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb'};__normalState.members=__normalState.members.map(m=>({...m,company_id:__normalState.company.id}));}window.dispatchEvent(new Event('snote:sales-data-changed'));},mode);await p.clock.runFor(1100);}
   await p.locator(DIALOG+'[open]').waitFor({state:'hidden'});assert.equal(await p.locator(DIALOG+' [name=title]').inputValue(),'');assert.equal(await p.locator(DIALOG+' [name=notes]').inputValue(),'');assert.doesNotMatch(await p.locator('#snote-dashboard-home').textContent(),/전환 전 개인 일정|전환 시 제거할 초안/);assert.equal(s.writes.length,0);checks.push(mode+' clears private view and draft');
  }finally{await f.finish();}}
- return{name:'actual role/company changes and ordinary idle expiry clear private agenda and dirty form',checks};
+ return{name:'actual inactive membership/company changes and ordinary idle expiry clear private agenda and dirty form',checks};
 }
 async function largeResponse(browser){
  const s=backend(),notes='😀'.repeat(2000);for(let n=0;n<500;n++)s.seed(A,{title:'대용량 가상 일정 '+String(n).padStart(3,'0'),notes,time:'09:30'});

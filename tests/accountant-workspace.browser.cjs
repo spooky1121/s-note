@@ -55,7 +55,7 @@ async function documentDefaults(p,kind,width){
  assert.equal(await p.evaluate(()=>__companyMock.officeWriteAttempts.length),0);
 }
 async function office(p,width){
- await p.evaluate(()=>navigate('contractOffice'));await ready(p);await p.locator('#snote-contract-office').waitFor({state:'visible'});assert.equal(await p.locator('#screen-title').textContent(),'서류 업무');
+ await p.evaluate(()=>navigate('contractOffice'));await ready(p);await p.locator('#snote-contract-office').waitFor({state:'visible'});assert.equal(await p.locator('#screen-title').textContent(),'업무');
  const landing=p.locator('#contract-office-landing'),tiles=landing.locator('button[data-document-kind]');await landing.waitFor({state:'visible'});
  assert.deepEqual(await tiles.evaluateAll(buttons=>buttons.map(button=>button.dataset.documentKind)),['purchase','sale','presentation','contract']);
  for(const label of ['매입서류','매도서류','제시표','계약서'])assert.equal(await landing.getByRole('button',{name:label,exact:true}).isVisible(),true);
@@ -81,8 +81,8 @@ async function layoutAndData(width){
   assert(initial.ids.includes('company-inactive')&&initial.ids.includes('company-moved')&&initial.ids.includes('company-own-1'));assert(!initial.ids.includes('other-company-cache'));
   assert.equal(await p.locator('#list-table tbody tr').count(),20);assert.equal(await p.locator('#accountant-bar').isVisible(),true);
   await p.waitForFunction(()=>document.querySelector('#snote-purchase-overview .sales-overview-metric dd')?.textContent==='27대');assert.equal(await p.evaluate(()=>snotePurchaseOverviewBridge.snapshot().cars.length),29,'Purchase history includes every canonical company vehicle, including sold ones');
-  const nav=await p.locator('#desktop-nav button').allTextContents();assert.equal(nav[0].trim(),'서류 업무');assert.match(await p.locator('#desktop-nav button').first().getAttribute('onclick'),/contractOffice/);assert(nav.every(text=>!text.includes('대시보드')&&!text.includes('상사 매입')&&!text.includes('계약서 업무')));
-  assert.equal(await p.evaluate(()=>snotePageAllowed('companyBuy')),false);assert.equal(await p.evaluate(()=>snotePageAllowed('dashboard')),false);
+  const nav=await p.locator('#desktop-nav button').allTextContents();assert.equal(nav[0].trim(),'대시보드');assert.match(await p.locator('#desktop-nav button').first().getAttribute('onclick'),/dashboard/);assert(nav.some(text=>text.trim()==='업무'));assert(nav.every(text=>!text.includes('상사 매입')&&!text.includes('계약서 업무')&&!text.includes('차량 검수 도우미')));
+  assert.equal(await p.evaluate(()=>snotePageAllowed('companyBuy')),false);assert.equal(await p.evaluate(()=>snotePageAllowed('dashboard')),true);
   await p.locator('#accountant-dealer-filter').selectOption(await p.evaluate(()=>__companyMock.aliasD));await p.evaluate(()=>handleAccountantDealerFilter());assert.equal(await p.evaluate(()=>getFiltered('list').length),21);
   await p.locator('#list-query').fill('딜러 매물 0');assert.equal(await p.evaluate(()=>getFiltered('list').length),1);await p.locator('#list-query').fill('');await p.locator('#accountant-dealer-filter').selectOption('all');await p.evaluate(()=>handleAccountantDealerFilter());
   const rows=await p.locator('#list-table thead').textContent();assert.match(rows,/담당/);assert.equal(await p.locator('#snote92-buy-manual').isVisible(),false);assert.equal(await p.locator('#list-table .status-select').count(),0);
