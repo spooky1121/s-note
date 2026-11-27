@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.248">
+<html lang="ko" data-snote-release="2.249">
 <head>
 <meta charset="utf-8" />
   <link rel="preload" href="assets/fonts/PretendardVariable.woff2?v=2.233" as="font" type="font/woff2" crossorigin>
@@ -3216,7 +3216,7 @@ button, input, select, textarea { font-family: inherit; }
 <script src="assets/list-pagination.js?v=2.228"></script>
 <script src="assets/popup-controls.js?v=2.183" defer></script>
 <link rel="stylesheet" href="assets/list-style.css?v=2.37">
-<script src="assets/customer-list.js?v=2.184-customer-trash" defer></script>
+<script src="assets/customer-list.js?v=2.249" defer></script>
 <link rel="stylesheet" href="assets/vehicle-detail-compact.css?v=2.85">
 <link rel="stylesheet" href="assets/vehicle-finance.css?v=2.84">
 <link rel="stylesheet" href="assets/vehicle-detail-layout.css?v=2.40">
@@ -8822,6 +8822,7 @@ window.zc72EraseContractPersonal=function(){
 };
 function snote237CustomerIcon(kind){return snote161ActionIcon(kind);}
 const snoteCustomerDeleteRequests=new Map();
+let snote249CustomerRefreshRequest=0;
 async function buildCustomerManagement(){
  if(!currentUser||isAccountant())return;
  window.SnoteCustomerList?.clear();
@@ -8830,9 +8831,13 @@ async function buildCustomerManagement(){
  $('alt-title').textContent='고객 관리';$('alt-copy').textContent='고객과 차량 정보를 한곳에서 확인하세요.';
  const host=$('alt-content');host.innerHTML='<div class="empty">고객 정보를 불러오는 중…</div>';
  try{
+  // Closing a contract starts an asynchronous save. Read its acknowledged
+  // customer version so the new list never publishes the pre-save CAS token.
+  await zc75WriteQueue.catch(()=>{});if(!current())return;
   const records=(await zc72ReadOwner(ownerId)).sort((a,b)=>Number(b.updatedAt||0)-Number(a.updatedAt||0));
   if(!current())return;
   await window.SnoteCustomerList.mount({host,records,ownerId,isCurrent:current,readIdentities:records=>window.snote214ReadCustomerIdentities(records),
+   versionFor:r=>JSON.stringify([window.snoteCustomerUpdatedAt?.(r)??null,window.snoteCustomerRestoreGeneration?.(r)||'']),
    carFor:r=>{const linked=cars.filter(c=>String(c.id)===String(r.carId)&&c.ownerId===ownerId);return linked.length===1?linked[0]:null;},
    renderRow:(r,identity,car)=>{
     const status=car?.status==='판매완료'?'판매완료':car?.status==='계약중'?'계약중':'판매중';
@@ -8841,6 +8846,13 @@ async function buildCustomerManagement(){
     return `<tr><td data-label="차량"><button type="button" class="snote202-car-open snote-customer-car" data-customer-car="${esc(r.carId)}" aria-label="${esc(car?.model||r.carModel||r.plate||'차량')} 차량 상세 보기"><span class="snote-customer-thumb" aria-hidden="true">${visual}</span><span class="snote-customer-car-copy"><strong>${esc(car?.model||r.carModel||'연결 차량 없음')}</strong><small>${esc(car?.plate||r.plate||'')}</small></span></button></td><td data-label="고객"><b>${esc(r.name||'')}</b><small>${esc(r.phone||'')}</small></td><td data-label="식별번호" data-customer-identity="${esc(r.carId)}">${esc(identity)}</td><td data-label="상태"><span class="zc75-status ${status==='판매완료'?'done':status==='계약중'?'contract':'selling'}">${status}</span></td><td data-label="주소">${esc(r.address||'미입력')}</td><td data-label="관리"><div class="zc75-actions">${action('sale','data-customer-open','판매 진행')}${action('contract','data-customer-contract','계약서 확인')}${action('receipt','data-customer-receipt','인수증 확인')}${action('delete','data-customer-delete','고객 삭제')}</div></td></tr>`;
    }});
  }catch(e){if(current())host.innerHTML='<div class="empty">고객정보를 불러오지 못했습니다. 연결 상태를 확인해 주세요.</div>';}
+}
+async function snote249RefreshCustomerList(owner,selection){
+ const actor=currentUser,request=++snote249CustomerRefreshRequest,current=()=>request===snote249CustomerRefreshRequest&&currentUser===actor&&actor?.username===owner&&route==='users'&&!isAccountant()&&window.SnoteCustomerList?.current(selection)===true;
+ if(!current())return false;
+ await zc75WriteQueue.catch(()=>{});if(!current())return false;
+ const records=(await zc72ReadOwner(owner)).sort((a,b)=>Number(b.updatedAt||0)-Number(a.updatedAt||0));
+ return current()&&window.SnoteCustomerList.refresh(records,selection);
 }
 document.addEventListener('click',async event=>{
  const open=event.target.closest('[data-customer-open]'),del=event.target.closest('[data-customer-delete]'),carButton=event.target.closest('[data-customer-car]');
@@ -8858,7 +8870,11 @@ document.addEventListener('click',async event=>{
   snoteCustomerDeleteRequests.set(key,operation);window.SnoteCustomerList.setPending(selection,true);
   try{if(!await window.snoteConfirm('이 고객의 저장된 정보를 휴지통으로 이동하시겠습니까? 휴지통에서 복원할 수 있습니다.',{isCurrent:present})||!present())return;
    await zc72Delete(owner,carId,options);if(current())toast('고객정보를 휴지통으로 이동했습니다.');}
-  catch(e){if(current())toast(e?.userMessage||'고객정보를 휴지통으로 이동하지 못했습니다.');}
+  catch(e){if(current()){
+   let refreshed=false;
+   if(e?.code==='RECYCLE_CONFLICT')try{refreshed=await snote249RefreshCustomerList(owner,selection);}catch{}
+   if(current())toast(refreshed?'고객정보가 변경되어 최신 내용을 불러왔습니다. 확인 후 다시 삭제해 주세요.':e?.userMessage||'고객정보를 휴지통으로 이동하지 못했습니다.');
+  }}
   finally{if(snoteCustomerDeleteRequests.get(key)===operation)snoteCustomerDeleteRequests.delete(key);window.SnoteCustomerList?.setPending(selection,false);}}
 });
 document.addEventListener('keydown',e=>{if(window.SnoteMessages?.active())return;
@@ -12802,14 +12818,18 @@ async function snoteRecycleTrashVehicle(car){
 }
 async function snoteRecycleTrashCustomer(owner,car,options={}){
  const base=snoteRecycleContext();if(!base)throw snoteRecycleError('RECYCLE_ONLINE_REQUIRED','고객 삭제는 온라인 로그인 후 이용해 주세요.');
- const customerAction={type:'trash',view:snote214CustomerView,selection:options.customerListSelection||window.SnoteCustomerList?.capture(owner,car)},ctx=snote214CustomerContext(owner),snapshots=await snoteRecyclePrepare(base);
+ const customerAction={type:'trash',view:snote214CustomerView,selection:options.customerListSelection||window.SnoteCustomerList?.capture(owner,car)},ctx=snote214CustomerContext(owner);
+ // Customer trash changes no vehicle/finance datasets. Keep its own save
+ // barrier and exact-row CAS without flushing or waiting on unrelated work.
+ snoteRecycleCheck(base);if(navigator.onLine===false)throw snoteRecycleError('RECYCLE_ONLINE_REQUIRED','휴지통은 인터넷에 연결된 온라인 계정에서 이용해 주세요.');
+ await zc75WriteQueue.catch(()=>{});snoteRecycleCheck(base);
  return snote214QueueCustomer(ctx,car,async()=>{
   const latest=await snote214ReadCustomerRow(ctx,car);snoteRecycleCheck(base);if(!latest)throw snoteRecycleError('RECYCLE_NOT_FOUND','고객정보가 이미 변경되었거나 휴지통으로 이동했습니다.');
   const generation=Object.hasOwn(options,'expectedRestoreGeneration')?options.expectedRestoreGeneration:latest.restore_generation||SNOTE_RECYCLE_ZERO;
   const expectedAt=Object.hasOwn(options,'expectedUpdatedAt')?options.expectedUpdatedAt:latest.updated_at;
   const data=await snoteRecycleRpc(base,'snote_recycle_trash_customer',{p_company:base.companyId,p_owner:ctx.uid,p_car_id:String(car),p_expected_updated_at:expectedAt,p_expected_generation:generation},false,true);
   if(data?.kind!=='customer'||data.ownerId!==ctx.uid||data.carId!==String(car))throw snoteRecycleCanonicalConflict();
-  await snoteRecycleApply(base,data,snapshots,false,customerAction);window.dispatchEvent(new Event('snote-recycle-updated'));return {ok:true};
+  await snoteRecycleApply(base,data,null,false,customerAction);window.dispatchEvent(new Event('snote-recycle-updated'));return {ok:true};
  });
 }
 async function snoteRecycleWriteMedia(records,removeIds,assertCurrent=()=>{}){
@@ -12938,7 +12958,7 @@ window.zc86Cloud={getAccessToken:async()=>{const client=S.client,user=S.user,com
 <script src="assets/workspace-order-store.js?v=2.135" defer></script>
 <script src="assets/workspace-reorder.js?v=2.239" defer></script>
 <script src="assets/vehicle-inspection-route.js?v=2.238" defer></script>
-<script src="assets/release-info.js?v=2.248" defer></script>
+<script src="assets/release-info.js?v=2.249" defer></script>
 <link rel="stylesheet" href="assets/encar-id.css?v=2.162">
 <script src="assets/encar-id.js?v=2.184" defer></script>
 <script src="assets/company-purchase.js?v=2.172" defer></script>
