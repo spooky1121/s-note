@@ -1,0 +1,121 @@
+name: Scanner connector
+
+on:
+  pull_request:
+    paths:
+      - 'tools/scanner-connector/**'
+      - '.github/workflows/scanner-connector.yml'
+      - 'docs/scanner-connector-windows.md'
+  push:
+    branches: [main]
+    paths:
+      - 'tools/scanner-connector/**'
+      - '.github/workflows/scanner-connector.yml'
+      - 'docs/scanner-connector-windows.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: scanner-connector-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  protocol:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: tools/scanner-connector
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
+        with:
+          dotnet-version: '10.0.404'
+      - name: Verify the local protocol with generated images
+        run: dotnet run --project ScannerConnector.Tests/ScannerConnector.Tests.csproj --configuration Release
+
+  windows:
+    needs: protocol
+    runs-on: windows-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: tools/scanner-connector
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
+        with:
+          dotnet-version: '10.0.404'
+      - name: Verify the protocol on Windows
+        run: dotnet run --project ScannerConnector.Tests/ScannerConnector.Tests.csproj --configuration Release
+      - name: Build the standalone Windows connector
+        run: >-
+          dotnet publish ScannerConnector.Windows/ScannerConnector.Windows.csproj
+          --configuration Release --runtime win-x64 --self-contained true
+          -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
+          -p:EnableCompressionInSingleFile=true -p:DebugType=None
+          -p:ContinuousIntegrationBuild=true --output dist/windows
+      - name: Package the connector and installation guide
+        # This test exercises the Windows GDI/WIA image-conversion boundary
+        # with generated images, without enumerating or operating a scanner.
+        # WinExe must be awaited explicitly to observe its exit status.
+        if: success()
+        run: |
+          $exe = (Resolve-Path dist/windows/SnoteScanner.exe).Path
+          $test = Start-Process -FilePath $exe -ArgumentList '--self-test' -Wait -PassThru
+          if ($test.ExitCode -ne 0) { throw "Windows native codec test failed: $($test.ExitCode)" }
+      - name: Package the tested connector and installation guide
+        run: |
+          if (!(Test-Path dist/windows/SnoteScanner.exe)) { throw 'Connector binary is missing' }
+          Copy-Item ../../docs/scanner-connector-windows.md dist/windows/설치안내.txt
+          $sdkRoot = Split-Path (Get-Command dotnet).Source
+          foreach ($license in @('LICENSE.txt', 'ThirdPartyNotices.txt')) {
+            if (Test-Path (Join-Path $sdkRoot $license)) {
+              Copy-Item (Join-Path $sdkRoot $license) dist/windows/$license
+            }
+          }
+          New-Item -ItemType Directory -Force artifacts | Out-Null
+          Compress-Archive -Path dist/windows/* -DestinationPath artifacts/SnoteScanner-Windows-x64.zip
+          $hash = (Get-FileHash artifacts/SnoteScanner-Windows-x64.zip -Algorithm SHA256).Hash.ToLowerInvariant()
+          [IO.File]::WriteAllText((Join-Path $PWD 'artifacts/SnoteScanner-Windows-x64.zip.sha256'), "$hash  SnoteScanner-Windows-x64.zip`n", [Text.UTF8Encoding]::new($false))
+          @{ sourceCommit = '${{ github.sha }}'; protocol = 1; connectorVersion = '1.0.0'; sdkVersion = '10.0.404'; sha256 = $hash; physicalScannerTested = $false } |
+            ConvertTo-Json | Set-Content artifacts/build-receipt.json -Encoding utf8
+          Copy-Item ../../docs/scanner-connector-windows.md artifacts/INSTALL.md
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: snote-scanner-windows-x64
+          path: tools/scanner-connector/artifacts/*
+          if-no-files-found: error
+          retention-days: 30
+
+  release:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: windows
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: snote-scanner-windows-x64
+          path: package
+      - name: Publish the reviewed connector version
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          cd package
+          sha256sum --check SnoteScanner-Windows-x64.zip.sha256
+          if gh release view scanner-connector-v1.0.0 >/dev/null 2>&1; then
+            echo 'Connector version already exists; immutable release will not be replaced.'
+            exit 0
+          fi
+          gh release create scanner-connector-v1.0.0 \
+            SnoteScanner-Windows-x64.zip SnoteScanner-Windows-x64.zip.sha256 build-receipt.json \
+            --target "$GITHUB_SHA" --title 'S-NOTE 스캐너 연결 1.0.0 · Windows' \
+            --notes-file INSTALL.md

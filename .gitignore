@@ -11,3 +11,9 @@ __pycache__/
 
 # Supabase CLI local cache and connection metadata.
 /supabase/.temp/
+
+# Windows scanner connector build outputs.
+/tools/scanner-connector/**/bin/
+/tools/scanner-connector/**/obj/
+/tools/scanner-connector/dist/
+/tools/scanner-connector/artifacts/
