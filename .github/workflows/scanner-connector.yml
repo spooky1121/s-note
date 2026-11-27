@@ -34,6 +34,8 @@ jobs:
         with:
           dotnet-version: '10.0.404'
       - name: Verify the local protocol with generated images
+        env:
+          SCANNER_CONNECTOR_TEST_RECEIPT: ${{ runner.temp }}/snote-scanner-native-protocol.json
         run: dotnet run --project ScannerConnector.Tests/ScannerConnector.Tests.csproj --configuration Release
 
   windows:
@@ -50,6 +52,8 @@ jobs:
         with:
           dotnet-version: '10.0.404'
       - name: Verify the protocol on Windows
+        env:
+          SCANNER_CONNECTOR_TEST_RECEIPT: ${{ runner.temp }}/snote-scanner-native-protocol.json
         run: dotnet run --project ScannerConnector.Tests/ScannerConnector.Tests.csproj --configuration Release
       - name: Build the standalone Windows connector
         run: >-
@@ -58,7 +62,7 @@ jobs:
           -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
           -p:EnableCompressionInSingleFile=true -p:DebugType=None
           -p:ContinuousIntegrationBuild=true --output dist/windows
-      - name: Package the connector and installation guide
+      - name: Verify Windows image conversion without a device
         # This test exercises the Windows GDI/WIA image-conversion boundary
         # with generated images, without enumerating or operating a scanner.
         # WinExe must be awaited explicitly to observe its exit status.
@@ -84,6 +88,7 @@ jobs:
           @{ sourceCommit = '${{ github.sha }}'; protocol = 1; connectorVersion = '1.0.0'; sdkVersion = '10.0.404'; sha256 = $hash; physicalScannerTested = $false } |
             ConvertTo-Json | Set-Content artifacts/build-receipt.json -Encoding utf8
           Copy-Item ../../docs/scanner-connector-windows.md artifacts/INSTALL.md
+          Copy-Item (Join-Path $env:RUNNER_TEMP 'snote-scanner-native-protocol.json') artifacts/native-protocol-tests.json
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: snote-scanner-windows-x64

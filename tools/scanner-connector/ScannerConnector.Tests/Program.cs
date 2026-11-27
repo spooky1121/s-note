@@ -240,7 +240,7 @@ static class ProtocolTests
             Equal("failed", state.Text("state")); Check(!state.Raw.Contains("SYNTHETIC_PRIVATE_PATH"), "Raw native error leaked");
             h.Adapter.Error = null; Guid next = Guid.NewGuid(); Equal(202, (await h.Post("/v1/scans", Body(next), token)).Status); await h.Complete(next, token);
         });
-        string output = Environment.GetEnvironmentVariable("SCANNER_CONNECTOR_TEST_RECEIPT") ?? "/workspace/work/scanner-device-v2250/native-protocol-tests.json";
+        string output = Environment.GetEnvironmentVariable("SCANNER_CONNECTOR_TEST_RECEIPT") ?? Path.Combine(Path.GetTempPath(), "snote-scanner-native-protocol.json");
         Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(output))!);
         await File.WriteAllTextAsync(output, JsonSerializer.Serialize(new { ok = true, syntheticOnly = true, actualWiaUsed = false, productionRequests = 0, passed = Passed.Count, cases = Passed }, new JsonSerializerOptions { WriteIndented = true }));
         Console.WriteLine($"PASS: {Passed.Count} independent native protocol groups");
