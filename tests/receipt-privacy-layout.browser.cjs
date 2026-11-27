@@ -21,7 +21,7 @@ async function metrics(page){return page.locator('#zc76-receipt-paper').evaluate
   await p.route('**/api/customer-intake',route=>route.fulfill({contentType:'application/json',body:JSON.stringify({ok:true,requests:[]})}));
   await p.evaluate(async()=>{window.snoteLoadDocumentLogo=async()=>null;await zc76OpenReceipt({ownerId:currentUser.username,carId:cars[0].id,name:'합성 인수 고객',phone:'01012345678',address:'서울특별시 강서구 양천로 390 합성빌딩 12층',mailing:'서울특별시 강서구 양천로 390 합성빌딩 12층',refundBank:'합성은행',refundAccount:'0001234567890',refundHolder:'합성 인수 고객',customerSignature:{version:1,strokes:[[[.08,.7],[.18,.2],[.35,.72],[.58,.22],[.85,.65]],[[.15,.85],[.9,.8]]]},customerSignatureSignedAt:'2026-11-17T00:00:00.000Z'},cars[0]);await snote95DocumentLogoReady;});
   await p.waitForFunction(()=>{const image=document.getElementById('snote215-receipt-signature-image');return !image.hidden&&image.complete&&image.naturalWidth>0;});await p.evaluate(()=>document.fonts.ready);
-  for(const value of expected)assert(compact(await p.locator('.zc76-privacy').innerText()).includes(compact(value)),value+' must remain in the form');
+  for(const value of expected)assert(compact(await p.locator('.zc76-privacy').textContent()).includes(compact(value)),value+' must remain in the form');
   const preview=await metrics(p);assert.deepEqual(preview.violations,[],'Preview prose must wrap entirely within its own cell');assert.equal(preview.whiteSpace,'normal');
   // A larger installed font must wrap too; the former global nowrap rule clipped
   // this realistic retention-column variation even when Linux's narrow font fit.
