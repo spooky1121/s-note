@@ -72,9 +72,9 @@ test('header remount keeps the title and rejects stale identity or disposed cont
  f.w.SnoteCustomerList.clear();assert.equal(slot.children.length,0);assert.equal(doc.getElementById('alt-title'),title);f.dom.window.close();
 });
 
-function actionList(f,readIdentities=async()=>({values:new Map(),failed:new Set()})){
+function actionList(f,readIdentities=async()=>({values:new Map(),failed:new Set()}),versionFor=record=>record){
  f.w.HTMLElement.prototype.scrollIntoView=()=>{};
- return f.w.SnoteCustomerList.mount({host:f.host,records:f.records,ownerId:'synthetic-owner',isCurrent:()=>true,carFor:()=>null,readIdentities,renderRow:(row,identity)=>'<tr><td>'+row.name+'</td><td>'+identity+'</td><td><button data-customer-delete="'+row.carId+'">삭제</button></td></tr>'});
+ return f.w.SnoteCustomerList.mount({host:f.host,records:f.records,ownerId:'synthetic-owner',isCurrent:()=>true,carFor:()=>null,readIdentities,versionFor,renderRow:(row,identity)=>'<tr><td>'+row.name+'</td><td>'+identity+'</td><td><button data-customer-delete="'+row.carId+'">삭제</button></td></tr>'});
 }
 test('an acknowledged removal survives pending identities and rerendering without losing search or controls',async()=>{
  const f=fixture(),list=f.w.SnoteCustomerList;let release;const mounted=actionList(f,()=>new Promise(resolve=>release=resolve));
@@ -89,4 +89,22 @@ test('removing the last customer of the last page clamps pagination and keeps th
  const selection=list.capture('synthetic-owner','21');list.setPending(selection,true);list.setPending(selection,false);assert.equal(f.host.querySelectorAll('tbody tr').length,1,'Cancel or failure does not remove a customer');assert.equal(f.host.querySelector('[data-customer-delete="21"]').disabled,false);
  assert(list.remove('synthetic-owner','21',selection));assert.equal(f.host.querySelectorAll('tbody tr').length,20);assert.equal(f.host.querySelector('#customer-pagination').hidden,true);assert.equal(f.host.querySelector('#snote-customer-view').dataset.customerView,'cards');assert.equal(f.host.querySelector('#snote-customer-count').textContent,'20명');
  await actionList(f);assert(!list.current(selection));list.setPending(selection,true);assert.equal(list.remove('synthetic-owner','21',selection),false,'An old deletion response cannot remove a customer from a new view');f.host.querySelector('[aria-label="2페이지"]').click();assert(!f.host.querySelector('[data-customer-delete="21"]').disabled,'An old view cannot disable a new view');f.dom.window.close();
+});
+test('conflict refresh clears old identity searches and rejects the earlier in-flight result',async()=>{
+ const f=fixture(),releases=[],list=f.w.SnoteCustomerList;const initial=actionList(f,()=>new Promise(resolve=>releases.push(resolve)));
+ const token=list.capture('synthetic-owner','1'),next=f.records.map(row=>({...row,name:row.carId==='1'?'확인 후 바뀐 고객':row.name})),input=f.host.querySelector('#snote-customer-search');
+ viewButton(f,'cards').click();f.query('9001011234567');assert(list.refresh(next,token));assert.equal(f.query('9001011234567'),0);assert.equal(f.host.querySelector('#snote-customer-search'),input);assert.equal(activeView(f),'cards');
+ releases[1]({values:new Map([['1','9102022345678']]),failed:new Set()});await new Promise(resolve=>setImmediate(resolve));assert.equal(f.query('9102022345678'),1);
+ releases[0]({values:new Map([['1','9001011234567']]),failed:new Set()});await initial;assert.equal(f.query('9001011234567'),0);assert.equal(f.query('9102022345678'),1);assert.match(f.host.textContent,/확인 후 바뀐 고객/);assert(!/9102022345678|9001011234567/.test(f.host.innerHTML));f.dom.window.close();
+});
+test('a conflict refresh cannot replace a newly mounted customer list using an old selection',async()=>{
+ const f=fixture(),list=f.w.SnoteCustomerList;await actionList(f);const token=list.capture('synthetic-owner','1');await actionList(f);const row=f.host.querySelector('tbody tr');
+ assert.equal(list.refresh([{carId:'replacement',name:'오래된 응답'}],token),false);assert.equal(f.host.querySelector('tbody tr'),row);assert(!f.host.textContent.includes('오래된 응답'));f.dom.window.close();
+});
+test('an old delete ACK cannot remove a restored version after an inline conflict refresh',async()=>{
+ const f=fixture(),list=f.w.SnoteCustomerList;for(const row of f.records)row.revision='old';await actionList(f,undefined,row=>row.revision);
+ const old=list.capture('synthetic-owner','1'),other=list.capture('synthetic-owner','2');
+ assert(list.refresh(f.records.map(row=>({...row,revision:row.carId==='1'?'restored':'old',name:row.carId==='1'?'복원한 새 고객':row.name})),other));
+ assert(list.current(old),'Inline refresh retains the mounted view');assert(!list.contains(old),'A new record generation must invalidate the old confirmation');assert.equal(list.remove('synthetic-owner','1',old),false);assert.match(f.host.textContent,/복원한 새 고객/);
+ assert(list.remove('synthetic-owner','2',other),'An unchanged exact version can still accept its own ACK');assert.equal(f.host.querySelectorAll('tbody tr').length,1);f.dom.window.close();
 });
