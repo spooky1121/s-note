@@ -5,6 +5,8 @@
  #snote-scanner [hidden]{display:none!important}
  #snote-scanner button,#snote-scanner input{font-family:inherit}
  #snote-scanner .snote-scanner-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+ #snote-scanner .snote-scanner-toolbar-main,#snote-scanner .snote-scanner-toolbar-side{display:flex;align-items:center;gap:8px;min-width:0}
+ #snote-scanner .snote-scanner-toolbar-side{margin-left:auto;gap:3px}
  #snote-scanner .snote-scanner-button{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:37px;padding:8px 13px;border:1px solid #dfe7ee;border-radius:9px;background:#fff;color:#526b7f;font-size:12px;line-height:20px;font-weight:550;cursor:pointer;transition:background-color .15s,border-color .15s}
  #snote-scanner .snote-scanner-button>svg{flex:none;width:16px;height:16px;scale:none!important}
  #snote-scanner .snote-scanner-button.is-primary{background:#087cb6;border-color:#087cb6;color:#fff}
@@ -49,10 +51,34 @@
  #snote-scanner .snote-scanner-empty{display:grid;place-items:center;min-height:142px;margin:0;padding:22px;border:1px solid #edf1f5;border-radius:11px;background:#fcfdfe;color:#9caab5;font-size:12px;text-align:center}
  #snote-scanner #snote-scanner-load-more{display:flex;margin:13px auto 0;min-height:34px;font-size:11px}
  #snote-scanner tr.is-added{animation:snoteScannerRowReveal .2s ease-out both}
+ #snote-scanner .snote-scanner-device{margin:0 0 16px;padding:17px;border:1px solid #e0eaf1;border-radius:12px;background:#fbfdff;animation:snoteScannerRowReveal .18s ease-out both}
+ #snote-scanner .snote-scanner-device-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}
+ #snote-scanner .snote-scanner-device-heading strong{font-size:13px;font-weight:600;color:#3f5c73}
+ #snote-scanner .snote-scanner-device-notice{min-height:20px;margin:7px 0 10px;font-size:12px;color:#607e93;overflow-wrap:anywhere}
+ #snote-scanner .snote-scanner-device-notice[data-tone=error]{color:#ad5865}
+ #snote-scanner .snote-scanner-device-guide p{margin:0 0 7px}
+ #snote-scanner .snote-scanner-device-guide small{display:block;margin-top:9px;color:#8699a9;font-size:11px;line-height:1.65;word-break:keep-all;overflow-wrap:anywhere}
+ #snote-scanner .snote-scanner-device-links{display:flex;flex-wrap:wrap;gap:7px 15px}
+ #snote-scanner .snote-scanner-device-links a{color:#087cb6;font-size:12px;text-underline-offset:3px}
+ #snote-scanner .snote-scanner-device-pair{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-top:14px}
+ #snote-scanner .snote-scanner-device-pair label{font-size:11.5px;color:#6b8396}
+ #snote-scanner .snote-scanner-device input,#snote-scanner .snote-scanner-device select{min-height:37px;min-width:0;padding:7px 10px;border:1px solid #dce6ed;border-radius:8px;background:#fff;color:#476477;font:inherit;font-size:12px;line-height:20px}
+ #snote-scanner .snote-scanner-device input:focus,#snote-scanner .snote-scanner-device select:focus{outline:2px solid #bee4f8;outline-offset:1px;border-color:#91cbe9}
+ #snote-scanner .snote-scanner-device-pair input{flex:0 1 135px;width:135px;letter-spacing:3px;font-variant-numeric:tabular-nums}
+ #snote-scanner .snote-scanner-device-pair input::placeholder{letter-spacing:0}
+ #snote-scanner .snote-scanner-device-settings{display:grid;grid-template-columns:minmax(180px,2fr) repeat(3,minmax(110px,1fr)) auto;align-items:end;gap:11px}
+ #snote-scanner .snote-scanner-device-settings label{display:grid;gap:4px;min-width:0;font-size:11px;color:#7890a2}
+ #snote-scanner .snote-scanner-device-settings select{width:100%}
+ #snote-scanner .snote-scanner-device-preview{display:flex;flex-direction:column;align-items:center;gap:12px}
+ #snote-scanner .snote-scanner-device-preview img{display:block;max-width:100%;max-height:62vh;min-width:0;object-fit:contain;background:#fff;border:1px solid #e6edf2;border-radius:5px}
+ #snote-scanner .snote-scanner-device-actions{display:flex;justify-content:center;flex-wrap:wrap;gap:8px}
  @keyframes snoteScannerRowReveal{from{opacity:0}to{opacity:1}}
 }
+@media screen and (max-width:1050px){#snote-scanner .snote-scanner-device-settings{grid-template-columns:repeat(2,minmax(0,1fr))}#snote-scanner .snote-scanner-device-settings>button{justify-self:start}}
 @media screen and (max-width:600px){
- #snote-scanner .snote-scanner-toolbar{gap:6px}
+ #snote-scanner .snote-scanner-toolbar{flex-wrap:wrap;gap:5px 8px}
+ #snote-scanner .snote-scanner-toolbar-main{gap:6px}
+ #snote-scanner .snote-scanner-toolbar-side{gap:3px}
  #snote-scanner .snote-scanner-button{min-height:44px;padding:10px 12px;font-size:11.5px}
  #snote-scanner .snote-scanner-text-button{min-height:44px;padding:9px 7px;font-size:11px}
  #snote-scanner .snote-scanner-dropzone{min-height:118px;padding:17px 13px}
@@ -74,6 +100,16 @@
  #snote-scanner .snote-scanner-actions{grid-column:1/-1}
  #snote-scanner .snote-scanner-row-actions{justify-content:flex-end;gap:4px;border-top:1px solid #f0f3f6}
  #snote-scanner .snote-scanner-row-actions button{flex:1;min-width:0}
+ #snote-scanner .snote-scanner-device{padding:12px;margin-bottom:12px}
+ #snote-scanner .snote-scanner-device-pair{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:7px}
+ #snote-scanner .snote-scanner-device-pair label{grid-column:1/-1}
+ #snote-scanner .snote-scanner-device-pair input{width:100%;min-height:44px}
+ #snote-scanner .snote-scanner-device-pair>button:last-child{grid-column:1/-1;justify-self:start}
+ #snote-scanner .snote-scanner-device-settings{gap:9px}
+ #snote-scanner .snote-scanner-device-settings label:first-child{grid-column:1/-1}
+ #snote-scanner .snote-scanner-device-settings input,#snote-scanner .snote-scanner-device-settings select{min-height:44px}
+ #snote-scanner .snote-scanner-device-actions{width:100%;gap:5px}
+ #snote-scanner .snote-scanner-device-actions>button{flex:1}
 }
 @media screen and (prefers-reduced-motion:reduce){#snote-scanner tr.is-added{animation:none}#snote-scanner *{transition:none!important}}
 @media print{#snote-scanner{display:none!important}}

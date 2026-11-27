@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.249">
+<html lang="ko" data-snote-release="2.250">
 <head>
 <meta charset="utf-8" />
   <link rel="preload" href="assets/fonts/PretendardVariable.woff2?v=2.233" as="font" type="font/woff2" crossorigin>
@@ -3202,7 +3202,7 @@ button, input, select, textarea { font-family: inherit; }
 <script src="assets/idle-recovery.js?v=2.201"></script>
 <script src="assets/idle-session.js?v=2.172"></script>
 <link rel="stylesheet" href="assets/profile-settings.css?v=2.102">
-<script src="assets/feature-loader.js?v=2.247.1"></script>
+<script src="assets/feature-loader.js?v=2.250"></script>
 <script src="assets/vehicle-colors.js?v=2.23"></script>
 <link rel="stylesheet" href="assets/customer-contract-signature.css?v=2.165">
 <script src="assets/customer-contract-signature.js?v=2.165"></script>
@@ -3261,7 +3261,7 @@ button, input, select, textarea { font-family: inherit; }
 <link rel="stylesheet" href="assets/accountant-navigation.css?v=2.246">
 <link rel="stylesheet" href="assets/accountant-information.css?v=2.246">
 <link rel="stylesheet" href="assets/accountant-business-pages.css?v=2.246">
-<link rel="stylesheet" href="assets/scanner.css?v=2.247">
+<link rel="stylesheet" href="assets/scanner.css?v=2.250">
 <link rel="stylesheet" href="assets/contract-office.css?v=2.246">
 <link rel="stylesheet" href="assets/workspace-ledgers.css?v=2.136">
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/snote-favicon.png?v=2.226">
@@ -9684,7 +9684,7 @@ function snote247ScannerContext(){
  if(!snote247ScannerIdentity||snote247ScannerIdentity.key!==identityKey||snote247ScannerIdentity.actor!==currentUser||snote247ScannerIdentity.client!==S.client){
   snote247ScannerIdentity={key:identityKey,actor:currentUser,client:S.client};snote247ScannerEpoch++;
  }
- const context=Object.freeze({ready:true,key:JSON.stringify([identityKey,snote247ScannerEpoch]),companyId:office.companyId,userId:office.userId});
+ const context=Object.freeze({ready:true,key:JSON.stringify([identityKey,snote247ScannerEpoch]),deviceKey:JSON.stringify([office.companyId,office.userId,sessionId]),companyId:office.companyId,userId:office.userId});
  snote247ScannerContexts.set(context,{identity:snote247ScannerIdentity,epoch:snote247ScannerEpoch,office,profile,sessionId});return context;
 }
 function snote247ScannerCurrent(context){
@@ -12958,7 +12958,7 @@ window.zc86Cloud={getAccessToken:async()=>{const client=S.client,user=S.user,com
 <script src="assets/workspace-order-store.js?v=2.135" defer></script>
 <script src="assets/workspace-reorder.js?v=2.239" defer></script>
 <script src="assets/vehicle-inspection-route.js?v=2.238" defer></script>
-<script src="assets/release-info.js?v=2.249" defer></script>
+<script src="assets/release-info.js?v=2.250" defer></script>
 <link rel="stylesheet" href="assets/encar-id.css?v=2.162">
 <script src="assets/encar-id.js?v=2.184" defer></script>
 <script src="assets/company-purchase.js?v=2.172" defer></script>
