@@ -99,6 +99,7 @@ async function fixture(width=1440,savedCars=null,{primaryColor=null,weather=null
   if(url.origin!==ORIGIN){f.external.push(url.href);return route.abort();}
   if(encarLogoUnavailable&&url.pathname===ENCAR_WORDMARK_PATH)return route.abort();
   if(lookupUnavailable&&url.pathname==='/assets/snote-encar-link.js')return route.fulfill({contentType:'application/javascript',body:'/* Synthetic unavailable lookup controller. */'});
+  if(url.pathname==='/api/automotive-columns')return route.fulfill({status:503,contentType:'application/json',body:JSON.stringify({ok:false,code:'NEWS_NOT_CONFIGURED',error:'Synthetic news is not configured.'})});
   if(url.pathname==='/api/weather')return route.fulfill({status:weather?.ok===false?503:200,contentType:'application/json',body:JSON.stringify(weather||{ok:true,temperature:18.4,code:0,region:'합성 지역',source:'MET Norway'})});
   if(url.pathname==='/api/encar'){
    const body=JSON.parse(request.postData());assert.equal(request.method(),'POST');assert.equal(request.headers().authorization,'Bearer '+sessionToken);assert.deepEqual(Object.keys(body).sort(),['candidateIds','plate']);assert(Array.isArray(body.candidateIds));

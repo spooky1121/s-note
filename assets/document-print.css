@@ -31,6 +31,8 @@
 }
 
 @media print {
+ /* Optional footer artwork must never block or show a broken-image icon. */
+ img[data-snote-print-logo-unavailable]{visibility:hidden!important}
  #quote-paper .q8-bottom{bottom:9mm!important}
  :is(.contract-paper,#zc76-receipt-paper) input::-webkit-calendar-picker-indicator{display:none!important}
  #zc76-receipt-paper input::placeholder{color:transparent!important}

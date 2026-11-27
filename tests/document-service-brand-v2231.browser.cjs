@@ -58,12 +58,12 @@ async function networkFailures(){
   results.push({kind:'transient fetch failure recovers',passed:true});
   for(const kind of ['quote','contract','receipt']){
    mode='ok';await open(p,kind);mode='fail';await invalidate(kind);assert.equal(await p.evaluate(()=>snote95UpdateDocumentCompany()),false);
-   const before=await p.evaluate(()=>__documentBrandTest.prints);await print(p,kind);assert.equal(await p.evaluate(()=>__documentBrandTest.prints),before,kind+' permanent logo failure blocks native print');
-   assert((await images(p)).every(i=>i.visibility==='hidden'),'Broken image icons remain hidden in fixed slots');assert(f.notifications.some(n=>/문서 로고.*다시/u.test(n.message)),kind+' shows retry guidance through the existing popup');
-   mode='ok';await print(p,kind);assert.equal(await p.evaluate(()=>__documentBrandTest.prints),before+1,kind+' next print retries and recovers without reopening');
+   const before=await p.evaluate(()=>__documentBrandTest.prints);await print(p,kind);assert.equal(await p.evaluate(()=>__documentBrandTest.prints),before+1,kind+' optional logo failure must not block native print');
+   assert((await images(p)).every(i=>i.visibility==='hidden'),'Broken image icons remain hidden in fixed slots');assert(!f.notifications.some(n=>/문서 로고.*다시/u.test(n.message)),kind+' optional logo failure must not show blocking retry guidance');
+   mode='ok';await print(p,kind);assert.equal(await p.evaluate(()=>__documentBrandTest.prints),before+2,kind+' next print retries and recovers without reopening');
    assert((await images(p)).every(i=>i.visibility==='visible'&&i.complete&&i.width===1149));
    if(kind==='contract')assert((await images(p,'#contract-print-pages .snote-document-brand img')).every(i=>i.visibility==='visible'&&i.width===1149),'Both print clones inherit the recovered ready image');
-   results.push({kind:kind+' permanent failure blocks and retry recovers',passed:true});
+   results.push({kind:kind+' optional failure prints and retry recovers',passed:true});
   }
   // Superseded decodes must neither hide a newer image nor change private artwork.
   const race=await p.evaluate(async()=>{
@@ -72,7 +72,9 @@ async function networkFailures(){
    version=2;image.decode=native;image.src='assets/snote-brand.png?v=2.231&probe=newer';const latest=await snote231PrepareDocumentBrand(image,()=>version===2,'newer');release();const stale=await old;
    return{latest,stale,visibility:getComputedStyle(image).visibility,companyUntouched:company.src===companySource};
   });assert.deepEqual(race,{latest:true,stale:false,visibility:'visible',companyUntouched:true});results.push({kind:'late decode cannot overwrite a newer ready image or company asset',passed:true});
-  await finish(f);console.log('PASS transient retry, permanent failure blocks all print paths, later recovery, contract clones and stale decode guard');
+  await finish(f);console.log('PASS transient retry, optional failure allows all print paths, later recovery, contract clones and stale decode guard');
  }catch(e){await p.screenshot({path:path.join(OUT,'failure.png'),fullPage:true}).catch(()=>{});await f.context.close();throw e;}
 }
 if(require.main===module)(async()=>{const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium'});setBrowser(browser);try{for(const width of [1440,390])await normalAndPDF(width);await networkFailures();fs.writeFileSync(path.join(OUT,'results.json'),JSON.stringify({ok:true,syntheticOnly:true,productionWrites:0,results},null,2)+'\n');}finally{await browser.close();}})().catch(e=>{console.error(e.stack||e);process.exitCode=1;});
+
+module.exports={setup,open,print,images,normalAndPDF,networkFailures};
