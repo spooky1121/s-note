@@ -41,7 +41,7 @@
  window.addEventListener('snote:route-changed',()=>{if(calculatorPending)closeCalculator();if(tutorialPending)closeTutorial(false);scheduleProbe();});
  window.addEventListener('snote:scheduler-context-changed',scheduleProbe);
  window.addEventListener('snote:auth-reset',()=>{closeCalculator(true);closeTutorial(false);});
- window.addEventListener('pagehide',()=>{closeCalculator(true);closeTutorial(false);});
+ window.addEventListener('pagehide',()=>{closeCalculator(true);closeTutorial(false,false);});
  matchMedia('(max-width:760px)').addEventListener('change',event=>{if(event.matches)closeTutorial(false);});
  const host=document.getElementById('alt-content');if(host)new MutationObserver(records=>{if(records.some(record=>!record.target.closest?.('#snote-encar-taxonomy-probe')))scheduleProbe();}).observe(host,{childList:true,subtree:true});
  scheduleProbe();
