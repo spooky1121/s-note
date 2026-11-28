@@ -5,6 +5,7 @@
  const UUID=/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i,ID=/^[a-z][a-z0-9-]{0,63}$/i;
  const SECTIONS=new Set(['sidebar','operator-sidebar','document-types','form-types']);
  const ROUTES=new Set(['dashboard','buy','sell','finance','users','companyBuy','prestock','inventoryFinance','monthly','vehicleInspection','settings','contractOffice','contractArchive']);
+ const automaticNavSelector='#desktop-nav,#mobile-drawer-nav,#operator-navigation';
  let active=null,sequence=0,scanQueued=false,noticeTimer=null;
  const fixedAccountantSidebar=(container,section,raw)=>section==='sidebar'&&container?.dataset.accountantNavigation==='true'&&raw?.role==='accountant';
  const node=(tag,cls,text)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(text)e.textContent=text;return e;};
@@ -77,11 +78,12 @@
   function refresh(){
    if(destroyed)return;if(gesture&&!container.contains(gesture.element))exit(true);const next=context(options);
    if(!next||ctx&&(!same(options,ctx)||ctx.scope!==next.scope)){exit(true);ctx=null;model=null;}
-   if(!next){container.classList.remove('snote-reorder-enabled');return;}
-   ctx=next;model=modelFor(ctx,options.section);controller.model=model;container.classList.add('snote-reorder-enabled');
+   if(!next){if(container.classList.contains('snote-reorder-enabled'))container.classList.remove('snote-reorder-enabled');return;}
+   ctx=next;model=modelFor(ctx,options.section);controller.model=model;if(!container.classList.contains('snote-reorder-enabled'))container.classList.add('snote-reorder-enabled');
    for(const row of items()){
     const e=row.element;if(!original.has(e))original.set(e,{described:e.getAttribute('aria-describedby'),keys:e.getAttribute('aria-keyshortcuts')});
-    e.classList.add('snote-reorder-item');e.dataset.reorderItem=row.id;e.setAttribute('aria-describedby',[original.get(e).described,uid].filter(Boolean).join(' '));e.setAttribute('aria-keyshortcuts','F2 Alt+ArrowUp Alt+ArrowDown');
+    if(!e.classList.contains('snote-reorder-item'))e.classList.add('snote-reorder-item');
+    for(const[name,value]of[['data-reorder-item',row.id],['aria-describedby',[original.get(e).described,uid].filter(Boolean).join(' ')],['aria-keyshortcuts','F2 Alt+ArrowUp Alt+ArrowDown']])if(e.getAttribute(name)!==value)e.setAttribute(name,value);
    }
    apply();paint();load(model,ctx,options);
   }
@@ -161,7 +163,9 @@
  window.addEventListener('keydown',event=>{if(active&&event.key==='Escape'){event.preventDefault();event.stopImmediatePropagation();active.exit(true);}},true);
  document.addEventListener('visibilitychange',()=>{if(document.hidden)active?.exit(true);});window.addEventListener('pagehide',()=>{active?.exit(true);for(const c of controllers)c.destroy();automatic.clear();});
  for(const name of['snote:workspace-order-context','snote:route-changed','snote:company-cars-ready','pageshow'])window.addEventListener(name,schedule);
- new MutationObserver(schedule).observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['data-accountant-navigation']});
+ // Existing containers watch their own direct children. Only navigation
+ // replacement/insertion/removal and the fixed-accountant flag need discovery.
+ new MutationObserver(records=>{if(records.some(record=>record.type==='attributes'?record.target.matches?.(automaticNavSelector):[...record.addedNodes,...record.removedNodes].some(node=>node.nodeType===1&&(node.matches(automaticNavSelector)||node.querySelector(automaticNavSelector)))))schedule();}).observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['data-accountant-navigation']});
  window.SnoteWorkspaceReorder=Object.freeze({mount,refresh:schedule,exit:()=>active?.exit()});
  schedule();window.dispatchEvent(new Event('snote:workspace-reorder-ready'));
 })();

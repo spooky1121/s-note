@@ -1,4 +1,4 @@
-import {createCalculator} from './quick-calculator-model.js?v=2.17';
+const {createCalculator}=await window.SnoteFeatures.module('calculatorModel');
 
 const trigger=document.getElementById('snote-calculator-trigger');
 if(trigger){
@@ -105,7 +105,6 @@ if(trigger){
     clearTimeout(presses.get(key));button.classList.add('is-pressed');
     presses.set(key,setTimeout(()=>{button.classList.remove('is-pressed');presses.delete(key);},150));
   }
-  trigger.addEventListener('click',()=>opened?close():open());
   panel.querySelector('#snote-calculator-close').addEventListener('click',()=>close(true));
   panel.addEventListener('click',event=>{const button=event.target.closest('[data-calculator-key]');if(button&&opened)press(button.dataset.calculatorKey);});
   document.addEventListener('pointerdown',event=>{if(opened&&!panel.contains(event.target)&&!trigger.contains(event.target))close();},true);
@@ -126,7 +125,6 @@ if(trigger){
   window.visualViewport?.addEventListener('resize',position);
   window.visualViewport?.addEventListener('scroll',position);
   window.addEventListener('pagehide',()=>close(false,true));
-  window.snoteCloseCalculator=()=>close();
-  window.snoteResetCalculator=()=>{close(false,true);render(calculator.reset());};
-  trigger.disabled=false;render();
+  window.SnoteQuickCalculator=Object.freeze({toggle:()=>opened?close():open(),close:()=>close(),reset:()=>{close(false,true);render(calculator.reset());}});
+  render();
 }

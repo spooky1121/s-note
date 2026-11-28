@@ -81,9 +81,9 @@
    // A presentation class never changes hidden, disabled or readonly from the permission layer.
    panel.classList.toggle('design-vehicle-inactive',enabled&&selected!==key);
    if(button.getAttribute('aria-selected')!==String(selected===key))button.setAttribute('aria-selected',String(selected===key));
-   button.tabIndex=selected===key?0:-1;
+   const tabIndex=selected===key?0:-1;if(button.tabIndex!==tabIndex)button.tabIndex=tabIndex;
    if(enabled){if(panel.getAttribute('role')!=='tabpanel')panel.setAttribute('role','tabpanel');if(panel.getAttribute('aria-labelledby')!==button.id)panel.setAttribute('aria-labelledby',button.id);}
-   else{panel.removeAttribute('role');panel.removeAttribute('aria-labelledby');}
+   else{if(panel.hasAttribute('role'))panel.removeAttribute('role');if(panel.hasAttribute('aria-labelledby'))panel.removeAttribute('aria-labelledby');}
   }
  }
  function refresh(){

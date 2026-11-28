@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.254">
+<html lang="ko" data-snote-release="2.255">
 <head>
 <meta charset="utf-8" />
   <link rel="preload" href="assets/fonts/PretendardVariable.woff2?v=2.233" as="font" type="font/woff2" crossorigin>
@@ -3177,8 +3177,8 @@ button, input, select, textarea { font-family: inherit; }
 <link rel="stylesheet" href="assets/vehicle-detail-colors.css?v=2.33.1">
 <link rel="stylesheet" href="assets/sales-month-filter.css?v=2.26">
 <link rel="stylesheet" href="assets/sales-overview.css?v=2.100">
-<script src="assets/sales-overview.js?v=2.90" defer></script>
-<script src="assets/purchase-overview.js?v=2.100" defer></script>
+<script src="assets/sales-overview.js?v=2.255" defer></script>
+<script src="assets/purchase-overview.js?v=2.255" defer></script>
 <link rel="stylesheet" href="assets/route-transition.css?v=2.213">
 <script src="assets/route-transition.js?v=2.213" defer></script>
 <link rel="stylesheet" href="assets/home-dashboard.css?v=2.246" data-snote-type-scale>
@@ -3202,7 +3202,7 @@ button, input, select, textarea { font-family: inherit; }
 <script src="assets/idle-recovery.js?v=2.201"></script>
 <script src="assets/idle-session.js?v=2.172"></script>
 <link rel="stylesheet" href="assets/profile-settings.css?v=2.102">
-<script src="assets/feature-loader.js?v=2.254"></script>
+<script src="assets/feature-loader.js?v=2.255"></script>
 <script src="assets/vehicle-colors.js?v=2.23"></script>
 <link rel="stylesheet" href="assets/customer-contract-signature.css?v=2.165">
 <script src="assets/customer-contract-signature.js?v=2.165"></script>
@@ -4607,37 +4607,7 @@ function syncVehicleCatalog(){
  snote98SyncInline();updateNewCarPreview();
 }
 function refreshTaxonomyWidget(){const el=$('catalog-counter');if(!el)return;const catalog=domesticTaxonomy();const models=new Set(catalog.map(x=>x.make+'|'+x.group));const generations=new Set(catalog.map(x=>x.make+'|'+x.group+'|'+x.model));const verified=catalog.filter(x=>x.grade).length;const official=catalog.filter(x=>x.grade&&['official_direct','official_search_excerpt'].includes(x.verification)).length; const reference=catalog.filter(x=>x.grade&&!['official_direct','official_search_excerpt'].includes(x.verification)).length;el.textContent='제조사 '+num(uniqueSorted(catalog.map(x=>x.make)).length)+'곳 · 모델 '+num(models.size)+'종 · 세대/세부모델 '+num(generations.size)+'종 · 공식 확인 등급 '+num(official)+'건 · 참고/직접 추가 '+num(reference)+'건 · 등급 미확인 '+num(catalog.filter(x=>!x.grade).length)+'건 · 세부등급 '+num(catalog.filter(x=>x.subgrade).length)+'건';}
-function escapeCsv(value){let s=String(value??'');return '"'+s.replaceAll('"','""')+'"'}
 function exportVehicleCatalog(){const blob=new Blob([JSON.stringify({schemaVersion:1,catalogVersion:window.SnoteVehicleCatalog.version(),records:domesticTaxonomy()},null,2)],{type:'application/json;charset=utf-8'});const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='s-note_vehicle_catalog.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
-function parseCsv(content){let rows=[],row=[],field='',quoted=false;content=content.replace(/^\uFEFF/,'');for(let i=0;i<content.length;i++){const c=content[i];if(c==='"'){if(quoted&&content[i+1]==='"'){field+='"';i++}else quoted=!quoted}else if(c===','&&!quoted){row.push(field);field=''}else if((c==='\n'||c==='\r')&&!quoted){if(c==='\r'&&content[i+1]==='\n')i++;row.push(field);if(row.some(x=>x.trim()))rows.push(row);row=[];field=''}else field+=c}if(quoted)throw Error('닫히지 않은 따옴표가 있습니다.');row.push(field);if(row.some(x=>x.trim()))rows.push(row);return rows}
-function downloadCatalogTemplate(){const cols=['make','group','model','grade','subgrade','model_year','verification','source','source_url','review_note','market'];const example=['기아','K5','K5 3세대','1.6 터보 노블레스','','2025','source_unverified','authorized_csv','','실차와 대조 필요','KR'];const csv=cols.join(',')+'\r\n'+example.map(escapeCsv).join(',');const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download='s-note_taxonomy_5level_template.csv';a.click();setTimeout(()=>URL.revokeObjectURL(u),2000)}
-async function importVehicleCatalog(event){const file=event.target.files?.[0];event.target.value='';if(!file)return;try{
- const catalogContext=window.snoteVehicleTaxonomyBridge?.context(),online=!!window.snoteVehicleTaxonomyBridge?.hasSession();
- const contextStillCurrent=()=>!online||!!catalogContext&&window.snoteVehicleTaxonomyBridge.context()?.key===catalogContext.key;
- if(!contextStillCurrent())throw Error('서버 연결을 확인한 뒤 가져오기를 다시 시도해 주세요.');
- if(file.size>15*1024*1024)throw Error('CSV는 최대 15MB까지 업로드할 수 있습니다.');
- const rows=parseCsv(await file.text());if(!rows.length)throw Error('파일이 비어 있습니다.');
- if(!contextStillCurrent())throw Error('로그인 또는 상사가 변경되었습니다.');
- const headers=rows.shift().map(s=>s.trim().toLowerCase().replace(/^\uFEFF/,''));
- if(!['make','group','model','grade'].every(k=>headers.includes(k)))throw Error('필수 열: make,group,model,grade');
- const cell=(fields,k)=>headers.includes(k)?String(fields[headers.indexOf(k)]||'').trim():'';
- let parsed=[],skipped=0;for(const fields of rows){
- const data={};for(const k of ['make','group','model','grade','subgrade'])data[k]=cell(fields,k).slice(0,150);
- if(!['make','group','model'].every(k=>data[k])||Object.values(data).some(x=>x.length>120)){skipped++;continue}
- let year=cell(fields,'model_year');if(!/^\d{4}$/.test(year))year='';
- let market=(cell(fields,'market')||'KR').toUpperCase();if(market!=='KR'&&market!=='UNSPECIFIED'){skipped++;continue}let u=cell(fields,'source_url');if(u&&!/^https:\/\//.test(u))u='';
- const incoming={...data,id:'custom:csv:'+taxonomyKey(data),model_year:year,market,verification:'source_unverified',source:cell(fields,'source')||'licensed_csv',source_url:u,review_note:'외부 입력 · 제조사 트림 검증 필요',key:taxonomyKey(data)};
- parsed.push(incoming);
- }
- if(!parsed.length)throw Error('유효한 데이터가 없습니다.');if(parsed.length>60000)throw Error('최대 60,000건까지 가져올 수 있습니다.');
- const accepted=[];let protectedCount=0;const existing=new Map(domesticTaxonomy().map(x=>[taxonomyKey(x),x]));for(const r of parsed){const identity=taxonomyKey(r),old=existing.get(identity);if(old&&['official','official_price_page','user_import'].includes(old.verification)){protectedCount++;continue}if(online){r.company_id=catalogContext.company_id;r.key='company:'+catalogContext.company_id+':'+identity;}accepted.push(r);existing.set(identity,r)}
- if(!contextStillCurrent())throw Error('로그인 또는 상사가 변경되었습니다.');
- if(taxonomyDB){await new Promise((resolve,reject)=>{const tx=taxonomyDB.transaction('entries','readwrite'),store=tx.objectStore('entries');for(const row of accepted)store.put(row);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)});vehicleTaxonomy=await readTaxonomy()}
- else vehicleTaxonomy=vehicleTaxonomy.concat(accepted);
- if(!contextStillCurrent())throw Error('로그인 또는 상사가 변경되었습니다.');
- refreshTaxonomyWidget();fillVehicleSelect('make');toast(`CSV ${accepted.length}건 반영 · 공식 확인 ${protectedCount}건 보호 · 형식 오류 ${skipped}건`)
- }catch(e){toast('CSV 가져오기 오류: '+e.message)}}
-
 function normalizeRepairItems(c){
   if(Array.isArray(c?.repairItems))return c.repairItems.filter(x=>x&&typeof x==='object').map(x=>({memo:String(x.memo||'').slice(0,120),amount:Number(x.amount)||0}));
   const legacy=Number(c?.costs?.repair||0);
@@ -5091,21 +5061,6 @@ function matchingModelPhoto(c){
  if(!r)r=modelPhotos.find(x=>x.keySuffix===modelImageKey(c,false));
  if(!r&&c.make&&c.group){const prefix=[c.make,c.group].map(x=>String(x).trim().toLocaleLowerCase('ko')).join('|')+'|';r=modelPhotos.find(x=>x.keySuffix===prefix+'*')}
  return r||null;
-}
-function modelBodyKind(c){const v=[c.group,c.generation,c.model].filter(Boolean).join(' ').toLowerCase();
- if(/카니발|스타리아|스타렉스|레이|모닝|캐스퍼|박스카|밴|미니버스|transit|sienna|알파드/.test(v))return 'van';
- if(/쏘렌토|스포티지|싼타페|투싼|셀토스|코나|팰리세이드|gv70|gv80|x[1-9]\b|q[2-9]\b|gl[abcde]|cayenne|카이엔|랜드로버|디스커버리|defender|디펜더|ev[34569]|아이오닉 5|아이오닉5|모하비|suv|rav4|모델 y|model y/.test(v))return 'suv';
- if(/쿠페|카브리올레|로드스터|박스터|911|z4|718|컨버터블|스파이더/.test(v))return 'coupe';
- return 'sedan';}
-function safeSvgText(t){return String(t||'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])).slice(0,60)}
-function illustrativeCarSvg(c){
- const kind=modelBodyKind(c);
- const path={sedan:'M115 208 L153 177 Q173 143 222 138 L338 138 Q367 141 404 183 L477 197 Q508 202 513 227 L511 254 L102 254 L103 230 Z',suv:'M107 211 L142 158 Q157 139 186 137 L404 137 Q424 137 438 160 L480 194 Q508 203 512 225 L510 256 L102 256 L103 230 Z',van:'M104 219 L113 151 Q119 131 151 130 L424 130 Q456 130 466 159 L486 205 Q509 211 511 228 L510 254 L103 254 Z',coupe:'M119 215 L180 196 Q217 156 253 149 L338 147 Q367 150 401 197 L476 209 Q504 214 513 233 L508 253 L105 253 Z'}[kind];
- const tint=(c.color||'').includes('흰')?'#e7eef7':(c.color||'').includes('검정')?'#223951':(c.color||'').includes('빨간')?'#d66c6b':(c.color||'').includes('파란')?'#6b9bc2':'#849bb6';
- const name=safeSvgText([c.make,c.group||c.model].filter(Boolean).join(' ')||'차량 모델');
- const model=safeSvgText(c.generation||c.model||'');
- const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="640" height="400" viewBox="0 0 640 400"><defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="#e7f5ff"/><stop offset="1" stop-color="#f9fcff"/></linearGradient></defs><rect width="640" height="400" fill="url(#bg)"/><circle cx="525" cy="67" r="97" fill="#d5ecfb" opacity=".58"/><path d="M54 285H581" stroke="#bcd2e5" stroke-width="2"/><path d="${path}" fill="${tint}" stroke="#425d79" stroke-width="6" stroke-linejoin="round"/><path d="M187 180 Q204 159 238 159 L334 159 Q361 163 389 192 L171 192 Z" fill="#d9f3ff" stroke="#91b6d2" stroke-width="4"/><circle cx="183" cy="250" r="36" fill="#273c53"/><circle cx="183" cy="250" r="19" fill="#cbdbe6"/><circle cx="432" cy="250" r="36" fill="#273c53"/><circle cx="432" cy="250" r="19" fill="#cbdbe6"/><rect x="55" y="23" width="118" height="29" rx="14" fill="#b8dff6"/><text x="114" y="43" fill="#21567e" font-family="Arial,sans-serif" font-size="13" text-anchor="middle" font-weight="bold">REFERENCE</text><text x="50%" y="324" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="23" fill="#264765">${name}</text><text x="50%" y="350" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" fill="#64829d">${model}</text><text x="50%" y="380" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" fill="#8ba4b7">실제 차량 사진이 아닌 차종 유형 참고 일러스트</text></svg>`;
- return 'data:image/svg+xml;charset=UTF-8,'+encodeURIComponent(svg);
 }
 /* v1.40: one identical placeholder for every car without real photos.
    Previously imported model photos remain in local storage but are no longer displayed. */
@@ -5609,7 +5564,6 @@ function syncLenderPicker(selected){
  const picker=$('detail-inventory-lender');if(!picker)return;
  picker.innerHTML=snote169LenderOptions(selected);picker.value=typeof selected==='string'?selected:'';
 }
-function zc157SettingStyles(){return ''}
 function buildAccountantSettings(){
  if(!isAccountant())return;
  $('alt-title').style.display='';$('alt-copy').style.display='';
@@ -5685,7 +5639,6 @@ function lenderText(c){return inventoryLoanOf(c)<=0?'현금차량':typeof c.inve
 function lenderBadge(c){const t=lenderText(c);return `<span class="${inventoryLoanOf(c)<=0?'zc-cash-badge':'zc-finance-label'}" data-lender="${esc(t)}">${esc(t)}</span>`}
 function saveInventoryLender(event,id){event?.stopPropagation();toast('경리 계정은 차량의 재고금융사를 변경할 수 없습니다.');}
 
-function fmtWon(v){return Number(v||0).toLocaleString('ko-KR')}
 /* v1.93: 선재고 지급액/잔액은 입력·표시·검증 모두 원(₩) 단위.
    기존 PRESTOCK_V148_KEY의 amount 필드 자체가 원 단위 정수이므로 절대로 마이그레이션하거나 10000배 변환하지 않는다. */
 function prestockFormatWon(won){return Math.round(Number(won||0)).toLocaleString('ko-KR')}
@@ -6543,11 +6496,6 @@ function zc77ManualInput(event){const k=event.target.dataset.zcOcrField;if(!k)re
  zc77UpdateNext();
 }
 function zc77UpdateNext(){const next=$('zc-auto-reg-next');if(next)next.disabled=zc77Busy||!zcAutoRegFile;}
-function zc77ValidateAll(announce=false){for(const k of zc77Fields){const v=$('zc-auto-reg-'+k).value.trim();if(zc77Valid(k,v))continue;
-  if(announce){const label={plate:'차량번호',model:'차명',year:'연식',vin:'차대번호(VIN)'}[k];toast(label+'가 비어 있거나 형식이 올바르지 않습니다. 등록증을 보고 수정해주세요.');$('zc-auto-reg-'+k).focus();}
-  return false;
- }return true;
-}
 for(const k of zc77Fields){$('zc-auto-reg-'+k).addEventListener('input',zc77ManualInput)}
 function zc77ScoreAdd(storage,key,value,score,source){if(!zc77Valid(key,value))return;
  const byKey=storage[key]||(storage[key]=new Map()),prev=byKey.get(value)||{value,score:0,count:0,source};
@@ -6796,21 +6744,6 @@ function snote200MarkOCR(mode,message){
  if(help)help.textContent=message;
  if(status)status.textContent=mode==='google'?'Google Vision 결과 · 원본 확인 후 등록':'Google Vision 미사용 · '+message;
  const note=$('zc-reg-ocr-note');if(note)note.dataset.state=mode==='google'?'done':'error';
-}
-async function snote200CheckOCRServer(){
- const result=$('snote200-ocr-check-result'),button=$('snote200-ocr-check');
- if(!result||!button)return;
- button.disabled=true;result.textContent=' 서버 경로 확인 중…';
- try{
-  if(location.protocol!=='https:'&&location.hostname!=='localhost')throw new Error('배포한 HTTPS 사이트에서 확인하세요.');
-  const res=await fetch('/api/ocr',{method:'GET',cache:'no-store',headers:{Accept:'application/json'}});
-  const type=res.headers.get('content-type')||'';
-  if(!type.includes('application/json'))throw new Error('/api/ocr 주소가 서버 함수 대신 HTML을 반환합니다. GitHub functions/api/ocr.js 경로와 Pages 배포 설정을 확인하세요.');
-  const body=await res.json();
-  if(!res.ok||body?.service!=='snote-vision-ocr'||body.ok!==true)throw new Error('OCR 서버 함수가 정상 응답하지 않습니다 (HTTP '+res.status+').');
-  result.textContent=body.configured===false?' ⚠ 서버 연결됨 · Cloudflare Secret 3개 확인 필요':' ✓ OCR 서버 경로 정상 · 실제 Google 호출은 사진 업로드 시 확인';
- }catch(err){result.textContent=' ✕ '+String(err?.message||'연결 실패').slice(0,240);}
- finally{button.disabled=false;}
 }
 zc77RunAutoRegistrationOCR=async function(file){
  const isCurrent=()=>zcAutoRegFile===file&&$('zc-auto-reg-overlay')?.hidden===false;
@@ -7086,7 +7019,7 @@ function openFileDB(options={migrate:true}){return window.SnoteIdbCompat.open('f
 function carFiles(id){return mediaByCar[id]||[]}
 function carPhotos(id){return carFiles(id).filter(x=>x.group==='photos').sort((a,b)=>a.createdAt-b.createdAt)}
 function saveCover(){if(isAccountant())return;try{if(isSnoteAdmin()){const c=cars.find(c=>c.id===activeCarId)||cars.find(c=>covers[c.id]);const owner=c?.ownerId||pendingStatusChange?.ownerId;if(!owner)return;const storage=JSON.parse(snote201ReadLocal(ZC_COVER_PREFIX+owner,owner,value=>{const map=JSON.parse(value);return !!map&&typeof map==='object'&&!Array.isArray(map);})||'{}')||{};for(const row of cars.filter(x=>x.ownerId===owner)){if(covers[row.id])storage[row.id]=covers[row.id];else delete storage[row.id]}localStorage.setItem(ZC_COVER_PREFIX+owner,JSON.stringify(storage));}else localStorage.setItem(ZC_COVER_PREFIX+currentUser.username,JSON.stringify(covers))}catch(_){}}
-async function refreshMedia(){if(isAccountant()){mediaObjectUrls.forEach(u=>URL.revokeObjectURL(u));mediaObjectUrls=[];mediaByCar={};modelPhotoUrls.forEach(u=>URL.revokeObjectURL(u));modelPhotoUrls=[];modelPhotos=[];renderCars();return;}if(!fileDB)return;if(!currentUser){mediaByCar={};return}const records=await new Promise((resolve,reject)=>{const tx=fileDB.transaction('media','readonly');const r=tx.objectStore('media').getAll();r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)});mediaObjectUrls.forEach(url=>URL.revokeObjectURL(url));mediaObjectUrls=[];mediaByCar={};for(const record of records.filter(r=>currentUser&&(isAccountant()||r.ownerId===currentUser.username))){record.url=URL.createObjectURL(record.blob);mediaObjectUrls.push(record.url);(mediaByCar[record.carId]||(mediaByCar[record.carId]=[])).push(record)}await refreshModelPhotos();renderCars();if(activeCarId)renderVehicle()}
+async function refreshMedia(){if(isAccountant()){mediaObjectUrls.forEach(u=>URL.revokeObjectURL(u));mediaObjectUrls=[];mediaByCar={};modelPhotoUrls.forEach(u=>URL.revokeObjectURL(u));modelPhotoUrls=[];modelPhotos=[];renderCars();return;}if(!fileDB)return;if(!currentUser){mediaByCar={};return}const records=await new Promise((resolve,reject)=>{const tx=fileDB.transaction('media','readonly');const r=tx.objectStore('media').getAll();r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)});mediaObjectUrls.forEach(url=>URL.revokeObjectURL(url));mediaObjectUrls=[];mediaByCar={};for(const record of records.filter(r=>currentUser&&(isAccountant()||r.ownerId===currentUser.username))){record.url=URL.createObjectURL(record.blob);mediaObjectUrls.push(record.url);(mediaByCar[record.carId]||(mediaByCar[record.carId]=[])).push(record)}renderCars();if(activeCarId)renderVehicle()}
 function updateDB(records,removeIds=[]){return new Promise((resolve,reject)=>{if(!fileDB){reject(new Error('현재 브라우저에서 이미지 저장 기능을 사용할 수 없습니다.'));return}const tx=fileDB.transaction('media','readwrite'),store=tx.objectStore('media');for(const id of removeIds)store.delete(id);for(const record of records)store.put(record);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error||new Error('저장 중 오류'));tx.onabort=()=>reject(tx.error||new Error('저장이 취소되었습니다.'))})}
 
 /* v1.8: original S-NOTE premium A4 quotation; preserve v1.7 amount-calculation semantics. */
@@ -7853,11 +7786,6 @@ function applyVinOCRCandidate(){
 }
 function dismissVinOCRCandidate(){showVinOcrState('info','추출 결과를 적용하지 않았습니다. 기존 차대번호는 유지됩니다.')}
 function vinOcrReset(){vinOcrRequest++;vinOcrState={level:'info',message:'등록증을 첨부하면 자동 인식합니다.',candidate:null};const input=$('detail-vin');if(input)input.classList.remove('vin-ocr-filled');showVinOcrState('info',vinOcrState.message)}
-async function redoRegistrationVinOCR(){
- if(vinOcrRunning){toast('차대번호 인식 중입니다. 잠시 기다려주세요.');return}
- const rec=carFiles(activeCarId).find(x=>x.group==='registration');if(!rec?.blob){toast('자동차등록증 사진을 먼저 등록해주세요.');return}
- await runRegistrationVinOCR(rec.blob,activeCarId);
-}
 async function vinImageCanvas(blob,limit=2600){
  let bitmap=null,img=null,url=null;
  try{
@@ -10763,7 +10691,6 @@ async function serverMediaRefresh(){
    row.url=URL.createObjectURL(row.blob);urls.push(row.url);(next[row.carId]||(next[row.carId]=[])).push(row);
   }catch(_){if(current())console.warn('파일 조회 실패',m.id);}}}
   await Promise.all(Array.from({length:Math.min(5,all.length)},()=>worker()));if(!current())throw snoteMediaScopeError();
-  if(typeof refreshModelPhotos==='function')await refreshModelPhotos();if(!current())throw snoteMediaScopeError();
   for(const url of mediaObjectUrls)try{URL.revokeObjectURL(url)}catch{};
   mediaObjectUrls=urls;mediaByCar=next;snote174VehicleDocumentSnapshot={current:()=>snoteMediaCurrent(base),requestEpoch:request,complete:countDocuments&&Array.isArray(r.data)&&Number.isSafeInteger(r.count)&&r.count===r.data.length&&r.data.every(row=>row.company_id===base.companyId),groups:new Map([...documentSlots].map(([key,present])=>[key,[...SNOTE174_DOCUMENT_GROUPS].filter(group=>present.has(group))]))};committed=true;renderCars();window.dispatchEvent(new Event('snote:vehicle-documents-ready'));if(activeCarId)renderVehicle();
  }finally{if(!committed)for(const url of urls)try{URL.revokeObjectURL(url)}catch{}}
@@ -13136,19 +13063,18 @@ window.zc86Cloud={getAccessToken:async()=>{const client=S.client,user=S.user,com
 
 </script>
 <script src="assets/snote-customer-intake.js?v=2.198" defer></script>
-<script type="module" src="assets/quick-calculator.js?v=2.85"></script>
-<script src="assets/vehicle-taxonomy-probe.js?v=2.172" defer></script>
+<script src="assets/optional-tools.js?v=2.255" defer></script>
 <script src="assets/vehicle-sharing.js?v=2.174" defer></script>
 <script src="assets/shared-vehicle-markers.js?v=2.195" defer></script>
 <link rel="stylesheet" href="assets/received-share-list.css?v=2.234">
 <script src="assets/received-share-list.js?v=2.234" defer></script>
 <link rel="stylesheet" href="assets/workspace-reorder.css?v=2.136">
 <script src="assets/workspace-order-store.js?v=2.135" defer></script>
-<script src="assets/workspace-reorder.js?v=2.239" defer></script>
+<script src="assets/workspace-reorder.js?v=2.255" defer></script>
 <script src="assets/vehicle-inspection-route.js?v=2.238" defer></script>
-<script src="assets/release-info.js?v=2.254" defer></script>
+<script src="assets/release-info.js?v=2.255" defer></script>
 <link rel="stylesheet" href="assets/encar-id.css?v=2.162">
-<script src="assets/encar-id.js?v=2.184" defer></script>
+<script src="assets/encar-id.js?v=2.255" defer></script>
 <script src="assets/company-purchase.js?v=2.172" defer></script>
 <script src="assets/recycle-bin.js?v=2.172" defer></script>
 <script src="assets/profile-editor.js?v=2.174" defer></script>
@@ -13163,7 +13089,6 @@ window.zc86Cloud={getAccessToken:async()=>{const client=S.client,user=S.user,com
 <link rel="stylesheet" href="assets/dealer-finance-rates.css?v=2.122">
 <script src="assets/dealer-finance-rates.js?v=2.172" defer></script>
 <script src="assets/workspace-refine.js?v=2.227" defer></script>
-<script src="assets/snote-tutorial.js?v=2.233" defer></script>
 <script src="assets/snote-chatbot.js?v=2.233" defer></script>
 <script src="assets/vehicle-cost-settings.js?v=2.199" defer></script>
 <link rel="stylesheet" href="assets/inventory-start-date.css?v=2.174">
@@ -13205,7 +13130,7 @@ window.addEventListener('snote:payment-accounts-changed',()=>{if(typeof contract
 <link rel="stylesheet" href="assets/design-vehicle.css?v=2.179" data-snote-type-scale>
 <link rel="stylesheet" href="assets/design-settings-office.css?v=2.179" data-snote-type-scale>
 <script src="assets/design-purchase.js?v=2.184" defer></script>
-<script src="assets/design-vehicle.js?v=2.179" defer></script>
+<script src="assets/design-vehicle.js?v=2.255" defer></script>
 <script src="assets/design-settings-office.js?v=2.251" defer></script>
 <link rel="stylesheet" href="assets/signup-registration.css?v=2.191">
 <script src="assets/signup-registration.js?v=2.191" defer></script>
