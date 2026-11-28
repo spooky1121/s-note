@@ -1,0 +1,12 @@
+# CPU runtime: PaddleOCR model architecture executed by ONNX Runtime.
+# Native Paddle weights are not required by this explicitly selected backend.
+onnxruntime==1.23.2
+numpy==2.5.5
+opencv-python-headless==4.10.0.84
+pyclipper==1.4.0
+PyYAML==6.0.2
+Pillow==13.0.0
+fastapi==0.115.12
+uvicorn==0.34.2
+httpx==0.28.1
+pytest==8.3.5
