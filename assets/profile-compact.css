@@ -1,6 +1,6 @@
 /* A stable two-line account summary keeps the same menu and avatar sources. */
 @media screen{
- #snote-app #snote-profile-dropdown{--profile-collapsed-width:34px;flex:0 0 176px;width:176px;min-width:0;padding-left:12px;border-left:0;transition:none}
+ #snote-app #snote-profile-dropdown{--profile-collapsed-width:34px;flex:0 0 123.2px;width:123.2px;min-width:0;padding-left:12px;border-left:0;transition:none}
  #snote-app #snote-profile-trigger{position:relative;z-index:31;display:flex;align-items:center;justify-content:flex-start;gap:8px;width:100%;min-width:0;max-width:none;height:44px;min-height:44px;margin:0;padding:4px 0;border:0;border-radius:8px;background:transparent;box-shadow:none;text-align:left;overflow:visible;translate:none!important;transform:none!important;transition:background-color .18s ease}
  #snote-app #snote-profile-trigger:is(:hover,[aria-expanded=true]){background:#f4f5f7}
  #snote-app #snote-profile-trigger #profile-avatar{flex:0 0 32px;width:32px;height:32px;margin:0;font-size:13px}
@@ -11,7 +11,7 @@
  #snote-app #snote-profile-menu{right:0;left:auto;transform-origin:top right}
 }
 @media screen and (max-width:760px){
- #snote-app #snote-profile-dropdown{--profile-collapsed-width:32px;flex-basis:156px;width:156px;padding-left:10px}
+ #snote-app #snote-profile-dropdown{--profile-collapsed-width:32px;flex-basis:109.2px;width:109.2px;padding-left:10px}
  #snote-app #snote-profile-trigger{height:40px;min-height:40px;gap:7px}
  #snote-app #snote-profile-trigger #profile-avatar{flex-basis:30px;width:30px;height:30px;font-size:12px}
  #snote-app #snote-profile-trigger #profile-name{font-size:11px;line-height:16px}
