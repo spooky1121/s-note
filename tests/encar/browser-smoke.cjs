@@ -31,6 +31,7 @@ async function releaseLabels(page,{loggedIn=false,width=1440}={}){
  assert.equal(await page.locator('.topright [data-snote-version]').count(),0);assert.equal(await page.locator('.sidebar .snote-sidebar-version').textContent(),'v'+release.version);assert.equal(await page.locator('#mobile-drawer .snote-sidebar-version').textContent(),'v'+release.version);
  assert.equal(await page.locator('.snote-login-footer [data-snote-version]').textContent(),'v'+release.version,'The runtime-created cloud login footer must use the same canonical version');
  if(loggedIn){
+  await page.waitForFunction(()=>document.documentElement.dataset.snoteStartup!=='pending');
   assert.equal(await page.locator('#auth-shell').evaluate(element=>element.classList.contains('hidden')),true);
   assert.equal(await page.locator('.sidebar .snote-sidebar-version').isVisible(),width>760,'The version belongs at the sidebar bottom');assert.equal(await page.locator('#snote-weather').isVisible(),true);
   await page.locator('#snote-calculator-trigger:not([disabled])').waitFor();

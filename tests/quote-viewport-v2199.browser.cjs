@@ -22,14 +22,19 @@ function contained(m){
 async function keyboard(p,height,offsetTop){
  await p.evaluate(({height,offsetTop})=>{const v=window.visualViewport;Object.defineProperty(v,'height',{configurable:true,get:()=>height});Object.defineProperty(v,'offsetTop',{configurable:true,get:()=>offsetTop});v.dispatchEvent(new Event('resize'));v.dispatchEvent(new Event('scroll'));},{height,offsetTop});await frames(p);contained(await metrics(p));
 }
+async function screenPaperMarkup(p){return p.locator('#quote-paper').evaluate(paper=>{
+ // v2.248 marks optional logos only while preparing/printing. Native afterprint
+ // clears that diagnostic attribute; all content, visibility and geometry remain checked.
+ const copy=paper.cloneNode(true);for(const image of copy.querySelectorAll('.snote-document-brand img[data-snote-print-logo-unavailable],.snote-document-logo img[data-snote-print-logo-unavailable]'))image.removeAttribute('data-snote-print-logo-unavailable');return copy.innerHTML;
+});}
 async function nativePrint(p,width,height){
  const previous=await p.evaluate(()=>__quoteViewportPrints);await p.locator('#quote-overlay [data-document-print]').click();await p.waitForFunction(n=>__quoteViewportPrints===n+1,previous);await p.mouse.move(0,0);
- const body=await p.locator('#quote-paper').innerHTML();await p.emulateMedia({media:'print'});await p.evaluate(()=>document.fonts.ready);await frames(p);
+ const body=await screenPaperMarkup(p);await p.emulateMedia({media:'print'});await p.evaluate(()=>document.fonts.ready);await frames(p);
  const print=await p.locator('#quote-paper').evaluate(e=>{const r=e.getBoundingClientRect(),f=e.querySelector('.q8-bottom').getBoundingClientRect();return{width:r.width,height:r.height,zoom:getComputedStyle(e).zoom,footerBottom:f.bottom-r.top,bankBottom:e.querySelector('.q8-bank-section').getBoundingClientRect().bottom-r.top,footerTop:f.top-r.top,controls:getComputedStyle(document.querySelector('#quote-overlay .snote-document-controls')).display};});
  assert(Math.abs(print.width-210*96/25.4)<1);assert(Math.abs(print.height-297*96/25.4)<1);assert.equal(print.zoom,'1');assert.equal(print.controls,'none');assert(print.footerBottom<print.height);assert(print.bankBottom<=print.footerTop+1);
  const file=path.join(OUT,'quote-'+width+'x'+height+'.pdf'),pdf=await p.pdf({path:file,format:'A4',preferCSSPageSize:true,printBackground:true}),pages=(pdf.toString('latin1').match(/\/Type\s*\/Page\b/g)||[]).length;assert.equal(pages,1,'The quotation remains one native A4 page');
  const text=execFileSync('pdftotext',['-layout',file,'-'],{encoding:'utf8'}).replace(/\s/g,'');for(const expected of['차량구매견적서','차량정보','항목별비용','최종견적금액','입금안내','합성견적차량','12가3456'])assert(text.includes(expected),'Printed quote must retain '+expected);
- await p.emulateMedia({media:'screen'});await p.evaluate(()=>SnoteDocumentViewport.refresh());await frames(p);assert.equal(await p.locator('#quote-paper').innerHTML(),body);contained(await metrics(p));return{pages,...print};
+ await p.emulateMedia({media:'screen'});await p.evaluate(()=>SnoteDocumentViewport.refresh());await frames(p);assert.equal(await screenPaperMarkup(p),body);contained(await metrics(p));return{pages,...print};
 }
 (async()=>{const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium'});setBrowser(browser);try{
  for(const[width,height]of SIZES){const f=await fixture(width,null,{paymentAccountsRegistered:true}),p=f.page;try{
