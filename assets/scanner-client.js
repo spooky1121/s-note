@@ -91,7 +91,8 @@
    const s=ensure(context),row=target(s,value),blob=await readAsset(context,s,row,check);assert(context,s,check);const url=createURL(blob),valueURL={url,timer:null};downloads.add(valueURL);
    try{return saveFile(url,row,()=>state===s&&guard(context,check)&&!s.deleted.has(row.id));}finally{valueURL.timer=root.setTimeout(()=>{if(downloads.delete(valueURL))revokeURL(url);},1000);}
   }
-  return Object.freeze({list,upload,remove,open,download,reset});
+  async function read(context,value,check=()=>true){const s=ensure(context),row=target(s,value);assert(context,s,check);return readAsset(context,s,row,check);}
+  return Object.freeze({list,upload,remove,open,download,read,reset});
  }
  return Object.freeze({create,record,cursor,validFilename,MAX_BYTES:MAX,PAGE_SIZE:PAGE});
 });

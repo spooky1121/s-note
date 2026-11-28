@@ -12,25 +12,36 @@ function fixture(role='accountant'){
  const own={id:'own',ownerId:alias(USER),companyId:COMPANY,model:'Synthetic own car',plate:'00가0001',purchaseAt:'2026-11-01',soldAt:'2026-11-26',status:'판매완료'};
  for(const key of ['buy','sell','inventoryLoan','incomeSettlement','customer','notes'])Object.defineProperty(own,key,{get(){throw Error('Vehicle dates must not read '+key);}});
  const rows=[own,{...own,id:'peer',ownerId:alias(PEER)},{...own,id:'foreign',companyId:FOREIGN},{...own,id:'conflicting-source'}];
- const member={user_id:USER,company_id:COMPANY,active:true,role},actor={key:'verified-personal-calendar',role,actorId:USER,companyId:COMPANY,ready:true},scope={key:'verified-vehicle-scope',ownerAlias:alias(USER),role,ready:true,canRead:role==='admin'||role==='accountant'};
- const box={window:{snoteCompanyPurchaseBridge:{current:()=>true,carAllowed:()=>true},snoteCompanyPurchaseIsReady:()=>true},S:{client:{synthetic:true},user:{id:USER},company:{id:COMPANY},members:[member],carScopes:new WeakMap()},currentUser:{username:alias(USER),role},route:'dashboard',snoteWorkspaceSalesReady:true,snote220CatalogEpoch:1,snote206VehicleCalendarLoadedScope:null,cars:rows,ownerAlias:alias,snote205SchedulerContext:()=>actor,snotePurchaseContext:()=>scope};
+ const member={user_id:USER,company_id:COMPANY,active:true,role},actor={key:'verified-personal-calendar',role,actorId:USER,companyId:COMPANY,ready:true},scope={key:'verified-vehicle-scope',ownerAlias:alias(USER),role,companyId:COMPANY,userId:USER,ready:true,canRead:role==='admin'||role==='accountant'};
+ const box={window:{snoteCompanyPurchaseBridge:{current:()=>true,carAllowed(car){const source=box.S.carScopes.get(car),owner=[USER,PEER].find(id=>alias(id)===car.ownerId);return !!source&&source.ownerId===owner&&source.companyId===COMPANY&&source.carId===car.id&&source.epoch===box.snote220CatalogEpoch;}},snoteCompanyPurchaseIsReady:()=>true},S:{client:{synthetic:true},user:{id:USER},company:{id:COMPANY},members:[member],carScopes:new WeakMap()},currentUser:{username:alias(USER),role},route:'dashboard',snoteWorkspaceSalesReady:true,snote220CatalogEpoch:1,snote206VehicleCalendarLoadedScope:null,cars:rows,ownerAlias:alias,snote205SchedulerContext:()=>actor,snotePurchaseContext:()=>scope};
+ box.S.carScopes.set(rows[0],{companyId:COMPANY,ownerId:USER,carId:'own',epoch:1});box.S.carScopes.set(rows[1],{companyId:COMPANY,ownerId:PEER,carId:'peer',epoch:1});
  box.S.carScopes.set(rows[3],{companyId:COMPANY,ownerId:PEER,carId:'conflicting-source',epoch:1});
  vm.createContext(box);vm.runInContext(source,box);box.window.snote206VehicleCalendarLoaded();
  return {box,actor,scope,member,bridge:box.window.snoteDealerVehicleCalendarBridge};
 }
-test('accountants never receive company/dealer vehicle dates or retained calendar cache keys',()=>{
- const f=fixture();Object.defineProperty(f.box,'cars',{get(){throw Error('Accountant calendar must not inspect any vehicle list');}});
- assert.equal(f.bridge.snapshot(),null);assert.equal(f.bridge.current('verified-personal-calendar'),false);assert.equal(f.box.snote206VehicleCalendarLoadedScope,null);
+test('accountants receive only verified company contracting metadata, with personal and dealer purchase/sale dates separated',()=>{
+ const f=fixture();for(const row of f.box.cars.slice(0,2)){row.status='계약중';row.contractAt='2026-11-28';for(const key of ['purchaseAt','soldAt'])Object.defineProperty(row,key,{get(){throw Error('Accountant contract projection must not inspect '+key);}});}
+ const snapshot=f.bridge.snapshot();assert.equal(snapshot.contractsOnly,true);assert.equal(snapshot.loading,false);assert.equal(f.bridge.current(snapshot.key),true);assert.equal(f.box.snote206VehicleCalendarLoadedScope,null);
+ assert.deepEqual(plain(snapshot.rows),[{ownerId:USER,id:'own',model:'Synthetic own car',plate:'00가0001',purchaseAt:'',soldAt:'',contractAt:'2026-11-28',status:'계약중'},{ownerId:PEER,id:'peer',model:'Synthetic own car',plate:'00가0001',purchaseAt:'',soldAt:'',contractAt:'2026-11-28',status:'계약중'}]);
 });
-test('an accountant role cannot reuse a previously loaded dealer vehicle calendar',()=>{
+test('accountants do not inspect dealer rows before a verified company load',()=>{
+ const f=fixture();f.box.window.snoteCompanyPurchaseIsReady=()=>false;Object.defineProperty(f.box,'cars',{get(){throw Error('Unverified company rows must stay inaccessible');}});
+ const snapshot=f.bridge.snapshot();assert.equal(snapshot.loading,true);assert.deepEqual(plain(snapshot.rows),[]);assert.equal(f.bridge.current(snapshot.key),false);
+});
+test('a changed accountant role cannot reuse a previously loaded dealer vehicle calendar',()=>{
  const f=fixture('dealer'),before=f.bridge.snapshot();assert(before&&before.rows.length===1);
- f.member.role=f.actor.role=f.scope.role=f.box.currentUser.role='accountant';f.scope.canRead=true;
+ f.member.role=f.actor.role=f.scope.role=f.box.currentUser.role='accountant';f.scope.canRead=true;f.box.window.snoteCompanyPurchaseIsReady=()=>false;
  Object.defineProperty(f.box,'cars',{get(){throw Error('Old dealer rows must stay inaccessible after role change');}});
- assert.equal(f.bridge.snapshot(),null);assert.equal(f.bridge.current(before.key),false);
+ const snapshot=f.bridge.snapshot();assert.equal(snapshot.loading,true);assert.deepEqual(plain(snapshot.rows),[]);assert.equal(f.bridge.current(before.key),false);
+});
+test('accountants fail closed for missing company authority, stale bridge and foreign actor scope',()=>{
+ for(const mutate of [f=>{f.scope.canRead=false;},f=>{f.box.window.snoteCompanyPurchaseBridge.current=()=>false;},f=>{f.scope.companyId=FOREIGN;},f=>{f.scope.userId=PEER;}]){
+  const f=fixture();mutate(f);Object.defineProperty(f.box,'cars',{get(){throw Error('Unauthorized rows must not be inspected');}});assert.equal(f.bridge.snapshot(),null);
+ }
 });
 for(const role of ['dealer','admin'])test(role+' retains their own readonly vehicle dates without company-wide or financial projection',()=>{
  const f=fixture(role),snapshot=f.bridge.snapshot();assert.equal(snapshot.loading,false);assert.equal(f.bridge.current(snapshot.key),true);
- assert.deepEqual(plain(snapshot.rows),[{id:'own',model:'Synthetic own car',plate:'00가0001',purchaseAt:'2026-11-01',soldAt:'2026-11-26',status:'판매완료'}]);
+ assert.deepEqual(plain(snapshot.rows),[{id:'own',model:'Synthetic own car',plate:'00가0001',purchaseAt:'2026-11-01',soldAt:'2026-11-26',contractAt:'',status:'판매완료'}]);
 });
 test('route, actor, client, company and epoch replacements reject the former date projection',()=>{
  for(const mutate of [f=>{f.box.route='acctInfo';},f=>{f.box.currentUser={...f.box.currentUser};},f=>{f.box.S.client={synthetic:'replacement'};},f=>{f.box.S.company={id:FOREIGN};f.actor.companyId=FOREIGN;f.member.company_id=FOREIGN;f.scope.key='verified-foreign-vehicle-scope';},f=>{f.box.snote220CatalogEpoch++;}]){

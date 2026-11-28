@@ -18,7 +18,7 @@
  .snote-scheduler-month-actions button:hover:enabled{background:#f4faff;color:#006bb5}
  .snote-scheduler-vehicle-legend{display:flex;align-items:center;gap:10px;font-size:12px;line-height:18px;white-space:nowrap}
  .snote-scheduler-vehicle-legend>span{display:inline-flex;align-items:center;gap:5px}
- .snote-scheduler-vehicle-legend .is-purchase{color:#0073ac}.snote-scheduler-vehicle-legend .is-sale{color:#c72f43}
+ .snote-scheduler-vehicle-legend .is-purchase{color:#0073ac}.snote-scheduler-vehicle-legend .is-sale{color:#c72f43}.snote-scheduler-vehicle-legend .is-contract{color:#a34068}
  .snote-scheduler-vehicle-legend>span::before{content:'';width:7px;height:7px;border-radius:50%;background:currentColor}
  .snote-scheduler-status{margin:0 0 12px;padding:10px 12px;border-radius:9px;background:#f4faff;color:#496078;font-size:13px}
  .snote-scheduler-retry{padding:3px;border:0;background:transparent;color:#006bb5;text-decoration:underline;font-size:inherit}
@@ -79,11 +79,15 @@
  .snote-scheduler-vehicle-event{display:flex;align-items:baseline;gap:7px;min-width:0;min-height:38px;padding:8px 0;border-top:1px solid #edf0f3;font-size:13px;line-height:20px;cursor:default}
  .snote-scheduler-vehicle-kind{flex:none;font-size:11px;font-weight:600}
  .snote-scheduler-vehicle-title{min-width:0;overflow-wrap:anywhere}
- .snote-scheduler-vehicle-event.is-purchase{color:#0073ac}.snote-scheduler-vehicle-event.is-sale{color:#c72f43}
+ .snote-scheduler-vehicle-event.is-purchase{color:#0073ac}.snote-scheduler-vehicle-event.is-sale{color:#c72f43}.snote-scheduler-vehicle-event.is-contract{color:#96365d;background:#fde7ee;border-color:#f5d4e0;border-radius:5px;padding-inline:6px}
  .snote-scheduler-vehicle-event.is-compact{min-height:20px;height:20px;padding:2px 4px;margin:2px 0;border:0;border-left:2px solid currentColor;border-radius:4px;font-size:11px;line-height:16px;overflow:hidden}
  .snote-scheduler-vehicle-event.is-compact .snote-scheduler-vehicle-kind{font-size:10px}
  .snote-scheduler-vehicle-event.is-compact .snote-scheduler-vehicle-title{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
- .snote-scheduler-vehicle-event.is-compact.is-purchase{border-left-color:#52c2ff;background:#e8f7ff}.snote-scheduler-vehicle-event.is-compact.is-sale{border-left-color:#ff6b7a;background:#fff0f2}
+ .snote-scheduler-vehicle-event.is-compact.is-purchase{border-left-color:#52c2ff;background:#e8f7ff}.snote-scheduler-vehicle-event.is-compact.is-sale{border-left-color:#ff6b7a;background:#fff0f2}.snote-scheduler-vehicle-event.is-compact.is-contract{border-left-color:#e99cb9;background:#fde7ee}
+ .snote-scheduler-contract-undated{flex:none;min-width:0;margin-top:8px;border:1px solid #f5d4e0;border-radius:7px;background:#fff6f9;color:#96365d;font-size:11px;line-height:16px}
+ .snote-scheduler-contract-undated>summary{padding:6px 9px;cursor:pointer}
+ .snote-scheduler-contract-undated-list{display:grid;gap:4px;max-height:100px;padding:0 9px 7px;overflow:auto}
+ .snote-scheduler-contract-undated-list>p{min-width:0;margin:0;overflow-wrap:anywhere}
  .snote-scheduler-dialog{width:min(520px,calc(100vw - 32px));max-width:calc(100vw - 32px);max-height:calc(100dvh - 40px);margin:auto;padding:0;border:1px solid #e7ecf1;border-radius:16px;background:#fff;color:#192c41;font-family:inherit;overflow:visible}
  .snote-scheduler-dialog::backdrop{background:#192c4140;backdrop-filter:blur(2px)}
  .snote-scheduler-dialog-body{max-height:calc(100dvh - 58px);overflow-y:auto;overscroll-behavior:contain;padding:26px!important;border-radius:inherit}

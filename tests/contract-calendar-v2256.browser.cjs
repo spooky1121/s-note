@@ -1,0 +1,28 @@
+'use strict';
+// Real role-scoped dashboard with synthetic canonical vehicles and personal schedules.
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),os=require('node:os');
+const {chromium}=require('./encar/node_modules/playwright'),{backend,setup}=require('./accountant-scanner-v2247.browser.cjs');
+const {constants:{A,ACCOUNTANT,COMPANY}}=require('./dealer-scheduler.browser.cjs');
+const ROOT=path.resolve(__dirname,'..'),OUT=process.env.SNOTE_CONTRACT_CALENDAR_DIR||path.join(os.tmpdir(),'snote-contract-calendar-v2256');fs.mkdirSync(OUT,{recursive:true});
+const HASH_FILES=['index.html','assets/dealer-scheduler.js','assets/dealer-scheduler.css'],hashes=()=>Object.fromEntries(HASH_FILES.map(file=>[file,crypto.createHash('sha256').update(fs.readFileSync(path.join(ROOT,file))).digest('hex')])),checks=[];
+function stateFixture(){
+ const s=backend(),company=s.companyData.get(COMPANY),dataset=company.datasets.find(row=>row.dataset==='cars'&&row.ownerId===A);
+ const base={ownerId:'UNTRUSTED_PAYLOAD_OWNER',year:2026,km:10000,buy:10000000,sell:12000000,moneyUnit:'KRW',purchaseAt:'2027-03-15'};
+ dataset.payload=[{...base,id:'dated-contract',model:'가상 계약일 등록 차량',plate:'00가1101',status:'계약중',contractAt:'2027-03-16'},{...base,id:'undated-contract',model:'가상 계약일 미등록 차량',plate:'00가1102',status:'계약중'},{...base,id:'sold-visible-dealer-only',model:'가상 판매 차량',plate:'00가1103',status:'판매완료',soldAt:'2027-03-17',soldPrice:11000000}];
+ const from=s.from;s.from=async(label,input)=>{const r=await from(label,input);if(input.table!=='zc_datasets'||!Array.isArray(r?.data))return r;return{...r,data:r.data.map(row=>row.dataset==='cars'&&row.owner_id===A?{...row,payload:structuredClone(dataset.payload),revision:dataset.revision}:row)};};
+ s.events.clear();s.seed(A,{title:'딜러 본인 일정 QA',eventDate:'2027-03-15'});s.seed(ACCOUNTANT,{title:'경리 본인 일정 QA',eventDate:'2027-03-15'});return s;
+}
+async function role(browser,email,width){
+ const s=stateFixture(),f=await setup(browser,width,email,s),p=f.page;
+ try{
+  const calendar=p.locator('#snote-dealer-scheduler');await calendar.locator('[data-vehicle-calendar-event][data-kind=contract]').waitFor();
+  const contract=calendar.locator('[data-date="2027-03-16"] [data-vehicle-calendar-event][data-kind=contract]');assert.equal(await contract.count(),1);assert((await contract.innerText()).includes('가상 계약일 등록 차량'));assert.match(await contract.getAttribute('aria-label'),/읽기 전용/);assert.equal(await contract.getAttribute('role'),'note');
+  const color=await contract.evaluate(e=>({color:getComputedStyle(e).color,background:getComputedStyle(e).backgroundColor,border:getComputedStyle(e).borderLeftColor}));assert.equal(color.background,'rgb(253, 231, 238)');assert.equal(color.border,'rgb(233, 156, 185)');await contract.click();assert.equal(await p.locator('#snote-dealer-scheduler-dialog[open]').count(),0,'Readonly vehicle markers must not open personal schedule editing');
+  const missing=calendar.locator('[data-contract-undated]');assert.match(await missing.locator('summary').innerText(),/계약일 미등록 1대/);await missing.locator('summary').click();assert((await missing.innerText()).includes('가상 계약일 미등록 차량'));assert.equal(await calendar.locator('[data-vehicle-calendar-event][data-vehicle-id="undated-contract"][data-kind=contract]').count(),0,'Missing contract dates stay out of date cells');
+  const text=await calendar.innerText();if(email.startsWith('accountant')){assert.equal(await calendar.locator('[data-vehicle-calendar-event][data-kind=purchase],[data-vehicle-calendar-event][data-kind=sale]').count(),0);assert(text.includes('경리 본인 일정 QA'));assert(!text.includes('딜러 본인 일정 QA'));}else{assert(await calendar.locator('[data-vehicle-calendar-event][data-kind=purchase]').count()>0);assert(await calendar.locator('[data-vehicle-calendar-event][data-kind=sale]').count()>0);assert(text.includes('딜러 본인 일정 QA'));assert(!text.includes('경리 본인 일정 QA'));}
+  const geometry=await calendar.evaluate(e=>({right:e.getBoundingClientRect().right,width:innerWidth,page:document.documentElement.scrollWidth}));assert(geometry.right<=geometry.width+1&&geometry.page<=geometry.width+1,JSON.stringify(geometry));assert.equal(s.scheduleWrites.length,0);assert.equal(s.writes.length,0);assert.equal(s.scannerCalls.length,0);
+  await p.screenshot({path:path.join(OUT,(email.startsWith('accountant')?'accountant':'dealer')+'-'+width+'.png'),fullPage:true});checks.push({role:email.startsWith('accountant')?'accountant':'dealer',width,contractDate:'2027-03-16',missingDates:1,readonly:true,personalSchedulesSeparated:true,color,geometry});console.log('PASS '+email+' '+width+' pink dated contract, undated list, private personal schedule and role-specific trade dates');await f.finish();
+ }catch(error){await p.screenshot({path:path.join(OUT,'failure-'+email.split('@')[0]+'-'+width+'.png'),fullPage:true}).catch(()=>{});await f.context.close();throw error;}
+}
+async function main(){const before=hashes(),browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium'});try{for(const width of[1366,390])for(const email of['dealer@example.invalid','accountant@example.invalid'])await role(browser,email,width);assert.deepEqual(hashes(),before);fs.writeFileSync(path.join(OUT,'results.json'),JSON.stringify({ok:true,syntheticOnly:true,operatingReads:0,operatingWrites:0,checks,sourceHashes:before},null,2)+'\n');}finally{await browser.close();}}
+if(require.main===module)main().catch(error=>{fs.writeFileSync(path.join(OUT,'failure.txt'),error.stack||String(error));console.error(error.stack);process.exitCode=1;});
