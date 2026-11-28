@@ -53,11 +53,12 @@
   if(!state){state={kind,mode,styles:[],svg:null,ring:null};stepState.set(host,state);}
   for(const value of ['plus','minus'])host.classList.toggle('snote-step-'+value,value===kind);
   if(mode==='glyph'){
-   host.classList.add('snote-step-glyph');const svg=host.querySelector('svg');
+   if(!host.classList.contains('snote-step-glyph'))host.classList.add('snote-step-glyph');const svg=host.querySelector('svg');
    if(svg&&(!state.ring||!state.ring.contains(svg))){if(state.ringNative)state.ring?.classList.remove('snote-step-glyph-ring');else state.ring?.remove();const native=svg.parentElement.matches('.mobile-plus'),ring=native?svg.parentElement:document.createElement('span');ring.classList.add('snote-step-glyph-ring');if(!native){ring.setAttribute('aria-hidden','true');svg.before(ring);ring.append(svg);}state.svg=svg;state.ring=ring;state.ringNative=native;}
    return;
   }
-  host.classList.add('snote-step-circle');host.classList.remove('snote-flat-icon-control');
+  if(!host.classList.contains('snote-step-circle'))host.classList.add('snote-step-circle');
+  if(host.classList.contains('snote-flat-icon-control'))host.classList.remove('snote-flat-icon-control');
   const values=[['display','inline-grid'],['place-items','center'],['box-sizing','border-box'],['width','28px'],['height','28px'],['min-width','28px'],['min-height','28px'],['flex','0 0 28px'],['align-self','var(--snote-step-align, center)'],['padding','0px'],['border','0px solid transparent'],['border-radius','50%'],['background','radial-gradient(circle var(--snote-step-radius, 14px) at center, var(--snote-step-background, #edf4ff) 98%, transparent 100%)'],['color','var(--snote-step-color, #0033a8)'],['box-shadow','none']];
   if(!state.styles.length)state.styles=values.map(([key])=>[key,host.style.getPropertyValue(key),host.style.getPropertyPriority(key)]);
   for(const[key,value]of values)if(host.style.getPropertyValue(key)!==value||host.style.getPropertyPriority(key)!=='important')host.style.setProperty(key,value,'important');

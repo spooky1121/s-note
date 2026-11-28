@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.252">
+<html lang="ko" data-snote-release="2.253">
 <head>
 <meta charset="utf-8" />
   <link rel="preload" href="assets/fonts/PretendardVariable.woff2?v=2.233" as="font" type="font/woff2" crossorigin>
@@ -3186,7 +3186,7 @@ button, input, select, textarea { font-family: inherit; }
 <link rel="stylesheet" href="assets/dealer-scheduler.css?v=2.244" data-snote-type-scale>
 <script src="assets/dealer-scheduler-store.js?v=2.244" defer></script>
 <script src="assets/korean-holidays.js?v=2.212" defer></script>
-<script src="assets/dealer-scheduler.js?v=2.244" defer></script>
+<script src="assets/dealer-scheduler.js?v=2.253" defer></script>
 <script src="assets/home-dashboard.js?v=2.246" defer></script>
 <script src="assets/dashboard-news.js?v=2.241" defer></script>
 <link rel="stylesheet" href="assets/mobile-office-tasks.css?v=2.184">
@@ -3229,7 +3229,7 @@ button, input, select, textarea { font-family: inherit; }
 <link rel="stylesheet" href="assets/workspace-refine.css?v=2.227">
 <script src="assets/icon-feedback.js?v=2.178" defer></script>
 <link rel="stylesheet" href="assets/icon-sizing.css?v=2.86">
-<script src="assets/icon-sizing.js?v=2.166" defer></script>
+<script src="assets/icon-sizing.js?v=2.253" defer></script>
 <script src="assets/action-controls.js?v=2.172" defer></script>
 <script src="assets/readable-type.js?v=2.228" defer></script>
 <link rel="stylesheet" href="assets/mobile-shell.css?v=2.59">
@@ -12618,11 +12618,12 @@ async function snote90RemoveCarMedia(carId){
 }
 // Profile actions use one verified identity and a captured JWT throughout each request.
 let snoteProfileSession=null,snoteProfileEpoch=0,snoteProfileAvatarMeta=null,snoteProfileAvatarImageCache=null;
+const snoteProfileAvatarDownloads=new Map();
 function snoteProfileResetAssets(options={}){
  window.SnotePaymentAccounts?.reset();
  if(!options.keepCompanyAssets){snote128ResetCompanyAssets();window.SnoteContractOffice?.reset();}
  if(snoteProfileAvatarImageCache?.url)URL.revokeObjectURL(snoteProfileAvatarImageCache.url);
- snoteProfileAvatarImageCache=null;snoteProfileAvatarMeta=null;snoteProfileSession=null;snoteProfileEpoch++;
+ snoteProfileAvatarImageCache=null;snoteProfileAvatarMeta=null;snoteProfileSession=null;snoteProfileEpoch++;snoteProfileAvatarDownloads.clear();
  const host=byId('profile-avatar');if(host)host.textContent=(currentUser?.name||'S').slice(0,1);
 }
 window.snoteResetProfileAssets=snoteProfileResetAssets;
@@ -12744,18 +12745,31 @@ async function snoteProfileAvatarResult(context,bound,metadata){
   if(snoteProfileAvatarImageCache?.url)URL.revokeObjectURL(snoteProfileAvatarImageCache.url);snoteProfileAvatarImageCache=null;snoteProfilePaintAvatar(context);return {avatar,avatarURL:null};
  }
  if(snoteProfileAvatarImageCache?.key===context.key&&snoteProfileAvatarImageCache.path===avatar.avatar_path)return {avatar,avatarURL:snoteProfileAvatarImageCache.url};
- const encoded=avatar.avatar_path.split('/').map(encodeURIComponent).join('/');
- const response=await fetch(bound.url+'/storage/v1/object/authenticated/snote-profile-photos/'+encoded,{credentials:'omit',cache:'no-store',redirect:'error',referrerPolicy:'no-referrer',headers:{apikey:bound.key,Authorization:'Bearer '+bound.token}});
- if(!response.ok)throw snoteProfileError('SNOTE_PROFILE_IMAGE','사진을 불러오지 못했습니다. 다시 시도해 주세요.');
- const blob=await response.blob();snoteProfileAssert(context);
- const mime=snoteProfileImageMime(new Uint8Array(await blob.slice(0,16).arrayBuffer()));snoteProfileAssert(context);
- if(!blob.size||blob.size>5242880||!mime)throw snoteProfileError('SNOTE_PROFILE_IMAGE','사진 형식을 확인해 주세요.');
+ // Each caller already pinned its own verified identity. Share only the same
+ // in-flight private image, never metadata reads or another session's bytes.
+ const key=JSON.stringify([context.key,avatar.avatar_path,avatar.avatar_revision]);
+ let pending=snoteProfileAvatarDownloads.get(key);
+ if(!pending||pending.client!==context.client){
+  pending={client:context.client,task:null};snoteProfileAvatarDownloads.set(key,pending);
+  pending.task=(async()=>{
+   const encoded=avatar.avatar_path.split('/').map(encodeURIComponent).join('/');
+   const response=await fetch(bound.url+'/storage/v1/object/authenticated/snote-profile-photos/'+encoded,{credentials:'omit',cache:'no-store',redirect:'error',referrerPolicy:'no-referrer',headers:{apikey:bound.key,Authorization:'Bearer '+bound.token}});
+   if(!response.ok)throw snoteProfileError('SNOTE_PROFILE_IMAGE','사진을 불러오지 못했습니다. 다시 시도해 주세요.');
+   const blob=await response.blob();snoteProfileAssert(context);
+   const mime=snoteProfileImageMime(new Uint8Array(await blob.slice(0,16).arrayBuffer()));snoteProfileAssert(context);
+   if(!blob.size||blob.size>5242880||!mime)throw snoteProfileError('SNOTE_PROFILE_IMAGE','사진 형식을 확인해 주세요.');
+   const latest=snoteProfileAvatarMeta?.value;
+   if(latest&&latest.avatar_revision>avatar.avatar_revision)return snoteProfileAvatarResult(context,bound,latest);
+   if(snoteProfileAvatarImageCache?.key===context.key&&snoteProfileAvatarImageCache.path===avatar.avatar_path)return {avatar,avatarURL:snoteProfileAvatarImageCache.url};
+   const url=URL.createObjectURL(blob),old=snoteProfileAvatarImageCache;
+   snoteProfileAvatarImageCache={key:context.key,path:avatar.avatar_path,url};snoteProfilePaintAvatar(context);if(old?.url)URL.revokeObjectURL(old.url);
+   return {avatar,avatarURL:url};
+  })().finally(()=>{if(snoteProfileAvatarDownloads.get(key)===pending)snoteProfileAvatarDownloads.delete(key);});
+ }
+ const result=await pending.task;snoteProfileAssert(context);
  const latest=snoteProfileAvatarMeta?.value;
- if(latest&&latest.avatar_revision>avatar.avatar_revision)return snoteProfileAvatarResult(context,bound,latest);
- if(snoteProfileAvatarImageCache?.key===context.key&&snoteProfileAvatarImageCache.path===avatar.avatar_path)return {avatar,avatarURL:snoteProfileAvatarImageCache.url};
- const url=URL.createObjectURL(blob),old=snoteProfileAvatarImageCache;
- snoteProfileAvatarImageCache={key:context.key,path:avatar.avatar_path,url};snoteProfilePaintAvatar(context);if(old?.url)URL.revokeObjectURL(old.url);
- return {avatar,avatarURL:url};
+ if(latest&&latest.avatar_revision>result.avatar.avatar_revision)return snoteProfileAvatarResult(context,bound,latest);
+ return result;
 }
 async function snoteProfileAvatarRead(context,bound){
  const metadata=snoteProfileAvatarCheck(context,await snoteProfileRpc(context,bound,'snote_profile_avatar_read',{p_company:context.companyId}));
@@ -13132,7 +13146,7 @@ window.zc86Cloud={getAccessToken:async()=>{const client=S.client,user=S.user,com
 <script src="assets/workspace-order-store.js?v=2.135" defer></script>
 <script src="assets/workspace-reorder.js?v=2.239" defer></script>
 <script src="assets/vehicle-inspection-route.js?v=2.238" defer></script>
-<script src="assets/release-info.js?v=2.252" defer></script>
+<script src="assets/release-info.js?v=2.253" defer></script>
 <link rel="stylesheet" href="assets/encar-id.css?v=2.162">
 <script src="assets/encar-id.js?v=2.184" defer></script>
 <script src="assets/company-purchase.js?v=2.172" defer></script>
