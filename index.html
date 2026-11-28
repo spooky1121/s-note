@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.255">
+<html lang="ko" data-snote-release="2.256">
 <head>
 <meta charset="utf-8" />
   <link rel="preload" href="assets/fonts/PretendardVariable.woff2?v=2.233" as="font" type="font/woff2" crossorigin>
@@ -3183,10 +3183,10 @@ button, input, select, textarea { font-family: inherit; }
 <script src="assets/route-transition.js?v=2.213" defer></script>
 <link rel="stylesheet" href="assets/home-dashboard.css?v=2.246" data-snote-type-scale>
 <link rel="stylesheet" href="assets/dashboard-news.css?v=2.241" data-snote-type-scale>
-<link rel="stylesheet" href="assets/dealer-scheduler.css?v=2.244" data-snote-type-scale>
+<link rel="stylesheet" href="assets/dealer-scheduler.css?v=2.256" data-snote-type-scale>
 <script src="assets/dealer-scheduler-store.js?v=2.244" defer></script>
 <script src="assets/korean-holidays.js?v=2.212" defer></script>
-<script src="assets/dealer-scheduler.js?v=2.253" defer></script>
+<script src="assets/dealer-scheduler.js?v=2.256" defer></script>
 <script src="assets/home-dashboard.js?v=2.246" defer></script>
 <script src="assets/dashboard-news.js?v=2.241" defer></script>
 <link rel="stylesheet" href="assets/mobile-office-tasks.css?v=2.184">
@@ -3202,7 +3202,7 @@ button, input, select, textarea { font-family: inherit; }
 <script src="assets/idle-recovery.js?v=2.201"></script>
 <script src="assets/idle-session.js?v=2.172"></script>
 <link rel="stylesheet" href="assets/profile-settings.css?v=2.102">
-<script src="assets/feature-loader.js?v=2.255"></script>
+<script src="assets/feature-loader.js?v=2.256"></script>
 <script src="assets/vehicle-colors.js?v=2.23"></script>
 <link rel="stylesheet" href="assets/customer-contract-signature.css?v=2.165">
 <script src="assets/customer-contract-signature.js?v=2.165"></script>
@@ -3261,7 +3261,7 @@ button, input, select, textarea { font-family: inherit; }
 <link rel="stylesheet" href="assets/accountant-navigation.css?v=2.246">
 <link rel="stylesheet" href="assets/accountant-information.css?v=2.246">
 <link rel="stylesheet" href="assets/accountant-business-pages.css?v=2.246">
-<link rel="stylesheet" href="assets/scanner.css?v=2.254">
+<link rel="stylesheet" href="assets/scanner.css?v=2.256">
 <link rel="stylesheet" href="assets/contract-office.css?v=2.246">
 <link rel="stylesheet" href="assets/workspace-ledgers.css?v=2.136">
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/snote-favicon.png?v=2.226">
@@ -5199,6 +5199,13 @@ function closeStatusModal(){
  $('status-overlay').classList.remove('open');$('status-overlay').setAttribute('aria-hidden','true');
  $('status-overlay').querySelector('.status-confirm-card').classList.remove('cancel-mode');
 }
+// Only a real transition into contracting records a date; legacy rows stay undated.
+function snote256VehicleStatusPatch(car,next,now=new Date()){
+ const patch={status:next};if(car&&next==='계약중'&&car.status!=='계약중'){
+  const parts=Object.fromEntries(new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(now).map(part=>[part.type,part.value]));
+  patch.contractAt=parts.year.padStart(4,'0')+'-'+parts.month+'-'+parts.day;
+ }return patch;
+}
 async function confirmStatusChange(){
  if(isAccountant()){toast('경리 계정에는 차량 상태 변경 권한이 없습니다.');return;}
  const req=pendingStatusChange;if(!req||!currentUser||$('status-confirm-submit').disabled)return;
@@ -5281,7 +5288,7 @@ async function confirmStatusChange(){
   finally{locked.forEach(({node,inert})=>node.inert=inert);if(pendingStatusChange===req){button.disabled=false;button.removeAttribute('aria-busy');$('confirm-sold-date').disabled=false;$('confirm-sold-price').disabled=false;if(!current())closeStatusModal();}}
   return;
  }
- const backup={...c};c.status=req.next;
+ const backup={...c};Object.assign(c,snote256VehicleStatusPatch(c,req.next));
  if(req.next==='판매완료'){c.soldAt=soldAt;c.soldPrice=soldPrice;const interest=snote239Interest(c);if(interest.ready){c.costs={...c.costs,inventoryInterest:interest.amountWon};c.inventoryInterestSnapshot=globalThis.SnoteInventoryInterest.snapshot(c,snoteInventoryLendersFor(c));}}
  if(!persistCars(c.ownerId)){for(const key of Object.keys(c))if(!Object.hasOwn(backup,key))delete c[key];Object.assign(c,backup);toast('상태를 저장하지 못했습니다.');return}
  if(req.next==='계약중'&&isPurchaseListRoute()&&!['all','계약중'].includes($('list-filter').value))$('list-filter').value='all';
@@ -9842,6 +9849,7 @@ function snote247Scans(){
 }
 window.snoteScannerBridge=Object.freeze({context:snote247ScannerContext,current:snote247ScannerCurrent,
  list(context,options,isCurrent){snote247ScannerAssert(context,isCurrent);return snote247Scans().list(context,options,isCurrent);},
+ read(context,value,isCurrent){snote247ScannerAssert(context,isCurrent);return snote247Scans().read(context,value,isCurrent);},
  upload(context,value,isCurrent){snote247ScannerAssert(context,isCurrent);return snote247Scans().upload(context,value,isCurrent);},
  remove(context,value,isCurrent){snote247ScannerAssert(context,isCurrent);return snote247Scans().remove(context,value,isCurrent);},
  open(context,value,origin,isCurrent){snote247ScannerAssert(context,isCurrent);return snote247Scans().open(context,value,origin,isCurrent);},
@@ -11725,8 +11733,8 @@ window.snoteDealerSchedulerBridge=Object.freeze({
  remove(expected,id,revision){return snote205SchedulerRpc(expected,'snote_schedule_delete',{p_expected_company_id:expected.companyId,p_event_id:id,p_expected_revision:revision});}
 });
 
-// Reuse already loaded own vehicles. Calendar dates never include financial values
-// and do not unlock the protected dashboard or perform another server request.
+// Reuse verified vehicle metadata only; personal schedules keep their own identity.
+// Accountants receive contracting dates only, never dealer purchase/sale schedules.
 window.snote206VehicleCalendarLoaded=()=>{
  const member=S.members.find(row=>row.user_id===S.user?.id&&row.company_id===S.company?.id&&row.active===true&&['admin','dealer'].includes(row.role));
  snote206VehicleCalendarLoadedScope=member&&S.client&&currentUser?.username===ownerAlias(S.user.id)&&currentUser.role===member.role?
@@ -11735,7 +11743,10 @@ window.snote206VehicleCalendarLoaded=()=>{
 function snote206VehicleCalendarContext(){
  if(route!=='dashboard')return null;
  const actor=snote205SchedulerContext(),scope=snotePurchaseContext(),loaded=snote206VehicleCalendarLoadedScope;
- if(actor?.role==='accountant')return null;
+ if(actor?.role==='accountant'){
+  if(!scope||typeof scope.key!=='string'||!scope.key||scope.role!=='accountant'||scope.companyId!==actor.companyId||scope.userId!==actor.actorId||scope.ownerAlias!==currentUser?.username||scope.canRead!==true||window.snoteCompanyPurchaseBridge?.current?.(scope)!==true)return null;
+  return {key:JSON.stringify([actor.key,scope.key,'contracts-only']),contractsOnly:true,loading:!snoteWorkspaceSalesReady||scope.ready!==true||window.snoteCompanyPurchaseIsReady?.()!==true};
+ }
  if(!actor||!scope||typeof scope.key!=='string'||scope.ownerAlias!==currentUser?.username||!loaded||
   loaded.client!==S.client||loaded.actor!==currentUser||loaded.userId!==actor.actorId||loaded.companyId!==actor.companyId||loaded.role!==actor.role||loaded.epoch!==snote220CatalogEpoch)return null;
  return {key:JSON.stringify([actor.key,scope.key]),loading:!snoteWorkspaceSalesReady||scope.ready!==true};
@@ -11745,12 +11756,15 @@ window.snoteDealerVehicleCalendarBridge=Object.freeze({
   const context=snote206VehicleCalendarContext();if(!context)return null;
   const value=(input,max)=>typeof input==='string'?input.slice(0,max):'';
   const rows=context.loading?[]:cars.filter(car=>{
-   if(!car||car.ownerId!==currentUser.username||(car.companyId&&car.companyId!==S.company.id)||(car.company_id&&car.company_id!==S.company.id))return false;
+   if(!car||(car.companyId&&car.companyId!==S.company.id)||(car.company_id&&car.company_id!==S.company.id))return false;
    const source=S.carScopes.get(car);
+   if(context.contractsOnly)return car.status==='계약중'&&!!source&&source.companyId===S.company.id&&source.carId===String(car.id)&&source.epoch===snote220CatalogEpoch&&window.snoteCompanyPurchaseBridge?.carAllowed?.(car)===true;
+   if(car.ownerId!==currentUser.username)return false;
    return !source||(source.companyId===S.company.id&&source.ownerId===S.user.id&&source.carId===String(car.id)&&source.epoch===snote220CatalogEpoch);
   }).map(car=>({
+    ...(context.contractsOnly?{ownerId:value(S.carScopes.get(car)?.ownerId,36)}:{}),
     id:value(String(car.id??''),200),model:value(car.model,200),plate:value(car.plate,32),
-    purchaseAt:value(car.purchaseAt,32),soldAt:value(car.soldAt,32),status:car.status==='판매완료'?'판매완료':''
+    purchaseAt:context.contractsOnly?'':value(car.purchaseAt,32),soldAt:context.contractsOnly?'':value(car.soldAt,32),contractAt:value(car.contractAt,32),status:['판매완료','계약중'].includes(car.status)?car.status:''
    }));
   return {...context,rows};
  },
@@ -13072,7 +13086,7 @@ window.zc86Cloud={getAccessToken:async()=>{const client=S.client,user=S.user,com
 <script src="assets/workspace-order-store.js?v=2.135" defer></script>
 <script src="assets/workspace-reorder.js?v=2.255" defer></script>
 <script src="assets/vehicle-inspection-route.js?v=2.238" defer></script>
-<script src="assets/release-info.js?v=2.255" defer></script>
+<script src="assets/release-info.js?v=2.256" defer></script>
 <link rel="stylesheet" href="assets/encar-id.css?v=2.162">
 <script src="assets/encar-id.js?v=2.255" defer></script>
 <script src="assets/company-purchase.js?v=2.172" defer></script>
