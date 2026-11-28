@@ -362,7 +362,7 @@ async function vehiclePaletteRegression(width){
  await finish(f);console.log('PASS '+width+'px compact aligned form, readable amounts, single-tooltip Encar wordmark and clipped-safe 12-color palette preserve legacy values, keyboard use and explicit save/discard');
 }
 
-module.exports={fixture,setBrowser(value){browser=value;},finish};
+module.exports={fixture,setBrowser(value){browser=value;},finish,TOKEN};
 if(require.main===module)(async()=>{
  browser=await chromium.launch({headless:true,...(executablePath?{executablePath}:{})});
  try{

@@ -2,8 +2,8 @@
 // Real settings UI and captured-token bridge; all Auth, provider and API replies are synthetic.
 const assert=require('node:assert/strict'),path=require('node:path');
 const{chromium}=require('./encar/node_modules/playwright');
-const{fixture,setBrowser,finish}=require('./encar/browser-smoke.cjs');
-const ROOT=path.resolve(__dirname,'..'),CARD='#snote-encar-taxonomy-probe',ACTOR='11111111-1111-4111-8111-111111111111',COMPANY='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',TOKEN='synthetic-local-encar-session';
+const{fixture,setBrowser,finish,TOKEN}=require('./encar/browser-smoke.cjs');
+const ROOT=path.resolve(__dirname,'..'),CARD='#snote-encar-taxonomy-probe',ACTOR='11111111-1111-4111-8111-111111111111',COMPANY='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
 function report({cached=false,manufacturer='Hyundai'}={}){return {ok:true,configured:true,provider:'encar-api.com',manufacturer,checkedAt:new Date().toISOString(),cached,providerRequestCount:cached?0:2,samples:[{listingId:'43000001',manufacturer:'현대',modelGroup:'그랜저',model:'그랜저 IG',badge:'2.4 프리미엄'},{listingId:'43000002',manufacturer:'현대',model:'더 뉴 그랜저',badge:'3.3 캘리그래피'}],detailClassification:[{path:'category.manufacturer.code',value:'005'},{path:'category.model.name',value:'그랜저 IG'}],schemaSummary:{modelGroupObserved:true,separateGradeTrimObserved:false,classificationCodeObserved:true,requiresReview:true},detailStatus:'checked',rateLimit:{limit:100,remaining:98,reset:1794000000},warnings:[],importEnabled:false,apiKey:'PRIVATE_PROVIDER_KEY',seller:{phone:'PRIVATE_SELLER_PHONE'}};}
 async function boot(f,{mount=true,role='admin',height=950}={}){
  const p=f.page,q=f.probe={statusMode:'ready',probeMode:'ready',requests:[],statusHold:false,probeHold:false,releases:[]};if(height!==950)await p.setViewportSize({width:p.viewportSize().width,height});

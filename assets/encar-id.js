@@ -88,6 +88,7 @@
  const priceMessage=document.createElement('span');priceMessage.id='snote-encar-price-message';priceMessage.className='snote-encar-price-message';priceMessage.setAttribute('role','status');priceMessage.setAttribute('aria-live','polite');
  pricePanel.append(priceLabel,priceChange,priceMessage);document.getElementById('vehicle-title')?.after(pricePanel);
  const setText=(node,value)=>{if(node.textContent!==value)node.textContent=value;};
+ const setProperty=(node,key,value)=>{if(node[key]!==value)node[key]=value;};
  const adURL=id=>'https://fem.encar.com/cars/detail/'+id+'?listAdvType=share&adnm=mo_detail_url';
  const won=value=>Number.isSafeInteger(value)&&value>0&&value<=MAX_WON;
  const current=context=>!!context&&bridge()?.current(context)===true;
@@ -160,11 +161,11 @@
   const context=detailContext(),record=context&&saved(context),scope=context?context.key:null;
   if(detailScope!==scope){cancelPrice();detailScope=scope;compared.clear();}
   if(priceJob&&!current(priceJob.context))cancelPrice();
-  if(!context||!record){pricePanel.hidden=true;setText(priceLabel,'');setText(priceMessage,'');priceLabel.removeAttribute('title');return;}
-  pricePanel.hidden=false;const checking=!!priceJob&&priceJob.context.key===context.key&&priceJob.id===record.id,writing=!!priceWrite&&priceWrite.context.key===context.key;
+  if(!context||!record){setProperty(pricePanel,'hidden',true);setText(priceLabel,'');setText(priceMessage,'');priceLabel.removeAttribute('title');return;}
+  setProperty(pricePanel,'hidden',false);const checking=!!priceJob&&priceJob.context.key===context.key&&priceJob.id===record.id,writing=!!priceWrite&&priceWrite.context.key===context.key;
   setText(priceLabel,priced(record)?'엔카 광고가 '+record.priceWon.toLocaleString('ko-KR')+'원':checking?'엔카 광고가 확인 중…':'엔카 광고가 확인 필요');
-  if(priced(record))priceLabel.title='광고 금액 확인 · '+new Date(record.priceCheckedAt).toLocaleString('ko-KR');else priceLabel.removeAttribute('title');
-  const expected=planned(context);priceChange.hidden=!priced(record)||!writable(context)||expected===null||expected===record.priceWon;priceChange.disabled=checking||writing;
+  if(priced(record))setProperty(priceLabel,'title','광고 금액 확인 · '+new Date(record.priceCheckedAt).toLocaleString('ko-KR'));else priceLabel.removeAttribute('title');
+  const expected=planned(context);setProperty(priceChange,'hidden',!priced(record)||!writable(context)||expected===null||expected===record.priceWon);setProperty(priceChange,'disabled',checking||writing);
   setText(priceMessage,'');
  }
  priceChange.addEventListener('click',()=>{const context=detailContext(),record=context&&saved(context);if(record)void refreshPrice(context,{force:!fresh(record),repeat:true});});
@@ -207,11 +208,11 @@
     // dependent on this optional search/price bundle being available to reopen it.
     if(context){const record=saved(context);
      if(record){if(button.getAttribute('href')!==record.url)button.setAttribute('href',record.url);button.removeAttribute('aria-disabled');button.removeAttribute('tabindex');}
-     else{button.removeAttribute('href');button.setAttribute('aria-disabled','true');button.tabIndex=-1;}
+     else{button.removeAttribute('href');if(button.getAttribute('aria-disabled')!=='true')button.setAttribute('aria-disabled','true');setProperty(button,'tabIndex',-1);}
     }
     continue;
    }
-   button.disabled=!context||!!session&&!saved(context);
+   setProperty(button,'disabled',!context||!!session&&!saved(context));
    if(detail){const label=context&&saved(context)?'엔카 광고 열기':'엔카 광고 찾기';if(button.getAttribute('aria-label')!==label)button.setAttribute('aria-label',label);if(button.dataset.tooltip!==label)button.dataset.tooltip=label;}
   }
  }

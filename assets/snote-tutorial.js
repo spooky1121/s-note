@@ -1,6 +1,6 @@
 /* Illustrated first-use guide. Screenshots contain examples; actions use existing page guards. */
 (()=>{'use strict';
- if(window.SnoteTutorial)return;
+ if(window.SnoteTutorialView)return;
  const chapters=[
   {id:'dashboard',title:'대시보드와 일정',summary:'오늘의 업무를 한눈에',steps:[
    {title:'요약 카드를 펼쳐 현황을 봐요',image:'dashboard-overview.jpg',caption:'대시보드 · 투자금과 이번 달 실적',text:'총투자금 카드를 누르면 재고대출금·현금투자금과 이번 달 매입·판매·수익 카드가 옆으로 펼쳐져요. 한 번 더 누르면 다시 접혀요.',items:['확인 권한이 필요한 금액은 잠금을 해제한 뒤 볼 수 있어요.','브라우저 너비에 맞춰 카드 배치가 조정돼요.'],route:'dashboard',action:'대시보드 열기'},
@@ -95,5 +95,5 @@
   new MutationObserver(records=>{if(dialog.open&&records.some(record=>!dialog.contains(record.target)))scheduleScope();}).observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['class','hidden','aria-hidden']});
   window.addEventListener('snote:route-changed',scheduleScope);window.addEventListener('resize',()=>{if(matchMedia('(max-width:760px)').matches)close(false);else alignTopic();});window.addEventListener('pagehide',()=>close(false,false));
  }
- window.SnoteTutorial=Object.freeze({open,close});
+ window.SnoteTutorialView=Object.freeze({open,close});
 })();
