@@ -52,10 +52,7 @@
  function loginCopy(){
   const register=document.getElementById('zc86-register');if(register&&register.textContent!=='상사대표 가입'){register.textContent='상사대표 가입';register.setAttribute('aria-label','상사대표 가입');}
   const dealer=document.getElementById('snote-dealer-register');if(dealer&&dealer.textContent!=='일반딜러 가입')dealer.textContent='일반딜러 가입';
-  const invite=document.getElementById('snote-invite-open');if(invite&&invite.textContent!=='초대코드로 가입')invite.textContent='초대코드로 가입';
-  const intro=invite?.parentElement?.querySelector('span');if(intro&&intro.textContent!=='초대받은 직원은')intro.textContent='초대받은 직원은';
   const hint=document.querySelector('#zc-cloud-gate .snote-login-shared-hint');if(hint&&hint.textContent!=='공용 PC는 해제해 주세요')hint.textContent='공용 PC는 해제해 주세요';
-  const footer=document.querySelector('#zc-cloud-gate .snote-login-footer');if(footer){const text=[...footer.childNodes].find(child=>child.nodeType===Node.TEXT_NODE&&/©/.test(child.textContent));if(text){const match=text.textContent.match(/©\s*\d{4}\s*S-NOTE/i),value=match?.[0]||'© S-NOTE';if(text.textContent!==value+' ')text.textContent=value+' ';}}
  }
  function refresh(){queued=false;loginCopy();refreshSettings();}
  function schedule(){if(!queued){queued=true;requestAnimationFrame(refresh);}}
