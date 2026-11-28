@@ -14,12 +14,14 @@ public sealed class PairingState
     private string code = "";
     private DateTimeOffset codeExpires, attemptWindow;
     private int attempts;
+    private long generation;
     public PairingState(TimeProvider? timeProvider = null)
     {
         clock = timeProvider ?? TimeProvider.System;
         Rotate();
     }
     public string CurrentCode { get { lock (gate) { EnsureCode(); return code; } } }
+    public long Generation { get { lock (gate) return generation; } }
     public void Rotate()
     {
         lock (gate) { NewCode(); }
@@ -43,14 +45,39 @@ public sealed class PairingState
             if (suppliedCode.Length != 6 || suppliedCode.Any(c => c is < '0' or > '9') ||
                 !CryptographicOperations.FixedTimeEquals(Encoding.ASCII.GetBytes(code), Encoding.ASCII.GetBytes(suppliedCode)))
                 throw new ConnectorException("BAD_CODE", 401);
-            foreach (var key in capabilities.Where(p => p.Value.ExpiresAt <= now).Select(p => p.Key).ToArray()) capabilities.Remove(key);
-            // Re-pairing is an explicit replacement for the oldest capability.
-            if (capabilities.Count >= 8) capabilities.Remove(capabilities.MinBy(p => p.Value.ExpiresAt).Key);
-            var token = Convert.ToHexString(RandomNumberGenerator.GetBytes(32)).ToLowerInvariant();
-            var expires = now.AddHours(12);
-            capabilities.Add(Digest(token), new(Digest(token), origin, expires));
+            var result = Issue(origin, now);
             NewCode();
-            return new(token, expires);
+            return result;
+        }
+    }
+    public PairingResult IssueApproved(string origin, long expectedGeneration, Action? remember = null)
+    {
+        lock (gate)
+        {
+            if (generation != expectedGeneration) throw new ConnectorException("CANCELLED", 409);
+            // Reset acquires this gate before clearing the durable store. A
+            // delayed approval cannot re-add trust or mint a token after reset.
+            remember?.Invoke();
+            return Issue(origin, clock.GetUtcNow());
+        }
+    }
+    private PairingResult Issue(string origin, DateTimeOffset now)
+    {
+        foreach (var key in capabilities.Where(p => p.Value.ExpiresAt <= now).Select(p => p.Key).ToArray()) capabilities.Remove(key);
+        if (capabilities.Count >= 8) capabilities.Remove(capabilities.MinBy(p => p.Value.ExpiresAt).Key);
+        var token = Convert.ToHexString(RandomNumberGenerator.GetBytes(32)).ToLowerInvariant();
+        var expires = now.AddHours(12);
+        capabilities.Add(Digest(token), new(Digest(token), origin, expires));
+        return new(token, expires);
+    }
+    public void RevokeAll(Action? clearTrust = null)
+    {
+        lock (gate)
+        {
+            capabilities.Clear();
+            generation++;
+            clearTrust?.Invoke();
+            NewCode();
         }
     }
     public LocalCapability Authenticate(string token, string origin)

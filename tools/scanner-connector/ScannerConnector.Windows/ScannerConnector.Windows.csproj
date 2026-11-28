@@ -13,7 +13,7 @@
     <PublishSingleFile>true</PublishSingleFile>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
     <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
-    <Version>1.0.0</Version>
+    <Version>1.1.0</Version>
     <Description>S-NOTE Windows scanner connector</Description>
     <Company>S-NOTE</Company>
     <Product>S-NOTE 스캐너 연결</Product>
@@ -23,5 +23,7 @@
     <ProjectReference Include="../ScannerConnector.Core/ScannerConnector.Core.csproj" />
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <EmbeddedResource Include="../../../assets/snote-favicon.png" LogicalName="Snote.ScannerConnector.Windows.Brand.png" />
+    <EmbeddedResource Include="Licenses/DOTNET-LICENSE.txt" LogicalName="Snote.ScannerConnector.Windows.Licenses.LICENSE.txt" />
+    <EmbeddedResource Include="Licenses/DOTNET-ThirdPartyNotices.txt" LogicalName="Snote.ScannerConnector.Windows.Licenses.ThirdPartyNotices.txt" />
   </ItemGroup>
 </Project>

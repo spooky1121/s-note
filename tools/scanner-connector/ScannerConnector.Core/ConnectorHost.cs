@@ -12,12 +12,12 @@ namespace Snote.ScannerConnector.Core;
 
 public static class ConnectorHost
 {
-    public const int Protocol = 1;
+    public const int Protocol = 2;
     public const string Product = "snote-scanner-connector";
-    public const string Version = "1.0.0";
+    public const string Version = "1.1.0";
     private static readonly HashSet<string> Origins = ["https://s-note.kr", "https://s-note.pages.dev"];
     private static readonly HashSet<string> CorsHeaders = ["content-type", "x-snote-scanner-token"];
-    private static readonly HashSet<string> ErrorCodes = ["PAIRING_REQUIRED", "BAD_CODE", "BUSY", "NO_DEVICE", "DRIVER_ERROR", "SCAN_FAILED", "NO_PAPER", "NOT_FOUND", "EXPIRED", "CANCELLED", "INVALID_REQUEST", "FORBIDDEN"];
+    private static readonly HashSet<string> ErrorCodes = ["PAIRING_REQUIRED", "BAD_CODE", "BUSY", "NO_DEVICE", "DRIVER_ERROR", "SCAN_FAILED", "NO_PAPER", "NOT_FOUND", "EXPIRED", "CANCELLED", "INVALID_REQUEST", "FORBIDDEN", "CONNECTION_DENIED", "TOO_MANY_ATTEMPTS"];
     private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web);
 
     public static WebApplication Create(IScannerAdapter adapter, PairingState pairing, ConnectorOptions? options = null)
@@ -44,8 +44,9 @@ public static class ConnectorHost
         });
         var app = builder.Build();
         var jobs = new ScanJobs(adapter, pairing, options.TimeProvider);
+        var connections = new BrowserConnections(pairing, options.TrustStore, options.ConnectionApproval, options.TimeProvider);
         var timer = new System.Threading.Timer(_ => jobs.Sweep(), null, TimeSpan.FromSeconds(30), TimeSpan.FromSeconds(30));
-        app.Lifetime.ApplicationStopping.Register(() => { timer.Dispose(); jobs.Dispose(); });
+        app.Lifetime.ApplicationStopping.Register(() => { timer.Dispose(); connections.Dispose(); jobs.Dispose(); });
         app.Run(async context =>
         {
             context.Response.Headers.CacheControl = "no-store";
@@ -57,9 +58,9 @@ public static class ConnectorHost
                     context.Connection.RemoteIpAddress is not { } remote || !IPAddress.IsLoopback(remote))
                     throw new ConnectorException("FORBIDDEN", 403);
                 var origin = context.Request.Headers.Origin.ToString();
-                if (!Origins.Contains(origin)) throw new ConnectorException("FORBIDDEN", 403);
+                if (!IsAllowedOrigin(origin)) throw new ConnectorException("FORBIDDEN", 403);
                 var path = context.Request.Path.Value ?? "";
-                var methods = Methods(path);
+                var methods = Methods(path, options.AllowLegacyPairing);
                 if (methods.Length == 0 || context.Request.QueryString.HasValue) throw new ConnectorException("NOT_FOUND", 404);
                 context.Response.Headers.AccessControlAllowOrigin = origin;
                 context.Response.Headers.Vary = "Origin, Access-Control-Request-Method, Access-Control-Request-Headers";
@@ -82,7 +83,26 @@ public static class ConnectorHost
                 if (!methods.Contains(context.Request.Method)) throw new ConnectorException("INVALID_REQUEST", 405);
                 if (path == "/v1/health")
                 {
-                    await Send(context, new { ok = true, product = Product, protocol = Protocol, version = Version, platform = "windows" });
+                    await Send(context, new { ok = true, product = Product, protocol = Protocol, version = Version, platform = "windows", capabilities = new[] { "browser-key-approval", "remembered-browser" } });
+                    return;
+                }
+                if (path == "/v2/connect/start")
+                {
+                    using var body = await Read(context, ["clientId", "scope", "session", "publicKey"]);
+                    var raw = body.RootElement;
+                    var challenge = connections.Start(origin, String(raw, "clientId", 64), String(raw, "scope", 64),
+                        String(raw, "session", 64), String(raw, "publicKey", 200));
+                    await Send(context, new { ok = true, id = challenge.Id, challenge = challenge.Challenge, expiresAt = challenge.ExpiresAt });
+                    return;
+                }
+                if (path == "/v2/connect/finish")
+                {
+                    using var body = await Read(context, ["id", "signature"]);
+                    var raw = body.RootElement;
+                    if (!Guid.TryParseExact(String(raw, "id", 36), "D", out var id) || id == Guid.Empty)
+                        throw new ConnectorException("INVALID_REQUEST", 400);
+                    var connection = await connections.FinishAsync(origin, id, String(raw, "signature", 88), context.RequestAborted);
+                    await Send(context, new { ok = true, token = connection.Token, expiresAt = connection.ExpiresAt, remembered = connection.Remembered });
                     return;
                 }
                 if (path == "/v1/pair")
@@ -144,7 +164,8 @@ public static class ConnectorHost
                 await Send(context, new { ok = false, code, error = Message(code) }, known?.StatusCode ?? code switch
                 {
                     "PAIRING_REQUIRED" or "BAD_CODE" => 401,
-                    "FORBIDDEN" => 403,
+                    "FORBIDDEN" or "CONNECTION_DENIED" => 403,
+                    "TOO_MANY_ATTEMPTS" => 429,
                     "NOT_FOUND" => 404,
                     "BUSY" or "CANCELLED" => 409,
                     "EXPIRED" => 410,
@@ -155,16 +176,18 @@ public static class ConnectorHost
         });
         return app;
     }
-    private static string[] Methods(string path)
+    private static string[] Methods(string path, bool allowLegacyPairing)
     {
         if (path is "/v1/health" or "/v1/devices") return ["GET"];
-        if (path is "/v1/pair" or "/v1/scans") return ["POST"];
+        if (path == "/v1/pair") return allowLegacyPairing ? ["POST"] : [];
+        if (path is "/v1/scans" or "/v2/connect/start" or "/v2/connect/finish") return ["POST"];
         var parts = path.Split('/');
         if (parts.Length is not (4 or 5) || parts[1] != "v1" || parts[2] != "scans" ||
             !Guid.TryParseExact(parts[3], "D", out var id) || id == Guid.Empty) return [];
         if (parts.Length == 5) return parts[4] == "image" ? ["GET"] : [];
         return ["GET", "DELETE"];
     }
+    internal static bool IsAllowedOrigin(string origin) => Origins.Contains(origin);
     private static bool ValidText(string value, int max) => !string.IsNullOrWhiteSpace(value) && value.Length <= max && !value.Any(char.IsControl);
     private static string String(JsonElement root, string key, int max)
     {
@@ -201,8 +224,10 @@ public static class ConnectorHost
     }
     private static string Message(string code) => code switch
     {
-        "PAIRING_REQUIRED" => "PC 연결 도우미의 연결코드를 다시 입력해 주세요.",
+        "PAIRING_REQUIRED" => "웹에서 스캔을 다시 눌러 PC 연결을 확인해 주세요.",
         "BAD_CODE" => "PC 연결 도우미의 연결코드를 확인해 주세요.",
+        "CONNECTION_DENIED" => "PC 연결 도우미에서 연결을 허용해 주세요.",
+        "TOO_MANY_ATTEMPTS" => "연결 요청이 많습니다. 잠시 후 다시 시도해 주세요.",
         "BUSY" => "스캐너가 처리 중입니다. 작업이 끝난 뒤 다시 시도해 주세요.",
         "NO_DEVICE" => "스캐너를 찾지 못했습니다. 전원·Wi-Fi·스캔 드라이버를 확인해 주세요.",
         "NO_PAPER" => "스캔할 원고를 넣어 주세요.",

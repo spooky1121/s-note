@@ -10,7 +10,8 @@ using Microsoft.Extensions.Hosting;
 using Snote.ScannerConnector.Core;
 
 // Generated device/image data only. The production WIA adapter is never used.
-if (args.Contains("--serve", StringComparer.Ordinal)) await ProtocolTests.ServeAsync();
+if (args.Contains("--serve-v2", StringComparer.Ordinal)) await BrowserConnectionTests.ServeAsync();
+else if (args.Contains("--serve", StringComparer.Ordinal)) await ProtocolTests.ServeAsync();
 else await ProtocolTests.RunAsync();
 
 static class ProtocolTests
@@ -18,6 +19,7 @@ static class ProtocolTests
     const string Site = "https://s-note.kr";
     const string AlternateSite = "https://s-note.pages.dev";
     static readonly List<string> Passed = [];
+    internal static byte[] SyntheticJpeg => FakeScanner.Jpeg;
 
     // Browser wire tests may launch this test assembly. It never loads WIA and
     // is not referenced or packaged by the production Windows project.
@@ -36,7 +38,7 @@ static class ProtocolTests
         {
             var r = await h.Get("/v1/health");
             Equal(200, r.Status); Equal("snote-scanner-connector", r.Text("product"));
-            Equal(1, r.Json.GetProperty("protocol").GetInt32());
+            Equal(2, r.Json.GetProperty("protocol").GetInt32());
             Equal(Site, r.Header("Access-Control-Allow-Origin"));
             Check(!r.Raw.Contains(h.Pairing.CurrentCode, StringComparison.Ordinal), "Pair code leaked in health");
             Check(!r.Json.TryGetProperty("devices", out _), "Unpaired health exposed devices");
@@ -240,6 +242,7 @@ static class ProtocolTests
             Equal("failed", state.Text("state")); Check(!state.Raw.Contains("SYNTHETIC_PRIVATE_PATH"), "Raw native error leaked");
             h.Adapter.Error = null; Guid next = Guid.NewGuid(); Equal(202, (await h.Post("/v1/scans", Body(next), token)).Status); await h.Complete(next, token);
         });
+        Passed.AddRange(await BrowserConnectionTests.RunAsync());
         string output = Environment.GetEnvironmentVariable("SCANNER_CONNECTOR_TEST_RECEIPT") ?? Path.Combine(Path.GetTempPath(), "snote-scanner-native-protocol.json");
         Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(output))!);
         await File.WriteAllTextAsync(output, JsonSerializer.Serialize(new { ok = true, syntheticOnly = true, actualWiaUsed = false, productionRequests = 0, passed = Passed.Count, cases = Passed }, new JsonSerializerOptions { WriteIndented = true }));
@@ -294,7 +297,7 @@ static class ProtocolTests
         readonly WebApplication _app;
         readonly HttpClient _http;
         public Uri Address => _http.BaseAddress!;
-        Harness(int port) { Pairing = new PairingState(Clock); _app = ConnectorHost.Create(Adapter, Pairing, new ConnectorOptions { Port = port, TimeProvider = Clock }); _http = new(); }
+        Harness(int port) { Pairing = new PairingState(Clock); _app = ConnectorHost.Create(Adapter, Pairing, new ConnectorOptions { Port = port, TimeProvider = Clock, AllowLegacyPairing = true }); _http = new(); }
         public static async Task<Harness> Create(int port = 0)
         {
             var h = new Harness(port); await h._app.StartAsync();

@@ -6,7 +6,7 @@
  let session=null,sequence=0,deviceModule=null;
  function loadDevice(){
   if(root.SnoteScannerDevice)return Promise.resolve(root.SnoteScannerDevice);if(deviceModule)return deviceModule;
-  let task;task=new Promise((resolve,reject)=>{const script=document.createElement('script');let settled=false;const finish=ok=>{if(settled)return;settled=true;clearTimeout(timer);script.onload=script.onerror=null;if(ok&&typeof root.SnoteScannerDevice?.createController==='function')resolve(root.SnoteScannerDevice);else{script.remove();if(deviceModule===task)deviceModule=null;reject(Error('DEVICE_MODULE_UNAVAILABLE'));}};const timer=setTimeout(()=>finish(false),10000);script.src=new URL('assets/scanner-device.js?v=2.250',document.baseURI).href;script.async=true;script.onload=()=>finish(true);script.onerror=()=>finish(false);document.head.append(script);});deviceModule=task;return task;
+  let task;task=new Promise((resolve,reject)=>{const script=document.createElement('script');let settled=false;const finish=ok=>{if(settled)return;settled=true;clearTimeout(timer);script.onload=script.onerror=null;if(ok&&typeof root.SnoteScannerDevice?.createController==='function')resolve(root.SnoteScannerDevice);else{script.remove();if(deviceModule===task)deviceModule=null;reject(Error('DEVICE_MODULE_UNAVAILABLE'));}};const timer=setTimeout(()=>finish(false),10000);script.src=new URL('assets/scanner-device.js?v=2.254',document.baseURI).href;script.async=true;script.onload=()=>finish(true);script.onerror=()=>finish(false);document.head.append(script);});deviceModule=task;return task;
  }
  function current(s){if(session!==s||!s.live||!s.host.isConnected||!s.host.contains(s.root))return false;try{return s.bridge===s.options.bridge&&s.bridge.current(s.context)===true;}catch{return false;}}
  function status(s,text,tone=''){if(!current(s))return;s.status.textContent=text;s.status.dataset.tone=tone;}
@@ -18,7 +18,7 @@
   if(!current(s)||!s.ready||s.deviceBusy||s.devicePending||s.confirming||s.deleting||s.queue.pending()||s.queue.busy())return;
   const intent=++s.deviceIntent;s.deviceBusy=true;update(s);
   try{const api=await loadDevice();if(!current(s)||intent!==s.deviceIntent)return;
-   if(!s.device)s.device=api.createController({host:s.deviceHost,scopeKey:s.context.deviceKey||s.context.key,isCurrent:()=>current(s),canSave:()=>current(s)&&s.ready&&!s.loading&&!s.confirming&&!s.deleting&&!s.queue.busy()&&!s.pendingDelete,onSave:file=>selectFiles(s,[file],true),onState:value=>{if(!current(s))return;s.deviceBusy=value.busy;s.devicePending=value.pending;update(s);},onClose:()=>{if(current(s)){update(s);s.queue.resume();s.deviceButton.focus();}}});
+   if(!s.device)s.device=api.createController({host:s.deviceHost,scopeKey:s.context.deviceKey||s.context.key,credentialScope:s.context.credentialScope||JSON.stringify([s.context.companyId,s.context.userId]),isCurrent:()=>current(s),canSave:()=>current(s)&&s.ready&&!s.loading&&!s.confirming&&!s.deleting&&!s.queue.busy()&&!s.pendingDelete,onSave:file=>selectFiles(s,[file],true),onState:value=>{if(!current(s))return;s.deviceBusy=value.busy;s.devicePending=value.pending;update(s);},onClose:()=>{if(current(s)){update(s);s.queue.resume();s.deviceButton.focus();}}});
    s.deviceBusy=false;update(s);await s.device.activate({settings});
   }catch{if(current(s)&&intent===s.deviceIntent)status(s,'스캐너 연결 화면을 불러오지 못했습니다. 다시 눌러 주세요.','error');}
   finally{if(current(s)&&intent===s.deviceIntent){s.deviceBusy=s.device?.busy()===true;s.devicePending=s.device?.pending()===true;update(s);}}
