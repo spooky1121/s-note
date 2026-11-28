@@ -34,6 +34,7 @@
  #snote-global-search .snote-unified-copy small {font-size:11px;line-height:1.5;color:#7f8a98;overflow-wrap:anywhere}
  #snote-global-search .snote-unified-badge {flex:none;font-size:10px;color:#71808c;white-space:nowrap}
  #snote-global-search .snote-unified-badge[data-status="판매중"] {color:#168359}
+ #snote-global-search .snote-unified-badge[data-status="계약중"] {color:#c72b45}
  #snote-global-search .snote-unified-badge[data-status="판매완료"] {color:#2658db}
  #snote-global-search .snote-unified-message {margin:4px 8px 10px;font-size:12px;line-height:1.6;color:#7f8a98}
  @media (min-width:761px) and (max-width:1120px) {

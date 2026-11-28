@@ -35,7 +35,7 @@
         const copy = node('span', null, 'snote-unified-copy'); copy.append(node('strong', row.title));
         if (row.detail) copy.append(node('small', row.detail));
         const badge = node('span', row.badge || (kind === 'menu' ? '이동' : '보기'), 'snote-unified-badge');
-        if (kind === 'vehicle' && ['판매중', '판매완료'].includes(row.badge)) badge.dataset.status = row.badge;
+        if (kind === 'vehicle' && ['판매중', '계약중', '판매완료'].includes(row.badge)) badge.dataset.status = row.badge;
         button.append(copy, badge);
         section.append(button);
       }
