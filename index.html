@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" data-snote-release="2.256">
+<html lang="ko" data-snote-release="2.257">
 <head>
 <meta charset="utf-8" />
   <link rel="preload" href="assets/fonts/PretendardVariable.woff2?v=2.233" as="font" type="font/woff2" crossorigin>
@@ -3202,7 +3202,7 @@ button, input, select, textarea { font-family: inherit; }
 <script src="assets/idle-recovery.js?v=2.201"></script>
 <script src="assets/idle-session.js?v=2.172"></script>
 <link rel="stylesheet" href="assets/profile-settings.css?v=2.102">
-<script src="assets/feature-loader.js?v=2.256"></script>
+<script src="assets/feature-loader.js?v=2.257"></script>
 <script src="assets/vehicle-colors.js?v=2.23"></script>
 <link rel="stylesheet" href="assets/customer-contract-signature.css?v=2.165">
 <script src="assets/customer-contract-signature.js?v=2.165"></script>
@@ -3261,7 +3261,7 @@ button, input, select, textarea { font-family: inherit; }
 <link rel="stylesheet" href="assets/accountant-navigation.css?v=2.246">
 <link rel="stylesheet" href="assets/accountant-information.css?v=2.246">
 <link rel="stylesheet" href="assets/accountant-business-pages.css?v=2.246">
-<link rel="stylesheet" href="assets/scanner.css?v=2.256">
+<link rel="stylesheet" href="assets/scanner.css?v=2.257">
 <link rel="stylesheet" href="assets/contract-office.css?v=2.246">
 <link rel="stylesheet" href="assets/workspace-ledgers.css?v=2.136">
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/snote-favicon.png?v=2.226">
@@ -4102,7 +4102,9 @@ function snote239MountAccountantPage(){
  return true;
 }
 function snote239ResetAccountantWorkspace(){
- snote247ScannerIntent++;window.SnoteScanner?.reset();
+ snote247ScannerIntent++;
+ if(window.SnoteScanner)window.SnoteScanner.reset({type:'snote:auth-reset'});
+ else try{for(const key of Object.keys(sessionStorage))if(key.startsWith('snote:scanner-session:v1:'))sessionStorage.removeItem(key);}catch{}
  snote244BusinessIntent++;window.SnoteAccountantBusinessPages?.reset();
  snote240InformationIntent++;snote240InformationTab='accounts';snote240InformationPreparedTab=null;window.snoteResetAccountantInformation?.();
  window.SnoteAccountantInformation?.reset();
@@ -9810,7 +9812,7 @@ function snote247ScannerRevoke(context){
  snote247ScannerDenied=saved.identity.key;snote247ScannerReset();window.SnoteScanner?.reset();
  if(route==='acctScanner')$('alt-content').textContent='스캐너 이용 권한을 확인하지 못했습니다. 다시 로그인해 주세요.';
 }
-async function snote247ScannerRequest(context,value,isCurrent=()=>true){
+async function snote247ScannerRequest(context,value,isCurrent=()=>true,analysis=false){
  snote247ScannerAssert(context,isCurrent);const saved=snote247ScannerContexts.get(context),controller=new AbortController();snote247ScannerRequests.add(controller);
  const mutation=['upload','delete'].includes(value.action);let sent=false,authTimer,requestTimer;
  try{
@@ -9818,9 +9820,9 @@ async function snote247ScannerRequest(context,value,isCurrent=()=>true){
   if(bound.user.id!==context.userId||snoteIdleSessionId(bound.session)!==saved.sessionId)throw snote247ScannerError('SCANNER_CONTEXT_CHANGED');
   let body;const headers={Authorization:'Bearer '+bound.token,Accept:value.action==='read'?'image/jpeg,image/png,image/webp':'application/json'};
   if(value.action==='upload'){body=new FormData();body.append('action','upload');body.append('companyId',context.companyId);body.append('requestId',value.requestId);body.append('file',value.file);}
-  else{headers['Content-Type']='application/json';body=JSON.stringify({...value,companyId:context.companyId});}
-  requestTimer=setTimeout(()=>controller.abort(),30000);sent=true;
-  const response=await fetch('/api/scanner',{method:'POST',credentials:'omit',cache:'no-store',redirect:'error',referrerPolicy:'no-referrer',headers,body,signal:controller.signal});snote247ScannerAssert(context,isCurrent);
+  else{headers['Content-Type']='application/json';body=JSON.stringify(analysis?{companyId:context.companyId,id:value.id,revision:value.revision}:{...value,companyId:context.companyId});}
+  requestTimer=setTimeout(()=>controller.abort(),analysis?90000:30000);sent=true;
+  const response=await fetch(analysis?'/api/scanner-analysis':'/api/scanner',{method:'POST',credentials:'omit',cache:'no-store',redirect:'error',referrerPolicy:'no-referrer',headers,body,signal:controller.signal});snote247ScannerAssert(context,isCurrent);
   const reader=response.body?.getReader();if(!reader)throw snote247ScannerError('SCANNER_INVALID_RESPONSE',mutation);
   const chunks=[],limit=value.action==='read'&&response.ok?5*1024*1024:65536;let size=0;
   try{for(;;){const part=await reader.read();snote247ScannerAssert(context,isCurrent);if(part.done)break;size+=part.value.byteLength;if(size>limit)throw snote247ScannerError('SCANNER_INVALID_RESPONSE',mutation);chunks.push(part.value);}}finally{await reader.cancel().catch(()=>{});}
@@ -9828,7 +9830,7 @@ async function snote247ScannerRequest(context,value,isCurrent=()=>true){
   if(value.action==='read'&&response.ok){const type=response.headers.get('Content-Type')?.split(';')[0].trim().toLowerCase();if(!['image/jpeg','image/png','image/webp'].includes(type))throw snote247ScannerError('SCANNER_INVALID_RESPONSE');return new Blob([bytes],{type});}
   let data;try{data=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes));}catch{throw snote247ScannerError('SCANNER_INVALID_RESPONSE',mutation);}
   if(!response.ok){
-   const statuses={UNAUTHORIZED:401,FORBIDDEN:403,INVALID_REQUEST:400,CONFLICT:409,BUSY:429,LIMIT:429,PAYLOAD_TOO_LARGE:413,UNSUPPORTED_MEDIA_TYPE:415,SETUP_REQUIRED:503,NETWORK:502,METHOD_NOT_ALLOWED:405};
+   const statuses={UNAUTHORIZED:401,FORBIDDEN:403,INVALID_REQUEST:400,CONFLICT:409,BUSY:429,LIMIT:429,PAYLOAD_TOO_LARGE:413,UNSUPPORTED_MEDIA_TYPE:415,SETUP_REQUIRED:503,NETWORK:502,METHOD_NOT_ALLOWED:405,OCR_SETUP_REQUIRED:503,OCR_RATE_LIMITED:429,OCR_UPSTREAM:502};
    const code=Object.hasOwn(statuses,data?.code)&&statuses[data.code]===response.status?data.code:response.status===401||response.status===403?'FORBIDDEN':response.status===409?'CONFLICT':'NETWORK';
    if(['UNAUTHORIZED','FORBIDDEN'].includes(code))snote247ScannerRevoke(context);
    throw snote247ScannerError(code,mutation&&code==='NETWORK');
@@ -9837,7 +9839,7 @@ async function snote247ScannerRequest(context,value,isCurrent=()=>true){
  }catch(error){
   if(!snote247ScannerCurrent(context)||!isCurrent())throw snote247ScannerError('SCANNER_CONTEXT_CHANGED');
   if(error?.code==='42501'){snote247ScannerRevoke(context);throw snote247ScannerError('FORBIDDEN');}
-  if(typeof error?.code==='string'&&/^(?:SCANNER_[A-Z_]+|NETWORK|CONFLICT|BUSY|LIMIT|FORBIDDEN|UNAUTHORIZED|INVALID_REQUEST|UNSUPPORTED_MEDIA_TYPE|PAYLOAD_TOO_LARGE|SETUP_REQUIRED|METHOD_NOT_ALLOWED)$/.test(error.code))throw error;
+  if(typeof error?.code==='string'&&/^(?:SCANNER_[A-Z_]+|OCR_SETUP_REQUIRED|OCR_RATE_LIMITED|OCR_UPSTREAM|NETWORK|CONFLICT|BUSY|LIMIT|FORBIDDEN|UNAUTHORIZED|INVALID_REQUEST|UNSUPPORTED_MEDIA_TYPE|PAYLOAD_TOO_LARGE|SETUP_REQUIRED|METHOD_NOT_ALLOWED)$/.test(error.code))throw error;
   throw snote247ScannerError('NETWORK',mutation&&sent);
  }finally{clearTimeout(authTimer);clearTimeout(requestTimer);controller.abort();snote247ScannerRequests.delete(controller);}
 }
@@ -9849,6 +9851,7 @@ function snote247Scans(){
 }
 window.snoteScannerBridge=Object.freeze({context:snote247ScannerContext,current:snote247ScannerCurrent,
  list(context,options,isCurrent){snote247ScannerAssert(context,isCurrent);return snote247Scans().list(context,options,isCurrent);},
+ analyze(context,value,isCurrent){snote247ScannerAssert(context,isCurrent);if(!value||value.revision!==1||!/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(value.id||''))throw snote247ScannerError('INVALID_REQUEST');return snote247ScannerRequest(context,{id:value.id,revision:value.revision},isCurrent,true);},
  read(context,value,isCurrent){snote247ScannerAssert(context,isCurrent);return snote247Scans().read(context,value,isCurrent);},
  upload(context,value,isCurrent){snote247ScannerAssert(context,isCurrent);return snote247Scans().upload(context,value,isCurrent);},
  remove(context,value,isCurrent){snote247ScannerAssert(context,isCurrent);return snote247Scans().remove(context,value,isCurrent);},
@@ -13086,7 +13089,7 @@ window.zc86Cloud={getAccessToken:async()=>{const client=S.client,user=S.user,com
 <script src="assets/workspace-order-store.js?v=2.135" defer></script>
 <script src="assets/workspace-reorder.js?v=2.255" defer></script>
 <script src="assets/vehicle-inspection-route.js?v=2.238" defer></script>
-<script src="assets/release-info.js?v=2.256" defer></script>
+<script src="assets/release-info.js?v=2.257" defer></script>
 <link rel="stylesheet" href="assets/encar-id.css?v=2.162">
 <script src="assets/encar-id.js?v=2.255" defer></script>
 <script src="assets/company-purchase.js?v=2.172" defer></script>
