@@ -40,6 +40,18 @@ async function cleanup(c,scope){try{const pending=await action(c,scope,'cleanup_
  }catch{/* Cleanup must never turn a committed scan into a failed save. */}}
 function queueCleanup(context,c,scope){if(typeof context.waitUntil==='function')context.waitUntil(cleanup(c,scope));}
 async function readJSON(request){const bytes=await readBoundedBytes(request,4096);try{return JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes));}catch{fail('INVALID_REQUEST');}}
+// Server-only reader for derived scanner features. Callers can never provide a
+// Storage path; every use resolves the live office ACL and immutable scan first.
+export async function openScannerImage(env,jwt,value){
+ const companyId=uuid(value?.companyId),payload={id:uuid(value?.id),revision:revision(value?.revision)};
+ if(payload.revision<1)fail('INVALID_REQUEST');
+ const c=config(env),scope=await authorize(c,jwt,companyId),resolved=await action(c,scope,'read',payload),row=item(resolved.item);
+ if(row.id!==payload.id||row.revision!==payload.revision||typeof resolved.sha256!=='string'||!/^[a-f0-9]{64}$/.test(resolved.sha256))fail('NETWORK');
+ const path=objectPath(scope,resolved.path,row.id);
+ async function check(){const checked=await action(c,scope,'read',payload),current=item(checked.item);if(current.id!==row.id||current.revision!==row.revision||checked.path!==resolved.path||checked.sha256!==resolved.sha256)fail('CONFLICT');}
+ return Object.freeze({companyId,actorId:scope.actorId,id:row.id,revision:row.revision,sha256:resolved.sha256,
+  check,async read(){const asset=await upstream(c,path,{method:'GET',binary:true,storage:true});if(!asset.bytes||asset.bytes.length!==row.size||asset.mimeType!==row.mimeType||await hash(asset.bytes)!==resolved.sha256)fail('NETWORK');const info=inspectOfficeImage(asset.bytes,row.mimeType);await check();return {bytes:asset.bytes,...info};}});
+}
 async function upload(context,c,jwt,request){
  const bytes=await readBoundedBytes(request,MAX_BODY),headers=new Headers({'Content-Type':request.headers.get('Content-Type')});let form;
  try{form=await new Response(bytes,{headers}).formData();}catch{fail('INVALID_REQUEST');}
