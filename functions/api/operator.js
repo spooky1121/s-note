@@ -41,11 +41,11 @@ function scope(value, expected = false) {
 }
 function json(body, status = 200) { return new Response(JSON.stringify(body), { status, headers: headers('application/json; charset=utf-8') }); }
 function headers(type) { return { 'Content-Type': type, 'Cache-Control': 'no-store, private, max-age=0', 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'no-referrer', 'Cross-Origin-Resource-Policy': 'same-origin', 'X-Frame-Options': 'DENY' }; }
-function configuration(env) {
+function configuration(env, { readOnly = false } = {}) {
   try {
-    const url = new URL(env.SUPABASE_URL), values = [env.SUPABASE_PUBLISHABLE_KEY, env.SUPABASE_SERVICE_ROLE_KEY];
+    const url = new URL(env.SUPABASE_URL), values = readOnly ? [env.SUPABASE_PUBLISHABLE_KEY] : [env.SUPABASE_PUBLISHABLE_KEY, env.SUPABASE_SERVICE_ROLE_KEY];
     if (url.protocol !== 'https:' || !url.hostname.endsWith('.supabase.co') || url.username || url.password || url.port || url.pathname !== '/' || url.search || url.hash || values.some(v => typeof v !== 'string' || !v.trim() || /[\r\n]/.test(v))) fail('SETUP_REQUIRED');
-    return { url: url.origin, pub: values[0].trim(), service: values[1].trim() };
+    return { url: url.origin, pub: values[0].trim(), service: readOnly ? null : values[1].trim() };
   } catch { fail('SETUP_REQUIRED'); }
 }
 async function bytes(response, maximum) {
@@ -102,6 +102,12 @@ async function authorize(c, jwt) {
 async function recheck(c, jwt, actor) {
   const next = await upstream(c, jwt, '/rest/v1/rpc/snote_operator_context', { body: {} });
   if (next?.allowed !== true || next.actorId !== actor.actorId || next.sessionId !== actor.sessionId) fail('FORBIDDEN');
+}
+// Read-only experimental services share the real operator/session allowlist.
+// They never need a service-role key or inherit company-admin authority.
+export async function authorizeOperatorSession(env, jwt) {
+  const c = configuration(env, { readOnly: true }), actor = await authorize(c, jwt);
+  return Object.freeze({ ...actor, recheck: () => recheck(c, jwt, actor) });
 }
 async function rpc(c, jwt, actor, name, args = {}, service = false) {
   if (service) await recheck(c, jwt, actor);

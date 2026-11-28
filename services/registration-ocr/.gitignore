@@ -1,0 +1,5 @@
+.venv/
+models/
+.pytest_cache/
+local.env
+*.log
