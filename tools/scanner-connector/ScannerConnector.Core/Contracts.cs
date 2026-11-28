@@ -17,4 +17,9 @@ public sealed class ConnectorOptions
 {
     public int Port { get; init; } = 17426;
     public TimeProvider TimeProvider { get; init; } = TimeProvider.System;
+    public IScannerTrustStore? TrustStore { get; init; }
+    public IScannerConnectionApproval? ConnectionApproval { get; init; }
+    // Migration tests may opt into the old code protocol. Production never
+    // exposes a parallel consent-free path around native browser approval.
+    public bool AllowLegacyPairing { get; init; }
 }

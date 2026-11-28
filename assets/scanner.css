@@ -60,12 +60,9 @@
  #snote-scanner .snote-scanner-device-guide small{display:block;margin-top:9px;color:#8699a9;font-size:11px;line-height:1.65;word-break:keep-all;overflow-wrap:anywhere}
  #snote-scanner .snote-scanner-device-links{display:flex;flex-wrap:wrap;gap:7px 15px}
  #snote-scanner .snote-scanner-device-links a{color:#087cb6;font-size:12px;text-underline-offset:3px}
- #snote-scanner .snote-scanner-device-pair{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-top:14px}
- #snote-scanner .snote-scanner-device-pair label{font-size:11.5px;color:#6b8396}
+ #snote-scanner .snote-scanner-device-connect{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-top:14px}
  #snote-scanner .snote-scanner-device input,#snote-scanner .snote-scanner-device select{min-height:37px;min-width:0;padding:7px 10px;border:1px solid #dce6ed;border-radius:8px;background:#fff;color:#476477;font:inherit;font-size:12px;line-height:20px}
  #snote-scanner .snote-scanner-device input:focus,#snote-scanner .snote-scanner-device select:focus{outline:2px solid #bee4f8;outline-offset:1px;border-color:#91cbe9}
- #snote-scanner .snote-scanner-device-pair input{flex:0 1 135px;width:135px;letter-spacing:3px;font-variant-numeric:tabular-nums}
- #snote-scanner .snote-scanner-device-pair input::placeholder{letter-spacing:0}
  #snote-scanner .snote-scanner-device-settings{display:grid;grid-template-columns:minmax(180px,2fr) repeat(3,minmax(110px,1fr)) auto;align-items:end;gap:11px}
  #snote-scanner .snote-scanner-device-settings label{display:grid;gap:4px;min-width:0;font-size:11px;color:#7890a2}
  #snote-scanner .snote-scanner-device-settings select{width:100%}
@@ -101,10 +98,7 @@
  #snote-scanner .snote-scanner-row-actions{justify-content:flex-end;gap:4px;border-top:1px solid #f0f3f6}
  #snote-scanner .snote-scanner-row-actions button{flex:1;min-width:0}
  #snote-scanner .snote-scanner-device{padding:12px;margin-bottom:12px}
- #snote-scanner .snote-scanner-device-pair{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:7px}
- #snote-scanner .snote-scanner-device-pair label{grid-column:1/-1}
- #snote-scanner .snote-scanner-device-pair input{width:100%;min-height:44px}
- #snote-scanner .snote-scanner-device-pair>button:last-child{grid-column:1/-1;justify-self:start}
+ #snote-scanner .snote-scanner-device-connect{margin-top:10px}
  #snote-scanner .snote-scanner-device-settings{gap:9px}
  #snote-scanner .snote-scanner-device-settings label:first-child{grid-column:1/-1}
  #snote-scanner .snote-scanner-device-settings input,#snote-scanner .snote-scanner-device-settings select{min-height:44px}

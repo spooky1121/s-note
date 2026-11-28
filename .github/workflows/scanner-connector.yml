@@ -8,6 +8,7 @@ on:
       - 'docs/scanner-connector-windows.md'
   push:
     branches: [main]
+    tags: [scanner-connector-v1.1.0]
     paths:
       - 'tools/scanner-connector/**'
       - '.github/workflows/scanner-connector.yml'
@@ -82,10 +83,13 @@ jobs:
             }
           }
           New-Item -ItemType Directory -Force artifacts | Out-Null
+          Copy-Item dist/windows/SnoteScanner.exe artifacts/SnoteScannerSetup.exe
+          $setupHash = (Get-FileHash artifacts/SnoteScannerSetup.exe -Algorithm SHA256).Hash.ToLowerInvariant()
+          [IO.File]::WriteAllText((Join-Path $PWD 'artifacts/SnoteScannerSetup.exe.sha256'), "$setupHash  SnoteScannerSetup.exe`n", [Text.UTF8Encoding]::new($false))
           Compress-Archive -Path dist/windows/* -DestinationPath artifacts/SnoteScanner-Windows-x64.zip
           $hash = (Get-FileHash artifacts/SnoteScanner-Windows-x64.zip -Algorithm SHA256).Hash.ToLowerInvariant()
           [IO.File]::WriteAllText((Join-Path $PWD 'artifacts/SnoteScanner-Windows-x64.zip.sha256'), "$hash  SnoteScanner-Windows-x64.zip`n", [Text.UTF8Encoding]::new($false))
-          @{ sourceCommit = '${{ github.sha }}'; protocol = 1; connectorVersion = '1.0.0'; sdkVersion = '10.0.404'; sha256 = $hash; physicalScannerTested = $false } |
+          @{ sourceCommit = '${{ github.sha }}'; protocol = 2; connectorVersion = '1.1.0'; sdkVersion = '10.0.404'; sha256 = $hash; setupSha256 = $setupHash; physicalScannerTested = $false; codeSigned = $false } |
             ConvertTo-Json | Set-Content artifacts/build-receipt.json -Encoding utf8
           Copy-Item ../../docs/scanner-connector-windows.md artifacts/INSTALL.md
           Copy-Item (Join-Path $env:RUNNER_TEMP 'snote-scanner-native-protocol.json') artifacts/native-protocol-tests.json
@@ -97,7 +101,7 @@ jobs:
           retention-days: 30
 
   release:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'push' && github.ref == 'refs/tags/scanner-connector-v1.1.0'
     needs: windows
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -116,11 +120,13 @@ jobs:
           set -euo pipefail
           cd package
           sha256sum --check SnoteScanner-Windows-x64.zip.sha256
-          if gh release view scanner-connector-v1.0.0 >/dev/null 2>&1; then
+          sha256sum --check SnoteScannerSetup.exe.sha256
+          if gh release view scanner-connector-v1.1.0 >/dev/null 2>&1; then
             echo 'Connector version already exists; immutable release will not be replaced.'
             exit 0
           fi
-          gh release create scanner-connector-v1.0.0 \
+          gh release create scanner-connector-v1.1.0 \
+            SnoteScannerSetup.exe SnoteScannerSetup.exe.sha256 \
             SnoteScanner-Windows-x64.zip SnoteScanner-Windows-x64.zip.sha256 build-receipt.json \
-            --target "$GITHUB_SHA" --title 'S-NOTE 스캐너 연결 1.0.0 · Windows' \
+            --target "$GITHUB_SHA" --title 'S-NOTE 스캐너 연결 1.1.0 · Windows 자동 연결' \
             --notes-file INSTALL.md
